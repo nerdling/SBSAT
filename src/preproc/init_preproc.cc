@@ -301,16 +301,17 @@ Finish_Preprocessing()
 	/****** Shrunk down the hash table ******/
 	
 	int Total_inferences = Pos_replace + Neg_replace + Setting_Pos + Setting_Neg;
+	int div_zero = 0;
 	if (Total_inferences == 0)
-	  Total_inferences++;
+	  div_zero = 1;
 	d3_printf3 ("Positive Replaces - %d (%d%%)\n", Pos_replace,
-					(100 * Pos_replace) / (Total_inferences));
+					(100 * Pos_replace) / (Total_inferences+div_zero));
 	d3_printf3 ("Negative Replaces - %d (%d%%)\n", Neg_replace,
-					(100 * Neg_replace) / (Total_inferences));
+					(100 * Neg_replace) / (Total_inferences+div_zero));
 	d3_printf3 ("Positive Sets     - %d (%d%%)\n", Setting_Pos,
-					(100 * Setting_Pos) / (Total_inferences));
+					(100 * Setting_Pos) / (Total_inferences+div_zero));
 	d3_printf3 ("Negative Sets     - %d (%d%%)\n", Setting_Neg,
-					(100 * Setting_Neg) / (Total_inferences));
+					(100 * Setting_Neg) / (Total_inferences+div_zero));
 	d3_printf2 ("Total Inferences  - %d (100%%)\n\n", Total_inferences);
 	//Stats();
 	
