@@ -351,7 +351,7 @@ get_freefile(char *basename, char *file_dir, char *filename, int filename_max)
   /* otherwise we just append a number */
   {
   int i = 1;
-  while (i<1000) {
+  while (i<1000000) {
      sprintf(filename+filename_len, "%d", i);
      if (stat(filename, &buf)==0) i++;
      else return;
