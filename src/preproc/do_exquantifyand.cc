@@ -92,227 +92,167 @@ ExQuantifyAnd ()
 {
 	int ret = PREP_NO_CHANGE;
 	
-	store *examount = new store[numinp + 1];
-	int *tempmem = new int[numinp + 1];
 	BDDNode *Quantify;
-	//int exquant = 0;   
-	for (int x = 0; x < numinp + 1; x++)
-	  tempmem[x] = 0;
 	
-	for (int x = 0; x < nmbrFunctions; x++)
-	  {
-		  for (int i = 0; i < length[x]; i++)
-			 {
-				 tempmem[variables[x].num[i]]++;
-			 }
-	  }
-	
-	for (int x = 0; x < numinp + 1; x++)
-	  {
-		  examount[x].num = new int[tempmem[x] + 1];
-		  examount[x].length = 0;
-	  }
-	delete tempmem;
-	
-	for (int x = 0; x < nmbrFunctions; x++)
-	  {
-		  for (int i = 0; i < length[x]; i++)
-			 {
-				 examount[variables[x].num[i]].num[examount[variables[x].num[i]].length] = x;
-				 examount[variables[x].num[i]].length++;
-			 }
-	  }
 	void bdd_gc();
-	bdd_gc();
-	for (int x = 1; x <= MAX_EXQUANTIFY_CLAUSES; x++)
-	  {
-		  for (int i = 1; i < numinp + 1; i++)
-			 {
-				 char p[100];
-				 D_3(
-					  if (i % ((numinp/100)+1) == 0) {
-						  for(int iter = 0; iter<str_length; iter++)
-							 d3_printf1("\b");
-						  sprintf(p, "{%ld:%d/%ld}", affected, i, numinp);
-						  str_length = strlen(p);
-						  d3_printf1(p);
-					  }
-					  );
-				 
-				 if (nCtrlC) {
-					 d3_printf1("Breaking out of Anding Existential Quantification\n");
-					 nCtrlC = 0;
-					 goto ea_bailout;
-				 }
-				 
+	bdd_gc(); //Hit it!
+
+	for (int x = 1; x <= MAX_EXQUANTIFY_CLAUSES; x++) {
+		for (int i = 1; i < numinp + 1; i++) {
+			char p[100];
+			D_3(
 				 if (i % ((numinp/100)+1) == 0) {
-					 d2e_printf3("\rPreprocessing Ea %d/%ld ", i, numinp);
+					 for(int iter = 0; iter<str_length; iter++)
+						d3_printf1("\b");
+					 sprintf(p, "{%ld:%d/%ld}", affected, i, numinp);
+					 str_length = strlen(p);
+					 d3_printf1(p);
 				 }
-				 
-				 //fprintf(stderr, "%d\n", i);
-				 if ((examount[i].length <= x) && (examount[i].length > 0))
-					{
-						int j = examount[i].num[0];
-						Quantify = functions[j];
-						int out = 0;
-						if(x==1) ret = PREP_CHANGED;
-						if(length[j]>MAX_EXQUANTIFY_VARLENGTH && ret!=PREP_CHANGED) continue;
-					   bool OLD_DO_INFERENCES = DO_INFERENCES;
-						DO_INFERENCES = 0;
-						for(int z = 1; z < examount[i].length; z++) {
-							D_3(
-							  for(int iter = 0; iter<str_length; iter++)
-								 d3_printf1("\b");
-							  sprintf(p, "(%d:%d/%ld[%d])",i, z, examount[i].length, countBDDs());
-							  str_length = strlen(p);
-							  d3_printf1(p);
-							);
-							if (nCtrlC) {
-								out = 1;
-								break;
-							}
-
-							int bdd_length = 0;
-							int *bdd_vars = NULL;
-							switch (int r=Rebuild_BDD(Quantify, &bdd_length, bdd_vars)) {
-							 case TRIV_UNSAT:
-							 case TRIV_SAT:
-							 case PREP_ERROR: return r;
-							 default: break;
-							}
-							delete [] bdd_vars;
-							bdd_vars = NULL;
-							if(bdd_length>MAX_EXQUANTIFY_VARLENGTH) {
-								out = 1;
-								break;
-							}
-
-							if(length[examount[i].num[z]] > MAX_EXQUANTIFY_VARLENGTH){
-								out = 1;
-								break;
-							}
-							Quantify = ite_and(Quantify, functions[examount[i].num[z]]);
-							affected++;
-							
-							functions[examount[i].num[z]] = true_ptr;
-							switch (int r=Rebuild_BDDx(examount[i].num[z])) {
-							 case TRIV_UNSAT: 
-							 case TRIV_SAT: 
-							 case PREP_ERROR: 
-								ret = r; goto ea_bailout; /* as much as I hate gotos */
-							 default: break;
-							}
-							UnSetRepeats(examount[i].num[z]);
-							equalityVble[examount[i].num[z]] = 0;
-							functionType[examount[i].num[z]] = UNSURE;
-							//length[examount[i].num[z]] = 0;
-							//if(variables[examount[i].num[z]].num!=NULL)
-							//  delete variables[examount[i].num[z]].num;
-							//variables[examount[i].num[z]].num = NULL;
-
-							ret = PREP_CHANGED;
-						}
-						DO_INFERENCES = OLD_DO_INFERENCES;
-						if(ret != PREP_CHANGED) continue;
-						if(out) {
-							functions[j] = Quantify;
-						} else {
-							
-							functions[j] = Quantify;
-							switch (int r=Rebuild_BDDx(j)) {
-							 case TRIV_UNSAT: 
-							 case TRIV_SAT: 
-							 case PREP_ERROR: 
-								ret = r; goto ea_bailout; /* as much as I hate gotos */
-							 default: break;
-							}
-
-							infer *x_infers = possible_infer_x(functions[j], i);
-
-/*							
-							BDDNode *quant = xquantify(functions[j], i);
-							if(set_variable(functions[j], i, 1) == quant)
-							  fprintf(stderr, "***[%d=T]***\n", i);
-							if(set_variable(functions[j], i, 0) == quant)
-							  fprintf(stderr, "***[%d=F]***\n", i);
-							for(int a = 0; a < length[j]; a++) {
-								if(i == variables[j].num[a]) continue;
-								if(i > variables[j].num[a]) {
-								  if(num_replace(functions[j], i, variables[j].num[a]) == quant)
-									 fprintf(stderr, "***[%d=%d]***\n", i, variables[j].num[a]);
-								} else {
-								  if(num_replace(functions[j], variables[j].num[a], i) == quant)
-									 fprintf(stderr, "***[%d=%d]***\n", i, variables[j].num[a]);
-								}
-							}
-							for(int a = 0; a < length[j]; a++) {
-								if(i == variables[j].num[a]) continue;
-								if(i > variables[j].num[a]) {
-								  if(num_replace(functions[j], i, -variables[j].num[a]) == quant)
-									 fprintf(stderr, "***[%d=%d]***\n", i, -variables[j].num[a]);
-								} else {
-								  if(num_replace(functions[j], variables[j].num[a], -i) == quant)
-									 fprintf(stderr, "***[%d=%d]***\n", i, -variables[j].num[a]);
-								}
-							}
-*/							
-								  
-							
-							
-							if(x_infers == NULL) {
-								//do nothing. //Variable dropped out or was inferred during ANDing.
-							} else if(x_infers->nums[0] == 0) {
-								for(int iter = 0; iter<str_length; iter++)
-								  d3_printf1("\b");
-								d3_printf2 ("*{%d}", i);
-								str_length = 0;// strlen(p);
-								functions[j] = xquantify (functions[j], i);
-								variablelist[i].true_false = 2;
-								SetRepeats(j);
-							} else {
-								BDDNode *inferBDD = true_ptr;
-								//while (x_infers!=NULL) {
-									//fprintf(stderr, "%d|%d, %d|", j, x_infers->nums[0], x_infers->nums[1]);
-									if(x_infers->nums[1] == 0)
-									  inferBDD = ite_and(inferBDD, ite_var(x_infers->nums[0]));
-									else
-									  inferBDD = ite_and(inferBDD, ite_equ(ite_var(x_infers->nums[0]), ite_var(x_infers->nums[1])));
-								   //infer *temp = x_infers; x_infers = x_infers->next; delete temp;
-								//}
-								while(x_infers!=NULL) {
-									infer *temp = x_infers; x_infers = x_infers->next; delete temp;
-								}
-								
-								int bdd_length = 0;
-								int *bdd_vars = NULL;
-								switch (int r=Rebuild_BDD(inferBDD, &bdd_length, bdd_vars)) {
-								 case TRIV_UNSAT:
-								 case TRIV_SAT:
-								 case PREP_ERROR: return r;
-								 default: break;
-								}
-								delete [] bdd_vars;
-								bdd_vars = NULL;
-							}
+				 );
+			if (nCtrlC) {
+				d3_printf1("Breaking out of Anding Existential Quantification\n");
+				nCtrlC = 0;
+				goto ea_bailout;
+			}
+			
+			if (i % ((numinp/100)+1) == 0) {
+				d2e_printf3("\rPreprocessing Ea %d/%ld ", i, numinp);
+			}
+			
+			//fprintf(stderr, "%d\n", i);
+			int amount_count = 0;
+			for (llist * k = amount[i].head; k != NULL; k = k->next)
+			  amount_count++;
+			
+			if ((amount_count <= x) && (amount_count > 0)) {
+				int j = amount[i].head->num;
+				Quantify = functions[j];
+				int out = 0;
+				if(x==1) ret = PREP_CHANGED;
+				if(length[j]>MAX_EXQUANTIFY_VARLENGTH && ret!=PREP_CHANGED) continue;
+				bool OLD_DO_INFERENCES = DO_INFERENCES;
+				DO_INFERENCES = 0;
+				int count1 = 0;
+				for (llist * k = amount[i].head->next; k != NULL;) {
+					int z = k->num;
+					count1++;
+					k = k->next;
+					D_3(
+						 for(int iter = 0; iter<str_length; iter++)
+						 d3_printf1("\b");
+						 sprintf(p, "(%d:%d/%d[%d])",i, count1, amount_count, countBDDs());
+						 str_length = strlen(p);
+						 d3_printf1(p);
+						 );
+					if (nCtrlC) {
+						out = 1;
+						break;
+					}
+					
+					int bdd_length = 0;
+					int *bdd_vars = NULL;
+					switch (int r=Rebuild_BDD(Quantify, &bdd_length, bdd_vars)) {
+					 case TRIV_UNSAT:
+					 case TRIV_SAT:
+					 case PREP_ERROR: return r;
+					 default: break;
+					}
+					delete [] bdd_vars;
+					bdd_vars = NULL;
+					if(bdd_length>MAX_EXQUANTIFY_VARLENGTH) {
+						out = 1;
+						break;
+					}
+					
+					if(length[z] > MAX_EXQUANTIFY_VARLENGTH){
+						out = 1;
+						break;
+					}
+					Quantify = ite_and(Quantify, functions[z]);
+					affected++;
+					
+					functions[z] = true_ptr;
+					switch (int r=Rebuild_BDDx(z)) {
+					 case TRIV_UNSAT: 
+					 case TRIV_SAT: 
+					 case PREP_ERROR: 
+						ret = r; goto ea_bailout; /* as much as I hate gotos */
+					 default: break;
+					}
+					UnSetRepeats(z);
+					equalityVble[z] = 0;
+					functionType[z] = UNSURE;
+					
+					ret = PREP_CHANGED;
+				}
+				DO_INFERENCES = OLD_DO_INFERENCES;
+				if(ret != PREP_CHANGED) continue;
+				if(out) {
+					functions[j] = Quantify;
+				} else {
+					functions[j] = Quantify;
+					switch (int r=Rebuild_BDDx(j)) {
+					 case TRIV_UNSAT: 
+					 case TRIV_SAT: 
+					 case PREP_ERROR: 
+						ret = r; goto ea_bailout; /* as much as I hate gotos */
+					 default: break;
+					}
+					
+					infer *x_infers = possible_infer_x(functions[j], i);
+					
+					if(x_infers == NULL) {
+						//do nothing. Variable dropped out or was inferred during ANDing.
+					} else if(x_infers->nums[0] == 0) {
+						for(int iter = 0; iter<str_length; iter++)
+						  d3_printf1("\b");
+						d3_printf2 ("*{%d}", i);
+						str_length = 0;// strlen(p);
+						functions[j] = xquantify (functions[j], i);
+						if(variablelist[i].true_false!=-1) assert(0);
+						variablelist[i].true_false = 2;
+						SetRepeats(j);
+					} else {
+						BDDNode *inferBDD = true_ptr;
+						//while (x_infers!=NULL) {
+						//fprintf(stderr, "%d|%d, %d|", j, x_infers->nums[0], x_infers->nums[1]);
+						if(x_infers->nums[1] == 0)
+						  inferBDD = ite_and(inferBDD, ite_var(x_infers->nums[0]));
+						else
+						  inferBDD = ite_and(inferBDD, ite_equ(ite_var(x_infers->nums[0]), ite_var(x_infers->nums[1])));
+						//infer *temp = x_infers; x_infers = x_infers->next; delete temp;
+						//}
+						while(x_infers!=NULL) {
+							infer *temp = x_infers; x_infers = x_infers->next; delete temp;
 						}
 						
-						switch (int r=Rebuild_BDDx(j)) {
+						int bdd_length = 0;
+						int *bdd_vars = NULL;
+						switch (int r=Rebuild_BDD(inferBDD, &bdd_length, bdd_vars)) {
 						 case TRIV_UNSAT:
-						 case TRIV_SAT: 
-						 case PREP_ERROR: 
-							ret = r; goto ea_bailout; /* as much as I hate gotos */
+						 case TRIV_SAT:
+						 case PREP_ERROR: return r;
 						 default: break;
 						}
-						equalityVble[j] = 0;
-						functionType[j] = UNSURE;
-						ret = PREP_CHANGED;
-						goto ea_bailout; /* as much as I hate gotos */
+						delete [] bdd_vars;
+						bdd_vars = NULL;
 					}
-			 }
-	  }
-ea_bailout:
-	for (int z = 0; z < numinp + 1; z++)
-	  delete examount[z].num;
-	delete examount;
+				}
+				
+				switch (int r=Rebuild_BDDx(j)) {
+				 case TRIV_UNSAT:
+				 case TRIV_SAT: 
+				 case PREP_ERROR: 
+					ret = r; goto ea_bailout; /* as much as I hate gotos */
+				 default: break;
+				}
+				equalityVble[j] = 0;
+				functionType[j] = UNSURE;
+				ret = PREP_CHANGED;
+				goto ea_bailout; /* as much as I hate gotos */
+			}
+		}
+	}
+	ea_bailout:
 	return ret;
 }
