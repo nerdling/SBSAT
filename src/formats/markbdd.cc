@@ -161,7 +161,7 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 					looper++;
 					// found variable and the variable id is id
 					independantVars[id] = 1;
-					fprintf(stderr, "%d indep=%d %s %s\n", looper, id, getsym_i(id)->name, macros);
+					//fprintf(stderr, "%d indep=%d %s %s\n", looper, id, getsym_i(id)->name, macros);
 					id = sym_regex(&myrg);
 					no_independent = 0;
 				}
@@ -227,7 +227,6 @@ BDDNode *putite(int intnum, BDDNode * bdd)
       defines[whereat].vlist[0] = v;
       defines[whereat].bdd = putite (intnum, bdd);
 
-		
 		long int y = 0;
       int tempint[5000];
 		unravelBDD (&y, tempint, defines[whereat].bdd);
@@ -281,38 +280,8 @@ BDDNode *putite(int intnum, BDDNode * bdd)
       return defines[whereat].bdd;
 	}
 	if (!strcasecmp (macros, "add_state")) {
-		BDDNode *v1 = putite(intnum, bdd);
-		expect_integer = 1;
-      BDDNode *v2 = putite(intnum, bdd);
-		expect_integer = 0;
-      if (v2 != ite_var (v2->variable)) {
-			fprintf (stderr, "\nKeyword 'add_state' needs a positive integer as a second argument (%s)...exiting:%d\n", macros, markbdd_line);
-			exit (1);
-		}
-		long int y = 0;
-      int tempint[5000];
-		int newBDD[50];
-		unravelBDD (&y, tempint, v1);
-      qsort (tempint, y, sizeof (int), compfunc);
-      if (y != 0) {
-			int v = 0;
-			for (int i = 1; i < y; i++) {
-				v++;
-				if (tempint[i] == tempint[i - 1])
-				  v--;
-				tempint[v] = tempint[i];
-			}
-			y = v + 1;
-		}
-      for (int i = y; i >= 0; i--) {
-		  tempint[i + 1] = tempint[i];
-		  newBDD[i + 1] = tempint[i] + v2->variable;
-		}
-		newBDD[0] = y;
-      tempint[0] = y;
-		//      struct BDDNodeStruct **functions = new BDDNode*[50];      
-		functionType[nmbrFunctions] = UNSURE;
-      return mitosis (v1, tempint, newBDD);
+		fprintf (stderr, "\nKeyword 'add_state' has been deprecated...exiting:%d\n", markbdd_line);
+		exit (1);
 	}
 	if (!strcasecmp(macros, "truth_table")) {
 		BDDNode *v1 = putite(intnum, bdd);
@@ -822,9 +791,13 @@ char getNextSymbol (int &intnum, BDDNode *&bdd) {
 				if (negate) intnum = -intnum;
 				return 'i';
 			} else if(is_int == 0 && expect_integer == 1) {					  
-				expect_integer = 0;
 				fprintf(stderr, "\nExpecting an integer, found %s...exiting:%d\n", macros, markbdd_line);
 				exit(1);
+			} else {
+				if(!strcasecmp(macros, "define")) {
+					fprintf (stderr, "\n'#' expected in front of keyword 'define'...exiting:%d\n", markbdd_line);
+					exit (1);
+				}
 			}
 			if(negate) d4_printf2("-%s ", macros);
 			if(!negate) d4_printf2("%s ", macros);
@@ -833,11 +806,10 @@ char getNextSymbol (int &intnum, BDDNode *&bdd) {
       if (p == '#') {
          p = fgetc(finputfile);
          if (p == EOF) {
-				fprintf (stderr, "\nUnexpected EOF...exiting\n:%d", markbdd_line);
+				fprintf (stderr, "\nUnexpected EOF...exiting:%d\n", markbdd_line);
 				exit (1);
 			}
-			if (((p >= 'a') && (p <= 'z')) || ((p >= 'A') && (p <= 'Z'))
-				 || (p == '_')) {
+			if(p == 'd') { //d for #define, no other operator starts with d
 				while (((p >= 'a') && (p <= 'z')) || ((p >= 'A') && (p <= 'Z'))
 						 || (p == '_') || ((p >= '0') && (p <= '9'))) {
 					macros[i] = p;
@@ -848,14 +820,19 @@ char getNextSymbol (int &intnum, BDDNode *&bdd) {
 					}
                p = fgetc(finputfile);
                if (p == EOF) {
-						fprintf (stderr, "\nUnexpected EOF (%s)...exiting\n:%d",	macros, markbdd_line);
+						fprintf (stderr, "\nUnexpected EOF (%s)...exiting:%d\n",	macros, markbdd_line);
 						exit (1);
 					}
 				}
 				ungetc (p, finputfile);
 				macros[i] = 0;
+				if(strcasecmp(macros, "define")) {
+					fprintf (stderr, "\n#define expected, found %s...exiting:%d\n", macros, markbdd_line);
+					exit (1);
+				}
 				return 'm';
 			} else {
+				ungetc(p, finputfile);
 				return '#';
 			}
 		}
