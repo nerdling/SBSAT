@@ -102,7 +102,7 @@ ShowResultLine(FILE *fout, char *var, int var_idx, int negative, int value)
 
 }
 
-void GetSolution(int oldnuminp, int nMaxVbleIndex, t_solution_info *solution_info) {
+void GetSolution(int oldnuminp, int nMaxVbleIndex) {
 	for (int i = 1; i <= nMaxVbleIndex; i++)
 	  {
 		  //if(variablelist[variablelist[i].replace].true_false == 2
@@ -279,7 +279,7 @@ void Backend(int nMaxVbleIndex, int oldnuminp, int *original_variables) {
 			variablelist[x].equalvars = old_variablelist[x].equalvars;
 		}
 		
-		GetSolution(oldnuminp, nMaxVbleIndex, solution_info);
+		GetSolution(oldnuminp, nMaxVbleIndex);
 	
 		ProcessSolution(oldnuminp, original_variables);
 		
@@ -336,7 +336,7 @@ void Backend_Trace (int nMaxVbleIndex, int oldnuminp,
 			variablelist[x].equalvars = old_variablelist[x].equalvars;
 		}
 		
-		GetSolution(oldnuminp, nMaxVbleIndex, solution_info);
+		GetSolution(oldnuminp, nMaxVbleIndex);
 	
 		ProcessSolution(oldnuminp, original_variables);
 		
@@ -464,22 +464,24 @@ char *
 }
 
 // returns 1 if true, -1 if don't care, 0 if false
-int truthOf (char *buffer, Tracer *tracer, int *original_variables)
+int truthOf(char *buffer, Tracer *tracer, int *original_variables)
 {
    int left_v, rght_v;
    Integer *equ_var;
    char *first, /**second,*/ *ptr, *arg = (char *) calloc (1, 1024);
    Hashtable *symbols = tracer->getHashTable ();
-   
-   StringTokenizer *s = new StringTokenizer ("new", " ");
-   s->renewTokenizer (buffer, " ");
+  
+   char tmp_str1[32]; 
+   char tmp_str2[32]; 
+   StringTokenizer *s = new StringTokenizer(strcpy(tmp_str1,"new"), strcpy(tmp_str2," "));
+   s->renewTokenizer(buffer, strcpy(tmp_str2," "));
    if (!s->hasMoreTokens ()){
 		free(arg);
 		delete s;
       return 1;
 	}
    first = s->nextToken ();
-   if (strlen(first) == 9 && !strncmp (first, "are_equal", 9)) {
+   if (strlen(first) == 9 && !strncmp(first, "are_equal", 9)) {
       int value = -1;
       for (ptr = buffer; *ptr != '('; ptr++);	// points to first argument
       ptr++;
@@ -560,14 +562,14 @@ int truthOf (char *buffer, Tracer *tracer, int *original_variables)
 		delete s;
       return value;
    } else if (strlen(first) == 3 && !strncmp (first, "ite", 3)) {
-      int ite, ife, els;
+      int ifte, ife, els;
       for (ptr = buffer; *ptr != '('; ptr++);	// points to first argument
       ptr++;
       ptr = getArg (ptr, arg);
       if (arg == NULL)
-		  ite = -1;
+		  ifte = -1;
       else
-		  ite = truthOf (arg, tracer, original_variables);
+		  ifte = truthOf (arg, tracer, original_variables);
       if (ptr == NULL) {
 			fprintf (stderr, "backend: ite has wrong number of variables\n");
 			exit (1);
@@ -600,12 +602,12 @@ int truthOf (char *buffer, Tracer *tracer, int *original_variables)
 			delete s;
 			return 0;
 		}
-      if (ite == 1) {
+      if (ifte == 1) {
 			if(arg!=NULL) free(arg);
 			delete s;
 			return ife;
 		}
-      if (ite == 0) {
+      if (ifte == 0) {
 			if(arg!=NULL) free(arg);
 			delete s;
 			return els;
@@ -656,8 +658,8 @@ int truthOf (char *buffer, Tracer *tracer, int *original_variables)
 		  left_v = -1;
       else
 		  left_v = 0;
-      int rght_v =
-		  truthOf (opNestOf (buffer, arg), tracer, original_variables);
+      rght_v =
+		  truthOf(opNestOf (buffer, arg), tracer, original_variables);
       if (left_v == rght_v) {
 			if(arg!=NULL) free(arg);
 			delete s;
@@ -689,7 +691,9 @@ void finalCheck (Tracer * tracer, int *original_variables)
    int fails = 0;
    bool flag = false;
    FILE *fd;
-   StringTokenizer *t = new StringTokenizer ("new", " ");
+   char tmp_str1[32]; 
+   char tmp_str2[32]; 
+   StringTokenizer *t = new StringTokenizer(strcpy(tmp_str1, "new"), strcpy(tmp_str2, " "));
    char *first, buffer[4096];
 	
    d2_printf1 ("Checking returned result... ");
@@ -700,7 +704,7 @@ void finalCheck (Tracer * tracer, int *original_variables)
 	
    while (fgets (buffer, 2047, fd)) {
 		
-      t->renewTokenizer (buffer, " =(,;");
+      t->renewTokenizer(buffer, strcpy(tmp_str1, " =(,;"));
       first = t->nextToken ();
       
       if (!strncmp (first, "STRUCTURE", 9)) {

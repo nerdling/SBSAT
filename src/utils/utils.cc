@@ -47,7 +47,7 @@ extern char temp_dir[128];
 
 void *ite_calloc(unsigned int x, unsigned int y, int dbg_lvl, const char *for_what) {
    void *p = NULL;
-   long long r = x;
+   LONG64 r = x;
    r *= y;
    if (r >= INT_MAX) {
          fprintf(stderr, "ERROR: Unable to allocate %u (%u * %u) bytes for %s\n", x*y, x, y, for_what); 
@@ -79,7 +79,7 @@ void ite_free(void **ptr) {
 
 void *ite_recalloc(void *ptr, unsigned int oldx, unsigned int x, unsigned int y, int dbg_lvl, const char *for_what) {
    void *p = NULL;
-   long long r = x;
+   LONG64 r = x;
    r *= y;
    if (r >= INT_MAX) {
          fprintf(stderr, "ERROR: Unable to allocate %u (%u * %u) bytes for %s\n", x*y, x, y, for_what); 
@@ -121,10 +121,10 @@ long
 get_memusage ()
 {
    int pid = getpid();
-   char stat[256];
+   char stat_buf[256];
    char buffer[2001];
-   sprintf(stat, "/proc/%d/stat", pid);
-   FILE *fin=fopen (stat, "r");
+   sprintf(stat_buf, "/proc/%d/stat", pid);
+   FILE *fin=fopen (stat_buf, "r");
    if (!fin) return 0;
 
    /* read the file in one swing */
@@ -152,7 +152,7 @@ get_memusage ()
    long memalloc=0;
    if (1!=sscanf(c+1, "%ld", &memalloc)) 
 	memalloc=0;
-   fprintf(stderr, "stat(%s):\n%s\nreturn: %ld", stat, buffer, memalloc);
+   fprintf(stderr, "stat(%s):\n%s\nreturn: %ld", stat_buf, buffer, memalloc);
    return memalloc;
 }
 #else

@@ -127,7 +127,7 @@ int DO_PRUNING_FN() {
                 continue;
              if (variables[j].min >= variables[x].max) 
                 continue;
-             if (nmbrVarsInCommon (x, j, length, variables, STRENGTH) == 0)
+             if (nmbrVarsInCommon (x, j, STRENGTH) == 0)
                 continue;
 
              if (length[x] < functionTypeLimits[functionType[x]])
@@ -157,10 +157,10 @@ int DO_PRUNING_FN() {
 						pruning (functions[x], functions[j]);
 #endif						
 #ifdef RESTRICT
-						restrictx(x, j, length, variables);
+						restrictx(x, j);
 #endif
 #ifdef REMOVE_FPS
-						remove_fpsx(x, j, length, variables);
+						remove_fpsx(x, j);
 #endif
 						if (currentBDD != functions[x])
 						  {
@@ -208,10 +208,10 @@ int DO_PRUNING_FN() {
 						pruning (functions[j], functions[x]);
 #endif
 #ifdef RESTRICT
-						restrictx(j, x, length, variables);
+						restrictx(j, x);
 #endif
 #ifdef REMOVE_FPS
-						remove_fpsx(j, x, length, variables);
+						remove_fpsx(j, x);
 #endif
 						if (currentBDD != functions[j])
 						  {

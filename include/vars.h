@@ -37,6 +37,7 @@
 #ifndef VARS_H
 #define VARS_H
 
+#define LONG64 long long
 
 /* counter and return values */
 #define NO_ERROR 0
@@ -139,7 +140,7 @@ extern int sizeBuckets;
 
 extern int TRACE_START;
 
-extern long long ite_counters[MAX_COUNTER];
+extern LONG64 ite_counters[MAX_COUNTER];
 extern double ite_counters_f[MAX_COUNTER_F];
 
 //extern char png_filename[128];

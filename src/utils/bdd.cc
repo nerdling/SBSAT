@@ -965,7 +965,7 @@ BDDNode * gcf (BDDNode * f, BDDNode * c)
    return find_or_add_node (v, r, e);
 }
 
-BDDNode * restrictx (int bddNmbr1, int bddNmbr2, int *&length, store *&variables)
+BDDNode * restrictx (int bddNmbr1, int bddNmbr2)
 {
    BDDNode *quantifiedBDD2 = functions[bddNmbr2];
    int bdd1pos = 0;
@@ -1039,7 +1039,7 @@ BDDNode *restrict (BDDNode * f, BDDNode * c)
    return find_or_add_node (v, r, e);
 }
 
-BDDNode * remove_fpsx (int bddNmbr1, int bddNmbr2, int *&length, store *&variables)
+BDDNode * remove_fpsx (int bddNmbr1, int bddNmbr2)
 {
    BDDNode *quantifiedBDD2 = functions[bddNmbr2];
    int bdd1pos = 0;
@@ -1325,8 +1325,7 @@ int countTrues (BDDNode * bdd) {
 }
 
 int
-OLD_nmbrVarsInCommon (int bddNmbr1, int bddNmbr2, int *&length,
-      store * &variables, int stopat)
+OLD_nmbrVarsInCommon (int bddNmbr1, int bddNmbr2, int stopat)
 {
    int bdd1pos = 0;
    int bdd2pos = 0;
@@ -1369,8 +1368,7 @@ OLD_nmbrVarsInCommon (int bddNmbr1, int bddNmbr2, int *&length,
 }
 
 int
-nmbrVarsInCommon(int bddNmbr1, int bddNmbr2, int *&length,
-      store * &variables, int STOPAT)
+nmbrVarsInCommon(int bddNmbr1, int bddNmbr2, int STOPAT)
 {
    static int bdd1pos;
    static int bdd2pos;

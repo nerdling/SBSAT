@@ -109,7 +109,7 @@ typedef struct linear_rec {
     int Tr,Fa;       // Symbols for true and false                      
 } Vars;
 
-typedef struct result {
+typedef struct /*result*/ {
    int left, rght;
 } Result;
 

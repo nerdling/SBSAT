@@ -385,10 +385,11 @@ read_cmd(int argc, char *argv[])
       if (argv[i][0]!='-') 
       {
          /* fixed parameters - inputfile, outputfile */
+         char tmp_str[32];
          params++;
          switch (params) {
-          case 1: p_opt = lookup_keyword("input-file"); break;
-          case 2: p_opt = lookup_keyword("output-file"); break;
+          case 1: p_opt = lookup_keyword(strcpy(tmp_str,"input-file")); break;
+          case 2: p_opt = lookup_keyword(strcpy(tmp_str,"output-file")); break;
           default: p_opt = NULL; break;
          }
          if (p_opt == NULL ) {
@@ -612,21 +613,24 @@ show_ini()
    int i;
    FILE *stdini=stdout;
 
-   fprintf (stdini, "# \n");
-   fprintf (stdini, "# %s Version %s %s\n", PACKAGE, VERSION, COPYRIGHT);
-   fprintf (stdini, "# \n");
+   fprintf(stdini, "# \n");
+   fprintf(stdini, "# %s Version %s %s\n", PACKAGE, VERSION, COPYRIGHT);
+   fprintf(stdini, "# \n");
    for (i=0;!(options[i].p_target==NULL&&options[i].desc_opt[0]==0);i++)
    {
       if ((options[i].var_type&VAR_INI) == 0) continue;
 
       if (options[i].p_target==NULL && options[i].p_type==P_NONE)  {
-         fprintf_desc(stdini, options[i].desc_opt, NULL, "# ");
+         char tmp_str[5];
+         fprintf_desc(stdini, options[i].desc_opt, NULL, strcpy(tmp_str, "# "));
          fprintf(stdini, "#\n");
          continue;
       }
       if (options[i].w_opt[0]==0) continue;
-      if (options[i].desc_opt[0]) 
-         fprintf_desc(stdini, options[i].desc_opt, NULL, "# ");
+      if (options[i].desc_opt[0])  {
+         char tmp_str[5];
+         fprintf_desc(stdini, options[i].desc_opt, NULL, strcpy(tmp_str, "# "));
+      }
 
       switch (options[i].p_type) {
        case P_PRE_CHAR: 
@@ -808,7 +812,8 @@ show_competition_version()
 void
 fix_ini_filename()
 {
-   t_opt *p_opt = lookup_keyword("ini");
+   char tmp_str[5];
+   t_opt *p_opt = lookup_keyword(strcpy(tmp_str, "ini"));
    if (!p_opt) return;
    if (((char*)(p_opt->p_target))[0] == '~') {
       char *env = getenv("HOME");

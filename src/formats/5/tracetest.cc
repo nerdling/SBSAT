@@ -1,7 +1,6 @@
 #include "ite.h"
 #include "bddnode.h"
 
-int *length;
 BDDNode **xorFunctions;
 char filename[128]="stdin";
 extern int s_error;

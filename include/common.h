@@ -76,7 +76,7 @@ typedef struct xorrecord {
 	struct xorrecord *next;
 } XORd;
 
-typedef struct func {
+typedef struct /*func*/ {
 	int  no_vars;
 	char *truth_table;
 	int  *var_list;

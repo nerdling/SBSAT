@@ -88,12 +88,13 @@ init_terminal_out()
       return 1;
    }
 
-   CM = qgetstr("cm"); /* this string used by tgoto() */
-   CL = qgetstr("cl"); /* this string used to clear screen */
-   SO = qgetstr("so"); /* this string used to set standout */
-   SE = qgetstr("se"); /* this string used by clear standout */
-   term_height = tgetnum("li");
-   term_width = tgetnum("co");
+   char tmp_str[5];
+   CM = qgetstr(strcpy(tmp_str, "cm")); /* this string used by tgoto() */
+   CL = qgetstr(strcpy(tmp_str, "cl")); /* this string used to clear screen */
+   SO = qgetstr(strcpy(tmp_str, "so")); /* this string used to set standout */
+   SE = qgetstr(strcpy(tmp_str, "se")); /* this string used by clear standout */
+   term_height = tgetnum(strcpy(tmp_str, "li"));
+   term_width = tgetnum(strcpy(tmp_str, "co"));
 #endif
    return 0;
 }

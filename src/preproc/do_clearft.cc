@@ -41,81 +41,14 @@
 #include "ite.h"
 #include "preprocess.h"
 
-int COF_MAX = 100;		//The max number of variables BDDs can have to be used in cofactoring
-
-int
-Do_Cofactor()
-{
-  int ret=PREP_NO_CHANGE;
-  BDDNode *cof = NULL;
-  d3_printf1("COFACTORING - ");
-	affected = 0;
-	char p[100];
-	D_3(
-		 sprintf(p, "{0:0/%d}", nmbrFunctions);
-		 str_length = strlen(p);
-		 d3_printf1(p);
-	);
+int Do_Clear_FunctionType() {
+	d3_printf1("CLEARING FUNCTION TYPE");
+	for(int x = 0; x < nmbrFunctions; x++)
+		functionType[x] = UNSURE;
 	
-  for (int x = 0; x < numout; x++)
-   {
-		D_3(
-			 if (x % ((nmbrFunctions/100)+1) == 0) {
-				 for(int iter = 0; iter<str_length; iter++)
-					d3_printf1("\b");
-				 sprintf(p, "{%ld:%d/%d}", affected, x, nmbrFunctions);
-				 str_length = strlen(p);
-				 d3_printf1(p);
-			 }
-		);
-
-      if (x % ((nmbrFunctions/100)+1) == 0) {
-			if (nCtrlC) {
-				d3_printf1("\nBreaking out of CoFactoring\n");
-				nCtrlC = 0;
-				break;
-			}
-         d2e_printf3("\rPreprocessing Co %d/%ld", x, numout);
-		}
-      
-		if (length[x] <= COF_MAX && length[x] > 0) {
-			//d3_printf1("*"); 
-			cof = functions[x];
-			for (int j = 0; j < numout; j++) {
-				if(j == x) continue;
-				//Cannot discriminate...must do EVERY function
-				if (nmbrVarsInCommon (x, j, 1) == 0) continue;
-				BDDNode *before = gcf(functions[j], cof);
-				if(before != functions[j]) {
-					functions[j] = before;
-					if (functions[j] == false_ptr)
-					  return TRIV_UNSAT;
-					functionType[j] = UNSURE;
-					equalityVble[j] = 0;
-					SetRepeats(j);
-					switch (Rebuild_BDDx(j)) {
-					 case TRIV_UNSAT: return TRIV_UNSAT;
-					 case TRIV_SAT:   return TRIV_SAT; 
-					 default: break;
-					}
-					affected++;
-				}
-			}
-			functions[x] = true_ptr;
-			functionType[x] = UNSURE;
-			equalityVble[x] = 0;
-			SetRepeats(x);
-			switch (Rebuild_BDDx(x)) {
-			 case TRIV_UNSAT: return TRIV_UNSAT;
-			 case TRIV_SAT:   return TRIV_SAT;
-			 default: break;
-			}
-			affected++;
-			ret = PREP_CHANGED;			
-		}
-		if(ret == PREP_CHANGED) break;
-   }  //This ends Cofactoring
 	d3_printf1("\n");
-	d2e_printf1("\r                                                    ");
+   d2e_printf1("\r                                         ");
+	
+	int ret = PREP_NO_CHANGE;
 	return ret;
 }

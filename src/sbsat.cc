@@ -362,7 +362,7 @@ ite_preprocessing()
     */
 
    if (prep_ret == PREP_NO_CHANGE || prep_ret == PREP_CHANGED) {
-      prep_ret = Preprocessor (variablelist);
+      prep_ret = Preprocessor();
    }
 
    ret = Finish_Preprocessing();

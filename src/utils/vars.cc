@@ -157,3 +157,6 @@ int competition_enable = 0;
 
 int sat_timeout = 0;
 int sat_ram = 0;
+
+store *variables;
+int *length = NULL;

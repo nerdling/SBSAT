@@ -457,12 +457,12 @@ infer *Ex_GetInfer(BDDNode * func)
 	return head;
 }
 
-void cheat_replaceall (int *&length, store * &variables, varinfo * &variablelist) {
+void cheat_replaceall() {
 	//Get the max number of input variables
 	int *tempint=NULL;
    long tempint_max = 0;
-	long y, i;
-	for (int x = 0; x < numout; x++) {
+	long x, y, i;
+	for (x = 0; x < numout; x++) {
 		y = 0;
 		unravelBDD (&y, &tempint_max, &tempint, functions[x]);
       if (y != 0) qsort (tempint, y, sizeof (int), compfunc);
@@ -479,7 +479,7 @@ void cheat_replaceall (int *&length, store * &variables, varinfo * &variablelist
    ite_free((void**)&tempint); tempint_max = 0;
 	
 	numinp = 0;
-	for (int x = 0; x < numout; x++) {
+	for (x = 0; x < numout; x++) {
       if (variables[x].num[length[x] - 1] > numinp)
 		  numinp = variables[x].num[length[x] - 1];
 	}
@@ -487,29 +487,28 @@ void cheat_replaceall (int *&length, store * &variables, varinfo * &variablelist
 	store *amount = new store[numinp + 2];
 	int *tempmem = new int[numinp + 2];
 	
-	for (int i = 0; i < numinp + 1; i++)
-	  tempmem[i] = 0;
+	for (i = 0; i < numinp + 1; i++) tempmem[i] = 0;
 	
-	for (int x = 0; x < nmbrFunctions; x++) {
-      for (int i = 0; i < length[x]; i++) {
+	for(x = 0; x < nmbrFunctions; x++) {
+      for(i = 0; i < length[x]; i++) {
 			tempmem[variables[x].num[i]]++;
 		}
 	}
 	
-	for (int x = 1; x < numinp + 1; x++) {
+	for (x = 1; x < numinp + 1; x++) {
 		amount[x].num = new int[tempmem[x] + 1];
       amount[x].length = 0;
 	}
 	
-  for (int x = 0; x < nmbrFunctions; x++) {
-	  for (int i = 0; i < length[x]; i++) {
+  for (x = 0; x < nmbrFunctions; x++) {
+	  for (i = 0; i < length[x]; i++) {
 		  amount[variables[x].num[i]].num[amount[variables[x].num[i]].length] = x;
 		  amount[variables[x].num[i]].length++;
 	  }
   }
 	
 	int replaceat = 0;
-	for (int x = 1; x < numinp + 1; x++) {
+	for (x = 1; x < numinp + 1; x++) {
       if (amount[x].length == 0)
 		  continue;
       replaceat++;
@@ -536,16 +535,16 @@ void cheat_replaceall (int *&length, store * &variables, varinfo * &variablelist
 	}
 	
 	/*      
-	 for(int x = 0; x < numinp+1; x++)
+	 for(x = 0; x < numinp+1; x++)
 	 independantVars[x] = 1; 
-	 for(int x = 0; x < nmbrFunctions; x++) {
+	 for(x = 0; x < nmbrFunctions; x++) {
 	 //fprintf(stdout, "here - %d %d\n", x, equalityVble[x]);
 	 if(equalityVble[x]!=0) 
 	 independantVars[equalityVble[x]] = 0;
 	 }
 	 */
 	
-	for (int x = 1; x < numinp + 1; x++)
+	for (x = 1; x < numinp + 1; x++)
 	  delete amount[x].num;
 	
 	numinp = replaceat;
@@ -740,17 +739,16 @@ infer *possible_infer_x(BDDNode *f, int x)
 	}	
 }
 
-void
-Stats (int length[], store variables[])
-{
+void Stats() {
   int *tempint=NULL;
   long tempint_max = 0;
-  long y, i;
+  long y;
+  int i, x;
   int z;
   intlist *clauses = new intlist[10000];
 
   z = 0;
-  for (int x = 0; x < numout; x++)
+  for (x = 0; x < numout; x++)
     {
       int numx = countFalses (functions[x]);
       intlist *list = new intlist[numx];
@@ -760,7 +758,7 @@ Stats (int length[], store variables[])
       //	  && functionType[x] != OR
       //	  && functionType[x] != ITE)
       //	{
-		 for (int y = 0; y < listx; y++)
+		 for (y = 0; y < listx; y++)
 			{
 				clauses[z].num = list[y].num;
 				clauses[z].length = list[y].length;
@@ -873,7 +871,7 @@ Stats (int length[], store variables[])
     }*/
 
 
-	for (int x = 0; x < numout; x++)
+	for (x = 0; x < numout; x++)
 	  {
 		  y = 0;
 		  unravelBDD (&y, &tempint_max, &tempint, functions[x]);
@@ -889,85 +887,85 @@ Stats (int length[], store variables[])
 	store *amount = new store[numinp + 1];
 	int *tempmem = new int[numinp + 2];
 	
-	for (int i = 0; i < numinp + 2; i++)
+	for (i = 0; i < numinp + 2; i++)
 	  tempmem[i] = 0;
 	
-	for (int x = 0; x < nmbrFunctions; x++)
-	  {
-		  for (int i = 0; i < length[x]; i++)
-			 tempmem[variables[x].num[i]]++;
-	  }
+   for(x = 0; x < nmbrFunctions; x++)
+   {
+      for (i = 0; i < length[x]; i++)
+         tempmem[variables[x].num[i]]++;
+   }
 	
-	for (int x = 0; x < numinp + 1; x++)
-	  {
-		  amount[x].num = new int[tempmem[x]];
-		  amount[x].length = 0;
-	  }
+   for(x = 0; x < numinp + 1; x++)
+   {
+      amount[x].num = new int[tempmem[x]];
+      amount[x].length = 0;
+   }
 	
-	for (int x = 0; x < nmbrFunctions; x++)
-	  {
-		  for (int i = 0; i < length[x]; i++)
-			 {
-				 amount[variables[x].num[i]].num[amount[variables[x].num[i]].
-															length] = x;
-				 amount[variables[x].num[i]].length++;
-			 }
-	  }
-	
-	for (int x = 1; x < numinp + 1; x++)
-	  {
-		  amount[x].num[0] = x;
-	  }
+   for(x = 0; x < nmbrFunctions; x++)
+   {
+      for (i = 0; i < length[x]; i++)
+      {
+         amount[variables[x].num[i]].num[amount[variables[x].num[i]].
+            length] = x;
+         amount[variables[x].num[i]].length++;
+      }
+   }
+
+   for (x = 1; x < numinp + 1; x++)
+   {
+      amount[x].num[0] = x;
+   }
 	
 	y = numinp + 1;
 	qsort (amount, y, sizeof (store), amount_compfunc);
 	
-	for (int x = 0; x < numinp; x++)
-	  {
-		  fprintf (stdout, "Variable %d occurs %d times.\n", amount[x].num[0],
-					  amount[x].length);
-	  }
+   for(x = 0; x < numinp; x++)
+   {
+      fprintf (stdout, "Variable %d occurs %d times.\n", amount[x].num[0],
+            amount[x].length);
+   }
 	
-	for (int x = 0; x < numinp + 1; x++)
-	  {
-		  delete amount[x].num;
-		  amount[x].num = new int[tempmem[x]];
-		  amount[x].length = 0;
-	  }
+   for(x = 0; x < numinp + 1; x++)
+   {
+      delete amount[x].num;
+      amount[x].num = new int[tempmem[x]];
+      amount[x].length = 0;
+   }
 	
-	for (int x = 0; x < nmbrFunctions; x++)
-	  {
-		  for (int i = 0; i < length[x]; i++)
-			 {
-				 amount[variables[x].num[i]].num[amount[variables[x].num[i]].
-															length] = x;
-				 amount[variables[x].num[i]].length++;
-			 }
-	  }
+   for(x = 0; x < nmbrFunctions; x++)
+   {
+      for(i = 0; i < length[x]; i++)
+      {
+         amount[variables[x].num[i]].num[amount[variables[x].num[i]].
+            length] = x;
+         amount[variables[x].num[i]].length++;
+      }
+   }
 	
 	fprintf (stdout, "\n");
 	
-	for (int x = 0; x < numout; x++)
-	  {
-		  y = 0;
-		  unravelBDD (&y, &tempint_max, &tempint, functions[x]);
-		  printBDD (functions[x]);
-		  fprintf (stdout, "\nConstraint %d ", x);
-		  if (functionType[x] == AND)
-			 fprintf (stdout, "is an AND= function and ");
-		  else if (functionType[x] == OR)
-			 fprintf (stdout, "is an OR= function and ");
-		  else if (functionType[x] == PLAINOR)
-			 fprintf (stdout, "is a PLAINOR function and ");
-		  else if (functionType[x] == ITE)
-			 fprintf (stdout, "is an ITE= function and ");
-		  else if (length[x] > functionTypeLimits[PLAINOR]) fprintf(stdout, "has more than PLAINOR_LIMIT (error) variables and ");
-		  fprintf (stdout, "has %ld nodes and %d variables.\n", y, length[x]);
-		  //if (parameterizedVars[x] != NULL)
-		//	 {
-		//		 printBDD (functions[x]);
-		//		 fprintf (stdout, "\n");
-		//		 for (int z = 0; z <= parameterizedVars[x][0]; z++)
+	for(x = 0; x < numout; x++)
+   {
+      y = 0;
+      unravelBDD (&y, &tempint_max, &tempint, functions[x]);
+      printBDD (functions[x]);
+      fprintf (stdout, "\nConstraint %d ", x);
+      if (functionType[x] == AND)
+         fprintf (stdout, "is an AND= function and ");
+      else if (functionType[x] == OR)
+         fprintf (stdout, "is an OR= function and ");
+      else if (functionType[x] == PLAINOR)
+         fprintf (stdout, "is a PLAINOR function and ");
+      else if (functionType[x] == ITE)
+         fprintf (stdout, "is an ITE= function and ");
+      else if (length[x] > functionTypeLimits[PLAINOR]) fprintf(stdout, "has more than PLAINOR_LIMIT (error) variables and ");
+      fprintf (stdout, "has %ld nodes and %d variables.\n", y, length[x]);
+      //if (parameterizedVars[x] != NULL)
+      //	 {
+      //		 printBDD (functions[x]);
+      //		 fprintf (stdout, "\n");
+      //		 for (int z = 0; z <= parameterizedVars[x][0]; z++)
 		//			{
 		//				fprintf (stdout, "%d|", parameterizedVars[x][z]);
 		//			}
@@ -978,26 +976,26 @@ Stats (int length[], store variables[])
 	fprintf (stdout, "\n");
 	
 	int ind = 0, dep = 0;
-	for (int x = 1; x < numinp + 1; x++)
-	  {
-		  if (independantVars[x] == 1)
-			 {
-				 fprintf (stdout, "Variable %d is Independant\n", x);
-				 ind++;
-			 }
-		  else
-			 {
-				 fprintf (stdout, "Variable %d is Dependant\n", x);
-				 dep++;
-			 }
-	  }
-	
-	fprintf (stdout,
-				"There are %d Independant Variables and %d Dependant Variables\n",
-				ind, dep);
+	for(x = 1; x < numinp + 1; x++)
+   {
+      if (independantVars[x] == 1)
+      {
+         fprintf (stdout, "Variable %d is Independant\n", x);
+         ind++;
+      }
+      else
+      {
+         fprintf (stdout, "Variable %d is Dependant\n", x);
+         dep++;
+      }
+   }
+
+   fprintf (stdout,
+         "There are %d Independant Variables and %d Dependant Variables\n",
+         ind, dep);
 
    ite_free((void**)&tempint); tempint_max = 0;   
-	for (int x = 1; x < numinp + 1; x++)
+	for(x = 1; x < numinp + 1; x++)
 	  delete amount[x].num;
 	delete amount;
 	delete tempmem;

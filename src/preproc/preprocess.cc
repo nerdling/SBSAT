@@ -76,7 +76,7 @@ int parse_cycle(char **p, int parse_only);
 extern double start_prep;
 
 int
-Preprocessor(varinfo *variablelist)
+Preprocessor()
 {
   char *p;
   int ret = PREP_NO_CHANGE;

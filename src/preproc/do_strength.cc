@@ -109,11 +109,10 @@ int Do_Strength() {
 					  && (functionType[x] != PLAINXOR || length[x] < PLAINXOR_LIMIT))
              */
 					{
-						if (nmbrVarsInCommon (x, j, length, variables, STRENGTH) == 0) // < STRENGTH)
+						if (nmbrVarsInCommon (x, j, STRENGTH) == 0) // < STRENGTH)
 						  continue;
 						did_vars_incommon = 1;
-						BDDNode *currentBDD =
-						  strengthen (x, j, length, variables);
+						BDDNode *currentBDD = strengthen (x, j);
 						if (currentBDD != functions[x])
 						  {
 							  //fprintf(stderr, "\nSt%d: ", x);
@@ -147,11 +146,10 @@ int Do_Strength() {
              */
 					{
 						if(did_vars_incommon == 0) {
-							if (nmbrVarsInCommon (x, j, length, variables, STRENGTH) == 0) // < STRENGTH)
+							if (nmbrVarsInCommon (x, j, STRENGTH) == 0) // < STRENGTH)
 							  continue;
 						}
-						BDDNode *currentBDD =
-						  strengthen (j, x, length, variables);
+						BDDNode *currentBDD = strengthen (j, x);
 						if (currentBDD != functions[j])
 						  {
 							  //d2_printf1 ("*");
@@ -181,7 +179,7 @@ int Do_Strength() {
 }
 
 //Strengthen bdd1 using bdd2
-BDDNode *strengthen(int bddNmbr1, int bddNmbr2, int *&length, store *&variables)
+BDDNode *strengthen(int bddNmbr1, int bddNmbr2)
 {	
     BDDNode *quantifiedBDD2 = functions[bddNmbr2];
     int bdd1pos = 0;

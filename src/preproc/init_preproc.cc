@@ -48,13 +48,11 @@ int Setting_Neg = 0;
 
 llistStruct *amount;
 Linear *l;
-int *length = NULL;
 infer *inferlist;
 infer *lastinfer;
 int notdone;
 //int *tempint = NULL;
 float *var_score = NULL;
-store *variables;
 int *num_funcs_var_occurs = NULL;
 int str_length;
 int preproc_did_nothing = 0;
@@ -149,7 +147,7 @@ Init_Preprocessing()
 
 	BDDNode *preset_bdd = true_ptr;
 	int iter = 0;
-	int str_length = strlen(preset_variables_string);
+	str_length = strlen(preset_variables_string);
 	int begin = iter;
 	while(iter < str_length) {
 		while(preset_variables_string[iter] == ' ' && iter < str_length) iter++;
@@ -283,7 +281,7 @@ Finish_Preprocessing()
 	
 	/****** Shrink down the hash table ******/
 	//printCircuit();
-	void Stats (int length[], store variables[]);
+	void Stats();
 	//Stats(length, variables);
 	//
 	// cheat_replaceall (length, variables, variablelist);
@@ -305,7 +303,7 @@ Finish_Preprocessing()
 	d3_printf3 ("Negative Sets     - %d (%d%%)\n\n", Setting_Neg,
 					(100 * Setting_Neg) / (Total_inferences));
 	
-	//Stats(length, variables);
+	//Stats();
 	
 	//Need to release these pointers
 	

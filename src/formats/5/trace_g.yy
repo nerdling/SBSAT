@@ -172,14 +172,14 @@ ite_op_id_equ(char *var, BDDNode *bdd)
 int ite_last_fn=0;
 
 void
-ite_op_equ(char *var, t_op2fn fn, BDDNode **explist)
+ite_op_equ(char *var, t_op2fn fn, BDDNode **_explist)
 {
    fn.fn_type = MAKE_EQU(fn.fn_type);
    symrec  *s_ptr = s_getsym(var, SYM_VAR);
    assert(s_ptr);
    s_set_indep(s_ptr, 0);
    //independantVars[s_ptr->id] = 0;
-   BDDNode *ptr = ite_op_exp(fn, explist);
+   BDDNode *ptr = ite_op_exp(fn, _explist);
    ptr = ite_equ(ite_vars(s_ptr), ptr);
    functions_add(ptr, ite_last_fn, s_ptr->id);
 }
@@ -203,17 +203,17 @@ ite_op_check(int *new_vars, int *total_vars, BDDNode *bdd)
 int
 explist_sort(const void *x, const void *y)
 {
-   int x_var = (*((BDDNode **)x))->variable;
-   int y_var = (*((BDDNode **)y))->variable;
+   int x_var = (*(*(BDDNode ***)&x))->variable;
+   int y_var = (*(*(BDDNode ***)&y))->variable;
    //return (x_var - y_var);
    return (y_var - x_var);
 }
 
-BDDNode *ite_op_exp(t_op2fn fn, BDDNode **explist)
+BDDNode *ite_op_exp(t_op2fn fn, BDDNode **_explist)
 {
    int i=0, num_members=0;
    BDDNode *ptr=NULL;
-   assert(explist[0] != NULL);
+   assert(_explist[0] != NULL);
    /* first check the bdds:
     1. if they all have just one var => special fn
     2. if they combined have more than X distict var => split it
@@ -224,8 +224,8 @@ BDDNode *ite_op_exp(t_op2fn fn, BDDNode **explist)
    int total_vars = 0;
    int new_vars = 0;
 
-   for (num_members=0;explist[num_members]!=NULL;num_members++) {
-      ite_op_check(&new_vars, &total_vars, explist[num_members]);
+   for (num_members=0;_explist[num_members]!=NULL;num_members++) {
+      ite_op_check(&new_vars, &total_vars, _explist[num_members]);
       if (total_vars <= 1) total_vars = 0;
    }
 
@@ -243,32 +243,32 @@ BDDNode *ite_op_exp(t_op2fn fn, BDDNode **explist)
           but we have to break it apart
           */
          spec_fn=1;
-         for (i=0;explist[i]!=NULL;i++) {
-            /* take explist[i] and ite_equ to a new temp var */
+         for (i=0;_explist[i]!=NULL;i++) {
+            /* take _explist[i] and ite_equ to a new temp var */
             ite_op_flag++; /* make sure we don't overflow... */
-            int new_vars=0;
-            int total_vars=0;
-            ite_op_check(&new_vars, &total_vars, explist[i]);
+            int _new_vars=0;
+            int _total_vars=0;
+            ite_op_check(&_new_vars, &_total_vars, _explist[i]);
             if (total_vars > 1) {
                symrec *s_ptr = tputsym(SYM_VAR);
-               /* save explist[i] into another function */
-               BDDNode *new_ptr = ite_equ(ite_vars(s_ptr), explist[i]);
+               /* save _explist[i] into another function */
+               BDDNode *new_ptr = ite_equ(ite_vars(s_ptr), _explist[i]);
                functions_add(new_ptr, UNSURE, s_ptr->id);
 
-               /* replace explist[i] with ite_var of the temp var */
-               explist[i] = ite_vars(s_ptr);
+               /* replace _explist[i] with ite_var of the temp var */
+               _explist[i] = ite_vars(s_ptr);
             }
          }
       }
 
    /* FIX: if the fn type is not ??imp -- sort the bdds by top_variable */
-   qsort (explist, num_members, sizeof (BDDNode*), explist_sort);
+   qsort (_explist, num_members, sizeof (BDDNode*), explist_sort);
 
    /* apply the function */
-   for (i=0;explist[i]!=NULL;i++) {
-      assert(explist[i]->var_ptr);
-      if (ptr==NULL) ptr = explist[i];
-      else ptr = fn.fn(explist[i], ptr);
+   for (i=0;_explist[i]!=NULL;i++) {
+      assert(_explist[i]->var_ptr);
+      if (ptr==NULL) ptr = _explist[i];
+      else ptr = fn.fn(_explist[i], ptr);
    }
    assert(ptr != NULL);
    assert(ptr->var_ptr);
@@ -287,15 +287,15 @@ BDDNode *ite_op_exp(t_op2fn fn, BDDNode **explist)
 }
 
 void
-ite_op_are_equal(BDDNode **explist)
+ite_op_are_equal(BDDNode **_explist)
 {
    t_op2fn fn;
 
-   /* LOOK: make sure ite_op_exp does not change the explist much */
+   /* LOOK: make sure ite_op_exp does not change the _explist much */
    /* ite_and positive */
    fn.fn=op_equ;
    fn.fn_type=EQU_EQU;
-   BDDNode *ptr = ite_op_exp(fn, explist);
+   BDDNode *ptr = ite_op_exp(fn, _explist);
 
    functions_add(ptr, EQU, 0); /* the only plain or? */
 }

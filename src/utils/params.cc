@@ -48,7 +48,7 @@ int  n_cnfformat=CNF_NOQM;
 char sResult[4]="n";
 int  ctrl_c=0;
 int  nCtrlC=0; /* ctrl c pressed */
-long long ite_counters[MAX_COUNTER];
+LONG64 ite_counters[MAX_COUNTER];
 double ite_counters_f[MAX_COUNTER_F];
 int  autarky=0; /* autarkies enabled */
 int  compress_smurfs=0;
@@ -363,7 +363,7 @@ init_params()
 /* Return the limit or:
  *    -1 if the variable is not set
  *       0 if there was a problem in atoi (variable isn't a number) */
-int getSATlimit(char * name) {
+int getSATlimit(const char * name) {
     char * value;
      
      value = getenv(name);
@@ -414,10 +414,11 @@ finish_params()
       }
       if (!strncmp((char*)(p_opt->p_target), "$TEMP", 5)) {
          char *env = getenv("TEMP");
+         char tmp_dir[] = "/tmp";
          if (!env) env = getenv("TMPDIR");
          if (!env) {
             struct stat buf;
-            if (stat("/tmp", &buf) == 0) env = "/tmp";
+            if (stat(tmp_dir, &buf) == 0) env = tmp_dir;
          }
          if (env)
          {
@@ -539,12 +540,13 @@ DO_ALL(int value/* , char *s_value*/)
    set_param_value("Dc", s_value); // and it knows src //
    set_param_value("Sp", s_value); // and it knows src //
 */
-   set_param_int("Cl", value);
-   set_param_int("Co", value);
-   set_param_int("Pr", value);
-   set_param_int("St", value);
-   set_param_int("Ex", value);
-   set_param_int("Ea", value);
-   set_param_int("Dc", value);
-	set_param_int("Sp", value);
+   char tmp_str[5];
+   set_param_int(strcpy(tmp_str, "Cl"), value);
+   set_param_int(strcpy(tmp_str, "Co"), value);
+   set_param_int(strcpy(tmp_str, "Pr"), value);
+   set_param_int(strcpy(tmp_str, "St"), value);
+   set_param_int(strcpy(tmp_str, "Ex"), value);
+   set_param_int(strcpy(tmp_str, "Ea"), value);
+   set_param_int(strcpy(tmp_str, "Dc"), value);
+	set_param_int(strcpy(tmp_str, "Sp"), value);
 }

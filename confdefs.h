@@ -61,7 +61,7 @@
 #define SELECT_TYPE_ARG1 int
 #define SELECT_TYPE_ARG234 (fd_set *)
 #define SELECT_TYPE_ARG5 (struct timeval *)
-#define RETSIGTYPE void
+#define RETSIGTYPE int
 #define LSTAT_FOLLOWS_SLASHED_SYMLINK 1
 #define HAVE_GETPAGESIZE 1
 #define HAVE_GETTIMEOFDAY 1
