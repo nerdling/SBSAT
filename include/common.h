@@ -84,6 +84,11 @@ struct intlist{
   int *num;
 };
 
+struct pathStruct {
+	int numpaths;
+	intlist *paths;
+};
+
 struct varinfo{
    int equalvars;  //for variablelist is 3 = 4
    int replace;    //dag for variablelist is the replaced numbers
