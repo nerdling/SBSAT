@@ -70,8 +70,8 @@ int nCk(int n, int k) {
 	return nCk(n-1, k) + nCk(n-1, k-1);	
 }
 
-void nCk_Sets(int n, int k, int *vars, int *whereat, int n_orig, BDDNode *bdd, int orig_bdd) {
-	if(length[orig_bdd] <= k) return;
+void nCk_Sets(int n, int k, int *vars, int *whereat, int n_orig, BDDNode *bdd, int orig_bdd, int target_k) {
+	if(length[orig_bdd] <= target_k) return;
 	if (n==0 && k==0) {
 		//printBDD(tempBDD);
 		//d3_printf1("\n");
@@ -94,12 +94,12 @@ void nCk_Sets(int n, int k, int *vars, int *whereat, int n_orig, BDDNode *bdd, i
 		}
 	} else {
 		if (k>0) { 
-			nCk_Sets(n-1,k-1, vars, whereat, n_orig, bdd, orig_bdd);
+			nCk_Sets(n-1,k-1, vars, whereat, n_orig, bdd, orig_bdd, target_k);
 		}
 		if (n>k) {
 			BDDNode *bdd_0 = xquantify(bdd, vars[n_orig-n]);
 			if(bdd_0 == true_ptr) return;
-			nCk_Sets(n-1,k, vars, whereat, n_orig, bdd_0, orig_bdd);
+			nCk_Sets(n-1,k, vars, whereat, n_orig, bdd_0, orig_bdd, target_k);
 		}
 	}
 }
@@ -116,13 +116,14 @@ int Split_Large () {
 	max_bdds += 10;
 
 	affected = 0;
+	int old_nmbrFunctions = nmbrFunctions;
 	
-	for(int j = 0; j < nmbrFunctions; j++) {
+	for(int j = 0; j < old_nmbrFunctions; j++) {
 		D_3(
 			 if (j % 100 == 0) {
 				 for(int iter = 0; iter<str_length; iter++)
 					d3_printf1("\b");
-				 sprintf(p, "{%ld:%d/%d}", affected, j, nmbrFunctions);
+				 sprintf(p, "{%ld:%d/%d}", affected, j, old_nmbrFunctions);
 				 str_length = strlen(p);
 				 d3_printf1(p);
 			 }
@@ -134,7 +135,7 @@ int Split_Large () {
 				nCtrlC = 0;
 				break;
 			}
-			d2e_printf3("\rPreprocessing Sp %d/%d", j, nmbrFunctions);
+			d2e_printf3("\rPreprocessing Sp %d/%d", j, old_nmbrFunctions);
 		}
 		
 		if (functionType[j] == UNSURE && length[j] > k_size) {
@@ -154,7 +155,12 @@ int Split_Large () {
 			}
 			
 			//d3_printf2("false paths:%d\n", countFalses (functions[j]));
-			nCk_Sets(length[j], k_size, variables[j].num, &whereat, length[j], functions[j], j);
+			int *vars_copy = new int[length[j]];
+			//This is necessary because variables[j].num is modified inside nCk_Sets
+			for(int i = 0; i < length[j]; i++)
+			  vars_copy[i] = variables[j].num[i];
+			nCk_Sets(length[j], k_size, vars_copy, &whereat, length[j], functions[j], j, k_size);
+			delete [] vars_copy;
 			//d3_printf2("whereat = %d: \n", whereat);
 			
 			//add BDDFuncs to functions;
