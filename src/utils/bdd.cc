@@ -135,34 +135,34 @@ print_bdd1 (BDDNode * f, int print_counter)
 {
    int i;
    for (i = 0; i < print_counter; i++)
-      printf ("    ");
+      d2_printf1 ("    ");
    if (IS_TRUE_FALSE(f))
    {
-      if (f == false_ptr)
-         printf ("F\n");
-
-      else if (f == true_ptr)
-         printf ("T\n");
+      if (f == false_ptr) {
+         d2_printf1 ("F\n");
+		} else if (f == true_ptr) {
+         d2_printf1 ("T\n");
+		}
       return;
    }
    if (!(IS_TRUE_FALSE(f->thenCase) && IS_TRUE_FALSE(f->elseCase)))
    {
-
       //      if ((BDD[BDD_num].v < 2) || (BDD[BDD_num].v >= next_var_list))
-      printf ("ite %d\n", f->variable);
+      //printf ("ite %d\n", f->variable);
+		d2e_printf2("ite %s\n", s_name(f->variable));
+		d3_printf3("ite %s (%d)\n", s_name(f->variable), f->variable);
       print_bdd1 (f->thenCase, print_counter + 1);
       print_bdd1 (f->elseCase, print_counter + 1);
       return;
-   }
-
-   else
-   {
-      printf ("ite %d ", f->variable);
-      if (f->thenCase == true_ptr)
-         printf ("T F\n");
-
-      else
-         printf ("F T\n");
+   } else {
+      //printf ("ite %d ", f->variable);
+		d2e_printf2("ite %s ", s_name(f->variable));
+		d3_printf3("ite %s (%d) ", s_name(f->variable), f->variable);
+      if (f->thenCase == true_ptr) {
+         d2_printf1 ("T F\n");
+		} else {
+         d2_printf1 ("F T\n");
+		}
       return;
    }
 }
