@@ -283,6 +283,8 @@ J_OptimizedHeuristic(int *pnBranchAtom, int *pnBranchValue)
 
 //#define MK_J_HEURISTIC_LEMMA
 #ifdef MK_J_HEURISTIC_LEMMA
+   /* this needs a variable with the UnitLemmaList from the brancher */
+   /* used to be global pUnitLemmaList */
    ITE_INLINE void 
    J_Heuristic_Lemma(LemmaInfoStruct **p, int *nInferredAtom, int *nInferredValue);
    if (pUnitLemmaList->pNextLemma[0] && pUnitLemmaList->pNextLemma[0]->pNextLemma[0])  {

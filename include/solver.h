@@ -81,7 +81,6 @@ extern int *arrChangedSmurfs;
 
 
 /* preallocated structures for BackTrack */
-extern LemmaInfoStruct *pUnitLemmaList;       
 extern int *arrUnsetLemmaFlagVars;
 extern bool *arrLemmaFlag;
 extern int  *arrTempLemma;

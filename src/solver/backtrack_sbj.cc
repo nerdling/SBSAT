@@ -58,6 +58,7 @@ BackTrack_SBJ()
 {
    int nOldBacktrackStackIndex=0;
    LemmaInfoStruct *pUnitLemmaListTail = NULL;
+   LemmaInfoStruct pUnitLemmaList;
    int nUnsetLemmaFlagIndex = 0; /* literals that we need to unset after bt */
    LemmaBlock *pNewLemma=NULL; /* last lemma added */
    int nTempLemmaIndex = 0; /* the length of the new/temporary lemma */
@@ -71,7 +72,8 @@ BackTrack_SBJ()
 	int highest_uip_var1 = 0;
 
 	
-   assert(pUnitLemmaList->pNextLemma[0] == NULL);
+   ///assert(pUnitLemmaList.pNextLemma[0] == NULL);
+   pUnitLemmaList.pNextLemma[0] = NULL;
 
    // Copy the conflict lemma into arrTempLemma.
    nTempLemmaIndex = ConstructTempLemma();
@@ -222,16 +224,16 @@ BackTrack_SBJ()
                 */
 
                assert(IsInLemmaList(pUnitLemmaListTail,
-                        pUnitLemmaList));	  
+                        &pUnitLemmaList));	  
 					
                pNewLemma=AddLemma(nTempLemmaIndex,
                      arrTempLemma,
                      bFlag,
-                     pUnitLemmaList, /*m lemma is added in here */
+                     &pUnitLemmaList, /*m lemma is added in here */
                      &pUnitLemmaListTail /*m and here */
                      )->pLemma;
 
-					LemmaInfoStruct *p =	pUnitLemmaList->pNextLemma[0];
+					LemmaInfoStruct *p =	pUnitLemmaList.pNextLemma[0];
 					if(p->nWatchedVble[1] == 0) {
 						highest_uip_level = arrBacktrackStackIndex[0];
 					} else if(arrBacktrackStackIndex[p->nWatchedVble[1]] < highest_uip_level) {
@@ -253,11 +255,11 @@ BackTrack_SBJ()
 					assert(IsInLemmaList(pBacktrackTop->pUnitLemmaListTail,
                         pBacktrackTop->pUnitLemmaList));
                pBacktrackTop->pUnitLemmaListTail->pNextLemma[0]
-                  = pUnitLemmaList->pNextLemma[0];
-               pUnitLemmaList->pNextLemma[0] = pBacktrackTop->pUnitLemmaList;
+                  = pUnitLemmaList.pNextLemma[0];
+               pUnitLemmaList.pNextLemma[0] = pBacktrackTop->pUnitLemmaList;
                if(pUnitLemmaListTail == NULL) 
                   pUnitLemmaListTail = pBacktrackTop->pUnitLemmaListTail;
-               assert(IsInLemmaList(pUnitLemmaListTail, pUnitLemmaList));
+               assert(IsInLemmaList(pUnitLemmaListTail, &pUnitLemmaList));
             }
 
          } // if(pBacktrackTop->bWasChoicePoint == true || ... )
@@ -415,7 +417,7 @@ BackTrack_SBJ()
       ite_counters[NUM_TOTAL_BACKJUMPS] += _num_backjumps;
    }
 	
-	LemmaInfoStruct *previous = pUnitLemmaList;
+	LemmaInfoStruct *previous = &pUnitLemmaList;
 	for (LemmaInfoStruct *p = previous->pNextLemma[0]; p; p = p->pNextLemma[0])
    {
       //m WatchedVble 0 and 1 have the highest BSI in the whole clause
@@ -440,8 +442,6 @@ BackTrack_SBJ()
 		
 		p = previous;			
 	} // for (LemmaInfoStruct *p = pUnitLemmaList->pNextLemma[0]; ; p = p->pNextLemma[0])
-	pUnitLemmaList->pNextLemma[0] = NULL;
-   pUnitLemmaListTail = NULL;
 
    BacktrackStackEntry *pBacktrackStackOldBranchPoint = pBacktrackTop;
    pBacktrackStackOldBranchPoint->pUnitLemmaList = NULL;

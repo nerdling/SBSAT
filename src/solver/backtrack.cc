@@ -47,6 +47,7 @@ BackTrack()
 {
    int nOldBacktrackStackIndex=0;
    LemmaInfoStruct *pUnitLemmaListTail = NULL;
+   LemmaInfoStruct pUnitLemmaList;
    int nUnsetLemmaFlagIndex = 0; /* literals that we need to unset after bt */
    LemmaBlock *pNewLemma=NULL; /* last lemma added */
    int nTempLemmaIndex = 0; /* the length of the new/temporary lemma */
@@ -56,7 +57,7 @@ BackTrack()
    int _num_backjumps = 0; /* num of backjumps during this backtrack */
 
 //   assert(pUnitLemmaList->pNextLemma[0] == NULL);
-   pUnitLemmaList->pNextLemma[0] = NULL;
+   pUnitLemmaList.pNextLemma[0] = NULL;
 
    // Copy the conflict lemma into arrTempLemma.
    nTempLemmaIndex = ConstructTempLemma();
@@ -190,12 +191,12 @@ BackTrack()
                bool bFlag = (MAX_NUM_CACHED_LEMMAS > 0);
 
                assert(IsInLemmaList(pUnitLemmaListTail,
-                        pUnitLemmaList));	  
+                        &pUnitLemmaList));	  
 
                pNewLemma=AddLemma(nTempLemmaIndex,
                      arrTempLemma,
                      bFlag,
-                     pUnitLemmaList, /*m lemma is added in here */
+                     &pUnitLemmaList, /*m lemma is added in here */
                      &pUnitLemmaListTail /*m and here */
                      )->pLemma;
 
@@ -211,11 +212,11 @@ BackTrack()
                assert(IsInLemmaList(pBacktrackTop->pUnitLemmaListTail,
                         pBacktrackTop->pUnitLemmaList));
                pBacktrackTop->pUnitLemmaListTail->pNextLemma[0]
-                  = pUnitLemmaList->pNextLemma[0];
-               pUnitLemmaList->pNextLemma[0] = pBacktrackTop->pUnitLemmaList;
+                  = pUnitLemmaList.pNextLemma[0];
+               pUnitLemmaList.pNextLemma[0] = pBacktrackTop->pUnitLemmaList;
                if(pUnitLemmaListTail == NULL) 
                   pUnitLemmaListTail = pBacktrackTop->pUnitLemmaListTail;
-               assert(IsInLemmaList(pUnitLemmaListTail, pUnitLemmaList));
+               assert(IsInLemmaList(pUnitLemmaListTail, &pUnitLemmaList));
             }
 
          } // if(pBacktrackTop->bWasChoicePoint == true || ... )
@@ -342,7 +343,7 @@ BackTrack()
    // We have to skip past the most recently added lemma because 
    // it witnesses that we have to reverse polarity, but we have 
    // already done so.
-   LemmaInfoStruct *previous = pUnitLemmaList->pNextLemma[0];
+   LemmaInfoStruct *previous = pUnitLemmaList.pNextLemma[0];
    for (LemmaInfoStruct *p = previous->pNextLemma[0]; p; p = p->pNextLemma[0])
    {
       //m WatchedVble 1 and 2 have the highest BSI in the whole clause
@@ -377,7 +378,7 @@ BackTrack()
 
    //cout << "Placing unit lemma list on the stack:" << endl;
    //DisplayLemmaList(pUnitLemmaList);
-   pBacktrackStackOldBranchPoint->pUnitLemmaList = pUnitLemmaList->pNextLemma[0];
+   pBacktrackStackOldBranchPoint->pUnitLemmaList = pUnitLemmaList.pNextLemma[0];
    pBacktrackStackOldBranchPoint->pUnitLemmaListTail = pUnitLemmaListTail;
 
 //   pUnitLemmaList->pNextLemma[0] = NULL;

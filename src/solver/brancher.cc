@@ -59,7 +59,6 @@ extern int NO_LEMMAS;
 int *arrFunctionType;
 BDDNodeStruct **arrFunctions;
 int nAssertionFailedVble = 0;
-LemmaInfoStruct *pUnitLemmaList=NULL;
 int gnNumCachedLemmas=0;
 extern BacktrackStackEntry *arrBacktrackStack; 
 extern SmurfState **arrRegSmurfInitialStates;

@@ -224,26 +224,6 @@ CreateAffectedFuncsStructures(int nMaxVbleIndex)
          arrAFS[nVble].arrSpecFuncsAffected = arrAFSBufferSpecFn + nAFSBufferSpecFnIdx;
          nAFSBufferSpecFnIdx += arrAFS[nVble].nNumSpecialFuncsAffected;
       }
-
-/*
-      // Allocate arrRegSmurfsAffected array.
-      if (arrAFS[nVble].nNumRegSmurfsAffected > 0)
-      {
-         ITE_NEW_CATCH(
-               arrAFS[nVble].arrRegSmurfsAffected
-               = new int[arrAFS[nVble].nNumRegSmurfsAffected];,
-               "arrAFS[].arrRegSmurfsAffected");	  
-      }
-
-      // Allocate arrSpecFuncsAffected array.
-      if (arrAFS[nVble].nNumSpecialFuncsAffected > 0)
-      {
-         ITE_NEW_CATCH(
-               arrAFS[nVble].arrSpecFuncsAffected
-               = new IndexRoleStruct[arrAFS[nVble].nNumSpecialFuncsAffected];,
-               "arrAFS[].arrSpecFuncsAffected");
-      }
-*/
    }
 
    // Setup two arrays of indicies used to keep track of
@@ -433,23 +413,19 @@ InitBrancher()
 {
    d2_printf1("InitBrancher\n");
 
-   arrVarScores = (t_arrVarScores*)ite_calloc(gnMaxVbleIndex, sizeof(t_arrVarScores), 9, "arrVarScores");
+   arrVarScores = (t_arrVarScores*)ite_calloc(gnMaxVbleIndex, 
+         sizeof(t_arrVarScores), 9, "arrVarScores");
    Update_arrVarScores();
 
    /* Backtrack arrays */
-   pUnitLemmaList = (LemmaInfoStruct*)ite_calloc(1, sizeof(LemmaInfoStruct),
-         9, "pUnitLemmaList"); /*m local to backtrack function only */
-
-   ITE_NEW_CATCH(
-         arrUnsetLemmaFlagVars = new int[gnMaxVbleIndex];
-         arrTempLemma = new int[gnMaxVbleIndex];
-         arrLemmaFlag = new bool[gnMaxVbleIndex+1];,
-         "BackTrack variables");
-
-   ITE_NEW_CATCH(
-         arrBacktrackStackIndex = new int[gnMaxVbleIndex+1];,
-         "arrBacktrackStackIndex");
-
+   arrUnsetLemmaFlagVars = (int*)ite_calloc(gnMaxVbleIndex, sizeof(int),
+         9, "arrUnsetLemmaFlagVars");
+   arrTempLemma = (int*)ite_calloc(gnMaxVbleIndex, sizeof(int),
+         9, "arrTempLemma");
+   arrLemmaFlag = (bool*)ite_calloc(gnMaxVbleIndex+1, sizeof(bool),
+         9, "arrLemmaFlag");
+   arrBacktrackStackIndex = (int*)ite_calloc(gnMaxVbleIndex+1, sizeof(int),
+         9, "arrBacktrackStackIndex");
 
    // Initialization of variables and data structures
    assert(pTrueSmurfState);  // Should be initialized by SmurfFactory.
@@ -583,10 +559,11 @@ ITE_INLINE void
 FreeBrancher()
 {
    d2_printf1("FreeBrancher\n");
-   delete [] arrUnsetLemmaFlagVars;
-   delete [] arrTempLemma;
-   delete [] arrBacktrackStackIndex;
-   delete [] arrLemmaFlag;
+   ite_free((void*)arrUnsetLemmaFlagVars);
+   ite_free((void*)arrTempLemma);
+   ite_free((void*)arrBacktrackStackIndex);
+   ite_free((void*)arrLemmaFlag);
+
    ite_free((void*)arrInferenceQueue);
    ite_free((void*)arrFnInferenceQueue);
 
@@ -608,7 +585,6 @@ FreeBrancher()
    ite_free((void*)arrChangedSpecialFn);
    ite_free((void*)arrChoicePointStack);
    ite_free((void*)arrBacktrackStack);
-   ite_free((void*)pUnitLemmaList);
    ite_free((void*)arrVarScores);
 
    FreeAFS();
