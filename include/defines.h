@@ -86,6 +86,7 @@ enum {
   IMPOR,     /* 16 *///x-> a v b v c
   PLAINOR,   /* 17 *///a v b v c
   PLAINXOR,  /* 18 *///a + b + c
+  MINMAX,    /* 19 */
   EQU_BASE=20,  /* equ_base + 0 */
   AND_EQU,       /* equ_base + 1 */
   NAND_EQU,      /* equ_base + 2 */
@@ -105,6 +106,7 @@ enum {
   IMPOR_EQU,     /* equ_base + 16 *///x-> a v b v c
   PLAINOR_EQU,   /* equ_base + 17 *///a v b v c
   PLAINXOR_EQU,  /* equ_base + 18 *///a + b + c
+  MINMAX_EQU,    /* equ_base - 19 */
   MAX_FUNC
 };
 
