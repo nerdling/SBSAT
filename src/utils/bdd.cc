@@ -737,7 +737,9 @@ BDDNode * ite_var (int v)
 {
    if (v < 0)
       return find_or_add_node (-v, false_ptr, true_ptr);
-   return find_or_add_node (v, true_ptr, false_ptr);
+	else if (v > 0)
+	  return find_or_add_node (v, true_ptr, false_ptr);
+	else return false_ptr;
 }
 
 #endif // NO_BDD_MACROS
