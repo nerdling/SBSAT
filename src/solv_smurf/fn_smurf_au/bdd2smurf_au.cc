@@ -51,7 +51,7 @@ CreateTransitionAu(SmurfAuState *pSmurfAuState, int i, int nSolverVble, int valu
 	BDDNodeStruct *pFuncEvaled;
 	//If we are transitioning on the autarky variable, we send the smurf to the true state.
 	//fprintf(stderr, "creating transition on %d(%d)=%d with autarkyvble %d\n", nVble, nSolverVble, value, nAutarkyVble);
-	if(nVble == nAutarkyVble) pFuncEvaled = true_ptr;
+	if(nSolverVble == nAutarkyVble) pFuncEvaled = true_ptr;
 	else pFuncEvaled = set_variable(pSmurfAuState->pFunc, nVble, value==BOOL_TRUE?1:0);
    SmurfAuState *pSmurfAuStateOfEvaled = BDD2SmurfAu(pFuncEvaled, nAutarkyVble);
    assert(pSmurfAuStateOfEvaled != NULL);
@@ -96,8 +96,7 @@ ComputeSmurfAuOfNormalized(BDDNodeStruct *pFunc, int nAutarkyVble)
    pSmurfAuState->vbles.arrElts = (int*)realloc(pSmurfAuState->vbles.arrElts, pSmurfAuState->vbles.nNumElts*sizeof(int));
 
    /* mapping ite->solver variables */
-	pSmurfAuState->vbles.arrElts[0] = nAutarkyVble;
-	int iter = 1;
+	int nAuVarIndex = -1;
 	for (int i=0;i<pSmurfAuState->vbles.nNumElts;i++) {
       if (pSmurfAuState->vbles.arrElts[i]==0 || 
 			 arrIte2SolverVarMap[pSmurfAuState->vbles.arrElts[i]]==0) {
@@ -107,12 +106,25 @@ ComputeSmurfAuOfNormalized(BDDNodeStruct *pFunc, int nAutarkyVble)
 						  variablelist[pSmurfAuState->vbles.arrElts[i]].true_false);
          //exit(1);
       }
-		
-      if(arrIte2SolverVarMap[pSmurfAuState->vbles.arrElts[i]] != nAutarkyVble)
-		  pSmurfAuState->vbles.arrElts[iter++] = arrIte2SolverVarMap[pSmurfAuState->vbles.arrElts[i]];
+		if(arrIte2SolverVarMap[pSmurfAuState->vbles.arrElts[i]] == nAutarkyVble)
+		  nAuVarIndex = i;
+
+		pSmurfAuState->vbles.arrElts[i] = arrIte2SolverVarMap[pSmurfAuState->vbles.arrElts[i]];
    }
 	
-   
+	assert(nAuVarIndex!=-1);
+	
+	//Put the autarky variable at the front of the list, so it will be transitioned on first
+	//when looking for inferences
+	if(nAuVarIndex!=0) {
+		int nSwap_Index = 0;
+		int nSwapLit = pSmurfAuState->vbles.arrElts[nSwap_Index];
+		pSmurfAuState->vbles.arrElts[nSwap_Index] = pSmurfAuState->vbles.arrElts[nAuVarIndex];
+		pSmurfAuState->vbles.arrElts[nAuVarIndex] = nSwapLit;
+	}
+	
+	assert(pSmurfAuState->vbles.arrElts[0] = nAutarkyVble);
+	
 	//Sort the variables.
    //qsort(pSmurfAuState->vbles.arrElts, pSmurfAuState->vbles.nNumElts, sizeof(int), revcompfunc);
 
@@ -123,17 +135,18 @@ ComputeSmurfAuOfNormalized(BDDNodeStruct *pFunc, int nAutarkyVble)
 
    gnTotalBytesForTransitionAus += nBytesForTransitionAus;
 
-	/*
+/*	
 	for(int i=0;i<pSmurfAuState->vbles.nNumElts;i++)
 	  {
 		  int nSolverVble = pSmurfAuState->vbles.arrElts[i];
 		  
 		  // Compute transition that occurs when vble is set to true.
-		  CreateTransitionAu(pSmurfAuState, i, nSolverVble, nAutarkyVble, BOOL_TRUE);
+		  CreateTransitionAu(pSmurfAuState, i, nSolverVble, BOOL_TRUE, nAutarkyVble);
 		  // Compute transition that occurs when vble is set to false.
-		  CreateTransitionAu(pSmurfAuState, i, nSolverVble, nAutarkyVble,  BOOL_FALSE);
+		  CreateTransitionAu(pSmurfAuState, i, nSolverVble, BOOL_FALSE, nAutarkyVble);
 	  }
-	*/
+ */
+	
    return pSmurfAuState;
 }
 
