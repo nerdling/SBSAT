@@ -53,8 +53,8 @@ int ExQuantifyAnd();
 int
 Do_ExQuantifyAnd()
 {
-	MAX_EXQUANTIFY_CLAUSES = 40;
-	MAX_EXQUANTIFY_VARLENGTH = 13;
+	MAX_EXQUANTIFY_CLAUSES = 20;
+	MAX_EXQUANTIFY_VARLENGTH = 18;
 	d3_printf1 ("ANDING AND EXISTENTIALLY QUANTIFYING -  ");
    int num_iters = 0;
 	int cofs = PREP_CHANGED;
