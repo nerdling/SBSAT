@@ -74,19 +74,19 @@ preproc_type preproc[] = {
 int parse_seq(char **p, int parse_only);
 int parse_cycle(char **p, int parse_only);
 
-int
-Preprocessor()
-{
-  char *p;
-  int ret = PREP_NO_CHANGE;
-
-  if (DO_INFERENCES) {
-    ret = Do_Apply_Inferences();
-    d3_printf1("\n");
-    if (ret == TRIV_UNSAT || ret == TRIV_SAT || ret == PREP_ERROR)
-      return ret; 
-  }
-
+int Preprocessor() {
+	char *p;
+	int ret = PREP_NO_CHANGE;
+	
+	if (DO_INFERENCES) {
+		ret = Do_Apply_Inferences();
+		num_inferences = Pos_replace + Neg_replace + Setting_Pos + Setting_Neg;
+		
+		d3_printf1("\n");
+		if (ret == TRIV_UNSAT || ret == TRIV_SAT || ret == PREP_ERROR)
+		  return ret; 
+	}
+	
 	p = preproc_string;
 	ret = parse_seq(&p, 0);
 	return ret;

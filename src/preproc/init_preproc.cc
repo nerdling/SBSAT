@@ -51,6 +51,7 @@ infer *inferlist;
 infer *lastinfer;
 int notdone;
 //int *tempint = NULL;
+int num_inferences = 0;
 float *var_score = NULL;
 int *num_funcs_var_occurs = NULL;
 int str_length;

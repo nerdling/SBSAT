@@ -354,7 +354,7 @@ int ExQuantifyAnd () {
 						}
 						if(out == 0) needs_slimming = 0;
 					}
-					if(needs_slimming == 1 && amount[i].head != NULL && length[j]>30) {
+					if(needs_slimming == 1 && amount[i].head != NULL){// && length[j]>30) {
 						//Shouldn't be just i that can be quantified away, 
 						//Should be some variable in this BDD that can be
 						//Quantified away, i is not always even a choice!!!
