@@ -383,6 +383,13 @@ void BtStackInit();
 void BtStackClear();
 void BtStackFree();
 
+/* choice point hints */
+int GetChoicePointHint();
+void AddChoicePointHint(int x);
+void FreeChoicePointHint();
+void InitChoicePointHint();
+void EmptyChoicePointHint();
+
 /* crtwin */
 void crtwin();
 void crtwin_init();

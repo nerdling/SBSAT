@@ -56,6 +56,7 @@ InitVariables()
       //assert(arrSolution[i] == BOOL_UNKNOWN);
       arrSolution[i] = BOOL_UNKNOWN;
    }
+   InitChoicePointHint();
 }
 
 ITE_INLINE void
@@ -63,4 +64,5 @@ FreeVariables()
 {
    ite_free((void**)&arrSolution);
    ite_free((void**)&var_stat);
+   FreeChoicePointHint();
 }

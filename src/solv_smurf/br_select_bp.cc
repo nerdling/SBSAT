@@ -77,6 +77,14 @@ SelectNewBranchPoint()
    }
 #endif
 
+   nInferredAtom = GetChoicePointHint();
+   if (nInferredAtom < 0) {
+      nInferredAtom = -nInferredAtom;
+      nInferredValue = BOOL_FALSE;
+   } else {
+      nInferredValue = BOOL_TRUE;
+   }
+
    // Call heuristic.
    if (nInferredAtom == 0)
       procHeurSelect(&nInferredAtom, &nInferredValue);

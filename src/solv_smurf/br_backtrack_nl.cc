@@ -45,6 +45,8 @@
 ITE_INLINE int
 BackTrack_NL()
 {
+   EmptyChoicePointHint();
+	
   int nInferredAtom;  /* the choice point */
   int nInferredValue; /* the value of the choice point */
 

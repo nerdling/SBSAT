@@ -44,6 +44,8 @@
 ITE_INLINE int
 BackTrack()
 {
+   EmptyChoicePointHint();
+	
    int nOldBacktrackStackIndex=0;
    LemmaInfoStruct *pUnitLemmaListTail;
    LemmaInfoStruct pUnitLemmaList;
@@ -396,7 +398,7 @@ BackTrack()
 		}
 		assert(IsInLemmaList(pChoicePointTop->pUnitLemmaListTail, &pUnitLemmaList));		
 	} else assert(pUnitLemmaList.pNextLemma[0]->pNextLemma[0] == NULL);
-	
+
 	// Get the consequences of the branch atoms new value.
    return 0; /* NO_ERROR */
 }

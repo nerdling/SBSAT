@@ -42,22 +42,12 @@ void SelectNewBranchPoint ();
 void push_smurf_states_onto_stack();
 void push_special_fn_onto_stack();
 
-/* 
- * input: pConflictLemma (used in ConstructTempLemma )
- * output:
- */
-
-//#define LEMMA_CONSTANT 10.0
-
-//LemmaBlock      * pConflictLemma=NULL;
-//LemmaInfoStruct * pConflictLemmaInfo=NULL;
-//bool *arrLemmaFlag=NULL;
-//int  *arrTempLemma=NULL;
-
 ITE_INLINE
 int
 BackTrack_SBJ()
 {
+   EmptyChoicePointHint();
+	
    int nOldBacktrackStackIndex=0;
    LemmaInfoStruct *pUnitLemmaListTail = NULL;
    LemmaInfoStruct pUnitLemmaList;

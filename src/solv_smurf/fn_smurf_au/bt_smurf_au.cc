@@ -54,7 +54,7 @@ CheckSmurfAuInferences(int nSmurfAuIndex, int *arrInferences, int nNumInferences
 		if (NO_AU_LEMMAS == 0) {
 			//Au smurfs don't give autarky lemmas just yet. To be added later.
 		}
-      
+     /* 
 		if (NO_LEMMAS == 0) { 
 			//Au smurfs give 1 variable lemmas.
 			//Create lemma 
@@ -71,21 +71,19 @@ CheckSmurfAuInferences(int nSmurfAuIndex, int *arrInferences, int nNumInferences
          //pLemma = NULL;
          //pLemmaInfo = NULL;
       }
-
+*/
       if (nCurrentAtomValue == BOOL_UNKNOWN)
       {
          ite_counters[INF_SMURF_AU]++;
-         InferLiteral(nNewInferredAtom, value, false, pLemma, pLemmaInfo, 1);
+         //InferLiteral(nNewInferredAtom, value, false, pLemma, pLemmaInfo, 1);
+         AddChoicePointHint(nNewInferredAtom * (value==BOOL_FALSE?-1:1));
       }
       else // if (nCurrentAtomValue != value)
       {
-         // Conflict -- backtrack.
-         TB_9(
-               d9_printf1("Conflict:  goto Backtrack\n");
-            )
+         // Conflict -- error
+         dE_printf1("Conflict:  Autarky Smurf Can't cause a conflict\n");
+         assert(0);
 
-         pConflictLemma = pLemma;
-         pConflictLemmaInfo = pLemmaInfo; /* so we can free it */
          return ERR_BT_SMURF_AU;
       }
    }

@@ -140,7 +140,7 @@ SUBDIRS = include fn_lemma_au fn_smurf_au hr_lsgbw hr_lemma fn_minmax fn_xor fn_
 INCLUDES = -I$(top_srcdir)/include -I$(top_srcdir)/src/solv_smurf/include
 SOURCES = display.cc solver.cc \
 	 fn_init.cc fn_create.cc fn_stack.cc fn_update.cc \
-	 vars_inferlit.cc vars_recordsol.cc vars_verify.cc vars_map.cc vars_init.cc \
+	 vars_inferlit.cc vars_recordsol.cc vars_verify.cc vars_map.cc vars_init.cc vars_hints.cc \
 	 br_init.cc br_afs.cc br_checks.cc br_brancher.cc br_select_bp.cc br_backtrack_nl.cc br_backtrack.cc
 
 #	heur_i.cc heur_j.cc 
@@ -164,12 +164,12 @@ libsolv_smurf_la_LIBADD =
 am__libsolv_smurf_la_SOURCES_DIST = display.cc solver.cc fn_init.cc \
 	fn_create.cc fn_stack.cc fn_update.cc vars_inferlit.cc \
 	vars_recordsol.cc vars_verify.cc vars_map.cc vars_init.cc \
-	br_init.cc br_afs.cc br_checks.cc br_brancher.cc \
+	vars_hints.cc br_init.cc br_afs.cc br_checks.cc br_brancher.cc \
 	br_select_bp.cc br_backtrack_nl.cc br_backtrack.cc
 am__objects_1 = display.lo solver.lo fn_init.lo fn_create.lo fn_stack.lo \
 	fn_update.lo vars_inferlit.lo vars_recordsol.lo vars_verify.lo \
-	vars_map.lo vars_init.lo br_init.lo br_afs.lo br_checks.lo \
-	br_brancher.lo br_select_bp.lo br_backtrack_nl.lo \
+	vars_map.lo vars_init.lo vars_hints.lo br_init.lo br_afs.lo \
+	br_checks.lo br_brancher.lo br_select_bp.lo br_backtrack_nl.lo \
 	br_backtrack.lo
 @MYLIBTOOL_TRUE@am_libsolv_smurf_la_OBJECTS = $(am__objects_1)
 libsolv_smurf_la_OBJECTS = $(am_libsolv_smurf_la_OBJECTS)
@@ -186,13 +186,14 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	./$(DEPDIR)/display.Plo ./$(DEPDIR)/fn_create.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/fn_init.Plo ./$(DEPDIR)/fn_stack.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/fn_update.Plo ./$(DEPDIR)/solver.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/vars_hints.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/vars_inferlit.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/vars_init.Plo ./$(DEPDIR)/vars_map.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/vars_recordsol.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/vars_verify.Plo
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
-LTCXXCOMPILE = $(LIBTOOL) --silent --mode=compile $(CXX) $(DEFS) \
+LTCXXCOMPILE = $(LIBTOOL) --mode=compile $(CXX) $(DEFS) \
 	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
 	$(AM_CXXFLAGS) $(CXXFLAGS)
 CXXLD = $(CXX)
@@ -209,7 +210,7 @@ DIST_COMMON = Makefile.am Makefile.in
 DIST_SUBDIRS = $(SUBDIRS)
 SOURCES = display.cc solver.cc \
 	 fn_init.cc fn_create.cc fn_stack.cc fn_update.cc \
-	 vars_inferlit.cc vars_recordsol.cc vars_verify.cc vars_map.cc vars_init.cc \
+	 vars_inferlit.cc vars_recordsol.cc vars_verify.cc vars_map.cc vars_init.cc vars_hints.cc \
 	 br_init.cc br_afs.cc br_checks.cc br_brancher.cc br_select_bp.cc br_backtrack_nl.cc br_backtrack.cc
 
 
@@ -253,6 +254,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fn_stack.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fn_update.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/solver.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vars_hints.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vars_inferlit.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vars_init.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vars_map.Plo@am__quote@
@@ -263,8 +265,7 @@ distclean-depend:
 	-rm -rf ./$(DEPDIR)
 
 .cc.o:
-@am__fastdepCXX_TRUE@	@echo Compiling $*
-@am__fastdepCXX_TRUE@	@if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" \
+@am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" \
 @am__fastdepCXX_TRUE@	  -c -o $@ `test -f '$<' || echo '$(srcdir)/'`$<; \
 @am__fastdepCXX_TRUE@	then mv "$(DEPDIR)/$*.Tpo" "$(DEPDIR)/$*.Po"; \
 @am__fastdepCXX_TRUE@	else rm -f "$(DEPDIR)/$*.Tpo"; exit 1; \
@@ -286,8 +287,7 @@ distclean-depend:
 @am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ `if test -f '$<'; then $(CYGPATH_W) '$<'; else $(CYGPATH_W) '$(srcdir)/$<'; fi`
 
 .cc.lo:
-@am__fastdepCXX_TRUE@	@echo Compiling $*
-@am__fastdepCXX_TRUE@	@if $(LTCXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" \
+@am__fastdepCXX_TRUE@	if $(LTCXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" \
 @am__fastdepCXX_TRUE@	  -c -o $@ `test -f '$<' || echo '$(srcdir)/'`$<; \
 @am__fastdepCXX_TRUE@	then mv "$(DEPDIR)/$*.Tpo" "$(DEPDIR)/$*.Plo"; \
 @am__fastdepCXX_TRUE@	else rm -f "$(DEPDIR)/$*.Tpo"; exit 1; \
