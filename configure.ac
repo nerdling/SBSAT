@@ -49,6 +49,18 @@ AC_ARG_ENABLE(extrawarning,
 	MYCXXFLAGS="${MYCXXFLAGS} -pedantic -W -Winline -Wmissing-prototypes -Wpointer-arith -Wcast-qual -Wcast-align -Wsign-compare -Wno-unused -Wconversion -Waggregate-return -Wshadow -Wwrite-strings -Wno-long-long"
     fi])
 
+AC_ARG_ENABLE(coverage, 
+[  --enable-coverage       Turn on compiler coverage information (default=no)],
+    [if eval "test x$enable_coverage = xyes"; then
+       if eval "test x$enable_profile = xyes"; then
+	echo "error: can not turn on coverage and profiling"
+	exit
+       else
+         MYCXXFLAGS="${MYCXXFLAGS}  -fprofile-arcs -ftest-coverage "
+         MYCCFLAGS="${MYCCFLAGS}  -fprofile-arcs -ftest-coverage "
+       fi
+    fi])
+
 sbsat_static=false
 AC_ARG_ENABLE(static, 
 [  --enable-static         Turn on linking libraries staticly (default=no)],
