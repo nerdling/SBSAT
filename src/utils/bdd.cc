@@ -127,7 +127,38 @@ BDDNode * mitosis (BDDNode * bdd, int *structureBDD, int *newBDD)
    return ite (ite_var (v), r, e);
 }
 
-BDDNode *MinMaxBDD(int *vars, int min, int max, int num_left, int set_true) {
+inline BDDNode *
+MinMaxBDD_within(int set_vars, int min, int max) 
+{
+   if (set_vars >= min && set_vars <= max) return true_ptr;
+   else return false_ptr;
+}
+
+
+BDDNode *MinMaxBDD(int *vars, int min, int max, int total_vars, int set_true) {
+   int i,j;
+   // make sure vars are sorted;
+   qsort(vars, total_vars, sizeof(int), revcompfunc);
+   for(i=1;i<total_vars;i++) assert(vars[i] < vars[i-1]);
+   BDDNode **arr = (BDDNode**)ite_calloc(total_vars+1, sizeof(BDDNode**), 2, "MinMaxBDD");
+   BDDNode **prev_arr = (BDDNode**)ite_calloc(total_vars+1, sizeof(BDDNode**), 2, "MinMaxBDD");
+   for(i=total_vars;i>=0;i--) 
+   {
+      arr[total_vars] = MinMaxBDD_within(i, min, max);
+      for(j=total_vars-1;j>=i;j--)
+      {
+         if (prev_arr[j+1] == arr[j+1]) arr[j]=arr[j+1];
+         else arr[j] = find_or_add_node(vars[j], prev_arr[j+1], arr[j+1]);
+      }
+      for(j=total_vars;j>=i;j--) prev_arr[j] = arr[j];
+   }
+   BDDNode *result = arr[0];
+   free(arr);
+   free(prev_arr);
+   return result;
+}
+
+BDDNode *_MinMaxBDD(int *vars, int min, int max, int num_left, int set_true) {
 	//fprintf(stderr, "v=%d min=%d max=%d num_left=%d set_true=%d\n", vars[num_left-1], min, max, num_left, set_true);
 	if (num_left+set_true < min) return false_ptr;
 	if (set_true > max) return false_ptr;
