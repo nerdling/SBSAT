@@ -827,8 +827,8 @@ int state1 (int f, int level) {
    // sm_num_infs *= 100000; // adjust for integer arithmetic
 
    for (smj = (SM+start); count>0; smj = smj->next) {
-      t = gcf((int)smj->T, cf_and); // apply inferences now
-      e = gcf((int)smj->E, cf_and); // apply inferences now
+      t = gcf(*(int*)&(smj->T), cf_and); // apply inferences now
+      e = gcf(*(int*)&(smj->E), cf_and); // apply inferences now
 
       if (t == (e ^ 1)) // linear variable experiment
 	      smj->pure = 1;
