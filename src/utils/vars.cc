@@ -47,7 +47,7 @@ char formatin = 'f', formatout = 'b'; //Solving the problem is the Default
 int print_tree = 0;
 char inputfile[128] = "-";
 char outputfile[128] = "-";
-char progname[65] = "ite";
+//char progname[65] = "ite";
 FILE * finputfile = NULL;
 FILE * foutputfile = NULL;
 char temp_dir[128] = "";
