@@ -57,7 +57,7 @@ functions_alloc(int n_fns)
 {
    if (n_fns <= functions_max) return 0;
    int delta = n_fns - functions_max;
-   if (delta < 10000) n_fns = functions_max + 1000;
+   if (delta < 1000) n_fns = functions_max + 1000;
    /* n_fns -- numout */
    equalityVble = (int *)ite_recalloc((void*)equalityVble, functions_max,
          n_fns, sizeof(int), 9, "equalityVble");
@@ -78,7 +78,7 @@ vars_alloc(int n_vars)
    if (n_vars < vars_max) return 0;
 
    int delta = n_vars - vars_max;
-   if (delta < 10000) n_vars = vars_max + 1000;
+   if (delta < 1000) n_vars = vars_max + 1000;
 
    /* n_vars -- numinp */
    independantVars = (int *)ite_recalloc((void*)independantVars, vars_max,
