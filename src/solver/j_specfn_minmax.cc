@@ -110,11 +110,11 @@ InitHeuristicTablesForSpecialFuncs_MINMAX()
          arrMinmaxWghts[i][j] = (double*)ite_calloc(arrMaxMinmaxFalse[i]+1, sizeof(double), 2, "arrMinmaxWghts[][]");
          arrMinmaxWghts[i][j][0] = (j-i < 0? 0: j-i); // diff = i, j - LeftToSetTrue, 0 - LeftToSetFalse
          if (j==0) {
-            for(int m=1; m<=arrMaxMinmaxTrue[i]; m++) {
+            for(int m=1; m<=arrMaxMinmaxFalse[i]; m++) {
                arrMinmaxWghts[i][0][m] = (m-i < 0? 0: m-i);
             }
          } else {
-            for(int m=1; m<=arrMaxMinmaxTrue[i]; m++) {
+            for(int m=1; m<=arrMaxMinmaxFalse[i]; m++) {
                arrMinmaxWghts[i][j][m] = (arrMinmaxWghts[i][j-1][m] + arrMinmaxWghts[i][j][m-1]) / (2*K);
             }
          }

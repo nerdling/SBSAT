@@ -230,6 +230,7 @@ AC_CONFIG_FILES([Makefile
                  doc/Makefile
                  doc/man1/Makefile
                  examples/Makefile
+                 examples/example_tests.sh
                  include/Makefile
                  src/Makefile
                  src/formats/5/Makefile

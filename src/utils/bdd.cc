@@ -144,6 +144,7 @@ MinMaxBDD_within(int set_vars, int min, int max)
 BDDNode *MinMaxBDD(int *vars, int min, int max, int total_vars, int set_true) {
    int i,j;
    // make sure vars are sorted;
+   //d4_printf5("MinMaxBDD(int *vars, int min=%d, int max=%d, int total_vars=%d, int set_true=%d)\n", min, max, total_vars, set_true);
    qsort(vars, total_vars, sizeof(int), revcompfunc);
    for(i=1;i<total_vars;i++) assert(vars[i] < vars[i-1]);
    BDDNode **arr = (BDDNode**)ite_calloc(total_vars+1, sizeof(BDDNode**), 2, "MinMaxBDD");

@@ -126,7 +126,8 @@ BDD2Specfn_MINMAX(BDDNodeStruct *pFunc,
       pCurrentNode = pCurrentNode->thenCase;
       pSpecialFunc->max++;
    }
-   pSpecialFunc->max--;
+   if (pCurrentNode == true_ptr) pSpecialFunc->max = pSpecialFunc->rhsVbles.nNumElts;
+   else pSpecialFunc->max--;
 
    pSpecialFunc->min=pSpecialFunc->rhsVbles.nNumElts;
    pCurrentNode = pRHSFunc;
@@ -135,7 +136,10 @@ BDD2Specfn_MINMAX(BDDNodeStruct *pFunc,
       pCurrentNode = pCurrentNode->elseCase;
       pSpecialFunc->min--;
    }
-   pSpecialFunc->min++;
+   if (pCurrentNode == true_ptr) pSpecialFunc->min = 0;
+   else pSpecialFunc->min++;
+
+   assert(pSpecialFunc->min <= pSpecialFunc->max);
 
    ConstructLemmasForMINMAX(pSpecialFunc);
 }
