@@ -68,6 +68,8 @@ Do_Apply_Inferences ()
 	
 	while (inferlist != NULL) {
 		//startover:;
+		void bdd_gc();
+		if(rand() % 1000 < 4) bdd_gc();
 		if (inferlist->nums[1] != 0) {
 			if (inferlist->nums[1] > 0) {
 /*				
@@ -94,10 +96,6 @@ Do_Apply_Inferences ()
 				for(int iter = 0; iter<str_length; iter++)
 				  d3_printf1("\b");
 				d3_printf3 ("{%d=%d}", inferlist->nums[0], inferlist->nums[1]);
-
-            //void bdd_gc();
-            //if(rand() % 1000 < 4) bdd_gc();
-
 				str_length = 0;
 				variablelist[inferlist->nums[1]].equalvars = inferlist->nums[0];
 				for (llist * k = amount[inferlist->nums[1]].head; k != NULL;) {
