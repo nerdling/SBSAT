@@ -550,8 +550,11 @@ int Rebuild_BDDx (int x) {
 	variables[x].num = new int[y + 1];	//(int *)calloc(y+1, sizeof(int));
 	for (int i = 0; i < y; i++)
 	  variables[x].num[i] = tempint[i];
+   variables[x].min = tempint[0];
+   variables[x].max = tempint[y-1];
 
-	//A line like this would be better placed in smurffactory
+
+   //A line like this would be better placed in smurffactory
 	//where the smurfs are made...maybe...we like to be able to preprocess
 	//things that have been made small...
 	//if (length[x] < 3)

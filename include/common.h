@@ -93,6 +93,8 @@ struct minmax {
 
 struct store{
    int *num;
+   int min;
+   int max;
    int length;//length for variablelist is 3 = 4
    long dag;  //dag for variablelist is the replaced numbers
    int andor; //andor for variablelist is True/False

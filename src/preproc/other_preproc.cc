@@ -418,6 +418,7 @@ cheat_replaceall (int *&length,
       variables[x].num = new int[y + 1];	//(int *)calloc(y+1, sizeof(int));
       for (i = 0; i < y; i++)
 	variables[x].num[i] = tempint[i];
+      assert(0); // .min = ; .max = ;
     }
 
   numinp = 0;
