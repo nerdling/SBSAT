@@ -156,11 +156,11 @@ int ExQuantify () {
 								//If variable v occurs in only this BDD.
 								amount_count = 0;
 								for (llist * k = amount[variables[j].num[v]].head; k != NULL; k = k->next) {
-									if(functionType[k->num] != AUTARKY_FUNC) amount_count++;
-									if(amount_count > 1) break;
+									if(functionType[k->num] != AUTARKY_FUNC) {
+										amount_count++;
+										if(amount_count > 1) break;
+									}
 								}
-
-								//if(amount[variables[j].num[v]].head->next == NULL) {
 								if(amount_count == 1) {
 									//d3_printf3("working on %d, %d\n", variables[j].num[v], length[j]);
 									BDDNode *Quantify = functions[j];
@@ -169,8 +169,10 @@ int ExQuantify () {
 										if(v == y) continue;
 										amount_count = 0;
 										for (llist * k = amount[variables[j].num[y]].head; k != NULL; k = k->next) {
-											if(functionType[k->num] != AUTARKY_FUNC) amount_count++;
-											if(amount_count > 1) break;
+											if(functionType[k->num] != AUTARKY_FUNC) {
+												amount_count++;
+												if(amount_count > 1) break;
+											}
 										}
 										
 										if(amount_count == 1) {//amount[variables[j].num[y]].head->next == NULL) {
@@ -188,7 +190,6 @@ int ExQuantify () {
 									BDDFuncs = (BDDNode **)ite_recalloc(NULL, 0, 1, sizeof(BDDNode *), 9, "BDDFuncs");
 									//BDDFuncs[0] = strip_x_BDD(Quantify, quant_var);
 									BDDFuncs[0] = Quantify;
-                           
 									/*if(Quantify == possible_BDD(Quantify, quant_var)) {
 										//fprintf(stderr, "\nHERE\n");
 									} else*/ {

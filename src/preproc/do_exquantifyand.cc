@@ -257,6 +257,7 @@ int ExQuantifyAnd () {
 								BDDNode *Quantify2 = functions[j];
 								//Quantify out every Ex variable except variable v
 								for(int y = 0; y < length[j]; y++) {
+									if(v == y) continue;
 									amount_count = 0;
 									for (llist * k = amount[variables[j].num[y]].head; k != NULL; k = k->next) {
 										if(functionType[k->num] != AUTARKY_FUNC) {
@@ -264,7 +265,7 @@ int ExQuantifyAnd () {
 											if(amount_count > 1) break;
 										}
 									}
-									if(v!=y && amount[variables[j].num[y]].head->next == NULL) {
+									if(amount_count == 1) { //amount[variables[j].num[y]].head->next == NULL) {
 										//d3_printf2("%d ", variables[j].num[y]);
 										Quantify2 = xquantify(Quantify2, variables[j].num[y]);
 									}
