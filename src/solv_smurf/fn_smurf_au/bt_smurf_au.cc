@@ -49,8 +49,8 @@ CheckSmurfAuInferences(int nSmurfAuIndex, int *arrInferences, int nNumInferences
 
       if (nCurrentAtomValue == value) continue;
 
-      LemmaBlock *pLemma = NULL;
-      LemmaInfoStruct *pLemmaInfo = NULL;
+      //LemmaBlock *pLemma = NULL;
+      //LemmaInfoStruct *pLemmaInfo = NULL;
 		if (NO_AU_LEMMAS == 0) {
 			//Au smurfs don't give autarky lemmas just yet. To be added later.
 		}
@@ -75,8 +75,11 @@ CheckSmurfAuInferences(int nSmurfAuIndex, int *arrInferences, int nNumInferences
       if (nCurrentAtomValue == BOOL_UNKNOWN)
       {
          ite_counters[INF_SMURF_AU]++;
-         //InferLiteral(nNewInferredAtom, value, false, pLemma, pLemmaInfo, 1);
-         AddChoicePointHint(nNewInferredAtom * (value==BOOL_FALSE?-1:1));
+         if (NO_LEMMAS == 1) {
+            InferLiteral(nNewInferredAtom, value, false, NULL, NULL, 1);
+         } else {
+            AddChoicePointHint(nNewInferredAtom * (value==BOOL_FALSE?-1:1));
+         }
       }
       else // if (nCurrentAtomValue != value)
       {
