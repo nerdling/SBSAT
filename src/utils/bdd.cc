@@ -864,6 +864,140 @@ BDDNode *_bdd2xdd(BDDNode *x) {
 	return (x->tmp_bdd = find_or_add_node(v, r, e));
 }
 
+inline BDDNode *constant_and(BDDNode *x, BDDNode *y) {	
+	if (x == true_ptr) return true_ptr;
+   if (x == false_ptr) return false_ptr;
+
+   if (y == true_ptr) return true_ptr;
+   if (y == false_ptr) return false_ptr;
+
+   BDDNode * r;
+   BDDNode * e;
+
+   if (x->variable > y->variable) {
+      r = constant_and(x->thenCase, y);
+      if(r != false_ptr) return true_ptr;
+		e = constant_and(x->elseCase, y);
+		if(e != false_ptr) return true_ptr;
+   } else if (x->variable == y->variable) {
+      if (x == y) return true_ptr;
+      else if (x->notCase == y) return false_ptr;
+      else {
+         r = constant_and(x->thenCase, y->thenCase);
+			if(r != false_ptr) return true_ptr;
+         e = constant_and(x->elseCase, y->elseCase);
+			if(e != false_ptr) return true_ptr;
+      }
+   } else {
+      r = constant_and(x, y->thenCase);
+		if(r != false_ptr) return true_ptr;
+      e = constant_and(x, y->elseCase);
+		if(e != false_ptr) return true_ptr;
+   } 
+
+	if(r == e) return r;
+	return true_ptr;
+}
+
+inline BDDNode *_and_dot(BDDNode *x, BDDNode *y);
+
+inline
+BDDNode *and_dot(BDDNode *x, BDDNode *y)
+{
+   if (y == true_ptr) return x;
+   if (y == false_ptr) return false_ptr;
+   return _and_dot(x, y);
+}
+
+inline
+BDDNode *_and_dot(BDDNode *x, BDDNode *y)
+{
+   if (x == true_ptr) return y;
+   if (x == false_ptr) return false_ptr;
+
+   int v;
+   BDDNode * r;
+   BDDNode * e;
+
+   if (x->variable > y->variable) {
+      BDDNode *cached = itetable_find_or_add_node(12, x, y, NULL);
+      if (cached) return cached;
+      v = x->variable;
+      r = _and_dot(x->thenCase, y);
+      if(r->inferences == NULL && r!=false_ptr) {
+			r = true_ptr; //maybe unnecessary?
+			e = constant_and(x->elseCase, y);
+		} else {
+			e = _and_dot(x->elseCase, y);
+			if(e->inferences == NULL && e!=false_ptr) {
+				if(r != false_ptr)
+				  r = true_ptr; //maybe unnecessary?
+			}
+		}
+		if (r == x->thenCase && e == x->elseCase) return x;
+   } else if (x->variable == y->variable) {
+      if (x == y) return x;
+      else if (x->notCase == y) return false_ptr;
+      else {
+         BDDNode *cached = itetable_find_or_add_node(12, x, y, NULL);
+         if (cached) return cached;
+         v = x->variable;
+         if (y->thenCase == true_ptr) r=x->thenCase;
+         else if (y->thenCase == false_ptr) r=false_ptr;
+         else r = _and_dot(x->thenCase, y->thenCase);
+			if(r->inferences == NULL && r!=false_ptr) {
+				r = true_ptr; //maybe unnecessary?
+				e = constant_and(x->elseCase, y);
+			} else {
+				if (y->elseCase == true_ptr) e=x->elseCase;
+				else if (y->elseCase == false_ptr) e=false_ptr;
+				else e = _and_dot(x->elseCase, y->elseCase);
+				if(e->inferences == NULL && e!=false_ptr) {
+					if(r != false_ptr)
+					  r = true_ptr; //maybe unnecessary?
+				}
+			}
+			// this happens but not often enough to bring a speedup
+			if (r == x->thenCase && e == x->elseCase) return x;
+			if (r == y->thenCase && e == y->elseCase) return y;
+      }
+   } else {
+      BDDNode *cached = itetable_find_or_add_node(12, y, x, NULL);
+      if (cached) return cached;
+      v = y->variable;
+      r = _and_dot(y->thenCase, x);
+      if(r->inferences == NULL && r!=false_ptr) {
+			r = true_ptr; //maybe unnecessary?
+			e = constant_and(x->elseCase, y);
+		} else {
+			e = _and_dot(y->elseCase, x);
+			if(e->inferences == NULL && e!=false_ptr) {
+				if(r != false_ptr)
+				  r = true_ptr; //maybe unnecessary?
+			}
+		}
+		// this happens but not often enough to bring a speedup
+		if (r == y->thenCase && e == y->elseCase) return y;
+   } 
+
+   if (r == e) return (r);
+   return itetable_add_node(12, x, y, find_or_add_node(v, r, e));
+   return find_or_add_node(v, r, e);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 inline BDDNode *_ite_x_y_F(BDDNode *x, BDDNode *y);
 
 inline
@@ -2200,7 +2334,9 @@ infer *_possible_infer_x(BDDNode *f, int x) {
 			f->tmp_infer = copy_infer(inference);
 			return inference;
 		} else {
-			BDDNode *r_BDD = ite_and(f->thenCase, ite_not(f->elseCase));
+			BDDNode *r_BDD;
+			if(f->t_and_not_e_bdd != NULL) r_BDD = f->t_and_not_e_bdd;
+			else r_BDD = and_dot(f->thenCase, ite_not(f->elseCase));
 			                 //Ex_GetInfer(f->thenCase);
 			if(r_BDD == false_ptr) {				  
 				infer *inference = new infer;
@@ -2221,8 +2357,9 @@ infer *_possible_infer_x(BDDNode *f, int x) {
 				f->tmp_infer = copy_infer(head);
 				return head;
 			}
-			
-			BDDNode *e_BDD = ite_and(f->elseCase, ite_not(f->thenCase));
+			BDDNode *e_BDD;
+			if(f->not_t_and_e_bdd != NULL) e_BDD = f->not_t_and_e_bdd;
+			else e_BDD = and_dot(f->elseCase, ite_not(f->thenCase));
 			                 //Ex_GetInfer(f->elseCase);
 			if(e_BDD == false_ptr) {				  
 				infer *inference = new infer;
