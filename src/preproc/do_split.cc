@@ -278,8 +278,8 @@ int Split_Large () {
 					affected++;
 					ret = PREP_CHANGED;
 					intlist *list = new intlist[num];
-					int pathx = 0, listx = 0;
-					findPathsToFalse (functions[j], tempint, pathx, list, &listx);
+					int listx = 0;
+					findPathsToFalse (functions[j], tempint, list, &listx);
 					if(listx >= max_bdds) {
 						BDDFuncs = (BDDNode **)ite_recalloc(BDDFuncs, max_bdds, listx+1, sizeof(BDDNode *), 9, "BDDFuncs");
 						max_bdds = listx+1;
@@ -288,7 +288,7 @@ int Split_Large () {
 					for (int i = 0; i < listx; i++) {
 						BDDFuncs[i] = false_ptr;
 						for(int x = 0; x < list[i].length; x++)
-						  BDDFuncs[i] = ite_or(BDDFuncs[i], ite_var(list[i].num[x]));
+						  BDDFuncs[i] = ite_or(BDDFuncs[i], ite_var(-list[i].num[x])); //Need to negate all literals to get CNF!
 						delete [] list[i].num;
 					}
 					delete [] list;

@@ -492,25 +492,34 @@ void cheat_replaceall (int *&length, store * &variables, varinfo * &variablelist
 	numinp = replaceat;
 }
 
-void findPathsToFalse (BDDNode *bdd, int *path, int pathx, intlist *list, int *listx) {
-	if (bdd == false_ptr) {
+void findPathsToX (BDDNode *bdd, int *path, int pathx, intlist *list, int *listx, BDDNode *X) {
+	if (bdd == X) {
 		list[(*listx)].num = new int[pathx];
 		for (int x = 0; x < pathx; x++) {
-			list[(*listx)].num[x] = -path[x];
+			list[(*listx)].num[x] = path[x];
 		}
 		//list[(*listx)].num[pathx-1] = -list[(*listx)].num[pathx-1];
 		list[(*listx)].length = pathx;
 		(*listx)++;
 		return;
 	}
-	if (bdd == true_ptr)
+	if (IS_TRUE_FALSE(bdd))
 	  return;
 	
 	path[pathx] = bdd->variable;
-	findPathsToFalse (bdd->thenCase, path, pathx + 1, list, listx);
-	
+	findPathsToX (bdd->thenCase, path, pathx + 1, list, listx, X);
 	path[pathx] = -bdd->variable;
-	findPathsToFalse (bdd->elseCase, path, pathx + 1, list, listx);
+	findPathsToX (bdd->elseCase, path, pathx + 1, list, listx, X);
+}
+
+void findPathsToFalse (BDDNode *bdd, int *path, intlist *list, int *listx) {
+	int pathx = 0;
+	findPathsToX (bdd, path, pathx, list, listx, false_ptr);
+}
+
+void findPathsToTrue (BDDNode *bdd, int *path, intlist *list, int *listx) {
+	int pathx = 0;
+	findPathsToX (bdd, path, pathx, list, listx, true_ptr);
 }
 
 void
@@ -526,9 +535,8 @@ Stats (int length[], store variables[])
     {
       int numx = countFalses (functions[x]);
       intlist *list = new intlist[numx];
-      int pathx = 0, listx = 0;
-      findPathsToFalse (functions[x], tempint, pathx, list,
-			&listx);
+		int listx = 0;
+      findPathsToFalse (functions[x], tempint, list, &listx);
       //      if (functionType[x] != AND
       //	  && functionType[x] != OR
       //	  && functionType[x] != ITE)
@@ -537,12 +545,11 @@ Stats (int length[], store variables[])
 			{
 				clauses[z].num = list[y].num;
 				clauses[z].length = list[y].length;
-				for (int a = 0; a < clauses[z].length; a++)
-				  {
-					          printf("%d ", clauses[z].num[a]);
-				  }
-				      printf("0\n");    
-
+				for (int a = 0; a < clauses[z].length; a++) {
+					printf("%d ", -clauses[z].num[a]); //Need to negate all literals to get CNF
+				}
+				printf("0\n");    
+				
 				z++;
 			}
 		//       fprintf(stdout, "\nend %d\n", x);

@@ -894,7 +894,7 @@ void printBDDToCNF () {
 	
    numinp = getNuminp ();
    
-   intlist *clauses = new intlist[no_out_vars+1];
+   intlist *false_paths = new intlist[no_out_vars+1];
    z = 0;
    
    for (int x = 0; x < numout; x++) {
@@ -902,15 +902,15 @@ void printBDDToCNF () {
       int no_vars = 0;
 		int numx = countFalses (functions[x]);
       intlist *list = new intlist[numx];
-      int pathx = 0, listx = 0;
-      findPathsToFalse (functions[x], tempint, pathx, list, &listx);
+      int listx = 0;
+      findPathsToFalse (functions[x], tempint, list, &listx);
 		
       for (int i = 0; i < listx; i++) {
-			clauses[z].num = list[i].num;
-			clauses[z].length = list[i].length;
-			if(clauses[z].length > no_vars) no_vars = clauses[z].length;
-			for (int a = 0; a < clauses[z].length; a++) {
-				//fprintf(stdout, "%d ", clauses[z].num[a]);
+			false_paths[z].num = list[i].num;
+			false_paths[z].length = list[i].length;
+			if(false_paths[z].length > no_vars) no_vars = false_paths[z].length;
+			for (int a = 0; a < false_paths[z].length; a++) {
+				//fprintf(stdout, "%d ", false_paths[z].num[a]);
 			}
 			//fprintf(stdout, "0\n");
 			z++;
@@ -920,11 +920,11 @@ void printBDDToCNF () {
 	
    fprintf(foutputfile, "p cnf %ld %d\n", numinp, no_out_vars);
 	for (int x = 0; x < no_out_vars; x++) {
-		for (int a = 0; a < clauses[x].length; a++)
-		  fprintf (foutputfile, "%d ", clauses[x].num[a]);
+		for (int a = 0; a < false_paths[x].length; a++)
+		  fprintf (foutputfile, "%d ", -false_paths[x].num[a]); //Need to negate all literals!
 		fprintf (foutputfile, "0\n");
-		delete clauses[x].num;
+		delete false_paths[x].num;
 	}
 	fprintf(foutputfile, "c end");
-	delete clauses;
+	delete false_paths;
 }
