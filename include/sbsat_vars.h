@@ -149,6 +149,11 @@ extern char module_root[128];
 extern int numBuckets;
 extern int sizeBuckets;
 
+extern float *arrVarTrueInfluences;
+extern int **arrVarChoiceLevels;
+extern int arrVarChoiceLevelsMax;
+extern int arrVarChoiceLevelsNum;
+
 extern int TRACE_START;
 
 extern LONG64 ite_counters[MAX_COUNTER];

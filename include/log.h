@@ -183,6 +183,10 @@ extern int DEBUG_LVL;
 #define d5_printf3(x1,x2,x3) D_5(fprintf(stddbg, x1, x2, x3);)
 #define d5_printf4(x1,x2,x3,x4) D_5(fprintf(stddbg, x1, x2, x3,x4);)
 #define d5_printf5(x1,x2,x3,x4,x5) D_5(fprintf(stddbg, x1, x2, x3,x4,x5);)
+#define d5_printf6(x1,x2,x3,x4,x5,x6) D_5(fprintf(stddbg, x1, x2, x3,x4,x5,x6);)
+#define d5_printf7(x1,x2,x3,x4,x5,x6,x7) D_5(fprintf(stddbg, x1, x2, x3,x4,x5,x6,x7);)
+#define d5_printf8(x1,x2,x3,x4,x5,x6,x7,x8) D_5(fprintf(stddbg, x1, x2, x3,x4,x5,x6,x7,x8);)
+#define d5_printf9(x1,x2,x3,x4,x5,x6,x7,x8,x9) D_5(fprintf(stddbg, x1, x2, x3,x4,x5,x6,x7,x8,x9);)
 
 #define d6_printf1(x)        D_6(fprintf(stddbg, x);)
 #define d6_printf2(x1,x2)    D_6(fprintf(stddbg, x1, x2);)
