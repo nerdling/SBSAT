@@ -381,6 +381,7 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 			fprintf (stderr, "\nKeyword 'minmax' needs a positive integer as a third argument (%s)...exiting:%d\n", macros, markbdd_line);
 			exit (1);
 		}
+		expect_integer = 0;
 		if(v3 == false_ptr) max = 0;
 		else max = v3->variable;
 		if(max<min) {
@@ -390,10 +391,10 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 
 		int *var_list = new int[v1->variable];
 		for (unsigned int x = 0; x < (unsigned int)v1->variable; x++) {
-			BDDNode * v4 = putite (intnum, bdd);
+			BDDNode *v4 = putite (intnum, bdd);
 			if (v4 != ite_var (v4->variable)) {
 				//CHANGE LATER? all positive? or not?
-				fprintf (stderr, "\nKeyword 'minmax' needs all positive integers as arguments (%s)...exiting:%d\n", macros, markbdd_line);
+				fprintf (stderr, "\nKeyword 'minmax' needs positive variables as arguments (%s)...exiting:%d\n", macros, markbdd_line);
 				exit (1);
 			}
 			var_list[x] = v4->variable;
