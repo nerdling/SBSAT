@@ -78,7 +78,7 @@ t_fn_inf_queue *arrFnInferenceQueue=NULL;
 t_fn_inf_queue *pFnInferenceQueueNextEmpty=NULL;
 t_fn_inf_queue *pFnInferenceQueueNextElt=NULL;
 
-int nNumVariables;
+int nNumVariables=0;
 
 AffectedFuncsStruct *arrAFS; // "Affected Funcs Struct":
 SmurfState **arrCurrentStates=0; // Current states of all of the Smurfs, i.e.,

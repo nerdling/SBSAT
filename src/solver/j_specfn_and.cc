@@ -42,7 +42,7 @@ struct AndEqFalseWghtStruct *arrAndEqFalseWght = NULL;
 struct AndEqWghtStruct *arrAndEqWght = NULL;
 double *arrAndEqWghtCx = NULL;
 double *arrAndEqWghtCe = NULL;
-double *arrAndEqWghtCt = NULL;
+double *arrAndEqWghtCt = NULL; // lhs is false
 
 ITE_INLINE void InitHeuristicTablesForSpecialFuncs_AND();
 ITE_INLINE void FreeHeuristicTablesForSpecialFuncs_AND();
@@ -71,9 +71,9 @@ InitHeuristicTablesForSpecialFuncs_AND()
    arrAndEqWght = (AndEqWghtStruct*)ite_calloc(nMaxRHSSize + 1,  sizeof(AndEqWghtStruct),
           9, "arrAndEqWght");
 
-   arrAndEqWghtCx = (double*)ite_calloc(nMaxRHSSize + 1, sizeof(double), 9, "arrAndEqWghtCx");
-   arrAndEqWghtCe = (double*)ite_calloc(nMaxRHSSize + 1, sizeof(double), 9, "arrAndEqWghtCe");
-   arrAndEqWghtCt = (double*)ite_calloc(nMaxRHSSize + 1, sizeof(double), 9, "arrAndEqWghtCt");
+   arrAndEqWghtCx = (double*)ite_calloc(nMaxRHSSize + 2, sizeof(double), 9, "arrAndEqWghtCx");
+   arrAndEqWghtCe = (double*)ite_calloc(nMaxRHSSize + 2, sizeof(double), 9, "arrAndEqWghtCe");
+   arrAndEqWghtCt = (double*)ite_calloc(nMaxRHSSize + 2, sizeof(double), 9, "arrAndEqWghtCt");
 
    if (sHeuristic[1] == 'm') {
 
@@ -104,7 +104,8 @@ InitHeuristicTablesForSpecialFuncs_AND()
          arrAndEqWghtCe[i] = (arrAndEqWghtCe[i-1]*(i-1) + arrAndEqWghtCt[i] + 1) / (2*K*(i+1));
       }
 
-      for (int i = nMaxRHSSize; i> 0; i--)
+      // move it all one up
+      for (int i = nMaxRHSSize+1; i> 0; i--)
       {
          arrAndEqWghtCt[i] = arrAndEqWghtCt[i-1];
          arrAndEqWghtCx[i] = arrAndEqWghtCx[i-1];
@@ -236,7 +237,7 @@ GetHeurScoresFromSpecialFunc_AND_C(int nSpecFuncIndex)
    {
       J_Update_RHS_AND_C(pSpecialFunc,
             0, 0, 0, 0, 0, // fLastSum, fLastConstPos, fLastMultiPos, fLastConstNeg, fLastMultiNeg, 
-            fSum, 0, arrAndEqWghtCt[nNumRHSUnknowns/*-1*/], 0, 0);
+            fSum, 0, arrAndEqWghtCt[nNumRHSUnknowns/*-1*/], 0, 0); // Ct
    }
    else
    {
@@ -252,8 +253,8 @@ GetHeurScoresFromSpecialFunc_AND_C(int nSpecFuncIndex)
       }
       else
       {
-         arrHeurScores[nLHSVble].Pos += arrAndEqWghtCt[nNumRHSUnknowns+1]*fSum;
-         arrHeurScores[nLHSVble].Neg += fSum;
+         arrHeurScores[nLHSVble].Pos += arrAndEqWghtCt[nNumRHSUnknowns+1]*fSum; // Transition to Ct
+         arrHeurScores[nLHSVble].Neg += fSum; // the RHS is inferred
       }
 
       J_Update_RHS_AND_C(pSpecialFunc,
