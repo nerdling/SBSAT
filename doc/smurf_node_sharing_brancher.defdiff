@@ -1,0 +1,1885 @@
+Index: include/itefeatures.h
+===================================================================
+RCS file: /home/mkouril/cvs/sbsat/include/itefeatures.h,v
+retrieving revision 1.1
+diff --ifdef=CVS_SMURF_NODES_SHARING_BRANCHER -r1.1 itefeatures.h
+/* =========FOR INTERNAL USE ONLY. NO DISTRIBUTION PLEASE ========== */
+
+/*********************************************************************
+ Copyright 1999-2003, University of Cincinnati.  All rights reserved. 
+ By using this software the USER indicates that he or she has read, 
+ understood and will comply with the following:
+
+ --- University of Cincinnati hereby grants USER nonexclusive permission 
+ to use, copy and/or modify this software for internal, noncommercial,
+ research purposes only. Any distribution, including commercial sale 
+ or license, of this software, copies of the software, its associated 
+ documentation and/or modifications of either is strictly prohibited 
+ without the prior consent of University of Cincinnati.  Title to copyright
+ to this software and its associated documentation shall at all times 
+ remain with University of Cincinnati.  Appropriate copyright notice shall 
+ be placed on all software copies, and a complete copy of this notice 
+ shall be included in all copies of the associated documentation.  
+ No right is  granted to use in advertising, publicity or otherwise 
+ any trademark,  service mark, or the name of University of Cincinnati. 
+
+
+ --- This software and any associated documentation is provided "as is" 
+
+ UNIVERSITY OF CINCINNATI MAKES NO REPRESENTATIONS OR WARRANTIES, EXPRESS 
+ OR IMPLIED, INCLUDING THOSE OF MERCHANTABILITY OR FITNESS FOR A 
+ PARTICULAR PURPOSE, OR THAT  USE OF THE SOFTWARE, MODIFICATIONS, OR 
+ ASSOCIATED DOCUMENTATION WILL NOT INFRINGE ANY PATENTS, COPYRIGHTS, 
+ TRADEMARKS OR OTHER INTELLECTUAL PROPERTY RIGHTS OF A THIRD PARTY.  
+
+ University of Cincinnati shall not be liable under any circumstances for 
+ any direct, indirect, special, incidental, or consequential damages 
+ with respect to any claim by USER or any third party on account of 
+ or arising from the use, or inability to use, this software or its 
+ associated documentation, even if University of Cincinnati has been advised
+ of the possibility of those damages.
+*********************************************************************/
+
+#ifndef ITEFEATURES_H
+#define ITEFEATURES_H
+
+/* configuration */
+#define FORCE_STABLE_QSORT
+#define NO_BDD_MACROS
+
+#ifdef CVS_SMURF_NODES_SHARING_BRANCHER
+#define SMURF_NODES_COUNT_REFS
+
+#endif /* CVS_SMURF_NODES_SHARING_BRANCHER */
+#endif
+Index: include/smurffactory.h
+===================================================================
+RCS file: /home/mkouril/cvs/sbsat/include/smurffactory.h,v
+retrieving revision 1.11
+diff --ifdef=CVS_SMURF_NODES_SHARING_BRANCHER -r1.11 smurffactory.h
+/* =========FOR INTERNAL USE ONLY. NO DISTRIBUTION PLEASE ========== */
+
+/*********************************************************************
+ Copyright 1999-2003, University of Cincinnati.  All rights reserved.
+ By using this software the USER indicates that he or she has read,
+ understood and will comply with the following:
+
+ --- University of Cincinnati hereby grants USER nonexclusive permission
+ to use, copy and/or modify this software for internal, noncommercial,
+ research purposes only. Any distribution, including commercial sale
+ or license, of this software, copies of the software, its associated
+ documentation and/or modifications of either is strictly prohibited
+ without the prior consent of University of Cincinnati.  Title to copyright
+ to this software and its associated documentation shall at all times
+ remain with University of Cincinnati.  Appropriate copyright notice shall
+ be placed on all software copies, and a complete copy of this notice
+ shall be included in all copies of the associated documentation.
+ No right is  granted to use in advertising, publicity or otherwise
+ any trademark,  service mark, or the name of University of Cincinnati.
+
+
+ --- This software and any associated documentation is provided "as is"
+
+ UNIVERSITY OF CINCINNATI MAKES NO REPRESENTATIONS OR WARRANTIES, EXPRESS
+ OR IMPLIED, INCLUDING THOSE OF MERCHANTABILITY OR FITNESS FOR A
+ PARTICULAR PURPOSE, OR THAT  USE OF THE SOFTWARE, MODIFICATIONS, OR
+ ASSOCIATED DOCUMENTATION WILL NOT INFRINGE ANY PATENTS, COPYRIGHTS,
+ TRADEMARKS OR OTHER INTELLECTUAL PROPERTY RIGHTS OF A THIRD PARTY.
+
+ University of Cincinnati shall not be liable under any circumstances for
+ any direct, indirect, special, incidental, or consequential damages
+ with respect to any claim by USER or any third party on account of
+ or arising from the use, or inability to use, this software or its
+ associated documentation, even if University of Cincinnati has been advised
+ of the possibility of those damages.
+*********************************************************************/
+// smurffactory.h
+// Started 1/3/2001 - J. Ward
+
+#ifndef SMURFFACTORY_H
+#define SMURFFACTORY_H
+
+#include "heuristic.h"
+
+// debug options
+//#define DISPLAY_TRACE
+//#define DISPLAY_CHOICEPOINTS
+
+
+#define FLAG_CHANGED_STRUCTURES
+// j heuristic debug option
+//#define TRACE_HEURISTIC
+
+#define SHARE_STATES_IF_PATHS_MATCH
+
+
+#define IsSpecialFunc(nFuncType) ((nFuncType) == OR || (nFuncType) == AND || (nFuncType) == PLAINOR || (nFuncType) == PLAINXOR || (nFuncType) == MINMAX)
+#define BOOL_NEG(nBoolValue) ((nBoolValue) == BOOL_TRUE ? BOOL_FALSE : BOOL_TRUE)
+
+struct SmurfState;
+
+#define INIT_STACK_BACKTRACKS_ALLOC 100
+
+#define SMURF_STATES_STACK_ALLOC_MULT 6 /* >= 2 */
+
+typedef union {
+    SmurfState *state;
+    void *next_pool; 
+    int   index_pool;
+    int   version;
+} tSmurfStateStackValue;
+
+typedef struct { 
+	int smurf; 
+	int path_idx; 
+	tSmurfStateStackValue u;
+	int prev;
+#ifdef CVS_SMURF_NODES_SHARING_BRANCHER
+#ifdef SMURF_NODES_COUNT_REFS
+   int refs;
+#endif
+#endif /* CVS_SMURF_NODES_SHARING_BRANCHER */
+} tSmurfStatesStack;
+
+extern int nMaxSmurfStatesStackIdx;
+extern int nCurSmurfStatesVersion;
+extern int nSmurfStatesStackIdx;
+extern tSmurfStatesStack *arrSmurfStatesStack;
+extern int *arrSmurfStatesFlags;
+
+ITE_INLINE void Add_arrSmurfStatesStack(int vx);
+
+#define Save_arrCurrentStates(vx)  { if (arrSmurfStatesFlags[vx]!=nCurSmurfStatesVersion) Add_arrSmurfStatesStack(vx); }
+
+#define SPECIAL_FN_STACK_ALLOC_MULT 6 /* >= 2 */
+
+typedef union {
+    int   value;
+    void *next_pool; 
+    int   index_pool;
+    int   version;
+} tSpecialFnStackValue;
+
+typedef struct { 
+	int fn; 
+	tSpecialFnStackValue u;
+	int prev;
+   int lhsvalue;
+   double rhssum;
+   int rhscounter;
+} tSpecialFnStack;
+
+typedef struct {
+	int idx;
+	int *literals;
+} t_smurf_path;
+
+typedef struct {
+   int specfn;
+	int next;
+	int prev;
+} t_smurf_chain;
+
+extern t_smurf_path *arrSmurfPath;
+extern t_smurf_chain *arrSmurfChain;
+
+extern int nMaxSpecialFnStackIdx;
+extern int nCurSpecialFnVersion;
+extern int nSpecialFnStackIdx;
+extern tSpecialFnStack *arrSpecialFnStack;
+extern int *arrSpecialFnFlags;
+
+ITE_INLINE void Add_arrNumRHSUnknowns(int vx);
+
+#define Save_arrNumRHSUnknowns(vx)  { if (arrSpecialFnFlags[vx]!=nCurSpecialFnVersion) Add_arrNumRHSUnknowns(vx); }
+
+//#define LITS_PER_LEMMA_BLOCK (MAX_VBLES_PER_SMURF + 2)
+#define LITS_PER_LEMMA_BLOCK (8 + 2)
+
+// The following struct represents a single node in a linked
+// list used to represent a lemma.
+struct LemmaBlock
+{
+  int arrLits[LITS_PER_LEMMA_BLOCK];
+  LemmaBlock *pNext;
+};
+
+struct IntegerSet_ArrayBased
+{
+  int nNumElts;
+  int *arrElts;
+};
+
+struct Transition
+{
+  //SmurfState *pState;
+  SmurfState *pNextState;
+  IntegerSet_ArrayBased positiveInferences;
+  IntegerSet_ArrayBased negativeInferences;
+  double fHeuristicWeight;
+};
+
+struct SmurfState
+{
+  struct BDDNodeStruct *pFunc;
+  Transition *arrTransitions;
+  IntegerSet_ArrayBased vbles;
+  double fNodeHeuristicWeight;
+  char cFlag;
+  char cVisited;
+  double *arrHeuristicXors;
+  int nNumHeuristicXors;
+#ifdef CVS_SMURF_NODES_SHARING_BRANCHER
+#ifdef SMURF_NODES_COUNT_REFS
+  int nRefs;
+#endif
+#endif /* CVS_SMURF_NODES_SHARING_BRANCHER */
+};
+
+// Structure for representing Boolean functions of the form:
+// [lit = ] Op(lit_0, lit_1, ..., lit_(n-1)), where Op is an associative,
+// commutative operator such as /\ or \/.
+struct SpecialFunc
+{
+  int nFunctionType;
+  int nLHSVble; // index of the vble on the LHS of the equation (-1 if none)
+  int nLHSPolarity; // true => positive literal; false => negative lit.
+  int nLHSLitMarkedValue; // Value of the LHS literal.  This member will be
+  // updated in the search only after the LHS variable has been dequeued
+  // from the inference queue.  It is used to update the heuristic values
+  // of variables mentioned in the constraint.  We currently update the
+  // heuristic values by adding in delta values.  In order to do this
+  // correctly, we need to know whether the heuristic values currently
+  // in place for this constraint were based
+  // on the assumption that the LHS was instantiated or uninstantiated.
+  // It would not be correct to determine this by going directly to the current
+  // partial assignment, because the LHS variable might be assigned
+  // in the partial assignment but might not have been dequeued from
+  // the inference queue.  In this case, the heuristic scores would
+  // reflect the assumption that the LHS was UNassigned.
+  IntegerSet_ArrayBased rhsVbles;
+  int *arrRHSPolarities;
+  LemmaBlock *pLongLemma; // Given that the func is written in the form shown
+  // above, then the long lemma is lit \/ ~lit_0 \/ ... \/ ~lit_(n-1).
+  // This is a prime implicant of the constraint.
+  LemmaBlock **arrShortLemmas; // Given the form shown above, the constraint
+  // has n "short lemmas" of the form ~lit \/ lit_i, 0 <= i <= n-1.
+  // Each of these clauses are also prime implicants of the constraint. 
+  int LinkedSmurfs; // function was split into special function and smurfs 
+  int min, max; // MinMax Special function bounds
+};
+
+struct BDDNodeStruct;
+
+// Data members that are added to the BDDNodeStruct.
+typedef struct {
+  BDDNodeStruct *pReduct;
+  SmurfState *pState; /* for compressing smurfs */
+} SmurfFactoryAddons;
+
+#define SFADDONS(x) ((SmurfFactoryAddons*)(x))
+
+ITE_INLINE void FreeSmurfFactoryAddons(SmurfFactoryAddons *f);
+ITE_INLINE void InitHeuristicTablesForSpecialFuncs();
+
+ITE_INLINE SmurfState *
+AllocateSmurfState();
+
+ITE_INLINE void
+FreeSmurfStatePool();
+
+ITE_INLINE Transition *
+FindTransition(SmurfState *pState, int nVble, int nVbleValue);
+ITE_INLINE Transition *
+FindOrAddTransition(SmurfState *pState, int nVble, int nVbleValue);
+
+ITE_INLINE void
+AllocateSmurfStatesStack(int newsize);
+
+ITE_INLINE void
+AllocateSpecialFnStack(int newsize);
+
+#endif // SMURFFACTORY_H
+Index: src/solver/brancher.cc
+===================================================================
+RCS file: /home/mkouril/cvs/sbsat/src/solver/brancher.cc,v
+retrieving revision 1.17
+diff --ifdef=CVS_SMURF_NODES_SHARING_BRANCHER -r1.17 brancher.cc
+/* =========FOR INTERNAL USE ONLY. NO DISTRIBUTION PLEASE ========== */ 
+/*********************************************************************
+ Copyright 1999-2003, University of Cincinnati.  All rights reserved.
+ By using this software the USER indicates that he or she has read,
+ understood and will comply with the following:
+
+ --- University of Cincinnati hereby grants USER nonexclusive permission
+ to use, copy and/or modify this software for internal, noncommercial,
+ research purposes only. Any distribution, including commercial sale
+ or license, of this software, copies of the software, its associated
+ documentation and/or modifications of either is strictly prohibited
+ without the prior consent of University of Cincinnati.  Title to copyright
+ to this software and its associated documentation shall at all times
+ remain with University of Cincinnati.  Appropriate copyright notice shall
+ be placed on all software copies, and a complete copy of this notice
+ shall be included in all copies of the associated documentation.
+ No right is  granted to use in advertising, publicity or otherwise
+ any trademark,  service mark, or the name of University of Cincinnati.
+
+
+ --- This software and any associated documentation is provided "as is"
+
+ UNIVERSITY OF CINCINNATI MAKES NO REPRESENTATIONS OR WARRANTIES, EXPRESS
+ OR IMPLIED, INCLUDING THOSE OF MERCHANTABILITY OR FITNESS FOR A
+ PARTICULAR PURPOSE, OR THAT  USE OF THE SOFTWARE, MODIFICATIONS, OR
+ ASSOCIATED DOCUMENTATION WILL NOT INFRINGE ANY PATENTS, COPYRIGHTS,
+ TRADEMARKS OR OTHER INTELLECTUAL PROPERTY RIGHTS OF A THIRD PARTY.
+
+ University of Cincinnati shall not be liable under any circumstances for
+ any direct, indirect, special, incidental, or consequential damages
+ with respect to any claim by USER or any third party on account of
+ or arising from the use, or inability to use, this software or its
+ associated documentation, even if University of Cincinnati has been advised
+ of the possibility of those damages.
+ *********************************************************************/
+
+#include "ite.h"
+#include "solver.h"
+
+ITE_INLINE int BackTrack();
+ITE_INLINE int BackTrack_NL();
+ITE_INLINE int BackTrack_SBJ();
+ITE_INLINE void SelectNewBranchPoint();
+ITE_INLINE int UpdateEachAffectedLemma(AffectedFuncsStruct *pAFS, int nInferredValue);
+ITE_INLINE int UpdateEachAffectedSpecialFunction(AffectedFuncsStruct *pAFS);
+ITE_INLINE int UpdateEachAffectedRegularSmurf(AffectedFuncsStruct *pAFS);
+ITE_INLINE void DisplayBacktrackInfo(double &fPrevEndTime, double &fStartTime);
+ITE_INLINE void DisplayStatistics(int nNumChoicePts, int nNumBacktracks, int nNumBackjumps);
+ITE_INLINE int RecordSolution(); 
+ITE_INLINE void J_ResetHeuristicScores();
+ITE_INLINE int RecordInitialInferences();
+
+extern int nNumRegSmurfs; // Number of regular Smurfs.
+SmurfState *pTrueSmurfState = 0;  // Pointer to the Smurf state
+//representing the Boolean function 'true'.
+extern int NO_LEMMAS;
+
+int *arrFunctionType;
+BDDNodeStruct **arrFunctions;
+int nAssertionFailedVble = 0;
+int gnNumCachedLemmas=0;
+extern BacktrackStackEntry *arrBacktrackStack; 
+extern SmurfState **arrRegSmurfInitialStates;
+t_proc_hook proc_hook = NULL;
+
+
+int *arrInferenceQueue; // Indicies of atoms that already have values
+// infered, but which still need to be processed in order to update the
+// Smurf states and in order to infer the resulting consequences.
+// (Note:  we may want to use pointers to atoms here rather than array
+// indicies?)  How it works:  When we decide that an atom is to take a
+// particular value we (1) record the value in the arrSolution array, and
+// (2) place a reference to the atom in the inference queue,
+// so that the consequences of the atom taking that value will be
+// processed later.
+int *pInferenceQueueNextEmpty; // ptr to next empty slot in inference queue
+int *pInferenceQueueNextElt; // ptr to next available elt in inference queue
+//  For a given variable index,
+// gives the functions may be affected by updating that variable.
+
+t_fn_inf_queue *arrFnInferenceQueue=NULL;
+t_fn_inf_queue *pFnInferenceQueueNextEmpty=NULL;
+t_fn_inf_queue *pFnInferenceQueueNextElt=NULL;
+
+int nNumVariables;
+
+AffectedFuncsStruct *arrAFS; // "Affected Funcs Struct":
+SmurfState **arrCurrentStates=0; // Current states of all of the Smurfs, i.e.,
+// arrCurrentStates[i] is a pointer to the current state of the i-th Smurf.
+// arrCurrentStates is basically a "top-of-stack" pointer into arrStateInfoStack.
+SmurfState **arrPrevStates=0; // Current states of all of the Smurfs, i.e.,
+char *arrSolution;
+int nVble;
+
+ChoicePointStruct *arrChoicePointStack; // Info on previous branch variables.
+ChoicePointStruct *pStartChoicePointStack; 
+ChoicePointStruct *pChoicePointTop; // Next free position in above stack.
+
+int nCallsToAddLemma =  0;
+int nBacktrackStackIndex = 1;
+BacktrackStackEntry *pBacktrackTop; // Next free position in backtrack stack.
+// The next five identifiers are used for identifying and processing
+// a lemma which witnesses a forced assignment which causes a conflict
+// during the search.
+int *arrConflictLemmaLits;
+
+/* Backtrack arrays */
+int *arrUnsetLemmaFlagVars;
+
+int nNumUnresolvedFunctions;
+
+int *arrNumRHSUnknowns = 0;
+int *arrNumRHSUnknownsNew = 0;
+int *arrPrevNumRHSUnknowns = 0;
+
+int *arrNumLHSUnknowns = 0;
+int *arrNumLHSUnknownsNew = 0;
+int *arrPrevNumLHSUnknowns = 0;
+
+double *arrSumRHSUnknowns = 0;
+double *arrSumRHSUnknownsNew = 0;
+double *arrPrevSumRHSUnknowns = 0;
+
+int *arrRHSCounter = 0;
+int *arrRHSCounterNew = 0;
+int *arrPrevRHSCounter = 0;
+
+extern long nTimeLimit;
+extern long nNumChoicePointLimit;
+extern int nCtrlC;
+
+ITE_INLINE
+bool
+CheckLimits(double fStartTime)
+{
+   double fEndTime;
+   fEndTime = get_runtime();
+
+   if (nCtrlC) {
+      return 1;
+   }
+
+   if (nTimeLimit && (fEndTime - fStartTime) > nTimeLimit) {
+      d2_printf2("Bailling out because the Time limit %ld ", nTimeLimit);
+      d2_printf2("is smaller than elapsed time %.0f\n", (fEndTime - fStartTime));
+      return 1;
+   }
+
+   if (nNumChoicePointLimit && ite_counters[NUM_CHOICE_POINTS]>nNumChoicePointLimit) {
+      d2_printf2("Bailling out because the limit on the number of choicepoints %ld ",
+            nNumChoicePointLimit);
+      d2_printf2("is smaller than the number of choicepoints %ld\n", (long)ite_counters[NUM_CHOICE_POINTS]);
+      return 1;
+   }
+
+   return 0;
+}
+
+ITE_INLINE int
+ITE_Deduce()
+{
+   int err=0;
+
+   // While inference queue is nonempty
+   while (pInferenceQueueNextElt < pInferenceQueueNextEmpty)
+   {
+      // Dequeue atom and value
+      int nInferredAtom = *(pInferenceQueueNextElt++);
+      int nInferredValue = arrSolution[nInferredAtom];
+
+      var_stat[nInferredAtom].infs[nInferredValue]++;
+
+      // Determine the potentially affected constraints.
+      AffectedFuncsStruct *pAFS = arrAFS + nInferredAtom;
+
+      TB_9(
+            d9_printf3("\nInferred Atom %c%d\n", 
+               (nInferredValue==BOOL_TRUE?'+':'-'),
+               nInferredAtom);
+            );
+
+      if ((err = UpdateEachAffectedRegularSmurf(pAFS))) break;
+      if ((err = UpdateEachAffectedSpecialFunction(pAFS))) break;
+
+      if (NO_LEMMAS == 0)
+         if ((err = UpdateEachAffectedLemma(pAFS, nInferredValue))) break;
+
+   } // while inference queue is non-empty
+#ifdef MK_NULL 
+   if (err == 0) err = ITE_Fn_Deduce();
+#endif
+   ite_counters[err]++;
+   return err;
+}
+
+#ifdef MK_NULL
+ITE_INLINE void
+ITE_Fn_Deduce()
+{
+   // While fn inference queue is nonempty
+   while (pFnInferenceQueueNextElt < pFnInferenceQueueNextEmpty)
+   {
+      // Dequeue func and value
+      AffectedFuncsStruct *pAFS = arrAFS + nInferredAtom;
+      int nInferredValue = pFnInferenceQueueNextElt->
+         int nInferredValue = arrSolution[nInferredAtom];
+
+      // Determine the potentially affected constraints.
+
+      TB_9(
+            d9_printf3("\nInferred Atom %c%d\n", 
+               (nInferredValue==BOOL_TRUE?'+':'-'),
+               nInferredAtom);
+         )
+
+         if ((err = UpdateEachAffectedRegularSmurf(pAFS))) break;
+      if ((err = UpdateEachAffectedSpecialFunction(pAFS))) break;
+
+      if (NO_LEMMAS == 0)
+         if ((err = UpdateEachAffectedLemma(pAFS, nInferredValue))) break;
+   } // while fn inference queue is non-empty
+   return err;
+}
+#endif
+
+double fStartTime;
+double fEndTime;
+double fPrevEndTime;
+int (* proc_backtrack)() = NULL;
+
+ITE_INLINE int
+BrancherPreset()
+{
+   // brancher_presets
+   char *ptr = brancher_presets;
+   int lit, sign;
+   while (*ptr != 0) {
+
+      if (*ptr == '=' || *ptr == '!' || *ptr == '#') {
+         if (*(ptr+1) != ' ' && *(ptr+1) != 0) { 
+            dE_printf2("Error in preset string %s\n", ptr);
+            return SOLV_ERROR;
+         }
+         ITE_GetNextDecision(&lit, &sign);
+      } else {
+         if (*ptr == '-' || *ptr == '+') lit = atoi(ptr+1);
+         else lit = atoi(ptr);
+      }
+      switch (*ptr) {
+       case '-': sign = 0; break;
+       case '+': sign = 1; break;
+       case '#':
+       case '!': sign = 1-sign; break;
+       case '=': break;
+       default:
+                 dE_printf2("Error in preset string %s\n", ptr);
+                 return SOLV_ERROR;
+      }
+      while (*ptr != ' ' && *ptr != 0) ptr++;
+      if (*ptr == ' ') ptr++; // skip space
+      ITE_MakeDecision(lit, sign);
+      if (ITE_Deduce() != 0) return SOLV_UNSAT;
+   }
+   return SOLV_UNKNOWN;
+}
+
+
+ITE_INLINE void
+dump_counters(FILE *fd)
+{
+   for(int i=0;i<MAX_COUNTER;i++)
+      fprintf(fd, "%lld, ", ite_counters[i]);
+   for(int i=0;i<MAX_COUNTER_F;i++)
+      fprintf(fd, "%f, ", ite_counters_f[i]);
+   fprintf(fd, "\n");
+}
+
+
+ITE_INLINE int
+ITE_Split(int **path, int *path_size)
+{
+   if (pStartChoicePointStack >= pChoicePointTop) return 1;
+   int vble = pStartChoicePointStack->nBranchVble;
+   pStartChoicePointStack++;
+
+   int i=1;
+   for (BacktrackStackEntry *ptr = arrBacktrackStack; 
+         ptr->nBranchVble != vble; ptr++) i++;
+   *path_size = i;
+   i=0;
+   *path = (int*)ite_calloc(*path_size, sizeof(int), 9, "path");
+   BacktrackStackEntry *ptr = arrBacktrackStack; 
+   for (; ptr->nBranchVble != vble; ptr++) {
+      (*path)[i] = (ptr->nBranchVble << 1) + arrSolution[ptr->nBranchVble];
+      i++;
+   }
+   (*path)[i] = (ptr->nBranchVble << 1) + 1-arrSolution[ptr->nBranchVble];
+   return 0;
+}
+
+ITE_INLINE int
+CheckBtHooks()
+{
+   int ret = 0;
+   ite_counters[NUM_BACKTRACKS]++;
+   d9_printf2("\nStarting backtrack # %ld\n", (long)ite_counters[NUM_BACKTRACKS]);
+   if (ite_counters[NUM_BACKTRACKS] % BACKTRACKS_PER_STAT_REPORT == 0) {
+
+      if (reports == 0) 
+         DisplayBacktrackInfo(fPrevEndTime, fStartTime);
+      else 
+         crtwin();
+      if (CheckLimits(fStartTime)) { 
+         d2_printf1("Interrupting brancher. Solution Unknown.\n");
+         ite_counters[ERR_LIMITS] = 1;
+         return 1; /* FIXME: ERR_limits!! */
+      }
+      if (fd_csv_trace_file) {
+         dump_counters(fd_csv_trace_file);
+      }
+   }
+   if (ite_counters[NUM_BACKTRACKS] % 255 == 0)
+      Update_arrVarScores();
+
+   /* setup bt function as a hook with frequency 1 ? */
+   ret = proc_backtrack();
+
+   if (ret==0 && proc_hook && ite_counters[NUM_BACKTRACKS] % 1000 == 0) {
+      proc_hook();
+   }
+
+//#define MK_SPLIT_TEST
+#ifdef MK_SPLIT_TEST
+   if (ite_counters[NUM_BACKTRACKS] % 10000 == 0) {
+      int *path, path_size;
+      if (ITE_Split(&path, &path_size) == 0) {
+         // got it!
+         d2_printf1("------------- Split! -------------\n");
+         for(int i=0;i<path_size;i++)
+           d2_printf3("%c%d ", (path[i]&1?'+':'-'), path[i]>>1);
+         d2_printf1("\n");
+      }
+   } 
+#endif
+
+   return ret;
+}
+
+ITE_INLINE int
+CheckInitHooks()
+{
+   int ret = SOLV_UNKNOWN;
+   if (NO_LEMMAS == 1) proc_backtrack = BackTrack_NL;
+   else if (sbj) proc_backtrack = BackTrack_SBJ;
+   else proc_backtrack = BackTrack;
+
+   if (reports != 0) crtwin_init();
+
+   if (*brancher_presets) ret = BrancherPreset();
+
+   return ret;
+}
+
+ITE_INLINE int
+CheckFinalHooks()
+{
+   D_2(
+         DisplayBacktrackInfo(fPrevEndTime, fStartTime);
+         DisplayStatistics(ite_counters[NUM_CHOICE_POINTS], ite_counters[NUM_BACKTRACKS], ite_counters[NUM_TOTAL_BACKJUMPS]);
+      );
+   return 0;
+}
+
+ITE_INLINE int
+InitBrancherX()
+{
+   assert(arrSolution[0]!=BOOL_UNKNOWN);
+
+   if (nNumRegSmurfs) {
+      memset(arrChangedSmurfs, 0, sizeof(int)*nNumRegSmurfs);
+   }
+
+   if (nNumSpecialFuncs) {
+      memset(arrChangedSpecialFn, 0, sizeof(int)*nNumSpecialFuncs);
+   }
+
+   for (int i = 0; i < nNumSpecialFuncs; i++) {
+      arrPrevNumRHSUnknowns[i] =
+         arrNumRHSUnknownsNew[i] =
+         arrNumRHSUnknowns[i] = arrSpecialFuncs[i].rhsVbles.nNumElts;
+      arrPrevNumLHSUnknowns[i] =
+         arrNumLHSUnknownsNew[i] =
+         arrNumLHSUnknowns[i] = arrSpecialFuncs[i].nLHSVble > 0? 1: 0;
+      arrPrevSumRHSUnknowns[i] =
+         arrSumRHSUnknownsNew[i] =
+         arrSumRHSUnknowns[i] = 0;
+      arrPrevRHSCounter[i] =
+         arrRHSCounterNew[i] =
+         arrRHSCounter[i] = 0;
+   }
+
+   /* for restart */
+   for (int i = 1; i<nNumVariables; i++) {
+      //assert(arrSolution[i] == BOOL_UNKNOWN);
+      arrSolution[i] = BOOL_UNKNOWN;
+   }
+   
+   nNumUnresolvedFunctions = nNumRegSmurfs + nNumSpecialFuncs; 
+
+   int nRegSmurfIndex = 0;
+   for (int i = 0; i < nmbrFunctions; i++)
+   {
+      if (!IsSpecialFunc(arrFunctionType[i]))
+      {
+         arrPrevStates[nRegSmurfIndex] =
+         arrCurrentStates[nRegSmurfIndex] =
+            arrRegSmurfInitialStates[nRegSmurfIndex];
+
+         if (arrCurrentStates[nRegSmurfIndex] == pTrueSmurfState)
+         {
+            nNumUnresolvedFunctions--;
+         }
+         nRegSmurfIndex++;
+      }
+   }
+
+   for (int i = 0; i < nNumRegSmurfs; i++) {
+      arrSmurfPath[i].idx = 0;
+   }
+
+   for(int x = 1; x <= gnMaxVbleIndex; x++) 
+   {
+      arrLemmaFlag[x] = false;
+      arrBacktrackStackIndex[x] = gnMaxVbleIndex+1;
+   }
+   arrBacktrackStackIndex[0] = 0;
+   pInferenceQueueNextElt = pInferenceQueueNextEmpty = arrInferenceQueue;
+   pFnInferenceQueueNextElt = pFnInferenceQueueNextEmpty = arrFnInferenceQueue;
+
+  pStartChoicePointStack =
+  pChoicePointTop = arrChoicePointStack;
+  pConflictLemma = NULL;
+
+  pStartBacktrackStack =
+  pBacktrackTop = arrBacktrackStack;
+  nBacktrackStackIndex = 1;
+
+  if (nHeuristic == JOHNSON_HEURISTIC) {
+      for (int i = 0; i < nNumSpecialFuncs; i++) {
+         arrSumRHSUnknowns[i] = 0;
+
+         for (int j=0; j<arrSpecialFuncs[i].rhsVbles.nNumElts; j++)
+            arrSumRHSUnknowns[i] += arrJWeights[arrSpecialFuncs[i].rhsVbles.arrElts[j]];
+      }
+
+     J_ResetHeuristicScores();
+  }
+
+  return RecordInitialInferences();
+}
+
+
+
+
+// ITE_INLINE
+int
+Brancher()
+   // The main brancher routine.
+   // Returns true iff the Village has a solution,
+   // in which case it allocates an array of integers to hold the
+   // solution, and points *parrSolution to the array.
+   // The array size will be _ircuit->variables.universeSize + 2.
+   // The array values will all be BOOL_FALSE, BOOL_TRUE, or BOOL_UNKNOWN.
+   // BOOL_UNKNOWN indicates a "do not care" situation for the
+   // corresponding variable.
+{  
+   int ret = SOLV_UNKNOWN;
+
+   // Main inferencing loop.
+   fPrevEndTime = fStartTime = get_runtime();
+
+#ifndef CVS_SMURF_NODES_SHARING_BRANCHER
+   ret = CheckInitHooks(); /* FIXME: check for result */
+#else /* CVS_SMURF_NODES_SHARING_BRANCHER */
+   ret = CheckInitHooks(); 
+#endif /* CVS_SMURF_NODES_SHARING_BRANCHER */
+
+   if (ret == SOLV_UNKNOWN)
+   while (1)
+   {
+      if (ITE_Deduce()==0)
+      {
+         assert(nNumUnresolvedFunctions >= 0);
+         if (nNumUnresolvedFunctions != 0) {
+            SelectNewBranchPoint();
+            continue;
+         }
+
+         /* if this is the last solution we need -- break! */
+         if (RecordSolution() == 0) break;
+
+         /* backtrack and look for more solutions */
+      };
+
+      /* if nowhere to backtrack -- leave */
+      if (CheckBtHooks() != 0) break;
+   }
+
+   if (ite_counters_f[BRANCHER_TIME] < 0.0) ite_counters_f[BRANCHER_TIME] = 0.0; 
+   ite_counters_f[BRANCHER_TIME] = get_runtime() - fStartTime;
+   d2_printf2("Time in brancher:  %4.3f secs.\n", ite_counters_f[BRANCHER_TIME]);
+   double fBacktracksPerSec;
+   if (ite_counters_f[BRANCHER_TIME] == 0.0) fBacktracksPerSec = 0;
+   else fBacktracksPerSec = ite_counters[NUM_BACKTRACKS] / ite_counters_f[BRANCHER_TIME];
+   d2_printf2("%.3f backtracks per sec.\n", fBacktracksPerSec);      
+
+   CheckFinalHooks();
+
+   if (ite_counters[NUM_SOLUTIONS])
+      ret = SOLV_SAT;
+   else		            
+   if (ite_counters[ERR_LIMITS])
+      ret = SOLV_UNKNOWN;
+   else
+      ret = SOLV_UNSAT;
+
+   //FreeLemmas(MAX_NUM_CACHED_LEMMAS);
+   return ret;
+}
+Index: src/solver/bt_smurfs.cc
+===================================================================
+RCS file: /home/mkouril/cvs/sbsat/src/solver/bt_smurfs.cc,v
+retrieving revision 1.13
+diff --ifdef=CVS_SMURF_NODES_SHARING_BRANCHER -r1.13 bt_smurfs.cc
+/* =========FOR INTERNAL USE ONLY. NO DISTRIBUTION PLEASE ========== */
+
+/*********************************************************************
+ Copyright 1999-2003, University of Cincinnati.  All rights reserved.
+ By using this software the USER indicates that he or she has read,
+ understood and will comply with the following:
+
+ --- University of Cincinnati hereby grants USER nonexclusive permission
+ to use, copy and/or modify this software for internal, noncommercial,
+ research purposes only. Any distribution, including commercial sale
+ or license, of this software, copies of the software, its associated
+ documentation and/or modifications of either is strictly prohibited
+ without the prior consent of University of Cincinnati.  Title to copyright
+ to this software and its associated documentation shall at all times
+ remain with University of Cincinnati.  Appropriate copyright notice shall
+ be placed on all software copies, and a complete copy of this notice
+ shall be included in all copies of the associated documentation.
+ No right is  granted to use in advertising, publicity or otherwise
+ any trademark,  service mark, or the name of University of Cincinnati.
+
+
+ --- This software and any associated documentation is provided "as is"
+
+ UNIVERSITY OF CINCINNATI MAKES NO REPRESENTATIONS OR WARRANTIES, EXPRESS
+ OR IMPLIED, INCLUDING THOSE OF MERCHANTABILITY OR FITNESS FOR A
+ PARTICULAR PURPOSE, OR THAT  USE OF THE SOFTWARE, MODIFICATIONS, OR
+ ASSOCIATED DOCUMENTATION WILL NOT INFRINGE ANY PATENTS, COPYRIGHTS,
+ TRADEMARKS OR OTHER INTELLECTUAL PROPERTY RIGHTS OF A THIRD PARTY.
+
+ University of Cincinnati shall not be liable under any circumstances for
+ any direct, indirect, special, incidental, or consequential damages
+ with respect to any claim by USER or any third party on account of
+ or arising from the use, or inability to use, this software or its
+ associated documentation, even if University of Cincinnati has been advised
+ of the possibility of those damages.
+ *********************************************************************/
+#include "ite.h"
+#include "solver.h"
+
+ITE_INLINE int
+CheckSmurfInferences(int nSmurfIndex, int *arrInferences, int nNumInferences, int value)
+{
+   for (int j = 0; j < nNumInferences; j++)
+   {
+      int nNewInferredAtom = arrInferences[j];
+      int nCurrentAtomValue = arrSolution[nNewInferredAtom];
+
+      if (nCurrentAtomValue == value) continue;
+
+      LemmaBlock *pLemma = NULL;
+      LemmaInfoStruct *pLemmaInfo = NULL;
+      if (NO_LEMMAS == 0) {
+         /* create lemma */
+         arrSmurfPath[nSmurfIndex].literals[arrSmurfPath[nSmurfIndex].idx] 
+            = nNewInferredAtom * (value==BOOL_FALSE?-1:1);
+
+#ifdef MATCH_ORIGINAL_LEMMA_ORDER
+         int *arrLits = (int*)ite_calloc(arrSmurfPath[nSmurfIndex].idx+1, sizeof(int),
+               9, "arrLits");
+         for (int i=0; i<arrSmurfPath[nSmurfIndex].idx+1;i++)
+            arrLits[arrSmurfPath[nSmurfIndex].idx+1-i-1] = arrSmurfPath[nSmurfIndex].literals[i];
+
+         pLemmaInfo=AddLemma(arrSmurfPath[nSmurfIndex].idx+1,
+               arrLits/*arrSmurfPath[nSmurfIndex].literals*/,
+               false, NULL, NULL);
+         pLemma = pLemmaInfo->pLemma;
+         free(arrLits);
+#else
+         pLemmaInfo=AddLemma(arrSmurfPath[nSmurfIndex].idx+1,
+               arrSmurfPath[nSmurfIndex].literals, false, NULL, NULL);
+         pLemma = pLemmaInfo->pLemma;
+#endif
+         //DisplayLemmaStatus(pLemma, arrSolution);
+      } else {
+         //pLemma = NULL;
+         //pLemmaInfo = NULL;
+      }
+
+      if (nCurrentAtomValue == BOOL_UNKNOWN)
+      {
+         ite_counters[INF_SMURF]++;
+         InferLiteral(nNewInferredAtom, value, false, pLemma, pLemmaInfo, 1);
+      }
+      else // if (nCurrentAtomValue != value)
+      {
+         // Conflict -- backtrack.
+         TB_9(
+               d9_printf1("Conflict:  goto Backtrack\n");
+            )
+
+         pConflictLemma = pLemma;
+         pConflictLemmaInfo = pLemmaInfo; /* so we can free it */
+         //goto_Backtrack;
+         return ERR_BT_SMURF;
+      }
+   }
+   return 0;
+}
+
+
+extern int *arrChangedSmurfs;
+
+inline
+ITE_INLINE int 
+UpdateRegularSmurf(int nSmurfIndex)
+{
+   SmurfState *pState;
+
+   d9_printf2("Visiting Regular Smurf #%d\n", nSmurfIndex);
+
+   pState = arrCurrentStates[nSmurfIndex];
+
+   while(1) 
+   {
+      int vble = 0, k;
+      int nNumElts = pState->vbles.nNumElts;
+      int *arrElts = pState->vbles.arrElts;
+      for (k = 0; k < nNumElts; k++) 
+      {
+         vble = arrElts[k];
+         if (arrSolution[vble]!=BOOL_UNKNOWN)  break;
+      }
+
+      /* if no more instantiated variables */
+      if (k == nNumElts) break;
+
+      //Save_arrCurrentStates(nSmurfIndex);
+
+      if (NO_LEMMAS == 0) {
+         // keep track of the path for lemmas
+         // the atoms in the path is reversed for lemmas
+         arrSmurfPath[nSmurfIndex].literals[arrSmurfPath[nSmurfIndex].idx++] 
+            = arrElts[k] * (arrSolution[vble]==BOOL_FALSE?1:-1);
+      }
+
+      // Get the transition.
+      Transition *pTransition = FindTransition(pState, k, vble, arrSolution[vble]);
+      if (pTransition->pNextState == NULL) pTransition = CreateTransition(pState, k, vble, arrSolution[vble]);
+      assert(pTransition->pNextState != NULL);
+
+      if (pTransition->positiveInferences.nNumElts &&
+            CheckSmurfInferences(
+               nSmurfIndex,
+               pTransition->positiveInferences.arrElts,
+                  pTransition->positiveInferences.nNumElts,
+                  BOOL_TRUE)) return ERR_BT_SMURF;
+
+         if (pTransition->negativeInferences.nNumElts &&
+               CheckSmurfInferences(
+                  nSmurfIndex,
+                  pTransition->negativeInferences.arrElts,
+                  pTransition->negativeInferences.nNumElts,
+                  BOOL_FALSE)) return ERR_BT_SMURF;
+
+         pState->cVisited |= 1;
+         arrCurrentStates[nSmurfIndex] = 
+            pState = pTransition->pNextState;
+         assert(arrCurrentStates[nSmurfIndex] != NULL);
+#ifdef CVS_SMURF_NODES_SHARING_BRANCHER
+
+#ifdef SMURF_NODES_COUNT_REFS
+         // can't do it here
+         // previous saved smurf state was the node which
+         // this smurf started this backtrack level with
+         // have to do this in the end of the level? (Ha!)
+         Add_arrSmurfStatesStack(nSmurfIndex);
+         arrCurrentStates[nSmurfIndex]->nRefs++;
+         if (arrCurrentStates[nSmurfIndex]->nRefs > 1) {
+            // someone else is already here -- so stop
+            arrCurrentStates[nSmurfIndex] = 
+               pState = pTrueSmurfState;
+         }
+#endif
+
+#endif /* CVS_SMURF_NODES_SHARING_BRANCHER */
+         if (pState == pTrueSmurfState)
+         {
+            nNumUnresolvedFunctions--;
+            TB_9(
+                  d9_printf3("Decremented nNumUnresolvedFunctions to %d due to smurf # %d\n",
+                     nNumUnresolvedFunctions, nSmurfIndex);
+               )
+               break; // break the for all vbles in smurf loop
+         }
+
+   } // while (1) there is a instantiated variable
+
+   return NO_ERROR;
+}
+
+ITE_INLINE int
+UpdateEachAffectedRegularSmurf(AffectedFuncsStruct *pAFS)
+{
+   int nSmurfIndex;
+
+   // Determine the potentially affected regular Smurfs.
+   int nNumRegSmurfsAffected = pAFS->nNumRegSmurfsAffected;
+   int *arrRegSmurfsAffected = pAFS->arrRegSmurfsAffected;
+
+   // Update each affected regular Smurf.
+   for (int i = 0; i < nNumRegSmurfsAffected; i++)
+   {
+      nSmurfIndex = arrRegSmurfsAffected[i];
+      if ((arrChangedSmurfs[nSmurfIndex]&1) == 0) continue;
+
+      // Update the Smurf state.
+      arrChangedSmurfs[nSmurfIndex] = 2;
+
+      if (arrCurrentStates[nSmurfIndex] == pTrueSmurfState) continue;
+
+      int ret = UpdateRegularSmurf(nSmurfIndex);
+      if (ret != NO_ERROR) return ret;
+      
+   } // for each affected regular Smurf
+
+   return NO_ERROR;
+}
+
+Index: src/solver/j_smurf.cc
+===================================================================
+RCS file: /home/mkouril/cvs/sbsat/src/solver/j_smurf.cc,v
+retrieving revision 1.3
+diff --ifdef=CVS_SMURF_NODES_SHARING_BRANCHER -r1.3 j_smurf.cc
+/* =========FOR INTERNAL USE ONLY. NO DISTRIBUTION PLEASE ========== */
+
+/*********************************************************************
+ Copyright 1999-2003, University of Cincinnati.  All rights reserved.
+ By using this software the USER indicates that he or she has read,
+ understood and will comply with the following:
+
+ --- University of Cincinnati hereby grants USER nonexclusive permission
+ to use, copy and/or modify this software for internal, noncommercial,
+ research purposes only. Any distribution, including commercial sale
+ or license, of this software, copies of the software, its associated
+ documentation and/or modifications of either is strictly prohibited
+ without the prior consent of University of Cincinnati.  Title to copyright
+ to this software and its associated documentation shall at all times
+ remain with University of Cincinnati.  Appropriate copyright notice shall
+ be placed on all software copies, and a complete copy of this notice
+ shall be included in all copies of the associated documentation.
+ No right is  granted to use in advertising, publicity or otherwise
+ any trademark,  service mark, or the name of University of Cincinnati.
+
+
+ --- This software and any associated documentation is provided "as is"
+
+ UNIVERSITY OF CINCINNATI MAKES NO REPRESENTATIONS OR WARRANTIES, EXPRESS
+ OR IMPLIED, INCLUDING THOSE OF MERCHANTABILITY OR FITNESS FOR A
+ PARTICULAR PURPOSE, OR THAT  USE OF THE SOFTWARE, MODIFICATIONS, OR
+ ASSOCIATED DOCUMENTATION WILL NOT INFRINGE ANY PATENTS, COPYRIGHTS,
+ TRADEMARKS OR OTHER INTELLECTUAL PROPERTY RIGHTS OF A THIRD PARTY.
+
+ University of Cincinnati shall not be liable under any circumstances for
+ any direct, indirect, special, incidental, or consequential damages
+ with respect to any claim by USER or any third party on account of
+ or arising from the use, or inability to use, this software or its
+ associated documentation, even if University of Cincinnati has been advised
+ of the possibility of those damages.
+ *********************************************************************/
+#include "ite.h"
+#include "solver.h"
+
+extern SmurfState **arrRegSmurfInitialStates;
+
+ITE_INLINE void
+J_Update_RHS_AND(SpecialFunc * pSpecialFunc, HWEIGHT fPosDelta, HWEIGHT fNegDelta);
+
+ITE_INLINE void
+GetHeurScoresFromSmurf(int i)
+{
+   // Get a ptr to the Smurf state.
+   SmurfState *pState = arrRegSmurfInitialStates[i];
+                     
+   // Do nothing if constraint is trivial.
+   if (pState == pTrueSmurfState) return;
+
+   int *arrElts = pState->vbles.arrElts;
+   int j=0;
+   int k;
+   if (arrSmurfChain[i].specfn == -1) {
+      for (k = 0; k < pState->vbles.nNumElts; k++) {
+         int nVble = arrElts[k];
+         arrHeurScores[nVble].Pos += pState->arrTransitions[j+BOOL_TRUE].fHeuristicWeight;
+         arrHeurScores[nVble].Neg += pState->arrTransitions[j+BOOL_FALSE].fHeuristicWeight;
+         j+=2;
+      }
+   } else {
+      int n = arrNumRHSUnknowns[arrSmurfChain[i].specfn];
+      for (k = 0; k < pState->vbles.nNumElts; k++) {
+         int nVble = arrElts[k];
+         arrHeurScores[nVble].Pos +=
+            pState->arrTransitions[j+BOOL_TRUE].pNextState->arrHeuristicXors[n];
+         arrHeurScores[nVble].Neg +=
+            pState->arrTransitions[j+BOOL_FALSE].pNextState->arrHeuristicXors[n];
+         j+=2;
+      }
+   }
+}
+
+ITE_INLINE void
+J_UpdateHeuristicSmurf(SmurfState *pOldState, SmurfState *pState, int nSmurfIndex) {
+   int k,j;
+   int *arrElts;
+   int nPrevNumRHSUnknowns=0;
+   int neg_idx=0;
+   SpecialFunc *pSpecialFunc=NULL;
+   HWEIGHT fScorePos = 0;
+   HWEIGHT fScoreNeg = 0;
+#ifdef CVS_SMURF_NODES_SHARING_BRANCHER
+#ifdef SMURF_NODES_COUNT_REFS
+   int nOldRefs = pOldState->nRefs;
+   int nNewRefs = pState->nRefs;
+#else
+#define nOldRefs 1
+#define nNewRefs 1
+#endif
+#endif /* CVS_SMURF_NODES_SHARING_BRANCHER */
+
+   // remove heuristic influence 
+   arrElts  = pOldState->vbles.arrElts;
+   j=0;
+   if (arrSmurfChain[nSmurfIndex].specfn == -1) {
+      for (k = 0; k < pOldState->vbles.nNumElts; k++) {
+         int nVble = arrElts[k];
+         Save_arrHeurScores(nVble);
+#ifndef CVS_SMURF_NODES_SHARING_BRANCHER
+         arrHeurScores[nVble].Pos -= pOldState->arrTransitions[j+BOOL_TRUE].fHeuristicWeight;
+         arrHeurScores[nVble].Neg -= pOldState->arrTransitions[j+BOOL_FALSE].fHeuristicWeight;
+#else /* CVS_SMURF_NODES_SHARING_BRANCHER */
+         arrHeurScores[nVble].Pos -= pOldState->arrTransitions[j+BOOL_TRUE].fHeuristicWeight*nOldRefs;
+         arrHeurScores[nVble].Neg -= pOldState->arrTransitions[j+BOOL_FALSE].fHeuristicWeight*nOldRefs;
+#endif /* CVS_SMURF_NODES_SHARING_BRANCHER */
+         j+=2;
+      }
+   } else {
+      pSpecialFunc = arrSpecialFuncs + arrSmurfChain[nSmurfIndex].specfn;
+      nPrevNumRHSUnknowns = arrPrevNumRHSUnknowns[arrSmurfChain[nSmurfIndex].specfn];
+      if (nPrevNumRHSUnknowns == 0)  {
+         for (k = 0; k < pOldState->vbles.nNumElts; k++) {
+            int nVble = arrElts[k];
+            Save_arrHeurScores(nVble);
+            arrHeurScores[nVble].Pos -= 
+#ifndef CVS_SMURF_NODES_SHARING_BRANCHER
+               pOldState->arrTransitions[j+BOOL_TRUE].fHeuristicWeight;
+#else /* CVS_SMURF_NODES_SHARING_BRANCHER */
+               pOldState->arrTransitions[j+BOOL_TRUE].fHeuristicWeight*nOldRefs;
+#endif /* CVS_SMURF_NODES_SHARING_BRANCHER */
+            arrHeurScores[nVble].Neg -= 
+#ifndef CVS_SMURF_NODES_SHARING_BRANCHER
+               pOldState->arrTransitions[j+BOOL_FALSE].fHeuristicWeight;
+#else /* CVS_SMURF_NODES_SHARING_BRANCHER */
+               pOldState->arrTransitions[j+BOOL_FALSE].fHeuristicWeight*nOldRefs;
+#endif /* CVS_SMURF_NODES_SHARING_BRANCHER */
+            j+=2;
+         }
+      } else {
+         /* nPrevNumRHSUnknowns > 0 */
+         for (k = 0; k < pOldState->vbles.nNumElts; k++) {
+            int nVble = arrElts[k];
+            Save_arrHeurScores(nVble);
+            arrHeurScores[nVble].Pos -= 
+#ifndef CVS_SMURF_NODES_SHARING_BRANCHER
+               pOldState->arrTransitions[j+BOOL_TRUE].pNextState->arrHeuristicXors[nPrevNumRHSUnknowns];
+#else /* CVS_SMURF_NODES_SHARING_BRANCHER */
+               pOldState->arrTransitions[j+BOOL_TRUE].pNextState->arrHeuristicXors[nPrevNumRHSUnknowns]*nOldRefs;
+#endif /* CVS_SMURF_NODES_SHARING_BRANCHER */
+            arrHeurScores[nVble].Neg -= 
+#ifndef CVS_SMURF_NODES_SHARING_BRANCHER
+               pOldState->arrTransitions[j+BOOL_FALSE].pNextState->arrHeuristicXors[nPrevNumRHSUnknowns];
+#else /* CVS_SMURF_NODES_SHARING_BRANCHER */
+               pOldState->arrTransitions[j+BOOL_FALSE].pNextState->arrHeuristicXors[nPrevNumRHSUnknowns]*nOldRefs;
+#endif /* CVS_SMURF_NODES_SHARING_BRANCHER */
+            j+=2;
+         }
+      }
+      // update special function 
+      if (pOldState == pTrueSmurfState) {
+         fScorePos = 
+#ifndef CVS_SMURF_NODES_SHARING_BRANCHER
+         fScoreNeg = -pOldState->arrHeuristicXors[nPrevNumRHSUnknowns];
+#else /* CVS_SMURF_NODES_SHARING_BRANCHER */
+         fScoreNeg = -pOldState->arrHeuristicXors[nPrevNumRHSUnknowns]*nOldRefs;
+#endif /* CVS_SMURF_NODES_SHARING_BRANCHER */
+      } else if (nPrevNumRHSUnknowns > 2) {
+         fScorePos = 
+#ifndef CVS_SMURF_NODES_SHARING_BRANCHER
+         fScoreNeg = -pOldState->arrHeuristicXors[nPrevNumRHSUnknowns-1];
+#else /* CVS_SMURF_NODES_SHARING_BRANCHER */
+         fScoreNeg = -pOldState->arrHeuristicXors[nPrevNumRHSUnknowns-1]*nOldRefs;
+#endif /* CVS_SMURF_NODES_SHARING_BRANCHER */
+      } else {
+         int counter=0;
+         int nNumElts = pSpecialFunc->rhsVbles.nNumElts;
+         int *arrElts = pSpecialFunc->rhsVbles.arrElts;
+         for (int j = 0; j < nNumElts; j++)
+         {
+            int vble = arrElts[j];
+            if (arrSolution[vble]!=BOOL_UNKNOWN &&
+                  arrSolution[vble] == pSpecialFunc->arrRHSPolarities[j])
+               counter++;
+         }
+         neg_idx = (pSpecialFunc->arrRHSPolarities[0]+counter) % 2;
+#ifndef CVS_SMURF_NODES_SHARING_BRANCHER
+         fScorePos = -pOldState->arrHeuristicXors[1-neg_idx]; 
+         fScoreNeg = -pOldState->arrHeuristicXors[neg_idx];
+#else /* CVS_SMURF_NODES_SHARING_BRANCHER */
+         fScorePos = -pOldState->arrHeuristicXors[1-neg_idx]*nOldRefs; 
+         fScoreNeg = -pOldState->arrHeuristicXors[neg_idx]*nOldRefs;
+#endif /* CVS_SMURF_NODES_SHARING_BRANCHER */
+      }
+   }
+
+   // can't return because the XOR part of the BROKEN-XOR-SMURF might not be true YET
+   //if (pState == pTrueSmurfState) return;
+   
+   // add heuristic influence 
+   arrElts  = pState->vbles.arrElts;
+   j=0;
+   if (arrSmurfChain[nSmurfIndex].specfn == -1) {
+      for (k = 0; k < pState->vbles.nNumElts; k++) {
+         int nVble = arrElts[k];
+#ifndef CVS_SMURF_NODES_SHARING_BRANCHER
+         arrHeurScores[nVble].Pos += pState->arrTransitions[j+BOOL_TRUE].fHeuristicWeight;
+         arrHeurScores[nVble].Neg += pState->arrTransitions[j+BOOL_FALSE].fHeuristicWeight;
+#else /* CVS_SMURF_NODES_SHARING_BRANCHER */
+         arrHeurScores[nVble].Pos += pState->arrTransitions[j+BOOL_TRUE].fHeuristicWeight*nNewRefs;
+         arrHeurScores[nVble].Neg += pState->arrTransitions[j+BOOL_FALSE].fHeuristicWeight*nNewRefs;
+#endif /* CVS_SMURF_NODES_SHARING_BRANCHER */
+         pState->arrTransitions[j+BOOL_TRUE].pNextState->cVisited |= 2;
+         pState->arrTransitions[j+BOOL_FALSE].pNextState->cVisited |= 2;
+         j+=2;
+      }
+   } else {
+      if (nPrevNumRHSUnknowns == 0) {
+         for (k = 0; k < pState->vbles.nNumElts; k++) {
+            int nVble = arrElts[k];
+            arrHeurScores[nVble].Pos += 
+#ifndef CVS_SMURF_NODES_SHARING_BRANCHER
+               pState->arrTransitions[j+BOOL_TRUE].fHeuristicWeight;
+#else /* CVS_SMURF_NODES_SHARING_BRANCHER */
+               pState->arrTransitions[j+BOOL_TRUE].fHeuristicWeight*nNewRefs;
+#endif /* CVS_SMURF_NODES_SHARING_BRANCHER */
+            arrHeurScores[nVble].Neg += 
+#ifndef CVS_SMURF_NODES_SHARING_BRANCHER
+               pState->arrTransitions[j+BOOL_FALSE].fHeuristicWeight;
+#else /* CVS_SMURF_NODES_SHARING_BRANCHER */
+               pState->arrTransitions[j+BOOL_FALSE].fHeuristicWeight*nNewRefs;
+#endif /* CVS_SMURF_NODES_SHARING_BRANCHER */
+
+            j+=2;
+         }
+      } else {
+         /* nPrevNumRHSUnknowns > 0 */
+         for (k = 0; k < pState->vbles.nNumElts; k++) {
+            int nVble = arrElts[k];
+            arrHeurScores[nVble].Pos += 
+#ifndef CVS_SMURF_NODES_SHARING_BRANCHER
+               pState->arrTransitions[j+BOOL_TRUE].pNextState->arrHeuristicXors[nPrevNumRHSUnknowns];
+#else /* CVS_SMURF_NODES_SHARING_BRANCHER */
+               pState->arrTransitions[j+BOOL_TRUE].pNextState->arrHeuristicXors[nPrevNumRHSUnknowns]*nNewRefs;
+#endif /* CVS_SMURF_NODES_SHARING_BRANCHER */
+            arrHeurScores[nVble].Neg += 
+#ifndef CVS_SMURF_NODES_SHARING_BRANCHER
+               pState->arrTransitions[j+BOOL_FALSE].pNextState->arrHeuristicXors[nPrevNumRHSUnknowns];
+#else /* CVS_SMURF_NODES_SHARING_BRANCHER */
+               pState->arrTransitions[j+BOOL_FALSE].pNextState->arrHeuristicXors[nPrevNumRHSUnknowns]*nNewRefs;
+#endif /* CVS_SMURF_NODES_SHARING_BRANCHER */
+            j+=2;
+         }
+      }
+
+      // update special function 
+      if (pState == pTrueSmurfState) {
+#ifndef CVS_SMURF_NODES_SHARING_BRANCHER
+         fScorePos += pState->arrHeuristicXors[nPrevNumRHSUnknowns];
+         fScoreNeg += pState->arrHeuristicXors[nPrevNumRHSUnknowns];
+#else /* CVS_SMURF_NODES_SHARING_BRANCHER */
+         fScorePos += pState->arrHeuristicXors[nPrevNumRHSUnknowns]*nNewRefs;
+         fScoreNeg += pState->arrHeuristicXors[nPrevNumRHSUnknowns]*nNewRefs;
+#endif /* CVS_SMURF_NODES_SHARING_BRANCHER */
+      } else if (nPrevNumRHSUnknowns > 2) {
+#ifndef CVS_SMURF_NODES_SHARING_BRANCHER
+         fScorePos += pState->arrHeuristicXors[nPrevNumRHSUnknowns-1];
+         fScoreNeg += pState->arrHeuristicXors[nPrevNumRHSUnknowns-1];
+#else /* CVS_SMURF_NODES_SHARING_BRANCHER */
+         fScorePos += pState->arrHeuristicXors[nPrevNumRHSUnknowns-1]*nNewRefs;
+         fScoreNeg += pState->arrHeuristicXors[nPrevNumRHSUnknowns-1]*nNewRefs;
+#endif /* CVS_SMURF_NODES_SHARING_BRANCHER */
+      } else {
+#ifndef CVS_SMURF_NODES_SHARING_BRANCHER
+         fScorePos += pState->arrHeuristicXors[1-neg_idx]; 
+         fScoreNeg += pState->arrHeuristicXors[neg_idx];
+#else /* CVS_SMURF_NODES_SHARING_BRANCHER */
+         fScorePos += pState->arrHeuristicXors[1-neg_idx]*nNewRefs; 
+         fScoreNeg += pState->arrHeuristicXors[neg_idx]*nNewRefs;
+#endif /* CVS_SMURF_NODES_SHARING_BRANCHER */
+      }
+      J_Update_RHS_AND(pSpecialFunc, fScorePos, fScoreNeg);
+   }
+}
+
+Index: src/solver/state_stacks.cc
+===================================================================
+RCS file: /home/mkouril/cvs/sbsat/src/solver/state_stacks.cc,v
+retrieving revision 1.7
+diff --ifdef=CVS_SMURF_NODES_SHARING_BRANCHER -r1.7 state_stacks.cc
+/* =========FOR INTERNAL USE ONLY. NO DISTRIBUTION PLEASE ========== */
+
+/*********************************************************************
+ Copyright 1999-2003, University of Cincinnati.  All rights reserved.
+ By using this software the USER indicates that he or she has read,
+ understood and will comply with the following:
+
+ --- University of Cincinnati hereby grants USER nonexclusive permission
+ to use, copy and/or modify this software for internal, noncommercial,
+ research purposes only. Any distribution, including commercial sale
+ or license, of this software, copies of the software, its associated
+ documentation and/or modifications of either is strictly prohibited
+ without the prior consent of University of Cincinnati.  Title to copyright
+ to this software and its associated documentation shall at all times
+ remain with University of Cincinnati.  Appropriate copyright notice shall
+ be placed on all software copies, and a complete copy of this notice
+ shall be included in all copies of the associated documentation.
+ No right is  granted to use in advertising, publicity or otherwise
+ any trademark,  service mark, or the name of University of Cincinnati.
+
+
+ --- This software and any associated documentation is provided "as is"
+
+ UNIVERSITY OF CINCINNATI MAKES NO REPRESENTATIONS OR WARRANTIES, EXPRESS
+ OR IMPLIED, INCLUDING THOSE OF MERCHANTABILITY OR FITNESS FOR A
+ PARTICULAR PURPOSE, OR THAT  USE OF THE SOFTWARE, MODIFICATIONS, OR
+ ASSOCIATED DOCUMENTATION WILL NOT INFRINGE ANY PATENTS, COPYRIGHTS,
+ TRADEMARKS OR OTHER INTELLECTUAL PROPERTY RIGHTS OF A THIRD PARTY.
+
+ University of Cincinnati shall not be liable under any circumstances for
+ any direct, indirect, special, incidental, or consequential damages
+ with respect to any claim by USER or any third party on account of
+ or arising from the use, or inability to use, this software or its
+ associated documentation, even if University of Cincinnati has been advised
+ of the possibility of those damages.
+*********************************************************************/
+#include "ite.h"
+#include "solver.h"
+
+/* pop the information */
+
+#define MAX_SMURF_STATES_STACK_POOL 100
+int nCurSmurfStatesVersion=1;
+int nSmurfStatesStackIdx=0;
+tSmurfStatesStack *arrSmurfStatesStack=NULL;
+int *arrSmurfStatesFlags=NULL;
+typedef struct _tSmurfStatesStackPool { 
+   tSmurfStatesStack *stack; 
+   int max; 
+   _tSmurfStatesStackPool *next;
+} tSmurfStatesStackPool;
+tSmurfStatesStackPool *arrSmurfStatesStackPool=NULL;
+tSmurfStatesStackPool *arrSmurfStatesStackPoolHead=NULL;
+
+#define MAX_SPECIAL_FN_STACK_POOL 100
+int nCurSpecialFnVersion=1;
+int nSpecialFnStackIdx=0;
+int nMaxSpecialFnStackIdx=0;
+tSpecialFnStack *arrSpecialFnStack=NULL;
+int *arrSpecialFnFlags=NULL;
+typedef struct _tSpecialFnStackPool {
+   tSpecialFnStack *stack; 
+   int max; 
+   _tSpecialFnStackPool *next;
+} tSpecialFnStackPool;
+tSpecialFnStackPool *arrSpecialFnStackPool=NULL;
+tSpecialFnStackPool *arrSpecialFnStackPoolHead=NULL;
+
+ITE_INLINE void Mark_arrSmurfStatesStack(int vx);
+ITE_INLINE void Mark_arrNumRHSUnknowns(int vx);
+ITE_INLINE void NextSpecialFnStack();
+ITE_INLINE void NextSmurfStatesStack();
+ITE_INLINE void InitializeSmurfStatesStack();
+ITE_INLINE void InitializeSpecialFnStack();
+
+#define LEVEL_START -1
+#define POOL_START -2
+#define POOL_END -3
+#define LEVEL_MARK -4
+
+ITE_INLINE
+int
+pop_mark_state_information()
+{
+   d9_printf1("pop_mark_state_information()\n");
+
+   /* pop smurf state stack */
+   assert(nSmurfStatesStackIdx>0);
+
+   /* until LEVEL_START or LEVEL_MARK*/
+   while (arrSmurfStatesStack[nSmurfStatesStackIdx].smurf != LEVEL_START &&
+         arrSmurfStatesStack[nSmurfStatesStackIdx].smurf != LEVEL_MARK) {
+      int smurf=arrSmurfStatesStack[nSmurfStatesStackIdx].smurf;
+
+      if (smurf == POOL_START) 
+      {
+         nSmurfStatesStackIdx--;
+         tSmurfStatesStack *new_arrSmurfStatesStack = (tSmurfStatesStack*)
+            (arrSmurfStatesStack[nSmurfStatesStackIdx--].u.next_pool);
+         nSmurfStatesStackIdx = 
+            arrSmurfStatesStack[nSmurfStatesStackIdx].u.index_pool;
+         assert(new_arrSmurfStatesStack[nSmurfStatesStackIdx].smurf==POOL_END);
+         arrSmurfStatesStack = new_arrSmurfStatesStack;
+      } else {
+         if (smurf >= 0) 
+         {
+            d9_printf2("pop_mark_state_information: smurf(%d)\n", smurf);
+
+            arrPrevStates[smurf]=
+            arrCurrentStates[smurf]=
+               arrSmurfStatesStack[nSmurfStatesStackIdx].u.state;
+            arrSmurfPath[smurf].idx =
+               arrSmurfStatesStack[nSmurfStatesStackIdx].path_idx;
+            arrSmurfStatesFlags[smurf]=
+               arrSmurfStatesStack[nSmurfStatesStackIdx].prev;
+#ifdef CVS_SMURF_NODES_SHARING_BRANCHER
+#ifdef SMURF_NODES_COUNT_REFS
+            arrCurrentStates[smurf]->nRefs = 
+               arrSmurfStatesStack[nSmurfStatesStackIdx].refs;
+#endif
+#endif /* CVS_SMURF_NODES_SHARING_BRANCHER */
+            arrChangedSmurfs[smurf]=0;
+         }
+      }
+      nSmurfStatesStackIdx--;
+   }
+   /* keep the mark on the top of the stack */
+   assert(nSmurfStatesStackIdx>0);
+
+   /* Pop the special function information. */
+   assert(nSpecialFnStackIdx > 0);
+
+   /* until LEVEL_START or LEVEL_MARK */
+   while (arrSpecialFnStack[nSpecialFnStackIdx].fn != LEVEL_START &&
+         arrSpecialFnStack[nSpecialFnStackIdx].fn != LEVEL_MARK) {
+      int fn=arrSpecialFnStack[nSpecialFnStackIdx].fn;
+
+      if (fn == POOL_START) {
+         nSpecialFnStackIdx--;
+         tSpecialFnStack *new_arrSpecialFnStack = 
+            (tSpecialFnStack*)(arrSpecialFnStack[nSpecialFnStackIdx--].u.next_pool);
+         nSpecialFnStackIdx = arrSpecialFnStack[nSpecialFnStackIdx].u.index_pool;
+         assert(new_arrSpecialFnStack[nSpecialFnStackIdx].fn==POOL_END);
+         arrSpecialFnStack = new_arrSpecialFnStack;
+      } else {
+         if (fn >= 0) 
+         {
+            d9_printf6("pop_mark_state_information: specfn(%d), #RHSUnknowns: %d -> %d, #LHSUnknowns: %d -> %d\n", fn, 
+                  arrNumRHSUnknowns[fn], arrSpecialFnStack[nSpecialFnStackIdx].u.value,
+                  arrNumLHSUnknowns[fn], arrSpecialFnStack[nSpecialFnStackIdx].lhsvalue);
+
+            arrNumRHSUnknownsNew[fn]=
+            arrPrevNumRHSUnknowns[fn]=
+            arrNumRHSUnknowns[fn]=arrSpecialFnStack[nSpecialFnStackIdx].u.value;
+
+            arrNumLHSUnknownsNew[fn]=
+            arrPrevNumLHSUnknowns[fn]=
+            arrNumLHSUnknowns[fn]=arrSpecialFnStack[nSpecialFnStackIdx].lhsvalue;
+
+            arrSumRHSUnknownsNew[fn]=
+            arrPrevSumRHSUnknowns[fn]=
+            arrSumRHSUnknowns[fn]=arrSpecialFnStack[nSpecialFnStackIdx].rhssum;
+
+            arrRHSCounterNew[fn]=
+            arrPrevRHSCounter[fn]=
+            arrRHSCounter[fn]=arrSpecialFnStack[nSpecialFnStackIdx].rhscounter;
+
+            arrSpecialFnFlags[fn]=arrSpecialFnStack[nSpecialFnStackIdx].prev;
+            arrChangedSpecialFn[fn]=0;
+         }
+      }
+      nSpecialFnStackIdx--;
+   }
+
+   /* keep the mark on the top of the stack */
+   assert(nSpecialFnStackIdx>0);
+
+   assert(arrSpecialFnStack[nSpecialFnStackIdx].fn == 
+         arrSmurfStatesStack[nSmurfStatesStackIdx].smurf);
+
+   if (arrSpecialFnStack[nSpecialFnStackIdx].fn == LEVEL_MARK)  {
+      d9_printf1("pop_mark_state_information() mark found\n");
+      return 1;
+   } else {
+      d9_printf1("pop_mark_state_information() mark not found\n");
+      return 0; 
+   }
+}
+
+
+ITE_INLINE
+void
+pop_state_information(int n)
+{
+   d9_printf2("pop_state_information(%d)\n", n);
+
+   for (int i=0;i<n;i++)
+   {
+      /* pop smurf state stack */
+      assert(nSmurfStatesStackIdx>0);
+
+      /* until LEVEL_START */
+      while (arrSmurfStatesStack[nSmurfStatesStackIdx].smurf != LEVEL_START) {
+         int smurf=arrSmurfStatesStack[nSmurfStatesStackIdx].smurf;
+
+         if (smurf == POOL_START) {
+            nSmurfStatesStackIdx--;
+            tSmurfStatesStack *new_arrSmurfStatesStack = (tSmurfStatesStack*)
+               (arrSmurfStatesStack[nSmurfStatesStackIdx--].u.next_pool);
+            nSmurfStatesStackIdx = 
+               arrSmurfStatesStack[nSmurfStatesStackIdx].u.index_pool;
+            assert(new_arrSmurfStatesStack[nSmurfStatesStackIdx].smurf==POOL_END);
+            arrSmurfStatesStack = new_arrSmurfStatesStack;
+         } else 
+            if (smurf >= 0) {
+               d9_printf2("pop_state_information: smurf(%d)\n", smurf);
+
+               arrPrevStates[smurf] =
+               arrCurrentStates[smurf] =
+                  arrSmurfStatesStack[nSmurfStatesStackIdx].u.state;
+               arrSmurfPath[smurf].idx =
+                  arrSmurfStatesStack[nSmurfStatesStackIdx].path_idx;
+               arrSmurfStatesFlags[smurf]=
+                  arrSmurfStatesStack[nSmurfStatesStackIdx].prev;
+#ifdef CVS_SMURF_NODES_SHARING_BRANCHER
+#ifdef SMURF_NODES_COUNT_REFS
+               arrCurrentStates[smurf]->nRefs = 
+                  arrSmurfStatesStack[nSmurfStatesStackIdx].refs;
+#endif
+#endif /* CVS_SMURF_NODES_SHARING_BRANCHER */
+               arrChangedSmurfs[smurf]=0;
+            }
+         nSmurfStatesStackIdx--;
+      }
+
+      nSmurfStatesStackIdx--; /* skip the LEVEL_START */
+
+      assert(nSmurfStatesStackIdx>0);
+      //assert(nCurSmurfStatesVersion = arrSmurfStatesStack[nSmurfStatesStackIdx+1].u.version);
+      //nCurSmurfStatesVersion--;
+
+      nCurSmurfStatesVersion = arrSmurfStatesStack[nSmurfStatesStackIdx+1].u.version;
+
+      /* Pop the special function information. */
+      assert(nSpecialFnStackIdx > 0);
+
+      /* until LEVEL_START */
+      while (arrSpecialFnStack[nSpecialFnStackIdx].fn != LEVEL_START) {
+         int fn=arrSpecialFnStack[nSpecialFnStackIdx].fn;
+
+         if (fn == POOL_START) {
+            nSpecialFnStackIdx--;
+            tSpecialFnStack *new_arrSpecialFnStack = 
+               (tSpecialFnStack*)(arrSpecialFnStack[nSpecialFnStackIdx--].u.next_pool);
+            assert(new_arrSpecialFnStack[/*nSpecialFnStackIdx=*/arrSpecialFnStack[nSpecialFnStackIdx].u.index_pool].fn==POOL_END);
+            nSpecialFnStackIdx = arrSpecialFnStack[nSpecialFnStackIdx].u.index_pool;
+            arrSpecialFnStack = new_arrSpecialFnStack;
+         } else
+            if (fn >= 0) {
+               d9_printf6("pop_state_information: specfn(%d), #RHSUnknowns: %d -> %d, #LHSUnknowns: %d -> %d\n", fn, 
+                     arrNumRHSUnknowns[fn], arrSpecialFnStack[nSpecialFnStackIdx].u.value,
+                     arrNumLHSUnknowns[fn], arrSpecialFnStack[nSpecialFnStackIdx].lhsvalue);
+
+               arrNumRHSUnknownsNew[fn]=
+               arrPrevNumRHSUnknowns[fn]=
+               arrNumRHSUnknowns[fn]=arrSpecialFnStack[nSpecialFnStackIdx].u.value;
+
+               arrNumLHSUnknownsNew[fn]=
+               arrPrevNumLHSUnknowns[fn]=
+               arrNumLHSUnknowns[fn]=arrSpecialFnStack[nSpecialFnStackIdx].lhsvalue;
+
+               arrSumRHSUnknownsNew[fn]=
+               arrPrevSumRHSUnknowns[fn]=
+               arrSumRHSUnknowns[fn]=arrSpecialFnStack[nSpecialFnStackIdx].rhssum;
+
+               arrRHSCounterNew[fn]=
+               arrPrevRHSCounter[fn]=
+               arrRHSCounter[fn]=arrSpecialFnStack[nSpecialFnStackIdx].rhscounter;
+
+               arrSpecialFnFlags[fn]=arrSpecialFnStack[nSpecialFnStackIdx].prev;
+               arrChangedSpecialFn[fn]=0;
+            }
+         nSpecialFnStackIdx--;
+      }
+
+      nSpecialFnStackIdx--; /* skip the LEVEL_START */
+
+      assert(nSpecialFnStackIdx>0);
+      //assert(nCurSpecialFnVersion == arrSpecialFnStack[nSpecialFnStackIdx+1].u.version);
+      //nCurSpecialFnVersion--;
+      
+      nCurSpecialFnVersion = arrSpecialFnStack[nSpecialFnStackIdx+1].u.version;
+   }
+}
+
+ITE_INLINE
+void
+push_smurf_states_onto_stack()
+{
+   nCurSmurfStatesVersion++;
+   Mark_arrSmurfStatesStack(LEVEL_START);
+}
+
+ITE_INLINE
+void
+push_special_fn_onto_stack()
+{
+   nCurSpecialFnVersion++;
+   Mark_arrNumRHSUnknowns(LEVEL_START);
+}
+
+ITE_INLINE
+void 
+Mark_arrSmurfStatesStack(int vx) 
+{ 
+   nSmurfStatesStackIdx++; 
+   if (arrSmurfStatesStack[nSmurfStatesStackIdx].smurf == POOL_END)
+   {
+      NextSmurfStatesStack();
+      nSmurfStatesStackIdx++; 
+   }
+   arrSmurfStatesStack[nSmurfStatesStackIdx].smurf = vx;  
+   arrSmurfStatesStack[nSmurfStatesStackIdx].u.version = nCurSmurfStatesVersion;  
+}
+
+ITE_INLINE
+void
+Mark_arrNumRHSUnknowns(int vx) 
+{ 
+   nSpecialFnStackIdx++; 
+   if (arrSpecialFnStack[nSpecialFnStackIdx].fn == POOL_END)
+   {
+      NextSpecialFnStack();
+      nSpecialFnStackIdx++; 
+   }
+   arrSpecialFnStack[nSpecialFnStackIdx].fn = vx;  
+   arrSpecialFnStack[nSpecialFnStackIdx].u.version = nCurSpecialFnVersion;  
+}
+
+ITE_INLINE
+void
+Add_arrSmurfStatesStack(int vx) 
+{ 
+   nSmurfStatesStackIdx++; 
+   if (arrSmurfStatesStack[nSmurfStatesStackIdx].smurf == POOL_END)
+   {
+      NextSmurfStatesStack();
+      nSmurfStatesStackIdx++; 
+   }
+   arrSmurfStatesStack[nSmurfStatesStackIdx].smurf   = vx;  
+   arrSmurfStatesStack[nSmurfStatesStackIdx].u.state = arrCurrentStates[vx]; 
+   arrSmurfStatesStack[nSmurfStatesStackIdx].path_idx = arrSmurfPath[vx].idx;
+   arrSmurfStatesStack[nSmurfStatesStackIdx].prev    = arrSmurfStatesFlags[vx]; 
+#ifdef CVS_SMURF_NODES_SHARING_BRANCHER
+#ifdef SMURF_NODES_COUNT_REFS
+   arrSmurfStatesStack[nSmurfStatesStackIdx].refs    = arrCurrentStates[vx]->nRefs; 
+#endif
+#endif /* CVS_SMURF_NODES_SHARING_BRANCHER */
+   arrSmurfStatesFlags[vx]                           = nCurSmurfStatesVersion; 
+}
+
+ITE_INLINE
+void
+Add_arrNumRHSUnknowns(int vx) 
+{ 
+   nSpecialFnStackIdx++; 
+   if (arrSpecialFnStack[nSpecialFnStackIdx].fn == POOL_END)
+   {
+      NextSpecialFnStack();
+      nSpecialFnStackIdx++; 
+   }
+   arrSpecialFnStack[nSpecialFnStackIdx].fn      = vx;  
+   arrSpecialFnStack[nSpecialFnStackIdx].u.value = arrNumRHSUnknowns[vx]; 
+   arrSpecialFnStack[nSpecialFnStackIdx].lhsvalue = arrNumLHSUnknowns[vx]; 
+   arrSpecialFnStack[nSpecialFnStackIdx].rhssum  = arrSumRHSUnknowns[vx]; 
+   arrSpecialFnStack[nSpecialFnStackIdx].rhscounter = arrRHSCounter[vx]; 
+   arrSpecialFnStack[nSpecialFnStackIdx].prev    = arrSpecialFnFlags[vx]; 
+   arrSpecialFnFlags[vx]                         = nCurSpecialFnVersion; 
+}
+
+ITE_INLINE void
+InitializeSmurfStatesStack()
+{
+   if (arrSmurfStatesFlags == NULL)
+      arrSmurfStatesFlags = (int*)ite_calloc(nNumRegSmurfs+1, sizeof(int), 
+            9, "arrSmurfStatesFlags");
+   if (arrSmurfStatesStackPool == NULL)
+      AllocateSmurfStatesStack((nNumRegSmurfs+1)*SMURF_STATES_STACK_ALLOC_MULT);
+}
+
+ITE_INLINE void
+NextSmurfStatesStack()
+{
+   assert(arrSmurfStatesStack[nSmurfStatesStackIdx].smurf == POOL_END);
+   nSmurfStatesStackIdx++;
+
+   if (arrSmurfStatesStack[nSmurfStatesStackIdx].u.next_pool == NULL) 
+   {
+      nSmurfStatesStackIdx--;
+      AllocateSmurfStatesStack((nNumRegSmurfs+1)*SMURF_STATES_STACK_ALLOC_MULT);
+   } 
+   else 
+   {
+      arrSmurfStatesStack = (tSmurfStatesStack*)arrSmurfStatesStack[nSmurfStatesStackIdx].u.next_pool;
+      nSmurfStatesStackIdx    = 2;
+   }
+}
+
+ITE_INLINE void
+AllocateSmurfStatesStack(int newsize)
+{
+   int prevsize = 0;
+   assert(newsize > 0);
+
+   newsize += 10000; /* it does not hurt to allocate a little bit more
+                      * for backtracking stack */
+
+   if (arrSmurfStatesStackPool) prevsize = arrSmurfStatesStackPool->max;
+   arrSmurfStatesStackPool = (tSmurfStatesStackPool*)ite_calloc(1, sizeof (tSmurfStatesStackPool),
+         9, "arrSmurfStatesStackPool");
+
+   arrSmurfStatesStackPool->max = newsize;
+
+   arrSmurfStatesStackPool->stack =
+      (tSmurfStatesStack*)ite_calloc(newsize, sizeof(tSmurfStatesStack),
+                                     2, "smurf states stack");
+
+   tSmurfStatesStack* prev_arrSmurfStatesStack = arrSmurfStatesStack;
+   arrSmurfStatesStack = arrSmurfStatesStackPool->stack;
+
+   arrSmurfStatesStackPool->next = arrSmurfStatesStackPoolHead;
+   arrSmurfStatesStackPoolHead = arrSmurfStatesStackPool; 
+
+   /* save the prev index*/
+   arrSmurfStatesStack[0].u.index_pool  = nSmurfStatesStackIdx;
+   arrSmurfStatesStack[1].u.next_pool   = (void *)prev_arrSmurfStatesStack;
+   arrSmurfStatesStack[2].smurf         = POOL_START;
+   arrSmurfStatesStack[newsize-2].smurf = POOL_END;
+   arrSmurfStatesStack[newsize-1].u.next_pool   = (void *)NULL;
+   if (prev_arrSmurfStatesStack != NULL) {
+      prev_arrSmurfStatesStack[prevsize-1].u.next_pool = (void*)arrSmurfStatesStack;
+   }
+
+   nSmurfStatesStackIdx    = 2;
+}
+
+ITE_INLINE void
+FreeSmurfStatesStack()
+{
+   while(arrSmurfStatesStackPoolHead != NULL) {
+      free(arrSmurfStatesStackPoolHead->stack);
+      tSmurfStatesStackPool *x = arrSmurfStatesStackPoolHead;
+      arrSmurfStatesStackPoolHead = arrSmurfStatesStackPoolHead->next;
+      free(x);
+   }
+
+   arrSmurfStatesStackPool = NULL;
+   arrSmurfStatesStack = NULL;
+   ite_free((void**)&arrSmurfStatesFlags);
+}
+
+ITE_INLINE void
+InitializeSpecialFnStack()
+{
+   if (arrSpecialFnFlags == NULL)
+      arrSpecialFnFlags = (int*)ite_calloc(nNumSpecialFuncs+1, sizeof(int),
+            9, "arrSpecialFnFlags");
+   if (arrSpecialFnStackPool == NULL)
+      AllocateSpecialFnStack((nNumSpecialFuncs+1)*SPECIAL_FN_STACK_ALLOC_MULT);
+}
+
+ITE_INLINE void
+NextSpecialFnStack()
+{
+   assert(arrSpecialFnStack[nSpecialFnStackIdx].fn == POOL_END);
+   nSpecialFnStackIdx++;
+
+   if (arrSpecialFnStack[nSpecialFnStackIdx].u.next_pool == NULL) 
+   {
+      nSpecialFnStackIdx--;
+      AllocateSpecialFnStack((nNumSpecialFuncs+1)*SPECIAL_FN_STACK_ALLOC_MULT);
+   } 
+   else 
+   {
+      arrSpecialFnStack = (tSpecialFnStack*)arrSpecialFnStack[nSpecialFnStackIdx].u.next_pool;
+      nSpecialFnStackIdx = 2;
+   }
+}
+
+ITE_INLINE void
+AllocateSpecialFnStack(int newsize)
+{
+   int prevsize;
+   assert(newsize > 0);
+   newsize += 10000; /* it does not hurt to allocate a little bit more
+                      * for backtracking stack */
+
+   if (arrSpecialFnStackPool) prevsize = arrSpecialFnStackPool->max;
+   arrSpecialFnStackPool = (tSpecialFnStackPool*)ite_calloc(1, sizeof (tSpecialFnStackPool),
+         9, "arrSpecialFnStackPool");
+
+   arrSpecialFnStackPool->max = newsize;
+   arrSpecialFnStackPool->stack =
+      (tSpecialFnStack*)ite_calloc(newsize, sizeof(tSpecialFnStack), 
+                                   2, "special function stack");
+
+   tSpecialFnStack* prev_arrSpecialFnStack = arrSpecialFnStack;
+   arrSpecialFnStack = arrSpecialFnStackPool->stack;
+   arrSpecialFnStackPool->next = arrSpecialFnStackPoolHead;
+   arrSpecialFnStackPoolHead = arrSpecialFnStackPool;
+
+   /* save the prev index*/
+   arrSpecialFnStack[0].u.index_pool = nSpecialFnStackIdx; 
+   arrSpecialFnStack[1].u.next_pool  = (void *)prev_arrSpecialFnStack;
+   arrSpecialFnStack[2].fn = POOL_START;
+   arrSpecialFnStack[newsize-2].fn = POOL_END;
+   arrSpecialFnStack[newsize-1].u.next_pool  = (void *)NULL;
+   if (prev_arrSpecialFnStack != NULL) {
+      prev_arrSpecialFnStack[prevsize-1].u.next_pool = (void*)arrSpecialFnStack;
+   }
+
+   nSpecialFnStackIdx      = 2;
+}
+
+ITE_INLINE void
+FreeSpecialFnStack()
+{
+   while(arrSpecialFnStackPoolHead) {
+      free(arrSpecialFnStackPoolHead->stack);
+      tSpecialFnStackPool *x = arrSpecialFnStackPoolHead;
+      arrSpecialFnStackPoolHead = arrSpecialFnStackPoolHead->next;
+      free(x);
+   }
+
+   arrSpecialFnStackPool = NULL;
+   arrSpecialFnStack = NULL;
+   ite_free((void**)&arrSpecialFnFlags);
+}
