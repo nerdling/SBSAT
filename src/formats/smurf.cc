@@ -317,11 +317,11 @@ void Smurfs_to_BDD () {
 		  
 		  do
 			 {
-             if (y>=tempint_max) {
-                 tempint = (int*)ite_recalloc((void*)tempint, tempint_max, tempint_max+100, sizeof(int), 9, "tempint");
+             if ((y+1)>=tempint_max) {
+                tempint = (int*)ite_recalloc((void*)tempint, tempint_max, tempint_max+100, sizeof(int), 9, "tempint");
                 tempint_max += 100;
              }
-				 y++;
+             y++;
 				 //ADD IN SYMBOL TABLE SUPPORT!
 				 fscanf (finputfile, "%d", &tempint[y]);
 			 }
