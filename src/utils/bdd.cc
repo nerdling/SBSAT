@@ -775,17 +775,13 @@ BDDNode *_ite_x_y_F(BDDNode *x, BDDNode *y)
    if (x == true_ptr) return y;
    if (x == false_ptr) return false_ptr;
 
-   BDDNode *cached = itetable_find_or_add_node(1, x, y, NULL);
-   if (cached) return cached;
-
-   //if (y == true_ptr) return x;
-   //if (y == false_ptr) return false_ptr;
-  
    int v;
    BDDNode * r;
    BDDNode * e;
 
    if (x->variable > y->variable) {
+      BDDNode *cached = itetable_find_or_add_node(1, x, y, NULL);
+      if (cached) return cached;
       v = x->variable;
       r = _ite_x_y_F(x->thenCase, y);
       e = _ite_x_y_F(x->elseCase, y);
@@ -795,6 +791,8 @@ BDDNode *_ite_x_y_F(BDDNode *x, BDDNode *y)
       if (x == y) return x;
       else if (x->notCase == y) return false_ptr;
       else {
+         BDDNode *cached = itetable_find_or_add_node(1, x, y, NULL);
+         if (cached) return cached;
          v = x->variable;
          if (y->thenCase == true_ptr) r=x->thenCase;
          else if (y->thenCase == false_ptr) r=false_ptr;
@@ -807,6 +805,8 @@ BDDNode *_ite_x_y_F(BDDNode *x, BDDNode *y)
 			if (r == y->thenCase && e == y->elseCase) return y;
       }
    } else {
+      BDDNode *cached = itetable_find_or_add_node(1, y, x, NULL);
+      if (cached) return cached;
       v = y->variable;
       r = _ite_x_y_F(y->thenCase, x);
       e = _ite_x_y_F(y->elseCase, x);
