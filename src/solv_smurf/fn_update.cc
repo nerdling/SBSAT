@@ -78,7 +78,7 @@ UpdateEachAffectedFunction(AffectedFuncsStruct *pAFS, int max_fn_priority)
    while(nLastFnInfPriority < max_fn_priority)
    {
       while(arrFnInfPriority[nLastFnInfPriority].First != NULL) {
-         int nCurFnPriotity = nLastFnInfPriority;
+         int nCurFnPriority = nLastFnInfPriority;
          int nFnId = arrFnInfPriority[nLastFnInfPriority].First->nFnId;
          int nType = arrFnInfPriority[nLastFnInfPriority].First->nType;
 
@@ -93,12 +93,12 @@ UpdateEachAffectedFunction(AffectedFuncsStruct *pAFS, int max_fn_priority)
          }
 
          arrChangedFn[nFnId]=2;
-         arrFnInfPriority[nCurFnPriotity].First = 
-            arrFnInfPriority[nCurFnPriotity].First->pFnInfNext;
-         if (arrFnInfPriority[nCurFnPriotity].First == NULL)
-            arrFnInfPriority[nCurFnPriotity].Last = NULL; 
+         arrFnInfPriority[nCurFnPriority].First = 
+            arrFnInfPriority[nCurFnPriority].First->pFnInfNext;
+         if (arrFnInfPriority[nCurFnPriority].First == NULL)
+            arrFnInfPriority[nCurFnPriority].Last = NULL; 
 
-			if(pInferenceQueueNextElt < pInferenceQueueNextEmpty && nLastFnInfPriority == MAX_FN_PRIORITY-1) {
+			if(pInferenceQueueNextElt < pInferenceQueueNextEmpty && nCurFnPriority == MAX_FN_PRIORITY-1) {
 				nLastFnInfPriority = 0;
 				return ret;
 			}
