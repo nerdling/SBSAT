@@ -105,7 +105,7 @@ RecordSolution ()
    ite_counters[NUM_SOLUTIONS]++;
    if (ite_counters[NUM_SOLUTIONS] == max_solutions) return 0;
 
-   d2_printf1("Recording the solution and continuing backtracking...\n");
+   d5_printf1("Recording the solution and continuing backtracking...\n");
    pConflictLemma = pFirstBlock;
    // goto_Backtrack;
    ite_counters[ERR_BT_SOL_LEMMA]++;

@@ -357,7 +357,9 @@ void DisplayBacktrackInfo(double &fPrevEndTime, double &fStartTime)
       if (autarky) d2_printf3(" Autarkies: %ld (avg au len: %.1f)\n", 
             (long)ite_counters[NUM_TOTAL_AUTARKIES], 
             (float)ite_counters[NUM_TOTAL_AUTARKIES]/(1+ite_counters[NUM_AUTARKIES]));
-      //cout << "\n Autark levels: " << autarky_count;
+      if (max_solutions != 1) d2_printf3(" Solutions found: %ld/%ld\n", 
+            (long)ite_counters[NUM_SOLUTIONS], (long)max_solutions);
+
       d2_printf1("\n");
 }
 

@@ -190,7 +190,7 @@ VerifySolution()
     }
   else
     {
-      d2_printf1("Solution verified.\n");
+      d5_printf1("Solution verified.\n");
     }
 
   return nSatisfied;
