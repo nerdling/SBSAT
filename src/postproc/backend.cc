@@ -232,7 +232,7 @@ void getExInferences(int *original_variables, int oldnuminp) {
 }
 
 void
-Backend_CNF_NoSolver (int oldnuminp, int *original_variables)
+Backend_NoSolver (int oldnuminp, int *original_variables)
 {
 	ProcessSolution(oldnuminp, original_variables);
 	
@@ -240,13 +240,13 @@ Backend_CNF_NoSolver (int oldnuminp, int *original_variables)
 	
 	for (int i = 1; i <= oldnuminp; i++)
 	  {
-		  ShowResultLine(foutputfile, NULL, i, 0, original_variables[i]);
+		  ShowResultLine(foutputfile, s_name(i), i, 0, original_variables[i]);
 	  }
 	fprintf(foutputfile, "\n");
 	//1 = True  0 = False  -1 = Don't Care
 }
 
-void Backend_CNF (int nMaxVbleIndex, int oldnuminp, int *original_variables) {
+void Backend(int nMaxVbleIndex, int oldnuminp, int *original_variables) {
 	int *old_orig_vars = (int *)calloc(oldnuminp+1, sizeof(int));
 	varinfo *old_variablelist = (varinfo *)calloc(oldnuminp+1, sizeof(varinfo));
 	for(int x = 0; x <= oldnuminp; x++) {
@@ -276,7 +276,7 @@ void Backend_CNF (int nMaxVbleIndex, int oldnuminp, int *original_variables) {
 		getExInferences(original_variables, oldnuminp);
 		
 		for (int i = 1; i <= oldnuminp; i++) {
-			ShowResultLine(foutputfile, NULL, i, 0, original_variables[i]);
+		   ShowResultLine(foutputfile, s_name(i), i, 0, original_variables[i]);
 		}
 		fprintf(foutputfile, "\n");
 	}	
@@ -288,18 +288,18 @@ void Backend_CNF (int nMaxVbleIndex, int oldnuminp, int *original_variables) {
 void
 Backend_Trace_NoSolver (int oldnuminp, int *original_variables, Tracer * tracer)
 {
-  ProcessSolution(oldnuminp, original_variables);
+   assert(tracer);
 
-  getExInferences(original_variables, oldnuminp);	
+   ProcessSolution(oldnuminp, original_variables);
 
-  if (tracer)  
-     tracer->getSymbols (original_variables, oldnuminp);
-  else
-     d3_printf1("no tracer -- skipping getSymbols\n");
+   getExInferences(original_variables, oldnuminp);	
+
+   tracer->getSymbols (original_variables, oldnuminp);
 }
 
 void Backend_Trace (int nMaxVbleIndex, int oldnuminp,
 						  int *original_variables, Tracer * tracer) {
+   assert(tracer);
 	int *old_orig_vars = (int *)calloc(oldnuminp+1, sizeof(int));
 	varinfo *old_variablelist = (varinfo *)calloc(oldnuminp+1, sizeof(varinfo));
 	for(int x = 0; x <= oldnuminp; x++) {
@@ -330,10 +330,8 @@ void Backend_Trace (int nMaxVbleIndex, int oldnuminp,
 		getExInferences(original_variables, oldnuminp);
 		
 		//We might have trouble calling tracer multiple times...
-      if (tracer) {
-         tracer->getSymbols (original_variables, oldnuminp);
-         finalCheck(tracer, original_variables);
-      }
+      tracer->getSymbols (original_variables, oldnuminp);
+      finalCheck(tracer, original_variables);
 	}
 	free(old_orig_vars);
    free(old_variablelist);
@@ -742,13 +740,13 @@ Verify_Solver(Tracer *tracer)
 
   nmbrFunctions = original_numout;
 
-  if (formatin == 't') 
+  if (formatin == 't' && tracer) 
    {
      Backend_Trace(numinp, oldnuminp, original_variables, tracer);
    } 
   else 
    {
-		Backend_CNF(numinp, oldnuminp, original_variables);
+		Backend(numinp, oldnuminp, original_variables);
    }
 
 	while(solution_info_head!=NULL) {
@@ -783,18 +781,17 @@ Verify_NoSolver(Tracer *tracer)
     functions[x] = original_functions[x];
   nmbrFunctions = original_numout;
 
-  if (formatin == 't')
-   {
-		if (tracer && result_display_type) {
+  if (result_display_type) {
+     if (formatin == 't' && tracer)
+     {
         Backend_Trace_NoSolver(oldnuminp, original_variables, tracer);
         finalCheck(tracer, original_variables);
      }
-   }
-  else
-   {
-		if (result_display_type) 
-		  Backend_CNF_NoSolver(oldnuminp, original_variables);
-   }
+     else
+     {
+        Backend_NoSolver(oldnuminp, original_variables);
+     }
+  }
 
 	while(solution_info_head!=NULL) {
 		solution_info = solution_info_head;
