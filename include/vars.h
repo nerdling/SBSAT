@@ -117,15 +117,16 @@ extern char outputfile[128];
 extern FILE * finputfile;
 extern FILE * foutputfile;
 
-extern int DO_CLUSTER;
+extern int DO_CLUSTER; //CNF clustering
 extern int DO_COFACTOR;
-
 extern int DO_PRUNING;
 extern int DO_STRENGTH;
+extern int DO_SIMPLEAND;
 extern int DO_STEAL;
 extern int DO_INFERENCES;
 extern int DO_EXIST_QUANTIFY;
 extern int DO_EXIST_QUANTIFY_AND;
+extern int DO_POSSIBLE_ANDING;
 extern int DO_DEP_CLUSTER;
 extern int DO_SPLIT;
 extern int DO_REWIND;

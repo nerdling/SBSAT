@@ -123,6 +123,13 @@ amount_compfunc (const void *x, const void *y)
   return -1;
 }
 
+int countBDDs() {
+	int count = 0;
+	for(int x = 0; x < nmbrFunctions; x++)
+	  if(functions[x]!=true_ptr) count++;
+	return count;
+}
+
 BDDNode *strip_x (int bdd, int x) {
 	if(length[bdd] < 3) return functions[bdd];
 	int new_x = variables[bdd].num[0]; //Really if variable 1 doesn't exist

@@ -46,13 +46,6 @@ int MAX_EXQUANTIFY_VARLENGTH = 5; //Limits size of number of vars in
 
 int ExQuantifyAnd();
 
-int countBDDs() {
-	int count = 0;
-	for(int x = 0; x < nmbrFunctions; x++)
-	  if(functions[x]!=true_ptr) count++;
-	return count;
-}
-
 int Do_ExQuantifyAnd() {
 	MAX_EXQUANTIFY_CLAUSES += 5;
 	MAX_EXQUANTIFY_VARLENGTH +=5;
