@@ -120,6 +120,9 @@ InferLiteral(int nInferredAtom,
          arrChangedFn[pOneAFS->nFnId]=3;
       } else {
          d9_printf1("Already marked and not updated\n");
+			int nFnPriority = arrSolverFunctions[pOneAFS->nFnId].nFnPriority;
+         if (nLastFnInfPriority > nFnPriority) 
+            nLastFnInfPriority = nFnPriority;
       }
 
       ret = procUpdateAffectedFunction_Infer[pOneAFS->nType](pOneAFS, 10);
