@@ -46,7 +46,7 @@ char term_buffer[2048];
 
 char *CM, *SO, *SE, *CL;
 char *tv_stype;
-char *ptr=NULL;
+char tcapbuf[1024]="";
 
 /*
  * Get a required termcap string or exit with a message.
@@ -56,7 +56,7 @@ char * qgetstr(char *ref)
    char *tmp=NULL;
 #ifdef HAVE_TERMCAP_H
 
-   if ((tmp = tgetstr(ref, &ptr)) == NULL) {
+   if ((tmp = tgetstr(ref, (char**)&tcapbuf)) == NULL) {
       printf("/etc/termcap terminal %s must have a %s= entry\n",
             tv_stype, ref);
    }
@@ -72,7 +72,6 @@ init_terminal_out()
    char *termtype = getenv("TERM");
    int success;
    extern char *getenv(), *realloc();
-   char *tcapbuf;
 
    if (termtype == 0) {
       d2_printf1("Specify a terminal type with `setenv TERM <yourtype>'.\n");
@@ -89,19 +88,12 @@ init_terminal_out()
       return 1;
    }
 
-   /* get far too much and shrink later */
-   ptr = tcapbuf = (char*)calloc(1024, sizeof(char));
-   if (!ptr) {
-      dE_printf1("Can't allocate tcapbuf\n");
-      exit(1); // memory problems -- can quit
-   }
    CM = qgetstr("cm"); /* this string used by tgoto() */
    CL = qgetstr("cl"); /* this string used to clear screen */
    SO = qgetstr("so"); /* this string used to set standout */
    SE = qgetstr("se"); /* this string used by clear standout */
    term_height = tgetnum("li");
    term_width = tgetnum("co");
-//   printf("co=%d, li=%d \r", height, width);
 #endif
    return 0;
 }
@@ -110,7 +102,7 @@ void
 free_terminal_out()
 {
 #ifdef HAVE_TERMCAP_H
-   ite_free((void**)&ptr);
+   
 #endif
 }
 
