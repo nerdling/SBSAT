@@ -1,3 +1,26 @@
+2004-07-06 13:40  fett
+
+	* src/utils/bdd_ite.cc: added in hashtables on all ite_x_?? calls
+
+2004-07-06 13:40  fett
+
+	* src/preproc/: do_applyinfs.cc, do_exquantifyand.cc: updated a few
+	thngs
+
+2004-07-06 12:52  fett
+
+	* src/utils/bdd_ite.cc: fixed a bug! needed to swap x and y
+	permanently in the third else statement of ite_x_y_F
+
+2004-07-06 12:52  fett
+
+	* src/solv_smurf/Makefile.in, ChangeLog,
+	src/preproc/do_exquantifyand.cc: [no log message]
+
+2004-07-06 12:52  fett
+
+	* src/preproc/do_exquantifyand.cc: nothing
+
 2004-06-22 22:43  mkouril
 
 	* doc/: Makefile.am, Makefile.in: Fixed distcheck
