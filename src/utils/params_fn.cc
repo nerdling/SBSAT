@@ -53,7 +53,7 @@ extern int term_width; // FIXME: later
 #endif
 
 #ifndef DESCRIPTION
-#define DESCRIPTION "SBSat is SAT solver."
+#define DESCRIPTION "SBSat is a SAT solver."
 #endif
 
 void
