@@ -45,6 +45,10 @@
 ITE_INLINE int
 HrNullInit()
 {
+   //procHeurBacktrack = Hr...Backtrack;
+   //procHeurUpdate = Hr...Update;
+   //procHeurFree = Hr...Free;
+   procHeurSelect = NullHeuristic;
    return 0;
 }
 
@@ -66,10 +70,11 @@ NullHeuristic(int *pnBranchAtom, int *pnBranchValue)
   return 0;
 }
 
+/*
 ITE_INLINE
 void
 NullInitHeuristicScores()
 {
 
 }
-
+*/
