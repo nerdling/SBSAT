@@ -67,7 +67,7 @@ CreateFunctions()
    double fEndTime = get_runtime();
    ite_counters_f[BUILD_SMURFS] = fEndTime - fStartTime;
    
-   d3_printf2 ("Time to build create functions:  %4.3f secs.\n", 
+   d3_printf2 ("Time to build functions:  %4.3f secs.\n", 
          ite_counters_f[BUILD_SMURFS]);
    d4_printf4("SMURF States Statistic: %ld/%ld (%f hit rate)\n",
          (long)(ite_counters[SMURF_NODE_FIND] - ite_counters[SMURF_NODE_NEW]),

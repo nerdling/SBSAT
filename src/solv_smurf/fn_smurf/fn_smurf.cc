@@ -34,7 +34,7 @@ FnSmurfInit()
    {
       procCreateFunction[i] = SmurfCreateFunction;
 
-      // Functino Stack
+      // Function Stack
       procSave2Stack[i] = SmurfSave2Stack;
       procRestoreFromStack[i] = SmurfRestoreFromStack;
 
