@@ -42,6 +42,8 @@
 #include "ite.h"
 #include "formats.h"
 
+#define CNF_USES_SYMTABLE
+
 int zecc_limit;
 int *zecc_arr;
 extern int *tempint;
@@ -191,8 +193,11 @@ store *getMinMax() {
 	min_max->length = num_vars;
 	min_max->num = new int[num_vars];
 	for(x = 0; x < num_vars; x++) {
+#ifdef CNF_USES_SYMTABLE
 		min_max->num[x] = tempint[x]==0?0:i_getsym_int(tempint[x], SYM_VAR);
-		//min_max->num[x] = tempint[x];
+#else
+		min_max->num[x] = tempint[x];
+#endif
 		if(abs(tempint[x]) > numinp) { //Could change this to be number of vars instead of max vars
 			fprintf(stderr, "Variable in input file is greater than allowed:%ld...exiting\n", (long)numinp);
 			exit(1);				
@@ -269,8 +274,11 @@ void CNF_to_BDD(int cnf)
 		if(y==0) {x--; numout--; continue; }
 		integers[x].num = new int[y + 1];
       for(i = 0; i < y + 1; i++) {
+#ifdef CNF_USES_SYMTABLE
 			integers[x].num[i] = tempint[i]==0?0:i_getsym_int(tempint[i], SYM_VAR);
-			//integers[x].num[i] = tempint[i];
+#else
+			integers[x].num[i] = tempint[i];
+#endif         
 			if(abs(tempint[i]) > numinp) { //Could change this to be number of vars instead of max vars
 				fprintf(stderr, "Variable in input file is greater than allowed:%ld...exiting\n", (long)numinp);
 				exit(1);				
