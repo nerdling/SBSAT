@@ -128,3 +128,8 @@ int reports = 0;
 
 char lemma_out_file[128] = "";
 char lemma_in_file[128] = "";
+
+int _bdd_pool_size=1000000;
+
+varinfo *variablelist = NULL;
+

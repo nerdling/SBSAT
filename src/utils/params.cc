@@ -116,6 +116,8 @@ t_opt options[] = {
                 "Set the number of buckets in power of 2"},
 { &sizeBuckets, "", "size-buckets", P_INT, V(i:0,"0"), V(i:5,"5"), VAR_NORMAL, 0, 
                 "Set the size of a bucket in power of 2"},
+{ &_bdd_pool_size, "", "bdd-pool-size", P_INT, V(i:0,"0"), V(i:1000000,"1000000"), VAR_NORMAL, 0, 
+                "The size of the bdd pool increment"},
 
 /* 
  * Input options
