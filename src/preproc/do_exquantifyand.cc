@@ -104,6 +104,7 @@ int ExQuantifyAnd () {
 				 );
 			if (nCtrlC) {
 				d3_printf1("Breaking out of Anding Existential Quantification\n");
+				ret = PREP_NO_CHANGE;
 				nCtrlC = 0;
 				goto ea_bailout;
 			}
