@@ -236,8 +236,8 @@ pop_state_information(int n)
             nSpecialFnStackIdx--;
             tSpecialFnStack *new_arrSpecialFnStack = 
                (tSpecialFnStack*)(arrSpecialFnStack[nSpecialFnStackIdx--].u.next_pool);
+            assert(new_arrSpecialFnStack[/*nSpecialFnStackIdx=*/arrSpecialFnStack[nSpecialFnStackIdx].u.index_pool].fn==POOL_END);
             nSpecialFnStackIdx = arrSpecialFnStack[nSpecialFnStackIdx].u.index_pool;
-            assert(new_arrSpecialFnStack[nSpecialFnStackIdx].fn==POOL_END);
             arrSpecialFnStack = new_arrSpecialFnStack;
          } else
             if (fn >= 0) {
@@ -368,6 +368,7 @@ NextSmurfStatesStack()
 
    if (arrSmurfStatesStack[nSmurfStatesStackIdx].u.next_pool == NULL) 
    {
+      nSmurfStatesStackIdx--;
       AllocateSmurfStatesStack((nNumRegSmurfs+1)*SMURF_STATES_STACK_ALLOC_MULT);
    } 
    else 
@@ -439,6 +440,7 @@ NextSpecialFnStack()
 
    if (arrSpecialFnStack[nSpecialFnStackIdx].u.next_pool == NULL) 
    {
+      nSpecialFnStackIdx--;
       AllocateSpecialFnStack((nNumSpecialFuncs+1)*SPECIAL_FN_STACK_ALLOC_MULT);
    } 
    else 
@@ -476,6 +478,10 @@ AllocateSpecialFnStack(int newsize)
    arrSpecialFnStack[newsize-1].u.next_pool  = (void *)NULL;
 
    nSpecialFnStackIdx      = 2;
+
+   d3_printf2("New Stack %x\n", arrSpecialFnStack);
+   d3_printf2("New Stack index_pool = %d\n", nSpecialFnStackIdx);
+   d3_printf2("New Stack next_pool = %x\n", prev_arrSpecialFnStack);
 }
 
 ITE_INLINE void
