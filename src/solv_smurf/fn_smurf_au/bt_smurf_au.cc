@@ -60,6 +60,7 @@ CheckSmurfAuInferences(int nSmurfAuIndex, int *arrInferences, int nNumInferences
 			//Create lemma 
          int *arrLits = (int*)ite_calloc(1, sizeof(int), 9, "arrLits"); //Lemma of size 1
 			arrLits[0] = nNewInferredAtom * (value==BOOL_FALSE?-1:1);
+			d9_printf3("\nAutarky Smurf #%d making inference %d\n", nSmurfAuIndex, arrLits[0]);
          
          pLemmaInfo=AddLemma(1, arrLits, false, NULL, NULL);
          pLemma = pLemmaInfo->pLemma;
