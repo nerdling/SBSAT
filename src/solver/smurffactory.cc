@@ -122,6 +122,7 @@ SmurfFactory()
          }
          nSumVarsPerSmurf += pSmurfState->vbles.nNumElts;
          arrRegSmurfInitialStates[nRegSmurfIndex] = pSmurfState;
+         pSmurfState->cVisited |= 1;
          arrSmurfPath[nRegSmurfIndex].literals = 
             (int*)ite_calloc(arrRegSmurfInitialStates[nRegSmurfIndex]->vbles.nNumElts+1, sizeof(int),
                9, "arrSmurfPath[].literals");
@@ -309,10 +310,37 @@ InitSmurfFactory()
    nRegSmurfIndex = 0;
 }
 
+void
+CountSmurfsUsage(SmurfState *pState, long *one, long *two, long *three)
+{
+   if (pState->cVisited == 0) return; else
+   if (pState->cVisited == 1) (*one)++; else
+   if (pState->cVisited == 2) (*two)++; else
+   if (pState->cVisited == 3) (*three)++; else assert(0);
+   pState->cVisited = 0;
+
+   for(int i=0; i<pState->vbles.nNumElts; i++) {
+      Transition *pTransition;
+      pTransition = FindTransition(pState, i, pState->vbles.arrElts[i], BOOL_TRUE);
+      if (pTransition->pNextState) CountSmurfsUsage(pTransition->pNextState, one, two, three);
+      pTransition = FindTransition(pState, i, pState->vbles.arrElts[i], BOOL_FALSE);
+      if (pTransition->pNextState) CountSmurfsUsage(pTransition->pNextState, one, two, three);
+   }
+}
+
 ITE_INLINE void
 FreeSmurfFactory()
 {
    d9_printf1("FreeSmurfFactory\n");
+
+   long states_one=0, states_two=0, states_three=0;
+   for (int i = 0; i < nNumRegSmurfs; i++) {
+      CountSmurfsUsage(arrRegSmurfInitialStates[i], &states_one, &states_two, &states_three);
+   }
+
+   d3_printf4("SmurfState State all: %lld, visited: %ld, heuristic: %ld\n",
+         ite_counters[SMURF_NODE_NEW], states_one+states_three, states_two);
+
    if (nHeuristic == JOHNSON_HEURISTIC) {
       FreeHeuristicTablesForSpecialFuncs();
    }

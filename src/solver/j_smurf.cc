@@ -155,6 +155,8 @@ J_UpdateHeuristicSmurf(SmurfState *pOldState, SmurfState *pState, int nSmurfInde
          int nVble = arrElts[k];
          arrHeurScores[nVble].Pos += pState->arrTransitions[j+BOOL_TRUE].fHeuristicWeight;
          arrHeurScores[nVble].Neg += pState->arrTransitions[j+BOOL_FALSE].fHeuristicWeight;
+         pState->arrTransitions[j+BOOL_TRUE].pNextState->cVisited |= 2;
+         pState->arrTransitions[j+BOOL_FALSE].pNextState->cVisited |= 2;
          j+=2;
       }
    } else {

@@ -13,7 +13,7 @@ void
 p3_done()
 {
    p3[0].top_and = 1;
-   p3_clear_sharing(0);
+   //p3_clear_sharing(0);
    p3_traverse_ref(0, -1);
    //p3_dump();
    p3_top_bdds(0);

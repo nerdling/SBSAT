@@ -98,6 +98,11 @@ solve_init()
 void
 solve_free()
 {
+   d4_printf5("SMURF States Statistic(total %ld): %ld/%ld (%f hit rate)\n",
+         (long)(ite_counters[SMURF_NODE_NEW]),
+         (long)(ite_counters[SMURF_NODE_FIND] - ite_counters[SMURF_NODE_NEW]),
+         (long)(ite_counters[SMURF_NODE_FIND]),
+         ite_counters[SMURF_NODE_FIND]==0?0:1.0 * (ite_counters[SMURF_NODE_FIND] - ite_counters[SMURF_NODE_NEW]) / ite_counters[SMURF_NODE_FIND]);
    FreeBrancher();
    FreeSmurfFactory();
    FreeSolver();

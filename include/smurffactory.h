@@ -162,6 +162,7 @@ struct SmurfState
   IntegerSet_ArrayBased vbles;
   double fNodeHeuristicWeight;
   char cFlag;
+  char cVisited;
   double *arrHeuristicXors;
   int nNumHeuristicXors;
 };

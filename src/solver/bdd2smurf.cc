@@ -41,8 +41,24 @@
 // External variables.
 long gnTotalBytesForTransitions = 0;
 
-ITE_INLINE
-SmurfState *
+ITE_INLINE Transition *
+CreateTransition(SmurfState *pSmurfState, int i, int nSolverVble, int value)
+{
+   int nVble = arrSolver2IteVarMap[nSolverVble];
+
+   // Compute transition that occurs when vble is set to true.
+   BDDNodeStruct *pFuncEvaled = set_variable(pSmurfState->pFunc, nVble, value==BOOL_TRUE?1:0);
+   InitializeAddons(pFuncEvaled);
+   SmurfState *pSmurfStateOfEvaled = BDD2Smurf(pFuncEvaled);
+   assert(pSmurfStateOfEvaled != NULL);
+   AddStateTransition(pSmurfState, i, nSolverVble, value,
+         pFuncEvaled, pSmurfStateOfEvaled);
+   Transition *transition = FindTransition(pSmurfState, i, nSolverVble, value);
+   assert(transition->pNextState != NULL);
+   return transition;
+}
+
+ITE_INLINE SmurfState *
 ComputeSmurfOfNormalized(BDDNodeStruct *pFunc)
    // Precondition:  *pFunc is 'normalized', i.e., no literal
    // is logically implied by *pFunc.
@@ -96,30 +112,17 @@ ComputeSmurfOfNormalized(BDDNodeStruct *pFunc)
 
    gnTotalBytesForTransitions += nBytesForTransitions;
 
-   int i=0;
-   int nSolverVble, nVble;
-   for (i=0;i<pSmurfState->vbles.nNumElts;i++)
+   //if (nHeuristic == JOHNSON_HEURISTIC) 
    {
+      for(int i=0;i<pSmurfState->vbles.nNumElts;i++)
+      {
+         int nSolverVble = pSmurfState->vbles.arrElts[i];
 
-      nSolverVble = pSmurfState->vbles.arrElts[i];
-      nVble = arrSolver2IteVarMap[nSolverVble];
-
-      // Compute transition that occurs when vble is set to true.
-      BDDNodeStruct *pFuncEvaled = set_variable(pFunc, nVble, 1);
-      InitializeAddons(pFuncEvaled);
-      assert(pFuncEvaled != pFunc);
-      SmurfState *pSmurfStateOfEvaled = BDD2Smurf(pFuncEvaled);
-      AddStateTransition(pSmurfState, i, nSolverVble, BOOL_TRUE,
-            pFuncEvaled, pSmurfStateOfEvaled);
-
-      // Compute transition that occurs when vble is set to false.
-      pFuncEvaled = set_variable(pFunc, nVble, 0);
-      InitializeAddons(pFuncEvaled);
-      assert(pFuncEvaled != pFunc);
-      pSmurfStateOfEvaled = BDD2Smurf(pFuncEvaled);
-
-      AddStateTransition(pSmurfState, i, nSolverVble, BOOL_FALSE,
-            pFuncEvaled, pSmurfStateOfEvaled);
+         // Compute transition that occurs when vble is set to true.
+         CreateTransition(pSmurfState, i, nSolverVble, BOOL_TRUE);
+         // Compute transition that occurs when vble is set to false.
+         CreateTransition(pSmurfState, i, nSolverVble, BOOL_FALSE);
+      }
    }
 
    return pSmurfState;

@@ -135,6 +135,8 @@ UpdateRegularSmurf(int nSmurfIndex)
 
       // Get the transition.
       Transition *pTransition = FindTransition(pState, k, vble, arrSolution[vble]);
+      if (pTransition->pNextState == NULL) pTransition = CreateTransition(pState, k, vble, arrSolution[vble]);
+      assert(pTransition->pNextState != NULL);
 
       if (pTransition->positiveInferences.nNumElts &&
             CheckSmurfInferences(
@@ -150,8 +152,10 @@ UpdateRegularSmurf(int nSmurfIndex)
                   pTransition->negativeInferences.nNumElts,
                   BOOL_FALSE)) return ERR_BT_SMURF;
 
+         pState->cVisited |= 1;
          arrCurrentStates[nSmurfIndex] = 
             pState = pTransition->pNextState;
+         assert(arrCurrentStates[nSmurfIndex] != NULL);
          if (pState == pTrueSmurfState)
          {
             nNumUnresolvedFunctions--;
