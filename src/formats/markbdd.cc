@@ -50,7 +50,7 @@ int markbdd_line;
 struct defines_struct {
 	char *string;
    BDDNode * bdd;
-   int vlist[100];
+	int *vlist;
 };
 
 int max_defines;
@@ -60,6 +60,8 @@ int max_integers;
 char *integers;
 int max_macros;
 char *macros;
+int negate;
+int expect_integer = 0;
 
 BDDNode *putite(int intnum, BDDNode * bdd)
 {
@@ -74,6 +76,7 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 //		Here I need to return an integer if it is actually an integer...
 //		for the defines, and InititalBranch, and others that use integers.
 //		Though I could fix those to use integers correctly......maybe.....
+		d4_printf2("%d ", intnum);
 		return ite_var (intnum);
 	}
 	if (order == 'b')
@@ -93,10 +96,11 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 	//Search the defines for this word...
 	for (int x = 0; x < totaldefines; x++) {
 		if (!strcasecmp (macros, defines[x].string)) {
-			BDDNode ** BDDS = new BDDNode *[defines[x].vlist[0] + 1];
+			BDDNode **BDDS = new BDDNode *[defines[x].vlist[0] + 1];
 			for (int v = 1; v <= defines[x].vlist[0]; v++)
 			  BDDS[v] = putite (intnum, bdd);
-			BDDNode * returnbdd = f_apply (defines[x].bdd, BDDS);
+			BDDNode *returnbdd = f_mitosis(defines[x].bdd, BDDS, defines[x].vlist);
+			//			BDDNode * returnbdd = f_apply (defines[x].bdd, BDDS);
 			delete [] BDDS;
 			return returnbdd;
 		}
@@ -116,6 +120,19 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 		functionType[nmbrFunctions] = UNSURE;
 	}
 	if (!strcasecmp (macros, "initialbranch")) {
+
+		/*
+		 t_myregex myrg;
+		 sym_regex_init(&myrg, "TakeBranchALU*");
+		 int id = sym_regex(&myrg);
+		 while (id) {
+		 // found variable and the variable id is id
+		 fprintf(stderr, "%d %s\n", id, getsym_i(id)->name);
+		 id = sym_regex(&myrg);
+		 }
+		 sym_regex_free(&myrg);
+		 */
+		
 		no_independent = 0;
 		int p = 0;
 		intnum = 0;
@@ -236,25 +253,86 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 			defines[whereat].string = (char *)ite_calloc(strlen(macros)+1, sizeof(char), 9, "defines[].string");
 			strcpy (defines[whereat].string, macros);
 		}
-		      
+		
 		//      int x;
 		//      for(x = 0; macros[x]!=0; x++)
 		//        defines[whereat].string[x] = macros[x];
 		//      defines[whereat].string[x] = 0;      
 		// 
+		d3e_printf2("#define %s ", defines[whereat].string);
       int v = 0;
-      order = getNextSymbol (intnum, bdd);
+		order = getNextSymbol (intnum, bdd);
+		
+		int max_vlist = 0;
+		defines[whereat].vlist = (int *)ite_recalloc(defines[whereat].vlist, max_vlist, max_vlist+10, sizeof(int), 9, "defines[whereat].vlist");
+		max_vlist+=10;
+
       while (order != '#') {
-			if (order != 'i') {
-				fprintf (stderr, "\nProblem with #define %s...exiting:%d\n", macros, markbdd_line);
+			if (order != 'm') {
+				fprintf (stderr, "\nProblem with #define %s...exiting:%d\n", defines[whereat].string, markbdd_line);
 				exit (1);
 			}
 			v++;
+			intnum = i_getsym(macros);
+			for(int iter = 1; iter < v; iter++)
+			  if(defines[whereat].vlist[iter] == intnum) {
+				  fprintf(stderr, "\nCannot use the same variable (%s) twice in argument list in #define %s...exiting:%d\n", getsym_i(intnum)->name, defines[whereat].string, markbdd_line);
+				  exit(1);
+			  }
+			if(v >= max_vlist) {
+				defines[whereat].vlist = (int *)ite_recalloc(defines[whereat].vlist, max_vlist, max_vlist+10, sizeof(int), 9, "defines[whereat].vlist");
+				max_vlist+=10;
+			}
+
 			defines[whereat].vlist[v] = intnum;
 			order = getNextSymbol (intnum, bdd);
 		}
       defines[whereat].vlist[0] = v;
       defines[whereat].bdd = putite (intnum, bdd);
+
+		
+		long int y = 0;
+      int tempint[5000];
+		unravelBDD (&y, tempint, defines[whereat].bdd);
+      qsort (tempint, y, sizeof (int), compfunc);
+      if (y != 0) {
+			int v = 0;
+			for (int i = 1; i < y; i++) {
+				v++;
+				if (tempint[i] == tempint[i - 1])
+				  v--;
+				tempint[v] = tempint[i];
+			}
+			y = v + 1;
+		}
+      
+		for (int i = 0; i < y; i++) {
+			int found = 0;
+			for(int b = 1; b <= defines[whereat].vlist[0]; b++) {
+				if(tempint[i] == defines[whereat].vlist[b]) 
+				  { found = 1; break; }
+			}
+			if(found == 0) {
+				fprintf(stderr, "\nVariable %s is not in argument list for #define %s...exiting:%d\n", getsym_i(tempint[i])->name, defines[whereat].string, markbdd_line);
+				exit(1);
+			}
+		}
+
+		//below: could compare the lengths and just say, "unused variables in the argument list"
+		//but that's not as descriptive
+		
+		for (int b = 1; b <= defines[whereat].vlist[0]; b++) {
+			int found = 0;
+			for(int i = 0; i <y; i++) {
+				if(tempint[i] == defines[whereat].vlist[b]) 
+				  { found = 1; break; }
+			}
+			if(found == 0) {
+				fprintf(stderr, "\nVariable %s is not used in #define %s...exiting:%d\n", getsym_i(defines[whereat].vlist[b])->name, defines[whereat].string, markbdd_line);
+				exit(1);
+			}
+		}
+
       strcpy (macros, "define");
       if (whereat == totaldefines) {
 			totaldefines++;
@@ -372,11 +450,13 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 	}
 	if (!strcasecmp (macros, "minmax")) {
 		int min, max;
+		expect_integer = 1;
 		BDDNode * v1 = putite (intnum, bdd);
 		if (v1 != ite_var (v1->variable)) {
 			fprintf (stderr, "\nKeyword 'minmax' needs a positive integer as a first argument (%s)...exiting:%d\n", macros, markbdd_line);
 			exit (1);
 		}
+		expect_integer = 1;
 		BDDNode * v2 = putite (intnum, bdd);
 		if (v2 != ite_var (v2->variable) && v2!=false_ptr) {
 			fprintf (stderr, "\nKeyword 'minmax' needs a positive integer as a second argument (%s)...exiting:%d\n", macros, markbdd_line);
@@ -384,6 +464,7 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 		}
 		if(v2 == false_ptr) min = 0;
 		else min = v2->variable;
+		expect_integer = 1;
       BDDNode * v3 = putite (intnum, bdd);
 		if (v3 != ite_var (v3->variable) && v3!=false_ptr) {
 			fprintf (stderr, "\nKeyword 'minmax' needs a positive integer as a third argument (%s)...exiting:%d\n", macros, markbdd_line);
@@ -716,8 +797,11 @@ BDDNode *putite(int intnum, BDDNode * bdd)
       return v1;
 	}
 	int v = i_getsym(macros);
-	return ite_var (v);
-	
+	if(negate == 1) {
+		negate = 0;
+		return ite_var(-v);
+	} else return ite_var(v);
+
 	fprintf (stderr, "\nUnknown word (%s)...exiting:%d\n", macros,	markbdd_line);
 	exit (1);
 	return NULL;
@@ -728,6 +812,7 @@ char getNextSymbol (int &intnum, BDDNode *&bdd) {
 	int p = 0;
 	while (1) {
       p = fgetc(finputfile);
+		if (p == '\n') { markbdd_line++; }
       if (p == EOF) {
 			//fprintf(stderr, "\nUnexpected EOF (%s)...exiting\n", macros);
 			return 'x';
@@ -744,20 +829,33 @@ char getNextSymbol (int &intnum, BDDNode *&bdd) {
 					exit (1);
 				}
 			}
-         p = fgetc(finputfile);
-         if (p == EOF) {
-				fprintf (stderr, "\nUnexpected EOF...exiting:%d\n", markbdd_line);
-				exit (1);
-			}
-			ungetc (p, finputfile);
+			ungetc(p, finputfile);
 			continue;
 		}
       if (((p >= 'a') && (p <= 'z')) || ((p >= 'A') && (p <= 'Z'))
-			 || (p == '_')) {
+			 || (p == '_') || ((p >= '0') && (p <= '9')) || (p == '-')) {
+			negate = 0;
+			if (p == '-') {
+				negate = 1;
+            p = fgetc(finputfile);
+            if (p == EOF) {
+					fprintf (stderr, "\nUnexpected EOF...exiting:%d\n", markbdd_line);
+					exit (1);
+				}
+			}
+			if (p == '-') {
+				fprintf (stderr, "\nDouble '-' found, variables cannot start with a '-'...exiting:%d\n", markbdd_line);
+				exit (1);
+			}
+			int is_int = 1;
 			while (((p >= 'a') && (p <= 'z')) || ((p >= 'A') && (p <= 'Z'))
 					 || (p == '_') || ((p >= '0') && (p <= '9'))) {
 				macros[i] = p;
 				i++;
+				if (((p >= 'a') && (p <= 'z')) || ((p >= 'A') && (p <= 'Z'))
+					 || (p == '_')) {
+					is_int = 0;
+				}
 				if(i >= max_macros) {
 					macros = (char *)ite_recalloc(macros, max_macros, max_macros+10, sizeof(char), 9, "macros");
 					max_macros+=10;
@@ -769,7 +867,24 @@ char getNextSymbol (int &intnum, BDDNode *&bdd) {
 				}
 			}
 			ungetc (p, finputfile);
+
 			macros[i] = 0;
+			if(is_int == 1 && expect_integer == 1) {
+				expect_integer = 0;
+				intnum = atoi (macros);
+				if (intnum > numinp) {
+					fprintf (stderr, "\nVariable %d is larger than allowed (%ld)...exiting:%d\n",	intnum, numinp - 2, markbdd_line);
+					exit (1);
+				}
+				if (negate) intnum = -intnum;
+				return 'i';
+			} else if(is_int == 0 && expect_integer == 1) {					  
+				expect_integer = 0;
+				fprintf(stderr, "\nExpecting an integer, found %s...exiting:%d\n", macros, markbdd_line);
+				exit(1);
+			}
+			if(negate) d4_printf2("-%s ", macros);
+			if(!negate) d4_printf2("%s ", macros);
 			return 'm';
 		}
       if (p == '#') {
@@ -818,7 +933,7 @@ char getNextSymbol (int &intnum, BDDNode *&bdd) {
 					}
                p = fgetc(finputfile);
                if (p == EOF) {
-						fprintf (stderr, "\nUnexpected EOF (%s)...exiting:%d\n",	macros, markbdd_line);
+						fprintf (stderr, "\nUnexpected EOF (%s)...exiting:%d\n",	integers, markbdd_line);
 						exit (1);
 					}
 				}
@@ -836,46 +951,11 @@ char getNextSymbol (int &intnum, BDDNode *&bdd) {
 				exit (1);
 			}
 		}
-      if (((p >= '0') && (p <= '9')) || (p == '-')) {
-			i = 0;
-			int negate = 0;
-			if (p == '-') {
-				negate = 1;
-            p = fgetc(finputfile);
-            if (p == EOF) {
-					fprintf (stderr, "\nUnexpected EOF (%s)...exiting:%d\n",	macros, markbdd_line);
-					exit (1);
-				}
-			}
-			while ((p >= '0') && (p <= '9')) {
-				integers[i] = p;
-				i++;
-				if(i >= max_integers) {
-					integers = (char *)ite_recalloc(integers, max_integers, max_integers+10, sizeof(char), 9, "integers");
-					max_integers+=10;
-				}
-            p = fgetc(finputfile);
-				if (p == EOF) {
-					fprintf (stderr, "\nUnexpected EOF (%s)...exiting:%d\n", macros, markbdd_line);
-					exit (1);
-				}
-			}
-			ungetc (p, finputfile);
-			integers[i] = 0;
-			intnum = atoi (integers);
-			if (intnum > numinp) {
-				fprintf (stderr, "\nVariable %d is larger than allowed (%ld)...exiting:%d\n",	intnum, numinp - 2, markbdd_line);
-				exit (1);
-			}
-			if (negate)
-			  intnum = -intnum;
-			return 'i';
-		}
 	}
 }
 
 void bddloop () {
-	fscanf (finputfile, "%ld %ld\n", &numinp, &numout);
+	fscanf (finputfile, "%ld %ld", &numinp, &numout);
 	numinp += 2;
 	markbdd_line = 1;
 	int intnum = 0, keepnum = 0;
@@ -904,9 +984,23 @@ void bddloop () {
 	
 	//  p = fgetc(finputfile);
 	// 
+	d3_printf1("\n");
+	
 	while (1) {		//(p = fgetc(finputfile))!=EOF) 
-		markbdd_line++;
-      d2_printf2("\rReading %d ", markbdd_line);
+		if(markbdd_line == 1) { d2_printf1("Reading 2"); }
+      else {
+			d2e_printf2("\rReading %d ", markbdd_line);
+			d3_printf2("Reading %d ", markbdd_line);
+		}
+		if (p == '\n') {
+			p = fgetc(finputfile);
+			if(p == EOF) {
+				goto Exit;
+			}
+			markbdd_line++;
+			d3_printf1("\r");
+			continue;
+		}
       if (p == ';') {
 			while (p != '\n') {
             p = fgetc(finputfile);
@@ -914,29 +1008,23 @@ void bddloop () {
 					goto Exit;
 				}
 			}
-         p = fgetc(finputfile);
-         if (p == EOF) {
-				goto Exit;
-			}
-			if (p != ';') {
-				ungetc (p, finputfile);
-			}
+			d3_printf1("\r");
 			continue;
 		}
-      if (p == '\n') {
-			while (p == '\n') {
+		if (p == ' ') {
+			while (p != ' ') {
             p = fgetc(finputfile);
-            if (p == EOF) {
+				if (p == EOF) {
 					goto Exit;
 				}
 			}
-			if (p == ';')
-			  continue;
-			ungetc (p, finputfile);
-		}
-      p = fgetc(finputfile);
-      if (p == EOF) {
-			goto Exit;
+			p = fgetc(finputfile);
+			if(p == EOF) {
+				goto Exit;
+			}
+				  
+			d3_printf1("\r");
+			continue;
 		}
       if (p == '*') {
 			keep[nmbrFunctions] = 1;
@@ -972,10 +1060,11 @@ void bddloop () {
 			 && (strcasecmp (macros, "initialbranch"))) {
 			fprintf (stddbg, "BDD $%d: ", nmbrFunctions);
 			printBDDfile (functions[nmbrFunctions - 1], stddbg);
-			fprintf (stddbg, "\n");
+			//fprintf (stddbg, "\n");
 		}
       )
-      p = fgetc (finputfile);
+
+		p = fgetc (finputfile);
       if (p != '\n') {
 			int continue_all = 0;
 			if(p==';') continue_all = 1;
@@ -998,8 +1087,8 @@ void bddloop () {
          }
 			if (p != '\n')
 			  goto Exit;
-		} else
-		  ungetc (p, finputfile);
+		}
+		d3_printf1("\n");
 	}
 	Exit:;
 	if (keepnum == 0)
