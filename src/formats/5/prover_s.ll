@@ -1,5 +1,5 @@
 %{
-#include "ite.h"
+#include "sbsat.h"
 #include "bddnode.h"
 #include "libt5_la-prover_g.h"
 

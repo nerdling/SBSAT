@@ -1,5 +1,5 @@
 %{
-#include "ite.h"
+#include "sbsat.h"
 #include "bddnode.h"
 #include "libt5_la-trace_g.h"
 extern int s_line;

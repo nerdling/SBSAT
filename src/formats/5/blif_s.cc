@@ -20,6 +20,7 @@
 
 /* Scanner skeleton version:
  * $Header$
+ * $FreeBSD: src/usr.bin/lex/flex.skl,v 1.7 2002/09/09 02:58:42 obrien Exp $
  */
 
 #define FLEX_SCANNER
@@ -27,7 +28,6 @@
 #define YY_FLEX_MINOR_VERSION 5
 
 #include <stdio.h>
-#include <unistd.h>
 
 
 /* cfront 1.2 defines "c_plusplus" instead of "__cplusplus" */
@@ -41,6 +41,7 @@
 #ifdef __cplusplus
 
 #include <stdlib.h>
+#include <unistd.h>
 
 /* Use prototypes in function declarations. */
 #define YY_USE_PROTOS
@@ -507,7 +508,7 @@ void blif_ll_nothing() { };
 /*%option outfile="blif_s.c" */
 /*INTNUMBER    [+-]?[0-9]+*/
 /* ID           [a-zA-Z_][\[\].-a-zA-Z0-9_]* */
-#line 511 "blif_s.cc"
+#line 512 "blif_s.cc"
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -655,13 +656,13 @@ YY_MALLOC_DECL
 YY_DECL
 	{
 	register yy_state_type yy_current_state;
-	register char *yy_cp = NULL, *yy_bp = NULL;
+	register char *yy_cp, *yy_bp;
 	register int yy_act;
 
 #line 30 "blif_s.ll"
 
 
-#line 665 "blif_s.cc"
+#line 666 "blif_s.cc"
 
 	if ( yy_init )
 		{
@@ -849,7 +850,7 @@ YY_RULE_SETUP
 #line 54 "blif_s.ll"
 ECHO;
 	YY_BREAK
-#line 853 "blif_s.cc"
+#line 854 "blif_s.cc"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(names):
 case YY_STATE_EOF(ttable):
@@ -1415,6 +1416,11 @@ YY_BUFFER_STATE b;
 	}
 
 
+#ifndef YY_ALWAYS_INTERACTIVE
+#ifndef YY_NEVER_INTERACTIVE
+extern int isatty YY_PROTO(( int ));
+#endif
+#endif
 
 #ifdef YY_USE_PROTOS
 void yy_init_buffer( YY_BUFFER_STATE b, FILE *file )
