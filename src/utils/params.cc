@@ -122,6 +122,8 @@ t_opt options[] = {
                 "Set the size of a bucket in power of 2"},
 { &_bdd_pool_size, "", "bdd-pool-size", P_INT, V(i:0,"0"), V(i:1000000,"1000000"), VAR_NORMAL, 0, 
                 "The size of the bdd pool increment"},
+{ &enable_gc, "", "gc", P_INT, V(i:1,"1"), V(i:1,"1"), VAR_NORMAL, 0, 
+                "Garbage collection"},
 
 /* 
  * Input options

@@ -219,4 +219,5 @@ extern char preset_variables_string[2048];
 extern int prover3_max_vars;
 extern int do_split_max_vars;
 extern int functionTypeLimits[MAX_FUNC];
+extern int enable_gc;
 #endif

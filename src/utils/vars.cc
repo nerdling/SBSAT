@@ -148,3 +148,5 @@ int prover3_max_vars;
 int do_split_max_vars;
 
 int functionTypeLimits[MAX_FUNC];
+
+int enable_gc = 1;
