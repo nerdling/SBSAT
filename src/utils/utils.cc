@@ -79,6 +79,12 @@ void ite_free(void **ptr) {
 
 void *ite_recalloc(void *ptr, unsigned int oldx, unsigned int x, unsigned int y, int dbg_lvl, const char *for_what) {
    void *p = NULL;
+   long long r = x;
+   r *= y;
+   if (r >= INT_MAX) {
+         fprintf(stderr, "ERROR: Unable to allocate %u (%u * %u) bytes for %s\n", x*y, x, y, for_what); 
+         exit(1); 
+   }
    assert(oldx<x);
    if (x==0 || y==0) {
       dm2_printf2("WARNING: 0 bytes allocation for %s\n", for_what); 
