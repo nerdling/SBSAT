@@ -824,21 +824,210 @@ No flowers grown in the open air are colourless.
 \layout Standard
 
 We would like to ask this question - Do I dislike all flowers that are not
- scented? Now we must translate these statements into first order predicate
- logic.
+ scented? Now we must translate these statements into First Order Logic.
  This gives:
 \layout Enumerate
 
-Ax ( Colored(x) -> Scented(x) )
+
+\begin_inset Formula $\forall$
+\end_inset 
+
+
+\emph on 
+w
+\emph default 
+ ( Colored(
+\emph on 
+w
+\emph default 
+) 
+\begin_inset Formula $\Rightarrow$
+\end_inset 
+
+ Scented(
+\emph on 
+w
+\emph default 
+) )
 \layout Enumerate
 
-Ax ( -OpenAir(x) -> -Like(x) )
+
+\begin_inset Formula $\forall$
+\end_inset 
+
+
+\emph on 
+x
+\emph default 
+ ( 
+\begin_inset Formula $\neg$
+\end_inset 
+
+OpenAir(
+\emph on 
+x
+\emph default 
+)
+\begin_inset Formula $\Rightarrow$
+\end_inset 
+
+ 
+\begin_inset Formula $\neg$
+\end_inset 
+
+Like(
+\emph on 
+x
+\emph default 
+) )
 \layout Enumerate
 
-Ax ( OpenAir(x) -> Colored(x) )
+
+\begin_inset Formula $\forall$
+\end_inset 
+
+
+\emph on 
+y
+\emph default 
+ ( OpenAir(
+\emph on 
+y
+\emph default 
+) 
+\begin_inset Formula $\Rightarrow$
+\end_inset 
+
+ Colored(
+\emph on 
+y
+\emph default 
+) )
 \layout Standard
 
-The question becomes: Ax ( -Scented(x) -> -Like(x) )
+The question becomes: 
+\begin_inset Formula $\forall$
+\end_inset 
+
+
+\emph on 
+z
+\emph default 
+ ( 
+\begin_inset Formula $\neg$
+\end_inset 
+
+Scented(
+\emph on 
+z
+\emph default 
+) 
+\begin_inset Formula $\Rightarrow$
+\end_inset 
+
+
+\begin_inset Formula $\neg$
+\end_inset 
+
+Like(
+\emph on 
+z
+\emph default 
+) )
+\layout Standard
+
+We can now translate these statements into one of the acceptable formats
+ used by SBSAT.
+ Both CNF and ITE(BDD) are demonstrated here.
+\layout Standard
+
+Example(file flowers.ite):
+\layout LyX-Code
+
+p bdd 4 4
+\layout LyX-Code
+
+;Coloured flowers are always scented.
+\layout LyX-Code
+
+;I dislike flowers that are not grown in the open air.
+\layout LyX-Code
+
+;No flowers grown in the open air are colourless.
+\layout LyX-Code
+
+;Do I dislike all flowers that are not scented?
+\layout LyX-Code
+
+;Where Colored=1, Scented=2, Like=3, Grown in the Open Air=4
+\layout LyX-Code
+
+;The question must be negated and added to the database.
+\layout LyX-Code
+
+;If SBSAT returns 'unsat' then the answer to the question
+\layout LyX-Code
+
+;is 'YES', otherwise the answer is 'NO'.
+\layout LyX-Code
+
+*imp(1, 2)
+\layout LyX-Code
+
+*imp(-3, -4)
+\layout LyX-Code
+
+*imp(3, 1)
+\layout LyX-Code
+
+*not(imp(-2, -4)) 
+\layout Standard
+
+Example(file flowers.cnf):
+\layout LyX-Code
+
+p cnf 4 5
+\layout LyX-Code
+
+c Coloured flowers are always scented.
+\layout LyX-Code
+
+c I dislike flowers that are not grown in the open air.
+\layout LyX-Code
+
+c No flowers grown in the open air are colourless.
+\layout LyX-Code
+
+c Do I dislike all flowers that are not scented?
+\layout LyX-Code
+
+c Where Colored=1, Scented=2, Like=3, Grown in the Open Air=4
+\layout LyX-Code
+
+c The question must be negated and added to the database.
+\layout LyX-Code
+
+c If SBSAT returns 'unsat' then the answer to the question
+\layout LyX-Code
+
+c is 'YES', otherwise the answer is 'NO'.
+\layout LyX-Code
+
+-1 2 0
+\layout LyX-Code
+
+3 -4 0
+\layout LyX-Code
+
+-3 1 0
+\layout LyX-Code
+
+-2 0
+\layout LyX-Code
+
+4 0 
+\layout LyX-Code
+
 \layout Subsection
 
 Choosing a different solver

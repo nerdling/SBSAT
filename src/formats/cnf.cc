@@ -885,7 +885,7 @@ void CNF_to_BDD(int cnf)
          int set_true = 0;
          qsort(min_max_store[x].num, min_max_store[x].length, sizeof(int), abscompfunc);
          functions[x+numout] = MinMaxBDD(min_max_store[x].num, min_max_store[x].min, min_max_store[x].max, min_max_store[x].length, set_true);
-			functionType[x+numout] = MIN_MAX;
+			functionType[x+numout] = MINMAX;
       }
       delete [] min_max_store;
       numout = numout+num_minmax;
