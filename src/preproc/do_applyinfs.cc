@@ -91,9 +91,10 @@ Do_Apply_Inferences ()
 				d3e_printf3 ("{%d=%d}", inferlist->nums[0], inferlist->nums[1]);
 				d4_printf5("{%s(%d)=%s(%d)}", s_name(inferlist->nums[0]), inferlist->nums[0], s_name(inferlist->nums[1]), inferlist->nums[1]);
 				str_length = 0;
+				if(variablelist[inferlist->nums[1]].true_false != 2)
+				  if(variablelist[inferlist->nums[0]].true_false == 2)
+					 variablelist[inferlist->nums[0]].true_false = -1;
 				variablelist[inferlist->nums[1]].true_false = -1;
-				if(variablelist[inferlist->nums[0]].true_false == 2)
-				  variablelist[inferlist->nums[0]].true_false = -1;
 				variablelist[inferlist->nums[1]].equalvars = inferlist->nums[0];
 				int count1 = 0;
 				num_replace_all(amount[inferlist->nums[1]].head, inferlist->nums[1], inferlist->nums[0]);
@@ -105,8 +106,8 @@ Do_Apply_Inferences ()
                   return TRIV_UNSAT;
                int changeFT = 0;
 					if (functionType[j] == AUTARKY_FUNC && equalityVble[j]==inferlist->nums[1])
-					  //functions[j] = true_ptr;
-					  equalityVble[j] = inferlist->nums[0];
+					  functions[j] = true_ptr;
+					  //equalityVble[j] = inferlist->nums[0];
 						  
                if (functionType[j] == AND || functionType[j] == OR) {
                   if (abs (equalityVble[j]) == inferlist->nums[0]) {
@@ -165,9 +166,10 @@ Do_Apply_Inferences ()
 				str_length = 0;  
 				d3e_printf3 ("{%d=%d}", inferlist->nums[0], inferlist->nums[1]);
 				d4_printf5 ("{%s(%d)!=%s(%d)}", s_name(inferlist->nums[0]), inferlist->nums[0], s_name(-inferlist->nums[1]), -inferlist->nums[1]);
+				if(variablelist[-inferlist->nums[1]].true_false != 2)
+				  if(variablelist[inferlist->nums[0]].true_false == 2)
+					 variablelist[inferlist->nums[0]].true_false = -1;
 				variablelist[-inferlist->nums[1]].true_false = -1;
-				if(variablelist[inferlist->nums[0]].true_false == 2)
-				  variablelist[inferlist->nums[0]].true_false = -1;
 				variablelist[-inferlist->nums[1]].equalvars = -inferlist->nums[0];
 				//Gotta keep that (-inferlist->nums[0]) negative...trust me
 				int count1 = 0;
@@ -180,8 +182,8 @@ Do_Apply_Inferences ()
 					  return TRIV_UNSAT;
                int changeFT = 0;
 					if (functionType[j] == AUTARKY_FUNC && equalityVble[j]==-inferlist->nums[1])
-					  //functions[j] = true_ptr;
-					  equalityVble[j] = inferlist->nums[0];
+					  functions[j] = true_ptr;
+					  //equalityVble[j] = inferlist->nums[0];
 
                if (functionType[j] == AND || functionType[j] == OR) {
                   if (abs (equalityVble[j]) == inferlist->nums[0]) {
@@ -430,7 +432,7 @@ int Rebuild_BDDx (int x) {
 	infer *startiter = NULL;
 
 	if(functionType[x] == AUTARKY_FUNC) {
-		//fprintf(stderr, "|%d %d|", l->equivCount(equalityVble[x]), l->opposCount(equalityVble[x]));
+		//fprintf(stderr, "\n|%d %d|\n", l->equivCount(equalityVble[x]), l->opposCount(equalityVble[x]));
 		//l->printEquivalence(equalityVble[x]);
 		//l->printOpposite(equalityVble[x]);
 		//l->printEquivVarCount();
@@ -484,6 +486,7 @@ int Rebuild_BDDx (int x) {
 			//Autark variable was infered by some other function.
 			autark_BDD[equalityVble[x]] = -1;
 			//d3_printf3("\n%d|%d gone|\n", x, equalityVble[x]);
+			//str_length = 0;
 			functions[x] = true_ptr;		
 			functionType[x] = UNSURE;
 			equalityVble[x] = 0;

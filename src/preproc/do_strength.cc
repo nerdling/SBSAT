@@ -101,7 +101,6 @@ int Do_Strength() {
 				 int did_vars_incommon = 0;
 				 if(functionType[j] == AUTARKY_FUNC) continue;
              if (length[x] < functionTypeLimits[functionType[x]]) {// &&
-					 //(functionType[j] != AUTARKY_FUNC)) {
 					 if (nmbrVarsInCommon (x, j, STRENGTH) == 0) // < STRENGTH)
 						continue;
 					 did_vars_incommon = 1;
@@ -111,8 +110,7 @@ int Do_Strength() {
 						 ret = PREP_CHANGED;
 						 SetRepeats(x);
 						 functions[x] = currentBDD;
-						 //if(functionType[x]!=AUTARKY_FUNC)
-							functionType[x] = UNSURE;
+						 functionType[x] = UNSURE;
 						 switch (int r=Rebuild_BDDx(x)) {
 						  case TRIV_SAT: 
 						  case TRIV_UNSAT: 
@@ -121,9 +119,7 @@ int Do_Strength() {
 						 }
 					 }
 				 }
-				 //if(functionType[x] == AUTARKY_FUNC) continue;
              if (length[j] < functionTypeLimits[functionType[j]]) {// &&
-					 //(functionType[x] != AUTARKY_FUNC)) {
 					 if(did_vars_incommon == 0) {
 						 if (nmbrVarsInCommon (x, j, STRENGTH) == 0) // < STRENGTH)
 							continue;
@@ -134,8 +130,7 @@ int Do_Strength() {
 						 ret = PREP_CHANGED;
 						 SetRepeats(j);
 						 functions[j] = currentBDD;
-						 //if(functionType[j]!=AUTARKY_FUNC)
-							functionType[j] = UNSURE;
+						 functionType[j] = UNSURE;
 						 switch (int r=Rebuild_BDDx(j)) {
 						  case TRIV_SAT: 
 						  case TRIV_UNSAT: 

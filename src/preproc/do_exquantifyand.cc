@@ -148,6 +148,8 @@ int ExQuantifyAnd () {
 
 			if(amount_count == 0) {
 				//Variable dropped out, set it to True.
+				//d3_printf3("\n%d dropped out, %d=T\n", i, i);
+				//str_length = 0;
 				BDDNode *inferBDD = ite_var(i);
 				int bdd_length = 0;
 				int *bdd_vars = NULL;
