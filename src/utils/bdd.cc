@@ -786,6 +786,8 @@ BDDNode *_ite_x_y_F(BDDNode *x, BDDNode *y)
       v = x->variable;
       r = _ite_x_y_F(x->thenCase, y);
       e = _ite_x_y_F(x->elseCase, y);
+		// this happens but not often enough to bring a speedup
+		if (r == x->thenCase && e == x->elseCase) return x;
    } else if (x->variable == y->variable) {
       if (x == y) return x;
       else if (x->notCase == y) return false_ptr;
@@ -797,17 +799,19 @@ BDDNode *_ite_x_y_F(BDDNode *x, BDDNode *y)
          if (y->elseCase == true_ptr) e=x->elseCase;
          else if (y->elseCase == false_ptr) e=false_ptr;
          else e = _ite_x_y_F(x->elseCase, y->elseCase);
+			// this happens but not often enough to bring a speedup
+			if (r == x->thenCase && e == x->elseCase) return x;
+			if (r == y->thenCase && e == y->elseCase) return y;
       }
    } else {
       v = y->variable;
       r = _ite_x_y_F(y->thenCase, x);  //mk switch
       e = _ite_x_y_F(y->elseCase, x);
+		// this happens but not often enough to bring a speedup
+		if (r == y->thenCase && e == y->elseCase) return y;
    } 
 
    if (r == e) return (r);
-   // this happens but not often enough to bring a speedup
-   //if (r == x->thenCase && e == x->elseCase && v==x->variable) return x; 
-   //if (r == y->thenCase && e == y->elseCase && v==y->variable) return y;
    return find_or_add_node(v, r, e);
 }
 
@@ -1775,24 +1779,6 @@ BDDNode * uquantify (BDDNode * f, int v)
 //BDDNode *xquantify(BDDNode *f, int v)
 
 ////////////////////
-BDDNode * set_variable (BDDNode * BDD, int num, int torf)
-{
-   if (BDD->variable < num)
-      return BDD;
-   if (BDD->variable == num)
-   {
-      if (torf)
-         return BDD->thenCase;
-
-      else
-         return BDD->elseCase;
-   }
-   BDDNode * r = set_variable (BDD->thenCase, num, torf);
-   BDDNode * e = set_variable (BDD->elseCase, num, torf);
-   if (r == e)
-      return r;
-   return find_or_add_node (BDD->variable, r, e);
-}
 
 /*
  CircuitStruct * split (CircuitStruct * Split_ircuit, int num, int torf)
@@ -1933,6 +1919,41 @@ void NEW_unravelBDD(long *y, long *max, int **tempint, BDDNode * func) {
 	NEW_unravelBDD (y, max, tempint, func->elseCase);
 }
 
+BDDNode * _set_variable (BDDNode * f, int num, int torf);
+
+BDDNode * set_variable (BDDNode * f, int num, int torf) {
+  bdd_flag_number++;
+  if (bdd_flag_number > 1000000000) {
+     void bdd_gc();
+     bdd_gc();
+     bdd_flag_number = 3;
+  }
+  return _set_variable(f, num, torf);
+}
+
+
+BDDNode * _set_variable (BDDNode * f, int num, int torf)
+{
+	if (f->variable < num)
+      return f;
+   if (f->flag == bdd_flag_number) {
+      return f->tmp_bdd;
+   }
+   f->flag = bdd_flag_number;
+   
+	if (f->variable == num) {
+      if (torf)
+		  return (f->tmp_bdd = f->thenCase);
+      else
+		  return (f->tmp_bdd = f->elseCase);
+   }
+   BDDNode * r = set_variable (f->thenCase, num, torf);
+   BDDNode * e = set_variable (f->elseCase, num, torf);
+   if (r == e)
+	  return (f->tmp_bdd = r);
+   return (f->tmp_bdd = find_or_add_node (f->variable, r, e));
+}
+
 BDDNode * _num_replace (BDDNode * f, int var, int replace);
 
 BDDNode * num_replace (BDDNode * f, int var, int replace) {
@@ -1946,13 +1967,13 @@ BDDNode * num_replace (BDDNode * f, int var, int replace) {
 }
 
 BDDNode * _num_replace (BDDNode * f, int var, int replace) {
+	if (var > f->variable)
+	  return f;
    if (f->flag == bdd_flag_number) {
       return f->tmp_bdd;
    }
    f->flag = bdd_flag_number;
-	if (var > f->variable)
-	  return (f->tmp_bdd = f);
-   else if (var == f->variable) {
+	if (var == f->variable) {
 		if (replace > 0)
 		  return (f->tmp_bdd = ite(ite_var(replace), f->thenCase, f->elseCase));//find_or_add_node(replace, f->thenCase, f->elseCase);
       else if (replace < 0)
