@@ -65,7 +65,7 @@ LSGBXorInitHeuristicTables()
   int nMaxRHSSize = 1;
 
   for(int i=0; i<nNumFuncs; i++) 
-     if (arrSolverFunctions[i].nType == PLAINXOR)
+     if (arrSolverFunctions[i].nType == PLAINXOR || arrSolverFunctions[i].nType == XOR_PART_BDDXOR)
         if (nMaxRHSSize < arrSolverFunctions[i].fn_xor.rhsVbles.nNumElts)
            nMaxRHSSize = arrSolverFunctions[i].fn_xor.rhsVbles.nNumElts;
 

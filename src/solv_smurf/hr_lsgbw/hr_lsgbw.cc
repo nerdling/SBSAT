@@ -105,7 +105,7 @@ HrLSGBWInit()
    procHeurSelect = J_OptimizedHeuristic;
 
    D_9(
-         DisplayJHeuristicValues();
+         DisplayHeuristicValues();
       );
    return 0;
 }

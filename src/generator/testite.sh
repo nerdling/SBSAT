@@ -5,15 +5,17 @@ PARAMS=" --debug 1  -L 0 --debug-dev stdout --backjumping 0 -All 0 -In 1 --backt
 #PARAMS=" --debug 1  -L 0 --backjumping 0 -All 1 -In 1 --smurfs-share-paths 0 --backtracks-per-report 10000 file.xor"
 
 #GENTEST="4 4 4 2"
-#GENTEST="100 30 30 4"
-#GENTEST="50 60 10 4"
+#GENTEST="xor 100 30 30 4"
+#GENTEST="xor 50 60 10 4"
 #GENTEST="xor 28 40 18 4"
-GENTEST="xor 14 20 10 3"
+#GENTEST="xor 48 40 18 4"
+GENTEST="xor 14 25 10 3"
 #GENTEST="40 20 20 20"
-
+c=0
 while test $RET -eq 0
 do
-  D=`date +%H%M%S`
+  c=$(($c+1))
+  D=`date +%H%M%S`$c
   FILENAME=file.$D.xor
   ./gentest $GENTEST > $FILENAME
   # | tee file.xor | ../sbsat -H l --debug 1  -L 0 --backjumping 0 
@@ -33,7 +35,7 @@ do
   fi
   if test $AU = $NAU ; then
     echo "good - $AU - $NAU"
-    #rm $FILENAME
+    rm $FILENAME
   else
     echo "bad - $AU - $NAU $FILENAME"
     cp $FILENAME bad

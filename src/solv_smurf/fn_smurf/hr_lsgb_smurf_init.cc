@@ -49,19 +49,6 @@ HrLSGBFnSmurfInit()
    }
 }
 
-ITE_INLINE void
-DisplayJHeuristicValues()
-{
-   fprintf(stddbg, "JHeuristic values: \n");
-   for(int i=0;i<gnMaxVbleIndex;i++)
-   {
-      if (arrSolution[i]==BOOL_UNKNOWN) {
-         fprintf(stddbg, "+%d(%d): %f%c\n", i, arrSolver2IteVarMap[i], arrHeurScores[i].Pos, arrSolution[i]!=BOOL_UNKNOWN?'*':' ');
-         fprintf(stddbg, "-%d(%d): %f%c\n", i, arrSolver2IteVarMap[i], arrHeurScores[i].Neg, arrSolution[i]!=BOOL_UNKNOWN?'*':' ');
-      }
-   }
-}
-
 ITE_INLINE double
 LSGBSumInferenceWeights(Transition *pTransition)
 {

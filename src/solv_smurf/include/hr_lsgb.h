@@ -194,7 +194,7 @@ ITE_INLINE int J_OptimizedHeuristic (int *pnBranchAtom, int *pnBranchValue);
 ITE_INLINE int J_OptimizedHeuristic_l (int *pnBranchAtom, int *pnBranchValue);
 ITE_INLINE int J_OptimizedHeuristic_Berm (int *pnBranchAtom, int *pnBranchValue);
 
-ITE_INLINE void DisplayJHeuristicValues();
+ITE_INLINE void DisplayHeuristicValues();
 ITE_INLINE void FreeHeuristicTablesForSpecialFuncs();
 
 ITE_INLINE int  HrLSGBInit();

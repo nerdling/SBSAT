@@ -129,7 +129,7 @@ HrLSGBInit()
       procHeurSelect = J_OptimizedHeuristic;
    }
    D_9(
-         DisplayJHeuristicValues();
+         DisplayHeuristicValues();
       );
    return 0;
 }
@@ -201,7 +201,7 @@ HrLSGBFree()
 #undef HEUR_EXTRA_OUT
 #endif
 
-#define HEUR_EXTRA_IN() D_8(DisplayJHeuristicValues();); d8_printf1("\n");
+#define HEUR_EXTRA_IN() D_8(DisplayHeuristicValues();); d8_printf1("\n");
 #define HEUR_EXTRA_OUT() \
    d8_printf6("JHeuristic: %c%d (%.10f,%.10f) because of %f\n",  \
          (*pnBranchValue==BOOL_TRUE?'+':'-'), \
@@ -342,5 +342,18 @@ J_Update_RHS_AND(int nNumRHSUnknowns, int *arrRHSVbles, int *arrRHSPolarities, H
        //}
        
    } // for each RHS vble
+}
+
+ITE_INLINE void
+DisplayHeuristicValues()
+{
+   fprintf(stddbg, "JHeuristic values: \n");
+   for(int i=0;i<gnMaxVbleIndex;i++)
+   {
+      if (arrSolution[i]==BOOL_UNKNOWN) {
+         fprintf(stddbg, "+%d(%d): %f%c\n", i, arrSolver2IteVarMap[i], arrHeurScores[i].Pos, arrSolution[i]!=BOOL_UNKNOWN?'*':' ');
+         fprintf(stddbg, "-%d(%d): %f%c\n", i, arrSolver2IteVarMap[i], arrHeurScores[i].Neg, arrSolution[i]!=BOOL_UNKNOWN?'*':' ');
+      }
+   }
 }
 

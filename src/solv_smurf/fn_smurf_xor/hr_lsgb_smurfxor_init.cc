@@ -193,6 +193,7 @@ LSGBSmurfXorSetHeurWeightsTrueState(int nNumXors)
       pTrueSmurfState->arrHeuristicXors 
          = (double*)realloc(pTrueSmurfState->arrHeuristicXors, nNumXors*sizeof(double));
       if (arrXorEqWght == NULL) LSGBXorInitHeuristicTables();
+      assert(nNumXors > 2);
 
       pTrueSmurfState->nNumHeuristicXors = nNumXors;
       pTrueSmurfState->arrHeuristicXors[0] = 0;       
