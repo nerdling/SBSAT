@@ -62,16 +62,41 @@ Do_Apply_Inferences ()
 	infer *temp = inferlist;
 	inferlist = inferlist->next;	//NEW Must increment past the empty start node
 	delete temp;
+
+			for (infer * iterator = inferlist; iterator != NULL;
+			  iterator = iterator->next) {
+			//d3_printf2("|%d ", iterator->nums[0]);
+			//d3_printf2("%d ", iterator->nums[1]);
+			
+			if(iterator->nums[1] != 0) {
+				iterator->nums[0] = l->get_equiv(iterator->nums[0]);
+				if (iterator->nums[0] == T) {
+					iterator->nums[0] = iterator->nums[1];
+					iterator->nums[1] = 0;
+				} else if (iterator->nums[0] == F) {
+					iterator->nums[0] = -iterator->nums[1];
+					iterator->nums[1] = 0;
+				}
+				if (iterator->nums[0] < 0) {
+					iterator->nums[0] = -iterator->nums[0];
+					iterator->nums[1] = -iterator->nums[1];					
+				}
+				
+				//d3_printf2("%d ", iterator->nums[0]);
+				//d3_printf2("%d|", iterator->nums[1]);
+			}
+		}
+	
 	while (inferlist != NULL) {
 		if (inferlist->nums[1] != 0) {
 			if (inferlist->nums[1] > 0) {
 				Pos_replace++;
-//            D_3(print_nonroller();)
+				//            D_3(print_nonroller();)
 				for(int iter = 0; iter<str_length; iter++)
-					d3_printf1("\b");
+				  d3_printf1("\b");
 				str_length = 0;
-				d3_printf3 ("{%d=%d}", inferlist->nums[0], inferlist->nums[1]);
 				variablelist[inferlist->nums[1]].equalvars = inferlist->nums[0];
+				int howmany = 0;
 				for (llist * k = amount[inferlist->nums[1]].head; k != NULL; k = k->next) {
 					int j = k->num;
 					BDDNode *before = functions[j];
@@ -253,7 +278,7 @@ Do_Apply_Inferences ()
 	inferlist->next = NULL;
 	lastinfer = inferlist;
 	DO_INFERENCES = 1;
-
+	
 	return ret;
 }
 
@@ -379,6 +404,7 @@ int Rebuild_BDDx (int x) {
 			lastiter = lastiter->next;
 			lastiter->nums[0] = iterator->nums[0];
 			lastiter->nums[1] = iterator->nums[1];
+			//fprintf(stderr, "%d|%d, %d|", x, iterator->nums[0], iterator->nums[1]);
 		}
 		lastiter->next = NULL;
 	}
@@ -386,7 +412,7 @@ int Rebuild_BDDx (int x) {
 	if(startiter!=NULL) {
 		lastinfer->next = startiter->next;
 		delete startiter;
-	}
+	} else lastinfer->next = NULL;
 	
 	infer *previous = lastinfer;
 	
@@ -454,20 +480,20 @@ int Rebuild_BDDx (int x) {
 					iterator->nums[0] = -result->left;
 					iterator->nums[1] = 0;
 				} else if (abs (result->left) < abs (result->rght)) {
-					if (result->left < 0) {
-						iterator->nums[0] = -result->left;
-						iterator->nums[1] = -result->rght;
-					} else {
-						iterator->nums[0] = result->left;
-						iterator->nums[1] = result->rght;
-					}
-				} else {
 					if (result->rght < 0) {
 						iterator->nums[0] = -result->rght;
 						iterator->nums[1] = -result->left;
 					} else {
 						iterator->nums[0] = result->rght;
 						iterator->nums[1] = result->left;
+					}
+				} else {
+					if (result->left < 0) {
+						iterator->nums[0] = -result->left;
+						iterator->nums[1] = -result->rght;
+					} else {
+						iterator->nums[0] = result->left;
+						iterator->nums[1] = result->rght;
 					}
 				}
 			} else {
@@ -495,14 +521,6 @@ int Rebuild_BDDx (int x) {
 					iterator->nums[0] = result->left;
 					iterator->nums[1] = 0;
 				} else if (abs (result->left) < abs (result->rght)) {
-					if (result->left < 0) {
-						iterator->nums[0] = -result->left;
-						iterator->nums[1] = result->rght;
-					} else {
-						iterator->nums[0] = result->left;
-						iterator->nums[1] = -result->rght;
-					}
-				} else {
 					if (result->rght < 0) {
 						iterator->nums[0] = -result->rght;
 						iterator->nums[1] = result->left;
@@ -510,12 +528,20 @@ int Rebuild_BDDx (int x) {
 						iterator->nums[0] = result->rght;
 						iterator->nums[1] = -result->left;
 					}
+				} else {
+					if (result->left < 0) {
+						iterator->nums[0] = -result->left;
+						iterator->nums[1] = result->rght;
+					} else {
+						iterator->nums[0] = result->left;
+						iterator->nums[1] = -result->rght;
+					}
 				}
 			}
 		}
-		//fprintf(stderr, "!%d, %d!", iterator->nums[0], iterator->nums[1]);
+		//fprintf(stderr, "!%d, %d!\n", iterator->nums[0], iterator->nums[1]);
 		//if(iterator->nums[1] > 100000) { 
-		//	l->printEquivalences();
+		//l->printEquivalences();
 		//	exit(1);
 		//}
 		if (iterator->nums[1] != 0)
@@ -526,7 +552,7 @@ int Rebuild_BDDx (int x) {
 
 	lastinfer = previous;
 	lastinfer->next = NULL;
-	
+
 	assert(x!=nmbrFunctions+1);
 	unravelBDD(&y, tempint, functions[x]);
 	qsort (tempint, y, sizeof (int), compfunc);
@@ -659,20 +685,20 @@ Rebuild_BDD (BDDNode *bdd, int *bdd_length, int *&bdd_vars)
 					iterator->nums[0] = -result->left;
 					iterator->nums[1] = 0;
 				} else if (abs (result->left) < abs (result->rght)) {
-					if (result->left < 0) {
-						iterator->nums[0] = -result->left;
-						iterator->nums[1] = -result->rght;
-					} else {
-						iterator->nums[0] = result->left;
-						iterator->nums[1] = result->rght;
-					}
-				} else {
 					if (result->rght < 0) {
 						iterator->nums[0] = -result->rght;
 						iterator->nums[1] = -result->left;
 					} else {
 						iterator->nums[0] = result->rght;
 						iterator->nums[1] = result->left;
+					}
+				} else {
+					if (result->left < 0) {
+						iterator->nums[0] = -result->left;
+						iterator->nums[1] = -result->rght;
+					} else {
+						iterator->nums[0] = result->left;
+						iterator->nums[1] = result->rght;
 					}
 				}
 			} else {
@@ -698,20 +724,20 @@ Rebuild_BDD (BDDNode *bdd, int *bdd_length, int *&bdd_vars)
 					iterator->nums[0] = result->left;
 					iterator->nums[1] = 0;
 				} else if (abs (result->left) < abs (result->rght)) {
-					if (result->left < 0) {
-						iterator->nums[0] = -result->left;
-						iterator->nums[1] = result->rght;
-					} else {
-						iterator->nums[0] = result->left;
-						iterator->nums[1] = -result->rght;
-					}
-				} else {
 					if (result->rght < 0) {
 						iterator->nums[0] = -result->rght;
 						iterator->nums[1] = result->left;
 					} else {
 						iterator->nums[0] = result->rght;
 						iterator->nums[1] = -result->left;
+					}
+				} else {
+					if (result->left < 0) {
+						iterator->nums[0] = -result->left;
+						iterator->nums[1] = result->rght;
+					} else {
+						iterator->nums[0] = result->left;
+						iterator->nums[1] = -result->rght;
 					}
 				}
 			}
