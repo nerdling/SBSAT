@@ -797,7 +797,7 @@ DisplayAllBrancherLemmas()
 }
 
 ITE_INLINE void
-DisplayAllBrancherLemmasToFile(char *filename)
+DisplayAllBrancherLemmasToFile(char *filename, int flag)
    // Displays all of the brancher lemmas to a file named "output".
 {
    FILE *pFile;
@@ -811,7 +811,16 @@ DisplayAllBrancherLemmasToFile(char *filename)
          pLemmaInfo;
          pLemmaInfo = pLemmaInfo->pLPQNext)
    {
+      if (flag == 1)
+         fprintf(pFile, "c %d %d %d %d %d %d\n", 
+               pLemmaInfo->pLemma->arrLits[0],
+               pLemmaInfo->nNumLemmaMoved,
+               pLemmaInfo->nNumLemmaConflict,
+               (int)(ite_counters[NUM_LPQ_ENQUEUE]-pLemmaInfo->nLemmaNumber),
+               pLemmaInfo->nNumLemmaInfs,
+               pLemmaInfo->nBacktrackStackReferences);
       DisplayLemmaToFile(pFile, pLemmaInfo->pLemma);
+      fprintf(pFile, "\n");
       assert((pLemmaInfo == pLPQLast) == (pLemmaInfo->pLPQNext == NULL));
    }
 }
@@ -891,7 +900,7 @@ DisplayLemmaToFile(FILE *pFile, LemmaBlock *pLemma)
       //cout << arrLits[nLitIndexInBlock] << " ";
       fprintf(pFile, "%d ", arrLits[nLitIndexInBlock]);
    }
-   fprintf(pFile, "0\n");
+   fprintf(pFile, "0");
 }
 
 ITE_INLINE
@@ -1525,6 +1534,11 @@ LPQEnqueue(LemmaInfoStruct *pLemmaInfo)
    // Place *pLemmaInfo at the front of the Lemma Priority Queue.
 {
    assert(!pLPQFirst || !(pLPQFirst->pLPQPrev));
+   ite_counters[NUM_LPQ_ENQUEUE]++;
+   pLemmaInfo->nNumLemmaMoved=0;
+   pLemmaInfo->nNumLemmaConflict=0;
+   pLemmaInfo->nNumLemmaInfs=0;
+   pLemmaInfo->nLemmaNumber=ite_counters[NUM_LPQ_ENQUEUE];
 
    if (pLPQFirst)
    {
@@ -1547,6 +1561,7 @@ MoveToFrontOfLPQ(LemmaInfoStruct *pLemmaInfo)
    // Priority Queue (LPQ).
    // Postcondition:  *pLemmaInfo has moved to the front of the LPQ.
 {
+   pLemmaInfo->nNumLemmaMoved++;
    LemmaInfoStruct *pPrev = pLemmaInfo->pLPQPrev;
    if (pPrev)
    {

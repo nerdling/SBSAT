@@ -199,9 +199,10 @@ UpdateEachAffectedLemma(AffectedFuncsStruct *pAFS, int nInferredValue)
                d9_printf3("Inferring X %d=%d\n", nWatchedVble, nWatchedVblePolarity);
                d9_printf1("Inference came from unit lemma\n");
                DisplayLemmaInfo(pLemmaListDisagreed);
-            )
+            );
 
-            ite_counters[INF_LEMMA]++;
+         pLemmaListDisagreed->nNumLemmaInfs++;
+         ite_counters[INF_LEMMA]++;
          InferLiteral(nWatchedVble, nWatchedVblePolarity, false,
                pLemmaListDisagreed->pLemma,
                pLemmaListDisagreed, 1);
@@ -216,6 +217,7 @@ UpdateEachAffectedLemma(AffectedFuncsStruct *pAFS, int nInferredValue)
          bWatchedVbleUnknown = false;
          continue;
       }
+      pLemmaListDisagreed->nNumLemmaConflict++;
       pConflictLemma = pLemmaListDisagreed->pLemma;
       // goto_Backtrack;
       return ERR_BT_LEMMA;
@@ -319,9 +321,10 @@ UpdateEachAffectedLemma(AffectedFuncsStruct *pAFS, int nInferredValue)
                d9_printf3("Inferring X %d=%d\n", nWatchedVble, nWatchedVblePolarity);
                d9_printf1("Inference came from unit lemma\n");
                DisplayLemmaInfo(pLemmaListDisagreed);
-            )
+            );
 
-            ite_counters[INF_LEMMA]++;
+         pLemmaListDisagreed->nNumLemmaInfs++;
+         ite_counters[INF_LEMMA]++;
          InferLiteral(nWatchedVble, nWatchedVblePolarity, false,
                pLemmaListDisagreed->pLemma, pLemmaListDisagreed, 1);
          /* pBacktrackTop->pLemmaInfo = pLemmaListDisagreed; */
@@ -336,6 +339,7 @@ UpdateEachAffectedLemma(AffectedFuncsStruct *pAFS, int nInferredValue)
          bWatchedVbleUnknown = false;
          continue;
       }
+      pLemmaListDisagreed->nNumLemmaConflict++;
       pConflictLemma = pLemmaListDisagreed->pLemma;
       // goto_Backtrack;
       return ERR_BT_LEMMA;

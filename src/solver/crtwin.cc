@@ -153,7 +153,7 @@ dump_lemmas(char *_filename)
 {
    char filename[128];
    get_freefile(_filename, NULL, filename, 128);
-   DisplayAllBrancherLemmasToFile(filename);
+   DisplayAllBrancherLemmasToFile(filename, 1);
 }
 
 void
