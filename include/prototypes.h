@@ -186,6 +186,7 @@ void DNF_to_CNF();
 void CNF_to_BDD(int);
 //CircuitStruct *split(int, int);
 void cheat_replace(BDDNode *, int, int);
+void num_replace_all(llist *, int , int);
 BDDNode *num_replace(BDDNode *, int, int);
 BDDNode *remove_fpsx (int, int);
 BDDNode *remove_fps(BDDNode *, BDDNode *);
@@ -211,6 +212,7 @@ void printBDDToCNF3SAT();
 
 void GetInferFoAN(BDDNode *);
 infer *GetInfer(long *, long *, int **, BDDNode *);
+void set_variable_all(llist *, int, int);
 BDDNode *set_variable(BDDNode *, int, int);
 extern int vars_max;
 int vars_alloc(int);

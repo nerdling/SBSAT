@@ -805,7 +805,7 @@ BDDNode *_ite_x_y_F(BDDNode *x, BDDNode *y)
       }
    } else {
       v = y->variable;
-      r = _ite_x_y_F(y->thenCase, x);  //mk switch
+      r = _ite_x_y_F(y->thenCase, x);
       e = _ite_x_y_F(y->elseCase, x);
 		// this happens but not often enough to bring a speedup
 		if (r == y->thenCase && e == y->elseCase) return y;
@@ -1921,6 +1921,19 @@ void NEW_unravelBDD(long *y, long *max, int **tempint, BDDNode * func) {
 
 BDDNode * _set_variable (BDDNode * f, int num, int torf);
 
+void set_variable_all(llist * k, int num, int torf) 
+{
+  bdd_flag_number++;
+  if (bdd_flag_number > 1000000000) {
+     void bdd_gc();
+     bdd_gc();
+     bdd_flag_number = 3;
+  }
+   while(k != NULL) {
+      functions[k->num] = _set_variable(functions[k->num], num, torf);
+      k = k->next;
+   }
+}
 BDDNode * set_variable (BDDNode * f, int num, int torf) {
   bdd_flag_number++;
   if (bdd_flag_number > 1000000000) {
@@ -1947,14 +1960,28 @@ BDDNode * _set_variable (BDDNode * f, int num, int torf)
       else
 		  return (f->tmp_bdd = f->elseCase);
    }
-   BDDNode * r = set_variable (f->thenCase, num, torf);
-   BDDNode * e = set_variable (f->elseCase, num, torf);
+   BDDNode * r = _set_variable (f->thenCase, num, torf);
+   BDDNode * e = _set_variable (f->elseCase, num, torf);
    if (r == e)
 	  return (f->tmp_bdd = r);
    return (f->tmp_bdd = find_or_add_node (f->variable, r, e));
 }
 
 BDDNode * _num_replace (BDDNode * f, int var, int replace);
+
+void num_replace_all(llist *k, int var, int replace) 
+{
+  bdd_flag_number++;
+  if (bdd_flag_number > 1000000000) {
+     void bdd_gc();
+     bdd_gc();
+     bdd_flag_number = 3;
+  }
+  while(k != NULL) {
+     functions[k->num] = _num_replace(functions[k->num], var, replace);
+     k = k->next; 
+  }
+}
 
 BDDNode * num_replace (BDDNode * f, int var, int replace) {
   bdd_flag_number++;

@@ -104,49 +104,46 @@ Do_Apply_Inferences ()
 				str_length = 0;
 				variablelist[inferlist->nums[1]].equalvars = inferlist->nums[0];
 				int count1 = 0;
+				num_replace_all(amount[inferlist->nums[1]].head, inferlist->nums[1], inferlist->nums[0]);
 				for (llist * k = amount[inferlist->nums[1]].head; k != NULL;) {
 					count1++;
 					int j = k->num;
 					k = k->next; //This must be done here because k could be deleted in Rebuild_BDDx()
-					BDDNode *before = functions[j];
-					functions[j] = num_replace (functions[j], inferlist->nums[1], inferlist->nums[0]);
-					if (functions[j] == false_ptr)
-					  return TRIV_UNSAT;
-					if (before != functions[j]) {
-						int changeFT = 0;
-						if (functionType[j] == AND || functionType[j] == OR) {
-							if (abs (equalityVble[j]) == inferlist->nums[0]) {
-								for (int iter = 0; iter < length[j]; iter++) {
-									if (variables[j].num[iter] >= inferlist->nums[1]) {
-										if (variables[j].num[iter] == inferlist->nums[1])
-										  changeFT = 1;
-										break;
-									}
-								}
-								if (changeFT == 1) {
-									functionType[j] = UNSURE; //x v (a & b & c)
-									equalityVble[j] = 0;
-								}
-							} else if (abs (equalityVble[j]) == inferlist->nums[1]) {
-								for (int iter = 0; iter < length[j]; iter++) {
-									if (variables[j].num[iter] >= inferlist->nums[0]) {
-										if (variables[j].num[iter] == inferlist->nums[0])
-										  changeFT = 1;
-										break;
-									}
-								}
-								if (changeFT == 1) {
-									functionType[j] = UNSURE; //x v (a & b & c)
-									equalityVble[j] = 0;
-								} else if (equalityVble[j] > 0) {
-									  equalityVble[j] = inferlist->nums[0];
-								} else equalityVble[j] = -inferlist->nums[0];
-							}
-						}
-						if (Rebuild_BDDx(j)==TRIV_UNSAT)
-						  return TRIV_UNSAT;
-					}
-				}
+               if (functions[j] == false_ptr)
+                  return TRIV_UNSAT;
+               int changeFT = 0;
+               if (functionType[j] == AND || functionType[j] == OR) {
+                  if (abs (equalityVble[j]) == inferlist->nums[0]) {
+                     for (int iter = 0; iter < length[j]; iter++) {
+                        if (variables[j].num[iter] >= inferlist->nums[1]) {
+                           if (variables[j].num[iter] == inferlist->nums[1])
+                              changeFT = 1;
+                           break;
+                        }
+                     }
+                     if (changeFT == 1) {
+                        functionType[j] = UNSURE; //x v (a & b & c)
+                        equalityVble[j] = 0;
+                     }
+                  } else if (abs (equalityVble[j]) == inferlist->nums[1]) {
+                     for (int iter = 0; iter < length[j]; iter++) {
+                        if (variables[j].num[iter] >= inferlist->nums[0]) {
+                           if (variables[j].num[iter] == inferlist->nums[0])
+                              changeFT = 1;
+                           break;
+                        }
+                     }
+                     if (changeFT == 1) {
+                        functionType[j] = UNSURE; //x v (a & b & c)
+                        equalityVble[j] = 0;
+                     } else if (equalityVble[j] > 0) {
+                        equalityVble[j] = inferlist->nums[0];
+                     } else equalityVble[j] = -inferlist->nums[0];
+                  }
+               }
+               if (Rebuild_BDDx(j)==TRIV_UNSAT)
+                  return TRIV_UNSAT;
+            }
 
 				int count0 = 0;
 				for (llist *k = amount[inferlist->nums[0]].head; k != NULL; k=k->next)
@@ -174,59 +171,54 @@ Do_Apply_Inferences ()
 				variablelist[-inferlist->nums[1]].equalvars = -inferlist->nums[0];
 				//Gotta keep that (-inferlist->nums[0]) negative...trust me
 				int count1 = 0;
+				num_replace_all(amount[-inferlist->nums[1]].head, -inferlist->nums[1], -inferlist->nums[0]);
 				for (llist * k = amount[-inferlist->nums[1]].head; k != NULL;) {
 					count1++;
 					int j = k->num;
 					k = k->next; //This must be done here because k could be deleted in Rebuild_BDDx()
-					BDDNode *before = functions[j];
-					//printBDDerr(before);
-					//fprintf(stderr, "\n");
-					functions[j] = num_replace (functions[j], -inferlist->nums[1], -inferlist->nums[0]);
 					if (functions[j] == false_ptr)
 					  return TRIV_UNSAT;
-					if (before != functions[j]) {
-						int changeFT = 0;
-						if (functionType[j] == AND || functionType[j] == OR) {
-							if (abs (equalityVble[j]) == inferlist->nums[0]) {
-								for (int iter = 0; iter < length[j]; iter++) {
-									if (variables[j].num[iter] >= -inferlist->nums[1]) {
-										if (variables[j].num[iter] == -inferlist->nums[1])
-										  changeFT = 1;
-										break;
-									}
-								}
-								if (changeFT == 1) {
-									//functionType[j] = ?????;	//-x -> (-a & -b & -c)
-									  functionType[j] = UNSURE;
-									equalityVble[j] = 0;
-								}
-							} else if (abs (equalityVble[j]) == -inferlist->nums[1]) {
-								for (int iter = 0; iter < length[j]; iter++) {
-									if (variables[j].num[iter] >= inferlist->nums[0]) {
-										if (variables[j].num[iter] == inferlist->nums[0])
-										  changeFT = 1;
-										break;
-									}
-								}
-								if (changeFT == 1) {
-									//functionType[j] = ?????;	//-x -> (-a & -b & -c)
-									functionType[j] = UNSURE;
-									equalityVble[j] = 0;
-								} else {
-									if (equalityVble[j] > 0)
-									  equalityVble[j] =  -inferlist->nums[0];
-									else
-									  equalityVble[j] = inferlist->nums[0];
-								}
-							}
-						}
-						if (Rebuild_BDDx(j)==TRIV_UNSAT)
-						  return TRIV_UNSAT;
-					}
-				}
+               int changeFT = 0;
+               if (functionType[j] == AND || functionType[j] == OR) {
+                  if (abs (equalityVble[j]) == inferlist->nums[0]) {
+                     for (int iter = 0; iter < length[j]; iter++) {
+                        if (variables[j].num[iter] >= -inferlist->nums[1]) {
+                           if (variables[j].num[iter] == -inferlist->nums[1])
+                              changeFT = 1;
+                           break;
+                        }
+                     }
+                     if (changeFT == 1) {
+                        //functionType[j] = ?????;	//-x -> (-a & -b & -c)
+                        functionType[j] = UNSURE;
+                        equalityVble[j] = 0;
+                     }
+                  } else if (abs (equalityVble[j]) == -inferlist->nums[1]) {
+                     for (int iter = 0; iter < length[j]; iter++) {
+                        if (variables[j].num[iter] >= inferlist->nums[0]) {
+                           if (variables[j].num[iter] == inferlist->nums[0])
+                              changeFT = 1;
+                           break;
+                        }
+                     }
+                     if (changeFT == 1) {
+                        //functionType[j] = ?????;	//-x -> (-a & -b & -c)
+                        functionType[j] = UNSURE;
+                        equalityVble[j] = 0;
+                     } else {
+                        if (equalityVble[j] > 0)
+                           equalityVble[j] =  -inferlist->nums[0];
+                        else
+                           equalityVble[j] = inferlist->nums[0];
+                     }
+                  }
+               }
+               if (Rebuild_BDDx(j)==TRIV_UNSAT)
+                  return TRIV_UNSAT;
+            }
 
-				int count0 = 0;
-				for (llist *k = amount[inferlist->nums[0]].head; k != NULL; k=k->next)
+            int count0 = 0;
+            for (llist *k = amount[inferlist->nums[0]].head; k != NULL; k=k->next)
 				  count0++;
 				
 				if(independantVars[-inferlist->nums[1]] == 2 && count1 >= count0)
@@ -251,25 +243,22 @@ Do_Apply_Inferences ()
 				str_length = 0;  
 				d3_printf2 ("{%d=T}", abs (inferlist->nums[0]));
 				variablelist[inferlist->nums[0]].true_false = 1;
+				set_variable_all(amount[inferlist->nums[0]].head, inferlist->nums[0], 1);
 				for (llist * k = amount[inferlist->nums[0]].head; k != NULL;) {
 					int j = k->num;
 					k = k->next; //This must be done here because k could be deleted in Rebuild_BDDx()
-					BDDNode *before = functions[j];
-					functions[j] = set_variable (functions[j], inferlist->nums[0], 1);
 					if (functions[j] == false_ptr)
 					  return TRIV_UNSAT;
-					if (before != functions[j]) {
-						if ((functionType[j] == AND && equalityVble[j] < 0)
-							 ||(functionType[j] == OR  && equalityVble[j] > 0)) {
-							if (abs (equalityVble[j]) == inferlist->nums[0]) {
-								functionType[j] = PLAINOR;	//a v b v c
-								equalityVble[j] = 0;
-							}
-						}
-						if (Rebuild_BDDx(j)==TRIV_UNSAT)
-						  return TRIV_UNSAT;
-					}
-				}
+               if ((functionType[j] == AND && equalityVble[j] < 0)
+                     ||(functionType[j] == OR  && equalityVble[j] > 0)) {
+                  if (abs (equalityVble[j]) == inferlist->nums[0]) {
+                     functionType[j] = PLAINOR;	//a v b v c
+                     equalityVble[j] = 0;
+                  }
+               }
+               if (Rebuild_BDDx(j)==TRIV_UNSAT)
+                  return TRIV_UNSAT;
+            }
 				//verifyCircuit(inferlist->nums[0]);
 			} else {
 				Setting_Neg++;
@@ -279,24 +268,21 @@ Do_Apply_Inferences ()
 				str_length = 0;  
 				d3_printf2 ("{%d=F}", abs (inferlist->nums[0]));
 				variablelist[-inferlist->nums[0]].true_false = 0;
+				set_variable_all(amount[-inferlist->nums[0]].head, -inferlist->nums[0], 0);
 				for (llist * k = amount[-inferlist->nums[0]].head; k != NULL;) {
 					int j = k->num;
 					k = k->next; //This must be done here because k could be deleted in Rebuild_BDDx()
-					BDDNode *before = functions[j];
-					functions[j] = set_variable (functions[j], -inferlist->nums[0], 0);
 					if (functions[j] == false_ptr)
 					  return TRIV_UNSAT;
-					if (before != functions[j]) {
-						if ((functionType[j] == AND && equalityVble[j] > 0)
-							 ||(functionType[j] == OR  && equalityVble[j] < 0)) {
-							if (abs (equalityVble[j]) == abs(inferlist->nums[0])) {
-								functionType[j] = PLAINOR;	//a v b v c
-								equalityVble[j] = 0;
-							}
-						}
-						if (Rebuild_BDDx(j)==TRIV_UNSAT)
-						  return TRIV_UNSAT;
-					}
+               if ((functionType[j] == AND && equalityVble[j] > 0)
+                     ||(functionType[j] == OR  && equalityVble[j] < 0)) {
+                  if (abs (equalityVble[j]) == abs(inferlist->nums[0])) {
+                     functionType[j] = PLAINOR;	//a v b v c
+                     equalityVble[j] = 0;
+                  }
+               }
+               if (Rebuild_BDDx(j)==TRIV_UNSAT)
+                  return TRIV_UNSAT;
 				}
 				//verifyCircuit(-inferlist->nums[0]);
 			}
