@@ -112,7 +112,9 @@ ite_main_init(int argc, char *argv[])
       printf("c SATRAM = %d\n", sat_ram);
    }
 
+   void itetable_init();
    bdd_init();
+   itetable_init();
    sym_init();
 
    return NO_ERROR;

@@ -61,6 +61,7 @@ BDDNode *bddtable_free = NULL;
 void bdd_gc();
 void bdd_fix_inferences(BDDNode *node);
 void bddtable_alloc_node(BDDNode **node, int v, BDDNode *r, BDDNode *e);
+void itetable_removeall();
 
 void bddtable_alloc_pool(int pool)
 {
@@ -369,6 +370,7 @@ bdd_gc()
          totalin, totalout, totalin==0?0:1.0*(totalout-totalin)/totalin);
 #endif
    
+   itetable_removeall();
 }
 
 void
