@@ -86,11 +86,6 @@ SmurfFactory()
       arrIte2SolverSmurf[i] = -1;
    }
 
-   if (nNumRegSmurfs) {
-      arrSmurfEqualityVble = (int*)ite_calloc(nNumRegSmurfs, sizeof(int),
-            9, "arrSmurfEqualityVble");
-   }
-
    // Construct the Smurfs.
    for (int i = 0; i < nmbrFunctions; i++)
    {
@@ -123,6 +118,9 @@ SmurfFactory()
             return SOLV_ERROR;
          }
          arrRegSmurfInitialStates[nRegSmurfIndex] = pSmurfState;
+         arrSmurfPath[nRegSmurfIndex].literals = 
+            (int*)ite_calloc(arrRegSmurfInitialStates[nRegSmurfIndex]->vbles.nNumElts+1, sizeof(int),
+               9, "arrSmurfPath[].literals");
          nRegSmurfIndex++;
    
          if (SMURFS_SHARE_PATHS)
@@ -159,21 +157,6 @@ SmurfFactory()
 
    assert(nRegSmurfIndex == nNumRegSmurfs);
    if (nNumRegSmurfs) {
-      arrSmurfPath = (t_smurf_path*)ite_calloc(nNumRegSmurfs, sizeof(t_smurf_path),
-            9, "arrSmurfPath");
-
-      arrSmurfChain = (t_smurf_chain*)ite_calloc(nNumRegSmurfs, sizeof(t_smurf_chain),
-            9, "arrSmurfChain");
-
-      for (int i = 0; i < nNumRegSmurfs; i++)
-      {
-         arrSmurfPath[i].literals = (int*)ite_calloc(arrRegSmurfInitialStates[i]->vbles.nNumElts+1, sizeof(int),
-               9, "arrSmurfPath[].literals");
-         arrSmurfChain[i].next = -1;
-         arrSmurfChain[i].prev = -1;
-         arrSmurfChain[i].specfn = -1;
-      }
-
    }
 
    if (nSpecialFuncIndex) {
@@ -183,25 +166,7 @@ SmurfFactory()
                arrSpecialFuncs[i].LinkedSmurfs != -1) {
             int smurf = arrSpecialFuncs[i].LinkedSmurfs;
             if (smurf != -1) {
-               arrSpecialFuncs[i].LinkedSmurfs = smurf;
-               /* go and set all the links */
                arrSmurfChain[smurf].specfn = i;
-               /*
-               arrSmurfChain[smurf].next = ;
-               arrSmurfChain[smurf].prev = ;
-               */
-               /* make sure that the dep/temp connecting var exists */
-               /*
-               int nNumElts = arrSpecialFuncs[i].rhsVbles.nNumElts;
-               int *arrElts = arrSpecialFuncs[i].rhsVbles.arrElts;
-               int nSpecFnVble = -2;
-               int nSmurfVble = arrSmurfEqualityVble[smurf];
-               for(int j=0; j < nNumElts; j++) {
-                  nSpecFnVble = arrElts[j];
-                  if (nSpecFnVble == nSmurfVble) break;
-               }
-               assert(nSpecFnVble == nSmurfVble);
-               */
             }
          }
       }
@@ -331,6 +296,21 @@ InitSmurfFactory()
       arrRegSmurfInitialStates
          = (SmurfState **)ite_calloc(nNumRegSmurfs, sizeof(SmurfState *),
                2, "initial smurf state pointers");
+      arrSmurfEqualityVble = (int*)ite_calloc(nNumRegSmurfs, sizeof(int),
+            9, "arrSmurfEqualityVble");
+      arrSmurfPath = (t_smurf_path*)ite_calloc(nNumRegSmurfs, sizeof(t_smurf_path),
+            9, "arrSmurfPath");
+
+      arrSmurfChain = (t_smurf_chain*)ite_calloc(nNumRegSmurfs, sizeof(t_smurf_chain),
+            9, "arrSmurfChain");
+
+      for (int i = 0; i < nNumRegSmurfs; i++)
+      {
+         arrSmurfChain[i].next = -1;
+         arrSmurfChain[i].prev = -1;
+         arrSmurfChain[i].specfn = -1;
+      }
+
    }
    nRegSmurfIndex = 0;
 }
@@ -344,35 +324,23 @@ FreeSmurfFactory()
    }
 
    /* from smurf factory */
-   if (arrSmurfPath!=NULL) {
-      for (int i = 0; i < nNumRegSmurfs; i++)
-         free(arrSmurfPath[i].literals);
-      free(arrSmurfPath);
-   }
+   for (int i = 0; i < nNumRegSmurfs; i++)
+      ite_free((void*)arrSmurfPath[i].literals);
 
-   if (arrSmurfChain!=NULL) {
-      free(arrSmurfChain);
-   }
+   ite_free((void*)arrSmurfPath);
+   ite_free((void*)arrSmurfChain);
+   ite_free((void*)arrSmurfEqualityVble);
+   ite_free((void*)arrRegSmurfInitialStates);
+   nRegSmurfIndex = 0;
 
-   if (arrSmurfEqualityVble!=NULL) {
-      free(arrSmurfEqualityVble);
+   for(int i=0; i < nNumSpecialFuncs; i++) {
+      ite_free((void*)arrSpecialFuncs[i].rhsVbles.arrElts);
+      ite_free((void*)arrSpecialFuncs[i].arrRHSPolarities);
+      ite_free((void*)arrSpecialFuncs[i].arrShortLemmas);
    }
+   ite_free((void*)arrSpecialFuncs);
+   nSpecialFuncIndex = 0;
 
-   if (arrSpecialFuncs) {
-      for(int i=0; i < nNumSpecialFuncs; i++) {
-         free(arrSpecialFuncs[i].rhsVbles.arrElts);
-         free(arrSpecialFuncs[i].arrRHSPolarities);
-         free(arrSpecialFuncs[i].arrShortLemmas);
-      }
-      free(arrSpecialFuncs);
-      arrSpecialFuncs=NULL;
-      nSpecialFuncIndex = 0;
-   }
-
-   if (arrRegSmurfInitialStates) {
-      free(arrRegSmurfInitialStates);
-      nRegSmurfIndex = 0;
-   }
    FreeAddonsPool();
    FreeSmurfStatePool();
 }

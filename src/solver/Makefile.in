@@ -123,7 +123,7 @@ noinst_LIBRARIES = libsolver.a libsolver2.a
 
 libsolver_a_SOURCES = solve.cc bddwalk.cc \
              init_solver.cc brancher.cc \
-	     backtrack.cc backtrack_nl.cc backtrack_sbj.cc \
+	     backtrack.cc backtrack_nl.cc backtrack_sbj.cc bt_misc.cc \
              select_bp.cc \
              j_heuristic.cc j_specfn.cc j_update_heu.cc \
              l_heuristic.cc l_lemma.cc \
@@ -151,12 +151,12 @@ libsolver_a_LIBADD =
 am_libsolver_a_OBJECTS = solve.$(OBJEXT) bddwalk.$(OBJEXT) \
 	init_solver.$(OBJEXT) brancher.$(OBJEXT) backtrack.$(OBJEXT) \
 	backtrack_nl.$(OBJEXT) backtrack_sbj.$(OBJEXT) \
-	select_bp.$(OBJEXT) j_heuristic.$(OBJEXT) j_specfn.$(OBJEXT) \
-	j_update_heu.$(OBJEXT) l_heuristic.$(OBJEXT) l_lemma.$(OBJEXT) \
-	i_heuristic.$(OBJEXT) heuristic.$(OBJEXT) bt_lemmas.$(OBJEXT) \
-	bt_specfn.$(OBJEXT) bt_smurfs.$(OBJEXT) bt_specfn_and.$(OBJEXT) \
-	bt_specfn_xor.$(OBJEXT) lemmainfo.$(OBJEXT) \
-	lemmaspace.$(OBJEXT) smurffactory.$(OBJEXT) \
+	bt_misc.$(OBJEXT) select_bp.$(OBJEXT) j_heuristic.$(OBJEXT) \
+	j_specfn.$(OBJEXT) j_update_heu.$(OBJEXT) l_heuristic.$(OBJEXT) \
+	l_lemma.$(OBJEXT) i_heuristic.$(OBJEXT) heuristic.$(OBJEXT) \
+	bt_lemmas.$(OBJEXT) bt_specfn.$(OBJEXT) bt_smurfs.$(OBJEXT) \
+	bt_specfn_and.$(OBJEXT) bt_specfn_xor.$(OBJEXT) \
+	lemmainfo.$(OBJEXT) lemmaspace.$(OBJEXT) smurffactory.$(OBJEXT) \
 	smurfstates.$(OBJEXT) state_stacks.$(OBJEXT) \
 	bdd2smurf.$(OBJEXT) specfn2smurf.$(OBJEXT) autarky.$(OBJEXT) \
 	display.$(OBJEXT) display_sf.$(OBJEXT) verify.$(OBJEXT) \
@@ -177,7 +177,8 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	./$(DEPDIR)/backtrack_sbj.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/bdd2smurf.Po ./$(DEPDIR)/bddwalk.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/brancher.Po ./$(DEPDIR)/bt_lemmas.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/bt_smurfs.Po ./$(DEPDIR)/bt_specfn.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/bt_misc.Po ./$(DEPDIR)/bt_smurfs.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/bt_specfn.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/bt_specfn_and.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/bt_specfn_xor.Po ./$(DEPDIR)/crtwin.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/display.Po ./$(DEPDIR)/display_sf.Po \
@@ -244,6 +245,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bddwalk.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/brancher.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bt_lemmas.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bt_misc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bt_smurfs.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bt_specfn.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bt_specfn_and.Po@am__quote@

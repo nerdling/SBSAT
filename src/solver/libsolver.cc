@@ -51,6 +51,7 @@
 #include "backtrack.cc"
 #include "backtrack_nl.cc"
 #include "backtrack_sbj.cc"
+#include "bt_misc.cc"
 #include "bt_lemmas.cc"
 #include "bt_smurfs.cc"
 #include "bt_specfn.cc"

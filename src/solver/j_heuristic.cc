@@ -88,8 +88,6 @@ extern int nNumRegSmurfs;	// Number of regular Smurfs.
 extern int nNumVariables;
 extern int nNumChoicePts;
 
-int nNumBytesInHeurScores;
-
 HeurScores *arrHeurScores=NULL;
 
 extern SpecialFunc *arrSpecialFuncs;
@@ -492,7 +490,6 @@ J_InitHeuristic()
    arrHeurScores = (HeurScores *)ite_calloc(nNumVariables, sizeof(HeurScores), 2,
          "heuristic scores");
 
-   nNumBytesInHeurScores = nNumVariables * sizeof(HeurScores) * 3; 
    J_AllocateHeurScoresStack (nNumVariables * HEUR_SCORES_STACK_ALLOC_MULT);
 }
 

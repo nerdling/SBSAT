@@ -157,7 +157,6 @@ typedef struct {
 } HeurScores;
 
 extern HeurScores *arrHeurScores;
-extern int nNumBytesInHeurScores;
 extern struct AndEqFalseWghtStruct *arrAndEqFalseWght;
 extern struct AndEqWghtStruct *arrAndEqWght;
 extern double *arrXorEqWght;

@@ -107,7 +107,7 @@ struct BacktrackStackEntry
 };
 
 int
-SolveVillage();
+Brancher();
 
 void
 DisplaySolution(int nMaxVbleIndex);
@@ -117,9 +117,6 @@ ConsistentPartialSolution(int nMaxVbleIndex);
 
 AffectedFuncsStruct *
 CreateAffectedFuncsStructures(int nMaxVbleIndex);
-
-void
-FreeSolveVillage();
 
 typedef struct _t_solution_info {
   int *arrElts;

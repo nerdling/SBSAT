@@ -123,8 +123,6 @@ double *arrPrevSumRHSUnknowns = 0;
 
 int nNumBackjumps = 0;
 int nNumChoicePts = 0;
-int nNumBytesInStateArray; // # of bytes in a current state array.
-int nNumBytesInSpecialFuncStackEntry;
 
 extern long nTimeLimit;
 extern long nNumChoicePointLimit;
@@ -311,7 +309,7 @@ CheckFinalHooks()
 
 // ITE_INLINE
 int
-SolveVillage()
+Brancher()
    // The main brancher routine.
    // Returns true iff the Village has a solution,
    // in which case it allocates an array of integers to hold the

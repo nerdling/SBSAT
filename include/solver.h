@@ -153,10 +153,10 @@ extern int *arrSolver2IteVarMap;
 
 extern int total_vars;
 
-ITE_INLINE int InitSolveVillage();
+ITE_INLINE int InitBrancher();
 ITE_INLINE void FreeSpecialFnStack();
 ITE_INLINE void FreeSmurfStatesStack();
-ITE_INLINE void FreeSolveVillage();
+ITE_INLINE void FreeBrancher();
 ITE_INLINE void FreeSmurfFactory();
 
 ITE_INLINE int ConstructTempLemma();

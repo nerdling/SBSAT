@@ -42,8 +42,6 @@ void LoadLemmas(char *filename);
 int *arrChangedSpecialFn = NULL;
 int *arrChangedSmurfs = NULL;
 
-extern int nNumBytesInStateArray; // # of bytes in a current state array.
-extern int nNumBytesInSpecialFuncStackEntry;
 extern SmurfState **arrRegSmurfInitialStates;
 
 // Stack of the indicies of the previous
@@ -425,24 +423,27 @@ FreeAFS()
 }
 
 ITE_INLINE int
-InitSolveVillage()
+InitBrancher()
 {
-   d2_printf1("InitSolveVillage\n");
+   d2_printf1("InitBrancher\n");
 
    int nNumFuncs = nmbrFunctions;
 
+   /* Backtrack arrays */
    pUnitLemmaList = (LemmaInfoStruct*)ite_calloc(1, sizeof(LemmaInfoStruct),
          9, "pUnitLemmaList"); /*m local to backtrack function only */
 
-   /* Backtrack arrays */
    ITE_NEW_CATCH(
          arrUnsetLemmaFlagVars = new int[gnMaxVbleIndex];
          arrTempLemma = new int[gnMaxVbleIndex];
-         arrBacktrackStackIndex = new int[gnMaxVbleIndex+1];
          arrLemmaFlag = new bool[gnMaxVbleIndex+1];,
-         "arrUnsetLemmaFlagVars");
+         "BackTrack variables");
 
-   nNumUnresolvedFunctions = nNumRegSmurfs + nNumSpecialFuncs; //nNumFuncs;
+   ITE_NEW_CATCH(
+         arrBacktrackStackIndex = new int[gnMaxVbleIndex+1];,
+         "arrBacktrackStackIndex");
+
+   nNumUnresolvedFunctions = nNumRegSmurfs + nNumSpecialFuncs; 
 
    for(int x = 1; x <= gnMaxVbleIndex; x++) 
    {
@@ -464,7 +465,6 @@ InitSolveVillage()
 
 
    arrAFS = CreateAffectedFuncsStructures(gnMaxVbleIndex);
-   nNumBytesInStateArray = sizeof(SmurfState *) * nNumRegSmurfs;
 
    if(nNumRegSmurfs > 0) {
       arrCurrentStates
@@ -485,7 +485,6 @@ InitSolveVillage()
          arrPrevStates[nRegSmurfIndex] =
          arrCurrentStates[nRegSmurfIndex] =
             arrRegSmurfInitialStates[nRegSmurfIndex];
-         //= arrFunctions[i]->addons->pSmurfState;
 
          if (arrCurrentStates[nRegSmurfIndex] == pTrueSmurfState)
          {
@@ -521,7 +520,6 @@ InitSolveVillage()
       arrPrevSumRHSUnknowns = (double *)ite_calloc(nNumSpecialFuncs, sizeof(double),
             9, "arrPrevSumRHSUnknowns");
 
-      nNumBytesInSpecialFuncStackEntry = nNumSpecialFuncs * sizeof(int);
       for (int i = 0; i < nNumSpecialFuncs; i++) {
          arrPrevNumRHSUnknowns[i] =
          arrNumRHSUnknownsNew[i] =
@@ -587,9 +585,9 @@ InitSolveVillage()
 }
 
 ITE_INLINE void
-FreeSolveVillage()
+FreeBrancher()
 {
-   d2_printf1("FreeSolveVillage\n");
+   d2_printf1("FreeBrancher\n");
    delete [] arrUnsetLemmaFlagVars;
    delete [] arrTempLemma;
    delete [] arrBacktrackStackIndex;

@@ -48,11 +48,36 @@ ITE_INLINE int InitSolver();
 ITE_INLINE void FreeSolver(Tracer *tracer);
 
 int
+solve_init()
+{
+  int ret = SOLV_UNKNOWN;
+
+  ret = InitSolver(); // breakxors, variables, lemma space init, lemma heu init
+  if (ret != SOLV_UNKNOWN) return ret;
+ 
+  /* Convert bdds and special functions to smurfs */
+  ret = SmurfFactory();
+  if (ret != SOLV_UNKNOWN) return ret;
+
+  ret = InitBrancher();
+  return ret;
+}
+
+void
+solve_free()
+{
+   FreeBrancher();
+   FreeSmurfFactory();
+   FreeSolver(NULL);
+}
+
+
+int
 solve(Tracer * tracer)
 {
   int ret = SOLV_UNKNOWN;
 
-  ret = InitSolver();
+  ret = InitSolver(); // breakxors, variables, lemma space init, lemma heu init
 
   if (ret == SOLV_UNKNOWN) {
  
@@ -61,17 +86,16 @@ solve(Tracer * tracer)
 
     if (ret == SOLV_UNKNOWN) {
 
-      ret = InitSolveVillage();
+      ret = InitBrancher();
 
       if (ret == SOLV_UNKNOWN) {
 
-         ret = SolveVillage();
+         ret = Brancher();
 
       };
-      FreeSolveVillage();
+      FreeBrancher();
     }
     FreeSmurfFactory();
-
   }
 
   FreeSolver(tracer);
@@ -94,19 +118,16 @@ InitSolver()
   }
 
   nNumVariables = 1; /* 0 => true, false */
-  //for (int x = 0; x < numinp + 1; x++) {
-  for (int x = 0; x < total_vars + 1; x++) {
-     if (x <= numinp) {
-        if (variablelist[x].true_false == -1) {
-           nNumVariables++;
-           if (independantVars[x] == 1) nIndepVars++;
-           else if (independantVars[x] == 0) nDepVars++;
-        }
-     } else {
-        /* temporary variables (xor) */
+
+  for (int x = 0; x <= numinp; x++) {
+     if (variablelist[x].true_false == -1) {
         nNumVariables++;
+        if (independantVars[x] == 1) nIndepVars++;
+        else if (independantVars[x] == 0) nDepVars++;
      }
   }
+  /* temporary variables (xor) */
+  nNumVariables += (total_vars - numinp);
 
   d2_printf4("Solver vars: %d/%d (not used: %d)\n", nNumVariables-1, total_vars, total_vars-nNumVariables+1);
   d2_printf4("Indep/Dep vars: %d/%d (other vars: %d)\n", nIndepVars, nDepVars, nNumVariables-1-nIndepVars-nDepVars);

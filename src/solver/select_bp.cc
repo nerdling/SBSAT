@@ -42,8 +42,6 @@ extern int nNumVariables;
 extern int gnMaxVbleIndex;
 extern SmurfState **arrCurrentStates;
 extern int nNumRegSmurfs;
-extern int nNumBytesInStateArray;
-extern int nNumBytesInSpecialFuncStackEntry;
 extern ChoicePointStruct *pChoicePointTop;
 extern int nNumUnresolvedFunctions;
 extern int nNumBacktracks;
@@ -84,25 +82,26 @@ SelectNewBranchPoint()
    int nInferredValue;
    proc_call_heuristic(&nInferredAtom, &nInferredValue);
 
-   /*	
+//#define SEAN_ZECCHINA
+#ifdef SEAN_ZECCHINA
    //override heuristic for first so many variables...
    //Special Zecchina code...Sean play!
    for(int zecc = 0; zecc < zecc_limit; zecc++) {
-   if(zecc_arr[zecc]>0) {
-   if(arrSolution[zecc_arr[zecc]] == BOOL_UNKNOWN) {
-   nInferredAtom = zecc_arr[zecc];
-   nInferredValue = BOOL_TRUE;
-   break;
+      if(zecc_arr[zecc]>0) {
+         if(arrSolution[zecc_arr[zecc]] == BOOL_UNKNOWN) {
+            nInferredAtom = zecc_arr[zecc];
+            nInferredValue = BOOL_TRUE;
+            break;
+         }
+      } else {
+         if(arrSolution[-zecc_arr[zecc]] == BOOL_UNKNOWN) {
+            nInferredAtom = -zecc_arr[zecc];
+            nInferredValue = BOOL_FALSE;
+            break;
+         }
+      }
    }
-   } else {
-   if(arrSolution[-zecc_arr[zecc]] == BOOL_UNKNOWN) {
-   nInferredAtom = -zecc_arr[zecc];
-   nInferredValue = BOOL_FALSE;
-   break;
-   }
-   }
-   }
-    */	
+#endif
 
    assert(nInferredValue == BOOL_TRUE || nInferredValue == BOOL_FALSE);
    assert(arrSolution[nInferredAtom] == BOOL_UNKNOWN);
