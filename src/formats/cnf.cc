@@ -281,7 +281,7 @@ void CNF_to_BDD(int cnf)
 #else
             integers[x].num[i] = tempint[i];
 #endif         
-            if(abs(tempint[i]) > numinp) { //Could change this to be number of vars instead of max vars
+            if(abs(integers[x].num[i]) > numinp) { //Could change this to be number of vars instead of max vars
                fprintf(stderr, "Variable in input file is greater than allowed:%ld...exiting\n", (long)numinp-2);
                exit(1);				
             }

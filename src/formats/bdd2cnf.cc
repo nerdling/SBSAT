@@ -848,6 +848,7 @@ void printBDDToCNFQM () {
 		print_cnf_symtable();
 	}
 
+   numinp = getNuminp ();
    fprintf(foutputfile, "p cnf %ld %d\n", numinp, no_outmp_ints);
 	
    for(int x = 0; x < numout; x++) {

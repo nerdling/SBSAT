@@ -170,7 +170,7 @@ void BDD_to_Smurfs () {
 			fprintf (foutputfile, "%d ", use_symtable?atoi(getsym_i(integers[v].num[x])->name):integers[v].num[x]);
 		}
 		fprintf (foutputfile, "-1\n");
-		//SEAN! ADD IN SUPPORT FOR PLAINORs and PLAINXORs
+		//SEAN! ADD IN SUPPORT FOR PLAINXORs
 		if (functionType[v] == PLAINOR) {
 			fprintf(foutputfile, "plainor ");
 			BDDNode *p_or = functions[v];
@@ -311,7 +311,6 @@ void Smurfs_to_BDD () {
 				tempint = (int*)ite_recalloc((void*)tempint, tempint_max, tempint_max+100, sizeof(int), 9, "tempint");
 				tempint_max += 100;
 			}
-			//ADD IN SYMBOL TABLE SUPPORT!
 			fscanf (finputfile, "%d", &tempint[y]);
 		}
 		while (tempint[y] != -1);
