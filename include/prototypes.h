@@ -97,6 +97,9 @@ int top_variable(BDDNode *, BDDNode *, BDDNode *);
 #define top_variable(x, y, z) MIN3((x)->variable, (y)->variable, (z)->variable)
 #endif
 
+BDDNode *and_dot(BDDNode *, BDDNode *);
+BDDNode *constant_and(BDDNode *, BDDNode *);
+  
 BDDNode *bdd2xdd(BDDNode *);
 int splitXors();
 void countSingleXors(BDDNode *, int *, int *);

@@ -142,7 +142,7 @@ typedef struct BDDNodeStruct {
    int flag;
    int variable;
    void *var_ptr;
-   struct BDDNodeStruct *thenCase, *elseCase, *notCase, *tmp_bdd, *or_bdd;
+   struct BDDNodeStruct *thenCase, *elseCase, *notCase, *tmp_bdd, *or_bdd, *t_and_not_e_bdd, *not_t_and_e_bdd;
 #ifdef BDD_MIRROR_NODE
    struct BDDNodeStruct *mirrCase;
 #endif
