@@ -3,3 +3,8 @@ EXTRA_DIST = BUGS compile.patch  compile.patch.all.sh  compile.patch.sh
 SUBDIRS = include src tests examples doc
 # doc intl po src tests
 
+if NO_CVSBUILD
+distdir = $(PACKAGE)-$(VERSION)
+else
+distdir=$(PACKAGE)-$(CVSBUILD)
+endif

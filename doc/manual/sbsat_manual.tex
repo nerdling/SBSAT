@@ -862,6 +862,69 @@ This~will~create~the~BDD~-~AND(8,~9)~
 
 \subsection{CNF format}
 
+The CNF format, short for Conjunctive Normal Form, conforms to the
+DIMACS CNF standard and contains a few added features.
+
+
+\subsubsection{File Header}
+
+In every CNF format input file, no equation can precede the header.
+Only comments can be written above the header of the file. The header
+conforms to the DIMACS standard which is as follows.
+
+\begin{lyxcode}
+p~cnf~\#Vars~\#Equations
+\end{lyxcode}
+The letter 'p' at the start of a new line denotes the start of the
+header. The string 'cnf' denotes that the file is in CNF format. \#Vars
+is a number denoting how many input variables are going to appear
+in this input file. \#Equations is a number denoting how many equations
+appear in this input file. Here is an example of a valid header.
+
+\begin{lyxcode}
+p~cnf~56~97
+\end{lyxcode}
+This header tells us that the input file format is CNF and has 56
+input variables and 97 equations.
+
+
+\subsubsection{Equations:}
+
+Each equation in the CNF format is made up of the disjunction of positive
+and negative literals. These {}``clauses'' are represented in a
+file by a string of positive and negative integers terminating in
+a zero.
+
+Example (file small.cnf):
+
+\begin{lyxcode}
+p~cnf~6~8~
+
+c~This~is~a~demonstration~of~the~CNF~format~for~the~SBSAT~solver~
+
+1~2~3~0
+
+2~3~4~0
+
+3~4~5~0~
+
+4~5~6~0
+
+-1~-2~-3~0
+
+-2~-3~-4~0
+
+-3~-4~-5~0
+
+-4~-5~-6~0
+\end{lyxcode}
+
+\subsubsection{Comments:}
+
+To include comments in a CNF input file, place the single character
+'c' prior to the comment. This will make the rest of the line a comment
+and every character following the 'c' will be ignored.
+
 
 \subsection{TRACE format}
 
@@ -873,7 +936,7 @@ This~will~create~the~BDD~-~AND(8,~9)~
 
 III. The BDD Tool 
 
-Data is presented the ITE program via an input file. In this file
+Data is presented to the ITE program via an input file. In this file
 BDD variables and BDDs are expressed using all Boolean functions,
 e.g., NOT, AND, NAND, OR, NOR, EQU, XOR, IMPLIES, etc. (See page ??
 for a full list of commands and a description of each). Every BDD

@@ -45,6 +45,7 @@ AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
 CPPFLAGS = @CPPFLAGS@
+CVSBUILD = @CVSBUILD@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
 CXXDEPMODE = @CXXDEPMODE@
@@ -70,6 +71,8 @@ LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LTLIBOBJS = @LTLIBOBJS@
 MAKEINFO = @MAKEINFO@
+NO_CVSBUILD_FALSE = @NO_CVSBUILD_FALSE@
+NO_CVSBUILD_TRUE = @NO_CVSBUILD_TRUE@
 OBJEXT = @OBJEXT@
 PACKAGE = @PACKAGE@
 PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
@@ -121,6 +124,10 @@ target_alias = @target_alias@
 EXTRA_DIST = BUGS compile.patch  compile.patch.all.sh  compile.patch.sh
 # ChangeLog.O README-alpha
 SUBDIRS = include src tests examples doc
+@NO_CVSBUILD_FALSE@distdir = $(PACKAGE)-$(CVSBUILD)
+
+# doc intl po src tests
+@NO_CVSBUILD_TRUE@distdir = $(PACKAGE)-$(VERSION)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -279,7 +286,6 @@ distclean-tags:
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 
 top_distdir = .
-distdir = $(PACKAGE)-$(VERSION)
 
 am__remove_distdir = \
   { test ! -d $(distdir) \
@@ -496,7 +502,6 @@ uninstall-info: uninstall-info-recursive
 	uninstall uninstall-am uninstall-info-am \
 	uninstall-info-recursive uninstall-recursive
 
-# doc intl po src tests
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

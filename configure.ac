@@ -66,6 +66,16 @@ AC_ARG_ENABLE(static,
 CXXFLAGS="${CXXFLAGS} ${MYCXXFLAGS} ${INCL}"
 CCFLAGS="${CCFLAGS} ${MYCCFLAGS} ${INCL}"
 
+AC_ARG_ENABLE(cvsbuild,
+[  --enable-cvsbuild Create nightly build],
+[case "${enableval}" in
+  no)  cvsbuild=false ;;
+  *) cvsbuild=${enableval} ;;
+esac],[debug=false])
+AM_CONDITIONAL(NO_CVSBUILD, test x$cvsbuild = xfalse)
+CVSBUILD=$cvsbuild
+AC_SUBST(CVSBUILD)
+
 # Checks for programs.
 AC_PROG_AWK
 AC_PROG_CXX
