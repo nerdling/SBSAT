@@ -60,9 +60,15 @@ Do_ExQuantifyAnd()
    int num_iters = 0;
 	int cofs = PREP_CHANGED;
 	int ret = PREP_NO_CHANGE;
+	affected = 0;
+	char p[100];
+	D_3(
+		 sprintf(p, "{0:0/%d}", nmbrFunctions);
+		 str_length = strlen(p);
+		 d3_printf1(p);
+	);
 	while (cofs!=PREP_NO_CHANGE)
 	  {
-	     d2e_printf2("\rPreprocessing Ea %d", ++num_iters);
 		  cofs = ExQuantifyAnd ();
 		  if(cofs == PREP_CHANGED) ret = PREP_CHANGED;
 		  else if(cofs == TRIV_UNSAT)
@@ -116,7 +122,27 @@ ExQuantifyAnd ()
 	  {
 		  for (int i = 1; i < numinp + 1; i++)
 			 {
-//				 fprintf(stderr, "%d\n", i);
+				 char p[100];
+				 D_3(
+					  if (i % 100 == 0) {
+						  for(int iter = 0; iter<str_length; iter++)
+							 d3_printf1("\b");
+						  sprintf(p, "{%ld:%d/%ld}", affected, i, numinp);
+						  str_length = strlen(p);
+						  d3_printf1(p);
+					  }
+				 );
+				 
+				 if(i % 100 == 0) {
+					 if (nCtrlC) {
+						 d3_printf1("\nBreaking out of Anding Existential Quantification\n");
+						 nCtrlC = 0;
+						 break;
+					 }
+					 d2e_printf3("\rPreprocessing Ea %d/%ld ", i, numinp);
+				 }
+				 
+				 //				 fprintf(stderr, "%d\n", i);
 				 if ((examount[i].length <= x) && (examount[i].length > 0))
 					{
 						int j = examount[i].num[0];

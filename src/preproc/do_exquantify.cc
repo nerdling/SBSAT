@@ -121,8 +121,14 @@ int ExQuantify () {
 			 }
 		);
 
-		if(i % 100 == 0) 
+		if(i % 100 == 0) {
+			if (nCtrlC) {
+				d3_printf1("\nBreaking out of Existential Quantification\n");
+				nCtrlC = 0;
+				break;
+			}
 		  d2e_printf3("\rPreprocessing Ex %d/%ld ", i, numinp);
+		}
 		
 		if(tempinters[i] == 1) {
 			int j = tempmem[i]->next->BDD;

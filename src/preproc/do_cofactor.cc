@@ -69,35 +69,42 @@ Do_Cofactor()
 			 }
 		);
 
-      if (x%1000 == 0) 
+      if (x%1 == 0) {
+			if (nCtrlC) {
+				d3_printf1("\nBreaking out of CoFactoring\n");
+				nCtrlC = 0;
+				break;
+			}
          d2e_printf3("\rPreprocessing Co %d/%ld", x, numout);
+		}
       
-     if (length[x] <= COF_MAX && length[x] > 0)
-      {
-        d3_printf1("*"); 
-        cof = functions[x];
-        for (int j = 0; j < numout; j++)
-         {
-           //Cannot discriminate...must do EVERY function
-           BDDNode *before = gcf(functions[j], cof);
-			  if(before != functions[j]) {
-				  functions[j] = gcf (functions[j], cof);
-				  if (functions[j] == false_ptr)
-					 return TRIV_UNSAT;
-				  functionType[j] = UNSURE;
-				  equalityVble[j] = 0;
-				  switch (Rebuild_BDDx(j)) {
-					case TRIV_UNSAT: return TRIV_UNSAT;
-					case TRIV_SAT:   return TRIV_SAT; 
-					default: break;
-				  }
-				  affected++;
-				  ret = PREP_CHANGED;
-			  }
-         }
-      }
+		if (length[x] <= COF_MAX && length[x] > 0)
+		  {
+			  d3_printf1("*"); 
+			  cof = functions[x];
+			  for (int j = 0; j < numout; j++)
+				 {
+					 //Cannot discriminate...must do EVERY function
+					 BDDNode *before = gcf(functions[j], cof);
+					 if(before != functions[j]) {
+						 functions[j] = gcf (functions[j], cof);
+						 if (functions[j] == false_ptr)
+							return TRIV_UNSAT;
+						 functionType[j] = UNSURE;
+						 equalityVble[j] = 0;
+						 SetRepeats(j);
+						 switch (Rebuild_BDDx(j)) {
+						  case TRIV_UNSAT: return TRIV_UNSAT;
+						  case TRIV_SAT:   return TRIV_SAT; 
+						  default: break;
+						 }
+						 affected++;
+						 ret = PREP_CHANGED;
+					 }
+				 }
+		  }
    }  //This ends Cofactoring
-  d3_printf1("\n");
-  d2e_printf1("\r                                                    ");
-  return ret;
+	d3_printf1("\n");
+	d2e_printf1("\r                                                    ");
+	return ret;
 }

@@ -114,7 +114,14 @@ int DepCluster () {
 			 }
 		);
       
-		d2e_printf3("\rPreprocessing Dc %d/%ld ", i, numinp);
+		if(i % 100 == 0) {
+			if (nCtrlC) {
+				d3_printf1("\nBreaking out of Dependant Clustering\n");
+				nCtrlC = 0;
+				break;
+			}
+			d2e_printf3("\rPreprocessing Dc %d/%ld ", i, numinp);
+		}
 		
 		//do temp variables first (independantVars[i] == 2)
 		//then come back and do dependent vars (independantVars[i] == 0)

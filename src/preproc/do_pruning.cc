@@ -99,8 +99,16 @@ int DO_PRUNING_FN() {
 					d3_printf1(p);
 				}
 		  );
-		  if (x % 100 == 0)
-           d2e_printf3("\rPreprocessing Pr %d/%d", x, nmbrFunctions);
+		  if (x % 100 == 0) {
+			  if (nCtrlC) {
+				  d3_printf1("\nBreaking out of Branch Pruning");
+				  for(; x < nmbrFunctions; x++) PRUNE_REPEATS[x] = 0;;
+				  nCtrlC = 0;
+				  break;
+			  }
+			  d2e_printf3("\rPreprocessing Pr %d/%d", x, nmbrFunctions);
+		  }
+		  
         PRUNE_REPEATS[x] = 0;
 		  if (functions[x] == true_ptr)
 			 continue;

@@ -74,8 +74,16 @@ int Do_Strength() {
 					d3_printf1(p);
 				}
 		  );
-		  if (x % 100 == 0)
+		  if (x % 100 == 0) {
+			  if (nCtrlC) {
+				  d3_printf1("\nBreaking out of Strengthening");
+				  for(; x < nmbrFunctions; x++) St_repeat[x] = 0;
+				  nCtrlC = 0;
+				  break;
+			  }
            d2e_printf3("\rPreprocessing St %d/%d", x, nmbrFunctions);
+		  }
+		  
 		  St_repeat[x] = 0;
 		  if (functions[x] == true_ptr)
 			 continue;
