@@ -53,6 +53,11 @@ struct defines_struct {
 	int *vlist;
 };
 
+int found_initbranch;
+char **initbranch_vars;
+int max_initbranch;
+int num_initbranch;
+
 int max_defines;
 int totaldefines;
 defines_struct *defines;
@@ -126,7 +131,13 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 		return ite_not(v1);
 	}
 	if (!strcasecmp (macros, "initial_branch")) {
+		if(found_initbranch == 1) {			  
+			fprintf(stderr, "\nOnly one instance of initial_branch is allowed...exiting:%d\n", markbdd_line);
+			exit(1);
+		}
+		found_initbranch = 1;
 
+		num_initbranch = 0;
 		char p = ' ';
 		while (p != ')') {
          p = fgetc(finputfile);
@@ -158,23 +169,17 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 			if(found_word == 1) {
 				macros[i] = '$';
 				macros[i+1] = 0;
-				t_myregex myrg;
-				sym_regex_init(&myrg, macros);
-				int id = sym_regex(&myrg);
-				int looper = 0;
-				while (id) {
-					looper++;
-					// found variable and the variable id is id
-					independantVars[id] = 1;
-					//fprintf(stderr, "%d indep=%d %s %s\n", looper, id, getsym_i(id)->name, macros);
-					id = sym_regex(&myrg);
-					no_independent = 0;
+				initbranch_vars[num_initbranch] = new char[i+1];
+				strcpy(initbranch_vars[num_initbranch], macros);
+				num_initbranch++;
+				if(num_initbranch >= max_initbranch) {
+					initbranch_vars = (char **)ite_recalloc(initbranch_vars, max_initbranch, max_initbranch+10, sizeof(char *), 9, "initbranch_vars");
+					max_initbranch+=10;
 				}
-				sym_regex_free(&myrg);
 			}
 		}
       //ungetc(p, finputfile);
-		strcpy (macros, "initialbranch");
+		strcpy (macros, "initial_branch");
       return true_ptr;
 	}
 	if (!strcasecmp (macros, "define")) {
@@ -182,7 +187,7 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 			fprintf (stderr, "\nUnnamed #define...exiting:%d\n", markbdd_line);
 			exit (1);
 		}
-      if ((!strcasecmp (macros, "initialbranch")) || (!strcasecmp (macros, "define"))
+      if ((!strcasecmp (macros, "initial_branch")) || (!strcasecmp (macros, "define"))
 			 || (!strcasecmp (macros, "t")) || (!strcasecmp (macros, "f"))) {
 			fprintf (stderr, "\n%s is a reserved word...exiting:%d\n", macros, markbdd_line);
 			exit (1);
@@ -874,6 +879,10 @@ void bddloop () {
 	BDDNode * bdd = NULL;
 	int p = 0;
 
+	found_initbranch = 0;
+	max_initbranch = 10;
+	initbranch_vars = (char **)ite_recalloc(initbranch_vars, 0, max_initbranch, sizeof(char *), 9, "initbranch_vars");
+	
 	totaldefines = 0;
 	max_defines = 100;
 	defines = (defines_struct *)ite_recalloc(defines, 0, max_defines, sizeof(defines_struct), 9, "defines");
@@ -1010,6 +1019,26 @@ void bddloop () {
 		d3_printf1("\n");
 	}
 	Exit:;
+
+	if(found_initbranch == 1) {
+		//APPLYING Initial_Branch if it was found.
+		for(int x = 0; x < num_initbranch; x++) {
+			t_myregex myrg;
+			sym_regex_init(&myrg, initbranch_vars[x]);
+			int id = sym_regex(&myrg);
+			int looper = 0;
+			while (id) {
+				looper++;
+				// found variable and the variable id is id
+				independantVars[id] = 1;
+				d4_printf5("%d indep=%d %s %s\n", looper, id, getsym_i(id)->name, initbranch_vars[x]);
+				id = sym_regex(&myrg);
+				no_independent = 0;
+			}
+			sym_regex_free(&myrg);
+		}
+	}
+	
 	if (keepnum == 0)
 	  for (int x = 0; x < nmbrFunctions; x++)
 		 keep[x] = 1;
@@ -1046,6 +1075,9 @@ void bddloop () {
 		//exit(1);
 	}
 	d2_printf1("\rReading ITE ... Done\n");
+	for(int x = 0; x < num_initbranch; x++)
+	  ite_free((void **)&initbranch_vars[x]);
+	ite_free((void **)initbranch_vars);
 	ite_free((void **)&keep);
 	for(int x = 0; x < totaldefines; x++)
 	  ite_free((void **)&defines[x].string);
