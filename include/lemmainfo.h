@@ -273,12 +273,12 @@ FreeLemmaInfoArray();
 ITE_INLINE bool
 IsInLemmaList(LemmaInfoStruct *pLemmaInfo, LemmaInfoStruct *pList);
 
-ITE_INLINE LemmaBlock *
+ITE_INLINE LemmaInfoStruct *
 AddLemma(int nNumLiterals,   //Can be used in the brancher
 	 int *arrLiterals, 
 	 bool bFlag,
 	 LemmaInfoStruct *pUnitLemmaList,
-	 LemmaInfoStruct *&pUnitLemmaListTail
+	 LemmaInfoStruct **pUnitLemmaListTail
 	 );	 
 
 ITE_INLINE void
