@@ -214,7 +214,7 @@ int AndCreateFunction(int nFnId, BDDNode *bdd, int nFnType, int eqVble)
 {
    arrSolverFunctions[nFnId].nFnId = nFnId;
    arrSolverFunctions[nFnId].nType = nFnType;
-   arrSolverFunctions[nFnId].nFnPriority = 1;
+   //arrSolverFunctions[nFnId].nFnPriority = 1;
    BDD2Specfn_AND(nFnId, bdd, nFnType, eqVble);
    arrSolverFunctions[nFnId].fn_and.nNumRHSUnknowns = 
       arrSolverFunctions[nFnId].fn_and.nNumRHSUnknownsNew = 

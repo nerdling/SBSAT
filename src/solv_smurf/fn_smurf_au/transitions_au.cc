@@ -68,6 +68,8 @@ AddStateTransitionAu(SmurfAuState *pSmurfAuState,
 		ptr = (int*)ite_calloc(1, sizeof(int), 9, "inferences"); //Just 1 inference.
 		pTransitionAu->positiveInferences.arrElts = ptr;
 		pTransitionAu->negativeInferences.arrElts = ptr;
+      pTransitionAu->positiveInferences.nNumElts = 0;
+      pTransitionAu->negativeInferences.nNumElts = 0;
 		
 		while(head != NULL) {
 			if (head->nums[1] == 0) {
@@ -94,7 +96,10 @@ AddStateTransitionAu(SmurfAuState *pSmurfAuState,
 		//like {1=2}. So it is necessary to go through 'head' because
 		//we need to skip by equivalences.
 	}
-	return pTransitionAu;
+   if (pTransitionAu->positiveInferences.nNumElts ||
+         pTransitionAu->negativeInferences.nNumElts)
+	pTransitionAu->pNextState = pTrueSmurfAuState;;
+   return pTransitionAu;
 }
 
 

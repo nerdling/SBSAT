@@ -145,7 +145,7 @@ ComputeSmurfAuOfNormalized(BDDNodeStruct *pFunc, int nAutarkyVble)
 		  // Compute transition that occurs when vble is set to false.
 		  CreateTransitionAu(pSmurfAuState, i, nSolverVble, BOOL_FALSE, nAutarkyVble);
 	  }
- */
+*/
 	
    return pSmurfAuState;
 }
@@ -175,6 +175,11 @@ int SmurfAuCreateFunction(int nFnId, BDDNode *bdd, int nFnType, int eqVble)
    arrSolverFunctions[nFnId].nFnPriority = MAX_FN_PRIORITY-1;
    arrSolverFunctions[nFnId].fn_smurf_au.nSmurfAuEqualityVble = arrIte2SolverVarMap[abs(eqVble)];
    arrSolverFunctions[nFnId].fn_smurf_au.pInitialState = BDD2SmurfAu(bdd, arrIte2SolverVarMap[abs(eqVble)]);
+   if (arrSolverFunctions[nFnId].fn_smurf_au.pInitialState == pTrueSmurfAuState) {
+      nNumUnresolvedFunctions--;
+      d9_printf3("Decremented nNumUnresolvedFunctions to %d due to autarky smurf # %d\n",
+            nNumUnresolvedFunctions, nFnId);
+   }
    arrSolverFunctions[nFnId].fn_smurf_au.pPrevState = arrSolverFunctions[nFnId].fn_smurf_au.pCurrentState = arrSolverFunctions[nFnId].fn_smurf_au.pInitialState;
    arrSolverFunctions[nFnId].fn_smurf_au.arrSmurfAuPath.literals = (int*)ite_calloc(arrSolverFunctions[nFnId].fn_smurf_au.pInitialState->vbles.nNumElts+1, sizeof(int),
                9, "arrSmurfAuPath[].literals");

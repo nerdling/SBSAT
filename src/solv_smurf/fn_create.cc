@@ -51,6 +51,8 @@ CreateFunctions()
 
    d9_printf1("CreateFunctions\n");
 
+   nNumFuncs = nmbrFunctions;
+   nNumUnresolvedFunctions = nNumFuncs; 
    arrSolverFunctions = (SolverFunction*)ite_calloc(nmbrFunctions, sizeof(SolverFunction), 2, "SolverFunctions");
 
    for (int i = 0; i < nmbrFunctions; i++)
@@ -61,7 +63,6 @@ CreateFunctions()
 
       procCreateFunction[nFunctionType](i, functions[i], nFunctionType, equalityVble[i]);
    }
-   nNumFuncs = nmbrFunctions;
    
    // Display statistics.
    double fEndTime = get_runtime();

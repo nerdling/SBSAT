@@ -99,6 +99,7 @@ UpdateRegularSmurfAu(int nSmurfAuIndex)
    d9_printf2("Visiting Autarky Smurf #%d\n", nSmurfAuIndex);
 
    pState = arrSolverFunctions[nSmurfAuIndex].fn_smurf_au.pCurrentState;
+   assert(pState != pTrueSmurfAuState);
 
    while(1) 
    {
@@ -111,11 +112,11 @@ UpdateRegularSmurfAu(int nSmurfAuIndex)
          if (arrSolution[vble]!=BOOL_UNKNOWN)  break;
       }
 
+      assert(nNumElts > 0);
+
       /* if no more instantiated variables */
       if (k == nNumElts) break;
 		
-      //Save_arrCurrentStates(nSmurfAuIndex);
-
       if (NO_AU_LEMMAS == 0) {
          // keep track of the path for lemmas
          // the atoms in the path is reversed for lemmas
@@ -167,7 +168,8 @@ UpdateRegularSmurfAu(int nSmurfAuIndex)
 
 int SmurfAuUpdateAffectedFunction(int nFnId)
 {
-   if (arrSolverFunctions[nFnId].fn_smurf_au.pCurrentState == pTrueSmurfAuState) return NO_ERROR;
+   if (arrSolverFunctions[nFnId].fn_smurf_au.pCurrentState == pTrueSmurfAuState) 
+      return NO_ERROR;
    return UpdateRegularSmurfAu(nFnId);
 }
 

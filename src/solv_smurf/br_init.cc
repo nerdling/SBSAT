@@ -53,7 +53,6 @@ InitBrancherX()
 {
    assert(arrSolution[0]!=BOOL_UNKNOWN);
    if (nNumFuncs && arrChangedFn) memset(arrChangedFn, 0, sizeof(int)*nNumFuncs);
-   nNumUnresolvedFunctions = nNumFuncs; 
    BtStackClear();
    return SOLV_UNKNOWN;
 }
