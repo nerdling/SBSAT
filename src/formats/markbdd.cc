@@ -121,116 +121,53 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 	}
 	if (!strcasecmp (macros, "initialbranch")) {
 
-		/*
-		 t_myregex myrg;
-		 sym_regex_init(&myrg, "TakeBranchALU*");
-		 int id = sym_regex(&myrg);
-		 while (id) {
-		 // found variable and the variable id is id
-		 fprintf(stderr, "%d %s\n", id, getsym_i(id)->name);
-		 id = sym_regex(&myrg);
-		 }
-		 sym_regex_free(&myrg);
-		 */
-		
-		no_independent = 0;
-		int p = 0;
-		intnum = 0;
-		int secondnum = 0, i = 0;
-		int openbracket_found = 0;
-		int stop_openbracket = 0;
-		Initialbranch:;
-		while ((p != '\n')	&& !((p == ')') && (openbracket_found))) {
+		int looping = 0;
+		char p = ' ';
+		while (p != ')') {
          p = fgetc(finputfile);
+			if (p == '\n') { markbdd_line++; }
 			if (p == EOF)	{
-				fprintf (stderr, " %d %d ", openbracket_found, stop_openbracket);
 				fprintf (stderr, "\nUnexpected EOF (%s)...exiting:%d\n",	macros, markbdd_line);
 				exit (1);
 			}
-			if (p == '(') {
-				if (!stop_openbracket)
-				  openbracket_found = 1;
-				continue;
-			}
-			if ((p >= '0') && (p <= '9')) {
-				i = 0;
-				while ((p >= '0') && (p <= '9')) {
-					integers[i] = p;
-					i++;
-					if(i >= max_integers) {
-						integers = (char *)ite_recalloc(integers, max_integers, max_integers+10, sizeof(char), 9, "integers");
-						max_integers+=10;
-					}
-               p = fgetc(finputfile);
-               if (p == EOF) {
-						fprintf (stderr, "\nUnexpected EOF (%s)...exiting:%d\n", macros, markbdd_line);
-						exit (1);
-					}
+			int found_word = 0;
+			int i = 0;
+			macros[i++] = '^';
+			while (((p >= 'a') && (p <= 'z')) || ((p >= 'A') && (p <= 'Z'))
+					 || (p == '_') || ((p >= '0') && (p <= '9')) || (p == '[')
+					 || (p == ']') || (p == '*')) {
+				found_word = 1;
+				if(p == '*') macros[i++] = '.';
+				macros[i] = p;
+				i++;
+				if(i >= max_macros) {
+					macros = (char *)ite_recalloc(macros, max_macros, max_macros+10, sizeof(char), 9, "macros");
+					max_macros+=10;
 				}
-				integers[i] = 0;
-				intnum = atoi (integers);
-				if (intnum > numinp) {
-					fprintf (stderr, "\nVariable %d is larger than allowed(%ld)...exiting:%d\n", intnum, numinp - 2, markbdd_line);
+            p = fgetc(finputfile);
+            if (p == EOF) {
+					fprintf (stderr, "\nUnexpected EOF (%s)...exiting:%d\n",	macros, markbdd_line);
 					exit (1);
 				}
-				if (p == '.') {
-               p = fgetc(finputfile);
-               if (p == EOF) {
-						fprintf (stderr, "\nUnexpected EOF (%s)...exiting:%d\n",	macros, markbdd_line);
-						exit (1);
-					}
-					if (p == '.') {
-                  p = fgetc(finputfile);
-                  if (p == EOF) {
-							fprintf (stderr, "\nUnexpected EOF (%s)...exiting:%d\n", macros, markbdd_line);
-							exit (1);
-						}
-						if ((p >= '0') && (p <= '9')) {
-							i = 0;
-							while ((p >= '0') && (p <= '9')) {
-								integers[i] = p;
-								i++;
-								if(i >= max_integers) {
-									integers = (char *)ite_recalloc(integers, max_integers, max_integers+10, sizeof(char), 9, "integers");
-									max_integers+=10;
-								}
-                        p = fgetc(finputfile);
-                        if (p == EOF) {
-									fprintf (stderr, "\nUnexpected EOF (%s)...exiting:%d\n",	macros, markbdd_line);
-									exit (1);
-								}
-							}
-							ungetc (p, finputfile);
-							integers[i] = 0;
-							secondnum = atoi (integers);
-							if (secondnum > numinp) {
-								fprintf (stderr, "\nVariable %d is larger than allowed (%ld)...exiting:%d\n",	secondnum, numinp - 2, markbdd_line);
-								exit (1);
-							}
-							for (int x = intnum; x <= secondnum; x++)
-							  independantVars[x] = 1;
-							stop_openbracket = 1;
-						} else {
-							fprintf (stderr, "\nNumber expected after '%d..'  exiting:%d\n", intnum, markbdd_line);
-							exit (1);
-						}
-					} else {
-						ungetc (p, finputfile);
-						stop_openbracket = 1;
-						independantVars[intnum] = 1;
-					}
-				} else {
-					ungetc (p, finputfile);
-					stop_openbracket = 1;
-					independantVars[intnum] = 1;
+			}
+			if(found_word == 1) {
+				macros[i] = '$';
+				macros[i+1] = 0;
+				t_myregex myrg;
+				sym_regex_init(&myrg, macros);
+				int id = sym_regex(&myrg);
+				int looper = 0;
+				while (id) {
+					looper++;
+					// found variable and the variable id is id
+					independantVars[id] = 1;
+					fprintf(stderr, "%d indep=%d %s %s\n", looper, id, getsym_i(id)->name, macros);
+					id = sym_regex(&myrg);
+					no_independent = 0;
 				}
+				sym_regex_free(&myrg);
 			}
 		}
-      if ((p == '\n') && (openbracket_found == 1)) {
-			p = ' ';
-			goto Initialbranch;
-		}
-      ungetc (p, finputfile);
       return true_ptr;
 	}
 	if (!strcasecmp (macros, "define")) {
