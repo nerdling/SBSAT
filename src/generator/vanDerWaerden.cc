@@ -79,6 +79,7 @@
 #define CNF  0
 #define XCNF 1
 #define ITE  2
+#define CNF2 3
 int formula_type = XCNF;
 void vanDerWaerden(int n, int k, int p) {
 	//fprintf(stdout, "p cnf %d %d\n", n*k, n+(n*((n-1)/(p-1))));
@@ -104,6 +105,14 @@ void vanDerWaerden(int n, int k, int p) {
       break;
     case ITE: 
       fprintf(stdout, "p bdd %d %d\n", n*k, clauses);
+      break;
+    case CNF2:
+      if (k != 2) {
+         fprintf(stderr, "Can't use CNF2 for any other k but 2\n");
+         exit(1);
+      }
+      clauses -= n;
+      fprintf(stdout, "p cnf %d %d\n", n*k, clauses);
       break;
     default: 
       exit(1);
@@ -182,18 +191,58 @@ void vanDerWaerden(int n, int k, int p) {
    } else if (formula_type == ITE) {
       for(int bucket=0; bucket<k; bucket++) {
          for(int num = 1; num <= n; num++) {
+#define MK_TEST
+#ifdef MK_TEST
+            if ((n-num)/(p-1) == 0) continue;
+            fprintf(stdout, "* AND%d(", (n-num)/(p-1));
+#endif
             for(int step = 1; 1; step++) {
                if (step * (p-1) + num > n) break;
                int base = num;
+#ifdef MK_TEST
+               fprintf(stdout, " OR%d( ", p);
+#else
                fprintf(stdout, "* OR%d( ", p);
+#endif
                for(int z = 0; z < p; z++) {
                   fprintf(stdout, "-%d ", base+bucket*n);
                   base+=step;
                }
+#ifdef MK_TEST
+               fprintf(stdout, ") ");
+#else
                fprintf(stdout, ")\n");
+#endif
                clause_count++;
             }
+#ifdef MK_TEST
+            fprintf(stdout, ")\n");
+#endif
          }
+      }
+   } else if (formula_type == CNF2) {
+      fprintf(stdout, "c prevent any arithmetic progression of length %d for every bucket %d\n", p, k);
+      for(int num = 1; num <= n; num++) {
+         for(int step = 1; 1; step++) {
+            if (step * (p-1) + num > n) break;
+            int base = num;
+            for(int z = 0; z < p; z++) {
+               fprintf(stdout, "-%d ", base);
+               base+=step;
+            }
+            fprintf(stdout, "0\n");
+            clause_count++;
+            base = num;
+            for(int z = 0; z < p; z++) {
+               fprintf(stdout, "%d ", base);
+               base+=step;
+            }
+            fprintf(stdout, "0\n");
+            clause_count++;
+         }
+      }
+      if (clause_count != clauses) {
+         fprintf(stderr, "======================== Problem\n");
       }
    }
 }
