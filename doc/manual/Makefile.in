@@ -270,6 +270,15 @@ sbsat_manual.tex: sbsat_manual.lyx
 
 sbsat_getting.pdf: sbsat_getting.lyx
 	lyx -e pdf sbsat_getting.lyx
+
+sbsat_getting.html: sbsat_getting.lyx
+	lyx -e html sbsat_getting.lyx
+
+sbsat_getting.ps: sbsat_getting.lyx
+	lyx -e ps sbsat_getting.lyx
+
+sbsat_getting.tex: sbsat_getting.lyx
+	lyx -e latex sbsat_getting.lyx
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

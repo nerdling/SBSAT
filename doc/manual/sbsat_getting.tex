@@ -1,0 +1,1224 @@
+%% LyX 1.3 created this file.  For more info, see http://www.lyx.org/.
+%% Do not edit unless you really know what you are doing.
+\documentclass[english]{article}
+\usepackage{ae}
+\usepackage{aecompl}
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc}
+\usepackage{color}
+\usepackage{setspace}
+\onehalfspacing
+
+\makeatletter
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% LyX specific LaTeX commands.
+\newcommand{\noun}[1]{\textsc{#1}}
+%% Bold symbol macro for standard LaTeX users
+\newcommand{\boldsymbol}[1]{\mbox{\boldmath $#1$}}
+
+%% Because html converters don't know tabularnewline
+\providecommand{\tabularnewline}{\\}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Textclass specific LaTeX commands.
+ \newenvironment{lyxcode}
+   {\begin{list}{}{
+     \setlength{\rightmargin}{\leftmargin}
+     \setlength{\listparindent}{0pt}% needed for AMS classes
+     \raggedright
+     \setlength{\itemsep}{0pt}
+     \setlength{\parsep}{0pt}
+     \normalfont\ttfamily}%
+    \item[]}
+   {\end{list}}
+
+\usepackage{babel}
+\makeatother
+\begin{document}
+
+\title{SBSAT Quick-Start Guide}
+
+
+\author{\noun{Michal} \noun{Kouril}, \noun{Sean} \noun{Weaver}, \noun{Andy
+Vogel}}
+
+\maketitle
+SBSAT Version 2.0, August 2003
+
+\newpage
+\tableofcontents{}
+
+
+\newpage
+\section*{Wecolme to SBSAT (State Based Satisfiability) Solver}
+
+SBSAT is a software package for solving instances of a generalization
+of the well-known Satisfiability problem. In particular, the problem
+solved by SBSAT is the following: 
+
+\begin{lyxcode}
+Given:~~Input~variable~set~V=\{v1...vn\}~of~Boolean~variables
+
+~~~~~~~~Set~of~Boolean~functions~F=\{f1...fm\}~where~for~all
+
+~~~~~~~~i,~fi~maps~an~assignment~of~values~to~variables~of
+
+~~~~~~~~V~to~\{T,F\}~(denote~by~V|t~an~assignment~t~of~values)~
+
+Result:~An~assignment~t~of~values~to~variables~of~V~such
+
+~~~~~~~~that~for~all~i~fi(V|t)~=~T,~or~\char`\"{}unsatisfiable\char`\"{}~if
+
+~~~~~~~~no~such~assignment~is~possible.~
+\end{lyxcode}
+If, for all i, fi is a function corresponding to the conjunction of
+a subset of variables of V, then the problem is reduced to the well
+studied Boolean Satisfiability Problem. If the variables of V are
+allowed to take arbitrarily many values, then the problem becomes
+the well-studied Constraint Satisfaction Problem.
+
+The functions F may be specified in several different ways. There
+is one canonical input specification format, in terms of BDDs, which
+may be the target of any user-supplied translation from a particular
+user-defined set of functions. Specific supported input formats and
+examples of how to translate a user-defined format for use by SBSAT
+are given in Section\textasciitilde{}\textbackslash{}ref\{the-examples-section\}.
+
+SBSAT executes in several phases. First, an instance is read from
+file. Second, depending on switches set on the command line when invoking
+SBSAT, various levels of preprocessing are applied to the input instance
+with the intention of producing an internal Satisfiability-equivalent
+set of constraints which supports smaller searches through judicious
+use of search heuristics and learning (Lemmas - see below). Details
+of the kinds of preprocessing available and their effects are given
+in Section\textasciitilde{}\textbackslash{}ref\{details-section\}
+and examples of their use are given in Section\textasciitilde{}\textbackslash{}ref\{examples-section\}.
+Third, the internal form is searched for a solution.
+
+The user is given a choice of four ways to perform a search. These
+are:
+
+\begin{enumerate}
+\item Backtracking 
+\item Backtracking with Lemmas 
+\item BDD Walksat (incomplete solver) 
+\item WVF (I do not understand what your explanation is trying to say)
+\end{enumerate}
+Search heuristics are used to help control the size of the search
+space. There are several provided:
+
+\begin{enumerate}
+\item Chaff-like 
+\item Johnson generatization 
+\item Others?
+\end{enumerate}
+The size of the search space can be further controlled through learning.
+As backtracks occur, new constraints, called Lemmas, are added to
+the internal constraint set. These can prevent some fruitless backtracking
+later in the search.
+
+Available input formats are... 
+
+\begin{enumerate}
+\item CNF
+\item BDD (ITE)
+\item Truth Table (Smurf)
+\item Tracer
+\item XOR
+\end{enumerate}
+\begin{lyxcode}
+{\footnotesize read~input~-{}->~preprocessing~-{}->~write~output~}{\footnotesize \par}
+
+~{\footnotesize ~~~~~~~~~~~~~~~~~~~~~~~~~~~~\textbackslash{}->~brancher~~~-{}->~print~solutions~}{\footnotesize \par}
+
+~{\footnotesize ~~~~~~~~~~~~~~~~~~~~~~~~~~~~\textbackslash{}->~bddwalksat~/~}{\footnotesize \par}
+
+~{\footnotesize ~~~~~~~~~~~~~~~~~~~~~~~~~~~~\textbackslash{}->~wvf~brancher}{\footnotesize \par}
+\end{lyxcode}
+The Solver does not have GUI based interface, rather it uses a command
+line interface. 
+
+The solver was successfully tested and compiled on a number of Unix
+based platforms such as Linux, DEC, Solaris, Mac OS X, Windows/Cygwin
+with a number of different compilers such as gcc2.95, gcc3.x, solaris-cc,
+dec-cc, pgcc. (intel cc?).
+
+
+\newpage
+\section{About the Quick-Start Guide}
+
+The main purpose of the Quick-Start Guide is to introduce a new user
+to the SBSAT Solver. We will use a few well chosen examples to demonstrate
+the different functionality of the SBSAT solver without getting bogged
+down in details. For a more detailed description of the solver please
+see the SBSAT Manual%
+\footnote{not available yet%
+}.
+
+All problems in this manual are part of the SBSAT distribution in
+the examples subdirectory.
+
+
+\subsection{Conventions}
+
+Program input and output
+
+Fixed sized length font (like a typewriter) shows a line of text as
+it should appear on the computer screen.
+
+(Example: \texttt{\footnotesize Reading file ...} )\\
+\\
+Command line demonstration
+
+A string character (\$) at the beginning of a line represents the
+command-line prompt.
+
+(Example: \texttt{\footnotesize \$ ite small.cnf} )\\
+\\
+Program options
+
+Programming options appear in \emph{Italics} to contrast with the
+option parameters, which appear in plain text. 
+
+(Example: \texttt{\footnotesize \$ ite} \texttt{\emph{\footnotesize -{}-help}}
+)\\
+\\
+Keywords in an input format
+
+An input format example has keywords in \textbf{Bold}.
+
+(Example: {*}\textbf{add\_state} \$1,2)\\
+
+
+
+\subsection{Hardware requirements}
+
+A Unix style operating system with c++ compiler installed is required.
+All examples require at least 32MB of RAM beyond the requirements
+of the operating system. Disk requirements depend on the operating
+system at least 200MB.
+
+In general, SBSAT allocates as much memory as it needs. The amount
+of memory can be limited only indirectly by changing e.g. the number
+of lemmas it maintains in the cache or the size of the pools for different
+stacks (it allocates new pool of the same size if it runs out of the
+current one). There is no other option to limit the amount of memory
+it allocates. It is expected that the amount of available memory matches
+the size of the problem being solved. SBSAT is not multi-threaded
+and does not take advantage of multiple processors.
+
+
+\subsection{Definitions}
+
+\begin{itemize}
+\item Preprocessing
+\item Backjumping, backjumps
+\item Lemma
+\item DIMACS CNF
+\item Solution
+\item Satisfiable output
+\item Unsatisfiable output
+\item Standard input and output
+\item for all, there exists
+\item imp, or, and, nor, nand, not, nimp, xor, equ, ...
+\item add\_state
+\item '{*}' (star in the begining of the line)
+\end{itemize}
+
+\subsection{How to compile}
+
+
+\subsection{How to install}
+
+
+\newpage
+\section{Running SBSAT: the basics}
+
+\begin{quotation}
+\textcolor{red}{I see nothing that says where ite is to be run from,
+whether there needs to be a path variable set, what the directory
+structure is expected to be, or even where the example \char`\"{}small.cnf\char`\"{}
+is. A novice user will certainly give up right here! I would.}
+\end{quotation}
+
+\subsection{Simple CNF Example}
+
+\begin{quotation}
+\textcolor{red}{Page 5: There is no such thing as a \char`\"{}CNF
+file\char`\"{}. There could be a file whose contents represent an
+instance of CNF in, say, DIMACS format. Please always consider whether
+a term you are using has been defined somewhere previously. You might
+use CNF file as shorthand for something else but a novice user has
+no idea this is the case if not told.}
+\end{quotation}
+We will start by using SBSAT to solve a simple CNF file. According
+to the DIMACS standards every CNF file starts with the header \char`\"{}\texttt{\footnotesize p
+cnf num\_of\_vars num\_of\_fns}\char`\"{} where \texttt{\footnotesize num\_of\_vars}
+is the number of variables present in the input file and \texttt{\footnotesize num\_of\_fns}
+is the number of functions present in the input file. Lines starting
+with \texttt{\footnotesize 'c'} indicate a comment and are ignored.
+Functions are expressed as a string of positive and negative integers,
+representing clauses in conjunctive normal form. Each function (clause?)
+ends with \texttt{\footnotesize '0'} (number zero) and a '-' (minus)
+in front of a variable indicates negation. 
+
+Example (file small.cnf):
+
+\begin{lyxcode}
+p~cnf~6~8~
+
+c~This~is~a~demonstration~of~the~CNF~format~for~the~SBSAT~solver~
+
+1~2~3~0
+
+2~3~4~0
+
+3~4~5~0~
+
+4~5~6~0
+
+-1~-2~-3~0
+
+-2~-3~-4~0
+
+-3~-4~-5~0
+
+-4~-5~-6~0~\\
+
+\end{lyxcode}
+To run the solver on this file, start the solver (\texttt{\footnotesize ite})
+with the filename of this problem on the command line:
+
+\texttt{\footnotesize \$ ite small.cnf}~\\
+{\footnotesize \par}
+
+The output is as follows:
+
+\begin{lyxcode}
+{\scriptsize warning:~ini~file~not~found~/home/fett/ite.ini}{\scriptsize \par}
+
+{\scriptsize Reading~File~../examples/small.cnf~~....}{\scriptsize \par}
+
+{\scriptsize Reading~CNF~...~Done~~~~~~~~~~~~~~~~~~~}{\scriptsize \par}
+
+{\scriptsize Preprocessing~....~Done~~~~~~~~~~~~~~~~~~~~~~~~~~~~}{\scriptsize \par}
+
+{\scriptsize Creating~Smurfs~...~Done~~~~~~~~~~~~~~~~~~~~~}{\scriptsize \par}
+
+{\scriptsize Solution~verified.}{\scriptsize \par}
+
+{\scriptsize Time~in~brancher:~~0.000~secs.}{\scriptsize \par}
+
+{\scriptsize 0.000~backtracks~per~sec.}{\scriptsize \par}
+
+{\scriptsize Time:~0.000s.~Backtracks:~0~(10000000.000~per~sec)~Progress:~~0.00\%}{\scriptsize \par}
+
+~{\scriptsize Choices~(total,~dependent,~backjumped):~(3,~0,~0)}{\scriptsize \par}
+
+~{\scriptsize Lemmas~(cached,~non-cached,~added):~(0,~2,~2)}{\scriptsize \par}
+
+~{\scriptsize Inferences~by~smurfs:~2;~lemmas:~0;~}{\scriptsize \par}
+
+~{\scriptsize Backtracks~by~smurfs:~0;~lemmas:~0;~}{\scriptsize \par}
+
+~{\scriptsize Backjumps:~0~(avg~bj~len:~0.0)}{\scriptsize \par}
+
+{\scriptsize Choice~Points:~2~,~Backtracks:~0,~Backjumps:~0~}{\scriptsize \par}
+
+{\scriptsize Satisfiable}{\scriptsize \par}
+
+{\scriptsize Total~Time:~0.010}{\scriptsize \par}
+
+
+\end{lyxcode}
+\begin{quotation}
+\textcolor{red}{Page 6: What does \char`\"{}decoding the output: satisfiable\char`\"{}
+mean?}
+\end{quotation}
+Decoding the output: \texttt{\footnotesize Satisfiable}{\footnotesize \par}
+
+In order to get the actual satisfiable assignment from the solver
+we need to add the input parameter instructing the solver to output
+the solution.\\
+
+
+\texttt{\footnotesize \$ ite} \texttt{\emph{\footnotesize -R}} \texttt{\footnotesize r
+small.cnf}\texttt{\emph{\footnotesize }}~\\
+{\footnotesize \par}
+
+\textbf{\underbar{\large TIP}} ~ The order of the parameters on the
+command line does not matter. (With the exception of \texttt{\emph{\footnotesize -All}}
+preprocessing switch and preprocessing enable/disable switches). So
+in this case the following command line would do exactly the same
+as the one above.
+
+\texttt{\footnotesize \$ ite small.cnf} \texttt{\emph{\footnotesize -R}}
+\texttt{\footnotesize r}~\\
+{\footnotesize \par}
+
+Output:
+
+\begin{lyxcode}
+{\scriptsize warning:~ini~file~not~found~/home/fett/ite.ini}{\scriptsize \par}
+
+{\scriptsize Reading~File~../examples/small.cnf~~....}{\scriptsize \par}
+
+{\scriptsize Reading~CNF~...~Done~~~~~~~~~~~~~~~~~~~}{\scriptsize \par}
+
+{\scriptsize Preprocessing~....~Done~~~~~~~~~~~~~~~~~~~~~~~~~~~~}{\scriptsize \par}
+
+{\scriptsize Creating~Smurfs~...~Done~~~~~~~~~~~~~~~~~~~~~}{\scriptsize \par}
+
+{\scriptsize Solution~verified.}{\scriptsize \par}
+
+{\scriptsize Time~in~brancher:~~0.000~secs.}{\scriptsize \par}
+
+{\scriptsize 0.000~backtracks~per~sec.}{\scriptsize \par}
+
+{\scriptsize Time:~0.010s.~Backtracks:~0~(1000000.000~per~sec)~Progress:~~0.00\%}{\scriptsize \par}
+
+~{\scriptsize Choices~(total,~dependent,~backjumped):~(3,~0,~0)}{\scriptsize \par}
+
+~{\scriptsize Lemmas~(cached,~non-cached,~added):~(0,~2,~2)}{\scriptsize \par}
+
+~{\scriptsize Inferences~by~smurfs:~2;~lemmas:~0;~}{\scriptsize \par}
+
+~{\scriptsize Backtracks~by~smurfs:~0;~lemmas:~0;~}{\scriptsize \par}
+
+~{\scriptsize Backjumps:~0~(avg~bj~len:~0.0)}{\scriptsize \par}
+
+{\scriptsize Choice~Points:~2~,~Backtracks:~0,~Backjumps:~0~}{\scriptsize \par}
+
+{\scriptsize //~Solution~\#1}{\scriptsize \par}
+
+{\scriptsize Preprocessing~....~Done}{\scriptsize \par}
+
+{\scriptsize -1~-2~3~4~-5~-6~}{\scriptsize \par}
+
+{\scriptsize Satisfiable}{\scriptsize \par}
+
+{\scriptsize Total~Time:~0.020}{\scriptsize \par}
+
+
+\end{lyxcode}
+The default output mixes solution information with execution information.
+Solution information may be separated from execution information as
+follows.
+
+\texttt{\footnotesize \$ ite small.cnf} \texttt{\emph{\footnotesize -R}}
+\texttt{\footnotesize r} \texttt{\emph{\footnotesize -{}-output-file}}
+\texttt{\footnotesize output.txt}~\\
+{\footnotesize \par}
+
+output.txt:
+
+\begin{lyxcode}
+{\scriptsize //~Solution~\#1}{\scriptsize \par}
+
+{\scriptsize -1~-2~3~4~-5~-6~}{\scriptsize \par}
+\end{lyxcode}
+\begin{quotation}
+\textcolor{red}{Page 7: There is no explantion given of the meaning
+of the solution         information.  Add some.}
+\end{quotation}
+\textbf{\underbar{\large TIP}} ~Some of the command line options
+have both a short and a long flag. They can be used interchangably.
+For example the '\texttt{\emph{\footnotesize -R}}' option is also
+\texttt{\emph{\footnotesize '-{}-show-result}}'. \\
+
+
+Note: dash (\texttt{\footnotesize -}) instead of the filename denotes
+the standard input or standard output depending on the context.
+
+\begin{quotation}
+\textcolor{red}{Page 7: It says dash denotes standard input. Now what?
+No example?}
+\end{quotation}
+All available options can be printed by specifying '\texttt{\emph{\footnotesize -{}-help}}'.
+
+\texttt{\footnotesize \$ ite} \texttt{\emph{\footnotesize -{}-help}}~\\
+{\footnotesize \par}
+
+Shortened output:
+
+\begin{lyxcode}
+{\scriptsize SBSat~is~a~SAT~solver.~Usage:~}{\scriptsize \par}
+
+{\scriptsize ite~{[}OPTIONS{]}...~{[}inputfile{]}~{[}outputfile{]}}{\scriptsize \par}
+
+
+
+{\scriptsize Options:~}{\scriptsize \par}
+
+{\scriptsize -{}-help,~-h~~~~~~~~~~~~~Show~all~program~options~}{\scriptsize \par}
+
+{\scriptsize -{}-version~~~~~~~~~~~~~~Show~program~version~}{\scriptsize \par}
+
+{\scriptsize -{}-create-ini~~~~~~~~~~~Create~ini~file~}{\scriptsize \par}
+
+{\scriptsize -{}-ini~<string>~~~~~~~~~Set~the~ini~file~{[}default=\char`\"{}\textasciitilde{}/ite.ini\char`\"{}{]}~}{\scriptsize \par}
+
+{\scriptsize -{}-debug~<number>~~~~~~~debugging~level~(0-none,~9-max)~{[}default=2{]}~}{\scriptsize \par}
+
+{\scriptsize -{}-debug-dev~<string>~~~debugging~device~{[}default=\char`\"{}stderr\char`\"{}{]}~}{\scriptsize \par}
+
+{\scriptsize -{}-params-dump,~-D~~~~~~dump~all~internal~parameters~before~processing~}{\scriptsize \par}
+
+{\scriptsize -{}-input-file~<string>~~input~filename~{[}default=\char`\"{}-\char`\"{}{]}~}{\scriptsize \par}
+
+{\scriptsize -{}-output-file~<string>~output~filename~{[}default=\char`\"{}-\char`\"{}{]}~}{\scriptsize \par}
+
+{\scriptsize -{}-temp-dir~<string>~~~~directory~for~temporary~files~{[}default=\char`\"{}\$TEMP\char`\"{}{]}~}{\scriptsize \par}
+
+{\scriptsize -{}-show-result~<string>,~-R~<string>~}{\scriptsize \par}
+
+~{\scriptsize ~~~~~~~~~~~~~~~~~~~~~~Show~result~(n=no~result,~r=raw,~f=fancy)~}{\scriptsize \par}
+
+~{\scriptsize ~~~~~~~~~~~~~~~~~~~~~~{[}default=\char`\"{}n\char`\"{}{]}~}{\scriptsize \par}
+
+...
+\end{lyxcode}
+
+\subsection{Converting your problem into a SAT problem}
+
+\begin{quotation}
+\textcolor{red}{Page 7: The section on converting to SAT does not
+belong here. At this point the user is trying to figure out how to
+use SBSAT. Either move it to a later section, probably on its own,
+or save it for the detailed sections (I still believe we will have
+one user manual when we are done and one documentation manual).}
+
+\textcolor{red}{Page 8: Conventions section should include all conventions
+you use. Thus, \char`\"{}for all\char`\"{} and \char`\"{}there exists\char`\"{}
+and so on are in the conventions section.}
+
+\textcolor{red}{Page 8: What does \char`\"{}{*}imp(1,2)\char`\"{}
+mean? Conventions again, maybe?}
+\end{quotation}
+Any NP-Complete problem can be translated into a SAT problem. Two
+such problems are demonstrated here. The first is a problem from AI
+where we have a database of information and we'd like to ask a question
+about the database. Here is a sample database taken from Charles Dodgson's
+(aka Lewis Carroll) book \emph{Symbolic Logic}:
+
+\begin{enumerate}
+\item Coloured flowers are always scented.
+\item I dislike flowers that are not grown in the open air.
+\item No flowers grown in the open air are colourless.
+\end{enumerate}
+We would like to ask this question - Do I dislike all flowers that
+are not scented? Now we must translate these statements into First
+Order Logic. This gives:
+
+\begin{enumerate}
+\item $\forall$\emph{w} ( Colored(\emph{w}) $\Rightarrow$ Scented(\emph{w})
+)
+\item $\forall$\emph{x} ( $\neg$OpenAir(\emph{x})$\Rightarrow$ $\neg$Like(\emph{x})
+)
+\item $\forall$\emph{y} ( OpenAir(\emph{y}) $\Rightarrow$ Colored(\emph{y})
+)
+\end{enumerate}
+The question becomes: $\forall$\emph{z} ( $\neg$Scented(\emph{z})
+$\Rightarrow$$\neg$Like(\emph{z}) )
+
+We can now translate these statements into one of the acceptable formats
+used by SBSAT. Both CNF and ITE(BDD) are demonstrated here.
+
+Example(file flowers.ite):
+
+\begin{lyxcode}
+p~bdd~4~4
+
+;Coloured~flowers~are~always~scented.
+
+;I~dislike~flowers~that~are~not~grown~in~the~open~air.
+
+;No~flowers~grown~in~the~open~air~are~colourless.
+
+;Do~I~dislike~all~flowers~that~are~not~scented?
+
+;Where~Colored=1,~Scented=2,~Like=3,~Grown~in~the~Open~Air=4
+
+;The~question~must~be~negated~and~added~to~the~database.
+
+;If~SBSAT~returns~'unsat'~then~the~answer~to~the~question
+
+;is~'YES',~otherwise~the~answer~is~'NO'.
+
+{*}imp(1,~2)
+
+{*}imp(-3,~-4)
+
+{*}imp(3,~1)
+
+{*}not(imp(-2,~-4))~
+\end{lyxcode}
+Example(file flowers.cnf):
+
+\begin{lyxcode}
+p~cnf~4~5
+
+c~Coloured~flowers~are~always~scented.
+
+c~I~dislike~flowers~that~are~not~grown~in~the~open~air.
+
+c~No~flowers~grown~in~the~open~air~are~colourless.
+
+c~Do~I~dislike~all~flowers~that~are~not~scented?
+
+c~Where~Colored=1,~Scented=2,~Like=3,~Grown~in~the~Open~Air=4
+
+c~The~question~must~be~negated~and~added~to~the~database.
+
+c~If~SBSAT~returns~'unsat'~then~the~answer~to~the~question
+
+c~is~'YES',~otherwise~the~answer~is~'NO'.
+
+-1~2~0
+
+3~-4~0
+
+-3~1~0
+
+-2~0
+
+4~0
+
+
+\end{lyxcode}
+
+\subsection{Choosing a different solver}
+
+\begin{quotation}
+\textcolor{red}{All pages: is -bw the same as -b -w or what? (Some
+people might assume it is).}
+\end{quotation}
+\begin{tabular}{|c|c|c|c|}
+\hline 
+Solver&
+Default&
+Option&
+Description\tabularnewline
+\hline
+\hline 
+Smurf Brancher&
+yes&
+\texttt{\emph{\footnotesize -b}}&
+\tabularnewline
+\hline 
+BDD WalkSAT&
+no&
+\texttt{\emph{\footnotesize -w}}&
+\tabularnewline
+\hline 
+WVF Brancher(obsolete)&
+no&
+\texttt{\emph{\footnotesize -m}}&
+\tabularnewline
+\hline
+\end{tabular}
+
+
+\subsection{Converting the input file}
+
+\begin{quotation}
+\textcolor{red}{Section 2.4: I have no idea what you are talking about.}
+\end{quotation}
+-In 0 -All 0 is the only way to get a direct translation of the original
+file (aka, no preprocessing whatsoever).
+
+
+\subsection{BDD (ITE) format examples}
+
+
+\subsubsection{Structure of BDD(ITE) format}
+
+\begin{quotation}
+\textcolor{red}{Page 9: You wait to here to tell me what the \char`\"{}{*}\char`\"{}
+is? We already used it on a previous page!!! Conventions maybe?}
+
+\textcolor{red}{Vicinity of Page 9. Somewhere we have to be more specific
+about limitations. The user is led to believe that putting \char`\"{}{*}\char`\"{}
+in front of anything will give a function that SBSAT can create. I
+do not think this is the case and the user must be informed of some
+rules that will prevent a crash.}
+\end{quotation}
+As with the CNF format the file starts with the header '\texttt{\footnotesize p
+bdd num\_inp\_vars num\_fns}'
+
+Each line starting with start \texttt{\footnotesize '{*}'} denotes
+a new BDD function. The table shows the basic built-in functions:
+
+\begin{tabular}{|c|c|c|c|}
+\hline 
+Function&
+Number of params&
+&
+\tabularnewline
+\hline
+\hline 
+equ&
+2+&
+&
+\tabularnewline
+\hline 
+and&
+2+&
+&
+\tabularnewline
+\hline 
+or&
+2+&
+&
+\tabularnewline
+\hline
+and&
+2+&
+&
+\tabularnewline
+\hline
+not&
+1&
+&
+\tabularnewline
+\hline
+imp&
+2+&
+&
+\tabularnewline
+\hline
+ite&
+3&
+&
+\tabularnewline
+\hline
+xor&
+2+&
+&
+\tabularnewline
+\hline
+\end{tabular}
+
+The parameters of the functions are either variables in the form of
+numbers or another function in the form of \texttt{\footnotesize '\$'}
+and the index of the function in the file (starting with 1).
+
+For the functions where the number of parameters can vary the number
+of parameters is attached right after the function name. Example:
+
+\texttt{\footnotesize xor3(1, 2, 3)}{\footnotesize \par}
+
+
+\subsubsection{Simple XOR Example}
+
+Here is the file called xortest.ite:
+
+\begin{lyxcode}
+{\footnotesize p~bdd~7~3}{\footnotesize \par}
+
+{\footnotesize {*}equ(xor(~xor(1,~2),~3),~F)}{\footnotesize \par}
+
+{\footnotesize {*}equ(xor(3,~and3(5,~4,~6)),~T)}{\footnotesize \par}
+
+{\footnotesize {*}equ(xor(and3(1,~2,~3),~and3(4,~5,~7)),~F)}{\footnotesize \par}
+
+
+
+
+\end{lyxcode}
+Run the example:
+
+\texttt{\footnotesize \$ ite xortest.ite}{\footnotesize \par}
+
+The output:
+
+\begin{lyxcode}
+{\scriptsize warning:~ini~file~not~found~/home/fett/ite.ini}{\scriptsize \par}
+
+{\scriptsize Reading~File~../examples/xortest.ite~~....}{\scriptsize \par}
+
+{\scriptsize Reading~ITE~...~Done}{\scriptsize \par}
+
+{\scriptsize Preprocessing~....~Done~~~~~~~~~~~~~~~~~~~~~~~~~~~~}{\scriptsize \par}
+
+{\scriptsize Creating~Smurfs~...~Done~~~~~~~~~~~~~~~~~~~~~}{\scriptsize \par}
+
+{\scriptsize Solution~verified.}{\scriptsize \par}
+
+{\scriptsize Time~in~brancher:~~0.000~secs.}{\scriptsize \par}
+
+{\scriptsize 0.000~backtracks~per~sec.}{\scriptsize \par}
+
+{\scriptsize Time:~0.000s.~Backtracks:~0~(10000000.000~per~sec)~Progress:~~0.00\%}{\scriptsize \par}
+
+~{\scriptsize Choices~(total,~dependent,~backjumped):~(3,~0,~0)}{\scriptsize \par}
+
+~{\scriptsize Lemmas~(cached,~non-cached,~added):~(0,~5,~5)}{\scriptsize \par}
+
+~{\scriptsize Inferences~by~smurfs:~5;~lemmas:~0;~}{\scriptsize \par}
+
+~{\scriptsize Backtracks~by~smurfs:~0;~lemmas:~0;~}{\scriptsize \par}
+
+~{\scriptsize Backjumps:~0~(avg~bj~len:~0.0)}{\scriptsize \par}
+
+{\scriptsize Choice~Points:~2~,~Backtracks:~0,~Backjumps:~0~}{\scriptsize \par}
+
+{\scriptsize Satisfiable}{\scriptsize \par}
+
+{\scriptsize Total~Time:~0.020~}{\scriptsize \par}
+
+
+\end{lyxcode}
+
+\subsubsection{add\_state example}
+
+\begin{quotation}
+\textcolor{red}{Section 2.5.3: add\_state is a really bad name because
+the user may easily get confused about the meaning of state. Perhaps
+add\_duplicate\_function is more like what the user is expecting.
+The section also needs to explain why we have such a crazy operation
+anyway.}
+\end{quotation}
+Another important function is \textbf{add\_state}. This function has
+two parameters. The first one is a BDD function. The second parameter
+is the shift in the variable number. \textbf{Add\_state} creates a
+new BDD with structure identical to the first parameter but with each
+variable incremented by the second parameter. 
+
+\begin{lyxcode}
+
+
+{\footnotesize p~bdd~44~5}{\footnotesize \par}
+
+{\footnotesize {*}equ(xor(1,~and(-17,~33)),~ite(15,~or(33,~-40),~-33)))~}{\footnotesize \par}
+
+{\footnotesize {*}add\_state(\$1,~1)~}{\footnotesize \par}
+
+{\footnotesize {*}add\_state(\$1,~2)~}{\footnotesize \par}
+
+{\footnotesize {*}add\_state(\$1,~3)~}{\footnotesize \par}
+
+{\footnotesize {*}add\_state(\$1,~4)~}{\footnotesize \par}
+\end{lyxcode}
+The example will be expanded into the following form:
+
+\begin{lyxcode}
+{\footnotesize p~bdd~44~5~}{\footnotesize \par}
+
+{\footnotesize {*}equ(xor(1,~and(-17,~33)),~ite(15,~or(33,~-40),~-33)))~}{\footnotesize \par}
+
+{\footnotesize {*}equ(xor(2,~and(-18,~34)),~ite(16,~or(34,~-41),~-34)))}{\footnotesize \par}
+
+{\footnotesize {*}equ(xor(3,~and(-19,~35)),~ite(17,~or(35,~-42),~-35)))}{\footnotesize \par}
+
+{\footnotesize {*}equ(xor(4,~and(-20,~36)),~ite(18,~or(36,~-43),~-36)))}{\footnotesize \par}
+
+{\footnotesize {*}equ(xor(5,~and(-21,~37)),~ite(19,~or(37,~-44),~-37)))}{\footnotesize \par}
+\end{lyxcode}
+
+\subsubsection{print\_tree and pprint\_tree examples}
+
+
+\subsubsection{Function definition example}
+
+\begin{lyxcode}
+{\footnotesize \#define~g~1~2~3~\#~ite(1,~2,~and(-2,~3))~}{\footnotesize \par}
+\end{lyxcode}
+
+\subsubsection{Complex example}
+
+\begin{lyxcode}
+{\scriptsize p~bdd~18~13~;~18~vars,~13~functions~}{\scriptsize \par}
+
+{\scriptsize \#define~fun~1~2~3~4~\#~ite~1~and~2~3~or~3~4~;~parms~must~be~consecutive~integers~from~1~}{\scriptsize \par}
+
+{\scriptsize \#define~g~1~2~3~\#~ite(fun(1,~2,~3,~-2),~T,~3)~}{\scriptsize \par}
+
+{\scriptsize InitialBranch~(2,~4..12,~15,~16,~18,~1,~3)~;~These~variables~will~be~branched~on~first~}{\scriptsize \par}
+
+{\scriptsize ite~4~5~6~;~eqn~\$1~}{\scriptsize \par}
+
+{\scriptsize {*}or~\$1~3~;~eqn~\$2,~smurf~1~}{\scriptsize \par}
+
+{\scriptsize {*}or~5~-6~;~eqn~\$3,~smurf~2~}{\scriptsize \par}
+
+{\scriptsize {*}and~\$1~-4~;~eqn~\$4,~smurf~3~}{\scriptsize \par}
+
+{\scriptsize {*}imp~\$1~\$4~;~eqn~\$5,~smurf~4~}{\scriptsize \par}
+
+{\scriptsize \#define~imp~1~2~\#~or3(1,~2,~3);~Notice~the~'imp'~operator~was~overloaded.~}{\scriptsize \par}
+
+{\scriptsize {*}imp(3~4~5)~~~~;~eqn~\$6,~smurf~5~}{\scriptsize \par}
+
+~{\scriptsize ~~~~~~~~~~~~~~;~this~is~a~really~bad~idea,~it~probably~shouldn't~be~allowed}{\scriptsize \par}
+
+{\scriptsize print\_tree~\$5~~;~no~equation~created,~no~smurf~created}{\scriptsize \par}
+
+{\scriptsize pprint\_tree~\$5~;~no~equation~created,~no~smurf~created~}{\scriptsize \par}
+
+{\scriptsize ite(2,~~~~~~~~~~~~~~;~eqn~\$7,~no~smurf~created}{\scriptsize \par}
+
+~{\scriptsize ~~~~~ite(3,~4,~5),~;~plus~comments~are~ignored,~even~in~the~middle~of~a~function~}{\scriptsize \par}
+
+~{\scriptsize ~~~~~ite(4,~5,~F))}{\scriptsize \par}
+
+{\scriptsize {*}fun~4~-5~2~3~;~eqn~\$8,~smurf~6~}{\scriptsize \par}
+
+{\scriptsize {*}fun~g~-5~4~\$6~2~3~4~;~eqn~\$9,~smurf~7}{\scriptsize \par}
+
+{\scriptsize {*}equ(5,~xor3(and(-3,~4),~nand(7,~5),~ite(15,~4,~nor(4,~-7))))~;~eqn~\$10,~smurf~8}{\scriptsize \par}
+
+{\scriptsize {*}add\_state(\$10,~1)~;~eqn~\$11,~smurf~9}{\scriptsize \par}
+
+~{\scriptsize ~~~~~~~~~~~~~~~~~~;~add\_state~creates~a~BDD~which~is~identical~to~the~first}{\scriptsize \par}
+
+~{\scriptsize ~~~~~~~~~~~~~~~~~~;~argument~but~with~all~it's~variables~incremented~by~the}{\scriptsize \par}
+
+~{\scriptsize ~~~~~~~~~~~~~~~~~~;~second~argument.}{\scriptsize \par}
+
+{\scriptsize {*}add\_state(\$10,~2)~;~eqn~\$12,~smurf~10~}{\scriptsize \par}
+
+{\scriptsize {*}add\_state(\$10,~3)~;~eqn~\$13,~smurf~11}{\scriptsize \par}
+
+
+\end{lyxcode}
+\textbf{\underbar{\large TIP}} Although both parentheses and commas
+are optional, we recommend you keep them in so you can easily orient
+yourself in the file.
+
+
+\newpage
+\section{SBSAT Advanced}
+
+
+\subsection{Changing Preprocessor Options}
+
+\begin{quotation}
+\textcolor{red}{Page 13: There really needs to be some explanation
+of the preprocessing options. Also some tips about when a preprocessing
+option might pay off and when might it be a liability.}
+\end{quotation}
+The available preprocessing options are :
+
+\begin{tabular}{|c|c|c|c|c|}
+\hline 
+Name&
+Default&
+Short&
+Formats&
+Description\tabularnewline
+\hline
+\hline 
+Clustering&
+yes&
+Cl&
+CNF&
+\tabularnewline
+\hline 
+Cofactoring&
+yes&
+Co&
+All&
+\tabularnewline
+\hline 
+Pruning&
+yes&
+Pr&
+All&
+\tabularnewline
+\hline 
+Strengthening&
+yes&
+St&
+All&
+\tabularnewline
+\hline 
+Inferences&
+yes&
+In&
+All&
+\tabularnewline
+\hline 
+Existential Quantification&
+yes&
+Ex&
+All&
+\tabularnewline
+\hline
+Dependent Var. Clustering&
+yes&
+Dc&
+All&
+\tabularnewline
+\hline
+\end{tabular}\\
+
+
+Preprocessing sequence: \texttt{\footnotesize (ExDc){*}(ExSt){*}(ExPr){*}}{\footnotesize \par}
+
+The sequence in which the preprocessing options are applied is specified
+by the 'preprocessing sequence' string. The parentheses '()' border
+the repeated sequences and are followed with the number of repeats.
+A star '{*}' means repeat until there is no change.
+
+Example:
+
+\texttt{\footnotesize \$ ite} \texttt{\emph{\footnotesize -{}-preprocess-sequence}}
+\texttt{\footnotesize '(ExDc)3(ExSt)2(ExPr)10'} \texttt{\footnotesize small.cnf}\\
+(or \texttt{\footnotesize \$ ite} \texttt{\emph{\footnotesize -P}}
+\texttt{\footnotesize '(ExDc)3(ExSt)2(ExPr)10 small.cnf')}~\\
+{\footnotesize \par}
+
+For some problems the preprocessing might take too long or may not
+produce a desired effect. Therefore it is possible to enable or disable
+the preprocessing options or change their sequence. 
+
+Example:
+
+\texttt{\footnotesize \$ ite} \texttt{\emph{\footnotesize -St}} \texttt{\footnotesize 0
+small.cnf}~\\
+{\footnotesize \par}
+
+\textbf{\underbar{\large TIP ~}} How to avoid repeating long preprocessing:
+Save the problem after preprocessing in SMURF file format (Using \texttt{\footnotesize \$}
+\texttt{\emph{\footnotesize }}\texttt{\footnotesize ite} \texttt{\emph{\footnotesize -{}-output-file}}
+\texttt{\footnotesize newfile.smurf} \texttt{\emph{\footnotesize -s}}
+\texttt{\footnotesize myoldfile}) and disable the preprocessing next
+time you run your problem (Using \texttt{\footnotesize \$ ite} \texttt{\emph{\footnotesize -{}-All}}
+\texttt{\footnotesize 0 newfile.smurf}) . 
+
+
+\subsection{Changing heuristic and its options}
+
+\begin{quotation}
+\textcolor{red}{Page 13: We do not implement a Johnson heuristic.
+We implement a heuristic that is designed to skew locally by favoring
+inferences and balance globally by favoring relatively equal \char`\"{}probabilities\char`\"{}
+of satisfying search subtrees. Call this the LSGB for Locally Skewed,
+Globally Balanced heuristic. Say that LSGB becomes Johnson when F
+is a bunch of disjunctions and k=2. Mention that the parameter k controls
+how much inferences are favored (deep vs. shallow) and can have a
+major impact on performance. Mention when high k might pay off, same
+for low k.}
+\end{quotation}
+The standard brancher has to two available heuristics, the Johnson
+heuristic and Lemma (chaff-like) heuristic. Both heuristics have their
+advantages and disadvantages. Usually if one heuristic is better than
+the other on a specific problem then this is also the case for similarly
+structured problems.
+
+Example: 
+
+\begin{tabular}{|c|c|c|c|}
+\hline 
+Heuristic&
+Default&
+Option&
+Description\tabularnewline
+\hline
+\hline 
+Johnson heuristic&
+yes&
+\texttt{\emph{\footnotesize -H}} \texttt{\footnotesize j}&
+\tabularnewline
+\hline 
+Lemma heuristc&
+no&
+\texttt{\emph{\footnotesize -H}} \texttt{\footnotesize l}&
+\tabularnewline
+\hline 
+Combined heuristic&
+no&
+\texttt{\emph{\footnotesize -H}} \texttt{\footnotesize jl}&
+\tabularnewline
+\hline
+\end{tabular}\\
+
+
+\textbf{\underbar{\large TIP}} ~ Using the Combined heuristic (\texttt{\emph{\footnotesize -H}}
+\texttt{\footnotesize jl}) might be a good compromise if you are unsure
+which heuristic to choose.
+
+
+\subsection{Adjusting other parameters}
+
+\begin{quotation}
+\textcolor{red}{Page 14: Say what a lemma is, say that lemmas are
+stored with a particular replacement policy. Say what a backjump is.
+Conventions? Perhaps change Conventions section to Conventions and
+Definitions and stick in some definitions that you are right now assuming
+that everyone knows about.}
+\end{quotation}
+
+\subsubsection{Lemma cache}
+
+The size of the cache in which the lemmas are stored is fixed throughout
+the branching process. Necessary amount of memory is automatically
+allocated to accomodate all lemmas in the cache. Usually the bigger
+the memory cache the slower the branching process. Therefore increasing
+lemma cache might not improve the overall branching time.
+
+The parameter to use for controlling the lemma cache is \texttt{\emph{\footnotesize -L}}
+or \texttt{\emph{\footnotesize -{}-max-cached-lemmas}}\texttt{\footnotesize .} 
+
+Example:
+
+\$ ite -L 1000 problem.cnf\\
+
+
+It is possible to set the lemma cache to 0. This will prevent any
+lemma from being stored beyond the point they are needed. The brancher
+will still generate lemmas during backtracking and inferencing. 
+
+To prevent the lemmas from being created and used the backjumping
+must be disabled together with setting the lemma cache to 0.
+
+Example:
+
+\$ ite -L 0 --backjumping 0 slider\_80\_unsat.ite\\
+
+
+For some problems this will yield significantly better results than
+when the lemmas are used.
+
+Note: the lemma heuristic is not compatible with the situation when
+the lemmas are disabled. Also the effectivness of the lemma heuristic
+is decreasing with descreasing the lemma cache.
+
+\begin{quotation}
+\textcolor{red}{Page 15: Now you say what backjumps are???!!! Stick
+in the new Conventions and Definitions section.}
+\end{quotation}
+Backjumping refers to the backtracking property where the literal
+previously chosen by heuristic and not involved in contradition is
+not considered with the reversed sign.
+
+
+\subsubsection{Controlling the time on the preprocessing and brancher}
+
+\begin{quotation}
+\textcolor{red}{Section 3.3.2: what does it mean for the preprocessing
+to take too long? You might want to say that preprocessing time exceeds
+the savings in time realized by the search engine, if that is what
+you mean.}
+\end{quotation}
+In some situations the preprocessing takes too long. One way to interrupt
+the preprocessing is to change the preprocessing string to perform
+less iterations through the preprocessing options (see ... ). Another
+way to cut the preprocessing time is to specify the time limit in
+seconds for how long the preprocessing can take. After the time limit
+has been reached the preprocessor will quit and the control will be
+handed to the brancher.
+
+Example: 
+
+\texttt{\emph{\footnotesize \$}} \texttt{\footnotesize ite small.cnf}
+\texttt{\emph{\footnotesize -{}-max-branching-time 180}}{\footnotesize \par}
+
+This will allow 3 minutes for preprocessing and continue to the brancher
+after that.
+
+\begin{quotation}
+\textcolor{red}{Section 3.3.2: If the preprocessor is cancelled after
+some time limit, what is guaranteed about the resulting massaged input
+that is handed to the search engine, if anything?}
+\end{quotation}
+The similar option exists for the brancher:
+
+\texttt{\footnotesize \$ ite small.cnf} \texttt{\emph{\footnotesize -{}-max-preproc-time}}
+\texttt{\footnotesize 180}{\footnotesize \par}
+
+
+\subsubsection{Creating and using an ini file}
+
+\begin{quotation}
+\textcolor{red}{Section 3.3.3: This section should be higher in the
+section hierarchy.} \textcolor{magenta}{(You don't need an ini file
+to run sbsat)}
+\end{quotation}
+If you are working on a problem that requires adding the same command
+line options over and over it is better to create an ini file. SBSAT
+automatically looks for ite.ini in your home dicrectory. 
+
+To create an ini file with the default values for all available options
+
+\texttt{\footnotesize \$ ite} \texttt{\emph{\footnotesize -{}-create-ini}}
+\texttt{\footnotesize > \textasciitilde{}/ite.ini}~\\
+{\footnotesize \par}
+
+You can edit the ini file and change the values to those of your choice.
+Please note that the command line options take precedence before the
+ini file settings. This way you can effectively override all settings.
+
+Also you can create different ini files for different problems. To
+use them use --ini option. Example:
+
+\texttt{\footnotesize \$ ite} \texttt{\emph{\footnotesize -{}-ini}}
+\texttt{\footnotesize myini.ini small.cnf}~\\
+{\footnotesize \par}
+
+\textbf{\underbar{\large TIP}} ~ You can specify the name of the
+input file in the ini file (using \texttt{\footnotesize input-file=\char`\"{}small.cnf\char`\"{}})
+and start sbsat with the ini file only (using \texttt{\footnotesize \$
+ite} \texttt{\emph{\footnotesize -{}-ini}} \texttt{\footnotesize myini.ini}).
+
+
+\subsection{Debugging your problem}
+
+\begin{itemize}
+\item try converting to another format
+\item debug prints (in ITE format)
+\item print internal data from the solver: 
+\item be familiar with BDDs 
+\item output the BDDs before preprocessing 
+\item match them to your original problem
+\item if you think you discovered a bug in SBSAT email us!
+\end{itemize}
+
+\subsection{Troubleshooting the compilation}
+
+\begin{itemize}
+\item use different compiler 
+\end{itemize}
+\texttt{\footnotesize \$ ./configure CXX=g++ }~\\
+{\footnotesize \par}
+
+\begin{itemize}
+\item link the libraries staticly 
+\end{itemize}
+\texttt{\footnotesize \$ ./configure -{}-static} 
+
+
+\newpage
+\section{Getting more help}
+
+\begin{itemize}
+\item Read the SBSAT Manual%
+\footnote{not available yet%
+}
+\item Check out the SBSAT Web Pages%
+\footnote{not available yet%
+}
+\item Email us: \\
+\noun{John} \noun{Franco} franco@gauss.ececs.uc.edu \\
+\noun{Michal} \noun{Kouril} mkouril@ececs.uc.edu\\
+\noun{Sean} \noun{Weaver} fett@gauss.ececs.uc.edu
+\end{itemize}
+\begin{quotation}
+\textcolor{red}{Vicinity of Page 8: Man are things out of order. Let's
+fix the sections first then we can talk about section order.}
+
+\textcolor{red}{I can see sections 2.5.4, 2.5.5, and 2.5.6 are not
+ready yet.}
+
+\textcolor{red}{Sections 3.4 and 3.5 are not ready, I see.}
+
+\textcolor{blue}{Why is the order of some charts ... default, option
+... and some ... option, default... This is really confusing!! Can
+we have some standardization?}
+
+\textcolor{blue}{Page 14: lemmas are disable => lemmas are disabled}
+
+\textcolor{blue}{Section 3.3.2: change the title to \char`\"{}Controlling
+the time on...\char`\"{}}\end{quotation}
+
+\end{document}
