@@ -125,7 +125,7 @@ BDDNode *putite(int intnum, BDDNode * bdd)
       strcpy (macros, "not");
 		return ite_not(v1);
 	}
-	if (!strcasecmp (macros, "initialbranch")) {
+	if (!strcasecmp (macros, "initial_branch")) {
 
 		char p = ' ';
 		while (p != ')') {
@@ -290,12 +290,14 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 		exit (1);
 	}
 	if (!strcasecmp(macros, "truth_table")) {
+		expect_integer = 1;
 		BDDNode *v1 = putite(intnum, bdd);
+		expect_integer = 0;
       BDDNode *v2;
 		if (v1 != ite_var (v1->variable)) {
 			fprintf (stderr, "\nKeyword 'truth_table' needs a positive integer as a first argument (%s)...exiting:%d\n", macros, markbdd_line);
 			exit (1);
-		}	
+		}			
 		int ints[50];
       for(int i = 1; i <= v1->variable; i++) {
 			v2 = putite(intnum, bdd);
@@ -307,25 +309,18 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 		}
 		ints[0] = v1->variable;
 		char *tv = new char[1 << v1->variable];
-		char string = getc(finputfile);
-		while ((string!='0') && (string!='1'))
-		  string = getc(finputfile);
-		if ((string != '0') && (string != '1')) {
-			fprintf (stderr, "\nProblem with truth vector (%s)...exiting:%d\n", macros, markbdd_line);
-			exit (1);
-		}
-		tv[0] = string;
-		d3_printf2("%c", string);
-		tv[1] = 0;
-		
-		for(int i = 1; i < (1 << v1->variable); i++) {
-			string = getc (finputfile);
-			d3_printf2("%c", string);
-			if ((string != '0') && (string != '1')) {
-				fprintf (stderr, "\nProblem with truth vector (%s)...exiting:%d\n", macros, markbdd_line);
-				exit (1);
+		order = getNextSymbol (intnum, bdd);
+
+		for(long i = 0; i < 1 << v1->variable; i++) {
+			d4_printf2("%c", macros[i]);
+			if(macros[i] == 'T' || macros[i] == 't') {
+				tv[i] = '1';
+			} else if(macros[i] == 'F' || macros[i] == 'f'){
+				tv[i] = '0';
+			} else {		  
+				fprintf(stderr, "\n'Keyword 'truth_table' needs 2^%d, found %ld...exiting:%d\n", ints[0], i, markbdd_line);
+				exit(0);
 			}
-	      tv[i] = string;
 			tv[i+1] = 0;
 		}
 		int y = 0;
@@ -557,7 +552,7 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 			}
 			numarguments = 10*numarguments + macros[x] - '0';
 		}
-      BDDNode * v1 = putite (intnum, bdd);
+      BDDNode * v1 = putite (intnum, bdd); 
       for (int x = 0; x < numarguments - 1; x++)
 		  v1 = ite_and (v1, putite (intnum, bdd));
       v1 = ite_not(v1);
