@@ -77,7 +77,7 @@ void slider2(char *out_type, int n, int sat)
    int start1[6] = {1, 2*s+3, 2*s+1, n/2-1-3*s, n/2-1, n/2};
    int start2[7] = {1, 2*s-1, 2*s+2, n/2-1-4*s, n/2-1-2*s, n/2-1-s, n/2};
  *
- * Please not that UNSAT version seems to be harder than SAT.
+ * Please note that UNSAT version seems to be harder than SAT.
  *
  * Disclaimer: no formal analysis was done to verify SAT and UNSAT
  * This means that for some n SAT might return UNSAT and UNSAT might return SAT problem.
