@@ -5,6 +5,7 @@
 struct symrec
 {
    char *name;  /* name of symbol          */
+   int   name_int;
    struct symrec *next;    /* link field              */
    int id;
    int flag;

@@ -15,6 +15,7 @@ int sym_table_idx = 0;
 int sym_table_max = SYM_TABLE_SIZE;
 int symtmp_table_idx = 0;
 int symtmp_table_max = SYMTMP_TABLE_SIZE;
+int sym_all_int_flag = 1;
 
 symrec * tputsym_truefalse(int sym_type);
 void fill_symrec_with_id(symrec *ptr, int sym_type, int id);
@@ -120,12 +121,13 @@ putsym(char *sym_name, int sym_type)
   ptr = (symrec *)ite_calloc (1, sizeof (symrec), 9, "symrec");
   ptr->name = (char *)ite_calloc (1, strlen (sym_name) + 1, 9, "symrec name");
   strcpy (ptr->name,sym_name);
+  if (sym_all_int_flag && sscanf(sym_name, "%d", &(ptr->name_int)) == 0) sym_all_int_flag = 0;
   ptr->next = (struct symrec *)tmp_sym_table->next;
   tmp_sym_table->next = ptr;
   fill_symrec(ptr, sym_type);
   return ptr;
 }
-
+/*
 symrec *
 putsym_with_id(char *sym_name, int sym_type, int id)
 {
@@ -139,16 +141,26 @@ putsym_with_id(char *sym_name, int sym_type, int id)
   fill_symrec_with_id(ptr, sym_type, id);
   return ptr;
 }
-
+*/
 symrec *
-getsym(char *name_str) //, int name_int)
+getsym(char *sym_name)
 {
   symrec *ptr;
+  //int sym_name_int=0; if (sscanf(sym_name, "%d", &sym_name_int) == 0) sym_name_int = 0;
   for (ptr = sym_hash(sym_name)->next; ptr != (symrec *) 0;
        ptr = (symrec *)ptr->next)
-     if (strcasecmp(ptr->name, name_str) == 0) {
+  {
+     /*
+     if (sym_name_int > 0 && ptr->name_int > 0)
+        if (sym_name_int == ptr->name_int) 
+           return ptr;
+        else
+           continue;
+           */
+     if (strcasecmp(ptr->name, sym_name) == 0) {
         return ptr;
      }
+  }
   return 0;
 }
 
