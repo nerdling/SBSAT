@@ -101,8 +101,6 @@ struct BacktrackStackEntry
   // pLemmaInfo will be NULL unless the lemma for this entry
   // was fired from the lemma cache when the inference was made.
   LemmaInfoStruct *pLemmaInfo;
-  LemmaInfoStruct *pUnitLemmaList;
-  LemmaInfoStruct *pUnitLemmaListTail;
 };
 
 int
