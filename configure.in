@@ -6,7 +6,7 @@ AC_INIT(include/config.h.in)
 #AC_LANG( C++ )
 AC_LANG_CPLUSPLUS
 AM_CONFIG_HEADER(include/config.h)
-AM_INIT_AUTOMAKE(sbsat,2.0b-18)
+AM_INIT_AUTOMAKE(sbsat,2.0b-20)
 
 # compile with optimization and without debugging by default
 MYCXXFLAGS=" -O2 -DNDEBUG "
