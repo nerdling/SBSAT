@@ -82,13 +82,19 @@ enum {
 };
 
 typedef struct {
+   int nFnId;
+   int nType;
+} t_fn_inf_queue;
+
+
+typedef struct {
    int fn;
 } Stack_FnTypeChange;
 
 typedef struct _FnStack {
    int nFnId;
-   int prev_version;
    int nType; // 0-Smurf, .., 1000-change pool, 1001-change fn id
+   int prev_version;
    union {
       struct {
          _FnStack * next_pool;
@@ -148,9 +154,11 @@ typedef struct
    LemmaInfoStruct LemmasWhereNegTail[2];
 } AffectedFuncsStruct;
 
-typedef struct {
+typedef struct _SolverFunction {
    int nFnId;
    int nType;
+   int nFnPriority;
+   _SolverFunction *pFnInfNext;;   
    union {
       Function_AND     fn_and;
       Function_Smurf   fn_smurf;
@@ -163,6 +171,14 @@ typedef struct {
 
 extern SolverFunction * arrSolverFunctions;
 
+#define MAX_FN_PRIORITY 3
+typedef struct {
+   SolverFunction *First;
+   SolverFunction *Last;
+} FnInfPriority;
+extern FnInfPriority arrFnInfPriority[MAX_FN_PRIORITY];
+extern int nLastFnInfPriority;
+
 /*
 InitFunction procInitFunction[] = { };
 AfterInitFunction procAfterInitFunction[] = { };
@@ -174,7 +190,7 @@ DisplayFunction procDisplayFunction[] = { }
 typedef int  (*fnCreateFunction)(int nFnId, BDDNode *, int type, int eqVble);
 typedef int  (*Save2Stack)(int id, void *one_stack);
 typedef int  (*RestoreFromStack)(void *one_stack);
-typedef int  (*UpdateAffectedFunction)(void *oneafs, int x);
+typedef int  (*UpdateAffectedFunction)(int nFnId);
 typedef int  (*UpdateAffectedFunction_Infer)(void *oneafs, int x);
 typedef int  (*HeurInit)();
 typedef int  (*HeurFree)();
@@ -217,11 +233,6 @@ extern HeurUpdateLemma         procHeurAddLemma;
 extern HeurUpdateLemma         procHeurRemoveLemma;
 extern HeurUpdateLemmaSpace    procHeurAddLemmaSpace;
 
-typedef struct {
-   int nFnId;
-   int nType;
-} t_fn_inf_queue;
-
 extern int nCurFnVersion;
 
 extern int nIndepVars;
@@ -241,6 +252,7 @@ extern int *arrInferenceQueue;
 extern t_fn_inf_queue *pFnInferenceQueueNextElt;
 extern t_fn_inf_queue *pFnInferenceQueueNextEmpty;
 extern t_fn_inf_queue *arrFnInferenceQueue;
+extern t_fn_inf_queue *pFnInfQueueUpdate;
 
 extern LemmaInfoStruct * pConflictLemmaInfo;
 extern LemmaBlock * pConflictLemma;

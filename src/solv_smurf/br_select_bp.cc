@@ -100,6 +100,9 @@ SelectNewBranchPoint()
 
    pChoicePointTop++;
    pFnInferenceQueueNextElt = pFnInferenceQueueNextEmpty = arrFnInferenceQueue;
+   pFnInfQueueUpdate = arrFnInferenceQueue;
+
+   assert(nLastFnInfPriority == 0);
 
    InferLiteral(nInferredAtom, nInferredValue, false, NULL, NULL, 0);
    return;

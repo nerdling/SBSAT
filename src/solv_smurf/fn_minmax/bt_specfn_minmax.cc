@@ -192,10 +192,9 @@ UpdateSpecialFunction_MINMAX(int nFnId)
    return NO_ERROR;
 }
 
-int MinMaxUpdateAffectedFunction(void *oneafs, int x)
+int MinMaxUpdateAffectedFunction(int nFnId)
 {
    // big update
-   int nFnId = ((OneAFS*)oneafs)->nFnId;
    if (arrSolverFunctions[nFnId].fn_minmax.nNumRHSUnknowns <= 0) return NO_ERROR ;
    return UpdateSpecialFunction_MINMAX(nFnId); 
 }

@@ -29,7 +29,7 @@ extern int arrFnXorTypes[];
 int XorCreateFunction(int nFnId, BDDNode *bdd, int nFnType, int eqVble);
 void XorAffectedVarList(int nFnId, int **arr1, int *num1, int **arr2, int *num2);
 void XorCreateAFS(int nFnId, int nVarId, int nAFSIndex);
-int XorUpdateAffectedFunction(void *oneafs, int x);
+int XorUpdateAffectedFunction(int nFnId);
 int XorUpdateAffectedFunction_Infer(void *oneafs, int x);
 int XorSave2Stack(int nFnId, void *one_stack);
 int XorRestoreFromStack(void *one_stack);

@@ -125,6 +125,12 @@ BtStackInit()
             "function inference queue");
    arrChangedFn = (int*)ite_calloc(nNumFuncs, sizeof(int),
          9, "arrChangedFn");
+
+   for(int i = 0; i < MAX_FN_PRIORITY; i++) {
+      arrFnInfPriority[i].First = NULL;
+      arrFnInfPriority[i].Last = NULL;
+   }
+   nLastFnInfPriority = 0;
 }
 ITE_INLINE void
 BtStackClear()
@@ -137,6 +143,12 @@ BtStackClear()
    arrBacktrackStackIndex[0] = 0;
    pInferenceQueueNextElt = pInferenceQueueNextEmpty = arrInferenceQueue;
    pFnInferenceQueueNextElt = pFnInferenceQueueNextEmpty = arrFnInferenceQueue;
+   pFnInfQueueUpdate = arrFnInferenceQueue;
+   for(int i = 0; i < MAX_FN_PRIORITY; i++) {
+      arrFnInfPriority[i].First = NULL;
+      arrFnInfPriority[i].Last = NULL;
+   }
+   nLastFnInfPriority = 0;
 
   pStartChoicePointStack =
   pChoicePointTop = arrChoicePointStack;

@@ -165,9 +165,8 @@ UpdateRegularSmurfAu(int nSmurfAuIndex)
    return NO_ERROR;
 }
 
-int SmurfAuUpdateAffectedFunction(void *oneafs, int x)
+int SmurfAuUpdateAffectedFunction(int nFnId)
 {
-   int nFnId = ((OneAFS*)oneafs)->nFnId;
    if (arrSolverFunctions[nFnId].fn_smurf_au.pCurrentState == pTrueSmurfAuState) return NO_ERROR;
    return UpdateRegularSmurfAu(nFnId);
 }

@@ -74,6 +74,9 @@ HeurUpdateLemma        procHeurAddLemma = NULL;
 HeurUpdateLemma        procHeurRemoveLemma = NULL;
 HeurUpdateLemmaSpace   procHeurAddLemmaSpace = NULL;
 
+FnInfPriority arrFnInfPriority[MAX_FN_PRIORITY];
+int nLastFnInfPriority;
+
 ITE_INLINE int  InitBrancherX();
 int HeuristicInit();
 

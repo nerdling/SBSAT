@@ -141,10 +141,9 @@ UpdateSpecialFunction_XOR(int nFnId)
    return NO_ERROR;
 }
 
-int XorUpdateAffectedFunction(void *oneafs, int x)
+int XorUpdateAffectedFunction(int nFnId)
 {
    // big update
-   int nFnId = ((OneAFS*)oneafs)->nFnId;
    if (arrSolverFunctions[nFnId].fn_xor.nNumRHSUnknowns <= 0) return NO_ERROR ;
    return UpdateSpecialFunction_XOR(nFnId); 
 }

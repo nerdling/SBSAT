@@ -235,7 +235,7 @@ typedef struct {
    SmurfState *state;
 } Stack_Smurf;
 
-int SmurfUpdateAffectedFunction(void *oneafs, int x);
+int SmurfUpdateAffectedFunction(int nFnId);
 int SmurfUpdateAffectedFunction_Infer(void *oneafs, int x);
 
 int SmurfSave2Stack(int nFnId, void *one_stack);

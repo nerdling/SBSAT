@@ -39,8 +39,9 @@
 #include "sbsat_solver.h"
 #include "solver.h"
 
+
 ITE_INLINE int
-UpdateEachAffectedFunction(AffectedFuncsStruct *pAFS, int x)
+XUpdateEachAffectedFunction(AffectedFuncsStruct *pAFS, int x)
 {
    int ret = NO_ERROR;
 
@@ -51,17 +52,54 @@ UpdateEachAffectedFunction(AffectedFuncsStruct *pAFS, int x)
    {
       if ((arrChangedFn[pOneAFS->nFnId]&1)==0) continue;
 
-      assert(arrChangedFn[pOneAFS->nFnId]==3);
+      assert((arrChangedFn[pOneAFS->nFnId]&3)==3);
       arrChangedFn[pOneAFS->nFnId]=2;
 
       d9_printf2("Big update function %d ", pOneAFS->nFnId);
 
-      ret = procUpdateAffectedFunction[pOneAFS->nType](pOneAFS, x);
+      ret = procUpdateAffectedFunction[pOneAFS->nType](pOneAFS->nFnId);
       if (ret != NO_ERROR) {
          d9_printf2("Conflict %d ", pOneAFS->nFnId);
          break;
       }
    }
+   return ret;
+}
+
+
+ITE_INLINE int
+UpdateEachAffectedFunction(AffectedFuncsStruct *pAFS, int x)
+{
+   int ret = NO_ERROR;
+
+   nLastFnInfPriority = 0;
+   while(nLastFnInfPriority < MAX_FN_PRIORITY)
+   {
+      while(arrFnInfPriority[nLastFnInfPriority].First != NULL) {
+         int nCurFnPriotity = nLastFnInfPriority;
+         int nFnId = arrFnInfPriority[nLastFnInfPriority].First->nFnId;
+         int nType = arrFnInfPriority[nLastFnInfPriority].First->nType;
+
+         assert((arrChangedFn[nFnId]&3)==3);
+         d9_printf2("Big update function %d ", nFnId);
+
+         ret = procUpdateAffectedFunction[nType](nFnId);
+         if (ret != NO_ERROR) {
+            d9_printf2("Conflict %d ", nFnId);
+            goto update_conflict;
+            break;
+         }
+
+         arrChangedFn[nFnId]=2;
+         arrFnInfPriority[nCurFnPriotity].First = 
+            arrFnInfPriority[nCurFnPriotity].First->pFnInfNext;
+         if (arrFnInfPriority[nCurFnPriotity].First == NULL)
+            arrFnInfPriority[nCurFnPriotity].Last = NULL; 
+      }
+      nLastFnInfPriority++;
+   }
+update_conflict:
+   nLastFnInfPriority = 0;
    return ret;
 }
 

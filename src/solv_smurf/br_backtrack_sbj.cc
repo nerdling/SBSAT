@@ -331,6 +331,12 @@ BackTrack_SBJ()
    // Flush the inference queue.
    pInferenceQueueNextElt = pInferenceQueueNextEmpty = arrInferenceQueue;
    pFnInferenceQueueNextElt = pFnInferenceQueueNextEmpty = arrFnInferenceQueue;
+   pFnInfQueueUpdate = arrFnInferenceQueue;
+   for(int i = 0; i < MAX_FN_PRIORITY; i++) {
+      arrFnInfPriority[i].First = NULL;
+      arrFnInfPriority[i].Last = NULL;
+   }
+   nLastFnInfPriority = 0;
 
    //Backjump to the highest uip point.
 

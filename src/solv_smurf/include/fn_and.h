@@ -42,7 +42,7 @@ extern int arrFnAndTypes[];
 ITE_INLINE int AndCreateFunction(int nFnId, BDDNode *bdd, int nFnType, int eqVble);
 void AndAffectedVarList(int nFnId, int **arr1, int *num1, int **arr2, int *num2);
 void AndCreateAFS(int nFnId, int nVarId, int nAFSIndex);
-int AndUpdateAffectedFunction(void *oneafs, int x);
+int AndUpdateAffectedFunction(int nFnId);
 int AndUpdateAffectedFunction_Infer(void *oneafs, int x);
 int AndSave2Stack(int nFnId, void *one_stack);
 int AndRestoreFromStack(void *one_stack);

@@ -182,14 +182,13 @@ UpdateSpecialFunction_AND(int nFnId)
    return NO_ERROR;
 }
 
-int AndUpdateAffectedFunction(void *oneafs, int x)
+int AndUpdateAffectedFunction(int nFnId)
 {
    // big update
-   int nFnId = ((OneAFS*)oneafs)->nFnId;
    if (arrSolverFunctions[nFnId].fn_and.nNumRHSUnknowns <= 0) return NO_ERROR ;
    /* the following depends on the polarity -- opportunity for fine tuning
-   if (arrSolverFunctions[((OneAFS*)oneafs)->nFnId].fn_and.nNumRHSUnknownsNew>0
-   && arrSolverFunctions[((OneAFS*)oneafs)->nFnId].fn_and.nNumLHSUnknownsNew>0)
+   if (arrSolverFunctions[nFnId].fn_and.nNumRHSUnknownsNew>0
+   && arrSolverFunctions[nFnId].fn_and.nNumLHSUnknownsNew>0)
        return NO_ERROR; 
     */
    return UpdateSpecialFunction_AND(nFnId);

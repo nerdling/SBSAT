@@ -33,7 +33,7 @@ extern int arrFnMinMaxTypes[];
 int MinMaxCreateFunction(int nFnId, BDDNode *bdd, int nFnType, int eqVble);
 void MinMaxAffectedVarList(int nFnId, int **arr1, int *num1, int **arr2, int *num2);
 void MinMaxCreateAFS(int nFnId, int nVarId, int nAFSIndex);
-int MinMaxUpdateAffectedFunction(void *oneafs, int x);
+int MinMaxUpdateAffectedFunction(int nFnId);
 int MinMaxUpdateAffectedFunction_Infer(void *oneafs, int x);
 int MinMaxSave2Stack(int nFnId, void *one_stack);
 int MinMaxRestoreFromStack(void *one_stack);

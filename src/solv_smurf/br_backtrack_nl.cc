@@ -146,6 +146,12 @@ BackTrack_NL()
   // Flush the inference queue.
   pInferenceQueueNextElt = pInferenceQueueNextEmpty = arrInferenceQueue;
   pFnInferenceQueueNextElt = pFnInferenceQueueNextEmpty = arrFnInferenceQueue;
+  pFnInfQueueUpdate = arrFnInferenceQueue;
+  for(int i = 0; i < MAX_FN_PRIORITY; i++) {
+     arrFnInfPriority[i].First = NULL;
+     arrFnInfPriority[i].Last = NULL;
+  }
+  nLastFnInfPriority = 0;
 
   // Reverse the polarity of the branch atom.
   nInferredValue = (nInferredValue == BOOL_TRUE ? BOOL_FALSE : BOOL_TRUE);

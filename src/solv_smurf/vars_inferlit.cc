@@ -91,24 +91,43 @@ InferLiteral(int nInferredAtom,
          if (arrChangedFn[pOneAFS->nFnId]==0) {
             FN_STACK_PUSH(pOneAFS->nFnId, pOneAFS->nType);
             /* add on the heuristic update stack */
-            if (ret == NO_ERROR) {
-               assert(pFnInferenceQueueNextElt - arrFnInferenceQueue < nNumFuncs);
-               pFnInferenceQueueNextElt->nFnId = pOneAFS->nFnId;
-               pFnInferenceQueueNextElt->nType = arrSolverFunctions[pOneAFS->nFnId].nType;
-               pFnInferenceQueueNextElt++;
-            } else {
-               d9_printf1("Small Update Error\n");
-            }
+            assert(pFnInferenceQueueNextElt - arrFnInferenceQueue < nNumFuncs);
+            pFnInferenceQueueNextElt->nFnId = pOneAFS->nFnId;
+            pFnInferenceQueueNextElt->nType = arrSolverFunctions[pOneAFS->nFnId].nType;
+            pFnInferenceQueueNextElt++;
          } else {
-            d9_printf1("Already updated\n");
+            d9_printf1("Already in arrFnInferenceQueue\n");
          }
+
+         int nFnPriority = arrSolverFunctions[pOneAFS->nFnId].nFnPriority;
+         if (arrFnInfPriority[nFnPriority].Last != NULL)
+         {
+            arrFnInfPriority[nFnPriority].Last->pFnInfNext = 
+               &arrSolverFunctions[pOneAFS->nFnId];
+            arrFnInfPriority[nFnPriority].Last = 
+               arrFnInfPriority[nFnPriority].Last->pFnInfNext;
+         }
+         else
+         {
+            arrFnInfPriority[nFnPriority].First = 
+               arrFnInfPriority[nFnPriority].Last = 
+               &arrSolverFunctions[pOneAFS->nFnId];
+         }
+         arrFnInfPriority[nFnPriority].Last->pFnInfNext = NULL;
+         if (nLastFnInfPriority > nFnPriority) 
+            nLastFnInfPriority = nFnPriority;
+
          arrChangedFn[pOneAFS->nFnId]=3;
       } else {
-         d9_printf1("Already marked\n");
+         d9_printf1("Already marked and not updated\n");
       }
 
       ret = procUpdateAffectedFunction_Infer[pOneAFS->nType](pOneAFS, 10);
-      if (ret != NO_ERROR) break;
+      if (ret != NO_ERROR) 
+      {
+         d9_printf1("Small Update Error\n");
+         break;
+      }
    }
 
 

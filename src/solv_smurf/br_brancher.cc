@@ -66,6 +66,7 @@ int *pInferenceQueueNextElt; // ptr to next available elt in inference queue
 t_fn_inf_queue *arrFnInferenceQueue=NULL;
 t_fn_inf_queue *pFnInferenceQueueNextEmpty=NULL;
 t_fn_inf_queue *pFnInferenceQueueNextElt=NULL;
+t_fn_inf_queue *pFnInfQueueUpdate=NULL;
 
 int nNumVariables=0;
 
