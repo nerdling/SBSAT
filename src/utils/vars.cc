@@ -139,3 +139,5 @@ t_arrVarScores *arrVarScores = NULL;
 
 char brancher_presets[4096];
 char comment[1024];
+
+char preset_variables_string[2048];

@@ -187,6 +187,9 @@ t_opt options[] = {
  */
 { NULL, "", "", P_NONE, {"0"}, {"0"}, VAR_NORMAL, 0, 
 	        "\nPreprocessing options:"},
+{ preset_variables_string, "", "preset-variables", P_STRING, 
+		V(i:2048,"2048"), {""}, VAR_NORMAL, 0, 
+                "Variables forced during preprocessing."},
 { preproc_string, "P", "preprocess-sequence", P_STRING, 
 		V(i:255,"255"), {"(ExDc)*(ExSt)*(ExPr)*"}, VAR_NORMAL, 0, 
                 "The preprocessing sequence"},

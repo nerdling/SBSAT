@@ -213,4 +213,5 @@ extern float JHEURISTIC_K; // Parameter to the Johnson Village heuristic.
 extern float JHEURISTIC_K_TRUE; 
 extern float JHEURISTIC_K_INF; 
 
+extern char preset_variables_string[2048];
 #endif
