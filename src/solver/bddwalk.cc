@@ -34,10 +34,10 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
-/* walksat version 35hw3 */
+/* walksat version 35hw4 */
 /* version 1 by Bram Cohen 7/93 */
 /* versions 2 - 35  by Henry Kautz */
-/* versions 35h* by Holger H Hoos -- all modifications marked "hh" */
+/* versions 35h by Holger H Hoos -- all modifications marked "hh" */
 /* version 35hw* by Sean Weaver -- modified to solve on BDDs instead of CNF */
 
 #include "ite.h"
@@ -69,8 +69,9 @@
 #define FALSE 0
 
 //#define USE_BRITTLE
-#define USE_FALSE_PATHS
+//#define USE_FALSE_PATHS
 //#define USE_SIMPLE_PATH_RES
+#define USE_PATHS_TO_TRUE
 
 #define MAX_NODES_PER_BDD 5000
 
@@ -88,6 +89,8 @@ floatlist *previousBrittle;
 dualintlist *previousState; /* records which BDDs are true, and which are false */
                             /* along with which variables changed the makecount(-) */
                             /* or breakcount(+) */
+pathStruct *BDDTruePaths;   /* Holds the paths in a BDD which lead to True */
+int pathmake, pathbreak;
 
 int *falseBDDs; 		/* clauses which are false */
 int *wherefalse;  	/* where each clause is listed in false */
@@ -96,7 +99,8 @@ int *lowfalse;
 int *numtruelit;		/* number of true literals in each clause */
 
 intlist *wvariables;  /* a list of variables in each BDD, could be used to */
-		     /* make 'wlength' an unnecessary variable */
+                      /* makes 'wlength' an unnecessary variable */
+int *wvisited;
 
 intlist *occurence;	/* where each variable occurs */
                      /* indexed as occurence[variable].num[occurence_num] */
@@ -131,6 +135,7 @@ int wp_denominator = 100;
 long int numflip;		/* number of changes so far */
 long int numnullflip;		/*  number of times a clause was picked, but no  */
 				/*  variable from it was flipped  */
+long int numlook;
 int numrun = BIG;
 int cutoff = BIG;//1000000;
 int base_cutoff = 1000000;
@@ -238,6 +243,7 @@ void init_1false(char initfile[], int initoptions);
 void init_CountFalses(char initfile[], int initoptions);
 void initprob(void);                 /* create a new problem */
 void freemem(void);
+void flipatoms_true_paths(void);
 void flipatoms(void);       /* changes the assignment of the literals */
                             /* specified in varstoflip[] */
 
@@ -268,13 +274,6 @@ int walkSolve()
 	numinp = getNuminp ();
 	if(numsol == NOVALUE) numsol = max_solutions; //get max_solutions from the command line
 	//int oldnuminp = numinp;
-	int *original_variables;
-	ITE_NEW_CATCH(
-		      original_variables = new int[numinp + 1], 
-		      "input variables");
-	for (int x = 0; x <= numinp; x++)
-	  original_variables[x] = -1;
-	
 	gettimeofday(&tv,&tzp);
 	seed = (( tv.tv_sec & 0177 ) * 1000000) + tv.tv_usec;
 	if (numsol==NOVALUE || numsol>numrun) numsol = numrun;
@@ -289,10 +288,15 @@ int walkSolve()
 		init_CountFalses(initfile, initoptions);
 		update_statistics_start_try();
 		numflip = 0;
+		numlook = 0;
 		while((numfalse > target) && (numflip < cutoff)) {
 			print_statistics_start_flip();
 			numflip+=picknoveltyplus();
+#ifdef USE_PATHS_TO_TRUE
+			flipatoms_true_paths();
+#else
 			flipatoms();
+#endif
 			update_statistics_end_flip();
 			if (nCtrlC) {
 				d3_printf1("Breaking out of BDD WalkSAT\n");
@@ -328,6 +332,7 @@ void initprob(void)
 	occurence = new intlist[numvars+1];
 	wlength = new int[numBDDs+1];
 	wvariables = new intlist[numBDDs+1];
+	wvisited = new int[numBDDs+1];
 	int *tempmem = new int[numvars+1];
 	int *tempint = new int[MAX_NODES_PER_BDD];
 	
@@ -340,7 +345,11 @@ void initprob(void)
 	wherefalse = new int[numBDDs+1];
 	falseBDDs = new int[numBDDs+1];
 	varstoflip = new int[MAX_NODES_PER_BDD];
-	
+
+#ifdef USE_PATHS_TO_TRUE
+	BDDTruePaths = new pathStruct[numBDDs+1];
+#endif
+
 	for(int x = 0; x < numvars+1; x++) {
 		brittlecount[x] = 0;
 		tempmem[x] = 0;
@@ -373,15 +382,14 @@ void initprob(void)
 			wvariables[x].num[i] = tempint[i];
 			tempmem[tempint[i]]++;
 		}
-	}
-	delete tempint;
+	}	
 	
 	for (int x = 0; x < numvars+1; x++)
 	  {
 		  occurence[x].num = new int[tempmem[x]+1];
 		  occurence[x].length = 0;
 	  }
-	delete tempmem;
+	delete [] tempmem;
 	
 	for (int x = 0; x < numBDDs; x++)
 	  {
@@ -399,42 +407,79 @@ void initprob(void)
 	
 	Fill_Density(); //Each BDDNode now has the density of True's below it stored.
 
+#ifdef USE_PATHS_TO_TRUE
+   for (int x = 0; x < numBDDs; x++) {
+      fprintf(stderr, "[%d]     \r", x);
+      int numTrues = countTrues(functions[x]);
+      BDDTruePaths[x].paths = new intlist[numTrues];
+      BDDTruePaths[x].numpaths = 0;
+      findPathsToTrue (functions[x], tempint, BDDTruePaths[x].paths, &(BDDTruePaths[x].numpaths));
+	}
+	//The paths to true in each BDD have been recorded.
+
+	/*
+	for (int x = 0; x < numBDDs; x++) {
+		fprintf(foutputfile, "\n%d: ", x);
+	   printBDD(functions[x]);
+		fprintf(foutputfile, "\n");
+		for (int y = 0; y < BDDTruePaths[x].numpaths; y++) {
+			for (int z = 0; z < BDDTruePaths[x].paths[y].length; z++)
+			  fprintf (foutputfile, "%d ", BDDTruePaths[x].paths[y].num[z]);
+			fprintf (foutputfile, "0\n");
+		}
+	}
+	*/
+	
+#endif
+	delete [] tempint;
+	
 }
 
 void freemem(void)
 {
-	delete atom;
-	delete lowatom;
-	delete solution;
+	delete [] atom;
+	delete [] lowatom;
+	delete [] solution;
 	
 	for (int x = 0; x < numvars+1; x++)
-	  delete occurence[x].num;
-	delete occurence;
+	  delete [] occurence[x].num;
+	delete [] occurence;
 	
 	for (int x = 0; x < numBDDs; x++)
-	  delete wvariables[x].num;
-	delete variables;
+	  delete [] wvariables[x].num;
+	delete [] wvariables;
 	
-	delete wlength;
+	delete [] wlength;
+	delete [] wvisited;
 	
-	delete changed;
-	delete breakcount;
-	delete makecount;
-	delete brittlecount;
+	delete [] changed;
+	delete [] breakcount;
+	delete [] makecount;
+	delete [] brittlecount;
 	
 	for (int x = 0; x < numBDDs; x++) {
-		delete previousState[x].num;
-		delete previousState[x].count;
-		delete previousBrittle[x].num;
-		delete previousBrittle[x].count;
+		delete [] previousState[x].num;
+		delete [] previousState[x].count;
+		delete [] previousBrittle[x].num;
+		delete [] previousBrittle[x].count;
 	}
+
+#ifdef USE_PATHS_TO_TRUE
+	for (int x = 0; x < numBDDs; x++) {
+		for (int y = 0; y < BDDTruePaths[x].numpaths; y++) {
+			delete [] BDDTruePaths[x].paths[y].num;
+		}
+		delete [] BDDTruePaths[x].paths;
+	}
+	delete [] BDDTruePaths;
+#endif
 	
-	delete previousState;
-	delete previousBrittle;
+	delete [] previousState;
+	delete [] previousBrittle;
 		
-	delete wherefalse;
-	delete falseBDDs;
-	delete varstoflip;
+	delete [] wherefalse;
+	delete [] falseBDDs;
+	delete [] varstoflip;
 }
 
 void initialize_statistics(void)
@@ -551,54 +596,48 @@ int CountFalseBDD(BDDNode *f) {
 	return count;
 }
 
-int findTrue(BDDNode *f)
-{
+//Find a path to true by following the current assignment and backtracking when a false is hit.
+int findTrue(BDDNode *f) {
 	int y = 1;
-	while(!IS_TRUE_FALSE(f))
-	  {
-		  if((atom[f->variable] == TRUE) && (f->thenCase != false_ptr)) {
-			  f = f->thenCase;
-		  } else if((atom[f->variable] == TRUE) && (f->thenCase == false_ptr)) {
-			  varstoflip[y++] = f->variable;
-			  f = f->elseCase;
-		  } else if((atom[f->variable] == FALSE) && (f->elseCase != false_ptr)) {
-			  f = f->elseCase;
-		  } else {
-			  varstoflip[y++] = f->variable;
-			  f = f->elseCase;  
-		  }
-	  }
+	while(!IS_TRUE_FALSE(f)) {
+		if((atom[f->variable] == TRUE) && (f->thenCase != false_ptr)) {
+			f = f->thenCase;
+		} else if((atom[f->variable] == TRUE) && (f->thenCase == false_ptr)) {
+			varstoflip[y++] = f->variable;
+			f = f->elseCase;
+		} else if((atom[f->variable] == FALSE) && (f->elseCase != false_ptr)) {
+			f = f->elseCase;
+		} else {
+			varstoflip[y++] = f->variable;
+			f = f->elseCase;  
+		}
+	}
 	return y;
 }
 
-int verifyunsat(void)
-{
-	for(int i = 0; i < numBDDs; i++)
-	  {
-		  if(!traverseBDD(functions[i]))
-			 {
-				if(falseBDDs[wherefalse[i]] != i) {
-					fprintf(stderr, "\ni=%d:", i);
-					printBDDerr(functions[i]);
-					fprintf(stderr, "\n");
-					return 0;
-				}
-			 }
-	  }
+int verifyunsat(void) {
+	for(int i = 0; i < numBDDs; i++) {
+		if(!traverseBDD(functions[i])) {
+			if(falseBDDs[wherefalse[i]] != i) {
+				fprintf(stderr, "\ni=%d:", i);
+				printBDDerr(functions[i]);
+				fprintf(stderr, "\n");
+				return 0;
+			}
+		}
+	}
 	return 1;
 }
 
-int verifyunsat(int i)
-{
-	if(!traverseBDD(functions[i]))
-	  {
-		  if(falseBDDs[wherefalse[i]] != i) {
-			  fprintf(stderr, "\ni=%d:", i);
-			  printBDDerr(functions[i]);
-			  fprintf(stderr, "\n");
-			  return 0;
-		  }
-	  }
+int verifyunsat(int i) {
+	if(!traverseBDD(functions[i])) {
+		if(falseBDDs[wherefalse[i]] != i) {
+			fprintf(stderr, "\ni=%d:", i);
+			printBDDerr(functions[i]);
+			fprintf(stderr, "\n");
+			return 0;
+		}
+	}
 	return 1;
 }
 
@@ -607,6 +646,7 @@ void updateBDDCounts(int i) {
 	int j = 0, k = 0;
 	float top_density = f->density;
 	int count = 0;
+
 #ifdef USE_FALSE_PATHS
 # ifdef USE_SIMPLE_PATH_RES
 	count = CountFalseBDD(f);
@@ -747,11 +787,23 @@ void init_CountFalses(char initfile[], int initoptions)
 	/* Initialize breakcount, makecount, brittlecount, previousBrittle, and previousState in the following: */
 	
 	for(i = 0;i < numBDDs;i++) {
+		wvisited[i] = -1;
+#ifndef USE_PATHS_TO_TRUE
 		updateBDDCounts(i);
+#endif
 		if(!traverseBDD(functions[i])) {
+#ifdef USE_PATHS_TO_TRUE
+			previousState[i].num[0] = -functions[i]->variable;
+			previousState[i].num[1] = 0;
+#endif
 			wherefalse[i] = numfalse;
 			falseBDDs[numfalse] = i;
 			numfalse++;
+		} else {
+#ifdef USE_PATHS_TO_TRUE
+			previousState[i].num[0] = functions[i]->variable;
+			previousState[i].num[1] = 0;
+#endif
 		}
 	}
 	
@@ -764,6 +816,51 @@ void init_CountFalses(char initfile[], int initoptions)
 		hamming_distance = calc_hamming_dist(atom, hamming_target);
 		fprintf(hamming_fp, "0 %i\n", hamming_distance);
 	}
+}
+
+void getmbcountTruePath(intlist *path) {
+
+	pathmake = 0; pathbreak = 0;
+	
+	//Temporarily set all variables in the global solution
+	for(int i = 0; i < path->length; i++) {
+		if((path->num[i] < 0 && atom[abs(path->num[i])] == 1) || (path->num[i] > 0 && atom[abs(path->num[i])] == 0)) {
+			path->num[i] = -path->num[i]; //Flipping all variables that don't match the path
+			atom[abs(path->num[i])] = 1-atom[abs(path->num[i])];
+		}
+	}
+	for(int x = 0; x < path->length; x++) {
+		
+		int numocc = occurence[abs(path->num[x])].length;
+		int *occptr = occurence[abs(path->num[x])].num;
+		
+		for(int i = 0; i < numocc ;i++) {
+			int cli = *(occptr++);
+			//cli = occurence[toflip].num[i];
+			if(wvisited[cli] == numlook) continue;
+			wvisited[cli] = numlook;
+			//Removing the influence every variable in this BDD has on this BDD.
+			if(traverseBDD(functions[cli])) {
+				//BDD is SAT
+				if(previousState[cli].num[0] < 0) {
+					pathmake++;
+				}
+			} else {
+				if(previousState[cli].num[0] > 0) {
+					pathbreak++;
+				}
+			}
+		}
+	}
+	
+	//Reset all variables in the global solution
+	for(int i = 0; i < path->length; i++) {
+		if((path->num[i] < 0 && atom[abs(path->num[i])] == 1) || (path->num[i] > 0 && atom[abs(path->num[i])] == 0)) {
+			path->num[i] = -path->num[i]; //Unflipping all variables that didn't match the path
+			atom[abs(path->num[i])] = 1-atom[abs(path->num[i])];
+		}
+	}
+	
 }
 
 void update_statistics_start_try(void)
@@ -796,14 +893,19 @@ int picknoveltyplus(void)
 
 //	fprintf(stderr, "\ntofix=%d\n", tofix);
 	
-	if (BDDsize == 1) {
-		varstoflip[0] = wvariables[tofix].num[0];
-		varstoflip[1] = 0;
-		return 1;
-	}
+	//This will never happen
+	//if (BDDsize == 1) {
+	//	varstoflip[0] = wvariables[tofix].num[0];
+	//	varstoflip[1] = 0;
+	//	return 1;
+	//}
 
 	int flipvar = 0;
-	
+	int flippath = 0;
+	int path;
+	int y;
+	//SEAN!!! LOOK HERE!!!
+	//Maybe random variable is good, !should try random true_path as well!.
 	/* hh: inserted modified loop breaker: */
 	if ((random()%wp_denominator < wp_numerator)) flipvar = wvariables[tofix].num[random()%BDDsize];
 	else {
@@ -813,14 +915,52 @@ int picknoveltyplus(void)
 		youngest_birthdate = -1;
 		best_diff = -BIG;
 		second_best_diff = -BIG;
-		
+
+#ifdef USE_PATHS_TO_TRUE
+		for(i = 0; i < BDDTruePaths[tofix].numpaths; i++) {
+			numlook++;
+			getmbcountTruePath(&BDDTruePaths[tofix].paths[i]);
+			path = i;
+			diff = (float)pathmake - (float)pathbreak;
+			//fprintf(stderr, "{mp=%d, bp=%d, diff=%f}", pathmake, pathbreak, diff);
+			//SEAN!!! LOOK HERE!!! BIRTHDAYS!!!
+			//Ugg...birthdays for multiple variables...ugg! No birthdays right now...
+			//birthdate = changed[path];
+			//if (birthdate > youngest_birthdate){
+			//	youngest_birthdate = birthdate;
+			//	youngest = var;
+			//}
+			if (diff > best_diff || (diff == best_diff)) {// && changed[path] < changed[best])) {
+				/* found new best, demote best to 2nd best */
+				second_best = best;
+				second_best_diff = best_diff;
+				best = path;
+				best_diff = diff;
+			}
+			else if (diff > second_best_diff || (diff == second_best_diff)) {// && changed[var] < changed[second_best])){
+				/* found new second best */
+				second_best = path;
+				second_best_diff = diff;
+			}
+		}
+		//if (best != youngest) flipvar = best;
+		//else
+		if ((random()%denominator < numerator)) flippath = second_best;
+		else flippath = best;
+	}
+	
+	y = 0;
+	for(i = 0; i < BDDTruePaths[tofix].paths[flippath].length; i++) {
+		if((BDDTruePaths[tofix].paths[flippath].num[i] > 0 && atom[abs(BDDTruePaths[tofix].paths[flippath].num[i])] == 0) ||
+			(BDDTruePaths[tofix].paths[flippath].num[i] < 0 && atom[abs(BDDTruePaths[tofix].paths[flippath].num[i])] == 1)) {
+			varstoflip[y] = abs(BDDTruePaths[tofix].paths[flippath].num[i]);
+			y++;
+		}
+	}	
+	varstoflip[y] = 0;
+#else
 		for(i = 0; i < BDDsize; i++){
 			var = wvariables[tofix].num[i];
-/*			if(breakcount[var] == 0 && makecount[var] > 0) {
-				best = var;
-				break;
-			}
- */
 			diff = (float)makecount[var] - (float)breakcount[var];
 			//diff = brittlecount[var]/(float)occurence[var].length;
 			//diff = brittlecount[var];
@@ -850,14 +990,15 @@ int picknoveltyplus(void)
 		else if ((random()%denominator < numerator)) flipvar = second_best;
 		else flipvar = best;
 	}
-
 	varstoflip[0] = flipvar;
 
-   atom[flipvar] = 1-atom[flipvar];  //temporarily flip variable
-	int y = 1;
-	//int y = findTrue(functions[tofix]);
-   atom[flipvar] = 1-atom[flipvar];  //temporarily flip variable
+	y = 1;
+   //atom[flipvar] = 1-atom[flipvar];  //temporarily flip variable
+   //int y = findTrue(functions[tofix]);
+   //atom[flipvar] = 1-atom[flipvar];  //temporarily flip variable
 	varstoflip[y] = 0;
+#endif
+	
 	return y;
 }
 
@@ -871,6 +1012,55 @@ void print_current_assign(void) {
 	}
 	if ((i-1) % 10 != 0) printf("\n");
 	printf("End assign\n");
+}
+
+void flipatoms_true_paths() {
+	numlook++;
+	//Temporarily set all variables in the global solution
+	int toflip;
+	int flipiter = 0;
+	while(varstoflip[flipiter]!=0) {
+		toflip = varstoflip[flipiter];
+		flipiter++;
+		atom[toflip] = 1-atom[toflip];
+		changed[toflip] = numflip;
+	}
+	
+	flipiter = 0;
+	while(varstoflip[flipiter]!=0) {
+		toflip = varstoflip[flipiter];
+		flipiter++;
+		int numocc = occurence[toflip].length;
+		int *occptr = occurence[toflip].num;
+		
+		for(int i = 0; i < numocc ;i++) {
+			int cli = *(occptr++);
+			//cli = occurence[toflip].num[i];
+			if(wvisited[cli] == numlook) continue;
+			wvisited[cli] = numlook;
+			//Removing the influence every variable in this BDD has on this BDD.
+			if(traverseBDD(functions[cli])) {
+				//BDD is SAT
+				if(previousState[cli].num[0] < 0) {
+					previousState[cli].num[0] = functions[cli]->variable;
+					previousState[cli].num[1] = 0;
+					numfalse--;
+					//fprintf(stderr, "removing fB=%d, moving fB=%d to spot %d\n", falseBDDs[wherefalse[cli]], falseBDDs[numfalse], wherefalse[cli]);
+					falseBDDs[wherefalse[cli]] = falseBDDs[numfalse];
+					wherefalse[falseBDDs[numfalse]] = wherefalse[cli];
+				}
+			} else {
+				if(previousState[cli].num[0] > 0) {
+					previousState[cli].num[0] = -functions[cli]->variable;
+					previousState[cli].num[1] = 0;
+					//fprintf(stderr, "adding fB=%d to spot %d\n", cli, numfalse);
+					falseBDDs[numfalse] = cli;
+					wherefalse[cli] = numfalse;
+					numfalse++;
+				}
+			}
+		}
+	}
 }
 
 void flipatoms()
@@ -917,7 +1107,8 @@ void flipatoms()
 			cli = *(occptr++);
 			
 			//Removing the influence every variable in this BDD has on this BDD.
-#ifdef USE_FALSE_PATHS
+#ifndef USE_PATHS_TO_TRUE
+# ifdef USE_FALSE_PATHS
 			for(j = 0; previousState[cli].num[j]!=0; j++) {
 				if(previousState[cli].num[j] > 0) {
 					breakcount[previousState[cli].num[j]]-=previousState[cli].count[j];
@@ -925,15 +1116,20 @@ void flipatoms()
 					makecount[-(previousState[cli].num[j])]-=previousState[cli].count[j];
 				}
 			}
-#endif
-#ifdef USE_BRITTLE
+# endif
+# ifdef USE_BRITTLE
 			for(k = 0; previousBrittle[cli].num[k]!=0; k++) {
 				brittlecount[previousBrittle[cli].num[k]]-=previousBrittle[cli].count[k];				  
 			}
+# endif
 #endif
 			if(traverseBDD(functions[cli])) {
 				//BDD is SAT
 				if(previousState[cli].num[0] < 0) {
+#ifdef USE_PATHS_TO_TRUE
+					previousState[cli].num[0] = functions[cli]->variable;
+					previousState[cli].num[1] = 0;
+#endif
 					numfalse--;
 					//fprintf(stderr, "removing fB=%d, moving fB=%d to spot %d\n", falseBDDs[wherefalse[cli]], falseBDDs[numfalse], wherefalse[cli]);
 					falseBDDs[wherefalse[cli]] = falseBDDs[numfalse];
@@ -942,13 +1138,19 @@ void flipatoms()
 			} else {
 				if(previousState[cli].num[0] > 0) 
 				  {
+#ifdef USE_PATHS_TO_TRUE
+					  previousState[cli].num[0] = -functions[cli]->variable;
+					  previousState[cli].num[1] = 0;
+#endif
 					  //fprintf(stderr, "adding fB=%d to spot %d\n", cli, numfalse);
 					  falseBDDs[numfalse] = cli;
 					  wherefalse[cli] = numfalse;
 					  numfalse++;
 				  }
 			}
+#ifndef USE_PATHS_TO_TRUE
 			updateBDDCounts(cli);
+#endif
 		}
 		//if(countunsat()!=numfalse) assert(0);
 		//	verifymbcount();
