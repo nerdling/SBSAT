@@ -97,7 +97,7 @@ int findandset_fnType(int);
 BDDNode *strip_x_BDD(BDDNode *, int);
 BDDNode *strip_x(int, int);
 BDDNode *collect_x (BDDNode *, int);
-int add_newFunctions(BDDNode **, int);
+int *add_newFunctions(BDDNode **, int);
 int Do_Apply_Inferences ();
 int Do_Apply_Inferences_backend ();
 void printBDDInfs(BDDNode *);

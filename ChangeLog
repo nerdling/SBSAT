@@ -1,3 +1,47 @@
+2004-08-03 17:11  fett
+
+	* src/utils/bdd.cc: sped up replaces and inferences a bit.
+	
+	  ~Sean
+
+2004-08-03 14:37  fett
+
+	* src/preproc/: do_exquantify.cc, do_exquantifyand.cc: updates
+	
+	  ~Sean
+
+2004-07-29 23:33  fett
+
+	* src/formats/smurf.cc: nothing
+
+2004-07-29 23:32  fett
+
+	* src/formats/smurf.cc: added in the xor functiontype support.
+	
+	   ~Sean
+
+2004-07-29 14:45  fett
+
+	* ChangeLog, confdefs.h, configure, configure.ac, libtool,
+	include/config.h, src/Makefile.in, src/formats/Makefile.in,
+	src/formats/markbdd.cc, src/formats/5/Makefile.in,
+	src/generator/Makefile.in, src/postproc/Makefile.in,
+	src/preproc/Makefile.in, src/solv_bddwalk/Makefile.in,
+	src/solv_smurf/Makefile.in, src/solv_smurf/fn_and/Makefile.in,
+	src/solv_smurf/fn_lemma/Makefile.in,
+	src/solv_smurf/fn_minmax/Makefile.in,
+	src/solv_smurf/fn_smurf/Makefile.in,
+	src/solv_smurf/fn_smurf_au/Makefile.in,
+	src/solv_smurf/fn_smurf_xor/Makefile.in,
+	src/solv_smurf/fn_xor/Makefile.in,
+	src/solv_smurf/fn_xor_smurf/Makefile.in,
+	src/solv_smurf/hr_lemma/Makefile.in,
+	src/solv_smurf/hr_lsgb/Makefile.in,
+	src/solv_smurf/hr_lsgb_lemma/Makefile.in,
+	src/solv_smurf/hr_lsgbw/Makefile.in,
+	src/solv_smurf/hr_null/Makefile.in, src/solv_wvf/Makefile.in,
+	src/utils/Makefile.in: new version!
+
 2004-07-29 14:16  mkouril
 
 	* src/solv_smurf/: hr_choice.cc, hr_lemma/hr_choice.cc,

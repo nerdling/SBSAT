@@ -510,53 +510,41 @@ Finish_Preprocessing()
    return ret;
 }
 
-int add_newFunctions(BDDNode **new_bdds, int new_size) {
+int *add_newFunctions(BDDNode **new_bdds, int new_size) {
 	int ret = PREP_NO_CHANGE;
 
-	nmbrFunctions = nmbrFunctions+new_size;
-	functions_alloc(nmbrFunctions);
+	int free_funcs = 0;
+	int *free_spots = (int *)ite_calloc(new_size+1, sizeof(int), 9, "free_spots");
 
-   if(length_size<nmbrFunctions) {
-		length = (int *)ite_recalloc(length, length_size, nmbrFunctions, sizeof(int), 9, "length");
-		length_size = nmbrFunctions;
-	}
-	if(variables_size<nmbrFunctions) {
-		variables = (store *)ite_recalloc(variables, variables_size, nmbrFunctions, sizeof(store), 9, "variables");
-		variables_size = nmbrFunctions;
-	}
-
-	Init_Repeats();
-
-	for(int x = nmbrFunctions-new_size; x < nmbrFunctions; x++) {		  
-		functions[x] = new_bdds[x-(nmbrFunctions-new_size)];		
-	}
-	
-	for (int x = nmbrFunctions-new_size; x < nmbrFunctions; x++) {
-		int r=Rebuild_BDDx(x);
-		switch (r) {
-		 case TRIV_UNSAT:
-		 case TRIV_SAT:
-		 case PREP_ERROR: return r;
-		 default: break;
+	for(int x = 0; x < nmbrFunctions; x++) {
+		if(functions[x] == true_ptr) {
+			free_spots[free_funcs] = x;
+			free_funcs++;
+			if(free_funcs >= new_size) break;
 		}
 	}
 
-/*	
-	for (int x = nmbrFunctions-new_size; x < nmbrFunctions; x++) {
-		for (int i = 0; i < length[x]; i++) {
-         llist *newllist = AllocateLList(x, NULL);
-			if (amount[variables[x].num[i]].head == NULL) {
-				num_funcs_var_occurs[variables[x].num[i]] = 1;
-				amount[variables[x].num[i]].head = newllist;
-				amount[variables[x].num[i]].tail = newllist;
-			} else {
-				num_funcs_var_occurs[variables[x].num[i]]++;
-				amount[variables[x].num[i]].tail->next = newllist;
-				amount[variables[x].num[i]].tail = newllist;
-			}
+	if(free_funcs < new_size) {
+		int oldnumfuncs = nmbrFunctions;
+		nmbrFunctions = nmbrFunctions+new_size-free_funcs;
+		functions_alloc(nmbrFunctions);
+
+		if(length_size<nmbrFunctions) {
+			length = (int *)ite_recalloc(length, length_size, nmbrFunctions, sizeof(int), 9, "length");
+			length_size = nmbrFunctions;
 		}
+		if(variables_size<nmbrFunctions) {
+			variables = (store *)ite_recalloc(variables, variables_size, nmbrFunctions, sizeof(store), 9, "variables");
+			variables_size = nmbrFunctions;
+		}
+		Init_Repeats();
+		for(int x = 0;free_funcs < new_size; free_funcs++)
+		  free_spots[free_funcs++] = oldnumfuncs+x;
 	}
-*/
+
+	for(int x = 0; x < free_funcs; x++) {
+		functions[free_spots[x]] = new_bdds[x];
+	}
 	
-	return ret;
+	return free_spots;
 }

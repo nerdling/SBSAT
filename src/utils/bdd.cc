@@ -122,7 +122,7 @@ BDDNode * mitosis (BDDNode * bdd, int *structureBDD, int *newBDD)
    v = newBDD[num];
    BDDNode * r = mitosis (bdd->thenCase, structureBDD, newBDD);
    BDDNode * e = mitosis (bdd->elseCase, structureBDD, newBDD);
-   return ite (ite_var (v), r, e);
+   return ite_xvar_y_z (ite_var (v), r, e);
 }
 
 inline BDDNode *
@@ -1293,26 +1293,33 @@ BDDNode * _num_replace (BDDNode * f, int var, int replace) {
    f->flag = bdd_flag_number;
 	if (var == f->variable) {
 		if (replace > 0) {
-			return (f->tmp_bdd = ite(ite_var(replace), f->thenCase, f->elseCase));
+			//return (f->tmp_bdd = ite(ite_var(replace), f->thenCase, f->elseCase));
+			return (f->tmp_bdd = ite_xvar_y_z(ite_var(replace), f->thenCase, f->elseCase));
 			BDDNode *itevar = ite_var(replace);
          BDDNode *cached = itetable_find_or_add_node(11, itevar, f, NULL);
          if (cached) return (f->tmp_bdd = cached);
+         //return (f->tmp_bdd = itetable_add_node(11, itevar, f, 
+         //         ite(itevar, f->thenCase, f->elseCase)));
          return (f->tmp_bdd = itetable_add_node(11, itevar, f, 
-                  ite(itevar, f->thenCase, f->elseCase)));
+                  ite_xvar_y_z(itevar, f->thenCase, f->elseCase)));
       } else if (replace < 0) {
-         return (f->tmp_bdd = ite(ite_var(-replace), f->elseCase, f->thenCase));
+         //return (f->tmp_bdd = ite(ite_var(-replace), f->elseCase, f->thenCase));
+			return (f->tmp_bdd = ite_xvar_y_z(ite_var(-replace), f->elseCase, f->thenCase));
 			BDDNode *itevar = ite_var(-replace);
          BDDNode *cached = itetable_find_or_add_node(11, itevar, f, NULL);
          if (cached) return (f->tmp_bdd = cached);
+         //return (f->tmp_bdd = itetable_add_node(11, itevar, f,
+         //         ite(itevar, f->elseCase, f->thenCase)));
          return (f->tmp_bdd = itetable_add_node(11, itevar, f,
-                  ite(itevar, f->elseCase, f->thenCase)));
+                  ite_xvar_y_z(itevar, f->elseCase, f->thenCase)));
       }
    }
    BDDNode * r = _num_replace (f->thenCase, var, replace);
    BDDNode * e = _num_replace (f->elseCase, var, replace);
    if (r == e)
 	  return (f->tmp_bdd = r);
-	return (f->tmp_bdd = itetable_add_node(11, ite_var(f->variable), f, ite (ite_var (f->variable), r, e)));
+	//return (f->tmp_bdd = itetable_add_node(11, ite_var(f->variable), f, ite (ite_var (f->variable), r, e)));
+	return (f->tmp_bdd = itetable_add_node(11, ite_var(f->variable), f, ite_xvar_y_z(ite_var (f->variable), r, e)));
 
 	//return (f->tmp_bdd = find_or_add_node(f->variable, r, e));
 }
@@ -1386,13 +1393,15 @@ BDDNode *_possible_BDD(BDDNode *f, int v) {
 		else f->t_and_not_e_bdd = r = ite_and(f->thenCase, ite_not(f->elseCase));
 		if(f->not_t_and_e_bdd != NULL) e = f->not_t_and_e_bdd;
 		else f->not_t_and_e_bdd = e = ite_and(ite_not(f->thenCase), f->elseCase);
-		return (f->tmp_bdd = ite(ite_var(v), r, e));
+		//return (f->tmp_bdd = ite(ite_var(v), r, e));
+		return (f->tmp_bdd = ite_xvar_y_z(ite_var(v), r, e));
 	}
 
 	BDDNode *r = _possible_BDD(f->thenCase, v);
 	BDDNode *e = _possible_BDD(f->elseCase, v);
 	if(r == e) return (f->tmp_bdd = r);
-	return (f->tmp_bdd = itetable_add_node(8, f, var, ite(ite_var(f->variable), r, e)));
+	//return (f->tmp_bdd = itetable_add_node(8, f, var, ite(ite_var(f->variable), r, e)));
+	return (f->tmp_bdd = itetable_add_node(8, f, var, ite_xvar_y_z(ite_var(f->variable), r, e)));
 }
 
 infer *_possible_infer_x(BDDNode *f, int x);

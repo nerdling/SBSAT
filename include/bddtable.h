@@ -78,7 +78,8 @@ void itetable_init();
 BDDNode *find_or_add_node(int, BDDNode *, BDDNode *);
 BDDNode *itetable_find_or_add_node (int v, BDDNode * r, BDDNode * e, BDDNode *cached_ite);
 BDDNode *itetable_add_node(int v, BDDNode * r, BDDNode * e, BDDNode *cached_ite);
-BDDNode *ite(BDDNode *, BDDNode *, BDDNode *);
+BDDNode *ite(BDDNode * x, BDDNode * y, BDDNode * z);
+BDDNode *ite_xvar_y_z(BDDNode * x, BDDNode * y, BDDNode * z);
 void bddtable_load(void *_bddtable, int _bddtable_len, void *_bddtable_start, int *_shift);
 void bddtable_get(void **_bddtable, int *_bddtable_len, int *_bddtable_msize);
 

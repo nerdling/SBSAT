@@ -235,7 +235,7 @@ BDDNode *ReadSmurf (int *y, char *tv, int level, int *integers, int num_ints)
    BDDNode * r = ReadSmurf (y, tv, level + 1, integers, num_ints);
    if (r == e)
       return r;
-   return ite (ite_var (integers[level]), r, e);
+   return ite_xvar_y_z(ite_var(integers[level]), r, e);
 }
 
 int unravelBDDTree (int y, int tempint[100], BDDNode * func) 

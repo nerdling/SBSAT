@@ -194,23 +194,21 @@ int ExQuantify () {
 										//fprintf(stderr, "\nHERE\n");
 									} else*/ {
 										autark_BDD[quant_var] = 1;
-										switch (int r=add_newFunctions(BDDFuncs, 1)) {
-										 case TRIV_UNSAT:
-										 case TRIV_SAT:
-										 case PREP_ERROR: return r;
-										 default: break;
-										}
+										int *new_bdd=add_newFunctions(BDDFuncs, 1);
 										ite_free((void **)&BDDFuncs);
-										functionType[nmbrFunctions-1] = AUTARKY_FUNC;
-										equalityVble[nmbrFunctions-1] = quant_var;
-										functions[nmbrFunctions-1] = possible_BDD(functions[nmbrFunctions-1], quant_var);
-										switch (int r=Rebuild_BDDx(nmbrFunctions-1)) {
+
+										functionType[new_bdd[0]] = AUTARKY_FUNC;
+										equalityVble[new_bdd[0]] = quant_var;
+										functions[new_bdd[0]] = possible_BDD(functions[nmbrFunctions-1], quant_var);
+										switch (int r=Rebuild_BDDx(new_bdd[0])) {
 										 case TRIV_UNSAT:
 										 case TRIV_SAT:
 										 case PREP_ERROR: return r;
 										 default: break;
 										}
+										ite_free((void**)&new_bdd);
 									}
+									
 									
 									//Check whether quant_var was applied as an inference.
 									amount_count = 0;

@@ -109,7 +109,7 @@ BDDNode *level_x_decomp(BDDNode *f, int level) {
 	BDDNode *r = level_x_decomp(f->thenCase, level-1);
 	BDDNode *e = level_x_decomp(f->elseCase, level-1);
 	if(r == e) return r;
-	return ite(ite_var(v), r, e);
+	return ite_xvar_y_z(ite_var(v), r, e);
 }
 
 int Split_Large () {
@@ -176,15 +176,20 @@ int Split_Large () {
 			if(whereat > 0) {
 				affected++;
 				ret = PREP_CHANGED;
-				switch (int r=add_newFunctions(BDDFuncs, whereat)) {
-				 case TRIV_UNSAT:
-				 case TRIV_SAT:
-				 case PREP_ERROR: 
-					ret=r;
-					goto sp_bailout;
-				 default: break;
-				}
+				int *new_bdds=add_newFunctions(BDDFuncs, whereat);
 
+				for (int i = 0; i < whereat; i++) {
+					int r=Rebuild_BDDx(new_bdds[i]);
+					switch (r) {
+					 case TRIV_UNSAT:
+					 case TRIV_SAT:
+					 case PREP_ERROR: return r;
+					 default: break;
+					}
+				}
+				
+				ite_free((void**)&new_bdds);
+				
 				switch (int r=Rebuild_BDDx(j)) {
 				 case TRIV_UNSAT:
 				 case TRIV_SAT:
@@ -250,15 +255,22 @@ int Split_Large () {
 					continue;				  
 				}
 				
-				switch (int r=add_newFunctions(BDDFuncs, whereat)) {
-				 case TRIV_UNSAT:
-				 case TRIV_SAT:
-				 case PREP_ERROR:
-					ret=r;
-					goto sp_bailout;
-				 default: break;
+				int *new_bdds=add_newFunctions(BDDFuncs, whereat);
+
+				for (int  = 0; x < whereat; i++) {
+					functionType[new_bdds[i]] = PLAINOR;
+					int r=Rebuild_BDDx(new_bdds[i]);
+					switch (r) {
+					 case TRIV_UNSAT:
+					 case TRIV_SAT:
+					 case PREP_ERROR: return r;
+					 default: break;
+					}
 				}
-				switch (int r=Rebuild_BDDx(j)) {
+
+				ite_free((void**)&new_bdds);
+			 
+			   switch (int r=Rebuild_BDDx(j)) {
 				 case TRIV_UNSAT:
 				 case TRIV_SAT:
 				 case PREP_ERROR: 
@@ -300,16 +312,20 @@ int Split_Large () {
 				}
 				delete [] list;
 				
-				switch (int r=add_newFunctions(BDDFuncs, listx)) {
-				 case TRIV_UNSAT:
-				 case TRIV_SAT:
-				 case PREP_ERROR: 
-					ret=r;
-					goto sp_bailout;
-				 default: break;
+				int *new_bdds=add_newFunctions(BDDFuncs, listx);
+
+				for (int i = 0; i < listx; i++) {
+					functionType[new_bdds[i]] = PLAINOR;
+					int r=Rebuild_BDDx(new_bdds[i]);
+					switch (r) {
+					 case TRIV_UNSAT:
+					 case TRIV_SAT:
+					 case PREP_ERROR: return r;
+					 default: break;
+					}
 				}
-				for(int i = nmbrFunctions-listx; i < nmbrFunctions; i++)
-				  functionType[i] = PLAINOR;
+
+				ite_free((void**)&new_bdds);
 				
 				equalityVble[j] = 0;
 				functionType[j] = UNSURE;
