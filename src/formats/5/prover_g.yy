@@ -117,6 +117,6 @@ BDDNode *tmp_equ_var(BDDNode *p)
     symrec *s_ptr = tputsym(SYM_VAR); 
     BDDNode *ret=ite_vars(s_ptr); 
     BDDNode *e=ite_equ(ret, p); 
-    functions_add(e, UNSURE, 0/*s_ptr->id*/); /*printf("ex\n"); */
+    functions_add(e, UNSURE, /*0*/s_ptr->id); /*printf("ex\n"); */
     return ret;
 }
