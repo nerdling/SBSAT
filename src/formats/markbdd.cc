@@ -709,6 +709,14 @@ BDDNode *putite(int intnum, BDDNode * bdd)
       return v1;
 	}
 	int v = i_getsym(macros);
+
+	if(v > numinp) {
+		numinp+=10;
+		vars_alloc(numinp+2); //should recalloc
+		for(int iter = 0; iter<10; iter++)
+		  independantVars[numinp-iter] = 0;
+	}
+
 	if(negate == 1) {
 		negate = 0;
 		return ite_var(-v);
@@ -898,6 +906,7 @@ void bddloop () {
    functions_alloc(numout+2);
 	
 	int *keep = (int *)ite_calloc(numout + 2, sizeof(int), 9, "keep");
+
 	for (int x = 0; x < numinp + 1; x++) {
 		independantVars[x] = 0;
 	}
