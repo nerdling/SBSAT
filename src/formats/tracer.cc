@@ -1414,6 +1414,8 @@ int Tracer::intValue (char *v)
 
 void Tracer::getSymbols (int *vars, int size) {
    Object **obj = symbols->entrySet();
+   int j=0;
+   if (result_display_type == 4) fprintf(foutputfile, "v ");
    for (int i=0 ; obj[i] != NULL ; i++) {
       int vv = ((Integer *)obj[i])->intValue();
       bool negative = (vv < 0) ? true : false;
@@ -1421,10 +1423,13 @@ void Tracer::getSymbols (int *vars, int size) {
       if (vv < size) {
          char *ret = ((Integer *)obj[i])->getId();
          if (ret[0] != 1) {
+            if (result_display_type == 4 && (++j%20) == 0) fprintf(foutputfile, "\nv ");
             ShowResultLine(foutputfile, ret, vv, negative, vars[vv]);
          }	
       }
    }
+   if (result_display_type == 4) fprintf(foutputfile, " 0");
+	fprintf(foutputfile, "\n");
    delete [] obj;
 }
 

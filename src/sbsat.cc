@@ -199,8 +199,8 @@ ite_final(int ret, Tracer *tracer)
 		break;
     case TRIV_UNSAT: 
     case SOLV_UNSAT: 
-      strcpy(competition_output, "SATISFIABLE");
-      competition_exit_code=10;
+      strcpy(competition_output, "UNSATISFIABLE");
+      competition_exit_code=20;
       strcpy(result_string, "Unsatisfiable"); break;
     case SOLV_UNKNOWN: strcpy(result_string, "Unknown Result"); break;
     case CONV_OUTPUT: strcpy(result_string, "Conversion"); break;
