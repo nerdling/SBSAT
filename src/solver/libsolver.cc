@@ -89,7 +89,6 @@
 #include "display_sf.cc"
 
 #include "recordsol.cc"
-#include "graphs.cc"
 
 #include "transitions.cc"
 #include "sf_addons.cc"

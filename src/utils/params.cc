@@ -280,14 +280,6 @@ t_opt options[] = {
 { &SMURFS_SHARE_PATHS, "", "smurfs-share-paths", P_INT, 
 		V(i:1,"1"), V(i:0,"0"), VAR_NORMAL, 0,
 		"Share paths among smurfs"},
-/*
-{ png_filename, "", "png-filename", P_STRING, 
-		V(i:128,"128"), "", VAR_CHECK+VAR_DUMP, 0,
-		"Png filename for brancher graphs"},
-*/
-{ jpg_filename, "", "jpg-filename", P_STRING, 
-		V(i:127,"127"), {""}, VAR_CHECK+VAR_DUMP, 0,
-		"Jpg filename for brancher graphs"},
 
 /* 
  * Johnson heuristic options 

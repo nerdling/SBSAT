@@ -124,12 +124,4 @@ typedef struct _t_solution_info {
   struct _t_solution_info *next;
 } t_solution_info;
 
-#ifdef HAVE_IMAGE_JPEG
-ITE_INLINE void
-graph_record(double progress);
-
-ITE_INLINE void
-graph_generate(char *filename);
-#endif
-
 #endif // BRANCHER_H

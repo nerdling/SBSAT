@@ -12,9 +12,6 @@
 /* Define to 1 if you have the <fstream.h> header file. */
 #undef HAVE_FSTREAM_H
 
-/* Have gd support for jpeg */
-#undef HAVE_IMAGE_JPEG
-
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 

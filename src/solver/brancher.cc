@@ -48,7 +48,6 @@ ITE_INLINE int UpdateEachAffectedRegularSmurf(AffectedFuncsStruct *pAFS);
 ITE_INLINE void DisplayBacktrackInfo(double &fPrevEndTime, double &fStartTime);
 ITE_INLINE void DisplayStatistics(int nNumChoicePts, int nNumBacktracks, int nNumBackjumps);
 ITE_INLINE int RecordSolution(); 
-ITE_INLINE void graph_free();
 ITE_INLINE void J_ResetHeuristicScores();
 
 extern int nNumRegSmurfs; // Number of regular Smurfs.
@@ -361,15 +360,6 @@ CheckFinalHooks()
          DisplayBacktrackInfo(fPrevEndTime, fStartTime);
          DisplayStatistics(ite_counters[NUM_CHOICE_POINTS], ite_counters[NUM_BACKTRACKS], ite_counters[NUM_TOTAL_BACKJUMPS]);
       );
-
-#ifdef HAVE_IMAGE_JPEG
-   D_2(
-         if (jpg_filename[0]) {
-         graph_generate(jpg_filename);
-         }
-      )
-      graph_free();
-#endif 
    return 0;
 }
 

@@ -322,12 +322,6 @@ void DisplayBacktrackInfo(double &fPrevEndTime, double &fStartTime)
 	      fflush(stddbg);
       }
 
-#ifdef HAVE_IMAGE_JPEG
-      D_2(
-      graph_record(progress);  /* other variables are taken out of ite_counters */
-      )
-#endif
-
       d2_printf3("\n Choices (total, dependent): (%lld, %lld)",
       		  ite_counters[NO_ERROR],
 		  ite_counters[HEU_DEP_VAR]

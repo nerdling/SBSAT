@@ -128,11 +128,6 @@ AC_TRY_COMPILE(
 	AC_MSG_RESULT(no))
 
 
-AC_CHECK_LIB(gd,gdImageJpeg,[
-	AC_DEFINE([HAVE_IMAGE_JPEG], [], [Have gd support for jpeg])
-	LIBS="$LIBS -lgd"	
-])
-
 AC_CHECK_LIB(termcap,tgetnum,[
 	AC_DEFINE([HAVE_TERMCAP_LIB], [], [Have termcap support])
 	LIBS="$LIBS -ltermcap"	
