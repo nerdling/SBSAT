@@ -120,7 +120,6 @@ store *getMinMax() {
 	char macros[20];
 	int p;
 	
-
 	char order = getNextSymbol_CNF (macros, min);
 	if(order != 'i' || min < 0) {
 		fprintf(stderr, "Error looking for min while parsing CNF input (%s)...exiting\n", macros);
