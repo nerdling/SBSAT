@@ -53,6 +53,8 @@ CreateTransitionAu(SmurfAuState *pSmurfAuState, int i, int nSolverVble, int valu
 	//fprintf(stderr, "creating transition on %d(%d)=%d with autarkyvble %d\n", nVble, nSolverVble, value, nAutarkyVble);
 	if(nSolverVble == nAutarkyVble) pFuncEvaled = true_ptr;
 	else pFuncEvaled = set_variable(pSmurfAuState->pFunc, nVble, value==BOOL_TRUE?1:0);
+	if(pFuncEvaled == false_ptr) 	//set the autarky variable to true
+	  pFuncEvaled = ite_var(arrSolver2IteVarMap[nAutarkyVble]);
    SmurfAuState *pSmurfAuStateOfEvaled = BDD2SmurfAu(pFuncEvaled, nAutarkyVble);
    assert(pSmurfAuStateOfEvaled != NULL);
    AddStateTransitionAu(pSmurfAuState, i, nSolverVble, value, nAutarkyVble,
@@ -158,14 +160,15 @@ BDD2SmurfAu(BDDNodeStruct *pFunc, int nAutarkyVble)
    // Otherwise, returns a pointer to the initial SmurfAu state.
 {
    // special autarky function -- represent with autarky state machine.
-   BDDNodeStruct *pReduct = set_variable_all_infs(pFunc);
+   //BDDNodeStruct *pReduct = set_variable_all_infs(pFunc);
 
 	//There should never be an inference except on the autarky variable.
 	//If this function has an inference, it must be the autarky variable.
 	//A transition on the autarky variable sends the smurf to the true state.
-	if(pReduct != pFunc) pReduct = true_ptr;
+	//if(pReduct != pFunc) pReduct = true_ptr;
 	
-   return ComputeSmurfAuOfNormalized(pReduct, nAutarkyVble);
+   //return ComputeSmurfAuOfNormalized(pReduct, nAutarkyVble);
+	return ComputeSmurfAuOfNormalized(pFunc, nAutarkyVble);
 }
 
 int SmurfAuCreateFunction(int nFnId, BDDNode *bdd, int nFnType, int eqVble)
@@ -175,6 +178,7 @@ int SmurfAuCreateFunction(int nFnId, BDDNode *bdd, int nFnType, int eqVble)
    arrSolverFunctions[nFnId].nFnPriority = MAX_FN_PRIORITY-1;
    arrSolverFunctions[nFnId].fn_smurf_au.nSmurfAuEqualityVble = arrIte2SolverVarMap[abs(eqVble)];
    arrSolverFunctions[nFnId].fn_smurf_au.pInitialState = BDD2SmurfAu(bdd, arrIte2SolverVarMap[abs(eqVble)]);
+	assert(arrSolverFunctions[nFnId].fn_smurf_au.pInitialState != pTrueSmurfAuState);
    if (arrSolverFunctions[nFnId].fn_smurf_au.pInitialState == pTrueSmurfAuState) {
       nNumUnresolvedFunctions--;
       d9_printf3("Decremented nNumUnresolvedFunctions to %d due to autarky smurf # %d\n",

@@ -98,7 +98,7 @@ AddStateTransitionAu(SmurfAuState *pSmurfAuState,
 	}
    if (pTransitionAu->positiveInferences.nNumElts ||
          pTransitionAu->negativeInferences.nNumElts)
-	pTransitionAu->pNextState = pTrueSmurfAuState;;
+	  pTransitionAu->pNextState = pTrueSmurfAuState;
    return pTransitionAu;
 }
 
