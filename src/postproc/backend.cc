@@ -366,17 +366,17 @@ Verify_Solver()
   /* 
    * original_variables
    */
-
-  ITE_NEW_CATCH(
-  original_variables = new int[numinp + 1],
-  "input variables");
-
-  for (int x = 0; x <= numinp; x++)
+	
+	ITE_NEW_CATCH(
+	original_variables = new int[numinp + 1],
+	"input variables");
+	
+	for (int x = 0; x <= numinp; x++)
      original_variables[x] = -1;
 
-  nmbrFunctions = original_numout;
+	nmbrFunctions = original_numout;
 
-  Backend(numinp, oldnuminp, original_variables);
+	Backend(numinp, oldnuminp, original_variables);
 
 	while(solution_info_head!=NULL) {
 		solution_info = solution_info_head;
@@ -387,9 +387,9 @@ Verify_Solver()
 	solution_info = NULL;
 	delete [] original_variables;
 	original_variables = NULL;
-	delete [] variablelist;
+	ite_free((void **)&variablelist);
 	variablelist = NULL;
-	delete [] original_functions;
+	ite_free((void **)&original_functions);
 	original_functions = NULL;
 	ite_free((void **)&length);
 	//delete [] length;
