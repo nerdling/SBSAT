@@ -89,7 +89,6 @@ static const double c_heur = 1.0;
 extern int nNumSpecialFuncs;
 extern int nNumRegSmurfs;	// Number of regular Smurfs.
 extern int nNumVariables;
-extern int nNumChoicePts;
 
 HeurScores *arrHeurScores=NULL;
 

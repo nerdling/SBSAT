@@ -194,7 +194,6 @@ SmurfFactory()
 
    if (nHeuristic == JOHNSON_HEURISTIC)  {
       InitHeuristicTablesForSpecialFuncs(gnMaxVbleIndex);
-      J_InitHeuristicScores();
    }
 
    // Display statistics.
@@ -323,7 +322,6 @@ FreeSmurfFactory()
    d2_printf1("FreeSmurfFactory\n");
    if (nHeuristic == JOHNSON_HEURISTIC) {
       FreeHeuristicTablesForSpecialFuncs();
-      J_FreeHeuristicScores();
    }
 
    /* from smurf factory */

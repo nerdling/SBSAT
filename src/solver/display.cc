@@ -295,7 +295,7 @@ CalculateProgress(int *_whereAmI, int *_total)
 ITE_INLINE
 void DisplayBacktrackInfo(double &fPrevEndTime, double &fStartTime)
 {
-      double fEndTime = get_runtime();
+      double fEndTime = ite_counters_f[CURRENT_TIME] = get_runtime();
       double fTotalDurationInSecs = fEndTime - fStartTime;
       double fDurationInSecs = fEndTime - fPrevEndTime;
       double fBacktracksPerSec = BACKTRACKS_PER_STAT_REPORT / (fDurationInSecs>0?fDurationInSecs:0.001);
@@ -310,7 +310,7 @@ void DisplayBacktrackInfo(double &fPrevEndTime, double &fStartTime)
       double progress = 0.0;
       CalculateProgress(&whereAmI, &total);
       if (total == 0) total=1;
-      progress = (float)whereAmI*100/total;
+      progress = ite_counters_f[PROGRESS] = (float)whereAmI*100/total;
       d2_printf3("\n Progress: %x/%x        ", whereAmI, total);
       char number[10];
       char back[10] = "\b\b\b\b\b\b\b\b\b";

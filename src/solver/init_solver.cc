@@ -427,6 +427,10 @@ InitBrancher()
    } else
       arrCurrentStates = NULL;
 
+   if (nHeuristic == JOHNSON_HEURISTIC) {
+      J_InitHeuristicScores();
+   }
+
    // Set up the Special Func Stack.
 
    if (nNumSpecialFuncs > 0) { 
@@ -531,6 +535,10 @@ ITE_INLINE void InitializeSpecialFnStack();
        exit(1);
    }
 
+   if (csv_trace_file) {
+      fd_csv_trace_file = fopen(csv_trace_file, "w");
+   }
+
    return ret;
 }
 
@@ -538,6 +546,9 @@ ITE_INLINE void
 FreeBrancher()
 {
    d2_printf1("FreeBrancher\n");
+
+   if (fd_csv_trace_file) fclose(fd_csv_trace_file);
+
    ite_free((void*)arrUnsetLemmaFlagVars);
    ite_free((void*)arrTempLemma);
    ite_free((void*)arrBacktrackStackIndex);
@@ -567,6 +578,9 @@ FreeBrancher()
    ite_free((void*)arrVarScores);
 
    FreeAFS();
+   if (nHeuristic == JOHNSON_HEURISTIC) {
+      J_FreeHeuristicScores();
+   }
    FreeSpecialFnStack();
    FreeSmurfStatesStack();
 }

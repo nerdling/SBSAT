@@ -37,8 +37,6 @@
 #include "ite.h"
 #include "solver.h"
 
-#define LEMMA_CONSTANT 10.0
-
 extern bool *arrLemmaFlag;
 extern int  *arrTempLemma;
 
@@ -53,7 +51,7 @@ BackTrack()
    int nTempLemmaIndex = 0; /* the length of the new/temporary lemma */
    int nNumForcedInfsBelowCurrentCP = 0;
    int nInferredAtom = 0; /* the choice point */
-   int nInferredValue = 0; /* the value of the choice point */
+   int nInferredValue = 0; /* the choice point value */
    int _num_backjumps = 0; /* num of backjumps during this backtrack */
 
 //   assert(pUnitLemmaList->pNextLemma[0] == NULL);
@@ -69,8 +67,8 @@ BackTrack()
 #ifdef MK_DISCOUNT_BACKJUMPS
       if (nInferredAtom != 0) {
          /* not that great since the values get restored during backtrack */
-         arrHeurScores[nInferredAtom].Pos -= 1;
-         arrHeurScores[nInferredAtom].Neg -= 1;
+         arrHeurScores[nInferredAtom].Pos /= 2;
+         arrHeurScores[nInferredAtom].Neg /= 2;
       }
 #endif
 
@@ -83,7 +81,6 @@ BackTrack()
          return 1;
       }
       nInferredAtom = pChoicePointTop->nBranchVble;
-      nInferredValue = arrSolution[nInferredAtom];
 
       /*
        * reconstruct nNumForcedInfsBelowCurrentCP
@@ -299,6 +296,8 @@ BackTrack()
       } // bactracking loop
       while (1);
 
+      /* remember the value so we can flip it */
+      nInferredValue = arrSolution[nInferredAtom];
       arrSolution[nInferredAtom] = BOOL_UNKNOWN;
       _num_backjumps++;
 
@@ -324,6 +323,8 @@ BackTrack()
    pFnInferenceQueueNextElt = pFnInferenceQueueNextEmpty = arrFnInferenceQueue;
 
    // Reverse the polarity of the branch atom.
+   // the value of the choice point 
+   // flip it
    nInferredValue = (nInferredValue == BOOL_TRUE ? BOOL_FALSE : BOOL_TRUE);
    InferLiteral(nInferredAtom, nInferredValue, true, pNewLemma, NULL, 1);
 

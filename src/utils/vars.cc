@@ -128,11 +128,11 @@ int reports = 0;
 
 char lemma_out_file[128] = "";
 char lemma_in_file[128] = "";
+char csv_trace_file[128] = "";
+FILE *fd_csv_trace_file = NULL;
 
 int _bdd_pool_size=1000000;
 
 varinfo *variablelist = NULL;
-
-int nNumAutarkies = 0;
 
 t_arrVarScores *arrVarScores = NULL;

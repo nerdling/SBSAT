@@ -62,8 +62,6 @@
 extern int *arrLemmaVbleCountsPos;
 extern int *arrLemmaVbleCountsNeg;
 
-extern int nNumChoicePts;
-
 extern int nIndepVariables;
 extern int nDepVariables;
 extern int *arrIndepVariables;
@@ -119,7 +117,7 @@ L_OptimizedHeuristic(int *pnBranchAtom, int *pnBranchValue)
    /* FIXME: if needed */
   //extern LemmaInfoStruct *garrLemmaInfo;
   extern int gnNumLemmas;
-  if (nNumChoicePts % LEMMA_COUNT_FREQUENCY == 0)
+  if (ite_counters[NUM_CHOICE_POINTS] % LEMMA_COUNT_FREQUENCY == 0)
     {
       // Update the "lemma counts":
       // Scan through the literals of each lemma and determine
@@ -167,7 +165,7 @@ L_OptimizedHeuristic(int *pnBranchAtom, int *pnBranchValue)
   nMaxWeight = -1;
 
 #ifdef  MK_L_HEU_W_SORT
-   if (nNumChoicePts % 100 == 0) 
+   if (ite_counters[NUM_CHOICE_POINTS] % 100 == 0) 
 	L_SortVariableArray(arrIndepVariables, nIndepVariables);
    
 

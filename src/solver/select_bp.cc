@@ -37,7 +37,6 @@
 #include "ite.h"
 #include "solver.h"
 
-extern int nNumChoicePts;
 extern int nNumVariables;
 extern int gnMaxVbleIndex;
 extern SmurfState **arrCurrentStates;
@@ -62,7 +61,7 @@ SelectNewBranchPoint()
    int nInferredValue = BOOL_UNKNOWN;
 
    // We need to select a new branch point.
-   d9_printf2("Calling heuristic to choose choice point #%d\n", nNumChoicePts);
+   d9_printf2("Calling heuristic to choose choice point #%ld\n", (long)ite_counters[NUM_CHOICE_POINTS]);
 
    if (nHeuristic == JOHNSON_HEURISTIC)
       J_UpdateHeuristic();
@@ -100,7 +99,7 @@ SelectNewBranchPoint()
    if (nInferredAtom > nIndepVars && nInferredAtom <= nDepVars)
       ite_counters[HEU_DEP_VAR]++;
 
-   nNumChoicePts++;
+   ite_counters[NUM_CHOICE_POINTS]++;
 
    push_smurf_states_onto_stack();
    push_special_fn_onto_stack();

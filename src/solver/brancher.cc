@@ -120,8 +120,6 @@ double *arrSumRHSUnknowns = 0;
 double *arrSumRHSUnknownsNew = 0;
 double *arrPrevSumRHSUnknowns = 0;
 
-int nNumChoicePts = 0;
-
 extern long nTimeLimit;
 extern long nNumChoicePointLimit;
 extern int nCtrlC;
@@ -144,10 +142,10 @@ CheckLimits(double fStartTime)
       return 1;
    }
 
-   if (nNumChoicePointLimit && nNumChoicePts>nNumChoicePointLimit) {
+   if (nNumChoicePointLimit && ite_counters[NUM_CHOICE_POINTS]>nNumChoicePointLimit) {
       d2_printf2("Bailling out because the limit on the number of choicepoints %ld ",
             nNumChoicePointLimit);
-      d2_printf2("is smaller than the number of choicepoints %d\n", nNumChoicePts);
+      d2_printf2("is smaller than the number of choicepoints %ld\n", (long)ite_counters[NUM_CHOICE_POINTS]);
       return 1;
    }
 
@@ -224,6 +222,16 @@ double fEndTime;
 double fPrevEndTime;
 int (* proc_backtrack)() = NULL;
 
+ITE_INLINE void
+dump_counters(FILE *fd)
+{
+   for(int i=0;i<MAX_COUNTER;i++)
+      fprintf(fd, "%lld, ", ite_counters[i]);
+   for(int i=0;i<MAX_COUNTER_F;i++)
+      fprintf(fd, "%f, ", ite_counters_f[i]);
+   fprintf(fd, "\n");
+}
+
 ITE_INLINE int
 CheckBtHooks()
 {
@@ -239,6 +247,9 @@ CheckBtHooks()
          d2_printf1("Interrupting brancher. Solution Unknown.\n");
          ite_counters[ERR_LIMITS] = 1;
          return 1; /* FIXME: ERR_limits!! */
+      }
+      if (fd_csv_trace_file) {
+         dump_counters(fd_csv_trace_file);
       }
    }
    if (ite_counters[NUM_BACKTRACKS] % 255 == 0)
@@ -265,7 +276,7 @@ CheckFinalHooks()
 {
    D_2(
          DisplayBacktrackInfo(fPrevEndTime, fStartTime);
-         DisplayStatistics(nNumChoicePts, ite_counters[NUM_BACKTRACKS], ite_counters[NUM_TOTAL_BACKJUMPS]);
+         DisplayStatistics(ite_counters[NUM_CHOICE_POINTS], ite_counters[NUM_BACKTRACKS], ite_counters[NUM_TOTAL_BACKJUMPS]);
       );
 
 #ifdef HAVE_IMAGE_JPEG
