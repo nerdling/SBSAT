@@ -281,6 +281,18 @@ J_OptimizedHeuristic(int *pnBranchAtom, int *pnBranchValue)
    double fMaxWeight = 0.0;
    double fVbleWeight;
 
+//#define MK_J_HEURISTIC_LEMMA
+#ifdef MK_J_HEURISTIC_LEMMA
+   ITE_INLINE void 
+   J_Heuristic_Lemma(LemmaInfoStruct **p, int *nInferredAtom, int *nInferredValue);
+   if (pUnitLemmaList->pNextLemma[0] && pUnitLemmaList->pNextLemma[0]->pNextLemma[0])  {
+      //fprintf(stderr, "x");
+      J_Heuristic_Lemma(&(pUnitLemmaList->pNextLemma[0]), pnBranchAtom, pnBranchValue);
+      if (*pnBranchAtom) { fprintf(stderr, "."); return; }
+   }
+#endif
+
+
    D_8(DisplayJHeuristicValues(););
    d8_printf1("\n");
 
@@ -428,6 +440,56 @@ ReturnHeuristicResult:
          fMaxWeight);
 }
 
+ITE_INLINE void 
+J_Heuristic_Lemma(LemmaInfoStruct **ppUnitLemmaList, int *nInferredAtom, int *nInferredValue)
+{
+   double fMaxWeight = 0;
+   double fVbleWeight = 0;
+   int nBestVble = 0;
+   for (LemmaInfoStruct *p = (*ppUnitLemmaList)->pNextLemma[0]; p; p = p->pNextLemma[0])
+   {
+      //fprintf(stderr, "#");
+      LemmaBlock *pLemmaBlock = p->pLemma;
+      int *arrLits = pLemmaBlock->arrLits;
+      int nLemmaLength = arrLits[0];
+
+      for (int nLitIndex = 1, nLitIndexInBlock = 1;
+            nLitIndex <= nLemmaLength;
+            nLitIndex++, nLitIndexInBlock++)
+      {
+         if (nLitIndexInBlock == LITS_PER_LEMMA_BLOCK)
+         {
+            nLitIndexInBlock = 0;
+            pLemmaBlock = pLemmaBlock->pNext;
+            arrLits = pLemmaBlock->arrLits;
+         }
+         int i = abs(arrLits[nLitIndexInBlock]);
+         if (arrSolution[i] == BOOL_UNKNOWN)
+         {
+            fprintf(stderr, "?");
+            fVbleWeight = J_WEIGHT(arrHeurScores[i]);
+            if (J_COMPARE(fVbleWeight, fMaxWeight))
+            {
+               fMaxWeight = fVbleWeight;
+               nBestVble = i;
+            }
+         }
+      }
+   }
+   if (nBestVble != 0) 
+   {
+      *nInferredAtom = nBestVble;
+      if (arrHeurScores[nBestVble].Pos >= arrHeurScores[nBestVble].Neg)
+      {
+         *nInferredValue = BOOL_TRUE;
+      }
+      else
+      {
+         *nInferredValue = BOOL_FALSE;
+      }
+   }
+   *ppUnitLemmaList = NULL;
+}
 
 ITE_INLINE
 double

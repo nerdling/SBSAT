@@ -43,11 +43,10 @@ int lemma[MAX_LEMMA_LEN];
 void
 LoadLemmas(char *filename)
 {
-   LemmaInfoStruct *pUnitLemmaListTail = NULL;
    int idx = 0;
    int lemma_no = 0;
    FILE *fin = fopen(filename, "r");
-   LemmaBlock *p;
+   LemmaInfoStruct *p;
    if (!fin) return;
 
    d2_printf2("Reading lemmas from %s\n", filename);
@@ -60,18 +59,11 @@ LoadLemmas(char *filename)
          if (idx >= MAX_LEMMA_LEN) break;
       }
       if (lemma[idx] != 0) break;
-      pUnitLemmaListTail = NULL;
-      pUnitLemmaList->pNextLemma[0] = NULL;
-      p = AddLemma(idx, lemma, true,
-            pUnitLemmaList, /*m lemma is added in here */
-            pUnitLemmaListTail /*m and here */
-            );
+      p = AddLemma(idx, lemma, true, NULL, NULL);
       assert(p);
-      AddLemmaIntoCache(pUnitLemmaListTail);
-      //assert(pUnitLemmaList == NULL);
+      AddLemmaIntoCache(p);
       d2_printf2("%d\r", lemma_no++);
    } while (!feof(fin));
 
    fclose(fin);
-   pUnitLemmaList->pNextLemma[0] = NULL;
 }

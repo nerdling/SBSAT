@@ -1570,9 +1570,9 @@ MoveToFrontOfLPQ(LemmaInfoStruct *pLemmaInfo)
 }
 
 ITE_INLINE
-LemmaBlock *
+LemmaInfoStruct *
 AddLemma(int nNumLiterals, int arrLiterals[], bool bPutInCache, 
-      LemmaInfoStruct *pUnitLemmaList, LemmaInfoStruct *&pUnitLemmaListTail
+      LemmaInfoStruct *pUnitLemmaList, LemmaInfoStruct **pUnitLemmaListTail
       )
 {
    nCallsToAddLemma++;
@@ -1645,15 +1645,18 @@ AddLemma(int nNumLiterals, int arrLiterals[], bool bPutInCache,
       pLemmaInfo->nWatchedVblePolarity[1] = ((nWatchedLiteral2 >= 0) ? BOOL_TRUE : BOOL_FALSE);
    }
 
-   /* new lemma is put in the beginning of pUnitLemmaList */
-   pLemmaInfo->pNextLemma[0] = pUnitLemmaList->pNextLemma[0];
-   pUnitLemmaList->pNextLemma[0] = pLemmaInfo;
+   if (pUnitLemmaList) {
+      /* new lemma is put in the beginning of pUnitLemmaList */
+      pLemmaInfo->pNextLemma[0] = pUnitLemmaList->pNextLemma[0];
+      pUnitLemmaList->pNextLemma[0] = pLemmaInfo;
 
-   if(pUnitLemmaListTail == NULL)
-      pUnitLemmaListTail = pLemmaInfo;
+      if(*pUnitLemmaListTail == NULL)
+         *pUnitLemmaListTail = pLemmaInfo;
 
-   gnNumLemmas++; //Only report adding a lemma if we want the brancher
-   //to act upon it.
+      assert(IsInLemmaList(*pUnitLemmaListTail, pUnitLemmaList));
+   }
+
+   gnNumLemmas++; 
 
    //Done updating brancher information for this variable in this lemma.
 
@@ -1673,8 +1676,7 @@ AddLemma(int nNumLiterals, int arrLiterals[], bool bPutInCache,
       d9_printf1("\n");
    )
 
-   assert(IsInLemmaList(pUnitLemmaListTail, pUnitLemmaList));
-   return pLemmaInfo->pLemma;
+   return pLemmaInfo;
 }
 
 ITE_INLINE

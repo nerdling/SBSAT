@@ -228,8 +228,8 @@ BackTrack_SBJ()
                      arrTempLemma,
                      bFlag,
                      pUnitLemmaList, /*m lemma is added in here */
-                     pUnitLemmaListTail /*m and here */
-                     );
+                     &pUnitLemmaListTail /*m and here */
+                     )->pLemma;
 
 					LemmaInfoStruct *p =	pUnitLemmaList->pNextLemma[0];
 					if(p->nWatchedVble[1] == 0) {

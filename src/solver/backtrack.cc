@@ -51,17 +51,27 @@ BackTrack()
    LemmaBlock *pNewLemma=NULL; /* last lemma added */
    int nTempLemmaIndex = 0; /* the length of the new/temporary lemma */
    int nNumForcedInfsBelowCurrentCP = 0;
-   int nInferredAtom; /* the choice point */
-   int nInferredValue; /* the value of the choice point */
+   int nInferredAtom = 0; /* the choice point */
+   int nInferredValue = 0; /* the value of the choice point */
    int _num_backjumps = 0; /* num of backjumps during this backtrack */
 
-   assert(pUnitLemmaList->pNextLemma[0] == NULL);
+//   assert(pUnitLemmaList->pNextLemma[0] == NULL);
+   pUnitLemmaList->pNextLemma[0] = NULL;
 
    // Copy the conflict lemma into arrTempLemma.
    nTempLemmaIndex = ConstructTempLemma();
 
    /* backjumping loop */
    do {
+
+//#define MK_DISCOUNT_BACKJUMPS
+#ifdef MK_DISCOUNT_BACKJUMPS
+      if (nInferredAtom != 0) {
+         /* not that great since the values get restored during backtrack */
+         arrHeurScores[nInferredAtom].Pos -= 1;
+         arrHeurScores[nInferredAtom].Neg -= 1;
+      }
+#endif
 
       // Pop the choice point stack.
       pChoicePointTop--;
@@ -103,8 +113,8 @@ BackTrack()
          J_PopHeuristicScores();
 
       // Pop the backtrack stack until we pop the branch atom.
-      while (1)
-      {
+      // backtracking loop
+      do {
          pBacktrackTop--;
          nBacktrackStackIndex--;
          assert(nBacktrackStackIndex >= 0);
@@ -153,8 +163,6 @@ BackTrack()
                int nTempLemmaLiteral;
                int nTempLemmaVble;
 
-               int nLemmaScore=0;  //Used for scoring lemmas
-
                int nCopytoIndex = 0;
                for (int i = 0; i < nTempLemmaIndex; i++)
                {
@@ -165,7 +173,6 @@ BackTrack()
                         (nTempLemmaVble == nBacktrackAtom))
                   {
                      arrTempLemma[nCopytoIndex++] = nTempLemmaLiteral;
-                     nLemmaScore += arrBacktrackStackIndex[nTempLemmaVble];
                   }
                   else
                      arrUnsetLemmaFlagVars[nUnsetLemmaFlagIndex++] 
@@ -180,21 +187,7 @@ BackTrack()
                   return 1; // goto_NoSolution;
                }
 
-               /* COMPUTE nLemmaScore where lemmas with lower level literal 
-                * are WORSE!!! 
-                */ 
-
-               bool bFlag = false;
-               if (MAX_NUM_CACHED_LEMMAS) bFlag = true;
-               /*
-                if (MAX_NUM_CACHED_LEMMAS && nBacktrackStackIndex > 0)
-                {
-                double fLemmaScore = 2.0 * nLemmaScore/
-                (nBacktrackStackIndex*(nBacktrackStackIndex+1));
-
-                if (fLemmaScore < LEMMA_CONSTANT) bFlag = true;
-                }
-                */
+               bool bFlag = (MAX_NUM_CACHED_LEMMAS > 0);
 
                assert(IsInLemmaList(pUnitLemmaListTail,
                         pUnitLemmaList));	  
@@ -203,8 +196,8 @@ BackTrack()
                      arrTempLemma,
                      bFlag,
                      pUnitLemmaList, /*m lemma is added in here */
-                     pUnitLemmaListTail /*m and here */
-                     );
+                     &pUnitLemmaListTail /*m and here */
+                     )->pLemma;
 
             }
 
@@ -250,7 +243,8 @@ BackTrack()
             )
 #endif
 
-            //m copy all literal not marked in arrLemmaFlag into arrTempLemma
+            // copy all literals not present in arrTempLemma into arrTempLemma
+            // (not marked in arrLemmaFlag)
             LemmaBlock *pLemmaBlock = pBacktrackTop->pLemma;
             int *arrLits = pLemmaBlock->arrLits;
             int nLemmaLength = arrLits[0];
@@ -273,7 +267,8 @@ BackTrack()
                {
                   arrLemmaFlag[nLemmaVble] = true;
                   arrTempLemma[nTempLemmaIndex++] = nLemmaLiteral;
-                  if(arrBacktrackStackIndex[nLemmaVble] > arrBacktrackStackIndex[nInferredAtom]) nNumForcedInfsBelowCurrentCP++;
+                  if(arrBacktrackStackIndex[nLemmaVble] > arrBacktrackStackIndex[nInferredAtom]) 
+                     nNumForcedInfsBelowCurrentCP++;
                   assert(arrSolution[nLemmaVble] 
                         == (nLemmaLiteral > 0 ? BOOL_FALSE : BOOL_TRUE));
                }
@@ -299,7 +294,9 @@ BackTrack()
          }
 
          arrSolution[nBacktrackAtom] = BOOL_UNKNOWN;
-      };  //  while (1)
+
+      } // bactracking loop
+      while (1);
 
       arrSolution[nInferredAtom] = BOOL_UNKNOWN;
       _num_backjumps++;
@@ -327,11 +324,6 @@ BackTrack()
 
    // Reverse the polarity of the branch atom.
    nInferredValue = (nInferredValue == BOOL_TRUE ? BOOL_FALSE : BOOL_TRUE);
-
-   // Mark the stacks for autarky use
-   //Mark_arrSmurfStatesStack();
-   //Mark_arrNumRHSUnknowns();
-
    InferLiteral(nInferredAtom, nInferredValue, true, pNewLemma, NULL, 1);
 
 #ifdef DISPLAY_TRACE
@@ -364,8 +356,6 @@ BackTrack()
          AddLemmaIntoCache(p);
 
          p = previous;
-
-         continue;
       }
       else
       {
@@ -382,7 +372,6 @@ BackTrack()
                false, p->pLemma, NULL, 1);
 
          previous = previous->pNextLemma[0];
-         continue; 
       }
    } // for (LemmaInfoStruct *p = pUnitLemmaList->pNextLemma[0]; ; p = p->pNextLemma[0])
 
@@ -391,8 +380,7 @@ BackTrack()
    pBacktrackStackOldBranchPoint->pUnitLemmaList = pUnitLemmaList->pNextLemma[0];
    pBacktrackStackOldBranchPoint->pUnitLemmaListTail = pUnitLemmaListTail;
 
-   pUnitLemmaList->pNextLemma[0] = NULL;
-   pUnitLemmaListTail = NULL;
+//   pUnitLemmaList->pNextLemma[0] = NULL;
 
    // Get the consequences of the branch atoms new value.
    return 0; /* NO_ERROR */

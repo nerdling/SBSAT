@@ -48,52 +48,44 @@ CheckSmurfInferences(int nSmurfIndex, int *arrInferences, int nNumInferences,
 
       if (nCurrentAtomValue == value) continue;
 
-      LemmaBlock *pLemma;
-      LemmaInfoStruct *pUnitLemmaListTail;
+      LemmaBlock *pLemma = NULL;
+      LemmaInfoStruct *pLemmaInfo = NULL;
       if (arrInferenceLemmas == NULL) {
          if (NO_LEMMAS == 0) {
             /* create lemma */
             arrSmurfPath[nSmurfIndex].literals[arrSmurfPath[nSmurfIndex].idx] 
                = nNewInferredAtom * (value==BOOL_FALSE?-1:1);
 
+#ifdef MATCH_ORIGINAL_LEMMA_ORDER
             int *arrLits = (int*)ite_calloc(arrSmurfPath[nSmurfIndex].idx+1, sizeof(int),
                   9, "arrLits");
             for (int i=0; i<arrSmurfPath[nSmurfIndex].idx+1;i++)
                arrLits[arrSmurfPath[nSmurfIndex].idx+1-i-1] = arrSmurfPath[nSmurfIndex].literals[i];
 
-            pUnitLemmaListTail = NULL;
-            pUnitLemmaList->pNextLemma[0] = NULL;
-            pLemma=AddLemma(arrSmurfPath[nSmurfIndex].idx+1,
+            pLemmaInfo=AddLemma(arrSmurfPath[nSmurfIndex].idx+1,
                   arrLits/*arrSmurfPath[nSmurfIndex].literals*/,
-                  false,
-                  pUnitLemmaList, //m lemma is added in here 
-                  pUnitLemmaListTail //m and here 
-                  );
-            pUnitLemmaList->pNextLemma[0] = NULL;
+                  false, NULL, NULL);
+            pLemma = pLemmaInfo->pLemma;
             free(arrLits);
-            /* 
-             LemmaBlock *pLemmaLastBlock;
-             int nNumBlocks;
-             EnterIntoLemmaSpace(arrSmurfPath[nSmurfIndex].idx+1,
-             arrSmurfPath[nSmurfIndex].literals,
-             true,
-             pLemma, pLemmaLastBlock, nNumBlocks);
-             */ 
-
+#else
+            pLemmaInfo=AddLemma(arrSmurfPath[nSmurfIndex].idx+1,
+                  arrSmurfPath[nSmurfIndex].literals, false, NULL, NULL);
+            pLemma = pLemmaInfo->pLemma;
+#endif
             //DisplayLemmaStatus(pLemma, arrSolution);
          } else {
-            pLemma = NULL;
-            pUnitLemmaListTail = NULL;
+            //pLemma = NULL;
+            //pLemmaInfo = NULL;
          }
       } else {
          pLemma = arrInferenceLemmas[j];
-         pUnitLemmaListTail = NULL;
+         //pLemmaInfo = NULL;
       }
 
       if (nCurrentAtomValue == BOOL_UNKNOWN)
       {
          ite_counters[INF_SMURF]++;
-         InferLiteral(nNewInferredAtom, value, false, pLemma, pUnitLemmaListTail, 1);
+         InferLiteral(nNewInferredAtom, value, false, pLemma, pLemmaInfo, 1);
       }
       else // if (nCurrentAtomValue != value)
       {
@@ -103,7 +95,7 @@ CheckSmurfInferences(int nSmurfIndex, int *arrInferences, int nNumInferences,
             )
 
          pConflictLemma = pLemma;
-         pConflictLemmaInfo = pUnitLemmaListTail; /* so we can free it */
+         pConflictLemmaInfo = pLemmaInfo; /* so we can free it */
          //goto_Backtrack;
          return ERR_BT_SMURF;
       }
@@ -121,41 +113,41 @@ UpdateRegularSmurf(int nSmurfIndex)
    SmurfState *pState;
    SmurfState *pOldState;
 
-      d9_printf2("Visiting Regular Smurf #%d\n", nSmurfIndex);
+   d9_printf2("Visiting Regular Smurf #%d\n", nSmurfIndex);
 
-      pOldState = pState = arrCurrentStates[nSmurfIndex];
+   pOldState = pState = arrCurrentStates[nSmurfIndex];
 
-      while(1) 
+   while(1) 
+   {
+      int vble = 0, k;
+      int nNumElts = pState->vbles.nNumElts;
+      int *arrElts = pState->vbles.arrElts;
+      for (k = 0; k < nNumElts; k++) 
       {
-         int vble = 0, k;
-         int nNumElts = pState->vbles.nNumElts;
-         int *arrElts = pState->vbles.arrElts;
-         for (k = 0; k < nNumElts; k++) 
-         {
-            vble = arrElts[k];
-            if (arrSolution[vble]!=BOOL_UNKNOWN)  break;
-         }
+         vble = arrElts[k];
+         if (arrSolution[vble]!=BOOL_UNKNOWN)  break;
+      }
 
-         /* if no more instantiated variables */
-         if (k == nNumElts) break;
+      /* if no more instantiated variables */
+      if (k == nNumElts) break;
 
-         //Save_arrCurrentStates(nSmurfIndex);
+      //Save_arrCurrentStates(nSmurfIndex);
 
-         if (compress_smurfs && NO_LEMMAS == 0) {
-            // keep track of the path for lemmas
-            // the atoms in the path is reversed for lemmas
-            arrSmurfPath[nSmurfIndex].literals[arrSmurfPath[nSmurfIndex].idx++] 
-               = arrElts[k] * (arrSolution[vble]==BOOL_FALSE?1:-1);
-         }
+      if (compress_smurfs && NO_LEMMAS == 0) {
+         // keep track of the path for lemmas
+         // the atoms in the path is reversed for lemmas
+         arrSmurfPath[nSmurfIndex].literals[arrSmurfPath[nSmurfIndex].idx++] 
+            = arrElts[k] * (arrSolution[vble]==BOOL_FALSE?1:-1);
+      }
 
-         // Get the transition.
-         Transition *pTransition = FindTransition(pState, k, vble, arrSolution[vble]);
-         assert (pTransition);
+      // Get the transition.
+      Transition *pTransition = FindTransition(pState, k, vble, arrSolution[vble]);
+      assert (pTransition);
 
-         if (pTransition->positiveInferences.nNumElts &&
-               CheckSmurfInferences(
-                  nSmurfIndex,
-                  pTransition->positiveInferences.arrElts,
+      if (pTransition->positiveInferences.nNumElts &&
+            CheckSmurfInferences(
+               nSmurfIndex,
+               pTransition->positiveInferences.arrElts,
                   pTransition->positiveInferences.nNumElts,
                   pTransition->arrPosInferenceLemmas,
                   BOOL_TRUE)) return ERR_BT_SMURF;
@@ -180,7 +172,7 @@ UpdateRegularSmurf(int nSmurfIndex)
                break; // break the for all vbles in smurf loop
          }
 
-      } // while (1) there is a instantiated variable
+   } // while (1) there is a instantiated variable
 
    return NO_ERROR;
 }
