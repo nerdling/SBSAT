@@ -290,7 +290,7 @@ bdd_gc()
    
 
    // clean the hash table
-   for (i=0;i<hash_memory_mask; i++)
+   for (i=0;i<=hash_memory_mask; i++)
    {
       hash_memory[i] = NULL;
    }

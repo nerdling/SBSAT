@@ -274,6 +274,10 @@ Do_Apply_Inferences ()
 		inferlist = inferlist->next;
 		delete temp;
 		temp = NULL;
+
+      int bdd_gc();
+      if (rand() % 100 < 4) bdd_gc();
+
    }
 	inferlist = new infer; //NEW
 	inferlist->next = NULL;
