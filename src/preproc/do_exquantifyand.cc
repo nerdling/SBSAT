@@ -197,11 +197,12 @@ int ExQuantifyAnd () {
 					 default: break;
 					}
 					
-					infer *x_infers = possible_infer_x(functions[j], i);
+					infer *x_infers = NULL;
+					if(ex_infer == 1) x_infers = possible_infer_x(functions[j], i);
 					
-					if(x_infers == NULL) {
+					if(x_infers == NULL && ex_infer == 1) {
 						//do nothing. Variable dropped out or was inferred during ANDing.
-					} else if(x_infers->nums[0] == 0) {
+					} else if(ex_infer == 0 || x_infers->nums[0] == 0) {
 						for(int iter = 0; iter<str_length; iter++)
 						  d3_printf1("\b");
 						d3_printf2 ("*{%d}", i);

@@ -108,7 +108,8 @@ int ExQuantify () {
 					
 					//!!!!!!!Should really go through each variable i that occurs only in this bdd!!!!!!!!
 					//Maybe a silly thing, but could lead to more inferences!
-					infer *x_infers = possible_infer_x(functions[j], i);
+					infer *x_infers = NULL;
+					if(ex_infer == 1) x_infers = possible_infer_x(functions[j], i);
 					//infer *x_infers = new infer;
 					//x_infers->nums[0] = 0;
 					
@@ -139,12 +140,12 @@ int ExQuantify () {
 						}
 					}
 */
-					if(x_infers == NULL) {
+					if(x_infers == NULL && ex_infer == 1) {
 						//continue, variable was inferenced away earlier.
 						//It will get picked up next loop around
 						//continue;
 						//goto ex_bailout;
-					} else if(x_infers->nums[0] == 0 || !ex_infer) {
+					} else if(ex_infer == 0 || x_infers->nums[0] == 0) {
 						for(int iter = 0; iter<str_length; iter++)
 						  d3_printf1("\b");
 						str_length = 0;

@@ -278,7 +278,7 @@ bdd_flag_nodes(BDDNode *node)
    //node->inferences = NULL;
    bdd_flag_nodes(node->thenCase);
    bdd_flag_nodes(node->elseCase);
-	if(node->notCase!=NULL) bdd_flag_nodes(node->notCase); //SEAN
+	bdd_flag_nodes(node->notCase); //SEAN
 	if(node->or_bdd!=NULL) bdd_flag_nodes(node->or_bdd); //mk
 }
 
@@ -352,7 +352,6 @@ bdd_gc()
             // deleted 
             DeallocateInferences_var(node->inferences, node->variable);
 
-            node->notCase = NULL; //SEAN
             node->or_bdd = NULL; //mk
 
 				memset(node, 0, sizeof(BDDNode));
@@ -451,9 +450,8 @@ bddtable_load(void *_bddtable, int _bddtable_len, void *_bddtable_start, int *_s
             ((char*)bddmemory[0].memory[i].thenCase + shift);
          bddmemory[0].memory[i].elseCase = (BDDNode*)
             ((char*)bddmemory[0].memory[i].elseCase + shift);
-         if (bddmemory[0].memory[i].notCase != NULL)
-            bddmemory[0].memory[i].notCase = (BDDNode*)
-               ((char*)bddmemory[0].memory[i].notCase + shift);
+			bddmemory[0].memory[i].notCase = (BDDNode*)
+			  ((char*)bddmemory[0].memory[i].notCase + shift);
          bddmemory[0].memory[i].next = NULL;
       } else {
          bddmemory[0].memory[i].next = bddtable_free;
