@@ -44,11 +44,7 @@ AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
-CC = @CC@
-CCDEPMODE = @CCDEPMODE@
-CFLAGS = @CFLAGS@
 CPPFLAGS = @CPPFLAGS@
-CVSBUILD = @CVSBUILD@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
 CXXDEPMODE = @CXXDEPMODE@
@@ -56,7 +52,6 @@ CXXFLAGS = @CXXFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
-ECHO = @ECHO@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
@@ -73,14 +68,8 @@ LEX_OUTPUT_ROOT = @LEX_OUTPUT_ROOT@
 LIBM = @LIBM@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
-LIBTOOL = @LIBTOOL@
-LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
 MAKEINFO = @MAKEINFO@
-MYLIBTOOL_FALSE = @MYLIBTOOL_FALSE@
-MYLIBTOOL_TRUE = @MYLIBTOOL_TRUE@
-NO_CVSBUILD_FALSE = @NO_CVSBUILD_FALSE@
-NO_CVSBUILD_TRUE = @NO_CVSBUILD_TRUE@
 OBJEXT = @OBJEXT@
 PACKAGE = @PACKAGE@
 PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
@@ -90,19 +79,14 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 RANLIB = @RANLIB@
-SBSAT_STATIC_FALSE = @SBSAT_STATIC_FALSE@
-SBSAT_STATIC_TRUE = @SBSAT_STATIC_TRUE@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
 VERSION = @VERSION@
 YACC = @YACC@
-ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
 ac_ct_RANLIB = @ac_ct_RANLIB@
 ac_ct_STRIP = @ac_ct_STRIP@
-am__fastdepCC_FALSE = @am__fastdepCC_FALSE@
-am__fastdepCC_TRUE = @am__fastdepCC_TRUE@
 am__fastdepCXX_FALSE = @am__fastdepCXX_FALSE@
 am__fastdepCXX_TRUE = @am__fastdepCXX_TRUE@
 am__include = @am__include@
@@ -135,182 +119,120 @@ sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 INCLUDES = -I$(top_srcdir)/include
-SOURCES = solve.cc ksolve.cc \
+noinst_LIBRARIES = libsolver.a libsolver2.a
+EXTRA_DIST = heur_choice.cc
+
+libsolver_a_SOURCES = solve.cc bddwalk.cc \
              init_solver.cc brancher.cc \
 	     backtrack.cc backtrack_nl.cc backtrack_sbj.cc bt_misc.cc \
              select_bp.cc \
-             j_heuristic.cc j_smurf.cc j_update_heu.cc \
-	     j_specfn.cc j_specfn_and.cc j_specfn_xor.cc j_specfn_minmax.cc \
-	     l_heuristic.cc l_lemma.cc \
+             j_heuristic.cc j_smurf.cc j_specfn.cc j_update_heu.cc \
+             l_heuristic.cc l_lemma.cc \
 	     i_heuristic.cc \
              heuristic.cc \
              bt_lemmas.cc bt_specfn.cc bt_smurfs.cc \
-             bt_specfn_and.cc bt_specfn_xor.cc bt_specfn_minmax.cc \
-             lemmas.cc lemmas_and.cc lemmas_xor.cc lemmas_minmax.cc \
-	     lemmacache.cc lemmainfo.cc lemmaspace.cc lemmawlits.cc lemmamisc.cc \
-             smurffactory.cc smurfstates.cc \
+             bt_specfn_and.cc bt_specfn_xor.cc \
+             lemmainfo.cc lemmaspace.cc smurffactory.cc smurfstates.cc \
              state_stacks.cc \
-	     bdd2smurf.cc bdd2specfn_and.cc bdd2specfn_xor.cc bdd2specfn_minmax.cc \
-	     autarky.cc \
-	     display.cc display_sf.cc verify.cc \
-	     recordsol.cc transitions.cc \
-	     update_heu.cc \
-	     crtwin.cc load_lemmas.cc interface.cc heur_stack.cc \
-	     bddwalk.cc wvf.cc 
+	     bdd2smurf.cc specfn2smurf.cc autarky.cc \
+             display.cc display_sf.cc verify.cc \
+	     recordsol.cc sf_addons.cc smurfaddons.cc transitions.cc wvf.cc update_heu.cc \
+	     crtwin.cc load_lemmas.cc interface.cc heur_stack.cc
 
-EXTRA_DIST = heur_choice.cc
 
-@MYLIBTOOL_TRUE@noinst_LTLIBRARIES = libsolver.la libsolver2.la
-@MYLIBTOOL_TRUE@libsolver_la_SOURCES = $(SOURCES)
-@MYLIBTOOL_TRUE@libsolver2_la_SOURCES = libsolver.cc
+libsolver2_a_SOURCES = libsolver.cc
 subdir = src/solver
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/include/config.h
 CONFIG_CLEAN_FILES =
-LTLIBRARIES = $(noinst_LTLIBRARIES)
+LIBRARIES = $(noinst_LIBRARIES)
 
-libsolver_la_LDFLAGS =
-libsolver_la_LIBADD =
-am__libsolver_la_SOURCES_DIST = solve.cc ksolve.cc init_solver.cc \
-	brancher.cc backtrack.cc backtrack_nl.cc backtrack_sbj.cc \
-	bt_misc.cc select_bp.cc j_heuristic.cc j_smurf.cc \
-	j_update_heu.cc j_specfn.cc j_specfn_and.cc j_specfn_xor.cc \
-	j_specfn_minmax.cc l_heuristic.cc l_lemma.cc i_heuristic.cc \
-	heuristic.cc bt_lemmas.cc bt_specfn.cc bt_smurfs.cc \
-	bt_specfn_and.cc bt_specfn_xor.cc bt_specfn_minmax.cc lemmas.cc \
-	lemmas_and.cc lemmas_xor.cc lemmas_minmax.cc lemmacache.cc \
-	lemmainfo.cc lemmaspace.cc lemmawlits.cc lemmamisc.cc \
-	smurffactory.cc smurfstates.cc state_stacks.cc bdd2smurf.cc \
-	bdd2specfn_and.cc bdd2specfn_xor.cc bdd2specfn_minmax.cc \
-	autarky.cc display.cc display_sf.cc verify.cc recordsol.cc \
-	transitions.cc update_heu.cc crtwin.cc load_lemmas.cc \
-	interface.cc heur_stack.cc bddwalk.cc wvf.cc
-am__objects_1 = solve.lo ksolve.lo init_solver.lo brancher.lo \
-	backtrack.lo backtrack_nl.lo backtrack_sbj.lo bt_misc.lo \
-	select_bp.lo j_heuristic.lo j_smurf.lo j_update_heu.lo \
-	j_specfn.lo j_specfn_and.lo j_specfn_xor.lo j_specfn_minmax.lo \
-	l_heuristic.lo l_lemma.lo i_heuristic.lo heuristic.lo \
-	bt_lemmas.lo bt_specfn.lo bt_smurfs.lo bt_specfn_and.lo \
-	bt_specfn_xor.lo bt_specfn_minmax.lo lemmas.lo lemmas_and.lo \
-	lemmas_xor.lo lemmas_minmax.lo lemmacache.lo lemmainfo.lo \
-	lemmaspace.lo lemmawlits.lo lemmamisc.lo smurffactory.lo \
-	smurfstates.lo state_stacks.lo bdd2smurf.lo bdd2specfn_and.lo \
-	bdd2specfn_xor.lo bdd2specfn_minmax.lo autarky.lo display.lo \
-	display_sf.lo verify.lo recordsol.lo transitions.lo \
-	update_heu.lo crtwin.lo load_lemmas.lo interface.lo \
-	heur_stack.lo bddwalk.lo wvf.lo
-@MYLIBTOOL_TRUE@am_libsolver_la_OBJECTS = $(am__objects_1)
-libsolver_la_OBJECTS = $(am_libsolver_la_OBJECTS)
-libsolver2_la_LDFLAGS =
-libsolver2_la_LIBADD =
-am__libsolver2_la_SOURCES_DIST = libsolver.cc
-@MYLIBTOOL_TRUE@am_libsolver2_la_OBJECTS = libsolver.lo
-libsolver2_la_OBJECTS = $(am_libsolver2_la_OBJECTS)
+libsolver_a_AR = $(AR) cru
+libsolver_a_LIBADD =
+am_libsolver_a_OBJECTS = solve.$(OBJEXT) bddwalk.$(OBJEXT) \
+	init_solver.$(OBJEXT) brancher.$(OBJEXT) backtrack.$(OBJEXT) \
+	backtrack_nl.$(OBJEXT) backtrack_sbj.$(OBJEXT) \
+	bt_misc.$(OBJEXT) select_bp.$(OBJEXT) j_heuristic.$(OBJEXT) \
+	j_smurf.$(OBJEXT) j_specfn.$(OBJEXT) j_update_heu.$(OBJEXT) \
+	l_heuristic.$(OBJEXT) l_lemma.$(OBJEXT) i_heuristic.$(OBJEXT) \
+	heuristic.$(OBJEXT) bt_lemmas.$(OBJEXT) bt_specfn.$(OBJEXT) \
+	bt_smurfs.$(OBJEXT) bt_specfn_and.$(OBJEXT) \
+	bt_specfn_xor.$(OBJEXT) lemmainfo.$(OBJEXT) \
+	lemmaspace.$(OBJEXT) smurffactory.$(OBJEXT) \
+	smurfstates.$(OBJEXT) state_stacks.$(OBJEXT) \
+	bdd2smurf.$(OBJEXT) specfn2smurf.$(OBJEXT) autarky.$(OBJEXT) \
+	display.$(OBJEXT) display_sf.$(OBJEXT) verify.$(OBJEXT) \
+	recordsol.$(OBJEXT) sf_addons.$(OBJEXT) smurfaddons.$(OBJEXT) \
+	transitions.$(OBJEXT) wvf.$(OBJEXT) update_heu.$(OBJEXT) \
+	crtwin.$(OBJEXT) load_lemmas.$(OBJEXT) interface.$(OBJEXT) \
+	heur_stack.$(OBJEXT)
+libsolver_a_OBJECTS = $(am_libsolver_a_OBJECTS)
+libsolver2_a_AR = $(AR) cru
+libsolver2_a_LIBADD =
+am_libsolver2_a_OBJECTS = libsolver.$(OBJEXT)
+libsolver2_a_OBJECTS = $(am_libsolver2_a_OBJECTS)
 
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)/include
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
-@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/autarky.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/backtrack.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/backtrack_nl.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/backtrack_sbj.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/bdd2smurf.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/bdd2specfn_and.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/bdd2specfn_minmax.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/bdd2specfn_xor.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/bddwalk.Plo ./$(DEPDIR)/brancher.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/bt_lemmas.Plo ./$(DEPDIR)/bt_misc.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/bt_smurfs.Plo ./$(DEPDIR)/bt_specfn.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/bt_specfn_and.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/bt_specfn_minmax.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/bt_specfn_xor.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/crtwin.Plo ./$(DEPDIR)/display.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/display_sf.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/heur_stack.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/heuristic.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/i_heuristic.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/init_solver.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/interface.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/j_heuristic.Plo ./$(DEPDIR)/j_smurf.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/j_specfn.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/j_specfn_and.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/j_specfn_minmax.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/j_specfn_xor.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/j_update_heu.Plo ./$(DEPDIR)/ksolve.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/l_heuristic.Plo ./$(DEPDIR)/l_lemma.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/lemmacache.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/lemmainfo.Plo ./$(DEPDIR)/lemmamisc.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/lemmas.Plo ./$(DEPDIR)/lemmas_and.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/lemmas_minmax.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/lemmas_xor.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/lemmaspace.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/lemmawlits.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/libsolver.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/load_lemmas.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/recordsol.Plo ./$(DEPDIR)/select_bp.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/smurffactory.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/smurfstates.Plo ./$(DEPDIR)/solve.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/state_stacks.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/transitions.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/update_heu.Plo ./$(DEPDIR)/verify.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/wvf.Plo
+@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/autarky.Po ./$(DEPDIR)/backtrack.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/backtrack_nl.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/backtrack_sbj.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/bdd2smurf.Po ./$(DEPDIR)/bddwalk.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/brancher.Po ./$(DEPDIR)/bt_lemmas.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/bt_misc.Po ./$(DEPDIR)/bt_smurfs.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/bt_specfn.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/bt_specfn_and.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/bt_specfn_xor.Po ./$(DEPDIR)/crtwin.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/display.Po ./$(DEPDIR)/display_sf.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/heur_stack.Po ./$(DEPDIR)/heuristic.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/i_heuristic.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/init_solver.Po ./$(DEPDIR)/interface.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/j_heuristic.Po ./$(DEPDIR)/j_smurf.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/j_specfn.Po ./$(DEPDIR)/j_update_heu.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/l_heuristic.Po ./$(DEPDIR)/l_lemma.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/lemmainfo.Po ./$(DEPDIR)/lemmaspace.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/libsolver.Po ./$(DEPDIR)/load_lemmas.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/recordsol.Po ./$(DEPDIR)/select_bp.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/sf_addons.Po ./$(DEPDIR)/smurfaddons.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/smurffactory.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/smurfstates.Po ./$(DEPDIR)/solve.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/specfn2smurf.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/state_stacks.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/transitions.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/update_heu.Po ./$(DEPDIR)/verify.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/wvf.Po
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
-LTCXXCOMPILE = $(LIBTOOL) --silent --mode=compile $(CXX) $(DEFS) \
-	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
-	$(AM_CXXFLAGS) $(CXXFLAGS)
 CXXLD = $(CXX)
-CXXLINK = $(LIBTOOL) --mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) \
-	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-DIST_SOURCES = $(am__libsolver_la_SOURCES_DIST) \
-	$(am__libsolver2_la_SOURCES_DIST)
+CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
+	-o $@
+DIST_SOURCES = $(libsolver_a_SOURCES) $(libsolver2_a_SOURCES)
 DIST_COMMON = Makefile.am Makefile.in
-SOURCES = solve.cc ksolve.cc \
-             init_solver.cc brancher.cc \
-	     backtrack.cc backtrack_nl.cc backtrack_sbj.cc bt_misc.cc \
-             select_bp.cc \
-             j_heuristic.cc j_smurf.cc j_update_heu.cc \
-	     j_specfn.cc j_specfn_and.cc j_specfn_xor.cc j_specfn_minmax.cc \
-	     l_heuristic.cc l_lemma.cc \
-	     i_heuristic.cc \
-             heuristic.cc \
-             bt_lemmas.cc bt_specfn.cc bt_smurfs.cc \
-             bt_specfn_and.cc bt_specfn_xor.cc bt_specfn_minmax.cc \
-             lemmas.cc lemmas_and.cc lemmas_xor.cc lemmas_minmax.cc \
-	     lemmacache.cc lemmainfo.cc lemmaspace.cc lemmawlits.cc lemmamisc.cc \
-             smurffactory.cc smurfstates.cc \
-             state_stacks.cc \
-	     bdd2smurf.cc bdd2specfn_and.cc bdd2specfn_xor.cc bdd2specfn_minmax.cc \
-	     autarky.cc \
-	     display.cc display_sf.cc verify.cc \
-	     recordsol.cc transitions.cc \
-	     update_heu.cc \
-	     crtwin.cc load_lemmas.cc interface.cc heur_stack.cc \
-	     bddwalk.cc wvf.cc 
-
+SOURCES = $(libsolver_a_SOURCES) $(libsolver2_a_SOURCES)
 
 all: all-am
 
 .SUFFIXES:
-.SUFFIXES: .cc .lo .o .obj
+.SUFFIXES: .cc .o .obj
 $(srcdir)/Makefile.in:  Makefile.am  $(top_srcdir)/configure.ac $(ACLOCAL_M4)
 	cd $(top_srcdir) && \
 	  $(AUTOMAKE) --gnu  src/solver/Makefile
 Makefile:  $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe)
 
-clean-noinstLTLIBRARIES:
-	-test -z "$(noinst_LTLIBRARIES)" || rm -f $(noinst_LTLIBRARIES)
-	@list='$(noinst_LTLIBRARIES)'; for p in $$list; do \
-	  dir="`echo $$p | sed -e 's|/[^/]*$$||'`"; \
-	  test "$$dir" = "$$p" && dir=.; \
-	  echo "rm -f \"$${dir}/so_locations\""; \
-	  rm -f "$${dir}/so_locations"; \
-	done
-libsolver.la: $(libsolver_la_OBJECTS) $(libsolver_la_DEPENDENCIES) 
-	$(CXXLINK)  $(libsolver_la_LDFLAGS) $(libsolver_la_OBJECTS) $(libsolver_la_LIBADD) $(LIBS)
-libsolver2.la: $(libsolver2_la_OBJECTS) $(libsolver2_la_DEPENDENCIES) 
-	$(CXXLINK)  $(libsolver2_la_LDFLAGS) $(libsolver2_la_OBJECTS) $(libsolver2_la_LIBADD) $(LIBS)
+AR = ar
+
+clean-noinstLIBRARIES:
+	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
+libsolver.a: $(libsolver_a_OBJECTS) $(libsolver_a_DEPENDENCIES) 
+	-rm -f libsolver.a
+	$(libsolver_a_AR) libsolver.a $(libsolver_a_OBJECTS) $(libsolver_a_LIBADD)
+	$(RANLIB) libsolver.a
+libsolver2.a: $(libsolver2_a_OBJECTS) $(libsolver2_a_DEPENDENCIES) 
+	-rm -f libsolver2.a
+	$(libsolver2_a_AR) libsolver2.a $(libsolver2_a_OBJECTS) $(libsolver2_a_LIBADD)
+	$(RANLIB) libsolver2.a
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT) core *.core
@@ -318,69 +240,56 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/autarky.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/backtrack.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/backtrack_nl.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/backtrack_sbj.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bdd2smurf.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bdd2specfn_and.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bdd2specfn_minmax.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bdd2specfn_xor.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bddwalk.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/brancher.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bt_lemmas.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bt_misc.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bt_smurfs.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bt_specfn.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bt_specfn_and.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bt_specfn_minmax.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bt_specfn_xor.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/crtwin.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/display.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/display_sf.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/heur_stack.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/heuristic.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/i_heuristic.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/init_solver.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/interface.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/j_heuristic.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/j_smurf.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/j_specfn.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/j_specfn_and.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/j_specfn_minmax.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/j_specfn_xor.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/j_update_heu.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ksolve.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/l_heuristic.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/l_lemma.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lemmacache.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lemmainfo.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lemmamisc.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lemmas.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lemmas_and.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lemmas_minmax.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lemmas_xor.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lemmaspace.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lemmawlits.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libsolver.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/load_lemmas.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/recordsol.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/select_bp.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/smurffactory.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/smurfstates.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/solve.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/state_stacks.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/transitions.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/update_heu.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/verify.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wvf.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/autarky.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/backtrack.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/backtrack_nl.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/backtrack_sbj.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bdd2smurf.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bddwalk.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/brancher.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bt_lemmas.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bt_misc.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bt_smurfs.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bt_specfn.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bt_specfn_and.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bt_specfn_xor.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/crtwin.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/display.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/display_sf.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/heur_stack.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/heuristic.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/i_heuristic.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/init_solver.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/interface.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/j_heuristic.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/j_smurf.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/j_specfn.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/j_update_heu.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/l_heuristic.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/l_lemma.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lemmainfo.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lemmaspace.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libsolver.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/load_lemmas.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/recordsol.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/select_bp.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sf_addons.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/smurfaddons.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/smurffactory.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/smurfstates.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/solve.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/specfn2smurf.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/state_stacks.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/transitions.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/update_heu.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/verify.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wvf.Po@am__quote@
 
 distclean-depend:
 	-rm -rf ./$(DEPDIR)
 
 .cc.o:
-@am__fastdepCXX_TRUE@	@echo Compiling $*
-@am__fastdepCXX_TRUE@	@if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" \
+@am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" \
 @am__fastdepCXX_TRUE@	  -c -o $@ `test -f '$<' || echo '$(srcdir)/'`$<; \
 @am__fastdepCXX_TRUE@	then mv "$(DEPDIR)/$*.Tpo" "$(DEPDIR)/$*.Po"; \
 @am__fastdepCXX_TRUE@	else rm -f "$(DEPDIR)/$*.Tpo"; exit 1; \
@@ -391,8 +300,7 @@ distclean-depend:
 @am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ `test -f '$<' || echo '$(srcdir)/'`$<
 
 .cc.obj:
-@am__fastdepCXX_TRUE@	@echo Compiling $*
-@am__fastdepCXX_TRUE@	@if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" \
+@am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" \
 @am__fastdepCXX_TRUE@	  -c -o $@ `if test -f '$<'; then $(CYGPATH_W) '$<'; else $(CYGPATH_W) '$(srcdir)/$<'; fi`; \
 @am__fastdepCXX_TRUE@	then mv "$(DEPDIR)/$*.Tpo" "$(DEPDIR)/$*.Po"; \
 @am__fastdepCXX_TRUE@	else rm -f "$(DEPDIR)/$*.Tpo"; exit 1; \
@@ -401,27 +309,6 @@ distclean-depend:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ `if test -f '$<'; then $(CYGPATH_W) '$<'; else $(CYGPATH_W) '$(srcdir)/$<'; fi`
-
-.cc.lo:
-@am__fastdepCXX_TRUE@	@echo Compiling $*
-@am__fastdepCXX_TRUE@	@if $(LTCXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" \
-@am__fastdepCXX_TRUE@	  -c -o $@ `test -f '$<' || echo '$(srcdir)/'`$<; \
-@am__fastdepCXX_TRUE@	then mv "$(DEPDIR)/$*.Tpo" "$(DEPDIR)/$*.Plo"; \
-@am__fastdepCXX_TRUE@	else rm -f "$(DEPDIR)/$*.Tpo"; exit 1; \
-@am__fastdepCXX_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	depfile='$(DEPDIR)/$*.Plo' tmpdepfile='$(DEPDIR)/$*.TPlo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LTCXXCOMPILE) -c -o $@ `test -f '$<' || echo '$(srcdir)/'`$<
-
-mostlyclean-libtool:
-	-rm -f *.lo
-
-clean-libtool:
-	-rm -rf .libs _libs
-
-distclean-libtool:
-	-rm -f libtool
 uninstall-info-am:
 
 ETAGS = etags
@@ -511,7 +398,7 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(LTLIBRARIES)
+all-am: Makefile $(LIBRARIES)
 
 installdirs:
 
@@ -541,13 +428,12 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-generic clean-libtool clean-noinstLTLIBRARIES \
-	mostlyclean-am
+clean-am: clean-generic clean-noinstLIBRARIES mostlyclean-am
 
 distclean: distclean-am
 
 distclean-am: clean-am distclean-compile distclean-depend \
-	distclean-generic distclean-libtool distclean-tags
+	distclean-generic distclean-tags
 
 dvi: dvi-am
 
@@ -573,8 +459,7 @@ maintainer-clean-am: distclean-am maintainer-clean-generic
 
 mostlyclean: mostlyclean-am
 
-mostlyclean-am: mostlyclean-compile mostlyclean-generic \
-	mostlyclean-libtool
+mostlyclean-am: mostlyclean-compile mostlyclean-generic
 
 pdf: pdf-am
 
@@ -587,20 +472,16 @@ ps-am:
 uninstall-am: uninstall-info-am
 
 .PHONY: CTAGS GTAGS all all-am check check-am clean clean-generic \
-	clean-libtool clean-noinstLTLIBRARIES ctags distclean \
-	distclean-compile distclean-depend distclean-generic \
-	distclean-libtool distclean-tags distdir dvi dvi-am info \
-	info-am install install-am install-data install-data-am \
-	install-exec install-exec-am install-info install-info-am \
-	install-man install-strip installcheck installcheck-am \
-	installdirs maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-compile mostlyclean-generic \
-	mostlyclean-libtool pdf pdf-am ps ps-am tags uninstall \
+	clean-noinstLIBRARIES ctags distclean distclean-compile \
+	distclean-depend distclean-generic distclean-tags distdir dvi \
+	dvi-am info info-am install install-am install-data \
+	install-data-am install-exec install-exec-am install-info \
+	install-info-am install-man install-strip installcheck \
+	installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-compile \
+	mostlyclean-generic pdf pdf-am ps ps-am tags uninstall \
 	uninstall-am uninstall-info-am
 
-#noinst_LIBRARIES = libsolver.a libsolver2.a
-#libsolver_a_SOURCES= $(SOURCES)
-#libsolver2_a_SOURCES=libsolver.cc
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

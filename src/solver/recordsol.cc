@@ -1,7 +1,7 @@
 /* =========FOR INTERNAL USE ONLY. NO DISTRIBUTION PLEASE ========== */
 
 /*********************************************************************
- Copyright 1999-2007, University of Cincinnati.  All rights reserved.
+ Copyright 1999-2003, University of Cincinnati.  All rights reserved.
  By using this software the USER indicates that he or she has read,
  understood and will comply with the following:
 
@@ -34,12 +34,14 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
-
 #include "ite.h"
 #include "solver.h"
 
+extern int *arrSolver2IteVarMap;
+
 t_solution_info *solution_info = NULL;
 t_solution_info *solution_info_head = NULL;
+
 
 ITE_INLINE int
 RecordSolution ()
@@ -48,7 +50,9 @@ RecordSolution ()
      VerifySolution ();
    }
 
-   /* collect all choice points */
+  /* collect all choice points */
+   extern ChoicePointStruct *arrChoicePointStack;
+   extern ChoicePointStruct *pChoicePointTop;
    ChoicePointStruct *pChoicePoint = arrChoicePointStack;
 
    int  tmp_nNumElts = pChoicePointTop - pChoicePoint;
@@ -75,23 +79,23 @@ RecordSolution ()
 			  false, pFirstBlock, pLastBlock, nNumBlocks);
 
    if (result_display_type) {
-		/* create another node in solution chain */
-		t_solution_info *tmp_solution_info;
-		tmp_solution_info = (t_solution_info*)ite_calloc(1, sizeof(t_solution_info),
- 								  9, "solution array");
-      tmp_solution_info->nNumElts = tmp_nNumElts_allocate;
-      tmp_solution_info->arrElts = tmp_arrElts;
-		
-		if (solution_info_head == NULL) {
+     /* create another node in solution chain */
+     t_solution_info *tmp_solution_info;
+     tmp_solution_info = (t_solution_info*)ite_calloc(1, sizeof(t_solution_info),
+           9, "solution array");
+  
+     if (solution_info_head == NULL) {
          solution_info = tmp_solution_info;
          solution_info_head = solution_info;
       } else {
-			solution_info->next = (struct _t_solution_info*)tmp_solution_info;
-			solution_info = (t_solution_info*)(solution_info->next);
+       solution_info->next = (struct _t_solution_info*)tmp_solution_info;
+       solution_info = (t_solution_info*)(solution_info->next);
       }
+      tmp_solution_info->nNumElts = tmp_nNumElts_allocate;
+      tmp_solution_info->arrElts = tmp_arrElts;
+	
       for (int i = 0; i<nNumVariables; i++) {
-         if (arrSolver2IteVarMap[i] <= numinp)
-            tmp_solution_info->arrElts[arrSolver2IteVarMap[i]] = arrSolution[i];
+        tmp_solution_info->arrElts[arrSolver2IteVarMap[i]] = arrSolution[i];
       }
    } else {
       free(tmp_arrElts);
@@ -101,7 +105,7 @@ RecordSolution ()
    ite_counters[NUM_SOLUTIONS]++;
    if (ite_counters[NUM_SOLUTIONS] == max_solutions) return 0;
 
-   d5_printf1("Recording the solution and continuing backtracking...\n");
+   d2_printf1("Recording the solution and continuing backtracking...\n");
    pConflictLemma = pFirstBlock;
    // goto_Backtrack;
    ite_counters[ERR_BT_SOL_LEMMA]++;
