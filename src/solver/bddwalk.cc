@@ -280,7 +280,6 @@ int walkSolve()
 	expertime = get_runtime();
 	while ((!abort_flag) && (numsuccesstry < numsol) && (numtry < numrun)) {
 		numtry++;
-		//init(initfile, initoptions);
 		//init_1false(initfile, initoptions);
 		init_CountFalses(initfile, initoptions);
 		update_statistics_start_try();
