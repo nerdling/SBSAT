@@ -125,10 +125,10 @@ long int numlook; /* used to make sure we don't traverse BDDs we've already */
                   /* traversed this same flip */
 
 int numrun = BIG;
-int cutoff = 100000; /* number of flips per random restart (on the command line --cutoff) */
+int cutoff = 0; /* number of flips per random restart (on the command line --cutoff) */
 int target = 0; /* number of BDDs left to be satisfied for a solution */
 int numtry = 0; /* total attempts at solutions */
-int numsol = NOVALUE; /* stop after finding this many solutions (on the command line --max-solutions) */
+int numsol = 0; /* stop after finding this many solutions (on the command line --max-solutions) */
 
 /* Histogram of tail */
 
@@ -220,8 +220,7 @@ void print_statistics_final(void);
 /* Main                             */
 /************************************/
 
-int walkSolve()
-{
+int walkSolve() {
 	/* Get values from the command line */
 	numsol = max_solutions;
 	cutoff = BDDWalkCutoff;
@@ -903,10 +902,14 @@ void update_and_print_statistics_end_try(void) {
 		
 		flips_x = 0;
 		flips_r = 0;
+		if(countunsat() != 0) {
+			fprintf(stderr, "Program error, verification of solution fails!\n");
+			exit(-1);
+		}
 	}
 
 	d2_printf8(" %9li %9i %9.2f %9.2f %9.2f %9li %9i",
-			 lowbad,numfalse,avgfalse, std_dev_avgfalse,ratio_avgfalse,numflip, (numsuccesstry*100)/numtry);
+				  lowbad,numfalse,avgfalse, std_dev_avgfalse,ratio_avgfalse,numflip, (numsuccesstry*100)/numtry);
 	if (numsuccesstry > 0) {
 		d2_printf2(" %9li", totalsuccessflip/numsuccesstry);
 	   d2_printf2(" %9.2f", mean_x);
@@ -914,13 +917,8 @@ void update_and_print_statistics_end_try(void) {
 			d2_printf2(" %9.2f", std_dev_x);
 		}
 	}
-//	d2_printf2("%d", numflip);
+	//d2_printf2("%d", numflip);
 	d2_printf1("\n");
-	
-	if(numfalse == 0 && countunsat() != 0) {
-		fprintf(stderr, "Program error, verification of solution fails!\n");
-		exit(-1);
-	}
 	
 	fflush(stdout);
 }
