@@ -92,6 +92,8 @@ Do_Apply_Inferences ()
 				d4_printf5("{%s(%d)=%s(%d)}", s_name(inferlist->nums[0]), inferlist->nums[0], s_name(inferlist->nums[1]), inferlist->nums[1]);
 				str_length = 0;
 				variablelist[inferlist->nums[1]].true_false = -1;
+				if(variablelist[inferlist->nums[0]].true_false == 2)
+				  variablelist[inferlist->nums[0]].true_false = -1;
 				variablelist[inferlist->nums[1]].equalvars = inferlist->nums[0];
 				int count1 = 0;
 				num_replace_all(amount[inferlist->nums[1]].head, inferlist->nums[1], inferlist->nums[0]);
@@ -160,6 +162,8 @@ Do_Apply_Inferences ()
 				d3e_printf3 ("{%d=%d}", inferlist->nums[0], inferlist->nums[1]);
 				d4_printf5 ("{%s(%d)!=%s(%d)}", s_name(inferlist->nums[0]), inferlist->nums[0], s_name(-inferlist->nums[1]), -inferlist->nums[1]);
 				variablelist[-inferlist->nums[1]].true_false = -1;
+				if(variablelist[inferlist->nums[0]].true_false == 2)
+				  variablelist[inferlist->nums[0]].true_false = -1;
 				variablelist[-inferlist->nums[1]].equalvars = -inferlist->nums[0];
 				//Gotta keep that (-inferlist->nums[0]) negative...trust me
 				int count1 = 0;

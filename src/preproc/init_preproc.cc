@@ -326,16 +326,7 @@ Finish_Preprocessing()
 	
 	ite_free((void**)&num_funcs_var_occurs);
 	
-	for (int x = 0; x < nmbrFunctions; x++) {
-		if (variables[x].num != NULL)
-		  delete [] variables[x].num;
-	}
-
 	ite_free((void **)&autark_BDD);
-
-	ite_free((void **)&variables);
-	//free(variables);
-	variables = NULL;
 
    DeallocateInferences(inferlist);
 	inferlist = NULL;
@@ -364,18 +355,33 @@ Finish_Preprocessing()
 			count--; //Don't send function to the solver
 		} else if (functionType[x] == AUTARKY_FUNC && USE_AUTARKY_SMURFS){
 			if (l->equivCount(equalityVble[x])==0 && l->opposCount(equalityVble[x])==0) {
+				for(int z = 0; z < length[x]; z++) {
+					if(variablelist[variables[x].num[z]].true_false!=-1) {
+						count--;
+						break;
+					}
+				}
 				//functions[x] = possible_BDD(functions[x], equalityVble[x]);
 			} else {
 				count--; //Don't send function to the solver
 			}
 		} else if (functions[x] == false_ptr) {
-			/* this might happen but I already know about unsatisfiness */
+			/* this might happen but I already know about unsatisfiedness */
 			// ret = TRIV_UNSAT;
 		}
 	}
 	nmbrFunctions = count + 1;
 	numout = nmbrFunctions;
 
+	for (int x = 0; x < nmbrFunctions; x++) {
+		if (variables[x].num != NULL)
+		  delete [] variables[x].num;
+	}
+
+	ite_free((void **)&variables);
+	//free(variables);
+	variables = NULL;
+	
 	for (long x = 0; x < nmbrFunctions; x++) {
 		if(functionType[x] == AUTARKY_FUNC) continue;
 		if(isOR(functions[x]) == 1)
