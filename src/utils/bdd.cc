@@ -1094,10 +1094,10 @@ BDDNode * ite_or (BDDNode * a, BDDNode * b)
 {
 #ifdef SORT_ITE_OPS
    if (a->variable < b->variable)
-      return ite(b, true_ptr, a);
+      return ite_x_T_z(b, /*true_ptr,*/ a);
    else
 #endif
-      return ite(a, true_ptr, b);
+      return ite_x_T_z(a, /*true_ptr,*/ b);
 }
 
 BDDNode * ite_nor (BDDNode * a, BDDNode * b)
@@ -1130,14 +1130,14 @@ BDDNode * ite_equ (BDDNode * a, BDDNode * b)
    return ite_not (ite_xor (a, b));
 }
 
-BDDNode * ite_and (BDDNode * a, BDDNode * b)
+BDDNode * ite_and(BDDNode * a, BDDNode * b)
 {
 #ifdef SORT_ITE_OPS
    if (a->variable < b->variable)
-      return ite (b, a, false_ptr);
+      return ite_x_y_F(b, a); //, false_ptr);
    else
 #endif
-   return ite (a, b, false_ptr);
+   return ite_x_y_F(a, b); //, false_ptr);
 }
 
 BDDNode * ite_nand (BDDNode * a, BDDNode * b)
@@ -1653,21 +1653,21 @@ BDDNode * xquantify (BDDNode * f, int v)
 BDDNode * _xquantify (BDDNode * f, int v)
 {
    if (f->flag == bdd_flag_number) {
-      return f->xq_bdd;
+      return f->tmp_bdd;
    }
    f->flag = bdd_flag_number;
    if (f->variable == v)
-      return (f->xq_bdd = ite_or_te(f));
-      //return (f->xq_bdd = ite_or (f->thenCase, f->elseCase));
+      return (f->tmp_bdd = ite_or_te(f));
+      //return (f->tmp_bdd = ite_or (f->thenCase, f->elseCase));
 
    if (v > f->variable)		//Does v exist in f?
-      return (f->xq_bdd = f);			      //no, then leave
+      return (f->tmp_bdd = f);			      //no, then leave
    BDDNode *r = _xquantify (f->thenCase, v);
    BDDNode *e = _xquantify (f->elseCase, v);
 
 	if (r == e)
-      return (f->xq_bdd = r);
-   return (f->xq_bdd = find_or_add_node (f->variable, r, e));
+      return (f->tmp_bdd = r);
+   return (f->tmp_bdd = find_or_add_node (f->variable, r, e));
 }
 
 BDDNode * OLD_xquantify (BDDNode * f, int v)
@@ -1876,23 +1876,38 @@ void NEW_unravelBDD(long *y, long *max, int **tempint, BDDNode * func) {
 	NEW_unravelBDD (y, max, tempint, func->elseCase);
 }
 
+BDDNode * _num_replace (BDDNode * f, int var, int replace);
 
 BDDNode * num_replace (BDDNode * f, int var, int replace) {
+  bdd_flag_number++;
+  if (bdd_flag_number > 1000000000) {
+     void bdd_gc();
+     bdd_gc();
+     bdd_flag_number = 3;
+  }
+  return _num_replace(f, var, replace);
+}
+
+BDDNode * _num_replace (BDDNode * f, int var, int replace) {
+   if (f->flag == bdd_flag_number) {
+      return f->tmp_bdd;
+   }
+   f->flag = bdd_flag_number;
 	if (var > f->variable)
-	  return f;
+	  return (f->tmp_bdd = f);
    else if (var == f->variable) {
 		if (replace > 0)
-		  return ite(ite_var(replace), f->thenCase, f->elseCase);//find_or_add_node(replace, f->thenCase, f->elseCase);
+		  return (f->tmp_bdd = ite(ite_var(replace), f->thenCase, f->elseCase));//find_or_add_node(replace, f->thenCase, f->elseCase);
       else if (replace < 0)
-		  return ite(ite_var(-replace), f->elseCase, f->thenCase);//find_or_add_node(-replace, f->elseCase, f->thenCase);
+		  return (f->tmp_bdd = ite(ite_var(-replace), f->elseCase, f->thenCase));//find_or_add_node(-replace, f->elseCase, f->thenCase);
    }
-   BDDNode * r = num_replace (f->thenCase, var, replace);
-   BDDNode * e = num_replace (f->elseCase, var, replace);
+   BDDNode * r = _num_replace (f->thenCase, var, replace);
+   BDDNode * e = _num_replace (f->elseCase, var, replace);
    if (r == e)
-	  return r;
+	  return (f->tmp_bdd = r);
 	//return ite (ite_var (f->variable), r, e);
 
-	return find_or_add_node(f->variable, r, e);
+	return (f->tmp_bdd = find_or_add_node(f->variable, r, e));
 }
 
 void cheat_replace (BDDNode * f, int var, int replace) {
