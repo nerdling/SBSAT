@@ -720,49 +720,99 @@ BDDNode *bdd2xdd(BDDNode *x) {
 BDDNode *ite (BDDNode * x, BDDNode * y, BDDNode * z) {
    if (x == true_ptr) return y;
    if (x == false_ptr) return z;
-   //int v = top_variable(x, y, z);
+
+	if(y == true_ptr && z == false_ptr) return x;
+   
+	//int v = top_variable(x, y, z);
    int v;
    BDDNode * r;
    BDDNode * e;
-   if (x->variable > y->variable)
-   {
+	
+	//else if(y == false_ptr && z == true_ptr) return ite_not(x);
+	
+	if (x->variable > y->variable) {
       if (x->variable > z->variable) {
-         v = x->variable;
-         r = ite (x->thenCase, y, z);
-         e = ite (x->elseCase, y, z);
+			if(y == z) return y;
+			v = x->variable;
+         r = ite(x->thenCase, y, z);
+         e = ite(x->elseCase, y, z);
       } else if (x->variable == z->variable) {
          v = x->variable;
-         r = ite(x->thenCase, y, z->thenCase);
-         e = ite(x->elseCase, y, z->elseCase);
+			if(x == z) {
+				r = ite(x->thenCase, y, false_ptr);
+				e = ite(x->elseCase, y, false_ptr);
+			} else {			
+				r = ite(x->thenCase, y, z->thenCase);
+				e = ite(x->elseCase, y, z->elseCase);
+			}
       } else {
          v = z->variable;
-         r = ite(x, y, z->thenCase);
-         e = ite(x, y, z->elseCase);
+			if(x == y) {
+				r = ite(z->thenCase, true_ptr, x);
+				e = ite(z->elseCase, true_ptr, x);
+			} else {
+				r = ite(x, y, z->thenCase);
+				e = ite(x, y, z->elseCase);
+			}
       }
    } else if (y->variable < z->variable) {
-      v = z->variable;
-      r = ite (x, y, z->thenCase);
-      e = ite (x, y, z->elseCase);
+		v = z->variable;
+		if(x == y) {
+			r = ite(z->thenCase, true_ptr, x);
+			e = ite(z->elseCase, true_ptr, x);
+		} else {		
+			r = ite(x, y, z->thenCase);
+			e = ite(x, y, z->elseCase);
+		}
    } else if (x->variable == z->variable) {
-      v = y->variable;
       if (y->variable == x->variable) {
-         r = ite(x->thenCase, y->thenCase, z->thenCase);
-         e = ite(x->elseCase, y->elseCase, z->elseCase);
+			if(y == z) return y;
+			//Also takes care of x = y = 
+			v = x->variable;
+			if(x == y) {
+				r = ite(x->thenCase, true_ptr, z->thenCase);
+				e = ite(x->elseCase, true_ptr, z->elseCase);
+			} else if(x == z) {
+				r = ite(x->thenCase, y->thenCase, false_ptr);
+				e = ite(x->elseCase, y->elseCase, false_ptr);
+			} else {
+				r = ite(x->thenCase, y->thenCase, z->thenCase);
+				e = ite(x->elseCase, y->elseCase, z->elseCase);
+			}
       } else {
-         r = ite(x, y->thenCase, z);
-         e = ite(x, y->elseCase, z);
+			v = y->variable;
+			if(x == z) {
+				r = ite(y->thenCase, x, false_ptr);
+				e = ite(y->elseCase, x, false_ptr);
+			} else {
+				r = ite(x, y->thenCase, z);
+				e = ite(x, y->elseCase, z);
+			}
       }
    } else {
-      v = y->variable;
       if (y->variable == x->variable) {
-         r = ite(x->thenCase, y->thenCase, z);
-         e = ite(x->elseCase, y->elseCase, z);
+			v = x->variable;
+			if(x == y) {
+				r = ite(x->thenCase, true_ptr, z);
+				e = ite(x->elseCase, true_ptr, z);
+			} else {			
+				r = ite(x->thenCase, y->thenCase, z);
+				e = ite(x->elseCase, y->elseCase, z);
+			}
       } else if (y->variable == z->variable) {
+			if(y == z) return y;
+			v = y->variable;		
          r = ite(x, y->thenCase, z->thenCase);
          e = ite(x, y->elseCase, z->elseCase);
       } else {
-         r = ite(x, y->thenCase, z);
-         e = ite(x, y->elseCase, z);
+			v = y->variable;
+			if(x == z) {
+				r = ite(y->thenCase, x, false_ptr);
+				e = ite(y->elseCase, x, false_ptr);
+			} else {
+				r = ite(x, y->thenCase, z);
+				e = ite(x, y->elseCase, z);
+			}
       }
    }
 
