@@ -169,6 +169,7 @@ void printBDDfile(BDDNode *, FILE *);
 void printBDDTree(BDDNode *, int *);
 BDDNode *ReadSmurf(int *, char *, int, int *, int);
 BDDNode *mitosis(BDDNode *, int *, int *);
+BDDNode *f_mitosis(BDDNode *, BDDNode **, int *);
 BDDNode *f_apply(BDDNode *, BDDNode**);
 BDDNode *MinMaxBDD(int *, int, int, int, int);
 void unmark(BDDNode *bdd);
