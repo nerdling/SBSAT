@@ -9,7 +9,7 @@ SOURCES=trace_g.yy trace_s.ll \
 	iscas_g.yy iscas_s.ll \
         parser.cc functions.cc bddops.cc p3.cc
 # _g.yy first
-EXTRA_DIST=bddnode.h functions.h bddnode.cc tracetest.cc p3.h \
+EXTRA_DIST=functions.h bddnode.cc tracetest.cc p3.h \
         libt5_la-trace_g.h  \
 	libt5_la-cnf_g.h  \
 	libt5_la-bdd_g.h \
