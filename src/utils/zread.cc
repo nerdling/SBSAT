@@ -46,9 +46,10 @@ check_gzip (char *filename)
   else  fin = fopen (filename, "rb");
   if (fin)
     {
-      char x1 = fgetc (fin);
-      char x2 = fgetc (fin);
-      if (x1 == '\037' && x2 == '\213') is_gzip=1;
+      unsigned char x1 = (unsigned char)fgetc (fin);
+      unsigned char x2 = (unsigned char)fgetc (fin);
+      if (x1 == (unsigned char)'\037' && 
+          x2 == (unsigned char)'\213') is_gzip=1;
       ungetc(x2, fin);
       ungetc(x1, fin);
       if (fin != stdin) fclose (fin);
