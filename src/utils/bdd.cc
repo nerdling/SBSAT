@@ -1406,7 +1406,40 @@ nmbrVarsInCommon(int bddNmbr1, int bddNmbr2, int STOPAT)
    }
 }
 
+BDDNode * _xquantify (BDDNode * f, int v);
+
+int bdd_flag_number = 2;
 BDDNode * xquantify (BDDNode * f, int v)
+{
+  bdd_flag_number++;
+  if (bdd_flag_number > 1000000000) {
+     void bdd_gc();
+     bdd_gc();
+     bdd_flag_number = 3;
+  }
+  return _xquantify(f, v);
+}
+
+BDDNode * _xquantify (BDDNode * f, int v)
+{
+   if (f->flag == bdd_flag_number) {
+      return f->xq_bdd;
+   }
+   f->flag = bdd_flag_number;
+   if (f->variable == v)
+      return (f->xq_bdd = ite_or (f->thenCase, f->elseCase));
+
+   if (v > f->variable)		//Does v exist in f?
+      return (f->xq_bdd = f);			      //no, then leave
+   BDDNode *r = xquantify (f->thenCase, v);
+   BDDNode *e = xquantify (f->elseCase, v);
+
+	if (r == e)
+      return (f->xq_bdd = r);
+   return (f->xq_bdd = find_or_add_node (f->variable, r, e));
+}
+
+BDDNode * OLD_xquantify (BDDNode * f, int v)
 {
    if (f->variable == v)
       return ite_or (f->thenCase, f->elseCase);
@@ -1576,7 +1609,6 @@ void OLD_unravelBDD (long *y, int tempint[5000], BDDNode * func) {
 
 void NEW_unravelBDD(long *y, long *max, int **tempint, BDDNode * func);
 
-int bdd_flag_number = 2;
 void unravelBDD(long *y, long *max, int **tempint, BDDNode * func) {
   *y=0;
   // assert (no flag is set );

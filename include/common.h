@@ -140,7 +140,7 @@ typedef struct BDDNodeStruct {
    int flag;
    int variable;
    void *var_ptr;
-   struct BDDNodeStruct *thenCase, *elseCase, *notCase;
+   struct BDDNodeStruct *thenCase, *elseCase, *notCase, *xq_bdd;
    infer *inferences;
    BDDNodeStruct *next;
    void *addons;
