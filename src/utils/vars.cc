@@ -160,3 +160,5 @@ int sat_ram = 0;
 
 store *variables;
 int *length = NULL;
+
+int K_TOP_VARIABLES=0;

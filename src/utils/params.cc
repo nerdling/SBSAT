@@ -213,12 +213,6 @@ t_opt options[] = {
                 "The preprocessing sequence"},
 { (void*)DO_ALL, "All",  "All", P_FN_INT, V(i:0,"0"), V(i:2,"2"), VAR_CMDLINE+VAR_DUMP, 0, 
 	       "Enable/Disable All Preprocessing Options (1/0)"},
-/*
-{ &DO_ALL, "All:ON",  "All:ON", P_PRE_INT, {i:1}, {i:2}, VAR_NORMAL, 0, 
-	       "Enable All Preprocessing Options"},
-{ &DO_ALL, "All:OFF", "All:OFF", P_PRE_INT, {i:0}, {i:2}, VAR_NORMAL, 0, 
-		"Disable All Preprocessing Options"},
-*/
 { &DO_CLUSTER, "Cl",  "Cl", P_INT, V(i:0,"0"), V(i:1,"1"), VAR_NORMAL, 0, 
 	       "Enable/Disable Clustering (1/0)"},
 { &DO_COFACTOR, "Co",  "Co", P_INT, V(i:0,"0"), V(i:0,"1"), VAR_NORMAL, 0, 
@@ -231,7 +225,7 @@ t_opt options[] = {
 		"Enable/Disable Inferences (1/0)"},
 { &DO_EXIST_QUANTIFY, "Ex",  "Ex", P_INT, V(i:0,"0"),  V(i:1,"1"), VAR_NORMAL, 0, 
 		"Enable/Disable Existential Quantification (1/0)"},
-{ &DO_EXIST_QUANTIFY_AND, "Ea",  "Ea",  P_INT,  V(i:0,"0"),  V(i:1,"1"), VAR_NORMAL, 0, //VAR_CHECK+VAR_DUMP, 0,
+{ &DO_EXIST_QUANTIFY_AND, "Ea",  "Ea",  P_INT,  V(i:0,"0"),  V(i:1,"1"), VAR_NORMAL, 0, 
 		"Enable/Disable AND-Existential Quantification (1/0)"},
 { &DO_DEP_CLUSTER, "Dc",  "Dc",  P_INT, V(i:0,"0"),  V(i:1,"1"), VAR_NORMAL, 0,
 	  "Enable/Disable Dependent Variable Clustering (1/0)"},
@@ -287,6 +281,8 @@ t_opt options[] = {
 		"Enable/Disable autarkies (1/0)"},
 { &max_solutions, "", "max-solutions", P_INT, V(i:0,"0"), V(i:1,"1"), VAR_NORMAL, 0,
 		"Set the maximum number of solutions to search for."},
+{ &K_TOP_VARIABLES, "", "K-top-variables", P_INT, V(i:0,"0"), V(i:0,"0"), VAR_NORMAL, 0,
+		"Try to set top K variables and collect common inferences."},
 { &sbj, "", "sbj", P_INT, V(i:0,"0"), V(i:0,"0"), VAR_NORMAL, 0,
 		"Super backjumping."},
 /*

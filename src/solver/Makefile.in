@@ -135,7 +135,7 @@ sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 INCLUDES = -I$(top_srcdir)/include
-SOURCES = solve.cc \
+SOURCES = solve.cc ksolve.cc \
              init_solver.cc brancher.cc \
 	     backtrack.cc backtrack_nl.cc backtrack_sbj.cc bt_misc.cc \
              select_bp.cc \
@@ -174,22 +174,23 @@ LIBRARIES = $(noinst_LIBRARIES)
 
 libsolver_a_AR = $(AR) cru
 libsolver_a_LIBADD =
-am__libsolver_a_SOURCES_DIST = solve.cc init_solver.cc brancher.cc \
-	backtrack.cc backtrack_nl.cc backtrack_sbj.cc bt_misc.cc \
-	select_bp.cc j_heuristic.cc j_smurf.cc j_update_heu.cc \
-	j_specfn.cc j_specfn_and.cc j_specfn_xor.cc j_specfn_minmax.cc \
-	l_heuristic.cc l_lemma.cc i_heuristic.cc heuristic.cc \
-	bt_lemmas.cc bt_specfn.cc bt_smurfs.cc bt_specfn_and.cc \
-	bt_specfn_xor.cc bt_specfn_minmax.cc lemmas.cc lemmas_and.cc \
-	lemmas_xor.cc lemmas_minmax.cc lemmacache.cc lemmainfo.cc \
-	lemmaspace.cc lemmawlits.cc lemmamisc.cc smurffactory.cc \
-	smurfstates.cc state_stacks.cc bdd2smurf.cc bdd2specfn_and.cc \
-	bdd2specfn_xor.cc bdd2specfn_minmax.cc autarky.cc display.cc \
-	display_sf.cc verify.cc recordsol.cc sf_addons.cc \
-	smurfaddons.cc transitions.cc update_heu.cc crtwin.cc \
-	load_lemmas.cc interface.cc heur_stack.cc bddwalk.cc wvf.cc
-am__objects_1 = solve.$(OBJEXT) init_solver.$(OBJEXT) brancher.$(OBJEXT) \
-	backtrack.$(OBJEXT) backtrack_nl.$(OBJEXT) \
+am__libsolver_a_SOURCES_DIST = solve.cc ksolve.cc init_solver.cc \
+	brancher.cc backtrack.cc backtrack_nl.cc backtrack_sbj.cc \
+	bt_misc.cc select_bp.cc j_heuristic.cc j_smurf.cc \
+	j_update_heu.cc j_specfn.cc j_specfn_and.cc j_specfn_xor.cc \
+	j_specfn_minmax.cc l_heuristic.cc l_lemma.cc i_heuristic.cc \
+	heuristic.cc bt_lemmas.cc bt_specfn.cc bt_smurfs.cc \
+	bt_specfn_and.cc bt_specfn_xor.cc bt_specfn_minmax.cc lemmas.cc \
+	lemmas_and.cc lemmas_xor.cc lemmas_minmax.cc lemmacache.cc \
+	lemmainfo.cc lemmaspace.cc lemmawlits.cc lemmamisc.cc \
+	smurffactory.cc smurfstates.cc state_stacks.cc bdd2smurf.cc \
+	bdd2specfn_and.cc bdd2specfn_xor.cc bdd2specfn_minmax.cc \
+	autarky.cc display.cc display_sf.cc verify.cc recordsol.cc \
+	sf_addons.cc smurfaddons.cc transitions.cc update_heu.cc \
+	crtwin.cc load_lemmas.cc interface.cc heur_stack.cc bddwalk.cc \
+	wvf.cc
+am__objects_1 = solve.$(OBJEXT) ksolve.$(OBJEXT) init_solver.$(OBJEXT) \
+	brancher.$(OBJEXT) backtrack.$(OBJEXT) backtrack_nl.$(OBJEXT) \
 	backtrack_sbj.$(OBJEXT) bt_misc.$(OBJEXT) select_bp.$(OBJEXT) \
 	j_heuristic.$(OBJEXT) j_smurf.$(OBJEXT) j_update_heu.$(OBJEXT) \
 	j_specfn.$(OBJEXT) j_specfn_and.$(OBJEXT) \
@@ -222,24 +223,25 @@ LTLIBRARIES = $(noinst_LTLIBRARIES)
 
 libsolver_la_LDFLAGS =
 libsolver_la_LIBADD =
-am__libsolver_la_SOURCES_DIST = solve.cc init_solver.cc brancher.cc \
-	backtrack.cc backtrack_nl.cc backtrack_sbj.cc bt_misc.cc \
-	select_bp.cc j_heuristic.cc j_smurf.cc j_update_heu.cc \
-	j_specfn.cc j_specfn_and.cc j_specfn_xor.cc j_specfn_minmax.cc \
-	l_heuristic.cc l_lemma.cc i_heuristic.cc heuristic.cc \
-	bt_lemmas.cc bt_specfn.cc bt_smurfs.cc bt_specfn_and.cc \
-	bt_specfn_xor.cc bt_specfn_minmax.cc lemmas.cc lemmas_and.cc \
-	lemmas_xor.cc lemmas_minmax.cc lemmacache.cc lemmainfo.cc \
-	lemmaspace.cc lemmawlits.cc lemmamisc.cc smurffactory.cc \
-	smurfstates.cc state_stacks.cc bdd2smurf.cc bdd2specfn_and.cc \
-	bdd2specfn_xor.cc bdd2specfn_minmax.cc autarky.cc display.cc \
-	display_sf.cc verify.cc recordsol.cc sf_addons.cc \
-	smurfaddons.cc transitions.cc update_heu.cc crtwin.cc \
-	load_lemmas.cc interface.cc heur_stack.cc bddwalk.cc wvf.cc
-am__objects_2 = solve.lo init_solver.lo brancher.lo backtrack.lo \
-	backtrack_nl.lo backtrack_sbj.lo bt_misc.lo select_bp.lo \
-	j_heuristic.lo j_smurf.lo j_update_heu.lo j_specfn.lo \
-	j_specfn_and.lo j_specfn_xor.lo j_specfn_minmax.lo \
+am__libsolver_la_SOURCES_DIST = solve.cc ksolve.cc init_solver.cc \
+	brancher.cc backtrack.cc backtrack_nl.cc backtrack_sbj.cc \
+	bt_misc.cc select_bp.cc j_heuristic.cc j_smurf.cc \
+	j_update_heu.cc j_specfn.cc j_specfn_and.cc j_specfn_xor.cc \
+	j_specfn_minmax.cc l_heuristic.cc l_lemma.cc i_heuristic.cc \
+	heuristic.cc bt_lemmas.cc bt_specfn.cc bt_smurfs.cc \
+	bt_specfn_and.cc bt_specfn_xor.cc bt_specfn_minmax.cc lemmas.cc \
+	lemmas_and.cc lemmas_xor.cc lemmas_minmax.cc lemmacache.cc \
+	lemmainfo.cc lemmaspace.cc lemmawlits.cc lemmamisc.cc \
+	smurffactory.cc smurfstates.cc state_stacks.cc bdd2smurf.cc \
+	bdd2specfn_and.cc bdd2specfn_xor.cc bdd2specfn_minmax.cc \
+	autarky.cc display.cc display_sf.cc verify.cc recordsol.cc \
+	sf_addons.cc smurfaddons.cc transitions.cc update_heu.cc \
+	crtwin.cc load_lemmas.cc interface.cc heur_stack.cc bddwalk.cc \
+	wvf.cc
+am__objects_2 = solve.lo ksolve.lo init_solver.lo brancher.lo \
+	backtrack.lo backtrack_nl.lo backtrack_sbj.lo bt_misc.lo \
+	select_bp.lo j_heuristic.lo j_smurf.lo j_update_heu.lo \
+	j_specfn.lo j_specfn_and.lo j_specfn_xor.lo j_specfn_minmax.lo \
 	l_heuristic.lo l_lemma.lo i_heuristic.lo heuristic.lo \
 	bt_lemmas.lo bt_specfn.lo bt_smurfs.lo bt_specfn_and.lo \
 	bt_specfn_xor.lo bt_specfn_minmax.lo lemmas.lo lemmas_and.lo \
@@ -308,8 +310,8 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	./$(DEPDIR)/j_specfn_xor.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/j_specfn_xor.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/j_update_heu.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/j_update_heu.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/l_heuristic.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/j_update_heu.Po ./$(DEPDIR)/ksolve.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/ksolve.Po ./$(DEPDIR)/l_heuristic.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/l_heuristic.Po ./$(DEPDIR)/l_lemma.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/l_lemma.Po ./$(DEPDIR)/lemmacache.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/lemmacache.Po ./$(DEPDIR)/lemmainfo.Plo \
@@ -358,7 +360,7 @@ DIST_SOURCES = $(am__libsolver_a_SOURCES_DIST) \
 	$(am__libsolver_la_SOURCES_DIST) \
 	$(am__libsolver2_la_SOURCES_DIST)
 DIST_COMMON = Makefile.am Makefile.in
-SOURCES = solve.cc \
+SOURCES = solve.cc ksolve.cc \
              init_solver.cc brancher.cc \
 	     backtrack.cc backtrack_nl.cc backtrack_sbj.cc bt_misc.cc \
              select_bp.cc \
@@ -488,6 +490,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/j_specfn_xor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/j_update_heu.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/j_update_heu.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ksolve.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ksolve.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/l_heuristic.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/l_heuristic.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/l_lemma.Plo@am__quote@

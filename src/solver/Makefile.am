@@ -1,5 +1,5 @@
 INCLUDES=-I$(top_srcdir)/include
-SOURCES= solve.cc \
+SOURCES= solve.cc ksolve.cc \
              init_solver.cc brancher.cc \
 	     backtrack.cc backtrack_nl.cc backtrack_sbj.cc bt_misc.cc \
              select_bp.cc \

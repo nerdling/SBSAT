@@ -61,6 +61,7 @@ ITE_INLINE void DisplaySmurfStates();
 ITE_INLINE char * StringFromFunctionType(int nFuncType);
 ITE_INLINE void InitSmurfFactory();
 
+
 ITE_INLINE int
 SmurfFactory()
 {
@@ -308,6 +309,7 @@ InitSmurfFactory()
 
    }
    nRegSmurfIndex = 0;
+
 }
 
 void

@@ -226,4 +226,5 @@ extern int ex_infer;
 extern int competition_enable;
 extern int sat_timeout;
 extern int sat_ram;
+extern int K_TOP_VARIABLES;
 #endif

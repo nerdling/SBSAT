@@ -40,6 +40,7 @@
 
 /* init */
 #include "solve.cc"
+#include "ksolve.cc"
 #include "init_solver.cc"
 
 /* basic brancher */

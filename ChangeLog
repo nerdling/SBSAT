@@ -1,3 +1,65 @@
+2004-03-09 22:26  fett
+
+	* src/preproc/do_exquantify.cc: now do _exquantify will quantify
+	  out it's variable if it can't infer it.
+
+	     ~Sean
+
+2004-03-09 21:35  fett
+
+	* src/preproc/: do_exquantify.cc, do_exquantifyand.cc: Added in
+	  code to intensely identify possible inferences.
+
+	     ~Sean
+
+2004-03-09 11:21  fett
+
+	* src/preproc/do_exquantify.cc: fixed a small problem where
+	  variables could be quantified away incorrectly.
+
+	    ~Sean
+
+2004-03-08 16:02  fett
+
+	* src/preproc/: do_exquantify.cc, do_exquantifyand.cc,
+	  do_prover3.cc, do_rewind.cc, other_preproc.cc: adding in new
+	  ex_and ideas, and added a check for unsat after each
+	  Do_Apply_Inferences() call.
+
+	    ~Sean
+
+2004-03-08 16:01  fett
+
+	* include/preprocess.h, src/utils/Makefile.in: ?
+
+	    ~Sean
+
+2004-03-08 16:01  fett
+
+	* examples/markbdd.ite: Maybe fixed a syntax error.
+
+	    ~Sean
+
+2004-03-08 10:02  mkouril
+
+	* src/utils/bddtable.cc, src/utils/symtable.cc, include/common.h:
+	  Added mirrored node to BDD (disabled by default)
+
+2004-03-02 15:40  mkouril
+
+	* src/solver/: display.cc, recordsol.cc, verify.cc: Show number of
+	  solutions for dbg levels < 5 instead of each solution in
+	  statistics
+
+2004-03-02 15:30  mkouril
+
+	* src/formats/5/: functions.cc, trace_g.yy, tracetest.cc: Cleanups
+
+2004-03-01 13:58  mkouril
+
+	* ChangeLog, src/solver/init_solver.cc: Fixed AFS for XOR after
+	  2/22/04
+
 2004-02-28 23:52  mkouril
 
 	* src/utils/bdd.cc: Function to print shared nodes in a BDD -- for

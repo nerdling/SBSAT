@@ -337,7 +337,7 @@ Update_arrVarScores()
 ITE_INLINE int
 InitBrancher()
 {
-   d3_printf1("InitBrancher\n");
+   d5_printf1("InitBrancher\n");
 
    switch (nHeuristic) {
     case JOHNSON_HEURISTIC:
@@ -514,7 +514,7 @@ ITE_INLINE void InitializeSpecialFnStack();
 ITE_INLINE void
 FreeBrancher()
 {
-   d4_printf1("FreeBrancher\n");
+   d5_printf1("FreeBrancher\n");
 
    if (fd_csv_trace_file) fclose(fd_csv_trace_file);
 

@@ -52,7 +52,7 @@ ITE_INLINE void FreeSolver();
 void LoadLemmas(char *filename);
 ITE_INLINE void FreeAFS();
 ITE_INLINE int InitBrancherX();
-
+ITE_INLINE int kSolver(int k_top_vars);
 
 int
 solve_init()
@@ -91,6 +91,9 @@ solve_init()
   if (ret != SOLV_UNKNOWN) return ret;
 
   ret = InitBrancherX();
+  if (ret != SOLV_UNKNOWN) return ret;
+
+  if (K_TOP_VARIABLES) ret = kSolver(K_TOP_VARIABLES);
   if (ret != SOLV_UNKNOWN) return ret;
   return ret;
 }
@@ -246,7 +249,7 @@ InitSolver()
 ITE_INLINE void
 FreeSolver()
 {
-  d4_printf1("FreeSolver\n");
+  d5_printf1("FreeSolver\n");
 
   if (nHeuristic == C_LEMMA_HEURISTIC 
 #ifdef JOHNSON_HEURISTIC_LEMMA
