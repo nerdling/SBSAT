@@ -359,8 +359,8 @@ void CNF_to_BDD(int cnf)
 			greater_pos[x].num = (int *)calloc(greaterpos_temp[x]+1, sizeof(int));
 			greater_neg[x].num = (int *)calloc(greaterneg_temp[x]+1, sizeof(int));
 		}
-      free(twopos_temp);
-      free(twoneg_temp);
+//      free(twopos_temp);
+//      free(twoneg_temp);
       free(greaterpos_temp);
       free(greaterneg_temp);
       
@@ -387,7 +387,7 @@ void CNF_to_BDD(int cnf)
 						  }
 					}
 					if(out == 0) {
-						//if this is a unique clase then keep it
+						//if this is a unique clause then keep it
 						two_pos[integers[x].num[0]].num[y] = x;
 						two_pos[integers[x].num[0]].num[y + 1] = 0;
 					}
@@ -405,7 +405,7 @@ void CNF_to_BDD(int cnf)
 						  }
 					}
 					if(out == 0) {
-						//if this is a unique clase then keep it
+						//if this is a unique clause then keep it
 						two_neg[-integers[x].num[0]].num[y] = x;
 						two_neg[-integers[x].num[0]].num[y + 1] = 0;
 					}
@@ -477,17 +477,11 @@ void CNF_to_BDD(int cnf)
 					out = 0;
 					for(z = 0; (greater_neg[x].num[z] != 0) && (out != 1); z++) {
                   if (z%10 == 1)
-                     d2_printf4("\rAND/OR Search CNF %ld/%ld ... *** sub *** AND/OR Search CNF %ld ...       ", x, numinp, z);
+                     d2_printf4("\rAND/OR Search CNF %ld/%ld ... *** sub1 *** AND/OR Search CNF %ld ...       ", x, numinp, z);
                   count = 0;
-						//An optimization can be placed here I think...
-						//For the future, if the number of literals in the greater_neg clause
-						//is greater than the number of two literal clauses, then it is not
-						//going to be an and= or an or=.
-						//twopos_temp and twoneg_temp variables because i believe they store
-						//How many two literal clauses there are...
-						//Don't need greaterneg_temp though. Just need the clause length.
-						//Which I don't seem to have...maybe it's not a big thing...
-						//I could store the length cause I compute it earlier. (i think)
+						
+//						if(integers[greater_neg[x].num[z]].length-1 > twopos_temp[x]) continue;
+						
 						for(y = 0; integers[greater_neg[x].num[z]].num[y] != 0; y++) {
 							if(integers[greater_neg[x].num[z]].dag == -1) {
 								for(i = 0; two_pos[x].num[i] != 0; i++) {
@@ -526,7 +520,12 @@ void CNF_to_BDD(int cnf)
 				if(two_neg[x].num[0] > 0) {
 					out = 0;
 					for(z = 0; (greater_pos[x].num[z] != 0) && (out != 1); z++) {
+                  if (z%10 == 1)
+						  d2_printf4("\rAND/OR Search CNF %ld/%ld ... *** sub2 *** AND/OR Search CNF %ld ...       ", x, numinp, z);
 						count = 0;
+						
+//						if(integers[greater_pos[x].num[z]].length-1 > twoneg_temp[x]) continue;
+						
 						for(y = 0; integers[greater_pos[x].num[z]].num[y] != 0; y++) {
 							if(integers[greater_pos[x].num[z]].dag == -1) {
 								for(i = 0; two_neg[x].num[i] != 0; i++) {
@@ -572,7 +571,11 @@ void CNF_to_BDD(int cnf)
 			free(greater_pos[x].num);
 			free(greater_neg[x].num);
 		}
-      free(two_pos);
+
+		free(twopos_temp);
+      free(twoneg_temp);
+		
+		free(two_pos);
       free(two_neg);
       free(greater_pos);
       free(greater_neg);
