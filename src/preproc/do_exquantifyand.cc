@@ -210,6 +210,9 @@ int ExQuantifyAnd () {
 						functions[j] = xquantify (functions[j], i);
 						variablelist[i].true_false = 2;
 						SetRepeats(j);
+						while(x_infers!=NULL) {
+							infer *temp = x_infers; x_infers = x_infers->next; delete temp;
+						}
 					} else {
 						BDDNode *inferBDD = true_ptr;
 						//while (x_infers!=NULL) {

@@ -2074,14 +2074,10 @@ infer *copy_infer(infer *inference) {
 		tmp_infer->nums[1] = infer_iter->nums[1];
 	}
 	tmp_infer->next = NULL;
-	if(tmp_infer == result) {
-		delete result;
-		result = NULL;
-	} else {
-		tmp_infer = result;
-		result = result->next;
-		delete tmp_infer;
-	}
+	tmp_infer = result;
+	result = result->next;
+	delete tmp_infer;
+	
 	return result;
 }
 
@@ -2209,6 +2205,8 @@ infer *_possible_infer_x(BDDNode *f, int x) {
 			temp->nums[0] = 0;
 			temp->nums[1] = 0;
 			temp->next = NULL;
+			while (r!=NULL) { infer *temp = r; r = r->next; delete temp; }
+			while (e!=NULL) { infer *temp = e; e = e->next; delete temp; }
 			f->tmp_infer = copy_infer(temp);
 			return temp;
 		} else if(r->nums[1] == 0 && e->nums[1] == 0 && r->nums[0] == e->nums[0]) {
