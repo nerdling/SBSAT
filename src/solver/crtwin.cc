@@ -175,7 +175,7 @@ crtwin(void) {
    int retval = 0;
    int draw = 0;
 
-//#define PERIOD_DUMP_LEMMAS
+#define PERIOD_DUMP_LEMMAS
 #ifdef PERIOD_DUMP_LEMMAS
    if (*lemma_out_file) dump_lemmas(lemma_out_file); 
 #endif
