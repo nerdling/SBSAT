@@ -79,23 +79,22 @@ RecordSolution ()
 			  false, pFirstBlock, pLastBlock, nNumBlocks);
 
    if (result_display_type) {
-     /* create another node in solution chain */
-     t_solution_info *tmp_solution_info;
-     tmp_solution_info = (t_solution_info*)ite_calloc(1, sizeof(t_solution_info),
-           9, "solution array");
-  
-     if (solution_info_head == NULL) {
+		/* create another node in solution chain */
+		t_solution_info *tmp_solution_info;
+		tmp_solution_info = (t_solution_info*)ite_calloc(1, sizeof(t_solution_info),
+ 								  9, "solution array");
+      tmp_solution_info->nNumElts = tmp_nNumElts_allocate;
+      tmp_solution_info->arrElts = tmp_arrElts;
+		
+		if (solution_info_head == NULL) {
          solution_info = tmp_solution_info;
          solution_info_head = solution_info;
       } else {
-       solution_info->next = (struct _t_solution_info*)tmp_solution_info;
-       solution_info = (t_solution_info*)(solution_info->next);
+			solution_info->next = (struct _t_solution_info*)tmp_solution_info;
+			solution_info = (t_solution_info*)(solution_info->next);
       }
-      tmp_solution_info->nNumElts = tmp_nNumElts_allocate;
-      tmp_solution_info->arrElts = tmp_arrElts;
-	
       for (int i = 0; i<nNumVariables; i++) {
-        tmp_solution_info->arrElts[arrSolver2IteVarMap[i]] = arrSolution[i];
+			tmp_solution_info->arrElts[arrSolver2IteVarMap[i]] = arrSolution[i];
       }
    } else {
       free(tmp_arrElts);
