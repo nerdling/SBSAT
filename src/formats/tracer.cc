@@ -591,7 +591,7 @@ we1:
                          if (special_op) 
                             special_op = false;
                          else if (symbols->get(v) == NULL) {
-                            get_or_putsym_check(first, SYM_VAR, nsymbols);
+                            get_or_putsym_check(v, SYM_VAR, nsymbols);
                             symbols->put(v, new Integer(nsymbols++, v));
                          }
                       }
