@@ -150,6 +150,9 @@ int Split_Large () {
 		}
 		
 		if (functionType[j] == UNSURE && length[j] > k_size) {
+			bool OLD_DO_INFERENCES = DO_INFERENCES;
+			DO_INFERENCES = 0;
+			
 			//d3_printf2("\n%d: ", j);
 			//printBDD(functions[j]);
 			//d3_printf1("\n");
@@ -212,8 +215,12 @@ int Split_Large () {
 				 default: break;
 				}
 			 }
+			DO_INFERENCES = OLD_DO_INFERENCES;
 		}
 		if (functionType[j] == UNSURE && length[j] > k_size) {
+			bool OLD_DO_INFERENCES = DO_INFERENCES;
+			DO_INFERENCES = 0;
+
 			/*				
 				int whereat = 0;
 				//Here is another idea for how to break BDDS:
@@ -267,10 +274,14 @@ int Split_Large () {
 				}
 				
 			 */				
+			DO_INFERENCES = OLD_DO_INFERENCES;
 		}
 		if (functionType[j] == UNSURE && length[j] > k_size) { 
 			//Function is still too large, must use alternative method (Break into CNF clauses).
 			//Count the clauses
+			bool OLD_DO_INFERENCES = DO_INFERENCES;
+			DO_INFERENCES = 0;
+
 			int num = countFalses (functions[j]);
 			if(num == 1) functionType[j] = PLAINOR;
 			else if(num > 1) {
@@ -318,6 +329,7 @@ int Split_Large () {
 				 default: break;
 				}
 			}
+			DO_INFERENCES = OLD_DO_INFERENCES;
 		}
 		
 		//d3_printf2("\n%d: ", j);

@@ -412,9 +412,6 @@ Finish_Preprocessing()
 int add_newFunctions(BDDNode **new_bdds, int new_size) {
 	int ret = PREP_NO_CHANGE;
 
-	bool OLD_DO_INFERENCES = DO_INFERENCES;
-	DO_INFERENCES = 0;
-	
 	nmbrFunctions = nmbrFunctions+new_size;
 	functions_alloc(nmbrFunctions);
 
@@ -455,10 +452,5 @@ int add_newFunctions(BDDNode **new_bdds, int new_size) {
 		}
 	}
 
-	DO_INFERENCES = OLD_DO_INFERENCES;
-
-	if (DO_INFERENCES) {
-		ret = Do_Apply_Inferences();
-	}
 	return ret;
 }
