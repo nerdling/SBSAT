@@ -74,6 +74,7 @@ ShowResultLine(FILE *fout, char *var, int var_idx, int negative, int value)
   }
   
   switch (result_display_type) {
+  case 4:
   case 1:
          /* raw result format */
          switch (value) {
@@ -244,10 +245,13 @@ Backend_NoSolver (int oldnuminp, int *original_variables)
 	
 	getExInferences(original_variables, oldnuminp);
 	
-	for (int i = 1; i <= oldnuminp; i++)
+   if (result_display_type == 4) fprintf(foutputfile, "v ");
+   for (int i = 1; i <= oldnuminp; i++)
 	  {
+        if (result_display_type == 4 && (i%20) == 0) fprintf(foutputfile, "\nv ");
 		  ShowResultLine(foutputfile, s_name(i), i, 0, original_variables[i]);
 	  }
+   if (result_display_type == 4) fprintf(foutputfile, " 0");
 	fprintf(foutputfile, "\n");
 	//1 = True  0 = False  -1 = Don't Care
 }
@@ -263,7 +267,7 @@ void Backend(int nMaxVbleIndex, int oldnuminp, int *original_variables) {
 
 	int num_sol = 1;
 	for(solution_info = solution_info_head; solution_info!=NULL; solution_info = solution_info->next) {
-		if (result_display_type) 
+		if (result_display_type && ite_counters[NUM_SOLUTIONS] > 1) 
 		  fprintf(foutputfile, "\n// Solution #%d\n", num_sol++);
 		for (int x = 0; x < original_numout; x++)
 		  functions[x] = original_functions[x];
@@ -281,10 +285,13 @@ void Backend(int nMaxVbleIndex, int oldnuminp, int *original_variables) {
 		
 		getExInferences(original_variables, oldnuminp);
 		
-		for (int i = 1; i <= oldnuminp; i++) {
-		   ShowResultLine(foutputfile, s_name(i), i, 0, original_variables[i]);
+      if (result_display_type == 4) fprintf(foutputfile, "v ");
+      for (int i = 1; i <= oldnuminp; i++) {
+         if (result_display_type == 4 && (i%20) == 0) fprintf(foutputfile, "\nv ");
+         ShowResultLine(foutputfile, s_name(i), i, 0, original_variables[i]);
 		}
-		fprintf(foutputfile, "\n");
+      if (result_display_type == 4) fprintf(foutputfile, " 0");
+      fprintf(foutputfile, "\n");
 	}	
 	free(old_orig_vars);
 	free(old_variablelist);
@@ -316,7 +323,7 @@ void Backend_Trace (int nMaxVbleIndex, int oldnuminp,
 
 	int num_sol = 1;
 	for(solution_info = solution_info_head; solution_info!=NULL; solution_info = solution_info->next) {
-		if (result_display_type) 
+		if (result_display_type && ite_counters[NUM_SOLUTIONS] > 1) 
 		  fprintf(foutputfile, "\n// Solution #%d\n", num_sol++);
 
 		for (int x = 0; x < original_numout; x++)

@@ -41,11 +41,11 @@ extern int term_width;
 int params_current_src = 0;
 
 #ifndef COPYRIGHT
-#define COPYRIGHT "Copyright (C) 1999-2003, University of Cincinnati.  All rights reserved."
+#define COPYRIGHT "Copyright (C) 1999-2004, University of Cincinnati.  All rights reserved."
 #endif
 
 #ifndef AUTHORS
-#define AUTHORS "a reserach team lead by John Franco"
+#define AUTHORS "a research team lead by John Franco"
 #endif
 
 #ifndef BUGS_EMAIL
@@ -672,6 +672,11 @@ show_help()
 {
    int i;
    FILE *stdhelp=stdout;
+   char left_str[81];
+   int left_size = (int)(term_width-2)/3;
+   if (left_size < 26) left_size = 26;
+   if (left_size > 80) left_size = 80;
+   strncpy(left_str, "                                                                                  ", left_size);
 
    fprintf (stdhelp, "%s\n", DESCRIPTION);
    fprintf (stdhelp, 
@@ -712,13 +717,13 @@ show_help()
             strcat(line, " <string>");
       }
       line_len = strlen(line);
-      if (line_len < 26) 
-         strncat(line, "                            ", 26-line_len);
+      if (line_len < left_size) 
+         strncat(line, left_str, left_size-line_len);
       else {
          strcat(line, "\n");
          fprintf(stdhelp, "%s", line);
-         strncpy(line, "                            ", 26);
-         line[26]=0;
+         strncpy(line, left_str, left_size);
+         line[left_size]=0;
       }
 
       default_line[0]=0;
@@ -767,12 +772,12 @@ show_help()
       else 
       {
          if ((int)(strlen(line)+strlen(options[i].desc_opt)) <= (int)(term_width-2))
-            fprintf(stdhelp, "%s%s\n                          %s\n",  
-                  line, options[i].desc_opt, default_line);
+            fprintf(stdhelp, "%s%s\n%s%s\n",  
+                  line, options[i].desc_opt, left_str, default_line);
          else 
          {
-            fprintf_desc(stdhelp, options[i].desc_opt, line, "                          ");
-            fprintf(stdhelp, "                          %s\n", default_line);
+            fprintf_desc(stdhelp, options[i].desc_opt, line, left_str);
+            fprintf(stdhelp, "%s%s\n", left_str, default_line);
          }
       }
    }
@@ -786,6 +791,13 @@ show_version()
    fprintf(stdout, "%s %s\n\n%s\n\nWritten by %s.\n", 
          PACKAGE, VERSION, COPYRIGHT, AUTHORS);
    exit(0);
+}
+
+void
+show_competition_version()
+{
+   fprintf(stdout, "c %s %s\nc \nc %s\nc \nc Written by %s.\n", 
+         PACKAGE, VERSION, COPYRIGHT, AUTHORS);
 }
 
 void

@@ -110,6 +110,12 @@ t_opt options[] = {
                "Enable/Disable Ctrl-c handler to end preproc/brancher"},
 { &reports,  "",   "reports",   P_INT,  V(i:1,"1"), V(i:0,"0"), VAR_NORMAL, 0,
                "Reporting style during branching (0 - standard, 1 - crtwin)"},
+{ &competition_enable,  "",   "competition",   P_INT,  V(i:1,"1"), V(i:0,"0"), VAR_NORMAL, 0,
+               "Competition reporting style"},
+{ &sat_timeout,  "",   "sattimeout",   P_INT,  V(i:1,"1"), V(i:0,"0"), VAR_NORMAL, 0,
+               "For SAT Competition SATTIMEOUT"},
+{ &sat_ram,  "",   "satram",   P_INT,  V(i:1,"1"), V(i:0,"0"), VAR_NORMAL, 0,
+               "For SAT Competition SATRAM"},
 
 /* 
  * BDD options
@@ -349,9 +355,29 @@ init_params()
       functionTypeLimits[i] = 1000000000; /* huge number max_int? */
 }
 
+/* To be used with "SATRAM" or "SATTIMEOUT" */
+/* Return the limit or:
+ *    -1 if the variable is not set
+ *       0 if there was a problem in atoi (variable isn't a number) */
+int getSATlimit(char * name) {
+    char * value;
+     
+     value = getenv(name);
+      if (value == NULL) return(-1);
+       return atoi(value);
+}
+
 void
 finish_params()
 {
+   if (competition_enable) {
+      DEBUG_LVL = 0;
+      if (sResult[0] == 'n') sResult[0] = 'c';
+   }
+
+   if (sat_timeout == 0) sat_timeout = getSATlimit("SATTIMEOUT");
+   if (sat_ram == 0) sat_ram = getSATlimit("SATRAM");
+
    /* special files */
    if (!strcmp(debug_dev, "stdout")) stddbg = stdout;
    else
@@ -409,6 +435,7 @@ finish_params()
     case 'r': result_display_type = 1; break;
     case 'f': result_display_type = 2; break;
     case 'm': result_display_type = 3; break;
+    case 'c': result_display_type = 4; break;
     default: 
               dE_printf2("error: Unknown result type %c\n", sResult[0]); 
               exit(1);

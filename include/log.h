@@ -117,10 +117,21 @@ extern int DEBUG_LVL;
 # define TB_9(x) {}
 #endif
 
+#if _DEBUG_LVL_COMPILE >= 0
+# define D_C(x) if (competition_enable) { x }
+#else
+# define D_C(x) {}
+#endif
+
 #define dE_printf1(x)        D_E(fprintf(stddbg, x);)
 #define dE_printf2(x1,x2)    D_E(fprintf(stddbg, x1, x2);)
 #define dE_printf3(x1,x2,x3) D_E(fprintf(stddbg, x1, x2, x3);)
 #define dE_printf4(x1,x2,x3,x4) D_E(fprintf(stddbg, x1, x2, x3,x4);)
+
+#define dC_printf1(x)        D_C(printf(x);)
+#define dC_printf2(x1,x2)    D_C(printf(x1, x2);)
+#define dC_printf3(x1,x2,x3) D_C(printf(x1, x2, x3);)
+#define dC_printf4(x1,x2,x3,x4) D_C(printf(x1, x2, x3,x4);)
 
 #define d0_printf1(x)        D_0(fprintf(stddbg, x);)
 #define d0_printf2(x1,x2)    D_0(fprintf(stddbg, x1, x2);)

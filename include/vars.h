@@ -221,4 +221,7 @@ extern int do_split_max_vars;
 extern int functionTypeLimits[MAX_FUNC];
 extern int enable_gc;
 extern int ex_infer;
+extern int competition_enable;
+extern int sat_timeout;
+extern int sat_ram;
 #endif

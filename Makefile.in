@@ -132,7 +132,7 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-EXTRA_DIST = BUGS compile.patch  compile.patch.all.sh  compile.patch.sh
+EXTRA_DIST = BUGS compile.patch  compile.patch.all.sh  compile.patch.sh confdefs.h
 # ChangeLog.O README-alpha
 SUBDIRS = include src tests examples doc
 @NO_CVSBUILD_FALSE@distdir = $(PACKAGE)-$(CVSBUILD)

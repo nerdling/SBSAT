@@ -150,5 +150,8 @@ int do_split_max_vars;
 int functionTypeLimits[MAX_FUNC];
 
 int enable_gc = 1;
-
 int ex_infer = 0;
+int competition_enable = 0;
+
+int sat_timeout = 0;
+int sat_ram = 0;

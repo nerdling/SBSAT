@@ -105,6 +105,13 @@ ite_main_init(int argc, char *argv[])
 	
    if (DEBUG_LVL == 1) d1_printf3("%s %s ", ite_basename(inputfile), comment);
 
+   if (competition_enable == 1) {
+      show_competition_version();
+      printf("c %s %s\n", ite_basename(inputfile), comment);
+      printf("c SATTIMEOUT = %d\n", sat_timeout);
+      printf("c SATRAM = %d\n", sat_ram);
+   }
+
    bdd_init();
    sym_init();
 
@@ -130,6 +137,7 @@ int
 ite_main(Tracer *tracer)
 {
    int ret = NO_ERROR;
+   dC_printf1("c Starting solver\n");
 
 	switch (formatout) {
     case 'n': break;
@@ -146,6 +154,8 @@ ite_main(Tracer *tracer)
 int
 ite_final(int ret, Tracer *tracer)
 {
+   int competition_exit_code=0; // UNKNOWN
+   char competition_output[32]="UNKNOWN";
 
    if (s_expected_result[0]) {
       ret = check_expected_result(ret);
@@ -170,6 +180,9 @@ ite_final(int ret, Tracer *tracer)
     case TRIV_SAT: {
 		 strcpy(result_string, "Satisfiable");
 		 Verify_NoSolver(tracer);
+
+		 strcpy(competition_output, "SATISFIABLE");
+       competition_exit_code=10;
 	 }
 		break;
     case SOLV_SAT: {
@@ -179,10 +192,16 @@ ite_final(int ret, Tracer *tracer)
           strcpy(result_string, "Satisfiable");
        }
        Verify_Solver(tracer);
+
+		 strcpy(competition_output, "SATISFIABLE");
+       competition_exit_code=10;
     } 
 		break;
     case TRIV_UNSAT: 
-    case SOLV_UNSAT: strcpy(result_string, "Unsatisfiable"); break;
+    case SOLV_UNSAT: 
+      strcpy(competition_output, "SATISFIABLE");
+      competition_exit_code=10;
+      strcpy(result_string, "Unsatisfiable"); break;
     case SOLV_UNKNOWN: strcpy(result_string, "Unknown Result"); break;
     case CONV_OUTPUT: strcpy(result_string, "Conversion"); break;
     case SOLV_ERROR: strcpy(result_string, "SOLVER ERROR: Result is not as expected"); break;
@@ -206,13 +225,23 @@ ite_final(int ret, Tracer *tracer)
          d0_printf2("%s\n", result_string);
          d2_printf2("Total Time: %4.3f \n", get_runtime());
       } else {
-         printf("%s\n", result_string);
+         if (competition_enable == 0) {
+            printf("%s\n", result_string);
+         }
       }
    }
 
    free_terminal_in();
    free_terminal_out();
 
+   if (competition_enable) {
+      printf("c Time (total, preproc, brancher): %.3fs %.3fs %.3fs\n", 
+            ite_counters_f[RUNNING_TIME], 
+            ite_counters_f[PREPROC_TIME], 
+            ite_counters_f[BRANCHER_TIME]);
+      printf("s %s\n", competition_output);
+      exit(competition_exit_code);
+   }
    if (ret == SOLV_ERROR) return 1;
    return 0;
 }
@@ -305,6 +334,7 @@ int
 ite_preprocessing()
 {
    d9_printf1("ite_preprocessing\n");
+   dC_printf1("c Starting preprocessing\n");
    int ret=0, prep_ret=0;
    /*
     * Preprocessing - start

@@ -149,6 +149,7 @@ extern t_opt options[];
 void show_ini();
 void show_help();
 void show_version();
+void show_competition_version();
 
 void init_options();
 void read_cmd(int argc, char *argv[]);
