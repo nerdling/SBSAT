@@ -122,21 +122,20 @@ ITE_Deduce()
                   nInferredAtom);
              );
 
-         if (NO_LEMMAS == 0)
-            if ((err = UpdateEachAffectedLemma(pAFS, nInferredValue))) 
-               goto deduce_error;
-         if ((err = UpdateEachAffectedFunction(pAFS, MAX_FN_PRIORITY-1))) 
-            goto deduce_error;
+         if (NO_LEMMAS == 0) {
+            err = UpdateEachAffectedLemma(pAFS, nInferredValue);
+            if (err != NO_ERROR) goto deduce_error;
+         }
+         err = UpdateEachAffectedFunction(pAFS, MAX_FN_PRIORITY-1);
+         if (err != NO_ERROR) goto deduce_error;
 
       } // while inference queue is non-empty
 
-      if ((err == UpdateEachAffectedFunction(NULL, MAX_FN_PRIORITY))) 
-         goto deduce_error;
+      err = UpdateEachAffectedFunction(NULL, MAX_FN_PRIORITY);
+      if (err != NO_ERROR) goto deduce_error;
    } while (pInferenceQueueNextElt < pInferenceQueueNextEmpty);
 deduce_error:
-#ifdef MK_NULL 
-   if (err == 0) err = ITE_Fn_Deduce();
-#endif
+
    ite_counters[err]++;
    return err;
 }

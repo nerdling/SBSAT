@@ -45,6 +45,8 @@ XUpdateEachAffectedFunction(AffectedFuncsStruct *pAFS, int x)
 {
    int ret = NO_ERROR;
 
+   if (pAFS == NULL) return NO_ERROR;
+
    // Determine the potentially affected special functions.
    OneAFS *pOneAFS = pAFS->arrOneAFS;
 
