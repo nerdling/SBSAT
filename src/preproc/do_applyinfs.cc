@@ -44,7 +44,7 @@ int
 Do_Apply_Inferences ()
 {
 	int ret = PREP_NO_CHANGE;
-	
+
 	/* Since I got up here DO_INFERENCES is set to 1 
 	 * It gets restored upon the exit from this fn
 	 */
@@ -53,7 +53,7 @@ Do_Apply_Inferences ()
 	//fprintf(stderr, "APPLYING INFERENCES - ");
 	infer *temp = inferlist;
 	inferlist = inferlist->next;	//NEW Must increment past the empty start node
-	delete temp;
+   DeallocateOneInference(temp); 
 
 	if (enable_gc && (rand() % 100 < 1)) 
       bdd_gc();
@@ -62,8 +62,8 @@ Do_Apply_Inferences ()
 	
 	while (inferlist != NULL) {
 		//startover:;
-		//if (enable_gc && (rand() % 100 < 4)) bdd_gc();
-		if (inferlist->nums[1] != 0) {
+      bdd_gc();
+      if (inferlist->nums[1] != 0) {
 			if (inferlist->nums[1] > 0) {
 /*				
 				//d3_printf2("|%d ", inferlist->nums[0]);
@@ -279,10 +279,10 @@ Do_Apply_Inferences ()
 		}
 		temp = inferlist;
 		inferlist = inferlist->next;
-		delete temp;
-		temp = NULL;
+      DeallocateOneInference(temp); 
+      temp = NULL;
    }
-	inferlist = new infer; //NEW
+	inferlist = AllocateInference(0, 0, NULL); //NEW
 	inferlist->next = NULL;
 	lastinfer = inferlist;
 	DO_INFERENCES = 1;
@@ -366,8 +366,8 @@ int Do_Apply_Inferences_backend () {
 	//  fprintf(stderr, "APPLYING INFERENCES - ");
 	infer *temp = inferlist;
 	inferlist = inferlist->next;	//NEW Must increment past the empty start node
-	delete temp;
-	while (inferlist != NULL) {
+   DeallocateOneInference(temp); 
+   while (inferlist != NULL) {
 		if (inferlist->nums[1] != 0) {
 			if (inferlist->nums[1] > 0) {
 				if(setALLequiv(inferlist->nums[0], inferlist->nums[1], 1) == TRIV_UNSAT) return TRIV_UNSAT;
@@ -383,11 +383,10 @@ int Do_Apply_Inferences_backend () {
 		}
 		temp = inferlist;
 		inferlist = inferlist->next;
-		delete temp;
-		temp = NULL;
+      DeallocateOneInference(temp); 
+      temp = NULL;
 	}
-	inferlist = new infer;
-	inferlist->next = NULL;
+	inferlist = AllocateInference(0, 0, NULL);
 	lastinfer = inferlist;
 	return ret;
 }
@@ -413,13 +412,13 @@ int Rebuild_BDDx (int x) {
 	infer *lastiter = NULL;
 	infer *startiter = NULL;
 	if(functions[x]->inferences != NULL) {
-		lastiter = new infer;
+		lastiter = AllocateInference(0, 0, NULL);
 		startiter = lastiter;
 		for(infer *iterator = functions[x]->inferences; iterator != NULL; iterator = iterator->next) {
-			lastiter->next = new infer;
+			lastiter->next = AllocateInference(iterator->nums[0], iterator->nums[1], NULL);
 			lastiter = lastiter->next;
-			lastiter->nums[0] = iterator->nums[0];
-			lastiter->nums[1] = iterator->nums[1];
+			//lastiter->nums[0] = iterator->nums[0];
+			//lastiter->nums[1] = iterator->nums[1];
 			//fprintf(stderr, "%d|%d, %d|", x, iterator->nums[0], iterator->nums[1]);
 		}
 		lastiter->next = NULL;
@@ -427,7 +426,7 @@ int Rebuild_BDDx (int x) {
 	
 	if(startiter!=NULL) {
 		lastinfer->next = startiter->next;
-		delete startiter;
+      DeallocateOneInference(startiter); 
 	} else lastinfer->next = NULL;
 	
 	infer *previous = lastinfer;
@@ -444,7 +443,7 @@ int Rebuild_BDDx (int x) {
 					infer *temp = iterator;
 					previous->next = iterator->next;	//Skip over inference already applied
 					iterator = previous;
-					delete temp;	//Delete the inference
+               DeallocateOneInference(temp); //Delete the inference
 					continue;	//Must continue to skip over 'previous = iterator;'
 				} else if (result->left == T && result->rght == F)
 					  return TRIV_UNSAT;
@@ -460,7 +459,7 @@ int Rebuild_BDDx (int x) {
 					infer *temp = iterator;
 					previous->next = iterator->next;	//Skip over inference already applied
 					iterator = previous;
-					delete temp;	//Delete the inference
+               DeallocateOneInference(temp); //Delete the inference
 					continue;	//Must continue to skip over 'previous = iterator;'
 				} else if (result->left == T && result->rght == F)
 					  return TRIV_UNSAT;
@@ -479,7 +478,7 @@ int Rebuild_BDDx (int x) {
 					infer *temp = iterator;
 					previous->next = iterator->next;	//Skip over inference already applied
 					iterator = previous;
-					delete temp;	//Delete the inference
+               DeallocateOneInference(temp); //Delete the inference
 					continue;	//Must continue to skip over 'previous = iterator;'
 				} else if (result->left == T && result->rght == F)
 					  return TRIV_UNSAT;
@@ -520,7 +519,7 @@ int Rebuild_BDDx (int x) {
 					infer *temp = iterator;
 					previous->next = iterator->next;	//Skip over inference already applied
 					iterator = previous;
-					delete temp;	//Delete the inference
+               DeallocateOneInference(temp); //Delete the inference
 					continue;	//Must continue to skip over 'previous = iterator;'
 				} else if (result->left == T && result->rght == F)
 					  return TRIV_UNSAT;
@@ -601,8 +600,8 @@ int Rebuild_BDDx (int x) {
 						num_funcs_var_occurs[variables[x].num[b]]--;
 						llist *temp = k;
 						k = k->next;
-						delete temp;
-						if(follow != NULL) follow->next = k;
+                  delete temp;
+                  if(follow != NULL) follow->next = k;
 						else amount[variables[x].num[b]].head = k;
 						if(k == NULL) amount[variables[x].num[b]].tail = follow;
 						k = NULL; //to break out now that we've deleted the entry.
@@ -644,8 +643,8 @@ int Rebuild_BDDx (int x) {
 					num_funcs_var_occurs[variables[x].num[b]]--;
 					llist *temp = k;
 					k = k->next;
-					delete temp;
-					if(follow != NULL) follow->next = k;
+               delete temp;
+               if(follow != NULL) follow->next = k;
 					else amount[variables[x].num[b]].head = k;
 					if(k == NULL) amount[variables[x].num[b]].tail = follow;
 					k = NULL; //to break out now that we've deleted the entry.
@@ -728,21 +727,21 @@ Rebuild_BDD (BDDNode *bdd, int *bdd_length, int *&bdd_vars)
 	infer *lastiter = NULL;
 	infer *startiter = NULL;
 	if(bdd->inferences != NULL) {
-		lastiter = new infer;
+		lastiter = AllocateInference(0, 0, NULL);
 		startiter = lastiter;
 		for(infer *iterator = bdd->inferences; iterator != NULL; iterator = iterator->next) {
-			lastiter->next = new infer;
+			lastiter->next = AllocateInference(iterator->nums[0], iterator->nums[1], NULL);
 			lastiter = lastiter->next;
-			lastiter->nums[0] = iterator->nums[0];
-			lastiter->nums[1] = iterator->nums[1];
+			//lastiter->nums[0] = iterator->nums[0];
+			//lastiter->nums[1] = iterator->nums[1];
 		}
 		lastiter->next = NULL;
 	}
 	
 	if(startiter!=NULL) {
 		lastinfer->next = startiter->next;
-		delete startiter;
-	}
+      DeallocateOneInference(startiter); 
+   }
 	
 	infer *previous = lastinfer;
 	
@@ -756,7 +755,7 @@ Rebuild_BDD (BDDNode *bdd, int *bdd_length, int *&bdd_vars)
 					infer *temp = iterator;
 					previous->next = iterator->next;	//Skip over inference already applied
 					iterator = previous;
-					delete temp;	//Delete the inference
+               DeallocateOneInference(temp); //Delete the inference
 					continue;	//Must continue to skip over 'previous = iterator;'
 				} else if (result->left == T && result->rght == F)
 					  return TRIV_UNSAT;
@@ -771,7 +770,7 @@ Rebuild_BDD (BDDNode *bdd, int *bdd_length, int *&bdd_vars)
 					infer *temp = iterator;
 					previous->next = iterator->next;	//Skip over inference already applied
 					iterator = previous;
-					delete temp;	//Delete the inference
+               DeallocateOneInference(temp); //Delete the inference
 					continue;	//Must continue to skip over 'previous = iterator;'
 				} else if (result->left == T && result->rght == F)
 					  return TRIV_UNSAT;
@@ -788,7 +787,7 @@ Rebuild_BDD (BDDNode *bdd, int *bdd_length, int *&bdd_vars)
 					infer *temp = iterator;
 					previous->next = iterator->next;	//Skip over inference already applied
 					iterator = previous;
-					delete temp;	//Delete the inference
+               DeallocateOneInference(temp); //Delete the inference
 					continue;	//Must continue to skip over 'previous = iterator;'
 				} else if (result->left == T && result->rght == F)
 					  return TRIV_UNSAT;
@@ -827,7 +826,7 @@ Rebuild_BDD (BDDNode *bdd, int *bdd_length, int *&bdd_vars)
 					infer *temp = iterator;
 					previous->next = iterator->next;	//Skip over inference already applied
 					iterator = previous;
-					delete temp;	//Delete the inference
+               DeallocateOneInference(temp); //Delete the inference
 					continue;	//Must continue to skip over 'previous = iterator;'
 				} else if (result->left == T && result->rght == F)
 					  return TRIV_UNSAT;

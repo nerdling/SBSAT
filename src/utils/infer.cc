@@ -117,6 +117,13 @@ DeallocateInferences(infer *next)
    infer_free = next;
 }
 
+void
+DeallocateOneInference(infer *next)
+{
+   if (next == NULL) return;
+   next->next = infer_free;
+   infer_free = next;
+}
 
 void
 DeallocateInferences_var(infer *next, int var)

@@ -272,6 +272,7 @@ void print_roller_init();
 
 void DeallocateInferences(infer *next);
 void DeallocateInferences_var(infer *next, int var);
+void DeallocateOneInference(infer *next);
 infer *AllocateInference(int num0, int num1, infer *next);
 
 FILE * ite_fopen(char *filename, const char *fileflags);

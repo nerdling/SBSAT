@@ -45,42 +45,35 @@ CreateInferences () {
 	
 	//Create Inferences from variablelist
 	
-	infer *lastiter = new infer;
+	infer *lastiter = AllocateInference(0, 0, NULL);
 	infer *startiter = lastiter;
 	for(int x = 1; x < numinp + 1; x++) {
 		//fprintf(stderr, "%d = %d/%d ", x, variablelist[x].true_false, variablelist[x].equalvars);
 		if(variablelist[x].true_false == 1) {
-			lastiter->next = new infer;
+			lastiter->next = AllocateInference(x, 0, NULL);
 			lastiter = lastiter->next;
-			lastiter->nums[0] = x;
-			lastiter->nums[1] = 0;
 		} else if(variablelist[x].true_false == 0) {
-			lastiter->next = new infer;
+			lastiter->next = AllocateInference(-x, 0, NULL);
 			lastiter = lastiter->next;
-			lastiter->nums[0] = -x;
-			lastiter->nums[1] = 0;
 		} else if(variablelist[x].equalvars != 0) {
-			lastiter->next = new infer;
-			lastiter = lastiter->next;
 			if(variablelist[x].equalvars>0) {
-				lastiter->nums[1] = x;//variablelist[x].equalvars;
-				lastiter->nums[0] = variablelist[x].equalvars;
+            lastiter->next = AllocateInference(x, variablelist[x].equalvars, NULL);
 			} else {
-				lastiter->nums[1] = -x;//-variablelist[x].equalvars;
-				lastiter->nums[0] = -variablelist[x].equalvars;
+            lastiter->next = AllocateInference(-x, -variablelist[x].equalvars, NULL);
 			}
+			lastiter = lastiter->next;
 		}
 	}
 	lastiter->next = NULL;
 	
 	if(startiter == lastiter) {
-		delete lastiter;
+      DeallocateOneInference(lastiter);
 		lastiter = NULL;
 		startiter = NULL;
 		return 0;
 	} else {	
 		lastinfer->next = startiter->next;
-		delete startiter;
+      DeallocateOneInference(startiter);
 	}
 	
 	infer *previous = lastinfer;
@@ -97,8 +90,8 @@ CreateInferences () {
 					previous->next = iterator->next;	
 					//Skip over inference already applied
 					iterator = previous;
-					delete temp;	//Delete the inference
-					continue;	//Must continue to skip over 'previous = iterator;'
+               DeallocateOneInference(temp); //Delete the inference
+               continue;	//Must continue to skip over 'previous = iterator;'
 				} else if (equivresult->left == T && equivresult->rght == F)
 					  return TRIV_UNSAT;
 				else if (equivresult->left < T) {
@@ -116,7 +109,7 @@ CreateInferences () {
 					previous->next = iterator->next;	
 					//Skip over inference already applied
 					iterator = previous;
-					delete temp;	//Delete the inference
+               DeallocateOneInference(temp); //Delete the inference
 					continue;	//Must continue to skip over 'previous = iterator;'
 				} else if (equivresult->left == T && equivresult->rght == F)
 					  return TRIV_UNSAT;
@@ -136,7 +129,7 @@ CreateInferences () {
 					infer *temp = iterator;
 					previous->next = iterator->next;	//Skip over inference already applied
 					iterator = previous;
-					delete temp;	//Delete the inference
+               DeallocateOneInference(temp); //Delete the inference
 					continue;	//Must continue to skip over 'previous = iterator;'
 				} else if (equivresult->left == T && equivresult->rght == F)
 					  return TRIV_UNSAT;
@@ -177,7 +170,7 @@ CreateInferences () {
 					infer *temp = iterator;
 					previous->next = iterator->next;	//Skip over inference already applied
 					iterator = previous;
-					delete temp;	//Delete the inference
+               DeallocateOneInference(temp); //Delete the inference
 					continue;	//Must continue to skip over 'previous = iterator;'
 				} else if (equivresult->left == T && equivresult->rght == F)
 					  return TRIV_UNSAT;

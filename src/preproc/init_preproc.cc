@@ -123,8 +123,11 @@ Init_Preprocessing()
 
 	if(length != NULL) ite_free((void **)&variables);
 	length = (int *)ite_recalloc(NULL, 0, nmbrFunctions, sizeof(int), 9, "length");
+   /*
 	inferlist = new infer;
 	inferlist->next = NULL;
+   */
+   inferlist = AllocateInference(0, 0, NULL);
 	lastinfer = inferlist;
 	variables = (store *)ite_recalloc(NULL, 0, nmbrFunctions, sizeof(store), 9, "variables");
 	
@@ -195,6 +198,10 @@ Init_Preprocessing()
 	
 	for (int x = 0; x < nmbrFunctions; x++)
 	  {
+        D_3(
+              if ((x % 1000) == 0)
+                d3_printf3("Rebuild %d/%d\r", x, nmbrFunctions);
+          )
 		  variables[x].num = NULL;
 		  int r=Rebuild_BDDx(x);
 		  switch (r) {
@@ -326,11 +333,14 @@ Finish_Preprocessing()
 	//free(variables);
 	variables = NULL;
 
+   DeallocateInferences(inferlist);
+   /*
 	while(inferlist != NULL) {
 		infer *temp = inferlist;
 		inferlist = inferlist->next;
 		delete temp;
 	}
+   */
 	inferlist = NULL;
 	
 	//delete [] tempint;
