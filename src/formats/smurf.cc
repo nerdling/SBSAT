@@ -272,285 +272,232 @@ void Smurfs_to_BDD () {
 	int out = 0, line, i = 0;
 	long long y = 0;
 	bool flag = false;
-	while (out < 3)
-	  {
-		  string = getc (finputfile);
-		  if ((string >= '0') && (string <= '9'))
-			 {
-				 i = 0;
-				 if (out == 2)
-					{
-						delete [] outvec;
-						outvec = new char[numout + 1];
-						vars = new arr[numout + 1];
-					}
-				 while ((string != ' ') && (string != '#'))
-					{
-						outvec[i] = string;
-						i++;
-						string = getc (finputfile);
-					}
-				 outvec[i] = 0;
-				 if (out == 0)
-					numinp = atoi (outvec);
-				 
-				 else if (out == 1)
-					numout = atoi (outvec);
-				 out++;
-			 }
-	  }
+	while (out < 3) {
+		string = getc (finputfile);
+		if ((string >= '0') && (string <= '9')) {
+			i = 0;
+			if (out == 2) {
+				delete [] outvec;
+				outvec = new char[numout + 1];
+				vars = new arr[numout + 1];
+			}
+			while ((string != ' ') && (string != '#')) {
+				outvec[i] = string;
+				i++;
+				string = getc (finputfile);
+			}
+			outvec[i] = 0;
+			if (out == 0)
+			  numinp = atoi (outvec);
+			else if (out == 1)
+			  numout = atoi (outvec);
+			out++;
+		}
+	}
 	while (string != '\n')
 	  string = getc (finputfile);
-	for (int x = 0; x < numout; x++)
-	  {
-		  line = -1;
-		  string = getc (finputfile);	// '#'
-		  string = getc (finputfile);	// '\n'
-		  fscanf (finputfile, "%d", &line);
-		  if (line != x)
-			 {
-				 fprintf (stderr, "\nFunction numbers do not match on function %d\n", line);
-				 fprintf (stderr, "Should be function %d\n", x);
-				 exit (1);
-			 }
-		  y = -1;
-		  
-		  do
-			 {
-             if ((y+1)>=tempint_max) {
-                tempint = (int*)ite_recalloc((void*)tempint, tempint_max, tempint_max+100, sizeof(int), 9, "tempint");
-                tempint_max += 100;
-             }
-             y++;
-				 //ADD IN SYMBOL TABLE SUPPORT!
-				 fscanf (finputfile, "%d", &tempint[y]);
-			 }
-		  while (tempint[y] != -1);
-		  vars[x].integers = new int[y + 2];
-		  for (i = 1; i <= y + 1; i++)
-			 {
-				 vars[x].integers[i] = tempint[i - 1];
-				 if (vars[x].integers[i] > numinp) {
-					 fprintf(stderr, "Variable number %d is larger than the allowed %ld\n", vars[x].integers[i], numinp);
-					 exit(1);
-				 }
-				 if (vars[x].integers[i] == 0)
-					{			//BDD's can't have the # 0 in them
-						flag = true;
-						vars[x].integers[i] = numinp+1;
-					}
-				 //      fprintf(stderr, "%d|", vars[x].integers[i]);
-			 }
-		  vars[x].integers[0] = y;
-		  string = getc (finputfile);	// '\n'
-		  string = getc (finputfile);
-		  if ((string == '0') || (string == '1'))
-			 {
-				 vars[x].tv = new char[((long long)1 << y) + 1];
-				 vars[x].tv[0] = string;
-				 for (int i = 1; i < ((long long)1 << y); i++)
-					{
-						string = getc (finputfile);
-						if ((string != '0') && (string != '1')) {
-							fprintf (stderr, "\nProblem with truth vector in function %d\n", line);
-							exit (1);
-						}
-						vars[x].tv[i] = string;
-					}
-				 vars[x].andor = UNSURE;
-			 } else if (string == 'p') {
-				 vars[x].tv = new char[y + 1];
-				 char test[10];
-				 for (int i = 0; i < 7; i++) {
-						string = fgetc (finputfile);
-						test[i] = string;
-				 }
-				 test[7] = 0;
-				 if (strcmp (test, "lainor ")) {
-					 fprintf (stderr, "\nProblem with truth vector in function %d\n", line);
-					 exit (1);
-				 }
-				 for (int i = 0; i < y; i++) {
-					 string = getc (finputfile);
-					 if ((string != '0') && (string != '1'))
-						{
-							fprintf (stderr, "\nProblem with truth vector in function %d\n", line);
-							exit (1);
-						}
-						vars[x].tv[i] = string;
-					}
-				 vars[x].andor = PLAINOR;
-			 } else if (string == 'a') {
-				 vars[x].tv = new char[y + 1];
-				 char test[10];
-				 for (int i = 0; i < 4; i++)
-					{
-						string = fgetc (finputfile);
-						test[i] = string;
-					}
-				 test[4] = 0;
-				 if (strcmp (test, "nd= "))
-					{
-						fprintf (stderr,
-									"\nProblem with truth vector in function %d\n", line);
-						exit (1);
-					}
-				 for (int i = 0; i < y; i++)
-					{
-						string = getc (finputfile);
-						if ((string != '0') && (string != '1') && (string != '3'))
-						  {
-							  fprintf (stderr,
-										  "\nProblem with truth vector in function %d\n",
-										  line);
-							  exit (1);
-						  }
-						vars[x].tv[i] = string;
-					}
-				 vars[x].andor = AND;
-			 }
-		  else if (string == 'o')
-			 {
-				 vars[x].tv = new char[y + 1];
-				 char test[10];
-				 for (int i = 0; i < 3; i++)
-					{
-						string = fgetc (finputfile);
-						test[i] = string;
-					}
-				 test[3] = 0;
-				 if (strcmp (test, "r= "))
-					{
-						fprintf (stderr,
-									"\nProblem with truth vector in function %d\n", line);
-						exit (1);
-					}
-				 for (int i = 0; i < y; i++)
-					{
-						string = getc (finputfile);
-						if ((string != '0') && (string != '1') && (string != '3'))
-						  {
-							  fprintf (stderr,
-										  "\nProblem with truth vector in function %d\n",
-										  line);
-							  exit (1);
-						  }
-						vars[x].tv[i] = string;
-					}
-				 vars[x].andor = OR;
-			 }
-		  else
-			 {
-				 dE_printf2("\nProblem reading in smurf file on function %d\n", line);
-				 exit (1);
-			 }
-	  }
+	for (int x = 0; x < numout; x++) {
+		line = -1;
+		string = getc (finputfile);	// '#'
+		string = getc (finputfile);	// '\n'
+		fscanf (finputfile, "%d", &line);
+		if (line != x) {
+			fprintf (stderr, "\nFunction numbers do not match on function %d\n", line);
+			fprintf (stderr, "Should be function %d\n", x);
+			exit (1);
+		}
+		y = -1;
+		do {
+			y++;
+			if (y>=tempint_max) {
+				tempint = (int*)ite_recalloc((void*)tempint, tempint_max, tempint_max+100, sizeof(int), 9, "tempint");
+				tempint_max += 100;
+			}
+			//ADD IN SYMBOL TABLE SUPPORT!
+			fscanf (finputfile, "%d", &tempint[y]);
+		}
+		while (tempint[y] != -1);
+		vars[x].integers = new int[y + 2];
+		for (i = 1; i <= y + 1; i++) {
+			vars[x].integers[i] = tempint[i - 1];
+			if (vars[x].integers[i] > numinp) {
+				fprintf(stderr, "Variable number %d is larger than the allowed %ld\n", vars[x].integers[i], numinp);
+				exit(1);
+			}
+			if (vars[x].integers[i] == 0) {
+				//BDD's can't have the # 0 in them
+				flag = true;
+				vars[x].integers[i] = numinp+1;
+			}
+			//      fprintf(stderr, "%d|", vars[x].integers[i]);
+		}
+		vars[x].integers[0] = y;
+		string = getc (finputfile);	// '\n'
+		string = getc (finputfile);
+		if ((string == '0') || (string == '1')) {
+			vars[x].tv = new char[((long long)1 << y) + 1];
+			vars[x].tv[0] = string;
+			for (int i = 1; i < ((long long)1 << y); i++) {
+				string = getc (finputfile);
+				if ((string != '0') && (string != '1')) {
+					fprintf (stderr, "\nProblem with truth vector in function %d\n", line);
+					exit (1);
+				}
+				vars[x].tv[i] = string;
+			}
+			vars[x].andor = UNSURE;
+		} else if (string == 'p') {
+			vars[x].tv = new char[y + 1];
+			char test[10];
+			for (int i = 0; i < 7; i++) {
+				string = fgetc (finputfile);
+				test[i] = string;
+			}
+			test[7] = 0;
+			if (strcmp (test, "lainor ")) {
+				fprintf (stderr, "\nProblem with truth vector in function %d\n", line);
+				exit (1);
+			}
+			for (int i = 0; i < y; i++) {
+				string = getc (finputfile);
+				if ((string != '0') && (string != '1')) {
+					fprintf (stderr, "\nProblem with truth vector in function %d\n", line);
+					exit (1);
+				}
+				vars[x].tv[i] = string;
+			}
+			vars[x].andor = PLAINOR;
+		} else if (string == 'a') {
+			vars[x].tv = new char[y + 1];
+			char test[10];
+			for (int i = 0; i < 4; i++) {
+				string = fgetc (finputfile);
+				test[i] = string;
+			}
+			test[4] = 0;
+			if (strcmp (test, "nd= ")) {
+				fprintf (stderr, "\nProblem with truth vector in function %d\n", line);
+				exit (1);
+			}
+			for (int i = 0; i < y; i++) {
+				string = getc (finputfile);
+				if ((string != '0') && (string != '1') && (string != '3')) {
+					fprintf (stderr, "\nProblem with truth vector in function %d\n", line);
+					exit (1);
+				}
+				vars[x].tv[i] = string;
+			}
+			vars[x].andor = AND;
+		} else if (string == 'o') {
+			vars[x].tv = new char[y + 1];
+			char test[10];
+			for (int i = 0; i < 3; i++) {
+				string = fgetc (finputfile);
+				test[i] = string;
+			}
+			test[3] = 0;
+			if (strcmp (test, "r= ")) {
+				fprintf (stderr, "\nProblem with truth vector in function %d\n", line);
+				exit (1);
+			}
+			for (int i = 0; i < y; i++) {
+				string = getc (finputfile);
+				if ((string != '0') && (string != '1') && (string != '3')) {
+					fprintf (stderr, "\nProblem with truth vector in function %d\n", line);
+					exit (1);
+				}
+				vars[x].tv[i] = string;
+			}
+			vars[x].andor = OR;
+		} else {
+			dE_printf2("\nProblem reading in smurf file on function %d\n", line);
+			exit (1);
+		}
+	}
 	if (flag)
 	  numinp++;
 	
    vars_alloc(numinp);
    functions_alloc(numout);
 	
-	for (int x = 0; x < numout; x++)
-	  {
-		  if ((x+1) % 1000 == 0) d2_printf3("\rDoing %d/%ld", x + 1, numout);
-		  if (vars[x].integers[0] == 0)
-			 {
-				 functions[x] = true_ptr;
-				 delete [] vars[x].integers;
-				 delete [] vars[x].tv;
-				 continue;
-			 }
-		  if (vars[x].andor == UNSURE)
-			 {
-				 int y = 0;
-				 int level = 0;
-				 int *reverse = new int[vars[x].integers[0] + 1];
-				 for (int i = 0; i < vars[x].integers[0]; i++) {
-					 reverse[vars[x].integers[0] - i] = vars[x].integers[i + 1];
-				 }
-				 reverse[0] = vars[x].integers[0];
-				 functions[x] = ReadSmurf (&y, vars[x].tv, level, &(reverse[1]), reverse[0]);	//vars[x].integers);
-				 functionType[x] = vars[x].andor;
-				 delete [] reverse;
-			 } else if (vars[x].andor == PLAINOR) {
-				 functions[x] = false_ptr;
-				 for (y = 0; y < vars[x].integers[0]; y++) {
-					 if (vars[x].tv[y] == '0')
-						functions[x] = ite_or (functions[x], ite_var (-vars[x].integers[y + 1]));
-					 else if (vars[x].tv[y] == '1')
-						functions[x] = ite_or (functions[x], ite_var (vars[x].integers[y + 1]));
-				 }
-				 functionType[x] = PLAINOR;
-			 } else if (vars[x].andor == AND) {
-				 functions[x] = true_ptr;
-				 for (y = 0; y < vars[x].integers[0]; y++)
-					{
-						if (vars[x].tv[y] == '0')
-						  functions[x] =
-						  ite_and (functions[x],
-									  ite_var (-vars[x].integers[y + 1]));
-						
-						else if (vars[x].tv[y] == '1')
-						  functions[x] =
-						  ite_and (functions[x],
-									  ite_var (vars[x].integers[y + 1]));
-						
-						else if (vars[x].tv[y] == '3')
-						  equalityVble[x] = vars[x].integers[y + 1];
-					}
-				 functionType[x] = AND;
-				 independantVars[equalityVble[x]] = 0;
-				 functions[x] =
-					ite_equ (ite_var (equalityVble[x]),
-								functions[x]);
-				 equalityVble[x] = abs (equalityVble[x]);
-			 }
-		  else if (vars[x].andor == OR)
-			 {
-				 functions[x] = false_ptr;
-				 for (y = 0; y < vars[x].integers[0]; y++)
-					{
-						if (vars[x].tv[y] == '0')
-						  functions[x] =
-						  ite_or (functions[x],
-									 ite_var (-vars[x].integers[y + 1]));
-						else if (vars[x].tv[y] == '1')
-						  functions[x] =
-						  ite_or (functions[x],
-									 ite_var (vars[x].integers[y + 1]));
-						else if (vars[x].tv[y] == '3')
-						  equalityVble[x] = vars[x].integers[y + 1];
-					}
-				 functionType[x] = OR;
-				 independantVars[equalityVble[x]] = 0;
-				 functions[x] =
-					ite_equ (ite_var (equalityVble[x]),
-								functions[x]);
-				 equalityVble[x] = abs (equalityVble[x]);
-			 }
-		  delete [] vars[x].integers;
-		  delete [] vars[x].tv;
-		  if (outvec[x] == '0')
-			 functions[x] = ite_not (functions[x]);
-	  }
+	for (int x = 0; x < numout; x++) {
+		if ((x+1) % 1000 == 0) d2_printf3("\rDoing %d/%ld", x + 1, numout);
+		if (vars[x].integers[0] == 0) {
+			functions[x] = true_ptr;
+			delete [] vars[x].integers;
+			delete [] vars[x].tv;
+			continue;
+		}
+		if (vars[x].andor == UNSURE) {
+			int y = 0;
+			int level = 0;
+			int *reverse = new int[vars[x].integers[0] + 1];
+			for (int i = 0; i < vars[x].integers[0]; i++) {
+				reverse[vars[x].integers[0] - i] = vars[x].integers[i + 1];
+			}
+			reverse[0] = vars[x].integers[0];
+			functions[x] = ReadSmurf (&y, vars[x].tv, level, &(reverse[1]), reverse[0]);	//vars[x].integers);
+			functionType[x] = vars[x].andor;
+			delete [] reverse;
+		} else if (vars[x].andor == PLAINOR) {
+			functions[x] = false_ptr;
+			for (y = 0; y < vars[x].integers[0]; y++) {
+				if (vars[x].tv[y] == '0')
+				  functions[x] = ite_or (functions[x], ite_var (-vars[x].integers[y + 1]));
+				else if (vars[x].tv[y] == '1')
+				  functions[x] = ite_or (functions[x], ite_var (vars[x].integers[y + 1]));
+			}
+			functionType[x] = PLAINOR;
+		} else if (vars[x].andor == AND) {
+			functions[x] = true_ptr;
+			for (y = 0; y < vars[x].integers[0]; y++) {
+				if (vars[x].tv[y] == '0')
+				  functions[x] = ite_and (functions[x], ite_var (-vars[x].integers[y + 1]));
+				else if (vars[x].tv[y] == '1')
+				  functions[x] = ite_and (functions[x], ite_var (vars[x].integers[y + 1]));
+				else if (vars[x].tv[y] == '3')
+				  equalityVble[x] = vars[x].integers[y + 1];
+			}
+			functionType[x] = AND;
+			independantVars[equalityVble[x]] = 0;
+			functions[x] = ite_equ (ite_var (equalityVble[x]), functions[x]);
+			equalityVble[x] = abs (equalityVble[x]);
+		} else if (vars[x].andor == OR) {
+			functions[x] = false_ptr;
+			for (y = 0; y < vars[x].integers[0]; y++) {
+				if (vars[x].tv[y] == '0')
+				  functions[x] = ite_or (functions[x], ite_var (-vars[x].integers[y + 1]));
+				else if (vars[x].tv[y] == '1')
+				  functions[x] = ite_or (functions[x], ite_var (vars[x].integers[y + 1]));
+				else if (vars[x].tv[y] == '3')
+				  equalityVble[x] = vars[x].integers[y + 1];
+			}
+			functionType[x] = OR;
+			independantVars[equalityVble[x]] = 0;
+			functions[x] = ite_equ (ite_var (equalityVble[x]), functions[x]);
+			equalityVble[x] = abs (equalityVble[x]);
+		}
+		delete [] vars[x].integers;
+		delete [] vars[x].tv;
+		if (outvec[x] == '0')
+		  functions[x] = ite_not (functions[x]);
+	}
 	delete [] vars;
 	delete [] outvec;
 	int count = -1;
 	
 	//Need to remove any clause that was set to True during the making of the BDDs
-	for (long x = 0; x < numout; x++)
-	  {
-		  count++;
-		  functions[count] = functions[x];
-		  equalityVble[count] = equalityVble[x];
-		  functionType[count] = functionType[x];
-		  if (functions[x] == true_ptr)
-			 count--;
-		  
-		  //printBDDerr(functions[x]);
-		  //fprintf(stderr, "\n\n");
-	  }
+	for (long x = 0; x < numout; x++) {
+		count++;
+		functions[count] = functions[x];
+		equalityVble[count] = equalityVble[x];
+		functionType[count] = functionType[x];
+		if (functions[x] == true_ptr)
+		  count--;
+		
+		//printBDDerr(functions[x]);
+		//fprintf(stderr, "\n\n");
+	}
 	fprintf (stderr, "\n");
 	numout = count + 1;
 	nmbrFunctions = numout;
