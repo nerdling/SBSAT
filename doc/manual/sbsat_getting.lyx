@@ -901,7 +901,7 @@ Note: dash (
  depending on the context.
 \layout Standard
 
-All available options could be printed by specifying '
+All available options can be printed by specifying '
 \family typewriter 
 \size footnotesize 
 \emph on 
@@ -1012,7 +1012,7 @@ Options:
 ...
 \layout Subsection
 
-Converting your problem into SAT problem
+Converting your problem into a SAT problem
 \layout Subsection
 
 Choosing a different solver
@@ -1190,7 +1190,7 @@ Structure of BDD(ITE) format
 As with the CNF format the file starts with the header '
 \family typewriter 
 \size footnotesize 
-p bdd num_inp_vars num_fn
+p bdd num_inp_vars num_fns
 \family default 
 \size default 
 '
@@ -1208,7 +1208,7 @@ Each line starting with start
 
 
 \begin_inset  Tabular
-<lyxtabular version="3" rows="8" columns="4">
+<lyxtabular version="3" rows="9" columns="4">
 <features>
 <column alignment="center" valignment="top" leftline="true" width="0(null)">
 <column alignment="center" valignment="top" leftline="true" width="0(null)">
@@ -1260,7 +1260,7 @@ equ
 
 \layout Standard
 
-2
+2+
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
@@ -1470,6 +1470,38 @@ ite
 \end_inset 
 </cell>
 </row>
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+xor
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+2+
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
 </lyxtabular>
 
 \end_inset 
@@ -1506,22 +1538,24 @@ Here is the file called xortest.ite:
 
 
 \size footnotesize 
-p bdd 1000 1000 
+p bdd 7 3
 \layout LyX-Code
 
 
 \size footnotesize 
-*equ(xor( xor(123, 125), 156), f) 
+*equ(xor( xor(1, 2), 3), F)
 \layout LyX-Code
 
 
 \size footnotesize 
-*equ(xor(134, and3(155, 127, 167)), t) 
+*equ(xor(3, and3(5, 4, 6)), T)
 \layout LyX-Code
 
 
 \size footnotesize 
-*equ(xor(and3(1, 2, 3), and3(45, 145, 167)), f) 
+*equ(xor(and3(1, 2, 3), and3(4, 5, 7)), F)
+\layout LyX-Code
+
 \layout LyX-Code
 
 \layout Standard
@@ -1536,25 +1570,211 @@ $ ite xortest.ite
 \layout Standard
 
 The output:
-\layout Standard
+\layout LyX-Code
 
-...
- (c&p) ...
+
+\size scriptsize 
+warning: ini file not found /home/fett/ite.ini
+\layout LyX-Code
+
+
+\size scriptsize 
+Reading File ../examples/xortest.ite ....
+\layout LyX-Code
+
+
+\size scriptsize 
+Done Reading File...
+\layout LyX-Code
+
+
+\size scriptsize 
+EXISTENTIALLY QUANTIFYING - 
+\layout LyX-Code
+
+
+\size scriptsize 
+DEPENDENT CLUSTERING - 
+\layout LyX-Code
+
+
+\size scriptsize 
+EXISTENTIALLY QUANTIFYING - 
+\layout LyX-Code
+
+
+\size scriptsize 
+STRENGTHENING - |
+\layout LyX-Code
+
+
+\size scriptsize 
+EXISTENTIALLY QUANTIFYING - 
+\layout LyX-Code
+
+
+\size scriptsize 
+STRENGTHENING - 
+\layout LyX-Code
+
+
+\size scriptsize 
+EXISTENTIALLY QUANTIFYING - 
+\layout LyX-Code
+
+
+\size scriptsize 
+BRANCH PRUNING - 
+\backslash 
+
+\layout LyX-Code
+
+
+\size scriptsize 
+EXISTENTIALLY QUANTIFYING - 
+\layout LyX-Code
+
+
+\size scriptsize 
+BRANCH PRUNING - 
+\layout LyX-Code
+
+
+\size scriptsize 
+Solver vars: 7/7 (not used: 0)
+\layout LyX-Code
+
+
+\size scriptsize 
+Indep/Dep vars: 7/0 (other vars: 0)
+\layout LyX-Code
+
+
+\size scriptsize 
+Initializing Smurf Factory data structs ...
+\layout LyX-Code
+
+
+\size scriptsize 
+Number of special functions: 0
+\layout LyX-Code
+
+
+\size scriptsize 
+Number of regular Smurfs: 2
+\layout LyX-Code
+
+
+\size scriptsize 
+Number of Smurf states: 57
+\layout LyX-Code
+
+
+\size scriptsize 
+Time to build Smurf states: 0.000 secs.
+\layout LyX-Code
+
+
+\size scriptsize 
+InitBrancher
+\layout LyX-Code
+
+
+\size scriptsize 
+Initializing heuristicScores
+\layout LyX-Code
+
+
+\size scriptsize 
+Solution verified.
+\layout LyX-Code
+
+
+\size scriptsize 
+Time in brancher: -0.000 secs.
+\layout LyX-Code
+
+
+\size scriptsize 
+-0.000 backtracks per sec.
+\layout LyX-Code
+
+
+\size scriptsize 
+Backtracks: 0 Time: 0.000 secs.
+ 10000000.000 backtracks per sec.
+\layout LyX-Code
+
+
+\size scriptsize 
+Progress: 0/3 0.00%
+\layout LyX-Code
+
+
+\size scriptsize 
+Choices (total, dependent): (3, 0)
+\layout LyX-Code
+
+
+\size scriptsize 
+Lemmas (cached, non-cached, added): (0, 5, 5)
+\layout LyX-Code
+
+
+\size scriptsize 
+Inferences by smurfs: 5; lemmas: 0; 
+\layout LyX-Code
+
+
+\size scriptsize 
+Backtracks by smurfs: 0; lemmas: 0; 
+\layout LyX-Code
+
+
+\size scriptsize 
+Backjumps: 0 (avg bj len: 0.0)
+\layout LyX-Code
+
+
+\size scriptsize 
+Choice Points: 2 , Backtracks: 0, Backjumps: 0 
+\layout LyX-Code
+
+
+\size scriptsize 
+Satisfiable
+\layout LyX-Code
+
+
+\size scriptsize 
+Total Time: 0.010 
 \layout Subsubsection
 
 add_state example
 \layout Standard
 
-Another important function is add_state.
+Another important function is 
+\series bold 
+add_state
+\series default 
+.
  This function has two parameters.
- First one is the BDD function specified as the $ and the one-based index
- of the function in the file.
+ The first one a BDD function.
  The second parameter is the shift in the variable number.
+ 
+\series bold 
+Add_state
+\series default 
+ creates a new BDD with structure identical the first parameter but with
+ each variable incremented by the second parameter.
+ 
+\layout LyX-Code
+
 \layout LyX-Code
 
 
 \size footnotesize 
-p bdd 80 83 
+p bdd 44 5
 \layout LyX-Code
 
 
@@ -1587,7 +1807,7 @@ The example will be expanded into the following form:
 
 
 \size footnotesize 
-p bdd 80 83 
+p bdd 44 5 
 \layout LyX-Code
 
 
@@ -1620,35 +1840,146 @@ Function definition example
 
 
 \size footnotesize 
-#define g 1 2 3 # ite f 1 2 3 -2 T 
+#define g 1 2 3 # ite(1, 2, and(-2, 3)) 
 \layout Subsubsection
 
 Complex example
 \layout LyX-Code
 
 
-\size footnotesize 
-InitialBranch (2, 4..12, 15, 16, 18, 1, 3) ;
+\size scriptsize 
+p bdd 18 13 ; 18 vars, 13 functions 
 \layout LyX-Code
 
 
-\size footnotesize 
-; These variables will be labeled as  independent variables, 
+\size scriptsize 
+#define fun 1 2 3 4 # ite 1 and 2 3 or 3 4 ; parms must be consecutive integers
+ from 1 
 \layout LyX-Code
 
 
-\size footnotesize 
-; the rest are labeled as dependent
+\size scriptsize 
+#define g 1 2 3 # ite(fun(1, 2, 3, -2), T, 3) 
 \layout LyX-Code
 
 
-\size footnotesize 
-print_tree $5; no equation created, no smurf created 
+\size scriptsize 
+InitialBranch (2, 4..12, 15, 16, 18, 1, 3) ; These variables will be branched
+ on first 
 \layout LyX-Code
 
 
-\size footnotesize 
+\size scriptsize 
+ite 4 5 6 ; eqn $1 
+\layout LyX-Code
+
+
+\size scriptsize 
+*or $1 3 ; eqn $2, smurf 1 
+\layout LyX-Code
+
+
+\size scriptsize 
+*or 5 -6 ; eqn $3, smurf 2 
+\layout LyX-Code
+
+
+\size scriptsize 
+*and $1 -4 ; eqn $4, smurf 3 
+\layout LyX-Code
+
+
+\size scriptsize 
+*imp $1 $4 ; eqn $5, smurf 4 
+\layout LyX-Code
+
+
+\size scriptsize 
+#define imp 1 2 # or3(1, 2, 3); Notice the 'imp' operator was overloaded.
+ 
+\layout LyX-Code
+
+
+\size scriptsize 
+*imp(3 4 5)    ; eqn $6, smurf 5 
+\layout LyX-Code
+
+
+\size scriptsize 
+               ; this is a really bad idea, it probably shouldn't be allowed
+\layout LyX-Code
+
+
+\size scriptsize 
+print_tree $5  ; no equation created, no smurf created
+\layout LyX-Code
+
+
+\size scriptsize 
 pprint_tree $5 ; no equation created, no smurf created 
+\layout LyX-Code
+
+
+\size scriptsize 
+ite(2,              ; eqn $7, no smurf created
+\layout LyX-Code
+
+
+\size scriptsize 
+      ite(3, 4, 5), ; plus comments are ignored, even in the middle of a
+ function 
+\layout LyX-Code
+
+
+\size scriptsize 
+      ite(4, 5, F))
+\layout LyX-Code
+
+
+\size scriptsize 
+*fun 4 -5 2 3 ; eqn $8, smurf 6 
+\layout LyX-Code
+
+
+\size scriptsize 
+*fun g -5 4 $6 2 3 4 ; eqn $9, smurf 7
+\layout LyX-Code
+
+
+\size scriptsize 
+*equ(5, xor3(and(-3, 4), nand(7, 5), ite(15, 4, nor(4, -7)))) ; eqn $10,
+ smurf 8
+\layout LyX-Code
+
+
+\size scriptsize 
+*add_state($10, 1) ; eqn $11, smurf 9
+\layout LyX-Code
+
+
+\size scriptsize 
+                   ; add_state creates a BDD which is identical to the first
+\layout LyX-Code
+
+
+\size scriptsize 
+                   ; argument but with all it's variables incremented by
+ the
+\layout LyX-Code
+
+
+\size scriptsize 
+                   ; second argument.
+\layout LyX-Code
+
+
+\size scriptsize 
+*add_state($10, 2) ; eqn $12, smurf 10 
+\layout LyX-Code
+
+
+\size scriptsize 
+*add_state($10, 3) ; eqn $13, smurf 11
 \layout LyX-Code
 
 \layout Standard
@@ -1756,7 +2087,7 @@ Cl
 
 \layout Standard
 
-All
+CNF
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
@@ -1781,7 +2112,7 @@ Cofactoring
 
 \layout Standard
 
-yes
+no
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
@@ -1797,7 +2128,7 @@ Co
 
 \layout Standard
 
-CNF
+All
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
@@ -2032,9 +2363,8 @@ Preprocessing sequence:
 The sequence in which the preprocessing options are applied is specified
  by the 'preprocessing sequence' string.
  The parentheses '()' border the repeated sequences and are followed with
- the number is reapeats.
- Star '*' means repeat until there is not change.
- You can replace the star with a number.
+ the number of repeats.
+ A star '*' means repeat until there is no change.
 \layout Standard
 
 Example:
@@ -2058,10 +2388,10 @@ small.cnf
 \size default 
 
 \newline 
-(or 
+(or
 \family typewriter 
 \size footnotesize 
-$ ite 
+ $ ite 
 \emph on 
 -P
 \emph default 
@@ -2070,8 +2400,8 @@ $ ite
 
 \layout Standard
 
-For some problems the preprocessing might take too long without the desired
- effect.
+For some problems the preprocessing might take too long or may not produce
+ a desired effect.
  Therefore it is possible to change the preprocessing options turn them
  off/on or change their sequence.
  

@@ -1330,8 +1330,7 @@ ite 4 5 6 ; eqn $1
 
 
 \size scriptsize 
-#define imp 1 2 # or3(1, 2, 3); Notice the 'imp' operator was overloaded
- to be the OR of 3 variables.
+#define imp 1 2 # or3(1, 2, 3); Notice the 'imp' operator was overloaded.
  
 \layout LyX-Code
 
@@ -1383,8 +1382,8 @@ ite(2,              ; eqn $7, no smurf created
 
 
 \size scriptsize 
-*equ(xor3(2, and(-3, 4), nand(7, 5), ite(15, or(4, -7), nor(4, -7)))) ;
- eqn $10, smurf 8
+*equ(5, xor3(and(-3, 4), nand(7, 5), ite(15, 4, nor(4, -7)))) ; eqn $10,
+ smurf 8
 \layout LyX-Code
 
 
@@ -1395,12 +1394,17 @@ ite(2,              ; eqn $7, no smurf created
 
 \size scriptsize 
                    ; add_state creates a BDD which is identical to the first
- argument but 
 \layout LyX-Code
 
 
 \size scriptsize 
-                   ; with all it's variables incremented by the second argument.
+                   ; argument but with all it's variables incremented by
+ the
+\layout LyX-Code
+
+
+\size scriptsize 
+                   ; second argument.
 \layout LyX-Code
 
 

@@ -124,7 +124,8 @@ void BDD_to_Smurfs () {
 	char p[8192];
 	store * integers;
 	int *tempint;
-	long v, x, y, i;
+	long v, y, i;
+	long long x;
 	tempint = (int *) calloc (500, sizeof (int));
 	integers = (store *) calloc (nmbrFunctions + 1, sizeof (store));
 	numinp = 0;
@@ -179,6 +180,7 @@ void BDD_to_Smurfs () {
 				 fprintf (foutputfile, "%d ", integers[v].num[x]);
 			 }
 		  fprintf (foutputfile, "-1\n");
+//SEAN! ADD IN SUPPORT FOR PLAINORs and PLAINXORs
 		  if (functionType[v] == AND || functionType[v] == OR)
 			 {
 				 int validated = 0;
@@ -261,10 +263,10 @@ void BDD_to_Smurfs () {
 								 }
 						  }
 					}
-			 }
-		  else
-			 {
-				 for (int tvec = 0; tvec < (1 << x); tvec++)
+			 }	else {
+				 if(x > MAX_MAX_VBLES_PER_SMURF)
+					fprintf(stderr, "Function %ld has %lld variables and it will take a while to consider all 2^%lld truth table values\n", v, x, x);
+				 for (long long tvec = 0; tvec < ((long long)1 << x); tvec++)
 					{
 						fprintf (foutputfile, "%d",
 									getTruth (integers[v].num, p, x,
@@ -289,7 +291,8 @@ Smurfs_to_BDD ()
 	char string, *outvec;
 	outvec = new char[100];
 	int tempint[500];
-	int out = 0, line, y = 0, i = 0;
+	int out = 0, line, i = 0;
+	long long y = 0;
 	bool flag = false;
 	while (out < 3)
 	  {
@@ -359,10 +362,10 @@ Smurfs_to_BDD ()
 		  if ((string == '0') || (string == '1'))
 			 {
 				 int plain_or = 2; //A PLAINOR will have exactly one 0;
-				 vars[x].tv = new char[(1 << y) + 1];
+				 vars[x].tv = new char[((long long)1 << y) + 1];
 				 vars[x].tv[0] = string;
 				 if(string == '0') plain_or--; //if a 0 is found, subtract.
-				 for (int i = 1; i < (1 << y); i++)
+				 for (int i = 1; i < ((long long)1 << y); i++)
 					{
 						string = getc (finputfile);
 						if ((string != '0') && (string != '1'))
