@@ -37,6 +37,9 @@
 #include "params.h"
 #include "log.h"
 
+extern int term_width; // FIXME: later
+//#define term_width 80
+
 #ifndef COPYRIGHT
 #define COPYRIGHT "Copyright (C) 1999-2003, University of Cincinnati.  All rights reserved."
 #endif
@@ -533,6 +536,7 @@ fprintf_desc(FILE *fout, char *desc, char *first_line, char *new_line)
    char *prev_line=desc;
    char *p_line=NULL;
    int line_no=0;
+   int line_len=0;
    if (first_line == NULL) first_line = new_line;
    while ((p_line=strchr(prev_line, '\n'))!=NULL) {
       *p_line = 0;
@@ -541,7 +545,32 @@ fprintf_desc(FILE *fout, char *desc, char *first_line, char *new_line)
       *p_line = '\n';
       prev_line = p_line+1;	
    };
-   fprintf(fout, "%s%s\n", (line_no++?new_line:first_line), prev_line);
+   line_len=strlen((line_no?new_line:first_line));
+   //fprintf(stdout, "%d(%d,%d)",line_len,line_no,term_width);
+   while ((line_len + strlen(prev_line)) > (term_width-2)) {
+      char tmp_char;
+      char *p_line2;
+      p_line = prev_line + (term_width-2 - line_len);
+      tmp_char = *p_line; *p_line = 0;
+      p_line2 = strrchr(prev_line, ' ');
+      if (p_line2 == NULL) p_line2 = strchr(p_line+1, ' ');
+      *p_line = tmp_char;
+      if (p_line2 != NULL) {
+         tmp_char = *p_line2; *p_line2 = 0;
+      }
+      fprintf(fout, "%s%s\n", (line_no++?new_line:first_line), 
+            prev_line);
+      if (p_line2 != NULL) {
+         *p_line2 = tmp_char;
+         prev_line = p_line2+1;
+      } else {
+         prev_line = NULL;
+         break;
+      }
+      line_len = strlen(new_line);
+   }
+   if (prev_line)
+      fprintf(fout, "%s%s\n", (line_no++?new_line:first_line), prev_line);
 }
 
 void
@@ -700,11 +729,11 @@ show_help()
       }
 
       if (strchr(options[i].desc_opt, '\n') == NULL &&
-            strlen(line)+strlen(options[i].desc_opt)+strlen(default_line) <= 78)
+            (strlen(line)+strlen(options[i].desc_opt)+strlen(default_line)) <= (term_width-2))
          fprintf(stdhelp, "%s%s %s\n",  line, options[i].desc_opt, default_line);
       else 
       {
-         if (strlen(line)+strlen(options[i].desc_opt) <= 78)
+         if (strlen(line)+strlen(options[i].desc_opt) <= term_width-2)
             fprintf(stdhelp, "%s%s\n                          %s\n",  
                   line, options[i].desc_opt, default_line);
          else 

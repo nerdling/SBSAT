@@ -39,89 +39,6 @@
 #include "solver.h"
 
 ITE_INLINE void DisplayBacktrackInfo(double &fPrevEndTime, double &fStartTime);
-char *cl_string, *cm_string;
-int height;
-int width;
-int auto_wrap;
-
-static char term_buffer[2048];
-struct termios  newtty, origtty;            /* tty modes          */
-
-static char *CM, *SO, *SE, *CL;
-static char *tv_stype;
-char *ptr;
-
-/*
- * Get a required termcap string or exit with a message.
- */
-static char * qgetstr(char *ref)
-{
-   char *tmp;
-
-   if ((tmp = tgetstr(ref, &ptr)) == NULL) {
-      printf("/etc/termcap terminal %s must have a %s= entry\n",
-            tv_stype, ref);
-   }
-   return (tmp);
-}
-
-
-void
-init_terminal_data()
-{
-   char *termtype = getenv("TERM");
-   int success;
-   extern char *getenv(), *realloc();
-   char *tcapbuf;
-
-   if (termtype == 0)
-      perror ("Specify a terminal type with `setenv TERM <yourtype>'.\n");
-
-   success = tgetent(term_buffer, termtype);
-   if (success < 0)
-      perror("Could not access the termcap data base.\n");
-   if (success == 0)
-      perror("Terminal type `...' is not defined.\n"/*, termtype*/);
-
-   /* get far too much and shrink later */
-   if ((ptr = tcapbuf = (char*)malloc(1024)) == NULL) {
-      printf("out of space\n");
-      exit(1);
-   }
-
-   CM = qgetstr("cm"); /* this string used by tgoto() */
-   CL = qgetstr("cl"); /* this string used to clear screen */
-   SO = qgetstr("so"); /* this string used to set standout */
-   SE = qgetstr("se"); /* this string used by clear standout */
-}
-
-/*
- * output char function.
- */
-int ttputc(int c)
-{
-   fputc(c, stdout);
-   return 0;
-}
-
-/*
- * output command string, set padding to one line affected.
- * use ttputc as character output function. Use only for
- * termcap created data not your own strings.
- */
-void putpad(char *str)
-{
-   tputs(str, 1, ttputc);
-}
-
-/*
- * Move cursor.
- */
-void
-move(int col, int row)
-{
-   putpad(tgoto(CM, col, row));
-}
 
 void
 crtwin_draw() //double fPrevEndTime, double fStartTime)
@@ -142,9 +59,6 @@ crtwin_draw() //double fPrevEndTime, double fStartTime)
       DisplayBacktrackInfo(fPrevEndTime, fStartTime);
       stddbg = tmpstd;
    }
-   height = tgetnum("li");
-   width = tgetnum("co");
-//   printf("co=%d, li=%d \r", height, width);
    fflush(stdout);
 }
 
@@ -204,10 +118,8 @@ crtwin_cmd(char c)
 
 void
 crtwin(void) {
-   fd_set rfds;
-   struct timeval tv;
-   int retval = 0;
    int draw = 0;
+   char c;
 
 #define PERIOD_DUMP_LEMMAS
 #ifdef PERIOD_DUMP_LEMMAS
@@ -216,22 +128,11 @@ crtwin(void) {
 #endif
 
    do {
-      /* Watch stdin (fd 0) to see when it has input. */
-      FD_ZERO(&rfds);
-      FD_SET(0, &rfds);
-
-      tv.tv_sec = 0;
-      tv.tv_usec = 0;
-      retval = select(1, &rfds, NULL, NULL, &tv);
-      /* Don't rely on the value of tv now! */
-
-      if (retval) {
-         char c = getchar();
-         printf("getchar: %x\n", c);
-         draw = 1;
-         crtwin_cmd(c);
-      }
-   } while (retval != 0);
+      c = term_getchar();
+      if (c == 0) break;
+      draw = 1;
+      crtwin_cmd(c);
+   } while(c != 0);
 
    if (draw == 0) crtwin_draw();
 }
@@ -239,28 +140,6 @@ crtwin(void) {
 void
 crtwin_init()
 {
-   if (isatty(0/*fileno(stdin)*/)) {
-      if (tcgetattr(0, &origtty) < 0) {
-         perror("tcgetattr: stdin");
-         exit(1);
-      }
-
-      newtty = origtty;
-      newtty.c_lflag &= ~(ICANON);
-      newtty.c_cc[VMIN] = 1;
-
-//      newtty.c_cc[VMIN] = 1;
-//      newtty.c_cc[VTIME] = 0;
-//      newtty.c_oflag &= ~OPOST;
-//      newtty.c_lflag &= ~(ICANON|ISIG|ECHO);
-//      newtty.c_iflag &= ~(INLCR|IGNCR|ICRNL|IUCLC|IXON);
-
-      if (tcsetattr(0, TCSANOW, &newtty) < 0) {
-         perror("tcsetattr: stdin");
-         exit(1);
-      }
-   }
-   init_terminal_data ();
 }
 
 

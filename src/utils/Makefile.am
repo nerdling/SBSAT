@@ -6,6 +6,6 @@ libutils_a_SOURCES= \
              params.cc params_fn.cc log.cc bddidx.cc bddidx_orig.cc \
              bddtable.cc zread.cc vars.cc infer.cc intnode.cc \
 	     smurfaddons.cc bdd_circuit_init.cc symtable.cc \
-	     custprint.cc # malloc.cc
+	     custprint.cc termcap.cc # malloc.cc
 
 EXTRA_DIST = bddidx_vsb.cc  malloc.cc # bddtable.cc

@@ -65,9 +65,7 @@ void bdd_bdd_alloc_pool(int pool)
       exit(1);
    }
    bddmemory_vsb[pool].max = _bdd_pool_size; 
-   bddmemory_vsb[pool].memory = (BDDNode*)calloc(bddmemory_vsb[pool].max, sizeof(BDDNode));
-   d2_printf2 ("Allocated %ld bytes for bdd pool\n", (long)((bddmemory_vsb[pool].max)*sizeof(BDDNode)));
-   if (!bddmemory_vsb[pool].memory) { fprintf(stderr, "out of memory"); exit(1); }
+   bddmemory_vsb[pool].memory = (BDDNode*)ite_calloc(bddmemory_vsb[pool].max, sizeof(BDDNode), 2, "bdd memory pool");
 }
 
 void FreeInferencePool();
@@ -93,9 +91,8 @@ bddvsb_init()
 
    hash_memory_size = (1 << (numBuckets+sizeBuckets));
    hash_memory_mask = (1 << (numBuckets+sizeBuckets))-1;
-   hash_memory = (BDDNode**)calloc(hash_memory_size, sizeof(BDDNode*));
-   if (hash_memory == NULL) { dE_printf2("Can't allocate %ld bytes for hash table\n", (long)(hash_memory_size*sizeof(BDDNode*))); exit(1); }
-   d2_printf2 ("Allocated %ld bytes for bdd hash table\n", (long)(hash_memory_size*sizeof(BDDNode*)));
+   hash_memory = (BDDNode**)ite_calloc(hash_memory_size, sizeof(BDDNode*),
+         2, "hash_memory");
 
    if (false_ptr == NULL && true_ptr == NULL)
    {
@@ -120,7 +117,7 @@ bddvsb_find_or_add_node (int v, BDDNode * r, BDDNode * e)
    ite_counters[BDD_NODE_FIND]++;
 
    assert(v >= r->variable && v >= e->variable);
-   if (DEBUG_LVL==10) {
+   if (DEBUG_LVL&32) {
       printf("%d ", v);
       if (r==true_ptr) printf(" true "); 
       else

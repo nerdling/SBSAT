@@ -151,11 +151,11 @@ int total_vars=0;
 ITE_INLINE int
 InitSolver()
 {
-  d2_printf1("InitSolver\n");
+  d9_printf1("InitSolver\n");
 
   if (BREAK_XORS) {
      total_vars = splitXors();
-     d2_printf3("Split(%ld) returned %d\n", numinp, total_vars);
+     d9_printf3("Split(%ld) returned %d\n", numinp, total_vars);
   } else {
      total_vars = numinp;
   }
@@ -240,7 +240,7 @@ InitSolver()
 ITE_INLINE void
 FreeSolver(Tracer *tracer)
 {
-  d2_printf1("FreeSolver\n");
+  d4_printf1("FreeSolver\n");
 
   if (nHeuristic == C_LEMMA_HEURISTIC 
 #ifdef JOHNSON_HEURISTIC_LEMMA

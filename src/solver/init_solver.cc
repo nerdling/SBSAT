@@ -561,7 +561,7 @@ ITE_INLINE void InitializeSpecialFnStack();
 ITE_INLINE void
 FreeBrancher()
 {
-   d2_printf1("FreeBrancher\n");
+   d4_printf1("FreeBrancher\n");
 
    if (fd_csv_trace_file) fclose(fd_csv_trace_file);
 

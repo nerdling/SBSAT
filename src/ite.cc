@@ -113,11 +113,8 @@ ite_main_load(Tracer *&tracer)
    ret = ite_io_init();
    if (ret != NO_ERROR) return ret;
 	
-   /* autodetect the input format  */
-   formatin = getformat (finputfile);
-	
    /* read input file */
-   ret = read_input(formatin, formatout, tracer);
+   ret = read_input(tracer);
    if (ret != NO_ERROR) return ret;
 
    return ret;
@@ -127,8 +124,7 @@ int
 ite_main(Tracer *tracer)
 {
    int ret = NO_ERROR;
-   {
-   }
+
 	switch (formatout) {
     case 'n': break;
     case 'b': ret = solve(tracer); break;
@@ -150,15 +146,15 @@ ite_final(int ret, Tracer *tracer)
    }
 
    if (ite_counters[BDD_NODE_FIND]==0) ite_counters[BDD_NODE_FIND] = 1;
-   d2_printf4("BDD Lookup Statistic: %ld/%ld (%f hit rate)\n", 
+   d4_printf4("BDD Lookup Statistic: %ld/%ld (%f hit rate)\n", 
          (long)(ite_counters[BDD_NODE_FIND] - ite_counters[BDD_NODE_NEW]), 
          (long)(ite_counters[BDD_NODE_FIND]),
          1.0 * (ite_counters[BDD_NODE_FIND] - ite_counters[BDD_NODE_NEW]) / ite_counters[BDD_NODE_FIND]);
-   d2_printf4("BDD Hash Table Lookup Statistic: %ld/%ld (%f steps)\n", 
+   d4_printf4("BDD Hash Table Lookup Statistic: %ld/%ld (%f steps)\n", 
          (long)(ite_counters[BDD_NODE_STEPS]),
          (long)(ite_counters[BDD_NODE_FIND]),
          1.0 * ite_counters[BDD_NODE_STEPS] / ite_counters[BDD_NODE_FIND]);
-   d2_printf4("BDD Hash Table Storage Statistic: %ld/%ld (%f nodes taken)\n", 
+   d4_printf4("BDD Hash Table Storage Statistic: %ld/%ld (%f nodes taken)\n", 
          (long)(ite_counters[BDD_NODE_NEW]),
          (long)((1<<(numBuckets+sizeBuckets))-1),
          1.0 * ite_counters[BDD_NODE_NEW] / (long)((1<<(numBuckets+sizeBuckets))-1));
@@ -218,6 +214,9 @@ ite_pre_init()
    for (i=0;i<MAX_COUNTER;i++) ite_counters[i] = 0;
    for (i=0;i<MAX_COUNTER_F;i++) ite_counters_f[i] = 0;
 
+   init_terminal_in();
+   init_terminal_out();
+
    return NO_ERROR;
 }
 
@@ -254,30 +253,6 @@ int
 ite_io_init()
 {
    d9_printf1("ite_io_init\n");
-   /* 
-    * open the input file 
-    */
-
-   if (!strcmp(inputfile, "-")) { d2_printf2("Reading standard input %s....\n", comment); }
-   else { d2_printf3("Reading File %s %s ....\n", inputfile, comment); }
-
-
-   if (check_gzip(inputfile)) {
-      d2_printf1("gzip file -- using zread\n");
-      finputfile = zread(inputfile);
-   }
-   else
-      if (!strcmp(inputfile, "-")) {
-         finputfile = stdin;
-      }
-      else {
-         finputfile = fopen(inputfile, "r");
-      }
-
-   if (!finputfile) { 
-      dE_printf2("Can't open the input file: %s\n", inputfile);
-      return ERR_IO_INIT;
-   } else d9_printf2("Input file opened: %s\n", inputfile);
 
    /* 
     * open the output file 

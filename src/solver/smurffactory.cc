@@ -69,7 +69,7 @@ SmurfFactory()
 
    InitSmurfFactory();
 
-   d2_printf1("SmurfFactory\n");
+   d9_printf1("SmurfFactory\n");
 
    InitVbleMappingArray(total_vars + 1);
    InitVbleEncodingArray();
@@ -96,7 +96,7 @@ SmurfFactory()
 
       if (pSpecFunc != NULL) 
       {
-         d2_printf1("&");
+         d4_printf1("&");
          /* spec fn is XOR! */
       } else {
          if (IsSpecialFunc(nFunctionType))
@@ -182,7 +182,7 @@ SmurfFactory()
          ComputeLemmasForSmurf(arrRegSmurfInitialStates[i]);
       }
       extern int  nTotalBytesForLemmaInferences;
-      d2_printf2("Allocated %d bytes for Lemma Inferences\n",
+      dm2_printf2("Allocated %d bytes for Lemma Inferences\n",
             nTotalBytesForLemmaInferences);
    }
 
@@ -202,7 +202,7 @@ SmurfFactory()
    SmurfStatesDisplayInfo();
    d2_printf2 ("Time to build Smurf states:  %4.3f secs.\n", ite_counters_f[BUILD_SMURFS]);
 
-   d2_printf4("SMURF States Statistic: %ld/%ld (%f hit rate)\n",
+   d4_printf4("SMURF States Statistic: %ld/%ld (%f hit rate)\n",
          (long)(ite_counters[SMURF_NODE_FIND] - ite_counters[SMURF_NODE_NEW]),
          (long)(ite_counters[SMURF_NODE_FIND]),
          ite_counters[SMURF_NODE_FIND]==0?0:1.0 * (ite_counters[SMURF_NODE_FIND] - ite_counters[SMURF_NODE_NEW]) / ite_counters[SMURF_NODE_FIND]);
@@ -214,7 +214,7 @@ SmurfFactory()
 ITE_INLINE void
 InitSmurfFactory()
 {
-   d2_printf1("InitSmurfFactory\n");
+   d9_printf1("InitSmurfFactory\n");
 #ifdef DISPLAY_TRACE
    for (int i = 0; i < nmbrFunctions; i++)
    {
@@ -319,7 +319,7 @@ InitSmurfFactory()
 ITE_INLINE void
 FreeSmurfFactory()
 {
-   d2_printf1("FreeSmurfFactory\n");
+   d9_printf1("FreeSmurfFactory\n");
    if (nHeuristic == JOHNSON_HEURISTIC) {
       FreeHeuristicTablesForSpecialFuncs();
    }

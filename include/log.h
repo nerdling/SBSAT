@@ -58,50 +58,52 @@ extern int DEBUG_LVL;
 #define D_0(x) { x }
 
 #if _DEBUG_LVL_COMPILE >= 1
-# define D_1(x) { if (DEBUG_LVL >= 1 && DEBUG_LVL<10) { x; } }
+# define D_1(x) { if ((DEBUG_LVL&15) >= 1) { x; } }
 #else
 # define D_1(x) {}
 #endif
 
 #if _DEBUG_LVL_COMPILE >= 2
-# define D_2(x) if (DEBUG_LVL >= 2 && DEBUG_LVL<10) { x }
+# define D_2(x) if ((DEBUG_LVL&15) >= 2) { x }
+# define DM_2(x) D_2(if(DEBUG_LVL&16) { x } )
 #else
 # define D_2(x) {}
+# define DM_2(x) {}
 #endif
 
 #if _DEBUG_LVL_COMPILE >= 3
-# define D_3(x) if (DEBUG_LVL >= 3 && DEBUG_LVL<10) { x }
+# define D_3(x) if ((DEBUG_LVL&15) >= 3) { x }
 #else
 # define D_3(x) {}
 #endif
 
 #if _DEBUG_LVL_COMPILE >= 4
-# define D_4(x) if (DEBUG_LVL >= 4 && DEBUG_LVL<10) { x }
+# define D_4(x) if ((DEBUG_LVL&15) >= 4) { x }
 #else
 # define D_4(x) {}
 #endif
 
 #if _DEBUG_LVL_COMPILE >= 5
-# define D_5(x) if (DEBUG_LVL >= 5 && DEBUG_LVL<10) { x }
+# define D_5(x) if ((DEBUG_LVL&15) >= 5) { x }
 #else
 # define D_5(x) {}
 #endif
 
 #if _DEBUG_LVL_COMPILE >= 6
-# define D_6(x) if (DEBUG_LVL >= 6 && DEBUG_LVL<10) { x }
+# define D_6(x) if ((DEBUG_LVL&15) >= 6) { x }
 #else
 # define D_6(x) {}
 #endif
 
 #if _DEBUG_LVL_COMPILE >= 8
-# define D_8(x) if (DEBUG_LVL >= 8 && DEBUG_LVL<10) { x }
+# define D_8(x) if ((DEBUG_LVL&15) >= 8) { x }
 #else
 # define D_8(x) {}
 #endif
 
 #if _DEBUG_LVL_COMPILE >= 9
-# define D_9(x) if (DEBUG_LVL >= 9 && DEBUG_LVL<10) { x }
-# define TB_9(x) if (DEBUG_LVL >= 9 && ite_counters[NUM_BACKTRACKS] >= TRACE_START) { x } 
+# define D_9(x) if ((DEBUG_LVL&15) >= 9) { x }
+# define TB_9(x) D_9(if(ite_counters[NUM_BACKTRACKS]>=TRACE_START) { x }) 
 #else
 # define D_9(x) {}
 # define TB_9(x) {}
@@ -127,6 +129,8 @@ extern int DEBUG_LVL;
 #define d2_printf3(x1,x2,x3) D_2(fprintf(stddbg, x1, x2, x3);)
 #define d2_printf4(x1,x2,x3,x4) D_2(fprintf(stddbg, x1, x2, x3,x4);)
 #define d2_printf5(x1,x2,x3,x4,x5) D_2(fprintf(stddbg, x1, x2, x3,x4,x5);)
+
+#define dm2_printf2(x1,x2)    DM_2(fprintf(stddbg, x1, x2);)
 
 #define d3_printf1(x)        D_3(fprintf(stddbg, x);)
 #define d3_printf2(x1,x2)    D_3(fprintf(stddbg, x1, x2);)

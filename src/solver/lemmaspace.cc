@@ -76,7 +76,7 @@ InitLemmaSpacePool(int at_least)
       exit(1);
   }
 
-  d2_printf2 ("Allocated %ld bytes for lemma space.\n",
+  dm2_printf2 ("Allocated %ld bytes for lemma space.\n",
        (long)(LEMMA_SPACE_SIZE * sizeof(LemmaBlock)));
 
   for (int i = 0; i < LEMMA_SPACE_SIZE - 1; i++)

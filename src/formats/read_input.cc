@@ -44,11 +44,18 @@ char tracer_tmp_filename[256];
 int parser_init();
 int trace_parse();
 extern FILE *trace_in;
+int read_input_open();
 
 int
-read_input(char formatin, char formatout, Tracer * &tracer)
+read_input(Tracer * &tracer)
 {
   d9_printf1("read_input\n");
+
+  int ret = read_input_open();
+  if (ret != NO_ERROR) return ret;
+
+  /* autodetect the input format  */
+  formatin = getformat (finputfile);
 
   switch  (formatin) {
   case 't':
@@ -122,5 +129,36 @@ read_input(char formatin, char formatout, Tracer * &tracer)
   }
   d9_printf1("read_input - done\n");
   return 0;
+}
+
+int
+read_input_open()
+{
+   /* 
+    * open the input file 
+    */
+
+   if (!strcmp(inputfile, "-")) { d2_printf2("Reading standard input %s....\n", comment); }
+   else { d2_printf3("Reading File %s %s ....\n", inputfile, comment); }
+
+
+   if (check_gzip(inputfile)) {
+      d2_printf1("gzip file -- using zread\n");
+      finputfile = zread(inputfile);
+   }
+   else
+      if (!strcmp(inputfile, "-")) {
+         finputfile = stdin;
+      }
+      else {
+         finputfile = fopen(inputfile, "r");
+      }
+
+   if (!finputfile) { 
+      dE_printf2("Can't open the input file: %s\n", inputfile);
+      return ERR_IO_INIT;
+   } else d9_printf2("Input file opened: %s\n", inputfile);
+   
+   return NO_ERROR;
 }
 

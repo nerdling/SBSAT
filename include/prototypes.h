@@ -69,8 +69,8 @@
 
 int walkSolve();
 int solve(Tracer * tracer);
-void write_output (char formatout, Tracer * &tracer);
-int read_input(char formatin, char formatout, Tracer * &tracer);
+void write_output(char formatout, Tracer * &tracer);
+int read_input(Tracer * &tracer);
 
 double get_runtime();
 long get_memusage();
@@ -267,5 +267,13 @@ read_bdd_circuit();
 //#define MEMCPY memcpy_ite
 #define MEMCPY memcpy
 
+// termcap 
+int init_terminal_out();
+int init_terminal_in();
+void move(int col, int row);
+void putpad(char *str);
+int term_getchar();
+extern char *CM, *SO, *SE, *CL;
+extern int term_width, term_height;
 
 #endif

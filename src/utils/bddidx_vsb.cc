@@ -101,7 +101,7 @@ void bdd_bdd_alloc_pool(int pool)
    bddmemory_vsb[pool].sizeBuckets = sizeBuckets;
    bddmemory_vsb[pool].memorySize = numBuckets + sizeBuckets;
    bddmemory_vsb[pool].memory = (BDDNode*)calloc((1 << bddmemory_vsb[pool].memorySize), sizeof(BDDNode));
-   d2_printf2 ("Allocated %d bytes for bdd pool\n", (1 << bddmemory_vsb[pool].memorySize)*sizeof(BDDNode));
+   dm2_printf2 ("Allocated %d bytes for bdd pool\n", (1 << bddmemory_vsb[pool].memorySize)*sizeof(BDDNode));
    if (!bddmemory_vsb[pool].memory) { fprintf(stderr, "out of memory"); exit(1); }
 }
 
@@ -152,7 +152,7 @@ bddvsb_find_or_add_node (int v, BDDNode * r, BDDNode * e)
    ite_counters[BDD_NODE_FIND]++;
 
    assert(v >= r->variable && v >= e->variable);
-   if (DEBUG_LVL==10) {
+   if (DEBUG_LVL==32) {
       printf("%d ", v);
       if (r==true_ptr) printf(" true "); 
       else

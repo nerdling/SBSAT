@@ -48,7 +48,7 @@ extern char temp_dir[128];
 void *ite_calloc(int x, int y, int dbg_lvl, char *for_what) {
    void *p = NULL;
    if (x==0 || y==0) {
-      d2_printf2("WARNING: 0 bytes allocation for %s\n", for_what); 
+      dm2_printf2("WARNING: 0 bytes allocation for %s\n", for_what); 
    } else {
       p=calloc(x,y);
       if (!p) {
@@ -56,8 +56,8 @@ void *ite_calloc(int x, int y, int dbg_lvl, char *for_what) {
          exit(1); 
       } 
    }
-   D_2(
-         if (dbg_lvl <= DEBUG_LVL) 
+   DM_2(
+         if ((DEBUG_LVL&15) >= dbg_lvl) 
          fprintf(stddbg, "Allocated %d bytes for %s\n", x*y, for_what); 
       );
    return p;

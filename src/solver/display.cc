@@ -315,7 +315,7 @@ void DisplayBacktrackInfo(double &fPrevEndTime, double &fStartTime)
       char back[10] = "\b\b\b\b\b\b\b\b\b";
       sprintf(number, "% 3.2f%%", progress);
       back[strlen(number)]=0;
-      if (DEBUG_LVL == 1) {
+      if ((DEBUG_LVL&15) == 1) {
 	      fprintf(stderr, "%s%s", number, back);
       } else {
 	      d0_printf3("%s%s", number, back);
