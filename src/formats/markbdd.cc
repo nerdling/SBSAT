@@ -511,6 +511,16 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 		  return false_ptr;
 		return pruning (v1, v2);
 	}
+	if (!strcasecmp (macros, "strengthen")) {
+		BDDNode * v1, *v2;
+		v1 = putite (intnum, bdd);
+		v2 = putite (intnum, bdd);
+		functionType[nmbrFunctions] = UNSURE;
+		strcpy (macros, "strengthen");
+		if (v1 == false_ptr)
+		  return false_ptr;
+		return strengthen_fun (v1, v2);
+	}
 	if (!strcasecmp (macros, "nimp")) {
       BDDNode * v1, *v2;
       v1 = putite (intnum, bdd);
