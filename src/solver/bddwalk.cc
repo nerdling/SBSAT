@@ -1249,16 +1249,16 @@ int picknoveltyplus(void)
 			if((BDDTruePaths[tofix].paths[flippath].num[i] > 0 && atom[abs(BDDTruePaths[tofix].paths[flippath].num[i])] == 0) ||
 				(BDDTruePaths[tofix].paths[flippath].num[i] < 0 && atom[abs(BDDTruePaths[tofix].paths[flippath].num[i])] == 1)) {
 				varstoflip[y] = abs(BDDTruePaths[tofix].paths[flippath].num[i]);
-				fprintf(stderr, "%d, |%d|", varstoflip[y], BDDTruePaths[tofix].paths[flippath].length);
+				//fprintf(stderr, "%d, |%d|", varstoflip[y], BDDTruePaths[tofix].paths[flippath].length);
 				y++;
 			}
 		}
 		if(y == 0) goto again;
 		varstoflip[y] = 0;
-		fprintf(stderr, "{bd=%f, sbd=%f, best=%d, sbest=%d, fp=%d, numfalse=%d}\n", best_diff, second_best_diff, best, second_best, flippath, numfalse);
+		//fprintf(stderr, "{bd=%f, sbd=%f, best=%d, sbest=%d, fp=%d, numfalse=%d}\n", best_diff, second_best_diff, best, second_best, flippath, numfalse);
 	} else {
 		//Flipping a random variable
-		fprintf(stderr, "{rflip=%d, numfalse=%d}\n", varstoflip[0], numfalse);
+		//fprintf(stderr, "{rflip=%d, numfalse=%d}\n", varstoflip[0], numfalse);
 	}
 	
 #else
