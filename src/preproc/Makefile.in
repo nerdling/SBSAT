@@ -174,8 +174,7 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	./$(DEPDIR)/do_pruning_2.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/do_pruning_pr.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/do_pruning_restrict.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/do_steal.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/do_split.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/do_split.Plo ./$(DEPDIR)/do_steal.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/do_strength.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/init_preproc.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/other_preproc.Plo \
@@ -237,8 +236,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_pruning_2.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_pruning_pr.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_pruning_restrict.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_steal.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_split.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_steal.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_strength.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/init_preproc.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/other_preproc.Plo@am__quote@
