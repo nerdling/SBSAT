@@ -75,9 +75,6 @@
 
 #define MAX_NODES_PER_BDD 5000
 
-static int scratch;
-#define ABS(x) ((scratch=(x))>0?(scratch):(-scratch))
-
 int numvars; //number of variables
 int numBDDs; //number of BDDs (numout | nmbrFunctions)
 
