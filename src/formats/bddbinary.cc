@@ -155,7 +155,6 @@ Binary_to_BDD()
    ite_free(&_length);
    ite_free(&_variablelist);
    ite_free(&_independantVars);
-   create_all_syms(_numinp);
 }
 
 void
@@ -199,6 +198,7 @@ reload_bdd_circuit(int _numinp, int _numout,
    for (i=0;i<numout;i++) {
       if (functions[i]) functions[i] = (BDDNode*)((char*)(functions[i])+shift);
    }
+   create_all_syms(_numinp);
 }        
 
 void
