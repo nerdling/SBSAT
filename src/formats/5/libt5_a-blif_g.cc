@@ -1,4 +1,4 @@
-/* A Bison parser, made from /oldhome/mkouril/sbsat/src/formats/5/blif_g.yy
+/* A Bison parser, made from /Users/Shared/Misa/sbsat/src/formats/5/blif_g.yy
    by GNU bison 1.35.  */
 
 #define YYBISON 1  /* Identify Bison output.  */
@@ -222,7 +222,7 @@ static const short yycheck[] =
        8,     4,     9,    10,     9,     5,     0,     9,    -1,    29
 };
 /* -*-C-*-  Note some compilers choke on comments on `#line' lines.  */
-#line 3 "/usr/share/bison/bison.simple"
+#line 3 "/sw/share/bison/bison.simple"
 
 /* Skeleton output parser for bison,
 
@@ -535,7 +535,7 @@ yystpcpy (yydest, yysrc)
 # endif
 #endif
 
-#line 315 "/usr/share/bison/bison.simple"
+#line 315 "/sw/share/bison/bison.simple"
 
 
 /* The user can define YYPARSE_PARAM as the name of an argument to be passed
@@ -950,7 +950,7 @@ case 24:
     break;
 }
 
-#line 705 "/usr/share/bison/bison.simple"
+#line 705 "/sw/share/bison/bison.simple"
 
 
   yyvsp -= yylen;

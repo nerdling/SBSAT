@@ -5,7 +5,7 @@ noinst_LIBRARIES = libt5.a
 #libgen_a_SOURCES= xorgen.cc
 
 # _g.yy first
-libt5_a_SOURCES = trace_g.yy cnf_g.yy bdd_g.yy trace_s.ll cnf_s.ll bdd_s.ll parser.cc functions.cc bddops.cc blif_g.yy blif_s.ll prover_g.yy prover_s.ll
+libt5_a_SOURCES = trace_g.yy cnf_g.yy bdd_g.yy trace_s.ll cnf_s.ll bdd_s.ll parser.cc functions.cc bddops.cc blif_g.yy blif_s.ll prover_g.yy prover_s.ll prover3_g.yy prover3_s.ll
 #libt5_a_YFLAGS =  -o y.tab.c -d -y 
 libt5_a_YFLAGS =  -d
 # enable --debug for grammer debugging -- need to take out xxx_debug definitions

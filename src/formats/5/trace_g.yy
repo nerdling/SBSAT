@@ -111,6 +111,7 @@ exp_list:  exp
 	          { explevel++; expindex[explevel]=0; explist[explevel][expindex[explevel]++] = $1; }
          | exp_list ',' exp
 	          { explist[explevel][expindex[explevel]++] = $3; }
+;
 
 exp:      ID
 	         { symrec *s=s_getsym($1, SYM_VAR); assert(s); $$ = ite_vars(s); }
