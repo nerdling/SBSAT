@@ -179,7 +179,7 @@ store *getMinMax(long *tempint_max, int **tempint) {
 		min_max->num[x] = (*tempint)[x];
 #endif
 		if(abs((*tempint)[x]) > numinp) { //Could change this to be number of vars instead of max vars
-			fprintf(stderr, "Variable in input file is greater than allowed:%ld...exiting\n", (long)numinp);
+			fprintf(stderr, "Variable in input file is greater than allowed:%ld...exiting\n", (long)numinp-2);
 			exit(1);				
 		}
 	}
@@ -282,7 +282,7 @@ void CNF_to_BDD(int cnf)
             integers[x].num[i] = tempint[i];
 #endif         
             if(abs(tempint[i]) > numinp) { //Could change this to be number of vars instead of max vars
-               fprintf(stderr, "Variable in input file is greater than allowed:%ld...exiting\n", (long)numinp);
+               fprintf(stderr, "Variable in input file is greater than allowed:%ld...exiting\n", (long)numinp-2);
                exit(1);				
             }
             //fprintf(stderr, "%d ", integers[x].num[i]);
@@ -1071,7 +1071,7 @@ DNF_to_BDD ()
             exit(1);
          }
          if(abs(intnum) > dnf_numinp) { //Could change this to be number of vars instead of max vars
-            fprintf(stderr, "Variable in input file is greater than allowed:%ld...exiting\n", (long)dnf_numinp);
+            fprintf(stderr, "Variable in input file is greater than allowed:%ld...exiting\n", (long)dnf_numinp-2);
             exit(1);				
          }
 #ifdef CNF_USES_SYMTABLE
