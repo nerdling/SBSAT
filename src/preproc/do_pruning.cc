@@ -96,7 +96,7 @@ int DO_PRUNING_FN() {
 	for (int x = 0; x < nmbrFunctions; x++)
 	  {
 		  D_3(
-				if (x % 100 == 0) {
+				if (x % ((nmbrFunctions/100)+1) == 0) {
 					for(int iter = 0; iter<str_length; iter++)
 					  d3_printf1("\b");
 					sprintf(p, "{%ld:%d/%d}", affected, x, nmbrFunctions);
@@ -104,13 +104,13 @@ int DO_PRUNING_FN() {
 					d3_printf1(p);
 				}
 		  );
-		  if (x % 100 == 0) {
-			  if (nCtrlC) {
-				  d3_printf1("\nBreaking out of Branch Pruning");
-				  for(; x < nmbrFunctions; x++) PRUNE_REPEATS[x] = 0;;
-				  nCtrlC = 0;
-				  break;
-			  }
+		  if (nCtrlC) {
+			  d3_printf1("\nBreaking out of Branch Pruning");
+			  for(; x < nmbrFunctions; x++) PRUNE_REPEATS[x] = 0;;
+			  nCtrlC = 0;
+			  break;
+		  }
+		  if (x % ((nmbrFunctions/100)+1) == 0) {
 			  d2e_printf3("\rPreprocessing Pr %d/%d", x, nmbrFunctions);
 		  }
 		  

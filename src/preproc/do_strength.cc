@@ -66,7 +66,7 @@ int Do_Strength() {
 	for (int x = 0; x < nmbrFunctions; x++)
 	  {
 		  D_3(
-				if (x % 100 == 0) {
+				if (x % ((nmbrFunctions/100)+1) == 0) {
 					for(int iter = 0; iter<str_length; iter++)
 					  d3_printf1("\b");
 					sprintf(p, "{%ld:%d/%d}", affected, x, nmbrFunctions);
@@ -74,13 +74,13 @@ int Do_Strength() {
 					d3_printf1(p);
 				}
 		  );
-		  if (x % 100 == 0) {
-			  if (nCtrlC) {
-				  d3_printf1("\nBreaking out of Strengthening");
-				  for(; x < nmbrFunctions; x++) St_repeat[x] = 0;
-				  nCtrlC = 0;
-				  break;
-			  }
+		  if (nCtrlC) {
+			  d3_printf1("\nBreaking out of Strengthening");
+			  for(; x < nmbrFunctions; x++) St_repeat[x] = 0;
+			  nCtrlC = 0;
+			  break;
+		  }
+		  if (x % ((nmbrFunctions/100)+1) == 0) {
            d2e_printf3("\rPreprocessing St %d/%d", x, nmbrFunctions);
 		  }
 		  

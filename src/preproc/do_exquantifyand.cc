@@ -132,12 +132,13 @@ ExQuantifyAnd ()
 					  }
 				 );
 				 
+				 if (nCtrlC) {
+					 d3_printf1("Breaking out of Anding Existential Quantification\n");
+					 nCtrlC = 0;
+					 goto ea_bailout;
+				 }
+				 
 				 if(i % 100 == 0) {
-					 if (nCtrlC) {
-						 d3_printf1("\nBreaking out of Anding Existential Quantification\n");
-						 nCtrlC = 0;
-						 break;
-					 }
 					 d2e_printf3("\rPreprocessing Ea %d/%ld ", i, numinp);
 				 }
 				 
@@ -150,6 +151,10 @@ ExQuantifyAnd ()
 						if(x==1) ret = PREP_CHANGED;
 						if(length[j]>MAX_EXQUANTIFY_VARLENGTH) continue;
 						for(int z = 1; z < examount[i].length; z++) {
+							if (nCtrlC) {
+								out = 1;
+								break;
+							}
 							if(length[examount[i].num[z]] > MAX_EXQUANTIFY_VARLENGTH){
 								out = 1;
 								break;
