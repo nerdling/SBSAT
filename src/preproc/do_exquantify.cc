@@ -190,6 +190,7 @@ int ExQuantify () {
 				for(int a = 0; a < oldlength; a++) {
 					if(done || temparr[a] < num[index]) {
 						//variable 'temparr[a]' got knocked out
+						if(new_i==0) new_i = temparr[a];
 						for(llBDD *lltemp = tempmem[temparr[a]]->next; lltemp != NULL; lltemp = lltemp->next) {
 							if(lltemp->BDD == j) {
 								llBDD *temp = lltemp;
@@ -204,7 +205,6 @@ int ExQuantify () {
 					} else {
 						index++;
 					}
-					if(new_i==0 && length[j]!=0) new_i = num[index];
 					if(index >= length[j]){
 					  done = 1;
 					  index = 0;
@@ -214,7 +214,8 @@ int ExQuantify () {
 				delete [] temparr;
 				if(new_i!=0) i = new_i-1;
 				//i = 0;
-				//'i' should equal the lowest indexed variable-1 that stayed in.
+				//'i' should equal the lowest indexed variable-1 that got
+				//kicked out.
 			}
 		}
 	}
