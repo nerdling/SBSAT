@@ -64,6 +64,10 @@ extern int Neg_replace;
 extern int Setting_Pos;
 extern int Setting_Neg;
 
+extern int length_size;
+extern int variables_size;
+extern int *autark_BDD;
+
 extern int *original_functionType;
 extern int *original_equalityVble;
 
@@ -81,6 +85,7 @@ void UnSetRepeats(int x);
 
 int Rebuild_BDDx (int x);
 int Rebuild_BDD (BDDNode *, int *, int *&);
+BDDNode *strip_x_BDD(BDDNode *, int);
 BDDNode *strip_x(int, int);
 BDDNode *collect_x (BDDNode *, int);
 int add_newFunctions(BDDNode **, int);

@@ -171,6 +171,8 @@ extern int NO_LEMMAS;
 
 extern int sbj;
 
+extern int USE_AUTARKY_SMURFS;
+
 extern int reports;
 
 extern char temp_dir[128];

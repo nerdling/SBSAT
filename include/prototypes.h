@@ -100,7 +100,8 @@ int top_variable(BDDNode *, BDDNode *, BDDNode *);
 
 BDDNode *and_dot(BDDNode *, BDDNode *);
 BDDNode *constant_and(BDDNode *, BDDNode *);
-  
+BDDNode *possible_BDD(BDDNode *, int);
+
 BDDNode *bdd2xdd(BDDNode *);
 int splitXors();
 void countSingleXors(BDDNode *, int *, int *);

@@ -103,6 +103,7 @@ enum {
   PLAINOR_EQU,   /* equ_base + 17 *///a v b v c
   PLAINXOR_EQU,  /* equ_base + 18 *///a + b + c
   MINMAX_EQU,    /* equ_base - 19 */
+  AUTARKY_FUNC,	  
   MAX_FUNC
 };
 
