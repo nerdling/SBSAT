@@ -156,15 +156,15 @@ VerifySolution()
 
   for (i = 0; i < nmbrFunctions /*&& nConsistent*/; i++)
     {
-      if (!VerifyBDDSolution(functions[i]))
-      {
-	void printBDDTree(BDDNode *bdd, int *which_zoom);
-	cout << "Constraint " << i << " violated:" << endl;
-	int which_zoom = 0;
-	printBDDTree(functions[i], &which_zoom);
-	cout << endl;
-	nSatisfied = 0;
-
+		 if (functionType[i] == AUTARKY_FUNC) continue;
+		 if (!VerifyBDDSolution(functions[i])) {
+			 void printBDDTree(BDDNode *bdd, int *which_zoom);
+			 cout << "Constraint " << i << " violated:" << endl;
+			 int which_zoom = 0;
+			 printBDDTree(functions[i], &which_zoom);
+			 cout << endl;
+			 nSatisfied = 0;
+			 
 	/*
 	if (IsSpecialFunc(functionType[i]))
 	{
