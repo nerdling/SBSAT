@@ -812,7 +812,7 @@ DisplayAllBrancherLemmasToFile(char *filename, int flag)
          pLemmaInfo = pLemmaInfo->pLPQNext)
    {
       if (flag == 1)
-         fprintf(pFile, "c %d %d %d %d %d %d %d\n", 
+         fprintf(pFile, "c %d %d %d %d %d %d %d %d\n", 
                pLemmaInfo->pLemma->arrLits[0],
                pLemmaInfo->nNumLemmaMoved,
                pLemmaInfo->nNumLemmaConflict,
@@ -820,7 +820,9 @@ DisplayAllBrancherLemmasToFile(char *filename, int flag)
                pLemmaInfo->nNumLemmaInfs,
                pLemmaInfo->nBacktrackStackReferences,
                pLemmaInfo->nLemmaFirstUseful?
-               (int)(ite_counters[NUM_LPQ_ENQUEUE]-pLemmaInfo->nLemmaFirstUseful):0);
+               (int)(pLemmaInfo->nLemmaFirstUseful-pLemmaInfo->nLemmaNumber):0,
+               pLemmaInfo->nLemmaLastUsed?
+               (int)(pLemmaInfo->nLemmaLastUsed-pLemmaInfo->nLemmaNumber):0);
       DisplayLemmaToFile(pFile, pLemmaInfo->pLemma);
       fprintf(pFile, "\n");
       assert((pLemmaInfo == pLPQLast) == (pLemmaInfo->pLPQNext == NULL));
@@ -1541,6 +1543,7 @@ LPQEnqueue(LemmaInfoStruct *pLemmaInfo)
    pLemmaInfo->nNumLemmaConflict=0;
    pLemmaInfo->nNumLemmaInfs=0;
    pLemmaInfo->nLemmaFirstUseful=0;
+   pLemmaInfo->nLemmaLastUsed = 0;
    pLemmaInfo->nLemmaNumber=ite_counters[NUM_LPQ_ENQUEUE];
 
    if (pLPQFirst)
@@ -1565,6 +1568,7 @@ MoveToFrontOfLPQ(LemmaInfoStruct *pLemmaInfo)
    // Postcondition:  *pLemmaInfo has moved to the front of the LPQ.
 {
    pLemmaInfo->nNumLemmaMoved++;
+   pLemmaInfo->nLemmaLastUsed = ite_counters[NUM_LPQ_ENQUEUE];
    if (pLemmaInfo->nLemmaFirstUseful == 0) 
       pLemmaInfo->nLemmaFirstUseful = ite_counters[NUM_LPQ_ENQUEUE];
    LemmaInfoStruct *pPrev = pLemmaInfo->pLPQPrev;

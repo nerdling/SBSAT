@@ -202,6 +202,7 @@ UpdateEachAffectedLemma(AffectedFuncsStruct *pAFS, int nInferredValue)
             );
 
          pLemmaListDisagreed->nNumLemmaInfs++;
+         pLemmaListDisagreed->nLemmaLastUsed = ite_counters[NUM_LPQ_ENQUEUE];
          if (pLemmaListDisagreed->nLemmaFirstUseful == 0) 
             pLemmaListDisagreed->nLemmaFirstUseful = ite_counters[NUM_LPQ_ENQUEUE];
          ite_counters[INF_LEMMA]++;
@@ -220,6 +221,7 @@ UpdateEachAffectedLemma(AffectedFuncsStruct *pAFS, int nInferredValue)
          continue;
       }
       pLemmaListDisagreed->nNumLemmaConflict++;
+      pLemmaListDisagreed->nLemmaLastUsed = ite_counters[NUM_LPQ_ENQUEUE];
       if (pLemmaListDisagreed->nLemmaFirstUseful == 0) 
          pLemmaListDisagreed->nLemmaFirstUseful = ite_counters[NUM_LPQ_ENQUEUE];
       pConflictLemma = pLemmaListDisagreed->pLemma;
@@ -328,6 +330,7 @@ UpdateEachAffectedLemma(AffectedFuncsStruct *pAFS, int nInferredValue)
             );
 
          pLemmaListDisagreed->nNumLemmaInfs++;
+         pLemmaListDisagreed->nLemmaLastUsed = ite_counters[NUM_LPQ_ENQUEUE];
          if (pLemmaListDisagreed->nLemmaFirstUseful == 0) 
             pLemmaListDisagreed->nLemmaFirstUseful = ite_counters[NUM_LPQ_ENQUEUE];
          ite_counters[INF_LEMMA]++;
@@ -346,6 +349,7 @@ UpdateEachAffectedLemma(AffectedFuncsStruct *pAFS, int nInferredValue)
          continue;
       }
       pLemmaListDisagreed->nNumLemmaConflict++;
+      pLemmaListDisagreed->nLemmaLastUsed = ite_counters[NUM_LPQ_ENQUEUE];
       if (pLemmaListDisagreed->nLemmaFirstUseful == 0) 
          pLemmaListDisagreed->nLemmaFirstUseful = ite_counters[NUM_LPQ_ENQUEUE];
       pConflictLemma = pLemmaListDisagreed->pLemma;
