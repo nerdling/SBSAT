@@ -77,7 +77,7 @@ int ExQuantifyAnd () {
 	BDDNode *Quantify;
 	
 	if (enable_gc) bdd_gc(); //Hit it!
-	
+	fprintf(stderr, "STARTING OVER\n");
 	for (int x = 1; x <= MAX_EXQUANTIFY_CLAUSES; x++) {
 		for (int i = 1; i < numinp + 1; i++) {
 			char p[100];
@@ -117,7 +117,6 @@ int ExQuantifyAnd () {
 
 			if(amount_count == 0) {
 				//Variable dropped out, set it to True.
-				fprintf(stderr, "\nvar %d dropped out\n", i);
 				BDDNode *inferBDD = ite_var(i);
 				int bdd_length = 0;
 				int *bdd_vars = NULL;
@@ -142,11 +141,11 @@ int ExQuantifyAnd () {
 			
 			if (amount_count == x){// && independantVars[i]==0) {
 				int j = amount_num;
-				Quantify = functions[j];//true_ptr;
+				Quantify = functions[j];
 				int out = 0;
 				if(length[j]>MAX_EXQUANTIFY_VARLENGTH) out = 1;
 				DO_INFERENCES = 0;
-				int count1 = 0;
+				int count1 = 1;
 				for (llist * k = amount[i].head; k != NULL && out==0;) {
 					int z = k->num;
 					k = k->next;
@@ -173,8 +172,16 @@ int ExQuantifyAnd () {
 					
 					Quantify = ite_and(Quantify, functions[z]);
 					affected++;
+
+					/*if(functions[z] == true_ptr) {
+						fprintf(stderr, "z == true!!!");
+						exit(0);
+					}*/
+
 					functions[z] = true_ptr;
- 
+					
+					ret = PREP_CHANGED;
+					
 					switch (int r=Rebuild_BDDx(z)) {
 					 case TRIV_UNSAT: 
 					 case TRIV_SAT: 
@@ -185,8 +192,6 @@ int ExQuantifyAnd () {
 					UnSetRepeats(z);
 					equalityVble[z] = 0;
 					functionType[z] = UNSURE;
-					
-					ret = PREP_CHANGED;
 
 					int bdd_length = 0;
 					int *bdd_vars = NULL;
@@ -198,7 +203,7 @@ int ExQuantifyAnd () {
 					}
 					delete [] bdd_vars;
 					bdd_vars = NULL;
-					if(bdd_length>MAX_EXQUANTIFY_VARLENGTH) {
+					if(bdd_length>MAX_EXQUANTIFY_VARLENGTH && count1!=amount_count) {
 						out = 1;
 						break;
 					}
@@ -272,7 +277,6 @@ int ExQuantifyAnd () {
 								BDDNode **BDDFuncs;
 								BDDFuncs = (BDDNode **)ite_recalloc(NULL, 0, 1, sizeof(BDDNode *), 9, "BDDFuncs");
 								BDDFuncs[0] = strip_x_BDD(Quantify2, quant_var);
-								ret = PREP_CHANGED;
 
 								switch (int r=add_newFunctions(BDDFuncs, 1)) {
 								 case TRIV_UNSAT:
@@ -306,19 +310,19 @@ int ExQuantifyAnd () {
 									d3e_printf2 ("*{%d}", quant_var);
 									str_length = 0;
 									variablelist[quant_var].true_false = 2;
-									switch (int r=Rebuild_BDDx(j)) {
-									 case TRIV_UNSAT:
-									 case TRIV_SAT:
-									 case PREP_ERROR: return r;
-									 default: break;
-									}
+									ret = PREP_CHANGED;
+								}
+								switch (int r=Rebuild_BDDx(j)) {
+								 case TRIV_UNSAT:
+								 case TRIV_SAT:
+								 case PREP_ERROR: return r;
+								 default: break;
 								}
 								changed = 1;
 								break;
 							}
 						}
 						if(changed == 1) {
-							ret = PREP_CHANGED;
 							SetRepeats(j);
 						}
 					}
@@ -337,7 +341,6 @@ int ExQuantifyAnd () {
 							ret = r; goto ea_bailout; /* as much as I hate gotos */
 						 default: break;
 						}
-						ret = PREP_CHANGED;
 					}
 					DO_INFERENCES = 1;
 					continue;
@@ -388,7 +391,6 @@ int ExQuantifyAnd () {
 						}
 						equalityVble[j] = 0;
 						functionType[j] = UNSURE;
-						ret = PREP_CHANGED;
 						continue;
 					}
 				}

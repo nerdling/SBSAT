@@ -71,6 +71,7 @@ int Do_Rewind() {
 				equalityVble[x] = 0;
 				Rebuild_BDDx(x);
 			}
+			//Rebuild_BDDx(y);
 			y++;
 		} else {
 			functions[x] = true_ptr;

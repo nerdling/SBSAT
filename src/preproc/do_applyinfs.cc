@@ -738,7 +738,22 @@ int Rebuild_BDDx (int x) {
 		}
 		//Done adding BDD x into the inferences lists.
 		// delete [] variables[x].num;
+	} else { //A NEW BDD
+		for (int b = 0; b < y; b++) {
+			llist *newllist = AllocateLList(x, NULL);
+			//fprintf(stderr, "f=%d v=%d\n", x, tempint[b]);
+			if (amount[tempint[b]].head == NULL) {
+				num_funcs_var_occurs[tempint[b]] = 1;
+				amount[tempint[b]].head = newllist;
+				amount[tempint[b]].tail = newllist;
+			} else {
+				num_funcs_var_occurs[tempint[b]]++;
+				amount[tempint[b]].tail->next = newllist;
+				amount[tempint[b]].tail = newllist;
+			}
+		}
 	}
+	
 
 	length[x] = y;
 	

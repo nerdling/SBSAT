@@ -222,13 +222,14 @@ int ExQuantify () {
 										d3e_printf2 ("*{%d}", quant_var);
 										str_length = 0;
 										variablelist[quant_var].true_false = 2;
-										switch (int r=Rebuild_BDDx(j)) {
-										 case TRIV_UNSAT:
-										 case TRIV_SAT:
-										 case PREP_ERROR: return r;
-										 default: break;
-										}
 									}
+									switch (int r=Rebuild_BDDx(j)) {
+									 case TRIV_UNSAT:
+									 case TRIV_SAT:
+									 case PREP_ERROR: return r;
+									 default: break;
+									}
+
 									changed = 1;
 									break;
 								}

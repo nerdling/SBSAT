@@ -206,7 +206,9 @@ Init_Preprocessing()
 	bdd_vars = NULL;
 
 	//Done working with preset variables.
-	
+
+	num_funcs_var_occurs = (int *)ite_calloc(numinp+1, sizeof(int), 9, "num_funcs_var_occurs");
+
 	for (int x = 0; x < nmbrFunctions; x++)
 	  {
         D_3(
@@ -223,17 +225,11 @@ Init_Preprocessing()
 		  }
 	  }
 
-   num_funcs_var_occurs = (int *)ite_calloc(numinp+1, sizeof(int), 9, "num_funcs_var_occurs");
-
+/*	
 	for (int x = 0; x < nmbrFunctions; x++) {
 		for (int i = 0; i < length[x]; i++) {
          llist *newllist = AllocateLList(x, NULL);
-         /*
-			llist *newllist = new llist;
-			newllist->num = x;
-			newllist->next = NULL;
-         */
-			if (amount[variables[x].num[i]].head == NULL) {
+  			if (amount[variables[x].num[i]].head == NULL) {
 				num_funcs_var_occurs[variables[x].num[i]] = 1;
 				amount[variables[x].num[i]].head = newllist;
 				amount[variables[x].num[i]].tail = newllist;
@@ -244,7 +240,8 @@ Init_Preprocessing()
 			}
 		}
 	}
-	
+*/
+
 	DO_INFERENCES = OLD_DO_INFERENCES;
 
    //Do_Flow();
@@ -438,13 +435,11 @@ int add_newFunctions(BDDNode **new_bdds, int new_size) {
 		 default: break;
 		}
 	}
-	
+
+/*	
 	for (int x = nmbrFunctions-new_size; x < nmbrFunctions; x++) {
 		for (int i = 0; i < length[x]; i++) {
          llist *newllist = AllocateLList(x, NULL);
-			/*llist *newllist = new llist;
-			newllist->num = x;
-			newllist->next = NULL;*/
 			if (amount[variables[x].num[i]].head == NULL) {
 				num_funcs_var_occurs[variables[x].num[i]] = 1;
 				amount[variables[x].num[i]].head = newllist;
@@ -456,6 +451,7 @@ int add_newFunctions(BDDNode **new_bdds, int new_size) {
 			}
 		}
 	}
-
+*/
+	
 	return ret;
 }

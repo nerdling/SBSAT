@@ -146,13 +146,10 @@ int Do_Prover3() {
 
 	for(int x = 0; x < numinp+1; x++)
 	  autark_BDD[x] = -1;
-	
+
+	/*
 	for (int x = 0; x < nmbrFunctions; x++) {
 		for (int i = 0; i < length[x]; i++) {
-         llist *newllist = AllocateLList(x, NULL);
-         //llist *newllist = new llist;
-			//newllist->num = x;
-			//newllist->next = NULL;
 			if (amount[variables[x].num[i]].head == NULL) {
 				num_funcs_var_occurs[variables[x].num[i]] = 1;
 				amount[variables[x].num[i]].head = newllist;
@@ -164,6 +161,7 @@ int Do_Prover3() {
 			}
 		}
 	}
+   */
 
 	/****** DONE INITIALIZING ARRAYS ******/
 	
