@@ -34,27 +34,14 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
+
 #include "ite.h"
 #include "solver.h"
 
-/* 
- * input: none
- *
- */
+ITE_INLINE void AU_check_pop_information_init();
+ITE_INLINE int AU_is_autarky();
 
-extern int autarky;
-
-ITE_INLINE void pop_state_information(int n);
-ITE_INLINE int pop_mark_state_information();
-ITE_INLINE void check_pop_information_init();
-ITE_INLINE int check_pop_information_specfn();
-ITE_INLINE int check_pop_information_smurfs();
-ITE_INLINE int is_autarky();
-ITE_INLINE void Mark_arrSmurfStatesStack(int);
-ITE_INLINE void Mark_arrNumRHSUnknowns(int);
-
-ITE_INLINE
-int
+ITE_INLINE int
 BackTrack_NL()
 {
   int nInferredAtom;  /* the choice point */
@@ -66,7 +53,7 @@ BackTrack_NL()
 
   if (autarky) {
     mark_found = pop_mark_state_information();
-    check_pop_information_init();
+    AU_check_pop_information_init();
   }
 
  /* autarky loop */
@@ -130,7 +117,7 @@ BackTrack_NL()
 
     if (autarky && mark_found) {
        mark_found = 0;
-       while (is_autarky()) {
+       while (AU_is_autarky()) {
           _num_autarkies++;
           loop_counter++;
        }

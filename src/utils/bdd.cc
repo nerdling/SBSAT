@@ -33,11 +33,7 @@
  or arising from the use, or inability to use, this software or its
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
- *********************************************************************/
-
-/***********************************************************************
- *  bdd.c (S.Weaver)
- ***********************************************************************/ 
+*********************************************************************/
 
 #include "ite.h"
 

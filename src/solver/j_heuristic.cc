@@ -33,7 +33,7 @@
  or arising from the use, or inability to use, this software or its
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
- *********************************************************************/
+*********************************************************************/
 
 #include "ite.h"
 #include "solver.h"
@@ -56,17 +56,8 @@ ITE_INLINE void J_ResetHeuristicScores();
 //static const double c_heur = 1.0 / 4096.0;
 //static const double c_heur = 1.0;
 
-extern int nNumSpecialFuncs;
-extern int nNumRegSmurfs;	// Number of regular Smurfs.
-extern int nNumVariables;
-
-extern SpecialFunc *arrSpecialFuncs;
-
-void
-DisplayUpdatesToHeuristicTransScores(Transition *pTransition);
-
-void
-J_UpdateHeuristicScoresFromTransition(Transition *pTransition);
+void DisplayUpdatesToHeuristicTransScores(Transition *pTransition);
+void J_UpdateHeuristicScoresFromTransition(Transition *pTransition);
 
 ITE_INLINE void
 J_InitHeuristicScores()

@@ -56,6 +56,20 @@ extern int *Ea_repeat;
 extern int str_length;
 extern long affected;
 
+extern int Pos_replace;
+extern int Neg_replace;
+extern int Setting_Pos;
+extern int Setting_Neg;
+
+extern int *original_functionType;
+extern int *original_equalityVble;
+
+extern long bdd_tempint_max;
+extern int *bdd_tempint;
+
+extern int STRENGTH;
+extern double start_prep;
+
 void Init_Repeats();
 void Delete_Repeats();
 void SetRepeats(int x);

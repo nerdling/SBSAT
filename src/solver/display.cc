@@ -34,19 +34,16 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
+
 #include "ite.h"
 #include "solver.h"
 
-extern SmurfState *pTrueSmurfState;
-extern SpecialFunc *arrSpecialFuncs;
-extern int nNumSpecialFuncs;
-extern int *arrFcnIndexRegSmurf;
-extern BDDNodeStruct **arrFunctions;
-extern int nNumRegSmurfs;
+extern int gnNumCachedLemmas;
+extern int gnNumLemmas;
+extern int nCallsToAddLemma;
 extern int nNumCachedLemmas[3]; 
 
-void
-DisplaySpecialFunc(SpecialFunc *p);
+void DisplaySpecialFunc(SpecialFunc *p);
 
 void
 DisplayStatus(int nNumSmurfs,
@@ -236,10 +233,6 @@ void DisplaySolution(int nMaxVbleIndex)
   printf("\n");
 }
 
-extern int gnNumCachedLemmas;
-extern int gnNumLemmas;
-extern int nCallsToAddLemma;
-
 ITE_INLINE
 void
 CalculateProgress(int *_whereAmI, int *_total)
@@ -250,8 +243,6 @@ CalculateProgress(int *_whereAmI, int *_total)
   int hard_count=28;
   int count=0;
 
-  extern BacktrackStackEntry *pBacktrackTop;
-  extern ChoicePointStruct *pStartChoicePointStack;
   BacktrackStackEntry *pBacktrack = pStartBacktrackStack;
   ChoicePointStruct *pChoicePoint = pStartChoicePointStack;
   while (pBacktrack < pBacktrackTop && 

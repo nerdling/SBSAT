@@ -34,9 +34,6 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
-/*********************************************************
- *  preprocess.c (S. Weaver)
- *********************************************************/
 
 #define PRUNING_PR
 #include "do_pruning.cc"

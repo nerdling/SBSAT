@@ -48,7 +48,6 @@
  *
  */ 
 
-
 int functions_max = 0;
 int vars_max = 0;
 

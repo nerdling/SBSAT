@@ -227,4 +227,12 @@ extern int competition_enable;
 extern int sat_timeout;
 extern int sat_ram;
 extern int K_TOP_VARIABLES;
+
+extern long nTimeLimit;
+extern long nNumChoicePointLimit;
+extern char temp_dir[128];
+extern char ini_filename[128];
+extern char input_result_filename[128];
+extern char preproc_string[256];
+
 #endif

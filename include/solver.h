@@ -67,6 +67,7 @@ extern int nBacktrackStackIndex;
 extern BacktrackStackEntry *pBacktrackTop;     
 extern BacktrackStackEntry *pStartBacktrackStack;     
 extern int *arrBacktrackStackIndex;
+extern BacktrackStackEntry *arrBacktrackStack; 
 extern ChoicePointStruct *arrChoicePointStack;
 extern ChoicePointStruct *pChoicePointTop;
 extern int nNumUnresolvedFunctions;
@@ -126,10 +127,6 @@ extern int *pInferenceQueueNextElt; // ptr to next available elt in inference qu
 extern int gnNumLemmas;
 
 /* Backtrack arrays */
-extern int *arrUnsetLemmaFlagVars;
-extern bool *arrLemmaFlag;
-extern int *arrTempLemma;
-
 extern int *pInferenceQueueNextEmpty; // ptr to next empty slot in inference queue
 extern int nNumUnresolvedFunctions;
 extern int nVble;
@@ -170,10 +167,17 @@ extern int total_vars;
 extern int *arrLemmaVbleCountsPos;
 extern int *arrLemmaVbleCountsNeg;
 
+extern t_solution_info *solution_info;
+extern t_solution_info *solution_info_head;
+
 ITE_INLINE int InitBrancher();
-ITE_INLINE void FreeSpecialFnStack();
-ITE_INLINE void FreeSmurfStatesStack();
 ITE_INLINE void FreeBrancher();
+
+ITE_INLINE void InitializeSmurfStatesStack();
+ITE_INLINE void InitializeSpecialFnStack();
+ITE_INLINE void FreeSmurfStatesStack();
+ITE_INLINE void FreeSpecialFnStack();
+
 ITE_INLINE void FreeSmurfFactory();
 
 ITE_INLINE int ConstructTempLemma();
@@ -182,6 +186,7 @@ ITE_INLINE void InferLiteral(int nInferredAtom, int nInferredValue,
              bool bWasChoicePoint,
              LemmaBlock *pLemma, LemmaInfoStruct *pCachedLemma, int infer);
 ITE_INLINE void pop_state_information(int n);
+ITE_INLINE int pop_mark_state_information();
 ITE_INLINE void Mark_arrSmurfStatesStack(int);
 ITE_INLINE void Mark_arrNumRHSUnknowns(int);
 
@@ -247,7 +252,6 @@ ITE_INLINE void InitHeurScoresStack();
 ITE_INLINE void FreeHeurScoresStack();
 ITE_INLINE void PushHeuristicScores();
 ITE_INLINE void PopHeuristicScores();
-
 
 /* crtwin */
 void crtwin();

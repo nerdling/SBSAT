@@ -34,9 +34,6 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
-/*********************************************************
- *  preprocess.c (S. Weaver)
- *********************************************************/
 
 #include "ite.h"
 
@@ -127,16 +124,6 @@ amount_compfunc (const void *x, const void *y)
 #endif
   return -1;
 }
-
-/* 
- *  int
- *  compfunc (const void *x, const void *y)
- *  ... moved to utils/utils.cc
- *
- *  infer 
- *  *GetInferFoAN(BDDNode *func) 
- *  ... moved to utils/utils.cc
- */
 
 infer *NEW_GetInfer(long *y, long *max, int **tempint, BDDNode * func);
 

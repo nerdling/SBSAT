@@ -34,18 +34,13 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
+
 #include "ite.h"
 #include "solver.h"
 
-extern int *arrIte2SolverVarMap;
-extern int *arrSolver2IteVarMap;
-
-ITE_INLINE
-int
+ITE_INLINE int
 ConsistentBDDSolution(BDDNodeStruct *pFunc)
 {
-  extern BDDNode *false_ptr;
-  extern BDDNode *true_ptr;
   int nVble;
   int nValue;
 
@@ -79,8 +74,7 @@ ConsistentBDDSolution(BDDNodeStruct *pFunc)
   return (pFunc == true_ptr ? 1 : 0);
 }
 
-ITE_INLINE
-int
+ITE_INLINE int
 ConsistentPartialSolution()
      // Return 1 if arrSolution[] is a consitent partial solution to
      // the constraints given.  Otherwise return 0.
@@ -113,14 +107,11 @@ ConsistentPartialSolution()
   return nConsistent;
 }
 
-ITE_INLINE
-int
+ITE_INLINE int
 VerifyBDDSolution(BDDNodeStruct *pFunc)
      // Return 1 if arrSolution[] causes *pFunc to evaluate to true.
      // Otherwise return 0.
 {
-   extern BDDNode *false_ptr;
-   extern BDDNode *true_ptr;
    int nVble;
    int nValue;
 
@@ -154,8 +145,7 @@ VerifyBDDSolution(BDDNodeStruct *pFunc)
    return (pFunc == true_ptr ? 1 : 0);
 }
 
-ITE_INLINE
-int
+ITE_INLINE int
 VerifySolution()
      // Return 1 if arrSolution[] is actually a satisfying solution to
      // the constraints given.  Otherwise return 0.

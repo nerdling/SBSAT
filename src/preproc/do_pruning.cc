@@ -34,14 +34,10 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
-/*********************************************************
- *  preprocess.c (S. Weaver)
- *********************************************************/
 
 #include "ite.h"
 #include "preprocess.h"
 
-extern int STRENGTH;
 void Sort_BDDs (long *tempint_max, int **tempint);
 
 #ifdef DO_PRUNING_FN

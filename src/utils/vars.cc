@@ -35,7 +35,6 @@
  of the possibility of those damages.
 *********************************************************************/
 
-
 #include <ite.h>
 
 //float STATE_TIME = 5000.0;

@@ -34,10 +34,9 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
+
 #include "ite.h"
 #include "formats.h"
-
-extern char *input_result_filename;
 
 int 
 setValue(char *s, int value, varinfo * variablelist)

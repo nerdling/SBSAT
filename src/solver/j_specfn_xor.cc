@@ -34,14 +34,9 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
-/* j-heuristic for special fns */
 
 #include "ite.h"
 #include "solver.h"
-
-extern SpecialFunc *arrSpecialFuncs;
-extern SmurfState **arrRegSmurfInitialStates;
-extern int *arrNumRHSUnknowns;
 
 double *arrXorEqWght = NULL;
 double *arrXorEqWghtD = NULL;

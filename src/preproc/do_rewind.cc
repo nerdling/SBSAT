@@ -34,21 +34,11 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
-/*********************************************************
- *  preprocess.c (S. Weaver)
- *********************************************************/
 
 #include "ite.h"
 #include "preprocess.h"
 
 int num_inferences = 0;
-
-extern int Pos_replace;
-extern int Neg_replace;
-extern int Setting_Pos;
-extern int Setting_Neg;
-extern int *original_functionType;
-extern int *original_equalityVble;
 
 int Do_Rewind() {
 	d3_printf1("REWINDING - ");
@@ -99,7 +89,7 @@ int Do_Rewind() {
 	}
 
 	d3_printf1("\n");
-   d2e_printf1("\r                                         ");
+   d2e_printf1("\rPreprocessing Rw                         ");
 	
 	int ret = PREP_CHANGED;
 	

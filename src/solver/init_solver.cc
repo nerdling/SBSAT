@@ -33,7 +33,8 @@
  or arising from the use, or inability to use, this software or its
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
- *********************************************************************/
+*********************************************************************/
+
 #include "ite.h"
 #include "solver.h"
 
@@ -462,8 +463,6 @@ InitBrancher()
       }
    }
 
-ITE_INLINE void InitializeSmurfStatesStack();
-ITE_INLINE void InitializeSpecialFnStack();
   /* have to have the stack at least for stages so I don't have to check
      the existence of special fn every time */
   InitializeSmurfStatesStack();

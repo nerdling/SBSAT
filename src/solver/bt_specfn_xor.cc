@@ -33,22 +33,14 @@
  or arising from the use, or inability to use, this software or its
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
- *********************************************************************/
+*********************************************************************/
+
 #include "ite.h"
 #include "solver.h"
 
-/* param */
-extern int *arrNumRHSUnknowns;
-extern SpecialFunc *arrSpecialFuncs;
-extern int nNumUnresolvedFunctions;
-
-/* conflict resolution */
-extern LemmaBlock *pConflictLemma;
-
 ITE_INLINE void FillLemmaWithReversedPolarities(LemmaBlock *pLemma);
 
-ITE_INLINE
-int
+ITE_INLINE int
 UpdateSpecialFunction_XOR(IndexRoleStruct *pIRS)
 {
    assert(pIRS->nRHSIndex >= 0); /* no LHS literal in XOR */
@@ -144,5 +136,3 @@ UpdateSpecialFunction_XOR(IndexRoleStruct *pIRS)
    arrNumRHSUnknowns[nSpecFuncIndex] = nNumRHSUnknowns;
    return NO_ERROR;
 }
-
-

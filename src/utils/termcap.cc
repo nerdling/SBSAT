@@ -33,7 +33,7 @@
  or arising from the use, or inability to use, this software or its
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
- *********************************************************************/
+*********************************************************************/
 
 #include "ite.h"
 
@@ -71,7 +71,6 @@ init_terminal_out()
 #ifdef HAVE_TERMCAP_H
    char *termtype = getenv("TERM");
    int success;
-   extern char *getenv(), *realloc();
 
    if (termtype == 0) {
       d2_printf1("Specify a terminal type with `setenv TERM <yourtype>'.\n");

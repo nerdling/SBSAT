@@ -33,11 +33,10 @@
  or arising from the use, or inability to use, this software or its
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
- *********************************************************************/
+*********************************************************************/
+
 #include "ite.h"
 #include "solver.h"
-
-extern SmurfState **arrRegSmurfInitialStates;
 
 ITE_INLINE void
 J_Update_RHS_AND(SpecialFunc * pSpecialFunc, HWEIGHT fPosDelta, HWEIGHT fNegDelta);

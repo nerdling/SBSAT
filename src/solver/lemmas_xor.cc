@@ -34,8 +34,6 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
-// lemmainfo.cc
-// Started 8/16/01 - J. Ward
 
 #include "ite.h"
 #include "solver.h"

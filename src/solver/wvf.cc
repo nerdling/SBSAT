@@ -172,7 +172,6 @@ float total_time=0;
 float brancher_time=0;
 //clock_t s=0,f=0;
 //double s=0,f=0;
-extern double f;
 double s=0;
 int total_pops,total_pushes,total_inferences,max_assumptions;
 int total_assumptions;

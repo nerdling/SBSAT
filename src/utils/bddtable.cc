@@ -33,9 +33,7 @@
  or arising from the use, or inability to use, this software or its
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
- *********************************************************************/
-/* variable size (growing) overlapping buckets */
-/* parallel buckets */
+*********************************************************************/
 
 #include "ite.h"
 
@@ -226,6 +224,7 @@ bddtable_find_or_add_node (int v, BDDNode * r, BDDNode * e)
       }
 		
 	} else {
+      ite_counters[BDD_NODE_NEW]++;
       /* could not find the node => allocate new one */
       bddtable_alloc_node(node, v, r, e);
       BDDNode *ret_node = *node; // next function invalidates node memory ptr location
@@ -241,7 +240,6 @@ bddtable_find_or_add_node (int v, BDDNode * r, BDDNode * e)
 inline void
 bddtable_alloc_node(BDDNode **node, int v, BDDNode *r, BDDNode *e)
 {
-   ite_counters[BDD_NODE_NEW]++;
    if (bddtable_free != NULL) {
       (*node) = bddtable_free;
       bddtable_free = bddtable_free->next;
@@ -405,7 +403,7 @@ bdd_gc(int force)
          if (node->flag == 0)
          {
             // deleted 
-#define GC_REBUILD_INFERENCES
+//#define GC_REBUILD_INFERENCES
 #ifndef GC_REBUILD_INFERENCES
             DeallocateInferences_var(node->inferences, node->variable);
 #endif

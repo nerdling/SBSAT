@@ -50,17 +50,13 @@ ITE_INLINE int RecordSolution();
 ITE_INLINE void J_ResetHeuristicScores();
 ITE_INLINE int RecordInitialInferences();
 
-extern int nNumRegSmurfs; // Number of regular Smurfs.
 SmurfState *pTrueSmurfState = 0;  // Pointer to the Smurf state
 //representing the Boolean function 'true'.
-extern int NO_LEMMAS;
 
 int *arrFunctionType;
 BDDNodeStruct **arrFunctions;
 int nAssertionFailedVble = 0;
 int gnNumCachedLemmas=0;
-extern BacktrackStackEntry *arrBacktrackStack; 
-extern SmurfState **arrRegSmurfInitialStates;
 t_proc_hook proc_hook = NULL;
 
 
@@ -96,7 +92,6 @@ ChoicePointStruct *arrChoicePointStack; // Info on previous branch variables.
 ChoicePointStruct *pStartChoicePointStack; 
 ChoicePointStruct *pChoicePointTop; // Next free position in above stack.
 
-int nCallsToAddLemma =  0;
 int nBacktrackStackIndex = 1;
 BacktrackStackEntry *pBacktrackTop; // Next free position in backtrack stack.
 // The next five identifiers are used for identifying and processing
@@ -125,12 +120,7 @@ int *arrRHSCounter = 0;
 int *arrRHSCounterNew = 0;
 int *arrPrevRHSCounter = 0;
 
-extern long nTimeLimit;
-extern long nNumChoicePointLimit;
-extern int nCtrlC;
-
-ITE_INLINE
-bool
+ITE_INLINE bool
 CheckLimits(double fStartTime)
 {
    double fEndTime;

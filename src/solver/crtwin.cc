@@ -33,7 +33,7 @@
  or arising from the use, or inability to use, this software or its
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
- *********************************************************************/
+*********************************************************************/
 
 #include "ite.h"
 #include "solver.h"
@@ -41,7 +41,7 @@
 ITE_INLINE void DisplayBacktrackInfo(double &fPrevEndTime, double &fStartTime);
 
 void
-crtwin_draw() //double fPrevEndTime, double fStartTime)
+crtwin_draw() 
 {
    double fPrevEndTime=0, fStartTime=0;
    putpad(CL);/* clear the screen */

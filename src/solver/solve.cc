@@ -34,6 +34,7 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
+
 #include "ite.h"
 #include "solver.h"
 
@@ -43,7 +44,6 @@ int *arrIte2SolverVarMap=NULL;
 int nIndepVars=0;
 int nDepVars=0;
 t_var_stat *var_stat=NULL;
-extern BacktrackStackEntry *arrBacktrackStack; 
 ITE_INLINE int RecordInitialInferences();
 
 

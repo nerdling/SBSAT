@@ -34,12 +34,13 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
+
 /********************************************************************
- *   autochk.c (S. Weaver)
  *   holds a single function getformat() which looks at an input file
  *   and determines what type it is (CNF, Trace, etc.)
  *   Returns a single char representing type.
  ********************************************************************/  
+
 #include "ite.h"
 #include "formats.h"
 

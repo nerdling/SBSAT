@@ -34,7 +34,6 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
-/* j-heuristic for special fns */
 
 #include "ite.h"
 #include "solver.h"

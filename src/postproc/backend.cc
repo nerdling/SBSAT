@@ -34,26 +34,20 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
-/********************************************************************
- *  backend.c (S.Weaver, J.Franco) Performs checking and reformating
- *  operations after a solution to a given problem is attained.
- *  Function finalCheck checks that the input lines are all not
- *  falsified by the returned assignment (if an assignment is
- *  returned).  Functions truthOf, getArg and opNestOf are used only
- *  by finalCheck.  Backend_Trace translates the values of internal 
- *  variables to values of original variables.
- ********************************************************************/
 
 #include "ite.h"
 #include "preprocess.h"
 #include "postproc.h"
+#include "solver.h"
 
+/*
 extern BDDNodeStruct **original_functions;
 extern int original_numout;
 extern int *arrSolution;
 extern int gnMaxVbleIndex;
 extern t_solution_info *solution_info;
 extern t_solution_info *solution_info_head;
+*/
 
 void
 ShowResultLine(FILE *fout, char *var, int var_idx, int negative, int value)

@@ -16,7 +16,7 @@
  be placed on all software copies, and a complete copy of this notice
  shall be included in all copies of the associated documentation.
  No right is  granted to use in advertising, publicity or otherwise
- any trademark,  service mark, or the name of University of Cincinnati.
+ any trademark, service mark, or the name of University of Cincinnati.
 
 
  --- This software and any associated documentation is provided "as is"
@@ -34,9 +34,6 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
-/*********************************************************
- *  preprocess.c (S. Weaver)
- *********************************************************/
 
 #include "ite.h"
 #include "preprocess.h"

@@ -33,17 +33,10 @@
  or arising from the use, or inability to use, this software or its
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
- *********************************************************************/
+*********************************************************************/
+
 #include "ite.h"
 #include "solver.h"
-
-/* param */
-extern int *arrNumRHSUnknowns;
-extern SpecialFunc *arrSpecialFuncs;
-extern int nNumUnresolvedFunctions;
-
-/* conflict resolution */
-extern LemmaBlock *pConflictLemma;
 
 ITE_INLINE void FillLemmaWithReversedPolarities(LemmaBlock *pLemma);
 
@@ -196,5 +189,3 @@ UpdateSpecialFunction_MINMAX(IndexRoleStruct *pIRS)
    arrRHSCounter[nSpecFuncIndex] = counter;
    return NO_ERROR;
 }
-
-

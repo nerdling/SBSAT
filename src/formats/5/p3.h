@@ -27,6 +27,8 @@ struct {
    int *refs;
    int refs_idx;
    int refs_max;
+   /*------*/
+   int flag;
 } t_ctl;
 
 void p3_add(char *dst, int argc, int tag, char *arg1, char *arg2);

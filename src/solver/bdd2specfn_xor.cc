@@ -38,7 +38,6 @@
 #include "ite.h"
 #include "solver.h"
 
-
 ITE_INLINE void
 BDD2Specfn_XOR(BDDNodeStruct *pFunc,
       int nFunctionType,

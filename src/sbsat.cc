@@ -33,14 +33,6 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
  *********************************************************************/
-/*
- *
- * SBSAT - University of Cincinnati
- *
- */
-/**********************************************************
- **  main.c (S. Weaver)
- **********************************************************/  
 
 #include "ite.h"
 #include "formats.h"
@@ -375,20 +367,20 @@ check_expected_result(int result)
 {
    switch (result) {
     case TRIV_SAT: 
-       if (strcmp(s_expected_result, "TRIV_SAT") && 
-             strcmp(s_expected_result, "SAT")) return SOLV_ERROR;
+       if (strcasecmp(s_expected_result, "TRIV_SAT") && 
+             strcasecmp(s_expected_result, "SAT")) return SOLV_ERROR;
        break;
     case TRIV_UNSAT: 
-       if (strcmp(s_expected_result, "TRIV_UNSAT") && 
-             strcmp(s_expected_result, "UNSAT")) return SOLV_ERROR;
+       if (strcasecmp(s_expected_result, "TRIV_UNSAT") && 
+             strcasecmp(s_expected_result, "UNSAT")) return SOLV_ERROR;
        break;
     case SOLV_SAT:  
-       if (strcmp(s_expected_result, "SOLV_SAT") && 
-             strcmp(s_expected_result, "SAT")) return SOLV_ERROR;
+       if (strcasecmp(s_expected_result, "SOLV_SAT") && 
+             strcasecmp(s_expected_result, "SAT")) return SOLV_ERROR;
        break;
     case SOLV_UNSAT: 
-       if (strcmp(s_expected_result, "SOLV_UNSAT") && 
-             strcmp(s_expected_result, "UNSAT")) return SOLV_ERROR;
+       if (strcasecmp(s_expected_result, "SOLV_UNSAT") && 
+             strcasecmp(s_expected_result, "UNSAT")) return SOLV_ERROR;
        break;
     default: /* can't verify the result */
        dE_printf1("Can't check the result against the expected result\n");

@@ -34,6 +34,7 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
+
 /**********************************************************************
  *  cnf.c (S. Weaver)
  *  Routines for converting from CNF to BDD and from DNF to CNF

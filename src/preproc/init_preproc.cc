@@ -34,9 +34,6 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
-/*********************************************************
- *  preprocess.c (S. Weaver)
- *********************************************************/
 
 #include "ite.h"
 #include "preprocess.h"
@@ -60,8 +57,8 @@ int str_length;
 int preproc_did_nothing = 0;
 long affected;
 BDDNodeStruct **xorFunctions;
-extern long bdd_tempint_max;
-extern int *bdd_tempint;
+long bdd_tempint_max=0;
+int *bdd_tempint=NULL;
 int *original_functionType;
 int *original_equalityVble;
 

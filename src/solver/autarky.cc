@@ -33,13 +33,12 @@
  or arising from the use, or inability to use, this software or its
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
- *********************************************************************/
+*********************************************************************/
+
 #include "ite.h"
 #include "solver.h"
 
 /* pop the information */
-extern SmurfState **arrCurrentStates;
-extern int *arrNumRHSUnknowns;
 
 #define YES_AUTARKY 1
 #define NO_AUTARKY 0
@@ -47,14 +46,13 @@ extern int *arrNumRHSUnknowns;
 tSmurfStatesStack* AU_arrSmurfStatesStack;
 int AU_nSmurfStatesStackIdx;
 
-ITE_INLINE void check_pop_information_init();
-ITE_INLINE int check_pop_information_specfn();
-ITE_INLINE int check_pop_information_smurfs();
-ITE_INLINE int is_autarky();
+ITE_INLINE void AU_check_pop_information_init();
+ITE_INLINE int AU_check_pop_information_specfn();
+ITE_INLINE int AU_check_pop_information_smurfs();
+ITE_INLINE int AU_is_autarky();
 
-ITE_INLINE
-int
-check_pop_information_smurfs()
+ITE_INLINE int
+AU_check_pop_information_smurfs()
 {
    if (arrCurrentStates == NULL) return YES_AUTARKY;
 
@@ -89,9 +87,8 @@ check_pop_information_smurfs()
 tSpecialFnStack* AU_arrSpecialFnStack;
 int AU_nSpecialFnStackIdx;
 
-ITE_INLINE
-int
-check_pop_information_specfn()
+ITE_INLINE int
+AU_check_pop_information_specfn()
 {
    if (arrNumRHSUnknowns == NULL) return YES_AUTARKY;
 
@@ -121,9 +118,8 @@ check_pop_information_specfn()
    return YES_AUTARKY;
 }
 
-ITE_INLINE
-void
-check_pop_information_init()
+ITE_INLINE void
+AU_check_pop_information_init()
 {
    AU_arrSmurfStatesStack   = arrSmurfStatesStack;
    AU_nSmurfStatesStackIdx  = nSmurfStatesStackIdx;
@@ -135,11 +131,8 @@ check_pop_information_init()
 
 /* in the end of backjump loop */
 
-extern bool *arrLemmaFlag;
-
-ITE_INLINE
-int
-is_autarky()
+ITE_INLINE int
+AU_is_autarky()
 {
    d9_printf1("Autarky check\n");
 
@@ -148,11 +141,11 @@ is_autarky()
 
    /* check each affected smurf -- 
     if not satisfied => not autarky */
-   if (check_pop_information_smurfs()==YES_AUTARKY) {
+   if (AU_check_pop_information_smurfs()==YES_AUTARKY) {
 
       /* check each affected special function -- 
        if not satisfied => not autarky */
-      if (check_pop_information_specfn()==YES_AUTARKY)
+      if (AU_check_pop_information_specfn()==YES_AUTARKY)
       {
          return YES_AUTARKY;
       }

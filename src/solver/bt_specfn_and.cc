@@ -33,24 +33,14 @@
  or arising from the use, or inability to use, this software or its
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
- *********************************************************************/
+*********************************************************************/
+
 #include "ite.h"
 #include "solver.h"
 
-/* param */
-extern int *arrNumRHSUnknowns;
-extern SpecialFunc *arrSpecialFuncs;
-extern int nNumUnresolvedFunctions;
-extern int *arrBacktrackStackIndex;
+ITE_INLINE void InferNLits(SpecialFunc *pSpecialFunc, int n);
 
-/* conflict resolution */
-extern LemmaBlock *pConflictLemma;
-
-ITE_INLINE void
-InferNLits(SpecialFunc *pSpecialFunc, int n);
-
-ITE_INLINE
-int
+ITE_INLINE int
 UpdateSpecialFunction_AND(IndexRoleStruct *pIRS)
 {
    int nSpecFuncIndex = pIRS->nSpecFuncIndex;

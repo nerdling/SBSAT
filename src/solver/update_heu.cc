@@ -33,9 +33,7 @@
  or arising from the use, or inability to use, this software or its
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
- *********************************************************************/
-
-// assert USE_LEMMA_VAR_HEURISTIC is not set... !
+*********************************************************************/
 
 #include "ite.h"
 #include "solver.h"

@@ -34,21 +34,10 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
-// lemmainfo.cc
-// Started 8/16/01 - J. Ward
 
 #include "ite.h"
 #include "solver.h"
 
-
-// ------------------------------------------------------------------------
-// TOC:
-//
-// ----------------------- lemma display ----------------------------------
-// ----------------------- checking and verification ----------------------
-// ------------------------------------------------------------------------
-
-// ------------------------------ lemma display -----------------------------------
 ITE_INLINE void
 DisplayLemma(int *pnLemma)
 {
@@ -420,7 +409,6 @@ VerifyLemmaList(int nVble, int nPos, int nWhichWatch)
 ITE_INLINE void
 VerifyLemmaLists()
 {
-   extern int gnMaxVbleIndex;
    for (int nVble = 1; nVble <= gnMaxVbleIndex; nVble++)
    {
       VerifyLemmaList(nVble, 1, 1);

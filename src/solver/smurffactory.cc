@@ -33,16 +33,12 @@
  or arising from the use, or inability to use, this software or its
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
- *********************************************************************/
-// SmurfFactory.cc
-// Routines for creating state machines.
-// Started 12/26/2000 - J. Ward
+*********************************************************************/
 
 #include "ite.h"
 #include "solver.h"
 
 // External variables.
-extern SmurfState *pTrueSmurfState;
 SpecialFunc *arrSpecialFuncs =  0;
 SmurfState **arrRegSmurfInitialStates = 0;
 t_smurf_path *arrSmurfPath;
@@ -53,9 +49,6 @@ int nNumRegSmurfs; // Number of regular Smurfs.
 int nSpecialFuncIndex;
 int nRegSmurfIndex;
 int gnMaxVbleIndex;
-
-extern BDDNode *false_ptr;
-extern BDDNode *true_ptr;
 
 ITE_INLINE void DisplaySmurfStates();
 ITE_INLINE char * StringFromFunctionType(int nFuncType);

@@ -33,7 +33,8 @@
  or arising from the use, or inability to use, this software or its
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
- *********************************************************************/
+*********************************************************************/
+
 #include "ite.h"
 #include "solver.h"
 
@@ -90,17 +91,12 @@ CheckSmurfInferences(int nSmurfIndex, int *arrInferences, int nNumInferences, in
 
          pConflictLemma = pLemma;
          pConflictLemmaInfo = pLemmaInfo; /* so we can free it */
-         //goto_Backtrack;
          return ERR_BT_SMURF;
       }
    }
    return 0;
 }
 
-
-extern int *arrChangedSmurfs;
-
-inline
 ITE_INLINE int 
 UpdateRegularSmurf(int nSmurfIndex)
 {

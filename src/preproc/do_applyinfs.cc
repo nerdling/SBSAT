@@ -34,22 +34,11 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
-/*********************************************************
- *  preprocess.c (S. Weaver)
- *********************************************************/
 
 #include "ite.h"
 #include "preprocess.h"
 
-extern int Pos_replace;
-extern int Neg_replace;
-extern int Setting_Pos;
-extern int Setting_Neg;
-
 int Rebuild_BDDx (int x);
-long bdd_tempint_max=0;
-int *bdd_tempint=NULL;
-
 
 int
 Do_Apply_Inferences ()

@@ -34,6 +34,7 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
+
 /* walksat version 35hw4 */
 /* version 1 by Bram Cohen 7/93 */
 /* versions 2 - 35  by Henry Kautz */
@@ -41,6 +42,7 @@
 /* version 35hw* by Sean Weaver -- modified to solve on BDDs instead of CNF */
 
 #include "ite.h"
+#include "solver.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -273,10 +275,6 @@ void update_and_print_statistics_end_try(void);
 void update_statistics_end_flip(void);
 void print_statistics_final(void);
 void print_sol_cnf(void);
-
-//Both these in recordsol.cc
-extern t_solution_info *solution_info;
-extern t_solution_info *solution_info_head;
 
 /************************************/
 /* Main                             */

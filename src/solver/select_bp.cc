@@ -34,25 +34,15 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
+
 #include "ite.h"
 #include "solver.h"
 
-extern int nNumVariables;
-extern int gnMaxVbleIndex;
-extern SmurfState **arrCurrentStates;
-extern int nNumRegSmurfs;
-extern ChoicePointStruct *pChoicePointTop;
-extern int nNumUnresolvedFunctions;
-extern int *arrBacktrackStackIndex;
-extern int nBacktrackStackIndex;
-extern int *pInferenceQueueNextEmpty;
 extern int zecc_limit;
 extern int *zecc_arr;
 
-
 ITE_INLINE void push_smurf_states_onto_stack();
 ITE_INLINE void push_special_fn_onto_stack();
-
 
 ITE_INLINE void
 SelectNewBranchPoint()

@@ -34,6 +34,7 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
+
 /***********************************************************************
  *  bdd2cnf.c (J. Franco, Sean Weaver)
  *  Function bdd2cnf converts an input BDD to a CNF expression and puts

@@ -33,6 +33,7 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
+
 #include "config.h"
 #include "params.h"
 #include "log.h"
@@ -49,7 +50,7 @@ int params_current_src = 0;
 #endif
 
 #ifndef BUGS_EMAIL
-#define BUGS_EMAIL "<mkouril@ececs.uc.edu> or <franco@gauss.ececs.uc.edu>"
+#define BUGS_EMAIL "<franco@gauss.ececs.uc.edu>, <mkouril@ececs.uc.edu> or <fett@gauss.ececs.uc.edu>"
 #endif
 
 #ifndef DESCRIPTION
@@ -497,6 +498,9 @@ read_cmd(int argc, char *argv[])
                 continue;
              };
              ((p_fn_int)(p_opt->p_target))(arg/*, argv[i]*/);
+             break;
+          case P_FN_STRING: 
+             ((p_fn_string)(p_opt->p_target))(argv[i]);
              break;
           default: break;
          };

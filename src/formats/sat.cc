@@ -34,9 +34,6 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
-/*********************************************************
- *  sat.c
- *********************************************************/
 
 #include "ite.h"
 #include "formats.h"

@@ -34,12 +34,12 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
+
 #include "ite.h"
 #include "solver.h"
 
 ITE_INLINE int BrancherPresetInt(int *ptr);
 ITE_INLINE int InitBrancherX();
-extern BacktrackStackEntry *arrBacktrackStack;
 
 ITE_INLINE void
 k_add2list(int **list, int *list_num, int *list_max, int *my_list, int my_list_len)

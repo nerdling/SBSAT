@@ -34,6 +34,7 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
+
 #include "ite.h"
 #include "solver.h"
 #include "params.h"
@@ -53,16 +54,8 @@ double ite_counters_f[MAX_COUNTER_F];
 int  autarky=0; /* autarkies enabled */
 char debug_dev[128]="stderr";
 
-extern long nTimeLimit;
-extern long nNumChoicePointLimit;
-extern char temp_dir[128];
-extern char ini_filename[128];
-extern char input_result_filename[128];
-extern char preproc_string[256];
-extern int  backjumping;
-extern int  NO_LEMMAS;
-
 void DO_ALL(int);
+void fn_parse_filename(char *filename);
 
 t_opt options[] = { 
 // p_target, l_opt, w_opt, p_type, p_value, p_defa, var_type, p_src=0, desc_opt
@@ -115,6 +108,8 @@ t_opt options[] = {
                "For SAT Competition SATTIMEOUT"},
 { &sat_ram,  "",   "satram",   P_INT,  V(i:1,"1"), V(i:0,"0"), VAR_NORMAL, 0,
                "For SAT Competition SATRAM"},
+{ (void*)fn_parse_filename, "",  "parse-filename", P_FN_STRING, V(i:0,"0"), V(i:0,"0"), VAR_CMDLINE+VAR_DUMP, 0, 
+	       ""},
 
 /* 
  * BDD options
@@ -280,7 +275,7 @@ t_opt options[] = {
 { &autarky, "", "autarky", P_INT, V(i:0,"0"), V(i:0,"0"), VAR_CHECK+VAR_DUMP, 0,
 		"Enable/Disable autarkies (1/0)"},
 { &max_solutions, "", "max-solutions", P_INT, V(i:0,"0"), V(i:1,"1"), VAR_NORMAL, 0,
-		"Set the maximum number of solutions to search for."},
+		"Set the maximum number of solutions to search for. 0 will cause the solver to search for as many solutions as it can find. The algorithm does not guarrantie that it reports all possible solutions."},
 { &K_TOP_VARIABLES, "", "K-top-variables", P_INT, V(i:0,"0"), V(i:0,"0"), VAR_NORMAL, 0,
 		"Try to set top K variables and collect common inferences."},
 { &sbj, "", "sbj", P_INT, V(i:0,"0"), V(i:0,"0"), VAR_NORMAL, 0,
@@ -546,4 +541,48 @@ DO_ALL(int value/* , char *s_value*/)
 	set_param_int(strcpy(tmp_str, "Rw"), value);
 	set_param_int(strcpy(tmp_str, "Cf"), value);
 	set_param_int(strcpy(tmp_str, "P3"), value);
+}
+
+void
+fn_parse_filename(char *filename)
+{
+   // filename in the format
+   // _ are separators (replaced with 0)
+   // name _ (un)sat _ arguments . ext
+   //
+   int argc=4;
+   char *filename_copy = strdup(filename);
+   char *ptr=filename_copy;
+   if (ptr == NULL) { perror("strdup"); exit(1); }
+   while(*ptr != 0) {
+      if (*ptr == '_') argc++;
+      ptr++;
+   }
+   char **argv = (char**)ite_calloc(argc+1, sizeof(char*), 9, "argv");
+   argc=0;
+   argv[argc++] = NULL; // skipped
+   argv[argc++] = filename;
+   // strip the extension
+   if ((ptr = strrchr(filename_copy, '.'))!=NULL) *ptr = 0;
+   ptr = filename_copy;
+   while(*ptr != 0 && *ptr!='_') ptr++;
+   if (*ptr != 0) {
+      ptr++;
+      // set the expected result
+      char expected_result[] = "--expected-result";
+      argv[argc++] = expected_result;
+      argv[argc++] = ptr;
+      while(1) {
+         while(*ptr != 0 && *ptr!='_') ptr++;
+         if (*ptr == 0) break;
+         *ptr = 0;
+         ptr++;
+         if (*ptr == 0) break;
+         argv[argc++] = ptr;
+         ptr++;
+      }
+   }
+   read_cmd(argc, argv);
+   free(filename_copy);
+   free(argv);
 }

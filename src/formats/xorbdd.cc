@@ -34,10 +34,6 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
-/*********************************************************
- *  xorbdd.c (S. Weaver)
- *  BDD tools
- *********************************************************/  
 
 #include "ite.h"
 #include "formats.h"

@@ -34,22 +34,15 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
+
 #include "ite.h"
 #include "solver.h"
-
-/* param */
-extern int *arrNumRHSUnknowns;
-
-/* trace */
-extern SpecialFunc *arrSpecialFuncs;
-extern int *arrChangedSpecialFn;
 
 ITE_INLINE int UpdateSpecialFunction_AND(IndexRoleStruct *pIRS);
 ITE_INLINE int UpdateSpecialFunction_XOR(IndexRoleStruct *pIRS);
 ITE_INLINE int UpdateSpecialFunction_MINMAX(IndexRoleStruct *pIRS);
 
-ITE_INLINE
-int
+ITE_INLINE int
 UpdateEachAffectedSpecialFunction(AffectedFuncsStruct *pAFS)
 {
   int ret=NO_ERROR;

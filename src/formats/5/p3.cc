@@ -43,14 +43,16 @@
 
 int p3_max = 0;
 t_ctl *p3 = NULL;
+int p3_alt_flag = 1;
 
-void p3_clear_sharing(int idx);
+void p3_clear_sharing(int idx, int flag);
 
 void
 p3_done()
 {
    p3[0].top_and = 1;
-   //p3_clear_sharing(0);
+   p3_clear_sharing(0, p3_alt_flag);
+   p3_alt_flag = 1-p3_alt_flag; 
    p3_traverse_ref(0, -1);
    //p3_dump();
    p3_top_bdds(0);
@@ -209,17 +211,34 @@ p3_bdds(int idx, int *vars)
 }
 
 void
-p3_clear_sharing(int idx)
+p3_clear_sharing(int idx, int flag)
 {
-   BDDNode *bdd = NULL;
    if (idx <= 0) {
       idx = -1*idx;
+      if (p3[idx].flag == flag) return;
+      p3[idx].flag = flag;
       p3[idx].bdd = NULL;
       p3[idx].vars = 0;
       //p3[idx].top_and = 0;
-      p3_clear_sharing(p3[idx].arg1);
+      p3_clear_sharing(p3[idx].arg1, flag);
       if (p3[idx].argc == 2) {
-         p3_clear_sharing(p3[idx].arg2);
+         p3_clear_sharing(p3[idx].arg2, flag);
+      }
+   } else {
+      /* variable */
+   }
+}
+
+void
+p3_clear_flag(int idx)
+{
+   if (idx <= 0) {
+      idx = -1*idx;
+      if (p3[idx].flag == 0) return;
+      p3[idx].flag = 0;
+      p3_clear_flag(p3[idx].arg1);
+      if (p3[idx].argc == 2) {
+         p3_clear_flag(p3[idx].arg2);
       }
    } else {
       /* variable */

@@ -83,7 +83,7 @@ FreeInferencePool()
    infer_pool = NULL;
 }
 
-infer * 
+inline infer * 
 AllocateInference(int num0, int num1, infer *next) {
 
    infer *infs;
@@ -116,18 +116,193 @@ DeallocateInferences(infer *next)
 }
 */
 
-inline int
-infer_has_var(infer *next, int var) {
-   return (abs(next->nums[0]) == var || abs(next->nums[1] == var))?1:0;
-}
-
 void
 DeallocateInferences_var(infer *next, int var)
 {
+   if (next == NULL) return;
    infer *last = next;
-   if (next == NULL || infer_has_var(next, var) == 0) return;
-   while (last->next != NULL && infer_has_var(last->next, var) == 1) last = last->next;
+   if (abs(next->nums[0]) == var && next->nums[1] == 0) {
+      // this node is an inference -- clip the first member only
+   } else {
+      // inferences created for this node only
+      while (last->next != NULL) last = last->next;
+   }
    last->next = infer_free;
    infer_free = next;
+   return;
+}
+
+void
+fprint_infer(FILE *fout, infer *next)
+{
+   while(next != NULL) {
+      fprintf(fout, "(%d %d) ", next->nums[0], next->nums[1]);
+      next = next->next;
+   }
+   fprintf(fout, "\n");
+}
+
+void 
+GetInferFoAN(BDDNode *func) {
+	infer *r = func->thenCase->inferences;
+	infer *e = func->elseCase->inferences;
+	//If this node is a leaf node, put either func->variable 
+	//  or -(func->variable) as the first element in inferarray
+	//  and return inferarray.
+/* leaf node is covered under thenCase=false_ptr or elseCase=false_ptr 
+	if (IS_TRUE_FALSE(func->thenCase) && IS_TRUE_FALSE(func->elseCase))
+	  {
+//		  fprintf(stderr, "Found a leaf, making an inference\n");
+//		  printBDDerr(func);
+//		  fprintf(stderr, "\n");
+		  if (func->thenCase == false_ptr)
+		      func->inferences = AllocateInference(-(func->variable), 0, NULL);
+		  else
+		      func->inferences = AllocateInference((func->variable), 0, NULL);
+		  return;
+		  
+	  }
+     */
+	//If the elseCase is false then add -(func->variable) to the front
+	//  of the list r and return it.
+	if (func->elseCase == false_ptr)
+	  {
+//		  fprintf(stderr, "e is false, so we pull up inferences from r\n");
+//		  printBDDerr(func);
+//		  fprintf(stderr, "\n");
+		  func->inferences = AllocateInference(func->variable, 0, r);
+		  return;
+	  }
+	//If the thenCase is false then add (func->variable) to the front
+	//  of the list e and return it.
+	if (func->thenCase == false_ptr)
+	  {
+//		  fprintf(stderr, "r false, so we pull up inferences from e\n");
+//		  printBDDerr(func);
+//		  fprintf(stderr, "\n");
+		  func->inferences = AllocateInference(-(func->variable), 0, e);
+		  return;
+	  }
+	
+	//If either branch(thenCase or elseCase) carries true (is NULL)
+	//then return NULL and we lose all our nice inferences 
+	//could be if((func->thenCase == true_ptr) || (func->elseCase == true_ptr))
+	if ((r == NULL) || (e == NULL))
+	  {
+//		  fprintf(stderr, "Lost all inferences\n");
+		  return;
+	  }
+	//If none of the above cases then we have two lists(r and e) which we
+	//  combine into inferarray and return.
+	
+	assert(func->inferences == NULL);
+   infer **infs = &(func->inferences);
+   infer *rhead = r;
+	infer *ehead = e;
+	//Pass 1...Search for simple complements
+	//       fprintf(stderr, "Doing simple complement search\n");
+	while ((r != NULL) && (e != NULL))
+	  {
+		  if ((r->nums[0] == -(e->nums[0])) && (r->nums[1] == 0)
+				&& (e->nums[1] == 0))
+			 {
+//				 fprintf(stderr, "Found a simple complement - %d = %d\n", func->variable, r->nums[0]);
+//				 printBDDerr(func);
+//				 fprintf(stderr, "\n");
+
+				 *infs = AllocateInference(func->variable, r->nums[0], NULL);
+				  infs = &((*infs) -> next);
+				 r = r->next;
+				 e = e->next;
+				 continue;
+			 }
+		  
+		  //If first nums are different, increment one of them
+		  if (abs (r->nums[0]) < abs (e->nums[0]))
+			 {
+				 e = e->next;
+				 continue;
+			 }
+		  if (abs (e->nums[0]) < abs (r->nums[0]))
+			 {
+				 r = r->next;
+				 continue;
+			 }
+		  
+		  //Else if second nums are different, increment one of them
+		  if (abs (r->nums[1]) < abs (e->nums[1]))
+			 {
+				 e = e->next;
+				 continue;
+			 }
+		  
+		  //None of the above.
+		  r = r->next;
+	  }
+	r = rhead;
+	e = ehead;
+	//Pass 2...Search for equals on single and double variable inferences.
+	//  ex1. 3 and 3 ... ex2. 4=7 and 4=7
+	//       fprintf(stderr, "doing pass 2, searching for single and double variables\n");
+	while ((r != NULL) && (e != NULL))
+	  {
+		  //If first nums of r and e are different, increment one of them
+		  if (abs (r->nums[0]) < abs (e->nums[0]))
+			 {
+				 e = e->next;
+				 continue;
+			 }
+		  if (abs (e->nums[0]) < abs (r->nums[0]))
+			 {
+				 r = r->next;
+				 continue;
+			 }
+		  
+		  //If nums 0 of both r and e are the same. Check for single equivalence
+		  if ((r->nums[0] == e->nums[0]) && (r->nums[1] == 0)
+				&& (e->nums[1] == 0))
+			 {
+//				 fprintf(stderr, "Found a single equivalence - %d\n", r->nums[0]);
+//				 printBDDerr(func);
+//				 fprintf(stderr, "\n");
+
+				 *infs = AllocateInference(r->nums[0], 0, NULL);
+				  infs = &((*infs) -> next);
+				 r = r->next;
+				 e = e->next;
+				 continue;
+			 }
+		  
+		  //if second nums of r and e are different, increment one of them
+		  if (abs (r->nums[1]) < abs (e->nums[1]))
+			 {
+				 e = e->next;
+				 continue;
+			 }
+		  if (abs (e->nums[1]) < abs (r->nums[1]))
+			 {
+				 r = r->next;
+				 continue;
+			 }
+		  
+		  //First nums and second nums of r and e are the same. 
+		  //Check for double equivalence
+		  if ((r->nums[1] == e->nums[1]) && (r->nums[1] != 0)
+				&& (e->nums[1] != 0))
+			 {
+//				 fprintf(stderr, "Found a double equivalence  %d = %d\n", r->nums[0], r->nums[1]);
+//				 printBDDerr(func);
+//				 fprintf(stderr, "\n");
+				 
+				 *infs = AllocateInference(r->nums[0], r->nums[1], NULL);
+				  infs = &((*infs) -> next);
+				 r = r->next;
+				 e = e->next;
+				 continue;
+			 }
+		  r = r->next;
+	  }
+
+	return;
 }
 

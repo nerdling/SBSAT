@@ -38,9 +38,6 @@
 #include "ite.h"
 #include "solver.h"
 
-extern int *arrIte2SolverVarMap;
-extern int *arrSolver2IteVarMap;
-
 ITE_INLINE void InitializeAddons(BDDNodeStruct *pFunc);
 SmurfFactoryAddons * AllocateSmurfFactoryAddons();
 

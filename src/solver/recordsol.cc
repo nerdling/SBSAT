@@ -34,14 +34,12 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
+
 #include "ite.h"
 #include "solver.h"
 
-extern int *arrSolver2IteVarMap;
-
 t_solution_info *solution_info = NULL;
 t_solution_info *solution_info_head = NULL;
-
 
 ITE_INLINE int
 RecordSolution ()
@@ -50,9 +48,7 @@ RecordSolution ()
      VerifySolution ();
    }
 
-  /* collect all choice points */
-   extern ChoicePointStruct *arrChoicePointStack;
-   extern ChoicePointStruct *pChoicePointTop;
+   /* collect all choice points */
    ChoicePointStruct *pChoicePoint = arrChoicePointStack;
 
    int  tmp_nNumElts = pChoicePointTop - pChoicePoint;

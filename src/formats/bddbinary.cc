@@ -35,8 +35,6 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
  *********************************************************************/
-/* variable size (growing) overlapping buckets */
-/* parallel buckets */
 
 #include "ite.h"
 #include "formats.h"

@@ -34,9 +34,6 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
-// Display SmurfFactory
-// Routines for displaying creating state machines.
-// Started 12/26/2000 - J. Ward
 
 #include "ite.h"
 #include "solver.h"

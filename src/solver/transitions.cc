@@ -38,8 +38,6 @@
 #include "ite.h"
 #include "solver.h"
 
-extern int *arrIte2SolverVarMap;
-
 ITE_INLINE Transition *
 AddStateTransition(SmurfState *pSmurfState,
                    int i,
