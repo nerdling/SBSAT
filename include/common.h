@@ -67,6 +67,12 @@ struct infer{
    struct infer *next;
 };
 
+struct floatlist {
+	int length;
+	int *num;
+	float *count;
+};
+
 struct dualintlist {
 	int length;
 	int *num;
@@ -102,6 +108,8 @@ struct store{
 
 typedef struct BDDNodeStruct {
    int t_var;
+	int hamming;
+	float density;
    int variable;
    void *var_ptr;
    struct BDDNodeStruct *thenCase, *elseCase;
@@ -122,7 +130,7 @@ extern   varinfo *variablelist;
 extern   float *var_score;
 extern   store *variables;
 extern   int *length;
-
+extern   int nCtrlC;
 
 typedef struct _t_solution_info {
   int *arrElts;

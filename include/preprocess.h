@@ -54,7 +54,6 @@ extern int *St_repeat;
 extern int *Dep_repeat;
 extern int str_length;
 extern long affected;
-extern int nCtrlC;
 
 void Init_Repeats();
 void Delete_Repeats();
