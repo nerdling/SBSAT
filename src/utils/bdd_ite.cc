@@ -108,7 +108,7 @@ BDDNode *_ite_x_y_F(BDDNode *x, BDDNode *y)
          if (y->elseCase == true_ptr) e=x->elseCase;
          else if (y->elseCase == false_ptr) e=false_ptr;
          else e = _ite_x_y_F(x->elseCase, y->elseCase);
-			// this happens but not often enough to bring a speedup
+			//This happens but maybe not often enough to bring a speedup
 			if (r == x->thenCase && e == x->elseCase) return x;
 			if (r == y->thenCase && e == y->elseCase) return y;
       }
@@ -122,50 +122,12 @@ BDDNode *_ite_x_y_F(BDDNode *x, BDDNode *y)
       v = x->variable;
       r = _ite_x_y_F(x->thenCase, y);
       e = _ite_x_y_F(x->elseCase, y);
-		// this happens but not often enough to bring a speedup
+		//This happens but maybe not often enough to bring a speedup.
 		if (r == x->thenCase && e == x->elseCase) return y;
    } 
 
    if (r == e) return (r);
    return itetable_add_node(1, x, y, find_or_add_node(v, r, e));
-   return find_or_add_node(v, r, e);
-}
-
-inline
-BDDNode *OLD_ite_x_y_F(BDDNode *x, BDDNode *y)
-{
-   if (x == true_ptr) return y;
-   if (x == false_ptr) return false_ptr;
-
-   if (y == true_ptr) return x;
-   if (y == false_ptr) return false_ptr;
-  
-   int v;
-   BDDNode * r;
-   BDDNode * e;
-
-   if (x->variable > y->variable) {
-      v = x->variable;
-      r = ite_x_y_F(x->thenCase, y);
-      e = ite_x_y_F(x->elseCase, y);
-   } else if (x->variable == y->variable) {
-      if (x == y) return x;
-      else if (x->notCase == y) return false_ptr;
-      else {
-         v = x->variable;
-         r = ite_x_y_F(x->thenCase, y->thenCase);
-         e = ite_x_y_F(x->elseCase, y->elseCase);
-      }
-   } else {
-      v = y->variable;
-      r = ite_x_y_F(x, y->thenCase);
-      e = ite_x_y_F(x, y->elseCase);
-   } 
-
-   if (r == e) return (r);
-   // this happens but not often enough to bring a speedup
-   //if (r == x->thenCase && e == x->elseCase && v==x->variable) return x; 
-   //if (r == y->thenCase && e == y->elseCase && v==y->variable) return y;
    return find_or_add_node(v, r, e);
 }
 
@@ -255,7 +217,10 @@ BDDNode *_ite_x_F_z(BDDNode *x, BDDNode *z)
 
    if (z == true_ptr) return ite_not(x);
    if (z == false_ptr) return false_ptr;
-  
+
+	BDDNode *cached = itetable_find_or_add_node(4, x, z, NULL);
+   if (cached) return cached;
+	
    int v;
    BDDNode * r;
    BDDNode * e;
@@ -279,6 +244,7 @@ BDDNode *_ite_x_F_z(BDDNode *x, BDDNode *z)
    } 
 
    if (r == e) return (r);
+   return itetable_add_node(4, x, z, find_or_add_node(v, r, e));
    return find_or_add_node(v, r, e);
 }
 
@@ -291,8 +257,8 @@ BDDNode *ite_x_y_ny(BDDNode *x, BDDNode *y)
    if (y == true_ptr) return x;
    if (y == false_ptr) return ite_not(x);
   
-//   BDDNode *cached = itetable_find_or_add_node(5, x, y, NULL);
-//   if (cached) return cached;
+   BDDNode *cached = itetable_find_or_add_node(5, x, y, NULL);
+   if (cached) return cached;
    
    int v;
    BDDNode * r;
@@ -317,7 +283,7 @@ BDDNode *ite_x_y_ny(BDDNode *x, BDDNode *y)
    } 
 
    if (r == e) return (r);
-//   return itetable_add_node(5, x, z, find_or_add_node(v, r, e));
+   return itetable_add_node(5, x, y, find_or_add_node(v, r, e));
    return find_or_add_node(v, r, e);
 }
 
