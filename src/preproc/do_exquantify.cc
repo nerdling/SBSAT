@@ -97,6 +97,7 @@ int ExQuantify () {
 	for(int x = 0; x < nmbrFunctions; x++) {
 		for(int i = 0; i < length[x]; i++) {
 			tempinters[variables[x].num[i]]++;
+			//fprintf(stderr, "\n{fun:%d var#:%d var:%d varstring:%s}", x, i, variables[x].num[i], s_name(variables[x].num[i]));
 			llBDD *newnode = new llBDD;
 			newnode->BDD = x;
 			if(tempmem[variables[x].num[i]]->next!=NULL)
@@ -106,7 +107,6 @@ int ExQuantify () {
 			tempmem[variables[x].num[i]]->next = newnode;
 		}
 	}
-	
 	BDDNode *Quantify;
 	
 	for (int i = 0; i < numinp + 1; i++) {
@@ -138,7 +138,8 @@ int ExQuantify () {
 			if ((functionType[j] == OR && length[j] < OR_EQU_LIMIT)
 				 || (functionType[j] == AND && length[j] < AND_EQU_LIMIT)
 				 || (functionType[j] == PLAINOR)
-				 || (i == abs (equalityVble[j]))) {
+				 || (i == abs (equalityVble[j]))
+				 || (functionType[j] == UNSURE)) {
 
 				Quantify = functions[j];
 				affected++;
