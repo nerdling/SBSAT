@@ -170,7 +170,6 @@ void BDD_to_Smurfs () {
 			fprintf (foutputfile, "%d ", use_symtable?atoi(getsym_i(integers[v].num[x])->name):integers[v].num[x]);
 		}
 		fprintf (foutputfile, "-1\n");
-		//SEAN! ADD IN SUPPORT FOR PLAINXORs
 		if (functionType[v] == PLAINOR) {
 			fprintf(foutputfile, "plainor ");
 			BDDNode *p_or = functions[v];
@@ -242,7 +241,36 @@ void BDD_to_Smurfs () {
 					}
 				}
 			}
-		} else {
+		} else if (functionType[v] == PLAINXOR) {
+			fprintf(foutputfile, "xor ");
+			BDDNode *p_xor = functions[v];
+			for (x = 0; x < integers[v].num[x] != 0; x++) {
+				if (set_variable (p_xor, integers[v].num[x], 1) == true_ptr)
+				  fprintf (foutputfile, "1");
+				else if (set_variable (p_xor, integers[v].num[x], 0) == true_ptr)
+				  fprintf (foutputfile, "0");
+				else {
+					p_xor = set_variable (p_xor, integers[v].num[x], 1);
+					fprintf (foutputfile, "1");
+				}
+			}
+/*		} else if (functionType[v] == MINMAX) {
+			fprintf(foutputfile, "minmax ");
+			BDDNode *p_or = functions[v];
+			for (x = 0; x < integers[v].num[x] != 0; x++) {
+				if (set_variable (p_or, integers[v].num[x], 1) == true_ptr)
+				  fprintf (foutputfile, "1");
+				else if (set_variable (p_or, integers[v].num[x], 0) == true_ptr)
+				  fprintf (foutputfile, "0");
+				else {
+					fprintf (stderr, "Error! %d", functionType[v]);
+					fprintf (stderr, "\n");
+					printBDDerr (functions[v]);
+					fprintf (stderr, "\n");
+					exit (1);
+				}
+			}
+*/		} else {
 			if(x > MAX_MAX_VBLES_PER_SMURF)
 			  fprintf(stderr, "Function %ld has %ld variables and it may take a while to consider all 2^%ld truth table values\n", v, x, x);
 			for (long long tvec = 0; tvec < ((long long)1 << x); tvec++) {
@@ -407,6 +435,27 @@ void Smurfs_to_BDD () {
 				vars[x].tv[i] = string;
 			}
 			vars[x].andor = OR;
+		} else if (string == 'x') {
+			vars[x].tv = new char[y + 1];
+			char test[10];
+			for(i = 0; i < 3; i++) {
+				string = fgetc (finputfile);
+				test[i] = string;
+			}
+			test[3] = 0;
+			if (strcmp (test, "or ")) {
+				fprintf (stderr, "\nProblem with truth vector in function %d\n", line);
+				exit (1);
+			}
+			for(i = 0; i < y; i++) {
+				string = getc (finputfile);
+				if ((string != '0') && (string != '1')) {
+					fprintf (stderr, "\nProblem with truth vector in function %d\n", line);
+					exit (1);
+				}
+				vars[x].tv[i] = string;
+			}
+			vars[x].andor = PLAINXOR;
 		} else {
 			dE_printf2("\nProblem reading in smurf file on function %d\n", line);
 			exit (1);
@@ -474,6 +523,15 @@ void Smurfs_to_BDD () {
 			independantVars[equalityVble[x]] = 0;
 			functions[x] = ite_equ (ite_var (equalityVble[x]), functions[x]);
 			equalityVble[x] = abs (equalityVble[x]);
+		} else if (vars[x].andor == PLAINXOR) {
+			functions[x] = false_ptr;
+			for (y = 0; y < vars[x].integers[0]; y++) {
+				if (vars[x].tv[y] == '0')
+				  functions[x] = ite_xor (functions[x], ite_var (-vars[x].integers[y + 1]));
+				else if (vars[x].tv[y] == '1')
+				  functions[x] = ite_xor (functions[x], ite_var (vars[x].integers[y + 1]));
+			}
+			functionType[x] = PLAINXOR;
 		}
 		delete [] vars[x].integers;
 		delete [] vars[x].tv;
