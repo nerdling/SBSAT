@@ -131,7 +131,7 @@ bddtable_hash_fn(int v, BDDNode *r, BDDNode *e)
    ;
 }
 
-void bddtable_alloc_not_node(BDDNode *not_node);
+inline void bddtable_alloc_not_node(BDDNode *not_node);
 
 BDDNode * 
 bddtable_find_or_add_node (int v, BDDNode * r, BDDNode * e)
@@ -218,7 +218,9 @@ bddtable_find_or_add_node (int v, BDDNode * r, BDDNode * e)
 	} else {
       /* could not find the node => allocate new one */
       bddtable_alloc_node(node, v, r, e);
-      bddtable_alloc_not_node((*node));//, v, r->notCase, e->notCase);
+      BDDNode *ret_node = *node;
+      bddtable_alloc_not_node((*node)); // not_node invalidates node address
+      return ret_node;
    }
    return (*node);
 }
@@ -254,19 +256,14 @@ bddtable_alloc_not_node(BDDNode *not_node)
    int hash_pos = bddtable_hash_fn(v, r, e);
 
    BDDNode **node = bddtable_hash_memory+hash_pos;
-   BDDNode **prev = NULL; 
    ite_counters[BDD_NODE_STEPS]++;
+   BDDNode *prev = NULL;
 
-   while (!(*node == NULL/* || ((*node)->variable == v && (*node)->thenCase == r && (*node)->elseCase == e)*/))
-   {
-      prev = node;
-      node = &((*node)->next);
-      ite_counters[BDD_NODE_STEPS]++;
-   }
-   assert(*node == NULL);
+   prev = *node;
    bddtable_alloc_node(node, v, r, e);
    not_node->notCase = *node;
    (*node)->notCase = not_node;
+   (*node)->next = prev;
 }
 
 void

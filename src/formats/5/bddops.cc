@@ -13,6 +13,7 @@ BDDNode * find_or_add_node_s (int v, void* s, BDDNode * r, BDDNode * e)
   assert(((symrec*)s)->id == v);
   BDDNode *tmp_bdd = find_or_add_node(v, r, e);
   tmp_bdd->var_ptr = s;
+  tmp_bdd->notCase->var_ptr = s;
   assert(tmp_bdd->variable == v);
   return tmp_bdd;
 }
