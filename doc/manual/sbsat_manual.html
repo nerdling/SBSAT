@@ -1,0 +1,1284 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2K.1beta (1.47)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>SBSat Manual</TITLE>
+<META NAME="description" CONTENT="SBSat Manual">
+<META NAME="keywords" CONTENT="sbsat_manual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2K.1beta">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="sbsat_manual.css">
+
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<IMG WIDTH="81" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next_inactive"
+ SRC="file:/usr/share/latex2html/icons/nx_grp_g.png"> 
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up_g.png"> 
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev_g.png">   
+<BR>
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<P>
+
+<P>
+<H1 ALIGN="CENTER">SBSat Manual</H1>
+<DIV ALIGN="CENTER">
+Written by Michal Kouril, Sean Weaver,... &lt;add your
+name here&gt;
+<BR>
+Covers the versions up to 2.0
+</DIV>
+
+<P>
+<BR>
+
+<H2><A NAME="SECTION00010000000000000000">
+Contents</A>
+</H2>
+<!--Table of Contents-->
+
+<UL>
+<LI><A NAME="tex2html45"
+  HREF="sbsat_manual.html">1 Introduction</A>
+<LI><A NAME="tex2html46"
+  HREF="#SECTION00030000000000000000">2 Overview</A>
+<LI><A NAME="tex2html47"
+  HREF="#SECTION00040000000000000000">3 Getting SBSat</A>
+<LI><A NAME="tex2html48"
+  HREF="#SECTION00050000000000000000">4 Compiling SBSat</A>
+<LI><A NAME="tex2html49"
+  HREF="#SECTION00060000000000000000">5 Running SBSat</A>
+<LI><A NAME="tex2html50"
+  HREF="#SECTION00070000000000000000">6 Program Options</A>
+<UL>
+<LI><A NAME="tex2html51"
+  HREF="#SECTION00071000000000000000">6.1 General options</A>
+<LI><A NAME="tex2html52"
+  HREF="#SECTION00072000000000000000">6.2 BDD table options</A>
+<LI><A NAME="tex2html53"
+  HREF="#SECTION00073000000000000000">6.3 Input options</A>
+<LI><A NAME="tex2html54"
+  HREF="#SECTION00074000000000000000">6.4 Output options</A>
+<LI><A NAME="tex2html55"
+  HREF="#SECTION00075000000000000000">6.5 Trace format options</A>
+<LI><A NAME="tex2html56"
+  HREF="#SECTION00076000000000000000">6.6 Preprocessing options</A>
+<LI><A NAME="tex2html57"
+  HREF="#SECTION00077000000000000000">6.7 Brancher options</A>
+<LI><A NAME="tex2html58"
+  HREF="#SECTION00078000000000000000">6.8 Johnson heuristic options</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html59"
+  HREF="#SECTION00080000000000000000">7 Input formats</A>
+<UL>
+<LI><A NAME="tex2html60"
+  HREF="#SECTION00081000000000000000">7.1 BDD (ITE) input format</A>
+<LI><A NAME="tex2html61"
+  HREF="#SECTION00082000000000000000">7.2 CNF format</A>
+<LI><A NAME="tex2html62"
+  HREF="#SECTION00083000000000000000">7.3 TRACE format</A>
+<LI><A NAME="tex2html63"
+  HREF="#SECTION00084000000000000000">7.4 SMURF format</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html64"
+  HREF="#SECTION00090000000000000000">8 Preprocessing</A>
+<UL>
+<LI><A NAME="tex2html65"
+  HREF="#SECTION00091000000000000000">8.1 Existential Quantification</A>
+<LI><A NAME="tex2html66"
+  HREF="#SECTION00092000000000000000">8.2 Branch Pruning</A>
+<LI><A NAME="tex2html67"
+  HREF="#SECTION00093000000000000000">8.3 Strengthening</A>
+<LI><A NAME="tex2html68"
+  HREF="#SECTION00094000000000000000">8.4 Dependent clustering</A>
+<LI><A NAME="tex2html69"
+  HREF="#SECTION00095000000000000000">8.5 Cofactoring</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html70"
+  HREF="#SECTION000100000000000000000">9 Solver</A>
+<UL>
+<LI><A NAME="tex2html71"
+  HREF="#SECTION000101000000000000000">9.1 SMURF Brancher</A>
+<LI><A NAME="tex2html72"
+  HREF="#SECTION000102000000000000000">9.2 BDDWalkSat</A>
+<LI><A NAME="tex2html73"
+  HREF="#SECTION000103000000000000000">9.3 WVF Brancher</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html74"
+  HREF="#SECTION000110000000000000000">10 Solver heuristics</A>
+<UL>
+<LI><A NAME="tex2html75"
+  HREF="#SECTION000111000000000000000">10.1 Johnson heuristic</A>
+<LI><A NAME="tex2html76"
+  HREF="#SECTION000112000000000000000">10.2 Chaff like lemma heuristic</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html77"
+  HREF="#SECTION000120000000000000000">11 Output formats</A>
+<LI><A NAME="tex2html78"
+  HREF="#SECTION000130000000000000000">12 Examples on how to use SBSat</A>
+<LI><A NAME="tex2html79"
+  HREF="#SECTION000140000000000000000">13 Reporting problems</A>
+<LI><A NAME="tex2html80"
+  HREF="#SECTION000150000000000000000">About this document ...</A>
+</UL>
+<!--End of Table of Contents-->
+
+<P>
+
+<H1><A NAME="SECTION00020000000000000000">
+1 Introduction</A>
+</H1>
+
+<P>
+The ITE interface is a continuation of a project started by Laura
+A. Pugh, August 17 2000 for C123 under the direction of Mark Vanfleet,
+Michael Dransfield, and Kelly McGuire. This project is being continued
+by Sean Weaver, under the direction of Mark Vanfleet and Dr. John
+Franco. The ITE interface is a module which can be used as a front
+end on any Satisfiability solver (SAT solver, see page ??). 
+
+<P>
+
+<H1><A NAME="SECTION00030000000000000000">
+2 Overview</A>
+</H1>
+
+<P>
+The ITE interface provides the user with a unique Binary Decision
+Diagram (BDD) interface (See BDDs. page ??). This interface is used
+to enter problems into any SAT solver. BDDs allow the user to express
+his/her problem data in a way that is natural to it's domain. The
+common practice of translating a problem into Conjunctive Normal Form
+(CNF) destroys naturally occurring clusters of information that can
+be taken advantage of during the search process (See CNF, page ??).
+Receiving the input in BDD form also gives traditional SAT solvers
+the ability to add and use powerful BDD preprocessing techniques before
+search. During search a SAT solver also has the ability to use any
+information contained in the BDDs to help it's search heuristic. ITE
+can provide a translation to CNF if it is being used in conjunction
+with a CNF SAT solver. ITE is currently being used in conjunction
+with a SAT solver named SBSAT. SBSAT is being developed at the University
+of Cincinnati by Mark Vanfleet, Dr. John Franco, Dr. John Schlipf,
+Sean Weaver, Michal Kouril, and George Vogel. 
+
+<P>
+
+<H1><A NAME="SECTION00040000000000000000">
+3 Getting SBSat</A>
+</H1>
+
+<P>
+
+<P>
+SBSat is still considered research software. Please email franco@gauss.ececs.uc.edu
+for more information how to get it. 
+   <BR>
+<BR>
+   
+<P>
+
+
+<P>
+
+<H1><A NAME="SECTION00050000000000000000">
+4 Compiling SBSat</A>
+</H1>
+
+<P>
+Considerning you obtained sbsat as tar.gz archive you will need to
+unpack it first. Necessary utilities are tar and gzip. They are present
+on most platforms. Also most platforms will let you use the following
+command to do so:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>#&nbsp;tar&nbsp;-xvzf&nbsp;sbsat.tar.gz
+</DD>
+</DL>If this command fails please try
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>#&nbsp;gzip&nbsp;-dc&nbsp;sbsat.tar.gz&nbsp;|&nbsp;tar&nbsp;-xvf&nbsp;-
+</DD>
+</DL>The result should be the directory with the sources. Change the current
+directory into newly created one:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>#&nbsp;cd&nbsp;sbsat
+</DD>
+</DL>And run configure and make:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>#&nbsp;./configure
+
+<P>
+#&nbsp;make
+</DD>
+</DL>(optional) Using the following command you can run a few included
+benchmarks:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>#&nbsp;make&nbsp;check
+</DD>
+</DL>(optional) You may install the executable and associtated files onto
+your system using:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>#&nbsp;make&nbsp;install
+</DD>
+</DL>The advantage of this step is that typically the systems have the
+path where the executable is installed (/usr/local/bin) as part of
+the system PATH variable so you will not need to specify the full
+path to start the executable.
+
+<P>
+
+<H1><A NAME="SECTION00060000000000000000">
+5 Running SBSat</A>
+</H1>
+
+<P>
+SBSat executable is called ite and is located in the src directory
+within the directory containing the sources for sbsat (sbsat directory).
+Unless you installed it to your system in the previous step (make
+install) you will need to refer to it with the full path or add this
+path into your PATH variable. Now on I will assume that the ite was
+installed.
+
+<P>
+The usage of SBSat is:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>ite&nbsp;[options]&nbsp;[inputfile&nbsp;[outputfile]]
+</DD>
+</DL>There are two basic options required by GNU standard:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>#&nbsp;ite&nbsp;-version
+</DD>
+</DL>This displays the current version.
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>#&nbsp;ite&nbsp;-help
+</DD>
+</DL>Shows all the command line options.
+
+<P>
+If ite is started without parameters it expects the input data on
+standard input.
+
+<P>
+The first parameter without dash is the input data file, the second
+parameter without is the output file.
+
+<P>
+
+<H1><A NAME="SECTION00070000000000000000">
+6 Program Options</A>
+</H1>
+
+<P>
+
+<H2><A NAME="SECTION00071000000000000000">
+6.1 General options</A>
+</H2>
+
+<P>
+SBSat general options are:
+
+<P>
+<I>-help, -h</I> Show all program options 
+
+<P>
+<I>-version</I> Show program version 
+
+<P>
+<I>-create-ini</I> Create ini file 
+
+<P>
+<I>-ini &lt;string&gt;</I> Set the ini file [default=&#34;/ite.ini&#34;]
+
+<P>
+<I>-debug &lt;number&gt;</I> debugging level (0-none, 9-max) [default=2]
+
+<P>
+<I>-debug-dev &lt;string&gt;</I> debugging device [default=&#34;stderr&#34;]
+
+<P>
+<I>-params-dump, -D</I> dump all internal parameters before processing 
+
+<P>
+<I>-input-file &lt;string&gt;</I> input filename [default=&#34;-&#34;]
+
+<P>
+<I>-output-file &lt;string&gt;</I> output filename [default=&#34;-&#34;]
+
+<P>
+<I>-temp-dir &lt;string&gt;</I> directory for temporary files [default=&#34;$TEMP&#34;]
+
+<P>
+<I>-show-result &lt;string&gt;, -R &lt;string&gt;</I>
+
+<P>
+Show result (n=no result, r=raw, f=fancy) [default=&#34;n&#34;]
+
+<P>
+<I>-verify-solution &lt;number&gt;</I> Verify solution [default=1]
+
+<P>
+<I>-expected-result &lt;string&gt;</I>Report error if the result is not
+as specified
+
+<P>
+Options are SAT, UNSAT, TRIV_SAT, TRIV_UNSAT, SOLV_S
+
+<P>
+and SOLV_UNSAT [default=&#34;&#34;]
+
+<P>
+<I>-ctrl-c &lt;number&gt;</I> Enable/Disable Ctrl-c handler to end preproc/brancher
+
+<P>
+[default=0]
+
+<P>
+<I>-reports &lt;number&gt;</I> Reporting style during branching (0 - standard,
+1 - crtwin)
+
+<P>
+[default=0]
+
+<P>
+
+<H2><A NAME="SECTION00072000000000000000">
+6.2 BDD table options</A>
+</H2>
+
+<P>
+BDD options:
+
+<P>
+<I>-num-buckets &lt;number&gt;</I> Set the number of buckets in power of
+2 [default=16]
+
+<P>
+<I>-size-buckets &lt;number&gt;</I> Set the size of a bucket in power of
+2 [default=5]
+
+<P>
+
+<H2><A NAME="SECTION00073000000000000000">
+6.3 Input options</A>
+</H2>
+
+<P>
+Input options:
+
+<P>
+<I>-limit-and-equ &lt;number&gt;</I>
+
+<P>
+The minimum # of literals to flag sp. function and_eq
+
+<P>
+u
+
+<P>
+[default=2]
+
+<P>
+<I>-limit-or-equ &lt;number&gt;</I> The minimum # of literals to flag
+sp. function or_equ
+
+<P>
+[default=2]
+
+<P>
+<I>-limit-or &lt;number&gt;</I> The minimum # of literals to flag sp.
+function plaino
+
+<P>
+r
+
+<P>
+[default=8]
+
+<P>
+-limit-xor &lt;number&gt; The minimum # of literals to flag sp. function
+plainx
+
+<P>
+or
+
+<P>
+[default=5]
+
+<P>
+<I>-break-xors &lt;number&gt;</I> Break XORS into linear and non-linear
+functions
+
+<P>
+[default=1]
+
+<P>
+
+<H2><A NAME="SECTION00074000000000000000">
+6.4 Output options</A>
+</H2>
+
+<P>
+Output options:
+
+<P>
+<I>-b</I> Start regular brancher [default]
+
+<P>
+<I>-w</I> Start walksat brancher 
+
+<P>
+<I>-m</I> Start WVF brancher 
+
+<P>
+<I>-n</I> Don't start any brancher or conversion 
+
+<P>
+<I>-s</I> Output in SMURF format 
+
+<P>
+<I>-c</I> Output in CNF format 
+
+<P>
+<I>-p</I> Output in tree like format 
+
+<P>
+<I>-cnf &lt;string&gt;</I> Format of CNF output (3sat, qm, noqm)
+
+<P>
+[default=&#34;noqm&#34;]
+
+<P>
+<I>-tree, -tree</I> Print tree representation 
+
+<P>
+<I>-tree-width &lt;number&gt;, -W &lt;number&gt;</I> Set tree width [default=64]
+
+<P>
+
+<H2><A NAME="SECTION00075000000000000000">
+6.5 Trace format options</A>
+</H2>
+
+<P>
+Trace format options:
+
+<P>
+<I>-module-dir &lt;string&gt;</I> directory to find extra modules [default=&#34;./Modules&#34;]
+
+<P>
+
+<H2><A NAME="SECTION00076000000000000000">
+6.6 Preprocessing options</A>
+</H2>
+
+<P>
+Preprocessing options:
+
+<P>
+<I>-preprocess-sequence &lt;string&gt;, -P &lt;string&gt;</I>
+
+<P>
+The preprocessing sequence
+
+<P>
+[default=&#34;(ExDc)*(ExSt)*(ExPr)*&#34;]
+
+<P>
+<I>-All, -All</I> Enable/Disable All Preprocessing Options (1/0) 
+
+<P>
+<I>-Cl &lt;number&gt;, -Cl &lt;number&gt;</I> Enable/Disable Clustering (1/0)
+[default=1]
+
+<P>
+<I>-Co &lt;number&gt;, -Co &lt;number&gt;</I> Enable/Disable Cofactoring (1/0)
+[default=1]
+
+<P>
+<I>-Pr &lt;number&gt;, -Pr &lt;number&gt;</I> Enable/Disable Pruning (1/0) [default=1]
+
+<P>
+<I>-St &lt;number&gt;, -St &lt;number&gt;</I> Enable/Disable Strengthening (1/0)
+[default=1]
+
+<P>
+<I>-In &lt;number&gt;, -In &lt;number&gt;</I> Enable/Disable Inferences (1/0)
+[default=1]
+
+<P>
+<I>-Ex &lt;number&gt;, -Ex &lt;number&gt;</I> Enable/Disable Existential Quantification
+(1/0) [default=1]
+
+<P>
+<I>-Dc &lt;number&gt;, -Dc &lt;number&gt;</I> Enable/Disable Dependent Variable
+Clustering (1/0)
+
+<P>
+[default=1]
+
+<P>
+<I>-max-preproc-time &lt;number&gt;</I> set the time limit in seconds (0=no
+limit)[default=0]
+
+<P>
+
+<H2><A NAME="SECTION00077000000000000000">
+6.7 Brancher options</A>
+</H2>
+
+<P>
+Brancher options:
+
+<P>
+<I>-reverse-depend, -r</I> Reverse dependency info on in/dependent
+variables 
+
+<P>
+<I>-clear-depend, -e</I> Clear dependency information on variables 
+
+<P>
+<I>-heuristic &lt;string&gt;, -H &lt;string&gt;</I>
+
+<P>
+Choose heuristic j=Johnson, l=Chaff-like lemma h. i=Interactive [default=&#34;j&#34;]
+
+<P>
+<I>-backjumping &lt;number&gt;</I> Enable/Disable backjumping (1/0) [default=1]
+
+<P>
+<I>-max-cached-lemmas &lt;number&gt;, -L &lt;number&gt;</I>
+
+<P>
+set the maximum # of lemmas [default=5000]
+
+<P>
+<I>-max-solutions &lt;number&gt;</I>Set the maximum number of solutions
+to search for.[default=1]
+
+<P>
+<I>-sbj &lt;number&gt;</I> Super backjumping. [default=0]
+
+<P>
+<I>-max-vbles-per-smurf &lt;number&gt;, -S &lt;number&gt;</I>
+
+<P>
+set the maximum number variables per smurf [default=8]
+
+<P>
+<I>-backtracks-per-report &lt;number&gt;</I>set the number of backtracks
+per report[default=10000]
+
+<P>
+<I>-max-brancher-time &lt;number&gt;</I>set the time limit in seconds (0=no
+limit)[default=0]
+
+<P>
+<I>-max-brancher-cp &lt;number&gt;</I> set the choice point limit (0=no
+limit) [default=0]
+
+<P>
+<I>-brancher-trace-start &lt;number&gt;</I>
+
+<P>
+number of backtracks to start the trace (when debug=9)[default=0]
+
+<P>
+<I>-compress-smurfs &lt;number&gt;</I> Share states among smurfs [default=1]
+
+<P>
+<I>-smurfs-share-paths &lt;number&gt;</I> Share paths among smurfs [default=0]
+
+<P>
+
+<H2><A NAME="SECTION00078000000000000000">
+6.8 Johnson heuristic options</A>
+</H2>
+
+<P>
+Johnson heuristic options:
+
+<P>
+<I>-jheuristic-k &lt;number&gt;, -K &lt;number&gt;</I> set the value of K [default=3.000000]
+
+<P>
+<I>-jheuristic-k-true &lt;number&gt;</I> set the value of True state [default=0.000000]
+
+<P>
+<I>-jheuristic-k-inf &lt;number&gt;</I> set the value of the inference
+multiplier
+
+<P>
+[default=1.000000]
+
+<P>
+
+<H1><A NAME="SECTION00080000000000000000"></A><A NAME="sec:Input-formats"></A>
+<BR>
+7 Input formats
+</H1>
+
+<P>
+The ITE Interface is the part of the program that reads in and interprets
+the user's input file. This process is as follows: 
+
+<P>
+1. Format for Input Files
+
+<P>
+
+<H2><A NAME="SECTION00081000000000000000">
+7.1 BDD (ITE) input format</A>
+</H2>
+
+<P>
+There is a header for every input file. Only comments are allowed
+to proceed the header. Thus it follows that all equations, defines,
+etc., follow directly after the header. 
+
+<P>
+All equations are entered in prefix format using specific keywords
+and variables. There must be some sort of white space between all
+keywords and variables. White space is defined to be a blank, a tab,
+a carriage return, a comma, or a parentheses. In order to include
+comments in the input file, place a semi colon (&#34;;&#34;)
+prior to the comment. This will make the rest of the line a comment
+and ITE will not attempt to process it. Comments are not necessary
+for the program to operate, but are a convenience for the user. 
+
+<P>
+
+<H3><A NAME="SECTION00081100000000000000">
+7.1.1 File Header </A>
+</H3>
+
+<P>
+In every input file, no equation can precede the header. The header
+conforms to the DIMACS standard which is as follows. 
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>p&nbsp;bdd&nbsp;#InputVars&nbsp;#Equations&nbsp;
+</DD>
+</DL>The letter 'p' at the start of a line denotes the start of the header.
+ITE requires that 'bdd' be the next three letters; these denote that
+the file is in the BDD format. #InputVars is a number that and tells
+ITE how many input variables are going to appear in this input file.
+#Equations is a number that tells ITE how many equations appear in
+this input file. Here is an example of a valid header. 
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>p&nbsp;bdd&nbsp;56&nbsp;97&nbsp;
+</DD>
+</DL>This header tells ITE that the input file is in BDD format with 56
+input variables and 97 equations. 
+
+<P>
+
+<H3><A NAME="SECTION00081200000000000000">
+7.1.2 Keywords </A>
+</H3>
+
+<P>
+Keywords are not case sensitive. The current keywords used, with a
+brief description of each are as follows: 
+
+<P>
+
+<UL>
+<LI>INITIALBRANCH InitialBranch allows the user to specify which variables
+should be branched on first during search. InitialBranch is a command
+that should only be used when the user is sure he knows more information
+about the nature of the input file the attached solver will be able
+to derive. This keyword takes any number of positive integer arguments
+Example Use: InitialBranch( 1, 3, 5..18, 4, 24..39) This will mark
+variables 1, 3, 5..18 (inclusive), 4, 24..39 (inclusive) to be branched
+on first. *Note that this keyword is the only keyword which requires
+parenthesis around it's argument list* 
+</LI>
+<LI>VAR is the Base keyword to all equations. It takes one(1) argument,
+which must be an integer. VAR creates a BDD for the variable following
+it. This BDD will have a true branch and a false branch. 
+<BR>
+The keyword VAR has been made obsolete. It is no longer necessary
+to place VAR in front of every variable. It is now assumed that all
+integers are variables unless preceded by a '$'. All integers preceded
+by a '$' refer to equations instead of variables.
+</LI>
+<LI>NOT The NOT function takes one(1) argument and forms a BDD which represents
+the negation of that argument. When negating a single variable, a
+negative sign (&#34;-&#34;) can be placed directly in front
+of the variable as a shortcut (See Shortcuts)
+</LI>
+<LI>ITE The ITE function takes three(3) arguments and forms a BDD which
+expresses the If-Then-Else relation of the three(3) arguments. The
+function builds a BDD so that if the first parameter evaluates to
+true, then the second parameter must be true, else the third parameter
+must be true. Every BDD possible can be expressed using the ITE function. 
+</LI>
+</UL>
+
+<DL COMPACT>
+<DT>
+<DD>Example:&nbsp;ITE(&nbsp;ITE(&nbsp;3,&nbsp;$5,&nbsp;-5),&nbsp;4,&nbsp;7)&nbsp;
+
+<P>
+(Assume&nbsp;$5&nbsp;has&nbsp;been&nbsp;previously&nbsp;defined.&nbsp;*Note&nbsp;that&nbsp;the&nbsp;use&nbsp;of&nbsp;parenthesis&nbsp;and&nbsp;commas&nbsp;here&nbsp;is&nbsp;allowed&nbsp;but&nbsp;not&nbsp;required*)&nbsp;
+</DD>
+</DL>
+<UL>
+<LI>AND takes two(2) arguments and creates a BDD which expresses the logical
+AND of the two(2) arguments. Example: AND 3 4 
+</LI>
+<LI>AND# AND followed directly by a positive integer is a shortcut designed
+to allow the user to send more than two(2) arguments to the AND function.
+Any number of arguments is supported here. Example 1: AND4(1, 2, 3,
+4) Example 2: AND5(-1, AND3(2, 3, $4), 5, $6, 7) Assume $4 and
+$6 have been previously defined. *Note that the use of white space
+here is allowed but not required* 
+</LI>
+<LI>NAND takes two(2) arguments and creates a BDD which expresses NOT
+of the logical AND of the two(2) arguments. 
+</LI>
+<LI>NAND# NAND followed directly by a positive integer is a shortcut
+designed to allow the user to send more than two(2) arguments to the
+NAND function. Any number of arguments is supported here. 
+</LI>
+<LI>OR OR takes two(2) arguments and creates a BDD which expresses the
+logical OR of the two(2) arguments. 
+</LI>
+<LI>OR# OR followed directly by a positive integer is a shortcut designed
+to allow the user to send more than two(2) arguments to the OR function.
+Any number of arguments is supported here. 
+</LI>
+<LI>NOR NOR takes two(2) arguments and creates a BDD which expresses the
+NOT of the logical OR of the two(2) arguments. 
+</LI>
+<LI>NOR# NOR followed directly by a positive integer is a shortcut designed
+to allow the user to send more than two(2) arguments to the NOR function.
+Any number of arguments is supported here. 
+</LI>
+<LI>EQU EQU takes two(2) arguments and creates a BDD which expresses that
+these two(2) arguments are equal to each other. 
+</LI>
+<LI>EQU# EQU followed directly by a positive integer is a shortcut designed
+to allow the user to send more than two(2) arguments to the EQU function.
+Any number of arguments is supported here. 
+</LI>
+<LI>XOR XOR takes two(2) arguments and creates a BDD which expresses that
+these two(2) arguments are opposite of each other. 
+</LI>
+<LI>XOR# XOR followed directly by a positive integer is a shortcut designed
+to allow the user to send more than two(2) arguments to the XOR function.
+Any number of arguments is supported here. 
+</LI>
+<LI>IMP IMP takes two(2) arguments and creates a BDD which expresses the
+logical implication of the two(2) arguments. *Take note that IMP
+does not support multiple arguments as many of the other keywords
+do, this is because the implication operator has strict variable ordering
+dependence.* 
+</LI>
+<LI>NIMP NIMP takes two(2) arguments and creates a BDD which expresses
+the NOT of the logical implication of the two(2) arguments. *Take
+note that NIMP does not support multiple arguments as many of the
+other keywords do, this is because the implication operator has strict
+variable ordering dependence.* 
+</LI>
+<LI>GCF The GCF keyword takes two(2) arguments. This function finds all
+solutions of both parameters and then creates a BDD which represents
+the intersection of these solutions. GCF stands for Generalized Co-Factoring. 
+</LI>
+<LI>STRENGTHEN STRENGTHEN takes two(2) arguments, e1 and e2. This function
+uses the information in e2 to strengthen e1. (See Strengthening, page
+??) 
+</LI>
+<LI>PRUNE PRUNE takes two(2) arguments, e1 and e2. This function prunes
+all branches found in e2 away from e1. (See Branch Pruning, page ??) 
+</LI>
+<LI>EXIST EXIST takes two(2) arguments, the first argument can be an equation
+or a variable (e1), the second argument must be a variable (v1). This
+function searches for and finds everyplace in e1 where v1 occurs.
+Every time v1 is found it is replaced by the logical OR of it's true
+branch and it's false branch. This function effectively removes v1
+from e1. (See Existential Quantification, page ??) 
+</LI>
+<LI>UNIVERSE UNIVERSE takes two(2) arguments, the first argument can be
+an equation or a variable (e1), the second argument must be a variable
+(v1). This function searches for and finds everyplace in e1 where
+v1 occurs. Every time v1 is found it is replaced by the logical AND
+of it's true branch and it's false branch. This function effectively
+removes v1 from e1. 
+</LI>
+<LI>PRINT_TREE This function takes one(1) argument. The argument is printed
+to standard out in a nice, easily readable tree form. The argument
+is printed from the top down. To the branch to the left is the true
+branch, the branch to the right is the false branch. 
+</LI>
+</UL>
+
+<DL COMPACT>
+<DT>
+<DD>Example:&nbsp;PRINT_TREE(&nbsp;OR3(4,&nbsp;5,&nbsp;-6)&nbsp;)&nbsp;
+
+<P>
+Prints&nbsp;to&nbsp;standard&nbsp;output:
+
+<P>
+--------------------------&nbsp;
+
+<P>
+4&nbsp;
+
+<P>
+T&nbsp;5&nbsp;
+
+<P>
+T&nbsp;6&nbsp;
+
+<P>
+F&nbsp;T&nbsp;
+
+<P>
+--------------------------&nbsp;
+</DD>
+</DL>
+<UL>
+<LI>PPRINT_TREE This function takes one(1) argument. The argument is
+printed to standard out in a different form than PRINT_TREE. If the
+true and false branches are T and F then they are printed on the same
+line, otherwise, the true and false branches are indented from the
+top variable. The true branch is printed first and is followed by
+the false branch. 
+</LI>
+</UL>
+
+<DL COMPACT>
+<DT>
+<DD>Example:&nbsp;PPRINT_TREE(&nbsp;OR3(4,&nbsp;5,&nbsp;-6)&nbsp;)&nbsp;
+
+<P>
+Prints&nbsp;to&nbsp;standard&nbsp;output:
+
+<P>
+----------------------------
+
+<P>
+ite&nbsp;4&nbsp;T&nbsp;ite&nbsp;5&nbsp;T&nbsp;ite&nbsp;6&nbsp;F&nbsp;T
+
+<P>
+----------------------------&nbsp;
+</DD>
+</DL>
+<UL>
+<LI>ADD_STATE This function takes two(2) arguments. The first argument
+(e1) must be an equation and the second argument must be a positive
+integer (i1). ADD_STATE creates a new BDD with structure identical
+e1 but with each variable incremented by i1. 
+</LI>
+</UL>
+
+<DL COMPACT>
+<DT>
+<DD>Example:&nbsp;ADD_STATE(&nbsp;AND(3,&nbsp;4),&nbsp;5&nbsp;)&nbsp;This&nbsp;will&nbsp;create&nbsp;the&nbsp;BDD&nbsp;-&nbsp;AND(8,&nbsp;9)&nbsp;
+</DD>
+</DL>
+<P>
+
+<H3><A NAME="SECTION00081300000000000000">
+7.1.3 Variable Names </A>
+</H3>
+
+<P>
+
+<H3><A NAME="SECTION00081400000000000000">
+7.1.4 Reusing Functions</A>
+</H3>
+
+<P>
+
+<H3><A NAME="SECTION00081500000000000000">
+7.1.5 Defines </A>
+</H3>
+
+<P>
+
+<H3><A NAME="SECTION00081600000000000000">
+7.1.6 Short Cuts </A>
+</H3>
+
+<P>
+
+<H3><A NAME="SECTION00081700000000000000">
+7.1.7 Example Input </A>
+</H3>
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>p&nbsp;bdd&nbsp;18&nbsp;13&nbsp;;&nbsp;18&nbsp;vars,&nbsp;13&nbsp;functions&nbsp;
+
+<P>
+#define&nbsp;fun&nbsp;1&nbsp;2&nbsp;3&nbsp;4&nbsp;
+
+<P>
+#&nbsp;ite&nbsp;1&nbsp;and&nbsp;2&nbsp;3&nbsp;or&nbsp;3&nbsp;4&nbsp;;&nbsp;parms&nbsp;must&nbsp;be&nbsp;consecutive&nbsp;integers&nbsp;from&nbsp;1&nbsp;
+
+<P>
+#define&nbsp;g&nbsp;1&nbsp;2&nbsp;3&nbsp;
+
+<P>
+#&nbsp;ite&nbsp;fun&nbsp;1&nbsp;2&nbsp;3&nbsp;-2&nbsp;T&nbsp;3&nbsp;
+
+<P>
+InitialBranch&nbsp;(2,&nbsp;4..12,&nbsp;15,&nbsp;16,&nbsp;18,&nbsp;1,&nbsp;3)&nbsp;;&nbsp;These&nbsp;variables&nbsp;will&nbsp;be&nbsp;branched&nbsp;on&nbsp;first&nbsp;
+
+<P>
+ite&nbsp;4&nbsp;5&nbsp;6&nbsp;;&nbsp;eqn&nbsp;$1&nbsp;
+
+<P>
+*or&nbsp;$1&nbsp;3&nbsp;;&nbsp;eqn&nbsp;$2,&nbsp;smurf&nbsp;1&nbsp;
+
+<P>
+*or&nbsp;5&nbsp;-6&nbsp;;&nbsp;eqn&nbsp;$3,&nbsp;smurf&nbsp;2&nbsp;
+
+<P>
+*and&nbsp;$1&nbsp;-4&nbsp;;&nbsp;eqn&nbsp;$4,&nbsp;smurf&nbsp;3&nbsp;
+
+<P>
+*imp&nbsp;$1&nbsp;$4&nbsp;;&nbsp;eqn&nbsp;$5,&nbsp;smurf&nbsp;4&nbsp;
+
+<P>
+#define&nbsp;imp&nbsp;1&nbsp;2&nbsp;3&nbsp;
+
+<P>
+#&nbsp;or3(1,&nbsp;2,&nbsp;3);&nbsp;Notice&nbsp;the&nbsp;'imp'&nbsp;operator&nbsp;was&nbsp;overloaded&nbsp;to&nbsp;be&nbsp;the&nbsp;OR&nbsp;of&nbsp;3&nbsp;variables.&nbsp;
+
+<P>
+*imp(3&nbsp;4&nbsp;5)&nbsp;;&nbsp;eqn&nbsp;$6,&nbsp;smurf&nbsp;5&nbsp;;&nbsp;this&nbsp;is&nbsp;a&nbsp;really&nbsp;bad&nbsp;idea,&nbsp;it&nbsp;probably&nbsp;shouldn't&nbsp;be&nbsp;allowed&nbsp;
+
+<P>
+print_tree&nbsp;$5;&nbsp;no&nbsp;equation&nbsp;created,&nbsp;no&nbsp;smurf&nbsp;created&nbsp;pprint_tree&nbsp;$5&nbsp;;&nbsp;no&nbsp;equation&nbsp;created,&nbsp;no&nbsp;smurf&nbsp;created&nbsp;
+
+<P>
+ite&nbsp;2&nbsp;;&nbsp;eqn&nbsp;$7&nbsp;ite&nbsp;3&nbsp;4&nbsp;5&nbsp;;&nbsp;plus&nbsp;comments&nbsp;are&nbsp;ignored,&nbsp;even&nbsp;in&nbsp;the&nbsp;middle&nbsp;of&nbsp;a&nbsp;function&nbsp;
+
+<P>
+ite&nbsp;4&nbsp;5&nbsp;F&nbsp;
+
+<P>
+*fun&nbsp;4&nbsp;-5&nbsp;2&nbsp;3&nbsp;;&nbsp;eqn&nbsp;$8,&nbsp;smurf&nbsp;5&nbsp;
+
+<P>
+*fun&nbsp;g&nbsp;-5&nbsp;4&nbsp;$6&nbsp;2&nbsp;3&nbsp;4&nbsp;;&nbsp;eqn&nbsp;$9,&nbsp;smurf&nbsp;6&nbsp;
+
+<P>
+*equ(xor3(2,&nbsp;and(-3,&nbsp;4),&nbsp;nand(7,&nbsp;5),&nbsp;ite(15,&nbsp;or(4,&nbsp;-7),&nbsp;nor(4,&nbsp;-7))))&nbsp;;&nbsp;eqn&nbsp;$10,&nbsp;smurf&nbsp;7&nbsp;
+
+<P>
+*add_state($10,&nbsp;1)&nbsp;;&nbsp;eqn&nbsp;$11,&nbsp;smurf&nbsp;7&nbsp;;&nbsp;add_state&nbsp;creates&nbsp;a&nbsp;BDD&nbsp;which&nbsp;is&nbsp;identical&nbsp;to&nbsp;the&nbsp;first&nbsp;argument&nbsp;but&nbsp;;with&nbsp;all&nbsp;it's&nbsp;variables&nbsp;incremented&nbsp;by&nbsp;the&nbsp;second&nbsp;argument.&nbsp;*add_state($10,&nbsp;2)&nbsp;;&nbsp;eqn&nbsp;$12,&nbsp;smurf&nbsp;8&nbsp;
+
+<P>
+*add_state($10,&nbsp;3)&nbsp;;&nbsp;eqn&nbsp;$13,&nbsp;smurf&nbsp;9
+
+<P>
+</DD>
+</DL>
+<P>
+
+<H2><A NAME="SECTION00082000000000000000">
+7.2 CNF format</A>
+</H2>
+
+<P>
+
+<H2><A NAME="SECTION00083000000000000000">
+7.3 TRACE format</A>
+</H2>
+
+<P>
+
+<H2><A NAME="SECTION00084000000000000000">
+7.4 SMURF format</A>
+</H2>
+
+<P>
+
+<H1><A NAME="SECTION00090000000000000000">
+8 Preprocessing</A>
+</H1>
+
+<P>
+III. The BDD Tool 
+
+<P>
+Data is presented the ITE program via an input file. In this file
+BDD variables and BDDs are expressed using all Boolean functions,
+e.g., NOT, AND, NAND, OR, NOR, EQU, XOR, IMPLIES, etc. (See page ??
+for a full list of commands and a description of each). Every BDD
+expressed may be reused when creating other BDD expressions. Input
+from this file continues until the specified number of user inputs
+has been processed (See page ??). 
+
+<P>
+The ITE program processes the input given to the program, but the
+main tool exercised is the BDD Tool. It completes all of the manipulations
+and calculations necessary to build the BDD structure. The BDD Tool
+comes standard with many powerful BDD functions (See page ??). These
+functions give the user total control over their problem data. 
+
+<P>
+
+<H2><A NAME="SECTION00091000000000000000">
+8.1 Existential Quantification</A>
+</H2>
+
+<P>
+
+<H2><A NAME="SECTION00092000000000000000">
+8.2 Branch Pruning</A>
+</H2>
+
+<P>
+
+<H2><A NAME="SECTION00093000000000000000">
+8.3 Strengthening</A>
+</H2>
+
+<P>
+
+<H2><A NAME="SECTION00094000000000000000">
+8.4 Dependent clustering</A>
+</H2>
+
+<P>
+
+<H2><A NAME="SECTION00095000000000000000">
+8.5 Cofactoring</A>
+</H2>
+
+<P>
+
+<H1><A NAME="SECTION000100000000000000000">
+9 Solver</A>
+</H1>
+
+<P>
+The execution is handed to the solver after preprocessing is done.
+There are four different options controlled by the command line (ini
+file):
+
+<P>
+
+<UL>
+<LI>SMURF brancher (default or when -b specified on the command line)
+</LI>
+<LI>BDD WalkSat (-w)
+</LI>
+<LI>WVF brancher (original pre-sbsat brancher)
+</LI>
+<LI>or it will start conversion of the internal problem representation
+into one of the specified formats.
+</LI>
+</UL>
+
+<P>
+
+<H2><A NAME="SECTION000101000000000000000">
+9.1 SMURF Brancher</A>
+</H2>
+
+<P>
+SMURF Brancher is given the problem as a collection of BDDs. Some
+of the BDDs are marked as special functions (AND, OR, AND=, XOR, ...).
+It converts non-special function BDDs and BDDs where the special function
+is not recognized (IMP, ...) into SMURF state machines. Special functions
+are handled using non-SMURF data structures in order to save memory
+space. 
+
+<P>
+After conversion into SMURFs the process of solving the problem starts.
+There are .. major parts:
+
+<P>
+
+<UL>
+<LI>heuristic - after processing all inferences without contradiction
+the new literal is chosen by looking at the heuristic values. Please
+see sec:Solver-heuristics
+</LI>
+<LI>inference queue - every new inference is first put into the inference
+queue but the value of the inference is set as soon as it is found.
+The consequences of the inferences are processed in FIFO style (updating
+the SMURFs, special functions and lemmas).
+</LI>
+<LI>smurf update
+</LI>
+<LI>special function update
+</LI>
+<LI>lemma update
+</LI>
+<LI>lemmas
+</LI>
+<LI>backtracking
+</LI>
+</UL>
+
+<P>
+
+<H2><A NAME="SECTION000102000000000000000">
+9.2 BDDWalkSat</A>
+</H2>
+
+<P>
+(Sean!)
+
+<P>
+
+<H2><A NAME="SECTION000103000000000000000">
+9.3 WVF Brancher</A>
+</H2>
+
+<P>
+
+<H1><A NAME="SECTION000110000000000000000"></A><A NAME="sec:Solver-heuristics"></A>
+<BR>
+10 Solver heuristics
+</H1>
+
+<P>
+
+<H2><A NAME="SECTION000111000000000000000">
+10.1 Johnson heuristic</A>
+</H2>
+
+<P>
+
+<H2><A NAME="SECTION000112000000000000000">
+10.2 Chaff like lemma heuristic</A>
+</H2>
+
+<P>
+
+<H1><A NAME="SECTION000120000000000000000">
+11 Output formats</A>
+</H1>
+
+<P>
+For format description please see sec:Input-formats.
+
+<P>
+
+<H1><A NAME="SECTION000130000000000000000">
+12 Examples on how to use SBSat</A>
+</H1>
+
+<P>
+
+<H1><A NAME="SECTION000140000000000000000">
+13 Reporting problems</A>
+</H1>
+
+<P>
+
+<P>
+Report bugs to &lt;mkouril@ececs.uc.edu&gt; or &lt;franco@gauss.ececs.uc.edu&gt;. 
+   <BR>
+<BR>
+   
+<P>
+
+
+<H1><A NAME="SECTION000150000000000000000">
+About this document ...</A>
+</H1>
+ <STRONG>SBSat Manual</STRONG><P>
+This document was generated using the
+<A HREF="http://www-dsed.llnl.gov/files/programs/unix/latex2html/manual/"><STRONG>LaTeX</STRONG>2<tt>HTML</tt></A> translator Version 2K.1beta (1.47)
+<P>
+Copyright &#169; 1993, 1994, 1995, 1996,
+<A HREF="http://cbl.leeds.ac.uk/nikos/personal.html">Nikos Drakos</A>, 
+Computer Based Learning Unit, University of Leeds.
+<BR>
+Copyright &#169; 1997, 1998, 1999,
+<A HREF="http://www.maths.mq.edu.au/~ross/">Ross Moore</A>, 
+Mathematics Department, Macquarie University, Sydney.
+<P>
+The command line arguments were: <BR>
+ <STRONG>latex2html</STRONG> <TT>-no_subdir -split 0 -show_section_numbers /tmp/lyx_tmpdir71109HKNEW/lyx_tmpbuf0/sbsat_manual.tex</TT>
+<P>
+The translation was initiated by  on 2003-05-30<HR>
+<!--Navigation Panel-->
+<IMG WIDTH="81" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next_inactive"
+ SRC="file:/usr/share/latex2html/icons/nx_grp_g.png"> 
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up_g.png"> 
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev_g.png">   
+<BR>
+<!--End of Navigation Panel-->
+<ADDRESS>
+
+2003-05-30
+</ADDRESS>
+</BODY>
+</HTML>
