@@ -135,7 +135,7 @@ target_alias = @target_alias@
 INCLUDES = -I$(top_srcdir)/include
 SOURCES = \
              integerset.cc literalset.cc bdd.cc utils.cc \
-             params.cc params_fn.cc log.cc bddidx.cc bddidx_orig.cc \
+             params.cc params_fn.cc log.cc \
              bddtable.cc zread.cc vars.cc infer.cc intnode.cc \
 	     bdd_circuit_init.cc symtable.cc java_wrapper.cc \
 	     custprint.cc termcap.cc # malloc.cc
@@ -144,7 +144,7 @@ SOURCES = \
 noinst_LTLIBRARIES = libutils.la
 libutils_la_SOURCES = $(SOURCES)
 
-EXTRA_DIST = bddidx_vsb.cc  malloc.cc # bddtable.cc
+EXTRA_DIST = malloc.cc # bddtable.cc
 subdir = src/utils
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/include/config.h
@@ -154,9 +154,9 @@ LTLIBRARIES = $(noinst_LTLIBRARIES)
 libutils_la_LDFLAGS =
 libutils_la_LIBADD =
 am__objects_1 = integerset.lo literalset.lo bdd.lo utils.lo params.lo \
-	params_fn.lo log.lo bddidx.lo bddidx_orig.lo bddtable.lo \
-	zread.lo vars.lo infer.lo intnode.lo bdd_circuit_init.lo \
-	symtable.lo java_wrapper.lo custprint.lo termcap.lo
+	params_fn.lo log.lo bddtable.lo zread.lo vars.lo infer.lo \
+	intnode.lo bdd_circuit_init.lo symtable.lo java_wrapper.lo \
+	custprint.lo termcap.lo
 am_libutils_la_OBJECTS = $(am__objects_1)
 libutils_la_OBJECTS = $(am_libutils_la_OBJECTS)
 
@@ -165,7 +165,6 @@ depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 @AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/bdd.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/bdd_circuit_init.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/bddidx.Plo ./$(DEPDIR)/bddidx_orig.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/bddtable.Plo ./$(DEPDIR)/custprint.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/infer.Plo ./$(DEPDIR)/integerset.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/intnode.Plo \
@@ -187,7 +186,7 @@ DIST_SOURCES = $(libutils_la_SOURCES)
 DIST_COMMON = Makefile.am Makefile.in
 SOURCES = \
              integerset.cc literalset.cc bdd.cc utils.cc \
-             params.cc params_fn.cc log.cc bddidx.cc bddidx_orig.cc \
+             params.cc params_fn.cc log.cc \
              bddtable.cc zread.cc vars.cc infer.cc intnode.cc \
 	     bdd_circuit_init.cc symtable.cc java_wrapper.cc \
 	     custprint.cc termcap.cc # malloc.cc
@@ -222,8 +221,6 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bdd.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bdd_circuit_init.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bddidx.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bddidx_orig.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bddtable.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/custprint.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/infer.Plo@am__quote@

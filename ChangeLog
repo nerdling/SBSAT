@@ -1,3 +1,20 @@
+2004-02-18 14:04  mkouril
+
+	* src/: preproc/do_strength.cc, utils/bdd.cc: nothing really
+
+2004-02-18 13:41  mkouril
+
+	* ChangeLog, include/prototypes.h, src/preproc/do_applyinfs.cc,
+	  src/utils/bdd.cc: Added set_variable_all and num_replace_all
+
+2004-02-18 12:07  fett
+
+	* src/utils/bdd.cc: fixed ite a little more.
+
+2004-02-18 10:50  mkouril
+
+	* src/utils/bdd.cc: Speedup of ite_x_y_F()
+
 2004-02-17 23:43  mkouril
 
 	* src/utils/: bdd.cc, bddtable.cc: Reverse the last one -- makes no
