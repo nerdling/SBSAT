@@ -71,6 +71,28 @@ void ite_free(void **ptr) {
 }
 
 
+void *ite_recalloc(void *ptr, int oldx, int x, int y, int dbg_lvl, const char *for_what) {
+   void *p = NULL;
+   assert(oldx<x);
+   if (x==0 || y==0) {
+      dm2_printf2("WARNING: 0 bytes allocation for %s\n", for_what); 
+   } else {
+      p=realloc(ptr, x*y);
+      if (!p) {
+         fprintf(stderr, "ERROR: Unable to allocate %d bytes for %s\n", x*y, for_what); 
+         exit(1); 
+      } 
+      void *pp = (char*)p+oldx*y;
+      memset(pp, 0, (x-oldx)*y);
+   }
+   DM_2(
+         if ((DEBUG_LVL&15) >= dbg_lvl) 
+         fprintf(stddbg, "ReAllocated %d bytes for %s\n", x*y, for_what); 
+      );
+   return p;
+}
+
+
 //Returns run time in seconds.
 double
 get_runtime ()

@@ -45,84 +45,46 @@
  * equalityVble[]
  * functions[]
  * functionType[] = UNSURE
- * parameterizedVars[] = NULL
- * parameterGroup[] = 0
  *
  */ 
 
-int
-bdd_circuit_init(int n_vars, int n_fns) /* numinp, numout */
-{
-   int x;
 
-   bdd_init();
+int functions_max = 0;
+int vars_max = 0;
+
+int
+functions_alloc(int n_fns)
+{
+   /* n_fns -- numout */
+   equalityVble = (int *)ite_recalloc((void*)equalityVble, functions_max, 
+         n_fns, sizeof(int), 9, "equalityVble");
+   functions = (BDDNode **)ite_recalloc((void*)functions, functions_max,
+         n_fns, sizeof(BDDNode*), 9, "functions");
+   xorFunctions = (BDDNode **)ite_recalloc((void*)xorFunctions, functions_max, 
+         n_fns, sizeof(BDDNode*), 9, "functions");
+   functionType = (int *)ite_recalloc((void*)functionType, functions_max,
+         n_fns, sizeof(int), 9, "functionType");
+
+   functions_max = n_fns;
+   return 0;
+}
+
+int
+vars_alloc(int n_vars)
+{
 
    /* n_vars -- numinp */
-   independantVars = (int *)calloc(n_vars, sizeof(int));
-   if (independantVars == NULL) 
-   {
-      dE_printf1("Unable to allocate memory for independant vars.\n");
-      exit(1);
-   }
-   for(x = 0; x < n_vars; x++) 
+   independantVars = (int *)ite_recalloc((void*)independantVars, vars_max,
+         n_vars, sizeof(int), 9, "independantVars");
+
+   for(int x = vars_max; x < n_vars; x++) 
    {
       independantVars[x] = 1;
    }
-
-
-   /* n_fns -- numout */
-   nmbrFunctions = 0;
-   equalityVble = (int *)calloc(n_fns, sizeof(int));
-   if (equalityVble == NULL) 
-   {
-      dE_printf1("Unable to allocate memory for equalityeVble.\n");
-      exit(1);
-   }
-
-   functions = (BDDNode **)calloc(n_fns, sizeof(BDDNode*));
-   if (functions == NULL) 
-   {
-      dE_printf1("Unable to allocate memory for functions.\n");
-      exit(1);
-   }
-
-   xorFunctions = (BDDNode **)calloc(n_fns, sizeof(BDDNode*));
-   if (xorFunctions == NULL) 
-   {
-      dE_printf1("Unable to allocate memory for xorFunctions.\n");
-      exit(1);
-   }
-
-   functionType = (int *)calloc(n_fns, sizeof(int));
-   if (functionType == NULL) 
-   {
-      dE_printf1("Unable to allocate memory for functionType.\n");
-      exit(1);
-   }
-
-   parameterizedVars = (int **)calloc(n_fns, sizeof(int *));
-   if (parameterizedVars == NULL) 
-   {
-      dE_printf1("Unable to allocate memory for parameterizedVars.\n");
-      exit(1);
-   }
-
-   parameterGroup = (int *)calloc(n_fns, sizeof(int));
-   if (parameterGroup == NULL) 
-   {
-      dE_printf1("Unable to allocate memory for parameterGroup.\n");
-      exit(1);
-   }
-
-   //for(x = 0; x < n_fns; x++) 
-   //{
-		//functionType[x] = UNSURE;
-      //parameterizedVars[x] = NULL;
-      //parameterGroup[x] = 0;
-   //}
-
-  return 0;
+   vars_max = n_vars;
+   return 0;
 }
+
 
 void
 bdd_circuit_free()
@@ -132,7 +94,5 @@ bdd_circuit_free()
    ite_free((void**)&functions);
    ite_free((void**)&xorFunctions);
    ite_free((void**)&functionType);
-   ite_free((void**)&parameterizedVars);
-   ite_free((void**)&parameterGroup);
 }
 

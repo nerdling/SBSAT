@@ -91,8 +91,8 @@ int *functionType=NULL;
 int *equalityVble=NULL; ///< Variable on the LHS of an ite=, and=, or or= BDD.
 int *independantVars=NULL;
 char **labels=NULL;
-int **parameterizedVars=NULL;
-int *parameterGroup=NULL;
+//int **parameterizedVars=NULL;
+//int *parameterGroup=NULL;
 
 int numBuckets=0;
 int sizeBuckets=0;

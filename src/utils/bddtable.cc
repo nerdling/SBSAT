@@ -360,7 +360,8 @@ reload_bdd_circuit(int _numinp, int _numout,
    d2_printf1("BDD and Circuit Init..\n");
    numinp = _numinp;
    numout = _numout;
-   bdd_circuit_init(numinp+1, numout);
+   vars_alloc(numinp+1);
+   functions_alloc(numout);
    nmbrFunctions = numout;
    curBDDPos = _bddtable_len;
 	length = new int[numout + 1];

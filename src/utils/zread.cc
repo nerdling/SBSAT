@@ -79,7 +79,7 @@ zread(char *filename)
     }
     int c = fgetc(infile);
     if (c == EOF) {
-       fprintf(stderr, "Can't use gzip\n", cmd);
+       fprintf(stderr, "Can't use gzip\n");
        exit(1);
     }
     ungetc(c, infile);
