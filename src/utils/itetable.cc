@@ -52,9 +52,9 @@ typedef struct {
    int max;
 } itetable_pool_type;
 
-/* FIXME: number of pools hardcoded to 100 */
-itetable_pool_type itememory[100];
+itetable_pool_type *itememory;
 int itememory_index=0;
+int itememory_max=0;
 int itetable_num_pools=0;
 int itetable_current_pos=0;
 ITENode *itetable_free = NULL;
@@ -67,10 +67,11 @@ itetable_alloc_node(ITENode **node, int v, BDDNode *r, BDDNode *e, BDDNode *cach
 
 void itetable_alloc_pool(int pool)
 {
-   if (pool >= 100)
+   if (pool >= itememory_max)
    {
-      dE_printf1("Increase the number of BDD Pools\n");
-      exit(1);
+      itememory = (itetable_pool_type*)ite_recalloc(itememory, itememory_max, pool+100, 
+            sizeof(itetable_pool_type), 2, "itememory");
+      itememory_max = pool+100;
    }
    itememory[pool].max = _bdd_pool_size; 
    itememory[pool].memory = (ITENode*)ite_calloc(itememory[pool].max, sizeof(ITENode), 2, "ite memory pool");
@@ -82,9 +83,12 @@ itetable_free_pools()
 {
    int i;
    for (i=0;i<=itetable_num_pools;i++) {
-      free(itememory[i].memory);
+      ite_free((void**)&(itememory[i].memory));
    }
-   free(itetable_hash_memory);
+   ite_free((void**)&itetable_hash_memory);
+   ite_free((void**)&itememory);
+   itememory_max = 0;
+   itememory_index = 0;
 }
 
 void

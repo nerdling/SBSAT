@@ -46,9 +46,9 @@ typedef struct {
    int max;
 } bdd_pool_type;
 
-/* FIXME: number of pools hardcoded to 100 */
-bdd_pool_type bddmemory[100];
+bdd_pool_type *bddmemory;
 int bddmemory_index=0;
+int bddmemory_max=0;
 int numBDDPool=0;
 int curBDDPos =0;
 BDDNode **bddtable_hash_memory = NULL;
@@ -67,10 +67,11 @@ void itetable_removeall();
 
 void bddtable_alloc_pool(int pool)
 {
-   if (pool >= 100)
+   if (pool >= bddmemory_max)
    {
-      dE_printf1("Increase the number of BDD Pools\n");
-      exit(1);
+      bddmemory = (bdd_pool_type*)ite_recalloc(bddmemory, bddmemory_max, pool+100, 
+            sizeof(bdd_pool_type), 2, "bddmemory");
+      bddmemory_max = pool+100;
    }
    bddmemory[pool].max = current_bddpool_size;
    if (current_bddpool_size < _bdd_pool_size) {
@@ -89,10 +90,13 @@ bddtable_free_pools()
 {
    int i;
    for (i=0;i<=numBDDPool;i++) {
-      free(bddmemory[i].memory);
+      ite_free((void**)&(bddmemory[i].memory));
    }
    FreeInferencePool();
-   free(bddtable_hash_memory);
+   ite_free((void**)&bddtable_hash_memory);
+   ite_free((void**)&bddmemory);
+   bddmemory_max = 0;
+   bddmemory_index = 0;
 }
 
 void
