@@ -98,11 +98,24 @@ void vanDerWaerden(int n, int k, int p) {
    // 1. 
    fprintf(stdout, "c every integer only in one bucket\n");
    for(int x = 1; x <= n; x++) {
-		fprintf(stdout, "#1 [ %d ", x);
-		for(int y = 1; y < k; y++)
-		  fprintf(stdout, "%d ", (y*n)+x);
-		fprintf(stdout, "] 1\n");
-	}
+      int y;
+      if (1) {
+         fprintf(stdout, "#1 [ %d ", x);
+         for(y = 1; y < k; y++)
+            fprintf(stdout, "%d ", (y*n)+x);
+         fprintf(stdout, "] 1\n");
+      } else {
+         // at least one bucket
+         fprintf(stdout, "%d ", x);
+         for(y = 1; y < k; y++)
+            fprintf(stdout, "%d ", (y*n)+x);
+         fprintf(stdout, "0\n", (y*n)+x);
+         // at most one bucket
+         for(y = 0; y < k; y++)
+            for (int z=y+1; z < k; z++)
+               fprintf(stdout, "-%d -%d 0\n", (y*n)+x, (z*n)+x);
+      }
+   }
 	
    fprintf(stdout, "c prevent any arithmetic progression of length %d for every bucket %d\n", p, k);
    for(int bucket=0; bucket<k; bucket++) {
