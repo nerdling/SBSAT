@@ -744,8 +744,6 @@ int Rebuild_BDDx (int x) {
 			}
 			a++;
 		}
-		//Done adding BDD x into the inferences lists.
-		// delete [] variables[x].num;
 	} else { //A NEW BDD
 		for (int b = 0; b < y; b++) {
 			llist *newllist = AllocateLList(x, NULL);
@@ -761,7 +759,7 @@ int Rebuild_BDDx (int x) {
 			}
 		}
 	}
-	
+	//Done adding BDD x into the inferences lists.
 
 	length[x] = y;
 	
