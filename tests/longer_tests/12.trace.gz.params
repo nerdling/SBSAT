@@ -1,1 +1,1 @@
-12.trace.gz --expected-result TRIV_SAT
+12.trace.gz -L 5000 --backjumping 1 --All 1 --expected-result TRIV_SAT

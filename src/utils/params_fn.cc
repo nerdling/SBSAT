@@ -189,6 +189,16 @@ set_param_int(char *param, int value)
 }
 
 void
+change_defa_param_int(char *param, int value)
+{
+   t_opt *p_opt = lookup_keyword(param);
+   if (p_opt == NULL) return;
+   assert(p_opt->p_type == P_INT);
+   p_opt->p_defa.i = value;
+   *(int*)(p_opt->p_target) = value;
+}
+
+void
 skip_eol(FILE *fini)
 {
   char c=fgetc(fini);

@@ -35,7 +35,14 @@
  of the possibility of those damages.
 *********************************************************************/
 
-Compatibility testing:
+Quick start:
+
+1) ./configure
+2) make
+3) make check
+
+
+Internal Compatibility testing:
 i386 Linux RH7.3 and EL WS3
 i386 Windows Cygwin
 Sparc Solaris 9

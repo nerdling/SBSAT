@@ -35,8 +35,8 @@
  of the possibility of those damages.
 *********************************************************************/
 
-#ifndef SMURFFACTORY_H
-#define SMURFFACTORY_H
+#ifndef FN_SMURF_H
+#define FN_SMURF_H
 
 //#include "heuristic.h"
 

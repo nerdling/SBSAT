@@ -35,10 +35,10 @@
  of the possibility of those damages.
 *********************************************************************/
 
-#ifndef I_HEURISTIC_H
-#define I_HEURISTIC_H
+#ifndef HEUR_I_H
+#define HEUR_I_H
 
 ITE_INLINE void
 I_OptimizedHeuristic(int *pnBranchAtom, int *pnBranchValue);
 
-#endif // I_HEURISTIC_H
+#endif 

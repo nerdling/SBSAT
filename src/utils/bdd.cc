@@ -162,11 +162,11 @@ BDDNode *_MinMaxBDD(int *vars, int min, int max, int num_left, int set_true) {
 	if (num_left+set_true < min) return false_ptr;
 	if (set_true > max) return false_ptr;
 	if ((set_true >= min) && (num_left+set_true <= max)) return true_ptr;
-	//if (num_left == 0) hoo don't need this one right
+	//if (num_left == 0) // I don't need this one 
 	int v = vars[num_left-1]; //vars should be sorted from least to greatest
 	
-	BDDNode *r = MinMaxBDD(vars, min, max, num_left-1, set_true+1); //Then Case
-	BDDNode *e = MinMaxBDD(vars, min, max, num_left-1, set_true); //Else Case
+	BDDNode *r = _MinMaxBDD(vars, min, max, num_left-1, set_true+1); //Then Case
+	BDDNode *e = _MinMaxBDD(vars, min, max, num_left-1, set_true); //Else Case
 	
 	if(r == e) return r;
 	return find_or_add_node (v, r, e);

@@ -35,8 +35,8 @@
  of the possibility of those damages.
 *********************************************************************/
 
-#ifndef L_HEURISTIC_H
-#define L_HEURISTIC_H
+#ifndef HR_LEMMA_H
+#define HR_LEMMA_H
 
 typedef struct {
    int pos;

@@ -1,10 +1,3 @@
-
-
-
-extern int nCallsToAddLemma;
-extern int gnNumCachedLemmas;
-extern int nNumCachedLemmas[3];
-
 /* =========FOR INTERNAL USE ONLY. NO DISTRIBUTION PLEASE ========== */
 
 /*********************************************************************
@@ -42,10 +35,13 @@ extern int nNumCachedLemmas[3];
  of the possibility of those damages.
 *********************************************************************/
 
-#ifndef LEMMAINFO_H
-#define LEMMAINFO_H
+#ifndef FN_LEMMA_H
+#define FN_LEMMA_H
 
-//#include "smurffactory.h"
+extern int nCallsToAddLemma;
+extern int gnNumCachedLemmas;
+extern int nNumCachedLemmas[3];
+
 
 #define LEMMA_SPACE_SIZE 50000  // initial size -- expandable in these inc.
 // # of lemma blocks allocated to store all lemmas. This includes prime 

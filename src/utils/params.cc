@@ -56,6 +56,7 @@ char debug_dev[128]="stderr";
 int USE_AUTARKY_LEMMAS;
 
 void DO_ALL(int);
+void DO_ALL_default(int value);
 void fn_parse_filename(char *filename);
 
 t_opt options[] = { 
@@ -389,6 +390,10 @@ finish_params()
       if (sat_timeout > 0) max_preproc_time = sat_timeout / 2;
    }
 
+   if (MAX_NUM_CACHED_LEMMAS == 0) {
+      backjumping = 0;
+   }
+
    /* special files */
    if (!strcmp(debug_dev, "stdout")) stddbg = stdout;
    else
@@ -493,11 +498,26 @@ finish_params()
    }
 }
 
+#define SLIDER_DEFAULTS
+
+int
+init_slider_options()
+{
+   char tmp_str[5];
+   change_defa_param_int(strcpy(tmp_str, "max-cached-lemmas"), 0);
+   change_defa_param_int(strcpy(tmp_str, "backjumping"), 0);
+   DO_ALL_default(0);
+   return 0;
+}
+
 int
 params_parse_cmd_line(int argc, char *argv[])
 {
    init_params();
    init_options();
+#ifdef SLIDER_DEFAULTS
+   init_slider_options();
+#endif
    read_cmd(argc, argv);
    fix_ini_filename();
    read_ini(ini_filename);
@@ -521,20 +541,8 @@ ctrl_c_proc(int x)
 }
 
 void
-DO_ALL(int value/* , char *s_value*/)
+DO_ALL(int value)
 {
-/*
-   char s_value[32];
-   sprintf(s_value, "%d", value);
-   set_param_value("Cl", s_value); // and it knows src //
-   set_param_value("Co", s_value); // and it knows src //
-   set_param_value("Pr", s_value); // and it knows src //
-   set_param_value("St", s_value); // and it knows src //
-   set_param_value("Ex", s_value); // and it knows src //
-   set_param_value("Ea", s_value); // and it knows src //
-   set_param_value("Dc", s_value); // and it knows src //
-   set_param_value("Sp", s_value); // and it knows src //
-*/
    char tmp_str[5];
    set_param_int(strcpy(tmp_str, "Cl"), value);
    set_param_int(strcpy(tmp_str, "Co"), value);
@@ -550,6 +558,27 @@ DO_ALL(int value/* , char *s_value*/)
 	set_param_int(strcpy(tmp_str, "Cf"), value);
 	set_param_int(strcpy(tmp_str, "Ff"), value);
 	set_param_int(strcpy(tmp_str, "P3"), value);
+   // also add a line to the following function
+}
+
+void
+DO_ALL_default(int value)
+{
+   char tmp_str[5];
+   change_defa_param_int(strcpy(tmp_str, "Cl"), value);
+   change_defa_param_int(strcpy(tmp_str, "Co"), value);
+   change_defa_param_int(strcpy(tmp_str, "Pr"), value);
+   change_defa_param_int(strcpy(tmp_str, "St"), value);
+   change_defa_param_int(strcpy(tmp_str, "Sa"), value);
+   change_defa_param_int(strcpy(tmp_str, "Ex"), value);
+   change_defa_param_int(strcpy(tmp_str, "Ea"), value);
+   change_defa_param_int(strcpy(tmp_str, "Pa"), value);
+   change_defa_param_int(strcpy(tmp_str, "Dc"), value);
+   change_defa_param_int(strcpy(tmp_str, "Sp"), value);
+   change_defa_param_int(strcpy(tmp_str, "Rw"), value);
+   change_defa_param_int(strcpy(tmp_str, "Cf"), value);
+   change_defa_param_int(strcpy(tmp_str, "Ff"), value);
+   change_defa_param_int(strcpy(tmp_str, "P3"), value);
 }
 
 void

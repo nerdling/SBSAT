@@ -35,8 +35,8 @@
  of the possibility of those damages.
 *********************************************************************/
 
-#ifndef J_HEURISTIC_H
-#define J_HEURISTIC_H
+#ifndef HR_LSGB_H
+#define HR_LSGB_H
 
 #include "fn_smurf.h"
 //#include "lemmainfo.h"

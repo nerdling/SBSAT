@@ -61,7 +61,6 @@ BDD2Specfn_MINMAX(int nFnId, BDDNode *pFunc, int nFunctionType, int nEqualityVbl
             9, "special function polarities");
 
    for(int i=0;i<nNumElts;i++) {
-      arrSolverFunctions[nFnId].fn_minmax.rhsVbles.arrElts[i] = arrSolverFunctions[nFnId].fn_minmax.rhsVbles.arrElts[i];
       arrRHSPolarities[i] = BOOL_UNKNOWN;
    }
    qsort(arrSolverFunctions[nFnId].fn_minmax.rhsVbles.arrElts, nNumElts, sizeof(int), revcompfunc);
@@ -76,11 +75,11 @@ BDD2Specfn_MINMAX(int nFnId, BDDNode *pFunc, int nFunctionType, int nEqualityVbl
    int i = 0; // Index into the array of variables mentioned in the func.
    while (pCurrentNode != true_ptr && pCurrentNode != false_ptr)
    {
-      if (arrSolverFunctions[nFnId].fn_minmax.rhsVbles.arrElts[i] != arrIte2SolverVarMap[pCurrentNode->variable]) {
+      if (arrSolverFunctions[nFnId].fn_minmax.rhsVbles.arrElts[i] != pCurrentNode->variable) {
          printBDD(pRHSFunc);
          assert(0);
       }
-      assert(arrSolverFunctions[nFnId].fn_minmax.rhsVbles.arrElts[i] == arrIte2SolverVarMap[pCurrentNode->variable]);
+      assert(arrSolverFunctions[nFnId].fn_minmax.rhsVbles.arrElts[i] == pCurrentNode->variable);
       arrRHSPolarities[i] = BOOL_TRUE;
       if (pCurrentNode->thenCase != true_ptr && pCurrentNode->thenCase != false_ptr)
          pCurrentNode = pCurrentNode->thenCase;
@@ -89,6 +88,12 @@ BDD2Specfn_MINMAX(int nFnId, BDDNode *pFunc, int nFunctionType, int nEqualityVbl
       i++;
    }
 
+   // convert variable ids from global to solver
+   for(int i=0;i<nNumElts;i++) {
+      arrSolverFunctions[nFnId].fn_minmax.rhsVbles.arrElts[i] = arrIte2SolverVarMap[arrSolverFunctions[nFnId].fn_minmax.rhsVbles.arrElts[i]];
+   }
+
+   // set the bounds - max
    arrSolverFunctions[nFnId].fn_minmax.max=0;
    pCurrentNode = pRHSFunc;
    while (pCurrentNode != true_ptr && pCurrentNode != false_ptr)
@@ -99,6 +104,7 @@ BDD2Specfn_MINMAX(int nFnId, BDDNode *pFunc, int nFunctionType, int nEqualityVbl
    if (pCurrentNode == true_ptr) arrSolverFunctions[nFnId].fn_minmax.max = arrSolverFunctions[nFnId].fn_minmax.rhsVbles.nNumElts;
    else arrSolverFunctions[nFnId].fn_minmax.max--;
 
+   // set the bounds - min
    arrSolverFunctions[nFnId].fn_minmax.min=arrSolverFunctions[nFnId].fn_minmax.rhsVbles.nNumElts;
    pCurrentNode = pRHSFunc;
    while (pCurrentNode != true_ptr && pCurrentNode != false_ptr)

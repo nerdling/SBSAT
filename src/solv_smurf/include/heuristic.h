@@ -1,26 +1,3 @@
-/*
-typedef struct {
-   InitHeur();
-   FreeHeur();
-   GetHeurValue();
-   UpdateHeurValue();
-} Heuristic;
-*/
-/*
-ITE_INLINE void UpdateHeuristic();
-ITE_INLINE void J_UpdateHeuristic();
-ITE_INLINE void J_UpdateHeuristicSmurf(SmurfState *pOldState, SmurfState *pState, int);
-ITE_INLINE void Update_arrVarScores();
-*/
-
-void Heuristic(int *pnBranchAtom, int *pnBranchValue);
-ITE_INLINE void InitHeurScoresStack();
-ITE_INLINE void FreeHeurScoresStack();
-ITE_INLINE void PushHeuristicScores();
-ITE_INLINE void PopHeuristicScores(int n);
-ITE_INLINE void InitHeuristics();
-ITE_INLINE void FreeHeuristics();
-
 /* =========FOR INTERNAL USE ONLY. NO DISTRIBUTION PLEASE ========== */
 
 /*********************************************************************
@@ -61,11 +38,16 @@ ITE_INLINE void FreeHeuristics();
 #ifndef HEURISTIC_H
 #define HEURISTIC_H
 
+void Heuristic(int *pnBranchAtom, int *pnBranchValue);
+ITE_INLINE void InitHeurScoresStack();
+ITE_INLINE void FreeHeurScoresStack();
+ITE_INLINE void PushHeuristicScores();
+ITE_INLINE void PopHeuristicScores(int n);
+ITE_INLINE void InitHeuristics();
+ITE_INLINE void FreeHeuristics();
 
 /* header files for available heuristics */
 #include "hr_lsgb.h"
-//#include "heur_l.h"
-//#include "heur_i.h"
 
 typedef void (* t_call_heuristic) (
 		int *pnBranchAtom,
