@@ -1,0 +1,6 @@
+
+To compile *.yy files:
+(need bison 1.8x)
+
+
+/bin/sh ../../../ylwrap `test -f 'trace_g.yy' || echo './'`trace_g.yy y.tab.c libt5_la-trace_g.cc y.tab.h libt5_la-trace_g.h y.output libt5_la-trace_g.output -- bison -y  -d
