@@ -10,7 +10,7 @@ SOURCES= solve.cc \
              heuristic.cc \
              bt_lemmas.cc bt_specfn.cc bt_smurfs.cc \
              bt_specfn_and.cc bt_specfn_xor.cc bt_specfn_minmax.cc \
-             lemmas.cc lemmas_and.cc lemmas_xor.cc \
+             lemmas.cc lemmas_and.cc lemmas_xor.cc lemmas_minmax.cc \
 	     lemmacache.cc lemmainfo.cc lemmaspace.cc lemmawlits.cc lemmamisc.cc \
              smurffactory.cc smurfstates.cc \
              state_stacks.cc \

@@ -146,7 +146,7 @@ SOURCES = solve.cc \
              heuristic.cc \
              bt_lemmas.cc bt_specfn.cc bt_smurfs.cc \
              bt_specfn_and.cc bt_specfn_xor.cc bt_specfn_minmax.cc \
-             lemmas.cc lemmas_and.cc lemmas_xor.cc \
+             lemmas.cc lemmas_and.cc lemmas_xor.cc lemmas_minmax.cc \
 	     lemmacache.cc lemmainfo.cc lemmaspace.cc lemmawlits.cc lemmamisc.cc \
              smurffactory.cc smurfstates.cc \
              state_stacks.cc \
@@ -181,9 +181,9 @@ am__libsolver_a_SOURCES_DIST = solve.cc init_solver.cc brancher.cc \
 	l_heuristic.cc l_lemma.cc i_heuristic.cc heuristic.cc \
 	bt_lemmas.cc bt_specfn.cc bt_smurfs.cc bt_specfn_and.cc \
 	bt_specfn_xor.cc bt_specfn_minmax.cc lemmas.cc lemmas_and.cc \
-	lemmas_xor.cc lemmacache.cc lemmainfo.cc lemmaspace.cc \
-	lemmawlits.cc lemmamisc.cc smurffactory.cc smurfstates.cc \
-	state_stacks.cc bdd2smurf.cc bdd2specfn_and.cc \
+	lemmas_xor.cc lemmas_minmax.cc lemmacache.cc lemmainfo.cc \
+	lemmaspace.cc lemmawlits.cc lemmamisc.cc smurffactory.cc \
+	smurfstates.cc state_stacks.cc bdd2smurf.cc bdd2specfn_and.cc \
 	bdd2specfn_xor.cc bdd2specfn_minmax.cc autarky.cc display.cc \
 	display_sf.cc verify.cc recordsol.cc sf_addons.cc \
 	smurfaddons.cc transitions.cc update_heu.cc crtwin.cc \
@@ -199,8 +199,9 @@ am__objects_1 = solve.$(OBJEXT) init_solver.$(OBJEXT) brancher.$(OBJEXT) \
 	bt_smurfs.$(OBJEXT) bt_specfn_and.$(OBJEXT) \
 	bt_specfn_xor.$(OBJEXT) bt_specfn_minmax.$(OBJEXT) \
 	lemmas.$(OBJEXT) lemmas_and.$(OBJEXT) lemmas_xor.$(OBJEXT) \
-	lemmacache.$(OBJEXT) lemmainfo.$(OBJEXT) lemmaspace.$(OBJEXT) \
-	lemmawlits.$(OBJEXT) lemmamisc.$(OBJEXT) smurffactory.$(OBJEXT) \
+	lemmas_minmax.$(OBJEXT) lemmacache.$(OBJEXT) \
+	lemmainfo.$(OBJEXT) lemmaspace.$(OBJEXT) lemmawlits.$(OBJEXT) \
+	lemmamisc.$(OBJEXT) smurffactory.$(OBJEXT) \
 	smurfstates.$(OBJEXT) state_stacks.$(OBJEXT) \
 	bdd2smurf.$(OBJEXT) bdd2specfn_and.$(OBJEXT) \
 	bdd2specfn_xor.$(OBJEXT) bdd2specfn_minmax.$(OBJEXT) \
@@ -228,9 +229,9 @@ am__libsolver_la_SOURCES_DIST = solve.cc init_solver.cc brancher.cc \
 	l_heuristic.cc l_lemma.cc i_heuristic.cc heuristic.cc \
 	bt_lemmas.cc bt_specfn.cc bt_smurfs.cc bt_specfn_and.cc \
 	bt_specfn_xor.cc bt_specfn_minmax.cc lemmas.cc lemmas_and.cc \
-	lemmas_xor.cc lemmacache.cc lemmainfo.cc lemmaspace.cc \
-	lemmawlits.cc lemmamisc.cc smurffactory.cc smurfstates.cc \
-	state_stacks.cc bdd2smurf.cc bdd2specfn_and.cc \
+	lemmas_xor.cc lemmas_minmax.cc lemmacache.cc lemmainfo.cc \
+	lemmaspace.cc lemmawlits.cc lemmamisc.cc smurffactory.cc \
+	smurfstates.cc state_stacks.cc bdd2smurf.cc bdd2specfn_and.cc \
 	bdd2specfn_xor.cc bdd2specfn_minmax.cc autarky.cc display.cc \
 	display_sf.cc verify.cc recordsol.cc sf_addons.cc \
 	smurfaddons.cc transitions.cc update_heu.cc crtwin.cc \
@@ -242,9 +243,9 @@ am__objects_2 = solve.lo init_solver.lo brancher.lo backtrack.lo \
 	l_heuristic.lo l_lemma.lo i_heuristic.lo heuristic.lo \
 	bt_lemmas.lo bt_specfn.lo bt_smurfs.lo bt_specfn_and.lo \
 	bt_specfn_xor.lo bt_specfn_minmax.lo lemmas.lo lemmas_and.lo \
-	lemmas_xor.lo lemmacache.lo lemmainfo.lo lemmaspace.lo \
-	lemmawlits.lo lemmamisc.lo smurffactory.lo smurfstates.lo \
-	state_stacks.lo bdd2smurf.lo bdd2specfn_and.lo \
+	lemmas_xor.lo lemmas_minmax.lo lemmacache.lo lemmainfo.lo \
+	lemmaspace.lo lemmawlits.lo lemmamisc.lo smurffactory.lo \
+	smurfstates.lo state_stacks.lo bdd2smurf.lo bdd2specfn_and.lo \
 	bdd2specfn_xor.lo bdd2specfn_minmax.lo autarky.lo display.lo \
 	display_sf.lo verify.lo recordsol.lo sf_addons.lo \
 	smurfaddons.lo transitions.lo update_heu.lo crtwin.lo \
@@ -316,6 +317,8 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	./$(DEPDIR)/lemmamisc.Po ./$(DEPDIR)/lemmas.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/lemmas.Po ./$(DEPDIR)/lemmas_and.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/lemmas_and.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/lemmas_minmax.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/lemmas_minmax.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/lemmas_xor.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/lemmas_xor.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/lemmaspace.Plo \
@@ -366,7 +369,7 @@ SOURCES = solve.cc \
              heuristic.cc \
              bt_lemmas.cc bt_specfn.cc bt_smurfs.cc \
              bt_specfn_and.cc bt_specfn_xor.cc bt_specfn_minmax.cc \
-             lemmas.cc lemmas_and.cc lemmas_xor.cc \
+             lemmas.cc lemmas_and.cc lemmas_xor.cc lemmas_minmax.cc \
 	     lemmacache.cc lemmainfo.cc lemmaspace.cc lemmawlits.cc lemmamisc.cc \
              smurffactory.cc smurfstates.cc \
              state_stacks.cc \
@@ -499,6 +502,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lemmas.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lemmas_and.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lemmas_and.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lemmas_minmax.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lemmas_minmax.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lemmas_xor.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lemmas_xor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lemmaspace.Plo@am__quote@
@@ -538,8 +543,7 @@ distclean-depend:
 	-rm -rf ./$(DEPDIR)
 
 .cc.o:
-@am__fastdepCXX_TRUE@	@echo Compiling $*
-@am__fastdepCXX_TRUE@	@if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" \
+@am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" \
 @am__fastdepCXX_TRUE@	  -c -o $@ `test -f '$<' || echo '$(srcdir)/'`$<; \
 @am__fastdepCXX_TRUE@	then mv "$(DEPDIR)/$*.Tpo" "$(DEPDIR)/$*.Po"; \
 @am__fastdepCXX_TRUE@	else rm -f "$(DEPDIR)/$*.Tpo"; exit 1; \
