@@ -473,13 +473,12 @@ void CNF_to_BDD(int cnf)
 		//ok...this is where the and= and or= are sorted out.
 		//I'll have to make a good explaination later
 		//cause this was hard to work out.
-      long num_iters = 0;
       int and_or_do = 1;
       while(and_or_do) {
-         if (++num_iters%1000 == 1)
-            d2_printf2("\rAND/OR Search CNF %ld       ", num_iters);
          and_or_do = 0;
 			for(long x = 1; x < numinp+1; x++) {
+				if (x%1000 == 1)
+				  d2_printf3("\rAND/OR Search CNF %ld/%ld ...       ", x, numinp);
 				if(two_pos[x].num[0] > 0) {
 					out = 0;
 					for(z = 0; (greater_neg[x].num[z] != 0) && (out != 1); z++) {

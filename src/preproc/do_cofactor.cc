@@ -49,13 +49,29 @@ Do_Cofactor()
   int ret=PREP_NO_CHANGE;
   BDDNode *cof = NULL;
   d3_printf1("\nCOFACTORING - ");
-
+	affected = 0;
+	char p[100];
+	D_3(
+		 sprintf(p, "{0:0/%d}", nmbrFunctions);
+		 str_length = strlen(p);
+		 d3_printf1(p);
+	);
+	
   for (int x = 0; x < numout; x++)
    {
+		D_3(
+			 if (x % 100 == 0) {
+				 for(int iter = 0; iter<str_length; iter++)
+					d3_printf1("\b");
+				 sprintf(p, "{%ld:%d/%d}", affected, x, nmbrFunctions);
+				 str_length = strlen(p);
+				 d3_printf1(p);
+			 }
+		);
+
       if (x%1000 == 0) 
          d2e_printf3("\rPreprocessing Co %d/%ld", x, numout);
       
-
      if (length[x] <= COF_MAX && length[x] > 0)
       {
         d3_printf1("*"); 
@@ -75,6 +91,7 @@ Do_Cofactor()
 					case TRIV_SAT:   return TRIV_SAT; 
 					default: break;
 				  }
+				  affected++;
 				  ret = PREP_CHANGED;
 			  }
          }

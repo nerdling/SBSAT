@@ -44,12 +44,17 @@
 int DepCluster();
 
 int Do_DepCluster() {
-   d3_printf1("\nDEPENDENT CLUSTERING -  ");
-   int num_iters = 0;
+   d3_printf1("DEPENDENT CLUSTERING - ");
    int cofs = PREP_CHANGED;
    int ret = PREP_NO_CHANGE;
+	affected = 0;
+	char p[100];
+	D_3(
+		 sprintf(p, "{0:0/%d}", nmbrFunctions);
+		 str_length = strlen(p);
+		 d3_printf1(p);
+	);
 	while (cofs!=PREP_NO_CHANGE) {
-      d2e_printf2("\rPreprocessing Dc %d ", ++num_iters);
       cofs = DepCluster ();
 		//cofs = Do_ExQuantify ();
       if(cofs == PREP_CHANGED) ret = PREP_CHANGED;
@@ -96,8 +101,21 @@ int DepCluster () {
 	}
 	
 	BDDNode *Quantify;
-	
+
 	for (int i = 0; i < numinp + 1; i++) {
+		char p[100];
+		D_3(
+			 if (i % 100 == 0) {
+				 for(int iter = 0; iter<str_length; iter++)
+					d3_printf1("\b");
+				 sprintf(p, "{%ld:%d/%ld}", affected, i, numinp);
+				 str_length = strlen(p);
+				 d3_printf1(p);
+			 }
+		);
+      
+		d2e_printf3("\rPreprocessing Dc %d/%ld ", i, numinp);
+		
 		//do temp variables first (independantVars[i] == 2)
 		//then come back and do dependent vars (independantVars[i] == 0)
 		if(independantVars[i] != 1) {
@@ -231,7 +249,6 @@ int DepCluster () {
 					functionType[k] = UNSURE;
 #endif
 				}
-				
 				count2++;
 				
 				//Need to add BDD k into the inference list of any variable that wasn't
@@ -259,6 +276,7 @@ int DepCluster () {
 					a++;
 				}
 				
+				affected++;
 				functions[k] = Quantify;
 				switch (int r=Rebuild_BDDx(k)) {
 				 case TRIV_UNSAT:
@@ -268,7 +286,7 @@ int DepCluster () {
 					goto ex_bailout;
 				 default: break;
 				}
-				
+
 				SetRepeats(k);
 				ret = PREP_CHANGED;
 				delete [] bdd_vars;

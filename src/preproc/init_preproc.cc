@@ -56,6 +56,8 @@ int *tempint = NULL;
 float *var_score = NULL;
 store *variables;
 int *num_funcs_var_occurs = NULL;
+int str_length;
+long affected;
 BDDNodeStruct **xorFunctions;
 
 int original_numout;

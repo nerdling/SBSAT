@@ -48,15 +48,21 @@ int MAX_EXQUANTIFY_CLAUSES = 3;	//Number of BDDs a variable appears in
 int MAX_EXQUANTIFY_VARLENGTH = 18;	//Limits size of number of vars in 
 				     //constraints created by ExQuantify
 //!
+
 int ExQuantify();
 
 int Do_ExQuantify() {
-   d3_printf1("EXISTENTIALLY QUANTIFYING -  ");
-   int num_iters = 0;
+   d3_printf1("EXISTENTIALLY QUANTIFYING - ");
    int cofs = PREP_CHANGED;
    int ret = PREP_NO_CHANGE;
-   while (cofs!=PREP_NO_CHANGE) {
-      d2e_printf2("\rPreprocessing Ex %d ", ++num_iters);
+	affected = 0;
+	char p[100];
+	D_3(
+		 sprintf(p, "{0:0/%d}", nmbrFunctions);
+		 str_length = strlen(p);
+		 d3_printf1(p);
+	);
+	while (cofs!=PREP_NO_CHANGE) {
       cofs = ExQuantify ();
       if(cofs == PREP_CHANGED) ret = PREP_CHANGED;
       else if(cofs == TRIV_UNSAT) {
@@ -104,6 +110,20 @@ int ExQuantify () {
 	BDDNode *Quantify;
 	
 	for (int i = 0; i < numinp + 1; i++) {
+		char p[100];
+		D_3(
+			 if (i % 100 == 0) {
+				 for(int iter = 0; iter<str_length; iter++)
+					d3_printf1("\b");
+				 sprintf(p, "{%ld:%d/%ld}", affected, i, numinp);
+				 str_length = strlen(p);
+				 d3_printf1(p);
+			 }
+		);
+
+		if(i % 100 == 0) 
+		  d2e_printf3("\rPreprocessing Ex %d/%ld ", i, numinp);
+		
 		if(tempinters[i] == 1) {
 			int j = tempmem[i]->next->BDD;
 			//Only quantify away variables from unknown functions, or functions
@@ -115,6 +135,10 @@ int ExQuantify () {
 				 || (i == abs (equalityVble[j]))) {
 
 				Quantify = functions[j];
+				affected++;
+				for(int iter = 0; iter<str_length; iter++)
+					d3_printf1("\b");
+				str_length = 0;
 				d3_printf2 ("*{%d}", i);
 				//fprintf(stderr, "\n%d: ", j);
 				//printBDDerr(functions[j]);

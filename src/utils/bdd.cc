@@ -567,22 +567,22 @@ int splitXors() {
 		if(length[x] <= PLAINXOR_LIMIT || functionType[x]!=UNSURE) continue; //???
 		BDDNode *xdd = bdd2xdd(functions[x]);		
 		countSingleXors(xdd, xor_vars, nonxor_vars);
-		d3_printf2("\n%ld: ", x);
+		d4_printf2("\n%ld: ", x);
       /*
-      D_3(
+      D_4(
          printBDDfile(xdd, stddbg);
       )
       */
 		BDDNode *ands = true_ptr;
 		BDDNode *xor_part = false_ptr;
 		int y = 0;
-	   d3_printf2("%ld: non-linear: ", x);
+	   d4_printf2("%ld: non-linear: ", x);
 		for(y=0; nonxor_vars[y]!=0; y++) {
-			d3_printf2("%d ", nonxor_vars[y]);
+			d4_printf2("%d ", nonxor_vars[y]);
 		}
-	   d3_printf2("\n%ld linear: ", x);
+	   d4_printf2("\n%ld linear: ", x);
 		for(y=0; xor_vars[y]!=0; y++) {
-			d3_printf2("%d ", xor_vars[y]);
+			d4_printf2("%d ", xor_vars[y]);
 			ands = ite_and(ands, ite_var(-xor_vars[y]));
 			xor_part = ite_xor(xor_part, ite_var(xor_vars[y]));
 		}
@@ -590,12 +590,12 @@ int splitXors() {
       
 		//if(IS_TRUE_FALSE(xor_part)) continue; /* unnecessary */
 		BDDNode *nonxor_part = gcf(functions[x], ands);
-      D_3(
-         //d3_printf1("\n");
+      D_4(
+         //d4_printf1("\n");
          //printBDDfile(functions[x], stddbg);
-         d3_printf1("\n");
+         d4_printf1("\n");
          printBDDfile(nonxor_part, stddbg);
-         d3_printf1("\n");
+         d4_printf1("\n");
          printBDDfile(xor_part, stddbg);
       )
 
@@ -604,7 +604,7 @@ int splitXors() {
          //functionType[x] = PLAINXOR; /* mark it as plain exor */
          continue;
       }
-      d3_printf2("Adding split function %ld\n", x);
+      d4_printf2("Adding split function %ld\n", x);
 		total_vars++;
 		xorFunctions[x] = ite_xor(xor_part, ite_var(total_vars));
 #ifndef NDEBUG

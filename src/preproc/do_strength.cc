@@ -54,11 +54,27 @@ int Do_Strength() {
 	for (int x = 0; x < nmbrFunctions; x++)
 	  repeat_small[x] = St_repeat[x];
 
-   D_3(print_nonroller();)
+//   D_3(print_nonroller();)
 	d3_printf1("STRENGTHENING - ");
+	affected = 0;
+	char p[100];
+   D_3(
+		 sprintf(p, "{0:0/%d}", nmbrFunctions);
+		 str_length = strlen(p);
+		 d3_printf1(p);
+	);
 	for (int x = 0; x < nmbrFunctions; x++)
 	  {
-        if (x % 100 == 0)
+		  D_3(
+				if (x % 100 == 0) {
+					for(int iter = 0; iter<str_length; iter++)
+					  d3_printf1("\b");
+					sprintf(p, "{%ld:%d/%d}", affected, x, nmbrFunctions);
+					str_length = strlen(p);
+					d3_printf1(p);
+				}
+		  );
+		  if (x % 100 == 0)
            d2e_printf3("\rPreprocessing St %d/%d", x, nmbrFunctions);
 		  St_repeat[x] = 0;
 		  if (functions[x] == true_ptr)
@@ -86,7 +102,8 @@ int Do_Strength() {
 						if (currentBDD != functions[x])
 						  {
 							  //d2_printf1("*");
-                       D_3(print_roller();)
+//                       D_3(print_roller();)
+							  affected++; 
 							  ret = PREP_CHANGED;
 							  SetRepeats(x);
 							  functions[x] = currentBDD;
@@ -110,7 +127,8 @@ int Do_Strength() {
 						if (currentBDD != functions[j])
 						  {
 							  //d2_printf1 ("*");
-                       D_3(print_roller();)
+//                       D_3(print_roller();)
+							  affected++; 
 							  ret = PREP_CHANGED;
 							  SetRepeats(j);
 							  functions[j] = currentBDD;
@@ -127,7 +145,7 @@ int Do_Strength() {
 	  }
 	st_bailout:
 
-   D_3(print_nonroller();)
+//   D_3(print_nonroller();)
 	d3_printf1 ("\n");
    d2e_printf1("\r                                         ");
 	delete [] repeat_small;
