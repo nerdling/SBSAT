@@ -116,7 +116,7 @@ int DepCluster () {
       
 		if(i % 100 == 0) {
 			if (nCtrlC) {
-				d3_printf1("\nBreaking out of Dependant Clustering\n");
+				d3_printf1("\nBreaking out of Dependent Clustering\n");
 				nCtrlC = 0;
 				break;
 			}
