@@ -365,7 +365,7 @@ Finish_Preprocessing()
 		if (functions[x] == true_ptr || (functionType[x]==AUTARKY_FUNC && !USE_AUTARKY_SMURFS)) {
 			count--;
 		} else if (functionType[x] == AUTARKY_FUNC && USE_AUTARKY_SMURFS){
-			functions[x] = possible_BDD(functions[x], equalityVble[x]);
+			//functions[x] = possible_BDD(functions[x], equalityVble[x]);
 		} else if (functions[x] == false_ptr) {
 			/* this might happen but I already know about unsatisfiness */
 			// ret = TRIV_UNSAT;

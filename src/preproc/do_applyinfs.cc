@@ -406,13 +406,13 @@ int Rebuild_BDDx (int x) {
 	SetRepeats(x);
 	Result *result;
 	
-	if (functions[x] == false_ptr)
+	if (functions[x] == false_ptr && functionType[x]!=AUTARKY_FUNC)
 	  return TRIV_UNSAT;
 
 	//Get Inferences	
 	infer *lastiter = NULL;
 	infer *startiter = NULL;
-	if(functions[x]->inferences != NULL) {
+	if(functions[x]->inferences != NULL && functionType[x]!=AUTARKY_FUNC) {
 		lastiter = AllocateInference(0, 0, NULL);
 		startiter = lastiter;
 		for(infer *iterator = functions[x]->inferences; iterator != NULL; iterator = iterator->next) {
@@ -434,7 +434,7 @@ int Rebuild_BDDx (int x) {
 		DeallocateOneInference(startiter); 
 	} else lastinfer->next = NULL;
 
-	if(functionType[x] == AUTARKY_FUNC && functions[x]->inferences == NULL) {
+	if(functionType[x] == AUTARKY_FUNC && functions[x]->inferences != NULL) {
 		//fprintf(stderr, "|%d %d|", l->equivCount(equalityVble[x]), l->opposCount(equalityVble[x]));
 		//l->printEquivalence(equalityVble[x]);
 		//l->printOpposite(equalityVble[x]);
@@ -443,7 +443,8 @@ int Rebuild_BDDx (int x) {
 		//l->printWhetherEquiv();
 		//str_length=0;
 		if(l->equivCount(equalityVble[x])==0 && l->opposCount(equalityVble[x])==0) {
-			BDDNode *autarkBDD = possible_BDD(functions[x], equalityVble[x]);
+			//BDDNode *autarkBDD = possible_BDD(functions[x], equalityVble[x]);
+			BDDNode *autarkBDD = functions[x];
 			if(autarkBDD == false_ptr) {
 				startiter = AllocateInference(equalityVble[x], 0, NULL);
 				startiter->next = lastinfer->next;
