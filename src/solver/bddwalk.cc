@@ -827,7 +827,12 @@ int verifyunsat(int i) {
 
 void updateBDDCounts(int i) {
 	BDDNode *f = functions[i];
-	int j = 0, k = 0;
+#ifdef USE_FALSE_PATHS
+	int j = 0;
+#endif
+#ifdef USE_BRITTLE
+   int  k = 0;
+#endif
 	float top_density = f->density;
 	int count = 0;
 
@@ -1113,9 +1118,12 @@ int picknoveltyplus(void)
 
 	int try_agains = 0;
 	again:;
+#ifndef USE_PATHS_TO_TRUE
 	int var, birthdate;
+   int youngest=0;
+#endif
 	double diff = 0.0;
-	int youngest=0, youngest_birthdate, best=-1, second_best=-1;
+	int youngest_birthdate, best=-1, second_best=-1;
 	double best_diff, second_best_diff;
 	int best_make = 0, second_make = 0;
 	int tofix, BDDsize;
@@ -1132,7 +1140,9 @@ int picknoveltyplus(void)
 	//	return 1;
 	//}
 
+#ifndef USE_PATHS_TO_TRUE
 	int flipvar = 0;
+#endif
 	int flippath = 0;
 	int path = 0;
 	int y;
@@ -1367,7 +1377,10 @@ void flipatoms_true_paths() {
 
 void flipatoms()
 {
-	int i, j, k;			/* loop counter */
+	int i;			/* loop counter */
+#ifdef USE_FALSE_PATHS
+	int j, k;			/* loop counter */
+#endif
 	//int toenforce;		/* literal to enforce */
 	register int cli;
 	int numocc;
