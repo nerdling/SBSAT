@@ -142,7 +142,7 @@ int ExQuantifyAnd () {
 			}
 			
 			//if (amount_count <= x) {
-			if (amount_count == x) {
+			if (amount_count == x){// && independantVars[i]==0) {
 				int j = amount[i].head->num;
 				Quantify = functions[j];
 				int out = 0;
@@ -354,32 +354,63 @@ int ExQuantifyAnd () {
 						}
 						if(out == 0) needs_slimming = 0;
 					}
-					if(needs_slimming == 1 && amount[i].head != NULL){// && length[j]>30) {
+					if(needs_slimming == 1) {// && length[j]>30) {
 						//Shouldn't be just i that can be quantified away, 
 						//Should be some variable in this BDD that can be
 						//Quantified away, i is not always even a choice!!!
-						if(amount[i].head->next==NULL && amount[i].head->num == j
-							&& inferlist->next==NULL) {
-							//Triple Extra Protection!
-							for(int iter = 0; iter<str_length; iter++)
-							  d3_printf1("\b");
-							d3_printf2 ("*{%d}", i);
-							str_length = 0;// strlen(p);
-							functions[j] = xquantify (functions[j], i);
-							variablelist[i].true_false = 2;
-							SetRepeats(j);
-							
-							switch (int r=Rebuild_BDDx(j)) {
-							 case TRIV_UNSAT:
-							 case TRIV_SAT: 
-							 case PREP_ERROR: 
-								ret = r; goto ea_bailout; /* as much as I hate gotos */
-							 default: break;
+						for(int v = 0; v < length[j] && needs_slimming; v++) {
+							if(amount[variables[j].num[v]].head->next == NULL &&
+								independantVars[variables[j].num[v]] == 2) {
+								for(int iter = 0; iter<str_length; iter++)
+								  d3_printf1("\b");
+								d3_printf2 ("*{%d}", variables[j].num[v]);
+								str_length = 0;// strlen(p);
+								functions[j] = xquantify (functions[j], variables[j].num[v]);
+								variablelist[variables[j].num[v]].true_false = 2;
+								SetRepeats(j);
+								
+								switch (int r=Rebuild_BDDx(j)) {
+								 case TRIV_UNSAT:
+								 case TRIV_SAT: 
+								 case PREP_ERROR:
+									ret = r; goto ea_bailout; /* as much as I hate gotos */
+								 default: break;
+								}
+								equalityVble[j] = 0;
+								functionType[j] = UNSURE;
+								ret = PREP_CHANGED;
+								needs_slimming = 0;
 							}
-							equalityVble[j] = 0;
-							functionType[j] = UNSURE;
-							ret = PREP_CHANGED;
-							//goto ea_bailout; /* as much as I hate gotos */
+						}
+						if(needs_slimming) {
+							int quant_var = 0;
+							for(int v = 0; v < length[j]; v++) {
+								if(amount[variables[j].num[v]].head->next == NULL) {
+									quant_var = variables[j].num[v];
+									break;
+								}
+							}
+							if(quant_var != 0) {
+								for(int iter = 0; iter<str_length; iter++)
+								  d3_printf1("\b");
+								d3_printf2 ("*{%d}", quant_var);
+								str_length = 0;// strlen(p);
+								functions[j] = xquantify (functions[j], quant_var);
+								variablelist[quant_var].true_false = 2;
+								SetRepeats(j);
+								
+								switch (int r=Rebuild_BDDx(j)) {
+								 case TRIV_UNSAT:
+								 case TRIV_SAT: 
+								 case PREP_ERROR: 
+									ret = r; goto ea_bailout; /* as much as I hate gotos */
+								 default: break;
+								}
+								equalityVble[j] = 0;
+								functionType[j] = UNSURE;
+								ret = PREP_CHANGED;
+								//goto ea_bailout; /* as much as I hate gotos */									  
+							}
 						}
 					}
 				} else if(functions[j] == Quantify && x!=1) {

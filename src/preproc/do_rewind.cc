@@ -95,8 +95,8 @@ int Do_Rewind() {
 	if (Total_inferences > num_inferences) num_inferences = Total_inferences;
 	else ret = PREP_NO_CHANGE;
 	fprintf(stderr, "%d/%d ", Total_inferences, numinp);
-	
-   bdd_gc(1);
 
+	bdd_gc(1);
+	
 	return ret;
 }
