@@ -876,7 +876,7 @@ void bddloop () {
 	numinp += 2;
 	markbdd_line = 1;
 	int intnum = 0, keepnum = 0;
-	BDDNode * bdd = NULL;
+	BDDNode *bdd = NULL;
 	int p = 0;
 
 	found_initbranch = 0;
