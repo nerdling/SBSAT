@@ -975,70 +975,129 @@ e1 but with each variable incremented by i1.
 
 <DL COMPACT>
 <DT>
-<DD>p&nbsp;bdd&nbsp;18&nbsp;13&nbsp;;&nbsp;18&nbsp;vars,&nbsp;13&nbsp;functions&nbsp;
+<DD><FONT SIZE="-2">p&nbsp;bdd&nbsp;18&nbsp;13&nbsp;;&nbsp;18&nbsp;vars,&nbsp;13&nbsp;functions&nbsp;</FONT>
+<P>
+
 
 <P>
-#define&nbsp;fun&nbsp;1&nbsp;2&nbsp;3&nbsp;4&nbsp;
+<FONT SIZE="-2">#define&nbsp;fun&nbsp;1&nbsp;2&nbsp;3&nbsp;4&nbsp;#&nbsp;ite&nbsp;1&nbsp;and&nbsp;2&nbsp;3&nbsp;or&nbsp;3&nbsp;4&nbsp;;&nbsp;parms&nbsp;must&nbsp;be&nbsp;consecutive&nbsp;integers&nbsp;from&nbsp;1&nbsp;</FONT>
+<P>
+
 
 <P>
-#&nbsp;ite&nbsp;1&nbsp;and&nbsp;2&nbsp;3&nbsp;or&nbsp;3&nbsp;4&nbsp;;&nbsp;parms&nbsp;must&nbsp;be&nbsp;consecutive&nbsp;integers&nbsp;from&nbsp;1&nbsp;
+<FONT SIZE="-2">#define&nbsp;g&nbsp;1&nbsp;2&nbsp;3&nbsp;#&nbsp;ite&nbsp;fun&nbsp;1&nbsp;2&nbsp;3&nbsp;-2&nbsp;T&nbsp;3&nbsp;</FONT>
+<P>
+
 
 <P>
-#define&nbsp;g&nbsp;1&nbsp;2&nbsp;3&nbsp;
+<FONT SIZE="-2">InitialBranch&nbsp;(2,&nbsp;4..12,&nbsp;15,&nbsp;16,&nbsp;18,&nbsp;1,&nbsp;3)&nbsp;;&nbsp;These&nbsp;variables&nbsp;will&nbsp;be&nbsp;branched&nbsp;on&nbsp;first&nbsp;</FONT>
+<P>
+
 
 <P>
-#&nbsp;ite&nbsp;fun&nbsp;1&nbsp;2&nbsp;3&nbsp;-2&nbsp;T&nbsp;3&nbsp;
+<FONT SIZE="-2">ite&nbsp;4&nbsp;5&nbsp;6&nbsp;;&nbsp;eqn&nbsp;$1&nbsp;</FONT>
+<P>
+
 
 <P>
-InitialBranch&nbsp;(2,&nbsp;4..12,&nbsp;15,&nbsp;16,&nbsp;18,&nbsp;1,&nbsp;3)&nbsp;;&nbsp;These&nbsp;variables&nbsp;will&nbsp;be&nbsp;branched&nbsp;on&nbsp;first&nbsp;
+<FONT SIZE="-2">*or&nbsp;$1&nbsp;3&nbsp;;&nbsp;eqn&nbsp;$2,&nbsp;smurf&nbsp;1&nbsp;</FONT>
+<P>
+
 
 <P>
-ite&nbsp;4&nbsp;5&nbsp;6&nbsp;;&nbsp;eqn&nbsp;$1&nbsp;
+<FONT SIZE="-2">*or&nbsp;5&nbsp;-6&nbsp;;&nbsp;eqn&nbsp;$3,&nbsp;smurf&nbsp;2&nbsp;</FONT>
+<P>
+
 
 <P>
-*or&nbsp;$1&nbsp;3&nbsp;;&nbsp;eqn&nbsp;$2,&nbsp;smurf&nbsp;1&nbsp;
+<FONT SIZE="-2">*and&nbsp;$1&nbsp;-4&nbsp;;&nbsp;eqn&nbsp;$4,&nbsp;smurf&nbsp;3&nbsp;</FONT>
+<P>
+
 
 <P>
-*or&nbsp;5&nbsp;-6&nbsp;;&nbsp;eqn&nbsp;$3,&nbsp;smurf&nbsp;2&nbsp;
+<FONT SIZE="-2">*imp&nbsp;$1&nbsp;$4&nbsp;;&nbsp;eqn&nbsp;$5,&nbsp;smurf&nbsp;4&nbsp;</FONT>
+<P>
+
 
 <P>
-*and&nbsp;$1&nbsp;-4&nbsp;;&nbsp;eqn&nbsp;$4,&nbsp;smurf&nbsp;3&nbsp;
+<FONT SIZE="-2">#define&nbsp;imp&nbsp;1&nbsp;2&nbsp;#&nbsp;or3(1,&nbsp;2,&nbsp;3);&nbsp;Notice&nbsp;the&nbsp;'imp'&nbsp;operator&nbsp;was&nbsp;overloaded&nbsp;to&nbsp;be&nbsp;the&nbsp;OR&nbsp;of&nbsp;3&nbsp;variables.&nbsp;</FONT>
+<P>
+
 
 <P>
-*imp&nbsp;$1&nbsp;$4&nbsp;;&nbsp;eqn&nbsp;$5,&nbsp;smurf&nbsp;4&nbsp;
+<FONT SIZE="-2">*imp(3&nbsp;4&nbsp;5)&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;eqn&nbsp;$6,&nbsp;smurf&nbsp;5&nbsp;</FONT>
+<P>
+
 
 <P>
-#define&nbsp;imp&nbsp;1&nbsp;2&nbsp;3&nbsp;
+&nbsp;<FONT SIZE="-2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;this&nbsp;is&nbsp;a&nbsp;really&nbsp;bad&nbsp;idea,&nbsp;it&nbsp;probably&nbsp;shouldn't&nbsp;be&nbsp;allowed&nbsp;</FONT>
+<P>
+
 
 <P>
-#&nbsp;or3(1,&nbsp;2,&nbsp;3);&nbsp;Notice&nbsp;the&nbsp;'imp'&nbsp;operator&nbsp;was&nbsp;overloaded&nbsp;to&nbsp;be&nbsp;the&nbsp;OR&nbsp;of&nbsp;3&nbsp;variables.&nbsp;
+<FONT SIZE="-2">print_tree&nbsp;$5&nbsp;&nbsp;;&nbsp;no&nbsp;equation&nbsp;created,&nbsp;no&nbsp;smurf&nbsp;created</FONT>
+<P>
+
 
 <P>
-*imp(3&nbsp;4&nbsp;5)&nbsp;;&nbsp;eqn&nbsp;$6,&nbsp;smurf&nbsp;5&nbsp;;&nbsp;this&nbsp;is&nbsp;a&nbsp;really&nbsp;bad&nbsp;idea,&nbsp;it&nbsp;probably&nbsp;shouldn't&nbsp;be&nbsp;allowed&nbsp;
+<FONT SIZE="-2">pprint_tree&nbsp;$5&nbsp;;&nbsp;no&nbsp;equation&nbsp;created,&nbsp;no&nbsp;smurf&nbsp;created&nbsp;</FONT>
+<P>
+
 
 <P>
-print_tree&nbsp;$5;&nbsp;no&nbsp;equation&nbsp;created,&nbsp;no&nbsp;smurf&nbsp;created&nbsp;pprint_tree&nbsp;$5&nbsp;;&nbsp;no&nbsp;equation&nbsp;created,&nbsp;no&nbsp;smurf&nbsp;created&nbsp;
+<FONT SIZE="-2">ite&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;eqn&nbsp;$7</FONT>
+<P>
+
 
 <P>
-ite&nbsp;2&nbsp;;&nbsp;eqn&nbsp;$7&nbsp;ite&nbsp;3&nbsp;4&nbsp;5&nbsp;;&nbsp;plus&nbsp;comments&nbsp;are&nbsp;ignored,&nbsp;even&nbsp;in&nbsp;the&nbsp;middle&nbsp;of&nbsp;a&nbsp;function&nbsp;
+<FONT SIZE="-2">ite&nbsp;3&nbsp;4&nbsp;5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;plus&nbsp;comments&nbsp;are&nbsp;ignored,&nbsp;even&nbsp;in&nbsp;the&nbsp;middle&nbsp;of&nbsp;a&nbsp;function&nbsp;</FONT>
+<P>
+
 
 <P>
-ite&nbsp;4&nbsp;5&nbsp;F&nbsp;
+<FONT SIZE="-2">ite&nbsp;4&nbsp;5&nbsp;F&nbsp;</FONT>
+<P>
+
 
 <P>
-*fun&nbsp;4&nbsp;-5&nbsp;2&nbsp;3&nbsp;;&nbsp;eqn&nbsp;$8,&nbsp;smurf&nbsp;5&nbsp;
+<FONT SIZE="-2">*fun&nbsp;4&nbsp;-5&nbsp;2&nbsp;3&nbsp;;&nbsp;eqn&nbsp;$8,&nbsp;smurf&nbsp;5&nbsp;</FONT>
+<P>
+
 
 <P>
-*fun&nbsp;g&nbsp;-5&nbsp;4&nbsp;$6&nbsp;2&nbsp;3&nbsp;4&nbsp;;&nbsp;eqn&nbsp;$9,&nbsp;smurf&nbsp;6&nbsp;
+<FONT SIZE="-2">*fun&nbsp;g&nbsp;-5&nbsp;4&nbsp;$6&nbsp;2&nbsp;3&nbsp;4&nbsp;;&nbsp;eqn&nbsp;$9,&nbsp;smurf&nbsp;6&nbsp;</FONT>
+<P>
+
 
 <P>
-*equ(xor3(2,&nbsp;and(-3,&nbsp;4),&nbsp;nand(7,&nbsp;5),&nbsp;ite(15,&nbsp;or(4,&nbsp;-7),&nbsp;nor(4,&nbsp;-7))))&nbsp;;&nbsp;eqn&nbsp;$10,&nbsp;smurf&nbsp;7&nbsp;
+<FONT SIZE="-2">*equ(xor3(2,&nbsp;and(-3,&nbsp;4),&nbsp;nand(7,&nbsp;5),&nbsp;ite(15,&nbsp;or(4,&nbsp;-7),&nbsp;nor(4,&nbsp;-7))))&nbsp;;&nbsp;eqn&nbsp;$10,&nbsp;smurf&nbsp;7&nbsp;</FONT>
+<P>
+
 
 <P>
-*add_state($10,&nbsp;1)&nbsp;;&nbsp;eqn&nbsp;$11,&nbsp;smurf&nbsp;7&nbsp;;&nbsp;add_state&nbsp;creates&nbsp;a&nbsp;BDD&nbsp;which&nbsp;is&nbsp;identical&nbsp;to&nbsp;the&nbsp;first&nbsp;argument&nbsp;but&nbsp;;with&nbsp;all&nbsp;it's&nbsp;variables&nbsp;incremented&nbsp;by&nbsp;the&nbsp;second&nbsp;argument.&nbsp;*add_state($10,&nbsp;2)&nbsp;;&nbsp;eqn&nbsp;$12,&nbsp;smurf&nbsp;8&nbsp;
+<FONT SIZE="-2">*add_state($10,&nbsp;1)&nbsp;;&nbsp;eqn&nbsp;$11,&nbsp;smurf&nbsp;7</FONT>
+<P>
+
 
 <P>
-*add_state($10,&nbsp;3)&nbsp;;&nbsp;eqn&nbsp;$13,&nbsp;smurf&nbsp;9
+&nbsp;<FONT SIZE="-2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;add_state&nbsp;creates&nbsp;a&nbsp;BDD&nbsp;which&nbsp;is&nbsp;identical&nbsp;to&nbsp;the&nbsp;first&nbsp;argument&nbsp;but&nbsp;</FONT>
+<P>
+
+
+<P>
+&nbsp;<FONT SIZE="-2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;with&nbsp;all&nbsp;it's&nbsp;variables&nbsp;incremented&nbsp;by&nbsp;the&nbsp;second&nbsp;argument.</FONT>
+<P>
+
+
+<P>
+<FONT SIZE="-2">*add_state($10,&nbsp;2)&nbsp;;&nbsp;eqn&nbsp;$12,&nbsp;smurf&nbsp;8&nbsp;</FONT>
+<P>
+
+
+<P>
+<FONT SIZE="-2">*add_state($10,&nbsp;3)&nbsp;;&nbsp;eqn&nbsp;$13,&nbsp;smurf&nbsp;9</FONT>
+<P>
+
 
 <P>
 </DD>
@@ -1264,9 +1323,9 @@ Copyright &#169; 1997, 1998, 1999,
 Mathematics Department, Macquarie University, Sydney.
 <P>
 The command line arguments were: <BR>
- <STRONG>latex2html</STRONG> <TT>-no_subdir -split 0 -show_section_numbers /tmp/lyx_tmpdir7535Vd22yL/lyx_tmpbuf0/sbsat_manual.tex</TT>
+ <STRONG>latex2html</STRONG> <TT>-no_subdir -split 0 -show_section_numbers /tmp/lyx_tmpdir291382FEzK0/lyx_tmpbuf0/sbsat_manual.tex</TT>
 <P>
-The translation was initiated by  on 2003-05-30<HR>
+The translation was initiated by  on 2003-06-30<HR>
 <!--Navigation Panel-->
 <IMG WIDTH="81" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next_inactive"
  SRC="file:/usr/share/latex2html/icons/nx_grp_g.png"> 
@@ -1278,7 +1337,7 @@ The translation was initiated by  on 2003-05-30<HR>
 <!--End of Navigation Panel-->
 <ADDRESS>
 
-2003-05-30
+2003-06-30
 </ADDRESS>
 </BODY>
 </HTML>
