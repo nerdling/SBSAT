@@ -73,6 +73,13 @@ ITE_Brancher()
    return Brancher();
 }
 
+
+int
+ITE_Final(int ret)
+{
+   return ite_final(ret, NULL); 
+}
+
 int
 ITE_GetVarAsgnment(int var)
 {

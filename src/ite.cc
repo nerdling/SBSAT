@@ -129,6 +129,12 @@ main(int argc, char *argv[])
    }
 
 ExitNormal:
+   return ite_final(ret, tracer);
+}
+
+int
+ite_final(int ret, Tracer *tracer)
+{
 
    if (s_expected_result[0]) {
       ret = check_expected_result(ret);

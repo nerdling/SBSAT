@@ -45,6 +45,7 @@ int ITE_SolveInit();
 int ITE_SolveFree();
 int ITE_GetVarAsgnment(int var);
 int ITE_Brancher();
+int ITE_Final(int ret);
 
 /* defined somewhere else */
 int ITE_Deduce();

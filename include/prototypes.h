@@ -230,6 +230,7 @@ int check_gzip (char *filename);
 FILE * zread(char *filename);
 
 void xorloop ();
+int ite_final(int ret, Tracer *tracer);
 
 void memcpy_ite(void*, void*, int);
 void get_freefile(char *basename, char *file_dir, char *filename, int filename_max);
