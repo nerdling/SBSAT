@@ -1,3 +1,138 @@
+2004-07-13 09:22  fett
+
+	* src/utils/params.cc: Forgot to add Ff into the -All 0 and -All 1
+	functions. Fixed now.
+	
+	  ~Sean
+
+2004-07-12 22:04  mkouril
+
+	* src/utils/params.cc: Turn BREAK_XORS on by default again
+
+2004-07-12 21:56  mkouril
+
+	* src/: generator/testite.sh, solv_smurf/fn_create.cc,
+	solv_smurf/fn_smurf/hr_lsgb_smurf_init.cc,
+	solv_smurf/fn_smurf_xor/hr_lsgb_smurfxor_init.cc,
+	solv_smurf/fn_xor/hr_lsgb_xor.cc, solv_smurf/hr_lsgb/hr_lsgb.cc,
+	solv_smurf/hr_lsgbw/hr_lsgbw.cc, solv_smurf/include/hr_lsgb.h:
+	Fixed breaking XORs' heuristic
+
+2004-07-12 20:33  mkouril
+
+	* src/solv_smurf/: fn_create.cc, fn_xor/bdd2specfn_xor.cc: Fixed
+	broken XORs handling and XORs var mapping
+
+2004-07-12 20:19  mkouril
+
+	* src/: generator/testite.sh, solv_smurf/fn_xor/bdd2specfn_xor.cc:
+	Fixed XOR mapping
+
+2004-07-12 20:02  mkouril
+
+	* src/: generator/testite.sh, solv_smurf/br_afs.cc,
+	solv_smurf/fn_smurf_xor/hr_lsgb_smurfxor_init.cc,
+	solv_smurf/fn_smurf_xor/hr_lsgb_smurfxor_update.cc,
+	solv_smurf/fn_xor_smurf/hr_lsgb_xorsmurf.cc: Fixed AFS when
+	procAffectedVarlist was not present (broken xors)
+
+2004-07-12 19:50  mkouril
+
+	* src/generator/gentest.cc: Fixed xor in gentest
+
+2004-07-12 17:45  fett
+
+	* doc/manual/: Makefile, Makefile.in, cuttings.tex, manual.tar,
+	sbsat_getting.aux, sbsat_getting.dvi, sbsat_getting.html,
+	sbsat_getting.log, sbsat_getting.pdf, sbsat_getting.ps,
+	sbsat_getting.tex, sbsat_getting.toc, sbsat_man_cmts.txt,
+	sbsat_manual.html, sbsat_manual.tex, Fig/Network.1.fig,
+	Fig/Network.eps, Fig/Network.fig, Fig/PIN.eps, Fig/Switch.eps,
+	Fig/bdd.eps, Fig/bdd.fig, Fig/branch_prune_bdd.eps,
+	Fig/branch_prune_bdd.fig, Fig/branch_prune_example_1.eps,
+	Fig/branch_prune_example_1.fig, Fig/branch_prune_example_2.eps,
+	Fig/branch_prune_example_2.fig, Fig/circuit.fig,
+	Fig/cofactoring1.eps, Fig/cofactoring1.fig, Fig/cofactoring1a.eps,
+	Fig/cofactoring1a.fig, Fig/cofactoring2.eps, Fig/cofactoring2.fig,
+	Fig/cofactoring2a.eps, Fig/cofactoring2a.fig, Fig/cofactoring3.eps,
+	Fig/cofactoring3.fig, Fig/cofactoring3a.eps, Fig/cofactoring3a.fig,
+	Fig/exquant_bdd.eps, Fig/exquant_bdd.fig, Fig/exquantex.eps,
+	Fig/exquantex.fig, Fig/exquantex1.eps, Fig/exquantex1.fig,
+	Fig/gcf.eps, Fig/gcf.fig, Fig/gcf1.eps, Fig/gcf1.fig, Fig/gcf2.eps,
+	Fig/gcf2.fig, Fig/gcf3.eps, Fig/gcf3.fig, Fig/gencirc.fig,
+	Fig/input_bdd.fig, Fig/layout.eps, Fig/layout.fig,
+	Fig/reconfig_board.eps, Fig/reconfig_board.fig, Fig/restrict.eps,
+	Fig/restrict.fig, Fig/smurf.eps, Fig/state.eps, Fig/state.fig,
+	Fig/strengthening_1.eps, Fig/strengthening_1.fig,
+	Fig/strengthening_2.eps, Fig/strengthening_2.fig,
+	Fig/wildforce_with.eps: added in the latest usermanual
+	
+	   ~Sean
+
+2004-07-12 17:42  mkouril
+
+	* src/: README, formats/README, formats/read_input.cc,
+	solv_smurf/README: Added READMEs
+
+2004-07-12 15:29  mkouril
+
+	* src/solv_smurf/fn_xor_smurf/fn_xor_smurf.cc,
+	src/solv_smurf/fn_xor_smurf/hr_lsgb_xorsmurf.cc, include/bddnode.h,
+	src/formats/5/bddnode.h: Added heuristic for broken xors
+
+2004-07-12 15:25  mkouril
+
+	* configure, configure.ac, include/common.h, src/Makefile.am,
+	src/Makefile.in, src/formats/5/blif_g.yy,
+	src/formats/5/functions.cc, src/formats/5/functions.h,
+	src/formats/5/iscas_g.yy, src/formats/5/libt5_la-blif_g.cc,
+	src/formats/5/libt5_la-blif_g.h, src/formats/5/libt5_la-trace_g.cc,
+	src/formats/5/libt5_la-trace_g.h, src/formats/5/prover3_g.yy,
+	src/formats/5/prover_g.yy, src/formats/5/trace_g.yy,
+	src/solv_smurf/Makefile.am, src/solv_smurf/Makefile.in,
+	src/solv_smurf/br_afs.cc, src/solv_smurf/fn_create.cc,
+	src/solv_smurf/solver.cc, src/solv_smurf/fn_smurf_xor/Makefile.am,
+	src/solv_smurf/fn_smurf_xor/Makefile.in,
+	src/solv_smurf/fn_smurf_xor/fn_smurf_xor.cc,
+	src/solv_smurf/fn_smurf_xor/hr_lsgb_smurf_init.cc,
+	src/solv_smurf/fn_smurf_xor/hr_lsgb_smurf_update.cc,
+	src/solv_smurf/fn_smurf_xor/hr_lsgb_smurfxor_init.cc,
+	src/solv_smurf/fn_smurf_xor/hr_lsgb_smurfxor_update.cc,
+	src/solv_smurf/fn_smurf_xor/hr_lsgbw_smurf_init.cc,
+	src/solv_smurf/fn_smurf_xor/hr_lsgbw_smurf_update.cc,
+	src/solv_smurf/fn_smurf_xor/hr_lsgbw_smurfxor_init.cc,
+	src/solv_smurf/fn_smurf_xor/hr_lsgbw_smurfxor_update.cc,
+	src/solv_smurf/fn_xor/bdd2specfn_xor.cc,
+	src/solv_smurf/fn_xor_smurf/Makefile.am,
+	src/solv_smurf/fn_xor_smurf/Makefile.in,
+	src/solv_smurf/fn_xor_smurf/hr_lsgb_xor.cc,
+	src/solv_smurf/fn_xor_smurf/hr_lsgbw_xor.cc,
+	src/solv_smurf/hr_lsgb/hr_lsgb.cc,
+	src/solv_smurf/include/fn_smurf.h, src/solv_smurf/include/fn_xor.h,
+	src/solv_smurf/include/solver.h, src/utils/bdd.cc,
+	src/utils/bdd_circuit_init.cc, src/utils/params.cc,
+	src/utils/vars.cc, src/solv_smurf/include/fn_smurf_xor.h,
+	src/solv_smurf/include/fn_xor_smurf.h: Added heuristic for broken
+	xors
+
+2004-07-12 15:24  fett
+
+	* src/preproc/do_findft.cc: this searches for and finds the
+	function type of variables.
+	
+	  ~Sean
+
+2004-07-12 15:20  fett
+
+	* include/common.h, include/prototypes.h, include/sbsat_preproc.h,
+	include/sbsat_vars.h, src/preproc/Makefile.am,
+	src/preproc/Makefile.in, src/preproc/do_split.cc,
+	src/preproc/init_preproc.cc, src/preproc/preprocess.cc,
+	src/utils/bdd.cc, src/utils/params.cc, src/utils/vars.cc: added new
+	preprocessing option find function types
+	
+	  ~Sean
+
 2004-07-07 11:23  fett
 
 	* src/utils/bdd_ite.cc: fixed a minor bug introduced yesterday.
