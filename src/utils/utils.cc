@@ -45,20 +45,26 @@ BDDNode *false_ptr = NULL;
 BDDNode *true_ptr = NULL;
 extern char temp_dir[128];
 
-void *ite_calloc(int x, int y, int dbg_lvl, const char *for_what) {
+void *ite_calloc(unsigned int x, unsigned int y, int dbg_lvl, const char *for_what) {
    void *p = NULL;
+   long long r = x;
+   r *= y;
+   if (r >= INT_MAX) {
+         fprintf(stderr, "ERROR: Unable to allocate %u (%u * %u) bytes for %s\n", x*y, x, y, for_what); 
+         exit(1); 
+   }
    if (x==0 || y==0) {
       dm2_printf2("WARNING: 0 bytes allocation for %s\n", for_what); 
    } else {
       p=calloc(x,y);
       if (!p) {
-         fprintf(stderr, "ERROR: Unable to allocate %d bytes for %s\n", x*y, for_what); 
+         fprintf(stderr, "ERROR: Unable to allocate %u (%u * %u) bytes for %s\n", x*y, x, y, for_what); 
          exit(1); 
       } 
    }
    DM_2(
          if ((DEBUG_LVL&15) >= dbg_lvl) 
-         fprintf(stddbg, "Allocated %d bytes for %s\n", x*y, for_what); 
+         fprintf(stddbg, "Allocated %ld bytes for %s\n", (long)(x*y), for_what); 
       );
    return p;
 }
@@ -71,7 +77,7 @@ void ite_free(void **ptr) {
 }
 
 
-void *ite_recalloc(void *ptr, int oldx, int x, int y, int dbg_lvl, const char *for_what) {
+void *ite_recalloc(void *ptr, unsigned int oldx, unsigned int x, unsigned int y, int dbg_lvl, const char *for_what) {
    void *p = NULL;
    assert(oldx<x);
    if (x==0 || y==0) {
