@@ -792,7 +792,7 @@ This~will~create~the~BDD~-~AND(8,~9)~
 
 {\scriptsize {*}imp~\$1~\$4~;~eqn~\$5,~smurf~4~}{\scriptsize \par}
 
-{\scriptsize \#define~imp~1~2~\#~or3(1,~2,~3);~Notice~the~'imp'~operator~was~overloaded~to~be~the~OR~of~3~variables.~}{\scriptsize \par}
+{\scriptsize \#define~imp~1~2~\#~or3(1,~2,~3);~Notice~the~'imp'~operator~was~overloaded.~}{\scriptsize \par}
 
 {\scriptsize {*}imp(3~4~5)~~~~;~eqn~\$6,~smurf~5~}{\scriptsize \par}
 
@@ -812,13 +812,15 @@ This~will~create~the~BDD~-~AND(8,~9)~
 
 {\scriptsize {*}fun~g~-5~4~\$6~2~3~4~;~eqn~\$9,~smurf~7}{\scriptsize \par}
 
-{\scriptsize {*}equ(xor3(2,~and(-3,~4),~nand(7,~5),~ite(15,~or(4,~-7),~nor(4,~-7))))~;~eqn~\$10,~smurf~8}{\scriptsize \par}
+{\scriptsize {*}equ(5,~xor3(and(-3,~4),~nand(7,~5),~ite(15,~4,~nor(4,~-7))))~;~eqn~\$10,~smurf~8}{\scriptsize \par}
 
 {\scriptsize {*}add\_state(\$10,~1)~;~eqn~\$11,~smurf~9}{\scriptsize \par}
 
-~{\scriptsize ~~~~~~~~~~~~~~~~~~;~add\_state~creates~a~BDD~which~is~identical~to~the~first~argument~but~}{\scriptsize \par}
+~{\scriptsize ~~~~~~~~~~~~~~~~~~;~add\_state~creates~a~BDD~which~is~identical~to~the~first}{\scriptsize \par}
 
-~{\scriptsize ~~~~~~~~~~~~~~~~~~;~with~all~it's~variables~incremented~by~the~second~argument.}{\scriptsize \par}
+~{\scriptsize ~~~~~~~~~~~~~~~~~~;~argument~but~with~all~it's~variables~incremented~by~the}{\scriptsize \par}
+
+~{\scriptsize ~~~~~~~~~~~~~~~~~~;~second~argument.}{\scriptsize \par}
 
 {\scriptsize {*}add\_state(\$10,~2)~;~eqn~\$12,~smurf~10~}{\scriptsize \par}
 
