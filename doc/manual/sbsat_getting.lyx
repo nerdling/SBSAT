@@ -29,7 +29,25 @@
 Getting Started With SBSAT
 \layout Author
 
-Michal Kouril, Sean Weaver, Andy Vogel
+
+\noun on 
+Michal
+\noun default 
+ 
+\noun on 
+Kouril
+\noun default 
+, 
+\noun on 
+Sean
+\noun default 
+ 
+\noun on 
+Weaver
+\noun default 
+, 
+\noun on 
+Andy Vogel
 \layout Standard
 
 SBSAT Version 2.0, August 2003
@@ -2401,7 +2419,74 @@ TIP
 Adjusting other parameters
 \layout Subsubsection
 
-Lemma cache (non lemma brancher)
+Lemma cache
+\layout Standard
+
+The size of the cache in which the lemmas are stored is fixed throughout
+ the branching process.
+ Necessary amount of memory is automatically allocated to accomodate all
+ lemmas in the cache.
+ Usually the bigger the memory cache the slower the branching process.
+ Therefore increasing lemma cache might not improve the overall branching
+ time.
+\layout Standard
+
+The parameter to use for controlling the lemma cache is 
+\family typewriter 
+\size footnotesize 
+\emph on 
+-L
+\family default 
+\size default 
+\emph default 
+ or 
+\family typewriter 
+\size footnotesize 
+\emph on 
+--max-cached-lemmas
+\emph default 
+.
+
+\family default 
+\size default 
+ 
+\layout Standard
+
+Example:
+\layout Standard
+
+$ ite -L 1000 problem.cnf
+\newline 
+
+\layout Standard
+
+It is possible to set the lemma cache to 0.
+ This will prevent any lemma from being stored beyond the point they are
+ needed.
+ The brancher will still generate lemmas during backtracking and inferencing.
+ 
+\layout Standard
+
+To prevent the lemmas from being created and used the backjumping must be
+ disabled together with setting the lemma cache to 0.
+\layout Standard
+
+Example:
+\layout Standard
+
+$ ite -L 0 --backjumping 0 sliders_80_unsat.ite
+\newline 
+
+\layout Standard
+
+For some problems this will yield significantly better results than when
+ the lemmas are used.
+\layout Standard
+
+Note: the lemma heuristic is not compatible with the situation when the
+ lemmas are disable.
+ Also the effectivness of the lemma heuristic is decreasing with descreasing
+ the lemma cache.
 \layout Subsubsection
 
 Constraining the time on the preprocessing and brancher
@@ -2605,9 +2690,33 @@ not available yet
 
 Email us: 
 \newline 
-John Franco franco@gauss.ececs.uc.edu 
+
+\noun on 
+John
+\noun default 
+ 
+\noun on 
+Franco
+\noun default 
+ franco@gauss.ececs.uc.edu 
 \newline 
-Michal Kouril mkouril@ececs.uc.edu
+
+\noun on 
+Michal
+\noun default 
+ 
+\noun on 
+Kouril
+\noun default 
+ mkouril@ececs.uc.edu
 \newline 
-Sean Weaver fett@gauss.ececs.uc.edu
+
+\noun on 
+Sean
+\noun default 
+ 
+\noun on 
+Weaver
+\noun default 
+ fett@gauss.ececs.uc.edu
 \the_end
