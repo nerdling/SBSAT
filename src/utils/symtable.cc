@@ -385,7 +385,7 @@ sym_set_flag(int id)
 }
 
 int
-sym_is_flag(int id) 
+_sym_is_flag(int id) 
 {
    return getsym_i(id)->flag & SYM_FLAG_UNRAVEL;
 }

@@ -43,7 +43,9 @@ symrec *getsym_i(int id);
 void    print_symtable();
 int get_or_putsym_check(char *sym_name, int sym_type, int id);
 
-int sym_is_flag(int id);
+int _sym_is_flag(int id);
+extern symrec **sym_table;
+#define sym_is_flag(id) (sym_table[id]->flag & SYM_FLAG_UNRAVEL)
 void sym_set_flag(int id);
 void sym_reset_flag(int id); 
 void sym_clear_all_flag();

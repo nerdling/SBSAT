@@ -1576,9 +1576,16 @@ void OLD_unravelBDD (long *y, int tempint[5000], BDDNode * func) {
 
 void NEW_unravelBDD(long *y, long *max, int **tempint, BDDNode * func);
 
+int bdd_flag_number = 2;
 void unravelBDD(long *y, long *max, int **tempint, BDDNode * func) {
   *y=0;
   // assert (no flag is set );
+  bdd_flag_number++;
+  if (bdd_flag_number > 1000000000) {
+     void bdd_gc();
+     bdd_gc();
+     bdd_flag_number = 3;
+  }
   NEW_unravelBDD(y, max, tempint, func);
   for (int i = 0;i<*y;i++) {
      // clear the flag
@@ -1586,7 +1593,10 @@ void unravelBDD(long *y, long *max, int **tempint, BDDNode * func) {
   }
 }
 
-void NEW_unravelBDD (long *y, long *max, int **tempint, BDDNode * func) {
+void NEW_unravelBDD(long *y, long *max, int **tempint, BDDNode * func) {
+   if (func->flag == bdd_flag_number) return;
+   func->flag = bdd_flag_number;
+
 	if ((func == true_ptr) || (func == false_ptr))
 	  return;
    assert(func->variable > 0);
