@@ -1,9 +1,9 @@
-#                                               -*- Autoconf -*- # Process this file with autoconf to produce a configure script.
+# -*- Autoconf -*- # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.57)
-AC_INIT([sbsat],[2.2b-1],[mkouril@ececs.uc.edu])
+AC_INIT([sbsat],[2.2r-1],[mkouril@ececs.uc.edu])
 AC_LANG([C++])
-AM_INIT_AUTOMAKE(sbsat,2.2b-1)
+AM_INIT_AUTOMAKE(sbsat,2.2r-1)
 AC_CONFIG_SRCDIR([include/brancher.h])
 AC_CONFIG_HEADER([include/config.h])
 
@@ -151,7 +151,7 @@ AC_ARG_ENABLE(alllibtool,
   yes) alllibtool=true ;;
   no)  alllibtooldebug=false ;;
   *) AC_MSG_ERROR(bad value ${enableval} for --enable-alllibtool) ;;
-esac],[alllibtool=false])
+esac],[alllibtool=true])
 AM_CONDITIONAL(MYLIBTOOL, test x$alllibtool = xtrue)
 
 # Checks for programs.
