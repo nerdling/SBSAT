@@ -324,8 +324,8 @@ static const yysigned_char yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const unsigned char yyrline[] =
 {
-       0,    51,    51,    52,    56,    58,    60,    62,    64,    68,
-      70
+       0,    51,    51,    52,    56,    58,    61,    63,    65,    69,
+      71
 };
 #endif
 
@@ -1039,31 +1039,32 @@ yyreduce:
 
   case 5:
 #line 59 "iscas_g.yy"
-    { symrec  *s_ptr = s_getsym(yyvsp[-1].id, SYM_VAR); s_set_indep(s_ptr, 0); }
+    { symrec  *s_ptr = s_getsym(yyvsp[-1].id, SYM_VAR); s_set_indep(s_ptr, 0); 
+         functions_add(ite_equ(ite_vars(s_ptr), true_ptr), UNSURE, s_ptr->id); }
     break;
 
   case 6:
-#line 61 "iscas_g.yy"
+#line 62 "iscas_g.yy"
     { iscas_explist[iscas_expindex] = NULL; iscas_and_equ(yyvsp[-5].id, iscas_explist); }
     break;
 
   case 7:
-#line 63 "iscas_g.yy"
+#line 64 "iscas_g.yy"
     { iscas_explist[iscas_expindex] = NULL; iscas_or_equ(yyvsp[-5].id, iscas_explist); }
     break;
 
   case 8:
-#line 65 "iscas_g.yy"
+#line 66 "iscas_g.yy"
     { iscas_not(yyvsp[-5].id, yyvsp[-1].id); }
     break;
 
   case 9:
-#line 69 "iscas_g.yy"
+#line 70 "iscas_g.yy"
     { iscas_expindex=0; iscas_explist[iscas_expindex++] = ite_vars(s_getsym(yyvsp[0].id, SYM_VAR)); }
     break;
 
   case 10:
-#line 71 "iscas_g.yy"
+#line 72 "iscas_g.yy"
     { if (iscas_expindex == iscas_expmax) perror("expindex over"); iscas_explist[iscas_expindex++] = ite_vars(s_getsym(yyvsp[0].id, SYM_VAR)); }
     break;
 
@@ -1071,7 +1072,7 @@ yyreduce:
     }
 
 /* Line 991 of yacc.c.  */
-#line 1074 "libt5_la-iscas_g.cc"
+#line 1075 "libt5_la-iscas_g.cc"
 
   yyvsp -= yylen;
   yyssp -= yylen;
@@ -1280,7 +1281,7 @@ yyreturn:
 }
 
 
-#line 74 "iscas_g.yy"
+#line 75 "iscas_g.yy"
 
 
 void
@@ -1298,6 +1299,7 @@ iscas_and_equ(char *var, BDDNode **explist)
 {
    symrec  *s_ptr=s_getsym(var, SYM_VAR);
    assert(s_ptr);
+   s_set_indep(s_ptr, 0);
    t_op2fn fn;
    fn.fn=op_and; 
    fn.fn_type=AND_EQU;
@@ -1311,6 +1313,7 @@ iscas_or_equ(char *var, BDDNode **explist)
 {
    symrec  *s_ptr=s_getsym(var, SYM_VAR);
    assert(s_ptr);
+   s_set_indep(s_ptr, 0);
    t_op2fn fn;
    fn.fn=op_or; 
    fn.fn_type=OR_EQU;

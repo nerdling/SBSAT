@@ -56,7 +56,8 @@ top_exp:
      P_INPUT '(' ID ')' 
       { symrec  *s_ptr = s_getsym($3, SYM_VAR); s_set_indep(s_ptr, 1); }
    | P_OUTPUT '(' ID ')'
-      { symrec  *s_ptr = s_getsym($3, SYM_VAR); s_set_indep(s_ptr, 0); }
+      { symrec  *s_ptr = s_getsym($3, SYM_VAR); s_set_indep(s_ptr, 0); 
+         functions_add(ite_equ(ite_vars(s_ptr), true_ptr), UNSURE, s_ptr->id); }
    | ID '=' P_AND '(' varlist ')'
       { iscas_explist[iscas_expindex] = NULL; iscas_and_equ($1, iscas_explist); }
    | ID '=' P_OR '(' varlist ')'
@@ -88,6 +89,7 @@ iscas_and_equ(char *var, BDDNode **explist)
 {
    symrec  *s_ptr=s_getsym(var, SYM_VAR);
    assert(s_ptr);
+   s_set_indep(s_ptr, 0);
    t_op2fn fn;
    fn.fn=op_and; 
    fn.fn_type=AND_EQU;
@@ -101,6 +103,7 @@ iscas_or_equ(char *var, BDDNode **explist)
 {
    symrec  *s_ptr=s_getsym(var, SYM_VAR);
    assert(s_ptr);
+   s_set_indep(s_ptr, 0);
    t_op2fn fn;
    fn.fn=op_or; 
    fn.fn_type=OR_EQU;
