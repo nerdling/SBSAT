@@ -123,6 +123,18 @@ typedef struct _LemmaInfoStruct {
   // we do not want to recycle this lemma.
   int nBacktrackStackReferences;
 
+  // how many times this lemma was moved in front of the lpq
+  int nNumLemmaMoved;
+
+  // how many times this lemma caused contradiction
+  int nNumLemmaConflict;
+
+  // NUM_LPQ_ENQUEUE
+  int nLemmaNumber;
+
+  // how many times this lemma caused inference
+  int nNumLemmaInfs;
+
 #ifdef HEURISTIC_USES_LEMMA_COUNTS
   bool bIsInCache;  // True iff the lemma has been moved into the lemma cache.
   int nNumUnknown_LemmaCount;  // Number of uninstantiated literals in
@@ -214,7 +226,7 @@ ITE_INLINE void
 DisplayAllBrancherLemmas();
 
 ITE_INLINE void
-DisplayAllBrancherLemmasToFile(char *filename);
+DisplayAllBrancherLemmasToFile(char *filename, int flag);
 
 ITE_INLINE LemmaBlock *
 FindOrAddLemma(LemmaBitEncoding lbe);   //Used with SmurfFactory ONLY
