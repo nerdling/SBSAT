@@ -2663,7 +2663,7 @@ To prevent the lemmas from being created and used the backjumping must be
 Example:
 \layout Standard
 
-$ ite -L 0 --backjumping 0 sliders_80_unsat.ite
+$ ite -L 0 --backjumping 0 slider_80_unsat.ite
 \newline 
 
 \layout Standard
