@@ -123,7 +123,7 @@ BDDNode *_ite_x_y_F(BDDNode *x, BDDNode *y)
       r = _ite_x_y_F(x->thenCase, y);
       e = _ite_x_y_F(x->elseCase, y);
 		//This happens but maybe not often enough to bring a speedup.
-		if (r == x->thenCase && e == x->elseCase) return y;
+		if (r == x->thenCase && e == x->elseCase) return x;
    } 
 
    if (r == e) return (r);
