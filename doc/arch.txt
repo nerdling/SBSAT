@@ -1,28 +1,23 @@
 
 Notes to compiling and running SBSAT on different architectures
 
-SBSAT 1.8.x was successfully tested on the following architectures:
+SBSAT 2.2 was successfully tested on the following architectures:
 
-* Linux RedHat 7.x, 8.x and gcc 2.9x - 3.x
+* Linux RedHat 9.x and gcc 2.9x - 3.x
 * DEC Alpha running OSF1 5.1 and cxx 6.2 or gcc 2.9x
 * Windows 2000/cygwin and gcc 2.9x
 * Sun Sparc Solaris 2.x and gcc 2.9x or CC
 * PPC running Mac OS X and gcc 3.x
 
-SBSAT 1.8.x was unsuccessfully tested on the following architectures:
-
-* SGI Irix 6.5 and cc
-
-
 Quick installation checklist:
 
 - get sbsat-x.x.x.tar.gz
-- unpack tar -xvzf sbsat-x.x.x.tar.gz (directory called sbsat-x.x.x will be created)
-  (alternatively use gzip -dc sbsat-x.x.x.tar.gz | tar -xvf - )
-- cd sbsat-x.x.x
+- unpack tar -xvzf sbsat-x.x-x.tar.gz (directory called sbsat-x.x-x will be created)
+  (alternatively use gzip -dc sbsat-x.x-x.tar.gz | tar -xvf - )
+- cd sbsat-x.x-x
 - ./configure [options]
   (please use ./configure --help to list the options)
-- make  (to create executable src/ite )
+- make  (to create executable src/sbsat )
 - make check  (to run a few tests)
 
 
@@ -36,8 +31,6 @@ Quick installation checklist:
   --enable-extrawarning   Turn on compiler extra warning information
 			   (default=no)
   --enable-static         Turn on linking libraries staticly (default=no)
-  --enable-efence         Use this if you want Electric Fence linked
-			  (default=no).
 
 For maximum speed please use ./configure --enable-optimization
 
