@@ -74,6 +74,9 @@ int Do_Strength() {
 					d3_printf1(p);
 				}
 		  );
+
+		  //if (term_getchar()=='f') Do Fast Foward
+		  
 		  if (nCtrlC) {
 			  d3_printf1("\nBreaking out of Strengthening");
 			  for(; x < nmbrFunctions; x++) St_repeat[x] = 0;
