@@ -434,9 +434,7 @@ inline BDDNode *constant_and(BDDNode *x, BDDNode *y) {
 
 inline BDDNode *_and_dot(BDDNode *x, BDDNode *y);
 
-inline
-BDDNode *and_dot(BDDNode *x, BDDNode *y)
-{
+BDDNode *and_dot(BDDNode *x, BDDNode *y) {
    if (y == true_ptr) return x;
    if (y == false_ptr) return false_ptr;
    return _and_dot(x, y);
@@ -920,27 +918,25 @@ nmbrVarsInCommon(int bddNmbr1, int bddNmbr2, int STOPAT)
    bdd1pos = 0;
    bdd2pos = 0;
    varsSoFar = 0;
-	if(length[bddNmbr1] == 0) return 0;
-	if(length[bddNmbr2] == 0) return 0;
+	if(length[bddNmbr1] < STOPAT) return 0;
+	if(length[bddNmbr2] < STOPAT) return 0;
    bdd1max = length[bddNmbr1] - STOPAT + 1;
    bdd2max = length[bddNmbr2] - STOPAT + 1;
 
    //fprintf(stdout, "(%d)%d - %d\n", bddNmbr1, length[bddNmbr1], length[bddNmbr2]);
 
-   while (1)
-   {
+   while (1) {
       while (variables[bddNmbr1].num[bdd1pos] < variables[bddNmbr2].num[bdd2pos]) {
          if (++bdd1pos == bdd1max) return 0; 
       }
-
+		
       while (variables[bddNmbr1].num[bdd1pos] > variables[bddNmbr2].num[bdd2pos]) {
          if (++bdd2pos == bdd2max) return 0; 
       }
-
-      if (variables[bddNmbr1].num[bdd1pos] == variables[bddNmbr2].num[bdd2pos])
-      {
+		
+      if (variables[bddNmbr1].num[bdd1pos] == variables[bddNmbr2].num[bdd2pos]) {
          if (++varsSoFar == STOPAT) return 1; 
-
+			
          bdd1max++; bdd1pos++;
          bdd2max++; bdd2pos++;
       }

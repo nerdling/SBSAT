@@ -216,6 +216,8 @@ t_opt options[] = {
 		"Enable/Disable Pruning (1/0)"},
 { &DO_STRENGTH, "St",  "St",  P_INT, V(i:0,"0"),  V(i:1,"1"), VAR_NORMAL, 0, 
 		"Enable/Disable Strengthening (1/0)"},
+{ &DO_SIMPLEAND, "Sa",  "Sa",  P_INT, V(i:0,"0"),  V(i:1,"1"), VAR_NORMAL, 0, 
+		"Enable/Disable Simple And (1/0)"},
 { &DO_INFERENCES, "In",  "In", P_INT, V(i:0,"0"),  V(i:1,"1"), VAR_NORMAL, 0, 
 		"Enable/Disable Inferences (1/0)"},
 { &DO_EXIST_QUANTIFY, "Ex",  "Ex", P_INT, V(i:0,"0"),  V(i:1,"1"), VAR_NORMAL, 0, 
@@ -534,6 +536,7 @@ DO_ALL(int value/* , char *s_value*/)
    set_param_int(strcpy(tmp_str, "Co"), value);
    set_param_int(strcpy(tmp_str, "Pr"), value);
    set_param_int(strcpy(tmp_str, "St"), value);
+	set_param_int(strcpy(tmp_str, "Sa"), value);
    set_param_int(strcpy(tmp_str, "Ex"), value);
    set_param_int(strcpy(tmp_str, "Ea"), value);
    set_param_int(strcpy(tmp_str, "Dc"), value);
