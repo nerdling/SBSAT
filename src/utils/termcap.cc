@@ -53,12 +53,14 @@ char *ptr;
  */
 static char * qgetstr(char *ref)
 {
-   char *tmp;
+   char *tmp=NULL;
+#ifdef TERMCAP_H
 
    if ((tmp = tgetstr(ref, &ptr)) == NULL) {
       printf("/etc/termcap terminal %s must have a %s= entry\n",
             tv_stype, ref);
    }
+#endif
    return (tmp);
 }
 
@@ -66,6 +68,7 @@ static char * qgetstr(char *ref)
 int
 init_terminal_out()
 {
+#ifdef TERMCAP_H
    char *termtype = getenv("TERM");
    int success;
    extern char *getenv(), *realloc();
@@ -99,6 +102,7 @@ init_terminal_out()
    term_height = tgetnum("li");
    term_width = tgetnum("co");
 //   printf("co=%d, li=%d \r", height, width);
+#endif
    return 0;
 }
 
@@ -107,7 +111,9 @@ init_terminal_out()
  */
 int ttputc(int c)
 {
+#ifdef TERMCAP_H
    fputc(c, stdout);
+#endif
    return 0;
 }
 
@@ -118,7 +124,9 @@ int ttputc(int c)
  */
 void putpad(char *str)
 {
+#ifdef TERMCAP_H
    tputs(str, 1, ttputc);
+#endif
 }
 
 /*
@@ -127,7 +135,9 @@ void putpad(char *str)
 void
 move(int col, int row)
 {
+#ifdef TERMCAP_H
    putpad(tgoto(CM, col, row));
+#endif
 }
 
 
@@ -136,6 +146,7 @@ struct termios  newtty, origtty;            /* tty modes          */
 int
 init_terminal_in()
 {
+#ifdef TERMCAP_H
    if (isatty(0/*fileno(stdin)*/)) {
       if (tcgetattr(0, &origtty) < 0) {
          fprintf(stderr, "tcgetattr: stdin");
@@ -157,12 +168,14 @@ init_terminal_in()
          return 1;
       }
    }
+#endif
    return 0;
 }
 
 int
 term_getchar()
 {
+#ifdef TERMCAP_H
    fd_set rfds;
    struct timeval tv;
    int retval = 0;
@@ -177,6 +190,7 @@ term_getchar()
    /* Don't rely on the value of tv now! */
 
    if (retval) return getchar();
+#endif
    return 0;
 }
 
