@@ -178,11 +178,11 @@ void getExInferences(int *original_variables, int oldnuminp) {
 
 	int numBDDs = nmbrFunctions;
 	DO_INFERENCES = 0; //don't call the other routine inside of ReBuildBDDx()
-	
+
 	ite_free((void **)&length);
 	//delete [] length;
-
 	length = NULL;
+
 	int ret = Init_Preprocessing();
 	if(ret == TRIV_UNSAT) {
 		fprintf(stderr, "\nError verifying solution\n");
@@ -232,6 +232,7 @@ void getExInferences(int *original_variables, int oldnuminp) {
 	
 	Finish_Preprocessing();
 }
+
 
 void
 Backend_NoSolver (int oldnuminp, int *original_variables)
@@ -760,6 +761,13 @@ Verify_Solver(Tracer *tracer)
 	solution_info = NULL;
 	delete [] original_variables;
 	original_variables = NULL;
+	delete [] variablelist;
+	variablelist = NULL;
+	delete [] original_functions;
+	original_functions = NULL;
+	ite_free((void **)&length);
+	//delete [] length;
+	length = NULL;
 }
 
 void
