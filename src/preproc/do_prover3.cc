@@ -52,7 +52,7 @@ int Do_Prover3() {
 	/****** DELETING ARRAYS ********/
 	ite_free((void**)&original_functionType);
 	ite_free((void**)&original_equalityVble);
-   delete [] original_functions;
+   ite_free((void**)&original_functions);
 	for (int x = 0; x < numinp + 1; x++) {
 		llist *k = amount[x].head;
 		while (k != NULL) {
@@ -96,7 +96,7 @@ int Do_Prover3() {
 	numinp = old_numinp;
 	CreateInferences();
 	numinp = getNuminp();
-	delete [] variablelist;
+   ite_free((void **)&variablelist);
 	
 	/****** REALLOCATING ARRAYS *********/
 	
@@ -139,9 +139,10 @@ int Do_Prover3() {
 	
 	for (int x = 0; x < nmbrFunctions; x++) {
 		for (int i = 0; i < length[x]; i++) {
-			llist *newllist = new llist;
-			newllist->num = x;
-			newllist->next = NULL;
+         llist *newllist = AllocateLList(x, NULL);
+         //llist *newllist = new llist;
+			//newllist->num = x;
+			//newllist->next = NULL;
 			if (amount[variables[x].num[i]].head == NULL) {
 				num_funcs_var_occurs[variables[x].num[i]] = 1;
 				amount[variables[x].num[i]].head = newllist;

@@ -102,15 +102,14 @@ Init_Preprocessing()
 	}
 
 	if(original_functions == NULL) {
-		ITE_NEW_CATCH(original_functions = new BDDNode *[nmbrFunctions + 1],
-						  "original functions");
+      original_functions = (BDDNode **)ite_calloc(nmbrFunctions+1, sizeof(BDDNode*), 2, "original_functions");
 		for(int x = 0; x < nmbrFunctions; x++)
 		  original_functions[x] = functions[x];
 		original_numout = nmbrFunctions;
 	}
 
 	if(variablelist==NULL) {
-		variablelist = new varinfo[numinp + 1];
+		variablelist = (varinfo*)ite_calloc(numinp+1, sizeof(varinfo), 2, "variablelist");
 		
 		for (int x = 0; x < numinp + 1; x++)
 		  {
@@ -217,9 +216,12 @@ Init_Preprocessing()
 
 	for (int x = 0; x < nmbrFunctions; x++) {
 		for (int i = 0; i < length[x]; i++) {
+         llist *newllist = AllocateLList(x, NULL);
+         /*
 			llist *newllist = new llist;
 			newllist->num = x;
 			newllist->next = NULL;
+         */
 			if (amount[variables[x].num[i]].head == NULL) {
 				num_funcs_var_occurs[variables[x].num[i]] = 1;
 				amount[variables[x].num[i]].head = newllist;
@@ -309,13 +311,16 @@ Finish_Preprocessing()
 	
 	for (int x = 0; x < numinp + 1; x++)
 	  {
-		  llist *k = amount[x].head;
+        DeallocateLLists(amount[x].head);
+        /*
+        llist *k = amount[x].head;
 		  while (k != NULL)
 			 {
 				 llist *temp = k;
 				 k = k->next;
-				 delete temp;
+				 //delete temp;
 			 }
+          */
 		  amount[x].head = NULL;
 		  amount[x].tail = NULL;
 	  }
@@ -339,7 +344,7 @@ Finish_Preprocessing()
 	while(inferlist != NULL) {
 		infer *temp = inferlist;
 		inferlist = inferlist->next;
-		delete temp;
+		//delete temp;
 	}
    */
 	inferlist = NULL;
@@ -440,9 +445,10 @@ int add_newFunctions(BDDNode **new_bdds, int new_size) {
 	
 	for (int x = nmbrFunctions-new_size; x < nmbrFunctions; x++) {
 		for (int i = 0; i < length[x]; i++) {
-			llist *newllist = new llist;
+         llist *newllist = AllocateLList(x, NULL);
+			/*llist *newllist = new llist;
 			newllist->num = x;
-			newllist->next = NULL;
+			newllist->next = NULL;*/
 			if (amount[variables[x].num[i]].head == NULL) {
 				num_funcs_var_occurs[variables[x].num[i]] = 1;
 				amount[variables[x].num[i]].head = newllist;

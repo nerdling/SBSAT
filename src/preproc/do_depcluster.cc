@@ -277,9 +277,10 @@ int DepCluster () {
 					if(bdd_vars[a] > variables[k].num[b]) {
 						b++;
 					} else if(bdd_vars[a] < variables[k].num[b]) {
-						llist *newllist = new llist;
-						newllist->num = k;
-						newllist->next = NULL;
+                  llist *newllist = AllocateLList(k, NULL);
+                  //llist *newllist = new llist;
+						//newllist->num = k;
+						//newllist->next = NULL;
 						amount[bdd_vars[a]].tail->next = newllist;
 						amount[bdd_vars[a]].tail = newllist;
 						a++;
@@ -287,9 +288,10 @@ int DepCluster () {
 				}
 				
 				while(a < bdd_length) {
-					llist *newllist = new llist;
-					newllist->num = k;
-					newllist->next = NULL;
+               llist *newllist = AllocateLList(k, NULL);
+					//llist *newllist = new llist;
+					//newllist->num = k;
+					//newllist->next = NULL;
 					amount[bdd_vars[a]].tail->next = newllist;
 					amount[bdd_vars[a]].tail = newllist;
 					a++;

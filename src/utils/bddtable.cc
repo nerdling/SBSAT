@@ -83,6 +83,7 @@ void bddtable_alloc_pool(int pool)
 }
 
 void FreeInferencePool();
+void FreeLListPool();
 
 void
 bddtable_free_pools()
@@ -92,6 +93,7 @@ bddtable_free_pools()
       ite_free((void**)&(bddmemory[i].memory));
    }
    FreeInferencePool();
+   FreeLListPool();
    ite_free((void**)&bddtable_hash_memory);
    ite_free((void**)&bddmemory);
    bddmemory_max = 0;
@@ -452,8 +454,8 @@ bdd_gc(int force)
    struct timeval tv_stop;
    gettimeofday(&tv_stop, NULL);
    double rt_stop = get_runtime();
-   d4_printf5("BDD_GC END(used %d, free %d, time=%dms, cpu=%.0fms)\n", 
-         bddtable_used_count_last, bddtable_free_count,
+   d4_printf6("BDD_GC END(used %d, pools %d, free %d, time=%dms, cpu=%.0fms)\n", 
+         bddtable_used_count_last, numBDDPool+1, bddtable_free_count,
          (tv_stop.tv_sec-tv_start.tv_sec)*1000+(tv_stop.tv_usec-tv_start.tv_usec)/1000,
          (rt_stop-rt_start)*1000);
 

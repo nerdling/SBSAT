@@ -257,10 +257,8 @@ void
 ite_main_free()
 {
    d9_printf1("ite_main_free\n");
-   delete [] variablelist;
-   variablelist = NULL;
-   delete [] original_functions;
-   original_functions = NULL;
+   ite_free((void **)&variablelist);
+   ite_free((void **)&original_functions);
 	ite_free((void **)&var_score);
 	
    bddtable_free_pools();

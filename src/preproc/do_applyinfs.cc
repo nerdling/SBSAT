@@ -600,7 +600,8 @@ int Rebuild_BDDx (int x) {
 						num_funcs_var_occurs[variables[x].num[b]]--;
 						llist *temp = k;
 						k = k->next;
-                  delete temp;
+                  DeallocateOneLList(temp);
+                  //delete temp;
                   if(follow != NULL) follow->next = k;
 						else amount[variables[x].num[b]].head = k;
 						if(k == NULL) amount[variables[x].num[b]].tail = follow;
@@ -616,10 +617,11 @@ int Rebuild_BDDx (int x) {
 //				}
 				b++;
 			} else if(tempint[a] < variables[x].num[b]) {
-				llist *newllist = new llist;
+            llist *newllist = AllocateLList(x, NULL);
+				//llist *newllist = new llist;
 				//fprintf(stderr, "{adding1 %d %d}\n", x, tempint[a]);
-				newllist->num = x;
-				newllist->next = NULL;
+				//newllist->num = x;
+				//newllist->next = NULL;
 				if (amount[tempint[a]].head == NULL) {
 					num_funcs_var_occurs[tempint[a]] = 1;
 					amount[tempint[a]].head = newllist;
@@ -643,7 +645,8 @@ int Rebuild_BDDx (int x) {
 					num_funcs_var_occurs[variables[x].num[b]]--;
 					llist *temp = k;
 					k = k->next;
-               delete temp;
+               DeallocateOneLList(temp);
+               //delete temp;
                if(follow != NULL) follow->next = k;
 					else amount[variables[x].num[b]].head = k;
 					if(k == NULL) amount[variables[x].num[b]].tail = follow;
@@ -661,10 +664,11 @@ int Rebuild_BDDx (int x) {
 		}
 		
 		while(a < y) {
-			llist *newllist = new llist;
+         llist *newllist = AllocateLList(x, NULL);
+         //llist *newllist = new llist;
 			//fprintf(stderr, "{adding2 %d %d}\n", x, tempint[a]);
-			newllist->num = x;
-			newllist->next = NULL;
+			//newllist->num = x;
+			//newllist->next = NULL;
 			if (amount[tempint[a]].head == NULL) {
 				num_funcs_var_occurs[tempint[a]] = 1;
 				amount[tempint[a]].head = newllist;

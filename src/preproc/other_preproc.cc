@@ -37,25 +37,25 @@
 
 #include "ite.h"
 
-int *P1_repeat;
-int *P2_repeat;
-int *Restct_repeat;
-int *ReFPS_repeat;
-int *St_repeat;
-int *Dep_repeat;
-int *Steal_repeat;
-int *Ea_repeat;
+char *P1_repeat;
+char *P2_repeat;
+char *Restct_repeat;
+char *ReFPS_repeat;
+char *St_repeat;
+char *Dep_repeat;
+char *Steal_repeat;
+char *Ea_repeat;
 int repeat_size = 0;
 
 void Init_Repeats() {
-	P1_repeat = (int *)ite_recalloc(P1_repeat, repeat_size, nmbrFunctions, sizeof(int), 9, "P1_repeat");
-	P2_repeat = (int *)ite_recalloc(P2_repeat, repeat_size, nmbrFunctions, sizeof(int), 9, "P2_repeat");
-	Restct_repeat = (int *)ite_recalloc(Restct_repeat, repeat_size, nmbrFunctions, sizeof(int), 9, "Restct_repeat");
-	ReFPS_repeat = (int *)ite_recalloc(ReFPS_repeat, repeat_size, nmbrFunctions, sizeof(int), 9, "ReFPS_repeat");
-	St_repeat = (int *)ite_recalloc(St_repeat, repeat_size, nmbrFunctions, sizeof(int), 9, "St_repeat");
-	Dep_repeat = (int *)ite_recalloc(Dep_repeat, repeat_size, nmbrFunctions, sizeof(int), 9, "Dep_repeat");
-	Steal_repeat = (int *)ite_recalloc(Steal_repeat, repeat_size, nmbrFunctions, sizeof(int), 9, "Steal_repeat");
-	Ea_repeat = (int *)ite_recalloc(Ea_repeat, repeat_size, nmbrFunctions, sizeof(int), 9, "Ea_repeat");
+	P1_repeat = (char *)ite_recalloc(P1_repeat, repeat_size, nmbrFunctions, sizeof(char), 9, "P1_repeat");
+	P2_repeat = (char *)ite_recalloc(P2_repeat, repeat_size, nmbrFunctions, sizeof(char), 9, "P2_repeat");
+	Restct_repeat = (char *)ite_recalloc(Restct_repeat, repeat_size, nmbrFunctions, sizeof(char), 9, "Restct_repeat");
+	ReFPS_repeat = (char *)ite_recalloc(ReFPS_repeat, repeat_size, nmbrFunctions, sizeof(char), 9, "ReFPS_repeat");
+	St_repeat = (char *)ite_recalloc(St_repeat, repeat_size, nmbrFunctions, sizeof(char), 9, "St_repeat");
+	Dep_repeat = (char *)ite_recalloc(Dep_repeat, repeat_size, nmbrFunctions, sizeof(char), 9, "Dep_repeat");
+	Steal_repeat = (char *)ite_recalloc(Steal_repeat, repeat_size, nmbrFunctions, sizeof(char), 9, "Steal_repeat");
+	Ea_repeat = (char *)ite_recalloc(Ea_repeat, repeat_size, nmbrFunctions, sizeof(char), 9, "Ea_repeat");
 	
 	repeat_size = nmbrFunctions;
 }
@@ -70,14 +70,6 @@ void Delete_Repeats() {
 	ite_free((void **)&Dep_repeat);
 	ite_free((void **)&Steal_repeat);
 	ite_free((void **)&Ea_repeat);
-	P1_repeat = NULL;
-	P2_repeat = NULL;
-	Restct_repeat = NULL;
-	ReFPS_repeat = NULL;
-	St_repeat = NULL;
-	Dep_repeat = NULL;
-	Steal_repeat = NULL;
-	Ea_repeat = NULL;
 }
 
 void SetRepeats(int x) {

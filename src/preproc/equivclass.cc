@@ -369,10 +369,8 @@ class Linear {
       int xidx=0, yidx=0, a, b, i;
       int lft, rgt, tmp;
 		
-      for (a=x ; equiv_fwd[a] >= 0 ; a=equiv_fwd[a]) 
-      { assert(no_inp_vars>xidx); xlist[xidx++] = a; }
-      for (b=y ; equiv_fwd[b] >= 0 ; b=equiv_fwd[b]) 
-      { assert(no_inp_vars>yidx); ylist[yidx++] = b; }
+      for (a=x ; equiv_fwd[a] >= 0 ; a=equiv_fwd[a]) xlist[xidx++] = a;
+      for (b=y ; equiv_fwd[b] >= 0 ; b=equiv_fwd[b]) ylist[yidx++] = b;
       if (a != b) { // x and y are in different equivalence classes   
 			// if true: consistent 
 			if (!(equiv_fwd[a] == equiv_fwd[b] && equiv_fwd[a] <= -2)) { 
