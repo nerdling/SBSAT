@@ -43,7 +43,6 @@ char getNextSymbol (char *&, int &intnum, BDDNode * &);
 int xorbdd_line;
 
 int intnum;
-extern int no_independent;
 
 char getNextSymbol () {
 	char integers[20];
@@ -166,7 +165,6 @@ char getNextSymbol () {
 				fprintf (stderr, "\nUnknown keyword (%s) found while looking for initialbranch...exiting:%d\n", macros, xorbdd_line);
 				exit (1);
 			}
-			no_independent = 0;
 			int p = 0;
 			char integers[10];
 			int secondnum = 0;
@@ -270,7 +268,6 @@ void xorloop () {
 	fscanf (finputfile, "%ld %ld\n", &numinp, &numout);
 	numinp += 2;
 	xorbdd_line = 1;
-	no_independent = 1;
 
 	vars_alloc(numinp+2);
 	functions_alloc(numout+2);
@@ -404,12 +401,6 @@ void xorloop () {
 	Exit:;
 
 	numinp = numinp+temp_vars;
-	if (no_independent) {
-		for (int x = 0; x < numinp + 1; x++) {
-         if (independantVars[x] == 0)
-            independantVars[x] = 1;
-		}
-	}
 	
    d2_printf1("\rReading XOR ... Done\n");
 	delete [] bdds;

@@ -40,7 +40,6 @@
 
 char getNextSymbol (int &intnum, BDDNode * &);
 
-int no_independent;
 int markbdd_line;
 
 struct defines_struct {
@@ -49,10 +48,38 @@ struct defines_struct {
 	int *vlist;
 };
 
-int found_initbranch;
-char **initbranch_vars;
+struct initbranch_level {
+	char *string;
+	float true_inf_weight;
+};
+
+struct initbranch_struct {
+	int branch_level;
+	int max_initbranch_level;
+	int num_initbranch_level;
+	initbranch_level *vars;
+};
+
+int initbranch_compfunc (const void *x, const void *y) {
+  initbranch_struct pp, qq;
+
+  pp = *(const initbranch_struct *) x;
+  qq = *(const initbranch_struct *) y;
+  if (pp.branch_level < qq.branch_level)
+    return -1;
+  if (pp.branch_level == qq.branch_level)
+    return 0;
+  return 1;
+}
+
+initbranch_struct *initbranch;
+
 int max_initbranch;
-int num_initbranch;
+
+float *arrVarTrueInfluences;
+int **arrVarChoiceLevels;
+int arrVarChoiceLevelsMax;
+int arrVarChoiceLevelsNum;
 
 int max_defines;
 int totaldefines;
@@ -127,14 +154,11 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 		return ite_not(v1);
 	}
 	if (!strcasecmp (macros, "initial_branch")) {
-		if(found_initbranch == 1) {			  
-			fprintf(stderr, "\nOnly one instance of initial_branch is allowed...exiting:%d\n", markbdd_line);
-			exit(1);
-		}
-		found_initbranch = 1;
-
-		num_initbranch = 0;
 		char p = ' ';
+		int started_words = 0;
+		int branch_level = 0;
+		int found_level = 0;
+		
 		while (p != ')') {
          p = fgetc(finputfile);
 			if (p == '\n') { markbdd_line++; }
@@ -148,6 +172,7 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 			while (((p >= 'a') && (p <= 'z')) || ((p >= 'A') && (p <= 'Z'))
 					 || (p == '_') || ((p >= '0') && (p <= '9')) || (p == '[')
 					 || (p == ']') || (p == '*')) {
+				started_words = 1;
 				found_word = 1;
 				if(p == '*') macros[i++] = '.';
 				macros[i] = p;
@@ -165,24 +190,72 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 			if(found_word == 1) {
 				macros[i] = '$';
 				macros[i+1] = 0;
-				initbranch_vars[num_initbranch] = new char[i+2];
-				strcpy(initbranch_vars[num_initbranch], macros);
-				num_initbranch++;
-				if(num_initbranch >= max_initbranch) {
-					initbranch_vars = (char **)ite_recalloc(initbranch_vars, max_initbranch, max_initbranch+10, sizeof(char *), 9, "initbranch_vars");
-					max_initbranch+=10;
-				}
-				if(macros[i] == '%') {
+				initbranch[branch_level].vars[initbranch[branch_level].num_initbranch_level].string = new char[i+2];
+				strcpy(initbranch[branch_level].vars[initbranch[branch_level].num_initbranch_level].string, macros);
+				d5_printf2(" %s", initbranch[branch_level].vars[initbranch[branch_level].num_initbranch_level].string);
+				if(p == '%') {
+					d5_printf1("%%");
 					expect_integer = 1;
 					BDDNode *v1 = putite(intnum, bdd);
 					expect_integer = 0;
 					if (v1 != ite_var (v1->variable)) {
-						fprintf (stderr, "\nKeyword 'initial_branch' needs a positive integer after a '%%' (%s)...exiting:%d\n", macros, markbdd_line);
+						fprintf (stderr, "\nKeyword 'initial_branch' needs an integer between 1 and 100 after a '%%' (%s)...exiting:%d\n", macros, markbdd_line);
 						exit (1);
 					}
-					//Need to attach to initbranch_vars and handle later once all variables
-					//have been assigned.
-				   //arrTrueInfluenceWeights[  ] = (* float) 
+					if (v1->variable > 100) {
+						fprintf (stderr, "\nKeyword 'initial_branch' needs an integer between 1 and 100 after a '%%' (%s)...exiting:%d\n", macros, markbdd_line);
+						exit (1);
+					}
+					initbranch[branch_level].vars[initbranch[branch_level].num_initbranch_level].true_inf_weight = (float) v1->variable / 100.0;
+				} else {
+					initbranch[branch_level].vars[initbranch[branch_level].num_initbranch_level].true_inf_weight = 0.5;
+				}
+					  
+				initbranch[branch_level].num_initbranch_level++;
+				if(initbranch[branch_level].num_initbranch_level >= initbranch[branch_level].max_initbranch_level) {
+					initbranch[branch_level].vars = (initbranch_level *)ite_recalloc(initbranch[branch_level].vars, initbranch[branch_level].max_initbranch_level, initbranch[branch_level].max_initbranch_level+10, sizeof(initbranch_level), 9, "initbranch[branch_level].vars");
+					initbranch[branch_level].max_initbranch_level+=10;
+				}
+			} else if(p == '%') {
+				fprintf (stderr, "\nKeyword 'initial_branch' needs '%%' to follow directly after a variable (%s)...exiting:%d\n", macros, markbdd_line);
+				exit (1);
+			}
+			if(p == '#') {
+				d5_printf1("#");
+				if(found_level == 1) {
+					fprintf (stderr, "\nKeyword 'initial_branch' can only have one #level associated with it, found multiple (%s)...exiting:%d\n", macros, markbdd_line);
+					exit (1);
+				} else if(started_words == 1) {
+					fprintf (stderr, "\nKeyword 'initial_branch' needs #level to be the first argument (%s)...exiting:%d\n", macros, markbdd_line);
+					exit (1);
+				} else {
+					found_level = 1;  
+
+					expect_integer = 1;
+					BDDNode *v1 = putite(intnum, bdd);
+					expect_integer = 0;
+					if (v1 != ite_var (v1->variable)) {
+						fprintf (stderr, "\nKeyword 'initial_branch' needs a positive integer as a level after '#' (%s)...exiting:%d\n", macros, markbdd_line);
+						exit (1);
+					}
+					//search for branch_level in initbranch
+					branch_level = -1;
+					for(int i = 0; i < max_initbranch; i++) {
+						if(initbranch[i].branch_level == v1->variable) {
+							branch_level = i;
+							break;
+						}
+					}
+					if(branch_level == -1) {
+						//Create a new initbranch[branch_level]
+						initbranch = (initbranch_struct *)ite_recalloc(initbranch, max_initbranch, max_initbranch+1, sizeof(initbranch_struct), 9, "initbranch");
+						branch_level = max_initbranch;
+						max_initbranch++;
+						initbranch[branch_level].branch_level = v1->variable;
+						initbranch[branch_level].max_initbranch_level = 10;
+						initbranch[branch_level].num_initbranch_level = 0;
+						initbranch[branch_level].vars = (initbranch_level *)ite_recalloc(initbranch[branch_level].vars, 0, initbranch[branch_level].max_initbranch_level, sizeof(initbranch_level), 9, "initbranch[0].vars");
+					}
 				}
 			}
 		}
@@ -398,12 +471,18 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 		int *var_list = new int[v1->variable];
 		for (unsigned int x = 0; x < (unsigned int)v1->variable; x++) {
 			BDDNode *v4 = putite (intnum, bdd);
-			if (v4 != ite_var (v4->variable)) {
-				//CHANGE LATER? all positive? or not?
-				fprintf (stderr, "\nKeyword 'minmax' needs positive variables as arguments (%s)...exiting:%d\n", macros, markbdd_line);
+			if (v4 == ite_var (v4->variable)) {
+				var_list[x] = v4->variable;
+			} else if(v4 == ite_var (-v4->variable)) {
+
+				//fprintf (stderr, "\nKeyword 'minmax' needs positive variables as arguments (%s)...exiting:%d\n", macros, markbdd_line);
+				//exit (1);
+			   
+				var_list[x] = -v4->variable;
+			} else {
+				fprintf (stderr, "\nKeyword 'minmax' needs positive or negative integers as arguments (%s)...exiting:%d\n", macros, markbdd_line);
 				exit (1);
 			}
-			var_list[x] = v4->variable;
 		}
 		int set_true = 0;
 		qsort(var_list, v1->variable, sizeof(int), abscompfunc);
@@ -700,8 +779,6 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 	if(v > numinp) {
 		numinp+=10;
 		vars_alloc(numinp+2); //should recalloc
-		for(int iter = 0; iter<10; iter++)
-		  independantVars[numinp-iter] = 0;
 	}
 
 	if(negate_it == 1) {
@@ -779,10 +856,11 @@ char getNextSymbol (int &intnum, BDDNode *&bdd) {
 			if(is_int == 1 && expect_integer == 1) {
 				expect_integer = 0;
 				intnum = atoi (macros);
-				if (intnum > numinp) {
+				/*if (intnum > numinp) {
 					fprintf (stderr, "\nVariable %d is larger than allowed (%ld)...exiting:%d\n",	intnum, numinp - 2, markbdd_line);
 					exit (1);
-				}
+				}*/
+				
 				if (negate_it) intnum = -intnum;
 				return 'i';
 			} else if(is_int == 0 && expect_integer == 1) {					  
@@ -877,9 +955,12 @@ void bddloop () {
 	BDDNode *bdd = NULL;
 	int p = 0;
 
-	found_initbranch = 0;
-	max_initbranch = 10;
-	initbranch_vars = (char **)ite_recalloc(initbranch_vars, 0, max_initbranch, sizeof(char *), 9, "initbranch_vars");
+	max_initbranch = 1;
+	initbranch = (initbranch_struct *)ite_recalloc(initbranch, 0, max_initbranch, sizeof(initbranch_struct), 9, "initbranch");
+	initbranch[0].branch_level = 1;
+	initbranch[0].max_initbranch_level = 10;
+	initbranch[0].num_initbranch_level = 0;
+	initbranch[0].vars = (initbranch_level *)ite_recalloc(initbranch[0].vars, 0, initbranch[0].max_initbranch_level, sizeof(initbranch_level), 9, "initbranch[0].vars");
 	
 	totaldefines = 0;
 	max_defines = 100;
@@ -891,17 +972,11 @@ void bddloop () {
 	max_macros = 20;
 	macros = (char *)ite_recalloc(macros, 0, max_macros, sizeof(char), 9, "macros");
 	
-	no_independent = 1;
-	
    vars_alloc(numinp+2);
    functions_alloc(numout+2);
 	
 	int *keep = (int *)ite_calloc(numout + 2, sizeof(int), 9, "keep");
 
-	for (int x = 0; x < numinp + 1; x++) {
-		independantVars[x] = 0;
-	}
-	
 	p = fgetc(finputfile);
 	 
 	d4_printf1("\n");
@@ -1018,39 +1093,71 @@ void bddloop () {
 	}
 	Exit:;
 
-	if(found_initbranch == 1) {
-		//APPLYING Initial_Branch if it was found.
-		for(int x = 0; x < num_initbranch; x++) {
+	int *initbranch_used = (int *)ite_calloc(numinp + 2, sizeof(int), 9, "initbranch_used");
+
+	arrVarChoiceLevels = (int **)ite_calloc(max_initbranch, sizeof(int *), 9, "arrVarChoiceLevels");
+	arrVarTrueInfluences = (float *)ite_calloc(numinp+1, sizeof(float), 9, "arrVarTrueInfluences");
+
+	for(int i = 0; i < numinp+1; i++)
+	  arrVarTrueInfluences[i] = 0.5;
+	
+	//Need to sort initbranch based on initbranch[x].branch_level
+	qsort(initbranch, max_initbranch, sizeof(initbranch_struct), initbranch_compfunc);
+	
+	for(int i = 0; i < max_initbranch; i++) {
+		int max_CLevels = initbranch[i].num_initbranch_level+1;
+		arrVarChoiceLevels[i] = (int *)ite_recalloc(arrVarChoiceLevels[i], 0, max_CLevels, sizeof(int), 9, "arrVarChoiceLevels[i]");
+		//arrVarChoiceLevels[i] = (int *)ite_calloc(sizeof(int), 9, "arrVarChoiceLevels[i]");
+		int nVarChoiceIter = 0;
+		for(int x = 0; x < initbranch[i].num_initbranch_level; x++) {
 			t_myregex myrg;
-			sym_regex_init(&myrg, initbranch_vars[x]);
+			sym_regex_init(&myrg, initbranch[i].vars[x].string);
 			int id = sym_regex(&myrg);
 			int looper = 0;
 			while (id) {
 				looper++;
-				// found variable and the variable id is id
-				independantVars[id] = 1;
-				d5_printf5("%d indep=%d %s %s\n", looper, id, getsym_i(id)->name, initbranch_vars[x]);
+				if(initbranch_used[id] == 0) {
+					// found variable and the variable id is id
+					initbranch_used[id] = 1;
+					arrVarTrueInfluences[id] = initbranch[i].vars[x].true_inf_weight;
+					arrVarChoiceLevels[i][nVarChoiceIter++] = id;
+					//d5_printf5("%d indep=%d %s %s\n", looper, id, getsym_i(id)->name, initbranch[i].vars[x].string);
+					d5_printf7("%d %d %s %s priority=%d true_inf=%4.2f\n", looper, id, getsym_i(id)->name, initbranch[i].vars[x].string, initbranch[i].branch_level, initbranch[i].vars[x].true_inf_weight);
+					if(nVarChoiceIter >= max_CLevels) {
+						arrVarChoiceLevels[i] = (int *)ite_recalloc(arrVarChoiceLevels[i], max_CLevels, max_CLevels+10, sizeof(int), 9, "arrVarChoiceLevels[i]");
+						max_CLevels += 10;
+					}
+				}
 				id = sym_regex(&myrg);
-				no_independent = 0;
 			}
 			sym_regex_free(&myrg);
 		}
+		arrVarChoiceLevels[i][nVarChoiceIter] = 0;
 	}
+
+	//Remove blank levels
+	int count=-1;
+	for(int x = 0; x < max_initbranch; x++) {
+		count++;
+		int *tmp = arrVarChoiceLevels[count];
+		arrVarChoiceLevels[count] = arrVarChoiceLevels[x];
+		if(arrVarChoiceLevels[x][0] == 0) {
+			count--;
+		}
+		arrVarChoiceLevels[x] = tmp;
+	}
+
+	arrVarChoiceLevelsMax = max_initbranch;
+	arrVarChoiceLevelsNum = count+1;
+
+	//Also we must take equivalences into account in the preprocessor!
 	
 	if (keepnum == 0)
 	  for (int x = 0; x < nmbrFunctions; x++)
 		 keep[x] = 1;
-	int count = -1;
-	if (no_independent) {
-		for (int x = 0; x < numinp + 1; x++) {
-			independantVars[x] = 1;
-		}
-	}
+
+	count = -1;
 	
-	//  for(int x = 0; x < numinp+1; x++) {
-	//    fprintf(foutputfile, "%d %d|", x, independantVars[x]);
-	//  }
-	// 
 	//(x <= numout) means to throw away functions that come after
 	//the cutoff part numout.
 	for (int x = 0; (x < nmbrFunctions) && (x <= numout); x++) {
@@ -1073,9 +1180,13 @@ void bddloop () {
 		//exit(1);
 	}
 	d2_printf1("\rReading ITE ... Done\n");
-	for(int x = 0; x < num_initbranch; x++)
-	  delete [] initbranch_vars[x];
-	ite_free((void **)&initbranch_vars);
+	for(int i = 0; i < max_initbranch; i++) {
+		for(int x = 0; x < initbranch[i].num_initbranch_level; x++)
+		  delete [] initbranch[i].vars[x].string;
+		ite_free((void **)&initbranch[i].vars);
+	}
+	ite_free((void **)&initbranch);
+	ite_free((void **)&initbranch_used);
 	ite_free((void **)&keep);
 	for(int x = 0; x < totaldefines; x++) {
 	  ite_free((void **)&defines[x].string);

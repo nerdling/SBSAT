@@ -289,17 +289,90 @@ Finish_Preprocessing()
 		 variablelist[x].true_false = 3;
 	delete []tmp;	
 	
-	/****** Shrink down the hash table ******/
-	//printCircuit();
-	//void Stats(int *length, store *variables);
-	//Stats(length, variables);
-	//
-	// cheat_replaceall (length, variables, variablelist);
-	// doing cheat_replaceall a different way!
-	// will conflict with the backend!
-	// It is now being handled by the brancher
-	// Do NOT uncomment...
-	/****** Shrunk down the hash table ******/
+	//After this all equalvars should point to their respective supernodes
+	//in the inverse tree (equivclass).
+   //This would have to change if we replace variables differently.
+
+	int *influence_times = (int *)ite_calloc(numinp + 1, sizeof(int), 9, "influence_times");
+	
+	for (int i = 1; i <= numinp; i++) {
+		if (variablelist[i].equalvars != 0 && variablelist[abs(variablelist[i].equalvars)].equalvars!=0) {
+			if(variablelist[i].equalvars>0) variablelist[i].equalvars = variablelist[variablelist[i].equalvars].equalvars;
+			else variablelist[i].equalvars = -variablelist[-variablelist[i].equalvars].equalvars;
+			if(variablelist[i].equalvars > 0) {
+				arrVarTrueInfluences[variablelist[i].equalvars]+=arrVarTrueInfluences[i];
+				influence_times[variablelist[i].equalvars]++;
+			} else {
+				arrVarTrueInfluences[-variablelist[i].equalvars]+=1.0-arrVarTrueInfluences[i];
+				influence_times[-variablelist[i].equalvars]++;
+			}
+		} else if(variablelist[i].equalvars != 0) {
+			if (variablelist[i].equalvars>0) {
+				arrVarTrueInfluences[variablelist[i].equalvars]+=arrVarTrueInfluences[i];
+				influence_times[variablelist[i].equalvars]++;
+			} else {
+				arrVarTrueInfluences[-variablelist[i].equalvars]+=1.0-arrVarTrueInfluences[i];
+				influence_times[-variablelist[i].equalvars]++;
+			}
+		}
+	}
+	
+	for(int x = 0; x < arrVarChoiceLevelsNum; x++) {
+		for(int i = 0; arrVarChoiceLevels[x][i]!=0; i++) {
+			if(variablelist[arrVarChoiceLevels[x][i]].equalvars != 0) {
+				if(variablelist[arrVarChoiceLevels[x][i]].equalvars > 0) {
+					arrVarChoiceLevels[x][i] = variablelist[arrVarChoiceLevels[x][i]].equalvars;
+				} else {
+					arrVarChoiceLevels[x][i] = -variablelist[arrVarChoiceLevels[x][i]].equalvars;
+				}
+			}
+		}
+	}
+
+	for(int x = 0; x < numinp+1; x++)
+	  arrVarTrueInfluences[x] = arrVarTrueInfluences[x] / (float)(1+influence_times[x]);
+
+	ite_free((void**)&influence_times);
+
+	int *isinVCL = (int *)ite_calloc(numinp + 1, sizeof(int), 9, "isinVCL");
+	
+	int count=-1;
+	for(int x = 0; x < arrVarChoiceLevelsNum; x++) {
+		count=-1;
+		for(int i = 0; arrVarChoiceLevels[x][i]!=0; i++) {
+			count++;
+			arrVarChoiceLevels[x][count] = arrVarChoiceLevels[x][i];
+			if(isinVCL[arrVarChoiceLevels[x][i]] == 1 || variablelist[arrVarChoiceLevels[x][i]].true_false!=-1)
+			  count--;
+			else isinVCL[arrVarChoiceLevels[x][i]] = 1;
+		}
+		arrVarChoiceLevels[x][count+1] = 0;
+	}
+	
+	count=-1;	
+	for(int x = 0; x < arrVarChoiceLevelsNum; x++) {
+		count++;
+		int *tmp = arrVarChoiceLevels[count];
+		arrVarChoiceLevels[count] = arrVarChoiceLevels[x];
+		if(arrVarChoiceLevels[x][0] == 0) {
+			count--;
+		}
+		arrVarChoiceLevels[x] = tmp;
+	}
+	arrVarChoiceLevelsNum = count+1;
+	
+	ite_free((void**)&isinVCL);
+	
+	d6_printf1("\n");
+	for(int x = 0; x < arrVarChoiceLevelsNum; x++) {
+		for(int i = 0; arrVarChoiceLevels[x][i]!=0; i++)
+		 d6_printf2("%d ", arrVarChoiceLevels[x][i]);
+		d6_printf1("\n");
+	}
+	d6_printf1("\n");
+	for(int x = 0; x < numinp+1; x++)
+	  d6_printf3("%d:%4.4f ", x, arrVarTrueInfluences[x]);
+	d6_printf1("\n");
 	
 	int Total_inferences = Pos_replace + Neg_replace + Setting_Pos + Setting_Neg;
 	int div_zero = 0;
@@ -327,7 +400,7 @@ Finish_Preprocessing()
 	amount = NULL;
 	
 	ite_free((void**)&num_funcs_var_occurs);
-	
+
 	ite_free((void **)&autark_BDD);
 
    DeallocateInferences(inferlist);
@@ -350,7 +423,7 @@ Finish_Preprocessing()
 	if(countBDDs() == 0) nmbrFunctions = 0;
 
 	//Need to remove any function that was set to True during the preprocessing of the BDDs
-	int count = -1;
+	count = -1;
 	for (long x = 0; x < nmbrFunctions; x++) {
 		count++;
 		functions[count] = functions[x];
@@ -388,15 +461,6 @@ Finish_Preprocessing()
    }
 */
 
-/*		
-	if(USE_AUTARKY_SMURFS)
-	  for(int x = 1; x <= numinp; x++)
-		 if(variablelist[x].true_false == 2) {
-			 variablelist[x].true_false=-1;
-			 independantVars[x] = 3;
-		 }
-*/
-
 	delete l; //Delete the equiv_class
 	l = NULL;
 
@@ -414,14 +478,14 @@ Finish_Preprocessing()
 	ite_free((void**)&original_equalityVble);
 
 	if(countBDDs()!=nmbrFunctions){
-		d3_printf2 ("Number of normal BDDs - %d\n", countBDDs());
+		d3_printf2("Number of normal BDDs - %d\n", countBDDs());
 		d3_printf2("Number of autark BDDs - %d\n", nmbrFunctions-countBDDs());
 		d3_printf2("Total number of BDDs  - %d\n", nmbrFunctions);
+		d3_printf2("Number of Variables   - %ld\n", numinp);
 	} else {
-		d3_printf2 ("Number of BDDs - %d\n", countBDDs());	  
+		d3_printf2("Number of BDDs - %d\n", countBDDs());
+		d3_printf2("Number of Variables - %ld\n", numinp);
 	}
-	
-	d3_printf2("Number of variables   - %ld\n", numinp);
 	
 	D_3(fflush (stddbg);)
 	  //printCircuitTree();
