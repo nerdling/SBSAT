@@ -1,7 +1,0 @@
-BUGS
-
-
-IRIX - CC
- * the sequence of header (.h and no .h)
- * reading ite, xor
- * compilation -g and loop control variable decls
