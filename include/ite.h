@@ -53,7 +53,6 @@
 #include "prototypes.h"
 
 #include "globals.h"
-#include "pools.h"
 #include "symtable.h"
 
 #include "interface.h"
