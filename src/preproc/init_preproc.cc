@@ -365,9 +365,11 @@ Finish_Preprocessing()
 		equalityVble[count] = equalityVble[x];
 		//parameterizedVars[count] = parameterizedVars[x];
 		length[count] = length[x];
-		if (functions[x] == true_ptr || (functionType[x]==AUTARKY_FUNC && !USE_AUTARKY_SMURFS))
-		  count--;
-		if (functions[x] == false_ptr) {
+		if (functions[x] == true_ptr || (functionType[x]==AUTARKY_FUNC && !USE_AUTARKY_SMURFS)) {
+			count--;
+		} else if (functionType[x] == AUTARKY_FUNC && USE_AUTARKY_SMURFS){
+			functions[x] = possible_BDD(functions[x], equalityVble[x]);
+		} else if (functions[x] == false_ptr) {
 			/* this might happen but I already know about unsatisfiness */
 			// ret = TRIV_UNSAT;
 		}
