@@ -2047,17 +2047,19 @@ BDDNode * _num_replace (BDDNode * f, int var, int replace) {
    f->flag = bdd_flag_number;
 	if (var == f->variable) {
 		if (replace > 0) {
-         BDDNode *cached = itetable_find_or_add_node(20+replace, f->thenCase, f->elseCase, NULL);
+			return (f->tmp_bdd = ite(ite_var(replace), f->thenCase, f->elseCase));
+			BDDNode *itevar = ite_var(replace);
+         BDDNode *cached = itetable_find_or_add_node(11, itevar, f, NULL);
          if (cached) return (f->tmp_bdd = cached);
-         return (f->tmp_bdd = itetable_find_or_add_node(20+replace, f->thenCase, f->elseCase, 
-                  ite(ite_var(replace), f->thenCase, f->elseCase)));//find_or_add_node(replace, f->thenCase, f->elseCase);
-         //return (f->tmp_bdd = ite(ite_var(replace), f->thenCase, f->elseCase));//find_or_add_node(replace, f->thenCase, f->elseCase);
+         return (f->tmp_bdd = itetable_find_or_add_node(11, itevar, f, 
+                  ite(itevar, f->thenCase, f->elseCase)));
       } else if (replace < 0) {
-         BDDNode *cached = itetable_find_or_add_node(20-replace, f->thenCase, f->elseCase, NULL);
+         return (f->tmp_bdd = ite(ite_var(-replace), f->elseCase, f->thenCase));
+			BDDNode *itevar = ite_var(-replace);
+         BDDNode *cached = itetable_find_or_add_node(11, itevar, f, NULL);
          if (cached) return (f->tmp_bdd = cached);
-         return (f->tmp_bdd = itetable_find_or_add_node(20-replace, f->thenCase, f->elseCase,
-                  ite(ite_var(-replace), f->elseCase, f->thenCase)));//find_or_add_node(-replace, f->elseCase, f->thenCase);
-         //return (f->tmp_bdd = ite(ite_var(-replace), f->elseCase, f->thenCase));//find_or_add_node(-replace, f->elseCase, f->thenCase);
+         return (f->tmp_bdd = itetable_find_or_add_node(11, itevar, f,
+                  ite(itevar, f->elseCase, f->thenCase)));
       }
    }
    BDDNode * r = _num_replace (f->thenCase, var, replace);
