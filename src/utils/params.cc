@@ -78,7 +78,7 @@ t_opt options[] = {
 { (void*)show_ini, "", "create-ini", P_FN, V(i:0,"0"), V(i:0,"0"), VAR_CMD, 0,
               "Create ini file"},
 { &ini_filename, "", "ini", P_STRING, 
-	       V(i:127,"127"), {"~/ite.ini"}, VAR_CMD+VAR_DUMP, 0,
+	       V(i:127,"127"), {"~/sbsat.ini"}, VAR_CMD+VAR_DUMP, 0,
               "Set the ini file"},
 { &DEBUG_LVL, "",   "debug", P_INT, V(i:0,"0"), V(i:2,"2"), VAR_NORMAL, 0,
               "debugging level (0-none, 9-max)"},

@@ -66,6 +66,7 @@ ITE_INLINE int
 SmurfFactory()
 {
    double fStartTime = get_runtime();
+   int nSumVarsPerSmurf = 0;
 
    InitSmurfFactory();
 
@@ -121,6 +122,7 @@ SmurfFactory()
             fprintf(stderr, "Could not create the Smurf state.");
             return SOLV_ERROR;
          }
+         nSumVarsPerSmurf += pSmurfState->vbles.nNumElts;
          arrRegSmurfInitialStates[nRegSmurfIndex] = pSmurfState;
          arrSmurfPath[nRegSmurfIndex].literals = 
             (int*)ite_calloc(arrRegSmurfInitialStates[nRegSmurfIndex]->vbles.nNumElts+1, sizeof(int),
@@ -222,6 +224,8 @@ SmurfFactory()
          (long)(ite_counters[SMURF_NODE_FIND] - ite_counters[SMURF_NODE_NEW]),
          (long)(ite_counters[SMURF_NODE_FIND]),
          ite_counters[SMURF_NODE_FIND]==0?0:1.0 * (ite_counters[SMURF_NODE_FIND] - ite_counters[SMURF_NODE_NEW]) / ite_counters[SMURF_NODE_FIND]);
+   d4_printf2 ("Avg. number of vars per smurf  %4.3f \n", 
+         1.0*(nSumVarsPerSmurf/(nRegSmurfIndex>0?nRegSmurfIndex:1)));
    d2e_printf1("\rCreating Smurfs ... Done                     \n");
 
    return SOLV_UNKNOWN;

@@ -150,6 +150,7 @@ AC_CHECK_LIB(termcap,tgetnum,[
 
 AC_CONFIG_FILES([Makefile
                  doc/Makefile
+                 doc/man1/Makefile
                  doc/manual/Makefile
                  examples/Makefile
                  include/Makefile

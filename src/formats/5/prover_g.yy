@@ -17,6 +17,7 @@
    BDDNode *tmp_equ_var(BDDNode *p);
    void push_symbols();
    void pop_symbols();
+   void set_S_vars_indep(symrec *s);
 
    /* FIXME: make it more dynamic! */
    extern symrec *varlist[1000];
@@ -67,7 +68,7 @@
 %% /* Grammar rules and actions follow */
 
 top_exp: ID
-    { symrec *s=s_getsym($1, SYM_VAR); assert(s); BDDNode *ret = ite_vars(s); functions_add(ret, UNSURE, 0); /*printf("top_id\n");*/ }
+    { symrec *s=s_getsym($1, SYM_VAR); assert(s); set_S_vars_indep(s); BDDNode *ret = ite_vars(s); functions_add(ret, UNSURE, 0); /*printf("top_id\n");*/ }
    | '~' exp
      {  functions_add($2, UNSURE, 0); /*printf("top_not\n");*/ assert(p_level==0); }
    | '(' exp ')'
@@ -76,7 +77,7 @@ top_exp: ID
 ;
 
 exp:  ID
-    { symrec *s=s_getsym($1, SYM_VAR); assert(s); $$ = ite_vars(s); symbols++; }
+    { symrec *s=s_getsym($1, SYM_VAR); assert(s); set_S_vars_indep(s); $$ = ite_vars(s); symbols++; }
    |  '~' exp
      { $$ = ite_not( $2 ); }
    |  '(' { push_symbols(); } exp ')' { if (symbols >= 10) { $3=tmp_equ_var($3); symbols=0;}; pop_symbols(); }
@@ -93,6 +94,11 @@ exp:  ID
 
 
 %%
+
+void set_S_vars_indep(symrec *s)
+{
+   //if (s->name[0] == 'S') s_set_indep(s, 0);
+}
 
 void push_symbols()
 {

@@ -94,6 +94,7 @@
    BDDNode *tmp_equ_var(BDDNode *p);
    void push_symbols();
    void pop_symbols();
+   void set_S_vars_indep(symrec *s);
 
    /* FIXME: make it more dynamic! */
    extern symrec *varlist[1000];
@@ -136,7 +137,7 @@
 #endif
 
 #if ! defined (YYSTYPE) && ! defined (YYSTYPE_IS_DECLARED)
-#line 48 "prover_g.yy"
+#line 49 "prover_g.yy"
 typedef union YYSTYPE {
     int         num;      /* For returning numbers.               */
     char        id[200];  /* For returning ids.                   */
@@ -144,7 +145,7 @@ typedef union YYSTYPE {
     BDDNode     *bdd;     /* For returning exp                    */
 } YYSTYPE;
 /* Line 191 of yacc.c.  */
-#line 147 "libt5_a-prover_g.cc"
+#line 148 "libt5_a-prover_g.cc"
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
 # define YYSTYPE_IS_TRIVIAL 1
@@ -156,7 +157,7 @@ typedef union YYSTYPE {
 
 
 /* Line 214 of yacc.c.  */
-#line 159 "libt5_a-prover_g.cc"
+#line 160 "libt5_a-prover_g.cc"
 
 #if ! defined (yyoverflow) || YYERROR_VERBOSE
 
@@ -327,8 +328,8 @@ static const yysigned_char yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const unsigned char yyrline[] =
 {
-       0,    69,    69,    71,    73,    75,    78,    80,    82,    82,
-      82,    84,    86,    86,    88,    90
+       0,    70,    70,    72,    74,    76,    79,    81,    83,    83,
+      83,    85,    87,    87,    89,    91
 };
 #endif
 
@@ -1035,67 +1036,67 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 70 "prover_g.yy"
-    { symrec *s=s_getsym(yyvsp[0].id, SYM_VAR); assert(s); BDDNode *ret = ite_vars(s); functions_add(ret, UNSURE, 0); /*printf("top_id\n");*/ }
+#line 71 "prover_g.yy"
+    { symrec *s=s_getsym(yyvsp[0].id, SYM_VAR); assert(s); set_S_vars_indep(s); BDDNode *ret = ite_vars(s); functions_add(ret, UNSURE, 0); /*printf("top_id\n");*/ }
     break;
 
   case 3:
-#line 72 "prover_g.yy"
+#line 73 "prover_g.yy"
     {  functions_add(yyvsp[0].bdd, UNSURE, 0); /*printf("top_not\n");*/ assert(p_level==0); }
     break;
 
   case 4:
-#line 74 "prover_g.yy"
+#line 75 "prover_g.yy"
     {  functions_add(yyvsp[-1].bdd, UNSURE, 0); /*printf("top_par\n");*/ assert(p_level==0); }
     break;
 
   case 6:
-#line 79 "prover_g.yy"
-    { symrec *s=s_getsym(yyvsp[0].id, SYM_VAR); assert(s); yyval.bdd = ite_vars(s); symbols++; }
+#line 80 "prover_g.yy"
+    { symrec *s=s_getsym(yyvsp[0].id, SYM_VAR); assert(s); set_S_vars_indep(s); yyval.bdd = ite_vars(s); symbols++; }
     break;
 
   case 7:
-#line 81 "prover_g.yy"
+#line 82 "prover_g.yy"
     { yyval.bdd = ite_not( yyvsp[0].bdd ); }
     break;
 
   case 8:
-#line 82 "prover_g.yy"
+#line 83 "prover_g.yy"
     { push_symbols(); }
     break;
 
   case 9:
-#line 82 "prover_g.yy"
+#line 83 "prover_g.yy"
     { if (symbols >= 10) { yyvsp[-1].bdd=tmp_equ_var(yyvsp[-1].bdd); symbols=0;}; pop_symbols(); }
     break;
 
   case 10:
-#line 83 "prover_g.yy"
+#line 84 "prover_g.yy"
     { yyval.bdd = yyvsp[-2].bdd; }
     break;
 
   case 11:
-#line 85 "prover_g.yy"
+#line 86 "prover_g.yy"
     { yyval.bdd = ite_and(yyvsp[-2].bdd, yyvsp[0].bdd); }
     break;
 
   case 12:
-#line 86 "prover_g.yy"
+#line 87 "prover_g.yy"
     { if (orlevel==0 && p_level==0) { yyvsp[-1].bdd = tmp_equ_var(yyvsp[-1].bdd); /*printf("ortop\n");*/ } orlevel++; }
     break;
 
   case 13:
-#line 87 "prover_g.yy"
+#line 88 "prover_g.yy"
     { orlevel--; if (orlevel==0 && p_level==0) { /*printf("orret\n");*/} yyval.bdd=ite_or(yyvsp[-3].bdd,yyvsp[0].bdd); }
     break;
 
   case 14:
-#line 89 "prover_g.yy"
+#line 90 "prover_g.yy"
     { yyval.bdd = ite_equ(yyvsp[-2].bdd, yyvsp[0].bdd); }
     break;
 
   case 15:
-#line 91 "prover_g.yy"
+#line 92 "prover_g.yy"
     { yyval.bdd = ite_imp(yyvsp[-2].bdd, yyvsp[0].bdd); }
     break;
 
@@ -1103,7 +1104,7 @@ yyreduce:
     }
 
 /* Line 991 of yacc.c.  */
-#line 1106 "libt5_a-prover_g.cc"
+#line 1107 "libt5_a-prover_g.cc"
 
   yyvsp -= yylen;
   yyssp -= yylen;
@@ -1312,8 +1313,13 @@ yyreturn:
 }
 
 
-#line 95 "prover_g.yy"
+#line 96 "prover_g.yy"
 
+
+void set_S_vars_indep(symrec *s)
+{
+   if (s->name[0] == 'S') s_set_indep(s, 0);
+}
 
 void push_symbols()
 {
