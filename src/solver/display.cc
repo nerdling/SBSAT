@@ -352,5 +352,8 @@ void DisplayBacktrackInfo(double &fPrevEndTime, double &fStartTime)
             (long)ite_counters[NUM_SOLUTIONS], (long)max_solutions);
 
       d2_printf1("\n");
+
+      void dump_lemmas(char *_filename);
+      if (*lemma_out_file) dump_lemmas(lemma_out_file);
 }
 
