@@ -132,7 +132,7 @@ InitializeAddons(BDDNodeStruct *pFunc)
 {
    if (pFunc->addons == NULL)
    {
-      SFADDONS(pFunc->addons) = AllocateSmurfFactoryAddons();
+      pFunc->addons = (void*)AllocateSmurfFactoryAddons();
       if (pFunc->addons == NULL ) {
          dE_printf1("Error: Can't allocate memory for addons\n");
          exit(1);
