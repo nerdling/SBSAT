@@ -387,6 +387,7 @@ finish_params()
     case 'n': result_display_type = 0; break;
     case 'r': result_display_type = 1; break;
     case 'f': result_display_type = 2; break;
+    case 'm': result_display_type = 3; break;
     default: 
               dE_printf2("error: Unknown result type %c\n", sResult[0]); 
               exit(1);

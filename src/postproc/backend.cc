@@ -93,6 +93,9 @@ ShowResultLine(FILE *fout, char *var, int var_idx, int negative, int value)
         }
         fprintf(fout, "\n");
 	break;
+  case 3:
+        fprintf(fout, "%c", value==BOOL_TRUE?'+':value==BOOL_FALSE?'-':'?');
+   break;
   default: break;
   }
 
