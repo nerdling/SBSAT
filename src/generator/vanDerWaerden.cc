@@ -76,7 +76,10 @@
  * If you can think of a way to condense #3 type clauses into a 
  * nice state machine, I would love to hear it.
  */
-#define XCNF_CARD 1
+#define CNF  0
+#define XCNF 1
+#define ITE  2
+int formula_type = XCNF;
 void vanDerWaerden(int n, int k, int p) {
 	//fprintf(stdout, "p cnf %d %d\n", n*k, n+(n*((n-1)/(p-1))));
    // clauses max step = (n-1)/(p-1)  [n is 1 based and k is 1 based]
@@ -90,51 +93,106 @@ void vanDerWaerden(int n, int k, int p) {
    int max_step = (n-1)/(p-1); // max sure this is integer
    int prog_sum = ((1+max_step)*max_step)/2;
    int clauses = n+k*(max_step*n-p*prog_sum+prog_sum);
-   if (XCNF_CARD) {
-      /* nothing else */
-   } else {
+   int clause_count = 0;
+   switch (formula_type) {
+    case CNF: 
       clauses += n*k*(k-1)/2;
+      fprintf(stdout, "p cnf %d %d\n", n*k, clauses);
+      break;
+    case XCNF: 
+      fprintf(stdout, "p cnf %d %d\n", n*k, clauses);
+      break;
+    case ITE: 
+      fprintf(stdout, "p bdd %d %d\n", n*k, clauses);
+      break;
+    default: 
+      exit(1);
    }
-   fprintf(stdout, "p cnf %d %d\n", n*k, clauses);
 
-   fprintf(stdout, "c max_step %d\n", max_step);
+   if (formula_type == CNF || formula_type == XCNF)
+      fprintf(stdout, "c max_step %d\n", max_step);
 
    // Problem:
    // n integer, k buckets, n*k variables
 
    // 1. 
-   fprintf(stdout, "c every integer only in one bucket\n");
+   if (formula_type == CNF || formula_type == XCNF)
+      fprintf(stdout, "c every integer only in one bucket\n");
    for(int x = 1; x <= n; x++) {
       int y;
-      if (XCNF_CARD) {
+      switch (formula_type) {
+       case CNF: {
+          // at least one bucket
+          fprintf(stdout, "%d ", x);
+          for(y = 1; y < k; y++)
+             fprintf(stdout, "%d ", (y*n)+x);
+          fprintf(stdout, "0\n");
+          clause_count++;
+          // at most one bucket
+          for(y = 0; y < k; y++)
+             for (int z=y+1; z < k; z++) {
+                fprintf(stdout, "-%d -%d 0\n", (y*n)+x, (z*n)+x);
+                clause_count++;
+             }
+       } break;
+       case XCNF: {
          fprintf(stdout, "#1 [ %d ", x);
          for(y = 1; y < k; y++)
             fprintf(stdout, "%d ", (y*n)+x);
          fprintf(stdout, "] 1\n");
-      } else {
-         // at least one bucket
-         fprintf(stdout, "%d ", x);
-         for(y = 1; y < k; y++)
-            fprintf(stdout, "%d ", (y*n)+x);
-         fprintf(stdout, "0\n", (y*n)+x);
-         // at most one bucket
-         for(y = 0; y < k; y++)
-            for (int z=y+1; z < k; z++)
-               fprintf(stdout, "-%d -%d 0\n", (y*n)+x, (z*n)+x);
+         clause_count++;
+       } break;
+       case ITE: {
+          // at least one bucket
+          fprintf(stdout, "* AND%d( OR%d(%d ", 1+k*(k-1)/2, k, x);
+          for(y = 1; y < k; y++)
+             fprintf(stdout, "%d ", (y*n)+x);
+          clause_count++;
+          fprintf(stdout, ") ");
+          // at most one bucket
+          for(y = 0; y < k; y++)
+             for (int z=y+1; z < k; z++) {
+                fprintf(stdout, "OR(-%d -%d) ", (y*n)+x, (z*n)+x);
+                clause_count++;
+             }
+          fprintf(stdout, ")\n");
+       } break;
       }
-   }
+  }
 	
-   fprintf(stdout, "c prevent any arithmetic progression of length %d for every bucket %d\n", p, k);
-   for(int bucket=0; bucket<k; bucket++) {
-      for(int num = 1; num <= n; num++) {
-         for(int step = 1; 1; step++) {
-            if (step * (p-1) + num > n) break;
-            int base = num;
-            for(int z = 0; z < p; z++) {
-               fprintf(stdout, "-%d ", base+bucket*n);
-               base+=step;
+   if (formula_type == CNF || formula_type == XCNF) {
+      fprintf(stdout, "c prevent any arithmetic progression of length %d for every bucket %d\n", p, k);
+      for(int bucket=0; bucket<k; bucket++) {
+         for(int num = 1; num <= n; num++) {
+            for(int step = 1; 1; step++) {
+               if (step * (p-1) + num > n) break;
+               int base = num;
+               for(int z = 0; z < p; z++) {
+                  fprintf(stdout, "-%d ", base+bucket*n);
+                  base+=step;
+               }
+               fprintf(stdout, "0\n");
+               clause_count++;
             }
-            fprintf(stdout, "0\n");
+         }
+      }
+      if (clause_count != clauses) {
+         fprintf(stderr, "======================== Problem\n");
+      }
+   } else if (formula_type == ITE) {
+      for(int bucket=0; bucket<k; bucket++) {
+         for(int num = 1; num <= n; num++) {
+            for(int step = 1; 1; step++) {
+               if (step * (p-1) + num > n) break;
+               int base = num;
+               fprintf(stdout, "* OR%d( ", p);
+               for(int z = 0; z < p; z++) {
+                  fprintf(stdout, "-%d ", base+bucket*n);
+                  base+=step;
+               }
+               fprintf(stdout, ")\n");
+               clause_count++;
+            }
          }
       }
    }
