@@ -685,16 +685,56 @@ BDDNode *bdd2xdd(BDDNode *x) {
 }
 
 BDDNode *ite (BDDNode * x, BDDNode * y, BDDNode * z) {
-   if (x == true_ptr)
-      return y;
-   if (x == false_ptr)
-      return z;
-   int v = top_variable (x, y, z);
-   BDDNode * r = ite (reduce_t (v, x), reduce_t (v, y), reduce_t (v, z));
-   BDDNode * e = ite (reduce_f (v, x), reduce_f (v, y), reduce_f (v, z));
-   if (r == e)
-      return (r);
-   return find_or_add_node (v, r, e);
+   if (x == true_ptr) return y;
+   if (x == false_ptr) return z;
+   //int v = top_variable(x, y, z);
+   int v;
+   BDDNode * r;
+   BDDNode * e;
+   if (x->variable > y->variable)
+   {
+      if (x->variable > z->variable) {
+         v = x->variable;
+         r = ite (x->thenCase, y, z);
+         e = ite (x->elseCase, y, z);
+      } else if (x->variable == z->variable) {
+         v = x->variable;
+         r = ite(x->thenCase, y, z->thenCase);
+         e = ite(x->elseCase, y, z->elseCase);
+      } else {
+         v = z->variable;
+         r = ite(x, y, z->thenCase);
+         e = ite(x, y, z->elseCase);
+      }
+   } else if (y->variable < z->variable) {
+      v = z->variable;
+      r = ite (x, y, z->thenCase);
+      e = ite (x, y, z->elseCase);
+   } else if (x->variable == z->variable) {
+      v = y->variable;
+      if (y->variable == x->variable) {
+         r = ite(x->thenCase, y->thenCase, z->thenCase);
+         e = ite(x->elseCase, y->elseCase, z->elseCase);
+      } else {
+         r = ite(x, y->thenCase, z);
+         e = ite(x, y->elseCase, z);
+      }
+   } else {
+      v = y->variable;
+      if (y->variable == x->variable) {
+         r = ite(x->thenCase, y->thenCase, z);
+         e = ite(x->elseCase, y->elseCase, z);
+      } else if (y->variable == z->variable) {
+         r = ite(x, y->thenCase, z->thenCase);
+         e = ite(x, y->elseCase, z->elseCase);
+      } else {
+         r = ite(x, y->thenCase, z);
+         e = ite(x, y->elseCase, z);
+      }
+   }
+
+   if (r == e) return (r);
+   return find_or_add_node(v, r, e);
 }
 
 #ifdef NO_BDD_MACROS
