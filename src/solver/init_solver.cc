@@ -82,7 +82,7 @@ RecordInitialInferences()
             printf("Brancher variable %d(%d) = ", arrIte2SolverVarMap[nVble], nVble);
             assert(bValueOfVble == BOOL_TRUE || bValueOfVble == BOOL_FALSE);
             printf((bValueOfVble == BOOL_TRUE) ? "true." : "false.");
-            printf(" numinp = %d numout = %d\n", numinp, numout);
+            printf(" numinp = %ld numout = %ld\n", (long)numinp, (long)numout);
             D_3(printBDD(arrFunctions[i]); fprintf(stddbg, "\n"); )
             //bInitialInferenceFound = true;
          }
