@@ -168,8 +168,8 @@ void ProcessSolution(int oldnuminp, int *original_variables) {
 			  original_variables[i] = 0;
 			  variablelist[i].true_false = 0;
 		  }
-		  fprintf(stderr, "%d = %d/%d ", i, variablelist[i].true_false, variablelist[i].equalvars);
-		  fprintf(stderr, "%d = %d\n ", i, original_variables[i]);
+		  //fprintf(stderr, "%d = %d/%d ", i, variablelist[i].true_false, variablelist[i].equalvars);
+		  //fprintf(stderr, "%d = %d\n ", i, original_variables[i]);
 		  //fprintf(stderr, "%d = %d\n", i, arrSolution[i]);
 	  }
 	//1 = True  0 = False  -1 = Don't Care
