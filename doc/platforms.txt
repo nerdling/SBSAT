@@ -1,14 +1,21 @@
-PC    - Linux   - gcc    - home
+PC    - Linux   - gcc    - beowulf           
 PC    - Linux   - pg     - beowulf
-PC    - Linux   - intel  - beowulf  - no license ?
+PC    - Linux   - intel  - beowulf 
 PC    - Windows - gcc    - home
-PC    - Windows - VS6    - home     - no makefile ? 
 PC    - Solaris - gcc    - ouzo
 Sparc - Solaris - gcc    - arthur
 Sparc - Solaris - CC     - arthur
-Sparc - Linux   - gcc    - home     - ?
-Mac   - MacOS   - gcc    - home
+Mac   - MacOS   - gcc3   - home
 Alpha - OSF     - gcc    - naboo
+Alpha - OSF     - cxx    - naboo
+SGI   - IRIX    - CC     - cricket  - CXX="CC -LANG:std", 
+                           comment out HAVE_IOSTREAM in config.h
+Embedded
+Canon - Linux   - gcc    - camera, CPU: Cris-Axis, Board ETREX100LX,
+			   LDFLAGS="-mlinux" CPPFLAGS="-mlinux"
+			   --enable-static
+			   run with --bdd-pool-size 10000
 
-did not link
-SGI   - IRIX    - CC     - cricket
+future?
+PC    - Windows - VS6    - home     - no makefile ? 
+Sparc - Linux   - gcc    - home     - ?
