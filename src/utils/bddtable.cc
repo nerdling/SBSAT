@@ -155,7 +155,7 @@ bddvsb_find_or_add_node (int v, BDDNode * r, BDDNode * e)
    }
 #endif
 
-   //int hash_pos = ((v + (*(int*) &r)/sizeof(BDDNode) + (*(int*)&e)/sizeof(BDDNode)) & hash_memory_mask;
+   //int hash_pos = (v + (*(int*)&r)/sizeof(BDDNode) + (*(int*)&e)/sizeof(BDDNode)) & hash_memory_mask;
    //int hash_pos = (v^(*(int*)&r)^(*(int*)&e)) & hash_memory_mask; // slow!
    //int hash_pos = (v + (*(int*)&r)>>2 + (*(int*)&e)>>2) & hash_memory_mask;
    int hash_pos = (v + (*(int*)&r) + (*(int*)&e)) & hash_memory_mask;
@@ -173,9 +173,10 @@ bddvsb_find_or_add_node (int v, BDDNode * r, BDDNode * e)
 
    if (*node != NULL) {
       /* if this node has one in front of it in the chain
-       * swap it so the next time this nodes needs less steps */
-      if (prev && prev != node) {
+       * swap it so the next time this node needs less steps */
 
+		if (prev && prev != node) {
+			
          BDDNode *tmp = *prev;
          *prev = *node;
          *node = tmp;
@@ -187,7 +188,8 @@ bddvsb_find_or_add_node (int v, BDDNode * r, BDDNode * e)
 
          node = prev;
       }
-   } else {
+
+	} else {
       /* count not find the node => allocate new one */
       ite_counters[BDD_NODE_NEW]++;
       if (bddmemory_vsb[numBDDPool].max == curBDDPos) {
