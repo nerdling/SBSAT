@@ -51,7 +51,6 @@ int  nCtrlC=0; /* ctrl c pressed */
 LONG64 ite_counters[MAX_COUNTER];
 double ite_counters_f[MAX_COUNTER_F];
 int  autarky=0; /* autarkies enabled */
-int  compress_smurfs=0;
 char debug_dev[128]="stderr";
 
 extern long nTimeLimit;
@@ -311,12 +310,6 @@ t_opt options[] = {
 { &TRACE_START, "", "brancher-trace-start", P_INT, 
 		V(i:0,"0"), V(i:0,"0"), VAR_NORMAL, 0,
 		"number of backtracks to start the trace (when debug=9)"},
-{ &compress_smurfs, "", "compress-smurfs", P_INT, 
-		V(i:1,"1"), V(i:1,"1"), VAR_NORMAL, 0,
-		"Share states among smurfs"},
-{ &SMURFS_SHARE_PATHS, "", "smurfs-share-paths", P_INT, 
-		V(i:1,"1"), V(i:0,"0"), VAR_NORMAL, 0,
-		"Share paths among smurfs"},
 
 /* 
  * Johnson heuristic options 

@@ -156,37 +156,45 @@ CreateAffectedFuncsStructures(int nMaxVbleIndex)
    int nNumElementsSmurfs = 0;
    int nNumElementsSpecFn = 0;
 
+   int nSpecialFuncIndex = 0;
+   int nRegSmurfIndex = 0;
+
    // For each variable, count the number of special funcs
    // and regular Smurfs which will mention it when the brancher starts.
    for (int nFuncIndex = 0; nFuncIndex < nmbrFunctions; nFuncIndex++)
    {
-      IntegerSetIterator isetNext(*(SFADDONS(SFADDONS(arrFunctions[nFuncIndex]->addons)->pReduct->addons)->pVbles));
+      //t_smurf_chain *arrSmurfChain;
 
-      if (IsSpecialFunc(arrFuncType[nFuncIndex]))
+      SpecialFunc *pSpecialFunc = NULL;
+      if (IsSpecialFunc(arrFuncType[nFuncIndex])) pSpecialFunc = arrSpecialFuncs + nSpecialFuncIndex;
+      else if (arrSmurfChain[nRegSmurfIndex].specfn != -1) pSpecialFunc = arrSpecialFuncs + arrSmurfChain[nRegSmurfIndex].specfn;
+
+      if (pSpecialFunc)
       {
-         while (isetNext(nVble))
+         if (pSpecialFunc->nLHSVble != 0)
          {
-            arrAFS[arrIte2SolverVarMap[nVble]].nNumSpecialFuncsAffected++;
+            nVble = pSpecialFunc->nLHSVble;
+            arrAFS[nVble].nNumSpecialFuncsAffected++;
             nNumElementsSpecFn++;
          }
+         for(int i=0;i<pSpecialFunc->rhsVbles.nNumElts;i++)
+         {
+            nVble = pSpecialFunc->rhsVbles.arrElts[i];
+            arrAFS[nVble].nNumSpecialFuncsAffected++;
+         }
+         nNumElementsSpecFn+=pSpecialFunc->rhsVbles.nNumElts;
       }
+
+      if (IsSpecialFunc(arrFuncType[nFuncIndex])) nSpecialFuncIndex++;
       else
       {
-         while (isetNext(nVble))
+         for(int i=0;i<arrRegSmurfInitialStates[nRegSmurfIndex]->vbles.nNumElts;i++)
          {
-            arrAFS[arrIte2SolverVarMap[nVble]].nNumRegSmurfsAffected++;
-            nNumElementsSmurfs++;
+            nVble = arrRegSmurfInitialStates[nRegSmurfIndex]->vbles.arrElts[i];
+            arrAFS[nVble].nNumRegSmurfsAffected++;
          }
-
-         if (xorFunctions[nFuncIndex])
-         {
-            IntegerSetIterator isetNext(*(SFADDONS(SFADDONS(xorFunctions[nFuncIndex]->addons)->pReduct->addons)->pVbles));
-            while (isetNext(nVble))
-            {
-               arrAFS[arrIte2SolverVarMap[nVble]].nNumSpecialFuncsAffected++;
-               nNumElementsSpecFn++;
-            }
-         }
+         nNumElementsSmurfs+=arrRegSmurfInitialStates[nRegSmurfIndex]->vbles.nNumElts;
+         nRegSmurfIndex++;
       }
    }
 
@@ -220,145 +228,69 @@ CreateAffectedFuncsStructures(int nMaxVbleIndex)
 
    // Now fill in the information concerning which variables are mentioned
    // in which functions.
-   int nSpecialFuncIndex = 0;
-   int nRegSmurfIndex = 0;
+  
+   nSpecialFuncIndex = 0;
+   nRegSmurfIndex = 0;
    for (int nFuncIndex = 0; nFuncIndex < nmbrFunctions; nFuncIndex++)
    {
-      if (IsSpecialFunc(arrFuncType[nFuncIndex]))
+      int tmp_nSpecialFuncIndex = -1;
+      if (IsSpecialFunc(arrFuncType[nFuncIndex])) tmp_nSpecialFuncIndex = nSpecialFuncIndex;
+      else if (arrSmurfChain[nRegSmurfIndex].specfn != -1) tmp_nSpecialFuncIndex = arrSmurfChain[nRegSmurfIndex].specfn;
+
+      if (tmp_nSpecialFuncIndex != -1)
       {
-         IntegerSetIterator isetNext(*(SFADDONS(SFADDONS(arrFunctions[nFuncIndex]->addons)->pReduct->addons)->pVbles));
-         while (isetNext(nVble))
+         SpecialFunc *pSpecialFunc = arrSpecialFuncs + tmp_nSpecialFuncIndex;
+         if (pSpecialFunc->nLHSVble != 0)
          {
-            assert(nVble != 0);
-            nVble = arrIte2SolverVarMap[nVble];
+            int nVble = pSpecialFunc->nLHSVble;
             int nIndex = arrSpecialFuncIndexForVble[nVble];
             arrAFS[nVble].arrSpecFuncsAffected[nIndex]
-               .nSpecFuncIndex = nSpecialFuncIndex;
-
-            // Determine the role of the variable in the special func. 
-            SpecialFunc *pSpecFunc = arrSpecialFuncs + nSpecialFuncIndex;
-            if (nVble == pSpecFunc->nLHSVble)
+               .nSpecFuncIndex = tmp_nSpecialFuncIndex;
+            if (pSpecialFunc->nLHSPolarity == BOOL_TRUE)
             {
-               if (pSpecFunc->nLHSPolarity == BOOL_TRUE)
-               {
-                  arrAFS[nVble].arrSpecFuncsAffected[nIndex]
-                     .nPolarity = BOOL_TRUE;
-               }
-               else
-               {
-                  arrAFS[nVble].arrSpecFuncsAffected[nIndex]
-                     .nPolarity = BOOL_FALSE;
-               }
-               arrAFS[nVble].arrSpecFuncsAffected[nIndex].nRHSIndex
-                  = -1;
+               arrAFS[nVble].arrSpecFuncsAffected[nIndex]
+                  .nPolarity = BOOL_TRUE;
             }
             else
             {
-               // It is a RHS variable.  Determine its polarity.
-               int *arrRHSVbles = pSpecFunc->rhsVbles.arrElts;
-               int nNumRHSVbles = pSpecFunc->rhsVbles.nNumElts;
-               int i;
-
-               for (i = 0; i < nNumRHSVbles; i++)
-               {
-                  if (nVble == arrRHSVbles[i])
-                  {
-                     if (pSpecFunc->arrRHSPolarities[i] == BOOL_TRUE)
-                     {
-                        arrAFS[nVble].arrSpecFuncsAffected[nIndex]
-                           .nPolarity = BOOL_TRUE;
-                     }
-                     else
-                     {
-                        arrAFS[nVble].arrSpecFuncsAffected[nIndex]
-                           .nPolarity = BOOL_FALSE;
-                     }
-                     arrAFS[nVble].arrSpecFuncsAffected[nIndex].nRHSIndex
-                        = i;
-                     break;
-                  }
-               }
-               assert(i != nNumRHSVbles); // bItemFound
+               arrAFS[nVble].arrSpecFuncsAffected[nIndex]
+                  .nPolarity = BOOL_FALSE;
             }
-
+            arrAFS[nVble].arrSpecFuncsAffected[nIndex].nRHSIndex = -1;
             arrSpecialFuncIndexForVble[nVble]++;
          }
-         nSpecialFuncIndex++;
+         for(int i=0;i<pSpecialFunc->rhsVbles.nNumElts;i++)
+         {
+            int nVble = pSpecialFunc->rhsVbles.arrElts[i];
+            int nIndex = arrSpecialFuncIndexForVble[nVble];
+            arrAFS[nVble].arrSpecFuncsAffected[nIndex]
+               .nSpecFuncIndex = tmp_nSpecialFuncIndex;
+            if (pSpecialFunc->arrRHSPolarities[i] == BOOL_TRUE)
+            {
+               arrAFS[nVble].arrSpecFuncsAffected[nIndex]
+                  .nPolarity = BOOL_TRUE;
+            }
+            else
+            {
+               arrAFS[nVble].arrSpecFuncsAffected[nIndex]
+                  .nPolarity = BOOL_FALSE;
+            }
+            arrAFS[nVble].arrSpecFuncsAffected[nIndex].nRHSIndex = i;
+            arrSpecialFuncIndexForVble[nVble]++;
+         }
       }
+
+      if (IsSpecialFunc(arrFuncType[nFuncIndex])) nSpecialFuncIndex++;
       else
       {
-         IntegerSetIterator isetNext(*(SFADDONS(SFADDONS(arrFunctions[nFuncIndex]->addons)->pReduct->addons)->pVbles));
-
-         // Current constraint is represented as a regular Smurf.
-         while (isetNext(nVble))
+         for(int i=0;i<arrRegSmurfInitialStates[nRegSmurfIndex]->vbles.nNumElts;i++)
          {
-            nVble = arrIte2SolverVarMap[nVble];
+            int nVble = arrRegSmurfInitialStates[nRegSmurfIndex]->vbles.arrElts[i];
             int nIndex = arrRegSmurfIndexForVble[nVble];
-            arrAFS[nVble].arrRegSmurfsAffected[nIndex]
-               = nRegSmurfIndex;
+            arrAFS[nVble].arrRegSmurfsAffected[nIndex] = nRegSmurfIndex;
             arrRegSmurfIndexForVble[nVble]++;
          }
          nRegSmurfIndex++;
-         if (xorFunctions[nFuncIndex]) {
-            IntegerSetIterator isetNext(*(SFADDONS(SFADDONS(xorFunctions[nFuncIndex]->addons)->pReduct->addons)->pVbles));
-            /* FIXME: copy from the above -- create function for this: */
-         while (isetNext(nVble))
-         {
-            nVble = arrIte2SolverVarMap[nVble];
-            int nIndex = arrSpecialFuncIndexForVble[nVble];
-            arrAFS[nVble].arrSpecFuncsAffected[nIndex]
-               .nSpecFuncIndex = nSpecialFuncIndex;
-
-            // Determine the role of the variable in the special func. 
-            SpecialFunc *pSpecFunc = arrSpecialFuncs + nSpecialFuncIndex;
-            if (nVble == pSpecFunc->nLHSVble)
-            {
-               if (pSpecFunc->nLHSPolarity == BOOL_TRUE)
-               {
-                  arrAFS[nVble].arrSpecFuncsAffected[nIndex]
-                     .nPolarity = BOOL_TRUE;
-               }
-               else
-               {
-                  arrAFS[nVble].arrSpecFuncsAffected[nIndex]
-                     .nPolarity = BOOL_FALSE;
-               }
-               arrAFS[nVble].arrSpecFuncsAffected[nIndex].nRHSIndex
-                  = -1;
-            }
-            else
-            {
-               // It is a RHS variable.  Determine its polarity.
-               int *arrRHSVbles = pSpecFunc->rhsVbles.arrElts;
-               int nNumRHSVbles = pSpecFunc->rhsVbles.nNumElts;
-               int i;
-
-               for (i = 0; i < nNumRHSVbles; i++)
-               {
-                  if (nVble == arrRHSVbles[i])
-                  {
-                     if (pSpecFunc->arrRHSPolarities[i] == BOOL_TRUE)
-                     {
-                        arrAFS[nVble].arrSpecFuncsAffected[nIndex]
-                           .nPolarity = BOOL_TRUE;
-                     }
-                     else
-                     {
-                        arrAFS[nVble].arrSpecFuncsAffected[nIndex]
-                           .nPolarity = BOOL_FALSE;
-                     }
-                     arrAFS[nVble].arrSpecFuncsAffected[nIndex].nRHSIndex
-                        = i;
-                     break;
-                  }
-               }
-               assert(i != nNumRHSVbles); // bItemFound
-            }
-
-            arrSpecialFuncIndexForVble[nVble]++;
-         }
-         nSpecialFuncIndex++;
-         }
       }
    }
 

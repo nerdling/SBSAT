@@ -92,7 +92,6 @@
 #include "lemmamisc.cc"
 #include "lemmacache.cc"
 #include "lemmas.cc"
-#include "lemmas_smurf.cc"
 #include "lemmas_and.cc"
 #include "lemmas_xor.cc"
 #include "verify.cc"

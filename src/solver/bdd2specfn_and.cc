@@ -114,9 +114,25 @@ BDD2Specfn_AND(BDDNodeStruct *pFunc,
    // Store variable set of RHS.
    // Here we assume that the LHS variable does not also occur on
    // the RHS of the equality.
-   SFADDONS(pFunc->addons)->pVbles
-      ->StoreAsArrayBasedSet_OmitElt(pSpecialFunc->rhsVbles, nEqualityVble);
-
+  
+   // FIXME: can do it even better -- if it really is special func
+   long tempint_max = 0;
+   long y=0;
+   unravelBDD(&y, &tempint_max, &pSpecialFunc->rhsVbles.arrElts, pFunc);
+   if (y>1) {
+      for(int i=0;i<y;i++) {
+         if (pSpecialFunc->rhsVbles.arrElts[i] == nEqualityVble) {
+            pSpecialFunc->rhsVbles.arrElts[i] = pSpecialFunc->rhsVbles.arrElts[y-1];
+            y--;
+            break;
+         }
+      }
+      qsort(pSpecialFunc->rhsVbles.arrElts, y, sizeof(int), revcompfunc);
+   }
+   pSpecialFunc->rhsVbles.nNumElts = y;
+   pSpecialFunc->rhsVbles.arrElts = (int*)realloc(pSpecialFunc->rhsVbles.arrElts, pSpecialFunc->rhsVbles.nNumElts*sizeof(int));
+  
+   
    for (int i=0;i<pSpecialFunc->rhsVbles.nNumElts;i++) {
       pSpecialFunc->rhsVbles.arrElts[i] = arrIte2SolverVarMap[pSpecialFunc->rhsVbles.arrElts[i]];
    }

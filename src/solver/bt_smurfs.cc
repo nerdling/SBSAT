@@ -132,7 +132,7 @@ UpdateRegularSmurf(int nSmurfIndex)
 
       //Save_arrCurrentStates(nSmurfIndex);
 
-      if (compress_smurfs && NO_LEMMAS == 0) {
+      if (NO_LEMMAS == 0) {
          // keep track of the path for lemmas
          // the atoms in the path is reversed for lemmas
          arrSmurfPath[nSmurfIndex].literals[arrSmurfPath[nSmurfIndex].idx++] 

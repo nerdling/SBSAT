@@ -70,8 +70,15 @@ BDD2Specfn_XOR(BDDNodeStruct *pFunc,
    // Store variable set of RHS.
    // Here we assume that the LHS variable does not also occur on
    // the RHS of the equality.
-   SFADDONS(pFunc->addons)->pVbles
-      ->StoreAsArrayBasedSet_OmitElt(pSpecialFunc->rhsVbles, 0);
+   //
+  
+   // FIXME: can do it even better -- if it really is special func
+   long tempint_max = 0;
+   long y=0;
+   unravelBDD(&y, &tempint_max, &pSpecialFunc->rhsVbles.arrElts, pFunc);
+   qsort(pSpecialFunc->rhsVbles.arrElts, y, sizeof(int), revcompfunc);
+   pSpecialFunc->rhsVbles.nNumElts = y;
+   pSpecialFunc->rhsVbles.arrElts = (int*)realloc(pSpecialFunc->rhsVbles.arrElts, pSpecialFunc->rhsVbles.nNumElts*sizeof(int));
 
 
    if (pSpecialFunc->rhsVbles.nNumElts <= 0)

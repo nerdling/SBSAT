@@ -40,16 +40,10 @@
 
 // External variables.
 long gnTotalBytesForTransitions = 0;
-extern int nRegSmurfIndex;
-
-// Functions.
-ITE_INLINE
-SmurfState *
-ComputeSmurfAndInferences(BDDNodeStruct *pFunc, PartialAssignmentEncoding encoding);
 
 ITE_INLINE
 SmurfState *
-ComputeSmurfOfNormalized(BDDNodeStruct *pFunc, PartialAssignmentEncoding encoding)
+ComputeSmurfOfNormalized(BDDNodeStruct *pFunc)//, PartialAssignmentEncoding encoding)
    // Precondition:  *pFunc is 'normalized', i.e., no literal
    // is logically implied by *pFunc.
    // Creates Smurf states to represent the function and its children.
@@ -61,38 +55,26 @@ ComputeSmurfOfNormalized(BDDNodeStruct *pFunc, PartialAssignmentEncoding encodin
    ite_counters[SMURF_NODE_FIND]++;
 
    // Collapse 'true' Smurf states.
-   if (pFunc == true_ptr)
-   {
-      // 'True' Smurf state was initialized at the beginning of SmurfFactory().
-      assert(pTrueSmurfState);
-      return pTrueSmurfState;
-   }
+   if (pFunc == true_ptr) return pTrueSmurfState;
 
-   if (compress_smurfs && pFunc->addons && SFADDONS(pFunc->addons)->pState) {
+   if (pFunc->addons && SFADDONS(pFunc->addons)->pState) {
          return SFADDONS(pFunc->addons)->pState;
    }
 
-   SmurfState *pSmurfState;
-   // Collapse Smurf states iff
-   // (1) They were created from the same constraint
-   // and (2) the literal assignment (path) taken to reach the different states
-   // are permutations of each other.  With respect to clause (2)
-   // we do not count forced assignments as part of the path.
-   if (encoding.FindOrAddState(&pSmurfState))
-   { 
-      /* state already present */
-      return pSmurfState;
-   }
+   SmurfState *pSmurfState = AllocateSmurfState();
 
    ite_counters[SMURF_NODE_NEW]++;
 
    pSmurfState->pFunc = pFunc;
    SFADDONS(pFunc->addons)->pState = pSmurfState;
 
-   ComputeVbleSet(pFunc);
+   // FIXME: can do it even better -- if it really is special func
+   long tempint_max = 0;
+   long y=0;
+   unravelBDD(&y, &tempint_max, &pSmurfState->vbles.arrElts, pFunc);
+   pSmurfState->vbles.nNumElts = y;
+   pSmurfState->vbles.arrElts = (int*)realloc(pSmurfState->vbles.arrElts, pSmurfState->vbles.nNumElts*sizeof(int));
 
-   SFADDONS(pFunc->addons)
-      ->pVbles->StoreAsArrayBasedSet(pSmurfState->vbles, NULL);
    /* mapping ite->solver variables */
    for (int i=0;i<pSmurfState->vbles.nNumElts;i++) {
       if (pSmurfState->vbles.arrElts[i]==0 || 
@@ -126,16 +108,14 @@ ComputeSmurfOfNormalized(BDDNodeStruct *pFunc, PartialAssignmentEncoding encodin
       // Compute transition that occurs when vble is set to true.
       BDDNodeStruct *pFuncEvaled = EvalBdd(pFunc, nVble, true);
       assert(pFuncEvaled != pFunc);
-      SmurfState *pSmurfStateOfEvaled
-         = ComputeSmurfAndInferences(pFuncEvaled, encoding.AddLiteral(nVble, true));
+      SmurfState *pSmurfStateOfEvaled = BDD2Smurf(pFuncEvaled);
       AddStateTransition(pSmurfState, i, arrIte2SolverVarMap[nVble], BOOL_TRUE,
             pFuncEvaled, pSmurfStateOfEvaled);
 
       // Compute transition that occurs when vble is set to false.
       pFuncEvaled = EvalBdd(pFunc, nVble, false);
       assert(pFuncEvaled != pFunc);
-      pSmurfStateOfEvaled 
-         = ComputeSmurfAndInferences(pFuncEvaled, encoding.AddLiteral(nVble, false));
+      pSmurfStateOfEvaled = BDD2Smurf(pFuncEvaled);
 
       AddStateTransition(pSmurfState, i, arrIte2SolverVarMap[nVble], BOOL_FALSE,
             pFuncEvaled, pSmurfStateOfEvaled);
@@ -205,31 +185,15 @@ ComputeReduct(BDDNodeStruct *pFunc)
 
 ITE_INLINE
 SmurfState *
-ComputeSmurfAndInferences(BDDNodeStruct *pFunc, PartialAssignmentEncoding encoding)
+BDD2Smurf(BDDNodeStruct *pFunc)
+   // Constructs a Smurf representation for the constraint *pFunc.
+   // Returns 0 if constraint pointed to by pFunc is unsatisfiable
+   // or if the constraint is represented by a special function.
+   // Otherwise, returns a pointer to the initial Smurf state.
 {
    // Non-special function -- represent with regular state machine.
    ComputeImpliedLiterals(pFunc);
    ComputeReduct(pFunc);
 
-   return ComputeSmurfOfNormalized(SFADDONS(pFunc->addons)->pReduct, encoding);
-}
-
-ITE_INLINE
-SmurfState *
-BDD2Smurf(BDDNodeStruct *pFunc)
-   // Constructs a representation for the constraint *pFunc.
-   // The representation may be as a regular Smurf or as a special function.
-   // Returns 0 if constraint pointed to by pFunc is unsatisfiable
-   // or if the constraint is represented by a special function.
-   // Otherwise, returns a pointer to the initial Smurf state.
-{
-
-   /* start the recursion */
-   PartialAssignmentEncoding encoding;
-
-   ComputeVbleSet(pFunc); /* LOOK -- should it be here? */
-   ComputeVariableMapping(*(SFADDONS(pFunc->addons)->pVbles));
-
-   return
-      ComputeSmurfAndInferences(pFunc, encoding);
+   return ComputeSmurfOfNormalized(SFADDONS(pFunc->addons)->pReduct);
 }

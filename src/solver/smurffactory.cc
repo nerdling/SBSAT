@@ -53,7 +53,6 @@ int nNumRegSmurfs; // Number of regular Smurfs.
 int nSpecialFuncIndex;
 int nRegSmurfIndex;
 int gnMaxVbleIndex;
-extern int compress_smurfs;
 
 extern BDDNode *false_ptr;
 extern BDDNode *true_ptr;
@@ -71,12 +70,6 @@ SmurfFactory()
    InitSmurfFactory();
 
    d9_printf1("SmurfFactory\n");
-
-   InitVbleMappingArray(total_vars + 1);
-   InitVbleEncodingArray();
-   if (SMURFS_SHARE_PATHS)
-      InitPrecomputedStatesArray();
-   InitLemmaLookupSpace();
 
    int *arrIte2SolverSpecFn = (int*)ite_calloc(nmbrFunctions, sizeof(int), 
          9, "arrIte2SolverSpecFn");
@@ -119,6 +112,7 @@ SmurfFactory()
 			  d3_printf3("Constructing Smurf for %d/%d           \r", i, nmbrFunctions);
          arrIte2SolverSmurf[i] = nRegSmurfIndex;
          arrSmurfEqualityVble[nRegSmurfIndex] = arrIte2SolverVarMap[equalityVble[i]];
+         //ComputeVbleSet(pFunc);
          SmurfState *pSmurfState = BDD2Smurf(pFunc);
 
          if (pSmurfState == NULL)
@@ -132,9 +126,6 @@ SmurfFactory()
             (int*)ite_calloc(arrRegSmurfInitialStates[nRegSmurfIndex]->vbles.nNumElts+1, sizeof(int),
                9, "arrSmurfPath[].literals");
          nRegSmurfIndex++;
-   
-         if (SMURFS_SHARE_PATHS)
-            ResetPrecomputedStatesArray();
       } 
 
       if (pSpecFunc != NULL)
@@ -153,11 +144,18 @@ SmurfFactory()
           case OR: 
           case PLAINOR: 
              BDD2Specfn_AND(pSpecFunc, nFunctionType,
-               equalityVble[i], &(arrSpecialFuncs[nSpecialFuncIndex]));
-                    break;
-          case PLAINXOR: BDD2Specfn_XOR(pSpecFunc, nFunctionType,
-               equalityVble[i], &(arrSpecialFuncs[nSpecialFuncIndex]));
-                    break;
+                   equalityVble[i], &(arrSpecialFuncs[nSpecialFuncIndex]));
+             break;
+          case PLAINXOR: 
+             BDD2Specfn_XOR(pSpecFunc, nFunctionType,
+                   equalityVble[i], &(arrSpecialFuncs[nSpecialFuncIndex]));
+             break;
+          case MINMAX:
+             /*
+             BDD2Specfn_MINMAX(pSpecFunc, nFunctionType,
+                   equalityVble[i], &(arrSpecialFuncs[nSpecialFuncIndex]));
+             break;
+             */
           default: assert(0); exit(1);
          }
 
@@ -196,23 +194,6 @@ SmurfFactory()
 
    free(arrIte2SolverSpecFn);
    free(arrIte2SolverSmurf);
-
-   if (compress_smurfs == 0) {
-      // Fill in lemma information
-      for (int i = 0; i < nNumRegSmurfs; i++)
-      {
-         ComputeLemmasForSmurf(arrRegSmurfInitialStates[i]);
-      }
-      extern int  nTotalBytesForLemmaInferences;
-      dm2_printf2("Allocated %d bytes for Lemma Inferences\n",
-            nTotalBytesForLemmaInferences);
-   }
-
-   FreeVbleEncodingArray();
-   if (SMURFS_SHARE_PATHS)
-      FreePrecomputedStatesArray();
-   FreeVbleMappingArray();
-   FreeLemmaLookupSpace();
 
    if (nHeuristic == JOHNSON_HEURISTIC)  {
       InitHeuristicTablesForSpecialFuncs(gnMaxVbleIndex);
@@ -291,13 +272,10 @@ InitSmurfFactory()
          nFunctionType = UNSURE;
       }
 
-      BDDNode *pFunc = functions[i];
-      ComputeVbleSet(pFunc);
 
       if (xorFunctions[i]) {
          nNumSpecialFuncs++;
          nNumRegSmurfs++;
-         ComputeVbleSet(xorFunctions[i]);
       } else
       if (IsSpecialFunc(functionType[i])) 
          nNumSpecialFuncs++;

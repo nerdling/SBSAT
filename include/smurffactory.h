@@ -56,7 +56,7 @@
 #define SHARE_STATES_IF_PATHS_MATCH
 
 
-#define IsSpecialFunc(nFuncType) ((nFuncType) == OR || (nFuncType) == AND || (nFuncType) == PLAINOR || (nFuncType) == PLAINXOR)
+#define IsSpecialFunc(nFuncType) ((nFuncType) == OR || (nFuncType) == AND || (nFuncType) == PLAINOR || (nFuncType) == PLAINXOR || (nFuncType) == MINMAX)
 #define BOOL_NEG(nBoolValue) ((nBoolValue) == BOOL_TRUE ? BOOL_FALSE : BOOL_TRUE)
 
 struct SmurfState;
