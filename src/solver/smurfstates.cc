@@ -123,6 +123,9 @@ FreeSmurfStatePool()
          }
          if (arrSmurfStatePool[i].vbles.arrElts != NULL)
             free(arrSmurfStatePool[i].vbles.arrElts);
+         if (arrSmurfStatePool[i].arrHeuristicXors != NULL) 
+            free(arrSmurfStatePool[i].arrHeuristicXors);
+         
       }
       free(smurfstate_pool_head->memory);
       tmp_smurfstate_pool = (t_smurfstate_pool*)(smurfstate_pool_head->next);
@@ -130,16 +133,6 @@ FreeSmurfStatePool()
       smurfstate_pool_head = tmp_smurfstate_pool;
    }
 }
-
-/*
-ITE_INLINE SmurfState *
-CheckpointSmurfState ()
-{
-assert(0);
-   //assert (arrSmurfStatePool[nSmurfStatePoolNum]);
-   //return arrSmurfStatePool[nSmurfStatePoolNum] + nSmurfStatePoolIndex;
-}
-*/
 
 ITE_INLINE void
 SmurfStatesDisplayInfo()

@@ -149,27 +149,6 @@ CreateAffectedFuncsStructures(int nMaxVbleIndex)
    int *arrFuncType = functionType;
    int nVble;
 
-/* zeroing done using calloc, 
-   structures now part of the AFS
-
-   // Initialize counts to zero and lists to empty.
-   for (int i = 0; i < nMaxVbleIndex + 1; i++)
-   {
-      arrAFS[i].nNumRegSmurfsAffected = 0;
-      arrAFS[i].nNumSpecialFuncsAffected = 0;
-      // Our lists of LemmaInfoStructs all start with a single
-      // empty head node.
-      arrAFS[i].pLemmasWherePos[0] = (LemmaInfoStruct*)ite_calloc(1, sizeof(LemmaInfoStruct),
-            9, "arrAFS[].pLemmasWherePos[0]");
-      arrAFS[i].pLemmasWherePos[1] = (LemmaInfoStruct*)ite_calloc(1, sizeof(LemmaInfoStruct),
-            9, "arrAFS[].pLemmasWherePos[0]");
-      arrAFS[i].pLemmasWhereNeg[0] = (LemmaInfoStruct*)ite_calloc(1, sizeof(LemmaInfoStruct),
-            9, "arrAFS[].pLemmasWherePos[0]");
-      arrAFS[i].pLemmasWhereNeg[1] = (LemmaInfoStruct*)ite_calloc(1, sizeof(LemmaInfoStruct),
-            9, "arrAFS[].pLemmasWherePos[0]");
-   }
-*/
-
    int nNumElementsSmurfs = 0;
    int nNumElementsSpecFn = 0;
 

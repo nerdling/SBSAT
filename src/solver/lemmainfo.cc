@@ -1107,6 +1107,7 @@ ConstructLemmasForLongXorEquals(SpecialFunc *pSpecialFunc)
    EnterIntoLemmaSpace(nNumRHSVbles, arrLits,
          false, pFirstBlock, pLastBlock, nNumBlocks);
    pSpecialFunc->pLongLemma = pFirstBlock;
+   delete [] arrLits;
 }
 
 ITE_INLINE
