@@ -53,7 +53,6 @@ infer *lastinfer;
 int notdone;
 int *tempint = NULL;
 store *variables;
-varinfo *variablelist = NULL;
 BDDNodeStruct **xorFunctions;
 
 int original_numout;
@@ -257,9 +256,6 @@ Finish_Preprocessing()
 	free(variables);
 	variables = NULL;
 
-	//free(length);
-   //length = NULL;
-	
 	while(inferlist != NULL) {
 		infer *temp = inferlist;
 		inferlist = inferlist->next;
@@ -310,9 +306,6 @@ Finish_Preprocessing()
           || (functionType[x] == PLAINXOR && length[x] < PLAINXOR_LIMIT)) 
             functionType[x] = UNSURE;
    }
-
-	//delete [] length;
-	//length = NULL;
 
 	d3_printf3 ("Number of BDDs - %ld\nNuminp = %ld\n", numout, numinp);
 	

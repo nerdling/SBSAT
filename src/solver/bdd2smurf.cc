@@ -101,7 +101,7 @@ ComputeSmurfOfNormalized(BDDNodeStruct *pFunc, PartialAssignmentEncoding encodin
          dE_printf3("\nvariable id: %d, true_false=%d\n", 
                pSmurfState->vbles.arrElts[i],
                variablelist[pSmurfState->vbles.arrElts[i]].true_false);
-         exit(1);
+         //exit(1);
       }
       pSmurfState->vbles.arrElts[i] = arrIte2SolverVarMap[pSmurfState->vbles.arrElts[i]];
    }

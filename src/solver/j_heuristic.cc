@@ -268,11 +268,31 @@ J_FreeHeuristicScores()
 }
 
 #define J_ONE 0
+
+// CLASSIC
 #define J_WEIGHT(pos, neg) (J_ONE+pos) * (J_ONE+neg)
 
-/* BERM (neg>pos?((pos*2) + neg):((neg*2) + pos)) */
+// ABSOLUTE MAXIMUM
+//#define J_WEIGHT(pos, neg) (neg > pos ? neg : pos)
+
+// BERM
+//#define J_WEIGHT(pos, neg) (neg>pos?((pos*2) + neg):((neg*2) + pos)) 
+
+// ADDITION
+//#define J_WEIGHT(pos, neg) (J_ONE+pos) + (J_ONE+neg)
+
+// NEW??
+//#define J_WEIGHT(pos, neg) (neg>pos?((pos*3) + neg) : ((neg*3) + pos))
+
+// slider_80_unsat -- the order from the best to worst is (all J_ONE = 0)
+// CLASSIC
+// BERM
+// ADDITION
+// ABSOLUTE MAXIMUM
+
 
 // * arrLemmaVbleCountsPos[i] * arrLemmaVbleCountsNeg[i]
+
 ITE_INLINE void
 J_OptimizedHeuristic(int *pnBranchAtom, int *pnBranchValue)
 {
