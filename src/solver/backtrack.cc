@@ -75,8 +75,8 @@ BackTrack()
 
       if (pChoicePointTop < arrChoicePointStack)
       {
-         //goto_NoSolution;
-         return 0;
+         // return ERR_
+         return 1;
       }
       nInferredAtom = pChoicePointTop->nBranchVble;
       nInferredValue = arrSolution[nInferredAtom];
@@ -184,7 +184,7 @@ BackTrack()
                {
                   // Lemma of length zero. The problem is unsat.
                   cout << "1: Lemma of length zero." << endl;
-                  return 0; // goto_NoSolution;
+                  return 1; // goto_NoSolution;
                }
 
                /* COMPUTE nLemmaScore where lemmas with lower level literal 
@@ -403,7 +403,7 @@ BackTrack()
    pUnitLemmaListTail = NULL;
 
    // Get the consequences of the branch atoms new value.
-   return 1;
+   return 0; /* NO_ERROR */
 }
 
 ITE_INLINE

@@ -76,8 +76,8 @@ BackTrack_NL()
   pChoicePointTop--;
   if (pChoicePointTop < arrChoicePointStack)
     {
-      //goto_NoSolution;
-      return 0;
+      // return ERR_
+      return 1;
     }
 
   /* the choice point */
@@ -175,6 +175,6 @@ BackTrack_NL()
 #endif  
   
   // Get the consequences of the branch atoms new value.
-  return 1;
+  return 0; /* NO_ERROR */
 }
 

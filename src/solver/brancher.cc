@@ -158,24 +158,106 @@ CheckLimits(double fStartTime)
    return 0;
 }
 
+ITE_INLINE int
+ITE_Deduce()
+{
+   int err;
 
-// ITE_INLINE
-int
-SolveVillage()
-   // The main brancher routine.
-   // Returns true iff the Village has a solution,
-   // in which case it allocates an array of integers to hold the
-   // solution, and points *parrSolution to the array.
-   // The array size will be _ircuit->variables.universeSize + 2.
-   // The array values will all be BOOL_FALSE, BOOL_TRUE, or BOOL_UNKNOWN.
-   // BOOL_UNKNOWN indicates a "do not care" situation for the
-   // corresponding variable.
-{  
-   int ret = SOLV_UNKNOWN;
-   double fStartTime;
-   double fEndTime;
-   double fPrevEndTime;
-   int err=0;
+   // While inference queue is nonempty
+   while (pInferenceQueueNextElt < pInferenceQueueNextEmpty)
+   {
+      // Dequeue atom and value
+      int nInferredAtom = *(pInferenceQueueNextElt++);
+      int nInferredValue = arrSolution[nInferredAtom];
+
+      // Determine the potentially affected constraints.
+      AffectedFuncsStruct *pAFS = arrAFS + nInferredAtom;
+
+      D_9(
+            //if (nNumBacktracks > TRACE_START) 
+            fprintf(stddbg, "\nInferred Atom %c%d\n", 
+               (nInferredValue==BOOL_TRUE?'+':'-'),
+               nInferredAtom);
+            );
+
+      if ((err = UpdateEachAffectedRegularSmurf(pAFS))) break;
+      if ((err = UpdateEachAffectedSpecialFunction(pAFS))) break;
+
+      if (NO_LEMMAS == 0)
+         if ((err = UpdateEachAffectedLemma(pAFS, nInferredValue))) break;
+
+   } // while inference queue is non-empty
+#ifdef MK_NULL 
+   if (err == 0) err = ITE_Fn_Deduce();
+#endif
+   ite_counters[err]++;
+   return err;
+}
+
+#ifdef MK_NULL
+ITE_INLINE void
+ITE_Fn_Deduce()
+{
+   // While fn inference queue is nonempty
+   while (pFnInferenceQueueNextElt < pFnInferenceQueueNextEmpty)
+   {
+      // Dequeue func and value
+      AffectedFuncsStruct *pAFS = arrAFS + nInferredAtom;
+      int nInferredValue = pFnInferenceQueueNextElt->
+         int nInferredValue = arrSolution[nInferredAtom];
+
+      // Determine the potentially affected constraints.
+
+      D_9(
+            //if (nNumBacktracks > TRACE_START) 
+            fprintf(stddbg, "\nInferred Atom %c%d\n", 
+               (nInferredValue==BOOL_TRUE?'+':'-'),
+               nInferredAtom);
+         )
+
+         if ((err = UpdateEachAffectedRegularSmurf(pAFS))) break;
+      if ((err = UpdateEachAffectedSpecialFunction(pAFS))) break;
+
+      if (NO_LEMMAS == 0)
+         if ((err = UpdateEachAffectedLemma(pAFS, nInferredValue))) break;
+   } // while fn inference queue is non-empty
+   return err;
+}
+#endif
+
+double fStartTime;
+double fEndTime;
+double fPrevEndTime;
+int (* proc_backtrack)() = NULL;
+
+ITE_INLINE int
+CheckBtHooks()
+{
+   nNumBacktracks++;
+   d9_printf2("\nStarting backtrack # %d\n", nNumBacktracks);
+   if (nNumBacktracks % BACKTRACKS_PER_STAT_REPORT == 0) {
+
+      if (reports == 0) 
+         DisplayBacktrackInfo(fPrevEndTime, fStartTime);
+      else 
+         crtwin();
+      if (CheckLimits(fStartTime)) { 
+         d2_printf1("Interrupting brancher. Solution Unknown.\n");
+         ite_counters[ERR_LIMITS] = 1;
+         return 1; /* FIXME: ERR_limits!! */
+      }
+   }
+  
+   /* setup bt function as a hook with frequency 1 ? */
+   return proc_backtrack();
+}
+
+ITE_INLINE int
+CheckInitHooks()
+{
+   if (NO_LEMMAS == 1) proc_backtrack = BackTrack_NL;
+   else if (sbj) proc_backtrack = BackTrack_SBJ;
+   else proc_backtrack = BackTrack;
 
    if (reports != 0) crtwin_init();
 
@@ -198,131 +280,12 @@ SolveVillage()
        dE_printf1("Unknown heuristic\n");
        exit(1);
    }
+   return 0;
+}
 
-   // Main inferencing loop.
-   fPrevEndTime = fStartTime = get_runtime();
-
-   if (!err)
-      while (1)
-      {
-         // While inference queue is nonempty
-         while (pInferenceQueueNextElt < pInferenceQueueNextEmpty)
-         {
-            // Dequeue atom and value
-            int nInferredAtom = *(pInferenceQueueNextElt++);
-            int nInferredValue = arrSolution[nInferredAtom];
-
-            // Determine the potentially affected constraints.
-            AffectedFuncsStruct *pAFS = arrAFS + nInferredAtom;
-
-            D_9(
-                  //if (nNumBacktracks > TRACE_START) 
-                  fprintf(stddbg, "\nInferred Atom %c%d\n", 
-                     (nInferredValue==BOOL_TRUE?'+':'-'),
-                     nInferredAtom);
-               )
-
-               if ((err = UpdateEachAffectedRegularSmurf(pAFS))) break;
-            if ((err = UpdateEachAffectedSpecialFunction(pAFS))) break;
-
-            if (NO_LEMMAS == 0)
-               if ((err = UpdateEachAffectedLemma(pAFS, nInferredValue))) break;
-
-         } // while inference queue is non-empty
-
-#ifdef MK_NULL 
-         // While fn inference queue is nonempty
-         while (pFnInferenceQueueNextElt < pFnInferenceQueueNextEmpty)
-         {
-            // Dequeue func and value
-            AffectedFuncsStruct *pAFS = arrAFS + nInferredAtom;
-            int nInferredValue = pFnInferenceQueueNextElt->
-               int nInferredValue = arrSolution[nInferredAtom];
-
-            // Determine the potentially affected constraints.
-
-            D_9(
-                  //if (nNumBacktracks > TRACE_START) 
-                  fprintf(stddbg, "\nInferred Atom %c%d\n", 
-                     (nInferredValue==BOOL_TRUE?'+':'-'),
-                     nInferredAtom);
-               )
-
-               if ((err = UpdateEachAffectedRegularSmurf(pAFS))) break;
-            if ((err = UpdateEachAffectedSpecialFunction(pAFS))) break;
-
-            if (NO_LEMMAS == 0)
-               if ((err = UpdateEachAffectedLemma(pAFS, nInferredValue))) break;
-         } // while inference queue is non-empty
-#endif
-
-         ite_counters[err]++;
-
-         if (err == 0)
-         {
-            assert(nNumUnresolvedFunctions >= 0);
-            if (nNumUnresolvedFunctions != 0) {
-               SelectNewBranchPoint();
-               continue;
-            }
-
-            ret = RecordSolution();
-            if (ret == SOLV_SAT) 
-               /* this is the last solution we need -- so break! */
-               break;
-
-            ite_counters[err]++;
-            /* look for more solutions */
-         };
-
-         err = 0;
-
-         nNumBacktracks++;
-         d9_printf2("\nStarting backtrack # %d\n", nNumBacktracks);
-
-         if (nNumBacktracks % BACKTRACKS_PER_STAT_REPORT == 0) {
-
-            if (reports == 0) 
-               DisplayBacktrackInfo(fPrevEndTime, fStartTime);
-            else 
-               crtwin();
-            if (CheckLimits(fStartTime)) { 
-               d2_printf1("Interrupting brancher. Solution Unknown.\n");
-               break; 
-            }
-         }
-
-         if (NO_LEMMAS == 0) {
-            /* YES -- we have lemmas */
-
-            int ret_bt;
-
-            if (sbj) ret_bt = BackTrack_SBJ();
-            else ret_bt = BackTrack();
-
-            if (ret_bt==0) 
-            {
-               if (ite_counters[NUM_SOLUTIONS])
-                  ret = SOLV_SAT;
-               else		            
-                  ret = SOLV_UNSAT;
-               break;
-            }
-            else continue;
-         }
-
-         if (BackTrack_NL()==0) {
-            if (ite_counters[NUM_SOLUTIONS])
-               ret = SOLV_SAT;
-            else		          
-               ret = SOLV_UNSAT;
-            break;
-         }
-         else continue;
-
-         /* point that can not be reached */
-      }
-
+ITE_INLINE int
+CheckFinalHooks()
+{
    switch (nHeuristic) {
     case JOHNSON_HEURISTIC:
        J_FreeHeuristicScores();
@@ -335,13 +298,6 @@ SolveVillage()
          DisplayStatistics(nNumChoicePts, nNumBacktracks, nNumBackjumps);
       );
 
-   fEndTime = get_runtime();
-   ite_counters_f[BRANCHER_TIME] = fEndTime - fStartTime;
-   d2_printf2("Time in brancher:  %4.3f secs.\n", ite_counters_f[BRANCHER_TIME]);
-   if (ite_counters_f[BRANCHER_TIME] == 0.0) ite_counters_f[BRANCHER_TIME] = 0.00001; /* something real small */
-   double fBacktracksPerSec = (nNumBacktracks) / ite_counters_f[BRANCHER_TIME];
-   d2_printf2("%.3f backtracks per sec.\n", fBacktracksPerSec);      
-
 #ifdef HAVE_IMAGE_JPEG
    D_2(
          if (jpg_filename[0]) {
@@ -350,7 +306,63 @@ SolveVillage()
       )
       graph_free();
 #endif 
+   return 0;
+}
+
+// ITE_INLINE
+int
+SolveVillage()
+   // The main brancher routine.
+   // Returns true iff the Village has a solution,
+   // in which case it allocates an array of integers to hold the
+   // solution, and points *parrSolution to the array.
+   // The array size will be _ircuit->variables.universeSize + 2.
+   // The array values will all be BOOL_FALSE, BOOL_TRUE, or BOOL_UNKNOWN.
+   // BOOL_UNKNOWN indicates a "do not care" situation for the
+   // corresponding variable.
+{  
+   int ret = SOLV_UNKNOWN;
+
+   CheckInitHooks(); /* FIXME: check for result */
+
+   // Main inferencing loop.
+   fPrevEndTime = fStartTime = get_runtime();
+
+   while (1)
+   {
+      if (ITE_Deduce()==0)
+      {
+         assert(nNumUnresolvedFunctions >= 0);
+         if (nNumUnresolvedFunctions != 0) {
+            SelectNewBranchPoint();
+            continue;
+         }
+
+         /* if this is the last solution we need -- break! */
+         if (RecordSolution() == 0) break;
+
+         /* backtrack and look for more solutions */
+      };
+
+      /* if nowhere to backtrack -- leave */
+      if (CheckBtHooks() != 0) break;
+   }
+
+   ite_counters_f[BRANCHER_TIME] = get_runtime() - fStartTime;
+   d2_printf2("Time in brancher:  %4.3f secs.\n", ite_counters_f[BRANCHER_TIME]);
+   if (ite_counters_f[BRANCHER_TIME] == 0.0) ite_counters_f[BRANCHER_TIME] = 0.00001; /* something real small */
+   double fBacktracksPerSec = (nNumBacktracks) / ite_counters_f[BRANCHER_TIME];
+   d2_printf2("%.3f backtracks per sec.\n", fBacktracksPerSec);      
+
+   CheckFinalHooks();
+
+   if (ite_counters[NUM_SOLUTIONS])
+      ret = SOLV_SAT;
+   else		            
+   if (ite_counters[ERR_LIMITS])
+      ret = SOLV_UNKNOWN;
+   else
+      ret = SOLV_UNSAT;
 
    return ret;
 }
-

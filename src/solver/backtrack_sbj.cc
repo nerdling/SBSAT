@@ -83,8 +83,8 @@ BackTrack_SBJ()
 
       if (pChoicePointTop < arrChoicePointStack)
       {
-         //goto_NoSolution;
-         return 0;
+         // return ERR_
+         return 1;
       }
 		
       nInferredAtom = pChoicePointTop->nBranchVble;
@@ -201,7 +201,7 @@ BackTrack_SBJ()
                {
                   // Lemma of length zero. The problem is unsat.
                   cout << "1: Lemma of length zero." << endl;
-                  return 0; // goto_NoSolution;
+                  return 1; // return ERR_
                }
 
                /* COMPUTE nLemmaScore where lemmas with lower level literal 
@@ -461,5 +461,5 @@ BackTrack_SBJ()
 #endif
 
    // Get the consequences of the branch atoms new value.
-   return 1;
+   return 0; /* NO_ERROR */
 }

@@ -103,11 +103,12 @@ RecordSolution ()
 	
    /* is this the last solution we are looking for */
    ite_counters[NUM_SOLUTIONS]++;
-   if (ite_counters[NUM_SOLUTIONS] == max_solutions) return SOLV_SAT;
+   if (ite_counters[NUM_SOLUTIONS] == max_solutions) return 0;
 
    d2_printf1("Recording the solution and continuing backtracking...\n");
    pConflictLemma = pFirstBlock;
    // goto_Backtrack;
-   return ERR_BT_SOL_LEMMA;
+   ite_counters[ERR_BT_SOL_LEMMA]++;
+   return 1;
 }
 
