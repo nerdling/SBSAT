@@ -1,9 +1,9 @@
 #                                               -*- Autoconf -*- # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.57)
-AC_INIT([sbsat],[2.1b-3],[mkouril@ececs.uc.edu])
+AC_INIT([sbsat],[2.1r-1],[mkouril@ececs.uc.edu])
 AC_LANG([C++])
-AM_INIT_AUTOMAKE(sbsat,2.1b-3)
+AM_INIT_AUTOMAKE(sbsat,2.1r-1)
 AC_CONFIG_SRCDIR([include/brancher.h])
 AC_CONFIG_HEADER([include/config.h])
 
