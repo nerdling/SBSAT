@@ -744,18 +744,35 @@ brief description of each are as follows:
 
 <P>
 
-<UL>
-<LI>INITIALBRANCH InitialBranch allows the user to specify which variables
-should be branched on first during search. InitialBranch is a command
-that should only be used when the user is sure he knows more information
-about the nature of the input file the attached solver will be able
-to derive. This keyword takes any number of positive integer arguments
-Example Use: InitialBranch( 1, 3, 5..18, 4, 24..39) This will mark
-variables 1, 3, 5..18 (inclusive), 4, 24..39 (inclusive) to be branched
-on first. *Note that this keyword is the only keyword which requires
-parenthesis around it's argument list* 
-</LI>
-<LI>VAR is the Base keyword to all equations. It takes one(1) argument,
+<DL COMPACT>
+<DT>
+<DD><P>
+</DD>
+</DL><B>INITIALBRANCH</B>
+
+<P>
+InitialBranch allows the user to specify which variables should be
+branched on first during search. InitialBranch is a command that should
+only be used when the user is sure he knows more information about
+the nature of the input file the attached solver will be able to derive.
+This keyword takes any number of positive integer arguments Example
+Use: InitialBranch( 1, 3, 5..18, 4, 24..39) This will mark variables
+1, 3, 5..18 (inclusive), 4, 24..39 (inclusive) to be branched on first.
+
+<P>
+*Note that this keyword is the only keyword which requires parenthesis
+around it's argument list* 
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD><P>
+</DD>
+</DL><B>VAR</B>
+
+<P>
+VAR is the base keyword to all equations. It takes one(1) argument,
 which must be an integer. VAR creates a BDD for the variable following
 it. This BDD will have a true branch and a false branch. 
 <BR>
@@ -763,117 +780,331 @@ The keyword VAR has been made obsolete. It is no longer necessary
 to place VAR in front of every variable. It is now assumed that all
 integers are variables unless preceded by a '$'. All integers preceded
 by a '$' refer to equations instead of variables.
-</LI>
-<LI>NOT The NOT function takes one(1) argument and forms a BDD which represents
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD><P>
+</DD>
+</DL><B>NOT</B> 
+
+<P>
+The NOT function takes one(1) argument and forms a BDD which represents
 the negation of that argument. When negating a single variable, a
 negative sign (&#34;-&#34;) can be placed directly in front
 of the variable as a shortcut (See Shortcuts)
-</LI>
-<LI>ITE The ITE function takes three(3) arguments and forms a BDD which
-expresses the If-Then-Else relation of the three(3) arguments. The
-function builds a BDD so that if the first parameter evaluates to
-true, then the second parameter must be true, else the third parameter
-must be true. Every BDD possible can be expressed using the ITE function. 
-</LI>
-</UL>
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD><P>
+</DD>
+</DL><B>ITE</B> 
+
+<P>
+The ITE function takes three(3) arguments and forms a BDD which expresses
+the If-Then-Else relation of the three(3) arguments. The function
+builds a BDD so that if the first parameter evaluates to true, then
+the second parameter must be true, else the third parameter must be
+true. Every BDD possible can be expressed using the ITE function. 
+
+<P>
 
 <DL COMPACT>
 <DT>
 <DD>Example:&nbsp;ITE(&nbsp;ITE(&nbsp;3,&nbsp;$5,&nbsp;-5),&nbsp;4,&nbsp;7)&nbsp;
 
 <P>
-(Assume&nbsp;$5&nbsp;has&nbsp;been&nbsp;previously&nbsp;defined.&nbsp;*Note&nbsp;that&nbsp;the&nbsp;use&nbsp;of&nbsp;parenthesis&nbsp;and&nbsp;commas&nbsp;here&nbsp;is&nbsp;allowed&nbsp;but&nbsp;not&nbsp;required*)&nbsp;
+Assume&nbsp;BDD&nbsp;$5&nbsp;has&nbsp;been&nbsp;previously&nbsp;defined.
+
+<P>
+*Note&nbsp;that&nbsp;the&nbsp;use&nbsp;of&nbsp;parenthesis&nbsp;and&nbsp;commas&nbsp;here&nbsp;is&nbsp;allowed&nbsp;but&nbsp;not&nbsp;required*
 </DD>
-</DL>
-<UL>
-<LI>AND takes two(2) arguments and creates a BDD which expresses the logical
-AND of the two(2) arguments. Example: AND 3 4 
-</LI>
-<LI>AND# AND followed directly by a positive integer is a shortcut designed
+</DL><B>AND</B> 
+
+<P>
+The AND function takes two(2) arguments and creates a BDD which expresses
+the logical AND of the two(2) arguments.
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>Example:&nbsp;AND&nbsp;3&nbsp;4&nbsp;
+
+<P>
+</DD>
+</DL><B>AND#</B>
+
+<P>
+AND followed directly by a positive integer is a shortcut designed
 to allow the user to send more than two(2) arguments to the AND function.
-Any number of arguments is supported here. Example 1: AND4(1, 2, 3,
-4) Example 2: AND5(-1, AND3(2, 3, $4), 5, $6, 7) Assume $4 and
-$6 have been previously defined. *Note that the use of white space
-here is allowed but not required* 
-</LI>
-<LI>NAND takes two(2) arguments and creates a BDD which expresses NOT
-of the logical AND of the two(2) arguments. 
-</LI>
-<LI>NAND# NAND followed directly by a positive integer is a shortcut
-designed to allow the user to send more than two(2) arguments to the
-NAND function. Any number of arguments is supported here. 
-</LI>
-<LI>OR OR takes two(2) arguments and creates a BDD which expresses the
-logical OR of the two(2) arguments. 
-</LI>
-<LI>OR# OR followed directly by a positive integer is a shortcut designed
+Any number of arguments is supported here. 
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>Example&nbsp;1:&nbsp;AND4(1,&nbsp;2,&nbsp;3,&nbsp;4)
+
+<P>
+Example&nbsp;2:&nbsp;AND5(-1,&nbsp;
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND3(2,&nbsp;3,&nbsp;$4),
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5,&nbsp;$6,&nbsp;7)
+
+<P>
+Assume&nbsp;$4&nbsp;and&nbsp;$6&nbsp;have&nbsp;been&nbsp;previously&nbsp;defined.
+
+<P>
+*Note&nbsp;that&nbsp;the&nbsp;use&nbsp;of&nbsp;white&nbsp;space&nbsp;here&nbsp;is&nbsp;allowed&nbsp;but&nbsp;not&nbsp;required*&nbsp;
+
+<P>
+</DD>
+</DL><B>NAND</B>
+
+<P>
+The NAND function takes two(2) arguments and creates a BDD which expresses
+NOT of the logical AND of the two(2) arguments. 
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD><P>
+</DD>
+</DL><B>NAND#</B>
+
+<P>
+NAND followed directly by a positive integer is a shortcut designed
+to allow the user to send more than two(2) arguments to the NAND function.
+Any number of arguments is supported here. 
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD><P>
+</DD>
+</DL><B>OR</B>
+
+<P>
+The OR function takes two(2) arguments and creates a BDD which expresses
+the logical OR of the two(2) arguments. 
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD><P>
+</DD>
+</DL><B>OR#</B>
+
+<P>
+OR followed directly by a positive integer is a shortcut designed
 to allow the user to send more than two(2) arguments to the OR function.
 Any number of arguments is supported here. 
-</LI>
-<LI>NOR NOR takes two(2) arguments and creates a BDD which expresses the
-NOT of the logical OR of the two(2) arguments. 
-</LI>
-<LI>NOR# NOR followed directly by a positive integer is a shortcut designed
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD><P>
+</DD>
+</DL><B>NOR</B>
+
+<P>
+The NOR function takes two(2) arguments and creates a BDD which expresses
+the NOT of the logical OR of the two(2) arguments. 
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD><P>
+</DD>
+</DL><B>NOR#</B>
+
+<P>
+NOR followed directly by a positive integer is a shortcut designed
 to allow the user to send more than two(2) arguments to the NOR function.
 Any number of arguments is supported here. 
-</LI>
-<LI>EQU EQU takes two(2) arguments and creates a BDD which expresses that
-these two(2) arguments are equal to each other. 
-</LI>
-<LI>EQU# EQU followed directly by a positive integer is a shortcut designed
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD><P>
+</DD>
+</DL><B>EQU</B>
+
+<P>
+The EQU function takes two(2) arguments and creates a BDD which expresses
+that these two(2) arguments are equal to each other. 
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD><P>
+</DD>
+</DL><B>EQU#</B>
+
+<P>
+EQU followed directly by a positive integer is a shortcut designed
 to allow the user to send more than two(2) arguments to the EQU function.
 Any number of arguments is supported here. 
-</LI>
-<LI>XOR XOR takes two(2) arguments and creates a BDD which expresses that
-these two(2) arguments are opposite of each other. 
-</LI>
-<LI>XOR# XOR followed directly by a positive integer is a shortcut designed
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD><P>
+</DD>
+</DL><B>XOR</B>
+
+<P>
+The XOR function takes two(2) arguments and creates a BDD which expresses
+that these two(2) arguments are opposite of each other. 
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD><P>
+</DD>
+</DL><B>XOR#</B>
+
+<P>
+XOR followed directly by a positive integer is a shortcut designed
 to allow the user to send more than two(2) arguments to the XOR function.
 Any number of arguments is supported here. 
-</LI>
-<LI>IMP IMP takes two(2) arguments and creates a BDD which expresses the
-logical implication of the two(2) arguments. *Take note that IMP
-does not support multiple arguments as many of the other keywords
-do, this is because the implication operator has strict variable ordering
-dependence.* 
-</LI>
-<LI>NIMP NIMP takes two(2) arguments and creates a BDD which expresses
-the NOT of the logical implication of the two(2) arguments. *Take
-note that NIMP does not support multiple arguments as many of the
-other keywords do, this is because the implication operator has strict
-variable ordering dependence.* 
-</LI>
-<LI>GCF The GCF keyword takes two(2) arguments. This function finds all
-solutions of both parameters and then creates a BDD which represents
-the intersection of these solutions. GCF stands for Generalized Co-Factoring. 
-</LI>
-<LI>STRENGTHEN STRENGTHEN takes two(2) arguments, e1 and e2. This function
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD><P>
+</DD>
+</DL><B>IMP</B>
+
+<P>
+The IMP function takes two(2) arguments and creates a BDD which expresses
+the logical implication of the two(2) arguments.
+
+<P>
+*Take note that IMP does not support multiple arguments as many
+of the other keywords do, this is because the implication operator
+has strict variable ordering dependence.* 
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD><P>
+</DD>
+</DL><B>NIMP</B>
+
+<P>
+The NIMP function takes two(2) arguments and creates a BDD which expresses
+the NOT of the logical implication of the two(2) arguments.
+
+<P>
+*Take note that NIMP does not support multiple arguments as many
+of the other keywords do, this is because the implication operator
+has strict variable ordering dependence.* 
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD><P>
+</DD>
+</DL><B>GCF</B> 
+
+<P>
+The GCF function takes two(2) arguments. This function finds all solutions
+of both parameters and then creates a BDD which represents the intersection
+of these solutions. GCF stands for Generalized Co-Factoring. 
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD><P>
+</DD>
+</DL><B>STRENGTHEN</B>
+
+<P>
+The STRENGTHEN function takes two(2) arguments, e1 and e2. This function
 uses the information in e2 to strengthen e1. (See Strengthening, page
-??) 
-</LI>
-<LI>PRUNE PRUNE takes two(2) arguments, e1 and e2. This function prunes
-all branches found in e2 away from e1. (See Branch Pruning, page ??) 
-</LI>
-<LI>EXIST EXIST takes two(2) arguments, the first argument can be an equation
-or a variable (e1), the second argument must be a variable (v1). This
-function searches for and finds everyplace in e1 where v1 occurs.
-Every time v1 is found it is replaced by the logical OR of it's true
-branch and it's false branch. This function effectively removes v1
-from e1. (See Existential Quantification, page ??) 
-</LI>
-<LI>UNIVERSE UNIVERSE takes two(2) arguments, the first argument can be
-an equation or a variable (e1), the second argument must be a variable
+??)
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD><P>
+</DD>
+</DL><B>PRUNE</B> 
+
+<P>
+The PRUNE function takes two(2) arguments, e1 and e2. This function
+prunes all branches found in e2 away from e1. (See Branch Pruning,
+page ??) 
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD><P>
+</DD>
+</DL><B>EXIST</B>
+
+<P>
+The EXIST function takes two(2) arguments, the first argument can
+be an equation or a variable (e1), the second argument must be a variable
+(v1). This function searches for and finds everyplace in e1 where
+v1 occurs. Every time v1 is found it is replaced by the logical OR
+of it's true branch and it's false branch. This function effectively
+removes v1 from e1. (See Existential Quantification, page ??) 
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD><P>
+</DD>
+</DL><B>UNIVERSE</B>
+
+<P>
+The UNIVERSE function takes two(2) arguments, the first argument can
+be an equation or a variable (e1), the second argument must be a variable
 (v1). This function searches for and finds everyplace in e1 where
 v1 occurs. Every time v1 is found it is replaced by the logical AND
 of it's true branch and it's false branch. This function effectively
 removes v1 from e1. 
-</LI>
-<LI>PRINT_TREE This function takes one(1) argument. The argument is printed
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD><P>
+</DD>
+</DL><B>PRINT_TREE</B> 
+
+<P>
+The PRINT_TREE function takes one(1) argument. The argument is printed
 to standard out in a nice, easily readable tree form. The argument
-is printed from the top down. To the branch to the left is the true
-branch, the branch to the right is the false branch. 
-</LI>
-</UL>
+is printed from the top down. The branch to the left is the true branch,
+the branch to the right is the false branch. 
+
+<P>
 
 <DL COMPACT>
 <DT>
@@ -886,30 +1117,32 @@ Prints&nbsp;to&nbsp;standard&nbsp;output:
 --------------------------&nbsp;
 
 <P>
-4&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4&nbsp;
 
 <P>
-T&nbsp;5&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;T&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5&nbsp;
 
 <P>
-T&nbsp;6&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;T&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6&nbsp;
 
 <P>
-F&nbsp;T&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;F&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;T&nbsp;
 
 <P>
 --------------------------&nbsp;
+
+<P>
 </DD>
-</DL>
-<UL>
-<LI>PPRINT_TREE This function takes one(1) argument. The argument is
-printed to standard out in a different form than PRINT_TREE. If the
-true and false branches are T and F then they are printed on the same
-line, otherwise, the true and false branches are indented from the
-top variable. The true branch is printed first and is followed by
-the false branch. 
-</LI>
-</UL>
+</DL><B>PPRINT_TREE</B>
+
+<P>
+The PPRINT_TREE function takes one(1) argument. The argument is printed
+to standard out in a different form than PRINT_TREE. If the true
+and false branches are T and F then they are printed on the same line,
+otherwise, the true and false branches are indented from the top variable.
+The true branch is printed first and is followed by the false branch. 
+
+<P>
 
 <DL COMPACT>
 <DT>
@@ -922,23 +1155,41 @@ Prints&nbsp;to&nbsp;standard&nbsp;output:
 ----------------------------
 
 <P>
-ite&nbsp;4&nbsp;T&nbsp;ite&nbsp;5&nbsp;T&nbsp;ite&nbsp;6&nbsp;F&nbsp;T
+ite&nbsp;4
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;T
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;ite&nbsp;5
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;T
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ite&nbsp;6&nbsp;F&nbsp;T
 
 <P>
 ----------------------------&nbsp;
+
+<P>
 </DD>
-</DL>
-<UL>
-<LI>ADD_STATE This function takes two(2) arguments. The first argument
+</DL><B>ADD_STATE</B>
+
+<P>
+The ADD_STATE function takes two(2) arguments. The first argument
 (e1) must be an equation and the second argument must be a positive
 integer (i1). ADD_STATE creates a new BDD with structure identical
 e1 but with each variable incremented by i1. 
-</LI>
-</UL>
+
+<P>
 
 <DL COMPACT>
 <DT>
-<DD>Example:&nbsp;ADD_STATE(&nbsp;AND(3,&nbsp;4),&nbsp;5&nbsp;)&nbsp;This&nbsp;will&nbsp;create&nbsp;the&nbsp;BDD&nbsp;-&nbsp;AND(8,&nbsp;9)&nbsp;
+<DD>Example:&nbsp;ADD_STATE(&nbsp;AND(3,&nbsp;4),&nbsp;5&nbsp;)
+
+<P>
+This&nbsp;will&nbsp;create&nbsp;the&nbsp;BDD&nbsp;-&nbsp;AND(8,&nbsp;9)&nbsp;
 </DD>
 </DL>
 <P>
@@ -985,7 +1236,7 @@ e1 but with each variable incremented by i1.
 
 
 <P>
-<FONT SIZE="-2">#define&nbsp;g&nbsp;1&nbsp;2&nbsp;3&nbsp;#&nbsp;ite&nbsp;fun&nbsp;1&nbsp;2&nbsp;3&nbsp;-2&nbsp;T&nbsp;3&nbsp;</FONT>
+<FONT SIZE="-2">#define&nbsp;g&nbsp;1&nbsp;2&nbsp;3&nbsp;#&nbsp;ite(fun(1,&nbsp;2,&nbsp;3,&nbsp;-2),&nbsp;T,&nbsp;3)&nbsp;</FONT>
 <P>
 
 
@@ -1030,7 +1281,7 @@ e1 but with each variable incremented by i1.
 
 
 <P>
-&nbsp;<FONT SIZE="-2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;this&nbsp;is&nbsp;a&nbsp;really&nbsp;bad&nbsp;idea,&nbsp;it&nbsp;probably&nbsp;shouldn't&nbsp;be&nbsp;allowed&nbsp;</FONT>
+&nbsp;<FONT SIZE="-2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;this&nbsp;is&nbsp;a&nbsp;really&nbsp;bad&nbsp;idea,&nbsp;it&nbsp;probably&nbsp;shouldn't&nbsp;be&nbsp;allowed</FONT>
 <P>
 
 
@@ -1045,37 +1296,37 @@ e1 but with each variable incremented by i1.
 
 
 <P>
-<FONT SIZE="-2">ite&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;eqn&nbsp;$7</FONT>
+<FONT SIZE="-2">ite(2,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;eqn&nbsp;$7,&nbsp;no&nbsp;smurf&nbsp;created</FONT>
 <P>
 
 
 <P>
-<FONT SIZE="-2">ite&nbsp;3&nbsp;4&nbsp;5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;plus&nbsp;comments&nbsp;are&nbsp;ignored,&nbsp;even&nbsp;in&nbsp;the&nbsp;middle&nbsp;of&nbsp;a&nbsp;function&nbsp;</FONT>
+&nbsp;<FONT SIZE="-2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ite(3,&nbsp;4,&nbsp;5),&nbsp;;&nbsp;plus&nbsp;comments&nbsp;are&nbsp;ignored,&nbsp;even&nbsp;in&nbsp;the&nbsp;middle&nbsp;of&nbsp;a&nbsp;function&nbsp;</FONT>
 <P>
 
 
 <P>
-<FONT SIZE="-2">ite&nbsp;4&nbsp;5&nbsp;F&nbsp;</FONT>
+&nbsp;<FONT SIZE="-2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ite(4,&nbsp;5,&nbsp;F))</FONT>
 <P>
 
 
 <P>
-<FONT SIZE="-2">*fun&nbsp;4&nbsp;-5&nbsp;2&nbsp;3&nbsp;;&nbsp;eqn&nbsp;$8,&nbsp;smurf&nbsp;5&nbsp;</FONT>
+<FONT SIZE="-2">*fun&nbsp;4&nbsp;-5&nbsp;2&nbsp;3&nbsp;;&nbsp;eqn&nbsp;$8,&nbsp;smurf&nbsp;6&nbsp;</FONT>
 <P>
 
 
 <P>
-<FONT SIZE="-2">*fun&nbsp;g&nbsp;-5&nbsp;4&nbsp;$6&nbsp;2&nbsp;3&nbsp;4&nbsp;;&nbsp;eqn&nbsp;$9,&nbsp;smurf&nbsp;6&nbsp;</FONT>
+<FONT SIZE="-2">*fun&nbsp;g&nbsp;-5&nbsp;4&nbsp;$6&nbsp;2&nbsp;3&nbsp;4&nbsp;;&nbsp;eqn&nbsp;$9,&nbsp;smurf&nbsp;7</FONT>
 <P>
 
 
 <P>
-<FONT SIZE="-2">*equ(xor3(2,&nbsp;and(-3,&nbsp;4),&nbsp;nand(7,&nbsp;5),&nbsp;ite(15,&nbsp;or(4,&nbsp;-7),&nbsp;nor(4,&nbsp;-7))))&nbsp;;&nbsp;eqn&nbsp;$10,&nbsp;smurf&nbsp;7&nbsp;</FONT>
+<FONT SIZE="-2">*equ(xor3(2,&nbsp;and(-3,&nbsp;4),&nbsp;nand(7,&nbsp;5),&nbsp;ite(15,&nbsp;or(4,&nbsp;-7),&nbsp;nor(4,&nbsp;-7))))&nbsp;;&nbsp;eqn&nbsp;$10,&nbsp;smurf&nbsp;8</FONT>
 <P>
 
 
 <P>
-<FONT SIZE="-2">*add_state($10,&nbsp;1)&nbsp;;&nbsp;eqn&nbsp;$11,&nbsp;smurf&nbsp;7</FONT>
+<FONT SIZE="-2">*add_state($10,&nbsp;1)&nbsp;;&nbsp;eqn&nbsp;$11,&nbsp;smurf&nbsp;9</FONT>
 <P>
 
 
@@ -1085,17 +1336,17 @@ e1 but with each variable incremented by i1.
 
 
 <P>
-&nbsp;<FONT SIZE="-2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;with&nbsp;all&nbsp;it's&nbsp;variables&nbsp;incremented&nbsp;by&nbsp;the&nbsp;second&nbsp;argument.</FONT>
+&nbsp;<FONT SIZE="-2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;with&nbsp;all&nbsp;it's&nbsp;variables&nbsp;incremented&nbsp;by&nbsp;the&nbsp;second&nbsp;argument.</FONT>
 <P>
 
 
 <P>
-<FONT SIZE="-2">*add_state($10,&nbsp;2)&nbsp;;&nbsp;eqn&nbsp;$12,&nbsp;smurf&nbsp;8&nbsp;</FONT>
+<FONT SIZE="-2">*add_state($10,&nbsp;2)&nbsp;;&nbsp;eqn&nbsp;$12,&nbsp;smurf&nbsp;10&nbsp;</FONT>
 <P>
 
 
 <P>
-<FONT SIZE="-2">*add_state($10,&nbsp;3)&nbsp;;&nbsp;eqn&nbsp;$13,&nbsp;smurf&nbsp;9</FONT>
+<FONT SIZE="-2">*add_state($10,&nbsp;3)&nbsp;;&nbsp;eqn&nbsp;$13,&nbsp;smurf&nbsp;11</FONT>
 <P>
 
 
@@ -1249,7 +1500,7 @@ the SMURFs, special functions and lemmas).
 </H2>
 
 <P>
-(Sean!)
+(Sean!) Woohoo!
 
 <P>
 
@@ -1323,9 +1574,9 @@ Copyright &#169; 1997, 1998, 1999,
 Mathematics Department, Macquarie University, Sydney.
 <P>
 The command line arguments were: <BR>
- <STRONG>latex2html</STRONG> <TT>-no_subdir -split 0 -show_section_numbers /tmp/lyx_tmpdir291382FEzK0/lyx_tmpbuf0/sbsat_manual.tex</TT>
+ <STRONG>latex2html</STRONG> <TT>-no_subdir -split 0 -show_section_numbers /tmp/lyx_tmpdir144006zwQ5a/lyx_tmpbuf0/sbsat_manual.tex</TT>
 <P>
-The translation was initiated by  on 2003-06-30<HR>
+The translation was initiated by  on 2003-07-07<HR>
 <!--Navigation Panel-->
 <IMG WIDTH="81" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next_inactive"
  SRC="file:/usr/share/latex2html/icons/nx_grp_g.png"> 
@@ -1337,7 +1588,7 @@ The translation was initiated by  on 2003-06-30<HR>
 <!--End of Navigation Panel-->
 <ADDRESS>
 
-2003-06-30
+2003-07-07
 </ADDRESS>
 </BODY>
 </HTML>
