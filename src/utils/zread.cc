@@ -74,9 +74,15 @@ zread(char *filename)
     strncat(cmd, filename, sizeof(cmd)-strlen(cmd));
     infile = popen(cmd, "r");  /* use "w" for zwrite */
     if (infile == NULL) {
-	fprintf(stderr, "popen('%s', 'r') failed\n", cmd);
-	exit(1);
+       fprintf(stderr, "popen('%s', 'r') failed\n", cmd);
+       exit(1);
     }
+    int c = fgetc(infile);
+    if (c == EOF) {
+       fprintf(stderr, "Can't use gzip\n", cmd);
+       exit(1);
+    }
+    ungetc(c, infile);
 
     return infile;
 }
