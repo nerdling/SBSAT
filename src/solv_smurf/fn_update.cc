@@ -97,7 +97,12 @@ UpdateEachAffectedFunction(AffectedFuncsStruct *pAFS, int max_fn_priority)
             arrFnInfPriority[nCurFnPriotity].First->pFnInfNext;
          if (arrFnInfPriority[nCurFnPriotity].First == NULL)
             arrFnInfPriority[nCurFnPriotity].Last = NULL; 
-      }
+
+			if(pInferenceQueueNextElt < pInferenceQueueNextEmpty && nLastFnInfPriority == MAX_FN_PRIORITY-1) {
+				nLastFnInfPriority = 0;
+				return ret;
+			}
+		}
       nLastFnInfPriority++;
    }
 update_conflict:

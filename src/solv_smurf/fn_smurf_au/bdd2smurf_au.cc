@@ -137,7 +137,7 @@ ComputeSmurfAuOfNormalized(BDDNodeStruct *pFunc, int nAutarkyVble)
 
    gnTotalBytesForTransitionAus += nBytesForTransitionAus;
 
-/*	
+	/*
 	for(int i=0;i<pSmurfAuState->vbles.nNumElts;i++)
 	  {
 		  int nSolverVble = pSmurfAuState->vbles.arrElts[i];
@@ -147,7 +147,7 @@ ComputeSmurfAuOfNormalized(BDDNodeStruct *pFunc, int nAutarkyVble)
 		  // Compute transition that occurs when vble is set to false.
 		  CreateTransitionAu(pSmurfAuState, i, nSolverVble, BOOL_FALSE, nAutarkyVble);
 	  }
-*/
+	 */
 	
    return pSmurfAuState;
 }

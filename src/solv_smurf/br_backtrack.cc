@@ -39,6 +39,8 @@
 #include "sbsat_solver.h"
 #include "solver.h"
 
+//#define DISPLAY_TRACE
+
 ITE_INLINE int
 BackTrack()
 {

@@ -97,19 +97,6 @@ UpdateRegularSmurfAu(int nSmurfAuIndex)
    SmurfAuState *pState;
 
    d9_printf2("Visiting Autarky Smurf #%d\n", nSmurfAuIndex);
-/*
-   if (
-        nSmurfAuIndex == 2654
-      )
-   {
-      nNumUnresolvedFunctions--;
-      arrSolverFunctions[nSmurfAuIndex].fn_smurf_au.pCurrentState =
-         pState = pTrueSmurfAuState;
-      d9_printf3("Decremented nNumUnresolvedFunctions to %d due to autarky smurf # %d\n",
-            nNumUnresolvedFunctions, nSmurfAuIndex);
-      return NO_ERROR;
-   }
- */  
 
    pState = arrSolverFunctions[nSmurfAuIndex].fn_smurf_au.pCurrentState;
    assert(pState != pTrueSmurfAuState);
