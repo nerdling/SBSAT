@@ -122,7 +122,7 @@ INCLUDES = -I$(top_srcdir)/include
 noinst_LIBRARIES = libsolver.a libsolver2.a
 EXTRA_DIST = heur_choice.cc
 
-libsolver_a_SOURCES = solve.cc bddwalk.cc \
+libsolver_a_SOURCES = solve.cc \
              init_solver.cc brancher.cc \
 	     backtrack.cc backtrack_nl.cc backtrack_sbj.cc bt_misc.cc \
              select_bp.cc \
@@ -137,10 +137,13 @@ libsolver_a_SOURCES = solve.cc bddwalk.cc \
 	     lemmacache.cc lemmainfo.cc lemmaspace.cc lemmawlits.cc lemmamisc.cc \
              smurffactory.cc smurfstates.cc \
              state_stacks.cc \
-	     bdd2smurf.cc specfn2smurf.cc autarky.cc \
-             display.cc display_sf.cc verify.cc \
-	     recordsol.cc sf_addons.cc smurfaddons.cc transitions.cc wvf.cc update_heu.cc \
-	     crtwin.cc load_lemmas.cc interface.cc heur_stack.cc
+	     bdd2smurf.cc bdd2specfn_and.cc bdd2specfn_xor.cc \
+	     autarky.cc \
+	     display.cc display_sf.cc verify.cc \
+	     recordsol.cc sf_addons.cc smurfaddons.cc transitions.cc \
+	     update_heu.cc \
+	     crtwin.cc load_lemmas.cc interface.cc heur_stack.cc \
+	     bddwalk.cc wvf.cc 
 
 
 libsolver2_a_SOURCES = libsolver.cc
@@ -152,26 +155,26 @@ LIBRARIES = $(noinst_LIBRARIES)
 
 libsolver_a_AR = $(AR) cru
 libsolver_a_LIBADD =
-am_libsolver_a_OBJECTS = solve.$(OBJEXT) bddwalk.$(OBJEXT) \
-	init_solver.$(OBJEXT) brancher.$(OBJEXT) backtrack.$(OBJEXT) \
-	backtrack_nl.$(OBJEXT) backtrack_sbj.$(OBJEXT) \
-	bt_misc.$(OBJEXT) select_bp.$(OBJEXT) j_heuristic.$(OBJEXT) \
-	j_smurf.$(OBJEXT) j_update_heu.$(OBJEXT) j_specfn.$(OBJEXT) \
-	j_specfn_and.$(OBJEXT) j_specfn_xor.$(OBJEXT) \
-	l_heuristic.$(OBJEXT) l_lemma.$(OBJEXT) i_heuristic.$(OBJEXT) \
-	heuristic.$(OBJEXT) bt_lemmas.$(OBJEXT) bt_specfn.$(OBJEXT) \
-	bt_smurfs.$(OBJEXT) bt_specfn_and.$(OBJEXT) \
+am_libsolver_a_OBJECTS = solve.$(OBJEXT) init_solver.$(OBJEXT) \
+	brancher.$(OBJEXT) backtrack.$(OBJEXT) backtrack_nl.$(OBJEXT) \
+	backtrack_sbj.$(OBJEXT) bt_misc.$(OBJEXT) select_bp.$(OBJEXT) \
+	j_heuristic.$(OBJEXT) j_smurf.$(OBJEXT) j_update_heu.$(OBJEXT) \
+	j_specfn.$(OBJEXT) j_specfn_and.$(OBJEXT) \
+	j_specfn_xor.$(OBJEXT) l_heuristic.$(OBJEXT) l_lemma.$(OBJEXT) \
+	i_heuristic.$(OBJEXT) heuristic.$(OBJEXT) bt_lemmas.$(OBJEXT) \
+	bt_specfn.$(OBJEXT) bt_smurfs.$(OBJEXT) bt_specfn_and.$(OBJEXT) \
 	bt_specfn_xor.$(OBJEXT) lemmas.$(OBJEXT) lemmas_smurf.$(OBJEXT) \
 	lemmas_and.$(OBJEXT) lemmas_xor.$(OBJEXT) lemmacache.$(OBJEXT) \
 	lemmainfo.$(OBJEXT) lemmaspace.$(OBJEXT) lemmawlits.$(OBJEXT) \
 	lemmamisc.$(OBJEXT) smurffactory.$(OBJEXT) \
 	smurfstates.$(OBJEXT) state_stacks.$(OBJEXT) \
-	bdd2smurf.$(OBJEXT) specfn2smurf.$(OBJEXT) autarky.$(OBJEXT) \
-	display.$(OBJEXT) display_sf.$(OBJEXT) verify.$(OBJEXT) \
-	recordsol.$(OBJEXT) sf_addons.$(OBJEXT) smurfaddons.$(OBJEXT) \
-	transitions.$(OBJEXT) wvf.$(OBJEXT) update_heu.$(OBJEXT) \
-	crtwin.$(OBJEXT) load_lemmas.$(OBJEXT) interface.$(OBJEXT) \
-	heur_stack.$(OBJEXT)
+	bdd2smurf.$(OBJEXT) bdd2specfn_and.$(OBJEXT) \
+	bdd2specfn_xor.$(OBJEXT) autarky.$(OBJEXT) display.$(OBJEXT) \
+	display_sf.$(OBJEXT) verify.$(OBJEXT) recordsol.$(OBJEXT) \
+	sf_addons.$(OBJEXT) smurfaddons.$(OBJEXT) transitions.$(OBJEXT) \
+	update_heu.$(OBJEXT) crtwin.$(OBJEXT) load_lemmas.$(OBJEXT) \
+	interface.$(OBJEXT) heur_stack.$(OBJEXT) bddwalk.$(OBJEXT) \
+	wvf.$(OBJEXT)
 libsolver_a_OBJECTS = $(am_libsolver_a_OBJECTS)
 libsolver2_a_AR = $(AR) cru
 libsolver2_a_LIBADD =
@@ -184,10 +187,12 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/autarky.Po ./$(DEPDIR)/backtrack.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/backtrack_nl.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/backtrack_sbj.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/bdd2smurf.Po ./$(DEPDIR)/bddwalk.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/brancher.Po ./$(DEPDIR)/bt_lemmas.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/bt_misc.Po ./$(DEPDIR)/bt_smurfs.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/bt_specfn.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/bdd2smurf.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/bdd2specfn_and.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/bdd2specfn_xor.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/bddwalk.Po ./$(DEPDIR)/brancher.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/bt_lemmas.Po ./$(DEPDIR)/bt_misc.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/bt_smurfs.Po ./$(DEPDIR)/bt_specfn.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/bt_specfn_and.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/bt_specfn_xor.Po ./$(DEPDIR)/crtwin.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/display.Po ./$(DEPDIR)/display_sf.Po \
@@ -210,7 +215,6 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	./$(DEPDIR)/smurfaddons.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/smurffactory.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/smurfstates.Po ./$(DEPDIR)/solve.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/specfn2smurf.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/state_stacks.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/transitions.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/update_heu.Po ./$(DEPDIR)/verify.Po \
@@ -258,6 +262,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/backtrack_nl.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/backtrack_sbj.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bdd2smurf.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bdd2specfn_and.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bdd2specfn_xor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bddwalk.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/brancher.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bt_lemmas.Po@am__quote@
@@ -300,7 +306,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/smurffactory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/smurfstates.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/solve.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/specfn2smurf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/state_stacks.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/transitions.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/update_heu.Po@am__quote@

@@ -108,7 +108,7 @@ SmurfFactory()
          }
       }
 
-      if (!IsSpecialFunc(nFunctionType))
+      if (IsSpecialFunc(nFunctionType) == 0)
       {
 			if(i % 100 == 0)
 			  d3_printf3("Constructing Smurf for %d/%d           \r", i, nmbrFunctions);
@@ -142,10 +142,20 @@ SmurfFactory()
 			if(i % 100 == 0)
 			  d3_printf3("Constructing Special Function for %d/%d\r", i, nmbrFunctions);
          arrIte2SolverSpecFn[i] = nSpecialFuncIndex;
-         SpecFn2Smurf(pSpecFunc, nFunctionType,
+         switch(nFunctionType) {
+          case AND: 
+          case OR: 
+          case PLAINOR: 
+             BDD2Specfn_AND(pSpecFunc, nFunctionType,
                equalityVble[i], &(arrSpecialFuncs[nSpecialFuncIndex]));
-         nSpecialFuncIndex++;
+                    break;
+          case PLAINXOR: BDD2Specfn_XOR(pSpecFunc, nFunctionType,
+               equalityVble[i], &(arrSpecialFuncs[nSpecialFuncIndex]));
+                    break;
+          default: assert(0); exit(1);
+         }
 
+         nSpecialFuncIndex++;
       }
 
 #ifdef PRINT_SMURF_STATS

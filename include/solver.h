@@ -193,7 +193,9 @@ ITE_INLINE BDDNodeStruct *EvalBdd(BDDNodeStruct *pFunc, int nVble, bool bValueOf
 ITE_INLINE void ComputeVbleSet(BDDNode *pFunc);
 
 ITE_INLINE SmurfState * BDD2Smurf(BDDNodeStruct *pFunc);
-ITE_INLINE void SpecFn2Smurf (BDDNodeStruct *pFunc, int nFunctionType,
+ITE_INLINE void BDD2Specfn_AND(BDDNodeStruct *pFunc, int nFunctionType,
+               int nEqualityVble,  SpecialFunc *pSpecialFunc);
+ITE_INLINE void BDD2Specfn_XOR(BDDNodeStruct *pFunc, int nFunctionType,
                int nEqualityVble,  SpecialFunc *pSpecialFunc);
 ITE_INLINE void ComputeVbleSet(BDDNode *pFunc);
 ITE_INLINE BDDNodeStruct *EvalBdd(BDDNodeStruct *pFunc,

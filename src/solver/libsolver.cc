@@ -79,7 +79,8 @@
 #include "autarky.cc"
 
 #include "bdd2smurf.cc"
-#include "specfn2smurf.cc"
+#include "bdd2specfn_and.cc"
+#include "bdd2specfn_xor.cc"
 #include "smurfstates.cc"
 
 #include "state_stacks.cc"
