@@ -129,7 +129,7 @@ float taboo_length = 2;
 float true_weight_taboo = 0.5;
 float true_weight_max = 0.5;
 
-float path_factor = 10; //Number of random paths choosen = number of variables / path_factor;
+float path_factor = 10; //Number of random paths choosen = total number of variables / path_factor;
 //Maybe a special case is needed for clauses?
 
 /************************************/
@@ -325,7 +325,7 @@ int walkSolve()
 	expertime = get_runtime() - expertime;
 	print_statistics_final();
 	freemem();
-	if (numsol!=NOVALUE) return SOLV_SAT;
+	if (numsuccesstry!=0) return SOLV_SAT;
 	return SOLV_UNKNOWN;
 }
 
