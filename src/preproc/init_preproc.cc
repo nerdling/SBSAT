@@ -309,9 +309,9 @@ Finish_Preprocessing()
 					(100 * Neg_replace) / (Total_inferences));
 	d3_printf3 ("Positive Sets     - %d (%d%%)\n", Setting_Pos,
 					(100 * Setting_Pos) / (Total_inferences));
-	d3_printf3 ("Negative Sets     - %d (%d%%)\n\n", Setting_Neg,
+	d3_printf3 ("Negative Sets     - %d (%d%%)\n", Setting_Neg,
 					(100 * Setting_Neg) / (Total_inferences));
-	
+	d3_printf2 ("Total Inferences  - %d (100%%)\n\n", Total_inferences);
 	//Stats();
 	
 	//Need to release these pointers
@@ -411,9 +411,13 @@ Finish_Preprocessing()
 	ite_free((void**)&original_functionType);
 	ite_free((void**)&original_equalityVble);
 
-	d3_printf3 ("Number of BDDs - %d\nNuminp = %ld\n", countBDDs(), numinp);
-	if(countBDDs()!=nmbrFunctions) d3_printf2("Number of Autarky BDDs - %d\n", nmbrFunctions-countBDDs());
-	  
+	d3_printf2 ("Number of normal BDDs - %d\n", countBDDs());
+	if(countBDDs()!=nmbrFunctions){
+		d3_printf2("Number of autark BDDs - %d\n", nmbrFunctions-countBDDs());
+		d3_printf2("Total number of BDDs  - %d\n", nmbrFunctions);
+	}
+	d3_printf2("Number of variables   - %ld\n", numinp);
+	
 	D_3(fflush (stddbg);)
 	  //printCircuitTree();
 	  //printCircuit();
