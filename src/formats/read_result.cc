@@ -40,34 +40,15 @@
 extern char *input_result_filename;
 
 int 
-setValue(char *s, int value, Tracer *tracer, varinfo * variablelist)
+setValue(char *s, int value, varinfo * variablelist)
 {
  d9_printf3("Setting %s to %d\n", s, value);
- if (formatin == 't') {
-    int i = tracer->intValue(s);
-    if (i==0) {
-      d1_printf2("Unknown symbol: %s\n", s);
-      return 1;
-    }
-    if (value != -1) {
-        if (i<0) { i=-i; value=value==0?1:0; };
-        d1_printf4("setting %d (%s) to %d\n", i, s, value);
-	if (variablelist[i].true_false != -1) {
-	   if (variablelist[i].true_false != value) {
-	     d1_printf2("Conflict of the imported values for %s\n", s);
-	     exit(1);
-  	   };
-        } else
-	variablelist[i].true_false = value;
-    }
- } else {
-  /* add other formats */
- }
+ /* add other formats */
  return 0;
 }
 
 int
-read_input_result(FILE *fin, Tracer *tracer, varinfo *variablelist)
+read_input_result(FILE *fin, varinfo *variablelist)
 {
 char c;
 char *p_str=NULL;
@@ -90,7 +71,7 @@ while (!feof(fin))
   if (c=='-' || c=='+' || c=='*') fgets(s, 255, fin);
   else fgets(s+1, 254, fin);
   if ((p_str=strchr(s, '\n'))!=NULL) *p_str = 0;
-  if (setValue(s, value, tracer, variablelist) != 0)
+  if (setValue(s, value, variablelist) != 0)
   {
     dE_printf2("unknown variable in the input file: %s\n", s);
     exit(1); 

@@ -46,42 +46,40 @@
 #include "formats.h"
 #include "preprocess.h"
 
-extern char tracer_tmp_filename[256];
 extern BDDNodeStruct **original_functions;
 
 void bddtable_free_pools();
 void bdd_circuit_free();
 void wvfSolve();
-void Verify_NoSolver(Tracer *tracer);
-void Verify_Solver(Tracer *tracer);
+void Verify_NoSolver();
+void Verify_Solver();
 
 int ite_pre_init();
-void ite_main_free(Tracer *tracer);
+void ite_main_free();
 int ite_io_init();
 void ite_io_free();
 int ite_preprocessing();
-int ite_final(int ret, Tracer *tracer);
+int ite_final(int ret);
 
 int check_expected_result(int result);
 int ite_main_init(int argc, char *argv[]);
-int ite_main_load(Tracer *&tracer);
-int ite_main(Tracer *tracer);
+int ite_main_load();
+int ite_main();
 int ite_main_preproc();
 
 int 
 main(int argc, char *argv[])
 {
    int ret = NO_ERROR;
-   Tracer * tracer = NULL;
    ret = ite_main_init(argc, argv);
    if (ret == NO_ERROR) {
-      ret = ite_main_load(tracer);
+      ret = ite_main_load();
       if (ret == NO_ERROR) {
          ret = ite_main_preproc();
-         if (ret == NO_ERROR) ret = ite_main(tracer);
+         if (ret == NO_ERROR) ret = ite_main();
       }
    }
-   return ite_final(ret, tracer);
+   return ite_final(ret);
 }
 
 int
@@ -121,7 +119,7 @@ ite_main_init(int argc, char *argv[])
 }
 
 int
-ite_main_load(Tracer *&tracer)
+ite_main_load()
 {
    int ret = NO_ERROR;
 	
@@ -129,14 +127,14 @@ ite_main_load(Tracer *&tracer)
    if (ret != NO_ERROR) return ret;
 	
    /* read input file */
-   ret = read_input(tracer);
+   ret = read_input();
    if (ret != NO_ERROR) return ret;
 
    return ret;
 }
 
 int
-ite_main(Tracer *tracer)
+ite_main()
 {
    int ret = NO_ERROR;
    dC_printf1("c Starting solver\n");
@@ -146,7 +144,7 @@ ite_main(Tracer *tracer)
     case 'b': ret = solve(); break;
     case 'w': ret = walkSolve(); break;
     case 'm': wvfSolve(); break;
-    default: write_output(formatout, tracer);   
+    default: write_output(formatout);   
              ret = CONV_OUTPUT;
    }
 
@@ -154,7 +152,7 @@ ite_main(Tracer *tracer)
 }
 
 int
-ite_final(int ret, Tracer *tracer)
+ite_final(int ret)
 {
    int competition_exit_code=0; // UNKNOWN
    char competition_output[32]="UNKNOWN";
@@ -181,7 +179,7 @@ ite_final(int ret, Tracer *tracer)
    switch(ret) {
     case TRIV_SAT: {
 		 strcpy(result_string, "Satisfiable");
-		 Verify_NoSolver(tracer);
+		 Verify_NoSolver();
 
 		 strcpy(competition_output, "SATISFIABLE");
        competition_exit_code=10;
@@ -193,7 +191,7 @@ ite_final(int ret, Tracer *tracer)
        } else {
           strcpy(result_string, "Satisfiable");
        }
-       Verify_Solver(tracer);
+       Verify_Solver();
 
 		 strcpy(competition_output, "SATISFIABLE");
        competition_exit_code=10;
@@ -211,7 +209,7 @@ ite_final(int ret, Tracer *tracer)
    }
 
    ite_io_free();
-   ite_main_free(tracer);
+   ite_main_free();
    sym_free();
    ite_free((void**)&length);
 
@@ -262,16 +260,9 @@ ite_pre_init()
 }
 
 void 
-ite_main_free(Tracer *tracer)
+ite_main_free()
 {
    d9_printf1("ite_main_free\n");
-   if (tracer != NULL) {
-      delete tracer;
-      d9_printf2("Removing file: %s\n", tracer_tmp_filename);
-      unlink(tracer->file);
-      unlink(tracer_tmp_filename);
-   }
-
    delete [] variablelist;
    variablelist = NULL;
    delete [] original_functions;
@@ -349,11 +340,11 @@ ite_preprocessing()
    /*
     extern varinfo * variablelist;
     extern char input_result_filename[128];
-    int read_input_result(FILE *, Tracer *tracer, varinfo*);
+    int read_input_result(FILE *, varinfo*);
     FILE *fresultfile=NULL;
 
     if (input_result_filename[0]) {
-    if (read_input_result(fresultfile, tracer, variablelist)) goto ExitNormal;
+    if (read_input_result(fresultfile, variablelist)) goto ExitNormal;
     else {
     d9_printf1("Finished reading input result\n");
    //ret = MakeInfs(variablelist);
@@ -407,8 +398,8 @@ check_expected_result(int result)
 };
 
 int
-ITE_Final(int ret, void *tracer)
+ITE_Final(int ret)
 {
-   return ite_final(ret, (Tracer*)tracer); 
+   return ite_final(ret); 
 }
 

@@ -200,9 +200,6 @@ t_opt options[] = {
 { module_root, "", "module-dir", P_STRING, 
 		V(i:127,"127"), {"./Modules"}, VAR_NORMAL, 0, 
                 "directory to find extra modules"},
-{ &tracer5, "", "tracer5", P_PRE_INT, V(i:1,"1"), V(i:0,"0"), VAR_CHECK, 0, 
-                "Use alternative tracer"},
-
 /* 
  * Preprocessing options
  */

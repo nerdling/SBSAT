@@ -40,14 +40,14 @@
 extern long numinp;
 
 void
-write_output (char formatout, Tracer * &tracer)
+write_output (char formatout)
 {
 
     switch (formatout) {
 
-    case 'f': numinp = getNuminp ();
-              //SolveItSTDIN(tracer);
-              break;
+    case 'f': {
+              numinp = getNuminp ();
+              } break;
 
     case 's': {
               BDD_to_Smurfs ();

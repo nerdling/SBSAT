@@ -39,9 +39,6 @@
 
 #define KEDAR 0
 
-char tracer_tmp_filename[256];
-
-
 int parser_init();
 
 int trace_parse();
@@ -60,7 +57,7 @@ extern FILE *iscas_in;
 int read_input_open();
 
 int
-read_input(Tracer * &tracer)
+read_input()
 {
   d9_printf1("read_input\n");
 
@@ -73,38 +70,12 @@ read_input(Tracer * &tracer)
   switch  (formatin) {
   case 't':
     {
-		 if (tracer5==0) {
-			 char line[2048];
-			 FILE *fg=NULL;
-			 get_freefile("tracer.tmp", temp_dir, tracer_tmp_filename, 255);
-			 if ((fg = fopen (tracer_tmp_filename, "wb+"))==NULL) 
-				{
-					fprintf(stderr, "Can't open the temp file: %s\n", tracer_tmp_filename);
-					exit(1);
-				}
-			 while (fgets (line, 2047, finputfile) != NULL) fputs (line, fg);
-			 fclose (fg);
-			 FlattenTrace * flatten = new FlattenTrace (tracer_tmp_filename);
-			 flatten->normalizeInputTrace ();
-			 flatten->insertModules ();
-			 delete flatten;
-				{
-					char _tracer_tmp_filename[256];
-					strcpy (_tracer_tmp_filename, tracer_tmp_filename);
-					strcat (_tracer_tmp_filename, ".mac");
-					tracer = new Tracer (_tracer_tmp_filename);
-					if (tracer->parseInput ()) exit(1);
-				}
-		 } else {
-          parser_init();
-          trace_in = finputfile;
-          trace_parse();
-          numinp = vars_max;
-          numout = functions_max;
-          //void sym_regex_test(char *reg);
-          //sym_regex_test("_temp_(1000-2100)");
-          sym_clear_all_flag(); 
-       }
+       parser_init();
+       trace_in = finputfile;
+       trace_parse();
+       numinp = vars_max;
+       numout = functions_max;
+       sym_clear_all_flag(); 
     } break;
 
   case 'b': bddloop(); break;

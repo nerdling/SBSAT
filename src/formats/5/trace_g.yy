@@ -233,8 +233,8 @@ BDDNode *ite_op_exp(t_op2fn fn, BDDNode **_explist)
    if (total_vars == 0 && num_members>=2 /*limit[fn.fn_type]*/) {
       /* we have a special function */ 
       spec_fn=1;
-   } else
-      /* LOOK: this does not happen -- why ??? */
+   } else {
+      /* FIXME: this does not happen -- why ??? */
       /* that's why untested!!!                */
       /* check if they have more than a limit to get broken up */
       if (new_vars >= 5 /*s_limit*/ || num_members>=2 /*limit[fn.fn_type]*/) {
@@ -260,16 +260,30 @@ BDDNode *ite_op_exp(t_op2fn fn, BDDNode **_explist)
             }
          }
       }
+   }
 
-   /* FIX: if the fn type is not ??imp -- sort the bdds by top_variable */
-   qsort (_explist, num_members, sizeof (BDDNode*), explist_sort);
+   /* FIXME: if the fn type is not ??imp -- sort the bdds by top_variable */
+   if (fn.as_type == AS_FULL) 
+      qsort (_explist, num_members, sizeof (BDDNode*), explist_sort);
 
    /* apply the function */
-   for (i=0;_explist[i]!=NULL;i++) {
-      assert(_explist[i]->var_ptr);
-      if (ptr==NULL) ptr = _explist[i];
-      else ptr = fn.fn(_explist[i], ptr);
+   if (fn.as_type != AS_LEFT || fn.as_type == AS_RIGHT)
+   {
+      for (i=0;_explist[i]!=NULL;i++) {
+         assert(_explist[i]->var_ptr);
+         if (ptr==NULL) ptr = _explist[i];
+         else ptr = fn.fn(ptr, _explist[i]);
+      }
+   } else {
+      for(i=0;_explist[i]!=NULL;i++) { }
+      while(i>0) {
+         i--;
+         assert(_explist[i]->var_ptr);
+         if (ptr==NULL) ptr = _explist[i];
+         else ptr = fn.fn(_explist[i], ptr);
+      }
    }
+   if (fn.neg_all) ptr = ite_not_s(ptr);
    assert(ptr != NULL);
    assert(ptr->var_ptr);
    /* if it is a special function separate it */
@@ -295,6 +309,8 @@ ite_op_are_equal(BDDNode **_explist)
    /* ite_and positive */
    fn.fn=op_equ;
    fn.fn_type=EQU_EQU;
+   fn.as_type=AS_FULL;
+   fn.neg_all=0;
    BDDNode *ptr = ite_op_exp(fn, _explist);
 
    functions_add(ptr, EQU, 0); /* the only plain or? */

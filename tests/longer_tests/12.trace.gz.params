@@ -1,1 +1,1 @@
-12.trace.gz --tracer5 --expected-result TRIV_SAT 
+12.trace.gz --expected-result TRIV_SAT 

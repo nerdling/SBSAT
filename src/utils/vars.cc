@@ -115,7 +115,6 @@ int PLAINXOR_LIMIT=0;
 int PLAINOR_LIMIT=0;
 
 int verify_solution=1;
-int tracer5=0;
 
 char s_expected_result[128]="";
 

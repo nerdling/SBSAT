@@ -33,6 +33,14 @@ functions_add(BDDNode *bdd, int fn_type, int equal_var)
    case ITE_EQU: fn_type=ITE; break;
    case EQU: fn_type=EQU; break;
    case PLAINOR: fn_type=PLAINOR; break;
+   case LIMP_EQU: fn_type=UNSURE; break;
+   case LNIMP_EQU: fn_type=UNSURE; break;
+   case RIMP_EQU: fn_type=UNSURE; break;
+   case RNIMP_EQU: fn_type=UNSURE; break;
+   case XOR_EQU: fn_type=UNSURE; break;
+   case NAND_EQU: fn_type=UNSURE; break;
+   case NOR_EQU: fn_type=UNSURE; break;
+   case EQU_EQU: fn_type=UNSURE; break;
    default: fprintf(stderr, "unknown function type: %d\n", fn_type);
             fn_type=UNSURE;
   }

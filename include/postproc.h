@@ -37,11 +37,7 @@
 #ifndef POSTPROC_H
 #define POSTPROC_H
 
-#include "tracer.h"    /* ++ */
-
-void finalCheck(Tracer *, int *);
-void Backend_Trace(int, int, int *, Tracer *);
-void Backend_Trace_NoSolver(int, int *, Tracer *);
+void finalCheck(int *);
 void Backend(int, int, int *);
 void Backend_NoSolver(int, int *);
 

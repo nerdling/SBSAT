@@ -154,8 +154,6 @@ extern char jpg_filename[128];
 
 extern int verify_solution;
 
-extern int tracer5;
-
 extern char s_expected_result[128];
 
 extern int  max_solutions;

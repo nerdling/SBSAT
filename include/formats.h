@@ -37,11 +37,8 @@
 #ifndef FORMATS_H
 #define FORMATS_H
 
-#include "flatten.h"
-#include "tracer.h"
-
-void write_output(char formatout, Tracer * &tracer);
-int read_input(Tracer * &tracer);
+void write_output(char formatout);
+int read_input();
 void DNF_to_BDD();
 void Binary_to_BDD();
 void BDD_to_Binary();

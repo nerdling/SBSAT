@@ -138,8 +138,8 @@ INCLUDES = -I$(top_srcdir)/include
 SUBDIRS = 5
 SOURCES = autochk.cc  \
 	smurf.cc  bdd2cnf.cc  bddbinary.cc \
-	cnf.cc      flatten.cc  markbdd.cc xorbdd.cc \
-	parse.cc    sat.cc      tracer.cc   \
+	cnf.cc    markbdd.cc xorbdd.cc \
+	sat.cc  \
         read_result.cc read_input.cc write_output.cc
 
 
@@ -157,12 +157,11 @@ LIBRARIES = $(noinst_LIBRARIES)
 libformats_a_AR = $(AR) cru
 libformats_a_LIBADD =
 am__libformats_a_SOURCES_DIST = autochk.cc smurf.cc bdd2cnf.cc \
-	bddbinary.cc cnf.cc flatten.cc markbdd.cc xorbdd.cc parse.cc \
-	sat.cc tracer.cc read_result.cc read_input.cc write_output.cc
+	bddbinary.cc cnf.cc markbdd.cc xorbdd.cc sat.cc read_result.cc \
+	read_input.cc write_output.cc
 am__objects_1 = autochk.$(OBJEXT) smurf.$(OBJEXT) bdd2cnf.$(OBJEXT) \
-	bddbinary.$(OBJEXT) cnf.$(OBJEXT) flatten.$(OBJEXT) \
-	markbdd.$(OBJEXT) xorbdd.$(OBJEXT) parse.$(OBJEXT) \
-	sat.$(OBJEXT) tracer.$(OBJEXT) read_result.$(OBJEXT) \
+	bddbinary.$(OBJEXT) cnf.$(OBJEXT) markbdd.$(OBJEXT) \
+	xorbdd.$(OBJEXT) sat.$(OBJEXT) read_result.$(OBJEXT) \
 	read_input.$(OBJEXT) write_output.$(OBJEXT)
 @MYLIBTOOL_FALSE@am_libformats_a_OBJECTS = $(am__objects_1)
 libformats_a_OBJECTS = $(am_libformats_a_OBJECTS)
@@ -172,11 +171,11 @@ libformats_la_LDFLAGS =
 @MYLIBTOOL_TRUE@libformats_la_DEPENDENCIES = 5/libt5.la
 @MYLIBTOOL_FALSE@libformats_la_DEPENDENCIES =
 am__libformats_la_SOURCES_DIST = autochk.cc smurf.cc bdd2cnf.cc \
-	bddbinary.cc cnf.cc flatten.cc markbdd.cc xorbdd.cc parse.cc \
-	sat.cc tracer.cc read_result.cc read_input.cc write_output.cc
+	bddbinary.cc cnf.cc markbdd.cc xorbdd.cc sat.cc read_result.cc \
+	read_input.cc write_output.cc
 am__objects_2 = autochk.lo smurf.lo bdd2cnf.lo bddbinary.lo cnf.lo \
-	flatten.lo markbdd.lo xorbdd.lo parse.lo sat.lo tracer.lo \
-	read_result.lo read_input.lo write_output.lo
+	markbdd.lo xorbdd.lo sat.lo read_result.lo read_input.lo \
+	write_output.lo
 @MYLIBTOOL_TRUE@am_libformats_la_OBJECTS = $(am__objects_2)
 libformats_la_OBJECTS = $(am_libformats_la_OBJECTS)
 
@@ -187,16 +186,13 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	./$(DEPDIR)/bdd2cnf.Plo ./$(DEPDIR)/bdd2cnf.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/bddbinary.Plo ./$(DEPDIR)/bddbinary.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/cnf.Plo ./$(DEPDIR)/cnf.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/flatten.Plo ./$(DEPDIR)/flatten.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/markbdd.Plo ./$(DEPDIR)/markbdd.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/parse.Plo ./$(DEPDIR)/parse.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/read_input.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/read_input.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/read_result.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/read_result.Po ./$(DEPDIR)/sat.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/sat.Po ./$(DEPDIR)/smurf.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/smurf.Po ./$(DEPDIR)/tracer.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/tracer.Po ./$(DEPDIR)/write_output.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/smurf.Po ./$(DEPDIR)/write_output.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/write_output.Po ./$(DEPDIR)/xorbdd.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/xorbdd.Po
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
@@ -219,8 +215,8 @@ DIST_COMMON = Makefile.am Makefile.in
 DIST_SUBDIRS = $(SUBDIRS)
 SOURCES = autochk.cc  \
 	smurf.cc  bdd2cnf.cc  bddbinary.cc \
-	cnf.cc      flatten.cc  markbdd.cc xorbdd.cc \
-	parse.cc    sat.cc      tracer.cc   \
+	cnf.cc    markbdd.cc xorbdd.cc \
+	sat.cc  \
         read_result.cc read_input.cc write_output.cc
 
 
@@ -268,12 +264,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bddbinary.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cnf.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cnf.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/flatten.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/flatten.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/markbdd.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/markbdd.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/parse.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/parse.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/read_input.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/read_input.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/read_result.Plo@am__quote@
@@ -282,8 +274,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sat.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/smurf.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/smurf.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tracer.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tracer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/write_output.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/write_output.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xorbdd.Plo@am__quote@
@@ -293,8 +283,7 @@ distclean-depend:
 	-rm -rf ./$(DEPDIR)
 
 .cc.o:
-@am__fastdepCXX_TRUE@	@echo Compiling $*
-@am__fastdepCXX_TRUE@	@if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" \
+@am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" \
 @am__fastdepCXX_TRUE@	  -c -o $@ `test -f '$<' || echo '$(srcdir)/'`$<; \
 @am__fastdepCXX_TRUE@	then mv "$(DEPDIR)/$*.Tpo" "$(DEPDIR)/$*.Po"; \
 @am__fastdepCXX_TRUE@	else rm -f "$(DEPDIR)/$*.Tpo"; exit 1; \
