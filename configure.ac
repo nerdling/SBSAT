@@ -149,5 +149,10 @@ AC_CONFIG_FILES([Makefile
                  tests/Makefile
                  tests/cnf/Makefile
                  tests/longer_tests/Makefile
-                 tests/trace_tests/Makefile])
+                 tests/trace_tests/Makefile
+                 tests/trace_tests.sh 
+                 tests/xor_tests.sh 
+                 tests/longer_tests.sh 
+                 tests/cnf_tests.sh])
+
 AC_OUTPUT

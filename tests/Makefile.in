@@ -117,7 +117,8 @@ SUBDIRS = trace_tests longer_tests cnf
 subdir = tests
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/include/config.h
-CONFIG_CLEAN_FILES =
+CONFIG_CLEAN_FILES = trace_tests.sh xor_tests.sh longer_tests.sh \
+	cnf_tests.sh
 DIST_SOURCES =
 
 RECURSIVE_TARGETS = info-recursive dvi-recursive pdf-recursive \
@@ -125,7 +126,8 @@ RECURSIVE_TARGETS = info-recursive dvi-recursive pdf-recursive \
 	all-recursive install-data-recursive install-exec-recursive \
 	installdirs-recursive install-recursive uninstall-recursive \
 	check-recursive installcheck-recursive
-DIST_COMMON = Makefile.am Makefile.in
+DIST_COMMON = Makefile.am Makefile.in cnf_tests.sh.in \
+	longer_tests.sh.in trace_tests.sh.in xor_tests.sh.in
 DIST_SUBDIRS = $(SUBDIRS)
 all: all-recursive
 
@@ -135,6 +137,14 @@ $(srcdir)/Makefile.in:  Makefile.am  $(top_srcdir)/configure.ac $(ACLOCAL_M4)
 	  $(AUTOMAKE) --gnu  tests/Makefile
 Makefile:  $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe)
+trace_tests.sh: $(top_builddir)/config.status trace_tests.sh.in
+	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
+xor_tests.sh: $(top_builddir)/config.status xor_tests.sh.in
+	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
+longer_tests.sh: $(top_builddir)/config.status longer_tests.sh.in
+	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
+cnf_tests.sh: $(top_builddir)/config.status cnf_tests.sh.in
+	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 uninstall-info-am:
 
 # This directory's subdirectories are mostly independent; you can cd
