@@ -183,25 +183,25 @@ bddvsb_find_or_add_node (int v, BDDNode * r, BDDNode * e)
       node = &((*node)->next);
       ite_counters[BDD_NODE_STEPS]++;
    }
-
+	
    if (*node != NULL) {
       /* if this node has one in front of it in the chain
        * swap it so the next time this node needs less steps */
-
+		
 		if (prev && prev != node) {
 			
          BDDNode *tmp = *prev;
          *prev = *node;
          *node = tmp;
-
+			
          BDDNode *tmp_next = (*prev)->next;
-
+			
          (*prev)->next = *node;
          (*node)->next = tmp_next;
-
+			
          node = prev;
       }
-
+		
 	} else {
       /* could not find the node => allocate new one */
       ite_counters[BDD_NODE_NEW]++;
