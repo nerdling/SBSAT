@@ -89,7 +89,7 @@ void vanDerWaerden(int n, int k, int p) {
    // and make it for each bucket = k*number_of_regressions
    int max_step = (n-1)/(p-1); // max sure this is integer
    int prog_sum = ((1+max_step)*max_step)/2;
-	fprintf(stdout, "p cnf %d %d\n", n*k, k*(max_step*n-p*prog_sum+prog_sum));
+	fprintf(stdout, "p cnf %d %d\n", n*k, n+k*(max_step*n-p*prog_sum+prog_sum));
    fprintf(stdout, "c max_step %d\n", max_step);
 
    // Problem:
