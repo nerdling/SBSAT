@@ -274,8 +274,8 @@ void xorloop () {
 	xorbdd_line = 1;
 	no_independent = 1;
 
-	vars_alloc((numinp*4)+2);
-	functions_alloc((numout*4)+2);
+	vars_alloc(numinp+2);
+	functions_alloc(numout+2);
 
 	int temp_vars = 1;
 	

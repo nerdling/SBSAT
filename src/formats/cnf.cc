@@ -820,7 +820,7 @@ void CNF_to_BDD(int cnf)
       }
       numout = num;
       d3_printf2("Building ITE BDDs - %d\n", num_ite);
-     
+
       vars_alloc(numinp);
       functions_alloc(numout+num_ite+recurselen+5+num_minmax);
 

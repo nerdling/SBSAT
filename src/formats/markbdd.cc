@@ -42,23 +42,28 @@
 #include "ite.h"
 #include "formats.h"
 
-char getNextSymbol (char *&, int &intnum, BDDNode * &);
+char getNextSymbol (int &intnum, BDDNode * &);
 
 int no_independent;
 int markbdd_line;
 
 struct defines_struct {
-	char string[20];
+	char *string;
    BDDNode * bdd;
    int vlist[100];
 };
 
+int max_defines;
 int totaldefines;
-defines_struct * defines;
+defines_struct *defines;
+int max_integers;
+char *integers;
+int max_macros;
+char *macros;
 
-BDDNode *putite(char macros[20], int intnum, BDDNode * bdd) 
+BDDNode *putite(int intnum, BDDNode * bdd)
 {
-	char order = getNextSymbol (macros, intnum, bdd);
+	char order = getNextSymbol (intnum, bdd);
 	if (order == 'i')
 	  return ite_var (intnum);
 	if (order == 'b')
@@ -78,7 +83,7 @@ BDDNode *putite(char macros[20], int intnum, BDDNode * bdd)
 		if (!strcasecmp (macros, defines[x].string)) {
 			BDDNode ** BDDS = new BDDNode *[defines[x].vlist[0] + 1];
 			for (int v = 1; v <= defines[x].vlist[0]; v++)
-			  BDDS[v] = putite (macros, intnum, bdd);
+			  BDDS[v] = putite (intnum, bdd);
 			BDDNode * returnbdd = f_apply (defines[x].bdd, BDDS);
 			delete [] BDDS;
 			return returnbdd;
@@ -86,22 +91,21 @@ BDDNode *putite(char macros[20], int intnum, BDDNode * bdd)
 	}
 	if (!strcasecmp (macros, "ite")) {
 		BDDNode * v1, *v2, *v3;
-		v1 = putite (macros, intnum, bdd);
-		v2 = putite (macros, intnum, bdd);
-		v3 = putite (macros, intnum, bdd);
+		v1 = putite (intnum, bdd);
+		v2 = putite (intnum, bdd);
+		v3 = putite (intnum, bdd);
 		functionType[nmbrFunctions] = UNSURE;
 		return ite (v1, v2, v3);
 	}
 	if (!strcasecmp (macros, "var"))
-	  return putite (macros, intnum, bdd);
+	  return putite (intnum, bdd);
 	if (!strcasecmp (macros, "not")) {
-	  return ite_not (putite (macros, intnum, bdd));
+	  return ite_not (putite (intnum, bdd));
 		functionType[nmbrFunctions] = UNSURE;
 	}
 	if (!strcasecmp (macros, "initialbranch")) {
 		no_independent = 0;
 		int p = 0;
-		char integers[10];
 		intnum = 0;
 		int secondnum = 0, i = 0;
 		int openbracket_found = 0;
@@ -124,6 +128,10 @@ BDDNode *putite(char macros[20], int intnum, BDDNode * bdd)
 				while ((p >= '0') && (p <= '9')) {
 					integers[i] = p;
 					i++;
+					if(i >= max_integers) {
+						integers = (char *)ite_recalloc(integers, max_integers, max_integers+10, sizeof(char), 9, "integers");
+						max_integers+=10;
+					}
                p = fgetc(finputfile);
                if (p == EOF) {
 						fprintf (stderr, "\nUnexpected EOF (%s)...exiting:%d\n", macros, markbdd_line);
@@ -153,6 +161,10 @@ BDDNode *putite(char macros[20], int intnum, BDDNode * bdd)
 							while ((p >= '0') && (p <= '9')) {
 								integers[i] = p;
 								i++;
+								if(i >= max_integers) {
+									integers = (char *)ite_recalloc(integers, max_integers, max_integers+10, sizeof(char), 9, "integers");
+									max_integers+=10;
+								}
                         p = fgetc(finputfile);
                         if (p == EOF) {
 									fprintf (stderr, "\nUnexpected EOF (%s)...exiting:%d\n",	macros, markbdd_line);
@@ -193,7 +205,7 @@ BDDNode *putite(char macros[20], int intnum, BDDNode * bdd)
       return true_ptr;
 	}
 	if (!strcasecmp (macros, "define")) {
-      if (getNextSymbol (macros, intnum, bdd) != 'm') {
+      if (getNextSymbol (intnum, bdd) != 'm') {
 			fprintf (stderr, "\nUnnamed #define...exiting:%d\n", markbdd_line);
 			exit (1);
 		}
@@ -202,21 +214,24 @@ BDDNode *putite(char macros[20], int intnum, BDDNode * bdd)
 			fprintf (stderr, "\n%s is a reserved word...exiting:%d\n", macros, markbdd_line);
 			exit (1);
 		}
-      int whereat = 0;
-      for (int x = 0; x < totaldefines; x++) {
-			whereat++;
-			if (!strcasecmp (macros, defines[x].string))
+      int whereat;
+      for (whereat = 0; whereat < totaldefines; whereat++) {
+			if (!strcasecmp (macros, defines[whereat].string))
 			  break;
 		}
-      strcpy (defines[whereat].string, macros);
-      
+
+		if(whereat==totaldefines) {
+			defines[whereat].string = (char *)ite_calloc(strlen(macros)+1, sizeof(char), 9, "defines[].string");
+			strcpy (defines[whereat].string, macros);
+		}
+		      
 		//      int x;
 		//      for(x = 0; macros[x]!=0; x++)
 		//        defines[whereat].string[x] = macros[x];
 		//      defines[whereat].string[x] = 0;      
 		// 
       int v = 0;
-      order = getNextSymbol (macros, intnum, bdd);
+      order = getNextSymbol (intnum, bdd);
       while (order != '#') {
 			if (order != 'i') {
 				fprintf (stderr, "\nProblem with #define %s...exiting:%d\n", macros, markbdd_line);
@@ -224,18 +239,23 @@ BDDNode *putite(char macros[20], int intnum, BDDNode * bdd)
 			}
 			v++;
 			defines[whereat].vlist[v] = intnum;
-			order = getNextSymbol (macros, intnum, bdd);
+			order = getNextSymbol (intnum, bdd);
 		}
       defines[whereat].vlist[0] = v;
-      defines[whereat].bdd = putite (macros, intnum, bdd);
+      defines[whereat].bdd = putite (intnum, bdd);
       strcpy (macros, "define");
-      if (whereat == totaldefines)
-		  totaldefines++;
+      if (whereat == totaldefines) {
+			totaldefines++;
+			if(totaldefines >= max_defines) {
+				defines = (defines_struct *)ite_recalloc(defines, max_defines, max_defines+10, sizeof(defines_struct), 9, "defines");
+				max_defines+=10;
+			}
+		}
       return defines[whereat].bdd;
 	}
 	if (!strcasecmp (macros, "add_state")) {
-		BDDNode *v1 = putite(macros, intnum, bdd);
-      BDDNode *v2 = putite(macros, intnum, bdd);
+		BDDNode *v1 = putite(intnum, bdd);
+      BDDNode *v2 = putite(intnum, bdd);
       if (v2 != ite_var (v2->variable)) {
 			fprintf (stderr, "\nKeyword 'add_state' needs a positive integer as a second argument (%s)...exiting:%d\n", macros, markbdd_line);
 			exit (1);
@@ -266,7 +286,7 @@ BDDNode *putite(char macros[20], int intnum, BDDNode * bdd)
       return mitosis (v1, tempint, newBDD);
 	}
 	if (!strcasecmp(macros, "truth_table")) {
-		BDDNode *v1 = putite(macros, intnum, bdd);
+		BDDNode *v1 = putite(intnum, bdd);
       BDDNode *v2;
 		if (v1 != ite_var (v1->variable)) {
 			fprintf (stderr, "\nKeyword 'truth_table' needs a positive integer as a first argument (%s)...exiting:%d\n", macros, markbdd_line);
@@ -274,7 +294,7 @@ BDDNode *putite(char macros[20], int intnum, BDDNode * bdd)
 		}	
 		int ints[50];
       for(int i = 1; i <= v1->variable; i++) {
-			v2 = putite(macros, intnum, bdd);
+			v2 = putite(intnum, bdd);
 			if (v2 != ite_var (v2->variable)) {
 				fprintf (stderr, "\nKeyword 'truth_table' needs %d positive integers (%s)...exiting:%d\n", v1->variable, macros, markbdd_line);
 				exit (1);
@@ -310,7 +330,7 @@ BDDNode *putite(char macros[20], int intnum, BDDNode * bdd)
 	   return ReadSmurf (&y, tv, level, &(ints[1]), ints[0]);
 	}
 	if (!strcasecmp(macros, "mitosis")) {
-		BDDNode * v1 = putite (macros, intnum, bdd);
+		BDDNode * v1 = putite (intnum, bdd);
       long int y = 0;
       int tempint[5000];
       unravelBDD (&y, tempint, v1);
@@ -332,7 +352,7 @@ BDDNode *putite(char macros[20], int intnum, BDDNode * bdd)
       
 		//      struct BDDNodeStruct **functions = new BDDNode*[50];      
 		for (int x = 1; x <= tempint[0]; x++)
-		  newBDD[x] = (putite (macros, intnum, bdd))->variable;
+		  newBDD[x] = (putite (intnum, bdd))->variable;
       newBDD[0] = tempint[0];
       delete newBDD;
 		functionType[nmbrFunctions] = UNSURE;
@@ -340,19 +360,19 @@ BDDNode *putite(char macros[20], int intnum, BDDNode * bdd)
 	}
 	if (!strcasecmp (macros, "minmax")) {
 		int min, max;
-		BDDNode * v1 = putite (macros, intnum, bdd);
+		BDDNode * v1 = putite (intnum, bdd);
 		if (v1 != ite_var (v1->variable)) {
 			fprintf (stderr, "\nKeyword 'minmax' needs a positive integer as a first argument (%s)...exiting:%d\n", macros, markbdd_line);
 			exit (1);
 		}
-		BDDNode * v2 = putite (macros, intnum, bdd);
+		BDDNode * v2 = putite (intnum, bdd);
 		if (v2 != ite_var (v2->variable) && v2!=false_ptr) {
 			fprintf (stderr, "\nKeyword 'minmax' needs a positive integer as a second argument (%s)...exiting:%d\n", macros, markbdd_line);
 			exit (1);
 		}
 		if(v2 == false_ptr) min = 0;
 		else min = v2->variable;
-      BDDNode * v3 = putite (macros, intnum, bdd);
+      BDDNode * v3 = putite (intnum, bdd);
 		if (v3 != ite_var (v3->variable) && v3!=false_ptr) {
 			fprintf (stderr, "\nKeyword 'minmax' needs a positive integer as a third argument (%s)...exiting:%d\n", macros, markbdd_line);
 			exit (1);
@@ -366,7 +386,7 @@ BDDNode *putite(char macros[20], int intnum, BDDNode * bdd)
 
 		int *var_list = new int[v1->variable];
 		for (unsigned int x = 0; x < (unsigned int)v1->variable; x++) {
-			BDDNode * v4 = putite (macros, intnum, bdd);
+			BDDNode * v4 = putite (intnum, bdd);
 			if (v4 != ite_var (v4->variable)) {
 				//CHANGE LATER? all positive? or not?
 				fprintf (stderr, "\nKeyword 'minmax' needs all positive integers as arguments (%s)...exiting:%d\n", macros, markbdd_line);
@@ -380,8 +400,8 @@ BDDNode *putite(char macros[20], int intnum, BDDNode * bdd)
 		return MinMaxBDD(var_list, min, max, v1->variable, set_true);
 	}
 	if (!strcasecmp (macros, "exist")) {
-		BDDNode * v1 = putite (macros, intnum, bdd);
-      BDDNode * v2 = putite (macros, intnum, bdd);
+		BDDNode * v1 = putite (intnum, bdd);
+      BDDNode * v2 = putite (intnum, bdd);
 		functionType[nmbrFunctions] = UNSURE;
       if (v1 == false_ptr)
 		  return false_ptr;
@@ -392,8 +412,8 @@ BDDNode *putite(char macros[20], int intnum, BDDNode * bdd)
       return xquantify (v1, v2->variable);
 	}
 	if (!strcasecmp (macros, "universe")) {
-      BDDNode * v1 = putite (macros, intnum, bdd);
-      BDDNode * v2 = putite (macros, intnum, bdd);
+      BDDNode * v1 = putite (intnum, bdd);
+      BDDNode * v2 = putite (intnum, bdd);
 		functionType[nmbrFunctions] = UNSURE;
       if (v1 == false_ptr)
 		  return false_ptr;
@@ -405,8 +425,8 @@ BDDNode *putite(char macros[20], int intnum, BDDNode * bdd)
 	}
 	if (!strcasecmp (macros, "nor")) {
       BDDNode * v1, *v2;
-      v1 = putite (macros, intnum, bdd);
-      v2 = putite (macros, intnum, bdd);
+      v1 = putite (intnum, bdd);
+      v2 = putite (intnum, bdd);
 		functionType[nmbrFunctions] = UNSURE;
       return ite_nor (v1, v2);
 	}
@@ -419,30 +439,30 @@ BDDNode *putite(char macros[20], int intnum, BDDNode * bdd)
 			}
 			numarguments = 10*numarguments + macros[x] - '0';
 		}
-      BDDNode * v1 = putite (macros, intnum, bdd);
+      BDDNode * v1 = putite (intnum, bdd);
       for (int x = 0; x < numarguments - 1; x++)
-		  v1 = ite_or (v1, putite (macros, intnum, bdd));
+		  v1 = ite_or (v1, putite (intnum, bdd));
       v1 = ite_not(v1);
 		functionType[nmbrFunctions] = UNSURE;
       return v1;
 	}
 	if (!strcasecmp (macros, "pprint_tree")) {
       BDDNode * v1;
-      v1 = putite (macros, intnum, bdd);
+      v1 = putite (intnum, bdd);
       print_bdd (v1);
       return true_ptr;
 	}
 	if (!strcasecmp (macros, "print_tree")) {
       BDDNode * v1;
       int which_zoom = 0;
-      v1 = putite (macros, intnum, bdd);
+      v1 = putite (intnum, bdd);
       printBDDTree (v1, &which_zoom);
       return true_ptr;
 	}
 	if (!strcasecmp (macros, "gcf")) {
       BDDNode * v1, *v2;
-      v1 = putite (macros, intnum, bdd);
-      v2 = putite (macros, intnum, bdd);
+      v1 = putite (intnum, bdd);
+      v2 = putite (intnum, bdd);
 		functionType[nmbrFunctions] = UNSURE;
       if (v1 == false_ptr)
 		  return false_ptr;
@@ -450,8 +470,8 @@ BDDNode *putite(char macros[20], int intnum, BDDNode * bdd)
 	}
 	if (!strcasecmp (macros, "prune")) { //Same as restrict, below
 		BDDNode * v1, *v2;
-		v1 = putite (macros, intnum, bdd);
-		v2 = putite (macros, intnum, bdd);
+		v1 = putite (intnum, bdd);
+		v2 = putite (intnum, bdd);
 		functionType[nmbrFunctions] = UNSURE;
 		if (v1 == false_ptr)
 		  return false_ptr;
@@ -459,8 +479,8 @@ BDDNode *putite(char macros[20], int intnum, BDDNode * bdd)
 	}
 	if (!strcasecmp (macros, "restrict")) { //Same as prune, above
 		BDDNode * v1, *v2;
-		v1 = putite (macros, intnum, bdd);
-		v2 = putite (macros, intnum, bdd);
+		v1 = putite (intnum, bdd);
+		v2 = putite (intnum, bdd);
 		functionType[nmbrFunctions] = UNSURE;
 		if (v1 == false_ptr)
 		  return false_ptr;
@@ -468,8 +488,8 @@ BDDNode *putite(char macros[20], int intnum, BDDNode * bdd)
 	}
 	if (!strcasecmp (macros, "nimp")) {
       BDDNode * v1, *v2;
-      v1 = putite (macros, intnum, bdd);
-      v2 = putite (macros, intnum, bdd);
+      v1 = putite (intnum, bdd);
+      v2 = putite (intnum, bdd);
 		functionType[nmbrFunctions] = UNSURE;
       return ite_nimp (v1, v2);
 	}
@@ -482,17 +502,17 @@ BDDNode *putite(char macros[20], int intnum, BDDNode * bdd)
 			}
 			numarguments = 10*numarguments + macros[x] - '0';
 		}
-      BDDNode * v1 = putite (macros, intnum, bdd);
+      BDDNode * v1 = putite (intnum, bdd);
       for (int x = 0; x < numarguments - 1; x++)
-		  v1 = ite_imp (v1, putite (macros, intnum, bdd));
+		  v1 = ite_imp (v1, putite (intnum, bdd));
       v1 = ite_not(v1);
 		functionType[nmbrFunctions] = UNSURE;
       return v1;
 	}
 	if (!strcasecmp (macros, "nand")) {
       BDDNode * v1, *v2;
-      v1 = putite (macros, intnum, bdd);
-      v2 = putite (macros, intnum, bdd);
+      v1 = putite (intnum, bdd);
+      v2 = putite (intnum, bdd);
 		functionType[nmbrFunctions] = UNSURE;
       return ite_nand (v1, v2);
 	}
@@ -505,17 +525,17 @@ BDDNode *putite(char macros[20], int intnum, BDDNode * bdd)
 			}
 			numarguments = 10*numarguments + macros[x] - '0';
 		}
-      BDDNode * v1 = putite (macros, intnum, bdd);
+      BDDNode * v1 = putite (intnum, bdd);
       for (int x = 0; x < numarguments - 1; x++)
-		  v1 = ite_and (v1, putite (macros, intnum, bdd));
+		  v1 = ite_and (v1, putite (intnum, bdd));
       v1 = ite_not(v1);
 		functionType[nmbrFunctions] = UNSURE;
       return v1;
 	}
 	if (!strcasecmp (macros, "equ")) {
       BDDNode * v1, *v2;
-      v1 = putite (macros, intnum, bdd);
-      v2 = putite (macros, intnum, bdd);
+      v1 = putite (intnum, bdd);
+      v2 = putite (intnum, bdd);
       int v1var = 0;
       if (v1 == ite_var (v1->variable))
 		  v1var = v1->variable;
@@ -592,8 +612,8 @@ BDDNode *putite(char macros[20], int intnum, BDDNode * bdd)
 	}
 	if (!strcasecmp (macros, "imp")) {
       BDDNode * v1, *v2;
-      v1 = putite (macros, intnum, bdd);
-      v2 = putite (macros, intnum, bdd);
+      v1 = putite (intnum, bdd);
+      v2 = putite (intnum, bdd);
 		functionType[nmbrFunctions] = UNSURE;
       return ite_imp (v1, v2);
 	}
@@ -606,16 +626,16 @@ BDDNode *putite(char macros[20], int intnum, BDDNode * bdd)
 			}
 			numarguments = 10*numarguments + macros[x] - '0';
 		}
-      BDDNode * v1 = putite (macros, intnum, bdd);
+      BDDNode * v1 = putite (intnum, bdd);
       for (int x = 0; x < numarguments - 1; x++)
-		  v1 = ite_imp (v1, putite (macros, intnum, bdd));
+		  v1 = ite_imp (v1, putite (intnum, bdd));
 		functionType[nmbrFunctions] = UNSURE;
       return v1;
 	}
 	if (!strcasecmp (macros, "and")) {
       BDDNode * v1, *v2;
-      v1 = putite (macros, intnum, bdd);
-      v2 = putite (macros, intnum, bdd);
+      v1 = putite (intnum, bdd);
+      v2 = putite (intnum, bdd);
 		functionType[nmbrFunctions] = UNSURE;
       return ite_and (v1, v2);
 	}
@@ -628,16 +648,16 @@ BDDNode *putite(char macros[20], int intnum, BDDNode * bdd)
 			}
 			numarguments = 10*numarguments + macros[x] - '0';
 		}
-      BDDNode * v1 = putite (macros, intnum, bdd);
+      BDDNode * v1 = putite (intnum, bdd);
       for (int x = 0; x < numarguments - 1; x++)
-		  v1 = ite_and (v1, putite (macros, intnum, bdd));
+		  v1 = ite_and (v1, putite (intnum, bdd));
 		functionType[nmbrFunctions] = UNSURE;
       return v1;
 	}
 	if (!strcasecmp (macros, "xor")) {
       BDDNode * v1, *v2;
-      v1 = putite (macros, intnum, bdd);
-      v2 = putite (macros, intnum, bdd);
+      v1 = putite (intnum, bdd);
+      v2 = putite (intnum, bdd);
 		functionType[nmbrFunctions] = UNSURE;
       return ite_xor (v1, v2);
 	}
@@ -650,16 +670,16 @@ BDDNode *putite(char macros[20], int intnum, BDDNode * bdd)
 			}
 			numarguments = 10*numarguments + macros[x] - '0';
 		}
-      BDDNode * v1 = putite (macros, intnum, bdd);
+      BDDNode * v1 = putite (intnum, bdd);
       for (int x = 0; x < numarguments - 1; x++)
-		  v1 = ite_xor (v1, putite (macros, intnum, bdd));
+		  v1 = ite_xor (v1, putite (intnum, bdd));
 		functionType[nmbrFunctions] = UNSURE;
       return v1;
 	}
 	if (!strcasecmp (macros, "or")) {
       BDDNode * v1, *v2;
-      v1 = putite (macros, intnum, bdd);
-      v2 = putite (macros, intnum, bdd);
+      v1 = putite (intnum, bdd);
+      v2 = putite (intnum, bdd);
 		functionType[nmbrFunctions] = UNSURE;
       return ite_or (v1, v2);
 	}
@@ -672,9 +692,9 @@ BDDNode *putite(char macros[20], int intnum, BDDNode * bdd)
 			}
 			numarguments = 10*numarguments + macros[x] - '0';
 		}
-      BDDNode * v1 = putite (macros, intnum, bdd);
+      BDDNode * v1 = putite (intnum, bdd);
       for (int x = 0; x < numarguments - 1; x++)
-		  v1 = ite_or (v1, putite (macros, intnum, bdd));
+		  v1 = ite_or (v1, putite (intnum, bdd));
 		functionType[nmbrFunctions] = UNSURE;
       return v1;
 	}
@@ -683,8 +703,7 @@ BDDNode *putite(char macros[20], int intnum, BDDNode * bdd)
 	return NULL;
 }
 
-char getNextSymbol (char *&macros, int &intnum, BDDNode *&bdd) {
-	char integers[20];
+char getNextSymbol (int &intnum, BDDNode *&bdd) {
 	int i = 0;
 	int p = 0;
 	while (1) {
@@ -719,6 +738,10 @@ char getNextSymbol (char *&macros, int &intnum, BDDNode *&bdd) {
 					 || (p == '_') || ((p >= '0') && (p <= '9'))) {
 				macros[i] = p;
 				i++;
+				if(i >= max_macros) {
+					macros = (char *)ite_recalloc(macros, max_macros, max_macros+10, sizeof(char), 9, "macros");
+					max_macros+=10;
+				}
             p = fgetc(finputfile);
             if (p == EOF) {
 					fprintf (stderr, "\nUnexpected EOF (%s)...exiting:%d\n",	macros, markbdd_line);
@@ -741,6 +764,10 @@ char getNextSymbol (char *&macros, int &intnum, BDDNode *&bdd) {
 						 || (p == '_') || ((p >= '0') && (p <= '9'))) {
 					macros[i] = p;
 					i++;
+					if(i >= max_macros) {
+						macros = (char *)ite_recalloc(macros, max_macros, max_macros+10, sizeof(char), 9, "macros");
+						max_macros+=10;
+					}
                p = fgetc(finputfile);
                if (p == EOF) {
 						fprintf (stderr, "\nUnexpected EOF (%s)...exiting\n:%d",	macros, markbdd_line);
@@ -765,6 +792,10 @@ char getNextSymbol (char *&macros, int &intnum, BDDNode *&bdd) {
 				while ((p >= '0') && (p <= '9')) {
 					integers[i] = p;
 					i++;
+					if(i >= max_integers) {
+						integers = (char *)ite_recalloc(integers, max_integers, max_integers+10, sizeof(char), 9, "integers");
+						max_integers+=10;
+					}
                p = fgetc(finputfile);
                if (p == EOF) {
 						fprintf (stderr, "\nUnexpected EOF (%s)...exiting:%d\n",	macros, markbdd_line);
@@ -799,6 +830,10 @@ char getNextSymbol (char *&macros, int &intnum, BDDNode *&bdd) {
 			while ((p >= '0') && (p <= '9')) {
 				integers[i] = p;
 				i++;
+				if(i >= max_integers) {
+					integers = (char *)ite_recalloc(integers, max_integers, max_integers+10, sizeof(char), 9, "integers");
+					max_integers+=10;
+				}
             p = fgetc(finputfile);
 				if (p == EOF) {
 					fprintf (stderr, "\nUnexpected EOF (%s)...exiting:%d\n", macros, markbdd_line);
@@ -823,19 +858,26 @@ void bddloop () {
 	fscanf (finputfile, "%ld %ld\n", &numinp, &numout);
 	numinp += 2;
 	markbdd_line = 1;
-	char macros[20];
 	int intnum = 0, keepnum = 0;
 	BDDNode * bdd = NULL;
 	int p = 0;
-	totaldefines = 0;
-	defines = new defines_struct[100];
-	no_independent = 1;
 
+	totaldefines = 0;
+	max_defines = 100;
+	defines = (defines_struct *)ite_recalloc(defines, 0, max_defines, sizeof(defines_struct), 9, "defines");
+	
+	max_integers = 20;
+	integers = (char *)ite_recalloc(integers, 0, max_integers, sizeof(char), 9, "integers");
+	
+	max_macros = 20;
+	macros = (char *)ite_recalloc(macros, 0, max_macros, sizeof(char), 9, "macros");
+	
+	no_independent = 1;
+	
    vars_alloc(numinp+2);
    functions_alloc(numout+2);
-
-	int *keep = new int[numout + 2];
-
+	
+	int *keep = (int *)ite_calloc(numout + 2, sizeof(int), 9, "keep");
 	for (int x = 0; x < numinp + 1; x++) {
 		independantVars[x] = 0;
 	}
@@ -879,7 +921,7 @@ void bddloop () {
       if (p == '*') {
 			keep[nmbrFunctions] = 1;
 			keepnum++;
-			functions[nmbrFunctions] = putite (macros, intnum, bdd);
+			functions[nmbrFunctions] = putite (intnum, bdd);
 			nmbrFunctions++;
 			if (nmbrFunctions > numout) {
 				fprintf (stderr, "Too many functions, increase to larger than %ld...exiting:%d",	numout, markbdd_line);
@@ -890,7 +932,7 @@ void bddloop () {
 			ungetc (p, finputfile);
 			if (p == ';')
 			  continue;
-			BDDNode * temp = putite (macros, intnum, bdd);
+			BDDNode * temp = putite (intnum, bdd);
 			if ((strcasecmp (macros, "pprint_tree"))
 				 && (strcasecmp (macros, "print_tree"))
 				 && (strcasecmp (macros, "define"))
@@ -962,8 +1004,9 @@ void bddloop () {
       functionType[count] = functionType[x];
       equalityVble[count] = equalityVble[x];
       //parameterizedVars[count] = parameterizedVars[x];
-      if ((functions[x] == true_ptr) || (keep[x] == 0))
-		  count--;
+		if ((functions[x] == true_ptr) || (keep[x] == 0)) {
+			count--;
+		}
       else if (functions[x] == false_ptr) {
 			//fprintf(stderr, "\nProblem is Unsatisfiable...exiting:%d\n", x+1, markbdd_line);
 			//exit(1);
@@ -975,6 +1018,10 @@ void bddloop () {
 		//exit(1);
 	}
 	d2_printf1("\rReading ITE ... Done\n");
-	delete [] keep;
-	delete [] defines;
+	ite_free((void **)&keep);
+	for(int x = 0; x < totaldefines; x++)
+	  ite_free((void **)&defines[x].string);
+	ite_free((void **)&defines);
+	ite_free((void **)&integers);
+	ite_free((void **)&macros);
 }
