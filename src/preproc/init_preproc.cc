@@ -338,8 +338,9 @@ Finish_Preprocessing()
 		 }
 	
    ite_counters_f[PREPROC_TIME] = get_runtime() - start_prep;
-   d3_printf2 ("Preprocessing Time: %5.3f seconds.\n",
+   d3_printf2("Preprocessing Time: %5.3f seconds.\n",
 					ite_counters_f[PREPROC_TIME]);
+   d2_printf1("\rPreprocessing .... Done\n");
 	
    return ret;
 }

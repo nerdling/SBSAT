@@ -271,16 +271,14 @@ void xorloop () {
 	
 	while (1) {				//(p = fgetc(finputfile))!=EOF) 
 		xorbdd_line++;
-      d2_printf3("\rReading %d/%ld", xorbdd_line, (long)numout);
+      d2_printf3("\rReading XOR %d/%ld", xorbdd_line, (long)numout);
 		if(p == ';') {
 			while (p != '\n') {
 				if ((p = fgetc(finputfile)) == EOF) {
-					d2_printf1("\nDone Reading File...\n");
 					goto Exit;
 				}
 			}
 			if((p == fgetc(finputfile)) == EOF) {
-				d2_printf1("\nDone Reading File...\n");
 				goto Exit;
 			}
 			if(p!=';') {
@@ -291,7 +289,6 @@ void xorloop () {
 		if(p=='\n') {
 			while (p != '\n') {
 				if ((p = fgetc(finputfile)) == EOF) {
-					d2_printf1("\nDone Reading File...\n");
 					goto Exit;
 				}
 			}
@@ -299,7 +296,6 @@ void xorloop () {
 			ungetc(p, finputfile);
 		}
 		if((p = fgetc(finputfile))==EOF) {
-			d2_printf1("\nDone Reading File...\n");
 			goto Exit;
 		}
 		ungetc(p, finputfile);
@@ -395,6 +391,6 @@ void xorloop () {
 		}
 	}
 	
-   d2_printf1("\rDone Reading\n");
+   d2_printf1("\rReading XOR ... Done\n");
 	delete [] bdds;
 }

@@ -43,10 +43,12 @@
 int DepCluster();
 
 int Do_DepCluster() {
-	d2_printf1 ("DEPENDENT CLUSTERING - ");
+   d3_printf1("DEPENDENT CLUSTERING - \n");
+   int num_iters = 0;
    int cofs = PREP_CHANGED;
    int ret = PREP_NO_CHANGE;
 	while (cofs!=PREP_NO_CHANGE) {
+      d2_printf2("\rPreprocessing Dc %d ", ++num_iters);
       cofs = DepCluster ();
 		//cofs = Do_ExQuantify ();
       if(cofs == PREP_CHANGED) ret = PREP_CHANGED;
@@ -55,7 +57,8 @@ int Do_DepCluster() {
 		}
 	}
 	
-	d2_printf1 ("\n");
+	d3_printf1 ("\n");
+	d2_printf1 ("\r                                                   ");
 	return ret;
 }
 

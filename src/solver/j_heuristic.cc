@@ -73,7 +73,7 @@ J_InitHeuristicScores()
 // Initialize the heuristic scores for all of the variables
 // the problem.  Called before the search begins.
 {
-   d2_printf1("Initializing heuristicScores\n");
+   d3_printf1("Initializing heuristicScores\n");
 
    pTrueSmurfState->fNodeHeuristicWeight = JHEURISTIC_K_TRUE;
 

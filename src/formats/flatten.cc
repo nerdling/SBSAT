@@ -203,7 +203,7 @@ int FlattenTrace::normalizeInputTrace () {   // Returns neg for error, 0 for OK
             while ((fgets(&sb[mark], B_SIZE-mark-2, fd)) != NULL) {
 	       if (++lineno %100 == 0) 
 		{
-		  d2_printf3("\rPass 0/3: %d : %d", lineno, flatten_lines);
+		  d2_printf3("\rReading tracer 0/3: %d/%d", lineno, flatten_lines);
                 }
                cp = indexOf(&sb[mark], comment);
                if (cp >= 0) { sb[mark+cp] = '\n'; sb[mark+cp+1] = 0; }

@@ -300,9 +300,9 @@ void DisplayBacktrackInfo(double &fPrevEndTime, double &fStartTime)
       double fBacktracksPerSec = BACKTRACKS_PER_STAT_REPORT / (fDurationInSecs>0?fDurationInSecs:0.001);
       fPrevEndTime = fEndTime;
 
-      d2_printf2("Backtracks: %ld ", (long)ite_counters[NUM_BACKTRACKS]);
-      d2_printf2("Time: %4.3f secs.    ", fTotalDurationInSecs);
-      d2_printf2("%4.3f backtracks per sec.\n", fBacktracksPerSec);
+      d2_printf2("Time: %4.3fs. ", fTotalDurationInSecs);
+      d2_printf3("Backtracks: %ld (%4.3f per sec) ", 
+            (long)ite_counters[NUM_BACKTRACKS], fBacktracksPerSec);
 
       int whereAmI = 0;
       int total = 0;
@@ -310,7 +310,8 @@ void DisplayBacktrackInfo(double &fPrevEndTime, double &fStartTime)
       CalculateProgress(&whereAmI, &total);
       if (total == 0) total=1;
       progress = ite_counters_f[PROGRESS] = (float)whereAmI*100/total;
-      d2_printf3("\n Progress: %x/%x        ", whereAmI, total);
+      //d2_printf3("Progress: %x/%x        ", whereAmI, total);
+      d2_printf1("Progress: ");
       char number[10];
       char back[10] = "\b\b\b\b\b\b\b\b\b";
       sprintf(number, "% 3.2f%%", progress);
@@ -322,10 +323,11 @@ void DisplayBacktrackInfo(double &fPrevEndTime, double &fStartTime)
 	      fflush(stddbg);
       }
 
-      d2_printf3("\n Choices (total, dependent): (%lld, %lld)",
-      		  ite_counters[NO_ERROR],
-		  ite_counters[HEU_DEP_VAR]
-		  );
+      d2_printf1("\n Choices (total, dependent" );
+      if (backjumping) d2_printf1(", backjumped");
+      d2_printf3("): (%lld, %lld", ite_counters[NO_ERROR], ite_counters[HEU_DEP_VAR]);
+      if (backjumping) d2_printf2(", %lld", ite_counters[NUM_TOTAL_BACKJUMPS]);
+      d2_printf1(")");
       if (NO_LEMMAS == 0)
       d2_printf4("\n Lemmas (cached, non-cached, added): (%d, %d, %d)",
       		  gnNumCachedLemmas,

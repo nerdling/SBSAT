@@ -391,7 +391,7 @@ Update_arrVarScores()
 ITE_INLINE int
 InitBrancher()
 {
-   d2_printf1("InitBrancher\n");
+   d3_printf1("InitBrancher\n");
 
    switch (nHeuristic) {
     case JOHNSON_HEURISTIC:

@@ -172,8 +172,8 @@ InitSolver()
   /* temporary variables (xor) */
   nNumVariables += (total_vars - numinp);
 
-  d2_printf4("Solver vars: %d/%d (not used: %d)\n", nNumVariables-1, total_vars, total_vars-nNumVariables+1);
-  d2_printf4("Indep/Dep vars: %d/%d (other vars: %d)\n", nIndepVars, nDepVars, nNumVariables-1-nIndepVars-nDepVars);
+  d3_printf4("Solver vars: %d/%d (not used: %d)\n", nNumVariables-1, total_vars, total_vars-nNumVariables+1);
+  d3_printf4("Indep/Dep vars: %d/%d (other vars: %d)\n", nIndepVars, nDepVars, nNumVariables-1-nIndepVars-nDepVars);
 
   /* ??!!?? */
   if (nNumVariables == 1) return SOLV_SAT;
@@ -216,7 +216,7 @@ InitSolver()
 
   var_stat = (t_var_stat *)ite_calloc(nNumVariables, sizeof(t_var_stat), 9, "var_stat");
 
-  d2_printf1 ("Initializing Smurf Factory data structs ...\n");
+  d3_printf1 ("Initializing Smurf Factory data structs ...\n");
   InitLemmaSpacePool(0);
 
   if (nHeuristic == C_LEMMA_HEURISTIC

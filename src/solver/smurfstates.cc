@@ -137,7 +137,7 @@ FreeSmurfStatePool()
 ITE_INLINE void
 SmurfStatesDisplayInfo()
 {
-   d2_printf2("Number of Smurf states: %ld\n", (long)(ite_counters[SMURF_STATES]));
+   d3_printf2("Number of Smurf states: %ld\n", (long)(ite_counters[SMURF_STATES]));
 }
 
 /* don't use -- bad one */

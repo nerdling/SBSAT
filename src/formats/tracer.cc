@@ -230,7 +230,7 @@ Tracer::parseInput () {
 	 if (++lineno % 100 == 0) 
           {
             extern int flatten_lines; /* from flatten */
-            d2_printf3("\rPass 1/3: %d of %d   ", lineno, flatten_lines);
+            d2_printf3("\rReading tracer 1/3: %d/%d   ", lineno, flatten_lines);
           }
 	 if  (s[0] == '%' && s[1] != '%') continue;
 	 switch (state) {
@@ -422,13 +422,14 @@ we1:
    lineno2=0;
    // Pass 2: Associate literal identities with output variables 
    //         and STRUCTURE functions excluding "not" functions. 
+   d2_printf1("\r                                            ");
    if ((fd = fopen(file, "rb")) != NULL) {
       while ((s = fgets(sb, 2047, fd)) != NULL) {
-	 if (++lineno2 % 100 == 0) 
+         if (++lineno2 % 100 == 0) 
          {
-	   d2_printf3("\rPass 2/3: %d out of %d          ", lineno2, lineno);
+            d2_printf3("\rReading tracer 2/3: %d/%d", lineno2, lineno);
          }
-	 //fprintf(stderr, "\n2:QQQ: %s\n", s); fflush(stderr);
+         //fprintf(stderr, "\n2:QQQ: %s\n", s); fflush(stderr);
 	 if (s[0] == '%' && s[1] != '%') continue;
 	 switch (state) {
 	 case 0:  // Startup - MODULE section 
@@ -623,14 +624,15 @@ we1:
 
    lineno2 = 0;	
    // Open the file a third time for building smurfs 
+   d2_printf1("\r                                                  ");
    if ((fd = fopen(file, "rb")) != NULL) {
       int *var_list = new int[100]; //100 should be max_inp_lst_sz
       int *uns_list = new int[100]; //100 should be max_inp_lst_sz
 	while ((s = fgets(sb, 2047, fd)) != NULL) {
 	   if (++lineno2 % 100 == 0) 
-	   {
-             d2_printf3("\rPass 3/3: %d out of %d        ", lineno2, lineno);
-           }
+      {
+         d2_printf3("\rReading tracer 3/3: %d/%d", lineno2, lineno);
+      }
 	   if (s[0] == '%' && s[1] != '%') continue;
 	   if (!strncmp(s,"&&begingroup",12)) {
 
@@ -1369,7 +1371,7 @@ finished:
       delete trim;
       return 1;
    }
-   d2_printf1("\n");
+   d2_printf1("\rReading tracer ... Done                                \n");
    unlink(file);         
    delete r;
    delete t;

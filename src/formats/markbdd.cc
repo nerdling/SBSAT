@@ -752,15 +752,14 @@ void bddloop () {
 	// 
 	while (1) {		//(p = fgetc(finputfile))!=EOF) 
 		markbdd_line++;
+      d2_printf2("\rReading %d ", markbdd_line);
       if (p == ';') {
 			while (p != '\n') {
 				if ((p = fgetc (finputfile)) == EOF) {
-					d2_printf1 ("\nDone Reading File...\n");
 					goto Exit;
 				}
 			}
 			if ((p = fgetc (finputfile)) == EOF) {
-				d2_printf1 ("\nDone Reading File...\n");
 				goto Exit;
 			}
 			if (p != ';') {
@@ -771,7 +770,6 @@ void bddloop () {
       if (p == '\n') {
 			while (p == '\n') {
 				if ((p = fgetc (finputfile)) == EOF) {
-					d2_printf1 ("\nDone Reading File...\n");
 					goto Exit;
 				}
 			}
@@ -780,7 +778,6 @@ void bddloop () {
 			ungetc (p, finputfile);
 		}
       if ((p = fgetc (finputfile)) == EOF) {
-			d2_printf1 ("\nDone Reading File...\n");
 			goto Exit;
 		}
       if (p == '*') {
@@ -842,7 +839,6 @@ void bddloop () {
 		} else
 		  ungetc (p, finputfile);
 	}
-	d2_printf1 ("\n");
 	Exit:;
 	if (keepnum == 0)
 	  for (int x = 0; x < nmbrFunctions; x++)
@@ -878,6 +874,7 @@ void bddloop () {
 		//fprintf(stderr, "\nProblem is a Tautology...exiting\n");
 		//exit(1);
 	}
+	d2_printf1("\rReading ITE ... Done\n");
 	delete [] keep;
 	delete [] defines;
 }

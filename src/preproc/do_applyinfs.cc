@@ -65,7 +65,7 @@ Do_Apply_Inferences ()
 		if (inferlist->nums[1] != 0) {
 			if (inferlist->nums[1] > 0) {
 				Pos_replace++;
-				d2_printf3 ("{%d=%d}", inferlist->nums[0], inferlist->nums[1]);
+				d3_printf3 ("{%d=%d}", inferlist->nums[0], inferlist->nums[1]);
 				variablelist[inferlist->nums[1]].equalvars = inferlist->nums[0];
 				for (llist * k = amount[inferlist->nums[1]].head; k != NULL; k = k->next) {
 					int j = k->num;
@@ -117,7 +117,7 @@ Do_Apply_Inferences ()
 				//verifyCircuit(inferlist->nums[1]);
 			} else {
 				Neg_replace++;
-				d2_printf3 ("{%d=%d}", inferlist->nums[0], inferlist->nums[1]);
+				d3_printf3 ("{%d=%d}", inferlist->nums[0], inferlist->nums[1]);
 				variablelist[-inferlist->nums[1]].equalvars = -inferlist->nums[0];
 				//Gotta keep that (-inferlist->nums[0]) negative...trust me
 				for (llist * k = amount[-inferlist->nums[1]].head; k != NULL; k = k->next) {
@@ -179,7 +179,7 @@ Do_Apply_Inferences ()
 		} else {
 			if (inferlist->nums[0] > 0) {
 				Setting_Pos++;
-				d2_printf2 ("{%d=T}", abs (inferlist->nums[0]));
+				d3_printf2 ("{%d=T}", abs (inferlist->nums[0]));
 				variablelist[inferlist->nums[0]].true_false = 1;
 				for (llist * k = amount[inferlist->nums[0]].head; k != NULL; k = k->next) {
 					int j = k->num;
@@ -203,7 +203,7 @@ Do_Apply_Inferences ()
 				//verifyCircuit(inferlist->nums[0]);
 			} else {
 				Setting_Neg++;
-				d2_printf2 ("{%d=F}", abs (inferlist->nums[0]));
+				d3_printf2 ("{%d=F}", abs (inferlist->nums[0]));
 				variablelist[-inferlist->nums[0]].true_false = 0;
 				for (llist * k = amount[-inferlist->nums[0]].head; k != NULL; k = k->next) {
 					int j = k->num;

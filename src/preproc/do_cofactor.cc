@@ -50,9 +50,12 @@ Do_Cofactor()
 
   for (int x = 0; x < numout; x++)
    {
+      if (x%1000 == 0)
+         d2_printf3("\rPreprocessing Co %d/%d", x, numout);
+
      if (length[x] <= COF_MAX && length[x] > 0)
       {
-        d2_printf1 ("*");
+        d3_printf1 ("*");
         cof = functions[x];
         for (int j = 0; j < numout; j++)
          {

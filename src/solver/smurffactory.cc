@@ -89,6 +89,9 @@ SmurfFactory()
    // Construct the Smurfs.
    for (int i = 0; i < nmbrFunctions; i++)
    {
+      if (i%100 == 0)
+         d2_printf3("\rCreating Smurfs ... %d/%d", i, nmbrFunctions);
+
       int nFunctionType = functionType[i];
       BDDNodeStruct *pFunc = functions[i];
       if (pFunc == false_ptr)  return SOLV_UNSAT;
@@ -200,12 +203,13 @@ SmurfFactory()
    double fEndTime = get_runtime();
    ite_counters_f[BUILD_SMURFS] = fEndTime - fStartTime;
    SmurfStatesDisplayInfo();
-   d2_printf2 ("Time to build Smurf states:  %4.3f secs.\n", ite_counters_f[BUILD_SMURFS]);
+   d3_printf2 ("Time to build Smurf states:  %4.3f secs.\n", ite_counters_f[BUILD_SMURFS]);
 
    d4_printf4("SMURF States Statistic: %ld/%ld (%f hit rate)\n",
          (long)(ite_counters[SMURF_NODE_FIND] - ite_counters[SMURF_NODE_NEW]),
          (long)(ite_counters[SMURF_NODE_FIND]),
          ite_counters[SMURF_NODE_FIND]==0?0:1.0 * (ite_counters[SMURF_NODE_FIND] - ite_counters[SMURF_NODE_NEW]) / ite_counters[SMURF_NODE_FIND]);
+   d2_printf1("\rCreating Smurfs ... Done                     \n");
 
    return SOLV_UNKNOWN;
 }
@@ -215,6 +219,7 @@ ITE_INLINE void
 InitSmurfFactory()
 {
    d9_printf1("InitSmurfFactory\n");
+   d2_printf1("Creating Smurfs ... ");
 #ifdef DISPLAY_TRACE
    for (int i = 0; i < nmbrFunctions; i++)
    {
@@ -281,7 +286,7 @@ InitSmurfFactory()
    }
 
    /* allocate an array for special functions */
-   d2_printf2("Number of special functions: %d\n", nNumSpecialFuncs);
+   d3_printf2("Number of special functions: %d\n", nNumSpecialFuncs);
    if (nNumSpecialFuncs > 0)
    {
       arrSpecialFuncs
@@ -291,7 +296,7 @@ InitSmurfFactory()
    nSpecialFuncIndex = 0;
 
    /* allocate an array for smurf initial states */
-   d2_printf2("Number of regular Smurfs: %d\n", nNumRegSmurfs);
+   d3_printf2("Number of regular Smurfs: %d\n", nNumRegSmurfs);
    if (nNumRegSmurfs > 0)
    {
       arrRegSmurfInitialStates

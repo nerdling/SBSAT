@@ -53,9 +53,11 @@ int Do_Strength() {
 	for (int x = 0; x < nmbrFunctions; x++)
 	  repeat_small[x] = St_repeat[x];
 	
-	d2_printf1 ("STRENGTHENING - ");
+	d3_printf1("STRENGTHENING - \n");
 	for (int x = 0; x < nmbrFunctions; x++)
 	  {
+        if (x % 100 == 0)
+           d2_printf3("\rPreprocessing St %d/%d", x, nmbrFunctions);
 		  St_repeat[x] = 0;
 		  if (functions[x] == true_ptr)
 			 continue;
@@ -82,7 +84,7 @@ int Do_Strength() {
 						if (currentBDD != functions[x])
 						  {
 							  //d2_printf1("*");
-							  d2_printf2("%c\b", signs[signs_idx++]);
+							  d3_printf2("%c\b", signs[signs_idx++]);
                        if (signs[signs_idx] == 0) signs_idx = 0;
                        //
 							  ret = PREP_CHANGED;
@@ -108,7 +110,7 @@ int Do_Strength() {
 						if (currentBDD != functions[j])
 						  {
 							  //d2_printf1 ("*");
-							  d2_printf2("%c\b", signs[signs_idx++]);
+							  d3_printf2("%c\b", signs[signs_idx++]);
                        if (signs[signs_idx] == 0) signs_idx = 0;
                        //
 							  ret = PREP_CHANGED;
@@ -125,7 +127,8 @@ int Do_Strength() {
 					}
 			 }
 	  }
-	d2_printf1 ("\n");
+	d3_printf1 ("\n");
+   d2_printf1("\r                                         ");
 	
 	st_bailout:
 	delete [] repeat_small;

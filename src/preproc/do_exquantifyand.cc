@@ -55,11 +55,13 @@ Do_ExQuantifyAnd()
 {
 	MAX_EXQUANTIFY_CLAUSES = 40;
 	MAX_EXQUANTIFY_VARLENGTH = 13;
-	d2_printf1 ("ANDING AND EXISTENTIALLY QUANTIFYING - ");
+	d3_printf1 ("ANDING AND EXISTENTIALLY QUANTIFYING - \n");
+   int num_iters = 0;
 	int cofs = PREP_CHANGED;
 	int ret = PREP_NO_CHANGE;
 	while (cofs!=PREP_NO_CHANGE)
 	  {
+	     d2_printf2("\rPreprocessing Ea %d", ++num_iters);
 		  cofs = ExQuantifyAnd ();
 		  if(cofs == PREP_CHANGED) ret = PREP_CHANGED;
 		  else if(cofs == TRIV_UNSAT)
@@ -67,7 +69,8 @@ Do_ExQuantifyAnd()
 				 return TRIV_UNSAT;
 			 }
 	  }
-	d2_printf1 ("\n");
+	d3_printf1 ("\n");
+	d2_printf1 ("\r                                      ");
 	return ret;
 }
 
@@ -140,7 +143,7 @@ ExQuantifyAnd ()
 						if(out) {
 							functions[j] = Quantify;
 						} else {
-							d2_printf2 ("*{%d}", i);
+							d3_printf2 ("*{%d}", i);
 							functions[j] = xquantify (Quantify, i);
 						}
 						switch (int r=Rebuild_BDDx(j)) {

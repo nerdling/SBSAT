@@ -78,10 +78,12 @@ int DO_PRUNING_FN() {
 	for (int x = 0; x < nmbrFunctions; x++)
 	  repeat_small[x] = PRUNE_REPEATS[x];
 	
-	d2_printf1 ("BRANCH PRUNING - ");
+	d3_printf1 ("BRANCH PRUNING - \n");
 	for (int x = 0; x < nmbrFunctions; x++)
 	  {
-		  PRUNE_REPEATS[x] = 0;
+        if (x % 100 == 0)
+           d2_printf3("\rPreprocessing Pr %d/%d", x, nmbrFunctions);
+        PRUNE_REPEATS[x] = 0;
 		  if (functions[x] == true_ptr)
 			 continue;
 		  for (int j = x + 1; j < nmbrFunctions; j++)
@@ -118,7 +120,7 @@ int DO_PRUNING_FN() {
 						if (currentBDD != functions[x])
 						  {
 							  //d2_printf1 ("*");
-							  d2_printf2("%c\b", signs[signs_idx++]);
+							  d3_printf2("%c\b", signs[signs_idx++]);
                        if (signs[signs_idx] == 0) signs_idx = 0;
 
 							  ret = PREP_CHANGED;
@@ -155,7 +157,7 @@ int DO_PRUNING_FN() {
 						if (currentBDD != functions[j])
 						  {
 							  //d2_printf1 ("*");
-							  d2_printf2("%c\b", signs[signs_idx++]);
+							  d3_printf2("%c\b", signs[signs_idx++]);
                        if (signs[signs_idx] == 0) signs_idx = 0;
 
 							  ret = PREP_CHANGED;
@@ -172,7 +174,8 @@ int DO_PRUNING_FN() {
 					}
 			 }
 	  }
-	d2_printf1 ("\n");
+	d3_printf1("\n");
+   d2_printf1("\r                                         ");
 	
 	st_bailout:
 	delete [] repeat_small;
