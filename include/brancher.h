@@ -48,6 +48,8 @@ struct ChoicePointStruct
   int nBranchVble; // Index of branch variable
   int nNumUnresolved; // # of not-yet-satisfied functions
   // present in the problem before the branch variable was selected
+  LemmaInfoStruct *pUnitLemmaList;
+  LemmaInfoStruct *pUnitLemmaListTail;
 };
 
 struct IndexRoleStruct

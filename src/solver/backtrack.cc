@@ -42,7 +42,7 @@ ITE_INLINE int
 BackTrack()
 {
    int nOldBacktrackStackIndex=0;
-   LemmaInfoStruct *pUnitLemmaListTail = NULL;
+   LemmaInfoStruct *pUnitLemmaListTail;
    LemmaInfoStruct pUnitLemmaList;
    int nUnsetLemmaFlagIndex = 0; /* literals that we need to unset after bt */
    LemmaBlock *pNewLemma=NULL; /* last lemma added */
@@ -52,9 +52,9 @@ BackTrack()
    int nInferredValue = 0; /* the choice point value */
    int _num_backjumps = 0; /* num of backjumps during this backtrack */
 
-//   assert(pUnitLemmaList->pNextLemma[0] == NULL);
-   pUnitLemmaList.pNextLemma[0] = NULL;
-
+	pUnitLemmaList.pNextLemma[0] = NULL;
+	pUnitLemmaListTail = NULL;
+	
    // Copy the conflict lemma into arrTempLemma.
    nTempLemmaIndex = ConstructTempLemma();
 
@@ -72,6 +72,19 @@ BackTrack()
       if (nInferredAtom != 0) 
          var_stat[nInferredAtom].backjumped[nInferredValue]++;
 
+		if(pChoicePointTop->pUnitLemmaList != NULL) {
+			if(pUnitLemmaList.pNextLemma[0] == NULL) {
+				pUnitLemmaList.pNextLemma[0] = pChoicePointTop->pUnitLemmaList;
+				pUnitLemmaListTail = pChoicePointTop->pUnitLemmaListTail;
+			} else {
+				pUnitLemmaListTail->pNextLemma[0] = pChoicePointTop->pUnitLemmaList;
+				pUnitLemmaListTail = pChoicePointTop->pUnitLemmaListTail;
+				assert(pChoicePointTop->pUnitLemmaListTail);
+			}
+			pChoicePointTop->pUnitLemmaList = NULL;
+			pChoicePointTop->pUnitLemmaListTail = NULL;
+		}
+		
       // Pop the choice point stack.
       pChoicePointTop--;
 
@@ -150,19 +163,16 @@ BackTrack()
                nBacktrackAtom == nInferredAtom) 
          {
             //nBacktrackAtom is a UIP-unique implication point
-            if (pBacktrackTop->bWasChoicePoint == false) {
-               pBacktrackTop->pUnitLemmaList = NULL;
-            }
-
-            pBacktrackTop->bWasChoicePoint = false;
-            if (arrLemmaFlag[nBacktrackAtom])
-            {
+				pBacktrackTop->bWasChoicePoint = false;
+				
+            if (arrLemmaFlag[nBacktrackAtom]) 
+				{
                // Resolve out lemma literals which are not needed.
                // Do this by checking the level at which each literal
                // was inferred.
                int nTempLemmaLiteral;
                int nTempLemmaVble;
-
+					
                int nCopytoIndex = 0;
                for (int i = 0; i < nTempLemmaIndex; i++)
                {
@@ -203,23 +213,8 @@ BackTrack()
 
             /*m while (1) - the end of backtrack */
             if(nBacktrackAtom == nInferredAtom) break; 
-
-
-            if(pBacktrackTop->pUnitLemmaList != NULL) 
-            {
-               /*m join pUnitLemmaList with the pBacktrackTop->pUnitLemmaList */
-               assert(IsInLemmaList(pBacktrackTop->pUnitLemmaListTail,
-                        pBacktrackTop->pUnitLemmaList));
-               pBacktrackTop->pUnitLemmaListTail->pNextLemma[0]
-                  = pUnitLemmaList.pNextLemma[0];
-               pUnitLemmaList.pNextLemma[0] = pBacktrackTop->pUnitLemmaList;
-               if(pUnitLemmaListTail == NULL) 
-                  pUnitLemmaListTail = pBacktrackTop->pUnitLemmaListTail;
-               assert(IsInLemmaList(pUnitLemmaListTail, &pUnitLemmaList));
-            }
-
          } // if(pBacktrackTop->bWasChoicePoint == true || ... )
-
+			
 #ifdef DISPLAY_TRACE
          TB_9(
             cout << "Examining lemma:" << endl;
@@ -300,7 +295,6 @@ BackTrack()
       nInferredValue = arrSolution[nInferredAtom];
       arrSolution[nInferredAtom] = BOOL_UNKNOWN;
       _num_backjumps++;
-
    }  // backjumping loop
    while (arrLemmaFlag[nInferredAtom] == false);
 
@@ -316,8 +310,6 @@ BackTrack()
    for(int i = 0; i < nTempLemmaIndex; i++) 
       arrLemmaFlag[abs(arrTempLemma[i])] = false;
 
-   BacktrackStackEntry *pBacktrackStackOldBranchPoint = pBacktrackTop;
-
    // Flush the inference queue.
    pInferenceQueueNextElt = pInferenceQueueNextEmpty = arrInferenceQueue;
    pFnInferenceQueueNextElt = pFnInferenceQueueNextEmpty = arrFnInferenceQueue;
@@ -328,32 +320,27 @@ BackTrack()
    nInferredValue = (nInferredValue == BOOL_TRUE ? BOOL_FALSE : BOOL_TRUE);
    InferLiteral(nInferredAtom, nInferredValue, true, pNewLemma, NULL, 1);
 
-#ifdef DISPLAY_TRACE
-   TB_9(
-      cout << "Reversed polarity of X" << nInferredAtom
-         << " to " << nInferredValue << endl;
-      //DisplayAllBrancherLemmas();
-      cout << "Would DisplayAllBrancherLemmas here." << endl;
-   )
-#endif  
-
-   // Add inferences from lemmas which became unit through the course of
+	assert(IsInLemmaList(pUnitLemmaListTail,
+								&pUnitLemmaList));	  
+	  
+	// Add inferences from lemmas which became unit through the course of
    // the backtracking.
    int nInferredAtomLevel = arrBacktrackStackIndex[nInferredAtom];
 
-   // We have to skip past the most recently added lemma because 
-   // it witnesses that we have to reverse polarity, but we have 
-   // already done so.
+   // A lemma in this UnitLemmaList will reverse the polarity of
+   // the branch atom automatically.
+   // A lemma here will witnesses that we have to reverse polarity.
    LemmaInfoStruct *previous = pUnitLemmaList.pNextLemma[0];
-   for (LemmaInfoStruct *p = previous->pNextLemma[0]; p; p = p->pNextLemma[0])
+   assert(previous->nWatchedVble[0] == nInferredAtom);
+	for (LemmaInfoStruct *p = previous->pNextLemma[0]; p; p = p->pNextLemma[0])
    {
       //m WatchedVble 1 and 2 have the highest BSI in the whole clause
       //m i.e. if Watched2 is < InferredAtomLevel => Watched1 is inferred
-      if(arrBacktrackStackIndex[p->nWatchedVble[1]] >= nInferredAtomLevel || p->nWatchedVble[0] == 0) 
+      if(arrBacktrackStackIndex[p->nWatchedVble[1]] >= nInferredAtomLevel || p->nWatchedVble[0] == 0)
       {
          //Remove lemma p from UnitLemmaList and add it into the lemma cache
-         previous->pNextLemma[0] = p->pNextLemma[0];
-         if (p == pUnitLemmaListTail) pUnitLemmaListTail = previous;
+			previous->pNextLemma[0] = p->pNextLemma[0];
+			if (p == pUnitLemmaListTail) pUnitLemmaListTail = previous;
 
          if (p->bPutInCache) //Add p to the two corresponding lemma lists...
          {
@@ -365,14 +352,14 @@ BackTrack()
             // Recycle the lemma immediately.
             FreeLemma(p);
          }
-         p = previous;
+			p = previous;
       }
       else
       {
          //It is the case that no two lemmas in the UnitLemmaList
          //will ever apply the same inference. Thus nWatchedVble[0] always
          //is the index of a variable which has not yet been branched on.
-         assert(p->nWatchedVble[1] != nInferredAtom);
+			assert(p->nWatchedVble[1] != nInferredAtom);
 
          //Apply the inference to nWatchedVble[0]
 
@@ -381,18 +368,26 @@ BackTrack()
          InferLiteral(p->nWatchedVble[0], p->nWatchedVblePolarity[0],
                false, p->pLemma, NULL, 1);
 
-         previous = previous->pNextLemma[0];
+			previous = previous->pNextLemma[0];
       }
    } // for (LemmaInfoStruct *p = pUnitLemmaList->pNextLemma[0]; ; p = p->pNextLemma[0])
-
    //cout << "Placing unit lemma list on the stack:" << endl;
    //DisplayLemmaList(pUnitLemmaList);
-   pBacktrackStackOldBranchPoint->pUnitLemmaList = pUnitLemmaList.pNextLemma[0];
-   pBacktrackStackOldBranchPoint->pUnitLemmaListTail = pUnitLemmaListTail;
-
-//   pUnitLemmaList->pNextLemma[0] = NULL;
-
-   // Get the consequences of the branch atoms new value.
+	
+	if (pChoicePointTop >= pStartChoicePointStack) { //We are at the top of the tree
+		if(pChoicePointTop->pUnitLemmaList == NULL) {
+			pChoicePointTop->pUnitLemmaList = pUnitLemmaList.pNextLemma[0];
+			pChoicePointTop->pUnitLemmaListTail = pUnitLemmaListTail;
+		} else {
+			pChoicePointTop->pUnitLemmaListTail->pNextLemma[0]
+			  = pUnitLemmaList.pNextLemma[0];
+			if(pUnitLemmaListTail != NULL)
+			  pChoicePointTop->pUnitLemmaListTail = pUnitLemmaListTail;
+		}
+		assert(IsInLemmaList(pChoicePointTop->pUnitLemmaListTail, &pUnitLemmaList));		
+	} else assert(pUnitLemmaList.pNextLemma[0]->pNextLemma[0] == NULL);
+	
+	// Get the consequences of the branch atoms new value.
    return 0; /* NO_ERROR */
 }
 
