@@ -28,6 +28,7 @@ void    sym_init();
 symrec *putsym(char *, int);
 symrec *getsym(char *);
 int     i_getsym(char *, int);
+int     i_getsym_int(int var_int, int sym_type);
 int     i_putsym(char *, int);
 symrec *s_getsym(char *, int);
 void    s_set_indep(symrec *, int);

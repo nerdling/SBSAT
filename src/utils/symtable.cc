@@ -148,6 +148,17 @@ i_getsym (char *sym_name, int sym_type)
   return ptr->id;
 }
 
+int
+i_getsym_int(int var_int, int sym_type)
+{
+   char sym_name[64];
+   int sign=var_int<0?-1:1;
+   var_int *= sign;
+   assert(var_int > 0);
+   sprintf(sym_name, "%d", var_int);
+   return sign*i_getsym(sym_name, sym_type);
+}
+
 symrec *
 s_getsym(char *sym_name, int sym_type)
 {
