@@ -52,13 +52,15 @@ AddLemmaIntoWatchedLits(LemmaInfoStruct *p)
       p->pPrevLemma[0] = &(pAFS->LemmasWherePos[0]);
       pAFS->LemmasWherePos[0].pNextLemma[0] = p;
       if (p->pNextLemma[0]) p->pNextLemma[0]->pPrevLemma[0] = p;
-   }
+		else pAFS->LemmasWherePosTail[0].pNextLemma[0] = p; //Maintain the Tail of the list.
+	}
    else
    {
       p->pNextLemma[0] = pAFS->LemmasWhereNeg[0].pNextLemma[0];
       p->pPrevLemma[0] = &(pAFS->LemmasWhereNeg[0]);
       pAFS->LemmasWhereNeg[0].pNextLemma[0] = p;
       if (p->pNextLemma[0]) p->pNextLemma[0]->pPrevLemma[0] = p;
+		else pAFS->LemmasWhereNegTail[0].pNextLemma[0] = p; //Maintain the Tail of the list.
    }
 
    //Add to watched literal 2s lemma list
@@ -69,6 +71,7 @@ AddLemmaIntoWatchedLits(LemmaInfoStruct *p)
       p->pPrevLemma[1] = &(pAFS->LemmasWherePos[1]);
       pAFS->LemmasWherePos[1].pNextLemma[1] = p;
       if (p->pNextLemma[1]) p->pNextLemma[1]->pPrevLemma[1] = p;
+		else pAFS->LemmasWherePosTail[1].pNextLemma[1] = p; //Maintain the Tail of the list.
    }
    else
    {
@@ -76,37 +79,68 @@ AddLemmaIntoWatchedLits(LemmaInfoStruct *p)
       p->pPrevLemma[1] = &(pAFS->LemmasWhereNeg[1]);
       pAFS->LemmasWhereNeg[1].pNextLemma[1] = p;
       if (p->pNextLemma[1]) p->pNextLemma[1]->pPrevLemma[1] = p;
+		else pAFS->LemmasWhereNegTail[1].pNextLemma[1] = p; //Maintain the Tail of the list.
    }
 }
 
 ITE_INLINE void
 RemoveLemmaFromWatchedLits(LemmaInfoStruct *pLemmaInfo)
 {
-   // Remove it from the lists which it is in based on
+	// Remove it from the lists which it is in based on
    // its watched variables.
 
+	AffectedFuncsStruct *pAFS = arrAFS + pLemmaInfo->nWatchedVble[0];
+	
    // Watched variable 1 list --
    if (pLemmaInfo->pPrevLemma[0])
    {
-      pLemmaInfo->pPrevLemma[0]->pNextLemma[0]
-         = pLemmaInfo->pNextLemma[0];
-   }
-   if (pLemmaInfo->pNextLemma[0])
-   {
-      pLemmaInfo->pNextLemma[0]->pPrevLemma[0]
-         = pLemmaInfo->pPrevLemma[0];
-   }
+		pLemmaInfo->pPrevLemma[0]->pNextLemma[0]
+		  = pLemmaInfo->pNextLemma[0];
+		if (pLemmaInfo->pNextLemma[0]) {
+			pLemmaInfo->pNextLemma[0]->pPrevLemma[0]
+			  = pLemmaInfo->pPrevLemma[0];
+		} else { //This lemma is the Tail of one of the lemma lists
+			if (pAFS->LemmasWherePosTail[0].pNextLemma[0] == pLemmaInfo)
+			  pAFS->LemmasWherePosTail[0].pNextLemma[0] = pLemmaInfo->pPrevLemma[0];
+			else if (pAFS->LemmasWhereNegTail[0].pNextLemma[0] == pLemmaInfo)
+			  pAFS->LemmasWhereNegTail[0].pNextLemma[0] = pLemmaInfo->pPrevLemma[0];
+			else {
+				fprintf(stderr, "LemmaInfoStruct Tail pointer is invalid\n");
+				assert(0);
+			}   
+		}
+	} else {
+		if (pLemmaInfo->pNextLemma[0]) {
+			pLemmaInfo->pNextLemma[0]->pPrevLemma[0]
+			  = pLemmaInfo->pPrevLemma[0];
+		}
+	}
 
+	pAFS = arrAFS + pLemmaInfo->nWatchedVble[1];
+	
    // Watched variable 2 list --
    if (pLemmaInfo->pPrevLemma[1])
    {
       pLemmaInfo->pPrevLemma[1]->pNextLemma[1]
-         = pLemmaInfo->pNextLemma[1];
-   }
-   if (pLemmaInfo->pNextLemma[1])
-   {
-      pLemmaInfo->pNextLemma[1]->pPrevLemma[1]
-         = pLemmaInfo->pPrevLemma[1];
+		  = pLemmaInfo->pNextLemma[1];
+		if (pLemmaInfo->pNextLemma[1]) {
+			pLemmaInfo->pNextLemma[1]->pPrevLemma[1]
+			  = pLemmaInfo->pPrevLemma[1];
+		} else { //This lemma is the Tail of one of the lemma lists
+			if (pAFS->LemmasWherePosTail[1].pNextLemma[1] == pLemmaInfo)
+			  pAFS->LemmasWherePosTail[1].pNextLemma[1] = pLemmaInfo->pPrevLemma[1];
+			else if (pAFS->LemmasWhereNegTail[1].pNextLemma[1] == pLemmaInfo)
+			  pAFS->LemmasWhereNegTail[1].pNextLemma[1] = pLemmaInfo->pPrevLemma[1];
+			else {
+				fprintf(stderr, "LemmaInfoStruct Tail pointer is invalid\n");
+				assert(0);
+			}
+		}
+	} else {
+		if (pLemmaInfo->pNextLemma[1]) {
+			pLemmaInfo->pNextLemma[1]->pPrevLemma[1]
+			  = pLemmaInfo->pPrevLemma[1];
+		}
    }
 }
 

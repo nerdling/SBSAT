@@ -42,9 +42,58 @@ int USE_BACKBURNER1 = 0;
 int USE_BACKBURNER2 = 1;
 
 ITE_INLINE
-void AFSMoveLemma(LemmaInfoStruct *previous, LemmaInfoStruct *pLemmaListDisagreed, int negativeLit, int nVble, int idx)
+void AFSMoveLemma(LemmaInfoStruct *previous, LemmaInfoStruct *pLemmaListDisagreed, LemmaInfoStruct *pLemmaListTail, int negativeLit, int nVble, int idx)
 {
-   previous->pNextLemma[idx]
+	previous->pNextLemma[idx]
+      = pLemmaListDisagreed->pNextLemma[idx];
+   if (pLemmaListDisagreed->pNextLemma[idx])
+   {
+      pLemmaListDisagreed->pNextLemma[idx]->pPrevLemma[idx]
+         = previous;
+   } else {
+		pLemmaListTail->pNextLemma[idx] = pLemmaListDisagreed->pPrevLemma[idx];
+	}
+
+	
+   /* Add him into his new list */
+   {
+      LemmaInfoStruct *pLemmasWhere;
+      if (negativeLit) pLemmasWhere = &((arrAFS + nVble)->LemmasWhereNeg[idx]);
+      else pLemmasWhere = &((arrAFS + nVble)->LemmasWherePos[idx]);
+
+      pLemmaListDisagreed->pNextLemma[idx]
+         = pLemmasWhere->pNextLemma[idx];
+      if (pLemmaListDisagreed->pNextLemma[idx])
+      {
+         pLemmaListDisagreed->pNextLemma[idx]
+            ->pPrevLemma[idx]
+            = pLemmaListDisagreed;
+		} else {
+			AffectedFuncsStruct *pAFS = arrAFS + nVble;
+			if(negativeLit) {
+				pAFS->LemmasWhereNegTail[idx].pNextLemma[idx] = pLemmaListDisagreed;
+			} else {
+				pAFS->LemmasWherePosTail[idx].pNextLemma[idx] = pLemmaListDisagreed;
+			}
+		}
+
+      pLemmasWhere->pNextLemma[idx]
+         = pLemmaListDisagreed;
+      pLemmaListDisagreed->pPrevLemma[idx]
+         = pLemmasWhere;
+      pLemmaListDisagreed->nWatchedVblePolarity[idx]
+         = 1-negativeLit;
+      pLemmaListDisagreed->nWatchedVble[idx]
+         = nVble;
+   }
+} 
+
+ITE_INLINE
+void AFSMoveLemmaToBack(LemmaInfoStruct *previous, LemmaInfoStruct *pLemmaListDisagreed, LemmaInfoStruct *pLemmaListTail, int negativeLit, int nVble, int idx)
+{
+//	if(pLemmaListDisagreed->pNextLemma[idx];
+   
+	previous->pNextLemma[idx]
       = pLemmaListDisagreed->pNextLemma[idx];
    if (pLemmaListDisagreed->pNextLemma[idx])
    {
@@ -84,12 +133,15 @@ UpdateEachAffectedLemma(AffectedFuncsStruct *pAFS, int nInferredValue)
    int nVble;
    // Update each affected lemma.
    LemmaInfoStruct *pLemmaListDisagreed;
-
-   if (nInferredValue == BOOL_TRUE)
+	LemmaInfoStruct *pLemmaListTail;
+	
+   if (nInferredValue == BOOL_TRUE) {
       pLemmaListDisagreed = &(pAFS->LemmasWhereNeg[0]);
-   else
+		pLemmaListTail = &(pAFS->LemmasWhereNegTail[0]);
+	} else {
       pLemmaListDisagreed = &(pAFS->LemmasWherePos[0]);
-
+		pLemmaListTail = &(pAFS->LemmasWherePosTail[0]);
+	}
 
    // Visit lemmas which have literals which contradict the
    // new assignment.
@@ -174,10 +226,10 @@ UpdateEachAffectedLemma(AffectedFuncsStruct *pAFS, int nInferredValue)
 				nVble = nNewWatchedVar;
 				negativeLit = nNewNegativeLit;
 				if(nVble != pLemmaListDisagreed->nWatchedVble[1] && nVble!=pLemmaListDisagreed->nWatchedVble[0]) {
-					AFSMoveLemma(pLemmaListDisagreed->pPrevLemma[1], pLemmaListDisagreed, negativeLit, nVble, 1);
+					AFSMoveLemma(pLemmaListDisagreed->pPrevLemma[1], pLemmaListDisagreed, pLemmaListTail, negativeLit, nVble, 1);
 				}
 				if(nSecondWatchedVar != 0) {
-					AFSMoveLemma(previous, pLemmaListDisagreed, nSecondNegativeLit, nSecondWatchedVar, 0);
+					AFSMoveLemma(previous, pLemmaListDisagreed, pLemmaListTail, nSecondNegativeLit, nSecondWatchedVar, 0);
 					pLemmaListDisagreed = previous;
 				} else  {
 					previous = pLemmaListDisagreed;
@@ -279,7 +331,7 @@ UpdateEachAffectedLemma(AffectedFuncsStruct *pAFS, int nInferredValue)
 							nVble = nNewWatchedVar;
 							negativeLit = nNewNegativeLit;
 							if(nSecondWatchedVar != 0) {
-								AFSMoveLemma(pLemmaListDisagreed->pPrevLemma[1], pLemmaListDisagreed, nSecondNegativeLit, nSecondWatchedVar, 1);
+								AFSMoveLemma(pLemmaListDisagreed->pPrevLemma[1], pLemmaListDisagreed, pLemmaListTail, nSecondNegativeLit, nSecondWatchedVar, 1);
 							}
 						}
 					} //END USE_BACKBURNER
@@ -287,7 +339,7 @@ UpdateEachAffectedLemma(AffectedFuncsStruct *pAFS, int nInferredValue)
 					// Lemma is now satisfied  or unknown
 					//
                // Remove lemma from his old list
-					AFSMoveLemma(previous, pLemmaListDisagreed, negativeLit, nVble, 0);
+					AFSMoveLemma(previous, pLemmaListDisagreed, pLemmaListTail, negativeLit, nVble, 0);
 					
                bWatchedVbleUnknown = false;
                bContinue = true;
@@ -431,10 +483,10 @@ UpdateEachAffectedLemma(AffectedFuncsStruct *pAFS, int nInferredValue)
 				nVble = nNewWatchedVar;
 				negativeLit = nNewNegativeLit;
 				if(nVble != pLemmaListDisagreed->nWatchedVble[0] && nVble!=pLemmaListDisagreed->nWatchedVble[1]) {
-					AFSMoveLemma(pLemmaListDisagreed->pPrevLemma[0], pLemmaListDisagreed, negativeLit, nVble, 0);
+					AFSMoveLemma(pLemmaListDisagreed->pPrevLemma[0], pLemmaListDisagreed, pLemmaListTail, negativeLit, nVble, 0);
 				}
 				if(nSecondWatchedVar != 0) {
-					AFSMoveLemma(previous, pLemmaListDisagreed, nSecondNegativeLit, nSecondWatchedVar, 1);
+					AFSMoveLemma(previous, pLemmaListDisagreed, pLemmaListTail, nSecondNegativeLit, nSecondWatchedVar, 1);
 					pLemmaListDisagreed = previous;
 				} else  {
 					previous = pLemmaListDisagreed;
@@ -532,13 +584,13 @@ UpdateEachAffectedLemma(AffectedFuncsStruct *pAFS, int nInferredValue)
 							nVble = nNewWatchedVar;
 							negativeLit = nNewNegativeLit;
 							if(nSecondWatchedVar != 0) {
-								AFSMoveLemma(pLemmaListDisagreed->pPrevLemma[0], pLemmaListDisagreed, nSecondNegativeLit, nSecondWatchedVar, 0);
+								AFSMoveLemma(pLemmaListDisagreed->pPrevLemma[0], pLemmaListDisagreed, pLemmaListTail, nSecondNegativeLit, nSecondWatchedVar, 0);
 							}
 						}
 					} //END USE_BACKBURNER
 					
 					//Lemma is satisfied now or unknown
-					AFSMoveLemma(previous, pLemmaListDisagreed, negativeLit, nVble, 1);
+					AFSMoveLemma(previous, pLemmaListDisagreed, pLemmaListTail, negativeLit, nVble, 1);
 					
                bWatchedVbleUnknown = false;
                bContinue = true;
