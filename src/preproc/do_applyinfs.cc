@@ -385,6 +385,13 @@ int Do_Apply_Inferences_backend () {
 	return ret;
 }
 
+void printBDDInfs(BDDNode *bdd) {
+	for(infer *iterator = bdd->inferences; iterator != NULL; iterator = iterator->next) {
+		d3_printf3 ("{%d, %d}", iterator->nums[0], iterator->nums[1]);
+		//fprintf(stderr, "%d|%d, %d|", x, iterator->nums[0], iterator->nums[1]);
+	}
+}
+
 int Rebuild_BDDx (int x) {
 	SetRepeats(x);
 	Result *result;
