@@ -229,10 +229,8 @@ double fPrevEndTime;
 int (* proc_backtrack)() = NULL;
 
 ITE_INLINE int
-BrancherPreset()
+BrancherPresetString(char *ptr)
 {
-   // brancher_presets
-   char *ptr = brancher_presets;
    int lit, sign;
    while (*ptr != 0) {
 
@@ -264,6 +262,28 @@ BrancherPreset()
    return SOLV_UNKNOWN;
 }
 
+ITE_INLINE int
+BrancherPresetInt(int *ptr)
+{
+   int lit, sign;
+   while (*ptr != 0) {
+
+      if (*ptr < 0) {
+         lit = -*ptr;
+         sign = 0;
+      } else {
+         lit = *ptr;
+         sign = 1;
+      }
+      ptr++;
+      if (arrSolution[lit] == BOOL_UNKNOWN) ITE_MakeDecision(lit, sign);
+      else {
+         if (arrSolution[lit] != sign) return SOLV_UNSAT;
+      }
+      if (ITE_Deduce() != 0) return SOLV_UNSAT;
+   }
+   return SOLV_UNKNOWN;
+}
 
 ITE_INLINE void
 dump_counters(FILE *fd)
@@ -356,7 +376,7 @@ CheckInitHooks()
 
    if (reports != 0) crtwin_init();
 
-   if (*brancher_presets) ret = BrancherPreset();
+   if (*brancher_presets) ret = BrancherPresetString(brancher_presets);
 
    return ret;
 }
