@@ -293,23 +293,26 @@ DisplayAllBrancherLemmasToFile(char *filename, int flag)
             pLemmaInfo;
             pLemmaInfo = pLemmaInfo->pLPQNext)
       {
-         if (flag == 1)
-            fprintf(pFile, "c %d %d %d %d %d %d %d %d %d\n",
-                  pLemmaInfo->pLemma->arrLits[0],
-                  pLemmaInfo->nNumLemmaMoved,
-                  pLemmaInfo->nNumLemmaConflict,
-                  (int)(ite_counters[NUM_LEMMA_INTO_CACHE]-pLemmaInfo->nLemmaNumber),
-                  pLemmaInfo->nNumLemmaInfs,
-                  pLemmaInfo->nBacktrackStackReferences,
-                  pLemmaInfo->nLemmaFirstUseful?
-                  (int)(pLemmaInfo->nLemmaFirstUseful-pLemmaInfo->nLemmaNumber):0,
-                  pLemmaInfo->nLemmaLastUsed?
-                  (int)(pLemmaInfo->nLemmaLastUsed-pLemmaInfo->nLemmaNumber):0,
-                  LemmaIsSAT(pLemmaInfo->pLemma));
-         DisplayLemmaToFile(pFile, pLemmaInfo->pLemma);
-         fprintf(pFile, "\n");
-         assert((pLemmaInfo == pLPQLast[0]) == (pLemmaInfo->pLPQNext == NULL));
-      }
+			//if(pLemmaInfo->nBacktrackStackReferences<=0)
+			  {
+				  if (flag == 1) 
+					 fprintf(pFile, "c %d %d %d %d %d %d %d %d %d\n",
+								pLemmaInfo->pLemma->arrLits[0],
+								pLemmaInfo->nNumLemmaMoved,
+								pLemmaInfo->nNumLemmaConflict,
+								(int)(ite_counters[NUM_LEMMA_INTO_CACHE]-pLemmaInfo->nLemmaNumber),
+								pLemmaInfo->nNumLemmaInfs,
+								pLemmaInfo->nBacktrackStackReferences,
+								pLemmaInfo->nLemmaFirstUseful?
+								(int)(pLemmaInfo->nLemmaFirstUseful-pLemmaInfo->nLemmaNumber):0,
+								pLemmaInfo->nLemmaLastUsed?
+								(int)(pLemmaInfo->nLemmaLastUsed-pLemmaInfo->nLemmaNumber):0,
+								LemmaIsSAT(pLemmaInfo->pLemma));
+				  DisplayLemmaToFile(pFile, pLemmaInfo->pLemma);
+				  fprintf(pFile, "\n");
+				  assert((pLemmaInfo == pLPQLast[0]) == (pLemmaInfo->pLPQNext == NULL));
+			}
+		}
    }
 }
 
