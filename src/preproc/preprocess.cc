@@ -59,6 +59,7 @@ preproc_type preproc[] = {
   { "Pr", 2, Do_Pruning,     &DO_PRUNING },
   { "P1", 2, Do_Pruning_1,   &DO_PRUNING },
   { "P2", 2, Do_Pruning_2,   &DO_PRUNING },
+  { "Sl", 2, Do_Steal,       &DO_PRUNING },
   { "PR", 2, Do_Pruning_Restrict, &DO_PRUNING },
   { "Co", 2, Do_Cofactor,    &DO_COFACTOR },
   { "Ex", 2, Do_ExQuantify,  &DO_EXIST_QUANTIFY },

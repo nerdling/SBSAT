@@ -63,9 +63,14 @@ void Sort_BDDs (int *tempint);
 # define DO_PRUNING_FN Do_Pruning_2
 # define PRUNE_REPEATS P2_repeat
 #else
+#ifdef STEAL
+# define DO_PRUNING_FN Do_Steal
+# define PRUNE_REPEATS Steal_repeat
+#else
 # define DO_PRUNING_FN Do_Pruning_FPS
 # define REMOVE_FPS
 # define PRUNE_REPEATS ReFPS_repeat
+#endif
 #endif
 #endif
 #endif
@@ -114,10 +119,6 @@ int DO_PRUNING_FN() {
 			 continue;
 		  for (int j = x + 1; j < nmbrFunctions; j++)
 			 {
-				 //fprintf(stderr, "\n\n");
-				 //printBDDerr(functions[x]);
-				 //fprintf(stderr, "\n");
-				 
 				 if (functions[j] == true_ptr)
 					continue;
 				 if ((!repeat_small[j] && !repeat_small[x]))
@@ -126,7 +127,7 @@ int DO_PRUNING_FN() {
                 continue;
              if (variables[j].min >= variables[x].max) 
                 continue;
-				 if (nmbrVarsInCommon (x, j, length, variables, STRENGTH) < STRENGTH)
+				 if (nmbrVarsInCommon (x, j, length, variables, STRENGTH) == 0)
 					continue;
 				 
 				 if ((functionType[x] != AND || length[x] < AND_EQU_LIMIT)
@@ -134,16 +135,23 @@ int DO_PRUNING_FN() {
 					  && (functionType[x] != PLAINOR || length[x] < PLAINOR_LIMIT)
 					  && (functionType[x] != PLAINXOR || length[x] < PLAINXOR_LIMIT))
 					{
+						//fprintf(stderr, "\n\n%d: ", x);
+						//printBDDerr(functions[x]);
+						//fprintf(stderr, "\n");
+						
 						BDDNode *currentBDD =
 #ifdef P1
 						  pruning_p1 (functions[x], functions[j]);
 #endif
 #ifdef P2
-						  pruning_p2 (functions[x], functions[j]);
+						pruning_p2 (functions[x], functions[j]);
+#endif
+#ifdef STEAL
+						  steal (functions[x], functions[j]);
 #endif
 #ifdef PRUNING_PR
 						pruning (functions[x], functions[j]);
-#endif
+#endif						
 #ifdef RESTRICT
 						restrictx(x, j, length, variables);
 #endif
@@ -152,6 +160,9 @@ int DO_PRUNING_FN() {
 #endif
 						if (currentBDD != functions[x])
 						  {
+							  //printBDDerr(currentBDD);
+							  //fprintf(stderr, "\n");
+
 							  //d2_printf1 ("*");
 //                       D_3(print_roller(););
                        affected++;
@@ -173,12 +184,18 @@ int DO_PRUNING_FN() {
 					  && (functionType[j] != PLAINOR || length[j] < PLAINOR_LIMIT)
 					  && (functionType[j] != PLAINXOR || length[j] < PLAINXOR_LIMIT))
 					{
+						//fprintf(stderr, "\n\n%d: ", j);
+						//printBDDerr(functions[j]);
+						//fprintf(stderr, "\n");
 						BDDNode *currentBDD =
 #ifdef P1
 						  pruning_p1 (functions[j], functions[x]);
 #endif
 #ifdef P2
-						  pruning_p2 (functions[j], functions[x]);
+						pruning_p2 (functions[j], functions[x]);
+#endif
+#ifdef STEAL
+						steal (functions[j], functions[x]);
 #endif
 #ifdef PRUNING_PR
 						pruning (functions[j], functions[x]);
@@ -191,6 +208,10 @@ int DO_PRUNING_FN() {
 #endif
 						if (currentBDD != functions[j])
 						  {
+
+							  //printBDDerr(currentBDD);
+							  //fprintf(stderr, "\n");
+							  
 							  //d2_printf1 ("*");
 //                       D_3(print_roller(););
 							  affected++;

@@ -277,6 +277,7 @@ Finish_Preprocessing()
 	
 	/****** Shrink down the hash table ******/
 	//printCircuit();
+	void Stats (int length[], store variables[]);
 	//Stats(length, variables);
 	//
 	// cheat_replaceall (length, variables, variablelist);

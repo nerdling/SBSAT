@@ -187,6 +187,8 @@ BDDNode *restrict (BDDNode *, BDDNode *);
 BDDNode *pruning(BDDNode *, BDDNode *);
 BDDNode *pruning_p1(BDDNode *, BDDNode *);
 BDDNode *pruning_p2(BDDNode *, BDDNode *);
+BDDNode *steal(BDDNode *, BDDNode *);
+BDDNode *Build_BDD_From_Inferences(BDDNode *c);
 void findPathsToFalse(BDDNode *, int *, int, intlist *, int *);
 void readCircuit ();
 void BDD_to_Smurfs();

@@ -120,6 +120,7 @@ extern int DO_COFACTOR;
 
 extern int DO_PRUNING;
 extern int DO_STRENGTH;
+extern int DO_STEAL;
 extern int DO_INFERENCES;
 extern int DO_EXIST_QUANTIFY;
 extern int DO_EXIST_QUANTIFY_AND;
