@@ -341,8 +341,13 @@ Finish_Preprocessing()
 	// 
 	//Done releasing pointers
 
-	//Need to remove any function that was set to True during the preprocessing of the BDDs
+	int var_nmbrFunctions = nmbrFunctions;
 	
+	//This is to ensure that autarkyBDDs don't get sent to the solver when we know the formula is SAT.
+	//Probably wouldn't happen anyway.
+	if(countBDDs() == 0) nmbrFunctions = 0;
+
+	//Need to remove any function that was set to True during the preprocessing of the BDDs
 	int count = -1;
 	for (long x = 0; x < nmbrFunctions; x++) {
 		count++;
@@ -373,7 +378,7 @@ Finish_Preprocessing()
 	nmbrFunctions = count + 1;
 	numout = nmbrFunctions;
 
-	for (int x = 0; x < nmbrFunctions; x++) {
+	for (int x = 0; x < var_nmbrFunctions; x++) {
 		if (variables[x].num != NULL)
 		  delete [] variables[x].num;
 	}
