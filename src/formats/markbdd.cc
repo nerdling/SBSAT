@@ -172,6 +172,18 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 					initbranch_vars = (char **)ite_recalloc(initbranch_vars, max_initbranch, max_initbranch+10, sizeof(char *), 9, "initbranch_vars");
 					max_initbranch+=10;
 				}
+				if(macros[i] == '%') {
+					expect_integer = 1;
+					BDDNode *v1 = putite(intnum, bdd);
+					expect_integer = 0;
+					if (v1 != ite_var (v1->variable)) {
+						fprintf (stderr, "\nKeyword 'initial_branch' needs a positive integer after a '%' (%s)...exiting:%d\n", macros, markbdd_line);
+						exit (1);
+					}
+					//Need to attach to initbranch_vars and handle later once all variables
+					//have been assigned.
+				   //arrTrueInfluenceWeights[  ] = (* float) 
+				}
 			}
 		}
       //ungetc(p, finputfile);
@@ -939,7 +951,7 @@ void bddloop () {
 			if ((strcasecmp (macros, "pprint_tree"))
 				 && (strcasecmp (macros, "print_tree"))
 				 && (strcasecmp (macros, "define"))
-				 && (strcasecmp (macros, "initialbranch"))) {
+				 && (strcasecmp (macros, "initial_branch"))) {
 				keep[nmbrFunctions] = 1;
 				keepnum++;
 				functions[nmbrFunctions] = temp;
@@ -958,7 +970,7 @@ void bddloop () {
 			if ((strcasecmp (macros, "pprint_tree"))
 				 && (strcasecmp (macros, "print_tree"))
 				 && (strcasecmp (macros, "define"))
-				 && (strcasecmp (macros, "initialbranch"))) {
+				 && (strcasecmp (macros, "initial_branch"))) {
 				functions[nmbrFunctions] = temp;
 				nmbrFunctions++;
 				if (nmbrFunctions > numout) {
@@ -971,7 +983,7 @@ void bddloop () {
       if ((strcasecmp (macros, "pprint_tree"))
 			 && (strcasecmp (macros, "print_tree"))
 			 && (strcasecmp (macros, "define"))
-			 && (strcasecmp (macros, "initialbranch"))) {
+			 && (strcasecmp (macros, "initial_branch"))) {
 			fprintf (stddbg, "BDD $%d: ", nmbrFunctions);
 			printBDDfile (functions[nmbrFunctions - 1], stddbg);
 			//fprintf (stddbg, "\n");
