@@ -36,8 +36,8 @@ typedef struct {
    int last_id;
    regex_t rg;
 } t_myregex;
-int sym_reg_init(t_myregex **rg, char *exp);
-int sym_reg(t_myregex **rg);
-int sym_reg_free(t_myregex **rg);
+int sym_regex_init(t_myregex *rg, char *exp);
+int sym_regex(t_myregex **rg);
+int sym_regex_free(t_myregex *rg);
 
 #endif

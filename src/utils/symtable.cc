@@ -196,23 +196,22 @@ print_symtable()
 }
 
 /* set myregex = NULL */
-/* call sym_reg_init(&myregex, "expression") */
-/* call sym_reg(&myregex) returns the first id or 0 */
-/* call sym_reg_free(&myregex) */
+/* call sym_regex_init(&myregex, "expression") */
+/* call sym_regex(&myregex) returns the first id or 0 */
+/* call sym_regex_free(&myregex) */
 
 int
-sym_reg_init(t_myregex **rg, char *exp)
+sym_regex_init(t_myregex *rg, char *exp)
 {
-   assert(*rg == NULL);
-   *rg = (t_myregex*)ite_calloc(1, sizeof(t_myregex), 9, "regex");
-   regcomp(&((*rg)->rg), exp, REG_NOSUB);
+   assert(rg != NULL);
+   memset(rg, 0, sizeof(t_myregex));
+   rg->last_id = 1;
+   return regcomp(&(rg->rg), exp, REG_NOSUB);
    /* REG_EXTENDED REG_ICASE REG_NEWLINE */
-   (*rg)->last_id = 1;
-   return 0;
 }
 
 int
-sym_reg(t_myregex *rg)
+sym_regex(t_myregex *rg)
 {
    assert(rg != NULL);
    for(;rg->last_id < sym_table_idx; rg->last_id++)
@@ -230,26 +229,26 @@ sym_reg(t_myregex *rg)
 }
 
 int
-sym_reg_free(t_myregex **rg)
+sym_regex_free(t_myregex *rg)
 {
-   assert(*rg!=NULL);
-   regfree(&((*rg)->rg));
-   ite_free((void**)rg);
+   assert(rg != NULL);
+   regfree(&(rg->rg));
+   memset(rg, 0, sizeof(t_myregex));
    return 0;
 }
 
 /* here is the test -- to use it call this from e.g. read_input */
 void
-sym_reg_test()
+sym_regex_test()
 {
-   t_myregex *myrg = NULL;
-   sym_reg_init(&myrg, "TakeBranchALU*");
-   int id = sym_reg(myrg);
+   t_myregex myrg;
+   sym_regex_init(&myrg, "TakeBranchALU*");
+   int id = sym_regex(&myrg);
    while (id) {
       /* found variable and the variable id is id */
       fprintf(stderr, "%d %s\n", id, getsym_i(id)->name);
-      id = sym_reg(myrg);
+      id = sym_regex(&myrg);
    }
-   sym_reg_free(&myrg);
+   sym_regex_free(&myrg);
    exit(1);
 }
