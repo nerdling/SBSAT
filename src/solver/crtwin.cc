@@ -110,10 +110,9 @@ crtwin_cmd(char c)
     case 'L': if (*lemma_out_file) dump_lemmas(lemma_out_file); break;
     case 'V': if (*var_stat_file) dump_vars(var_stat_file); break;
     case '+': BACKTRACKS_PER_STAT_REPORT *= 2; break;
-    case '-': BACKTRACKS_PER_STAT_REPORT /= 2; break;
+    case '-': if (BACKTRACKS_PER_STAT_REPORT > 1) BACKTRACKS_PER_STAT_REPORT /= 2; break;
     default: break;
    }
-   crtwin_draw();
 }
 
 void
@@ -130,7 +129,6 @@ crtwin(void) {
    do {
       c = term_getchar();
       if (c == 0) break;
-      draw = 1;
       crtwin_cmd(c);
    } while(c != 0);
 
@@ -140,6 +138,8 @@ crtwin(void) {
 void
 crtwin_init()
 {
+   init_terminal_in();
+   init_terminal_out();
 }
 
 
