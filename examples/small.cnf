@@ -1,0 +1,10 @@
+p cnf 6 8
+c This is a demonstration of the CNF format for the SBSAT solver
+1 2 3 0
+2 3 4 0
+3 4 5 0
+4 5 6 0
+-1 -2 -3 0
+-2 -3 -4 0
+-3 -4 -5 0
+-4 -5 -6 0
