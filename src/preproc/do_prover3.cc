@@ -168,7 +168,12 @@ int Do_Prover3() {
 	
 	DO_INFERENCES = OLD_DO_INFERENCES;
 	
-	Do_Apply_Inferences();
+	switch (int r=Do_Apply_Inferences()) {
+	 case TRIV_UNSAT:
+	 case TRIV_SAT:
+	 case PREP_ERROR: return r;
+	 default: break;
+	}
 	
 	d3_printf1("\n");
    d2e_printf1("\r                                         ");
