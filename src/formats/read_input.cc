@@ -92,8 +92,8 @@ read_input(Tracer * &tracer)
           trace_parse();
           numinp = vars_max;
           numout = functions_max;
-          //void sym_regex_test();
-          //sym_regex_test();
+          //void sym_regex_test(char *reg);
+          //sym_regex_test("_temp_(1000-2100)");
        }
     } break;
 

@@ -109,7 +109,7 @@ getsym (char *sym_name)
   symrec *ptr;
   for (ptr = sym_hash(sym_name)->next; ptr != (symrec *) 0;
        ptr = (symrec *)ptr->next)
-    if (strcmp (ptr->name,sym_name) == 0)
+    if (strcasecmp (ptr->name,sym_name) == 0)
       return ptr;
   return 0;
 }
@@ -239,10 +239,10 @@ sym_regex_free(t_myregex *rg)
 
 /* here is the test -- to use it call this from e.g. read_input */
 void
-sym_regex_test()
+sym_regex_test(char *reg)
 {
    t_myregex myrg;
-   sym_regex_init(&myrg, "TakeBranchALU*");
+   sym_regex_init(&myrg, reg);
    int id = sym_regex(&myrg);
    while (id) {
       /* found variable and the variable id is id */
