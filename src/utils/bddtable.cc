@@ -58,6 +58,8 @@ int hash_memory_size = 0;
 int hash_memory_mask = 0;
 BDDNode *bddtable_free = NULL;
 
+void bdd_gc();
+
 void bdd_bdd_alloc_pool(int pool)
 {
    if (pool >= 100)
@@ -198,7 +200,7 @@ bddvsb_find_or_add_node (int v, BDDNode * r, BDDNode * e)
       }
 
 	} else {
-      /* count not find the node => allocate new one */
+      /* could not find the node => allocate new one */
       ite_counters[BDD_NODE_NEW]++;
       if (bddtable_free != NULL) {
          (*node) = bddtable_free;
@@ -236,10 +238,25 @@ void
 bdd_gc()
 {
    int i,j;
+
+#ifndef NDEBUG
+   d3_printf1("BDD_GC START\n");
+   int totalin=0, totalout=0;
+   // count free nodes -- statistics -- can be removed
+   BDDNode *p = bddtable_free;
+   while (p!=NULL) {
+      totalin++;
+      p = p->next;
+   }
+#endif
+   
+   
    // clean all flags
    for (i=0;i<=numBDDPool;i++)
    {
-      for (j=0;j<bddmemory_vsb[i].max;j++)
+      int max = bddmemory_vsb[i].max;
+      if (i == numBDDPool) max = curBDDPos;
+      for (j=0;j<max;j++) 
          (bddmemory_vsb[i].memory+j)->flag = 0;
    }
 
@@ -261,7 +278,9 @@ bdd_gc()
    bddtable_free = NULL;
    for (i=0;i<=numBDDPool;i++)
    {
-      for (j=0;j<bddmemory_vsb[i].max;j++)
+      int max = bddmemory_vsb[i].max;
+      if (i == numBDDPool) max = curBDDPos;
+      for (j=0;j<max;j++)
       {
          BDDNode *node = (bddmemory_vsb[i].memory+j);
          if (node->flag == 0)
@@ -280,6 +299,18 @@ bdd_gc()
          }
       }
    }
+
+#ifndef NDEBUG
+   // count free nodes -- statistics -- can be removed
+   p = bddtable_free;
+   while (p!=NULL) {
+      totalout++;
+      p = p->next;
+   }
+   d3_printf4("BDD_GC %d -> %d (%.02f%%)\n", 
+         totalin, totalout, totalin==0?0:1.0*(totalout-totalin)/totalin);
+#endif
+   
 }
 
 
