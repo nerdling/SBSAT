@@ -164,12 +164,11 @@ ite_final(int ret, Tracer *tracer)
 
    char result_string[64];
    switch(ret) {
-    case TRIV_SAT: 
-       {
-          strcpy(result_string, "Satisfiable");
-          Verify_NoSolver(tracer);
-       };
-       break;
+    case TRIV_SAT: {
+		 strcpy(result_string, "Satisfiable");
+		 Verify_NoSolver(tracer);
+	 }
+		break;
     case SOLV_SAT: {
        if (ite_counters[NUM_SOLUTIONS] > 1) {
           sprintf(result_string, "Satisfiable(%lld)", ite_counters[NUM_SOLUTIONS]);
@@ -178,7 +177,7 @@ ite_final(int ret, Tracer *tracer)
        }
        Verify_Solver(tracer);
     } 
-       break;
+		break;
     case TRIV_UNSAT: 
     case SOLV_UNSAT: strcpy(result_string, "Unsatisfiable"); break;
     case SOLV_UNKNOWN: strcpy(result_string, "Unknown Result"); break;
