@@ -7,7 +7,8 @@ PARAMS=" --debug 1  -L 0 --debug-dev stdout --backjumping 0 -All 0 -In 1 --backt
 #GENTEST="4 4 4 2"
 #GENTEST="100 30 30 4"
 #GENTEST="50 60 10 4"
-GENTEST="xor 28 40 18 4"
+#GENTEST="xor 28 40 18 4"
+GENTEST="xor 14 20 10 3"
 #GENTEST="40 20 20 20"
 
 while test $RET -eq 0

@@ -76,7 +76,7 @@ BDD2Specfn_XOR(int nFnId, BDDNode *pFunc, int nFunctionType, int _nEqualityVble)
             9, "special function polarities");
 
    for(int i=0;i<nNumElts;i++) {
-      arrSolverFunctions[nFnId].fn_xor.rhsVbles.arrElts[i] = arrSolverFunctions[nFnId].fn_xor.rhsVbles.arrElts[i];
+      arrSolverFunctions[nFnId].fn_xor.rhsVbles.arrElts[i] = arrIte2SolverVarMap[arrSolverFunctions[nFnId].fn_xor.rhsVbles.arrElts[i]];
       arrRHSPolarities[i] = BOOL_UNKNOWN;
    }
    qsort(arrSolverFunctions[nFnId].fn_xor.rhsVbles.arrElts, nNumElts, sizeof(int), revcompfunc);
@@ -92,8 +92,10 @@ BDD2Specfn_XOR(int nFnId, BDDNode *pFunc, int nFunctionType, int _nEqualityVble)
    while (pCurrentNode != true_ptr && pCurrentNode != false_ptr)
    {
       if (arrSolverFunctions[nFnId].fn_xor.rhsVbles.arrElts[i] != arrIte2SolverVarMap[pCurrentNode->variable]) {
+         fprintf(stderr, "Error in XOR special function construction. Incorrect mapping.\n");
          printBDD(pRHSFunc);
          assert(0);
+         exit(1);
       }
       assert(arrSolverFunctions[nFnId].fn_xor.rhsVbles.arrElts[i] == arrIte2SolverVarMap[pCurrentNode->variable]);
       arrRHSPolarities[i] = BOOL_TRUE;
