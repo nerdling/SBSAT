@@ -133,6 +133,7 @@ ite_main_load()
    if (ret != NO_ERROR) return ret;
 	
    /* read input file */
+
 	start_prep = get_runtime (); //Start the preprocessing clock.
    ret = read_input();
    if (ret != NO_ERROR) return ret;

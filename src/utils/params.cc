@@ -498,7 +498,7 @@ finish_params()
    }
 }
 
-#define SLIDER_DEFAULTS
+//#define SLIDER_DEFAULTS
 
 int
 init_slider_options()

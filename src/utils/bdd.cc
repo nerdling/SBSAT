@@ -1398,6 +1398,7 @@ BDDNode *_possible_BDD(BDDNode *f, int v) {
 
 	BDDNode *r = _possible_BDD(f->thenCase, v);
 	BDDNode *e = _possible_BDD(f->elseCase, v);
+	
 	if(r == e) return (f->tmp_bdd = r);
 	//return (f->tmp_bdd = itetable_add_node(8, f, var, ite(ite_var(f->variable), r, e)));
 	return (f->tmp_bdd = itetable_add_node(8, f, var, ite_xvar_y_z(ite_var(f->variable), r, e)));

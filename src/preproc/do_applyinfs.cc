@@ -106,8 +106,8 @@ Do_Apply_Inferences ()
                   return TRIV_UNSAT;
                int changeFT = 0;
 					if (functionType[j] == AUTARKY_FUNC && equalityVble[j]==inferlist->nums[1])
-					  functions[j] = true_ptr;
-					  //equalityVble[j] = inferlist->nums[0];
+					  //functions[j] = true_ptr;
+					  equalityVble[j] = inferlist->nums[0];
 						  
                if (functionType[j] == AND || functionType[j] == OR) {
                   if (abs (equalityVble[j]) == inferlist->nums[0]) {
@@ -182,8 +182,8 @@ Do_Apply_Inferences ()
 					  return TRIV_UNSAT;
                int changeFT = 0;
 					if (functionType[j] == AUTARKY_FUNC && equalityVble[j]==-inferlist->nums[1])
-					  functions[j] = true_ptr;
-					  //equalityVble[j] = inferlist->nums[0];
+					  //functions[j] = true_ptr;
+					  equalityVble[j] = inferlist->nums[0];
 
                if (functionType[j] == AND || functionType[j] == OR) {
                   if (abs (equalityVble[j]) == inferlist->nums[0]) {
