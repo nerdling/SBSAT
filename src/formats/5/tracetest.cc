@@ -20,13 +20,13 @@ int PARSE();
 
 int main(int argc, char **argv)
 {
-    parser_init();
-    numinp=500000;
-    numout=500000;
-    vars_alloc(numinp);
-    functions_alloc(numout);
+    //numinp=500000;
+    //numout=500000;
+    //vars_alloc(numinp);
+    //functions_alloc(numout);
     bdd_init();
     sym_init();
+    parser_init();
 
     ++argv, --argc;  /* skip over program name */
     if ( argc > 0 ) {

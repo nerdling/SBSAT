@@ -91,6 +91,7 @@
    void     ite_op_are_equal(BDDNode **);
    void     ite_new_int_leaf(char *, char *);
    void     ite_flag_vars(symrec **, int);
+   BDDNode *tmp_equ_var(BDDNode *p);
 
    /* FIXME: make it more dynamic! */
    extern symrec *varlist[1000];
@@ -105,6 +106,11 @@
    extern int normal_bdds;
    extern int spec_fn_bdds;
    extern int t_sym_max;
+   int level = 0;
+   int orlevel = 0;
+   int symbols = 0;
+   int p_level = 0;
+   int p_symbols[20];
 
    void prover_nothing() { /*unput (0);*/ }
 
@@ -128,7 +134,7 @@
 #endif
 
 #if ! defined (YYSTYPE) && ! defined (YYSTYPE_IS_DECLARED)
-#line 40 "prover_g.yy"
+#line 46 "prover_g.yy"
 typedef union YYSTYPE {
     int         num;      /* For returning numbers.               */
     char        id[200];  /* For returning ids.                   */
@@ -136,7 +142,7 @@ typedef union YYSTYPE {
     BDDNode     *bdd;     /* For returning exp                    */
 } YYSTYPE;
 /* Line 191 of yacc.c.  */
-#line 139 "libt5_a-prover_g.cc"
+#line 145 "libt5_a-prover_g.cc"
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
 # define YYSTYPE_IS_TRIVIAL 1
@@ -148,7 +154,7 @@ typedef union YYSTYPE {
 
 
 /* Line 214 of yacc.c.  */
-#line 151 "libt5_a-prover_g.cc"
+#line 157 "libt5_a-prover_g.cc"
 
 #if ! defined (yyoverflow) || YYERROR_VERBOSE
 
@@ -245,18 +251,18 @@ union yyalloc
 #endif
 
 /* YYFINAL -- State number of the termination state. */
-#define YYFINAL  7
+#define YYFINAL  10
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   28
+#define YYLAST   37
 
 /* YYNTOKENS -- Number of terminals. */
 #define YYNTOKENS  11
 /* YYNNTS -- Number of nonterminals. */
-#define YYNNTS  2
+#define YYNNTS  6
 /* YYNRULES -- Number of rules. */
-#define YYNRULES  9
+#define YYNRULES  15
 /* YYNRULES -- Number of states. */
-#define YYNSTATES  17
+#define YYNSTATES  28
 
 /* YYTRANSLATE(YYLEX) -- Bison symbol number corresponding to YYLEX.  */
 #define YYUNDEFTOK  2
@@ -302,21 +308,25 @@ static const unsigned char yytranslate[] =
    YYRHS.  */
 static const unsigned char yyprhs[] =
 {
-       0,     0,     3,     4,     6,     9,    13,    17,    21,    25
+       0,     0,     3,     5,     8,    12,    16,    18,    21,    22,
+      23,    29,    33,    34,    39,    43
 };
 
 /* YYRHS -- A `-1'-separated list of the rules' RHS. */
 static const yysigned_char yyrhs[] =
 {
-      12,     0,    -1,    -1,     3,    -1,     8,    12,    -1,     9,
-      12,    10,    -1,    12,     7,    12,    -1,    12,     6,    12,
-      -1,    12,     5,    12,    -1,    12,     4,    12,    -1
+      12,     0,    -1,     3,    -1,     8,    13,    -1,     9,    13,
+      10,    -1,    12,     7,    12,    -1,     3,    -1,     8,    13,
+      -1,    -1,    -1,     9,    14,    13,    10,    15,    -1,    13,
+       7,    13,    -1,    -1,    13,     6,    16,    13,    -1,    13,
+       5,    13,    -1,    13,     4,    13,    -1
 };
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const unsigned char yyrline[] =
 {
-       0,    60,    60,    61,    62,    63,    64,    65,    66,    67
+       0,    67,    67,    69,    71,    73,    77,    79,    81,    81,
+      81,    83,    85,    85,    87,    89
 };
 #endif
 
@@ -326,7 +336,7 @@ static const unsigned char yyrline[] =
 static const char *const yytname[] =
 {
   "$end", "error", "$undefined", "ID", "P_IMP", "P_EQUIV", "'#'", "'&'", 
-  "'~'", "'('", "')'", "$accept", "exp", 0
+  "'~'", "'('", "')'", "$accept", "top_exp", "exp", "@1", "@2", "@3", 0
 };
 #endif
 
@@ -343,13 +353,15 @@ static const unsigned short yytoknum[] =
 /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const unsigned char yyr1[] =
 {
-       0,    11,    12,    12,    12,    12,    12,    12,    12,    12
+       0,    11,    12,    12,    12,    12,    13,    13,    14,    15,
+      13,    13,    16,    13,    13,    13
 };
 
 /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
 static const unsigned char yyr2[] =
 {
-       0,     2,     0,     1,     2,     3,     3,     3,     3,     3
+       0,     2,     1,     2,     3,     3,     1,     2,     0,     0,
+       5,     3,     0,     4,     3,     3
 };
 
 /* YYDEFACT[STATE-NAME] -- Default rule to reduce with in state
@@ -357,29 +369,31 @@ static const unsigned char yyr2[] =
    means the default is an error.  */
 static const unsigned char yydefact[] =
 {
-       2,     3,     2,     2,     0,     4,     0,     1,     2,     2,
-       2,     2,     5,     9,     8,     7,     6
+       0,     2,     0,     0,     0,     6,     0,     8,     3,     0,
+       1,     0,     7,     0,     0,     0,    12,     0,     4,     5,
+       0,    15,    14,     0,    11,     9,    13,    10
 };
 
 /* YYDEFGOTO[NTERM-NUM]. */
 static const yysigned_char yydefgoto[] =
 {
-      -1,     4
+      -1,     4,     8,    13,    27,    23
 };
 
 /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
    STATE-NUM.  */
-#define YYPACT_NINF -5
+#define YYPACT_NINF -6
 static const yysigned_char yypact[] =
 {
-      19,    -5,    19,    19,    10,    -5,    14,    -5,    19,    19,
-      19,    19,    -5,    -4,    -4,    -3,    -5
+      23,    -6,    26,    26,     1,    -6,    26,    -6,     0,    11,
+      -6,    23,    -6,    26,    26,    26,    -6,    26,    -6,    -6,
+      18,    30,    30,    26,    -6,    -6,    -5,    -6
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yysigned_char yypgoto[] =
 {
-      -5,    -2
+      -6,    -4,    -3,    -6,    -6,    -6
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
@@ -389,24 +403,27 @@ static const yysigned_char yypgoto[] =
 #define YYTABLE_NINF -1
 static const unsigned char yytable[] =
 {
-       5,     6,    10,    11,    11,     0,    13,    14,    15,    16,
-       7,     0,     0,     0,     8,     9,    10,    11,     8,     9,
-      10,    11,     1,     0,    12,     0,     0,     2,     3
+       9,    10,    17,    12,    14,    15,    16,    19,    11,     0,
+      20,    21,    22,     0,    24,    14,    15,    16,    17,     0,
+      26,    18,    14,    15,    16,    17,     1,     0,    25,     5,
+       0,     2,     3,     0,     6,     7,    16,    17
 };
 
 static const yysigned_char yycheck[] =
 {
-       2,     3,     6,     7,     7,    -1,     8,     9,    10,    11,
-       0,    -1,    -1,    -1,     4,     5,     6,     7,     4,     5,
-       6,     7,     3,    -1,    10,    -1,    -1,     8,     9
+       3,     0,     7,     6,     4,     5,     6,    11,     7,    -1,
+      13,    14,    15,    -1,    17,     4,     5,     6,     7,    -1,
+      23,    10,     4,     5,     6,     7,     3,    -1,    10,     3,
+      -1,     8,     9,    -1,     8,     9,     6,     7
 };
 
 /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
    symbol of state STATE-NUM.  */
 static const unsigned char yystos[] =
 {
-       0,     3,     8,     9,    12,    12,    12,     0,     4,     5,
-       6,     7,    10,    12,    12,    12,    12
+       0,     3,     8,     9,    12,     3,     8,     9,    13,    13,
+       0,     7,    13,    14,     4,     5,     6,     7,    10,    12,
+      13,    13,    13,    16,    13,    10,    13,    15
 };
 
 #if ! defined (YYSIZE_T) && defined (__SIZE_TYPE__)
@@ -1015,11 +1032,81 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-      
+        case 2:
+#line 68 "prover_g.yy"
+    { symrec *s=s_getsym(yyvsp[0].id, SYM_VAR); assert(s); BDDNode *ret = ite_vars(s); functions_add(ret, UNSURE, 0); printf("top_id\n"); }
+    break;
+
+  case 3:
+#line 70 "prover_g.yy"
+    {  functions_add(yyvsp[0].bdd, UNSURE, 0); printf("top_not\n"); assert(p_level==0); }
+    break;
+
+  case 4:
+#line 72 "prover_g.yy"
+    {  functions_add(yyvsp[-1].bdd, UNSURE, 0); printf("top_par\n"); assert(p_level==0); }
+    break;
+
+  case 5:
+#line 74 "prover_g.yy"
+    { printf("top_rep\n"); }
+    break;
+
+  case 6:
+#line 78 "prover_g.yy"
+    { symrec *s=s_getsym(yyvsp[0].id, SYM_VAR); assert(s); yyval.bdd = ite_vars(s); symbols++; }
+    break;
+
+  case 7:
+#line 80 "prover_g.yy"
+    { yyval.bdd = ite_not( yyvsp[0].bdd ); }
+    break;
+
+  case 8:
+#line 81 "prover_g.yy"
+    {p_level++;}
+    break;
+
+  case 9:
+#line 81 "prover_g.yy"
+    {p_level--; }
+    break;
+
+  case 10:
+#line 82 "prover_g.yy"
+    { yyval.bdd = yyvsp[-2].bdd; }
+    break;
+
+  case 11:
+#line 84 "prover_g.yy"
+    { yyval.bdd = ite_and(yyvsp[-2].bdd, yyvsp[0].bdd); }
+    break;
+
+  case 12:
+#line 85 "prover_g.yy"
+    { if (orlevel==0 && p_level==0) { yyvsp[-1].bdd = tmp_equ_var(yyvsp[-1].bdd); printf("ortop\n"); } orlevel++; }
+    break;
+
+  case 13:
+#line 86 "prover_g.yy"
+    { orlevel--; if (orlevel==0 && p_level==0) { printf("orret\n");} yyval.bdd=ite_or(yyvsp[-3].bdd,yyvsp[0].bdd); }
+    break;
+
+  case 14:
+#line 88 "prover_g.yy"
+    { yyval.bdd = ite_equ(yyvsp[-2].bdd, yyvsp[0].bdd); }
+    break;
+
+  case 15:
+#line 90 "prover_g.yy"
+    { yyval.bdd = ite_imp(yyvsp[-2].bdd, yyvsp[0].bdd); }
+    break;
+
+
     }
 
 /* Line 991 of yacc.c.  */
-#line 1022 "libt5_a-prover_g.cc"
+#line 1109 "libt5_a-prover_g.cc"
 
   yyvsp -= yylen;
   yyssp -= yylen;
@@ -1228,7 +1315,14 @@ yyreturn:
 }
 
 
-#line 93 "prover_g.yy"
+#line 94 "prover_g.yy"
 
 
+BDDNode *tmp_equ_var(BDDNode *p) 
+{
+    symrec *s_ptr = tputsym(SYM_VAR); 
+    BDDNode *ret=ite_vars(s_ptr); 
+    ite_equ(ret, p); 
+    return ret;
+}
 

@@ -94,8 +94,8 @@ char **labels=NULL;
 //int **parameterizedVars=NULL;
 //int *parameterGroup=NULL;
 
-int numBuckets=0;
-int sizeBuckets=0;
+int numBuckets=16;
+int sizeBuckets=5;
 char preproc_string[256]="((ExSt)Ex(PrSt))";
 
 int TRACE_START=0;
