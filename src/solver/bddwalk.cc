@@ -54,11 +54,6 @@
 #include <sys/times.h>
 #include <sys/time.h>
 
-#ifndef CLK_TCK
-#define CLK_TCK 60
-#endif
-
-#define STOREBLOCK 2000000	/* size of block to malloc each time */
 #define BIG 100000000
 
 #define Var(CLAUSE, POSITION) (ABS(clause[CLAUSE][POSITION]))
@@ -126,22 +121,20 @@ int numfalse;		/* number of false clauses */
 int *varstoflip;
 double *true_var_weights;
 
-float true_weight_mult = 1.6;
-float taboo_max = 5;
-float taboo_length = 2;
+float true_weight_mult = 1.5;
+float taboo_max = 6;
+float taboo_length = taboo_max-1;//2;
 float true_weight_taboo = 0.5;
 float true_weight_max = 0.5;
 
-float path_factor = 10; //Number of random paths choosen = total number of variables / path_factor;
+float path_factor = 10; //Number of random paths choosen = total number of variables * path_factor;
 //Maybe a special case is needed for clauses?
 
 /************************************/
 /* Global flags and parameters      */
 /************************************/
 
-int abort_flag;
-
-int numerator = 20;//NOVALUE;	/* make random flip with numerator/denominator frequency */
+int numerator = 10;//NOVALUE;	/* make random flip with numerator/denominator frequency */
 
 int denominator = 100;
 
@@ -159,19 +152,11 @@ int target = 0;
 int numtry = 0;			/* total attempts at solutions */
 int numsol = NOVALUE;	        /* stop after this many tries succeeds */
 
-int makeflag = TRUE;		/* set to true by heuristics that require the make values to be calculated */
-
 /* Histogram of tail */
 
 long int tailhist[HISTMAX];	/* histogram of num unsat in tail of run */
-long histtotal;
 int tail = 3;
 int tail_start_flip;
-
-/* Initialization options */
-
-char initfile[100] = { 0 };
-int initoptions = FALSE;
 
 /* Randomization */
 
@@ -232,19 +217,6 @@ double nonsuc_mean_std_dev_avgfalse;
 int nonsuc_number_sampled_runs = 0;
 double nonsuc_ratio_mean_avgfalse;
 
-/* Hamming calcualations */
-
-char hamming_target_file[512] = { 0 };
-char hamming_data_file[512] = { 0 };
-int hamming_sample_freq;
-int hamming_flag = FALSE;
-int hamming_distance;
-int *hamming_target;
-void read_hamming_file(char initfile[]);
-void open_hamming_data(char initfile[]);
-int calc_hamming_dist(int atom[], int hamming_target[]);
-FILE * hamming_fp;
-
 /* Noise level */
 int samplefreq = 1;
 
@@ -254,9 +226,8 @@ int countunsat(void);
 int countunsatfalses(void);
 void verifymbcount();
 void scanone(int argc, char *argv[], int i, int *varptr);
-//void init(char initfile[], int initoptions);
-void init_1false(char initfile[], int initoptions);
-void init_CountFalses(char initfile[], int initoptions);
+void init_1false();
+void init_CountFalses();
 void initprob(void);                 /* create a new problem */
 void freemem(void);
 void flipatoms_true_paths(void);
@@ -269,11 +240,8 @@ void save_solution(void);
 void print_current_assign(void);
 
 void print_statistics_header(void);
-void initialize_statistics(void);
 void update_statistics_start_try(void);
-void print_statistics_start_flip(void);
 void update_and_print_statistics_end_try(void);
-void update_statistics_end_flip(void);
 void print_statistics_final(void);
 void print_sol_cnf(void);
 
@@ -291,13 +259,11 @@ int walkSolve()
 	if (numsol==NOVALUE || numsol>numrun) numsol = numrun;
 	srandom(seed);
 	initprob(); //must create array that tells in what BDDs a variable occurs...
-	initialize_statistics();
 	print_statistics_header();
-	abort_flag = FALSE;
 	expertime = get_runtime();
-	while ((!abort_flag) && (numsuccesstry < numsol) && (numtry < numrun)) {
+	while ((numsuccesstry < numsol) && (numtry < numrun)) {
 		numtry++;
-		init_CountFalses(initfile, initoptions);
+		init_CountFalses();
 		update_statistics_start_try();
 		numflip = 0;
 		numlook = 0;
@@ -308,14 +274,12 @@ int walkSolve()
 		//fprintf(stderr, "\n");
 
 		while((numfalse > target) && (numflip < cutoff)) {
-			print_statistics_start_flip();
 			numflip+=picknoveltyplus();
 #ifdef USE_PATHS_TO_TRUE
 			flipatoms_true_paths();
 #else
 			flipatoms();
 #endif
-			update_statistics_end_flip();
 			if (nCtrlC) {
 				d3_printf1("Breaking out of BDD WalkSAT\n");
 				break;
@@ -353,7 +317,7 @@ void initprob(void)
 	wvisited = new int[numBDDs+1];
 	int *tempmem = new int[numvars+1];
 	int *tempint = NULL; //new int[MAX_NODES_PER_BDD];
-        long tempint_max = 0;
+	long tempint_max = 0;
 	
 	changed = new int[numvars+1];
 	breakcount = new int[numvars+1];
@@ -644,64 +608,6 @@ void freemem(void)
 	delete [] varstoflip;
 }
 
-void initialize_statistics(void)
-{  //it doesn't seem that this does too much...ask holger if he wants
-	//to have this functionality (reading in hamming files)
-	x = 0; r = 0;
-	if (hamming_flag) {
-		read_hamming_file(hamming_target_file);
-		open_hamming_data(hamming_data_file);
-	}
-	tail_start_flip = tail * numvars;
-	printf("tail starts after flip = %i\n", tail_start_flip);
-	numnullflip = 0;
-}
-
-void read_hamming_file(char initfile[])
-{
-	int i;			/* loop counter */
-	FILE * infile;
-	int lit;    
-	
-	printf("loading hamming target file %s ...", initfile);
-	
-	if ((infile = fopen(initfile, "r")) == NULL){
-		fprintf(stderr, "Cannot open %s\n", initfile);
-		exit(1);
-	}
-	i=0;
-	for(i = 1;i < numvars+1;i++)
-	  hamming_target[i] = 0;
-	
-	while (fscanf(infile, " %d", &lit)==1){
-		if (ABS(lit)>numvars){
-			fprintf(stderr, "Bad hamming file %s\n", initfile);
-			exit(1);
-		}
-		if (lit>0) hamming_target[lit]=1;
-	}
-	printf("done\n");
-}
-
-void open_hamming_data(char initfile[])
-{
-	if ((hamming_fp = fopen(initfile, "w")) == NULL){
-		fprintf(stderr, "Cannot open %s for output\n", initfile);
-		exit(1);
-	}
-}
-
-int calc_hamming_dist(int atom[], int hamming_target[])
-{
-	int i;
-	int dist = 0;
-	
-	for (i=1; i<=numvars; i++){
-		if (atom[i] != hamming_target[i]) dist++;
-	}
-	return dist;
-}
-
 void print_statistics_header(void)
 {
     printf("numvars = %i, numBDDs = %i\n",numvars,numBDDs);
@@ -713,16 +619,6 @@ void print_statistics_header(void)
 
     fflush(stdout);
 
-}
-
-void print_statistics_start_flip(void)
-{
-//	if (printtrace && (numflip % printtrace == 0)){
-//		printf(" %9i %9i                     %9li\n", lowbad,numfalse,numflip);
-//		if (trace_assign)
-//		  print_current_assign();
-//		fflush(stdout);
-//	}
 }
 
 float weight_bdd(BDDNode *f) {
@@ -955,7 +851,7 @@ void updateBDDCounts(int i) {
 	}
 }
 
-void init_CountFalses(char initfile[], int initoptions)
+void init_CountFalses()
 {
 	int i;
 	
@@ -1000,10 +896,6 @@ void init_CountFalses(char initfile[], int initoptions)
 	//		  fprintf(stderr, "\n%d: bc=%d, mc=%d, diff=%d", x, breakcount[x], makecount[x], (makecount[x] - breakcount[x]));
 	//	  }
 	//	fprintf(stderr, "\n");
-	if (hamming_flag) { //Doesn't do this, hamming_flag == false
-		hamming_distance = calc_hamming_dist(atom, hamming_target);
-		fprintf(hamming_fp, "0 %i\n", hamming_distance);
-	}
 }
 
 void getmbcountTruePath(intlist *path) {
@@ -1096,11 +988,12 @@ void getRandomTruePath(int x, intlist *path) {
 			path->length++;
 		}
 	}
-	if(bdd!=true_ptr) {
-		fprintf(stderr, "HEY!!!");
-		printBDDerr(bdd);
-		exit(0);		  
-	}
+
+	//if(bdd!=true_ptr) {
+	//	fprintf(stderr, "ERROR! PATH DOES NOT SATISFY BDD\n");
+	//	printBDDerr(bdd);
+	//	exit(0);		  
+	//}
 	
 	//for(int i = 0; i < path->length; i++) {
 	//	fprintf(stderr, "%d ", path->num[i]);
@@ -1427,15 +1320,6 @@ void flipatoms()
 		//  toenforce = toflip;
 		atom[toflip] = 1-atom[toflip];  //flipped variable
 		
-		if (hamming_flag){ //not turned on
-			if (atom[toflip] == hamming_target[toflip])
-			  hamming_distance--;
-			else
-			  hamming_distance++;
-			if ((numflip % hamming_sample_freq) == 0)
-			  fprintf(hamming_fp, "%ld %i\n", numflip, hamming_distance);
-		}
-		
 		numocc = occurance[toflip].length;
 		occptr = occurance[toflip].num;
 		
@@ -1650,12 +1534,6 @@ void print_statistics_final(void)
       printf("      nonsuccessful mean average noise level = %f\n", nonsuc_mean_avgfalse);
       printf("      nonsuccessful mean noise std deviation = %f\n", nonsuc_mean_std_dev_avgfalse);
       printf("      nonsuccessful ratio mean noise to mean std dev = %f\n", nonsuc_ratio_mean_avgfalse);
-	}
-	
-	if (hamming_flag){
-		fclose(hamming_fp);
-		printf("Final distance to hamming target = %i\n", calc_hamming_dist(atom, hamming_target));
-		printf("Hamming distance data stored in %s\n", hamming_data_file);
 	}
 	
 	if (numsuccesstry > 0){

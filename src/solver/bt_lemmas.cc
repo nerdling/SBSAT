@@ -43,39 +43,38 @@ int USE_BACKBURNER2 = 1;
 
 ITE_INLINE
 void AFSMoveLemma(LemmaInfoStruct *previous, LemmaInfoStruct *pLemmaListDisagreed, int negativeLit, int nVble, int idx)
-/* #define AFSMoveLemma(previous, pLemmaListDisagreed, negativeLit, nVble, idx) \ */
-{ \
-   previous->pNextLemma[idx] \
-      = pLemmaListDisagreed->pNextLemma[idx]; \
-   if (pLemmaListDisagreed->pNextLemma[idx]) \
-   { \
-      pLemmaListDisagreed->pNextLemma[idx]->pPrevLemma[idx] \
-         = previous; \
-   } \
- \
-   /* Add him into his new list */ \
-   { \
-      LemmaInfoStruct *pLemmasWhere; \
-      if (negativeLit) pLemmasWhere = &((arrAFS + nVble)->LemmasWhereNeg[idx]); \
-      else pLemmasWhere = &((arrAFS + nVble)->LemmasWherePos[idx]); \
- \
-      pLemmaListDisagreed->pNextLemma[idx] \
-         = pLemmasWhere->pNextLemma[idx]; \
-      if (pLemmaListDisagreed->pNextLemma[idx]) \
-      { \
-         pLemmaListDisagreed->pNextLemma[idx] \
-            ->pPrevLemma[idx] \
-            = pLemmaListDisagreed; \
-      } \
-      pLemmasWhere->pNextLemma[idx] \
-         = pLemmaListDisagreed; \
-      pLemmaListDisagreed->pPrevLemma[idx] \
-         = pLemmasWhere; \
-      pLemmaListDisagreed->nWatchedVblePolarity[idx] \
-         = 1-negativeLit; \
-      pLemmaListDisagreed->nWatchedVble[idx] \
-         = nVble; \
-   } \
+{
+   previous->pNextLemma[idx]
+      = pLemmaListDisagreed->pNextLemma[idx];
+   if (pLemmaListDisagreed->pNextLemma[idx])
+   {
+      pLemmaListDisagreed->pNextLemma[idx]->pPrevLemma[idx]
+         = previous;
+   }
+
+   /* Add him into his new list */
+   {
+      LemmaInfoStruct *pLemmasWhere;
+      if (negativeLit) pLemmasWhere = &((arrAFS + nVble)->LemmasWhereNeg[idx]);
+      else pLemmasWhere = &((arrAFS + nVble)->LemmasWherePos[idx]);
+
+      pLemmaListDisagreed->pNextLemma[idx]
+         = pLemmasWhere->pNextLemma[idx];
+      if (pLemmaListDisagreed->pNextLemma[idx])
+      {
+         pLemmaListDisagreed->pNextLemma[idx]
+            ->pPrevLemma[idx]
+            = pLemmaListDisagreed;
+      }
+      pLemmasWhere->pNextLemma[idx]
+         = pLemmaListDisagreed;
+      pLemmaListDisagreed->pPrevLemma[idx]
+         = pLemmasWhere;
+      pLemmaListDisagreed->nWatchedVblePolarity[idx]
+         = 1-negativeLit;
+      pLemmaListDisagreed->nWatchedVble[idx]
+         = nVble;
+   }
 } 
 
 ITE_INLINE
