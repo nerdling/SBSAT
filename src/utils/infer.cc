@@ -114,3 +114,19 @@ DeallocateInferences(infer *next)
    infer_free = next;
 }
 */
+
+inline int
+infer_has_var(infer *next, int var) {
+   return (abs(next->nums[0]) == var || abs(next->nums[1] == var))?1:0;
+}
+
+void
+DeallocateInferences_var(infer *next, int var)
+{
+   infer *last = next;
+   if (next == NULL || infer_has_var(next, var) == 0) return;
+   while (last->next != NULL && infer_has_var(last->next, var) == 1) last = last->next;
+   last->next = infer_free;
+   infer_free = next;
+}
+

@@ -236,7 +236,7 @@ bdd_flag_nodes(BDDNode *node)
 {
    if (node->flag == 1) return;
    node->flag = 1;
-   node->inferences = NULL;
+   //node->inferences = NULL;
    bdd_flag_nodes(node->thenCase);
    bdd_flag_nodes(node->elseCase);
 }
@@ -277,6 +277,8 @@ bdd_gc()
    false_ptr->flag = 1;
    for (i=0;i<nmbrFunctions;i++)
    {
+     // printBDDInfs(functions[i]);
+     // fprintf(stddbg, "\n");
       bdd_flag_nodes(functions[i]);
    }
    for (i=0;i<original_numout;i++)
@@ -286,7 +288,7 @@ bdd_gc()
 
    
    // deallocate infereces
-   FreeInferencePool(); 
+   //FreeInferencePool(); 
    
 
    // clean the hash table
@@ -307,7 +309,7 @@ bdd_gc()
          if (node->flag == 0)
          {
             // deleted 
-            //DeallocateInferences(node->inferences);
+            DeallocateInferences_var(node->inferences, node->variable);
             memset(node, 0, sizeof(BDDNode));
             node->next = bddtable_free;
             bddtable_free = node;
@@ -321,7 +323,7 @@ bdd_gc()
          }
       }
    }
-
+/*
    for (i=0;i<nmbrFunctions;i++)
    {
       bdd_fix_inferences(functions[i]);
@@ -330,8 +332,15 @@ bdd_gc()
    {
       bdd_fix_inferences(original_functions[i]);
    }
-
-
+   */
+/*
+   fprintf(stddbg, "out:\n");
+   for (i=0;i<nmbrFunctions;i++)
+   {
+      printBDDInfs(functions[i]);
+      fprintf(stddbg, "\n");
+   }
+*/
 #ifndef NDEBUG
    // count free nodes -- statistics -- can be removed
    p = bddtable_free;

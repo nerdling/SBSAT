@@ -75,24 +75,24 @@ init_terminal_out()
    char *tcapbuf;
 
    if (termtype == 0) {
-      fprintf(stderr, "Specify a terminal type with `setenv TERM <yourtype>'.\n");
+      d2_printf1("Specify a terminal type with `setenv TERM <yourtype>'.\n");
       return 1;
    }
 
    success = tgetent(term_buffer, termtype);
    if (success < 0) {
-      fprintf(stderr, "Could not access the termcap data base.\n");
+      d2_printf1("Could not access the termcap data base.\n");
       return 1;
    }
    if (success == 0) {
-      fprintf(stderr, "Terminal type `...' is not defined.\n"/*, termtype*/);
+      d2_printf1("Terminal type `...' is not defined.\n"/*, termtype*/);
       return 1;
    }
 
    /* get far too much and shrink later */
    ptr = tcapbuf = (char*)calloc(1024, sizeof(char));
    if (!ptr) {
-      fprintf(stderr, "Can't allocate tcapbuf\n");
+      dE_printf1("Can't allocate tcapbuf\n");
       exit(1); // memory problems -- can quit
    }
    CM = qgetstr("cm"); /* this string used by tgoto() */
