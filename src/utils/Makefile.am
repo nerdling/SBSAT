@@ -5,8 +5,12 @@ SOURCES= \
              bddtable.cc zread.cc vars.cc infer.cc \
 	     bdd_circuit_init.cc symtable.cc java_wrapper.cc \
 	     custprint.cc termcap.cc # malloc.cc
+EXTRA_DIST = malloc.cc # bddtable.cc
 
+if MYLIBTOOL
 noinst_LTLIBRARIES = libutils.la
 libutils_la_SOURCES= $(SOURCES)
-
-EXTRA_DIST = malloc.cc # bddtable.cc
+else
+noinst_LIBRARIES = libutils.a
+libutils_a_SOURCES= $(SOURCES)
+endif

@@ -145,6 +145,14 @@ AC_ARG_WITH(java,
 #
 #AC_SUBST(Z_CFLAGS)
 #AC_SUBST(Z_LIBS)
+AC_ARG_ENABLE(alllibtool,
+[  --enable-alllibtool    Turn on libtool for the whole tree],
+[case "${enableval}" in
+  yes) alllibtool=true ;;
+  no)  alllibtooldebug=false ;;
+  *) AC_MSG_ERROR(bad value ${enableval} for --enable-alllibtool) ;;
+esac],[alllibtool=false])
+AM_CONDITIONAL(MYLIBTOOL, test x$alllibtool = xtrue)
 
 # Checks for programs.
 AC_PROG_AWK

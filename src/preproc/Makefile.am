@@ -7,5 +7,10 @@ SOURCES= create_infs.cc do_cofactor.cc   do_exquantify.cc   \
 	do_split.cc do_steal.cc do_rewind.cc do_clearft.cc \
 	do_prover3.cc
 
+if MYLIBTOOL
 noinst_LTLIBRARIES = libpreproc.la
 libpreproc_la_SOURCES=$(SOURCES)
+else
+noinst_LIBRARIES = libpreproc.a
+libpreproc_a_SOURCES=$(SOURCES)
+endif

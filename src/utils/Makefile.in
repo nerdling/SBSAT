@@ -77,6 +77,8 @@ LIBTOOL = @LIBTOOL@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
 MAKEINFO = @MAKEINFO@
+MYLIBTOOL_FALSE = @MYLIBTOOL_FALSE@
+MYLIBTOOL_TRUE = @MYLIBTOOL_TRUE@
 NO_CVSBUILD_FALSE = @NO_CVSBUILD_FALSE@
 NO_CVSBUILD_TRUE = @NO_CVSBUILD_TRUE@
 OBJEXT = @OBJEXT@
@@ -140,38 +142,66 @@ SOURCES = \
 	     bdd_circuit_init.cc symtable.cc java_wrapper.cc \
 	     custprint.cc termcap.cc # malloc.cc
 
-
-noinst_LTLIBRARIES = libutils.la
-libutils_la_SOURCES = $(SOURCES)
-
 EXTRA_DIST = malloc.cc # bddtable.cc
+
+@MYLIBTOOL_TRUE@noinst_LTLIBRARIES = libutils.la
+@MYLIBTOOL_TRUE@libutils_la_SOURCES = $(SOURCES)
+@MYLIBTOOL_FALSE@noinst_LIBRARIES = libutils.a
+@MYLIBTOOL_FALSE@libutils_a_SOURCES = $(SOURCES)
 subdir = src/utils
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/include/config.h
 CONFIG_CLEAN_FILES =
+LIBRARIES = $(noinst_LIBRARIES)
+
+libutils_a_AR = $(AR) cru
+libutils_a_LIBADD =
+am__libutils_a_SOURCES_DIST = bdd.cc utils.cc params.cc params_fn.cc \
+	log.cc itetable.cc bddtable.cc zread.cc vars.cc infer.cc \
+	bdd_circuit_init.cc symtable.cc java_wrapper.cc custprint.cc \
+	termcap.cc
+am__objects_1 = bdd.$(OBJEXT) utils.$(OBJEXT) params.$(OBJEXT) \
+	params_fn.$(OBJEXT) log.$(OBJEXT) itetable.$(OBJEXT) \
+	bddtable.$(OBJEXT) zread.$(OBJEXT) vars.$(OBJEXT) \
+	infer.$(OBJEXT) bdd_circuit_init.$(OBJEXT) symtable.$(OBJEXT) \
+	java_wrapper.$(OBJEXT) custprint.$(OBJEXT) termcap.$(OBJEXT)
+@MYLIBTOOL_FALSE@am_libutils_a_OBJECTS = $(am__objects_1)
+libutils_a_OBJECTS = $(am_libutils_a_OBJECTS)
 LTLIBRARIES = $(noinst_LTLIBRARIES)
 
 libutils_la_LDFLAGS =
 libutils_la_LIBADD =
-am__objects_1 = bdd.lo utils.lo params.lo params_fn.lo log.lo \
+am__libutils_la_SOURCES_DIST = bdd.cc utils.cc params.cc params_fn.cc \
+	log.cc itetable.cc bddtable.cc zread.cc vars.cc infer.cc \
+	bdd_circuit_init.cc symtable.cc java_wrapper.cc custprint.cc \
+	termcap.cc
+am__objects_2 = bdd.lo utils.lo params.lo params_fn.lo log.lo \
 	itetable.lo bddtable.lo zread.lo vars.lo infer.lo \
 	bdd_circuit_init.lo symtable.lo java_wrapper.lo custprint.lo \
 	termcap.lo
-am_libutils_la_OBJECTS = $(am__objects_1)
+@MYLIBTOOL_TRUE@am_libutils_la_OBJECTS = $(am__objects_2)
 libutils_la_OBJECTS = $(am_libutils_la_OBJECTS)
 
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)/include
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
-@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/bdd.Plo \
+@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/bdd.Plo ./$(DEPDIR)/bdd.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/bdd_circuit_init.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/bddtable.Plo ./$(DEPDIR)/custprint.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/infer.Plo ./$(DEPDIR)/itetable.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/java_wrapper.Plo ./$(DEPDIR)/log.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/params.Plo ./$(DEPDIR)/params_fn.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/symtable.Plo ./$(DEPDIR)/termcap.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/utils.Plo ./$(DEPDIR)/vars.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/zread.Plo
+@AMDEP_TRUE@	./$(DEPDIR)/bdd_circuit_init.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/bddtable.Plo ./$(DEPDIR)/bddtable.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/custprint.Plo ./$(DEPDIR)/custprint.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/infer.Plo ./$(DEPDIR)/infer.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/itetable.Plo ./$(DEPDIR)/itetable.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/java_wrapper.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/java_wrapper.Po ./$(DEPDIR)/log.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/log.Po ./$(DEPDIR)/params.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/params.Po ./$(DEPDIR)/params_fn.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/params_fn.Po ./$(DEPDIR)/symtable.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/symtable.Po ./$(DEPDIR)/termcap.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/termcap.Po ./$(DEPDIR)/utils.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/utils.Po ./$(DEPDIR)/vars.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/vars.Po ./$(DEPDIR)/zread.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/zread.Po
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 LTCXXCOMPILE = $(LIBTOOL) --mode=compile $(CXX) $(DEFS) \
@@ -180,7 +210,8 @@ LTCXXCOMPILE = $(LIBTOOL) --mode=compile $(CXX) $(DEFS) \
 CXXLD = $(CXX)
 CXXLINK = $(LIBTOOL) --mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-DIST_SOURCES = $(libutils_la_SOURCES)
+DIST_SOURCES = $(am__libutils_a_SOURCES_DIST) \
+	$(am__libutils_la_SOURCES_DIST)
 DIST_COMMON = Makefile.am Makefile.in
 SOURCES = \
              bdd.cc utils.cc \
@@ -200,6 +231,15 @@ $(srcdir)/Makefile.in:  Makefile.am  $(top_srcdir)/configure.ac $(ACLOCAL_M4)
 Makefile:  $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe)
 
+AR = ar
+
+clean-noinstLIBRARIES:
+	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
+libutils.a: $(libutils_a_OBJECTS) $(libutils_a_DEPENDENCIES) 
+	-rm -f libutils.a
+	$(libutils_a_AR) libutils.a $(libutils_a_OBJECTS) $(libutils_a_LIBADD)
+	$(RANLIB) libutils.a
+
 clean-noinstLTLIBRARIES:
 	-test -z "$(noinst_LTLIBRARIES)" || rm -f $(noinst_LTLIBRARIES)
 	@list='$(noinst_LTLIBRARIES)'; for p in $$list; do \
@@ -218,26 +258,42 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bdd.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bdd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bdd_circuit_init.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bdd_circuit_init.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bddtable.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bddtable.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/custprint.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/custprint.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/infer.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/infer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/itetable.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/itetable.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/java_wrapper.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/java_wrapper.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/log.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/log.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/params.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/params.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/params_fn.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/params_fn.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/symtable.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/symtable.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/termcap.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/termcap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/utils.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/utils.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vars.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vars.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/zread.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/zread.Po@am__quote@
 
 distclean-depend:
 	-rm -rf ./$(DEPDIR)
 
 .cc.o:
-@am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" \
+@am__fastdepCXX_TRUE@	@echo Compiling $*
+@am__fastdepCXX_TRUE@	@if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" \
 @am__fastdepCXX_TRUE@	  -c -o $@ `test -f '$<' || echo '$(srcdir)/'`$<; \
 @am__fastdepCXX_TRUE@	then mv "$(DEPDIR)/$*.Tpo" "$(DEPDIR)/$*.Po"; \
 @am__fastdepCXX_TRUE@	else rm -f "$(DEPDIR)/$*.Tpo"; exit 1; \
@@ -366,7 +422,7 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(LTLIBRARIES)
+all-am: Makefile $(LIBRARIES) $(LTLIBRARIES)
 
 installdirs:
 
@@ -396,8 +452,8 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-generic clean-libtool clean-noinstLTLIBRARIES \
-	mostlyclean-am
+clean-am: clean-generic clean-libtool clean-noinstLIBRARIES \
+	clean-noinstLTLIBRARIES mostlyclean-am
 
 distclean: distclean-am
 
@@ -442,16 +498,16 @@ ps-am:
 uninstall-am: uninstall-info-am
 
 .PHONY: CTAGS GTAGS all all-am check check-am clean clean-generic \
-	clean-libtool clean-noinstLTLIBRARIES ctags distclean \
-	distclean-compile distclean-depend distclean-generic \
-	distclean-libtool distclean-tags distdir dvi dvi-am info \
-	info-am install install-am install-data install-data-am \
-	install-exec install-exec-am install-info install-info-am \
-	install-man install-strip installcheck installcheck-am \
-	installdirs maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-compile mostlyclean-generic \
-	mostlyclean-libtool pdf pdf-am ps ps-am tags uninstall \
-	uninstall-am uninstall-info-am
+	clean-libtool clean-noinstLIBRARIES clean-noinstLTLIBRARIES \
+	ctags distclean distclean-compile distclean-depend \
+	distclean-generic distclean-libtool distclean-tags distdir dvi \
+	dvi-am info info-am install install-am install-data \
+	install-data-am install-exec install-exec-am install-info \
+	install-info-am install-man install-strip installcheck \
+	installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-compile \
+	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
+	tags uninstall uninstall-am uninstall-info-am
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

@@ -6,9 +6,11 @@ SOURCES=autochk.cc  \
 	parse.cc    sat.cc      tracer.cc   \
         read_result.cc read_input.cc write_output.cc
 
-#if SBSAT_SHARED_BUILD
+if MYLIBTOOL
 noinst_LTLIBRARIES = libformats.la
 libformats_la_SOURCES=$(SOURCES)
 libformats_la_LIBADD=5/libt5.la
-#endif
-
+else
+noinst_LIBRARIES = libformats.a
+libformats_a_SOURCES=$(SOURCES)
+endif

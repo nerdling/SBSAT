@@ -21,9 +21,14 @@ SOURCES= solve.cc \
 	     update_heu.cc \
 	     crtwin.cc load_lemmas.cc interface.cc heur_stack.cc \
 	     bddwalk.cc wvf.cc 
+EXTRA_DIST=heur_choice.cc
 
+if MYLIBTOOL
 noinst_LTLIBRARIES = libsolver.la libsolver2.la
 libsolver_la_SOURCES= $(SOURCES)
 libsolver2_la_SOURCES=libsolver.cc
-
-EXTRA_DIST=heur_choice.cc
+else
+noinst_LIBRARIES = libsolver.a libsolver2.a
+libsolver_a_SOURCES= $(SOURCES)
+libsolver2_a_SOURCES=libsolver.cc
+endif

@@ -1,19 +1,5 @@
-241c241
-< LTCXXCOMPILE = $(LIBTOOL) --mode=compile $(CXX) $(DEFS) \
----
-> LTCXXCOMPILE = $(LIBTOOL) --silent --mode=compile $(CXX) $(DEFS) \
-361c361,362
+218c218,219
 < @am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" \
 ---
-> @am__fastdepCXX_TRUE@	@echo "Compiling $*.cc"
+> @am__fastdepCXX_TRUE@	@echo Compiling $*
 > @am__fastdepCXX_TRUE@	@if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" \
-372c373,374
-< @am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" \
----
-> @am__fastdepCXX_TRUE@	@echo "Compiling $*.cc"
-> @am__fastdepCXX_TRUE@	@if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" \
-383c385,386
-< @am__fastdepCXX_TRUE@	if $(LTCXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" \
----
-> @am__fastdepCXX_TRUE@	@echo "Compiling $*.cc"
-> @am__fastdepCXX_TRUE@	@if $(LTCXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" \

@@ -43,7 +43,7 @@ long gnTotalBytesForTransitions = 0;
 
 ITE_INLINE
 SmurfState *
-ComputeSmurfOfNormalized(BDDNodeStruct *pFunc)//, PartialAssignmentEncoding encoding)
+ComputeSmurfOfNormalized(BDDNodeStruct *pFunc)
    // Precondition:  *pFunc is 'normalized', i.e., no literal
    // is logically implied by *pFunc.
    // Creates Smurf states to represent the function and its children.
@@ -68,6 +68,7 @@ ComputeSmurfOfNormalized(BDDNodeStruct *pFunc)//, PartialAssignmentEncoding enco
    pSmurfState->pFunc = pFunc;
    SFADDONS(pFunc->addons)->pState = pSmurfState;
 
+   // get all the variables
    long tempint_max = 0;
    long y=0;
    unravelBDD(&y, &tempint_max, &pSmurfState->vbles.arrElts, pFunc);
@@ -96,20 +97,19 @@ ComputeSmurfOfNormalized(BDDNodeStruct *pFunc)//, PartialAssignmentEncoding enco
    gnTotalBytesForTransitions += nBytesForTransitions;
 
    int i=0;
-   int nVble;
+   int nSolverVble, nVble;
    for (i=0;i<pSmurfState->vbles.nNumElts;i++)
    {
 
-      // pSmurfState->vbles.arrElts[i];
-      nVble = arrSolver2IteVarMap[pSmurfState->vbles.arrElts[i]];
-      //d9_printf2("Building Smurf State x with %d\n", nVble);
+      nSolverVble = pSmurfState->vbles.arrElts[i];
+      nVble = arrSolver2IteVarMap[nSolverVble];
 
       // Compute transition that occurs when vble is set to true.
       BDDNodeStruct *pFuncEvaled = set_variable(pFunc, nVble, 1);
       InitializeAddons(pFuncEvaled);
       assert(pFuncEvaled != pFunc);
       SmurfState *pSmurfStateOfEvaled = BDD2Smurf(pFuncEvaled);
-      AddStateTransition(pSmurfState, i, arrIte2SolverVarMap[nVble], BOOL_TRUE,
+      AddStateTransition(pSmurfState, i, nSolverVble, BOOL_TRUE,
             pFuncEvaled, pSmurfStateOfEvaled);
 
       // Compute transition that occurs when vble is set to false.
@@ -118,7 +118,7 @@ ComputeSmurfOfNormalized(BDDNodeStruct *pFunc)//, PartialAssignmentEncoding enco
       assert(pFuncEvaled != pFunc);
       pSmurfStateOfEvaled = BDD2Smurf(pFuncEvaled);
 
-      AddStateTransition(pSmurfState, i, arrIte2SolverVarMap[nVble], BOOL_FALSE,
+      AddStateTransition(pSmurfState, i, nSolverVble, BOOL_FALSE,
             pFuncEvaled, pSmurfStateOfEvaled);
    }
 

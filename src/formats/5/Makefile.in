@@ -77,6 +77,8 @@ LIBTOOL = @LIBTOOL@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
 MAKEINFO = @MAKEINFO@
+MYLIBTOOL_FALSE = @MYLIBTOOL_FALSE@
+MYLIBTOOL_TRUE = @MYLIBTOOL_TRUE@
 NO_CVSBUILD_FALSE = @NO_CVSBUILD_FALSE@
 NO_CVSBUILD_TRUE = @NO_CVSBUILD_TRUE@
 OBJEXT = @OBJEXT@
@@ -146,49 +148,80 @@ SOURCES = trace_g.yy trace_s.ll \
 # _g.yy first
 EXTRA_DIST = bddnode.h functions.h bddnode.cc tracetest.cc
 
-#noinst_LIBRARIES = libt5.a
-#libt5_a_SOURCES = 
-#libt5_a_LIBADD = libt5.la
-
-#if SBSAT_SHARED_BUILD
-noinst_LTLIBRARIES = libt5.la
-libt5_la_SOURCES = $(SOURCES)
-libt5_la_YFLAGS = -d
-
-#endif
 bin_PROGRAMS = tracetest
 tracetest_SOURCES = tracetest.cc  # bddnode.cc
-tracetest_LDADD = ../../preproc/libpreproc.la libt5.la ../../utils/libutils.la
+
+@MYLIBTOOL_TRUE@noinst_LTLIBRARIES = libt5.la
+@MYLIBTOOL_TRUE@libt5_la_SOURCES = $(SOURCES)
+@MYLIBTOOL_TRUE@libt5_la_YFLAGS = -d
+@MYLIBTOOL_FALSE@tracetest_LDADD = ../../preproc/libpreproc.a libt5.a ../../utils/libutils.a
+@MYLIBTOOL_TRUE@tracetest_LDADD = ../../preproc/libpreproc.la libt5.la ../../utils/libutils.la
+@MYLIBTOOL_FALSE@noinst_LIBRARIES = libt5.a
+@MYLIBTOOL_FALSE@libt5_a_SOURCES = $(SOURCES)
+@MYLIBTOOL_FALSE@libt5_a_YFLAGS = -d
 subdir = src/formats/5
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/include/config.h
 CONFIG_CLEAN_FILES =
+LIBRARIES = $(noinst_LIBRARIES)
+
+libt5_a_AR = $(AR) cru
+libt5_a_LIBADD =
+am__libt5_a_SOURCES_DIST = trace_g.yy trace_s.ll cnf_g.yy cnf_s.ll \
+	bdd_g.yy bdd_s.ll blif_g.yy blif_s.ll prover_g.yy prover_s.ll \
+	prover3_g.yy prover3_s.ll iscas_g.yy iscas_s.ll parser.cc \
+	functions.cc bddops.cc p3.cc
+am__objects_1 = libt5_a-trace_g.$(OBJEXT) trace_s.$(OBJEXT) \
+	libt5_a-cnf_g.$(OBJEXT) cnf_s.$(OBJEXT) libt5_a-bdd_g.$(OBJEXT) \
+	bdd_s.$(OBJEXT) libt5_a-blif_g.$(OBJEXT) blif_s.$(OBJEXT) \
+	libt5_a-prover_g.$(OBJEXT) prover_s.$(OBJEXT) \
+	libt5_a-prover3_g.$(OBJEXT) prover3_s.$(OBJEXT) \
+	libt5_a-iscas_g.$(OBJEXT) iscas_s.$(OBJEXT) parser.$(OBJEXT) \
+	functions.$(OBJEXT) bddops.$(OBJEXT) p3.$(OBJEXT)
+@MYLIBTOOL_FALSE@am_libt5_a_OBJECTS = $(am__objects_1)
+libt5_a_OBJECTS = $(am_libt5_a_OBJECTS)
 LTLIBRARIES = $(noinst_LTLIBRARIES)
 
 libt5_la_LDFLAGS =
 libt5_la_LIBADD =
-am__objects_1 = libt5_la-trace_g.lo trace_s.lo libt5_la-cnf_g.lo \
+am__libt5_la_SOURCES_DIST = trace_g.yy trace_s.ll cnf_g.yy cnf_s.ll \
+	bdd_g.yy bdd_s.ll blif_g.yy blif_s.ll prover_g.yy prover_s.ll \
+	prover3_g.yy prover3_s.ll iscas_g.yy iscas_s.ll parser.cc \
+	functions.cc bddops.cc p3.cc
+am__objects_2 = libt5_la-trace_g.lo trace_s.lo libt5_la-cnf_g.lo \
 	cnf_s.lo libt5_la-bdd_g.lo bdd_s.lo libt5_la-blif_g.lo \
 	blif_s.lo libt5_la-prover_g.lo prover_s.lo \
 	libt5_la-prover3_g.lo prover3_s.lo libt5_la-iscas_g.lo \
 	iscas_s.lo parser.lo functions.lo bddops.lo p3.lo
-am_libt5_la_OBJECTS = $(am__objects_1)
+@MYLIBTOOL_TRUE@am_libt5_la_OBJECTS = $(am__objects_2)
 libt5_la_OBJECTS = $(am_libt5_la_OBJECTS)
 bin_PROGRAMS = tracetest$(EXEEXT)
 PROGRAMS = $(bin_PROGRAMS)
 
 am_tracetest_OBJECTS = tracetest.$(OBJEXT)
 tracetest_OBJECTS = $(am_tracetest_OBJECTS)
-tracetest_DEPENDENCIES = ../../preproc/libpreproc.la libt5.la \
-	../../utils/libutils.la
+@MYLIBTOOL_TRUE@tracetest_DEPENDENCIES = ../../preproc/libpreproc.la \
+@MYLIBTOOL_TRUE@	libt5.la ../../utils/libutils.la
+@MYLIBTOOL_FALSE@tracetest_DEPENDENCIES = ../../preproc/libpreproc.a \
+@MYLIBTOOL_FALSE@	libt5.a ../../utils/libutils.a
 tracetest_LDFLAGS =
 
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)/include
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
-@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/bdd_s.Plo ./$(DEPDIR)/bddops.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/blif_s.Plo ./$(DEPDIR)/cnf_s.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/functions.Plo ./$(DEPDIR)/iscas_s.Plo \
+@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/bdd_s.Plo ./$(DEPDIR)/bdd_s.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/bddops.Plo ./$(DEPDIR)/bddops.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/blif_s.Plo ./$(DEPDIR)/blif_s.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/cnf_s.Plo ./$(DEPDIR)/cnf_s.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/functions.Plo ./$(DEPDIR)/functions.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/iscas_s.Plo ./$(DEPDIR)/iscas_s.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/libt5_a-bdd_g.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/libt5_a-blif_g.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/libt5_a-cnf_g.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/libt5_a-iscas_g.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/libt5_a-prover3_g.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/libt5_a-prover_g.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/libt5_a-trace_g.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/libt5_la-bdd_g.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/libt5_la-blif_g.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/libt5_la-cnf_g.Plo \
@@ -196,12 +229,14 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	./$(DEPDIR)/libt5_la-prover3_g.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/libt5_la-prover_g.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/libt5_la-trace_g.Plo ./$(DEPDIR)/p3.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/parser.Plo ./$(DEPDIR)/prover3_s.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/prover_s.Plo ./$(DEPDIR)/trace_s.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/tracetest.Po
+@AMDEP_TRUE@	./$(DEPDIR)/p3.Po ./$(DEPDIR)/parser.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/parser.Po ./$(DEPDIR)/prover3_s.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/prover3_s.Po ./$(DEPDIR)/prover_s.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/prover_s.Po ./$(DEPDIR)/trace_s.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/trace_s.Po ./$(DEPDIR)/tracetest.Po
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
-LTCXXCOMPILE = $(LIBTOOL) --silent --mode=compile $(CXX) $(DEFS) \
+LTCXXCOMPILE = $(LIBTOOL) --mode=compile $(CXX) $(DEFS) \
 	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
 	$(AM_CXXFLAGS) $(CXXFLAGS)
 CXXLD = $(CXX)
@@ -219,13 +254,14 @@ LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) \
 CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-DIST_SOURCES = $(libt5_la_SOURCES) $(tracetest_SOURCES)
+DIST_SOURCES = $(am__libt5_a_SOURCES_DIST) $(am__libt5_la_SOURCES_DIST) \
+	$(tracetest_SOURCES)
 DIST_COMMON = README Makefile.am Makefile.in bdd_s.cc blif_s.cc \
-	cnf_s.cc iscas_s.cc libt5_la-bdd_g.cc libt5_la-bdd_g.h \
-	libt5_la-blif_g.cc libt5_la-blif_g.h libt5_la-cnf_g.cc \
-	libt5_la-cnf_g.h libt5_la-iscas_g.cc libt5_la-iscas_g.h \
-	libt5_la-prover3_g.cc libt5_la-prover3_g.h libt5_la-prover_g.cc \
-	libt5_la-prover_g.h libt5_la-trace_g.cc libt5_la-trace_g.h \
+	cnf_s.cc iscas_s.cc libt5_a-bdd_g.cc libt5_a-blif_g.cc \
+	libt5_a-cnf_g.cc libt5_a-iscas_g.cc libt5_a-prover3_g.cc \
+	libt5_a-prover_g.cc libt5_a-trace_g.cc libt5_la-bdd_g.cc \
+	libt5_la-blif_g.cc libt5_la-cnf_g.cc libt5_la-iscas_g.cc \
+	libt5_la-prover3_g.cc libt5_la-prover_g.cc libt5_la-trace_g.cc \
 	prover3_s.cc prover_s.cc trace_s.cc
 SOURCES = trace_g.yy trace_s.ll \
 	cnf_g.yy cnf_s.ll \
@@ -247,6 +283,15 @@ $(srcdir)/Makefile.in:  Makefile.am  $(top_srcdir)/configure.ac $(ACLOCAL_M4)
 Makefile:  $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe)
 
+AR = ar
+
+clean-noinstLIBRARIES:
+	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
+libt5.a: $(libt5_a_OBJECTS) $(libt5_a_DEPENDENCIES) 
+	-rm -f libt5.a
+	$(libt5_a_AR) libt5.a $(libt5_a_OBJECTS) $(libt5_a_LIBADD)
+	$(RANLIB) libt5.a
+
 clean-noinstLTLIBRARIES:
 	-test -z "$(noinst_LTLIBRARIES)" || rm -f $(noinst_LTLIBRARIES)
 	@list='$(noinst_LTLIBRARIES)'; for p in $$list; do \
@@ -255,41 +300,6 @@ clean-noinstLTLIBRARIES:
 	  echo "rm -f \"$${dir}/so_locations\""; \
 	  rm -f "$${dir}/so_locations"; \
 	done
-libt5_la-trace_g.h: libt5_la-trace_g.cc
-	@if test ! -f $@; then \
-	  rm -f libt5_la-trace_g.cc; \
-	  $(MAKE) libt5_la-trace_g.cc; \
-	else :; fi
-libt5_la-cnf_g.h: libt5_la-cnf_g.cc
-	@if test ! -f $@; then \
-	  rm -f libt5_la-cnf_g.cc; \
-	  $(MAKE) libt5_la-cnf_g.cc; \
-	else :; fi
-libt5_la-bdd_g.h: libt5_la-bdd_g.cc
-	@if test ! -f $@; then \
-	  rm -f libt5_la-bdd_g.cc; \
-	  $(MAKE) libt5_la-bdd_g.cc; \
-	else :; fi
-libt5_la-blif_g.h: libt5_la-blif_g.cc
-	@if test ! -f $@; then \
-	  rm -f libt5_la-blif_g.cc; \
-	  $(MAKE) libt5_la-blif_g.cc; \
-	else :; fi
-libt5_la-prover_g.h: libt5_la-prover_g.cc
-	@if test ! -f $@; then \
-	  rm -f libt5_la-prover_g.cc; \
-	  $(MAKE) libt5_la-prover_g.cc; \
-	else :; fi
-libt5_la-prover3_g.h: libt5_la-prover3_g.cc
-	@if test ! -f $@; then \
-	  rm -f libt5_la-prover3_g.cc; \
-	  $(MAKE) libt5_la-prover3_g.cc; \
-	else :; fi
-libt5_la-iscas_g.h: libt5_la-iscas_g.cc
-	@if test ! -f $@; then \
-	  rm -f libt5_la-iscas_g.cc; \
-	  $(MAKE) libt5_la-iscas_g.cc; \
-	else :; fi
 libt5.la: $(libt5_la_OBJECTS) $(libt5_la_DEPENDENCIES) 
 	$(CXXLINK)  $(libt5_la_LDFLAGS) $(libt5_la_OBJECTS) $(libt5_la_LIBADD) $(LIBS)
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
@@ -332,11 +342,24 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bdd_s.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bdd_s.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bddops.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bddops.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/blif_s.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/blif_s.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cnf_s.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cnf_s.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/functions.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/functions.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/iscas_s.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/iscas_s.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libt5_a-bdd_g.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libt5_a-blif_g.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libt5_a-cnf_g.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libt5_a-iscas_g.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libt5_a-prover3_g.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libt5_a-prover_g.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libt5_a-trace_g.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libt5_la-bdd_g.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libt5_la-blif_g.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libt5_la-cnf_g.Plo@am__quote@
@@ -345,17 +368,22 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libt5_la-prover_g.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libt5_la-trace_g.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/p3.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/p3.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/parser.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/parser.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/prover3_s.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/prover3_s.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/prover_s.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/prover_s.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/trace_s.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/trace_s.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tracetest.Po@am__quote@
 
 distclean-depend:
 	-rm -rf ./$(DEPDIR)
 
 .cc.o:
-@am__fastdepCXX_TRUE@	@echo "Compiling $*.cc"
+@am__fastdepCXX_TRUE@	@echo Compiling $*
 @am__fastdepCXX_TRUE@	@if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" \
 @am__fastdepCXX_TRUE@	  -c -o $@ `test -f '$<' || echo '$(srcdir)/'`$<; \
 @am__fastdepCXX_TRUE@	then mv "$(DEPDIR)/$*.Tpo" "$(DEPDIR)/$*.Po"; \
@@ -367,8 +395,7 @@ distclean-depend:
 @am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ `test -f '$<' || echo '$(srcdir)/'`$<
 
 .cc.obj:
-@am__fastdepCXX_TRUE@	@echo "Compiling $*.cc"
-@am__fastdepCXX_TRUE@	@if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" \
+@am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" \
 @am__fastdepCXX_TRUE@	  -c -o $@ `if test -f '$<'; then $(CYGPATH_W) '$<'; else $(CYGPATH_W) '$(srcdir)/$<'; fi`; \
 @am__fastdepCXX_TRUE@	then mv "$(DEPDIR)/$*.Tpo" "$(DEPDIR)/$*.Po"; \
 @am__fastdepCXX_TRUE@	else rm -f "$(DEPDIR)/$*.Tpo"; exit 1; \
@@ -379,8 +406,7 @@ distclean-depend:
 @am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ `if test -f '$<'; then $(CYGPATH_W) '$<'; else $(CYGPATH_W) '$(srcdir)/$<'; fi`
 
 .cc.lo:
-@am__fastdepCXX_TRUE@	@echo "Compiling $*.cc"
-@am__fastdepCXX_TRUE@	@if $(LTCXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" \
+@am__fastdepCXX_TRUE@	if $(LTCXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" \
 @am__fastdepCXX_TRUE@	  -c -o $@ `test -f '$<' || echo '$(srcdir)/'`$<; \
 @am__fastdepCXX_TRUE@	then mv "$(DEPDIR)/$*.Tpo" "$(DEPDIR)/$*.Plo"; \
 @am__fastdepCXX_TRUE@	else rm -f "$(DEPDIR)/$*.Tpo"; exit 1; \
@@ -395,6 +421,27 @@ distclean-depend:
 
 .yy.cc:
 	$(SHELL) $(YLWRAP) `test -f '$<' || echo '$(srcdir)/'`$< y.tab.c $@ y.tab.h $*.h y.output $*.output -- $(YACCCOMPILE)
+
+libt5_a-trace_g.cc: trace_g.yy
+	$(SHELL) $(YLWRAP) `test -f 'trace_g.yy' || echo '$(srcdir)/'`trace_g.yy y.tab.c libt5_a-trace_g.cc y.tab.h libt5_a-trace_g.h y.output libt5_a-trace_g.output -- $(YACC) $(YFLAGS) $(libt5_a_YFLAGS)
+
+libt5_a-cnf_g.cc: cnf_g.yy
+	$(SHELL) $(YLWRAP) `test -f 'cnf_g.yy' || echo '$(srcdir)/'`cnf_g.yy y.tab.c libt5_a-cnf_g.cc y.tab.h libt5_a-cnf_g.h y.output libt5_a-cnf_g.output -- $(YACC) $(YFLAGS) $(libt5_a_YFLAGS)
+
+libt5_a-bdd_g.cc: bdd_g.yy
+	$(SHELL) $(YLWRAP) `test -f 'bdd_g.yy' || echo '$(srcdir)/'`bdd_g.yy y.tab.c libt5_a-bdd_g.cc y.tab.h libt5_a-bdd_g.h y.output libt5_a-bdd_g.output -- $(YACC) $(YFLAGS) $(libt5_a_YFLAGS)
+
+libt5_a-blif_g.cc: blif_g.yy
+	$(SHELL) $(YLWRAP) `test -f 'blif_g.yy' || echo '$(srcdir)/'`blif_g.yy y.tab.c libt5_a-blif_g.cc y.tab.h libt5_a-blif_g.h y.output libt5_a-blif_g.output -- $(YACC) $(YFLAGS) $(libt5_a_YFLAGS)
+
+libt5_a-prover_g.cc: prover_g.yy
+	$(SHELL) $(YLWRAP) `test -f 'prover_g.yy' || echo '$(srcdir)/'`prover_g.yy y.tab.c libt5_a-prover_g.cc y.tab.h libt5_a-prover_g.h y.output libt5_a-prover_g.output -- $(YACC) $(YFLAGS) $(libt5_a_YFLAGS)
+
+libt5_a-prover3_g.cc: prover3_g.yy
+	$(SHELL) $(YLWRAP) `test -f 'prover3_g.yy' || echo '$(srcdir)/'`prover3_g.yy y.tab.c libt5_a-prover3_g.cc y.tab.h libt5_a-prover3_g.h y.output libt5_a-prover3_g.output -- $(YACC) $(YFLAGS) $(libt5_a_YFLAGS)
+
+libt5_a-iscas_g.cc: iscas_g.yy
+	$(SHELL) $(YLWRAP) `test -f 'iscas_g.yy' || echo '$(srcdir)/'`iscas_g.yy y.tab.c libt5_a-iscas_g.cc y.tab.h libt5_a-iscas_g.h y.output libt5_a-iscas_g.output -- $(YACC) $(YFLAGS) $(libt5_a_YFLAGS)
 
 libt5_la-trace_g.cc: trace_g.yy
 	$(SHELL) $(YLWRAP) `test -f 'trace_g.yy' || echo '$(srcdir)/'`trace_g.yy y.tab.c libt5_la-trace_g.cc y.tab.h libt5_la-trace_g.h y.output libt5_la-trace_g.output -- $(YACC) $(YFLAGS) $(libt5_la_YFLAGS)
@@ -514,7 +561,7 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(LTLIBRARIES) $(PROGRAMS)
+all-am: Makefile $(LIBRARIES) $(LTLIBRARIES) $(PROGRAMS)
 
 installdirs:
 	$(mkinstalldirs) $(DESTDIR)$(bindir)
@@ -543,31 +590,31 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
-	-rm -f libt5_la-iscas_g.h
 	-rm -f libt5_la-prover3_g.cc
 	-rm -f libt5_la-iscas_g.cc
-	-rm -f libt5_la-prover_g.h
+	-rm -f libt5_a-iscas_g.cc
 	-rm -f libt5_la-blif_g.cc
 	-rm -f prover_s.cc
+	-rm -f libt5_a-prover3_g.cc
 	-rm -f blif_s.cc
-	-rm -f libt5_la-cnf_g.h
+	-rm -f libt5_a-prover_g.cc
+	-rm -f libt5_a-cnf_g.cc
 	-rm -f iscas_s.cc
 	-rm -f cnf_s.cc
-	-rm -f libt5_la-trace_g.h
+	-rm -f libt5_a-bdd_g.cc
 	-rm -f libt5_la-trace_g.cc
 	-rm -f libt5_la-cnf_g.cc
-	-rm -f bdd_s.cc
+	-rm -f libt5_a-trace_g.cc
+	-rm -f libt5_a-blif_g.cc
 	-rm -f libt5_la-prover_g.cc
+	-rm -f bdd_s.cc
 	-rm -f prover3_s.cc
 	-rm -f libt5_la-bdd_g.cc
-	-rm -f libt5_la-blif_g.h
-	-rm -f libt5_la-bdd_g.h
 	-rm -f trace_s.cc
-	-rm -f libt5_la-prover3_g.h
 clean: clean-am
 
 clean-am: clean-binPROGRAMS clean-generic clean-libtool \
-	clean-noinstLTLIBRARIES mostlyclean-am
+	clean-noinstLIBRARIES clean-noinstLTLIBRARIES mostlyclean-am
 
 distclean: distclean-am
 
@@ -612,17 +659,17 @@ ps-am:
 uninstall-am: uninstall-binPROGRAMS uninstall-info-am
 
 .PHONY: CTAGS GTAGS all all-am check check-am clean clean-binPROGRAMS \
-	clean-generic clean-libtool clean-noinstLTLIBRARIES ctags \
-	distclean distclean-compile distclean-depend distclean-generic \
-	distclean-libtool distclean-tags distdir dvi dvi-am info \
-	info-am install install-am install-binPROGRAMS install-data \
-	install-data-am install-exec install-exec-am install-info \
-	install-info-am install-man install-strip installcheck \
-	installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-compile \
-	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags uninstall uninstall-am uninstall-binPROGRAMS \
-	uninstall-info-am
+	clean-generic clean-libtool clean-noinstLIBRARIES \
+	clean-noinstLTLIBRARIES ctags distclean distclean-compile \
+	distclean-depend distclean-generic distclean-libtool \
+	distclean-tags distdir dvi dvi-am info info-am install \
+	install-am install-binPROGRAMS install-data install-data-am \
+	install-exec install-exec-am install-info install-info-am \
+	install-man install-strip installcheck installcheck-am \
+	installdirs maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-compile mostlyclean-generic \
+	mostlyclean-libtool pdf pdf-am ps ps-am tags uninstall \
+	uninstall-am uninstall-binPROGRAMS uninstall-info-am
 
 
 #libt5_a_CXXFLAGS =  -pg

@@ -1,5 +1,6 @@
 INCLUDES=-I$(top_srcdir)/include
 SOURCES=sbsat.cc
+if MYLIBTOOL
 SBSAT_LIBS= \
 	libsbsat2.la \
 	formats/libformats.la \
@@ -7,6 +8,16 @@ SBSAT_LIBS= \
 	postproc/libpostproc.la \
 	preproc/libpreproc.la \
 	utils/libutils.la 
+else
+SBSAT_LIBS= \
+	libsbsat2.la \
+	formats/libformats.a \
+	formats/5/libt5.a \
+	solver/libsolver2.a  \
+	postproc/libpostproc.a \
+	preproc/libpreproc.a \
+	utils/libutils.a 
+endif
 
 lib_LTLIBRARIES = libsbsat2.la libsbsat.la
 libsbsat2_la_SOURCES = $(SOURCES)
