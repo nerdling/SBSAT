@@ -28,25 +28,6 @@ typedef struct _t_op2fn {
         int        fn_type;
 } t_op2fn;
 
-// And a circuit is just a (variable-size) array of BDD's.
-// an array of nmbrFunctions BDD's
-/*
-typedef struct circuitStruct {
-   BDDNode *memory;
-   int nmbrFunctions;
-   int numBuckets;
-   int sizeBuckets;
-   int memorySize;
-   struct BDDNodeStruct **functions;
-   int *functionType;
-   int *equalityVble; // Variable on the LHS of an ite=, and=, or or= BDD.
-   int *independantVars;
-   char **labels;
-   int **parameterizedVars;
-   int *parameterGroup;
-} CircuitStruct;
-*/
-
 #define MAX3ID(x,y,z) (x->id>y->id?(x->id>z->id?x:z):y->id>z->id?y:z)
 
 #define top_variable_s(x, y, z) \

@@ -16,14 +16,15 @@ struct symrec
 typedef struct symrec symrec;
 
 /* The symbol table: a chain of `struct symrec'.     */
-extern symrec *sym_table;
+//extern symrec **sym_table;
 
 void    sym_init();
 symrec *putsym(char *);
 symrec *getsym(char *);
-int    i_getsym(char *);
+int     i_getsym(char *);
 symrec *s_getsym(char *);
+void    s_set_indep(symrec *, int);
 symrec *tputsym();
 symrec *getsym_i(int id);
-void   print_symtable();
+void    print_symtable();
 #endif

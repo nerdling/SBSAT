@@ -28,7 +28,6 @@
    int lines=0;
    extern int normal_bdds;
    extern int spec_fn_bdds;
-   extern int t_sym_max;
 
 #ifndef __attribute__
 #define __attribute__(x)
@@ -81,7 +80,7 @@ structure: STRUCTURE lines
 
 lines:  /* empty */
 	      | lines line ';'
-            { if (((++lines) % 100) == 0) fprintf(stderr, "\r%d %d", lines, t_sym_max); }
+            { if (((++lines) % 100) == 0) fprintf(stderr, "\r%d", lines); }
 ;
 
 line:     ID '=' OP '(' exp_list ')'
@@ -131,7 +130,8 @@ void
 ite_op_id_equ(char *var, BDDNode *bdd)
 {
    symrec  *s_ptr = s_getsym(var);
-   independantVars[s_ptr->id] = 0;
+   s_set_indep(s_ptr, 0);
+   //independantVars[s_ptr->id] = 0;
    BDDNode *ptr = ite_equ(ite_vars(s_ptr), bdd);
    functions_add(ptr, UNSURE, s_ptr->id);
 }
@@ -143,7 +143,8 @@ ite_op_equ(char *var, t_op2fn fn, BDDNode **explist)
 {
    fn.fn_type = MAKE_EQU(fn.fn_type);
    symrec  *s_ptr = s_getsym(var);
-   independantVars[s_ptr->id] = 0;
+   s_set_indep(s_ptr, 0);
+   //independantVars[s_ptr->id] = 0;
    BDDNode *ptr = ite_op_exp(fn, explist);
    ptr = ite_equ(ite_vars(s_ptr), ptr);
    functions_add(ptr, ite_last_fn, s_ptr->id);
@@ -268,7 +269,8 @@ void
 ite_new_int_leaf(char *id, char *zero_one)
 {
    symrec *s_ptr = s_getsym(id);
-   independantVars[s_ptr->id] = 0;
+   s_set_indep(s_ptr, 0);
+   //independantVars[s_ptr->id] = 0;
    BDDNode *ptr = ite_vars(s_ptr);
    if (*zero_one == '0') ptr = ite_not_s(ptr);
    else if (*zero_one != '1') {
@@ -281,8 +283,8 @@ void
 ite_flag_vars(symrec **varlist, int indep)
 {
   for (int i=0; varlist[i]!=NULL; i++) {
-     varlist[i]->indep = indep;
-     independantVars[varlist[i]->id] = indep;
+     s_set_indep(varlist[i], indep);
+     //independantVars[varlist[i]->id] = indep;
   }
 }
 

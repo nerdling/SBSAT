@@ -42,6 +42,8 @@
 
 void ite_free(void **ptr);
 void *ite_calloc(int x, int y, int dbg_lvl, const char *for_what);
+void *ite_recalloc(void *ptr, int oldx, int x, int y, int dbg_lvl, const char *for_what);
+
 char *ite_basename(char *filename);
 
 

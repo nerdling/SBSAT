@@ -116,8 +116,6 @@ extern   int *functionType;
 extern   int *equalityVble; // Variable on the LHS of an ite=, and=, or or= BDD.
 extern   int *independantVars;
 extern   char **labels;
-extern   int **parameterizedVars;
-extern   int *parameterGroup;
 extern   varinfo *variablelist;
 extern   float *var_score;
 extern   store *variables;

@@ -131,7 +131,6 @@
    int lines=0;
    extern int normal_bdds;
    extern int spec_fn_bdds;
-   extern int t_sym_max;
 
 #ifndef __attribute__
 #define __attribute__(x)
@@ -153,7 +152,7 @@
 #endif
 
 #if ! defined (YYSTYPE) && ! defined (YYSTYPE_IS_DECLARED)
-#line 39 "trace_g.yy"
+#line 38 "trace_g.yy"
 typedef union YYSTYPE {
     int         num;      /* For returning numbers.               */
     char        id[200];  /* For returning ids.                   */
@@ -161,7 +160,7 @@ typedef union YYSTYPE {
     BDDNode     *bdd;     /* For returning exp                    */
 } YYSTYPE;
 /* Line 191 of yacc.c.  */
-#line 164 "libt5_a-trace_g.cc"
+#line 163 "libt5_a-trace_g.cc"
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
 # define YYSTYPE_IS_TRIVIAL 1
@@ -173,7 +172,7 @@ typedef union YYSTYPE {
 
 
 /* Line 214 of yacc.c.  */
-#line 176 "libt5_a-trace_g.cc"
+#line 175 "libt5_a-trace_g.cc"
 
 #if ! defined (yyoverflow) || YYERROR_VERBOSE
 
@@ -354,10 +353,10 @@ static const yysigned_char yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const unsigned char yyrline[] =
 {
-       0,    56,    56,    57,    60,    63,    67,    68,    70,    73,
-      74,    76,    79,    82,    83,    87,    89,    91,    93,    95,
-      97,   101,   103,   107,   111,   113,   116,   118,   120,   122,
-     124
+       0,    55,    55,    56,    59,    62,    66,    67,    69,    72,
+      73,    75,    78,    81,    82,    86,    88,    90,    92,    94,
+      96,   100,   102,   106,   110,   112,   115,   117,   119,   121,
+     123
 };
 #endif
 
@@ -1098,102 +1097,102 @@ yyreduce:
   switch (yyn)
     {
         case 5:
-#line 64 "trace_g.yy"
+#line 63 "trace_g.yy"
     { /* print_symtable(); */ }
     break;
 
   case 7:
-#line 69 "trace_g.yy"
+#line 68 "trace_g.yy"
     { varlist[varindex] = NULL; ite_flag_vars(varlist, /*independent - 1*/1);  }
     break;
 
   case 10:
-#line 75 "trace_g.yy"
+#line 74 "trace_g.yy"
     { varlist[varindex] = NULL; ite_flag_vars(varlist, /*dependent - 0*/0);  }
     break;
 
   case 14:
-#line 84 "trace_g.yy"
-    { if (((++lines) % 100) == 0) fprintf(stderr, "\r%d %d", lines, t_sym_max); }
+#line 83 "trace_g.yy"
+    { if (((++lines) % 100) == 0) fprintf(stderr, "\r%d", lines); }
     break;
 
   case 15:
-#line 88 "trace_g.yy"
+#line 87 "trace_g.yy"
     { explist[explevel][expindex[explevel]] = NULL; ite_op_equ(yyvsp[-5].id, yyvsp[-3].op2fn, explist[explevel]); explevel--; }
     break;
 
   case 16:
-#line 90 "trace_g.yy"
+#line 89 "trace_g.yy"
     { ite_op_id_equ(yyvsp[-2].id,yyvsp[0].bdd); }
     break;
 
   case 17:
-#line 92 "trace_g.yy"
+#line 91 "trace_g.yy"
     { ite_new_int_leaf(yyvsp[-5].id, yyvsp[-1].id); }
     break;
 
   case 18:
-#line 94 "trace_g.yy"
+#line 93 "trace_g.yy"
     { explist[explevel][expindex[explevel]] = NULL; ite_op_are_equal(explist[explevel]); explevel--; }
     break;
 
   case 19:
-#line 96 "trace_g.yy"
+#line 95 "trace_g.yy"
     { fprintf(stderr, "nonhandled are_c_op\n"); assert(0); }
     break;
 
   case 20:
-#line 98 "trace_g.yy"
+#line 97 "trace_g.yy"
     { printf("%s\n", yyvsp[-1].id); }
     break;
 
   case 21:
-#line 102 "trace_g.yy"
+#line 101 "trace_g.yy"
     { varindex=0; varlist[varindex++] = s_getsym(yyvsp[0].id); }
     break;
 
   case 22:
-#line 104 "trace_g.yy"
+#line 103 "trace_g.yy"
     { varlist[varindex++] = s_getsym(yyvsp[0].id); }
     break;
 
   case 23:
-#line 108 "trace_g.yy"
+#line 107 "trace_g.yy"
     { yyval.bdd = yyvsp[0].bdd; }
     break;
 
   case 24:
-#line 112 "trace_g.yy"
+#line 111 "trace_g.yy"
     { explevel++; expindex[explevel]=0; explist[explevel][expindex[explevel]++] = yyvsp[0].bdd; }
     break;
 
   case 25:
-#line 114 "trace_g.yy"
+#line 113 "trace_g.yy"
     { explist[explevel][expindex[explevel]++] = yyvsp[0].bdd; }
     break;
 
   case 26:
-#line 117 "trace_g.yy"
+#line 116 "trace_g.yy"
     { symrec *s=s_getsym(yyvsp[0].id); yyval.bdd = ite_vars(s); }
     break;
 
   case 27:
-#line 119 "trace_g.yy"
+#line 118 "trace_g.yy"
     { yyval.bdd = ite_s( yyvsp[-5].bdd, yyvsp[-3].bdd, yyvsp[-1].bdd); }
     break;
 
   case 28:
-#line 121 "trace_g.yy"
+#line 120 "trace_g.yy"
     { explist[explevel][expindex[explevel]] = NULL; yyval.bdd = ite_op_exp(yyvsp[-3].op2fn,explist[explevel]); explevel--; }
     break;
 
   case 29:
-#line 123 "trace_g.yy"
+#line 122 "trace_g.yy"
     { yyval.bdd = ite_not_s(ite_vars(s_getsym(yyvsp[-1].id))); }
     break;
 
   case 30:
-#line 125 "trace_g.yy"
+#line 124 "trace_g.yy"
     { fprintf(stderr, "nonhandled u_op\n"); yyval.bdd = NULL; }
     break;
 
@@ -1201,7 +1200,7 @@ yyreduce:
     }
 
 /* Line 991 of yacc.c.  */
-#line 1204 "libt5_a-trace_g.cc"
+#line 1203 "libt5_a-trace_g.cc"
 
   yyvsp -= yylen;
   yyssp -= yylen;
@@ -1410,14 +1409,15 @@ yyreturn:
 }
 
 
-#line 128 "trace_g.yy"
+#line 127 "trace_g.yy"
 
 
 void
 ite_op_id_equ(char *var, BDDNode *bdd)
 {
    symrec  *s_ptr = s_getsym(var);
-   independantVars[s_ptr->id] = 0;
+   s_set_indep(s_ptr, 0);
+   //independantVars[s_ptr->id] = 0;
    BDDNode *ptr = ite_equ(ite_vars(s_ptr), bdd);
    functions_add(ptr, UNSURE, s_ptr->id);
 }
@@ -1429,7 +1429,8 @@ ite_op_equ(char *var, t_op2fn fn, BDDNode **explist)
 {
    fn.fn_type = MAKE_EQU(fn.fn_type);
    symrec  *s_ptr = s_getsym(var);
-   independantVars[s_ptr->id] = 0;
+   s_set_indep(s_ptr, 0);
+   //independantVars[s_ptr->id] = 0;
    BDDNode *ptr = ite_op_exp(fn, explist);
    ptr = ite_equ(ite_vars(s_ptr), ptr);
    functions_add(ptr, ite_last_fn, s_ptr->id);
@@ -1554,7 +1555,8 @@ void
 ite_new_int_leaf(char *id, char *zero_one)
 {
    symrec *s_ptr = s_getsym(id);
-   independantVars[s_ptr->id] = 0;
+   s_set_indep(s_ptr, 0);
+   //independantVars[s_ptr->id] = 0;
    BDDNode *ptr = ite_vars(s_ptr);
    if (*zero_one == '0') ptr = ite_not_s(ptr);
    else if (*zero_one != '1') {
@@ -1567,8 +1569,8 @@ void
 ite_flag_vars(symrec **varlist, int indep)
 {
   for (int i=0; varlist[i]!=NULL; i++) {
-     varlist[i]->indep = indep;
-     independantVars[varlist[i]->id] = indep;
+     s_set_indep(varlist[i], indep);
+     //independantVars[varlist[i]->id] = indep;
   }
 }
 

@@ -11,7 +11,10 @@ int spec_fn_bdds=0;
 void
 functions_add(BDDNode *bdd, int fn_type, int equal_var)
 {
-  
+
+ if (nmbrFunctions >= functions_max) 
+  functions_alloc(nmbrFunctions+100);
+
   switch (fn_type) {
    case UNSURE: fn_type=UNSURE; break;
    case AND_EQU: fn_type=AND; break;
