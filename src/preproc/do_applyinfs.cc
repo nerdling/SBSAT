@@ -416,9 +416,6 @@ int Rebuild_BDDx (int x) {
 	if (functions[x] == false_ptr)
 	  return TRIV_UNSAT;
 
-//	countFalses(functions[x]);
-//	countFalses(functions[x]);
-	
 	//Get Inferences
 	
 	//This still does more new statements than necessary, but it's definetly faster.

@@ -162,8 +162,7 @@ int Split_Large () {
 			//d3_printf4("%d C %d = %d\n", length[j], k_size, num_splits);
 			
 			int whereat = 0;
-			int fpaths = countFalses(functions[j]);
-			if(fpaths == 1) {
+			if(isOR(functions[j]) == 1) {
 				functionType[j] = PLAINOR;
 				continue;				  
 			}
@@ -250,8 +249,7 @@ int Split_Large () {
 					max_bdds += 25;
 				}
 				
-				int fpaths = countFalses(functions[j]);
-				if(fpaths == 1) {
+				if(isOR(functions[j]) == 1) {
 					functionType[j] = PLAINOR;
 					continue;				  
 				}

@@ -1612,6 +1612,7 @@ BDDNode * pruning_p1(BDDNode * f, BDDNode * c)
 int countX (BDDNode *bdd, BDDNode *X) {
 	if(bdd == X) return 1;
 	if(IS_TRUE_FALSE(bdd)) return 0;
+	if(bdd->variable <= X->variable) return 0;
 	return countX(bdd->thenCase, X) + countX(bdd->elseCase, X);	
 }
 
@@ -1621,6 +1622,17 @@ int countFalses (BDDNode * bdd) {
 
 int countTrues (BDDNode * bdd) {
 	return countX(bdd, true_ptr);
+}
+
+int isOR(BDDNode *bdd) {
+	while(bdd != false_ptr) {
+		if(bdd->thenCase == true_ptr)
+		  bdd = bdd->elseCase;
+		if(bdd->elseCase == true_ptr)
+		  bdd = bdd->thenCase;
+		else return 0;
+	}
+	return 1;
 }
 
 int

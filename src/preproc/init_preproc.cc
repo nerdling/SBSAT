@@ -372,7 +372,7 @@ Finish_Preprocessing()
 	for (long x = 0; x < nmbrFunctions; x++) {
 		//if (length[x] < functionTypeLimits[functionType[x]])
 		//functionType[x] = UNSURE;
-		if(countFalses(functions[x]) == 1)
+		if(isOR(functions[x]) == 1)
 		  functionType[x] = PLAINOR;
    }
 

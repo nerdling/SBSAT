@@ -206,6 +206,7 @@ int getNuminp();
 int countX (BDDNode *, BDDNode *);
 int countFalses(BDDNode *);
 int countTrues(BDDNode *);
+int isOR(BDDNode *);
 int makeAllResolutions(intlist *&, int, int);
 Recd *resolve (int *, int, int, int);
 void getRidOfRecdList (Recd *);
