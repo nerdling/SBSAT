@@ -135,7 +135,7 @@ target_alias = @target_alias@
 INCLUDES = -I$(top_srcdir)/include
 EXTRA_DIST = testite.sh
 noinst_LIBRARIES = libgen.a
-libgen_a_SOURCES = xorgen.cc vanDerWaerden.cc
+libgen_a_SOURCES = xorgen.cc vanDerWaerden.cc rn.cc
 
 bin_PROGRAMS = gentest
 gentest_SOURCES = gentest.cc
@@ -148,7 +148,8 @@ LIBRARIES = $(noinst_LIBRARIES)
 
 libgen_a_AR = $(AR) cru
 libgen_a_LIBADD =
-am_libgen_a_OBJECTS = xorgen.$(OBJEXT) vanDerWaerden.$(OBJEXT)
+am_libgen_a_OBJECTS = xorgen.$(OBJEXT) vanDerWaerden.$(OBJEXT) \
+	rn.$(OBJEXT)
 libgen_a_OBJECTS = $(am_libgen_a_OBJECTS)
 bin_PROGRAMS = gentest$(EXEEXT)
 PROGRAMS = $(bin_PROGRAMS)
@@ -161,7 +162,7 @@ gentest_LDFLAGS =
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)/include
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
-@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/gentest.Po \
+@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/gentest.Po ./$(DEPDIR)/rn.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/vanDerWaerden.Po ./$(DEPDIR)/xorgen.Po
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -233,6 +234,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gentest.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rn.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vanDerWaerden.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xorgen.Po@am__quote@
 
