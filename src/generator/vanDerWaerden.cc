@@ -81,6 +81,7 @@
 #define ITE  2
 #define CNF2 3
 #define MINXCNF 4
+#define CNF2MK 5
 
 char name[128];
 int formula_type = XCNF;
@@ -98,6 +99,7 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
    if (!strcmp(vdw_type, "cnf")) formula_type = CNF; else 
    if (!strcmp(vdw_type, "xcnf")) formula_type = XCNF; else 
    if (!strcmp(vdw_type, "cnf2")) formula_type = CNF2; else 
+   if (!strcmp(vdw_type, "cnf2mk")) formula_type = CNF2MK; else 
    if (!strcmp(vdw_type, "ite")) formula_type = ITE; else 
    if (!strcmp(vdw_type, "minxcnf")) formula_type = MINXCNF; else {
       fprintf(stderr, "Unknown vdw formula type\n");
@@ -116,6 +118,8 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
    int prog_sum = ((1+max_step)*max_step)/2;
    int clauses = n+k*(max_step*n-p*prog_sum+prog_sum);
    int clause_count = 0;
+   int sym = 0;
+   int sym_clauses = 0;
    switch (formula_type) {
     case CNF: 
       clauses += n*k*(k-1)/2;
@@ -131,13 +135,18 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
          fprintf(stdout, "%s ", var(n, x, 0));
       fprintf(stdout, ")\n");
       break;
+    case CNF2MK:
+      sym = n/(p-1); //mk version
+      if (sym*(p-1) != n) { fprintf(stderr, "Can't do it properly\n"); exit(1); }
+      sym_clauses = (sym)*(p-2)*2;
+      sym_clauses += - 2*(p-2) - ((sym-1)/11)*2*(p-2);
     case CNF2:
       if (k != 2) {
          fprintf(stderr, "Can't use CNF2 for any other k but 2\n");
          exit(1);
       }
       clauses -= n;
-      fprintf(stdout, "p cnf %d %d\n", n*k, clauses);
+      fprintf(stdout, "p cnf %d %d\n", n*k, clauses+sym_clauses);
       break;
     case MINXCNF:
       clauses -= n;
@@ -257,7 +266,7 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
 #endif
          }
       }
-   } else if (formula_type == CNF2) {
+   } else if (formula_type == CNF2 || formula_type == CNF2MK) {
       fprintf(stdout, "c prevent any arithmetic progression of length %d for every bucket %d\n", p, k);
       for(int num = 1; num <= n; num++) {
          for(int step = 1; 1; step++) {
@@ -280,6 +289,19 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
       }
       if (clause_count != clauses) {
          fprintf(stderr, "======================== Problem\n");
+      }
+      if (formula_type == CNF2MK) {
+         // add symetry
+         for(int i=1;i<=sym;i++) {
+            if ((i-1)%11 == 0) continue;
+            for(int j=1;j<(p-1);j++) {
+               int eq_var = j*sym+i;
+               fprintf(stdout, "-%s ", var(n, i, 0));
+               fprintf(stdout, "%s 0\n", var(n, eq_var, 0)); 
+               fprintf(stdout, "%s ", var(n, i, 0));
+               fprintf(stdout, "-%s 0\n", var(n, eq_var, 0)); 
+            }
+         }
       }
    } else if (formula_type == MINXCNF) {
       fprintf(stdout, "c prevent any arithmetic progression of length %d for every bucket %d\n", p, k);
