@@ -179,7 +179,7 @@ InitSolver()
         //arrSolution[index] = BOOL_UNKNOWN;
         arrSolver2IteVarMap[index] = x;
         arrIte2SolverVarMap[x] = index;
-        if (x <= numinp)
+        if (x <= numinp && var_score) 
            var_score[index] = var_score[x];
      }
   }

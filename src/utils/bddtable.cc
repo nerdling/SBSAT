@@ -355,10 +355,10 @@ reload_bdd_circuit(int _numinp, int _numout,
                    void *_length, 
                    void *_variablelist)
 {
-   cerr << "Have " << _numinp << " variables and " 
-                   << _numout << " functions .. " << endl;
+   d2_printf3("Have %d variables and %d functions .. \n",
+                   numinp, numout);
 
-   cerr << "BDD and Circuit Init.. " << endl;
+   d2_printf1("BDD and Circuit Init..\n");
    numinp = _numinp;
    numout = _numout;
    bdd_circuit_init(numinp+1, numout);
@@ -378,14 +378,14 @@ reload_bdd_circuit(int _numinp, int _numout,
    int shift = (char*)(bddmemory_vsb[0].memory) - (char*)(_bddtable_start);
 
    /* fix functions */
-   cerr << "Fixing functions .. " << endl;
+   d2_printf1("Fixing functions .. \n");
    int i;
    for (i=0;i<numout;i++) {
       if (functions[i]) functions[i] = (BDDNode*)((char*)(functions[i])+shift);
    }
 
    /* fix bdd table */
-   cerr << "Fixing bdd table .. " << endl;
+   d2_printf1("Fixing bdd table .. \n");
    for (i=0;i<curBDDPos;i++) {
       bddmemory_vsb[0].memory[i].thenCase = (BDDNode*)
          ((char*)bddmemory_vsb[0].memory[i].thenCase + shift);
@@ -404,7 +404,7 @@ reload_bdd_circuit(int _numinp, int _numout,
       *node = bddmemory_vsb[0].memory + i;
    }
 
-   cerr << "Fixing bdd table inferences .. " << endl;
+   d2_printf1("Fixing bdd table inferences .. \n");
    GetInferFoAN(bddmemory_vsb[0].memory+0);
    GetInferFoAN(bddmemory_vsb[0].memory+1);
    for (i=2;i<curBDDPos;i++) {

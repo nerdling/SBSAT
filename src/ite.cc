@@ -54,32 +54,43 @@ void Verify_NoSolver(Tracer *tracer);
 void Verify_Solver(Tracer *tracer);
 
 int ite_pre_init();
-int ite_init();
 void ite_free(Tracer *tracer);
 int ite_io_init();
 void ite_io_free();
 int ite_preprocessing();
 
 int check_expected_result(int result);
-int ite_main_load(int argc, char *argv[]);
-int ite_main_init(Tracer *&tracer);
+int ite_main_init(int argc, char *argv[]);
+int ite_main_load(Tracer *&tracer);
 int ite_main(Tracer *tracer);
+int ite_main_preproc();
 
 int 
 main(int argc, char *argv[])
 {
    int ret = NO_ERROR;
    Tracer * tracer = NULL;
-   ret = ite_main_load(argc, argv);
+   ret = ite_main_init(argc, argv);
    if (ret == NO_ERROR) {
-      ret = ite_main_init(tracer);
-      if (ret != TRIV_SAT && ret != TRIV_UNSAT) ret = ite_main(tracer);
+      ret = ite_main_load(tracer);
+      if (ret == NO_ERROR) {
+         ret = ite_main_preproc();
+         if (ret == NO_ERROR) ret = ite_main(tracer);
+      }
    }
    return ite_final(ret, tracer);
 }
 
+int
+ite_main_preproc()
+{
+   int ret = ite_preprocessing();
+   if (ret == TRIV_SAT || ret == TRIV_UNSAT) return ret;
+   return NO_ERROR;
+}
+
 int 
-ite_main_load(int argc, char *argv[])
+ite_main_init(int argc, char *argv[])
 {
    int ret = NO_ERROR;
 	
@@ -95,10 +106,9 @@ ite_main_load(int argc, char *argv[])
 }
 
 int
-ite_main_init(Tracer *&tracer)
+ite_main_load(Tracer *&tracer)
 {
-   int ret = ite_init();
-   if (ret != NO_ERROR) return ret;
+   int ret = NO_ERROR;
 	
    ret = ite_io_init();
    if (ret != NO_ERROR) return ret;
@@ -110,11 +120,13 @@ ite_main_init(Tracer *&tracer)
    ret = read_input(formatin, formatout, tracer);
    if (ret != NO_ERROR) return ret;
 
+   return ret;
+}
 
-   /* preprocessing */
-   ret = ite_preprocessing();
-   if (ret == TRIV_SAT || ret == TRIV_UNSAT) return ret;
-
+int
+ite_main(Tracer *tracer)
+{
+   int ret = NO_ERROR;
    {
       /*
        * reversing dependency if requested
@@ -137,15 +149,6 @@ ite_main_init(Tracer *&tracer)
                independantVars[x] = 1;
       }
    }
-   /* solver or conversion */
-   return ret;
-}
-
-
-int
-ite_main(Tracer *tracer)
-{
-   int ret = NO_ERROR;
 	switch (formatout) {
     case 'n': break;
     case 'b': ret = solve(tracer); break;
@@ -235,14 +238,6 @@ ite_pre_init()
    for (i=0;i<MAX_COUNTER;i++) ite_counters[i] = 0;
    for (i=0;i<MAX_COUNTER_F;i++) ite_counters_f[i] = 0;
 
-   return NO_ERROR;
-}
-
-int 
-ite_init()
-{
-   d9_printf1("ite_init\n");
-   // bdd_init(); -- moved to bdd_circuit_init
    return NO_ERROR;
 }
 
