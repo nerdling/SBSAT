@@ -15,6 +15,8 @@
    void     ite_new_int_leaf(char *, char *);
    void     ite_flag_vars(symrec **, int);
    BDDNode *tmp_equ_var(BDDNode *p);
+   void push_symbols();
+   void pop_symbols();
 
    /* FIXME: make it more dynamic! */
    extern symrec *varlist[1000];
@@ -71,14 +73,13 @@ top_exp: ID
    | '(' exp ')'
      {  functions_add($2, UNSURE, 0); printf("top_par\n"); assert(p_level==0); }
    | top_exp '&' top_exp
-      { printf("top_rep\n"); }
 ;
 
 exp:  ID
     { symrec *s=s_getsym($1, SYM_VAR); assert(s); $$ = ite_vars(s); symbols++; }
    |  '~' exp
      { $$ = ite_not( $2 ); }
-   |  '(' {p_level++;} exp ')' {p_level--; }
+   |  '(' { push_symbols(); } exp ')' { if (symbols >= 1) { $3=tmp_equ_var($3); symbols=0;}; pop_symbols(); }
      { $$ = $3; }
    | exp '&' exp 
      { $$ = ite_and($1, $3); }
@@ -93,10 +94,23 @@ exp:  ID
 
 %%
 
+void push_symbols()
+{
+   p_symbols[p_level++] = symbols; 
+   symbols=0;
+}
+
+void pop_symbols()
+{
+   p_level--;
+   symbols += p_symbols[p_level];
+}
+
 BDDNode *tmp_equ_var(BDDNode *p) 
 {
     symrec *s_ptr = tputsym(SYM_VAR); 
     BDDNode *ret=ite_vars(s_ptr); 
-    ite_equ(ret, p); 
+    BDDNode *e=ite_equ(ret, p); 
+    functions_add(e, UNSURE, 0/*s_ptr->id*/); printf("ex\n"); 
     return ret;
 }

@@ -42,7 +42,7 @@
 
 
 #if ! defined (YYSTYPE) && ! defined (YYSTYPE_IS_DECLARED)
-#line 46 "prover_g.yy"
+#line 48 "prover_g.yy"
 typedef union YYSTYPE {
     int         num;      /* For returning numbers.               */
     char        id[200];  /* For returning ids.                   */

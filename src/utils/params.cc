@@ -164,7 +164,7 @@ t_opt options[] = {
 
 /* b s c w   - left ldxpi  */
 
-{ &formatin,  "", "formatin", P_CHAR, V(i:0,"0"), V(c:' '," "), VAR_DUMP, 0, 
+{ &formatin,  "", "formatin", P_CHAR, V(i:0,"0"), V(c:' '," "), VAR_NORMAL, 0, 
                 "Input format"},
 { &print_tree, "tree", "tree", P_PRE_INT, V(i:1,"1"), V(i:0,"0"), VAR_CMD, 0, 
                 "Print tree representation"},

@@ -43,8 +43,13 @@ char tracer_tmp_filename[256];
 
 
 int parser_init();
+
 int trace_parse();
 extern FILE *trace_in;
+
+int prover_parse();
+extern FILE *prover_in;
+
 int read_input_open();
 
 int
@@ -59,7 +64,7 @@ read_input(Tracer * &tracer)
   if (ret != NO_ERROR) return ret;
 
   /* autodetect the input format  */
-  formatin = getformat (finputfile);
+  if (formatin == ' ') formatin = getformat (finputfile);
 
   switch  (formatin) {
   case 't':
@@ -125,7 +130,13 @@ read_input(Tracer * &tracer)
             } else {
 
             } break;
-
+  case 'p': {
+     parser_init();
+     prover_in = finputfile;
+     prover_parse();
+     numinp = vars_max;
+     numout = functions_max;
+  } break;
   default:
       fprintf (stderr, "Problem read_input: Unknown Input Format: %c\n", formatin);
       exit (1);
