@@ -54,5 +54,6 @@ int ITE_SolveReInit();
 
 /* defined somewhere else */
 int ITE_Deduce();
+int ITE_Final(int ret, void *tracer);
 
 #endif

@@ -368,8 +368,8 @@ check_expected_result(int result)
 };
 
 int
-ITE_Final(int ret, Tracer *tracer)
+ITE_Final(int ret, void *tracer)
 {
-   return ite_final(ret, tracer); 
+   return ite_final(ret, (Tracer*)tracer); 
 }
 
