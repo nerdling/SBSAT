@@ -121,9 +121,9 @@ ITE_Deduce()
                nInferredAtom);
             );
 
-      if ((err = UpdateEachAffectedFunction(pAFS, nInferredValue))) break;
       if (NO_LEMMAS == 0)
          if ((err = UpdateEachAffectedLemma(pAFS, nInferredValue))) break;
+      if ((err = UpdateEachAffectedFunction(pAFS, nInferredValue))) break;
 
    } // while inference queue is non-empty
 #ifdef MK_NULL 
