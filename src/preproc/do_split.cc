@@ -80,8 +80,7 @@ int Split_Large () {
 	int max_bdds = 0;
 	int num_bdds = 0;
 	fprintf(stderr, "HERE1");
-	BDDNode **BDDFuncs = NULL;
-	BDDFuncs = (BDDNode **)ite_recalloc(BDDFuncs, max_bdds, max_bdds+10, sizeof(BDDNode *), 9, "BDDFuncs");
+	BDDNode **BDDFuncs = (BDDNode **)ite_recalloc(NULL, max_bdds, max_bdds+10, sizeof(BDDNode *), 9, "BDDFuncs");
 	fprintf(stderr, "HERE2");
 	max_bdds += 10;
 	
