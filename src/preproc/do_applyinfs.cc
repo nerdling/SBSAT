@@ -692,11 +692,11 @@ int Rebuild_BDDx (int x) {
 	//if (length[x] < 3)
 	//  functionType[x] = UNSURE;
 
-	if (DO_INFERENCES)
-	  return Do_Apply_Inferences();
-	
-	//void bdd_gc();
-	//bdd_gc();
+	if (DO_INFERENCES) {
+		void bdd_gc();
+		if(rand() % 100 < 4) bdd_gc();
+		return Do_Apply_Inferences();
+	}
 	
 	return PREP_NO_CHANGE;
 }
