@@ -2,9 +2,9 @@
 
 AC_PREREQ(2.57)
 # watch out -- two places to change the version
-AC_INIT([sbsat],[2.5a-3],[mkouril@ececs.uc.edu])
+AC_INIT([sbsat],[2.5b-1],[mkouril@ececs.uc.edu])
 AC_LANG([C++])
-AM_INIT_AUTOMAKE(sbsat,2.5a-3)
+AM_INIT_AUTOMAKE(sbsat,2.5b-1)
 AC_CONFIG_SRCDIR([include/sbsat.h])
 AC_CONFIG_HEADER([include/config.h])
 
