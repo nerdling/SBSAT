@@ -563,7 +563,15 @@ int Rebuild_BDDx (int x) {
    long tempint_max = 0;
    int *tempint=NULL;
 	unravelBDD(&y, &tempint_max, &tempint, functions[x]);
+//	fprintf(stderr, "%d|", y);
 	if (y != 0) qsort (tempint, y, sizeof (int), compfunc);
+//	fprintf(stderr, "%d|", y);
+//	printBDDerr(functions[x]);
+//	fprintf(stderr, "\n");
+//	for(int j = 0; j < y; j++)
+//	  fprintf(stderr, "%d ", tempint[j]);
+//	fprintf(stderr, "\n");
+						 
 	
 	//Checking to see if any variables were added to this BDD
 	//Dependent clustering can add variables, so can Ex_AND, so can Steal

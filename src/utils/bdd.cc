@@ -1465,20 +1465,19 @@ void unravelBDD(long *y, long *max, int **tempint, BDDNode * func) {
 }
 
 void NEW_unravelBDD (long *y, long *max, int **tempint, BDDNode * func) {
-  if ((func == true_ptr) || (func == false_ptr))
-    return;
-  if (sym_is_flag(func->variable) == 0)
-  {
-     if (*y >= *max) {
-        *tempint = (int*)ite_recalloc(*(void**)tempint, *max, *max+100, sizeof(int), 9, "tempint");
-        *max += 100;
-     }
-     (*tempint)[*y] = func->variable;
-     sym_set_flag(func->variable);
-     (*y)++;
-  };
-  NEW_unravelBDD (y, max, tempint, func->thenCase);
-  NEW_unravelBDD (y, max, tempint, func->elseCase);
+	if ((func == true_ptr) || (func == false_ptr))
+	  return;
+	if (sym_is_flag(func->variable) == 0) {
+		if (*y >= *max) {
+			*tempint = (int*)ite_recalloc(*(void**)tempint, *max, *max+100, sizeof(int), 9, "tempint");
+			*max += 100;
+		}
+		(*tempint)[*y] = func->variable;
+		sym_set_flag(func->variable);
+		(*y)++;
+	}
+	NEW_unravelBDD (y, max, tempint, func->thenCase);
+	NEW_unravelBDD (y, max, tempint, func->elseCase);
 }
 
 
