@@ -118,6 +118,23 @@ void Do_Flow() {
 	ite_free((void**)&var_mark);
 }
 
+void Get_Cutx(int x, int *influence, int *equ_funcs, int depth) {
+	if(depth == 0) {
+		for(int y = 0; y <= length[equ_funcs[x]]; y++) {
+			if(x != variables[equ_funcs[x]].num[y])
+			  influence[variables[equ_funcs[x]].num[y]]++;
+		}
+	} else {
+		for(int y = 0; y <= length[equ_funcs[x]]; y++) {
+//			d5_printf3("{%d %d}", x, y);
+			if(x != variables[equ_funcs[x]].num[y]) {
+				if(independantVars[variables[equ_funcs[x]].num[y]] == 1)
+				  influence[variables[equ_funcs[x]].num[y]]++;
+				else Get_Cutx(variables[equ_funcs[x]].num[y], influence, equ_funcs, depth-1);
+			}
+		}
+	}
+}
 
 void Do_Flow_Grouping() {
 	
@@ -220,7 +237,7 @@ void Do_Flow_Grouping() {
 
 	for(int x = 1; x <= numinp; x++) {
 		symrec *ptr = getsym_i(x);
-		var_score[x] = var_score[x] + 1;
+		var_score[x] = var_score[x] + 1; //So no score == 0
 		d5_printf5("%d{%d} (%s) = %5.3f ", x, influences[x].depth, (ptr&&ptr->name?ptr->name:"NULL"), var_score[x]);
 		if(independantVars[x] == 0) {
 			for(int y = 0; y <= indep_count; y++) {
@@ -233,6 +250,46 @@ void Do_Flow_Grouping() {
 		d5_printf1("\n");
 	}
 
+	/**********************************************************/
+	//looking for min cut for each high flow gate backing up 3 or 4
+	
+	int CutSize = 10;
+	
+	d5_printf2("\nCut Size of %d\n", CutSize);
+	int *influence = (int *)ite_calloc(numinp+1, sizeof(int), 9, "influence");
+	
+	for(int x = 1; x <= numinp; x++) {
+		int count = numinp+1;
+		int smallest = 0;
+		if(independantVars[x] == 0) {
+			for(int curr_CutSize = CutSize; curr_CutSize >= 0; curr_CutSize--) {
+				for(int y = 1; y <= numinp; y++)
+				  influence[y] = 0;
+				symrec *ptr = getsym_i(x);
+				d5_printf5("%d{%d} (%s) = %5.3f ", x, influences[x].depth, (ptr&&ptr->name?ptr->name:"NULL"), var_score[x]);
+				Get_Cutx(x, influence, equ_funcs, curr_CutSize);
+				int temp_count = 0;
+				for(int y = 1; y <= numinp; y++) {
+					if(influence[y] > 0) {
+						temp_count++;
+						ptr = getsym_i(y);
+						d5_printf3("%d (%s), ", y, (ptr&&ptr->name?ptr->name:"NULL"));
+					}
+				}
+				if(count >= temp_count) {
+					count = temp_count;
+					smallest = curr_CutSize;
+				}
+				d5_printf3("\n%d %d\n", count, smallest);
+			}
+		}
+		
+	}
+	ite_free((void **)&influence);
+	
+	/**********************************************************/
+	//End min cut thing
+	
 	for(int x = 0; x < dep_count; x++) {
 		ite_free((void**)&influences[x].influence);
 	}
