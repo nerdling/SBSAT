@@ -67,11 +67,11 @@
 %% /* Grammar rules and actions follow */
 
 top_exp: ID
-    { symrec *s=s_getsym($1, SYM_VAR); assert(s); BDDNode *ret = ite_vars(s); functions_add(ret, UNSURE, 0); printf("top_id\n"); }
+    { symrec *s=s_getsym($1, SYM_VAR); assert(s); BDDNode *ret = ite_vars(s); functions_add(ret, UNSURE, 0); /*printf("top_id\n");*/ }
    | '~' exp
-     {  functions_add($2, UNSURE, 0); printf("top_not\n"); assert(p_level==0); }
+     {  functions_add($2, UNSURE, 0); /*printf("top_not\n");*/ assert(p_level==0); }
    | '(' exp ')'
-     {  functions_add($2, UNSURE, 0); printf("top_par\n"); assert(p_level==0); }
+     {  functions_add($2, UNSURE, 0); /*printf("top_par\n");*/ assert(p_level==0); }
    | top_exp '&' top_exp
 ;
 
@@ -79,12 +79,12 @@ exp:  ID
     { symrec *s=s_getsym($1, SYM_VAR); assert(s); $$ = ite_vars(s); symbols++; }
    |  '~' exp
      { $$ = ite_not( $2 ); }
-   |  '(' { push_symbols(); } exp ')' { if (symbols >= 1) { $3=tmp_equ_var($3); symbols=0;}; pop_symbols(); }
+   |  '(' { push_symbols(); } exp ')' { if (symbols >= 10) { $3=tmp_equ_var($3); symbols=0;}; pop_symbols(); }
      { $$ = $3; }
    | exp '&' exp 
      { $$ = ite_and($1, $3); }
-   |  exp '#' { if (orlevel==0 && p_level==0) { $1 = tmp_equ_var($1); printf("ortop\n"); } orlevel++; } exp
-     { orlevel--; if (orlevel==0 && p_level==0) { printf("orret\n");} $$=ite_or($1,$4); }
+   |  exp '#' { if (orlevel==0 && p_level==0) { $1 = tmp_equ_var($1); /*printf("ortop\n");*/ } orlevel++; } exp
+     { orlevel--; if (orlevel==0 && p_level==0) { /*printf("orret\n");*/} $$=ite_or($1,$4); }
    |  exp P_EQUIV exp
      { $$ = ite_equ($1, $3); }
    |  exp P_IMP exp
@@ -111,6 +111,6 @@ BDDNode *tmp_equ_var(BDDNode *p)
     symrec *s_ptr = tputsym(SYM_VAR); 
     BDDNode *ret=ite_vars(s_ptr); 
     BDDNode *e=ite_equ(ret, p); 
-    functions_add(e, UNSURE, 0/*s_ptr->id*/); printf("ex\n"); 
+    functions_add(e, UNSURE, 0/*s_ptr->id*/); /*printf("ex\n"); */
     return ret;
 }

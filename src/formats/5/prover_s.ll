@@ -35,8 +35,8 @@ ID           [-a-zA-Z0-9_.\[\]]+
 "%"[^\n]*         /* eat up one-line comments */
 
 [ \t\r]+            /* eat up whitespace */
-"\\""\n"	    /* eat up new-lines */ { s_line++; fprintf(stderr, "\r%d", s_line); }
-"\n"	          /* eat up new-lines */ { s_line++; fprintf(stderr, "\r%d", s_line); }
+"\\""\n"	    /* eat up new-lines */ { s_line++; /*fprintf(stderr, "\r%d", s_line);*/ }
+"\n"	          /* eat up new-lines */ { s_line++; /*fprintf(stderr, "\r%d", s_line);*/ }
 
 .                 printf( "Unrecognized character: %s\n", yytext ); 
 
