@@ -92,9 +92,8 @@ AddStateTransitionAu(SmurfAuState *pSmurfAuState,
 			head = head->next;
 		}
 		//If head == NULL that means the autarky BDD was able to make an inference
-		//that did not involve the autarky variable. Or and inference was made
-		//like {1=2}. So it is necessary to go through 'head' because
-		//we need to skip by equivalences.
+		//that did not involve the autarky variable. Or an equivalence was made
+		//like {1=2}.
 	}
    if (pTransitionAu->positiveInferences.nNumElts ||
          pTransitionAu->negativeInferences.nNumElts)
