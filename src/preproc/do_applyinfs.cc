@@ -572,7 +572,7 @@ int Rebuild_BDDx (int x) {
 	lastinfer = previous;
 	lastinfer->next = NULL;
 
-	assert(x!=nmbrFunctions+1);
+	assert(x<nmbrFunctions+1);
 	long y = 0;
 	unravelBDD(&y, &bdd_tempint_max, &bdd_tempint, functions[x]);
    int *tempint=bdd_tempint;

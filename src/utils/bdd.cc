@@ -49,10 +49,11 @@ enum {
    NUMREPLACEALL_FLAG_NUMBER, /* var/replace list dependent */
    POSSIBLEINFER_FLAG_NUMBER,
 	CLEANPOSSIBLE_FLAG_NUMBER,
-   PRINTSHAREDBDDS_FLAG_NUMBER, 
-	MAX_FLAG_NUMBER
+   PRINTSHAREDBDDS_FLAG_NUMBER,
+   REDUCEDREPLACE_FLAG_NUMBER,
+   MAX_FLAG_NUMBER
 };
-int last_bdd_flag_number[MAX_FLAG_NUMBER] = {0,0,0,0,0,0,0,0,0,0};
+int last_bdd_flag_number[MAX_FLAG_NUMBER] = {0,0,0,0,0,0,0,0,0,0,0};
 int bdd_flag_number = 2;
 
 inline void
@@ -773,7 +774,7 @@ BDDNode * pruning_p2 (BDDNode * f, BDDNode * c)
 
    // We know that f & c are both BDD's with top variables.
    if (f->variable < c->variable)
-      return pruning_p2 (f, ite_or (c->thenCase, c->elseCase));	//xquantify(c, c->variable));
+      return pruning_p2 (f, ite_or_te(c));//ite_or (c->thenCase, c->elseCase));	//xquantify(c, c->variable));
    int v = f->variable;
 
    //v is the top variable of f & c.
@@ -1199,7 +1200,7 @@ BDDNode * _num_replace (BDDNode * f, int var, int replace) {
    BDDNode * e = _num_replace (f->elseCase, var, replace);
    if (r == e)
 	  return (f->tmp_bdd = r);
-	//return ite (ite_var (f->variable), r, e);
+	return (f->tmp_bdd = ite (ite_var (f->variable), r, e));
 
 	return (f->tmp_bdd = find_or_add_node(f->variable, r, e));
 }

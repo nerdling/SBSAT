@@ -222,7 +222,7 @@ int DepCluster () {
 							 default: break;
 							}
 						}
-//#define SEAN_REAL_DC //Unomment for REAL dependent clustering
+//#define SEAN_REAL_DC //Uncomment for REAL dependent clustering
 #ifndef SEAN_REAL_DC
 					   delete [] bdd_vars;
 						bdd_vars = NULL;

@@ -166,7 +166,6 @@ int ExQuantifyAnd () {
 						out = 1;
 						break;
 					}
-
 					if(length[z] > MAX_EXQUANTIFY_VARLENGTH){
 						out = 1;
 						break;
@@ -174,13 +173,13 @@ int ExQuantifyAnd () {
 
 					Quantify = ite_and(Quantify, functions[z]);
 					affected++;
-					
 					functions[z] = true_ptr;
+ 
 					switch (int r=Rebuild_BDDx(z)) {
 					 case TRIV_UNSAT: 
 					 case TRIV_SAT: 
 					 case PREP_ERROR: 
-						ret = r; goto ea_bailout; /* as much as I hate gotos */
+						ret = r; goto ea_bailout;
 					 default: break;
 					}
 					UnSetRepeats(z);

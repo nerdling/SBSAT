@@ -80,6 +80,8 @@ void UnSetRepeats(int x);
 
 int Rebuild_BDDx (int x);
 int Rebuild_BDD (BDDNode *, int *, int *&);
+BDDNode *strip_x(int, int);
+BDDNode *collect_x (BDDNode *, int);
 int add_newFunctions(BDDNode **, int);
 int Do_Apply_Inferences ();
 int Do_Apply_Inferences_backend ();

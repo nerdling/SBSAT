@@ -36,6 +36,7 @@
 *********************************************************************/
 
 #include "ite.h"
+#include "preprocess.h"
 
 char *P1_repeat;
 char *P2_repeat;
@@ -120,6 +121,37 @@ amount_compfunc (const void *x, const void *y)
     }
 #endif
   return -1;
+}
+
+BDDNode *strip_x (int bdd, int x) {
+	if(length[bdd] < 3) return functions[bdd];
+	int new_x = variables[bdd].num[0]; //Really if variable 1 doesn't exist
+	                                   //in this BDD then I don't have to do
+	                                   //two replaces
+	int new_v0 = variables[bdd].num[length[bdd]-1] + 1;
+	BDDNode *f = num_replace(functions[bdd], variables[bdd].num[0], new_v0);
+	f = num_replace(f, x, new_x);
+	BDDNode *f_x = collect_x(f, new_x);
+	f = pruning(f, f_x);
+	f = num_replace(f, new_v0, variables[bdd].num[0]);
+	f_x = num_replace(f_x, new_x, x);
+	f_x = num_replace(f_x, new_v0, variables[bdd].num[0]);
+	functions[bdd] = f;
+	int OLD_DO_INFERENCES = DO_INFERENCES;
+	DO_INFERENCES = 0;
+	//printBDD(functions[bdd]);
+	Rebuild_BDDx(bdd);
+	DO_INFERENCES = OLD_DO_INFERENCES;
+	return f_x;
+}
+
+BDDNode *collect_x (BDDNode *f, int x) {
+	if(f->variable <= x) return f;
+	BDDNode *r = collect_x(f->thenCase, x);
+	BDDNode *e = collect_x(f->elseCase, x);
+	if(r == false_ptr) return e;
+	if(e == false_ptr) return r;
+	return find_or_add_node (f->variable, r, e);	
 }
 
 infer *NEW_GetInfer(long *y, long *max, int **tempint, BDDNode * func);
