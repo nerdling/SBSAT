@@ -49,17 +49,14 @@ int MAX_EXQUANTIFY_VARLENGTH = 5; //Limits size of number of vars in
 
 int ExQuantifyAnd();
 
-int countBDDs() 
-{
+int countBDDs() {
 	int count = 0;
 	for(int x = 0; x < nmbrFunctions; x++)
 	  if(functions[x]!=true_ptr) count++;
 	return count;
 }
 
-int
-Do_ExQuantifyAnd()
-{
+int Do_ExQuantifyAnd() {
 	MAX_EXQUANTIFY_CLAUSES += 5;
 	MAX_EXQUANTIFY_VARLENGTH +=5;
 	d3_printf1 ("ANDING AND EXISTENTIALLY QUANTIFYING - ");
@@ -72,24 +69,19 @@ Do_ExQuantifyAnd()
 		 str_length = strlen(p);
 		 d3_printf1(p);
 	);
-	while (cofs!=PREP_NO_CHANGE)
-	  {
-		  cofs = ExQuantifyAnd ();
-		  if(cofs == PREP_CHANGED) ret = PREP_CHANGED;
-		  else if(cofs == TRIV_UNSAT)
-			 {
-				 return TRIV_UNSAT;
-			 }
-	  }
+	while (cofs!=PREP_NO_CHANGE) {
+		cofs = ExQuantifyAnd ();
+		if(cofs == PREP_CHANGED) ret = PREP_CHANGED;
+		else if(cofs == TRIV_UNSAT) {
+			return TRIV_UNSAT;
+		}
+	}
 	d3_printf1 ("\n");
 	d2e_printf1 ("\r                                      ");
 	return ret;
 }
 
-
-int 
-ExQuantifyAnd ()
-{
+int ExQuantifyAnd () {
 	int ret = PREP_NO_CHANGE;
 	
 	BDDNode *Quantify;

@@ -67,6 +67,7 @@ preproc_type preproc[] = {
   { "Dc", 2, Do_DepCluster, &DO_DEP_CLUSTER },
   { "Sp", 2, Do_Split, &DO_SPLIT },	
   { "Rw", 2, Do_Rewind, &DO_REWIND },
+  { "Cf", 2, Do_Clear_FunctionType, &DO_CLEAR_FUNCTION_TYPE },
   { "", 0, NULL, NULL }
 };
 

@@ -138,7 +138,7 @@ SOURCES = create_infs.cc do_cofactor.cc   do_exquantify.cc   \
 	do_exquantifyand.cc  do_pruning.cc init_preproc.cc \
 	preprocess.cc do_pruning_1.cc do_pruning_2.cc      \
 	do_pruning_restrict.cc do_flow.cc do_pruning_pr.cc \
-	do_split.cc do_steal.cc do_rewind.cc
+	do_split.cc do_steal.cc do_rewind.cc do_clearft.cc
 
 
 noinst_LTLIBRARIES = libpreproc.la
@@ -156,7 +156,7 @@ am__objects_1 = create_infs.lo do_cofactor.lo do_exquantify.lo \
 	do_depcluster.lo do_exquantifyand.lo do_pruning.lo \
 	init_preproc.lo preprocess.lo do_pruning_1.lo do_pruning_2.lo \
 	do_pruning_restrict.lo do_flow.lo do_pruning_pr.lo do_split.lo \
-	do_steal.lo do_rewind.lo
+	do_steal.lo do_rewind.lo do_clearft.lo
 am_libpreproc_la_OBJECTS = $(am__objects_1)
 libpreproc_la_OBJECTS = $(am_libpreproc_la_OBJECTS)
 
@@ -165,6 +165,7 @@ depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 @AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/create_infs.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/do_applyinfs.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/do_clearft.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/do_cofactor.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/do_depcluster.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/do_exquantify.Plo \
@@ -174,9 +175,9 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	./$(DEPDIR)/do_pruning_2.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/do_pruning_pr.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/do_pruning_restrict.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/do_split.Plo ./$(DEPDIR)/do_steal.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/do_rewind.Plo ./$(DEPDIR)/do_split.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/do_steal.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/do_strength.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/do_rewind.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/init_preproc.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/other_preproc.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/preprocess.Plo
@@ -195,7 +196,7 @@ SOURCES = create_infs.cc do_cofactor.cc   do_exquantify.cc   \
 	do_exquantifyand.cc  do_pruning.cc init_preproc.cc \
 	preprocess.cc do_pruning_1.cc do_pruning_2.cc      \
 	do_pruning_restrict.cc do_flow.cc do_pruning_pr.cc \
-	do_split.cc do_steal.cc do_rewind.cc
+	do_split.cc do_steal.cc do_rewind.cc do_clearft.cc
 
 
 all: all-am
@@ -227,6 +228,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/create_infs.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_applyinfs.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_clearft.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_cofactor.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_depcluster.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_exquantify.Plo@am__quote@
@@ -237,10 +239,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_pruning_2.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_pruning_pr.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_pruning_restrict.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_rewind.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_split.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_steal.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_strength.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_rewind.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/init_preproc.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/other_preproc.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/preprocess.Plo@am__quote@

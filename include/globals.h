@@ -69,6 +69,8 @@ extern int DO_INFERENCES;
 extern int DO_EXIST_QUANTIFY;
 extern int DO_EXIST_QUANTIFY_AND;
 extern int DO_DEP_CLUSTER;
+extern int DO_REWIND;
+extern int DO_CLEAR_FUNCTION_TYPE;
 extern int MAX_EXQUANTIFY_CLAUSES;     //Number of clauses a variable appears in
                                      //to quantify that variable away.
 extern int COF_MAX;
