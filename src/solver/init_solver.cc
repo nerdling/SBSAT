@@ -44,6 +44,7 @@ int *arrChangedSmurfs = NULL;
 // inferred variables (variables inferred to be true or inferred to be false,
 // including branch variables)
 BacktrackStackEntry *arrBacktrackStack; 
+BacktrackStackEntry *pStartBacktrackStack; 
 
 ITE_INLINE void FreeHeuristicTablesForSpecialFuncs();
 

@@ -202,6 +202,8 @@ UpdateEachAffectedLemma(AffectedFuncsStruct *pAFS, int nInferredValue)
             );
 
          pLemmaListDisagreed->nNumLemmaInfs++;
+         if (pLemmaListDisagreed->nLemmaFirstUseful == 0) 
+            pLemmaListDisagreed->nLemmaFirstUseful = ite_counters[NUM_LPQ_ENQUEUE];
          ite_counters[INF_LEMMA]++;
          InferLiteral(nWatchedVble, nWatchedVblePolarity, false,
                pLemmaListDisagreed->pLemma,
@@ -218,6 +220,8 @@ UpdateEachAffectedLemma(AffectedFuncsStruct *pAFS, int nInferredValue)
          continue;
       }
       pLemmaListDisagreed->nNumLemmaConflict++;
+      if (pLemmaListDisagreed->nLemmaFirstUseful == 0) 
+         pLemmaListDisagreed->nLemmaFirstUseful = ite_counters[NUM_LPQ_ENQUEUE];
       pConflictLemma = pLemmaListDisagreed->pLemma;
       // goto_Backtrack;
       return ERR_BT_LEMMA;
@@ -324,6 +328,8 @@ UpdateEachAffectedLemma(AffectedFuncsStruct *pAFS, int nInferredValue)
             );
 
          pLemmaListDisagreed->nNumLemmaInfs++;
+         if (pLemmaListDisagreed->nLemmaFirstUseful == 0) 
+            pLemmaListDisagreed->nLemmaFirstUseful = ite_counters[NUM_LPQ_ENQUEUE];
          ite_counters[INF_LEMMA]++;
          InferLiteral(nWatchedVble, nWatchedVblePolarity, false,
                pLemmaListDisagreed->pLemma, pLemmaListDisagreed, 1);
@@ -340,6 +346,8 @@ UpdateEachAffectedLemma(AffectedFuncsStruct *pAFS, int nInferredValue)
          continue;
       }
       pLemmaListDisagreed->nNumLemmaConflict++;
+      if (pLemmaListDisagreed->nLemmaFirstUseful == 0) 
+         pLemmaListDisagreed->nLemmaFirstUseful = ite_counters[NUM_LPQ_ENQUEUE];
       pConflictLemma = pLemmaListDisagreed->pLemma;
       // goto_Backtrack;
       return ERR_BT_LEMMA;

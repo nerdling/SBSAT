@@ -262,11 +262,10 @@ CalculateProgress(int *_whereAmI, int *_total)
   int hard_count=28;
   int count=0;
 
-  extern BacktrackStackEntry *arrBacktrackStack;
   extern BacktrackStackEntry *pBacktrackTop;
-  extern ChoicePointStruct *arrChoicePointStack;
-  BacktrackStackEntry *pBacktrack = arrBacktrackStack;
-  ChoicePointStruct *pChoicePoint = arrChoicePointStack;
+  extern ChoicePointStruct *pStartChoicePointStack;
+  BacktrackStackEntry *pBacktrack = pStartBacktrackStack;
+  ChoicePointStruct *pChoicePoint = pStartChoicePointStack;
   while (pBacktrack < pBacktrackTop && 
          (count<soft_count || (count < hard_count && whereAmI==0)) ) 
   {

@@ -84,7 +84,7 @@ BackTrack_SBJ()
       // Pop the choice point stack.
       pChoicePointTop--;
 
-      if (pChoicePointTop < arrChoicePointStack)
+      if (pChoicePointTop < pStartChoicePointStack)
       {
          // return ERR_
          return 1;
@@ -363,7 +363,7 @@ BackTrack_SBJ()
 	while(highest_uip_level < nOldBacktrackStackIndex) {
 		// Pop the choice point stack.
 		pChoicePointTop--;
-		if (pChoicePointTop < arrChoicePointStack) {
+		if (pChoicePointTop < pStartChoicePointStack) {
 			pChoicePointTop++;
 			nAtTop = 1;
 			break;

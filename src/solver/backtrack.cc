@@ -75,7 +75,7 @@ BackTrack()
       // Pop the choice point stack.
       pChoicePointTop--;
 
-      if (pChoicePointTop < arrChoicePointStack)
+      if (pChoicePointTop < pStartChoicePointStack)
       {
          // return ERR_
          return 1;

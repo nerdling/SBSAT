@@ -93,6 +93,7 @@ char *arrSolution;
 int nVble;
 
 ChoicePointStruct *arrChoicePointStack; // Info on previous branch variables.
+ChoicePointStruct *pStartChoicePointStack; 
 ChoicePointStruct *pChoicePointTop; // Next free position in above stack.
 
 int nCallsToAddLemma =  0;
@@ -271,8 +272,24 @@ dump_counters(FILE *fd)
 }
 
 ITE_INLINE int
+ITE_Split(int *lit)
+{
+   if (pStartChoicePointStack >= pChoicePointTop) return 1;
+
+   pStartChoicePointStack++;
+   return 0;
+}
+
+ITE_INLINE int
+ITE_GetPath(int **path, int *path_size)
+{
+   return 0;
+}
+
+ITE_INLINE int
 CheckBtHooks()
 {
+   int ret = 0;
    ite_counters[NUM_BACKTRACKS]++;
    d9_printf2("\nStarting backtrack # %ld\n", (long)ite_counters[NUM_BACKTRACKS]);
    if (ite_counters[NUM_BACKTRACKS] % BACKTRACKS_PER_STAT_REPORT == 0) {
@@ -294,7 +311,20 @@ CheckBtHooks()
       Update_arrVarScores();
 
    /* setup bt function as a hook with frequency 1 ? */
-   return proc_backtrack();
+   ret = proc_backtrack();
+
+//#define MK_SPLIT_TEST
+#ifdef MK_SPLIT_TEST
+   if (ite_counters[NUM_BACKTRACKS] == 10000) {
+      int lit;
+      int *path, path_size;
+      if (ITE_Split(&lit) == 0) {
+         ITE_GetPath(&path, &path_size);
+      }
+   } 
+#endif
+
+   return ret;
 }
 
 ITE_INLINE int
@@ -395,9 +425,11 @@ InitBrancherX()
    pInferenceQueueNextElt = pInferenceQueueNextEmpty = arrInferenceQueue;
    pFnInferenceQueueNextElt = pFnInferenceQueueNextEmpty = arrFnInferenceQueue;
 
+  pStartChoicePointStack =
   pChoicePointTop = arrChoicePointStack;
   pConflictLemma = NULL;
 
+  pStartBacktrackStack =
   pBacktrackTop = arrBacktrackStack;
   nBacktrackStackIndex = 1;
 
