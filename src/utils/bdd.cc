@@ -54,9 +54,10 @@ enum {
    NUMREPLACE_FLAG_NUMBER, /* var/replace dependent */
    NUMREPLACEALL_FLAG_NUMBER, /* var/replace list dependent */
    POSSIBLEINFER_FLAG_NUMBER,
-   MAX_FLAG_NUMBER
+	CLEANPOSSIBLE_FLAG_NUMBER,
+	MAX_FLAG_NUMBER
 };
-int last_bdd_flag_number[MAX_FLAG_NUMBER] = {0,0,0,0,0,0,0,0,0};
+int last_bdd_flag_number[MAX_FLAG_NUMBER] = {0,0,0,0,0,0,0,0,0,0};
 int bdd_flag_number = 2;
 
 //#define itetable_add_node itetable_find_or_add_node
@@ -2053,16 +2054,41 @@ BDDNode * _num_replace (BDDNode * f, int var, int replace) {
 }
 
 infer *_possible_infer_x(BDDNode *f, int x);
+void clean_possible_infer_x(BDDNode *f, int x);
 	
 infer *possible_infer_x(BDDNode *f, int x) {
    start_bdd_flag_number(POSSIBLEINFER_FLAG_NUMBER);
-   return _possible_infer_x(f, x);
+   infer *result = _possible_infer_x(f, x);
+   start_bdd_flag_number(CLEANPOSSIBLE_FLAG_NUMBER);
+	clean_possible_infer_x(f, x);
+	return result;
+}
+
+infer *copy_infer(infer *inference) {
+	infer *result = new infer;
+	infer *tmp_infer = result;
+	for(infer *infer_iter=inference; infer_iter!=NULL; infer_iter=infer_iter->next) {
+		tmp_infer->next = new infer;
+		tmp_infer = tmp_infer->next;
+		tmp_infer->nums[0] = infer_iter->nums[0];
+		tmp_infer->nums[1] = infer_iter->nums[1];
+	}
+	tmp_infer->next = NULL;
+	if(tmp_infer == result) {
+		delete result;
+		result = NULL;
+	} else {
+		tmp_infer = result;
+		result = result->next;
+		delete tmp_infer;
+	}
+	return result;
 }
 
 infer *_possible_infer_x(BDDNode *f, int x) {
 	if(f->variable < x) return NULL; //This could happen on a path that doesn't involve x
 
-   if (f->flag == bdd_flag_number) return f->tmp_infer;
+   if(f->flag == bdd_flag_number) return copy_infer(f->tmp_infer);
    f->flag = bdd_flag_number;
 	
 	if(f->variable == x) {
@@ -2071,13 +2097,15 @@ infer *_possible_infer_x(BDDNode *f, int x) {
 			inference->nums[0] = x;
 			inference->nums[1] = 0;
 			inference->next = NULL;
-			return (f->tmp_infer = inference);
+			f->tmp_infer = copy_infer(inference);
+			return inference;
 		} else if(f->elseCase == true_ptr || f->thenCase == false_ptr) {
 			infer *inference = new infer;
 			inference->nums[0] = -x;
 			inference->nums[1] = 0;
 			inference->next = NULL;
-			return (f->tmp_infer = inference);
+			f->tmp_infer = copy_infer(inference);
+			return inference;
 		} else {
 			BDDNode *r_BDD = ite_and(f->thenCase, ite_not(f->elseCase));
 			                 //Ex_GetInfer(f->thenCase);
@@ -2086,7 +2114,8 @@ infer *_possible_infer_x(BDDNode *f, int x) {
 				inference->nums[0] = -x;
 				inference->nums[1] = 0;
 				inference->next = NULL;
-				return (f->tmp_infer = inference);
+				f->tmp_infer = copy_infer(inference);
+				return inference;
 			}
 			infer *head = NULL;
 			infer *temp = NULL;
@@ -2096,7 +2125,8 @@ infer *_possible_infer_x(BDDNode *f, int x) {
 				head->nums[0] = 0;
 				head->nums[1] = 0;
 				head->next = NULL;
-				return (f->tmp_infer = head);
+				f->tmp_infer = copy_infer(head);
+				return head;
 			}
 			BDDNode *e_BDD = ite_and(f->elseCase, ite_not(f->thenCase));
 			                 //Ex_GetInfer(f->elseCase);
@@ -2105,7 +2135,8 @@ infer *_possible_infer_x(BDDNode *f, int x) {
 				inference->nums[0] = x;
 				inference->nums[1] = 0;
 				inference->next = NULL;
-				return (f->tmp_infer = inference);
+				f->tmp_infer = copy_infer(inference);
+				return inference;
 			}
 			infer *e = e_BDD->inferences;
 			if(e == NULL) {
@@ -2114,7 +2145,8 @@ infer *_possible_infer_x(BDDNode *f, int x) {
 				head->nums[0] = 0;
 				head->nums[1] = 0;
 				head->next = NULL;
-				return (f->tmp_infer = head);
+				f->tmp_infer = copy_infer(head);
+				return head;
 			}
 			
 			for(infer *r_iter=r; r_iter!=NULL; r_iter=r_iter->next) {
@@ -2147,23 +2179,28 @@ infer *_possible_infer_x(BDDNode *f, int x) {
 //				printBDDTree(f, &w);
 			}
 			
-			return (f->tmp_infer = head);
+			f->tmp_infer = copy_infer(head);
+			return head;
 		}
 	} else {
-		infer *r = possible_infer_x(f->thenCase, x);
+		infer *r = _possible_infer_x(f->thenCase, x);
 		if(r != NULL) 
-		  if(r->nums[0] == 0) return (f->tmp_infer = r);
-
-		infer *e = possible_infer_x(f->elseCase, x);
-		if(e != NULL) {
-		  if(e->nums[0] == 0) {
-			  while (r!=NULL) { infer *temp = r; r = r->next; delete temp; }
-			  return (f->tmp_infer = e);
+		  if(r->nums[0] == 0){
+			  f->tmp_infer = copy_infer(r);
+			  return r;
 		  }
+		
+		infer *e = _possible_infer_x(f->elseCase, x);
+		if(e != NULL) {
+			if(e->nums[0] == 0) {
+				while (r!=NULL) { infer *temp = r; r = r->next; delete temp; }
+				f->tmp_infer = copy_infer(e);
+				return e;
+			}
 		}
 		
-		if(r == NULL) return (f->tmp_infer = e);
-		if(e == NULL) return (f->tmp_infer = r);
+		if(r == NULL) { f->tmp_infer = copy_infer(e); return e; }
+		if(e == NULL) { f->tmp_infer = copy_infer(r); return r; }
 		//If both are NULL, NULL is returned;
 		
 		if((r->nums[1] == 0 && e->nums[1] != 0) ||
@@ -2172,17 +2209,20 @@ infer *_possible_infer_x(BDDNode *f, int x) {
 			temp->nums[0] = 0;
 			temp->nums[1] = 0;
 			temp->next = NULL;
-			return (f->tmp_infer = temp);
+			f->tmp_infer = copy_infer(temp);
+			return temp;
 		} else if(r->nums[1] == 0 && e->nums[1] == 0 && r->nums[0] == e->nums[0]) {
 			//Both sides are same inference, return r;
 			while (e!=NULL) { infer *temp = e; e = e->next; delete temp; }
-			return (f->tmp_infer = r);
+			f->tmp_infer = copy_infer(r);
+			return r;
 		} else if(r->nums[1] == 0 && e->nums[1] == 0 && r->nums[0] == -e->nums[0]) {
 			//Sides are opposite inference, return {f->variable, r->nums[1]};
 			r->nums[1] = r->nums[0]; //r->nums[1] = -e->nums[0];
 			r->nums[0] = f->variable;
 			while (e!=NULL) { infer *temp = e; e = e->next; delete temp; }
-			return (f->tmp_infer = r);
+			f->tmp_infer = copy_infer(r);
+			return r;
 		}
 		
 		//They share equivalences of x = {y, -y}
@@ -2211,8 +2251,18 @@ infer *_possible_infer_x(BDDNode *f, int x) {
 		infer *temp;
 		while (r!=NULL) { temp = r; r = r->next; delete temp;	}
 		while (e!=NULL) { temp = e; e = e->next; delete temp; }
-		return (f->tmp_infer = head);
+		f->tmp_infer = copy_infer(head);
+		return head;
 	}	
+}
+
+void clean_possible_infer_x(BDDNode *f, int x) {
+	if(f->variable < x) return;
+   if(f->flag == bdd_flag_number) return;
+   f->flag = bdd_flag_number;
+	while (f->tmp_infer!=NULL) { infer *temp = f->tmp_infer; f->tmp_infer = f->tmp_infer->next; delete temp; }
+	clean_possible_infer_x(f->thenCase, x);
+	clean_possible_infer_x(f->elseCase, x);
 }
 
 void cheat_replace (BDDNode * f, int var, int replace) {
