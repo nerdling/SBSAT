@@ -956,6 +956,7 @@ cnf_process(store *integers, int num_minmax, minmax * min_max_store)
          int set_true = 0;
          qsort(min_max_store[x].num, min_max_store[x].length, sizeof(int), abscompfunc);
          functions[x+numout] = MinMaxBDD(min_max_store[x].num, min_max_store[x].min, min_max_store[x].max, min_max_store[x].length, set_true);
+			functionType[x+numout] = MINMAX;
 		}
 		delete [] min_max_store;
 		numout = numout+num_minmax;
