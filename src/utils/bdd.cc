@@ -43,6 +43,41 @@
 
 #define SORT_ITE_OPS
 
+enum {
+   BDD2XDD_FLAG_NUMBER,
+   FORCE_REUSE_FLAG_NUMBER, /* if bigger than this => won't get reused */
+   XQUANTIFY_FLAG_NUMBER, /* v dependent */
+   UNRAVELBDD_FLAG_NUMBER, /* starting bdd dependent */
+   COUNTX_FLAG_NUMBER, /* X dependent */
+   SETVARIABLE_FLAG_NUMBER, /* torf+-num dependent */
+   SETVARIABLEALL_FLAG_NUMBER, /* variable list dependent */
+   NUMREPLACE_FLAG_NUMBER, /* var/replace dependent */
+   NUMREPLACEALL_FLAG_NUMBER, /* var/replace list dependent */
+   MAX_FLAG_NUMBER
+};
+int last_bdd_flag_number[MAX_FLAG_NUMBER] = {0,0,0,0,0,0,0,0,0};
+int bdd_flag_number = 2;
+
+//#define itetable_add_node itetable_find_or_add_node
+
+inline void
+start_bdd_flag_number(int last_bdd_flag)
+{
+   if (last_bdd_flag > FORCE_REUSE_FLAG_NUMBER ||
+         last_bdd_flag_number[last_bdd_flag] != bdd_flag_number)
+   {
+      bdd_flag_number++;
+      if (bdd_flag_number > 1000000000) {
+         void bdd_gc();
+         bdd_gc();
+         for(int i=0;i<MAX_FLAG_NUMBER;i++)
+            last_bdd_flag_number[i] = 0;
+         bdd_flag_number = 3;
+      }
+      last_bdd_flag_number[last_bdd_flag] = bdd_flag_number;
+   }
+}
+
 BDDNode *f_mitosis (BDDNode *f, BDDNode **x, int *structureBDD)
 {
    if (IS_TRUE_FALSE(f))
@@ -716,25 +751,40 @@ BDDNode *xdd_reduce_f(int v, BDDNode *x) {
 }
 
 BDDNode *xddxor(BDDNode *x, BDDNode *y) {
+   BDDNode *cached = itetable_find_or_add_node(9, x, y, NULL);
+   if (cached) return cached;
+
 	if(x == false_ptr) return y;
 	if(y == false_ptr) return x;
 	if(x == true_ptr && y == true_ptr) return false_ptr;
 	int v = (x->variable > y->variable) ? x->variable : y->variable;
 	BDDNode *r = xddxor(xdd_reduce_t(v, x), xdd_reduce_t(v, y));
 	BDDNode *e = xddxor(xdd_reduce_f(v, x), xdd_reduce_f(v, y));
-	if(r == false_ptr) return e;
-	return find_or_add_node(v, r, e);
+	if(r == false_ptr) return itetable_add_node(9, x, y, e);
+	//return find_or_add_node(v, r, e);
+	return itetable_add_node(9, x, y, find_or_add_node(v, r, e));
 }
 
+BDDNode *_bdd2xdd(BDDNode *x);
+
 BDDNode *bdd2xdd(BDDNode *x) {
+   start_bdd_flag_number(BDD2XDD_FLAG_NUMBER);
+   return _bdd2xdd(x);
+}
+
+BDDNode *_bdd2xdd(BDDNode *x) {
 	if(x == false_ptr) return false_ptr;
 	if(x == true_ptr) return true_ptr;
+
+   if (x->flag == bdd_flag_number) return x->tmp_bdd;
+   x->flag = bdd_flag_number;
+
 	int v = x->variable;
-	BDDNode *r = bdd2xdd(xdd_reduce_t(v, x));
-	BDDNode *e = bdd2xdd(xdd_reduce_f(v, x));
+	BDDNode *r = _bdd2xdd(xdd_reduce_t(v, x));
+	BDDNode *e = _bdd2xdd(xdd_reduce_f(v, x));
 	r = xddxor(r, e);
-	if(r == false_ptr) return e;
-	return find_or_add_node(v, r, e);
+	if(r == false_ptr) return (x->tmp_bdd = e);
+	return (x->tmp_bdd = find_or_add_node(v, r, e));
 }
 
 inline
@@ -815,7 +865,7 @@ BDDNode *_ite_x_y_F(BDDNode *x, BDDNode *y)
    } 
 
    if (r == e) return (r);
-   return itetable_find_or_add_node(1, x, y, find_or_add_node(v, r, e));
+   return itetable_add_node(1, x, y, find_or_add_node(v, r, e));
    return find_or_add_node(v, r, e);
 }
 
@@ -892,7 +942,7 @@ BDDNode *ite_x_y_T(BDDNode *x, BDDNode *y)
    } 
 
    if (r == e) return (r);
-   return itetable_find_or_add_node(2, x, y, find_or_add_node(v, r, e));
+   return itetable_add_node(2, x, y, find_or_add_node(v, r, e));
    return find_or_add_node(v, r, e);
 }
 
@@ -931,7 +981,7 @@ BDDNode *ite_x_T_z(BDDNode *x, BDDNode *z)
    } 
 
    if (r == e) return (r);
-//   return itetable_find_or_add_node(3, x, z, find_or_add_node(v, r, e));
+//   return itetable_add_node(3, x, z, find_or_add_node(v, r, e));
    return find_or_add_node(v, r, e);
 }
 
@@ -1620,14 +1670,8 @@ BDDNode * pruning_p1(BDDNode * f, BDDNode * c)
 
 int _countX(BDDNode *bdd, BDDNode *X);
 
-int bdd_flag_number = 2;
 int countX(BDDNode *bdd, BDDNode *X) {
-   bdd_flag_number++;
-   if (bdd_flag_number > 1000000000) {
-      void bdd_gc();
-      bdd_gc();
-      bdd_flag_number = 3;
-   }
+   start_bdd_flag_number(COUNTX_FLAG_NUMBER);
    return _countX(bdd, X);
 }
 
@@ -1742,17 +1786,12 @@ nmbrVarsInCommon(int bddNmbr1, int bddNmbr2, int STOPAT)
    }
 }
 
-BDDNode * _xquantify (BDDNode * f, int v);
 
+BDDNode * _xquantify (BDDNode * f, int v);
 BDDNode * xquantify (BDDNode * f, int v)
 {
-  bdd_flag_number++;
-  if (bdd_flag_number > 1000000000) {
-     void bdd_gc();
-     bdd_gc();
-     bdd_flag_number = 3;
-  }
-  return _xquantify(f, v);
+   start_bdd_flag_number(XQUANTIFY_FLAG_NUMBER);
+   return _xquantify(f, v);
 }
 
 BDDNode * _xquantify (BDDNode * f, int v)
@@ -1775,7 +1814,7 @@ BDDNode * _xquantify (BDDNode * f, int v)
 
 	if (r == e)
       return (f->tmp_bdd = r);
-   return (f->tmp_bdd = itetable_find_or_add_node(10, f, var, find_or_add_node (f->variable, r, e)));
+   return (f->tmp_bdd = itetable_add_node(10, f, var, find_or_add_node (f->variable, r, e)));
 }
 
 BDDNode * OLD_xquantify (BDDNode * f, int v)
@@ -1933,12 +1972,7 @@ void NEW_unravelBDD(long *y, long *max, int **tempint, BDDNode * func);
 void unravelBDD(long *y, long *max, int **tempint, BDDNode * func) {
   *y=0;
   // assert (no flag is set );
-  bdd_flag_number++;
-  if (bdd_flag_number > 1000000000) {
-     void bdd_gc();
-     bdd_gc();
-     bdd_flag_number = 3;
-  }
+  start_bdd_flag_number(UNRAVELBDD_FLAG_NUMBER);
   NEW_unravelBDD(y, max, tempint, func);
   for (int i = 0;i<*y;i++) {
      // clear the flag
@@ -1970,25 +2004,15 @@ BDDNode * _set_variable (BDDNode * f, int num, int torf);
 
 void set_variable_all(llist * k, int num, int torf) 
 {
-  bdd_flag_number++;
-  if (bdd_flag_number > 1000000000) {
-     void bdd_gc();
-     bdd_gc();
-     bdd_flag_number = 3;
-  }
+   start_bdd_flag_number(SETVARIABLEALL_FLAG_NUMBER);
    while(k != NULL) {
       functions[k->num] = _set_variable(functions[k->num], num, torf);
       k = k->next;
    }
 }
 BDDNode * set_variable (BDDNode * f, int num, int torf) {
-  bdd_flag_number++;
-  if (bdd_flag_number > 1000000000) {
-     void bdd_gc();
-     bdd_gc();
-     bdd_flag_number = 3;
-  }
-  return _set_variable(f, num, torf);
+   start_bdd_flag_number(SETVARIABLE_FLAG_NUMBER);
+   return _set_variable(f, num, torf);
 }
 
 
@@ -2018,26 +2042,16 @@ BDDNode * _num_replace (BDDNode * f, int var, int replace);
 
 void num_replace_all(llist *k, int var, int replace) 
 {
-  bdd_flag_number++;
-  if (bdd_flag_number > 1000000000) {
-     void bdd_gc();
-     bdd_gc();
-     bdd_flag_number = 3;
-  }
-  while(k != NULL) {
-     functions[k->num] = _num_replace(functions[k->num], var, replace);
-     k = k->next; 
-  }
+   start_bdd_flag_number(NUMREPLACEALL_FLAG_NUMBER);
+   while(k != NULL) {
+      functions[k->num] = _num_replace(functions[k->num], var, replace);
+      k = k->next; 
+   }
 }
 
 BDDNode * num_replace (BDDNode * f, int var, int replace) {
-  bdd_flag_number++;
-  if (bdd_flag_number > 1000000000) {
-     void bdd_gc();
-     bdd_gc();
-     bdd_flag_number = 3;
-  }
-  return _num_replace(f, var, replace);
+   start_bdd_flag_number(NUMREPLACE_FLAG_NUMBER);
+   return _num_replace(f, var, replace);
 }
 
 BDDNode * _num_replace (BDDNode * f, int var, int replace) {
@@ -2051,14 +2065,14 @@ BDDNode * _num_replace (BDDNode * f, int var, int replace) {
 			BDDNode *itevar = ite_var(replace);
          BDDNode *cached = itetable_find_or_add_node(11, itevar, f, NULL);
          if (cached) return (f->tmp_bdd = cached);
-         return (f->tmp_bdd = itetable_find_or_add_node(11, itevar, f, 
+         return (f->tmp_bdd = itetable_add_node(11, itevar, f, 
                   ite(itevar, f->thenCase, f->elseCase)));
       } else if (replace < 0) {
          return (f->tmp_bdd = ite(ite_var(-replace), f->elseCase, f->thenCase));
 			BDDNode *itevar = ite_var(-replace);
          BDDNode *cached = itetable_find_or_add_node(11, itevar, f, NULL);
          if (cached) return (f->tmp_bdd = cached);
-         return (f->tmp_bdd = itetable_find_or_add_node(11, itevar, f,
+         return (f->tmp_bdd = itetable_add_node(11, itevar, f,
                   ite(itevar, f->elseCase, f->thenCase)));
       }
    }

@@ -115,7 +115,21 @@ itetable_hash_fn(int v, BDDNode *r, BDDNode *e)
 }
 
 BDDNode * 
-itetable_find_or_add_node (int v, BDDNode * r, BDDNode * e, BDDNode *cached_ite)
+itetable_add_node(int v, BDDNode * r, BDDNode * e, BDDNode *cached_ite)
+{
+   if (cached_ite == NULL) return NULL;
+
+   int hash_pos = itetable_hash_fn(v, r, e);
+   ITENode **node = itetable_hash_memory+hash_pos;
+   ITENode *new_node;
+   itetable_alloc_node(&new_node, v, r, e, cached_ite);
+   new_node->next = *node;
+   *node = new_node;
+   return (*node)->cached_ite;
+}
+
+BDDNode * 
+itetable_find_or_add_node(int v, BDDNode * r, BDDNode * e, BDDNode *cached_ite)
 {
    int hash_pos = itetable_hash_fn(v, r, e);
 
