@@ -147,6 +147,9 @@ extern int DEBUG_LVL;
 #define d2_printf4(x1,x2,x3,x4) D_2(fprintf(stddbg, x1, x2, x3,x4);)
 #define d2_printf5(x1,x2,x3,x4,x5) D_2(fprintf(stddbg, x1, x2, x3,x4,x5);)
 #define d2_printf6(x1,x2,x3,x4,x5,x6) D_2(fprintf(stddbg, x1, x2, x3,x4,x5,x6);)
+#define d2_printf7(x1,x2,x3,x4,x5,x6,x7) D_2(fprintf(stddbg, x1, x2, x3,x4,x5,x6,x7);)
+#define d2_printf8(x1,x2,x3,x4,x5,x6,x7,x8) D_2(fprintf(stddbg, x1, x2, x3,x4,x5,x6,x7,x8);)
+#define d2_printf9(x1,x2,x3,x4,x5,x6,x7,x8,x9) D_2(fprintf(stddbg, x1, x2, x3,x4,x5,x6,x7,x8,x9);)
 
 #define d2e_printf1(x)        D_2E(fprintf(stddbg, x);)
 #define d2e_printf2(x1,x2)    D_2E(fprintf(stddbg, x1, x2);)

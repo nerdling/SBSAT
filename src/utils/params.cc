@@ -308,6 +308,10 @@ t_opt options[] = {
 		"number of backtracks to start the trace (when debug=9)"},
 { &BDDWalkCutoff, "", "cutoff", P_INT, V(i:0,"0"), V(i:100000,"100000"), VAR_NORMAL, 0,
 		"BDDWalkSAT number of flips per random restart"},
+{ &BDDWalktaboo_max, "", "taboo-max", P_INT, V(i:0,"0"), V(i:6,"6"), VAR_NORMAL, 0,
+		"BDDWalkSAT length of taboo list"},
+{ &BDDWalktaboo_multi, "", "taboo-multi", P_FLOAT, V(i:0,"0"), V(f:1.5,"1.5"), VAR_NORMAL, 0,
+		"BDDWalkSAT multiplier for the probablity of picking variables with taboo"},
 
 /* 
  * Johnson heuristic options 

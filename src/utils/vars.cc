@@ -106,7 +106,9 @@ int sizeBuckets=5;
 char preproc_string[256]="((ExSt)Ex(PrSt))";
 
 int TRACE_START=0;
-long BDDWalkCutoff=100000;
+int BDDWalkCutoff=100000;
+int BDDWalktaboo_max=6;
+float BDDWalktaboo_multi=1.5;
 
 //char png_filename[128]="";
 char jpg_filename[128]="";
