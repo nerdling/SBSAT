@@ -1,0 +1,10 @@
+
+Adding a new solver
+-------------------
+*  Create directory solv_xxx
+*  Create ../include/sbsat_solv_xxx.h
+*  Add solv_xxxx into Makefile.am
+*  Add libsolv_xxx.a and .la into Makfile.am
+*  Add solv_xxxx/Makefile into ../configure.ac
+*  Add solv_xxxx() into ite_main() in sbsat.cc
+*  Add include line into sbsat.cc

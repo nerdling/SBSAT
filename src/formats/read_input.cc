@@ -38,8 +38,6 @@
 #include "sbsat.h"
 #include "sbsat_formats.h"
 
-#define KEDAR 0
-
 int parser_init();
 
 int trace_parse();

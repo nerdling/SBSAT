@@ -1,0 +1,7 @@
+Adding a new format
+-------------------
+*  Create fm_xxxx.cc having fm_xxxx()
+*  Add fm_xxxx() into ../../include/sbsat_formats.h
+*  Add function call to fm_xxxx() into read_input.cc function read_input (for input)
+*  Add function call to fm_xxxx() into write_output.cc function write_output (for output)
+*  Possibly fix getformat() in autochk.cc to autodetect the new format

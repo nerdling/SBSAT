@@ -1,0 +1,48 @@
+SBSAT
+Smurf Solver Directory
+
+
+Add new function type
+---------------------
+*  Add the function type into the formats/preprocessor (if necessary)
+   (look into ../../include/common.h for the list of function types)
+*  Create directory fn_xxxxx
+*  Create source file fn_xxxx.cc in fn_xxxxx
+*  Create header file fn_xxxx.h file in include
+*  Create fn_xxxx/Makefile.am (look into other fn_xxxx directories)
+*  Add fn_xxxx/Makefile into configure.ac
+*  Add fn_xxxxx directory into Makefile.am
+*  Add libfnxxxx.a and .la library into ../Makefile.am
+*  Add the include file line into include/solver.h
+*  Add Init function into FN_INIT_LIST include/solver.h
+*  Add AFS type in OneAFS include/solver.h (if necessary)
+*  Add SolverFunction type in SolverFunction include/solver.h (if necessary)
+*  Add heuristic code for this function type in hr_yyyy_xxxx_zzz.cc 
+   (where why yyyy is heuristic, xxxx is function type, zzz is anything)
+*  Add heuristic initialization function for this function into every heuristic init
+   function in hr_xxxx/hr_xxxx.cc
+   The function is called HrYYYYYFnXxxxxInit() where YYYY is a heuristic name
+   and Xxxxxx is the function type name. 
+
+
+Add new heuristic 
+-----------------
+*  Create directory hr_xxxx
+*  Create source file hr_xxxx.cc in hr_xxxx with HrXXXXInit(), HrXXXXBacktrack(), 
+   HrXXXXUpdate(), HrXXXXSelect() and HrXXXXFree()
+   (follow the examples in hr_lsgb/hr_lsgb.c)
+*  Create header file hr_xxxx.h in include
+*  Create hr_xxxx/Makefile.am
+*  Add hr_xxxx/Makefile into configure.ac
+*  Add hr_xxxxx directory into Makefile.am
+*  Add libhrxxxx.a and .la library into ../Makefile.am
+*  Add the include file line into include/solver.h
+*  Add procHeurInit = HrXXXXInit function into solver.cc function HeuristicInit()
+*  Add heuristic init function for every function type necessary
+   (init function for each type will set procHeurGetScores and procHeurUpdateFunctionInfEnd
+    functions -- first one is used to updated the scores in the begining, the second
+    one during backtracking -- before choosing a new choicepoint)
+
+
+TODO:
+* rename X_OptimizedHeuristic to HrXXXXSelect
