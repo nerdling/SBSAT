@@ -1,3 +1,246 @@
+2004-06-05 09:54  fett
+
+	* src/: formats/markbdd.cc, utils/bdd_print.cc: moved the bdd
+	printing mechanisms to debug level 2 so they don't print during
+	'make check'
+	
+	  ~Sean
+
+2004-06-02 12:04  fett
+
+	* src/solver/bddwalk.cc: moved countunsat() inside of an if
+	statement.
+	
+	   ~Sean
+
+2004-05-28 15:17  fett
+
+	* src/utils/params.cc: Moved some things around to accomidate
+	BDDWalkSAT and fixed a few other things.
+	
+	  ~Sean
+
+2004-05-27 16:49  fett
+
+	* src/solver/bddwalk.cc: added comments for an idea.
+	
+	  ~Sean
+
+2004-05-27 16:14  fett
+
+	* src/solver/bddwalk.cc: fixed getting a random path to true. I
+	forgot the weights were already taken into account on each node.
+	whoops.
+	
+	   ~Sean
+
+2004-05-26 22:54  fett
+
+	* examples/example_tests.sh.in: fixed spelling mistake.
+	
+	  ~Sean
+
+2004-05-26 15:01  fett
+
+	* src/preproc/init_preproc.cc: fixed functiontypes being not what
+	they should.
+	
+	  ~Sean
+
+2004-05-26 14:52  fett
+
+	* tests/: cnf_tests.sh.in, trace_tests.sh.in: fixed spelling
+	mistake
+
+2004-05-26 14:52  fett
+
+	* src/preproc/init_preproc.cc: [no log message]
+
+2004-05-26 14:39  fett
+
+	* src/solver/bddwalk.cc: added 2 BDDWalkSAT command line options
+	fixed a small bug with taboo where the last variable in the problem
+	would probably only ever be flipped once.  Now the taboo values are
+	cleared out after each random restart.	Added printing mechanisms
+	'r' for random restart, ' ' to display current status and 'q' to
+	quit.  Added comments, removed a tad more useless code.  Moved all
+	print statements to debug level 2.
+	
+	   ~Sean
+
+2004-05-26 14:37  fett
+
+	* include/log.h, include/vars.h, src/utils/params.cc,
+	src/utils/vars.cc: added 2 BDDWalkSAT command line options
+	
+	   ~Sean
+
+2004-05-25 13:20  fett
+
+	* include/vars.h, src/solver/bddwalk.cc, src/utils/params.cc,
+	src/utils/vars.cc: added --cutoff to the command line for
+	BDDWalkSAT
+	
+	  ~Sean
+
+2004-05-24 17:47  fett
+
+	* src/solver/bddwalk.cc: fixed some warnings...
+	
+	   ~Sean
+
+2004-05-24 14:40  fett
+
+	* src/solver/bddwalk.cc: Removed a bunch of code. Adding comments.
+	Finalizing a version of this solver.
+	
+	   ~Sean
+
+2004-05-24 14:39  fett
+
+	* src/formats/cnf.cc: fixed an error when a cnf file has an extra 0
+	at the end.
+	
+	   ~Sean
+
+2004-05-20 17:20  fett
+
+	* src/solver/bddwalk.cc: bdd walksat is looking better.
+	
+	  ~Sean
+
+2004-05-20 16:45  fett
+
+	* src/solver/bddwalk.cc: Now BDDWalksat will only do multi random
+	flips. faster?
+	
+	  ~Sean
+
+2004-05-20 16:45  fett
+
+	* include/common.h: modified a structure for bddwalksat
+	
+	  ~Sean
+
+2004-05-20 13:05  fett
+
+	* src/solver/bddwalk.cc: fixed a printing bug.
+	
+	   ~Sean
+		CVS:
+	-------------------------------------------------------------------
+	---
+
+2004-05-20 12:41  fett
+
+	* src/solver/bddwalk.cc: working on it
+	
+	  ~Sean
+
+2004-05-20 12:41  fett
+
+	* include/brancher.h: permenently moved pUnitLemmaList to teh
+	choicepoint struct
+	
+	  ~Sean
+
+2004-05-20 12:31  fett
+
+	* src/solver/backtrack_sbj.cc: removed reliance on
+	pBacktrackStack->pUnitLemmaList
+	
+	   ~Sean
+
+2004-05-20 12:30  fett
+
+	* include/ite.h: removed the missing pools.h...for now
+	
+	   ~Sean
+
+2004-05-20 09:15  mkouril
+
+	* include/pools.h: Not needed.
+
+2004-05-19 19:01  mkouril
+
+	* sbsat.xcode/project.pbxproj: Updated XCode makefile
+
+2004-05-19 17:04  fett
+
+	* include/brancher.h, src/solver/backtrack.cc: partially moved
+	pUnitLemmaList to the choicepoint stack.  It will be complete when
+	superbackjumping is updated.
+	
+	   ~Sean
+
+2004-05-17 14:22  fett
+
+	* src/solver/: bt_lemmas.cc, init_solver.cc: fixed
+	
+	Added in a tail pointer to the lemma watched lists so now when we
+	find a satsified lemma we move it to the back of the lists instead
+	of the front.
+	
+	  ~Sean
+
+2004-05-17 13:22  fett
+
+	* src/solver/bt_lemmas.cc: broke, but working correctly...
+	
+	   ~Sean
+
+2004-05-17 12:51  fett
+
+	* include/brancher.h: broke!
+	
+	  ~Sean
+
+2004-05-17 12:51  fett
+
+	* src/solver/: bt_lemmas.cc, lemmawlits.cc: broken!
+	
+	  ~Sean
+
+2004-05-17 10:42  fett
+
+	* src/solver/: bddwalk.cc, bt_lemmas.cc: took out slashes in
+	ASFMoveLemma()
+	
+	fixed up bddwalksat some more.
+	
+	  ~Sean
+
+2004-05-12 14:05  fett
+
+	* src/solver/bddwalk.cc: more
+
+2004-05-12 13:13  fett
+
+	* src/solver/bddwalk.cc: here
+
+2004-05-12 12:57  fett
+
+	* src/solver/bddwalk.cc: fixed a small bug, i think...
+	
+	  ~Sean
+
+2004-05-11 20:17  fett
+
+	* ChangeLog, src/solver/bddwalk.cc: nothing
+
+2004-05-11 20:15  fett
+
+	* src/solver/bddwalk.cc: just looking
+	
+	   ~Sean
+
+2004-05-11 20:14  fett
+
+	* src/formats/: bdd2cnf.cc, cnf.cc, smurf.cc: updated comments.
+	Fixed a small bug in cnf.cc dealing with the symbol table.
+	
+	   ~Sean
+
 2004-05-10 08:39  mkouril
 
 	* src/solver/lemmamisc.cc: Added LemmaLitsUnset
