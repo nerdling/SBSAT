@@ -51,6 +51,8 @@ extern int *Restct_repeat;
 extern int *ReFPS_repeat;
 extern int *St_repeat;
 extern int *Dep_repeat;
+extern int str_length;
+extern long affected;
 
 void Init_Repeats();
 void Delete_Repeats();
