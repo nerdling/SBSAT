@@ -1552,7 +1552,7 @@ fi
 
 # Define the identity of the package.
  PACKAGE=sbsat
- VERSION=2.0b-17
+ VERSION=2.0b-18
 
 
 cat >>confdefs.h <<_ACEOF
