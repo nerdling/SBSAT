@@ -375,10 +375,11 @@ Finish_Preprocessing()
 	numout = nmbrFunctions;
 
 	for (long x = 0; x < nmbrFunctions; x++) {
-		//if (length[x] < functionTypeLimits[functionType[x]])
-		//functionType[x] = UNSURE;
-		if(isOR(functions[x]) == 1 && functionType[x]!=AUTARKY_FUNC && length[x]>=functionTypeLimits[PLAINOR])
+		if(functionType[x] == AUTARKY_FUNC) continue;
+		if(isOR(functions[x]) == 1)
 		  functionType[x] = PLAINOR;
+		if (length[x] < functionTypeLimits[functionType[x]])
+		  functionType[x] = UNSURE;
    }
 
 	if(USE_AUTARKY_SMURFS)
