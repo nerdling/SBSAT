@@ -79,7 +79,7 @@ ShowResultLine(FILE *fout, char *var, int var_idx, int negative, int value)
          case BOOL_FALSE: fprintf (fout, "-%s", var); break;
          default: fprintf (fout, "*%s", var); break;
          }
-         fprintf(fout, "\n");
+         fprintf(fout, " ");
 	break;
   case 2:
         /* fancy/franco result format */
@@ -240,6 +240,7 @@ Backend_CNF_NoSolver (int oldnuminp, int *original_variables)
 	  {
 		  ShowResultLine(foutputfile, NULL, i, 0, original_variables[i]);
 	  }
+	fprintf(foutputfile, "\n");
 	//1 = True  0 = False  -1 = Don't Care
 }
 
@@ -275,6 +276,7 @@ void Backend_CNF (int nMaxVbleIndex, int oldnuminp, int *original_variables) {
 		for (int i = 1; i <= oldnuminp; i++) {
 			ShowResultLine(foutputfile, NULL, i, 0, original_variables[i]);
 		}
+		fprintf(foutputfile, "\n");
 	}	
 	free(old_orig_vars);
 	free(old_variablelist);
