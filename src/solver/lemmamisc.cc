@@ -125,6 +125,31 @@ LemmaIsSAT(LemmaBlock *pLemma)
 	return 0;
 }
 
+ITE_INLINE int
+LemmaLitsUnset(LemmaBlock *pLemma)
+{
+   LemmaBlock *pLemmaBlock = pLemma;
+   int *arrLits = pLemmaBlock->arrLits;
+   int nLemmaLength = arrLits[0];
+   int nLitIndex;
+   int nLitIndexInBlock;
+   int nLitsUnset = 0;
+   for (nLitIndex = 1, nLitIndexInBlock = 1;
+         nLitIndex <= nLemmaLength;
+         nLitIndex++, nLitIndexInBlock++)
+   {
+      if (nLitIndexInBlock == LITS_PER_LEMMA_BLOCK)
+      {
+         nLitIndexInBlock = 0;
+         pLemmaBlock = pLemmaBlock->pNext;
+         arrLits = pLemmaBlock->arrLits;
+      }
+      if(arrSolution[abs(arrLits[nLitIndexInBlock])] == BOOL_UNKNOWN)
+         nLitsUnset++;
+   }
+	return nLitsUnset;
+}
+
 ITE_INLINE void
 DisplayLemmaStatus(LemmaBlock *pLemma)
 {
