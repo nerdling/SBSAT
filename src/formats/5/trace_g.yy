@@ -120,7 +120,7 @@ exp:      ID
 	     | OP '(' exp_list ')'
 	         { explist[explevel][expindex[explevel]] = NULL; $$ = ite_op_exp($1,explist[explevel]); explevel--; }
 	     | U_OP_NOT '(' ID ')'
-	         { $$ = ite_not(ite_vars(s_getsym($3))); }
+	         { $$ = ite_not_s(ite_vars(s_getsym($3))); }
 	     | U_OP '(' ID ')'
 	         { fprintf(stderr, "nonhandled u_op\n"); $$ = NULL; }
 ;
@@ -270,7 +270,7 @@ ite_new_int_leaf(char *id, char *zero_one)
    symrec *s_ptr = s_getsym(id);
    independantVars[s_ptr->id] = 0;
    BDDNode *ptr = ite_vars(s_ptr);
-   if (*zero_one == '0') ptr = ite_not(ptr);
+   if (*zero_one == '0') ptr = ite_not_s(ptr);
    else if (*zero_one != '1') {
       fprintf(stderr, "new_int_leaf with non 0/1 argument (%s) -- assuming 1\n", zero_one);
    }

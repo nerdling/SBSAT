@@ -14,6 +14,7 @@ BDDNode * op_rimp(BDDNode *a, BDDNode *b) { return ite_imp_s(a,b); }
 
 BDDNode * find_or_add_node_s (int v, void* s, BDDNode * r, BDDNode * e)
 {
+  assert(s);
   assert(((symrec*)s)->id == v);
   BDDNode *tmp_bdd = find_or_add_node(v, r, e);
   tmp_bdd->var_ptr = s;

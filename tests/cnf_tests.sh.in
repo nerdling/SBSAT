@@ -8,7 +8,7 @@ echo ===========================================
 
 for i in @top_srcdir@/tests/cnf/*.cnf
 do
- echo -n "`basename $i` ... "
+ echo @ECHO_N@ "`basename $i` ... @ECHO_C@"
  PARAMS=
  if [ -f $i.params ] ; then
    PARAMS=`cat $i.params`

@@ -104,7 +104,7 @@ Contents</A>
 <LI><A NAME="tex2html65"
   HREF="#SECTION00091000000000000000">8.1 Existential Quantification</A>
 <LI><A NAME="tex2html66"
-  HREF="#SECTION00092000000000000000">8.2 Branch Pruning</A>
+  HREF="#SECTION00092000000000000000">8.2 Restrict</A>
 <LI><A NAME="tex2html67"
   HREF="#SECTION00093000000000000000">8.3 Strengthening</A>
 <LI><A NAME="tex2html68"
@@ -1059,12 +1059,12 @@ uses the information in e2 to strengthen e1. (See Strengthening, page
 <DT>
 <DD><P>
 </DD>
-</DL><B>PRUNE</B> 
+</DL><B>RESTRICT</B>
 
 <P>
-The PRUNE function takes two(2) arguments, e1 and e2. This function
-prunes all branches found in e2 away from e1. (See Branch Pruning,
-page ??) 
+The RESTRICT function takes two(2) arguments, e1 and e2. This function
+prunes all branches found in e2 away from e1. (See Restrict, page
+??) 
 
 <P>
 
@@ -1119,25 +1119,25 @@ the branch to the right is the false branch.
 <DD>Example:&nbsp;PRINT_TREE(&nbsp;OR3(4,&nbsp;5,&nbsp;-6)&nbsp;)&nbsp;
 
 <P>
-Prints&nbsp;to&nbsp;standard&nbsp;output:
+Prints&nbsp;to&nbsp;standard&nbsp;output:&nbsp;
 
 <P>
---------------------------&nbsp;
+------------------------------
 
 <P>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6
 
 <P>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;T&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;T
 
 <P>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;T&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;T&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
 <P>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;F&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;T&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;T&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;F
 
 <P>
---------------------------&nbsp;
+------------------------------
 
 <P>
 </DD>
@@ -1163,10 +1163,7 @@ Prints&nbsp;to&nbsp;standard&nbsp;output:
 ----------------------------
 
 <P>
-ite&nbsp;4
-
-<P>
-&nbsp;&nbsp;&nbsp;&nbsp;T
+ite&nbsp;6
 
 <P>
 &nbsp;&nbsp;&nbsp;&nbsp;ite&nbsp;5
@@ -1175,10 +1172,56 @@ ite&nbsp;4
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;T
 
 <P>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ite&nbsp;6&nbsp;F&nbsp;T
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ite&nbsp;4&nbsp;T&nbsp;F
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;T
 
 <P>
 ----------------------------&nbsp;
+
+<P>
+</DD>
+</DL><B>MINMAX</B>
+
+<P>
+The MINMAX function takes at least 4 arguments. The first argument
+is the number of variables that will be in the resulting BDD. The
+second argument is the minimum number of variables in the BDD that
+need to be set to true to make the BDD evaluate to true. The third
+argument is the maximum number of variables in the BDD that can be
+set to true for the BDD to evaluate to true. The fourth argument is
+the list of variables that make up the BDD.
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>Example:PRINT_TREE(&nbsp;MINMAX(4,&nbsp;1,&nbsp;3,&nbsp;13,&nbsp;12,&nbsp;11,&nbsp;10)
+
+<P>
+Prints&nbsp;to&nbsp;standard&nbsp;output:
+
+<P>
+---------------------------------
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;13
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;12&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;12
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;11&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;T&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;T&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;11
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;10&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;T&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;T&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10
+
+<P>
+&nbsp;&nbsp;F&nbsp;&nbsp;&nbsp;&nbsp;T&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;T&nbsp;&nbsp;&nbsp;&nbsp;F
+
+<P>
+---------------------------------
 
 <P>
 </DD>
@@ -1418,7 +1461,7 @@ functions give the user total control over their problem data.
 <P>
 
 <H2><A NAME="SECTION00092000000000000000">
-8.2 Branch Pruning</A>
+8.2 Restrict</A>
 </H2>
 
 <P>
@@ -1587,9 +1630,9 @@ Copyright &#169; 1997, 1998, 1999,
 Mathematics Department, Macquarie University, Sydney.
 <P>
 The command line arguments were: <BR>
- <STRONG>latex2html</STRONG> <TT>-no_subdir -split 0 -show_section_numbers /tmp/lyx_tmpdir1372v94MHK/lyx_tmpbuf0/sbsat_manual.tex</TT>
+ <STRONG>latex2html</STRONG> <TT>-no_subdir -split 0 -show_section_numbers /tmp/lyx_tmpdir4038MuggET/lyx_tmpbuf0/sbsat_manual.tex</TT>
 <P>
-The translation was initiated by  on 2003-07-28<HR>
+The translation was initiated by  on 2003-08-05<HR>
 <!--Navigation Panel-->
 <IMG WIDTH="81" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next_inactive"
  SRC="file:/usr/share/latex2html/icons/nx_grp_g.png"> 
@@ -1601,7 +1644,7 @@ The translation was initiated by  on 2003-07-28<HR>
 <!--End of Navigation Panel-->
 <ADDRESS>
 
-2003-07-28
+2003-08-05
 </ADDRESS>
 </BODY>
 </HTML>

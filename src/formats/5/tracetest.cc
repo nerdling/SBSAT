@@ -18,6 +18,10 @@ int PARSE();
 int main(int argc, char **argv)
 {
     parser_init();
+    numinp=500000;
+    numout=500000;
+    bdd_circuit_init(numinp, numout);
+    sym_init();
 
     ++argv, --argc;  /* skip over program name */
     if ( argc > 0 ) {

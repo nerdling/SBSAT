@@ -295,8 +295,7 @@ Backend_Trace_NoSolver (int oldnuminp, int *original_variables, Tracer * tracer)
   if (tracer)  
      tracer->getSymbols (original_variables, oldnuminp);
   else
-     fprintf(stderr, "no tracer -- skipping getSymbols\n");
-
+     d3_printf1("no tracer -- skipping getSymbols\n");
 }
 
 void Backend_Trace (int nMaxVbleIndex, int oldnuminp,
@@ -331,8 +330,10 @@ void Backend_Trace (int nMaxVbleIndex, int oldnuminp,
 		getExInferences(original_variables, oldnuminp);
 		
 		//We might have trouble calling tracer multiple times...
-		tracer->getSymbols (original_variables, oldnuminp);
-		finalCheck(tracer, original_variables);
+      if (tracer) {
+         tracer->getSymbols (original_variables, oldnuminp);
+         finalCheck(tracer, original_variables);
+      }
 	}
 	free(old_orig_vars);
    free(old_variablelist);
@@ -784,8 +785,10 @@ Verify_NoSolver(Tracer *tracer)
 
   if (formatin == 't')
    {
-     Backend_Trace_NoSolver(oldnuminp, original_variables, tracer);
-     finalCheck(tracer, original_variables);
+     if (tracer) {
+        Backend_Trace_NoSolver(oldnuminp, original_variables, tracer);
+        finalCheck(tracer, original_variables);
+     }
    }
   else
    {

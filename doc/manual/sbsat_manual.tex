@@ -658,11 +658,11 @@ uses the information in e2 to strengthen e1. (See Strengthening, page
 \begin{lyxcode}
 
 \end{lyxcode}
-\textbf{PRUNE} 
+\textbf{RESTRICT}
 
-The PRUNE function takes two(2) arguments, e1 and e2. This function
-prunes all branches found in e2 away from e1. (See Branch Pruning,
-page ??) 
+The RESTRICT function takes two(2) arguments, e1 and e2. This function
+prunes all branches found in e2 away from e1. (See Restrict, page
+??) 
 
 \begin{lyxcode}
 
@@ -701,19 +701,19 @@ the branch to the right is the false branch.
 \begin{lyxcode}
 Example:~PRINT\_TREE(~OR3(4,~5,~-6)~)~
 
-Prints~to~standard~output:
+Prints~to~standard~output:~
 
--{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-~
+-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-
 
-~~~~~~~~~~~~~~~~~~~~~~~~~4~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~6
 
-~~~~~~~~~~~~~~~T~~~~~~~~~~~~~~~~~~~5~
+~~~~~~~~~~~~~~~~5~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~T
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~T~~~~~~~~~6~
+~~~~~~~~T~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~F~~~~~T~
+~~~~~~~~~~~~~~~~~~T~~~~~~~F
 
--{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-~
+-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-
 
 
 \end{lyxcode}
@@ -732,17 +732,48 @@ Prints~to~standard~output:
 
 -{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-
 
-ite~4
-
-~~~~T
+ite~6
 
 ~~~~ite~5
 
 ~~~~~~~~T
 
-~~~~~~~~ite~6~F~T
+~~~~~~~~ite~4~T~F
+
+~~~~T
 
 -{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-~
+
+
+\end{lyxcode}
+\textbf{MINMAX}
+
+The MINMAX function takes at least 4 arguments. The first argument
+is the number of variables that will be in the resulting BDD. The
+second argument is the minimum number of variables in the BDD that
+need to be set to true to make the BDD evaluate to true. The third
+argument is the maximum number of variables in the BDD that can be
+set to true for the BDD to evaluate to true. The fourth argument is
+the list of variables that make up the BDD.
+
+\begin{lyxcode}
+Example:PRINT\_TREE(~MINMAX(4,~1,~3,~13,~12,~11,~10)
+
+Prints~to~standard~output:
+
+-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~13
+
+~~~~~~~~~~~~~~~~12~~~~~~~~~~~~~~~~~~~~~~~~~~~~~12
+
+~~~~~~~~11~~~~~~~~~~~~~~~T~~~~~~~~~~~~~~~T~~~~~~~~~~~~~11
+
+~~~~10~~~~~~~T~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~T~~~~~~10
+
+~~F~~~~T~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~T~~~~F
+
+-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-
 
 
 \end{lyxcode}
@@ -860,7 +891,7 @@ functions give the user total control over their problem data.
 \subsection{Existential Quantification}
 
 
-\subsection{Branch Pruning}
+\subsection{Restrict}
 
 
 \subsection{Strengthening}
