@@ -45,7 +45,10 @@
 }
 
 %token ID 
-%left P_EQUIV P_IMP '#' '~' '&'
+%left P_EQUIV P_IMP  /* lowest precedence */
+%left '#'
+%left '&'
+%left '~' /* highest precedence */
 %type <id> ID 
 // %type <num> INTNUMBER
 // %type <op2fn> OP
