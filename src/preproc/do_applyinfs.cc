@@ -95,8 +95,8 @@ Do_Apply_Inferences ()
 				  d3_printf1("\b");
 				d3_printf3 ("{%d=%d}", inferlist->nums[0], inferlist->nums[1]);
 
-            void bdd_gc();
-            if(rand() % 1000 < 4) bdd_gc();
+            //void bdd_gc();
+            //if(rand() % 1000 < 4) bdd_gc();
 
 				str_length = 0;
 				variablelist[inferlist->nums[1]].equalvars = inferlist->nums[0];

@@ -203,7 +203,10 @@ BDDNode *strengthen(int bddNmbr1, int bddNmbr2, int *&length, store *&variables)
     if(quantifiedBDD2 == functions[bddNmbr2]) {
 		 functions[bddNmbr2] = true_ptr;
 		 //d2_printf2("Removing %d ", bddNmbr2);
+		 bool OLD_DO_INFERENCES = DO_INFERENCES;
+		 DO_INFERENCES = 0;
 		 Rebuild_BDDx(bddNmbr2);
+		 DO_INFERENCES = OLD_DO_INFERENCES;
     }
     return ite_and(functions[bddNmbr1], quantifiedBDD2);
 }
