@@ -905,6 +905,9 @@ BDDNode *ite_x_T_z(BDDNode *x, BDDNode *z)
    if (z == true_ptr) return true_ptr;
    if (z == false_ptr) return x;
   
+//   BDDNode *cached = itetable_find_or_add_node(3, x, z, NULL);
+//   if (cached) return cached;
+
    int v;
    BDDNode * r;
    BDDNode * e;
@@ -928,6 +931,7 @@ BDDNode *ite_x_T_z(BDDNode *x, BDDNode *z)
    } 
 
    if (r == e) return (r);
+//   return itetable_find_or_add_node(3, x, z, find_or_add_node(v, r, e));
    return find_or_add_node(v, r, e);
 }
 
@@ -1169,34 +1173,34 @@ BDDNode * ite_or (BDDNode * a, BDDNode * b)
       return ite_x_T_z(a, /*true_ptr,*/ b);
 }
 
-BDDNode * ite_nor (BDDNode * a, BDDNode * b)
+BDDNode * ite_nor(BDDNode * a, BDDNode * b)
 {
    return ite_not(ite_or (a, b));
 }
 
 BDDNode * ite_imp (BDDNode * a, BDDNode * b)
 {
-   return ite (a, b, true_ptr);
+   return ite_x_y_T(a, b);//, true_ptr);
 }
 
 BDDNode * ite_nimp(BDDNode * a, BDDNode * b)
 {
-   return ite_not (ite_imp (a, b));
+   return ite_not(ite_imp(a, b));
 }
 
 BDDNode * ite_xor(BDDNode * a, BDDNode * b)
 {
 #ifdef SORT_ITE_OPS
    if (a->variable < b->variable)
-      return ite (b, ite_not (a), a);
+      return ite_x_y_ny(b, ite_not (a));//, a);
    else
 #endif
-   return ite (a, ite_not (b), b);
+   return ite_x_y_ny(a, ite_not (b));//, b);
 }
 
-BDDNode * ite_equ (BDDNode * a, BDDNode * b)
+BDDNode * ite_equ(BDDNode * a, BDDNode * b)
 {
-   return ite_not (ite_xor (a, b));
+   return ite_not(ite_xor (a, b));
 }
 
 BDDNode * ite_and(BDDNode * a, BDDNode * b)
@@ -1609,11 +1613,27 @@ BDDNode * pruning_p1(BDDNode * f, BDDNode * c)
    return find_or_add_node (f->variable, r, e);
 }
 
-int countX (BDDNode *bdd, BDDNode *X) {
-	if(bdd == X) return 1;
-	if(IS_TRUE_FALSE(bdd)) return 0;
-	if(bdd->variable <= X->variable) return 0;
-	return countX(bdd->thenCase, X) + countX(bdd->elseCase, X);	
+int _countX(BDDNode *bdd, BDDNode *X);
+
+int bdd_flag_number = 2;
+int countX(BDDNode *bdd, BDDNode *X) {
+   bdd_flag_number++;
+   if (bdd_flag_number > 1000000000) {
+      void bdd_gc();
+      bdd_gc();
+      bdd_flag_number = 3;
+   }
+   return _countX(bdd, X);
+}
+
+int _countX(BDDNode *bdd, BDDNode *X) {
+   if (bdd->flag == bdd_flag_number) return bdd->tmp_int;
+   bdd->flag = bdd_flag_number;
+
+	if(bdd == X) return (bdd->tmp_int = 1);
+	if(IS_TRUE_FALSE(bdd)) return (bdd->tmp_int = 0);
+   if(bdd->variable <= X->variable) return (bdd->tmp_int = 0);
+	return (bdd->tmp_int = _countX(bdd->thenCase, X) + _countX(bdd->elseCase, X));	
 }
 
 int countFalses (BDDNode * bdd) {
@@ -1719,7 +1739,6 @@ nmbrVarsInCommon(int bddNmbr1, int bddNmbr2, int STOPAT)
 
 BDDNode * _xquantify (BDDNode * f, int v);
 
-int bdd_flag_number = 2;
 BDDNode * xquantify (BDDNode * f, int v)
 {
   bdd_flag_number++;
@@ -1733,10 +1752,13 @@ BDDNode * xquantify (BDDNode * f, int v)
 
 BDDNode * _xquantify (BDDNode * f, int v)
 {
-   if (f->flag == bdd_flag_number) {
-      return f->tmp_bdd;
-   }
+   if (f->flag == bdd_flag_number) return f->tmp_bdd;
    f->flag = bdd_flag_number;
+
+   BDDNode *var = ite_var(v);
+   BDDNode *cached = itetable_find_or_add_node(10, f, var, NULL);
+   if (cached) return (f->tmp_bdd = cached);
+
    if (f->variable == v)
       return (f->tmp_bdd = ite_or_te(f));
       //return (f->tmp_bdd = ite_or (f->thenCase, f->elseCase));
@@ -1748,7 +1770,7 @@ BDDNode * _xquantify (BDDNode * f, int v)
 
 	if (r == e)
       return (f->tmp_bdd = r);
-   return (f->tmp_bdd = find_or_add_node (f->variable, r, e));
+   return (f->tmp_bdd = itetable_find_or_add_node(10, f, var, find_or_add_node (f->variable, r, e)));
 }
 
 BDDNode * OLD_xquantify (BDDNode * f, int v)
