@@ -183,112 +183,96 @@ void BDD_to_Smurfs () {
 			 }
 		  fprintf (foutputfile, "-1\n");
 //SEAN! ADD IN SUPPORT FOR PLAINORs and PLAINXORs
-		  if (functionType[v] == AND || functionType[v] == OR)
-			 {
-				 int validated = 0;
-				 int torf = equalityVble[v] > 0 ? 1 : 0;
-				 if ((torf == 1 && functionType[v] == AND) || 
-					  (torf == 0 && functionType[v] == OR))
-					{
-						fprintf (foutputfile, "and= ");
-						BDDNode * true_and =
-						  set_variable (functions[v],
-											 abs (equalityVble[v]), 1);
-						for (int x = 0; x < integers[v].num[x] != 0; x++)
-						  {
-							  if (integers[v].num[x] ==
-									abs (equalityVble[v]))
-								 {
-									 fprintf (foutputfile, "3");
-									 validated = 1;
-									 continue;
-								 }
-							  if (set_variable (true_and, integers[v].num[x], 0) ==
-									false_ptr)
-								 fprintf (foutputfile, "1");
-							  
-							  else if (set_variable (true_and, integers[v].num[x], 1) ==
-										  false_ptr)
-								 fprintf (foutputfile, "0");
-							  
-							  else
-								 {
-									 fprintf (stderr, "Error! %d",
-												 functionType[v]);
-									 fprintf (stderr, "\n");
-									 printBDDerr (true_and);
-									 fprintf (stderr, "\n");
-									 printBDDerr (functions[v]);
-									 fprintf (stderr, "\n");
-									 exit (1);
-								 }
-						  }
-						if (validated == 0)
-						  {
-							  fprintf (stderr,
-										  "\nERROR: Equivalence Variable Not Correct!\n");
-							  exit (1);
-						  }
-					}
-				 else
-					{
-						fprintf (foutputfile, "or= ");
-						BDDNode * true_or =
-						  set_variable (functions[v],
-											 abs (equalityVble[v]), 1);
-						for (int x = 0; x < integers[v].num[x] != 0; x++)
-						  {
-							  if (integers[v].num[x] ==
-									abs (equalityVble[v]))
-								 {
-									 fprintf (foutputfile, "3");
-									 continue;
-								 }
-							  if (set_variable (true_or, integers[v].num[x], 1) ==
-									true_ptr)
-								 fprintf (foutputfile, "1");
-							  
-							  else if (set_variable (true_or, integers[v].num[x], 0) ==
-										  true_ptr)
-								 fprintf (foutputfile, "0");
-							  
-							  else
-								 {
-									 fprintf (stderr, "Error! %d",
-												 functionType[v]);
-									 fprintf (stderr, "\n");
-									 printBDDerr (true_or);
-									 fprintf (stderr, "\n");
-									 printBDDerr (functions[v]);
-									 fprintf (stderr, "\n");
-									 exit (1);
-								 }
-						  }
-					}
-			 }	else {
-				 if(x > MAX_MAX_VBLES_PER_SMURF)
-					fprintf(stderr, "Function %ld has %lld variables and it will take a while to consider all 2^%lld truth table values\n", v, x, x);
-				 for (long long tvec = 0; tvec < ((long long)1 << x); tvec++)
-					{
-						fprintf (foutputfile, "%d",
-									getTruth (integers[v].num, p, x,
-												 functions[v]));
-						bcount (p, (x - 1));
-					}
-			 }
+		  if (functionType[v] == PLAINOR) {
+			  fprintf(foutputfile, "plainor ");
+			  BDDNode *p_or = functions[v];
+			  for (int x = 0; x < integers[v].num[x] != 0; x++) {
+				  if (set_variable (p_or, integers[v].num[x], 1) == true_ptr)
+					 fprintf (foutputfile, "1");
+				  else if (set_variable (p_or, integers[v].num[x], 0) == true_ptr)
+					 fprintf (foutputfile, "0");
+				  else {
+					  fprintf (stderr, "Error! %d", functionType[v]);
+					  fprintf (stderr, "\n");
+					  printBDDerr (functions[v]);
+					  fprintf (stderr, "\n");
+					  exit (1);
+				  }
+			  }
+		  } else if (functionType[v] == AND || functionType[v] == OR) {
+			  int validated = 0;
+			  int torf = equalityVble[v] > 0 ? 1 : 0;
+			  if ((torf == 1 && functionType[v] == AND) || 
+					(torf == 0 && functionType[v] == OR)) {
+				  fprintf (foutputfile, "and= ");
+				  BDDNode * true_and =
+					 set_variable (functions[v], abs (equalityVble[v]), 1);
+				  for (int x = 0; x < integers[v].num[x] != 0; x++) {
+					  if (integers[v].num[x] == abs (equalityVble[v])) {
+						  fprintf (foutputfile, "3");
+						  validated = 1;
+						  continue;
+					  }
+					  if (set_variable (true_and, integers[v].num[x], 0) == false_ptr)
+						 fprintf (foutputfile, "1");
+					  else if (set_variable (true_and, integers[v].num[x], 1) == false_ptr)
+						 fprintf (foutputfile, "0");
+					  else {
+						  fprintf (stderr, "Error! %d", functionType[v]);
+						  fprintf (stderr, "\n");
+						  printBDDerr (true_and);
+						  fprintf (stderr, "\n");
+						  printBDDerr (functions[v]);
+						  fprintf (stderr, "\n");
+						  exit (1);
+					  }
+				  }
+				  if (validated == 0) {
+					  fprintf (stderr, "\nERROR: Equivalence Variable Not Correct!\n");
+					  exit (1);
+				  }
+			  } else {
+				  fprintf (foutputfile, "or= ");
+				  BDDNode * true_or = set_variable (functions[v], abs (equalityVble[v]), 1);
+				  for (int x = 0; x < integers[v].num[x] != 0; x++) {
+					  if (integers[v].num[x] == abs (equalityVble[v])) {
+						  fprintf (foutputfile, "3");
+						  continue;
+					  }
+					  if (set_variable (true_or, integers[v].num[x], 1) == true_ptr)
+						 fprintf (foutputfile, "1");
+					  else if (set_variable (true_or, integers[v].num[x], 0) == true_ptr)
+						 fprintf (foutputfile, "0");
+					  else {
+						  fprintf (stderr, "Error! %d", functionType[v]);
+						  fprintf (stderr, "\n");
+						  printBDDerr (true_or);
+						  fprintf (stderr, "\n");
+						  printBDDerr (functions[v]);
+						  fprintf (stderr, "\n");
+						  exit (1);
+					  }
+				  }
+			  }
+		  } else {
+			  if(x > MAX_MAX_VBLES_PER_SMURF)
+				 fprintf(stderr, "Function %ld has %lld variables and it may take a while to consider all 2^%lld truth table values\n", v, x, x);
+			  for (long long tvec = 0; tvec < ((long long)1 << x); tvec++) {
+				  fprintf (foutputfile, "%d", getTruth (integers[v].num, p, x, functions[v]));
+				  bcount (p, (x - 1));
+			  }
+		  }
 		  fprintf (foutputfile, "\n");
 	  }
 	fprintf (foutputfile, "@");
 }
-void
-Smurfs_to_BDD ()
-{
-	typedef struct
-	  {
-		  int *integers;
-		  char *tv;
-		  int andor;
-	  } arr;
+
+void Smurfs_to_BDD () {
+	typedef struct {
+		int *integers;
+		char *tv;
+		int andor;
+	} arr;
 	arr * vars = NULL;
 	char string, *outvec;
 	outvec = new char[100];
@@ -363,29 +347,41 @@ Smurfs_to_BDD ()
 		  string = getc (finputfile);
 		  if ((string == '0') || (string == '1'))
 			 {
-				 int plain_or = 2; //A PLAINOR will have exactly one 0;
 				 vars[x].tv = new char[((long long)1 << y) + 1];
 				 vars[x].tv[0] = string;
-				 if(string == '0') plain_or--; //if a 0 is found, subtract.
 				 for (int i = 1; i < ((long long)1 << y); i++)
 					{
 						string = getc (finputfile);
-						if ((string != '0') && (string != '1'))
-						  {
-							  fprintf (stderr,
-										  "\nProblem with truth vector in function %d\n",
-										  line);
-							  exit (1);
-						  }
+						if ((string != '0') && (string != '1')) {
+							fprintf (stderr, "\nProblem with truth vector in function %d\n", line);
+							exit (1);
+						}
 						vars[x].tv[i] = string;
-						if(string == '0') plain_or--;	//if a zero is found, subtract
 					}
-				 if(plain_or == 1) vars[x].andor = PLAINOR; 
-				                   //exactly one zero was found, must be PLAINOR
-				 else vars[x].andor = UNSURE;
-			 }
-		  else if (string == 'a')
-			 {
+				 vars[x].andor = UNSURE;
+			 } else if (string == 'p') {
+				 vars[x].tv = new char[y + 1];
+				 char test[10];
+				 for (int i = 0; i < 7; i++) {
+						string = fgetc (finputfile);
+						test[i] = string;
+				 }
+				 test[7] = 0;
+				 if (strcmp (test, "lainor ")) {
+					 fprintf (stderr, "\nProblem with truth vector in function %d\n", line);
+					 exit (1);
+				 }
+				 for (int i = 0; i < y; i++) {
+					 string = getc (finputfile);
+					 if ((string != '0') && (string != '1'))
+						{
+							fprintf (stderr, "\nProblem with truth vector in function %d\n", line);
+							exit (1);
+						}
+						vars[x].tv[i] = string;
+					}
+				 vars[x].andor = PLAINOR;
+			 } else if (string == 'a') {
 				 vars[x].tv = new char[y + 1];
 				 char test[10];
 				 for (int i = 0; i < 4; i++)
@@ -466,22 +462,28 @@ Smurfs_to_BDD ()
 				 delete [] vars[x].tv;
 				 continue;
 			 }
-		  if (vars[x].andor == UNSURE || vars[x].andor == PLAINOR)
+		  if (vars[x].andor == UNSURE)
 			 {
 				 int y = 0;
 				 int level = 0;
 				 int *reverse = new int[vars[x].integers[0] + 1];
-				 for (int i = 0; i < vars[x].integers[0]; i++)
-					{
-						reverse[vars[x].integers[0] - i] = vars[x].integers[i + 1];
-					}
+				 for (int i = 0; i < vars[x].integers[0]; i++) {
+					 reverse[vars[x].integers[0] - i] = vars[x].integers[i + 1];
+				 }
 				 reverse[0] = vars[x].integers[0];
 				 functions[x] = ReadSmurf (&y, vars[x].tv, level, &(reverse[1]), reverse[0]);	//vars[x].integers);
 				 functionType[x] = vars[x].andor;
 				 delete [] reverse;
-			 }
-		  else if (vars[x].andor == AND)
-			 {
+			 } else if (vars[x].andor == PLAINOR) {
+				 functions[x] = false_ptr;
+				 for (y = 0; y < vars[x].integers[0]; y++) {
+					 if (vars[x].tv[y] == '0')
+						functions[x] = ite_or (functions[x], ite_var (-vars[x].integers[y + 1]));
+					 else if (vars[x].tv[y] == '1')
+						functions[x] = ite_or (functions[x], ite_var (vars[x].integers[y + 1]));
+				 }
+				 functionType[x] = PLAINOR;
+			 } else if (vars[x].andor == AND) {
 				 functions[x] = true_ptr;
 				 for (y = 0; y < vars[x].integers[0]; y++)
 					{
