@@ -53,7 +53,7 @@ infer *infer_free = NULL;
 void
 InitializeInferencePool()
 {
-   d4_printf1("Init inference pool\n");
+   //d4_printf1("Init inference pool\n");
    t_infer_pool *tmp_infer_pool; 
    tmp_infer_pool = (t_infer_pool*)calloc(1, sizeof(t_infer_pool));
    tmp_infer_pool->max = INFER_POOL_SIZE;

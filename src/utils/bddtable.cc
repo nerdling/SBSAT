@@ -405,6 +405,7 @@ bdd_gc(int force)
          if (node->flag == 0)
          {
             // deleted 
+#define GC_REBUILD_INFERENCES
 #ifndef GC_REBUILD_INFERENCES
             DeallocateInferences_var(node->inferences, node->variable);
 #endif
@@ -419,6 +420,9 @@ bdd_gc(int force)
             bddtable_free_count++;
          } else
          {
+#ifdef GC_REBUILD_INFERENCES
+            node->inferences = NULL;
+#endif
             // rehash
             int hash_pos = bddtable_hash_fn(node->variable, node->thenCase, node->elseCase);
             BDDNode **hash_node = bddtable_hash_memory+hash_pos;
