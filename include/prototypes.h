@@ -37,31 +37,7 @@
 #ifndef PROTOTYPES_H
 #define PROTOTYPES_H
 
-/*
- * great for small problems
- * bigger problems == take more memory or is slower depending on params
- */
-//#define BDDIDX_STORAGE
-
-/*  BDD hash table with variable size/overlapping buckets */
-#define BDD_VSB_STORAGE
-
-#ifdef BDD_VSB_STORAGE
-#define find_or_add_node bddvsb_find_or_add_node
-#define bdd_init         bddvsb_init
-#endif
-
-#ifdef BDDIDX_STORAGE
-#define find_or_add_node bddidx_find_or_add_node
-#define bdd_init         bddidx_init
-#endif
-
-#ifndef BDD_VSB_STORAGE
-#ifndef BDDIDX_STORAGE
-#define find_or_add_node orig_find_or_add_node
-#define bdd_init         bddorig_init
-#endif
-#endif
+#define find_or_add_node bddtable_find_or_add_node
 
 int walkSolve();
 int solve();

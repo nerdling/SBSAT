@@ -49,7 +49,7 @@
 extern char tracer_tmp_filename[256];
 extern BDDNodeStruct **original_functions;
 
-void bdd_bdd_free_pools();
+void bddtable_free_pools();
 void bdd_circuit_free();
 void wvfSolve();
 void Verify_NoSolver(Tracer *tracer);
@@ -276,7 +276,7 @@ ite_main_free(Tracer *tracer)
    original_functions = NULL;
 	ite_free((void **)&var_score);
 	
-   bdd_bdd_free_pools();
+   bddtable_free_pools();
    bdd_circuit_free();
 }
 
