@@ -77,9 +77,9 @@ Do_Apply_Inferences ()
 					inferlist->nums[1] = 0;
 					goto startover;
 				} else if (inferlist->nums[0] == F) {
-					goto startover;
 					inferlist->nums[0] = -inferlist->nums[1];
 					inferlist->nums[1] = 0;
+					goto startover;
 				} else if (inferlist->nums[0] < 0) {
 					inferlist->nums[0] = -inferlist->nums[0];
 					inferlist->nums[1] = -inferlist->nums[1];					
