@@ -81,8 +81,15 @@
 #define ITE  2
 #define CNF2 3
 int formula_type = XCNF;
-void vanDerWaerden(int n, int k, int p) {
-	//fprintf(stdout, "p cnf %d %d\n", n*k, n+(n*((n-1)/(p-1))));
+void vanDerWaerden(char *vdw_type, int n, int k, int p) {
+   if (!strcmp(vdw_type, "cnf")) formula_type = CNF; else 
+   if (!strcmp(vdw_type, "xcnf")) formula_type = XCNF; else 
+   if (!strcmp(vdw_type, "cnf2")) formula_type = CNF2; else 
+   if (!strcmp(vdw_type, "ite")) formula_type = ITE; else {
+      fprintf(stderr, "Unknown vdw formula type\n");
+      exit(1);
+   }
+
    // clauses max step = (n-1)/(p-1)  [n is 1 based and k is 1 based]
    // clauses with step 1 = n-p+1
    // clauses with step 2 = n-p*2+2
