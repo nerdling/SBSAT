@@ -86,7 +86,6 @@ int ExQuantifyAnd () {
 	
 	BDDNode *Quantify;
 	
-	void bdd_gc();
 	if (enable_gc) bdd_gc(); //Hit it!
 
 	for (int x = 1; x <= MAX_EXQUANTIFY_CLAUSES; x++) {

@@ -104,11 +104,5 @@ FreeSmurfFactoryAddons(SmurfFactoryAddons *f)
      delete f->pImplied;
      f->pImplied = NULL;
    }
-  if (f->pVbles != NULL)
-   {
-     delete f->pVbles;
-     f->pVbles = NULL;
-   }
-
 }
 

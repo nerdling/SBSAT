@@ -44,42 +44,6 @@ extern int *arrSolver2IteVarMap;
 ITE_INLINE void InitializeAddons(BDDNodeStruct *pFunc);
 SmurfFactoryAddons * AllocateSmurfFactoryAddons();
 
-ITE_INLINE void 
-ComputeVbleSet(BDDNode *pFunc)
-  // Computes the variable set of *pFunc.
-  // Allocates an IntegerSet for pFunc->addons->pVbles and stores the
-  // result there.  Note:  The elements will be stored in the IntegerSet
-  // in increasing order assuming that lower variable indicies occur
-  // -NEW
-  // in decreasing order assuming that lower variable indicies occur
-  // -NEW
-  // closer to the root of the BDD.  (That variable sets are stored
-  // in increasing order is used by some of the subsequent routines.)
-{
-  if (SFADDONS(pFunc->addons)->pVbles)
-    {
-      // Variable set has already been computed.
-      return;
-    }
-
-  ITE_NEW_CATCH(
-  SFADDONS(pFunc->addons)->pVbles = new IntegerSet();,
-  "pFunc->addons->pVbles");
-
-  if (pFunc == false_ptr || pFunc == true_ptr)
-    {
-      assert(SFADDONS(pFunc->addons)->pVbles->IsEmpty());
-      return;
-    }
-
-  ComputeVbleSet(pFunc->thenCase);
-  ComputeVbleSet(pFunc->elseCase);
-  ComputeUnion(*(SFADDONS(pFunc->thenCase->addons)->pVbles),
-               *(SFADDONS(pFunc->elseCase->addons)->pVbles),
-               *(SFADDONS(pFunc->addons)->pVbles));
-  SFADDONS(pFunc->addons)->pVbles->PushElement(pFunc->variable);
-}
-
 /* this function uses real variables */
 ITE_INLINE BDDNodeStruct *
 EvalBdd(BDDNodeStruct *pFunc, int nVble, bool bValueOfVble)

@@ -202,7 +202,6 @@ struct BDDNodeStruct;
 typedef struct {
   LiteralSet *pImplied;
   BDDNodeStruct *pReduct;
-  IntegerSet *pVbles;
   SmurfState *pState; /* for compressing smurfs */
 } SmurfFactoryAddons;
 

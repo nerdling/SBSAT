@@ -58,7 +58,6 @@ int bddtable_hash_memory_size = 0;
 int bddtable_hash_memory_mask = 0;
 BDDNode *bddtable_free = NULL;
 
-void bdd_gc();
 void bdd_fix_inferences(BDDNode *node);
 void bddtable_alloc_node(BDDNode **node, int v, BDDNode *r, BDDNode *e);
 void itetable_removeall();

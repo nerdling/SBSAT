@@ -274,4 +274,6 @@ long ite_filesize(char *filename);
 
 BDDNode *tmp_equ_var(BDDNode *p);
 
+void bdd_gc();
+
 #endif

@@ -112,7 +112,7 @@ SmurfFactory()
 			  d3_printf3("Constructing Smurf for %d/%d           \r", i, nmbrFunctions);
          arrIte2SolverSmurf[i] = nRegSmurfIndex;
          arrSmurfEqualityVble[nRegSmurfIndex] = arrIte2SolverVarMap[equalityVble[i]];
-         //ComputeVbleSet(pFunc);
+
          SmurfState *pSmurfState = BDD2Smurf(pFunc);
 
          if (pSmurfState == NULL)
@@ -251,10 +251,6 @@ InitSmurfFactory()
          "true_ptr->addons->pImplied");
    assert(SFADDONS(true_ptr->addons)->pImplied->IsEmpty());
    SFADDONS(true_ptr->addons)->pReduct = true_ptr;
-   ITE_NEW_CATCH(
-         SFADDONS(true_ptr->addons)->pVbles = new IntegerSet();,
-         "true_ptr->addons->pVbles");
-   assert(SFADDONS(true_ptr->addons)->pVbles->IsEmpty());
 
    // Count number of special functions
    // See "struct SpecialFunc" in SmurfFactory.h for a description

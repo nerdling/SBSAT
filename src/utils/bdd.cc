@@ -70,7 +70,6 @@ start_bdd_flag_number(int last_bdd_flag)
    {
       bdd_flag_number++;
       if (bdd_flag_number > 1000000000) {
-         void bdd_gc();
          bdd_gc();
          for(int i=0;i<MAX_FLAG_NUMBER;i++)
             last_bdd_flag_number[i] = 0;
