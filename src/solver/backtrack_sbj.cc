@@ -1,7 +1,7 @@
 /* =========FOR INTERNAL USE ONLY. NO DISTRIBUTION PLEASE ========== */
 
 /*********************************************************************
- Copyright 1999-2007, University of Cincinnati.  All rights reserved.
+ Copyright 1999-2003, University of Cincinnati.  All rights reserved.
  By using this software the USER indicates that he or she has read,
  understood and will comply with the following:
 
@@ -33,8 +33,7 @@
  or arising from the use, or inability to use, this software or its
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
-*********************************************************************/
-
+ *********************************************************************/
 #include "ite.h"
 #include "solver.h"
 void SelectNewBranchPoint ();
@@ -59,19 +58,20 @@ BackTrack_SBJ()
 {
    int nOldBacktrackStackIndex=0;
    LemmaInfoStruct *pUnitLemmaListTail = NULL;
-   LemmaInfoStruct pUnitLemmaList;
    int nUnsetLemmaFlagIndex = 0; /* literals that we need to unset after bt */
+   LemmaBlock *pNewLemma=NULL; /* last lemma added */
    int nTempLemmaIndex = 0; /* the length of the new/temporary lemma */
    int nNumForcedInfsBelowCurrentCP = 0;
    int nInferredAtom; /* the choice point */
    int nInferredValue; /* the value of the choice point */
-   int _num_backjumps = 0;
 
 	int highest_uip_level = gnMaxVbleIndex + 1;
+	int highest_uip_var0 = 0;
+	int highest_uip_var1 = 0;
 
-   pUnitLemmaList.pNextLemma[0] = NULL;
-	pUnitLemmaListTail = NULL;
 	
+   assert(pUnitLemmaList->pNextLemma[0] == NULL);
+
    // Copy the conflict lemma into arrTempLemma.
    nTempLemmaIndex = ConstructTempLemma();
 
@@ -81,10 +81,10 @@ BackTrack_SBJ()
       // Pop the choice point stack.
       pChoicePointTop--;
 
-      if (pChoicePointTop < pStartChoicePointStack)
+      if (pChoicePointTop < arrChoicePointStack)
       {
-         // return ERR_
-         return 1;
+         //goto_NoSolution;
+         return 0;
       }
 		
       nInferredAtom = pChoicePointTop->nBranchVble;
@@ -115,7 +115,8 @@ BackTrack_SBJ()
       pop_state_information(1);
 
       // Pop heuristic scores.
-      if (arrHeurScores) PopHeuristicScores();
+      if (nHeuristic == JOHNSON_HEURISTIC || nHeuristic == STATE_HEURISTIC)
+         J_PopHeuristicScores();
 
       // Pop the backtrack stack until we pop the branch atom.
       while (1)
@@ -139,7 +140,7 @@ BackTrack_SBJ()
          }
 
          /*m invalidating arrBacktrackStackIndex but keep the prev value */
-         int nBacktrackAtom = pBacktrackTop->nBranchVble;
+         int nBacktrackAtom = pBacktrackTop->nAtom;
          int nBacktrackAtomStackIndex = arrBacktrackStackIndex[nBacktrackAtom];
          arrBacktrackStackIndex[nBacktrackAtom] = gnMaxVbleIndex + 1;
 
@@ -156,6 +157,9 @@ BackTrack_SBJ()
 				 nBacktrackAtom == nInferredAtom))
          {
             //nBacktrackAtom is a UIP-unique implication point
+            if (pBacktrackTop->bWasChoicePoint == false) {
+               pBacktrackTop->pUnitLemmaList = NULL;
+            }
 
             pBacktrackTop->bWasChoicePoint = false;
 
@@ -197,7 +201,7 @@ BackTrack_SBJ()
                {
                   // Lemma of length zero. The problem is unsat.
                   cout << "1: Lemma of length zero." << endl;
-                  return 1; // return ERR_
+                  return 0; // goto_NoSolution;
                }
 
                /* COMPUTE nLemmaScore where lemmas with lower level literal 
@@ -217,39 +221,56 @@ BackTrack_SBJ()
                 */
 
                assert(IsInLemmaList(pUnitLemmaListTail,
-                        &pUnitLemmaList));	  
+                        pUnitLemmaList));	  
 					
-               AddLemma(nTempLemmaIndex,
+               pNewLemma=AddLemma(nTempLemmaIndex,
                      arrTempLemma,
                      bFlag,
-                     &pUnitLemmaList, /*m lemma is added in here */
-                     &pUnitLemmaListTail /*m and here */
+                     pUnitLemmaList, /*m lemma is added in here */
+                     pUnitLemmaListTail /*m and here */
                      );
 
-					LemmaInfoStruct *p =	pUnitLemmaList.pNextLemma[0];
+					LemmaInfoStruct *p =	pUnitLemmaList->pNextLemma[0];
 					if(p->nWatchedVble[1] == 0) {
 						highest_uip_level = arrBacktrackStackIndex[0];
 					} else if(arrBacktrackStackIndex[p->nWatchedVble[1]] < highest_uip_level) {
 						highest_uip_level = arrBacktrackStackIndex[p->nWatchedVble[1]];
-						//highest_uip_var0 = p->nWatchedVble[0];
-						//highest_uip_var1 = p->nWatchedVble[1];
+						highest_uip_var0 = p->nWatchedVble[0];
+						highest_uip_var1 = p->nWatchedVble[1];
 					}
             }
 
             /*m while (1) - the end of backtrack */
             if(nBacktrackAtom == nInferredAtom) break; 
 
+
+            if(pBacktrackTop->pUnitLemmaList != NULL) 
+            {
+					//I do need this cause of backjumping???
+					//Maybe i don't need this?
+               /*m join pUnitLemmaList with the pBacktrackTop->pUnitLemmaList */
+					assert(IsInLemmaList(pBacktrackTop->pUnitLemmaListTail,
+                        pBacktrackTop->pUnitLemmaList));
+               pBacktrackTop->pUnitLemmaListTail->pNextLemma[0]
+                  = pUnitLemmaList->pNextLemma[0];
+               pUnitLemmaList->pNextLemma[0] = pBacktrackTop->pUnitLemmaList;
+               if(pUnitLemmaListTail == NULL) 
+                  pUnitLemmaListTail = pBacktrackTop->pUnitLemmaListTail;
+               assert(IsInLemmaList(pUnitLemmaListTail, pUnitLemmaList));
+            }
+
          } // if(pBacktrackTop->bWasChoicePoint == true || ... )
 
 #ifdef DISPLAY_TRACE
-         TB_9(
+         if (nNumBacktracks >= TRACE_START)
+         {
             cout << "Examining lemma:" << endl;
             DisplayLemmaStatus(pBacktrackTop->pLemma, arrSolution);
             cout << "which witnesses inference X"
-               << pBacktrackTop->nBranchVble << " = "
-               << arrSolution[pBacktrackTop->nBranchVble]
+               << pBacktrackTop->nAtom << " = "
+               << arrSolution[pBacktrackTop->nAtom]
                << endl;
-         )
+         }
 #endif
 
          // Check whether the atom at the top of the backtrack stack
@@ -259,9 +280,10 @@ BackTrack_SBJ()
             // The backtrack atom is relevant to the resolution done so far.
             // Therefore, include its attached lemma in the resolution process.
 # ifdef DISPLAY_TRACE
-            TB_9(
-                  cout << "Lemma relevant to contradiction." << endl;
-                );
+            if (nNumBacktracks >= TRACE_START)
+            {
+               cout << "Lemma relevant to contradiction." << endl;
+            }
 # endif
 
 
@@ -295,31 +317,35 @@ BackTrack_SBJ()
             }
          }
 #ifdef DISPLAY_TRACE
-         else TB_9(
-               cout << "Lemma irrelevant to contradiction." << endl;
-               );
+         else if (nNumBacktracks >= TRACE_START)
+         {
+            cout << "Lemma irrelevant to contradiction." << endl;
+         }
          cout << "Star_Count = " << nNumForcedInfsBelowCurrentCP << endl;
 
-         TB_9(
+         if (nNumBacktracks >= TRACE_START)
+         {
             cout << "Backtracking from forced assignment of X"
 				  << nBacktrackAtom << " equal to "
 				  << (arrSolution[nBacktrackAtom] == BOOL_TRUE ? "true" : "false")
 					 << "." << endl;
-         )
+         }
 #endif
 			
-         if (pBacktrackTop->pLemmaInfo) FreeLemma(pBacktrackTop->pLemmaInfo);
+         if (pBacktrackTop->pLemmaInfo) {
+            FreeLemma(pBacktrackTop->pLemmaInfo, false);
+         }
 			
          arrSolution[nBacktrackAtom] = BOOL_UNKNOWN;
       };  //  while (1)
 
       arrSolution[nInferredAtom] = BOOL_UNKNOWN;
-      _num_backjumps++;
+      nNumBackjumps++;
 
 	}  // backjumping loop
    while (arrLemmaFlag[nInferredAtom] == false);
 
-   _num_backjumps--; /*m last backjump was not just backtrack */
+   nNumBackjumps--; /*m last backjump was not just backtrack */
 
    /*m clean up */
    for(int i = 0; i < nUnsetLemmaFlagIndex; i++)
@@ -338,7 +364,7 @@ BackTrack_SBJ()
 	while(highest_uip_level < nOldBacktrackStackIndex) {
 		// Pop the choice point stack.
 		pChoicePointTop--;
-		if (pChoicePointTop < pStartChoicePointStack) {
+		if (pChoicePointTop < arrChoicePointStack) {
 			pChoicePointTop++;
 			nAtTop = 1;
 			break;
@@ -353,7 +379,8 @@ BackTrack_SBJ()
 		
 		pop_state_information(1);
 		// Pop heuristic scores.
-		if (arrHeurScores) PopHeuristicScores();
+		if (nHeuristic == JOHNSON_HEURISTIC || nHeuristic == STATE_HEURISTIC)
+		  J_PopHeuristicScores();
 
 		// Pop the backtrack stack until we pop the branch atom.
 		while (1)
@@ -372,26 +399,21 @@ BackTrack_SBJ()
 					  
 				  pBacktrackTop->pLemmaInfo = NULL;
 			  }
-			  if (pBacktrackTop->pLemmaInfo) FreeLemma(pBacktrackTop->pLemmaInfo);
+			  if (pBacktrackTop->pLemmaInfo) FreeLemma(pBacktrackTop->pLemmaInfo, false);
 			  
 			  /*m invalidating arrBacktrackStackIndex but keep the prev value */
-			  int nBacktrackAtom = pBacktrackTop->nBranchVble;
+			  int nBacktrackAtom = pBacktrackTop->nAtom;
 			  arrBacktrackStackIndex[nBacktrackAtom] = gnMaxVbleIndex + 1;
 			  arrSolution[nBacktrackAtom] = BOOL_UNKNOWN;
 			  if(nBacktrackAtom == nInferredAtom) break;
 		  };  //  while (1)
 		
 		arrSolution[nInferredAtom] = BOOL_UNKNOWN;
-      _num_backjumps++;
+      nNumBackjumps++;
 		
 	}  // backjumping loop
-
-   if (_num_backjumps) {
-      ite_counters[NUM_BACKJUMPS]++;
-      ite_counters[NUM_TOTAL_BACKJUMPS] += _num_backjumps;
-   }
 	
-	LemmaInfoStruct *previous = &pUnitLemmaList;
+	LemmaInfoStruct *previous = pUnitLemmaList;
 	for (LemmaInfoStruct *p = previous->pNextLemma[0]; p; p = p->pNextLemma[0])
    {
       //m WatchedVble 0 and 1 have the highest BSI in the whole clause
@@ -416,9 +438,28 @@ BackTrack_SBJ()
 		
 		p = previous;			
 	} // for (LemmaInfoStruct *p = pUnitLemmaList->pNextLemma[0]; ; p = p->pNextLemma[0])
+	pUnitLemmaList->pNextLemma[0] = NULL;
+   pUnitLemmaListTail = NULL;
+
+   BacktrackStackEntry *pBacktrackStackOldBranchPoint = pBacktrackTop;
+   pBacktrackStackOldBranchPoint->pUnitLemmaList = NULL;
+   pBacktrackStackOldBranchPoint->pUnitLemmaListTail = NULL;
+	//I may not need to maintain pBacktrackStackOldBranchPoint...
 
 	ite_counters[NO_ERROR]--;
+	//Re-apply the choicepoint.
+   //Heuristic does this automatically.
+
+#ifdef DISPLAY_TRACE
+   if (nNumBacktracks >= TRACE_START)
+   {
+      cout << "Reversed polarity of X" << nInferredAtom
+         << " to " << nInferredValue << endl;
+      //DisplayAllBrancherLemmas();
+      cout << "Would DisplayAllBrancherLemmas here." << endl;
+   }
+#endif
 
    // Get the consequences of the branch atoms new value.
-   return 0; /* NO_ERROR */
+   return 1;
 }

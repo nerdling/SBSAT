@@ -1,7 +1,7 @@
 /* =========FOR INTERNAL USE ONLY. NO DISTRIBUTION PLEASE ========== */
 
 /*********************************************************************
- Copyright 1999-2007, University of Cincinnati.  All rights reserved.
+ Copyright 1999-2003, University of Cincinnati.  All rights reserved.
  By using this software the USER indicates that he or she has read,
  understood and will comply with the following:
 
@@ -33,14 +33,27 @@
  or arising from the use, or inability to use, this software or its
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
-*********************************************************************/
-
+ *********************************************************************/
 #include "ite.h"
 #include "solver.h"
 
-ITE_INLINE void InferNLits(SpecialFunc *pSpecialFunc, int n);
+/* param */
+extern int *arrNumRHSUnknowns;
+extern SpecialFunc *arrSpecialFuncs;
+extern int nNumUnresolvedFunctions;
+extern int *arrBacktrackStackIndex;
 
-ITE_INLINE int
+/* conflict resolution */
+extern LemmaBlock *pConflictLemma;
+
+/* trace */
+extern int nNumBacktracks;
+
+ITE_INLINE void
+InferNLits(SpecialFunc *pSpecialFunc, int n);
+
+ITE_INLINE
+int
 UpdateSpecialFunction_AND(IndexRoleStruct *pIRS)
 {
    int nSpecFuncIndex = pIRS->nSpecFuncIndex;

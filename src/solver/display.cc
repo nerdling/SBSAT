@@ -1,7 +1,7 @@
 /* =========FOR INTERNAL USE ONLY. NO DISTRIBUTION PLEASE ========== */
 
 /*********************************************************************
- Copyright 1999-2007, University of Cincinnati.  All rights reserved.
+ Copyright 1999-2003, University of Cincinnati.  All rights reserved.
  By using this software the USER indicates that he or she has read,
  understood and will comply with the following:
 
@@ -34,16 +34,19 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
-
 #include "ite.h"
 #include "solver.h"
 
-extern int gnNumCachedLemmas;
-extern int gnNumLemmas;
-extern int nCallsToAddLemma;
-extern int nNumCachedLemmas[3]; 
+extern SmurfState *pTrueSmurfState;
+extern SpecialFunc *arrSpecialFuncs;
+extern int nNumSpecialFuncs;
+extern int *arrFcnIndexRegSmurf;
+extern BDDNodeStruct **arrFunctions;
+extern int nNumRegSmurfs;
 
-void DisplaySpecialFunc(SpecialFunc *p);
+
+void
+DisplaySpecialFunc(SpecialFunc *p);
 
 void
 DisplayStatus(int nNumSmurfs,
@@ -59,39 +62,38 @@ DisplayStatus(int nNumSmurfs,
        << endl;
 
   return;
-/*
+
   cout << "Unresolved Smurfs: " << endl;
   for (int i = 0; i < nNumSmurfs; i++)
     {
-       
-       for (int j = 0; j < 2 && i < nNumSmurfs; j++)
-       {
-          cout << i << ": " << arrCurrentStates[i];
-          i++;
-          cout << "   ";
-       }
-
-       if (arrCurrentStates[i] != pTrueSmurfState)
-       {
-          cout << i << ": " << arrCurrentStates[i] << endl;
-       }
+      /*
+      for (int j = 0; j < 2 && i < nNumSmurfs; j++)
+	{
+	  cout << i << ": " << arrCurrentStates[i];
+	  i++;
+	  cout << "   ";
+	}
+       */
+      if (arrCurrentStates[i] != pTrueSmurfState)
+	{
+	  cout << i << ": " << arrCurrentStates[i] << endl;
+	}
     }
   
   cout << "Unresolved special functions:" << endl;
   if (nNumSpecialFuncs > 0)
-  {
-     for (int i = 0; i < nNumSpecialFuncs; i++)
-     {
-        if (arrNumRHSUnknowns[i] > 0)
-        {
-           cout << "Special function " << i << ":" << endl;
-           DisplaySpecialFunc(arrSpecialFuncs + i);
-           cout << "#RHS Unknowns: "
-              << arrNumRHSUnknowns[i] << endl;
-        }
-     }
-  }
-  */
+    {
+      for (int i = 0; i < nNumSpecialFuncs; i++)
+	{
+	  if (arrNumRHSUnknowns[i] > 0)
+	    {
+	      cout << "Special function " << i << ":" << endl;
+	      DisplaySpecialFunc(arrSpecialFuncs + i);
+	      cout << "#RHS Unknowns: "
+		   << arrNumRHSUnknowns[i] << endl;
+	    }
+	}
+    }
 }
 
 void
@@ -136,6 +138,19 @@ DisplaySpecialFunc(SpecialFunc *p)
 
 #ifdef DISPLAY_TRACE
 //enum InferenceType {REG_SMURF, LEMMA, SPECIAL_FUNC};
+
+void
+DisplayRelevantVbleAssignments(BDDNode *pBDD)
+{
+  int nVble;
+  IntegerSetIterator isetNext(*(pBDD->addons->pVbles));
+  while (isetNext(nVble))
+    {
+      cout << "X" << nVble << ": "
+           << arrSolution[nVble] << "  ";
+    }
+  cout << endl;
+}
 
 void
 DisplayInference(InferenceType eInfType,
@@ -233,6 +248,13 @@ void DisplaySolution(int nMaxVbleIndex)
   printf("\n");
 }
 
+extern int nNumBacktracks;
+extern int gnNumCachedLemmas;
+extern int gnNumLemmas;
+extern int nCallsToAddLemma;
+extern int nNumBackjumps;
+//extern long autarky_count;
+
 ITE_INLINE
 void
 CalculateProgress(int *_whereAmI, int *_total)
@@ -243,8 +265,11 @@ CalculateProgress(int *_whereAmI, int *_total)
   int hard_count=28;
   int count=0;
 
-  BacktrackStackEntry *pBacktrack = pStartBacktrackStack;
-  ChoicePointStruct *pChoicePoint = pStartChoicePointStack;
+  extern BacktrackStackEntry *arrBacktrackStack;
+  extern BacktrackStackEntry *pBacktrackTop;
+  extern ChoicePointStruct *arrChoicePointStack;
+  BacktrackStackEntry *pBacktrack = arrBacktrackStack;
+  ChoicePointStruct *pChoicePoint = arrChoicePointStack;
   while (pBacktrack < pBacktrackTop && 
          (count<soft_count || (count < hard_count && whereAmI==0)) ) 
   {
@@ -256,7 +281,7 @@ CalculateProgress(int *_whereAmI, int *_total)
       total += 1;
       count++;
     }else
-    if (pBacktrack->nBranchVble == pChoicePoint->nBranchVble) {
+    if (pBacktrack->nAtom == pChoicePoint->nBranchVble) {
       whereAmI *= 2;
       total *= 2;
       total += 1;
@@ -273,87 +298,63 @@ CalculateProgress(int *_whereAmI, int *_total)
 ITE_INLINE
 void DisplayBacktrackInfo(double &fPrevEndTime, double &fStartTime)
 {
-      double fEndTime = ite_counters_f[CURRENT_TIME] = get_runtime();
+      double fEndTime = get_runtime();
       double fTotalDurationInSecs = fEndTime - fStartTime;
       double fDurationInSecs = fEndTime - fPrevEndTime;
       double fBacktracksPerSec = BACKTRACKS_PER_STAT_REPORT / (fDurationInSecs>0?fDurationInSecs:0.001);
       fPrevEndTime = fEndTime;
 
-      d2_printf2("Time: %4.3fs. ", fTotalDurationInSecs);
-      d2_printf3("Backtracks: %ld (%4.3f per sec) ", 
-            (long)ite_counters[NUM_BACKTRACKS], fBacktracksPerSec);
+      d2_printf2("Backtracks: %d ", nNumBacktracks);
+      d2_printf2("Time: %4.3f secs.    ", fTotalDurationInSecs);
+      d2_printf2("%4.3f backtracks per sec.\n", fBacktracksPerSec);
 
       int whereAmI = 0;
       int total = 0;
       double progress = 0.0;
       CalculateProgress(&whereAmI, &total);
       if (total == 0) total=1;
-      progress = ite_counters_f[PROGRESS] = (float)whereAmI*100/total;
-      //d2_printf3("Progress: %x/%x        ", whereAmI, total);
-      d2_printf1("Progress: ");
+      progress = (float)whereAmI*100/total;
+      d2_printf3("\n Progress: %x/%x        ", whereAmI, total);
       char number[10];
       char back[10] = "\b\b\b\b\b\b\b\b\b";
       sprintf(number, "% 3.2f%%", progress);
       back[strlen(number)]=0;
-      if ((DEBUG_LVL&15) == 1) {
+      if (DEBUG_LVL == 1) {
 	      fprintf(stderr, "%s%s", number, back);
       } else {
-         D_1(
 	      d0_printf3("%s%s", number, back);
 	      fflush(stddbg);
-            )
       }
 
-      d2_printf1("\n Choices (total, dependent" );
-      dC_printf4("c %4.3fs. Progress %s Choices: %lld\n", fTotalDurationInSecs, number, ite_counters[NO_ERROR]);
-      if (backjumping) d2_printf1(", backjumped");
-      d2_printf3("): (%lld, %lld", ite_counters[NO_ERROR], ite_counters[HEU_DEP_VAR]);
-      if (backjumping) d2_printf2(", %lld", ite_counters[NUM_TOTAL_BACKJUMPS]);
-      d2_printf1(")");
-      if (NO_LEMMAS == 0)
-      d2_printf6("\n Lemmas (0, 1, 2, non-cached, added): (%d, %d, %d, %d, %d)",
-      		  nNumCachedLemmas[0], nNumCachedLemmas[1], nNumCachedLemmas[2],
-		  gnNumLemmas - (nNumCachedLemmas[0]+nNumCachedLemmas[1]+nNumCachedLemmas[2]),
+#ifdef HAVE_IMAGE_JPEG
+      D_2(
+      graph_record(progress);  /* other variables are taken out of ite_counters */
+      )
+#endif
+
+      d2_printf3("\n Choices (total, dependent): (%lld, %lld)",
+      		  ite_counters[NO_ERROR],
+		  ite_counters[HEU_DEP_VAR]
+		  );
+      d2_printf4("\n Lemmas (cached, non-cached, added): (%d, %d, %d)",
+      		  gnNumCachedLemmas,
+		  gnNumLemmas - gnNumCachedLemmas,
 		  nCallsToAddLemma
 		  );
-      /*d2_printf5("\n Inferences by (smurfs, ANDs, XORs, lemmas): (%lld, %lld, %lld, %lld)",
+      d2_printf5("\n Inferences by (smurfs, ANDs, XORs, lemmas): (%lld, %lld, %lld, %lld)",
       		  ite_counters[INF_SMURF],
       		  ite_counters[INF_SPEC_FN_AND],
       		  ite_counters[INF_SPEC_FN_XOR],
       		  ite_counters[INF_LEMMA]
-		  );*/
-      d2_printf1("\n");
-      d2_printf1(" Inferences by ");
-      if (nNumRegSmurfs) d2_printf2("smurfs: %lld; ", ite_counters[INF_SMURF]);
-      if (nNumSpecialFuncs) {
-         d2_printf2("ANDs: %lld; ", ite_counters[INF_SPEC_FN_AND]);
-         d2_printf2("XORs: %lld; ", ite_counters[INF_SPEC_FN_XOR]);
-         d2_printf2("MINMAXs: %lld; ", ite_counters[INF_SPEC_FN_MINMAX]);
-      }
-      if (NO_LEMMAS == 0) d2_printf2("lemmas: %lld; ", ite_counters[INF_LEMMA]);
-      d2_printf1("\n");
-
-      d2_printf1(" Backtracks by ");
-      if (nNumRegSmurfs) d2_printf2("smurfs: %lld; ", ite_counters[ERR_BT_SMURF]);
-      if (nNumSpecialFuncs) {
-         d2_printf2("ANDs: %lld; ", ite_counters[ERR_BT_SPEC_FN_AND]);
-         d2_printf2("XORs: %lld; ", ite_counters[ERR_BT_SPEC_FN_XOR]);
-         d2_printf2("MINMAXs: %lld; ", ite_counters[ERR_BT_SPEC_FN_MINMAX]);
-      }
-      if (NO_LEMMAS == 0) d2_printf2("lemmas: %lld; ", ite_counters[ERR_BT_LEMMA]);
-      d2_printf1("\n");
-      if (backjumping) d2_printf3(" Backjumps: %ld (avg bj len: %.1f)\n", 
-            (long)ite_counters[NUM_TOTAL_BACKJUMPS], 
-            (float)ite_counters[NUM_TOTAL_BACKJUMPS]/(1+ite_counters[NUM_BACKJUMPS]));
-      if (autarky) d2_printf3(" Autarkies: %ld (avg au len: %.1f)\n", 
-            (long)ite_counters[NUM_TOTAL_AUTARKIES], 
-            (float)ite_counters[NUM_TOTAL_AUTARKIES]/(1+ite_counters[NUM_AUTARKIES]));
-      if (max_solutions != 1) d2_printf3(" Solutions found: %ld/%ld\n", 
-            (long)ite_counters[NUM_SOLUTIONS], (long)max_solutions);
-
-      d2_printf1("\n");
-
-      void dump_lemmas(char *_filename);
-      if (*lemma_out_file) dump_lemmas(lemma_out_file);
+		  );
+      d2_printf5("\n Backtracks by (smurfs, ANDs, XORs, lemmas): (%lld, %lld, %lld, %lld)",
+      		  ite_counters[ERR_BT_SMURF],
+      		  ite_counters[ERR_BT_SPEC_FN_AND],
+      		  ite_counters[ERR_BT_SPEC_FN_XOR],
+      		  ite_counters[ERR_BT_LEMMA]
+		  );
+      d2_printf2("\n Backjumps: %d", nNumBackjumps);
+      //cout << "\n Autark levels: " << autarky_count;
+      d2_printf1("\n\n");
 }
 

@@ -1,6 +1,6 @@
 %name-prefix="blif_"
 %{
-#include "sbsat.h"
+#include "ite.h"
 #include "bddnode.h"
 #include "symtable.h"
 #include "functions.h"
@@ -15,15 +15,19 @@
    void     ite_new_int_leaf(char *, char *);
    void     ite_flag_vars(symrec **, int);
 
-   symrec **blif_varlist = NULL;
-   int blif_varmax = 0;
-   int blif_varindex;
+   /* FIXME: make it more dynamic! */
+   extern symrec *varlist[1000];
+   extern int varindex;
+
+   /* FIXME: make it more dynamic! */
+   extern BDDNode *explist[10][1000];
+   extern int expindex[10];
+   extern int explevel;
 
    extern int lines;
+   extern int normal_bdds;
+   extern int spec_fn_bdds;
    extern int t_sym_max;
-
-   void blif_nothing() { /*unput (0);*/ }
-   void blif_reallocate_varlist();
 
 #ifndef __attribute__
 #define __attribute__(x)
@@ -38,8 +42,8 @@
     BDDNode     *bdd;     /* For returning exp                    */
 }
 
-%token MODEL INPUTS OUTPUTS LATCH NAMES END ID ZEROONE TT TTONE
-//%type <id> ID TT TTONE // STRING U_OP
+%token MODEL INPUTS OUTPUTS LATCH NAMES END TT TTONE ID ZEROONE
+%type <id> ID TT TTONE // STRING U_OP
 // %type <num> INTNUMBER
 // %type <op2fn> OP
 //%type <bdd> exp exp_start
@@ -65,7 +69,7 @@ inputlist: /* empty */
 ;
 
 input:  INPUTS varlist 
-            { blif_varlist[blif_varindex] = NULL; ite_flag_vars(blif_varlist, /*independent - 1*/1);  }
+            { varlist[varindex] = NULL; ite_flag_vars(varlist, /*independent - 1*/1);  }
 	   | INPUTS 
 ;
 
@@ -74,13 +78,12 @@ outputlist: /* empty */
 ;
 
 output:  OUTPUTS varlist 
-            { blif_varlist[blif_varindex] = NULL; ite_flag_vars(blif_varlist, /*dependent - 0*/0);  }
+            { varlist[varindex] = NULL; ite_flag_vars(varlist, /*dependent - 0*/0);  }
 	    | OUTPUTS 
 ;
 
 commandslist: /* empty */
          | commandslist commands
-;
 
 commands:  latch
          | names
@@ -100,9 +103,9 @@ namesbody: truthlist
 ;
 
 varlist:   ID
-	         { blif_varindex=0; blif_reallocate_varlist(); blif_varlist[blif_varindex++] = 0; /*s_getsym($1);*/ }
+	         { varindex=0; varlist[varindex++] = 0; /*s_getsym($1);*/ }
 	      | varlist ID
-	         { blif_reallocate_varlist(); blif_varlist[blif_varindex++] = 0; /*s_getsym($2);*/ }
+	         { varlist[varindex++] = 0; /*s_getsym($2);*/ }
 ;
 
 truthlist: truthline
@@ -114,14 +117,4 @@ truthline: TT
 ;
 
 %%
-
-void
-blif_reallocate_varlist()
-{
-   if (blif_varindex >= blif_varmax)
-   {
-      blif_varlist = (symrec **)ite_recalloc((void*)blif_varlist, blif_varmax, blif_varmax+100, sizeof(int), 9, "blif_varlist");
-      blif_varmax += 100;
-   }
-}
 

@@ -1,7 +1,7 @@
 /* =========FOR INTERNAL USE ONLY. NO DISTRIBUTION PLEASE ========== */
 
 /*********************************************************************
- Copyright 1999-2007, University of Cincinnati.  All rights reserved.
+ Copyright 1999-2003, University of Cincinnati.  All rights reserved.
  By using this software the USER indicates that he or she has read,
  understood and will comply with the following:
 
@@ -34,23 +34,18 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
+/*********************************************************
+ *  depcluster.cc (S. Weaver)
+ *********************************************************/
 
-#include "sbsat.h"
-#include "sbsat_preproc.h"
+#include "ite.h"
 
 int DepCluster();
 
 int Do_DepCluster() {
-   d3_printf1("DEPENDENT CLUSTERING - ");
+	d2_printf1 ("DEPENDENT CLUSTERING - ");
    int cofs = PREP_CHANGED;
    int ret = PREP_NO_CHANGE;
-	affected = 0;
-	char p[100];
-	D_3(
-		 sprintf(p, "{0:0/%d}", nmbrFunctions);
-		 str_length = strlen(p);
-		 d3_printf1(p);
-	);
 	while (cofs!=PREP_NO_CHANGE) {
       cofs = DepCluster ();
 		//cofs = Do_ExQuantify ();
@@ -60,8 +55,7 @@ int Do_DepCluster() {
 		}
 	}
 	
-	d3_printf1 ("\n");
-	d2e_printf1 ("\r                                                   ");
+	d2_printf1 ("\n");
 	return ret;
 }
 
@@ -98,38 +92,18 @@ int DepCluster () {
 	}
 	
 	BDDNode *Quantify;
-
+	
 	for (int i = 0; i < numinp + 1; i++) {
-		char p[100];
-		D_3(
-			 if (i % 100 == 0) {
-				 for(int iter = 0; iter<str_length; iter++)
-					d3_printf1("\b");
-				 sprintf(p, "{%ld:%d/%ld}", affected, i, numinp);
-				 str_length = strlen(p);
-				 d3_printf1(p);
-			 }
-		);
-      
-		if(i % 100 == 0) {
-			if (nCtrlC) {
-				d3_printf1("\nBreaking out of Dependent Clustering\n");
-				nCtrlC = 0;
-				break;
-			}
-			d2e_printf3("\rPreprocessing Dc %d/%ld ", i, numinp);
-		}
-		
 		//do temp variables first (independantVars[i] == 2)
 		//then come back and do dependent vars (independantVars[i] == 0)
 		if(independantVars[i] != 1) {
 			int j = -1;
-			//int print = 0;
+			int print = 0;
 			int count1 = 0;
 			int count2 = 0;
 			for(llBDD *iter = tempmem[i]->next; iter!=NULL; iter = iter->next) {
 				count1++;
-				//if(Dep_repeat[iter->BDD] != 0) print = 1;
+				if(Dep_repeat[iter->BDD] != 0) print = 1;
 				if(abs(equalityVble[iter->BDD]) == i) {
 					if(j!=-1) {
 						//fprintf(stderr, "\nInconsistent var %d, skipping\n", i);
@@ -162,18 +136,18 @@ int DepCluster () {
 				 case TRIV_UNSAT:
 				 case PREP_ERROR:
 					ret=r;
-               goto ex_bailout;
+					goto ex_bailout;
+					break;
 				 default: break;
 				}
-				delete [] bdd_vars;
-				bdd_vars = NULL;
-			
+
 				Quantify = xquantify (Quantify, i);
 				switch (int r=Rebuild_BDD(Quantify, &bdd_length, bdd_vars)) {
 				 case TRIV_UNSAT:
 				 case PREP_ERROR:
 					ret=r;
-               goto ex_bailout;
+					goto ex_bailout;
+					break;
 				 default: break;
 				}
 
@@ -189,48 +163,30 @@ int DepCluster () {
 					(functionType[k] == OR || functionType[k] == AND)) {
 					int equ_var = abs(equalityVble[k]);
 					BDDNode *true_side = set_variable (Quantify, i, 1);
-               BDDNode *false_side = set_variable (Quantify, i, 0);
+					BDDNode *false_side = set_variable (Quantify, i, 0);
 					if(true_side == ite_not(false_side)) {
-						true_side->notCase = false_side->notCase;
-						false_side->notCase = true_side->notCase;
 						equalityVble[k] = equ_var; //could of been negative, now it's positive for sure
 						if(true_side->thenCase == true_ptr || true_side->elseCase == true_ptr)
 						  functionType[k] = OR;
 						else
 						  functionType[k] = AND;
-               } else {
+					} else {
 						if(bdd_length > MAX_VBLES_PER_SMURF) {	
 							if(DO_INFERENCES) {
 								switch (int r=Do_Apply_Inferences()) {
 								 case TRIV_UNSAT:
 								 case PREP_ERROR:
 									ret=r;
-                           goto ex_bailout;
+									goto ex_bailout;
+									break;
 								 default: break;
 								}
 							}
-							delete [] bdd_vars;
-							bdd_vars = NULL;
 							continue;
 						}
-						if(DO_INFERENCES) {
-							switch (int r=Do_Apply_Inferences()) {
-							 case TRIV_UNSAT:
-							 case PREP_ERROR:
-								ret=r;
-                        goto ex_bailout;
-							 default: break;
-							}
-						}
-//#define SEAN_REAL_DC //Uncomment for REAL dependent clustering
-#ifndef SEAN_REAL_DC
-					   delete [] bdd_vars;
-						bdd_vars = NULL;
-                  continue;
-#else
+						continue; //Comment out for REAL dependent clustering
 						equalityVble[k] = 0;
 						functionType[k] = UNSURE;
-#endif
 					}
 				} else {
 					if(bdd_length > MAX_VBLES_PER_SMURF) { 
@@ -240,34 +196,44 @@ int DepCluster () {
 							 case PREP_ERROR:
 								ret=r;
 								goto ex_bailout;
+								break;
 							 default: break;
 							}
 						}
-						delete [] bdd_vars;
-						bdd_vars = NULL;
 						continue;
 					}
-					if(DO_INFERENCES) {
-						switch (int r=Do_Apply_Inferences()) {
-						 case TRIV_UNSAT:
-						 case PREP_ERROR:
-							ret=r;
-                     goto ex_bailout;
-						 default: break;
-						}
-					}
-#ifndef SEAN_REAL_DC
-					delete [] bdd_vars;
-					bdd_vars = NULL;
-               continue; 
-#else
+					continue; //Comment out for REAL dependent clustering
 					equalityVble[k] = 0;
 					functionType[k] = UNSURE;
-#endif
 				}
+				
 				count2++;
 				
-				affected++;
+				//Need to add BDD k into the inference list of any variable that wasn't
+				//originally in k.
+				int a = 0, b = 0;
+				while(a < bdd_length && b < length[k]) {
+					if(bdd_vars[a] > variables[k].num[b]) {
+						b++;
+					} else if(bdd_vars[a] < variables[k].num[b]) {
+						llist *newllist = new llist;
+						newllist->num = k;
+						newllist->next = NULL;
+						amount[bdd_vars[a]].tail->next = newllist;
+						amount[bdd_vars[a]].tail = newllist;
+						a++;
+					} else { a++; b++; }
+				}
+				
+				while(a < bdd_length) {
+					llist *newllist = new llist;
+					newllist->num = k;
+					newllist->next = NULL;
+					amount[bdd_vars[a]].tail->next = newllist;
+					amount[bdd_vars[a]].tail = newllist;
+					a++;
+				}
+				
 				functions[k] = Quantify;
 				switch (int r=Rebuild_BDDx(k)) {
 				 case TRIV_UNSAT:
@@ -275,13 +241,19 @@ int DepCluster () {
 				 case PREP_ERROR: 
 					ret=r;
 					goto ex_bailout;
+					break;
 				 default: break;
 				}
-
+				
 				SetRepeats(k);
 				ret = PREP_CHANGED;
 				delete [] bdd_vars;
 				bdd_vars = NULL;
+			}
+			//Dep_repeat[j] = 0;
+			if(count1 == (count2+1)) {
+				//fprintf(stderr, "HEY!!! %d %d %d Ex this var %d!!!!", count1, count2, tempinters[i], i);
+				//Do_ExQuantify();
 			}
 			if(ret == PREP_CHANGED) goto ex_bailout;
 			//lazy...lazy...lazy...

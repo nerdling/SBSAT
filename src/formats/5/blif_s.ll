@@ -1,17 +1,8 @@
 %{
-#include "sbsat.h"
+#include "ite.h"
 #include "bddnode.h"
 #include "libt5_a-blif_g.h"
-
-/* remove warning about unput not used */
-#define YY_NO_UNPUT
-/* remove warning statement has no effect */
-#define ECHO
-
-#define yyterminate() { blif__delete_buffer(YY_CURRENT_BUFFER); return YY_NULL; }
-
 extern int s_line;
-void blif_ll_nothing() { }
 %}
 %s names ttable
 %option noyywrap
@@ -52,3 +43,4 @@ TRUTHTABLE  [-01]+" "[01]?
 .                 printf( "Unrecognized character: %s\n", yytext ); 
 
 %%
+

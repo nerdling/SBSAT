@@ -1,7 +1,7 @@
 /* =========FOR INTERNAL USE ONLY. NO DISTRIBUTION PLEASE ========== */
 
 /*********************************************************************
- Copyright 1999-2007, University of Cincinnati.  All rights reserved.
+ Copyright 1999-2003, University of Cincinnati.  All rights reserved.
  By using this software the USER indicates that he or she has read,
  understood and will comply with the following:
 
@@ -33,33 +33,39 @@
  or arising from the use, or inability to use, this software or its
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
-*********************************************************************/
-
+ *********************************************************************/
 #include "ite.h"
 #include "solver.h"
 
 int *arrChangedSpecialFn = NULL;
 int *arrChangedSmurfs = NULL;
 
+extern int nNumBytesInStateArray; // # of bytes in a current state array.
+extern int nNumBytesInSpecialFuncStackEntry;
+extern SmurfState **arrRegSmurfInitialStates;
+
 // Stack of the indicies of the previous
 // inferred variables (variables inferred to be true or inferred to be false,
 // including branch variables)
-BacktrackStackEntry *arrBacktrackStack=NULL; 
-BacktrackStackEntry *pStartBacktrackStack=NULL; 
-int * arrBacktrackStackIndex = NULL;
+BacktrackStackEntry *arrBacktrackStack; 
 
 ITE_INLINE void FreeHeuristicTablesForSpecialFuncs();
+ITE_INLINE void InitializeSmurfStatesStack();
+ITE_INLINE void InitializeSpecialFnStack();
 
 
-ITE_INLINE int
+ITE_INLINE
+int
 RecordInitialInferences()
 {
    int i;
    BDDNode *pFunc;
+   int nNumFuncs = nmbrFunctions;
+   bool bValueOfVble;
    int nCurrentAtomValue;
    bool bInitialInferenceFound = false;
 
-   for (i = 0; i < nmbrFunctions; i++)
+   for (i = 0; i < nNumFuncs; i++)
    {
       if (IsSpecialFunc(arrFunctionType[i]))
       {
@@ -67,39 +73,27 @@ RecordInitialInferences()
          continue;
       }
       pFunc = arrFunctions[i];
-      infer *head = pFunc->inferences;
-      while(head != NULL)
+      if (pFunc->addons->pImplied == NULL) {
+         // There is no literal implicant for this smurf ??
+         dE_printf1("CHECK ME -- no implicant for the smurf\n");
+         continue;
+      }
+      LiteralSetIterator litsetNext(*(pFunc->addons->pImplied));
+      while (litsetNext(nVble, bValueOfVble))
       {
-         if (head->nums[1] != 0) { head=head->next; continue; }
-         int nVble = head->nums[0];
-         head=head->next;
-         int nValueOfVble = BOOL_TRUE;;
-         if (nVble < 0) { 
-            nVble = -nVble; 
-            nValueOfVble = BOOL_FALSE; 
-         }
-
+         nVble = arrIte2SolverVarMap[nVble];
          if (!bInitialInferenceFound)
          {
-            printf("\nWarning.  Inference found in constraint %d", i);
-            printf("\n prior to beginning backtracking search:  ");
-            printf("\nBrancher variable %d(%d) = ", arrIte2SolverVarMap[nVble], nVble);
-            assert(nValueOfVble == BOOL_TRUE || nValueOfVble == BOOL_FALSE);
-            printf((nValueOfVble == BOOL_TRUE) ? "true." : "false.");
-            printf("\nCurrent value = ");
-            printf((arrSolution[arrIte2SolverVarMap[nVble]] == BOOL_TRUE) ? "true." :
-                  (arrSolution[arrIte2SolverVarMap[nVble]] == BOOL_FALSE) ?  "false." :
-               "unknown");
-            printf("\n numinp = %ld numout = %ld", (long)numinp, (long)numout);
-            D_3(printBDD(arrFunctions[i]); )
-            printf("\nThis message will appear only once for the first inference found\n");
-//            bInitialInferenceFound = true;
+            printf("Warning.  Inference found in constraint %d", i);
+            printf(" prior to beginning backtracking search:  ");
+            printf("Brancher variable %d = ", nVble);
+            assert(bValueOfVble == BOOL_TRUE || bValueOfVble == BOOL_FALSE);
+            printf((bValueOfVble == BOOL_TRUE) ? "true.\n" : "false.\n");
+            //bInitialInferenceFound = true;
          }
-         nVble = arrIte2SolverVarMap[nVble];
-         assert(nVble != 0);
 
          nCurrentAtomValue = arrSolution[nVble];
-         if (nValueOfVble == BOOL_TRUE)
+         if (bValueOfVble)
          {
             // Positive inference
             if (nCurrentAtomValue == BOOL_FALSE)
@@ -159,53 +153,67 @@ CreateAffectedFuncsStructures(int nMaxVbleIndex)
    AffectedFuncsStruct *arrAFS;
    arrAFS = (AffectedFuncsStruct*)ite_calloc(nMaxVbleIndex+1, sizeof(AffectedFuncsStruct),
          9, "arrAFS");
+   garrAFS = arrAFS;
 
+   int nNumFuncs = nmbrFunctions;
    int *arrFuncType = functionType;
    int nVble;
+
+/* zeroing done using calloc, 
+   structures now part of the AFS
+
+   // Initialize counts to zero and lists to empty.
+   for (int i = 0; i < nMaxVbleIndex + 1; i++)
+   {
+      arrAFS[i].nNumRegSmurfsAffected = 0;
+      arrAFS[i].nNumSpecialFuncsAffected = 0;
+      // Our lists of LemmaInfoStructs all start with a single
+      // empty head node.
+      arrAFS[i].pLemmasWherePos[0] = (LemmaInfoStruct*)ite_calloc(1, sizeof(LemmaInfoStruct),
+            9, "arrAFS[].pLemmasWherePos[0]");
+      arrAFS[i].pLemmasWherePos[1] = (LemmaInfoStruct*)ite_calloc(1, sizeof(LemmaInfoStruct),
+            9, "arrAFS[].pLemmasWherePos[0]");
+      arrAFS[i].pLemmasWhereNeg[0] = (LemmaInfoStruct*)ite_calloc(1, sizeof(LemmaInfoStruct),
+            9, "arrAFS[].pLemmasWherePos[0]");
+      arrAFS[i].pLemmasWhereNeg[1] = (LemmaInfoStruct*)ite_calloc(1, sizeof(LemmaInfoStruct),
+            9, "arrAFS[].pLemmasWherePos[0]");
+   }
+*/
 
    int nNumElementsSmurfs = 0;
    int nNumElementsSpecFn = 0;
 
-   int nSpecialFuncIndex = 0;
-   int nRegSmurfIndex = 0;
-
    // For each variable, count the number of special funcs
    // and regular Smurfs which will mention it when the brancher starts.
-   for (int nFuncIndex = 0; nFuncIndex < nmbrFunctions; nFuncIndex++)
+   for (int nFuncIndex = 0; nFuncIndex < nNumFuncs; nFuncIndex++)
    {
-      //t_smurf_chain *arrSmurfChain;
+      IntegerSetIterator isetNext(*(arrFunctions[nFuncIndex]->addons->pReduct->addons->pVbles));
 
-      SpecialFunc *pSpecialFunc = NULL;
-      if (IsSpecialFunc(arrFuncType[nFuncIndex]) || arrSmurfChain[nRegSmurfIndex].specfn != -1) 
-         pSpecialFunc = arrSpecialFuncs + nSpecialFuncIndex;
-
-      if (pSpecialFunc)
+      if (IsSpecialFunc(arrFuncType[nFuncIndex]))
       {
-         if (pSpecialFunc->nLHSVble != 0)
+         while (isetNext(nVble))
          {
-            nVble = pSpecialFunc->nLHSVble;
-            arrAFS[nVble].nNumSpecialFuncsAffected++;
+            arrAFS[arrIte2SolverVarMap[nVble]].nNumSpecialFuncsAffected++;
             nNumElementsSpecFn++;
          }
-         for(int i=0;i<pSpecialFunc->rhsVbles.nNumElts;i++)
-         {
-            nVble = pSpecialFunc->rhsVbles.arrElts[i];
-            arrAFS[nVble].nNumSpecialFuncsAffected++;
-         }
-         nNumElementsSpecFn+=pSpecialFunc->rhsVbles.nNumElts;
-         nSpecialFuncIndex++;
       }
-
-      if (IsSpecialFunc(arrFuncType[nFuncIndex])) {}
       else
       {
-         for(int i=0;i<arrRegSmurfInitialStates[nRegSmurfIndex]->vbles.nNumElts;i++)
+         while (isetNext(nVble))
          {
-            nVble = arrRegSmurfInitialStates[nRegSmurfIndex]->vbles.arrElts[i];
-            arrAFS[nVble].nNumRegSmurfsAffected++;
+            arrAFS[arrIte2SolverVarMap[nVble]].nNumRegSmurfsAffected++;
+            nNumElementsSmurfs++;
          }
-         nNumElementsSmurfs+=arrRegSmurfInitialStates[nRegSmurfIndex]->vbles.nNumElts;
-         nRegSmurfIndex++;
+
+         if (xorFunctions[nFuncIndex])
+         {
+            IntegerSetIterator isetNext(*(xorFunctions[nFuncIndex]->addons->pReduct->addons->pVbles));
+            while (isetNext(nVble))
+            {
+               arrAFS[arrIte2SolverVarMap[nVble]].nNumSpecialFuncsAffected++;
+               nNumElementsSpecFn++;
+            }
+         }
       }
    }
 
@@ -226,10 +234,26 @@ CreateAffectedFuncsStructures(int nMaxVbleIndex)
          arrAFS[nVble].arrSpecFuncsAffected = arrAFSBufferSpecFn + nAFSBufferSpecFnIdx;
          nAFSBufferSpecFnIdx += arrAFS[nVble].nNumSpecialFuncsAffected;
       }
-		arrAFS[nVble].LemmasWherePosTail[0].pNextLemma[0] = &(arrAFS[nVble].LemmasWherePos[0]);
-		arrAFS[nVble].LemmasWherePosTail[1].pNextLemma[1] = &(arrAFS[nVble].LemmasWherePos[1]);
-		arrAFS[nVble].LemmasWhereNegTail[0].pNextLemma[0] = &(arrAFS[nVble].LemmasWhereNeg[0]);
-		arrAFS[nVble].LemmasWhereNegTail[1].pNextLemma[1] = &(arrAFS[nVble].LemmasWhereNeg[1]);
+
+/*
+      // Allocate arrRegSmurfsAffected array.
+      if (arrAFS[nVble].nNumRegSmurfsAffected > 0)
+      {
+         ITE_NEW_CATCH(
+               arrAFS[nVble].arrRegSmurfsAffected
+               = new int[arrAFS[nVble].nNumRegSmurfsAffected];,
+               "arrAFS[].arrRegSmurfsAffected");	  
+      }
+
+      // Allocate arrSpecFuncsAffected array.
+      if (arrAFS[nVble].nNumSpecialFuncsAffected > 0)
+      {
+         ITE_NEW_CATCH(
+               arrAFS[nVble].arrSpecFuncsAffected
+               = new IndexRoleStruct[arrAFS[nVble].nNumSpecialFuncsAffected];,
+               "arrAFS[].arrSpecFuncsAffected");
+      }
+*/
    }
 
    // Setup two arrays of indicies used to keep track of
@@ -243,75 +267,149 @@ CreateAffectedFuncsStructures(int nMaxVbleIndex)
 
    // Now fill in the information concerning which variables are mentioned
    // in which functions.
-  
-   nSpecialFuncIndex = 0;
-   nRegSmurfIndex = 0;
-   for (int nFuncIndex = 0; nFuncIndex < nmbrFunctions; nFuncIndex++)
+   int nSpecialFuncIndex = 0;
+   int nRegSmurfIndex = 0;
+   for (int nFuncIndex = 0; nFuncIndex < nNumFuncs; nFuncIndex++)
    {
-      int tmp_nSpecialFuncIndex = -1;
-      if (IsSpecialFunc(arrFuncType[nFuncIndex]) || arrSmurfChain[nRegSmurfIndex].specfn != -1) 
-         tmp_nSpecialFuncIndex = nSpecialFuncIndex;
-
-      if (tmp_nSpecialFuncIndex != -1)
+      if (IsSpecialFunc(arrFuncType[nFuncIndex]))
       {
-         SpecialFunc *pSpecialFunc = arrSpecialFuncs + tmp_nSpecialFuncIndex;
-         if (pSpecialFunc->nLHSVble != 0)
+         IntegerSetIterator isetNext(*(arrFunctions[nFuncIndex]->addons->pReduct->addons->pVbles));
+         while (isetNext(nVble))
          {
-            int nVble = pSpecialFunc->nLHSVble;
+            nVble = arrIte2SolverVarMap[nVble];
             int nIndex = arrSpecialFuncIndexForVble[nVble];
             arrAFS[nVble].arrSpecFuncsAffected[nIndex]
-               .nSpecFuncIndex = tmp_nSpecialFuncIndex;
-            if (pSpecialFunc->nLHSPolarity == BOOL_TRUE)
+               .nSpecFuncIndex = nSpecialFuncIndex;
+
+            // Determine the role of the variable in the special func. 
+            SpecialFunc *pSpecFunc = arrSpecialFuncs + nSpecialFuncIndex;
+            if (nVble == pSpecFunc->nLHSVble)
             {
-               arrAFS[nVble].arrSpecFuncsAffected[nIndex]
-                  .nPolarity = BOOL_TRUE;
+               if (pSpecFunc->nLHSPolarity == BOOL_TRUE)
+               {
+                  arrAFS[nVble].arrSpecFuncsAffected[nIndex]
+                     .nPolarity = BOOL_TRUE;
+               }
+               else
+               {
+                  arrAFS[nVble].arrSpecFuncsAffected[nIndex]
+                     .nPolarity = BOOL_FALSE;
+               }
+               arrAFS[nVble].arrSpecFuncsAffected[nIndex].nRHSIndex
+                  = -1;
             }
             else
             {
-               arrAFS[nVble].arrSpecFuncsAffected[nIndex]
-                  .nPolarity = BOOL_FALSE;
+               // It is a RHS variable.  Determine its polarity.
+               int *arrRHSVbles = pSpecFunc->rhsVbles.arrElts;
+               int nNumRHSVbles = pSpecFunc->rhsVbles.nNumElts;
+               int i;
+
+               for (i = 0; i < nNumRHSVbles; i++)
+               {
+                  if (nVble == arrRHSVbles[i])
+                  {
+                     if (pSpecFunc->arrRHSPolarities[i] == BOOL_TRUE)
+                     {
+                        arrAFS[nVble].arrSpecFuncsAffected[nIndex]
+                           .nPolarity = BOOL_TRUE;
+                     }
+                     else
+                     {
+                        arrAFS[nVble].arrSpecFuncsAffected[nIndex]
+                           .nPolarity = BOOL_FALSE;
+                     }
+                     arrAFS[nVble].arrSpecFuncsAffected[nIndex].nRHSIndex
+                        = i;
+                     break;
+                  }
+               }
+               assert(i != nNumRHSVbles); // bItemFound
             }
-            arrAFS[nVble].arrSpecFuncsAffected[nIndex].nRHSIndex = -1;
-            arrSpecialFuncIndexForVble[nVble]++;
-         }
-         for(int i=0;i<pSpecialFunc->rhsVbles.nNumElts;i++)
-         {
-            int nVble = pSpecialFunc->rhsVbles.arrElts[i];
-            int nIndex = arrSpecialFuncIndexForVble[nVble];
-            arrAFS[nVble].arrSpecFuncsAffected[nIndex]
-               .nSpecFuncIndex = tmp_nSpecialFuncIndex;
-            if (pSpecialFunc->arrRHSPolarities[i] == BOOL_TRUE)
-            {
-               arrAFS[nVble].arrSpecFuncsAffected[nIndex]
-                  .nPolarity = BOOL_TRUE;
-            }
-            else
-            {
-               arrAFS[nVble].arrSpecFuncsAffected[nIndex]
-                  .nPolarity = BOOL_FALSE;
-            }
-            arrAFS[nVble].arrSpecFuncsAffected[nIndex].nRHSIndex = i;
+
             arrSpecialFuncIndexForVble[nVble]++;
          }
          nSpecialFuncIndex++;
       }
-
-      if (IsSpecialFunc(arrFuncType[nFuncIndex])) {}
       else
       {
-         for(int i=0;i<arrRegSmurfInitialStates[nRegSmurfIndex]->vbles.nNumElts;i++)
+         IntegerSetIterator isetNext(*(arrFunctions[nFuncIndex]->addons->pReduct->addons->pVbles));
+
+         // Current constraint is represented as a regular Smurf.
+         while (isetNext(nVble))
          {
-            int nVble = arrRegSmurfInitialStates[nRegSmurfIndex]->vbles.arrElts[i];
+            nVble = arrIte2SolverVarMap[nVble];
             int nIndex = arrRegSmurfIndexForVble[nVble];
-            arrAFS[nVble].arrRegSmurfsAffected[nIndex] = nRegSmurfIndex;
+            arrAFS[nVble].arrRegSmurfsAffected[nIndex]
+               = nRegSmurfIndex;
             arrRegSmurfIndexForVble[nVble]++;
          }
          nRegSmurfIndex++;
+         if (xorFunctions[nFuncIndex]) {
+            IntegerSetIterator isetNext(*(xorFunctions[nFuncIndex]->addons->pReduct->addons->pVbles));
+            /* FIXME: copy from the above -- create function for this: */
+         while (isetNext(nVble))
+         {
+            nVble = arrIte2SolverVarMap[nVble];
+            int nIndex = arrSpecialFuncIndexForVble[nVble];
+            arrAFS[nVble].arrSpecFuncsAffected[nIndex]
+               .nSpecFuncIndex = nSpecialFuncIndex;
+
+            // Determine the role of the variable in the special func. 
+            SpecialFunc *pSpecFunc = arrSpecialFuncs + nSpecialFuncIndex;
+            if (nVble == pSpecFunc->nLHSVble)
+            {
+               if (pSpecFunc->nLHSPolarity == BOOL_TRUE)
+               {
+                  arrAFS[nVble].arrSpecFuncsAffected[nIndex]
+                     .nPolarity = BOOL_TRUE;
+               }
+               else
+               {
+                  arrAFS[nVble].arrSpecFuncsAffected[nIndex]
+                     .nPolarity = BOOL_FALSE;
+               }
+               arrAFS[nVble].arrSpecFuncsAffected[nIndex].nRHSIndex
+                  = -1;
+            }
+            else
+            {
+               // It is a RHS variable.  Determine its polarity.
+               int *arrRHSVbles = pSpecFunc->rhsVbles.arrElts;
+               int nNumRHSVbles = pSpecFunc->rhsVbles.nNumElts;
+               int i;
+
+               for (i = 0; i < nNumRHSVbles; i++)
+               {
+                  if (nVble == arrRHSVbles[i])
+                  {
+                     if (pSpecFunc->arrRHSPolarities[i] == BOOL_TRUE)
+                     {
+                        arrAFS[nVble].arrSpecFuncsAffected[nIndex]
+                           .nPolarity = BOOL_TRUE;
+                     }
+                     else
+                     {
+                        arrAFS[nVble].arrSpecFuncsAffected[nIndex]
+                           .nPolarity = BOOL_FALSE;
+                     }
+                     arrAFS[nVble].arrSpecFuncsAffected[nIndex].nRHSIndex
+                        = i;
+                     break;
+                  }
+               }
+               assert(i != nNumRHSVbles); // bItemFound
+            }
+
+            arrSpecialFuncIndexForVble[nVble]++;
+         }
+         nSpecialFuncIndex++;
+         }
       }
    }
 
-   ite_free((void**)&arrRegSmurfIndexForVble);
-   ite_free((void**)&arrSpecialFuncIndexForVble);
+   free(arrRegSmurfIndexForVble);
+   free(arrSpecialFuncIndexForVble);
 
    return arrAFS;
 }
@@ -319,73 +417,37 @@ CreateAffectedFuncsStructures(int nMaxVbleIndex)
 ITE_INLINE void
 FreeAFS()
 {
-   ite_free((void**)&arrAFSBufferSmurfs);
-   ite_free((void**)&arrAFSBufferSpecFn);
-   ite_free((void**)&arrAFS);
+   free(arrAFSBufferSmurfs);
+   free(arrAFSBufferSpecFn);
+   free(garrAFS);
 }
-
-ITE_INLINE void
-Update_arrVarScores()
-{
-   for (int i = 1; i<gnMaxVbleIndex; i++)
-   {
-      arrVarScores[i].pos = arrVarScores[i].pos/2 + 
-         arrLemmaVbleCountsPos[i] - arrVarScores[i].last_count_pos;
-      arrVarScores[i].neg = arrVarScores[i].neg/2 + 
-         arrLemmaVbleCountsNeg[i] - arrVarScores[i].last_count_neg;
-      arrVarScores[i].last_count_pos = arrLemmaVbleCountsPos[i];
-      arrVarScores[i].last_count_neg = arrLemmaVbleCountsNeg[i];
-   }
-}
-
 
 ITE_INLINE int
-InitBrancher()
+InitSolveVillage()
 {
-   d5_printf1("InitBrancher\n");
+   d2_printf1("InitSolveVillage\n");
 
-   switch (nHeuristic) {
-    case JOHNSON_HEURISTIC:
-       proc_update_heuristic = J_UpdateHeuristic;
-       if (sHeuristic[1] == 'l') {
-         int i = strlen(sHeuristic);
-         if (i>8) i=8;
-         memmove(sHeuristic+1, sHeuristic+2, i-1); 
-         proc_call_heuristic = J_OptimizedHeuristic_l;
-      } else {
-         proc_call_heuristic = J_OptimizedHeuristic;
-      }
-      D_9(
-             DisplayJHeuristicValues();
-          );
-       break;
-    case C_LEMMA_HEURISTIC:
-       proc_call_heuristic = L_OptimizedHeuristic;
-       proc_update_heuristic = UpdateHeuristic;
-       break;
-    case INTERACTIVE_HEURISTIC:
-       proc_call_heuristic = I_OptimizedHeuristic;
-       proc_update_heuristic = UpdateHeuristic;
-       break;
-    default:
-       dE_printf1("Unknown heuristic\n");
-       exit(1);
-   }
+   int nNumFuncs = nmbrFunctions;
 
-
-   arrVarScores = (t_arrVarScores*)ite_calloc(gnMaxVbleIndex, 
-         sizeof(t_arrVarScores), 9, "arrVarScores");
-   Update_arrVarScores();
+   pUnitLemmaList = (LemmaInfoStruct*)ite_calloc(1, sizeof(LemmaInfoStruct),
+         9, "pUnitLemmaList"); /*m local to backtrack function only */
 
    /* Backtrack arrays */
-   arrUnsetLemmaFlagVars = (int*)ite_calloc(gnMaxVbleIndex, sizeof(int),
-         9, "arrUnsetLemmaFlagVars");
-   arrTempLemma = (int*)ite_calloc(gnMaxVbleIndex, sizeof(int),
-         9, "arrTempLemma");
-   arrLemmaFlag = (bool*)ite_calloc(gnMaxVbleIndex+1, sizeof(bool),
-         9, "arrLemmaFlag");
-   arrBacktrackStackIndex = (int*)ite_calloc(gnMaxVbleIndex+1, sizeof(int),
-         9, "arrBacktrackStackIndex");
+   ITE_NEW_CATCH(
+         arrUnsetLemmaFlagVars = new int[gnMaxVbleIndex];
+         arrTempLemma = new int[gnMaxVbleIndex];
+         arrBacktrackStackIndex = new int[gnMaxVbleIndex+1];
+         arrLemmaFlag = new bool[gnMaxVbleIndex+1];,
+         "arrUnsetLemmaFlagVars");
+
+   nNumUnresolvedFunctions = nNumRegSmurfs + nNumSpecialFuncs; //nNumFuncs;
+
+   for(int x = 1; x <= gnMaxVbleIndex; x++) 
+   {
+      arrLemmaFlag[x] = false;
+      arrBacktrackStackIndex[x] = gnMaxVbleIndex+1;
+   }
+   arrBacktrackStackIndex[0] = 0;
 
    // Initialization of variables and data structures
    assert(pTrueSmurfState);  // Should be initialized by SmurfFactory.
@@ -396,7 +458,11 @@ InitBrancher()
    arrInferenceQueue
       = (int *)ite_calloc(nNumVariables, sizeof(*arrInferenceQueue), 2, 
             "inference queue");
+   pInferenceQueueNextElt = pInferenceQueueNextEmpty = arrInferenceQueue;
+
+
    arrAFS = CreateAffectedFuncsStructures(gnMaxVbleIndex);
+   nNumBytesInStateArray = sizeof(SmurfState *) * nNumRegSmurfs;
 
    if(nNumRegSmurfs > 0) {
       arrCurrentStates
@@ -408,9 +474,26 @@ InitBrancher()
    } else
       arrCurrentStates = NULL;
 
-   if (nHeuristic == JOHNSON_HEURISTIC) {
-      J_InitHeuristicScores();
+
+   int nRegSmurfIndex = 0;
+   for (int i = 0; i < nNumFuncs; i++)
+   {
+      if (!IsSpecialFunc(arrFunctionType[i]))
+      {
+         arrPrevStates[nRegSmurfIndex] =
+         arrCurrentStates[nRegSmurfIndex] =
+            arrRegSmurfInitialStates[nRegSmurfIndex];
+         //= arrFunctions[i]->addons->pSmurfState;
+
+         if (arrCurrentStates[nRegSmurfIndex] == pTrueSmurfState)
+         {
+            nNumUnresolvedFunctions--;
+         }
+         nRegSmurfIndex++;
+      }
    }
+   InitializeSmurfStatesStack();
+
 
    // Set up the Special Func Stack.
 
@@ -436,21 +519,7 @@ InitBrancher()
       arrPrevSumRHSUnknowns = (double *)ite_calloc(nNumSpecialFuncs, sizeof(double),
             9, "arrPrevSumRHSUnknowns");
 
-      arrRHSCounter = (int *)ite_calloc(nNumSpecialFuncs, sizeof(int),
-            9, "arrRHSCounter");
-      arrRHSCounterNew = (int *)ite_calloc(nNumSpecialFuncs, sizeof(int),
-            9, "arrRHSCounterNew");
-      arrPrevRHSCounter = (int *)ite_calloc(nNumSpecialFuncs, sizeof(int),
-            9, "arrPrevRHSCounter");
-
-      if (nHeuristic == JOHNSON_HEURISTIC) {
-         assert(arrJWeights);
-         for (int i = 0; i < nNumSpecialFuncs; i++) {
-            for (int j=0; j<arrSpecialFuncs[i].rhsVbles.nNumElts; j++)
-               arrSumRHSUnknowns[i] += arrJWeights[arrSpecialFuncs[i].rhsVbles.arrElts[j]];
-         }
-      }
-
+      nNumBytesInSpecialFuncStackEntry = nNumSpecialFuncs * sizeof(int);
       for (int i = 0; i < nNumSpecialFuncs; i++) {
          arrPrevNumRHSUnknowns[i] =
          arrNumRHSUnknownsNew[i] =
@@ -458,19 +527,15 @@ InitBrancher()
          arrPrevNumLHSUnknowns[i] =
          arrNumLHSUnknownsNew[i] =
          arrNumLHSUnknowns[i] = arrSpecialFuncs[i].nLHSVble > 0? 1: 0;
-         arrSumRHSUnknowns[i] = 0;
-         arrPrevRHSCounter[i] =
-         arrRHSCounterNew[i] =
-         arrRHSCounter[i] = 0;
 
          assert(arrSolution[0]!=BOOL_UNKNOWN);
       }
    }
 
-  /* have to have the stack at least for stages so I don't have to check
-     the existence of special fn every time */
-  InitializeSmurfStatesStack();
-  InitializeSpecialFnStack();
+   /* have to have the stack at least for stages so I don't have to check
+    the existence of special fn every time */
+   InitializeSpecialFnStack();
+
 
    if (nNumRegSmurfs) {
       arrChangedSmurfs = (int*)ite_calloc(nNumRegSmurfs, sizeof(int),
@@ -487,76 +552,71 @@ InitBrancher()
    arrChoicePointStack 
       = (ChoicePointStruct *)ite_calloc(gnMaxVbleIndex, sizeof(*arrChoicePointStack), 2,
             "choice point stack");
+   pChoicePointTop = arrChoicePointStack;
+
    arrBacktrackStack
       = (BacktrackStackEntry *)ite_calloc(nNumVariables, sizeof(*arrBacktrackStack), 2,
             "backtrack stack");
-    /* init Fn Inference queue */
+   pBacktrackTop = arrBacktrackStack;
+
+   /* init Fn Inference queue */
    arrFnInferenceQueue
       = (t_fn_inf_queue *)ite_calloc(nNumSpecialFuncs+nNumRegSmurfs+1, sizeof(t_fn_inf_queue), 2,
             "function inference queue");
+   pFnInferenceQueueNextElt = pFnInferenceQueueNextEmpty = arrFnInferenceQueue;
 
+   gnNumLemmas = 0;
+   InitLemmaInfoArray();
    //  InitHeuristicTablesForSpecialFuncs(nNumVariables);
+
+   if (nHeuristic == JOHNSON_HEURISTIC) J_InitHeuristic();
+
+   int ret = RecordInitialInferences();
 
    // The variable with index 0 plays a special role (which is in handling
    // the PLAINOR functions).  We force its value to false before the
    // search begins.
    arrSolution[0] = BOOL_FALSE;
-   /* for restart */
-   for (int i = 1; i<nNumVariables; i++) {
-      //assert(arrSolution[i] == BOOL_UNKNOWN);
-      arrSolution[i] = BOOL_UNKNOWN;
-   }
+   *(pInferenceQueueNextEmpty++) = 0;
 
-   if (*csv_trace_file) {
-      fd_csv_trace_file = fopen(csv_trace_file, "w");
-   }
-
-   return SOLV_UNKNOWN;
+   return ret;
 }
 
 ITE_INLINE void
-FreeBrancher()
+FreeSolveVillage()
 {
-   d5_printf1("FreeBrancher\n");
+   d2_printf1("FreeSolveVillage\n");
+   delete [] arrUnsetLemmaFlagVars;
+   delete [] arrTempLemma;
+   delete [] arrBacktrackStackIndex;
+   delete [] arrLemmaFlag;
+   if (arrInferenceQueue) free(arrInferenceQueue);
+   if (arrFnInferenceQueue) free(arrFnInferenceQueue);
 
-   if (fd_csv_trace_file) fclose(fd_csv_trace_file);
+   if (arrNumRHSUnknowns)   free(arrNumRHSUnknowns);
+   if (arrNumRHSUnknownsNew) free(arrNumRHSUnknownsNew);
+   if (arrPrevNumRHSUnknowns) free(arrPrevNumRHSUnknowns);
 
-   ite_free((void**)&arrUnsetLemmaFlagVars);
-   ite_free((void**)&arrTempLemma);
-   ite_free((void**)&arrBacktrackStackIndex);
-   ite_free((void**)&arrLemmaFlag);
+   if (arrNumLHSUnknowns)   free(arrNumLHSUnknowns);
+   if (arrNumLHSUnknownsNew) free(arrNumLHSUnknownsNew);
+   if (arrPrevNumLHSUnknowns) free(arrPrevNumLHSUnknowns);
 
-   ite_free((void**)&arrInferenceQueue);
-   ite_free((void**)&arrFnInferenceQueue);
+   if (arrSumRHSUnknowns)   free(arrSumRHSUnknowns);
+   if (arrSumRHSUnknownsNew) free(arrSumRHSUnknownsNew);
+   if (arrPrevSumRHSUnknowns) free(arrPrevSumRHSUnknowns);
 
-   ite_free((void**)&arrNumRHSUnknowns);
-   ite_free((void**)&arrNumRHSUnknownsNew);
-   ite_free((void**)&arrPrevNumRHSUnknowns);
-
-   ite_free((void**)&arrNumLHSUnknowns);
-   ite_free((void**)&arrNumLHSUnknownsNew);
-   ite_free((void**)&arrPrevNumLHSUnknowns);
-
-   ite_free((void**)&arrSumRHSUnknowns);
-   ite_free((void**)&arrSumRHSUnknownsNew);
-   ite_free((void**)&arrPrevSumRHSUnknowns);
-
-   ite_free((void**)&arrRHSCounter);
-   ite_free((void**)&arrRHSCounterNew);
-   ite_free((void**)&arrPrevRHSCounter);
-
-   ite_free((void**)&arrCurrentStates);
-   ite_free((void**)&arrPrevStates);
-   ite_free((void**)&arrChangedSmurfs);
-   ite_free((void**)&arrChangedSpecialFn);
-   ite_free((void**)&arrChoicePointStack);
-   ite_free((void**)&arrBacktrackStack);
-   ite_free((void**)&arrVarScores);
+   if (arrCurrentStates)    free(arrCurrentStates);
+   if (arrPrevStates)       free(arrPrevStates);
+   if (arrChangedSmurfs)    free(arrChangedSmurfs);
+   if (arrChangedSpecialFn) free(arrChangedSpecialFn);
+   free(arrChoicePointStack);
+   free(arrBacktrackStack);
+   free(pUnitLemmaList);
+   FreeIntNodePool();
+   FreeLemmaInfoArray();
+   if (nHeuristic == JOHNSON_HEURISTIC) {
+      J_FreeHeurScoresStack();
+   }
 
    FreeAFS();
-   if (nHeuristic == JOHNSON_HEURISTIC) {
-      J_FreeHeuristicScores();
-   }
-   FreeSpecialFnStack();
-   FreeSmurfStatesStack();
 }

@@ -1,16 +1,8 @@
 %{
-#include "sbsat.h"
+#include "ite.h"
 #include "bddnode.h"
 #include "libt5_a-bdd_g.h"
 extern int s_line;
-
-/* remove warning about unput not used */
-#define YY_NO_UNPUT
-/* remove warning statement has no effect */
-#define ECHO
-
-#define yyterminate() { bdd__delete_buffer(YY_CURRENT_BUFFER); return YY_NULL; }
-
 %}
 
 %option noyywrap

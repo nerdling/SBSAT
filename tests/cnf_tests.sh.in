@@ -8,28 +8,19 @@ echo ===========================================
 
 for i in @top_srcdir@/tests/cnf/*.cnf
 do
- echo @ECHO_N@ "`basename $i` ... @ECHO_C@"
+ echo -n "`basename $i` ... "
  PARAMS=
  if [ -f $i.params ] ; then
    PARAMS=`cat $i.params`
  fi
- ../src/sbsat --debug 0 --ini @top_srcdir@/tests/emptyite.ini --ctrl-c 0 $i $PARAMS
- if [ $? != 0 ] ; then
-    exit 1;
- fi
- echo @ECHO_N@ "`basename $i` (simple_solver) ... @ECHO_C@"
- PARAMS=
- if [ -f $i.params ] ; then
-   PARAMS=`cat $i.params`
- fi
- ../src/sbsat --debug 0 --ini ../tests/emptyite.ini --ctrl-c 0 $i $PARAMS -t --lemmas 1 --max-solutions 0
+ ../src/ite --debug 0 --ini @top_srcdir@/tests/emptyite.ini --ctrl-c 0 $i $PARAMS
  if [ $? != 0 ] ; then
     exit 1;
  fi
 done
 
 echo ===========================================
-echo Done - Success
+echo Done - Sucess
 echo ===========================================
 
 exit 0

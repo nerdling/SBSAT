@@ -1,0 +1,10 @@
+aclocal.m4
+config.log
+config.status
+Makefile
+sbsat-*.tar.bz2
+sbsat-*.tar.gz
+stamp-h1
+config.h
+autom4te.cache
+.deps

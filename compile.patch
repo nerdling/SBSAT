@@ -1,3 +1,5 @@
-#!/bin/sh
-
-patch -f -p1 $1 < compile.patch
+218c218,219
+< @am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" \
+---
+> @am__fastdepCXX_TRUE@	@echo Compiling $*
+> @am__fastdepCXX_TRUE@	@if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" \

@@ -1,7 +1,7 @@
 /* =========FOR INTERNAL USE ONLY. NO DISTRIBUTION PLEASE ========== */
 
 /*********************************************************************
- Copyright 1999-2007, University of Cincinnati.  All rights reserved.
+ Copyright 1999-2003, University of Cincinnati.  All rights reserved.
  By using this software the USER indicates that he or she has read,
  understood and will comply with the following:
 
@@ -34,34 +34,94 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
-
 #ifndef PROTOTYPES_H
 #define PROTOTYPES_H
 
+#include <stdio.h>
+#include "tracer.h"
+#include "equivclass.h"
+
+/*
+ * great for small problems
+ * bigger problems == take more memory or is slower depending on params
+ */
+//#define BDDIDX_STORAGE
+
+/*  BDD hash table with variable size/overlapping buckets */
+#define BDD_VSB_STORAGE
+
+#ifdef BDD_VSB_STORAGE
+#define find_or_add_node bddvsb_find_or_add_node
+#define bdd_init         bddvsb_init
+#endif
+
+#ifdef BDDIDX_STORAGE
+#define find_or_add_node bddidx_find_or_add_node
+#define bdd_init         bddidx_init
+#endif
+
+#ifndef BDD_VSB_STORAGE
+#ifndef BDDIDX_STORAGE
+#define find_or_add_node orig_find_or_add_node
+#define bdd_init         bddorig_init
+#endif
+#endif
+
+int walkSolve();
+int solve(Tracer * &tracer);
+void write_output (char formatout, Tracer * &tracer);
+int read_input(char formatin, char formatout, Tracer * &tracer);
 
 double get_runtime();
 long get_memusage();
-void unravelBDD (int *y, int *max, int **tempint, BDDNode *func);
-void Dd_Support(int *y, int *max, int **tempint, DdNode * func);
-DdNode **BDDlist_to_CUDD (BDDNode **bdds, int nNumBDDs, DdManager *BDD_Manager);
+void unravelBDD (long *, int *, BDDNode *);
 int compfunc (const void *, const void *);
-int revcompfunc (const void *, const void *);
+int revcompfunc (const void *x, const void *y);
 int abscompfunc (const void *, const void *);
 int absrevcompfunc (const void *, const void *);
-int initbranch_compfunc(const void *, const void *);
 
-BDDNode *and_dot(BDDNode *, BDDNode *);
-BDDNode *constant_and(BDDNode *, BDDNode *);
-BDDNode *possible_BDD(BDDNode *, int);
+void bdd_init();
+BDDNode *find_or_add_node(int, BDDNode *, BDDNode *);
+BDDNode *ite(BDDNode *, BDDNode *, BDDNode *);
 
+#ifdef NO_BDD_MACROS
+BDDNode *ite_var (int);
+BDDNode *ite_not(BDDNode *);
+BDDNode *ite_and(BDDNode *, BDDNode *);
+BDDNode *ite_or(BDDNode *, BDDNode *);
+BDDNode *ite_equ(BDDNode *, BDDNode *);
+BDDNode *ite_xor(BDDNode *, BDDNode *);
+BDDNode *ite_imp(BDDNode *, BDDNode *);
+BDDNode *ite_itequ(BDDNode *, BDDNode *, BDDNode *, BDDNode *);
+BDDNode *ite_nand(BDDNode *, BDDNode *);
+BDDNode *ite_nor(BDDNode *, BDDNode *);
+BDDNode *ite_nimp(BDDNode *, BDDNode *);
 BDDNode *bdd2xdd(BDDNode *);
-BDDNode *xddnot(BDDNode *);
-BDDNode *xddxor(BDDNode *, BDDNode *);
-BDDNode *xddand(BDDNode *, BDDNode *);
-
 int splitXors();
 void countSingleXors(BDDNode *, int *, int *);
-int are_oppos(BDDNode *, BDDNode *);
+BDDNode *reduce_t(int, BDDNode *);
+BDDNode *reduce_f(int, BDDNode *);
+int top_variable(BDDNode *, BDDNode *, BDDNode *);
+#else
+#define ite_var(v)     (v<0?find_or_add_node (-1*v, false_ptr, true_ptr):\
+                            find_or_add_node (   v, true_ptr,  false_ptr))
+#define ite_not(a)     (ite(a, false_ptr, true_ptr))
+#define ite_and(a, b)  (ite(a, b, false_ptr))
+#define ite_or(a, b)   (ite(a, true_ptr, b))
+#define ite_equ(a, b)  (ite_not(ite_xor(a, b)))
+#define ite_xor(a, b)  (ite(a, ite_not(b), b))
+#define ite_imp(a, b)  (ite(a, b, true_ptr))
+#define ite_itequ(a, b, c, d) (ite_equ(d, ite(a, b, c)))
+
+#define ite_nor(a, b)  (ite_not(ite_or(a, b)))
+#define ite_nimp(a, b) (ite_not(ite_imp(a, b)))
+#define ite_nand(a, b) (ite_not(ite_and(a, b)))
+
+#define reduce_t(v, x) ((x)->variable == v ? (x)->thenCase : (x))
+#define reduce_f(v, x) ((x)->variable == v ? (x)->elseCase : (x))
+#define MIN3(x,y,z) (x<y?(x<z?x:z):y<z?y:z)
+#define top_variable(x, y, z) MIN3((x)->variable, (y)->variable, (z)->variable)
+#endif
 
 void SAT_to_CNF();
 void Smurfs_to_BDD();
@@ -73,61 +133,63 @@ void myungetc(char c);
 void readfile();
 int look_up(char *s);
 
+BDDNode *ite(BDDNode *, BDDNode *, BDDNode *);
+BDDNode *ite_xor3(BDDNode *, BDDNode *, BDDNode *);
+BDDNode *ite_xor4(BDDNode *, BDDNode *, BDDNode *, BDDNode *);
+BDDNode *ite_xor5(BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *);
+BDDNode *ite_xor6(BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *);
+BDDNode *ite_xor7(BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *);
+BDDNode *ite_xor8(BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *);
+BDDNode *ite_xor9(BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *);
+BDDNode *ite_xor10(BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *);
+BDDNode *ite_and3(BDDNode *, BDDNode *, BDDNode *);
+BDDNode *ite_and4(BDDNode *, BDDNode *, BDDNode *, BDDNode *);
+BDDNode *ite_and5(BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *);
+BDDNode *ite_and6(BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *);
+BDDNode *ite_and7(BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *);
+BDDNode *ite_and8(BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *);
+BDDNode *ite_and9(BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *);
+BDDNode *ite_and10(BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *);
+BDDNode *ite_or3(BDDNode *, BDDNode *, BDDNode *);
+BDDNode *ite_or4(BDDNode *, BDDNode *, BDDNode *, BDDNode *);
+BDDNode *ite_or5(BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *);
+BDDNode *ite_or6(BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *);
+BDDNode *ite_or7(BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *);
+BDDNode *ite_or8(BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *);
+BDDNode *ite_or9(BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *);
+BDDNode *ite_or10(BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *);
 BDDNode *gcf(BDDNode *, BDDNode *);
-int nmbrVarsInCommon(int, int, int);
-BDDNode *strengthen(int, int);
-BDDNode *strengthen_fun(BDDNode *, BDDNode *);
+int nmbrVarsInCommon(int, int, int *&, store *&, int);
+BDDNode* strengthen(int, int, int *&, store *&);
 BDDNode *xquantify(BDDNode *, int);
 BDDNode *uquantify(BDDNode *, int);
-BDDNode *safe_assign(BDDNode *, int);
-BDDNode *safe_assign_eq(BDDNode *, int);
-BDDNode *safe_assign_func(BDDNode *, int);
 int countnodes(BDDNode *);
-int count_true_paths(BDDNode *, int *, int);
-void marknodes(BDDNode *);
 
 #define print_bdd(f) print_bdd1(f, 0)
 void print_bdd1(BDDNode *, int);
-int verifyBDD (BDDNode *, int);
 void verifyCircuit(int);
 void printBDDerr(BDDNode *);
 void printBDD(BDDNode *);
 void printBDDfile(BDDNode *, FILE *);
-void printBDDfile_sym(BDDNode *, FILE *);
 void printBDDTree(BDDNode *, int *);
-void printITEBDD(BDDNode *);
-void printBDDdot_file(BDDNode **, int);
-void printBDDdot_stdout(BDDNode **, int);
-void PrintSmurfs(BDDNode **bdds, int size); //Used to display the SMURFS via the dot format.
 BDDNode *ReadSmurf(int *, char *, int, int *, int);
 BDDNode *mitosis(BDDNode *, int *, int *);
-BDDNode *f_mitosis(BDDNode *, BDDNode **, int *);
-BDDNode *mitosis_len(BDDNode *bdd, int *structureBDD, int *newBDD, int length);
-BDDNode *shared_structure(BDDNode *, int, int);
 BDDNode *f_apply(BDDNode *, BDDNode**);
 BDDNode *MinMaxBDD(int *, int, int, int, int);
-void unmark(BDDNode *);
-float mark_trues(BDDNode *);
-void Fill_Density();
-double calculateNeed(BDDNode *f, int v, int pos); //For calculating sigma of the message passing routines.
+void unmark(BDDNode *bdd);
+char getformat (FILE *);
 void DNF_to_CNF();
-int CNF_to_BDD();
+void CNF_to_BDD(int);
 //CircuitStruct *split(int, int);
 void cheat_replace(BDDNode *, int, int);
-void num_replace_all(llist *, int , int);
 BDDNode *num_replace(BDDNode *, int, int);
-BDDNode *remove_fpsx (int, int);
+BDDNode *remove_fpsx (int, int, int *&, store *&);
 BDDNode *remove_fps(BDDNode *, BDDNode *);
-BDDNode *restrictx (int, int);
+BDDNode *restrictx (int, int, int *&, store *&);
 BDDNode *restrict (BDDNode *, BDDNode *);
+BDDNode *p2(BDDNode *, BDDNode *);
 BDDNode *pruning(BDDNode *, BDDNode *);
-BDDNode *pruning_p1(BDDNode *, BDDNode *);
-BDDNode *pruning_p2(BDDNode *, BDDNode *);
-BDDNode *steal(BDDNode *, BDDNode *);
-BDDNode *Build_BDD_From_Inferences(BDDNode *);
-void findPathsToX (BDDNode *, int *, int **, int, intlist *, int *, BDDNode *);
-void findPathsToFalse(BDDNode *, int *, int **, intlist *, int *);
-void findPathsToTrue(BDDNode *, int *, int **, intlist *, int *);
+void findPathsToFalse(BDDNode *, int *, int, intlist *, int *);
 void readCircuit ();
 void BDD_to_Smurfs();
 
@@ -137,103 +199,49 @@ void printSchlipfCircuit();
 void printBDDToCNF();
 void printBDDToCNFQM();
 void printBDDToCNF3SAT();
-void printBDDToAAG();
 
 void GetInferFoAN(BDDNode *);
-infer *GetInfer(int *, int *, int **, BDDNode *);
-BDDNode *set_variable_noflag(BDDNode *, int, int);
-void set_variable_all(llist *, int, int);
+infer *GetInfer(long *, int *, BDDNode *);
 BDDNode *set_variable(BDDNode *, int, int);
-BDDNode *set_variable_all_infs(BDDNode *);
-BDDNode *set_variable_noflag(BDDNode *, int, int);
-
-//XDD set variable
-BDDNode *set_variable_xdd_noflag(BDDNode *, int, int);
-BDDNode *set_variable_xdd(BDDNode *, int, int);
-
-extern int vars_max;
-int vars_alloc(int);
-extern int functions_max;
-int functions_alloc(int);
+int bdd_circuit_init(int n_vars, int n_fns);
 void bcount(char *, int);
 int getEquiv(int, int *, int);
 int *getANDLiterals(int, int *, int);
 int getTruth (int *, char *, int , BDDNode *);
 void bddloop();
-void iteloop();
-int Preprocessor();
+int Preprocessor(varinfo *);
 int getNuminp();
-int countX (BDDNode *, BDDNode *);
 int countFalses(BDDNode *);
-int countTrues(BDDNode *);
 int makeAllResolutions(intlist *&, int, int);
-Recd *resolve (int *, int, int, int);
-void getRidOfRecdList (Recd *);
+void SolveItSTDIN(Tracer *);
+void finalCheck(Tracer *, int *);
+void Backend_Trace(int, int, int *, Tracer *);
+void Backend_Trace_NoSolver(int, int *, Tracer *);
+void Backend_CNF(int, int, int *);
+void Backend_CNF_NoSolver(int, int *);
 void writeCircuit();
 void readCircuit_wvf();
 
 ITE_INLINE void DisplaySolution(int, int []);
 void DisplayTraceInferenceQueue();
 
+int check_gzip (char *filename);
+FILE * zread(char *filename);
+
 void xorloop ();
 
 void memcpy_ite(void*, void*, int);
-void get_freefile(char *basename, char *file_dir, char *filename, int filename_max);
+void get_tempfile(char *basename, char *filename, int filename_max);
 void ShowResultLine(FILE *fout, char *var, int var_idx, int negative, int value);
 
-void
-reload_bdd_circuit(int _numinp, int _numout,
-                   void *_bddtable, int _bddtable_len,
-                   void *_bddtable_start,
-                   void *_equalityvble, 
-                   void *_functions, 
-                   void *_functiontype, 
-                   void *_length, 
-                   void *_variablelist,
-                   void *_independantVars);
+ITE_INLINE void
+EnterIntoLemmaSpace(int nNumElts, int arrLemmaLiterals[],
+		    bool bRecycleLemmasAsNeeded, LemmaBlock *&pFirstBlock,
+		    LemmaBlock *&pLastBlock, int &nNumBlocks);
 
-void
-get_bdd_circuit(int *_numinp, int *_numout,
-                   void **_bddtable, int *_bddtable_len, int *_bddtable_msize,
-                   void **_equalityvble, 
-                   void **_functions,  int *_functions_msize,
-                   void **_functiontype, 
-                   void **_length, 
-                   void **_variablelist, int *_variablelist_msize,
-                   void **_independantVars);
-void
-read_bdd_circuit();
 
-// termcap 
-int init_terminal_out();
-int init_terminal_in();
-void free_terminal_in();
-void free_terminal_out();
-void move(int col, int row);
-void putpad(char *str);
-int term_getchar();
-extern char *CM, *SO, *SE, *CL;
-extern int term_width, term_height;
+//#define MEMCPY memcpy_ite
+#define MEMCPY memcpy
 
-void print_roller();
-void print_nonroller();
-void print_roller_init();
-
-void DeallocateLLists(llist *next);
-void DeallocateOneLList(llist *next);
-llist *AllocateLList(int x, llist *next);
-
-void DeallocateInferences(infer *next);
-void DeallocateInferences_var(infer *next, int var);
-void DeallocateOneInference(infer *next);
-infer *AllocateInference(int num0, int num1, infer *next);
-
-FILE * ite_fopen(char *filename, const char *fileflags);
-long ite_filesize(char *filename);
-
-BDDNode *tmp_equ_var(BDDNode *p);
-
-int bdd_gc_test();
-void bdd_gc(int force=0);
 
 #endif

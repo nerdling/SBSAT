@@ -1,7 +1,7 @@
 /* =========FOR INTERNAL USE ONLY. NO DISTRIBUTION PLEASE ========== */
 
 /*********************************************************************
- Copyright 1999-2007, University of Cincinnati.  All rights reserved.
+ Copyright 1999-2003, University of Cincinnati.  All rights reserved.
  By using this software the USER indicates that he or she has read,
  understood and will comply with the following:
 
@@ -38,6 +38,8 @@
 #include "ite.h"
 #include "solver.h"
 
+extern int *arrIte2SolverVarMap;
+
 ITE_INLINE Transition *
 AddStateTransition(SmurfState *pSmurfState,
                    int i,
@@ -47,51 +49,38 @@ AddStateTransition(SmurfState *pSmurfState,
                    SmurfState *pSmurfStateOfEvaled
                    )
 {
-  assert(pSmurfState != pSmurfStateOfEvaled);
-
   Transition *pTransition = FindOrAddTransition(pSmurfState, i, nVble, nValueOfVble);
 
   assert(pTransition->pNextState == NULL);
-  //assert(pTransition->pState == NULL);
+  assert(pTransition->pState == NULL);
 
   pTransition->pNextState = pSmurfStateOfEvaled;
-  //pTransition->pState = pSmurfState;
+  pTransition->pState = pSmurfState;
 
-  infer *head = pFuncEvaled->inferences;
-  int size=0;
-  while(head != NULL) {
-     if (head->nums[1] == 0) size++;
-     head = head->next;
-  }
-
+  int size = pFuncEvaled->addons->pImplied->GetPtrPositiveInferences()->Size() +
+             pFuncEvaled->addons->pImplied->GetPtrNegativeInferences()->Size();
   int *ptr = NULL;
   if (size) {
      ptr = (int*)ite_calloc(size, sizeof(int), 9, "inferences");
 
      // Take the positive inferences from *pFuncEvaled and store them
      // in the transition.
-     head = pFuncEvaled->inferences;
-     int i=0;
-     while(head != NULL) {
-        if (head->nums[1] == 0) {
-           if (head->nums[0] > 0) {
-              ptr[i++] = arrIte2SolverVarMap[head->nums[0]];
-           }
-        }
-        head = head->next;
+     pFuncEvaled->addons->pImplied->GetPtrPositiveInferences()
+        ->StoreAsArrayBasedSet(pTransition->positiveInferences, ptr);
+     ptr += pTransition->positiveInferences.nNumElts;
+
+     for(int i=0;i<pTransition->positiveInferences.nNumElts;i++) {
+        pTransition->positiveInferences.arrElts[i] = 
+           arrIte2SolverVarMap[pTransition->positiveInferences.arrElts[i]];
      }
-     pTransition->positiveInferences.arrElts = ptr;
-     pTransition->positiveInferences.nNumElts = i;
-     pTransition->negativeInferences.arrElts = ptr+i;
-     pTransition->negativeInferences.nNumElts = size-i;
-     head = pFuncEvaled->inferences;
-     while(head != NULL) {
-        if (head->nums[1] == 0) {
-           if (head->nums[0] < 0) {
-              ptr[i++] = arrIte2SolverVarMap[-head->nums[0]];
-           }
-        }
-        head = head->next;
+
+     // Likewise for the negative inferences.
+     pFuncEvaled->addons->pImplied->GetPtrNegativeInferences()
+        ->StoreAsArrayBasedSet(pTransition->negativeInferences, ptr);
+
+     for(int i=0;i<pTransition->negativeInferences.nNumElts;i++) {
+        pTransition->negativeInferences.arrElts[i] = 
+           arrIte2SolverVarMap[pTransition->negativeInferences.arrElts[i]];
      }
   }
   return pTransition;

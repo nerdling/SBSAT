@@ -8,8 +8,6 @@ int cnf_lex();
 void cnf_error(const char*);
 //#define YYSTYPE int
 
-//void cnf_nothing() { goto yyerrlab1; };
-
 #ifndef __attribute__
 #define __attribute__(x)
 #endif

@@ -1,7 +1,7 @@
 /* =========FOR INTERNAL USE ONLY. NO DISTRIBUTION PLEASE ========== */
 
 /*********************************************************************
- Copyright 1999-2007, University of Cincinnati.  All rights reserved.
+ Copyright 1999-2003, University of Cincinnati.  All rights reserved.
  By using this software the USER indicates that he or she has read,
  understood and will comply with the following:
 
@@ -34,11 +34,7 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
-
 #include "ite.h"
-#include "solver.h"
-
-#define SIZE_SMURF_STATE_POOL 20000 // Size of initial pool of Smurf states.
 
 typedef struct _t_smurfstate_pool {
    SmurfState *memory;
@@ -111,14 +107,22 @@ FreeSmurfStatePool()
                if (arrSmurfStatePool[i].arrTransitions[2*k+BOOL_FALSE].negativeInferences.arrElts)
                   free(arrSmurfStatePool[i].arrTransitions[2*k+BOOL_FALSE].negativeInferences.arrElts);
 
+               if (arrSmurfStatePool[i].arrTransitions[2*k+BOOL_TRUE].arrPosInferenceLemmas)
+                  free (arrSmurfStatePool[i].arrTransitions[2*k+BOOL_TRUE].arrPosInferenceLemmas);
+	       else
+               if (arrSmurfStatePool[i].arrTransitions[2*k+BOOL_TRUE].arrNegInferenceLemmas)
+                  free (arrSmurfStatePool[i].arrTransitions[2*k+BOOL_TRUE].arrNegInferenceLemmas);
+	       else
+               if (arrSmurfStatePool[i].arrTransitions[2*k+BOOL_FALSE].arrPosInferenceLemmas)
+                  free (arrSmurfStatePool[i].arrTransitions[2*k+BOOL_FALSE].arrPosInferenceLemmas);
+	       else
+               if (arrSmurfStatePool[i].arrTransitions[2*k+BOOL_FALSE].arrNegInferenceLemmas)
+                  free (arrSmurfStatePool[i].arrTransitions[2*k+BOOL_FALSE].arrNegInferenceLemmas);
             }
             free(arrSmurfStatePool[i].arrTransitions);
          }
          if (arrSmurfStatePool[i].vbles.arrElts != NULL)
             free(arrSmurfStatePool[i].vbles.arrElts);
-         if (arrSmurfStatePool[i].arrHeuristicXors != NULL) 
-            free(arrSmurfStatePool[i].arrHeuristicXors);
-         
       }
       free(smurfstate_pool_head->memory);
       tmp_smurfstate_pool = (t_smurfstate_pool*)(smurfstate_pool_head->next);
@@ -127,10 +131,20 @@ FreeSmurfStatePool()
    }
 }
 
+/*
+ITE_INLINE SmurfState *
+CheckpointSmurfState ()
+{
+assert(0);
+   //assert (arrSmurfStatePool[nSmurfStatePoolNum]);
+   //return arrSmurfStatePool[nSmurfStatePoolNum] + nSmurfStatePoolIndex;
+}
+*/
+
 ITE_INLINE void
 SmurfStatesDisplayInfo()
 {
-   d3_printf2("Number of Smurf states: %ld\n", (long)(ite_counters[SMURF_STATES]));
+   d2_printf2("Number of Smurf states: %ld\n", (long)(ite_counters[SMURF_STATES]));
 }
 
 /* don't use -- bad one */

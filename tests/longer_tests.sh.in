@@ -6,20 +6,23 @@ echo you may interrupt it any time
 echo bug SAT, dlx2_cc UNSAT, slider sat=SAT, unsat=UNSAT
 echo ===========================================
 
-for i in @top_srcdir@/tests/longer_tests/*.params
+for i in @top_srcdir@/tests/longer_tests/*.trace \
+         @top_srcdir@/tests/longer_tests/*.ite
 do
- PARAMS="@top_srcdir@/tests/longer_tests/`cat $i`"
- CMD="../src/sbsat --debug 1 --ini ../tests/emptyite.ini --ctrl-c 0 $PARAMS"
-
- $CMD
+ echo -n "`basename $i` ... "
+ PARAMS=
+ if [ -f $i.params ] ; then
+   PARAMS=`cat $i.params`
+ fi
+ ../src/ite --debug 0 --ini @top_srcdir@/tests/emptyite.ini --ctrl-c 0 $i $PARAMS
  if [ $? != 0 ] ; then
-    echo "Failed command: $CMD"
     exit 1;
  fi
 done
 
 echo ===========================================
-echo Done - Success
+echo Done - Sucess
 echo ===========================================
 
 exit 0
+

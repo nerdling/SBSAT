@@ -1,7 +1,7 @@
 /* =========FOR INTERNAL USE ONLY. NO DISTRIBUTION PLEASE ========== */
 
 /*********************************************************************
- Copyright 1999-2007, University of Cincinnati.  All rights reserved.
+ Copyright 1999-2003, University of Cincinnati.  All rights reserved.
  By using this software the USER indicates that he or she has read,
  understood and will comply with the following:
 
@@ -34,150 +34,93 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
+#include "ite.h"
 
-#include "sbsat.h"
-#include "sbsat_formats.h"
+#define KEDAR 0
+
+char tracer_tmp_filename[256];
+
 
 int parser_init();
-
 int trace_parse();
 extern FILE *trace_in;
 
-int prover_parse();
-extern FILE *prover_in;
-
-int prover3_parse();
-void prover3_free();
-extern FILE *prover3_in;
-
-int iscas_parse();
-extern FILE *iscas_in;
-
-int aig_parse();
-extern FILE *aig_in;
-
-int nle_parse();
-extern FILE *nle_in;
-
-int read_input_open();
-
 int
-read_input()
+read_input(char formatin, char formatout, Tracer * &tracer)
 {
   d9_printf1("read_input\n");
-
-  int ret = read_input_open();
-  if (ret != NO_ERROR) return ret;
-
-  /* autodetect the input format  */
-  if (formatin == ' ') formatin = getformat ();
 
   switch  (formatin) {
   case 't':
     {
-       parser_init();
-       trace_in = finputfile;
-       trace_parse();
-       numinp = vars_max;
-       numout = functions_max;
-       sym_clear_all_flag(); 
+		 if (tracer5==0) {
+			 char line[2048];
+			 FILE *fg=NULL;
+			 get_tempfile("tracer.tmp", tracer_tmp_filename, 255);
+			 if ((fg = fopen (tracer_tmp_filename, "wb+"))==NULL) 
+				{
+					fprintf(stderr, "Can't open the temp file: %s\n", tracer_tmp_filename);
+					exit(1);
+				}
+			 while (fgets (line, 2047, finputfile) != NULL) fputs (line, fg);
+			 fclose (fg);
+			 FlattenTrace * flatten = new FlattenTrace (tracer_tmp_filename);
+			 flatten->normalizeInputTrace ();
+			 flatten->insertModules ();
+			 delete flatten;
+				{
+					char _tracer_tmp_filename[256];
+					strcpy (_tracer_tmp_filename, tracer_tmp_filename);
+					strcat (_tracer_tmp_filename, ".mac");
+					tracer = new Tracer (_tracer_tmp_filename);
+					if (tracer->parseInput ()) exit(1);
+				}
+		 } else {
+          numinp=500000;
+          numout=500000;
+          bdd_circuit_init(numinp, numout);
+          sym_init();
+          parser_init();
+          trace_in = finputfile;
+          trace_parse();
+          //exit(1);
+       }
     } break;
 
-  case 'b': bddloop(); break;
+  case 'b': bddloop (); break;
+
+  case 'x': xorloop (); break;
 	  
-  case 'e': iteloop(); break;
+  case 'u': Smurfs_to_BDD (); break;
 
-  case 'x': xorloop(); break;
-	  
-  case 'u': Smurfs_to_BDD(); break;
+  case 'c': if (formatout == 'l') {
+               //Do_Lemmas ();
+               return 1; 
+            } else CNF_to_BDD (1);
+            break;
 
-  case 'c': ret = CNF_to_BDD(); break;
-
-  case 'd': DNF_to_BDD(); break;
-
-  case 'B': Binary_to_BDD(); break;
+  case 'd': if (formatout == 'd') {
+               if (KEDAR) fprintf (stdout, "S*****\n");
+               DNF_to_CNF ();
+               if (KEDAR) fprintf (stdout, "F*****\n");
+               return 1; 
+            } else CNF_to_BDD (0);
+            break;
 
   case 's': if (formatout == 'c') {
+              if (KEDAR) fprintf (stdout, "S*****\n");
               SAT_to_CNF ();
+              if (KEDAR) fprintf (stdout, "F*****\n");
               return 1;
             } else {
 
             } break;
-  case 'p': {
-     parser_init();
-     prover_in = finputfile;
-     prover_parse();
-     numinp = vars_max;
-     numout = functions_max;
-  } break;
-  case '3': {
-     parser_init();
-     prover3_in = finputfile;
-     prover3_parse();
-     //prover3_free();
-     numinp = vars_max;
-     numout = functions_max;
-  } break;
-  case 'i': {
-     parser_init();
-     iscas_in = finputfile;
-     iscas_parse();
-     numinp = vars_max;
-     numout = functions_max;
-  } break;
-  case 'a': {
-     parser_init();
-     aig_in = finputfile;
-     aig_parse();
-     numinp = vars_max;
-     numout = functions_max;
-  } break;
-  case 'l': {
-     parser_init();
-     nle_in = finputfile;
-     nle_parse();
-     numinp = vars_max;
-     numout = functions_max;
-  } break;
+
   default:
       fprintf (stderr, "Problem read_input: Unknown Input Format: %c\n", formatin);
       exit (1);
   }
-   
-  if (ret != NO_ERROR) return ret;   
-   
   d9_printf1("read_input - done\n");
   return 0;
-}
-
-int
-read_input_open()
-{
-   /* 
-    * open the input file 
-    */
-
-   if (!strcmp(inputfile, "-")) { d2_printf2("Reading standard input %s....\n", comment); }
-   else { d2_printf3("Reading File %s %s ....\n", inputfile, comment); }
-
-   int zip=check_gzip(inputfile);
-   if (zip) {
-      d2_printf1("gzip file -- using zread\n");
-      finputfile = zread(inputfile, zip);
-   }
-   else
-      if (!strcmp(inputfile, "-")) {
-         finputfile = stdin;
-      }
-      else {
-         finputfile = fopen(inputfile, "r");
-      }
-
-   if (!finputfile) { 
-      dE_printf2("Can't open the input file: %s\n", inputfile);
-      return ERR_IO_INIT;
-   } else d9_printf2("Input file opened: %s\n", inputfile);
-   
-   return NO_ERROR;
 }
 

@@ -1,7 +1,7 @@
 /* =========FOR INTERNAL USE ONLY. NO DISTRIBUTION PLEASE ========== */
 
 /*********************************************************************
- Copyright 1999-2007, University of Cincinnati.  All rights reserved.
+ Copyright 1999-2003, University of Cincinnati.  All rights reserved.
  By using this software the USER indicates that he or she has read,
  understood and will comply with the following:
 
@@ -34,35 +34,25 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
-
-#include "sbsat.h"
-#include "sbsat_formats.h"
+#include "ite.h"
 
 extern long numinp;
 
 void
-write_output (char formatout)
+write_output (char formatout, Tracer * &tracer)
 {
 
     switch (formatout) {
 
-    case 'f': {
-              numinp = getNuminp ();
-              } break;
+    case 'f': numinp = getNuminp ();
+              //SolveItSTDIN(tracer);
+              break;
 
     case 's': {
               BDD_to_Smurfs ();
               } break;
 
-	 case 'v': {
-              Smurf_FPGA ();
-              } break;
-
-    case 'd': {
-		        printBDDdot_file(functions, nmbrFunctions);
-	           } break;
-
-	 case 'p': {
+    case 'p': {
               if (print_tree) printCircuitTree();
               else printCircuit();
               } break;
@@ -77,20 +67,10 @@ write_output (char formatout)
 	      }
 	      break;
 
-    case 'i': printBDDFormat (); break;
-		 
-	 case 'a': printBDDToAAG (); break;
-
-    case 'l': printLinearFormat(); break;
-
-	 case 'x': printXORFormat(); break;
-		 
-    case 'B': 
-              BDD_to_Binary();
-              break;
+    case 'i': printSchlipfCircuit (); break;
 
     default:
-      fprintf (stderr, "Usage: sbsat -formatout [inputfile [outputfile]]\n");
+      fprintf (stderr, "Usage: ite -formatout [inputfile [outputfile]]\n");
       fprintf (stderr, "Problem: Unknown Output Format\n");
       exit (1);
     }

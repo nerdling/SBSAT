@@ -1,7 +1,7 @@
 /* =========FOR INTERNAL USE ONLY. NO DISTRIBUTION PLEASE ========== */
 
 /*********************************************************************
- Copyright 1999-2007, University of Cincinnati.  All rights reserved.
+ Copyright 1999-2003, University of Cincinnati.  All rights reserved.
  By using this software the USER indicates that he or she has read,
  understood and will comply with the following:
 
@@ -34,16 +34,25 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
-
 #include "ite.h"
 #include "solver.h"
 
-ITE_INLINE int UpdateSpecialFunction_AND(IndexRoleStruct *pIRS);
-ITE_INLINE int UpdateSpecialFunction_XOR(IndexRoleStruct *pIRS);
-ITE_INLINE int UpdateSpecialFunction_MINMAX(IndexRoleStruct *pIRS);
+/* param */
+extern int *arrNumRHSUnknowns;
 
-ITE_INLINE int
-UpdateEachAffectedSpecialFunction(AffectedFuncsStruct *pAFS)
+/* trace */
+extern int nNumBacktracks;
+extern SpecialFunc *arrSpecialFuncs;
+extern int *arrChangedSpecialFn;
+
+ITE_INLINE int UpdateSpecialFunction_AND(IndexRoleStruct *pIRS);
+ITE_INLINE int J_UpdateSpecialFunction_AND(IndexRoleStruct *pIRS);
+ITE_INLINE int UpdateSpecialFunction_XOR(IndexRoleStruct *pIRS);
+ITE_INLINE int J_UpdateSpecialFunction_XOR(IndexRoleStruct *pIRS);
+
+ITE_INLINE
+int
+UpdateEachAffectedSpecialFunction (AffectedFuncsStruct *pAFS)
 {
   int ret=NO_ERROR;
 
@@ -70,9 +79,8 @@ UpdateEachAffectedSpecialFunction(AffectedFuncsStruct *pAFS)
 	  d9_printf2("#RHS Unknowns: %d ", arrNumRHSUnknowns[nSpecFuncIndex]);
 
      switch (arrSpecialFuncs[nSpecFuncIndex].nFunctionType) {
-      case SFN_AND: ret=UpdateSpecialFunction_AND(pIRS); break;
-      case SFN_XOR: ret=UpdateSpecialFunction_XOR(pIRS); break;
-      case SFN_MINMAX: ret=UpdateSpecialFunction_MINMAX(pIRS); break;
+      case AND: ret=UpdateSpecialFunction_AND(pIRS); break;
+      case XOR: ret=UpdateSpecialFunction_XOR(pIRS); break;
       default: assert(0); break;
      }
 
@@ -81,7 +89,6 @@ UpdateEachAffectedSpecialFunction(AffectedFuncsStruct *pAFS)
         arrPrevNumRHSUnknowns[nSpecFuncIndex] = arrNumRHSUnknowns[nSpecFuncIndex];
         arrPrevNumLHSUnknowns[nSpecFuncIndex] = arrNumLHSUnknowns[nSpecFuncIndex];
         arrPrevSumRHSUnknowns[nSpecFuncIndex] = arrSumRHSUnknowns[nSpecFuncIndex];
-        arrPrevRHSCounter[nSpecFuncIndex]     = arrRHSCounter[nSpecFuncIndex];
      }
      if (ret != NO_ERROR) break;
 

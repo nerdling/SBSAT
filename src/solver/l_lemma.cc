@@ -1,7 +1,7 @@
 /* =========FOR INTERNAL USE ONLY. NO DISTRIBUTION PLEASE ========== */
 
 /*********************************************************************
- Copyright 1999-2007, University of Cincinnati.  All rights reserved.
+ Copyright 1999-2003, University of Cincinnati.  All rights reserved.
  By using this software the USER indicates that he or she has read,
  understood and will comply with the following:
 
@@ -33,10 +33,8 @@
  or arising from the use, or inability to use, this software or its
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
-*********************************************************************/
-
+ *********************************************************************/
 #include "ite.h"
-#include "solver.h"
 
 double *arrLemmaHeurScoresPos;
 double *arrLemmaHeurScoresNeg;
@@ -49,19 +47,21 @@ ITE_INLINE
 void
 InitLemmaHeurArrays (int nMaxVbleIndex)
 {
-   arrLemmaHeurScoresPos = (double*)ite_calloc(nMaxVbleIndex+1, sizeof(double), 9, "arrLemmaHeurScoresPos");
-   arrLemmaHeurScoresNeg = (double*)ite_calloc(nMaxVbleIndex+1, sizeof(double), 9, "arrLemmaHeurScoresNeg");
-   arrLemmaVbleCountsPos = (int*)ite_calloc(nMaxVbleIndex+1, sizeof(int), 9, "arrLemmaVbleCountsPos");
-   arrLemmaVbleCountsNeg = (int*)ite_calloc(nMaxVbleIndex+1, sizeof(int), 9, "arrLemmaVbleCountsNeg");
-   arrLastLemmaVbleCountsPos = (int*)ite_calloc(nMaxVbleIndex+1, sizeof(int), 9, "arrLastLemmaVbleCountsPos");
-   arrLastLemmaVbleCountsNeg = (int*)ite_calloc(nMaxVbleIndex+1, sizeof(int), 9, "arrLastLemmaVbleCountsNeg");
+   ITE_NEW_CATCH(
+         arrLemmaHeurScoresPos = new double[nMaxVbleIndex + 1];
+         arrLemmaHeurScoresNeg = new double[nMaxVbleIndex + 1];
+         arrLemmaVbleCountsPos = new int[nMaxVbleIndex + 1];
+         arrLemmaVbleCountsNeg = new int[nMaxVbleIndex + 1];
+         arrLastLemmaVbleCountsPos = new int[nMaxVbleIndex + 1];
+         arrLastLemmaVbleCountsNeg = new int[nMaxVbleIndex + 1];,
+         "InitLemmaHeurArrays");
 
    for (int i = 0; i <= nMaxVbleIndex; i++)
    {
       arrLemmaHeurScoresPos[i] = 0.0;
       arrLemmaHeurScoresNeg[i] = 0.0;
-      arrLemmaVbleCountsPos[i] = 1; // to satisfy the heuristic
-      arrLemmaVbleCountsNeg[i] = 1; // to satisfy the heuristic
+      arrLemmaVbleCountsPos[i] = 0;
+      arrLemmaVbleCountsNeg[i] = 0;
       arrLastLemmaVbleCountsPos[i] = 0;
       arrLastLemmaVbleCountsNeg[i] = 0;
    }
@@ -72,12 +72,13 @@ ITE_INLINE
 void
 DeleteLemmaHeurArrays ()
 {
-   ite_free((void**)&arrLemmaHeurScoresPos);
-   ite_free((void**)&arrLemmaHeurScoresNeg);
-   ite_free((void**)&arrLemmaVbleCountsPos);
-   ite_free((void**)&arrLemmaVbleCountsNeg);
-   ite_free((void**)&arrLastLemmaVbleCountsPos);
-   ite_free((void**)&arrLastLemmaVbleCountsNeg);
+   delete arrLemmaHeurScoresPos;
+   delete arrLemmaHeurScoresNeg;
+   delete arrLemmaVbleCountsPos;
+   delete arrLemmaVbleCountsNeg;
+   delete arrLastLemmaVbleCountsPos;
+   delete arrLastLemmaVbleCountsNeg;
+
 }
 
 //#define fWght 1000;

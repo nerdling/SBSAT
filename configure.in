@@ -1,0 +1,185 @@
+dnl Process this file with autoconf to produce a configure script.
+dnl Run: aclocal; autoconf; autoheader; automake -a
+dnl Run: ./configure --help
+dnl
+AC_INIT(include/config.h.in)
+#AC_LANG( C++ )
+AC_LANG_CPLUSPLUS
+AM_CONFIG_HEADER(include/config.h)
+AM_INIT_AUTOMAKE(sbsat,2.0b-17)
+
+# compile with optimization and without debugging by default
+MYCXXFLAGS=" -O2 -DNDEBUG "
+MYCCFLAGS=" -DNDEBUG "
+INCL=""
+
+AC_ARG_ENABLE(optimization, 
+[  --enable-optimization   Turn on compiler optimization (default=no)],
+    [if eval "test x$enable_optimization = xyes"; then
+        MYCXXFLAGS="-O3 -DNDEBUG -ffast-math -fstrict-aliasing -funroll-all-loops -fno-peephole -fexpensive-optimizations -fomit-frame-pointer "
+	MYCCFLAGS="-xO5 -KPIC -dalign -native"
+    fi])
+
+AC_ARG_ENABLE(debug, 
+[  --enable-debug          Turn on compiler debugging information (default=no)],
+    [if eval "test x$enable_debug = xyes"; then
+       if eval "test x$enable_optimization = xyes"; then
+	echo "error: can not turn on debuging and extra optimization"
+	exit
+       else
+         MYCXXFLAGS=" -g "
+         MYCCFLAGS=" -g "
+       fi
+    fi])
+
+AC_ARG_ENABLE(profile, 
+[  --enable-profile        Turn on compiler profiling information (default=no)],
+    [if eval "test x$enable_profile = xyes"; then
+       if eval "test x$enable_optimization = xyes"; then
+	echo "error: can not turn on profiling and extra optimization"
+	exit
+       else
+         MYCXXFLAGS="${MYCXXFLAGS}  -pg "
+         MYCCFLAGS="${MYCCFLAGS}  -pg "
+       fi
+    fi])
+
+AC_ARG_ENABLE(warning, 
+[  --enable-warning        Turn on compiler warning information (default=no)],
+    [if eval "test x$enable_warning = xyes"; then
+        MYCXXFLAGS="${MYCXXFLAGS} -Wall"
+        MYCCFLAGS="${MYCCFLAGS} -Wall"
+    fi])
+
+AC_ARG_ENABLE(extrawarning, 
+[  --enable-extrawarning   Turn on compiler extra warning information (default=no)],
+    [if eval "test x$enable_extrawarning = xyes"; then
+	MYCXXFLAGS="${MYCXXFLAGS} -pedantic -W -Winline -Wmissing-prototypes -Wpointer-arith -Wcast-qual -Wcast-align -Wsign-compare -Wno-unused -Wconversion -Waggregate-return -Wshadow -Wwrite-strings "
+    fi])
+
+AC_ARG_ENABLE(static, 
+[  --enable-static         Turn on linking libraries staticly (default=no)],
+    [if eval "test x$enable_static = xyes"; then
+        MYCXXFLAGS="${MYCXXFLAGS} -static"
+        MYCCFLAGS="${MYCCFLAGS} -static"
+    fi])
+
+dnl Extra libraries 'with'-options
+AC_ARG_WITH(gd-inc,[  --with-gd-inc=DIR       location of the gd includes],
+[INCL="${INCL} -I${withval}"])
+   
+AC_ARG_WITH(gd-lib,[  --with-gd-lib=DIR       location of the gd library],
+[LIBS="${LIBS} -L${withval}"])
+
+CXXFLAGS="${CXXFLAGS} ${MYCXXFLAGS} ${INCL}"
+CCFLAGS="${CCFLAGS} ${MYCCFLAGS} ${INCL}"
+
+AC_ARG_ENABLE(efence, 
+[  --enable-efence         Use this if you want Electric Fence linked (default=no).],
+    [if eval "test x$enable_efence = xyes"; then
+        AC_MSG_CHECKING([for libefence ])
+        saved_libs="$LIBS"
+        LIBS="$LIBS -lefence"
+        AC_TRY_LINK([], [void *ptr=malloc(10);], [echo "yes" ], 
+		[ LIBS="$saved_libs"
+		  echo "couldn't find libefence"
+		  exit ])
+    fi])
+
+## Does the compiler support namespaces?
+AC_MSG_CHECKING([for support for C++ namespace])
+AC_TRY_LINK(
+            changequote(<<, >>)dnl
+            <<namespace x_version {void f(){}};
+              namespace x = x_version;
+              using namespace x_version;
+            >>,
+            changequote([, ])dnl
+            [f();], 
+	AC_DEFINE([HAVE_NAMESPACE],[], [Have namespace support])
+	AC_MSG_RESULT(yes),
+	AC_MSG_RESULT(no))
+
+## Does the compiler support the "std" namespace?
+## GCC version 3 not only supports this but insists on it, 
+## so if this feature is supported, we always use it. 
+AC_HAVE_HEADERS(string)
+AC_MSG_CHECKING([for support for C++ "std" namespace])
+AC_TRY_COMPILE(
+  #ifdef HAVE_STRING
+  #include <string>
+  #endif
+,
+	[std::string s;],
+	AC_DEFINE([HAVE_STD_NAMESPACE],[], [Have std namespace support])
+	AC_DEFINE(STD_NAMESPACE,std::,[Namespace std])
+	AC_MSG_RESULT(yes),
+	AC_MSG_RESULT(no))
+
+## Does the compiler support the "using namespace std" namespace?
+## GCC version 3 not only supports this but insists on it, 
+## so if this feature is supported, we always use it. 
+AC_MSG_CHECKING([for support for C++ "using namespace std"])
+AC_TRY_COMPILE(
+	[using namespace std;],[],
+	AC_DEFINE([HAVE_USING_NAMESPACE_STD],[], [Have using namespace std support])
+	AC_DEFINE_UNQUOTED(HAVE_USING_NAMESPACE_STD)
+	AC_MSG_RESULT(yes),
+	AC_MSG_RESULT(no))
+
+
+AC_CHECK_LIB(gd,gdImageJpeg,[
+	AC_DEFINE([HAVE_IMAGE_JPEG], [], [Have gd support for jpeg])
+	LIBS="$LIBS -lgd"	
+])
+
+AC_CHECK_LIB(termcap,tgetnum,[
+	AC_DEFINE([HAVE_TERMCAP_LIB], [], [Have termcap support])
+	LIBS="$LIBS -ltermcap"	
+])
+
+dnl Checks for programs.
+# AC_PROG_CXXCPP
+AC_PROG_CXX
+AC_PROG_INSTALL
+AC_PROG_MAKE_SET
+AC_PROG_RANLIB
+
+# for alternative way to read input
+#AC_PROG_CC
+AC_PROG_LEX
+AC_PROG_YACC
+
+dnl Checks for libraries.
+
+dnl Checks for header files.
+AC_STDC_HEADERS
+AC_HAVE_HEADERS(stdio.h stdlib.h unistd.h assert.h signal.h )
+AC_HAVE_HEADERS(iostream.h fstream.h iostream fstream )
+AC_HAVE_HEADERS(string.h strings.h)
+AC_HAVE_HEADERS(sys/types.h sys/times.h sys/time.h sys/resource.h sys/wait.h)
+AC_HAVE_HEADERS(sys/stat.h ctype.h limits.h signal.h math.h)
+AC_HAVE_HEADERS(termcap.h termios.h)
+# AC_HAVE_HEADERS(jni.h )
+
+dnl Checks for library functions.
+# AC_FUNC_ALLOCA
+# AC_FUNC_MEMCMP
+# AC_FUNC_MALLOC
+AC_CHECK_LIBM
+AC_SUBST(LIBM)
+# AC_CHECK_FUNCS(strcmp strlen strncmp strnlen strerror)
+# AC_CHECK_FUNCS(fopen fclose fgets strchr getrlimit memset )
+# AC_CHECK_FUNCS(memmove memcpy strftime calloc malloc getrusage )
+# AC_CHECK_FUNCS(printf fprintf )
+
+# AC_C_INLINE
+
+dnl Create Makefiles and make test executable
+AC_OUTPUT([Makefile src/Makefile src/formats/Makefile src/solver/Makefile src/utils/Makefile \
+           src/preproc/Makefile src/postproc/Makefile src/generator/Makefile include/Makefile \
+           doc/Makefile doc/manual/Makefile examples/Makefile src/formats/5/Makefile \
+           tests/Makefile tests/trace_tests/Makefile tests/longer_tests/Makefile tests/cnf/Makefile \
+           tests/trace_tests.sh tests/xor_tests.sh tests/longer_tests.sh tests/cnf_tests.sh],
+ [chmod +x tests/trace_tests.sh tests/xor_tests.sh tests/longer_tests.sh tests/cnf_tests.sh])
+

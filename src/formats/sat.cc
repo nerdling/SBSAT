@@ -1,7 +1,7 @@
 /* =========FOR INTERNAL USE ONLY. NO DISTRIBUTION PLEASE ========== */
 
 /*********************************************************************
- Copyright 1999-2007, University of Cincinnati.  All rights reserved.
+ Copyright 1999-2003, University of Cincinnati.  All rights reserved.
  By using this software the USER indicates that he or she has read,
  understood and will comply with the following:
 
@@ -34,12 +34,11 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
+/*********************************************************
+ *  sat.c
+ *********************************************************/
 
-#include "sbsat.h"
-#include "sbsat_formats.h"
-
-#define MAXFILE_LENGTH 4000000
-#define LINE_LENGTH 1024
+#include "ite.h"
 
 /*=================================================================*/
 #define OPS_NUM 2
@@ -47,11 +46,7 @@
 int
 look_up (char *s)
 {
-  char *op1 = strdup("-out");
-  char *op2 = strdup("-in");
-  char *ops[OPS_NUM] = { op1, op2 };
-  free(op1);
-  free(op2);
+  char *ops[OPS_NUM] = { "-out", "-in" };
   int i;
 
   for (i = 0; i < OPS_NUM; i++)
@@ -86,11 +81,8 @@ SAT_to_CNF ()
 
   tmp = (char *) calloc (100, sizeof (char));
   Ws = (char *) calloc (MAXFILE_LENGTH, sizeof (char));
-  if (Ws == NULL) {
-    char *msg = strdup("Not enough memory");
-    print_err (msg, 1);
-    free(msg);
-  }
+  if (Ws == NULL)
+    print_err ("Not enough memory", 1);
 
   Acr = Acw = Ws;
   readfile ();
@@ -166,11 +158,8 @@ SAT_to_CNF ()
 void
 myputc (char c)
 {
-  if (Acw - Ws == MAXFILE_LENGTH) {
-    char *msg = strdup("File is longer than allocated space");
-    print_err (msg, 1);
-    free(msg);
-  }
+  if (Acw - Ws == MAXFILE_LENGTH)
+    print_err ("File is longer than allocated space", 1);
 
   if (c == ' ' && (*(Acw - 1) == ' ' || *(Acw - 1) == '\n'))
     return;
@@ -201,86 +190,73 @@ myungetc (char c)
 void
 readfile ()
 {
-  int c;
+  char c;
   int nl = 0, i, bracket = 0;
 
   C = 0;
-  while (1)
+  while ((c = fgetc (finputfile)) != EOF)
     {
-       c = fgetc(finputfile);
-       switch (c)
-       {
-        case EOF: break;
-        case '\n':
-           nl = 1;
-        case ' ':
-        case '\t':
+      switch (c)
+	{
+	case '\n':
+	  nl = 1;
+	case ' ':
+	case '\t':
 
-           c = fgetc(finputfile);
-           while (c == ' ' || c == '\t' || c == '\n') {
-              if (c == '\n')
-                 nl = 1;
-              c = fgetc(finputfile);
-           }
+	  while ((c = fgetc (finputfile)) == ' ' || c == '\t' || c == '\n')
+	    if (c == '\n')
+	      nl = 1;
 
-           (nl == 1) ? myputc ('\n') : myputc (' ');
-           nl = 0;
-           ungetc (c, finputfile);
-           break;
+	  (nl == 1) ? myputc ('\n') : myputc (' ');
+	  nl = 0;
+	  ungetc (c, finputfile);
+	  break;
 
-        case 'c':
-           myputc ('c');
-           c = fgetc(finputfile);
-           for (i = 0; c != '\n' && i < LINE_LENGTH - 1 && c != EOF;
-                 i++) {
-              myputc (c);
-              c = fgetc(finputfile);
-           }
-       
+	case 'c':
+	  myputc ('c');
+	  for (i = 0;
+	       (c = fgetc (finputfile)) != '\n' && i < LINE_LENGTH - 1 && c != EOF;
+	       i++)
+	    myputc (c);
 
-           myputc ('\n');
-           if ((i == LINE_LENGTH - 1 && c != '\n') || c == EOF)
-           {
-              ungetc (c, finputfile);
-              ungetc (' ', finputfile);
-              ungetc ('c', finputfile);
-           }
-           break;
+	  myputc ('\n');
+	  if ((i == LINE_LENGTH - 1 && c != '\n') || c == EOF)
+	    {
+	      ungetc (c, finputfile);
+	      ungetc (' ', finputfile);
+	      ungetc ('c', finputfile);
+	    }
+	  break;
 
-        case 'p':
-           myputc (c);
-           c = fgetc(finputfile);
-           while (c != '\n' && c != EOF) {
-              myputc (c);
-              c = fgetc(finputfile);
-           }
-           for (i = 0; i < 20; i++, *Acw = ' ', Acw++);
-           myputc ('\n');
-           break;
+	case 'p':
+	  myputc (c);
+	  while ((c = fgetc (finputfile)) != '\n' && c != EOF)
+	    myputc (c);
+	  for (i = 0; i < 20; i++, *Acw = ' ', Acw++);
+	  myputc ('\n');
+	  break;
 
-        case '(':
-           bracket++;
-           myputc (c);
-           break;
+	case '(':
+	  bracket++;
+	  myputc (c);
+	  break;
 
-        case ')':
-           bracket--;
-           if (bracket == 2)
-              C++;
-           myputc (c);
-           break;
+	case ')':
+	  bracket--;
+	  if (bracket == 2)
+	    C++;
+	  myputc (c);
+	  break;
 
-        default:
-           myputc (c);
-           break;
-       }
+	default:
+	  myputc (c);
+	  break;
+	}
     }
   myputc ('\0');
-  if (bracket != 0) {
-     char *msg = strdup("Error in input: Mismatching brackets.");
-     print_err (msg, 0);
-     free(msg);
-  }
+  if (bracket != 0)
+    print_err ("Error in input: Mismatching brackets.", 0);
+
 }
 
 //========================================================================
@@ -293,11 +269,8 @@ writestring (char *s)		/* writes a string to f cutting after
   int len = strlen (s);
   char *ls = (char *) calloc (LINE_LENGTH + 1, sizeof (char));
 
-  if (ls == NULL) {
-    char *msg = strdup("Not enough memory");
-    print_err (msg, 1);
-    free(msg);
-  }
+  if (ls == NULL)
+    print_err ("Not enough memory", 1);
 
   for (i = 0; i < len;)
     {
@@ -315,11 +288,8 @@ writestring (char *s)		/* writes a string to f cutting after
 	{
 	  nl = LINE_LENGTH;
 	  for (p = s + nl; *p != ' ' && p != s; p--, nl--);
-	  if (p == s) {
-        char *msg = strdup("Too short line_length.");
-	    print_err (msg, 1);
-        free(msg);
-      }
+	  if (p == s)
+	    print_err ("Too short line_length.", 1);
 
 	  strncpy (ls, s, nl);
 	  *(ls + nl) = '\0';

@@ -1,7 +1,7 @@
 /* =========FOR INTERNAL USE ONLY. NO DISTRIBUTION PLEASE ========== */
 
 /*********************************************************************
- Copyright 1999-2007, University of Cincinnati.  All rights reserved.
+ Copyright 1999-2003, University of Cincinnati.  All rights reserved.
  By using this software the USER indicates that he or she has read,
  understood and will comply with the following:
 
@@ -35,7 +35,7 @@
  of the possibility of those damages.
 *********************************************************************/
 
-#include "sbsat.h"
+#include "ite.h"
 
 FILE *stddbg=stderr;
 int DEBUG_LVL=0;

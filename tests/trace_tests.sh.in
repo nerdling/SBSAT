@@ -7,19 +7,19 @@ echo ===========================================
 
 for i in @top_srcdir@/tests/trace_tests/*.trace 
 do
- echo @ECHO_N@ "`basename $i` ... @ECHO_C@"
+ echo -n "`basename $i` ... "
  PARAMS=
  if [ -f $i.params ] ; then
    PARAMS=`cat $i.params`
  fi
- ../src/sbsat --ini @top_srcdir@/tests/emptyite.ini --debug 0 $i $PARAMS
+ ../src/ite --ini @top_srcdir@/tests/emptyite.ini --debug 0 $i $PARAMS
  if [ $? != 0 ] ; then
     exit 1;
  fi
 done
 
 echo ===========================================
-echo Done - Success
+echo Done - Sucess
 echo ===========================================
 
 exit 0

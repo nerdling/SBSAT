@@ -1,7 +1,7 @@
 /* =========FOR INTERNAL USE ONLY. NO DISTRIBUTION PLEASE ========== */
 
 /*********************************************************************
- Copyright 1999-2007, University of Cincinnati.  All rights reserved.
+ Copyright 1999-2003, University of Cincinnati.  All rights reserved.
  By using this software the USER indicates that he or she has read,
  understood and will comply with the following:
 
@@ -34,13 +34,12 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
-#define ITE_INLINE  inline
+//#define ITE_INLINE  __inline__
 
 #include "smurffactory.cc"
 
 /* init */
 #include "solve.cc"
-#include "ksolve.cc"
 #include "init_solver.cc"
 
 /* basic brancher */
@@ -52,13 +51,11 @@
 #include "backtrack.cc"
 #include "backtrack_nl.cc"
 #include "backtrack_sbj.cc"
-#include "bt_misc.cc"
 #include "bt_lemmas.cc"
 #include "bt_smurfs.cc"
 #include "bt_specfn.cc"
 #include "bt_specfn_and.cc"
 #include "bt_specfn_xor.cc"
-#include "bt_specfn_minmax.cc"
 
 /* null heuristic */
 #include "heuristic.cc"
@@ -69,11 +66,7 @@
 
 /* johnson heuristic */
 #include "j_update_heu.cc"
-#include "j_smurf.cc"
 #include "j_specfn.cc"
-#include "j_specfn_and.cc"
-#include "j_specfn_xor.cc"
-#include "j_specfn_minmax.cc"
 #include "j_heuristic.cc"
 
 /* interactive heuristic */
@@ -82,36 +75,24 @@
 #include "autarky.cc"
 
 #include "bdd2smurf.cc"
-#include "bdd2specfn_and.cc"
-#include "bdd2specfn_xor.cc"
-#include "bdd2specfn_minmax.cc"
+#include "specfn2smurf.cc"
 #include "smurfstates.cc"
 
 #include "state_stacks.cc"
-#include "heur_stack.cc"
 
 #include "lemmainfo.cc"
 #include "lemmaspace.cc"
-#include "lemmawlits.cc"
-#include "lemmamisc.cc"
-#include "lemmacache.cc"
-#include "lemmas.cc"
-#include "lemmas_and.cc"
-#include "lemmas_xor.cc"
-#include "lemmas_minmax.cc"
 #include "verify.cc"
 #include "display.cc"
 #include "display_sf.cc"
 
 #include "recordsol.cc"
+#include "graphs.cc"
 
 #include "transitions.cc"
+#include "sf_addons.cc"
 
 #include "bddwalk.cc"
 #include "wvf.cc"
 
 #include "crtwin.cc"
-
-#include "load_lemmas.cc"
-
-#include "interface.cc"

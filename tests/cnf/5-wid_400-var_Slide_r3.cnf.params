@@ -1,1 +1,1 @@
--L 5000 --backjumping 1 --All 1 --expected-result SAT
+--expected-result SAT

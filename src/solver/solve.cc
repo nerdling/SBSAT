@@ -1,7 +1,7 @@
 /* =========FOR INTERNAL USE ONLY. NO DISTRIBUTION PLEASE ========== */
 
 /*********************************************************************
- Copyright 1999-2007, University of Cincinnati.  All rights reserved.
+ Copyright 1999-2003, University of Cincinnati.  All rights reserved.
  By using this software the USER indicates that he or she has read,
  understood and will comply with the following:
 
@@ -34,7 +34,6 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
-
 #include "ite.h"
 #include "solver.h"
 
@@ -43,91 +42,17 @@ int *arrSolver2IteVarMap=NULL;
 int *arrIte2SolverVarMap=NULL;
 int nIndepVars=0;
 int nDepVars=0;
-t_var_stat *var_stat=NULL;
-ITE_INLINE int RecordInitialInferences();
 
 
 ITE_INLINE int InitSolver();
-ITE_INLINE void FreeSolver();
-void LoadLemmas(char *filename);
-ITE_INLINE void FreeAFS();
-ITE_INLINE int InitBrancherX();
-ITE_INLINE int kSolver(int k_top_vars);
+ITE_INLINE void FreeSolver(Tracer *tracer);
 
 int
-solve_init()
+solve(Tracer * &tracer)
 {
   int ret = SOLV_UNKNOWN;
 
-      /*
-       * reversing dependency if requested
-       */
-      if (reverse_independant_dependant)
-      {
-         for (int x = 0; x < numinp + 1; x++)
-         {
-            if (independantVars[x] == 1)
-               independantVars[x] = 0;
-            else if (independantVars[x] == 0)
-               independantVars[x] = 1;
-         }
-      }
-
-      if (clear_dependance)
-      {
-         for (int x = 0; x < numinp + 1; x++)
-            if (independantVars[x] == 0)
-               independantVars[x] = 1;
-      }
-
-  ret = InitSolver(); // breakxors, variables, lemma space init, lemma heu init
-  if (ret != SOLV_UNKNOWN) return ret;
- 
-  /* Convert bdds and special functions to smurfs */
-  ret = SmurfFactory();
-  if (ret != SOLV_UNKNOWN) return ret;
-
-  bdd_gc(1);
-
-  ret = InitBrancher();
-  if (ret != SOLV_UNKNOWN) return ret;
-
-  ret = InitBrancherX();
-  if (ret != SOLV_UNKNOWN) return ret;
-
-  if (K_TOP_VARIABLES) ret = kSolver(K_TOP_VARIABLES);
-  if (ret != SOLV_UNKNOWN) return ret;
-  return ret;
-}
-
-void
-solve_free()
-{
-   d4_printf5("SMURF States Statistic(total %ld): %ld/%ld (%f hit rate)\n",
-         (long)(ite_counters[SMURF_NODE_NEW]),
-         (long)(ite_counters[SMURF_NODE_FIND] - ite_counters[SMURF_NODE_NEW]),
-         (long)(ite_counters[SMURF_NODE_FIND]),
-         ite_counters[SMURF_NODE_FIND]==0?0:1.0 * (ite_counters[SMURF_NODE_FIND] - ite_counters[SMURF_NODE_NEW]) / ite_counters[SMURF_NODE_FIND]);
-   FreeBrancher();
-   FreeSmurfFactory();
-   FreeSolver();
-}
-
-int
-solve()
-{
-   int ret = solve_init();
-   if (ret == SOLV_UNKNOWN) ret = Brancher();
-   solve_free();
-   return ret;
-}
-
-int
-_solve()
-{
-  int ret = SOLV_UNKNOWN;
-
-  ret = InitSolver(); // breakxors, variables, lemma space init, lemma heu init
+  ret = InitSolver();
 
   if (ret == SOLV_UNKNOWN) {
  
@@ -136,23 +61,20 @@ _solve()
 
     if (ret == SOLV_UNKNOWN) {
 
-      ret = InitBrancher();
+      ret = InitSolveVillage();
 
       if (ret == SOLV_UNKNOWN) {
 
-         ret = Brancher();
+         ret = SolveVillage();
 
       };
-
-      /* restart?? */
-      //if (ret == SOLV_UNKNOWN || ret == SOLV_UNSAT) ret = Brancher();
-
-      FreeBrancher();
+      FreeSolveVillage();
     }
     FreeSmurfFactory();
+
   }
 
-  FreeSolver();
+  FreeSolver(tracer);
 
   return ret;
 }
@@ -162,29 +84,32 @@ int total_vars=0;
 ITE_INLINE int
 InitSolver()
 {
-  d9_printf1("InitSolver\n");
+  d2_printf1("InitSolver\n");
 
   if (BREAK_XORS) {
      total_vars = splitXors();
-     d9_printf3("Split(%ld) returned %d\n", numinp, total_vars);
+     d2_printf3("Split(%ld) returned %d\n", numinp, total_vars);
   } else {
      total_vars = numinp;
   }
 
   nNumVariables = 1; /* 0 => true, false */
-
-  for (int x = 0; x <= numinp; x++) {
-     if (variablelist[x].true_false == -1) {
+  //for (int x = 0; x < numinp + 1; x++) {
+  for (int x = 0; x < total_vars + 1; x++) {
+     if (x <= numinp) {
+        if (variablelist[x].true_false == -1) {
+           nNumVariables++;
+           if (independantVars[x] == 1) nIndepVars++;
+           else if (independantVars[x] == 0) nDepVars++;
+        }
+     } else {
+        /* temporary variables (xor) */
         nNumVariables++;
-        if (independantVars[x] == 1) nIndepVars++;
-        else if (independantVars[x] == 0) nDepVars++;
      }
   }
-  /* temporary variables (xor) */
-  nNumVariables += (total_vars - numinp);
 
-  d3_printf4("Solver vars: %d/%d (not used: %d)\n", nNumVariables-1, total_vars, total_vars-nNumVariables+1);
-  d3_printf4("Indep/Dep vars: %d/%d (other vars: %d)\n", nIndepVars, nDepVars, nNumVariables-1-nIndepVars-nDepVars);
+  d2_printf4("Solver vars: %d/%d (not used: %d)\n", nNumVariables-1, total_vars, total_vars-nNumVariables+1);
+  d2_printf4("Indep/Dep vars: %d/%d (other vars: %d)\n", nIndepVars, nDepVars, nNumVariables-1-nIndepVars-nDepVars);
 
   /* ??!!?? */
   if (nNumVariables == 1) return SOLV_SAT;
@@ -212,11 +137,9 @@ InitSolver()
         }
 
      if (index != -1) {
-        //arrSolution[index] = BOOL_UNKNOWN;
+        arrSolution[index] = BOOL_UNKNOWN;
         arrSolver2IteVarMap[index] = x;
         arrIte2SolverVarMap[x] = index;
-        if (x <= numinp && var_score) 
-           var_score[index] = var_score[x];
      }
   }
   assert (nmbrFunctions > 0);
@@ -225,51 +148,30 @@ InitSolver()
 
   gnMaxVbleIndex = nNumVariables; 
 
-  var_stat = (t_var_stat *)ite_calloc(nNumVariables, sizeof(t_var_stat), 9, "var_stat");
-
-  d3_printf1 ("Initializing Smurf Factory data structs ...\n");
+  d2_printf1 ("Initializing Smurf Factory data structs ...\n");
   InitLemmaSpacePool(0);
 
-  if (nHeuristic == C_LEMMA_HEURISTIC
-#ifdef JOHNSON_HEURISTIC_LEMMA
-        || nHeuristic == JOHNSON_HEURISTIC
-#endif
-        ) 
+  if (nHeuristic == C_LEMMA_HEURISTIC) /* || nHeuristic == JOHNSON_HEURISTIC) */
 	       InitLemmaHeurArrays(gnMaxVbleIndex);
-
-   if (nHeuristic == JOHNSON_HEURISTIC) {
-      InitHeurScoresStack();
-   }
-
-   gnNumLemmas = 0;
-   InitLemmaInfoArray();
-   if (*lemma_in_file) LoadLemmas(lemma_in_file);
 
   return SOLV_UNKNOWN;
 }
 
 ITE_INLINE void
-FreeSolver()
+FreeSolver(Tracer *tracer)
 {
-  d5_printf1("FreeSolver\n");
+  d2_printf1("FreeSolver\n");
 
-  if (nHeuristic == C_LEMMA_HEURISTIC 
-#ifdef JOHNSON_HEURISTIC_LEMMA
-        || nHeuristic == JOHNSON_HEURISTIC
-#endif
-        ) 
+  if (nHeuristic == C_LEMMA_HEURISTIC) /* || nHeuristic == JOHNSON_HEURISTIC) */
      DeleteLemmaHeurArrays();
 
-  if (nHeuristic == JOHNSON_HEURISTIC) {
-     FreeHeurScoresStack();
-  }
+  free(arrSolution);
+  free(arrSolver2IteVarMap);
+  free(arrIte2SolverVarMap);
 
-  //ite_free((void**)&arrSolution);
-  ite_free((void**)&arrSolution);
-  ite_free((void**)&arrSolver2IteVarMap);
-  ite_free((void**)&arrIte2SolverVarMap);
-  ite_free((void**)&var_stat);
-
-  FreeLemmaInfoArray();
   FreeLemmaSpacePool();
+  FreeSpecialFnStack();
+  FreeSmurfStatesStack();
+
+  if (formatin == 't' && tracer) unlink(tracer->file);
 }

@@ -1,7 +1,7 @@
 /* =========FOR INTERNAL USE ONLY. NO DISTRIBUTION PLEASE ========== */
 
 /*********************************************************************
- Copyright 1999-2007, University of Cincinnati.  All rights reserved.
+ Copyright 1999-2003, University of Cincinnati.  All rights reserved.
  By using this software the USER indicates that he or she has read,
  understood and will comply with the following:
 
@@ -33,32 +33,23 @@
  or arising from the use, or inability to use, this software or its
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
-*********************************************************************/
+ *********************************************************************/
 
 #include "ite.h"
 #include "solver.h"
 
 // External variables.
 long gnTotalBytesForTransitions = 0;
+extern int nRegSmurfIndex;
 
-ITE_INLINE Transition *
-CreateTransition(SmurfState *pSmurfState, int i, int nSolverVble, int value)
-{
-   int nVble = arrSolver2IteVarMap[nSolverVble];
+// Functions.
+ITE_INLINE
+SmurfState *
+ComputeSmurfAndInferences(BDDNodeStruct *pFunc, PartialAssignmentEncoding encoding);
 
-   // Compute transition that occurs when vble is set to true.
-   BDDNodeStruct *pFuncEvaled = set_variable(pSmurfState->pFunc, nVble, value==BOOL_TRUE?1:0);
-   SmurfState *pSmurfStateOfEvaled = BDD2Smurf(pFuncEvaled);
-   assert(pSmurfStateOfEvaled != NULL);
-   AddStateTransition(pSmurfState, i, nSolverVble, value,
-         pFuncEvaled, pSmurfStateOfEvaled);
-   Transition *transition = FindTransition(pSmurfState, i, nSolverVble, value);
-   assert(transition->pNextState != NULL);
-   return transition;
-}
-
-ITE_INLINE SmurfState *
-ComputeSmurfOfNormalized(BDDNodeStruct *pFunc)
+ITE_INLINE
+SmurfState *
+ComputeSmurfOfNormalized(BDDNodeStruct *pFunc, PartialAssignmentEncoding encoding)
    // Precondition:  *pFunc is 'normalized', i.e., no literal
    // is logically implied by *pFunc.
    // Creates Smurf states to represent the function and its children.
@@ -70,24 +61,38 @@ ComputeSmurfOfNormalized(BDDNodeStruct *pFunc)
    ite_counters[SMURF_NODE_FIND]++;
 
    // Collapse 'true' Smurf states.
-   if (pFunc == true_ptr) return pTrueSmurfState;
+   if (pFunc == true_ptr)
+   {
+      // 'True' Smurf state was initialized at the beginning of SmurfFactory().
+      assert(pTrueSmurfState);
+      return pTrueSmurfState;
+   }
 
-   if (pFunc->pState) return (SmurfState*)(pFunc->pState);
+   if (compress_smurfs && pFunc->addons && pFunc->addons->pState) {
+         return pFunc->addons->pState;
+   }
 
-   SmurfState *pSmurfState = AllocateSmurfState();
+   SmurfState *pSmurfState;
+   // Collapse Smurf states iff
+   // (1) They were created from the same constraint
+   // and (2) the literal assignment (path) taken to reach the different states
+   // are permutations of each other.  With respect to clause (2)
+   // we do not count forced assignments as part of the path.
+   if (encoding.FindOrAddState(&pSmurfState))
+   { 
+      /* state already present */
+      return pSmurfState;
+   }
 
    ite_counters[SMURF_NODE_NEW]++;
 
    pSmurfState->pFunc = pFunc;
-   pFunc->pState = (void*)pSmurfState;
+   pFunc->addons->pState = pSmurfState;
 
-   // get all the variables
-   long tempint_max = 0;
-   long y=0;
-   unravelBDD(&y, &tempint_max, &pSmurfState->vbles.arrElts, pFunc);
-   pSmurfState->vbles.nNumElts = y;
-   pSmurfState->vbles.arrElts = (int*)realloc(pSmurfState->vbles.arrElts, pSmurfState->vbles.nNumElts*sizeof(int));
+   ComputeVbleSet(pFunc);
 
+   pFunc->addons
+      ->pVbles->StoreAsArrayBasedSet(pSmurfState->vbles, NULL);
    /* mapping ite->solver variables */
    for (int i=0;i<pSmurfState->vbles.nNumElts;i++) {
       if (pSmurfState->vbles.arrElts[i]==0 || 
@@ -96,7 +101,7 @@ ComputeSmurfOfNormalized(BDDNodeStruct *pFunc)
          dE_printf3("\nvariable id: %d, true_false=%d\n", 
                pSmurfState->vbles.arrElts[i],
                variablelist[pSmurfState->vbles.arrElts[i]].true_false);
-         //exit(1);
+         exit(1);
       }
       pSmurfState->vbles.arrElts[i] = arrIte2SolverVarMap[pSmurfState->vbles.arrElts[i]];
    }
@@ -109,32 +114,123 @@ ComputeSmurfOfNormalized(BDDNodeStruct *pFunc)
 
    gnTotalBytesForTransitions += nBytesForTransitions;
 
-   //if (nHeuristic == JOHNSON_HEURISTIC) 
+   int i=0;
+   int nVble;
+   Transition *pTransition;
+   for (i=0;i<pSmurfState->vbles.nNumElts;i++)
    {
-      for(int i=0;i<pSmurfState->vbles.nNumElts;i++)
-      {
-         int nSolverVble = pSmurfState->vbles.arrElts[i];
 
-         // Compute transition that occurs when vble is set to true.
-         CreateTransition(pSmurfState, i, nSolverVble, BOOL_TRUE);
-         // Compute transition that occurs when vble is set to false.
-         CreateTransition(pSmurfState, i, nSolverVble, BOOL_FALSE);
-      }
+      // pSmurfState->vbles.arrElts[i];
+      nVble = arrSolver2IteVarMap[pSmurfState->vbles.arrElts[i]];
+      //d9_printf2("Building Smurf State x with %d\n", nVble);
+
+      // Compute transition that occurs when vble is set to true.
+      BDDNodeStruct *pFuncEvaled = EvalBdd(pFunc, nVble, true);
+      SmurfState *pSmurfStateOfEvaled
+         = ComputeSmurfAndInferences(pFuncEvaled, encoding.AddLiteral(nVble, true));
+      pTransition =
+         AddStateTransition(pSmurfState, i, arrIte2SolverVarMap[nVble], BOOL_TRUE,
+               pFuncEvaled, pSmurfStateOfEvaled);
+
+      // Compute transition that occurs when vble is set to false.
+      pFuncEvaled = EvalBdd(pFunc, nVble, false);
+      pSmurfStateOfEvaled 
+         = ComputeSmurfAndInferences(pFuncEvaled, encoding.AddLiteral(nVble, false));
+
+      pTransition = 
+         AddStateTransition(pSmurfState, i, arrIte2SolverVarMap[nVble], BOOL_FALSE,
+               pFuncEvaled, pSmurfStateOfEvaled);
    }
 
    return pSmurfState;
 }
 
 ITE_INLINE
+void
+ComputeImpliedLiterals(BDDNodeStruct *pFunc)
+{
+   if (pFunc->addons->pImplied)
+   {
+      // Inference set has already been computed.
+      return;
+   }
+
+   ITE_NEW_CATCH(
+         pFunc->addons->pImplied = new LiteralSet();,
+         "pFunc->addons->pImplied");
+   LiteralSet *pImplied = pFunc->addons->pImplied;
+   if (pFunc == false_ptr)
+   {
+      pImplied->SetToInconsistent();
+      return;
+   }
+
+   if (pFunc == true_ptr)
+   {
+      assert(pImplied->IsEmpty());
+      return;
+   }
+
+   ComputeImpliedLiterals(pFunc->thenCase);
+   ComputeImpliedLiterals(pFunc->elseCase);
+   ComputeIntersection(*(pFunc->thenCase->addons->pImplied),
+         *(pFunc->elseCase->addons->pImplied),
+         *pImplied);
+   if (pFunc->thenCase == false_ptr)
+   {
+      pImplied->PushElement(pFunc->variable, false);
+   }
+   else if (pFunc->elseCase == false_ptr)
+   {
+      pImplied->PushElement(pFunc->variable, true);
+   }
+}
+
+ITE_INLINE
+void
+ComputeReduct(BDDNodeStruct *pFunc)
+{ 
+   if (pFunc->addons->pReduct) return;
+
+   int nVble;
+   bool bValueOfVble;
+   BDDNodeStruct *pReduct = pFunc;
+
+   LiteralSetIterator litsetNext(*(pFunc->addons->pImplied));
+   while (litsetNext(nVble, bValueOfVble))
+   {
+      pReduct = EvalBdd(pReduct, nVble, bValueOfVble);
+   }
+   pFunc->addons->pReduct = pReduct;
+}
+
+ITE_INLINE
+SmurfState *
+ComputeSmurfAndInferences(BDDNodeStruct *pFunc, PartialAssignmentEncoding encoding)
+{
+   // Non-special function -- represent with regular state machine.
+   ComputeImpliedLiterals(pFunc);
+   ComputeReduct(pFunc);
+
+   return ComputeSmurfOfNormalized(pFunc->addons->pReduct, encoding);
+}
+
+ITE_INLINE
 SmurfState *
 BDD2Smurf(BDDNodeStruct *pFunc)
-   // Constructs a Smurf representation for the constraint *pFunc.
+   // Constructs a representation for the constraint *pFunc.
+   // The representation may be as a regular Smurf or as a special function.
    // Returns 0 if constraint pointed to by pFunc is unsatisfiable
    // or if the constraint is represented by a special function.
    // Otherwise, returns a pointer to the initial Smurf state.
 {
-   // Non-special function -- represent with regular state machine.
-   BDDNodeStruct *pReduct = set_variable_all_infs(pFunc);
 
-   return ComputeSmurfOfNormalized(pReduct);
+   /* start the recursion */
+   PartialAssignmentEncoding encoding;
+
+   ComputeVbleSet(pFunc); /* LOOK -- should it be here? */
+   ComputeVariableMapping(*(pFunc->addons->pVbles));
+
+   return
+      ComputeSmurfAndInferences(pFunc, encoding);
 }

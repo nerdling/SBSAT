@@ -1,7 +1,7 @@
 /* =========FOR INTERNAL USE ONLY. NO DISTRIBUTION PLEASE ========== */
 
 /*********************************************************************
- Copyright 1999-2007, University of Cincinnati.  All rights reserved.
+ Copyright 1999-2003, University of Cincinnati.  All rights reserved.
  By using this software the USER indicates that he or she has read,
  understood and will comply with the following:
 
@@ -33,18 +33,103 @@
  or arising from the use, or inability to use, this software or its
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
-*********************************************************************/
+ *********************************************************************/
 
 #include "ite.h"
 #include "solver.h"
 
+#include <termcap.h>
+#include <termios.h>
+
 ITE_INLINE void DisplayBacktrackInfo(double &fPrevEndTime, double &fStartTime);
+char *cl_string, *cm_string;
+int height;
+int width;
+int auto_wrap;
+
+static char term_buffer[2048];
+struct termios  newtty, origtty;            /* tty modes          */
+
+static char *CM, *SO, *SE, *CL;
+static char *tv_stype;
+char *ptr;
+
+/*
+ * Get a required termcap string or exit with a message.
+ */
+static char * qgetstr(char *ref)
+{
+   char *tmp;
+
+   if ((tmp = tgetstr(ref, &ptr)) == NULL) {
+      printf("/etc/termcap terminal %s must have a %s= entry\n",
+            tv_stype, ref);
+   }
+   return (tmp);
+}
+
 
 void
-crtwin_draw() 
+init_terminal_data()
+{
+   char *termtype = getenv("TERM");
+   int success;
+   extern char *getenv(), *realloc();
+   char *tcapbuf;
+
+   if (termtype == 0)
+      perror ("Specify a terminal type with `setenv TERM <yourtype>'.\n");
+
+   success = tgetent(term_buffer, termtype);
+   if (success < 0)
+      perror("Could not access the termcap data base.\n");
+   if (success == 0)
+      perror("Terminal type `...' is not defined.\n"/*, termtype*/);
+
+   /* get far too much and shrink later */
+   if ((ptr = tcapbuf = (char*)malloc(1024)) == NULL) {
+      printf("out of space\n");
+      exit(1);
+   }
+
+   CM = qgetstr("cm"); /* this string used by tgoto() */
+   CL = qgetstr("cl"); /* this string used to clear screen */
+   SO = qgetstr("so"); /* this string used to set standout */
+   SE = qgetstr("se"); /* this string used by clear standout */
+}
+
+/*
+ * output char function.
+ */
+int ttputc(int c)
+{
+   fputc(c, stdout);
+   return 0;
+}
+
+/*
+ * output command string, set padding to one line affected.
+ * use ttputc as character output function. Use only for
+ * termcap created data not your own strings.
+ */
+void putpad(char *str)
+{
+   tputs(str, 1, ttputc);
+}
+
+/*
+ * Move cursor.
+ */
+void
+move(int col, int row)
+{
+   putpad(tgoto(CM, col, row));
+}
+
+void
+crtwin_draw() //double fPrevEndTime, double fStartTime)
 {
    double fPrevEndTime=0, fStartTime=0;
-#ifdef MK_NULL // enable when needed
    putpad(CL);/* clear the screen */
 
    move(30, 5);
@@ -53,7 +138,6 @@ crtwin_draw()
    putpad(SE);/* end standout mode */
 
    move(0, 7);
-#endif
 
    {
       FILE *tmpstd = stddbg;
@@ -61,78 +145,54 @@ crtwin_draw()
       DisplayBacktrackInfo(fPrevEndTime, fStartTime);
       stddbg = tmpstd;
    }
+   height = tgetnum("li");
+   width = tgetnum("co");
+   printf("co=%d, li=%d \r", height, width);
    fflush(stdout);
 }
 
 void
-DumpAllVarsToFile(char *filename)
+dump_lemmas(char *filename)
 {
-   FILE *fout = fopen(filename, "w");
-   if (!fout) return;
-   for (int i=0; i<nNumVariables; i++) {
-      fprintf(fout, "%d ", i);
-      fprintf(fout, "%d %d %d %d %d %d ",
-            var_stat[i].chosen[0],
-            var_stat[i].chosen[1],
-            var_stat[i].backjumped[0],
-            var_stat[i].backjumped[1],
-            var_stat[i].infs[0],
-            var_stat[i].infs[1]);
-      if (arrHeurScores) {
-         fprintf(fout, "%f %f ",
-               arrHeurScores[i].Neg,
-               arrHeurScores[i].Pos
-               );
-      }
-      fprintf(fout, "\n");
-   }
-   fclose(fout);
-}
-
-void
-dump_lemmas(char *_filename)
-{
-   char filename[256];
-   get_freefile(_filename, NULL, filename, 256);
-   DisplayAllBrancherLemmasToFile(filename, 1);
-}
-
-void
-dump_vars(char *_filename)
-{
-   char filename[256];
-   get_freefile(_filename, NULL, filename, 256);
-   DumpAllVarsToFile(filename);
+   DisplayAllBrancherLemmasToFile(filename);
 }
 
 void
 crtwin_cmd(char c)
 {
    switch(c) {
-    case 'L': if (*lemma_out_file) dump_lemmas(lemma_out_file); break;
-    case 'V': if (*var_stat_file) dump_vars(var_stat_file); break;
+    case 'L': dump_lemmas("lemmas.txt"); break;
     case '+': BACKTRACKS_PER_STAT_REPORT *= 2; break;
-    case '-': if (BACKTRACKS_PER_STAT_REPORT > 1) BACKTRACKS_PER_STAT_REPORT /= 2; break;
+    case '-': BACKTRACKS_PER_STAT_REPORT /= 2; break;
     default: break;
    }
+   crtwin_draw();
 }
 
 void
 crtwin(void) {
+   fd_set rfds;
+   struct timeval tv;
+   int retval = 0;
    int draw = 0;
-   char c;
-
-#define PERIOD_DUMP_LEMMAS
-#ifdef PERIOD_DUMP_LEMMAS
-   if (*lemma_out_file) dump_lemmas(lemma_out_file); 
-   if (*var_stat_file) dump_vars(var_stat_file); 
-#endif
 
    do {
-      c = term_getchar();
-      if (c == 0) break;
-      crtwin_cmd(c);
-   } while(c != 0);
+      /* Watch stdin (fd 0) to see when it has input. */
+      FD_ZERO(&rfds);
+      FD_SET(0, &rfds);
+
+      tv.tv_sec = 0;
+      tv.tv_usec = 0;
+      retval = select(1, &rfds, NULL, NULL, &tv);
+      /* Don't rely on the value of tv now! */
+
+      if (retval) {
+         char c = getchar();
+         printf("getchar: %x\n", c);
+         draw = 1;
+         crtwin_cmd(c);
+      }
+   } while (retval != 0);
 
    if (draw == 0) crtwin_draw();
 }
@@ -140,8 +200,28 @@ crtwin(void) {
 void
 crtwin_init()
 {
-   init_terminal_in();
-   init_terminal_out();
+   if (isatty(0/*fileno(stdin)*/)) {
+      if (tcgetattr(0, &origtty) < 0) {
+         perror("tcgetattr: stdin");
+         exit(1);
+      }
+
+      newtty = origtty;
+      newtty.c_lflag &= ~(ICANON);
+      newtty.c_cc[VMIN] = 1;
+
+//      newtty.c_cc[VMIN] = 1;
+//      newtty.c_cc[VTIME] = 0;
+//      newtty.c_oflag &= ~OPOST;
+//      newtty.c_lflag &= ~(ICANON|ISIG|ECHO);
+//      newtty.c_iflag &= ~(INLCR|IGNCR|ICRNL|IUCLC|IXON);
+
+      if (tcsetattr(0, TCSANOW, &newtty) < 0) {
+         perror("tcsetattr: stdin");
+         exit(1);
+      }
+   }
+   init_terminal_data ();
 }
 
 

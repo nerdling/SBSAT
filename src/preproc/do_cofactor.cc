@@ -1,7 +1,7 @@
 /* =========FOR INTERNAL USE ONLY. NO DISTRIBUTION PLEASE ========== */
 
 /*********************************************************************
- Copyright 1999-2007, University of Cincinnati.  All rights reserved.
+ Copyright 1999-2003, University of Cincinnati.  All rights reserved.
  By using this software the USER indicates that he or she has read,
  understood and will comply with the following:
 
@@ -34,9 +34,11 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
+/*********************************************************
+ *  preprocess.c (S. Weaver)
+ *********************************************************/
 
-#include "sbsat.h"
-#include "sbsat_preproc.h"
+#include "ite.h"
 
 int COF_MAX = 100;		//The max number of variables BDDs can have to be used in cofactoring
 
@@ -45,73 +47,32 @@ Do_Cofactor()
 {
   int ret=PREP_NO_CHANGE;
   BDDNode *cof = NULL;
-  d3_printf1("COFACTORING - ");
-	affected = 0;
-	char p[100];
-	D_3(
-		 sprintf(p, "{0:0/%d}", nmbrFunctions);
-		 str_length = strlen(p);
-		 d3_printf1(p);
-	);
-	
+
   for (int x = 0; x < numout; x++)
    {
-		D_3(
-			 if (x % ((nmbrFunctions/100)+1) == 0) {
-				 for(int iter = 0; iter<str_length; iter++)
-					d3_printf1("\b");
-				 sprintf(p, "{%ld:%d/%d}", affected, x, nmbrFunctions);
-				 str_length = strlen(p);
-				 d3_printf1(p);
-			 }
-		);
-
-      if (x % ((nmbrFunctions/100)+1) == 0) {
-			if (nCtrlC) {
-				d3_printf1("\nBreaking out of CoFactoring\n");
-				nCtrlC = 0;
-				break;
-			}
-         d2e_printf3("\rPreprocessing Co %d/%ld", x, numout);
-		}
-      
-		if (length[x] <= COF_MAX && length[x] > 0) {
-			//d3_printf1("*"); 
-			cof = functions[x];
-			for (int j = 0; j < numout; j++) {
-				if(j == x) continue;
-				if (nmbrVarsInCommon (x, j, 1) == 0) continue;
-				BDDNode *before = gcf(functions[j], cof);
-				if(before != functions[j]) {
-					functions[j] = before;
-					if (functions[j] == false_ptr)
-					  return TRIV_UNSAT;
-					functionType[j] = UNSURE;
-					equalityVble[j] = 0;
-					SetRepeats(j);
-					switch (Rebuild_BDDx(j)) {
-					 case TRIV_UNSAT: return TRIV_UNSAT;
-					 case TRIV_SAT:   return TRIV_SAT; 
-					 default: break;
-					}
-					affected++;
-				}
-			}
-			functions[x] = true_ptr;
-			functionType[x] = UNSURE;
-			equalityVble[x] = 0;
-			SetRepeats(x);
-			switch (Rebuild_BDDx(x)) {
-			 case TRIV_UNSAT: return TRIV_UNSAT;
-			 case TRIV_SAT:   return TRIV_SAT;
-			 default: break;
-			}
-			affected++;
-			ret = PREP_CHANGED;			
-		}
-		if(ret == PREP_CHANGED) break;
+     if (length[x] <= COF_MAX && length[x] > 0)
+      {
+        d2_printf1 ("*");
+        cof = functions[x];
+        for (int j = 0; j < numout; j++)
+         {
+           //Cannot discriminate...must do EVERY function
+           BDDNode *before = gcf(functions[j], cof);
+			  if(before != functions[j]) {
+				  functions[j] = gcf (functions[j], cof);
+				  if (functions[j] == false_ptr)
+					 return TRIV_UNSAT;
+				  functionType[j] = UNSURE;
+				  equalityVble[j] = 0;
+				  switch (Rebuild_BDDx(j)) {
+					case TRIV_UNSAT: return TRIV_UNSAT; break;
+					case TRIV_SAT:   return TRIV_SAT; break;
+					default: break;
+				  }
+				  ret = PREP_CHANGED;
+			  }
+         }
+      }
    }  //This ends Cofactoring
-	d3_printf1("\n");
-	d2e_printf1("\r                                                    ");
-	return ret;
+  return ret;
 }

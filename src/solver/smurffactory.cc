@@ -1,7 +1,7 @@
 /* =========FOR INTERNAL USE ONLY. NO DISTRIBUTION PLEASE ========== */
 
 /*********************************************************************
- Copyright 1999-2007, University of Cincinnati.  All rights reserved.
+ Copyright 1999-2003, University of Cincinnati.  All rights reserved.
  By using this software the USER indicates that he or she has read,
  understood and will comply with the following:
 
@@ -33,12 +33,16 @@
  or arising from the use, or inability to use, this software or its
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
-*********************************************************************/
+ *********************************************************************/
+// SmurfFactory.cc
+// Routines for creating state machines.
+// Started 12/26/2000 - J. Ward
 
 #include "ite.h"
 #include "solver.h"
 
 // External variables.
+extern SmurfState *pTrueSmurfState;
 SpecialFunc *arrSpecialFuncs =  0;
 SmurfState **arrRegSmurfInitialStates = 0;
 t_smurf_path *arrSmurfPath;
@@ -49,21 +53,29 @@ int nNumRegSmurfs; // Number of regular Smurfs.
 int nSpecialFuncIndex;
 int nRegSmurfIndex;
 int gnMaxVbleIndex;
+extern int compress_smurfs;
+
+extern BDDNode *false_ptr;
+extern BDDNode *true_ptr;
 
 ITE_INLINE void DisplaySmurfStates();
 ITE_INLINE char * StringFromFunctionType(int nFuncType);
 ITE_INLINE void InitSmurfFactory();
 
-
 ITE_INLINE int
 SmurfFactory()
 {
    double fStartTime = get_runtime();
-   int nSumVarsPerSmurf = 0;
 
    InitSmurfFactory();
 
-   d9_printf1("SmurfFactory\n");
+   d2_printf1("SmurfFactory\n");
+
+   InitVbleMappingArray(total_vars + 1);
+   InitVbleEncodingArray();
+   if (SMURFS_SHARE_PATHS)
+      InitPrecomputedStatesArray();
+   InitLemmaLookupSpace();
 
    int *arrIte2SolverSpecFn = (int*)ite_calloc(nmbrFunctions, sizeof(int), 
          9, "arrIte2SolverSpecFn");
@@ -72,6 +84,11 @@ SmurfFactory()
    for (int i = 0; i<nmbrFunctions; i++) {
       arrIte2SolverSpecFn[i] = -1;
       arrIte2SolverSmurf[i] = -1;
+   }
+
+   if (nNumRegSmurfs) {
+      arrSmurfEqualityVble = (int*)ite_calloc(nNumRegSmurfs, sizeof(int),
+            9, "arrSmurfEqualityVble");
    }
 
    // Construct the Smurfs.
@@ -84,8 +101,8 @@ SmurfFactory()
 
       if (pSpecFunc != NULL) 
       {
-         d4_printf1("&");
-         /* spec fn is SFN_XOR! */
+         d2_printf1("&");
+         /* spec fn is XOR! */
       } else {
          if (IsSpecialFunc(nFunctionType))
          {
@@ -93,21 +110,11 @@ SmurfFactory()
          }
       }
 
-      d5_printf4("Function %d(%d,%d): ", i, length[i], nFunctionType);
-      D_5( printBDD(functions[i]); );
-      d5_printf1("\n");
-
-      if (IsSpecialFunc(nFunctionType) == 0)
+      if (!IsSpecialFunc(nFunctionType))
       {
-         assert(pFunc != true_ptr && pFunc != false_ptr);
-         //if (i%100 == 0)
-           d2e_printf3("\rCreating Smurfs ... %d/%d", i, nmbrFunctions);
-
-			//if(i % 100 == 0)
-			  d3_printf3("Constructing Smurf for %d/%d           \r", i, nmbrFunctions);
+         d3_printf3("Constructing Smurf for %d/%d\r", i, nmbrFunctions);
          arrIte2SolverSmurf[i] = nRegSmurfIndex;
          arrSmurfEqualityVble[nRegSmurfIndex] = arrIte2SolverVarMap[equalityVble[i]];
-
          SmurfState *pSmurfState = BDD2Smurf(pFunc);
 
          if (pSmurfState == NULL)
@@ -115,49 +122,27 @@ SmurfFactory()
             fprintf(stderr, "Could not create the Smurf state.");
             return SOLV_ERROR;
          }
-         nSumVarsPerSmurf += pSmurfState->vbles.nNumElts;
          arrRegSmurfInitialStates[nRegSmurfIndex] = pSmurfState;
-         pSmurfState->cVisited |= 1;
-         arrSmurfPath[nRegSmurfIndex].literals = 
-            (int*)ite_calloc(arrRegSmurfInitialStates[nRegSmurfIndex]->vbles.nNumElts+1, sizeof(int),
-               9, "arrSmurfPath[].literals");
          nRegSmurfIndex++;
+   
+         if (SMURFS_SHARE_PATHS)
+            ResetPrecomputedStatesArray();
       } 
 
       if (pSpecFunc != NULL)
       {
-         assert(pSpecFunc != true_ptr && pSpecFunc != false_ptr);
-         
-         //if (i%100 == 0)
-           d2e_printf3("\rCreating Special Function ... %d/%d", i, nmbrFunctions);
-         if (IsSpecialFunc(nFunctionType) == 0) {
+         if (!IsSpecialFunc(nFunctionType)) {
             nFunctionType = PLAINXOR;
             arrSpecialFuncs[nSpecialFuncIndex].LinkedSmurfs = nRegSmurfIndex-1;
          } else {
             arrSpecialFuncs[nSpecialFuncIndex].LinkedSmurfs = -1;
          }
-			//if(i % 100 == 0)
-			  d3_printf3("Constructing Special Function for %d/%d\r", i, nmbrFunctions);
+         d3_printf3("Constructing Special Function for %d/%d\r", i, nmbrFunctions);
          arrIte2SolverSpecFn[i] = nSpecialFuncIndex;
-         switch(nFunctionType) {
-          case AND: 
-          case OR: 
-          case PLAINOR: 
-             BDD2Specfn_AND(pSpecFunc, nFunctionType,
-                   equalityVble[i], &(arrSpecialFuncs[nSpecialFuncIndex]));
-             break;
-          case PLAINXOR: 
-             BDD2Specfn_XOR(pSpecFunc, nFunctionType,
-                   equalityVble[i], &(arrSpecialFuncs[nSpecialFuncIndex]));
-             break;
-          case MINMAX:
-             BDD2Specfn_MINMAX(pSpecFunc, nFunctionType,
-                   equalityVble[i], &(arrSpecialFuncs[nSpecialFuncIndex]));
-             break;
-          default: assert(0); exit(1);
-         }
-
+         SpecFn2Smurf(pSpecFunc, nFunctionType,
+               equalityVble[i], &(arrSpecialFuncs[nSpecialFuncIndex]));
          nSpecialFuncIndex++;
+
       }
 
 #ifdef PRINT_SMURF_STATS
@@ -171,20 +156,52 @@ SmurfFactory()
       printf("\n");
 #endif
    }
-   d3_printf1("\n");
 
    assert(nRegSmurfIndex == nNumRegSmurfs);
    if (nNumRegSmurfs) {
+      arrSmurfPath = (t_smurf_path*)ite_calloc(nNumRegSmurfs, sizeof(t_smurf_path),
+            9, "arrSmurfPath");
+
+      arrSmurfChain = (t_smurf_chain*)ite_calloc(nNumRegSmurfs, sizeof(t_smurf_chain),
+            9, "arrSmurfChain");
+
+      for (int i = 0; i < nNumRegSmurfs; i++)
+      {
+         arrSmurfPath[i].literals = (int*)ite_calloc(arrRegSmurfInitialStates[i]->vbles.nNumElts+1, sizeof(int),
+               9, "arrSmurfPath[].literals");
+         arrSmurfChain[i].next = -1;
+         arrSmurfChain[i].prev = -1;
+         arrSmurfChain[i].specfn = -1;
+      }
+
    }
 
    if (nSpecialFuncIndex) {
       for(int i=0; i < nSpecialFuncIndex; i++)
       {
-         if (arrSpecialFuncs[i].nFunctionType == SFN_XOR &&
+         if (arrSpecialFuncs[i].nFunctionType == XOR &&
                arrSpecialFuncs[i].LinkedSmurfs != -1) {
             int smurf = arrSpecialFuncs[i].LinkedSmurfs;
             if (smurf != -1) {
+               arrSpecialFuncs[i].LinkedSmurfs = smurf;
+               /* go and set all the links */
                arrSmurfChain[smurf].specfn = i;
+               /*
+               arrSmurfChain[smurf].next = ;
+               arrSmurfChain[smurf].prev = ;
+               */
+               /* make sure that the dep/temp connecting var exists */
+               /*
+               int nNumElts = arrSpecialFuncs[i].rhsVbles.nNumElts;
+               int *arrElts = arrSpecialFuncs[i].rhsVbles.arrElts;
+               int nSpecFnVble = -2;
+               int nSmurfVble = arrSmurfEqualityVble[smurf];
+               for(int j=0; j < nNumElts; j++) {
+                  nSpecFnVble = arrElts[j];
+                  if (nSpecFnVble == nSmurfVble) break;
+               }
+               assert(nSpecFnVble == nSmurfVble);
+               */
             }
          }
       }
@@ -193,21 +210,33 @@ SmurfFactory()
    free(arrIte2SolverSpecFn);
    free(arrIte2SolverSmurf);
 
-   if (nHeuristic == JOHNSON_HEURISTIC)  InitHeuristicTablesForSpecialFuncs();
+   if (compress_smurfs == 0) {
+      // Fill in lemma information
+      for (int i = 0; i < nNumRegSmurfs; i++)
+      {
+         ComputeLemmasForSmurf(arrRegSmurfInitialStates[i]);
+      }
+      extern int  nTotalBytesForLemmaInferences;
+      d2_printf2("Allocated %d bytes for Lemma Inferences\n",
+            nTotalBytesForLemmaInferences);
+   }
+
+   FreeVbleEncodingArray();
+   if (SMURFS_SHARE_PATHS)
+      FreePrecomputedStatesArray();
+   FreeVbleMappingArray();
+   FreeLemmaLookupSpace();
 
    // Display statistics.
    double fEndTime = get_runtime();
    ite_counters_f[BUILD_SMURFS] = fEndTime - fStartTime;
    SmurfStatesDisplayInfo();
-   d3_printf2 ("Time to build Smurf states:  %4.3f secs.\n", ite_counters_f[BUILD_SMURFS]);
+   d2_printf2 ("Time to build Smurf states:  %4.3f secs.\n", ite_counters_f[BUILD_SMURFS]);
 
-   d4_printf4("SMURF States Statistic: %ld/%ld (%f hit rate)\n",
+   d2_printf4("SMURF States Statistic: %ld/%ld (%f hit rate)\n",
          (long)(ite_counters[SMURF_NODE_FIND] - ite_counters[SMURF_NODE_NEW]),
          (long)(ite_counters[SMURF_NODE_FIND]),
          ite_counters[SMURF_NODE_FIND]==0?0:1.0 * (ite_counters[SMURF_NODE_FIND] - ite_counters[SMURF_NODE_NEW]) / ite_counters[SMURF_NODE_FIND]);
-   d4_printf2 ("Avg. number of vars per smurf  %4.3f \n", 
-         1.0*(nSumVarsPerSmurf/(nRegSmurfIndex>0?nRegSmurfIndex:1)));
-   d2e_printf1("\rCreating Smurfs ... Done                     \n");
 
    return SOLV_UNKNOWN;
 }
@@ -216,8 +245,7 @@ SmurfFactory()
 ITE_INLINE void
 InitSmurfFactory()
 {
-   d9_printf1("InitSmurfFactory\n");
-   d2e_printf1("Creating Smurfs ... ");
+   d2_printf1("InitSmurfFactory\n");
 #ifdef DISPLAY_TRACE
    for (int i = 0; i < nmbrFunctions; i++)
    {
@@ -226,8 +254,34 @@ InitSmurfFactory()
    }
 #endif
 
+   if (nHeuristic == JOHNSON_HEURISTIC) 
+      InitHeuristicTablesForSpecialFuncs(gnMaxVbleIndex);
+
+   // Make sure that the addons pointer of each BDD is NULL.
+   // there are two cycles since the parts of BDD might be shared
+   //for (int i = 0; i < nmbrFunctions; i++)
+   //    AssertNullAddons(functions[i]);
+
+   for (int i = 0; i < nmbrFunctions; i++) {
+      InitializeAddons(functions[i]);
+      if (xorFunctions[i])
+         InitializeAddons(xorFunctions[i]);
+   }
+
+   InitializeAddons(true_ptr);
+
    // Initialize info regarding the 'true' function.
    pTrueSmurfState = AllocateSmurfState();
+   pTrueSmurfState->fNodeHeuristicWeight = JHEURISTIC_K_TRUE;
+   ITE_NEW_CATCH(
+         true_ptr->addons->pImplied = new LiteralSet();,
+         "true_ptr->addons->pImplied");
+   assert(true_ptr->addons->pImplied->IsEmpty());
+   true_ptr->addons->pReduct = true_ptr;
+   ITE_NEW_CATCH(
+         true_ptr->addons->pVbles = new IntegerSet();,
+         "true_ptr->addons->pVbles");
+   assert(true_ptr->addons->pVbles->IsEmpty());
 
    // Count number of special functions
    // See "struct SpecialFunc" in SmurfFactory.h for a description
@@ -237,19 +291,23 @@ InitSmurfFactory()
    for (int i = 0; i < nmbrFunctions; i++)
    {
       int nFunctionType = functionType[i];
-
-      if (nFunctionType != UNSURE && nFunctionType != ITE && nFunctionType != ITE_EQU && !IsSpecialFunc(nFunctionType))
+      if (nFunctionType != UNSURE && nFunctionType != ITE
+            && !IsSpecialFunc(nFunctionType))
       {
-         d2_printf3("SmurfFactory -- Unrecognized function type: %d for %d assuming UNSURE\n", 
+         dE_printf3("SmurfFactory -- Unrecognized function type: %d for %d assuming UNSURE\n", 
                nFunctionType, i);
          nFunctionType = UNSURE;
       }
 
+      BDDNode *pFunc = functions[i];
+      ComputeVbleSet(pFunc);
+
       if (xorFunctions[i]) {
          nNumSpecialFuncs++;
          nNumRegSmurfs++;
+         ComputeVbleSet(xorFunctions[i]);
       } else
-      if (IsSpecialFunc(nFunctionType)) 
+      if (IsSpecialFunc(functionType[i])) 
          nNumSpecialFuncs++;
       else
          nNumRegSmurfs++;
@@ -257,95 +315,65 @@ InitSmurfFactory()
    }
 
    /* allocate an array for special functions */
-   d3_printf2("Number of special functions: %d\n", nNumSpecialFuncs);
+   d2_printf2("Number of special functions: %d\n", nNumSpecialFuncs);
    if (nNumSpecialFuncs > 0)
    {
       arrSpecialFuncs
-         = (SpecialFunc *)ite_calloc(nNumSpecialFuncs+1, sizeof(SpecialFunc),
+         = (SpecialFunc *)ite_calloc(nNumSpecialFuncs, sizeof(SpecialFunc),
                2, "special function array");
    }
    nSpecialFuncIndex = 0;
 
    /* allocate an array for smurf initial states */
-   d3_printf2("Number of regular Smurfs: %d\n", nNumRegSmurfs);
+   d2_printf2("Number of regular Smurfs: %d\n", nNumRegSmurfs);
    if (nNumRegSmurfs > 0)
    {
       arrRegSmurfInitialStates
          = (SmurfState **)ite_calloc(nNumRegSmurfs, sizeof(SmurfState *),
                2, "initial smurf state pointers");
-      arrSmurfEqualityVble = (int*)ite_calloc(nNumRegSmurfs, sizeof(int),
-            9, "arrSmurfEqualityVble");
-      arrSmurfPath = (t_smurf_path*)ite_calloc(nNumRegSmurfs, sizeof(t_smurf_path),
-            9, "arrSmurfPath");
-
-      arrSmurfChain = (t_smurf_chain*)ite_calloc(nNumRegSmurfs, sizeof(t_smurf_chain),
-            9, "arrSmurfChain");
-
-      for (int i = 0; i < nNumRegSmurfs; i++)
-      {
-         arrSmurfChain[i].next = -1;
-         arrSmurfChain[i].prev = -1;
-         arrSmurfChain[i].specfn = -1;
-      }
-
    }
    nRegSmurfIndex = 0;
-
-}
-
-void
-CountSmurfsUsage(SmurfState *pState, long *one, long *two, long *three)
-{
-   if (pState->cVisited == 0) return; else
-   if (pState->cVisited == 1) (*one)++; else
-   if (pState->cVisited == 2) (*two)++; else
-   if (pState->cVisited == 3) (*three)++; else assert(0);
-   pState->cVisited = 0;
-
-   for(int i=0; i<pState->vbles.nNumElts; i++) {
-      Transition *pTransition;
-      pTransition = FindTransition(pState, i, pState->vbles.arrElts[i], BOOL_TRUE);
-      if (pTransition->pNextState) CountSmurfsUsage(pTransition->pNextState, one, two, three);
-      pTransition = FindTransition(pState, i, pState->vbles.arrElts[i], BOOL_FALSE);
-      if (pTransition->pNextState) CountSmurfsUsage(pTransition->pNextState, one, two, three);
-   }
 }
 
 ITE_INLINE void
 FreeSmurfFactory()
 {
-   d9_printf1("FreeSmurfFactory\n");
-
-   long states_one=0, states_two=0, states_three=0;
-   for (int i = 0; i < nNumRegSmurfs; i++) {
-      CountSmurfsUsage(arrRegSmurfInitialStates[i], &states_one, &states_two, &states_three);
-   }
-
-   d3_printf4("SmurfState State all: %lld, visited: %ld, heuristic: %ld\n",
-         ite_counters[SMURF_NODE_NEW], states_one+states_three, states_two);
-
+   d2_printf1("FreeSmurfFactory\n");
    if (nHeuristic == JOHNSON_HEURISTIC) {
       FreeHeuristicTablesForSpecialFuncs();
    }
 
    /* from smurf factory */
-   for (int i = 0; i < nNumRegSmurfs; i++)
-      ite_free((void**)&arrSmurfPath[i].literals);
-
-   ite_free((void**)&arrSmurfPath);
-   ite_free((void**)&arrSmurfChain);
-   ite_free((void**)&arrSmurfEqualityVble);
-   ite_free((void**)&arrRegSmurfInitialStates);
-   nRegSmurfIndex = 0;
-
-   for(int i=0; i < nNumSpecialFuncs; i++) {
-      ite_free((void**)&arrSpecialFuncs[i].rhsVbles.arrElts);
-      ite_free((void**)&arrSpecialFuncs[i].arrRHSPolarities);
-      ite_free((void**)&arrSpecialFuncs[i].arrShortLemmas);
+   if (arrSmurfPath!=NULL) {
+      for (int i = 0; i < nNumRegSmurfs; i++)
+         free(arrSmurfPath[i].literals);
+      free(arrSmurfPath);
    }
-   ite_free((void**)&arrSpecialFuncs);
-   nSpecialFuncIndex = 0;
 
+   if (arrSmurfChain!=NULL) {
+      free(arrSmurfChain);
+   }
+
+   if (arrSmurfEqualityVble!=NULL) {
+      free(arrSmurfEqualityVble);
+   }
+
+   if (arrSpecialFuncs) {
+      for(int i=0; i < nNumSpecialFuncs; i++) {
+         free(arrSpecialFuncs[i].rhsVbles.arrElts);
+         free(arrSpecialFuncs[i].arrRHSPolarities);
+         free(arrSpecialFuncs[i].arrShortLemmas);
+      }
+      free(arrSpecialFuncs);
+      arrSpecialFuncs=NULL;
+      nSpecialFuncIndex = 0;
+   }
+
+   if (arrRegSmurfInitialStates) {
+      free(arrRegSmurfInitialStates);
+      nRegSmurfIndex = 0;
+   }
+   FreeAddonsPool();
    FreeSmurfStatePool();
 }
 

@@ -1,16 +1,11 @@
 INCLUDES=-I$(top_srcdir)/include
-sources= \
-             bdd.cc bdd_ite.cc bdd_print.cc utils.cc \
-             params.cc params_fn.cc log.cc itetable.cc \
-             bddtable.cc zread.cc vars.cc infer.cc llist.cc \
-	     bdd_circuit_init.cc symtable.cc java_wrapper.cc \
-	     custprint.cc termcap.cc queue.cc
-#EXTRA_DIST = # bddtable.cc
-
-#if MYLIBTOOL
-#noinst_LTLIBRARIES = libutils.la
-#libutils_la_SOURCES= $(sources)
-#else
 noinst_LIBRARIES = libutils.a
-libutils_a_SOURCES= $(sources)
-#endif
+
+libutils_a_SOURCES= \
+             integerset.cc literalset.cc bdd.cc utils.cc \
+             params.cc params_fn.cc log.cc bddidx.cc bddidx_orig.cc \
+             bddtable.cc zread.cc vars.cc infer.cc intnode.cc \
+	     smurfaddons.cc bdd_circuit_init.cc symtable.cc \
+	     custprint.cc # malloc.cc
+
+EXTRA_DIST = bddidx_vsb.cc  malloc.cc # bddtable.cc

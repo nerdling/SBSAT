@@ -1,7 +1,7 @@
 /* =========FOR INTERNAL USE ONLY. NO DISTRIBUTION PLEASE ========== */
 
 /*********************************************************************
- Copyright 1999-2007, University of Cincinnati.  All rights reserved.
+ Copyright 1999-2003, University of Cincinnati.  All rights reserved.
  By using this software the USER indicates that he or she has read,
  understood and will comply with the following:
 
@@ -33,7 +33,9 @@
  or arising from the use, or inability to use, this software or its
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
-*********************************************************************/
+ *********************************************************************/
+
+// assert USE_LEMMA_VAR_HEURISTIC is not set... !
 
 #include "ite.h"
 #include "solver.h"
@@ -64,23 +66,19 @@ UPDATE_HEURISTIC()
 #ifdef JHEURISTIC
          d9_printf2("JHeuristic update for special function %d\n", i);
          switch(arrSpecialFuncs[i].nFunctionType) {
-          //case SFN_AND: J_UpdateHeuristic_AND(arrSpecialFuncs+i, arrPrevNumRHSUnknowns[i], arrNumRHSUnknowns[i], 
+          //case AND: J_UpdateHeuristic_AND(arrSpecialFuncs+i, arrPrevNumRHSUnknowns[i], arrNumRHSUnknowns[i], 
           //                arrPrevNumLHSUnknowns[i], arrNumLHSUnknowns[i]);
-          case SFN_AND: 
+          case AND: 
              J_UpdateHeuristic_AND_C(arrSpecialFuncs+i, 
                           arrPrevNumRHSUnknowns[i], arrNumRHSUnknowns[i], 
                           arrPrevNumLHSUnknowns[i], arrNumLHSUnknowns[i],
                           arrPrevSumRHSUnknowns[i], arrSumRHSUnknowns[i]);
                     break;
-          //case SFN_XOR: J_UpdateHeuristic_XOR(arrSpecialFuncs+i, 
+          //case XOR: J_UpdateHeuristic_XOR(arrSpecialFuncs+i, 
           //                arrPrevNumRHSUnknowns[i], arrNumRHSUnknowns[i], -1);
-          case SFN_XOR: J_UpdateHeuristic_XOR_C(arrSpecialFuncs+i, 
+          case XOR: J_UpdateHeuristic_XOR_C(arrSpecialFuncs+i, 
                           arrPrevNumRHSUnknowns[i], arrNumRHSUnknowns[i], 
                           arrPrevSumRHSUnknowns[i], arrSumRHSUnknowns[i], -1);
-                    break;
-          case SFN_MINMAX: J_UpdateHeuristic_MINMAX(arrSpecialFuncs+i, 
-                          arrPrevNumRHSUnknowns[i], arrNumRHSUnknowns[i], 
-                          arrPrevRHSCounter[i], arrRHSCounter[i]);
                     break;
           default: assert(0);
                    exit(1);
@@ -90,7 +88,6 @@ UPDATE_HEURISTIC()
          arrPrevNumRHSUnknowns[i] = arrNumRHSUnknowns[i];
          arrPrevNumLHSUnknowns[i] = arrNumLHSUnknowns[i];
          arrPrevSumRHSUnknowns[i] = arrSumRHSUnknowns[i];
-         arrPrevRHSCounter[i] = arrRHSCounter[i];
          arrChangedSpecialFn[i]=0;
       }
       pFnInfQueue++;
@@ -108,10 +105,10 @@ UPDATE_HEURISTIC()
             arrNumLHSUnknowns[i] != arrPrevNumLHSUnknowns[i])
       {
          switch(arrSpecialFuncs[i].nFunctionType) {
-          case SFN_AND: J_UpdateHeuristic_AND(arrSpecialFuncs+i, arrPrevNumRHSUnknowns[i], arrNumRHSUnknowns[i], 
+          case AND: J_UpdateHeuristic_AND(arrSpecialFuncs+i, arrPrevNumRHSUnknowns[i], arrNumRHSUnknowns[i], 
                           arrPrevNumLHSUnknowns[i], arrNumLHSUnknowns[i]);
                     break;
-          case SFN_XOR: J_UpdateHeuristic_XOR(arrSpecialFuncs+i, arrPrevNumRHSUnknowns[i], arrNumRHSUnknowns[i], -1);
+          case XOR: J_UpdateHeuristic_XOR(arrSpecialFuncs+i, arrPrevNumRHSUnknowns[i], arrNumRHSUnknowns[i], -1);
                     break;
           default: assert(0);
                    exit(1);

@@ -1,6 +1,6 @@
 /* =========FOR INTERNAL USE ONLY. NO DISTRIBUTION PLEASE ========== */ 
 /*********************************************************************
- Copyright 1999-2007, University of Cincinnati.  All rights reserved.
+ Copyright 1999-2003, University of Cincinnati.  All rights reserved.
  By using this software the USER indicates that he or she has read,
  understood and will comply with the following:
 
@@ -33,28 +33,24 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
-
 #include "config.h"
 #include "params.h"
 #include "log.h"
 
-extern int term_width; 
-int params_current_src = 0;
-
 #ifndef COPYRIGHT
-#define COPYRIGHT "Copyright (C) 1999-2009, University of Cincinnati.  All rights reserved."
+#define COPYRIGHT "Copyright (C) 1999-2003, University of Cincinnati.  All rights reserved."
 #endif
 
 #ifndef AUTHORS
-#define AUTHORS "a research team lead by John Franco"
+#define AUTHORS "reserach team lead by John Franco"
 #endif
 
 #ifndef BUGS_EMAIL
-#define BUGS_EMAIL "weaversa@gmail.com"
+#define BUGS_EMAIL "<mkouril@ececs.uc.edu> or <franco@gauss.ececs.uc.edu>"
 #endif
 
 #ifndef DESCRIPTION
-#define DESCRIPTION "SBSAT is a SAT solver."
+#define DESCRIPTION "SBSat is SAT solver."
 #endif
 
 void
@@ -65,13 +61,7 @@ init_options()
   for (i=0;!(options[i].p_target==NULL&&options[i].desc_opt[0]==0);i++)
   {
 #ifndef HAVE_DES_INITIALIZERS
-#ifdef NDEBUG
-#define DEBUG_VSF(x) x;
-#else
-#define DEBUG_VSF(x) { v_sf = x; assert(1==v_sf); }
-     int v_sf;
-#endif
-     int v_i;
+     int v_i, v_sf;
      long v_l;
      float v_f;
      switch (options[i].p_type) {
@@ -81,28 +71,35 @@ init_options()
                    break;
       case P_PRE_INT:
       case P_INT: 
-                   DEBUG_VSF(sscanf(options[i].p_defa.s, "%d", &v_i));
+                   v_sf = sscanf(options[i].p_defa.s, "%d", &v_i);
+                   assert(1==v_sf);
                    options[i].p_defa.i = v_i;
-                   DEBUG_VSF(sscanf(options[i].p_value.s, "%d", &v_i));
+                   v_sf = sscanf(options[i].p_value.s, "%d", &v_i);
+                   assert(1==v_sf);
                    options[i].p_value.i = v_i;
                    break;
       case P_PRE_LONG:
       case P_LONG: 
-                   DEBUG_VSF(sscanf(options[i].p_defa.s, "%ld", &v_l));
+                   v_sf = sscanf(options[i].p_defa.s, "%ld", &v_l);
+                   assert(1==v_sf);
                    options[i].p_defa.l = v_l;
-                   DEBUG_VSF(sscanf(options[i].p_value.s, "%ld", &v_l));
+                   v_sf = sscanf(options[i].p_value.s, "%ld", &v_l);
+                   assert(1==v_sf);
                    options[i].p_value.l = v_l;
                    break;
       case P_PRE_FLOAT:
       case P_FLOAT: 
-                   DEBUG_VSF(sscanf(options[i].p_defa.s, "%f", &v_f));
+                   v_sf = sscanf(options[i].p_defa.s, "%f", &v_f);
+                   assert(1==v_sf);
                    options[i].p_defa.f = v_f;
-                   DEBUG_VSF(sscanf(options[i].p_value.s, "%f", &v_f));
+                   v_sf = sscanf(options[i].p_value.s, "%f", &v_f);
+                   assert(1==v_sf);
                    options[i].p_value.f = v_f;
                    break;
       case P_PRE_STRING:
       case P_STRING: 
-                   DEBUG_VSF(sscanf(options[i].p_value.s, "%d", &v_i));
+                   v_sf = sscanf(options[i].p_value.s, "%d", &v_i);
+                   assert(1==v_sf);
                    options[i].p_value.i = v_i;
                    break;
       default: break; /* P_NONE, P_FN, ... */
@@ -176,29 +173,6 @@ lookup_short_keyword(char *key)
 }
 
 void
-set_param_int(char *param, int value)
-{
-   t_opt *p_opt = lookup_keyword(param);
-   if (p_opt == NULL) return;
-   assert(p_opt->p_type == P_INT);
-   if (p_opt->p_src <= params_current_src)
-   {
-      *(int*)(p_opt->p_target) = value;
-      p_opt->p_src = params_current_src;
-   }
-}
-
-void
-change_defa_param_int(char *param, int value)
-{
-   t_opt *p_opt = lookup_keyword(param);
-   if (p_opt == NULL) return;
-   assert(p_opt->p_type == P_INT);
-   p_opt->p_defa.i = value;
-   *(int*)(p_opt->p_target) = value;
-}
-
-void
 skip_eol(FILE *fini)
 {
   char c=fgetc(fini);
@@ -214,14 +188,10 @@ read_ini(char *filename)
    char *p_keyword=NULL;
    t_opt *p_opt;
 
-   params_current_src = 1;
-
    if (!fini) 
    { 
-      d3_printf2("warning: ini file not found %s\n", filename); 
+      d2_printf2("warning: ini file not found %s\n", filename); 
       return; 
-   } else {
-      d2_printf2("using ini file %s\n", filename); 
    };
 
    while (!feof(fini))
@@ -240,15 +210,12 @@ read_ini(char *filename)
          continue;
       }
       ungetc(c, fini);
-      fscanf(fini, "%s", keyword);
+      fscanf(fini, "%s=", keyword);
       p_keyword=strchr(keyword, '='); 
       if (p_keyword) {
          *p_keyword=0;
          p_keyword++;
       }
-
-      //set_param_value(keyword, p_keyword);
-
       if ((p_opt = lookup_keyword(keyword))==NULL || 
             (p_opt->var_type&(VAR_INI+VAR_CHECK))==0)
       {
@@ -257,25 +224,22 @@ read_ini(char *filename)
          skip_eol(fini);
          continue;
       }
-      if (p_opt->p_src > params_current_src) 
+      if (p_opt->p_src > 1) 
       { 
          /* already set from cmd line */
          skip_eol(fini);
          continue;
       }
 
-      /* set src for all vars with the same target var location before this one variable */
       if (p_opt > options) {
          t_opt *x_opt = p_opt;
-         while ((--x_opt)->p_target == p_opt->p_target) x_opt->p_src = params_current_src;
+         while ((--x_opt)->p_target == p_opt->p_target) x_opt->p_src = 1;
       }
-      /* and after this one */
       {
          t_opt *x_opt = p_opt;
-         while ((++x_opt)->p_target == p_opt->p_target) x_opt->p_src = params_current_src;
+         while ((++x_opt)->p_target == p_opt->p_target) x_opt->p_src = 1;
       }
-      /* set src = ini file */
-      p_opt->p_src = params_current_src;
+      p_opt->p_src = 1;
 
       if (p_opt->p_type <= P_NONE || p_opt->p_type == P_FN) 
       {
@@ -359,8 +323,8 @@ read_ini(char *filename)
                    continue;
                 }
              }
-             strncpy((char*)(p_opt->p_target), p_keyword+1, p_opt->p_value.i-1);
-             ((char*)(p_opt->p_target))[p_opt->p_value.i-1]=0;
+             strncpy((char*)(p_opt->p_target), p_keyword+1, p_opt->p_value.i);
+             ((char*)(p_opt->p_target))[p_opt->p_value.i]=0;
           } break;
           case P_FN_INT: 
              int arg;
@@ -370,7 +334,7 @@ read_ini(char *filename)
                 skip_eol(fini);
                 continue;
              };
-             ((p_fn_int)(p_opt->p_target))(arg/*, p_keyword*/);
+             ((p_fn_int)(p_opt->p_target))(arg);
              break;
           default: break;
          }
@@ -388,19 +352,16 @@ read_cmd(int argc, char *argv[])
    t_opt *p_opt;
    int params=0; 
 
-   params_current_src = 2;
-
    for (i=1;i<argc;i++)
    {
       d9_printf3("parameter(%d): %s\n", i, argv[i]);
       if (argv[i][0]!='-') 
       {
          /* fixed parameters - inputfile, outputfile */
-         char tmp_str[32];
          params++;
          switch (params) {
-          case 1: p_opt = lookup_keyword(strcpy(tmp_str,"input-file")); break;
-          case 2: p_opt = lookup_keyword(strcpy(tmp_str,"output-file")); break;
+          case 1: p_opt = lookup_keyword("input-file"); break;
+          case 2: p_opt = lookup_keyword("output-file"); break;
           default: p_opt = NULL; break;
          }
          if (p_opt == NULL ) {
@@ -419,31 +380,16 @@ read_cmd(int argc, char *argv[])
          exit(1);
          continue;
       }
-      if (p_opt->p_src > params_current_src) 
-      {
-         /* already set from higher src */
-         // skip = 1;
-         if (p_opt->p_type <= P_NONE || p_opt->p_type == P_FN) {
-            continue;
-         } else {
-            i++;
-            if (i == argc) {
-               printf("error: missing parameter for %s\n", argv[i-1]);
-               exit(1);
-               continue;
-            }
-            continue;
-         }
-      }
+
       if (p_opt > options) {
          t_opt *x_opt = p_opt;
-         while ((--x_opt)->p_target == p_opt->p_target) x_opt->p_src = params_current_src;
+         while ((--x_opt)->p_target == p_opt->p_target) x_opt->p_src = 2;
       }
       {
          t_opt *x_opt = p_opt;
-         while ((++x_opt)->p_target == p_opt->p_target) x_opt->p_src = params_current_src;
+         while ((++x_opt)->p_target == p_opt->p_target) x_opt->p_src = 2;
       }
-      p_opt->p_src = params_current_src; /* cmd line source */
+      p_opt->p_src = 2; /* cmd line source */
 
       if (p_opt->p_type <= P_NONE || p_opt->p_type == P_FN) {
          d9_printf1("found predefined keyword\n");
@@ -497,8 +443,8 @@ read_cmd(int argc, char *argv[])
              }; 
              break;
           case P_STRING: 
-             strncpy((char*)(p_opt->p_target), argv[i], p_opt->p_value.i-1);
-             ((char*)(p_opt->p_target))[p_opt->p_value.i-1]=0;
+             strncpy((char*)(p_opt->p_target), argv[i], p_opt->p_value.i);
+             ((char*)(p_opt->p_target))[p_opt->p_value.i]=0;
              break;
           case P_FN_INT: 
              int arg;
@@ -507,10 +453,7 @@ read_cmd(int argc, char *argv[])
                 exit(1);
                 continue;
              };
-             ((p_fn_int)(p_opt->p_target))(arg/*, argv[i]*/);
-             break;
-          case P_FN_STRING: 
-             ((p_fn_string)(p_opt->p_target))(argv[i]);
+             ((p_fn_int)(p_opt->p_target))(arg);
              break;
           default: break;
          };
@@ -584,7 +527,6 @@ fprintf_desc(FILE *fout, char *desc, char *first_line, char *new_line)
    char *prev_line=desc;
    char *p_line=NULL;
    int line_no=0;
-   int line_len=0;
    if (first_line == NULL) first_line = new_line;
    while ((p_line=strchr(prev_line, '\n'))!=NULL) {
       *p_line = 0;
@@ -593,32 +535,7 @@ fprintf_desc(FILE *fout, char *desc, char *first_line, char *new_line)
       *p_line = '\n';
       prev_line = p_line+1;	
    };
-   line_len=strlen((line_no?new_line:first_line));
-   //fprintf(stdout, "%d(%d,%d)",line_len,line_no,term_width);
-   while ((int)(line_len + strlen(prev_line)) > (int)(term_width-2)) {
-      char tmp_char;
-      char *p_line2;
-      p_line = prev_line + (term_width-2 - line_len);
-      tmp_char = *p_line; *p_line = 0;
-      p_line2 = strrchr(prev_line, ' ');
-      if (p_line2 == NULL) p_line2 = strchr(p_line+1, ' ');
-      *p_line = tmp_char;
-      if (p_line2 != NULL) {
-         tmp_char = *p_line2; *p_line2 = 0;
-      }
-      fprintf(fout, "%s%s\n", (line_no++?new_line:first_line), 
-            prev_line);
-      if (p_line2 != NULL) {
-         *p_line2 = tmp_char;
-         prev_line = p_line2+1;
-      } else {
-         prev_line = NULL;
-         break;
-      }
-      line_len = strlen(new_line);
-   }
-   if (prev_line)
-      fprintf(fout, "%s%s\n", (line_no++?new_line:first_line), prev_line);
+   fprintf(fout, "%s%s\n", (line_no++?new_line:first_line), prev_line);
 }
 
 void
@@ -627,24 +544,21 @@ show_ini()
    int i;
    FILE *stdini=stdout;
 
-   fprintf(stdini, "# \n");
-   fprintf(stdini, "# %s Version %s %s\n", PACKAGE, VERSION, COPYRIGHT);
-   fprintf(stdini, "# \n");
+   fprintf (stdini, "# \n");
+   fprintf (stdini, "# %s Version %s %s\n", PACKAGE, VERSION, COPYRIGHT);
+   fprintf (stdini, "# \n");
    for (i=0;!(options[i].p_target==NULL&&options[i].desc_opt[0]==0);i++)
    {
       if ((options[i].var_type&VAR_INI) == 0) continue;
 
       if (options[i].p_target==NULL && options[i].p_type==P_NONE)  {
-         char tmp_str[5];
-         fprintf_desc(stdini, options[i].desc_opt, NULL, strcpy(tmp_str, "# "));
+         fprintf_desc(stdini, options[i].desc_opt, NULL, "# ");
          fprintf(stdini, "#\n");
          continue;
       }
       if (options[i].w_opt[0]==0) continue;
-      if (options[i].desc_opt[0])  {
-         char tmp_str[5];
-         fprintf_desc(stdini, options[i].desc_opt, NULL, strcpy(tmp_str, "# "));
-      }
+      if (options[i].desc_opt[0]) 
+         fprintf_desc(stdini, options[i].desc_opt, NULL, "# ");
 
       switch (options[i].p_type) {
        case P_PRE_CHAR: 
@@ -690,16 +604,10 @@ show_help()
 {
    int i;
    FILE *stdhelp=stdout;
-   char left_str[81];
-   int left_size = (int)(term_width-2)/3;
-   if (left_size < 26) left_size = 26;
-   if (left_size > 80) left_size = 80;
-   strncpy(left_str, "                                                                                  ", left_size);
-   left_str[left_size] = 0;
 
    fprintf (stdhelp, "%s\n", DESCRIPTION);
    fprintf (stdhelp, 
-         "Usage: sbsat [OPTIONS]... [inputfile [outputfile]]\n\n");
+         "Usage: ite [OPTIONS]... [inputfile] [outputfile]\n\n");
    fprintf (stdhelp, 
          "Options:\n");
 
@@ -723,8 +631,6 @@ show_help()
             strcat(line, " <number>");
          else if (options[i].p_type==P_STRING) 
             strcat(line, " <string>");
-         else if (options[i].p_type==P_CHAR) 
-            strcat(line, " <char>");
       } else  sprintf(line, "  ");
       if (options[i].l_opt[0]) {
          if (options[i].w_opt[0]) strcat(line, ", "); //else strcat(line, "  ");
@@ -736,17 +642,15 @@ show_help()
             strcat(line, " <number>");
          else if (options[i].p_type==P_STRING) 
             strcat(line, " <string>");
-         else if (options[i].p_type==P_CHAR) 
-            strcat(line, " <char>");
       }
       line_len = strlen(line);
-      if (line_len < left_size) 
-         strncat(line, left_str, left_size-line_len);
+      if (line_len < 26) 
+         strncat(line, "                            ", 26-line_len);
       else {
          strcat(line, "\n");
          fprintf(stdhelp, "%s", line);
-         strncpy(line, left_str, left_size);
-         line[left_size]=0;
+         strncpy(line, "                            ", 26);
+         line[26]=0;
       }
 
       default_line[0]=0;
@@ -790,21 +694,21 @@ show_help()
       }
 
       if (strchr(options[i].desc_opt, '\n') == NULL &&
-            (int)(strlen(line)+strlen(options[i].desc_opt)+strlen(default_line)) <= (int)(term_width-2))
+            strlen(line)+strlen(options[i].desc_opt)+strlen(default_line) <= 78)
          fprintf(stdhelp, "%s%s %s\n",  line, options[i].desc_opt, default_line);
       else 
       {
-         if ((int)(strlen(line)+strlen(options[i].desc_opt)) <= (int)(term_width-2))
-            fprintf(stdhelp, "%s%s\n%s%s\n",  
-                  line, options[i].desc_opt, left_str, default_line);
+         if (strlen(line)+strlen(options[i].desc_opt) <= 78)
+            fprintf(stdhelp, "%s%s\n                          %s\n",  
+                  line, options[i].desc_opt, default_line);
          else 
          {
-            fprintf_desc(stdhelp, options[i].desc_opt, line, left_str);
-            fprintf(stdhelp, "%s%s\n", left_str, default_line);
+            fprintf_desc(stdhelp, options[i].desc_opt, line, "                          ");
+            fprintf(stdhelp, "                          %s\n", default_line);
          }
       }
    }
-   fprintf(stdhelp, "\nPlease report bugs to %s.\n", BUGS_EMAIL);
+   fprintf(stdhelp, "\nReport bugs to %s.\n", BUGS_EMAIL);
    exit(0);  
 }
 
@@ -817,17 +721,9 @@ show_version()
 }
 
 void
-show_competition_version()
-{
-   fprintf(stdout, "c %s %s\nc \nc %s\nc \nc Written by %s.\n", 
-         PACKAGE, VERSION, COPYRIGHT, AUTHORS);
-}
-
-void
 fix_ini_filename()
 {
-   char tmp_str[5];
-   t_opt *p_opt = lookup_keyword(strcpy(tmp_str, "ini"));
+   t_opt *p_opt = lookup_keyword("ini");
    if (!p_opt) return;
    if (((char*)(p_opt->p_target))[0] == '~') {
       char *env = getenv("HOME");
@@ -838,7 +734,7 @@ fix_ini_filename()
                env, ((char*)(p_opt->p_target))+1);
          strncpy((char*)(p_opt->p_target), temp_str,
                p_opt->p_value.i-1);
-         ((char*)(p_opt->p_target))[p_opt->p_value.i-1]=0;
+         ((char*)(p_opt->p_target))[p_opt->p_value.i]=0;
       }
    }
 }

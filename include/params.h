@@ -1,7 +1,7 @@
 /* =========FOR INTERNAL USE ONLY. NO DISTRIBUTION PLEASE ========== */
 
 /*********************************************************************
- Copyright 1999-2007, University of Cincinnati.  All rights reserved.
+ Copyright 1999-2003, University of Cincinnati.  All rights reserved.
  By using this software the USER indicates that he or she has read,
  understood and will comply with the following:
 
@@ -34,7 +34,6 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
-
 #ifndef PARAMS_H
 #define PARAMS_H
 
@@ -94,7 +93,7 @@ typedef void(*p_fn_string)(char *);
 
 typedef
 union {
-  char s[256]; /* has to be the first */
+  char s[128]; /* has to be the first */
   char c;
   int i;
   long l;
@@ -121,7 +120,7 @@ typedef
 struct {
   void *p_target;
   char l_opt[32];
-  char w_opt[256];
+  char w_opt[128];
   short p_type;
   t_value p_value;
   t_value p_defa;
@@ -150,7 +149,6 @@ extern t_opt options[];
 void show_ini();
 void show_help();
 void show_version();
-void show_competition_version();
 
 void init_options();
 void read_cmd(int argc, char *argv[]);
@@ -159,8 +157,5 @@ void read_ini(char*);
 void dump_params();
 t_opt *lookup_keyword(char *key);
 t_opt *lookup_short_keyword(char *key);
-void set_param_int(char *param, int value);
-void change_defa_param_int(char *param, int value);
-
 
 #endif

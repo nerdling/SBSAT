@@ -1,7 +1,7 @@
 /* =========FOR INTERNAL USE ONLY. NO DISTRIBUTION PLEASE ========== */
 
 /*********************************************************************
- Copyright 1999-2007, University of Cincinnati.  All rights reserved.
+ Copyright 1999-2003, University of Cincinnati.  All rights reserved.
  By using this software the USER indicates that he or she has read,
  understood and will comply with the following:
 
@@ -16,7 +16,7 @@
  be placed on all software copies, and a complete copy of this notice
  shall be included in all copies of the associated documentation.
  No right is  granted to use in advertising, publicity or otherwise
- any trademark, service mark, or the name of University of Cincinnati.
+ any trademark,  service mark, or the name of University of Cincinnati.
 
 
  --- This software and any associated documentation is provided "as is"
@@ -34,247 +34,133 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
+/*********************************************************
+ *  preprocess.c (S. Weaver)
+ *********************************************************/
 
-#include "sbsat.h"
-#include "sbsat_preproc.h"
+#include "ite.h"
 
-int MAX_EXQUANTIFY_CLAUSES = 5000;
-int MAX_EXQUANTIFY_VARLENGTH = 0;
+//!These two flags should not be changed until ExQuantify is redone!
+
+extern int MAX_EXQUANTIFY_CLAUSES; /* = 20;*/	//Number of BDDs a variable appears in
+				     //to quantify that variable away.
+extern int MAX_EXQUANTIFY_VARLENGTH; /* = 18; */	//Limits size of number of vars in 
+				     //constraints created by ExQuantify
+//!
 
 int ExQuantifyAnd();
 
-int Do_ExQuantifyAnd() {
-	MAX_EXQUANTIFY_CLAUSES += 5;
-	MAX_EXQUANTIFY_VARLENGTH +=cluster_step_increase;
-	d3_printf2 ("EXQUANTIFY AND %d - ", countBDDs());
+int
+Do_ExQuantifyAnd()
+{
+	MAX_EXQUANTIFY_CLAUSES = 40;
+	MAX_EXQUANTIFY_VARLENGTH = 13;
+	d2_printf1 ("ANDING AND EXISTENTIALLY QUANTIFYING - ");
 	int cofs = PREP_CHANGED;
 	int ret = PREP_NO_CHANGE;
-	affected = 0;
-	char p[100];
-	D_3(
-		 sprintf(p, "{0:0/%ld}", numinp);
-		 str_length = strlen(p);
-		 d3_printf1(p);
-	);
-	while (cofs!=PREP_NO_CHANGE) {
-		cofs = ExQuantifyAnd ();
-		if(cofs == PREP_CHANGED) ret = PREP_CHANGED;
-		else if(cofs == TRIV_UNSAT) {
-			return TRIV_UNSAT;
-		}
-	}
-	d3_printf1 ("\n");
-	d2e_printf1 ("\r                                      ");
-
-	if(countBDDs() == 0) return TRIV_SAT;
+	while (cofs!=PREP_NO_CHANGE)
+	  {
+		  cofs = ExQuantifyAnd ();
+		  if(cofs == PREP_CHANGED) ret = PREP_CHANGED;
+		  else if(cofs == TRIV_UNSAT)
+			 {
+				 return TRIV_UNSAT;
+			 }
+	  }
+	d2_printf1 ("\n");
 	return ret;
 }
 
-typedef struct rand_list {
-	int num;
-	int size;
-	int prob;
-};
 
-int rlistfunc (const void *x, const void *y) {
-	rand_list pp, qq;
-	pp = *(const rand_list *) x;
-	qq = *(const rand_list *) y;
-	if (pp.size < qq.size)
-	  return -1;
-	if (pp.size == qq.size) {
-		if(pp.prob < qq.prob)
-		  return -1;
-		if(pp.prob > qq.prob)
-		  return 1;		  
-		return 0;
-	}
-	return 1;
-}
+int 
+ExQuantifyAnd ()
+{
+  int ret = PREP_NO_CHANGE;
 
-int ExQuantifyAnd () {
-	int ret = PREP_NO_CHANGE;
+  store *examount = new store[numinp + 1];
+  int *tempmem = new int[numinp + 1];
+  BDDNode *Quantify;
+  //int exquant = 0;   
+  for (int x = 0; x < numinp + 1; x++)
+    tempmem[x] = 0;
 	
-	rand_list *rlist = (rand_list*)ite_calloc(numinp+1, sizeof(rand_list), 9, "rlist");
+  for (int x = 0; x < nmbrFunctions; x++)
+	  {
+		  for (int i = 0; i < length[x]; i++)
+			 {
+				 tempmem[variables[x].num[i]]++;
+			 }
+	  }
 	
-	int amount_count;
-
-	for(int i = 1;i < numinp+1; i++) {
-		rlist[i].num = i;
-
-		rlist[i].size = num_funcs_var_occurs[i];
-		
-		rlist[i].prob = random()%(numinp*numinp);
-	}
+	for (int x = 0; x < numinp + 1; x++)
+	  {
+		  examount[x].num = new int[tempmem[x] + 1];
+		  examount[x].length = 0;
+	  }
+	delete tempmem;
 	
-	qsort(rlist, numinp+1, sizeof(rand_list), rlistfunc);
-
-	if (enable_gc) bdd_gc(); //Hit it!
-//	for (int x = 1; x <= MAX_EXQUANTIFY_CLAUSES; x++) {
-		for (int rnum = 1; rnum <= numinp; rnum++) {
-		//for (int i = numinp; i > 0; i--) {
-			int i = rlist[rnum].num;
-			if(i == 0) continue;
-			char p[100];
-			int j, count1;
-			
-			D_3(
-				 if (i % ((numinp/100)+1) == 0) {
-					 for(int iter = 0; iter<str_length; iter++)
-						d3_printf1("\b");
-					 sprintf(p, "{%ld:%d/%ld}", affected, i, numinp);
-					 str_length = strlen(p);
-					 d3_printf1(p);
-				 }
-				 );
-			if (nCtrlC) {
-				d3_printf1("Breaking out of Anding Existential Quantification\n");
-				ret = PREP_NO_CHANGE;
-				nCtrlC = 0;
-				goto ea_bailout;
-			}
-			
-			if (i % ((numinp/100)+1) == 0) {
-				d2e_printf3("\rPreprocessing Ea %d/%ld ", i, numinp);
-			}
-			
-			if(variablelist[i].true_false != -1 || variablelist[i].equalvars != 0)
-			  continue;
-			//fprintf(stderr, "%d\n", i);
-			
-			if(num_funcs_var_occurs[i] == 0) {
-				continue;
-				//Variable dropped out, set it to True.
-				//d3_printf3("\n%d dropped out, %d=T\n", i, i);
-				//str_length = 0;
-				BDDNode *inferBDD = ite_var(i);
-				int bdd_length = 0;
-				int *bdd_vars = NULL;
-				switch (int r=Rebuild_BDD(inferBDD, &bdd_length, bdd_vars)) {
-				 case TRIV_UNSAT:
-				 case TRIV_SAT:
-				 case PREP_ERROR: return r;
-				 default: break;
-				}
-				delete [] bdd_vars;
-				bdd_vars = NULL;
-				ret = PREP_CHANGED;
-				switch (int r=Do_Apply_Inferences()) {
-				 case TRIV_UNSAT:
-				 case TRIV_SAT:
-				 case PREP_ERROR: return r;
-				 default: break;
-				}
-				continue;
-			}
-
-			assert(amount[i].head != NULL);
-			j = amount[i].head->num;
-			count1 = 1;
-			for (llist * k = amount[i].head; k != NULL;) {
-				int z = k->num;
-				k = k->next;
-				if(z == j) continue;
-				D_3(
-					 for(int iter = 0; iter<str_length; iter++)
-					 d3_printf1("\b");
-					 sprintf(p, "(%d:%d/%d[%d])",i, count1, amount_count, countBDDs());
-					 str_length = strlen(p);
-					 d3_printf1(p);
-					 );
-
-				if (nCtrlC) break;
-				if(length[z] > MAX_EXQUANTIFY_VARLENGTH) break;
-				if(length[j] > MAX_EXQUANTIFY_VARLENGTH) break;
-				
-				count1++;
-				
-				functions[j] = ite_and(functions[j], functions[z]);
-				affected++;
-				
-				functions[z] = true_ptr;
-				
-				ret = PREP_CHANGED;
-				
-				switch (int r=Rebuild_BDDx(z)) {
-				 case TRIV_UNSAT: 
-				 case TRIV_SAT: 
-				 case PREP_ERROR: 
-					ret = r; goto ea_bailout;
-				 default: break;
-				}
-				UnSetRepeats(z);
-				
-				switch (int r=Rebuild_BDDx(j)) {
-				 case TRIV_UNSAT: 
-				 case TRIV_SAT: 
-				 case PREP_ERROR: 
-					ret = r; goto ea_bailout;
-				 default: break;
-				}
-				
-				for(int l = 0; l < length[j]; l++) {
-					int h = variables[j].num[l];
-					if (num_funcs_var_occurs[h] == 1) {
-						for(int iter = 0; iter<str_length; iter++)
-						  d3_printf1("\b");
-						d3e_printf2 ("*{%d}", h);
-						d4_printf3 ("*{%s(%d)}", s_name(h), h);
-						str_length = 0;// strlen(p);
-						functions[j] = xquantify (functions[j], h);
-						variablelist[h].true_false = 2;
-						switch (int r=Rebuild_BDDx(j)) {
-						 case TRIV_UNSAT:
-						 case TRIV_SAT: 
-						 case PREP_ERROR: 
-							ret = r; goto ea_bailout; /* as much as I hate gotos */
-						 default: break;
+	for (int x = 0; x < nmbrFunctions; x++)
+	  {
+		  for (int i = 0; i < length[x]; i++)
+			 {
+				 examount[variables[x].num[i]].num[examount[variables[x].num[i]].
+															  length] = x;
+				 examount[variables[x].num[i]].length++;
+			 }
+	  }
+	for (int x = 1; x <= MAX_EXQUANTIFY_CLAUSES; x++)
+	  {
+		  for (int i = 1; i < numinp + 1; i++)
+			 {
+//				 fprintf(stderr, "%d\n", i);
+				 if ((examount[i].length <= x) && (examount[i].length > 0))
+					{
+						int j = examount[i].num[0];
+						Quantify = functions[j];
+						int out = 0;
+						if(x==1) ret = PREP_CHANGED;
+						if(length[j]>MAX_EXQUANTIFY_VARLENGTH) continue;
+						for(int z = 1; z < examount[i].length; z++) {
+							if(length[examount[i].num[z]] > MAX_EXQUANTIFY_VARLENGTH){
+								out = 1;
+								break;
+							}
+							Quantify = ite_and(Quantify, functions[examount[i].num[z]]);
+							functions[examount[i].num[z]] = true_ptr;
+							UnSetRepeats(examount[i].num[z]);
+							equalityVble[examount[i].num[z]] = 0;
+							functionType[examount[i].num[z]] = UNSURE;
+							length[examount[i].num[z]] = 0;
+							if(variables[examount[i].num[z]].num!=NULL)
+							  delete variables[examount[i].num[z]].num;
+							variables[examount[i].num[z]].num = NULL;
+							ret = PREP_CHANGED;
 						}
-						SetRepeats(j);
+						if(ret != PREP_CHANGED) continue;
+						if(out) {
+							functions[j] = Quantify;
+						} else {
+							d2_printf2 ("*{%d}", i);
+							functions[j] = xquantify (Quantify, i);
+						}
+						switch (int r=Rebuild_BDDx(j)) {
+						case TRIV_UNSAT: 
+						case TRIV_SAT: 
+						case PREP_ERROR: 
+						   ret = r; goto ea_bailout; /* as much as I hate gotos */
+                                                   break;
+						default: break;
+						}
 						equalityVble[j] = 0;
 						functionType[j] = UNSURE;
-						l = 0;
+						ret = PREP_CHANGED;
+						goto ea_bailout; /* as much as I hate gotos */
 					}
-				}
-				k = amount[i].head; //Must do this because Rebuild_BDDx can modify amount
-			}
-			if(num_funcs_var_occurs[i] != 1) {
-				D_3(
-					 for(int iter = 0; iter<str_length; iter++)
-					 d3_printf1("\b");
-					 sprintf(p, "(%d:%d/%d[%d])",i, count1, num_funcs_var_occurs[i], countBDDs());
-					 str_length = strlen(p);
-					 d3_printf1(p);
-					 );
-			}
-			if(num_funcs_var_occurs[i] == 1) {
-				assert(amount[i].head != NULL);
-				j = amount[i].head->num;
-				
-				for(int iter = 0; iter<str_length; iter++)
-				  d3_printf1("\b");
-				d3e_printf2 ("*{%d}", i);
-				d4_printf3 ("*{%s(%d)}", s_name(i), i);
-				str_length = 0;// strlen(p);
-				functions[j] = xquantify (functions[j], i);
-				variablelist[i].true_false = 2;
-				
-				switch (int r=Rebuild_BDDx(j)) {
-				 case TRIV_UNSAT:
-				 case TRIV_SAT: 
-				 case PREP_ERROR: 
-					ret = r; goto ea_bailout;
-				 default: break;
-				}
-				ret = PREP_CHANGED;
-			}
-		}
-	ea_bailout:
-
-	ite_free((void**)&rlist);
-	
-	for(int x = 0; x < nmbrFunctions; x++)
-	  Ea_repeat[x] = 1;
-
+			 }
+	  }
+ea_bailout:
+	for (int z = 0; z < numinp + 1; z++)
+	  delete examount[z].num;
+	delete examount;
 	return ret;
 }

@@ -1,7 +1,7 @@
 /* =========FOR INTERNAL USE ONLY. NO DISTRIBUTION PLEASE ========== */
 
 /*********************************************************************
- Copyright 1999-2007, University of Cincinnati.  All rights reserved.
+ Copyright 1999-2003, University of Cincinnati.  All rights reserved.
  By using this software the USER indicates that he or she has read,
  understood and will comply with the following:
 
@@ -34,6 +34,9 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
+// Display SmurfFactory
+// Routines for displaying creating state machines.
+// Started 12/26/2000 - J. Ward
 
 #include "ite.h"
 #include "solver.h"
@@ -48,7 +51,7 @@ extern int nSmurfStatePoolIndex;
 //#define PRINT_SMURF_STATS
 #define DISPLAY_LEMMAS
 
-const char * opnames[EQU_BASE] =  {
+char * opnames[EQU_BASE] =  {
        "UNSURE",
        "AND",
        "NAND",
@@ -74,8 +77,8 @@ ITE_INLINE
 char *
 StringFromFunctionType(int nFuncType)
 {
-  if (nFuncType < EQU_BASE) return (char*)opnames[nFuncType];
-  return (char*)"UNKNOWN FUNC TYPE";
+  if (nFuncType < EQU_BASE) return opnames[nFuncType];
+  return "UNKNOWN FUNC TYPE";
 }
 
 
@@ -129,17 +132,17 @@ DisplaySpecialFunction(SpecialFunc *pSpecialFunc, int nFunctionType)
     {
     case (1):
       // or
-      pszConnective = (char*)" or ";
+      pszConnective = " or ";
       break;
 
     case (3):
       // and=
-      pszConnective = (char*)" and ";
+      pszConnective = " and ";
       break;
 
     case (4):
       // or=
-      pszConnective = (char*)" or ";
+      pszConnective = " or ";
       break;
 
     default:
@@ -185,10 +188,29 @@ DisplayTransition(Transition *pTransition, int nVble, int nValue)
 		   << pTransition->pNextState << ")" << endl;
 */
 	      cout << "Pos Inferences: ";
-	      //Display_ISAB(pTransition->positiveInferences);
+	      Display_ISAB(pTransition->positiveInferences);
 	      cout << endl;
+#ifdef DISPLAY_LEMMAS
+	      int nNumInferences = pTransition->positiveInferences.nNumElts;
+	      LemmaBlock **arrLemmas = pTransition->arrPosInferenceLemmas;
+	      cout << "Lemmas:" << endl;
+	      for (int i = 0; i < nNumInferences; i++)
+		{
+		  DisplayLemma(arrLemmas[i]);
+		}
+#endif
 	      cout << "Neg Inferences: ";
-	      //Display_ISAB(pTransition->negativeInferences);
+	      Display_ISAB(pTransition->negativeInferences);
+	      cout << endl;
+#ifdef DISPLAY_LEMMAS
+	      nNumInferences = pTransition->negativeInferences.nNumElts;
+	      arrLemmas = pTransition->arrNegInferenceLemmas;
+	      cout << "Lemmas:" << endl;
+	      for (int i = 0; i < nNumInferences; i++)
+		{
+		  DisplayLemma(arrLemmas[i]);
+		}
+#endif
 	      cout << endl;
 #ifdef PRINT_HEURISTIC_INFO
 	      if (nHeuristic == JOHNSON_HEURISTIC) 
@@ -219,6 +241,9 @@ DisplayFunction(BDDNode *pFunc, int nFunctionType, int nMaxVbleIndex)
       return;
     }
 
+  cout << " Implied: ";
+  pFunc->addons->pImplied->Display();
+  cout << endl;
   cout << " pReduct: ";
   cout << pFunc->addons->pReduct;
   cout << endl;

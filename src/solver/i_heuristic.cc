@@ -1,7 +1,7 @@
 /* =========FOR INTERNAL USE ONLY. NO DISTRIBUTION PLEASE ========== */
 
 /*********************************************************************
- Copyright 1999-2007, University of Cincinnati.  All rights reserved.
+ Copyright 1999-2003, University of Cincinnati.  All rights reserved.
  By using this software the USER indicates that he or she has read,
  understood and will comply with the following:
 
@@ -34,7 +34,6 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
-
 #include "ite.h"
 #include "solver.h"
 
@@ -70,33 +69,34 @@ I_OptimizedHeuristic(int *pnBranchAtom, int *pnBranchValue)
   int lit=0;
 
   D_3(fprintVars(stdout, nNumVariables);)
+
   do
   {
-     fprintf(stdout, "Please enter the next variable to branch on: ");
-     if (scanf("%d", &lit)!=1) {
-        char c;
-        scanf("%c", &c);  
-        lit=0;
-     }
-     if (lit != 0) {
-        if (abs(lit) >= nNumVariables) {
-           fprintf(stdout, "This variable does not exist\n");
-           lit=0;
-        } else
-           if (arrSolution[abs(lit)] != BOOL_UNKNOWN) {
-              fprintf(stdout, "This variable is already set to %c\n",
-                    arrSolution[abs(lit)]==BOOL_TRUE?'T':'F');
-              lit=0;
-           } else {
-              if (lit > 0) {
-                 *pnBranchValue = BOOL_TRUE;
-                 *pnBranchAtom = lit;
-              } else {
-                 *pnBranchValue = BOOL_FALSE;
-                 *pnBranchAtom = -lit;
-              }
-           }
-     } 
+  fprintf(stdout, "Please enter the next variable to branch on: ");
+  if (scanf("%d", &lit)!=1) {
+    char c;
+    scanf("%c", &c);  
+    lit=0;
+  }
+  if (lit != 0) {
+    if (abs(lit) >= nNumVariables) {
+	fprintf(stdout, "This variable does not exist\n");
+	lit=0;
+    } else
+    if (arrSolution[abs(lit)] != BOOL_UNKNOWN) {
+	fprintf(stdout, "This variable is already set to %c\n",
+		arrSolution[abs(lit)]==BOOL_TRUE?'T':'F');
+	lit=0;
+    } else {
+      if (lit > 0) {
+	*pnBranchValue = BOOL_TRUE;
+        *pnBranchAtom = lit;
+      } else {
+	*pnBranchValue = BOOL_FALSE;
+        *pnBranchAtom = -lit;
+      }
+    }
+  } 
   }
   while (lit==0);
   fprintf(stdout, "Branching on %d\n", lit);

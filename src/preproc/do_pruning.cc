@@ -1,7 +1,7 @@
 /* =========FOR INTERNAL USE ONLY. NO DISTRIBUTION PLEASE ========== */
 
 /*********************************************************************
- Copyright 1999-2007, University of Cincinnati.  All rights reserved.
+ Copyright 1999-2003, University of Cincinnati.  All rights reserved.
  By using this software the USER indicates that he or she has read,
  understood and will comply with the following:
 
@@ -34,11 +34,14 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
+/*********************************************************
+ *  preprocess.c (S. Weaver)
+ *********************************************************/
 
-#include "sbsat.h"
-#include "sbsat_preproc.h"
+#include "ite.h"
 
-void Sort_BDDs (long *tempint_max, int **tempint);
+extern int STRENGTH;
+void Sort_BDDs (int *tempint);
 
 #ifdef DO_PRUNING_FN
 # error "DO_PRUNING_FN defined -- undefine it"
@@ -47,30 +50,25 @@ void Sort_BDDs (long *tempint_max, int **tempint);
 # define DO_PRUNING_FN Do_Pruning_1
 # define PRUNE_REPEATS P1_repeat
 #else
-#ifdef PRUNING_PR
-# define DO_PRUNING_FN Do_Pruning
+#ifdef P2
+# define DO_PRUNING_FN Do_Pruning_2
 # define PRUNE_REPEATS P2_repeat
 #else
 #ifdef RESTRICT
 # define DO_PRUNING_FN Do_Pruning_Restrict
 # define PRUNE_REPEATS Restct_repeat
 #else
-#ifdef P2
-# define DO_PRUNING_FN Do_Pruning_2
-# define PRUNE_REPEATS P2_repeat
-#else
-#ifdef STEAL
-# define DO_PRUNING_FN Do_Steal
-# define PRUNE_REPEATS Steal_repeat
-#else
-# define DO_PRUNING_FN Do_Pruning_FPS
+# define DO_PRUNING_FN Do_Pruning
 # define REMOVE_FPS
 # define PRUNE_REPEATS ReFPS_repeat
 #endif
 #endif
 #endif
-#endif
-#endif
+
+//#define P1 
+//#define P2
+//#define RESTRICT
+//#define REMOVE_FPS (default)
 
 int DO_PRUNING_FN() {
 	int ret = PREP_NO_CHANGE;
@@ -79,92 +77,50 @@ int DO_PRUNING_FN() {
 	
 	for (int x = 0; x < nmbrFunctions; x++)
 	  repeat_small[x] = PRUNE_REPEATS[x];
-
-//   D_3(print_roller_init(););
-	d3_printf1 ("BRANCH PRUNING - ");
-	affected = 0;
-	char p[100];
-	D_3(
-		 sprintf(p, "{0:0/%d}", nmbrFunctions);
-		 str_length = strlen(p);
-		 d3_printf1(p);
-	);
+	
+	d2_printf1 ("BRANCH PRUNING - ");
 	for (int x = 0; x < nmbrFunctions; x++)
 	  {
-		  D_3(
-				if (x % ((nmbrFunctions/100)+1) == 0) {
-					for(int iter = 0; iter<str_length; iter++)
-					  d3_printf1("\b");
-					sprintf(p, "{%ld:%d/%d}", affected, x, nmbrFunctions);
-					str_length = strlen(p);
-					d3_printf1(p);
-				}
-		  );
-		  if (nCtrlC) {
-			  d3_printf1("\nBreaking out of Branch Pruning");
-			  for(; x < nmbrFunctions; x++) PRUNE_REPEATS[x] = 0;;
-			  nCtrlC = 0;
-			  break;
-		  }
-		  if (x % ((nmbrFunctions/100)+1) == 0) {
-			  d2e_printf3("\rPreprocessing Pr %d/%d", x, nmbrFunctions);
-		  }
-		  
-        PRUNE_REPEATS[x] = 0;
+		  PRUNE_REPEATS[x] = 0;
 		  if (functions[x] == true_ptr)
 			 continue;
 		  for (int j = x + 1; j < nmbrFunctions; j++)
 			 {
+				 //fprintf(stderr, "\n\n");
+				 //printBDDerr(functions[x]);
+				 //fprintf(stderr, "\n");
+				 
 				 if (functions[j] == true_ptr)
 					continue;
 				 if ((!repeat_small[j] && !repeat_small[x]))
 					continue;
-             if (variables[x].min >= variables[j].max)
-                continue;
-             if (variables[j].min >= variables[x].max) 
-                continue;
-             if (nmbrVarsInCommon (x, j, STRENGTH) == 0)
-                continue;
-             if (length[x] < functionTypeLimits[functionType[x]])
-             /*
+				 if (nmbrVarsInCommon (x, j, length, variables, STRENGTH) < STRENGTH)
+					continue;
+				 
 				 if ((functionType[x] != AND || length[x] < AND_EQU_LIMIT)
 					  && (functionType[x] != OR || length[x] < OR_EQU_LIMIT)
 					  && (functionType[x] != PLAINOR || length[x] < PLAINOR_LIMIT)
 					  && (functionType[x] != PLAINXOR || length[x] < PLAINXOR_LIMIT))
-              */
 					{
-
-						//fprintf(stderr, "\n\n%d: ", x);
-						//printBDDerr(functions[x]);
-						//fprintf(stderr, "\n");
-						
 						BDDNode *currentBDD =
 #ifdef P1
-						  pruning_p1 (functions[x], functions[j]);
+						  pruning (functions[x], functions[j]);
 #endif
 #ifdef P2
-						pruning_p2 (functions[x], functions[j]);
+						p2 (functions[x], functions[j]);
 #endif
-#ifdef STEAL
-						  steal (functions[x], functions[j]);
-#endif
-#ifdef PRUNING_PR
-						pruning (functions[x], functions[j]);
-#endif						
 #ifdef RESTRICT
-						restrictx(x, j);
+						restrictx(x, j, length, variables);
 #endif
 #ifdef REMOVE_FPS
-						remove_fpsx(x, j);
+						remove_fpsx(x, j, length, variables);
 #endif
 						if (currentBDD != functions[x])
 						  {
-							  //printBDDerr(currentBDD);
-							  //fprintf(stderr, "\n");
-
 							  //d2_printf1 ("*");
-//                       D_3(print_roller(););
-                       affected++;
+							  d2_printf2("%c\b", signs[signs_idx++]);
+                       if (signs[signs_idx] == 0) signs_idx = 0;
+
 							  ret = PREP_CHANGED;
 							  SetRepeats(x);
 							  functions[x] = currentBDD;
@@ -172,60 +128,53 @@ int DO_PRUNING_FN() {
 							  switch (int r=Rebuild_BDDx(x)) {
 								case TRIV_SAT: 
 								case TRIV_UNSAT: 
-								case PREP_ERROR: ret=r; goto pr_bailout; /* As much as ... */
+								case PREP_ERROR: ret=r; goto st_bailout; /* As much as ... */
 								default: break;
 							  }
 						  }
 					}
 				 
-             if (length[j] < functionTypeLimits[functionType[j]]) {
-					 //fprintf(stderr, "\n\n%d: ", j);
-					 //printBDDerr(functions[j]);
-					 //fprintf(stderr, "\n");
-					 BDDNode *currentBDD =
+				 if ((functionType[j] != AND || length[j] < AND_EQU_LIMIT)
+					  && (functionType[j] != OR || length[j] < OR_EQU_LIMIT)
+					  && (functionType[j] != PLAINOR || length[j] < PLAINOR_LIMIT)
+					  && (functionType[j] != PLAINXOR || length[j] < PLAINXOR_LIMIT))
+					{
+						BDDNode *currentBDD =
 #ifdef P1
-						pruning_p1 (functions[j], functions[x]);
+						  pruning (functions[j], functions[x]);
 #endif
 #ifdef P2
-					 pruning_p2 (functions[j], functions[x]);
-#endif
-#ifdef STEAL
-					 steal (functions[j], functions[x]);
-#endif
-#ifdef PRUNING_PR
-					 pruning (functions[j], functions[x]);
+						p2 (functions[j], functions[x]);
 #endif
 #ifdef RESTRICT
-					 restrictx(j, x);
+						restrictx(j, x, length, variables);
 #endif
 #ifdef REMOVE_FPS
-					 remove_fpsx(j, x);
+						remove_fpsx(j, x, length, variables);
 #endif
-					 if (currentBDD != functions[j]) {
-						 //printBDDerr(currentBDD);
-						 //fprintf(stderr, "\n");
-						 //d2_printf1 ("*");
-						 //                       D_3(print_roller(););
-						 affected++;
-						 ret = PREP_CHANGED;
-						 SetRepeats(j);
-						 functions[j] = currentBDD;
-						 functionType[j] = UNSURE;
-						 switch (int r=Rebuild_BDDx(j)) {
-						  case TRIV_SAT: 
-						  case TRIV_UNSAT: 
-						  case PREP_ERROR: ret=r; goto pr_bailout; /* As much as ... */
-						  default: break;
-						 }
-					 }
-				 }
+						if (currentBDD != functions[j])
+						  {
+							  //d2_printf1 ("*");
+							  d2_printf2("%c\b", signs[signs_idx++]);
+                       if (signs[signs_idx] == 0) signs_idx = 0;
+
+							  ret = PREP_CHANGED;
+							  SetRepeats(j);
+							  functions[j] = currentBDD;
+							  functionType[j] = UNSURE;
+							  switch (int r=Rebuild_BDDx(j)) {
+								case TRIV_SAT: 
+								case TRIV_UNSAT: 
+								case PREP_ERROR: ret=r; goto st_bailout; /* As much as ... */
+								default: break;
+							  }
+						  }
+					}
 			 }
 	  }
-	pr_bailout:
+	d2_printf1 ("\n");
 	
-	//   D_3(print_nonroller(););
-	d3_printf1("\n");
-   d2e_printf1("\r                                         ");
+	st_bailout:
 	delete [] repeat_small;
 	return ret;
 }

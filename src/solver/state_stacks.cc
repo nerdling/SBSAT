@@ -1,7 +1,7 @@
 /* =========FOR INTERNAL USE ONLY. NO DISTRIBUTION PLEASE ========== */
 
 /*********************************************************************
- Copyright 1999-2007, University of Cincinnati.  All rights reserved.
+ Copyright 1999-2003, University of Cincinnati.  All rights reserved.
  By using this software the USER indicates that he or she has read,
  understood and will comply with the following:
 
@@ -34,7 +34,6 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
-
 #include "ite.h"
 #include "solver.h"
 
@@ -156,10 +155,6 @@ pop_mark_state_information()
             arrPrevSumRHSUnknowns[fn]=
             arrSumRHSUnknowns[fn]=arrSpecialFnStack[nSpecialFnStackIdx].rhssum;
 
-            arrRHSCounterNew[fn]=
-            arrPrevRHSCounter[fn]=
-            arrRHSCounter[fn]=arrSpecialFnStack[nSpecialFnStackIdx].rhscounter;
-
             arrSpecialFnFlags[fn]=arrSpecialFnStack[nSpecialFnStackIdx].prev;
             arrChangedSpecialFn[fn]=0;
          }
@@ -241,8 +236,8 @@ pop_state_information(int n)
             nSpecialFnStackIdx--;
             tSpecialFnStack *new_arrSpecialFnStack = 
                (tSpecialFnStack*)(arrSpecialFnStack[nSpecialFnStackIdx--].u.next_pool);
-            assert(new_arrSpecialFnStack[/*nSpecialFnStackIdx=*/arrSpecialFnStack[nSpecialFnStackIdx].u.index_pool].fn==POOL_END);
             nSpecialFnStackIdx = arrSpecialFnStack[nSpecialFnStackIdx].u.index_pool;
+            assert(new_arrSpecialFnStack[nSpecialFnStackIdx].fn==POOL_END);
             arrSpecialFnStack = new_arrSpecialFnStack;
          } else
             if (fn >= 0) {
@@ -261,10 +256,6 @@ pop_state_information(int n)
                arrSumRHSUnknownsNew[fn]=
                arrPrevSumRHSUnknowns[fn]=
                arrSumRHSUnknowns[fn]=arrSpecialFnStack[nSpecialFnStackIdx].rhssum;
-
-               arrRHSCounterNew[fn]=
-               arrPrevRHSCounter[fn]=
-               arrRHSCounter[fn]=arrSpecialFnStack[nSpecialFnStackIdx].rhscounter;
 
                arrSpecialFnFlags[fn]=arrSpecialFnStack[nSpecialFnStackIdx].prev;
                arrChangedSpecialFn[fn]=0;
@@ -357,7 +348,6 @@ Add_arrNumRHSUnknowns(int vx)
    arrSpecialFnStack[nSpecialFnStackIdx].u.value = arrNumRHSUnknowns[vx]; 
    arrSpecialFnStack[nSpecialFnStackIdx].lhsvalue = arrNumLHSUnknowns[vx]; 
    arrSpecialFnStack[nSpecialFnStackIdx].rhssum  = arrSumRHSUnknowns[vx]; 
-   arrSpecialFnStack[nSpecialFnStackIdx].rhscounter = arrRHSCounter[vx]; 
    arrSpecialFnStack[nSpecialFnStackIdx].prev    = arrSpecialFnFlags[vx]; 
    arrSpecialFnFlags[vx]                         = nCurSpecialFnVersion; 
 }
@@ -365,11 +355,9 @@ Add_arrNumRHSUnknowns(int vx)
 ITE_INLINE void
 InitializeSmurfStatesStack()
 {
-   if (arrSmurfStatesFlags == NULL)
-      arrSmurfStatesFlags = (int*)ite_calloc(nNumRegSmurfs+1, sizeof(int), 
-            9, "arrSmurfStatesFlags");
-   if (arrSmurfStatesStackPool == NULL)
-      AllocateSmurfStatesStack((nNumRegSmurfs+1)*SMURF_STATES_STACK_ALLOC_MULT);
+   arrSmurfStatesFlags = (int*)ite_calloc(nNumRegSmurfs+1, sizeof(int), 
+         9, "arrSmurfStatesFlags");
+   AllocateSmurfStatesStack((nNumRegSmurfs+1)*SMURF_STATES_STACK_ALLOC_MULT);
 }
 
 ITE_INLINE void
@@ -380,7 +368,6 @@ NextSmurfStatesStack()
 
    if (arrSmurfStatesStack[nSmurfStatesStackIdx].u.next_pool == NULL) 
    {
-      nSmurfStatesStackIdx--;
       AllocateSmurfStatesStack((nNumRegSmurfs+1)*SMURF_STATES_STACK_ALLOC_MULT);
    } 
    else 
@@ -393,13 +380,11 @@ NextSmurfStatesStack()
 ITE_INLINE void
 AllocateSmurfStatesStack(int newsize)
 {
-   int prevsize = 0;
    assert(newsize > 0);
 
    newsize += 10000; /* it does not hurt to allocate a little bit more
                       * for backtracking stack */
 
-   if (arrSmurfStatesStackPool) prevsize = arrSmurfStatesStackPool->max;
    arrSmurfStatesStackPool = (tSmurfStatesStackPool*)ite_calloc(1, sizeof (tSmurfStatesStackPool),
          9, "arrSmurfStatesStackPool");
 
@@ -421,9 +406,6 @@ AllocateSmurfStatesStack(int newsize)
    arrSmurfStatesStack[2].smurf         = POOL_START;
    arrSmurfStatesStack[newsize-2].smurf = POOL_END;
    arrSmurfStatesStack[newsize-1].u.next_pool   = (void *)NULL;
-   if (prev_arrSmurfStatesStack != NULL) {
-      prev_arrSmurfStatesStack[prevsize-1].u.next_pool = (void*)arrSmurfStatesStack;
-   }
 
    nSmurfStatesStackIdx    = 2;
 }
@@ -438,19 +420,18 @@ FreeSmurfStatesStack()
       free(x);
    }
 
-   arrSmurfStatesStackPool = NULL;
-   arrSmurfStatesStack = NULL;
-   ite_free((void**)&arrSmurfStatesFlags);
+   if (arrSmurfStatesFlags != NULL) {
+      free(arrSmurfStatesFlags);
+      arrSmurfStatesFlags = NULL;
+   }
 }
 
 ITE_INLINE void
 InitializeSpecialFnStack()
 {
-   if (arrSpecialFnFlags == NULL)
-      arrSpecialFnFlags = (int*)ite_calloc(nNumSpecialFuncs+1, sizeof(int),
-            9, "arrSpecialFnFlags");
-   if (arrSpecialFnStackPool == NULL)
-      AllocateSpecialFnStack((nNumSpecialFuncs+1)*SPECIAL_FN_STACK_ALLOC_MULT);
+   arrSpecialFnFlags = (int*)ite_calloc(nNumSpecialFuncs+1, sizeof(int),
+         9, "arrSpecialFnFlags");
+   AllocateSpecialFnStack((nNumSpecialFuncs+1)*SPECIAL_FN_STACK_ALLOC_MULT);
 }
 
 ITE_INLINE void
@@ -461,7 +442,6 @@ NextSpecialFnStack()
 
    if (arrSpecialFnStack[nSpecialFnStackIdx].u.next_pool == NULL) 
    {
-      nSpecialFnStackIdx--;
       AllocateSpecialFnStack((nNumSpecialFuncs+1)*SPECIAL_FN_STACK_ALLOC_MULT);
    } 
    else 
@@ -474,12 +454,10 @@ NextSpecialFnStack()
 ITE_INLINE void
 AllocateSpecialFnStack(int newsize)
 {
-   int prevsize;
    assert(newsize > 0);
    newsize += 10000; /* it does not hurt to allocate a little bit more
                       * for backtracking stack */
 
-   if (arrSpecialFnStackPool) prevsize = arrSpecialFnStackPool->max;
    arrSpecialFnStackPool = (tSpecialFnStackPool*)ite_calloc(1, sizeof (tSpecialFnStackPool),
          9, "arrSpecialFnStackPool");
 
@@ -499,9 +477,6 @@ AllocateSpecialFnStack(int newsize)
    arrSpecialFnStack[2].fn = POOL_START;
    arrSpecialFnStack[newsize-2].fn = POOL_END;
    arrSpecialFnStack[newsize-1].u.next_pool  = (void *)NULL;
-   if (prev_arrSpecialFnStack != NULL) {
-      prev_arrSpecialFnStack[prevsize-1].u.next_pool = (void*)arrSpecialFnStack;
-   }
 
    nSpecialFnStackIdx      = 2;
 }
@@ -516,7 +491,8 @@ FreeSpecialFnStack()
       free(x);
    }
 
-   arrSpecialFnStackPool = NULL;
-   arrSpecialFnStack = NULL;
-   ite_free((void**)&arrSpecialFnFlags);
+   if (arrSpecialFnFlags != NULL) {
+      free(arrSpecialFnFlags);
+      arrSpecialFnFlags = NULL;
+   }
 }

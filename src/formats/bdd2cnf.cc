@@ -1,7 +1,7 @@
 /* =========FOR INTERNAL USE ONLY. NO DISTRIBUTION PLEASE ========== */
 
 /*********************************************************************
- Copyright 1999-2007, University of Cincinnati.  All rights reserved.
+ Copyright 1999-2003, University of Cincinnati.  All rights reserved.
  By using this software the USER indicates that he or she has read,
  understood and will comply with the following:
 
@@ -34,7 +34,6 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
-
 /***********************************************************************
  *  bdd2cnf.c (J. Franco, Sean Weaver)
  *  Function bdd2cnf converts an input BDD to a CNF expression and puts
@@ -43,34 +42,38 @@
  *  Function printBDDToCNF converts a collection of BDDs to CNF.
  ***********************************************************************/
 
-#include "sbsat.h"
-#include "sbsat_formats.h"
+#include "ite.h"
 
-#define F (numinp+3)
-#define T (numinp+2)
+typedef struct hashrecord {
+   bool used;
+   char *data;
+   struct hashrecord *next;
+} Recd;
 
-int use_symtable = 0;
+typedef struct xorrecord {
+   Recd *clauses;
+   char *vars;
+   char *save;
+   int   save_size;
+   struct xorrecord *next;
+} XORd;
 
-void cnf_print_independent_vars() {
-	fprintf(foutputfile, "c Independent Variables: ");
-	for(int x = 1; x <= numinp; x++) {
-		if(independantVars[x] == 1-reverse_independant_dependant) 
-		  fprintf (foutputfile, "%d ", use_symtable?-atoi(getsym_i(x)->name):x);
-	}
-	fprintf(foutputfile, "0\n");
-}
-
-void print_cnf_symtable() {
-	for(int x = 1; x <= numinp; x++)
-	  fprintf(foutputfile, "c %d = %s\n", x, getsym_i(x)->name);
-}
+typedef struct func {
+   int  no_vars;
+   char *truth_table;
+   int  *var_list;
+   Recd *reduced0;
+   Recd *reduced1;
+   XORd *xor0;
+   XORd *xor1;
+} func_object;
 
 void getMaxNo (BDDNode * bdd, int *no) {
    if (bdd == false_ptr || bdd == true_ptr)
       return;
    if (*no < bdd->variable)
       *no = bdd->variable;
-   bdd->tmp_int = 0;
+   bdd->t_var = 0;
    getMaxNo (bdd->thenCase, no);
    getMaxNo (bdd->elseCase, no);
 }
@@ -85,10 +88,10 @@ int getMaxVarNoInBDD (BDDNode * bdd) {
 // A recursive post-order traversal of a BDD (bdd), beginning at its root, to  
 // compose CNF clauses representing each node.  Clauses are placed in a file   
 // called "bdd_tmp.cnf".  On the first visit to a BDD node, the code assigns   
-// a new (*curr) variable which is placed in the node's tmp_int field (assumed   
+// a new (*curr) variable which is placed in the node's t_var field (assumed   
 // initially to be 0) unless the node has thenCase and elseCase pointing to    
 // true,false or false,true.  If the thenCase and elseCase pointers are set    
-// to true,false, or false,true then tmp_int gets the number of the node's bdd   
+// to true,false, or false,true then t_var gets the number of the node's bdd   
 // variable (bdd->variable).  If the thenCase and elseCase pointers are set    
 // to false,true then t_sgn is set to false (it is otherwise true).  Also on   
 // the first visit, deeper visits to children are invoked.  Upon returning,    
@@ -119,7 +122,6 @@ int getMaxVarNoInBDD (BDDNode * bdd) {
 //   curr:   first available number for naming a made-up variable              
 //   cl_cnt: will contain a count of clauses formed                            
 //   ft:     file "bdd_tmp.cnf"                                                
-
 void bdd2cnf (BDDNode * bdd, int *curr, int *cl_cnt, FILE * ft) {
    int i, t, e,			// made-up vars: i=if, t=then, e=else
       v;			// Actual variable of node
@@ -131,10 +133,10 @@ void bdd2cnf (BDDNode * bdd, int *curr, int *cl_cnt, FILE * ft) {
    }
 
    if (bdd->thenCase == true_ptr && bdd->elseCase == false_ptr) {
-      bdd->tmp_int = use_symtable?atoi(getsym_i(bdd->variable)->name):bdd->variable;
+      bdd->t_var = bdd->variable;
       return;
    } else if (bdd->thenCase == false_ptr && bdd->elseCase == true_ptr) {
-      bdd->tmp_int = use_symtable?-atoi(getsym_i(bdd->variable)->name):-bdd->variable;
+      bdd->t_var = -bdd->variable;
       return;
    } else {
       // Setup values for at most four variables involved at a BDD node    
@@ -142,201 +144,201 @@ void bdd2cnf (BDDNode * bdd, int *curr, int *cl_cnt, FILE * ft) {
       // e (else):   made-up variable: true iff else branch is             
       // t (then):   made-up variable: true iff then branch is             
       // i (if):     made-up variable: true iff v=T and t=T or v=F and e=T 
-      e = bdd->elseCase->tmp_int;
+      e = bdd->elseCase->t_var;
       if (e == 0) {
-			if (bdd->elseCase == true_ptr) {
-				e = T;
-			} else if (bdd->elseCase == false_ptr) {
-				e = F;
-			} else {
-				bdd2cnf (bdd->elseCase, curr, cl_cnt, ft);
-				e = bdd->elseCase->tmp_int;
-			}
+	 if (bdd->elseCase == true_ptr) {
+	    e = T;
+	 } else if (bdd->elseCase == false_ptr) {
+	    e = F;
+	 } else {
+	    bdd2cnf (bdd->elseCase, curr, cl_cnt, ft);
+	    e = bdd->elseCase->t_var;
+	 }
       }
-		
-      t = bdd->thenCase->tmp_int;
+
+      t = bdd->thenCase->t_var;
       if (t == 0) {
-			if (bdd->thenCase == true_ptr) {
-				t = T;
-			} else if (bdd->thenCase == false_ptr) {
-				t = F;
-			} else {
-				bdd2cnf (bdd->thenCase, curr, cl_cnt, ft);
-				t = bdd->thenCase->tmp_int;
-			}
+	 if (bdd->thenCase == true_ptr) {
+	    t = T;
+	 } else if (bdd->thenCase == false_ptr) {
+	    t = F;
+	 } else {
+	    bdd2cnf (bdd->thenCase, curr, cl_cnt, ft);
+	    t = bdd->thenCase->t_var;
+	 }
       }
-		
-      i = bdd->tmp_int;
+
+      i = bdd->t_var;
       if (i == 0) {
-			i = (*curr)++;
-			bdd->tmp_int = i;
+	 i = (*curr)++;
+	 bdd->t_var = i;
       }
-		
-      v = use_symtable?atoi(getsym_i(bdd->variable)->name):bdd->variable;
-		
+
+      v = bdd->variable;
+
       // Ready to output clauses to file:                    
       // Generally it's:                                     
       // (i, v, !e) & (i, !v, !t) & (!i, v, e) & (!i, !v, t) 
       // First clause:
       if (e == T) {
-			if (abs (i) < abs (v))
-			  sprintf (buffer, "%d %d 0\n", i, v);
-			else
-			  sprintf (buffer, "%d %d 0\n", v, i);
-			if (fputs (buffer, ft) < 0) {
-				fprintf(stderr, "Error writing to bdd_tmp.cnf\n");
-				unlink ("bdd_tmp.cnf");
-				exit (1);
-			}
-			(*cl_cnt)++;
+	 if (abs (i) < abs (v))
+	    sprintf (buffer, "%d %d 0\n", i, v);
+	 else
+	    sprintf (buffer, "%d %d 0\n", v, i);
+	 if (fputs (buffer, ft) < 0) {
+	    fprintf(stderr, "Error writing to bdd_tmp.cnf\n");
+	    unlink ("bdd_tmp.cnf");
+	    exit (1);
+	 }
+	 (*cl_cnt)++;
       } else if (e != F) {
-			if (abs (i) < abs (v)) {
-				if (abs (i) < abs (e)) {
-					if (abs (v) < abs (e))
-					  sprintf (buffer, "%d %d %d 0\n", i, v, -e);
-					else
-					  sprintf (buffer, "%d %d %d 0\n", i, -e, v);
-				} else {
-					sprintf (buffer, "%d %d %d 0\n", -e, i, v);
-				}
-			} else {
-				if (abs (e) < abs (v)) {
-					sprintf (buffer, "%d %d %d 0\n", -e, v, i);
-				} else {
-					if (abs (i) < abs (e))
-					  sprintf (buffer, "%d %d %d 0\n", v, i, -e);
-					else
-					  sprintf (buffer, "%d %d %d 0\n", v, -e, i);
-				}
-			}
-			if (fputs (buffer, ft) < 0) {
-				fprintf(stderr, "Error writing to bdd_tmp.cnf\n");
-				unlink ("bdd_tmp.cnf");
-				exit (1);
-			}
-			(*cl_cnt)++;
+	 if (abs (i) < abs (v)) {
+	    if (abs (i) < abs (e)) {
+	       if (abs (v) < abs (e))
+		  sprintf (buffer, "%d %d %d 0\n", i, v, -e);
+	       else
+		  sprintf (buffer, "%d %d %d 0\n", i, -e, v);
+	    } else {
+	       sprintf (buffer, "%d %d %d 0\n", -e, i, v);
+	    }
+	 } else {
+	    if (abs (e) < abs (v)) {
+	       sprintf (buffer, "%d %d %d 0\n", -e, v, i);
+	    } else {
+	       if (abs (i) < abs (e))
+		  sprintf (buffer, "%d %d %d 0\n", v, i, -e);
+	       else
+		  sprintf (buffer, "%d %d %d 0\n", v, -e, i);
+	    }
+	 }
+	 if (fputs (buffer, ft) < 0) {
+	    fprintf(stderr, "Error writing to bdd_tmp.cnf\n");
+	    unlink ("bdd_tmp.cnf");
+	    exit (1);
+	 }
+	 (*cl_cnt)++;
       }
       // Second clause:
       if (t == T) {
-			if (abs (i) < abs (v))
-			  sprintf (buffer, "%d -%d 0\n", i, v);
-			else
-			  sprintf (buffer, "-%d %d 0\n", v, i);
-			if (fputs (buffer, ft) < 0) {
-				fprintf(stderr, "Error writing to bdd_tmp.cnf\n");
-				unlink ("bdd_tmp.cnf");
-				exit (1);
-			}
-			(*cl_cnt)++;
+	 if (abs (i) < abs (v))
+	    sprintf (buffer, "%d -%d 0\n", i, v);
+	 else
+	    sprintf (buffer, "-%d %d 0\n", v, i);
+	 if (fputs (buffer, ft) < 0) {
+	    fprintf(stderr, "Error writing to bdd_tmp.cnf\n");
+	    unlink ("bdd_tmp.cnf");
+	    exit (1);
+	 }
+	 (*cl_cnt)++;
       } else if (t != F) {
-			if (abs (i) < abs (v)) {
-				if (abs (i) < abs (t)) {
-					if (abs (v) < abs (t))
-					  sprintf (buffer, "%d -%d %d 0\n", i, v, -t);
-					else
-					  sprintf (buffer, "%d %d -%d 0\n", i, -t, v);
-				} else {
-					sprintf (buffer, "%d %d -%d 0\n", -t, i, v);
-				}
-			} else {
-				if (abs (t) < abs (v)) {
-					sprintf (buffer, "%d -%d %d 0\n", -t, v, i);
-				} else {
-					if (abs (i) < abs (t))
-					  sprintf (buffer, "-%d %d %d 0\n", v, i, -t);
-					else
-					  sprintf (buffer, "-%d %d %d 0\n", v, -t, i);
-				}
-			}
-			if (fputs (buffer, ft) < 0) {
-				fprintf(stderr, "Error writing to bdd_tmp.cnf\n");
-				unlink ("bdd_tmp.cnf");
-				exit (1);
-			}
-			(*cl_cnt)++;
+	 if (abs (i) < abs (v)) {
+	    if (abs (i) < abs (t)) {
+	       if (abs (v) < abs (t))
+		  sprintf (buffer, "%d -%d %d 0\n", i, v, -t);
+	       else
+		  sprintf (buffer, "%d %d -%d 0\n", i, -t, v);
+	    } else {
+	       sprintf (buffer, "%d %d -%d 0\n", -t, i, v);
+	    }
+	 } else {
+	    if (abs (t) < abs (v)) {
+	       sprintf (buffer, "%d -%d %d 0\n", -t, v, i);
+	    } else {
+	       if (abs (i) < abs (t))
+		  sprintf (buffer, "-%d %d %d 0\n", v, i, -t);
+	       else
+		  sprintf (buffer, "-%d %d %d 0\n", v, -t, i);
+	    }
+	 }
+	 if (fputs (buffer, ft) < 0) {
+	    fprintf(stderr, "Error writing to bdd_tmp.cnf\n");
+	    unlink ("bdd_tmp.cnf");
+	    exit (1);
+	 }
+	 (*cl_cnt)++;
       }
       // Third clause:
       if (e == F) {
-			if (abs (i) < abs (v))
-			  sprintf (buffer, "%d %d 0\n", -i, v);
-			else
-			  sprintf (buffer, "%d %d 0\n", v, -i);
-			if (fputs (buffer, ft) < 0) {
-				fprintf(stderr, "Error writing to bdd_tmp.cnf\n");
-				unlink ("bdd_tmp.cnf");
-				exit (1);
-			}
-			(*cl_cnt)++;
+	 if (abs (i) < abs (v))
+	    sprintf (buffer, "%d %d 0\n", -i, v);
+	 else
+	    sprintf (buffer, "%d %d 0\n", v, -i);
+	 if (fputs (buffer, ft) < 0) {
+	    fprintf(stderr, "Error writing to bdd_tmp.cnf\n");
+	    unlink ("bdd_tmp.cnf");
+	    exit (1);
+	 }
+	 (*cl_cnt)++;
       } else if (e != T) {
-			if (abs (i) < abs (v)) {
-				if (abs (i) < abs (e)) {
-					if (abs (v) < abs (e))
-					  sprintf (buffer, "%d %d %d 0\n", -i, v, e);
-					else
-					  sprintf (buffer, "%d %d %d 0\n", -i, e, v);
-				} else {
-					sprintf (buffer, "%d %d %d 0\n", e, -i, v);
-				}
-			} else {
-				if (abs (e) < abs (v)) {
-					sprintf (buffer, "%d %d %d 0\n", e, v, -i);
-				} else {
-					if (abs (i) < abs (e))
-					  sprintf (buffer, "%d %d %d 0\n", v, -i, e);
-					else
-					  sprintf (buffer, "%d %d %d 0\n", v, e, -i);
-				}
-			}
-			if (fputs (buffer, ft) < 0) {
-				fprintf(stderr, "Error writing to bdd_tmp.cnf\n");
-				unlink ("bdd_tmp.cnf");
-				exit (1);
-			}
-			(*cl_cnt)++;
+	 if (abs (i) < abs (v)) {
+	    if (abs (i) < abs (e)) {
+	       if (abs (v) < abs (e))
+		  sprintf (buffer, "%d %d %d 0\n", -i, v, e);
+	       else
+		  sprintf (buffer, "%d %d %d 0\n", -i, e, v);
+	    } else {
+	       sprintf (buffer, "%d %d %d 0\n", e, -i, v);
+	    }
+	 } else {
+	    if (abs (e) < abs (v)) {
+	       sprintf (buffer, "%d %d %d 0\n", e, v, -i);
+	    } else {
+	       if (abs (i) < abs (e))
+		  sprintf (buffer, "%d %d %d 0\n", v, -i, e);
+	       else
+		  sprintf (buffer, "%d %d %d 0\n", v, e, -i);
+	    }
+	 }
+	 if (fputs (buffer, ft) < 0) {
+	    fprintf(stderr, "Error writing to bdd_tmp.cnf\n");
+	    unlink ("bdd_tmp.cnf");
+	    exit (1);
+	 }
+	 (*cl_cnt)++;
       }
       // Fourth clause:
       if (t == F) {
-			if (abs (i) < abs (v))
-			  sprintf (buffer, "%d -%d 0\n", -i, v);
-			else
-			  sprintf (buffer, "-%d %d 0\n", v, -i);
-			if (fputs (buffer, ft) < 0) {
-				fprintf(stderr, "Error writing to bdd_tmp.cnf\n");
-				unlink ("bdd_tmp.cnf");
-				exit (1);
-			}
-			(*cl_cnt)++;
+	 if (abs (i) < abs (v))
+	    sprintf (buffer, "%d -%d 0\n", -i, v);
+	 else
+	    sprintf (buffer, "-%d %d 0\n", v, -i);
+	 if (fputs (buffer, ft) < 0) {
+	    fprintf(stderr, "Error writing to bdd_tmp.cnf\n");
+	    unlink ("bdd_tmp.cnf");
+	    exit (1);
+	 }
+	 (*cl_cnt)++;
       } else if (t != T) {
-			if (abs (i) < abs (v)) {
-				if (abs (i) < abs (t)) {
-					if (abs (v) < abs (t))
-					  sprintf (buffer, "%d -%d %d 0\n", -i, v, t);
-					else
-					  sprintf (buffer, "%d %d -%d 0\n", -i, t, v);
-				} else {
-					sprintf (buffer, "%d %d -%d 0\n", t, -i, v);
-				}
-			} else {
-				if (abs (t) < abs (v)) {
-					sprintf (buffer, "%d -%d %d 0\n", t, v, -i);
-				} else {
-					if (abs (i) < abs (t))
-					  sprintf (buffer, "-%d %d %d 0\n", v, -i, t);
-					else
-					  sprintf (buffer, "-%d %d %d 0\n", v, t, -i);
-				}
-			}
-			if (fputs (buffer, ft) < 0) {
-				fprintf(stderr, "Error writing to bdd_tmp.cnf\n");
-				unlink ("bdd_tmp.cnf");
-				exit (1);
-			}
-			(*cl_cnt)++;
+	 if (abs (i) < abs (v)) {
+	    if (abs (i) < abs (t)) {
+	       if (abs (v) < abs (t))
+		  sprintf (buffer, "%d -%d %d 0\n", -i, v, t);
+	       else
+		  sprintf (buffer, "%d %d -%d 0\n", -i, t, v);
+	    } else {
+	       sprintf (buffer, "%d %d -%d 0\n", t, -i, v);
+	    }
+	 } else {
+	    if (abs (t) < abs (v)) {
+	       sprintf (buffer, "%d -%d %d 0\n", t, v, -i);
+	    } else {
+	       if (abs (i) < abs (t))
+		  sprintf (buffer, "-%d %d %d 0\n", v, -i, t);
+	       else
+		  sprintf (buffer, "-%d %d %d 0\n", v, t, -i);
+	    }
+	 }
+	 if (fputs (buffer, ft) < 0) {
+	    fprintf(stderr, "Error writing to bdd_tmp.cnf\n");
+	    unlink ("bdd_tmp.cnf");
+	    exit (1);
+	 }
+	 (*cl_cnt)++;
       }
    }
 }
 
-// Makes a CNF expression from a given _ircuit "c"
+// Makes a CNF expression from a given _ircuit "c"                             
 // Output is standard out                                                      
 // Input is a _ircuit "c" consisting of BDDs with variables identified as ints 
 // Process depends on creating new (made-up) variables, at most one for each   
@@ -353,12 +355,8 @@ void printBDDToCNF3SAT () {
    FILE *ft;  char buffer[1024];
    int clause_cnt = 0, t_cnt, max_var_no = 0;
    char tmp_bdd_filename[256];
-   char *file = strdup("bdd_tmp.cnf");
-   get_freefile(file, temp_dir, tmp_bdd_filename, 255);
-   free(file);
+   get_tempfile("bdd_tmp.cnf", tmp_bdd_filename, 255);
 
-	use_symtable = sym_all_int();
-	
    for (int i = 0; i < nmbrFunctions; i++) {
       //if (functionType[i] != 0) {
       // fprintf(stderr, 
@@ -378,31 +376,22 @@ void printBDDToCNF3SAT () {
    for (int i = 0; i < nmbrFunctions; i++) {
       //printBDD (functions[i]);
       bdd2cnf (functions[i], &max_var_no, &clause_cnt, ft);
-      sprintf (buffer, "%d 0\n", functions[i]->tmp_int);
+      sprintf (buffer, "%d 0\n", functions[i]->t_var);
       if (fputs (buffer, ft) < 0) {
-			fprintf(stderr, "Error writing to bdd_tmp.cnf\n");
-			unlink ("bdd_tmp.cnf");
-			exit (1);
+	 fprintf(stderr, "Error writing to bdd_tmp.cnf\n");
+	 unlink ("bdd_tmp.cnf");
+	 exit (1);
       }
       clause_cnt++;
    }
 
-//   fputs ("c end\n", ft);
+   fputs ("c end\n", ft);
    fclose (ft);
    if ((ft = fopen (tmp_bdd_filename, "rb")) == NULL) {
       fprintf(stderr, "Cannot open bdd_tmp.cnf for reading\n");
       exit(1);
    }
-
-	if(!use_symtable) {
-		print_cnf_symtable();
-	}
-   
-	if(print_independent_vars) {
-		cnf_print_independent_vars();
-	}
-	
-	fprintf (foutputfile, "p cnf %d %d\n", max_var_no - 1, clause_cnt);
+   fprintf (foutputfile, "p cnf %d %d\n", max_var_no - 1, clause_cnt);
    while (fgets (buffer, 1023, ft) != NULL)
       fprintf (foutputfile, "%s", buffer);
    fclose (ft);
@@ -470,7 +459,7 @@ int countNumberClauses (Recd *clauses) {
 }
 
 Recd *applyBoundedResolution (Recd *clauses,int k,bool *changes, int no_vars) {
-   int pivot, i, comlits;
+   int pivot, i, comlits, j;
    char *tmp;
    Recd *front = clauses;
    Recd *anchor;
@@ -485,7 +474,7 @@ Recd *applyBoundedResolution (Recd *clauses,int k,bool *changes, int no_vars) {
    }
 
    // fprintf(stderr,"resolving...\n");
-   //j=0;
+   j=0;
    for (anchor = clauses ; anchor->next != NULL ; anchor = anchor->next) {
       // fprintf(stderr,"\r%d     ",j++);
       for (sweep = anchor->next ; sweep != NULL ; sweep = sweep->next) {
@@ -527,7 +516,7 @@ Recd *applyBoundedResolution (Recd *clauses,int k,bool *changes, int no_vars) {
 
 Recd *applySubsumption (Recd *clauses, bool *change, int no_vars) {
    Recd *cursor, *tester, *front, *ptr;
-   int i/*,j*/;
+   int i, j;
 	
    if (clauses == NULL) return NULL;
 	
@@ -536,7 +525,7 @@ Recd *applySubsumption (Recd *clauses, bool *change, int no_vars) {
    front->next = clauses;
 	
    // fprintf(stderr,"\nsubsuming...\n");
-   //j=0;
+   j=0;
    for (cursor = clauses ; cursor != NULL ; cursor = cursor->next) {
       // fprintf(stderr,"\r%d     ",j++);
       for (tester = front ; tester->next != NULL ; ) {
@@ -559,7 +548,7 @@ Recd *applySubsumption (Recd *clauses, bool *change, int no_vars) {
 }
 
 // Limit of 31 on no_vars, unchecked
-Recd *resolve (int *truth_table, int sign, int no_vars, int no_outmp_ints) {
+Recd *resolve (int *truth_table, int sign, int no_vars, int no_out_vars) {
    Recd ***clauses = NULL;
 
    // For each i < no_vars, build a linked list for each set of 
@@ -724,11 +713,10 @@ Recd *resolve (int *truth_table, int sign, int no_vars, int no_outmp_ints) {
 }
 
 void printBDDToCNFQM () {
-   int *tempint=NULL, z;
-   int tempint_max=0;
+   int tempint[5000], z;
 	
    func_object **funcs;
-   int no_outmp_ints;
+   int no_out_vars;
    
    z = 0;
    for (int x = 0; x < numout; x++) {
@@ -736,7 +724,7 @@ void printBDDToCNFQM () {
       z+=numx;
    } //Count the clauses
 
-   no_outmp_ints = z;
+   no_out_vars = z;
 	
    funcs = (func_object **)calloc(1,sizeof(func_object *)*nmbrFunctions);
    for (int i=0 ; i < nmbrFunctions ; i++) funcs[i] = new func_object;
@@ -749,9 +737,19 @@ void printBDDToCNFQM () {
       fprintf(stderr, "[%d]     \r", x);
       int no_vars = 0;
 		
-      int y = 0;
-      unravelBDD(&y, &tempint_max, &tempint, functions[x]);
-      if (y != 0) qsort(tempint, y, sizeof (int), compfunc);
+      long y = 0;
+      unravelBDD(&y, tempint, functions[x]);
+      qsort (tempint, y, sizeof (int), compfunc);
+      if (y != 0) {
+			int v = 0;
+			for (int i = 1; i < y; i++) {
+				v++;
+				if (tempint[i] == tempint[i - 1])
+				  v--;
+				tempint[v] = tempint[i];
+			}
+			y = v + 1;
+      }
       
       no_vars = y;
       funcs[x]->no_vars = no_vars;
@@ -843,12 +841,11 @@ void printBDDToCNFQM () {
 			literals = NULL;
 			break;
 		 default:
-			funcs[x]->reduced0 = resolve (truth_table, 0, no_vars, no_outmp_ints);
+			funcs[x]->reduced0 = resolve (truth_table, 0, no_vars, no_out_vars);
 			break;
       }
       delete truth_table;
    }
-   ite_free((void**)&tempint); tempint_max = 0;
    
    z = 0;
    for(int x = 0; x < numout; x++) {
@@ -857,23 +854,9 @@ void printBDDToCNFQM () {
 			z++;
       }
    }
-   no_outmp_ints = z;
-
-	use_symtable = sym_all_int(); //returns the maximum integer used, or 0 if any non integers are used.
-	if(!use_symtable) {
-		print_cnf_symtable();
-	}
-
-	if(print_independent_vars) {
-		cnf_print_independent_vars();
-	}
+   no_out_vars = z;
 	
-   numinp = getNuminp ();
-
-	if(use_symtable)
-	  fprintf(foutputfile, "p cnf %ld %d\n", use_symtable, no_outmp_ints);
-	else
-	  fprintf(foutputfile, "p cnf %ld %d\n", numinp, no_outmp_ints);
+   fprintf(foutputfile, "p cnf %ld %d\n", numinp, no_out_vars);
 	
    for(int x = 0; x < numout; x++) {
 		Recd *res = funcs[x]->reduced0;
@@ -882,8 +865,8 @@ void printBDDToCNFQM () {
 				int *vlst = funcs[x]->var_list;
 				int literal = (int) res->data[i];
 				if(literal < 2) {
-					if(literal == 1) fprintf(foutputfile, "%d ", use_symtable?-atoi(getsym_i(vlst[i])->name):-vlst[i]);
-					else fprintf(foutputfile, "%d ", use_symtable?atoi(getsym_i(vlst[i])->name):vlst[i]);
+					if(literal == 1) fprintf(foutputfile, "%d ", -vlst[i]);
+					else fprintf(foutputfile, "%d ", vlst[i]);
 				}
 			}
 			fprintf(foutputfile, "0\n");
@@ -894,10 +877,9 @@ void printBDDToCNFQM () {
 }
 
 void printBDDToCNF () {
-   int *tempint = NULL, z;
-   int tempint_max = 0;
+   int tempint[5000], z;
 	
-   int no_outmp_ints;
+   int no_out_vars;
    
    z = 0;
    for (int x = 0; x < numout; x++) {
@@ -905,11 +887,11 @@ void printBDDToCNF () {
       z+=numx;
    } //Count the clauses
 
-   no_outmp_ints = z;
+   no_out_vars = z;
 	
    numinp = getNuminp ();
    
-   intlist *false_paths = new intlist[no_outmp_ints+1];
+   intlist *clauses = new intlist[no_out_vars+1];
    z = 0;
    
    for (int x = 0; x < numout; x++) {
@@ -917,49 +899,29 @@ void printBDDToCNF () {
       int no_vars = 0;
 		int numx = countFalses (functions[x]);
       intlist *list = new intlist[numx];
-      int listx = 0;
-      findPathsToFalse (functions[x], &tempint_max, &tempint, list, &listx);
+      int pathx = 0, listx = 0;
+      findPathsToFalse (functions[x], tempint, pathx, list, &listx);
 		
       for (int i = 0; i < listx; i++) {
-			false_paths[z].num = list[i].num;
-			false_paths[z].length = list[i].length;
-			if(false_paths[z].length > no_vars) no_vars = false_paths[z].length;
-			for (int a = 0; a < false_paths[z].length; a++) {
-				//fprintf(stdout, "%d ", false_paths[z].num[a]);
+			clauses[z].num = list[i].num;
+			clauses[z].length = list[i].length;
+			if(clauses[z].length > no_vars) no_vars = clauses[z].length;
+			for (int a = 0; a < clauses[z].length; a++) {
+				//fprintf(stdout, "%d ", clauses[z].num[a]);
 			}
 			//fprintf(stdout, "0\n");
 			z++;
       }
 		delete list;
 	}
-
-	ite_free((void**)&tempint); tempint_max = 0;
 	
-	use_symtable = sym_all_int(); //returns the maximum integer used, or 0 if any non integers are used.
-	if(!use_symtable) {
-		print_cnf_symtable();
-	}
-
-	if(print_independent_vars) {
-		cnf_print_independent_vars();
-	}
-	
-	if(use_symtable)
-	  fprintf(foutputfile, "p cnf %ld %d\n", use_symtable, no_outmp_ints);
-	else
-	  fprintf(foutputfile, "p cnf %ld %d\n", numinp, no_outmp_ints);
-	
-	for (int x = 0; x < no_outmp_ints; x++) {
-		for (int a = false_paths[x].length-1; a >= 0; a--) {
-			int lit = false_paths[x].num[a];
-			if(lit > 0)
-			  fprintf (foutputfile, "%d ", use_symtable?-atoi(getsym_i(lit)->name):-lit); //Need to negate all literals!
-			else
-			  fprintf (foutputfile, "%d ", use_symtable?atoi(getsym_i(-lit)->name):-lit); //Need to negate all literals!
-		}
+   fprintf(foutputfile, "p cnf %ld %d\n", numinp, no_out_vars);
+	for (int x = 0; x < no_out_vars; x++) {
+		for (int a = 0; a < clauses[x].length; a++)
+		  fprintf (foutputfile, "%d ", clauses[x].num[a]);
 		fprintf (foutputfile, "0\n");
-		delete false_paths[x].num;
+		delete clauses[x].num;
 	}
-//	fprintf(foutputfile, "c end\n");
-	delete false_paths;
+	fprintf(foutputfile, "c");
+	delete clauses;
 }

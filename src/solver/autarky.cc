@@ -1,7 +1,7 @@
 /* =========FOR INTERNAL USE ONLY. NO DISTRIBUTION PLEASE ========== */
 
 /*********************************************************************
- Copyright 1999-2007, University of Cincinnati.  All rights reserved.
+ Copyright 1999-2003, University of Cincinnati.  All rights reserved.
  By using this software the USER indicates that he or she has read,
  understood and will comply with the following:
 
@@ -33,12 +33,13 @@
  or arising from the use, or inability to use, this software or its
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
-*********************************************************************/
-
+ *********************************************************************/
 #include "ite.h"
 #include "solver.h"
 
 /* pop the information */
+extern SmurfState **arrCurrentStates;
+extern int *arrNumRHSUnknowns;
 
 #define YES_AUTARKY 1
 #define NO_AUTARKY 0
@@ -46,13 +47,14 @@
 tSmurfStatesStack* AU_arrSmurfStatesStack;
 int AU_nSmurfStatesStackIdx;
 
-ITE_INLINE void AU_check_pop_information_init();
-ITE_INLINE int AU_check_pop_information_specfn();
-ITE_INLINE int AU_check_pop_information_smurfs();
-ITE_INLINE int AU_is_autarky();
+ITE_INLINE void check_pop_information_init();
+ITE_INLINE int check_pop_information_specfn();
+ITE_INLINE int check_pop_information_smurfs();
+ITE_INLINE int is_autarky();
 
-ITE_INLINE int
-AU_check_pop_information_smurfs()
+ITE_INLINE
+int
+check_pop_information_smurfs()
 {
    if (arrCurrentStates == NULL) return YES_AUTARKY;
 
@@ -87,8 +89,9 @@ AU_check_pop_information_smurfs()
 tSpecialFnStack* AU_arrSpecialFnStack;
 int AU_nSpecialFnStackIdx;
 
-ITE_INLINE int
-AU_check_pop_information_specfn()
+ITE_INLINE
+int
+check_pop_information_specfn()
 {
    if (arrNumRHSUnknowns == NULL) return YES_AUTARKY;
 
@@ -118,8 +121,9 @@ AU_check_pop_information_specfn()
    return YES_AUTARKY;
 }
 
-ITE_INLINE void
-AU_check_pop_information_init()
+ITE_INLINE
+void
+check_pop_information_init()
 {
    AU_arrSmurfStatesStack   = arrSmurfStatesStack;
    AU_nSmurfStatesStackIdx  = nSmurfStatesStackIdx;
@@ -131,8 +135,11 @@ AU_check_pop_information_init()
 
 /* in the end of backjump loop */
 
-ITE_INLINE int
-AU_is_autarky()
+extern bool *arrLemmaFlag;
+
+ITE_INLINE
+int
+is_autarky()
 {
    d9_printf1("Autarky check\n");
 
@@ -141,11 +148,11 @@ AU_is_autarky()
 
    /* check each affected smurf -- 
     if not satisfied => not autarky */
-   if (AU_check_pop_information_smurfs()==YES_AUTARKY) {
+   if (check_pop_information_smurfs()==YES_AUTARKY) {
 
       /* check each affected special function -- 
        if not satisfied => not autarky */
-      if (AU_check_pop_information_specfn()==YES_AUTARKY)
+      if (check_pop_information_specfn()==YES_AUTARKY)
       {
          return YES_AUTARKY;
       }
