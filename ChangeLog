@@ -1,3 +1,107 @@
+2004-07-29 14:16  mkouril
+
+	* src/solv_smurf/: hr_choice.cc, hr_lemma/hr_choice.cc,
+	hr_lemma/hr_lemma.cc, hr_lsgb/hr_choice.cc, hr_lsgb/hr_lsgb.cc,
+	hr_lsgb_lemma/hr_choice.cc, hr_lsgb_lemma/hr_lsgb_lemma.cc: Initial
+	branching set
+
+2004-07-29 13:05  fett
+
+	* src/: postproc/backend.cc, utils/params.cc: added in a binary
+	output '-R b', a lot like '-R c'
+	
+	  ~Sean
+
+2004-07-29 12:38  fett
+
+	* src/preproc/: do_exquantifyand.cc, init_preproc.cc: fixed a quick
+	bug
+
+2004-07-29 12:18  fett
+
+	* src/: formats/markbdd.cc, formats/xorbdd.cc,
+	preproc/init_preproc.cc: Added in new support for Initial_Branch
+
+2004-07-29 12:18  fett
+
+	* include/: log.h, sbsat_vars.h: Added in new variables for
+	Initial_Branch
+
+2004-07-29 12:17  fett
+
+	* examples/: flowers.cnf, flowers.ite, markbdd.ite: changed a few
+	things
+
+2004-07-21 13:15  fett
+
+	* src/: sbsat.cc, preproc/init_preproc.cc, solv_smurf/fn_create.cc:
+	changed how the preprocessing time is recorded.  reading in the
+	input format is not part of the preprocessing time.
+	
+	   ~Sean
+
+2004-07-14 11:20  fett
+
+	* examples/markbdd.ite: fixed a bug
+
+2004-07-14 11:19  fett
+
+	* ChangeLog, src/generator/Makefile.in, src/postproc/Makefile.in,
+	src/solv_bddwalk/Makefile.in, src/solv_smurf/Makefile.in,
+	src/solv_smurf/fn_and/Makefile.in,
+	src/solv_smurf/fn_lemma/Makefile.in,
+	src/solv_smurf/fn_minmax/Makefile.in,
+	src/solv_smurf/fn_smurf/Makefile.in,
+	src/solv_smurf/fn_smurf_au/Makefile.in,
+	src/solv_smurf/fn_smurf_xor/Makefile.in,
+	src/solv_smurf/fn_xor/Makefile.in,
+	src/solv_smurf/fn_xor_smurf/Makefile.in,
+	src/solv_smurf/hr_lemma/Makefile.in,
+	src/solv_smurf/hr_lsgb/Makefile.in,
+	src/solv_smurf/hr_lsgb_lemma/Makefile.in,
+	src/solv_smurf/hr_lsgbw/Makefile.in,
+	src/solv_smurf/hr_null/Makefile.in, src/solv_wvf/Makefile.in,
+	src/utils/Makefile.in: [no log message]
+
+2004-07-14 11:19  fett
+
+	* src/preproc/Makefile.in: ?
+	
+	  ~Sean
+
+2004-07-14 11:19  fett
+
+	* src/formats/markbdd.cc: fixed a warning.
+	
+	  ~Sean
+
+2004-07-13 19:18  mkouril
+
+	* src/solv_smurf/README: More Docs
+
+2004-07-13 10:54  mkouril
+
+	* src/: Makefile.in, formats/Makefile.in, formats/5/Makefile.in:
+	Applied compile patch
+
+2004-07-13 10:44  mkouril
+
+	* compile.patch.sh, confdefs.h, configure, configure.ac, libtool,
+	include/Makefile.am, include/Makefile.in, include/config.h,
+	src/Makefile.in, src/formats/Makefile.in,
+	src/formats/5/Makefile.am, src/formats/5/Makefile.in,
+	src/solv_smurf/fn_xor_smurf/hr_lsgbw_xorsmurf.cc,
+	src/solv_smurf/include/Makefile.am,
+	src/solv_smurf/include/Makefile.in, src/solver/Makefile.in: Version
+	2.5a-2
+
+2004-07-13 10:17  fett
+
+	* src/formats/markbdd.cc: initial branch was not supposed to be a $
+	line, it is fixed now.
+	
+	  ~Sean
+
 2004-07-13 09:22  fett
 
 	* src/utils/params.cc: Forgot to add Ff into the -All 0 and -All 1

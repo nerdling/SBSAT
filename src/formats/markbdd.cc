@@ -475,8 +475,8 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 				var_list[x] = v4->variable;
 			} else if(v4 == ite_var (-v4->variable)) {
 
-				//fprintf (stderr, "\nKeyword 'minmax' needs positive variables as arguments (%s)...exiting:%d\n", macros, markbdd_line);
-				//exit (1);
+				fprintf (stderr, "\nKeyword 'minmax' needs positive variables as arguments (%s)...exiting:%d\n", macros, markbdd_line);
+				exit (1);
 			   
 				var_list[x] = -v4->variable;
 			} else {
