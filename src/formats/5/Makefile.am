@@ -10,13 +10,6 @@ SOURCES=trace_g.yy trace_s.ll \
         parser.cc functions.cc bddops.cc p3.cc
 # _g.yy first
 EXTRA_DIST=bddnode.h functions.h bddnode.cc tracetest.cc p3.h \
-        libt5_a-trace_g.h  \
-	libt5_a-cnf_g.h  \
-	libt5_a-bdd_g.h \
-	libt5_a-blif_g.h \
-	libt5_a-prover_g.h \
-	libt5_a-prover3_g.h \
-	libt5_a-iscas_g.h \
         libt5_la-trace_g.h  \
 	libt5_la-cnf_g.h  \
 	libt5_la-bdd_g.h \
@@ -24,6 +17,16 @@ EXTRA_DIST=bddnode.h functions.h bddnode.cc tracetest.cc p3.h \
 	libt5_la-prover_g.h \
 	libt5_la-prover3_g.h \
 	libt5_la-iscas_g.h
+
+SAVE4LATER = \
+       libt5_a-trace_g.h  \
+	libt5_a-cnf_g.h  \
+	libt5_a-bdd_g.h \
+	libt5_a-blif_g.h \
+	libt5_a-prover_g.h \
+	libt5_a-prover3_g.h \
+	libt5_a-iscas_g.h 
+
 
 bin_PROGRAMS = tracetest
 tracetest_SOURCES = tracetest.cc  # bddnode.cc

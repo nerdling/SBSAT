@@ -65,7 +65,8 @@ ITENode **itetable_hash_memory = NULL;
 int itetable_hash_memory_size = 0;
 int itetable_hash_memory_mask = 0;
 
-void itetable_alloc_node(ITENode **node, int v, BDDNode *r, BDDNode *e, BDDNode *cached_ite);
+inline void 
+itetable_alloc_node(ITENode **node, int v, BDDNode *r, BDDNode *e, BDDNode *cached_ite);
 
 void itetable_alloc_pool(int pool)
 {
