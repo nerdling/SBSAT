@@ -1005,7 +1005,7 @@ BDDNode *ite_x_y_ny(BDDNode *x, BDDNode *y)
    return find_or_add_node(v, r, e);
 }
 
-BDDNode *ite (BDDNode * x, BDDNode * y, BDDNode * z) {
+BDDNode *ite(BDDNode * x, BDDNode * y, BDDNode * z) {
    if (x == true_ptr) return y;
    if (x == false_ptr) return z;
 
@@ -1018,7 +1018,12 @@ BDDNode *ite (BDDNode * x, BDDNode * y, BDDNode * z) {
       if(z == false_ptr) return false_ptr;
       return ite_x_F_z(x, z);
 	}
-	
+
+   if (z == true_ptr) {
+      return ite_x_y_T(x, y);
+   } else if (z == false_ptr) {
+      return ite_x_y_F(x, y);
+   }
 	//int v = top_variable(x, y, z);
    int v;
    BDDNode * r;
@@ -1032,8 +1037,8 @@ BDDNode *ite (BDDNode * x, BDDNode * y, BDDNode * z) {
             r = ite_x_y_ny(x->thenCase, y);
             e = ite_x_y_ny(x->elseCase, y);
          } else {
-            r = ite(x->thenCase, y, z);
-            e = ite(x->elseCase, y, z);
+            r = ite(x->thenCase, y, z); // <----
+            e = ite(x->elseCase, y, z); // <----
          }
       } else if (x->variable == z->variable) {
          v = x->variable;
@@ -1044,8 +1049,8 @@ BDDNode *ite (BDDNode * x, BDDNode * y, BDDNode * z) {
 				r = ite_x_y_T(x->thenCase, y);
 				e = ite_x_y_T(x->elseCase, y);
 			} else {			
-				r = ite(x->thenCase, y, z->thenCase);
-				e = ite(x->elseCase, y, z->elseCase);
+				r = ite(x->thenCase, y, z->thenCase); // <----
+				e = ite(x->elseCase, y, z->elseCase); // <----
 			}
       } else {
          v = z->variable;
@@ -1056,8 +1061,8 @@ BDDNode *ite (BDDNode * x, BDDNode * y, BDDNode * z) {
             r = ite_x_F_z(x, z->thenCase);
 				e = ite_x_F_z(x, z->elseCase);
 			} else {
-				r = ite(x, y, z->thenCase);
-				e = ite(x, y, z->elseCase);
+				r = ite(x, y, z->thenCase); // <----
+				e = ite(x, y, z->elseCase); // <----
 			}
       }
    } else if (y->variable < z->variable) {
@@ -1069,8 +1074,8 @@ BDDNode *ite (BDDNode * x, BDDNode * y, BDDNode * z) {
          r = ite_x_F_z(x, z->thenCase);
          e = ite_x_F_z(x, z->elseCase);
 		} else {		
-			r = ite(x, y, z->thenCase);
-			e = ite(x, y, z->elseCase);
+			r = ite(x, y, z->thenCase); // <----
+			e = ite(x, y, z->elseCase); // <----
 		}
    } else if (x->variable == z->variable) {
       if (y->variable == x->variable) {
@@ -1092,8 +1097,8 @@ BDDNode *ite (BDDNode * x, BDDNode * y, BDDNode * z) {
             r = ite_x_y_T(x->thenCase, y->thenCase);
             e = ite_x_y_T(x->elseCase, y->elseCase);
 			} else {
-				r = ite(x->thenCase, y->thenCase, z->thenCase);
-				e = ite(x->elseCase, y->elseCase, z->elseCase);
+				r = ite(x->thenCase, y->thenCase, z->thenCase); // <----
+				e = ite(x->elseCase, y->elseCase, z->elseCase); // <----
 			}
       } else {
 			v = y->variable;
@@ -1104,8 +1109,8 @@ BDDNode *ite (BDDNode * x, BDDNode * y, BDDNode * z) {
             r = ite_x_y_T(x, y->thenCase);
             e = ite_x_y_T(x, y->elseCase);
 			} else {
-				r = ite(x, y->thenCase, z);
-				e = ite(x, y->elseCase, z);
+				r = ite(x, y->thenCase, z); // <----
+				e = ite(x, y->elseCase, z); // <----
 			}
       }
    } else {
@@ -1118,8 +1123,8 @@ BDDNode *ite (BDDNode * x, BDDNode * y, BDDNode * z) {
             r = ite_x_F_z(x->thenCase, z);
             e = ite_x_F_z(x->elseCase, z);
 			} else {			
-				r = ite(x->thenCase, y->thenCase, z);
-				e = ite(x->elseCase, y->elseCase, z);
+				r = ite(x->thenCase, y->thenCase, z); // <----
+				e = ite(x->elseCase, y->elseCase, z); // <----
 			}
       } else if (y->variable == z->variable) {
 			if(y == z) return y;
@@ -1128,8 +1133,8 @@ BDDNode *ite (BDDNode * x, BDDNode * y, BDDNode * z) {
             r = ite_x_y_ny(x, y->thenCase);
             e = ite_x_y_ny(x, y->elseCase);
          } else {
-            r = ite(x, y->thenCase, z->thenCase);
-            e = ite(x, y->elseCase, z->elseCase);
+            r = ite(x, y->thenCase, z->thenCase); // <----
+            e = ite(x, y->elseCase, z->elseCase); // <----
          }
       } else {
 			v = y->variable;
@@ -1140,8 +1145,8 @@ BDDNode *ite (BDDNode * x, BDDNode * y, BDDNode * z) {
             r = ite_x_y_T(x, y->thenCase);
             e = ite_x_y_T(x, y->elseCase);
 			} else {
-				r = ite(x, y->thenCase, z);
-				e = ite(x, y->elseCase, z);
+				r = ite(x, y->thenCase, z); // <----
+				e = ite(x, y->elseCase, z); // <----
 			}
       }
    }
