@@ -161,5 +161,7 @@ extern char lemma_out_file[128];
 extern char lemma_in_file[128];
 
 extern int _bdd_pool_size;
+extern int nNumAutarkies;
+extern int autarky;
 
 #endif

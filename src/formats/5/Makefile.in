@@ -274,8 +274,7 @@ distclean-depend:
 	-rm -rf ./$(DEPDIR)
 
 .cc.o:
-@am__fastdepCXX_TRUE@	@echo Compiling $*
-@am__fastdepCXX_TRUE@	@if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" \
+@am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" \
 @am__fastdepCXX_TRUE@	  -c -o $@ `test -f '$<' || echo '$(srcdir)/'`$<; \
 @am__fastdepCXX_TRUE@	then mv "$(DEPDIR)/$*.Tpo" "$(DEPDIR)/$*.Po"; \
 @am__fastdepCXX_TRUE@	else rm -f "$(DEPDIR)/$*.Tpo"; exit 1; \
@@ -286,8 +285,7 @@ distclean-depend:
 @am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ `test -f '$<' || echo '$(srcdir)/'`$<
 
 .cc.obj:
-@am__fastdepCXX_TRUE@	@echo Compiling $*
-@am__fastdepCXX_TRUE@	@if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" \
+@am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" \
 @am__fastdepCXX_TRUE@	  -c -o $@ `if test -f '$<'; then $(CYGPATH_W) '$<'; else $(CYGPATH_W) '$(srcdir)/$<'; fi`; \
 @am__fastdepCXX_TRUE@	then mv "$(DEPDIR)/$*.Tpo" "$(DEPDIR)/$*.Po"; \
 @am__fastdepCXX_TRUE@	else rm -f "$(DEPDIR)/$*.Tpo"; exit 1; \
@@ -432,18 +430,18 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
-	-rm -f libt5_a-cnf_g.h
-	-rm -f blif_s.cc
-	-rm -f libt5_a-blif_g.cc
-	-rm -f bdd_s.cc
-	-rm -f cnf_s.cc
-	-rm -f libt5_a-bdd_g.h
-	-rm -f libt5_a-blif_g.h
 	-rm -f libt5_a-trace_g.h
-	-rm -f libt5_a-trace_g.cc
-	-rm -f libt5_a-cnf_g.cc
+	-rm -f libt5_a-cnf_g.h
+	-rm -f libt5_a-blif_g.h
 	-rm -f libt5_a-bdd_g.cc
+	-rm -f libt5_a-bdd_g.h
+	-rm -f libt5_a-blif_g.cc
+	-rm -f libt5_a-trace_g.cc
+	-rm -f bdd_s.cc
+	-rm -f blif_s.cc
+	-rm -f libt5_a-cnf_g.cc
 	-rm -f trace_s.cc
+	-rm -f cnf_s.cc
 clean: clean-am
 
 clean-am: clean-binPROGRAMS clean-generic clean-noinstLIBRARIES \
