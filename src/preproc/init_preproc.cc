@@ -176,7 +176,6 @@ Init_Preprocessing()
 		}
 		if(sign==0) intnum = -intnum;
 		preset_bdd = ite_and(preset_bdd, ite_var(intnum));
-		
 		if(iter < str_length) preset_variables_string[iter] = ' ';
 	}
 
