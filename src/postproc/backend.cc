@@ -179,7 +179,9 @@ void getExInferences(int *original_variables, int oldnuminp) {
 	int numBDDs = nmbrFunctions;
 	DO_INFERENCES = 0; //don't call the other routine inside of ReBuildBDDx()
 	
-	delete [] length;
+	ite_free((void **)&length);
+	//delete [] length;
+
 	length = NULL;
 	int ret = Init_Preprocessing();
 	if(ret == TRIV_UNSAT) {
@@ -806,7 +808,9 @@ Verify_NoSolver(Tracer *tracer)
 	variablelist = NULL;
 	delete [] original_functions;
 	original_functions = NULL;
-	delete [] length;
+
+	ite_free((void **)&length);
+	//delete [] length;
 	length = NULL;
 }
 
