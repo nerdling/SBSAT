@@ -209,7 +209,7 @@ int ExQuantifyAnd () {
 						  d3_printf1("\b");
 						d3_printf2 ("*{%d}", i);
 						str_length = 0;// strlen(p);
-						//functions[j] = xquantify (functions[j], i);
+						functions[j] = xquantify (functions[j], i);
 						variablelist[i].true_false = 2;
 						SetRepeats(j);
 						while(x_infers!=NULL) {
