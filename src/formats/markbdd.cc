@@ -177,7 +177,7 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 					BDDNode *v1 = putite(intnum, bdd);
 					expect_integer = 0;
 					if (v1 != ite_var (v1->variable)) {
-						fprintf (stderr, "\nKeyword 'initial_branch' needs a positive integer after a '%' (%s)...exiting:%d\n", macros, markbdd_line);
+						fprintf (stderr, "\nKeyword 'initial_branch' needs a positive integer after a '%%' (%s)...exiting:%d\n", macros, markbdd_line);
 						exit (1);
 					}
 					//Need to attach to initbranch_vars and handle later once all variables
