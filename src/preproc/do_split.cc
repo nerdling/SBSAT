@@ -150,7 +150,6 @@ int Split_Large () {
 		}
 		
 		if (functionType[j] == UNSURE && length[j] > k_size) {
-			/*			
 			//d3_printf2("\n%d: ", j);
 			//printBDD(functions[j]);
 			//d3_printf1("\n");
@@ -213,7 +212,6 @@ int Split_Large () {
 				 default: break;
 				}
 			 }
-		*/
 		}
 		if (functionType[j] == UNSURE && length[j] > k_size) {
 			/*				
