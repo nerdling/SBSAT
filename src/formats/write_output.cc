@@ -75,7 +75,7 @@ write_output (char formatout, Tracer * &tracer)
               break;
 
     default:
-      fprintf (stderr, "Usage: ite -formatout [inputfile [outputfile]]\n");
+      fprintf (stderr, "Usage: sbsat -formatout [inputfile [outputfile]]\n");
       fprintf (stderr, "Problem: Unknown Output Format\n");
       exit (1);
     }

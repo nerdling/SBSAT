@@ -681,7 +681,7 @@ show_help()
 
    fprintf (stdhelp, "%s\n", DESCRIPTION);
    fprintf (stdhelp, 
-         "Usage: ite [OPTIONS]... [inputfile] [outputfile]\n\n");
+         "Usage: sbsat [OPTIONS]... [inputfile] [outputfile]\n\n");
    fprintf (stdhelp, 
          "Options:\n");
 
