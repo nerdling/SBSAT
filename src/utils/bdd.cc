@@ -88,12 +88,6 @@ BDDNode * mitosis (BDDNode * bdd, int *structureBDD, int *newBDD)
    return ite (ite_var (v), r, e);
 }
 
-int countnodes(BDDNode *f) {
-   if(IS_TRUE_FALSE(f))
-      return 0;
-   return (countnodes(f->thenCase) + countnodes(f->elseCase));	
-}
-
 BDDNode *MinMaxBDD(int *vars, int min, int max, int num_left, int set_true) {
 	//fprintf(stderr, "v=%d min=%d max=%d num_left=%d set_true=%d\n", vars[num_left-1], min, max, num_left, set_true);
 	if (num_left+set_true < min) return false_ptr;
@@ -109,18 +103,52 @@ BDDNode *MinMaxBDD(int *vars, int min, int max, int num_left, int set_true) {
 	return find_or_add_node (v, r, e);
 }
 
+int countnodes(BDDNode *f) {
+   if(IS_TRUE_FALSE(f))
+      return 0;
+   return (countnodes(f->thenCase) + countnodes(f->elseCase));	
+}
 
-void unmark (BDDNode * bdd)
-{
-   if (IS_TRUE_FALSE(bdd))
-      return;
+int mark_trues(BDDNode *f) {
+	if (f->t_var > -1)
+		return f->t_var;
+	f->t_var = mark_trues(f->thenCase);
+   f->t_var += mark_trues(f->elseCase);
+   return f->t_var;
+}
 
-   //   if(bdd->t_var == 0) return; //Slower or faster?
-   bdd->t_var = 0;
-   unmark (bdd->thenCase);
-   unmark (bdd->elseCase);
+void unmark (BDDNode * f) {
+   if (IS_TRUE_FALSE(f))
+	  return;
+	if(f->t_var == -1) return; //Slower or faster?
+   f->t_var = -1;
+   unmark (f->thenCase);
+   unmark (f->elseCase);
    return;
 }
+
+void Fill_Density() {
+	for(int x = 0; x < nmbrFunctions; x++)
+	  unmark(functions[x]);
+	true_ptr->t_var = 1;
+	false_ptr->t_var = 0;
+	for(int x = 0; x < nmbrFunctions; x++) {
+		functions[x]->t_var = mark_trues(functions[x]);
+	}
+}
+
+/*
+int HammingDistance (BDDNode *f, BDDNode *c) {
+	if(f == true_ptr && c == true_ptr) return 0;
+	if(c == false_ptr) return -1;
+	//Could (should) store hamming distance on nodes.
+	//if(c->hamming > -2)
+	
+	
+	
+	
+}
+*/
 
 BDDNode * f_apply (BDDNode * f, BDDNode ** x)
 {

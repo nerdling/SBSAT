@@ -68,6 +68,9 @@
 #define TRUE 1
 #define FALSE 0
 
+//#define USE_BRITTLE
+#define USE_FALSE_PATHS
+
 #define MAX_NODES_PER_BDD 5000
 
 static int scratch;
@@ -80,9 +83,12 @@ int numliterals;
 
 int **clause;			/* clauses to be satisfied */
 
-dualintlist *previousState;  /* records which BDDs are true, and which are false */
-                         /* along with which variables changed the makecount(-) */
-                         /* or breakcount(+) */
+float *brittlecount;   /* records the brittleness a BDD changes to by flipping a var */
+
+floatlist *previousBrittle;
+dualintlist *previousState; /* records which BDDs are true, and which are false */
+                            /* along with which variables changed the makecount(-) */
+                            /* or breakcount(+) */
 
 int *falseBDDs; 		/* clauses which are false */
 int *wherefalse;  	/* where each clause is listed in false */
@@ -127,7 +133,7 @@ long int numflip;		/* number of changes so far */
 long int numnullflip;		/*  number of times a clause was picked, but no  */
 				/*  variable from it was flipped  */
 int numrun = BIG;
-int cutoff = 50000;
+int cutoff = 10000000;
 int base_cutoff = 1000000;
 int target = 0;
 int numtry = 0;			/* total attempts at solutions */
@@ -289,8 +295,16 @@ int walkSolve()
 			numflip+=picknoveltyplus();
 			flipatoms();
 			update_statistics_end_flip();
+			if (nCtrlC) {
+				d3_printf1("Breaking out of BDD WalkSAT\n");
+				break;
+			}
 		}
 		update_and_print_statistics_end_try();
+		if (nCtrlC) {
+			nCtrlC = 0;
+			break;
+		}
 	}
 	expertime = get_runtime() - expertime;
 	print_statistics_final();
@@ -301,112 +315,127 @@ int walkSolve()
 
 void initprob(void)
 {
-  //Number of variables in each BDD.
-  //Number of times each variable occurs, (per node or per BDD or per 2^level????)
-  //Set up an array of pointers where index 1 is variable, index 2 is the BDD it occurs in.
-  
-  numvars = numinp = getNuminp();
-  numBDDs = nmbrFunctions;
-  
-  atom = new int[numvars+1];
-  lowatom = new int[numvars+1];
-  solution = new int[numvars+1];
-  
-  occurence = new intlist[numvars+1];
-  wlength = new int[numBDDs+1];
-  wvariables = new intlist[numBDDs+1];
-  int *tempmem = new int[numvars+1];
-  int *tempint = new int[MAX_NODES_PER_BDD];
-  
-  changed = new int[numvars+1];
-  breakcount = new int[numvars+1];
-  makecount = new int[numvars+1];	
-  previousState = new dualintlist[numBDDs+1]; //intlist[numBDDs+1];
-  wherefalse = new int[numBDDs+1];
-  falseBDDs = new int[numBDDs+1];
-  varstoflip = new int[MAX_NODES_PER_BDD];
-  
-  for(int x = 0; x < numvars+1; x++)
-    tempmem[x] = 0;
-  
-  for(int x = 0; x < numBDDs; x++) {
-    previousState[x].num = NULL;
-    previousState[x].count = NULL;
-    long y = 0;
-    unravelBDD (&y, tempint, functions[x]);
-    qsort (tempint, y, sizeof (int), compfunc);
-    if (y != 0) {
-      int v = 0;
-      for (int i = 1; i < y; i++) {
-	v++;
-	if (tempint[i] == tempint[i-1])
-	  v--;
-	tempint[v] = tempint[i];
-      }
-      y = v+1;
-    }
-    
-    wlength[x] = y;
-    wvariables[x].num = new int[y+1];	//(int *)calloc(y+1, sizeof(int));
-    for (int i = 0; i < y; i++) {
-      wvariables[x].num[i] = tempint[i];
-      tempmem[tempint[i]]++;
-    }
-  }
-  delete tempint;
-  
-  for (int x = 0; x < numvars+1; x++)
-    {
-      occurence[x].num = new int[tempmem[x]+1];
-      occurence[x].length = 0;
-    }
-  delete tempmem;
-  
-  for (int x = 0; x < numBDDs; x++)
-    {
-      for (int i = 0; i < wlength[x]; i++)
-	{
-	  occurence[wvariables[x].num[i]].num[occurence[wvariables[x].num[i]].length] = x;
-	  occurence[wvariables[x].num[i]].length++;
+	//Number of variables in each BDD.
+	//Number of times each variable occurs, (per node or per BDD or per 2^level????)
+	//Set up an array of pointers where index 1 is variable, index 2 is the BDD it occurs in.
+	
+	numvars = numinp = getNuminp();
+	numBDDs = nmbrFunctions;
+	
+	atom = new int[numvars+1];
+	lowatom = new int[numvars+1];
+	solution = new int[numvars+1];
+	
+	occurence = new intlist[numvars+1];
+	wlength = new int[numBDDs+1];
+	wvariables = new intlist[numBDDs+1];
+	int *tempmem = new int[numvars+1];
+	int *tempint = new int[MAX_NODES_PER_BDD];
+	
+	changed = new int[numvars+1];
+	breakcount = new int[numvars+1];
+	makecount = new int[numvars+1];	
+	previousState = new dualintlist[numBDDs+1]; //intlist[numBDDs+1];
+	brittlecount = new float[numvars+1];
+	previousBrittle = new floatlist[numBDDs+1];
+	wherefalse = new int[numBDDs+1];
+	falseBDDs = new int[numBDDs+1];
+	varstoflip = new int[MAX_NODES_PER_BDD];
+	
+	for(int x = 0; x < numvars+1; x++) {
+		brittlecount[x] = 0;
+		tempmem[x] = 0;
 	}
-    }
-  
-  //Need "variables" for later! Don't delete!
-  
-  //occurence is done.
-  //length is done.
+	
+	for(int x = 0; x < numBDDs; x++) {
+		long y = 0;
+		unravelBDD (&y, tempint, functions[x]);
+		qsort (tempint, y, sizeof (int), compfunc);
+		if (y != 0) {
+			int v = 0;
+			for (int i = 1; i < y; i++) {
+				v++;
+				if (tempint[i] == tempint[i-1])
+				  v--;
+				tempint[v] = tempint[i];
+			}
+			y = v+1;
+		}
+		
+		wlength[x] = y;
+		//previousState[x].num = NULL;
+		//previousState[x].count = NULL;
+		previousState[x].num = new int[wlength[x]+2];
+		previousState[x].count = new int[wlength[x]+2];
+		previousBrittle[x].num = new int[wlength[x]+2];
+		previousBrittle[x].count = new float[wlength[x]+2];
+		wvariables[x].num = new int[y+1];	//(int *)calloc(y+1, sizeof(int));
+		for (int i = 0; i < y; i++) {
+			wvariables[x].num[i] = tempint[i];
+			tempmem[tempint[i]]++;
+		}
+	}
+	delete tempint;
+	
+	for (int x = 0; x < numvars+1; x++)
+	  {
+		  occurence[x].num = new int[tempmem[x]+1];
+		  occurence[x].length = 0;
+	  }
+	delete tempmem;
+	
+	for (int x = 0; x < numBDDs; x++)
+	  {
+		  for (int i = 0; i < wlength[x]; i++)
+			 {
+				 occurence[wvariables[x].num[i]].num[occurence[wvariables[x].num[i]].length] = x;
+				 occurence[wvariables[x].num[i]].length++;
+			 }
+	  }
+	
+	//Need "variables" for later! Don't delete!
+	
+	//occurence is done.
+	//length is done.
+	
+	Fill_Density(); //Each BDDNode now has the number of True's below it stored.
+
 }
 
 void freemem(void)
 {
-  delete atom;
-  delete lowatom;
-  delete solution;
-  
-  for (int x = 0; x < numvars+1; x++)
-    delete occurence[x].num;
-  delete occurence;
-
-  for (int x = 0; x < numBDDs; x++)
-    delete wvariables[x].num;
-  delete variables;
-
-  delete wlength;
-  
-  delete changed;
-  delete breakcount;
-  delete makecount;
-
-  for (int x = 0; x < numBDDs; x++) {
-	  delete previousState[x].num;
-	  delete previousState[x].count;
-  }
-
-  delete previousState;
-
-  delete wherefalse;
-  delete falseBDDs;
-  delete varstoflip;
+	delete atom;
+	delete lowatom;
+	delete solution;
+	
+	for (int x = 0; x < numvars+1; x++)
+	  delete occurence[x].num;
+	delete occurence;
+	
+	for (int x = 0; x < numBDDs; x++)
+	  delete wvariables[x].num;
+	delete variables;
+	
+	delete wlength;
+	
+	delete changed;
+	delete breakcount;
+	delete makecount;
+	delete brittlecount;
+	
+	for (int x = 0; x < numBDDs; x++) {
+		delete previousState[x].num;
+		delete previousState[x].count;
+		delete previousBrittle[x].num;
+		delete previousBrittle[x].count;
+	}
+	
+	delete previousState;
+	delete previousBrittle;
+		
+	delete wherefalse;
+	delete falseBDDs;
+	delete varstoflip;
 }
 
 void initialize_statistics(void)
@@ -574,81 +603,140 @@ int verifyunsat(int i)
 	return 1;
 }
 
+void updateBDDCounts(int i) {
+	BDDNode *f = functions[i];
+	int j = 0, k = 0;
+	float top_t_var = f->t_var;
+	int count = 0;
+#ifdef USE_FALSE_PATHS
+	count = CountFalseBDD(f);
+#else
+	if(!traverseBDD(f)) count = 1;
+#endif
+	if(count==0) { //BDD is SAT
+#ifndef USE_FALSE_PATHS
+		previousState[i].num[0] = f->variable;
+#endif
+		while(!IS_TRUE_FALSE(f)) {
+			top_t_var = f->t_var;
+			if(atom[f->variable] == 1) {
+#ifdef USE_FALSE_PATHS
+				int false_count = CountFalseBDD(f->elseCase);
+				if(false_count > 0) { 
+					breakcount[f->variable]+=false_count;
+					previousState[i].count[j] = false_count;
+					previousState[i].num[j++] = f->variable;
+				}
+#endif
+#ifdef USE_BRITTLE
+				previousBrittle[i].count[k] = ((float)f->elseCase->t_var - (float)f->thenCase->t_var)/top_t_var;
+				previousBrittle[i].num[k++] = f->variable;
+				brittlecount[f->variable]+=((float)f->elseCase->t_var - (float)f->thenCase->t_var)/top_t_var;
+#endif
+				f = f->thenCase;
+			} else {
+#ifdef USE_FALSE_PATHS
+				int false_count = CountFalseBDD(f->thenCase);
+				if(false_count > 0) {
+					breakcount[f->variable]+=false_count;
+					previousState[i].count[j] = false_count;
+					previousState[i].num[j++] = f->variable;
+				}
+#endif
+#ifdef USE_BRITTLE
+				previousBrittle[i].count[k] = ((float)f->thenCase->t_var - (float)f->elseCase->t_var)/top_t_var;
+				previousBrittle[i].num[k++] = f->variable;
+				brittlecount[f->variable]+=((float)f->thenCase->t_var - (float)f->elseCase->t_var)/top_t_var;
+#endif
+				f = f->elseCase;
+			}
+		}
+#ifdef USE_FALSE_PATHS
+		previousState[i].num[j] = 0;
+#endif
+#ifdef USE_BRITTLE
+		previousBrittle[i].num[k] = 0;
+#endif
+	} else { //BDD is UNSAT
+#ifndef USE_FALSE_PATHS
+		previousState[i].num[0] = -(f->variable);
+#endif
+		while(!IS_TRUE_FALSE(f)) {
+			top_t_var = f->t_var;
+			if(atom[f->variable] == 1) {
+#ifdef USE_FALSE_PATHS
+				int false_count = CountFalseBDD(f->elseCase);
+				if(false_count != count) {
+					makecount[f->variable]+=count-false_count;
+					previousState[i].count[j] = count-false_count;
+					previousState[i].num[j++] = -(f->variable);
+				}
+#endif
+#ifdef USE_BRITTLE
+				previousBrittle[i].count[k] = ((float)f->elseCase->t_var - (float)f->thenCase->t_var)/top_t_var;
+				previousBrittle[i].num[k++] = f->variable;
+				brittlecount[f->variable]+=((float)f->elseCase->t_var - (float)f->thenCase->t_var)/top_t_var;
+#endif
+				f = f->thenCase;
+			} else {
+#ifdef USE_FALSE_PATHS
+				int false_count = CountFalseBDD(f->thenCase);
+				if(false_count != count) {
+					makecount[f->variable]+=count-false_count;
+					previousState[i].count[j] = count-false_count;
+					previousState[i].num[j++] = -(f->variable);
+				}
+#endif
+#ifdef USE_BRITTLE
+				previousBrittle[i].count[k] = ((float)f->thenCase->t_var - (float)f->elseCase->t_var)/top_t_var;
+				previousBrittle[i].num[k++] = f->variable;
+				brittlecount[f->variable]+=((float)f->thenCase->t_var - (float)f->elseCase->t_var)/top_t_var;
+#endif
+				f = f->elseCase;
+			}
+		}
+#ifdef USE_FALSE_PATHS
+		previousState[i].num[j] = 0;
+#endif
+#ifdef USE_BRITTLE
+		previousBrittle[i].num[k] = 0;
+#endif
+	}
+}
+
 void init_CountFalses(char initfile[], int initoptions)
 {
 	int i;
-	int j;
-
+	
 	numfalse = 0;
-
-	for(i = 1;i < numvars+1;i++)
+	
+	for(i = 0;i < numvars+1;i++)
 	  {
 		  changed[i] = -BIG;
 		  breakcount[i] = 0;
 		  makecount[i] = 0;
+		  brittlecount[i] = 0;
 	  }
 	
 	for(i = 1;i < numvars+1;i++)
 	  atom[i] = random()%2;  //This makes a random truth assignment
-		
-	/* Initialize breakcount, makecount, and previousState in the following: */
-
+	
+	/* Initialize breakcount, makecount, brittlecount, previousBrittle, and previousState in the following: */
+	
 	for(i = 0;i < numBDDs;i++) {
-		BDDNode *f = functions[i];
-		if(previousState[i].num != NULL) delete [] previousState[i].num;
-		previousState[i].num = new int[wlength[i]+2];
-		if(previousState[i].num != NULL) delete [] previousState[i].count;
-		previousState[i].count = new int[wlength[i]+2];
-		//Previous state should be initialized before this function
-		//That way I don't have to keep deleting it and reinitializing it
-		int count = CountFalseBDD(f);
-		if(count==0) { //BDD is SAT
-			j = 0;
-			while(!IS_TRUE_FALSE(f)) {
-				if(atom[f->variable] == 1) {
-					int false_count = CountFalseBDD(f->elseCase);
-					breakcount[f->variable]+=false_count;
-					previousState[i].count[j] = false_count;
-					if(false_count > 0) previousState[i].num[j++] = f->variable;
-					f = f->thenCase;
-				} else {
-					int false_count = CountFalseBDD(f->thenCase);
-					breakcount[f->variable]+=false_count;
-					previousState[i].count[j] = false_count;
-					if(false_count > 0) previousState[i].num[j++] = f->variable;
-					f = f->elseCase;
-				}
-			}
-			previousState[i].num[j] = 0;
-		} else { //BDD is UNSAT
+		updateBDDCounts(i);
+		if(!traverseBDD(functions[i])) {
 			wherefalse[i] = numfalse;
 			falseBDDs[numfalse] = i;
 			numfalse++;
-			j = 0;
-			while(!IS_TRUE_FALSE(f)) {
-				if(atom[f->variable] == 1) {
-					int false_count = CountFalseBDD(f->elseCase);
-					makecount[f->variable]+=count-false_count;
-					previousState[i].count[j] = count-false_count;
-					if(false_count != count) previousState[i].num[j++] = -(f->variable);
-					f = f->thenCase;
-				} else {
-					int false_count = CountFalseBDD(f->thenCase);
-					makecount[f->variable]+=count-false_count;
-					previousState[i].count[j] = count-false_count;
-					if(false_count != count) previousState[i].num[j++] = -(f->variable);
-					f = f->elseCase;
-				}
-			}
-			previousState[i].num[j] = 0;
 		}
 	}
-
-//	for(int x = 1; x < numvars+1; x++)
-//	  {
-//		  fprintf(stderr, "\n%d: bc=%d, mc=%d, diff=%d", x, breakcount[x], makecount[x], (makecount[x] - breakcount[x]));
-//	  }
-//	fprintf(stderr, "\n");
+	
+	//	for(int x = 1; x < numvars+1; x++)
+	//	  {
+	//		  fprintf(stderr, "\n%d: bc=%d, mc=%d, diff=%d", x, breakcount[x], makecount[x], (makecount[x] - breakcount[x]));
+	//	  }
+	//	fprintf(stderr, "\n");
 	if (hamming_flag) { //Doesn't do this, hamming_flag == false
 		hamming_distance = calc_hamming_dist(atom, hamming_target);
 		fprintf(hamming_fp, "0 %i\n", hamming_distance);
@@ -674,8 +762,10 @@ void update_statistics_start_try(void)
 
 int picknoveltyplus(void)
 {
-	int var, diff, birthdate;
-	int youngest=0, youngest_birthdate, best=0, second_best=0, best_diff, second_best_diff;
+	int var, birthdate;
+	float diff;
+	int youngest=0, youngest_birthdate, best=0, second_best=0;
+	float best_diff, second_best_diff;
 	int tofix, BDDsize, i;
 	
 	tofix = falseBDDs[random()%numfalse]; //Maybe in the future not so random...
@@ -703,7 +793,13 @@ int picknoveltyplus(void)
 		
 		for(i = 0; i < BDDsize; i++){
 			var = wvariables[tofix].num[i];
-			diff = makecount[var] - breakcount[var];
+			diff = (float)makecount[var] - (float)breakcount[var];
+			//diff = brittlecount[var]/(float)occurence[var].length;
+			//diff = brittlecount[var];
+		   //diff = ((float)makecount[var] - (float)breakcount[var]) + (brittlecount[var]/(float)occurence[var].length);
+			//diff = ((float)makecount[var] - (float)breakcount[var]) + brittlecount[var];
+			//fprintf(stderr, "{%f:", diff);
+			//fprintf(stderr, "%f}", brittlecount[var]);
 			birthdate = changed[var];
 			if (birthdate > youngest_birthdate){
 				youngest_birthdate = birthdate;
@@ -751,7 +847,7 @@ void print_current_assign(void) {
 
 void flipatoms()
 {
-	int i, j;			/* loop counter */
+	int i, j, k;			/* loop counter */
 	//int toenforce;		/* literal to enforce */
 	register int cli;
 	int numocc;
@@ -768,7 +864,7 @@ void flipatoms()
 			return;
 		}
 		flipiter++;
-		
+
 		changed[toflip] = numflip;
 		//if(atom[toflip] > 0)
 		//  toenforce = -toflip;
@@ -792,18 +888,22 @@ void flipatoms()
 			//cli = occurence[toflip].num[i];
 			cli = *(occptr++);
 			
-			BDDNode *f = functions[cli];
-
 			//Removing the influence every variable in this BDD has on this BDD.
+#ifdef USE_FALSE_PATHS
 			for(j = 0; previousState[cli].num[j]!=0; j++) {
-				if(previousState[cli].num[j] > 0) 
+				if(previousState[cli].num[j] > 0) {
 				  breakcount[previousState[cli].num[j]]-=previousState[cli].count[j];
-				else
+				} else {
 				  makecount[-(previousState[cli].num[j])]-=previousState[cli].count[j];
+				}
 			}
-
-			int count = CountFalseBDD(f);
-			if(count==0) {
+#endif
+#ifdef USE_BRITTLE
+			for(k = 0; previousBrittle[cli].num[k]!=0; k++) {
+				brittlecount[previousBrittle[cli].num[k]]-=previousBrittle[cli].count[k];				  
+			}
+#endif
+			if(traverseBDD(functions[cli])) {
 				//BDD is SAT
 				if(previousState[cli].num[0] < 0) {
 					numfalse--;
@@ -811,49 +911,16 @@ void flipatoms()
 					falseBDDs[wherefalse[cli]] = falseBDDs[numfalse];
 					wherefalse[falseBDDs[numfalse]] = wherefalse[cli];
 				}
-				j = 0;
-				while(!IS_TRUE_FALSE(f)) {
-					if(atom[f->variable] == 1) {
-						int false_count = CountFalseBDD(f->elseCase);
-						breakcount[f->variable]+=false_count;
-						previousState[cli].count[j] = false_count;
-						if(false_count > 0) previousState[cli].num[j++] = f->variable;
-						f = f->thenCase;
-					} else {
-						int false_count = CountFalseBDD(f->thenCase);
-						breakcount[f->variable]+=false_count;
-						previousState[cli].count[j] = false_count;
-						if(false_count > 0) previousState[cli].num[j++] = f->variable;
-						f = f->elseCase;
-					}
-				}
-				previousState[cli].num[j] = 0;
 			} else {
-				//BDD is UNSAT
-				if(previousState[cli].num[0] > 0) {
-					//				fprintf(stderr, "adding fB=%d to spot %d\n", cli, numfalse);
-					falseBDDs[numfalse] = cli;
-					wherefalse[cli] = numfalse;
-					numfalse++;
-				}
-				j = 0;
-				while(!IS_TRUE_FALSE(f)) {
-					if(atom[f->variable] == 1) {
-						int false_count = CountFalseBDD(f->elseCase);
-						makecount[f->variable]+=count-false_count;
-						previousState[cli].count[j] = count-false_count;
-						if(false_count != count) previousState[cli].num[j++] = -(f->variable);
-						f = f->thenCase;
-					} else {
-						int false_count = CountFalseBDD(f->thenCase);
-						makecount[f->variable]+=count-false_count;
-						previousState[cli].count[j] = count-false_count;
-						if(false_count != count) previousState[cli].num[j++] = -(f->variable);
-						f = f->elseCase;
-					}
-				}
-				previousState[cli].num[j] = 0;
+				if(previousState[cli].num[0] > 0) 
+				  {
+					  //fprintf(stderr, "adding fB=%d to spot %d\n", cli, numfalse);
+					  falseBDDs[numfalse] = cli;
+					  wherefalse[cli] = numfalse;
+					  numfalse++;
+				  }
 			}
+			updateBDDCounts(cli);
 		}
 		//if(countunsat()!=numfalse) assert(0);
 		//	verifymbcount();
