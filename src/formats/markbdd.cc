@@ -350,7 +350,7 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 		//      struct BDDNodeStruct **functions = new BDDNode*[50];      
 		for (int x = 1; x <= tempint[0]; x++) {
 			expect_integer = 1;
-		  newBDD[x] = (putite (intnum, bdd))->variable;
+			newBDD[x] = (putite (intnum, bdd))->variable;
 		}
 		expect_integer = 0;
 
