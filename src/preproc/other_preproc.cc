@@ -388,40 +388,35 @@ infer *GetInfer (long *y, int *tempint, BDDNode * func)
 	return NULL;
 }
 
-void
-cheat_replaceall (int *&length,
-		  store * &variables, varinfo * &variablelist)
-{
-  //Get the max number of input variables
-  int tempint[5000];
-  long y, v, i;
-  for (int x = 0; x < numout; x++)
-    {
-      y = 0;
-      unravelBDD (&y, tempint, functions[x]);
+void cheat_replaceall (int *&length, store * &variables, varinfo * &variablelist) {
+	//Get the max number of input variables
+	int tempint[5000];
+	long y, v, i;
+	for (int x = 0; x < numout; x++) {
+		y = 0;
+		unravelBDD (&y, tempint, functions[x]);
       qsort (tempint, y, sizeof (int), compfunc);
-      if (y != 0)
-	{
-	  v = 0;
-	  for (i = 1; i < y; i++)
-	    {
-	      v++;
-	      if (tempint[i] == tempint[i - 1])
-		v--;
-	      tempint[v] = tempint[i];
-	    }
-	  y = v + 1;
-	}
-      length[x] = y;
-      if (variables[x].num != NULL)
-	delete variables[x].num;
+      if (y != 0) {
+			v = 0;
+			for (i = 1; i < y; i++) {
+				v++;
+				if (tempint[i] == tempint[i - 1])
+				  v--;
+				tempint[v] = tempint[i];
+			}
+			y = v + 1;
+		}
+		length[x] = y;
+		if (variables[x].num != NULL)
+		  delete variables[x].num;
       variables[x].num = new int[y + 1];	//(int *)calloc(y+1, sizeof(int));
       for (i = 0; i < y; i++)
-	variables[x].num[i] = tempint[i];
-      assert(0); // .min = ; .max = ;
-    }
-
-  numinp = 0;
+		  variables[x].num[i] = tempint[i];
+		variables[x].min = tempint[0];
+		variables[x].max = tempint[y-1];
+	}
+	
+	numinp = 0;
   for (int x = 0; x < numout; x++)
     {
       if (variables[x].num[length[x] - 1] > numinp)
