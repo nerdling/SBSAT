@@ -457,7 +457,14 @@ InitBrancher()
             9, "arrPrevSumRHSUnknowns");
 
 
-      assert(arrJWeights);
+      if (nHeuristic == JOHNSON_HEURISTIC) {
+         assert(arrJWeights);
+         for (int i = 0; i < nNumSpecialFuncs; i++) {
+            for (int j=0; j<arrSpecialFuncs[i].rhsVbles.nNumElts; j++)
+               arrSumRHSUnknowns[i] += arrJWeights[arrSpecialFuncs[i].rhsVbles.arrElts[j]];
+         }
+      }
+
       for (int i = 0; i < nNumSpecialFuncs; i++) {
          arrPrevNumRHSUnknowns[i] =
          arrNumRHSUnknownsNew[i] =
@@ -466,9 +473,6 @@ InitBrancher()
          arrNumLHSUnknownsNew[i] =
          arrNumLHSUnknowns[i] = arrSpecialFuncs[i].nLHSVble > 0? 1: 0;
          arrSumRHSUnknowns[i] = 0;
-
-         for (int j=0; j<arrSpecialFuncs[i].rhsVbles.nNumElts; j++)
-            arrSumRHSUnknowns[i] += arrJWeights[arrSpecialFuncs[i].rhsVbles.arrElts[j]];
 
          assert(arrSolution[0]!=BOOL_UNKNOWN);
       }

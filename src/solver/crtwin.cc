@@ -144,8 +144,33 @@ crtwin_draw() //double fPrevEndTime, double fStartTime)
    }
    height = tgetnum("li");
    width = tgetnum("co");
-   printf("co=%d, li=%d \r", height, width);
+//   printf("co=%d, li=%d \r", height, width);
    fflush(stdout);
+}
+
+void
+DumpAllVarsToFile(char *filename)
+{
+   FILE *fout = fopen(filename, "w");
+   if (!fout) return;
+   for (int i=0; i<nNumVariables; i++) {
+      fprintf(fout, "%d ", i);
+      fprintf(fout, "%d %d %d %d %d %d ",
+            var_stat[i].chosen[0],
+            var_stat[i].chosen[1],
+            var_stat[i].backjumped[0],
+            var_stat[i].backjumped[1],
+            var_stat[i].infs[0],
+            var_stat[i].infs[1]);
+      if (arrHeurScores) {
+         fprintf(fout, "%f %f ",
+               arrHeurScores[i].Neg,
+               arrHeurScores[i].Pos
+               );
+      }
+      fprintf(fout, "\n");
+   }
+   fclose(fout);
 }
 
 void
@@ -157,10 +182,19 @@ dump_lemmas(char *_filename)
 }
 
 void
+dump_vars(char *_filename)
+{
+   char filename[128];
+   get_freefile(_filename, NULL, filename, 128);
+   DumpAllVarsToFile(filename);
+}
+
+void
 crtwin_cmd(char c)
 {
    switch(c) {
     case 'L': if (*lemma_out_file) dump_lemmas(lemma_out_file); break;
+    case 'V': if (*var_stat_file) dump_vars(var_stat_file); break;
     case '+': BACKTRACKS_PER_STAT_REPORT *= 2; break;
     case '-': BACKTRACKS_PER_STAT_REPORT /= 2; break;
     default: break;
@@ -178,6 +212,7 @@ crtwin(void) {
 #define PERIOD_DUMP_LEMMAS
 #ifdef PERIOD_DUMP_LEMMAS
    if (*lemma_out_file) dump_lemmas(lemma_out_file); 
+   if (*var_stat_file) dump_vars(var_stat_file); 
 #endif
 
    do {

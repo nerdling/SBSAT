@@ -74,7 +74,7 @@ main(int argc, char *argv[])
    ret = params_parse_cmd_line(argc, argv);
    if (ret != NO_ERROR) goto ExitNormal;
 	
-   if (DEBUG_LVL == 1) d1_printf2("%s ", inputfile);
+   if (DEBUG_LVL == 1) d1_printf3("%s %s ", ite_basename(inputfile), comment);
 	
    ret = ite_init();
    if (ret != NO_ERROR) goto ExitNormal;
@@ -250,8 +250,8 @@ ite_io_init()
     * open the input file 
     */
 
-   if (!strcmp(inputfile, "-")) { d2_printf1("Reading standard input....\n"); }
-   else { d2_printf2("Reading File %s ....\n", inputfile); }
+   if (!strcmp(inputfile, "-")) { d2_printf2("Reading standard input %s....\n", comment); }
+   else { d2_printf3("Reading File %s %s ....\n", inputfile, comment); }
 
 
    if (check_gzip(inputfile)) {

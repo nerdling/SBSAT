@@ -71,6 +71,8 @@ BackTrack()
          arrHeurScores[nInferredAtom].Neg /= 2;
       }
 #endif
+      if (nInferredAtom != 0) 
+         var_stat[nInferredAtom].backjumped[nInferredValue]++;
 
       // Pop the choice point stack.
       pChoicePointTop--;

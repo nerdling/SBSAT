@@ -42,6 +42,8 @@
 
 void ite_free(void * &ptr);
 void *ite_calloc(int x, int y, int dbg_lvl, char *for_what);
+char *ite_basename(char *filename);
+
 
 #define ITE_NEW_CATCH(x, desc) \
  try { x; } catch(...) { \

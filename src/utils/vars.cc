@@ -131,6 +131,8 @@ char lemma_in_file[128] = "";
 char csv_trace_file[128] = "";
 FILE *fd_csv_trace_file = NULL;
 
+char var_stat_file[128] = "";
+
 int _bdd_pool_size=1000000;
 
 varinfo *variablelist = NULL;
@@ -138,3 +140,4 @@ varinfo *variablelist = NULL;
 t_arrVarScores *arrVarScores = NULL;
 
 char brancher_presets[4096];
+char comment[1024];

@@ -42,6 +42,7 @@ int *arrSolver2IteVarMap=NULL;
 int *arrIte2SolverVarMap=NULL;
 int nIndepVars=0;
 int nDepVars=0;
+t_var_stat *var_stat=NULL;
 extern BacktrackStackEntry *arrBacktrackStack; 
 ITE_INLINE int RecordInitialInferences();
 
@@ -180,6 +181,8 @@ InitSolver()
   assert (nSolutionDep-nIndepVars-1 == nDepVars);
 
   gnMaxVbleIndex = nNumVariables; 
+
+  var_stat = (t_var_stat *)ite_calloc(nNumVariables, sizeof(t_var_stat), 9, "var_stat");
 
   d2_printf1 ("Initializing Smurf Factory data structs ...\n");
   InitLemmaSpacePool(0);

@@ -130,6 +130,12 @@ extern double *arrSumRHSUnknowns;
 extern double *arrSumRHSUnknownsNew;
 extern double *arrPrevSumRHSUnknowns;
 
+typedef struct {
+   int chosen[2];
+   int backjumped[2];
+   int infs[2];
+} t_var_stat;
+extern t_var_stat *var_stat;
 
 extern int compress_smurfs;
 

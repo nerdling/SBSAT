@@ -93,6 +93,7 @@ SelectNewBranchPoint()
    if (nInferredAtom == 0)
       proc_call_heuristic(&nInferredAtom, &nInferredValue);
 
+   var_stat[nInferredAtom].chosen[nInferredValue]++;
    assert(nInferredValue == BOOL_TRUE || nInferredValue == BOOL_FALSE);
    assert(arrSolution[nInferredAtom] == BOOL_UNKNOWN);
 

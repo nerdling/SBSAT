@@ -174,6 +174,8 @@ extern char lemma_in_file[128];
 extern char csv_trace_file[128];
 extern FILE *fd_csv_trace_file;
 
+extern char var_stat_file[128];
+
 extern int _bdd_pool_size;
 extern int autarky;
 
@@ -186,5 +188,6 @@ typedef struct {
 
 extern t_arrVarScores *arrVarScores;
 extern char brancher_presets[4096];
+extern char comment[1024];
 
 #endif

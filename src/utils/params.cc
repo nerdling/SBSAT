@@ -97,6 +97,8 @@ t_opt options[] = {
                "Verify solution"},
 { s_expected_result, "",  "expected-result", P_STRING, V(i:127,"127"), {""}, VAR_NORMAL, 0,
                "Report error if the result is not as specified\nOptions are SAT, UNSAT, TRIV_SAT, TRIV_UNSAT, SOLV_SAT and SOLV_UNSAT"},
+{ comment, "",  "comment", P_STRING, V(i:1023,"1023"), {""}, VAR_NORMAL, 0,
+               "Comment to appear next to the filename "},
 /*
 { &input_result_filename, "", "read-result-filename", P_STRING, 
 	       V(i:127,"127",}, V(s:,,""), VAR_NORMAL, 0,
@@ -227,6 +229,9 @@ t_opt options[] = {
 { csv_trace_file, "", "csv-trace-file", P_STRING, 
 		V(i:127,"127"), {""}, VAR_NORMAL, 0, 
                 "File to save execution trace in CSV format"},
+{ var_stat_file, "", "var-stat-file", P_STRING, 
+		V(i:127,"127"), {""}, VAR_NORMAL, 0, 
+                "File to save var stats"},
 { brancher_presets, "", "brancher-presets", P_STRING, 
 		V(i:4095,"4095"), {""}, VAR_NORMAL, 0, 
                 "Variables that are preset before the brancher is called\n([[=|!|#|+var|-var] ]*)"},

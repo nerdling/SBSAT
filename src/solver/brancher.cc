@@ -165,6 +165,8 @@ ITE_Deduce()
       int nInferredAtom = *(pInferenceQueueNextElt++);
       int nInferredValue = arrSolution[nInferredAtom];
 
+      var_stat[nInferredAtom].infs[nInferredValue]++;
+
       // Determine the potentially affected constraints.
       AffectedFuncsStruct *pAFS = arrAFS + nInferredAtom;
 
@@ -374,6 +376,8 @@ CheckFinalHooks()
 ITE_INLINE void
 InitBrancherX()
 {
+   assert(arrSolution[0]!=BOOL_UNKNOWN);
+
    if (nNumRegSmurfs) {
       memset(arrChangedSmurfs, 0, sizeof(int)*nNumRegSmurfs);
    }
@@ -389,12 +393,6 @@ InitBrancherX()
       arrPrevNumLHSUnknowns[i] =
          arrNumLHSUnknownsNew[i] =
          arrNumLHSUnknowns[i] = arrSpecialFuncs[i].nLHSVble > 0? 1: 0;
-      arrSumRHSUnknowns[i] = 0;
-
-      for (int j=0; j<arrSpecialFuncs[i].rhsVbles.nNumElts; j++)
-         arrSumRHSUnknowns[i] += arrJWeights[arrSpecialFuncs[i].rhsVbles.arrElts[j]];
-
-      assert(arrSolution[0]!=BOOL_UNKNOWN);
    }
 
    /* for restart */
@@ -443,8 +441,16 @@ InitBrancherX()
   pBacktrackTop = arrBacktrackStack;
   nBacktrackStackIndex = 1;
 
-  if (nHeuristic == JOHNSON_HEURISTIC)
+  if (nHeuristic == JOHNSON_HEURISTIC) {
+      for (int i = 0; i < nNumSpecialFuncs; i++) {
+         arrSumRHSUnknowns[i] = 0;
+
+         for (int j=0; j<arrSpecialFuncs[i].rhsVbles.nNumElts; j++)
+            arrSumRHSUnknowns[i] += arrJWeights[arrSpecialFuncs[i].rhsVbles.arrElts[j]];
+      }
+
      J_ResetHeuristicScores();
+  }
 
  //*(pInferenceQueueNextEmpty++) = 0;
 }
