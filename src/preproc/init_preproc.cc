@@ -381,6 +381,11 @@ Finish_Preprocessing()
 		  functionType[x] = PLAINOR;
    }
 
+	if(USE_AUTARKY_SMURFS)
+	  for(int x = 1; x <= numinp; x++)
+		 if(variablelist[x].true_false == 2)
+			variablelist[x].true_false=3;		  
+
    ite_free((void**)&bdd_tempint); bdd_tempint_max = 0;
 	ite_free((void**)&original_functionType);
 	ite_free((void**)&original_equalityVble);
