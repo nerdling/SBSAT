@@ -36,7 +36,7 @@ sym_init()
 void
 sym_free()
 {
-   for (int i=0; i< sym_table_idx; i++) {
+   for (int i=0; i<= sym_table_idx; i++) {
       if (sym_table[i] && sym_table[i]->name) {
          ite_free((void**)&sym_table[i]->name);
          ite_free((void**)&sym_table[i]);
@@ -283,7 +283,7 @@ tputsym(int sym_type)
 void
 print_symtable()
 {
-  for(int i=0;i<sym_table_idx;i++) {
+  for(int i=0;i <= sym_table_idx;i++) {
      symrec *ptr = getsym_i(i);
      if (ptr)
        printf("%d \"%s\" %d %d\n", i, (ptr->name?ptr->name:""), s_is_indep(ptr), independantVars[i]);
@@ -309,7 +309,7 @@ int
 sym_regex(t_myregex *rg)
 {
    assert(rg != NULL);
-   for(;rg->last_id < sym_table_idx; rg->last_id++)
+   for(;rg->last_id <= sym_table_idx; rg->last_id++)
    {
       symrec *ptr = getsym_i(rg->last_id);
       if (ptr && ptr->name &&
@@ -372,7 +372,7 @@ void
 sym_clear_all_flag()
 {
    int i;
-   for(i=2;i<sym_table_idx;i++)
+   for(i=1;i <= sym_table_idx;i++)
       sym_table[i]->flag = 0;
 }
 
@@ -380,7 +380,7 @@ int
 sym_all_int()
 {
    int i;
-   for(i=1;i<sym_table_idx;i++) {
+   for(i=1;i <= sym_table_idx;i++) {
       int num;
       if (sym_table[i] == NULL) continue;
       if (sym_table[i]->name == NULL) return 0;
