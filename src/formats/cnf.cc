@@ -217,7 +217,7 @@ void CNF_to_BDD(int cnf)
 	store *integers = new store[numout+2];
 	store *old_integers = new store[numout+2];
 
-	d3_printf1("Storing Inputs");
+	d3_printf1("Storing CNF Inputs");
 
 	int old_numout = numout;
 	//Get and store the CNF clauses from STDIN
@@ -932,34 +932,33 @@ cnf_process(store *integers, int num_minmax, minmax * min_max_store)
    } else {
       vars_alloc(numinp);
       functions_alloc(numout+num_minmax);
-
+		
       d3_printf2("Building unclustered BDDs - %ld\n", numout);
-
+		
       for(long x = 1; x < numout + 1; x++) {
-         if (x % 1000 == 0) 
-            d2_printf3("\rBuilding unclustered BDDs %ld/%ld ...       ", x, numout);
+         if (x % 1000 == 1)
+			  d2_printf3("\rBuilding unclustered BDDs %ld/%ld ...       ", x, numout);
          qsort(integers[x].num, integers[x].length, sizeof(int), abscompfunc);
          //qsort(integers[x].num, integers[x].length, sizeof(int), absrevcompfunc);
-	    functions[x-1] = false_ptr;
-	    //fprintf(stderr, "\n%d ", integers[x].num[0]);
-	    for(y = 0; y < integers[x].length; y++) {
-	      functions[x - 1] = ite_or (functions[x-1], ite_var(integers[x].num[y]));
-				//fprintf(stderr, "%d ", integers[x].num[y]);
-	    }
-	    functionType[x-1] = PLAINOR;	  
-	  }
-	  d3_printf2("Building MinMax BDDs - %d\n", num_minmax);
-	  for(int x = 0; x < num_minmax; x++) {
+			fprintf(stderr, "here");
+			functions[x-1] = false_ptr;
+			//fprintf(stderr, "\n%d ", integers[x].num[0]);
+			for(y = 0; y < integers[x].length; y++) {
+				functions[x - 1] = ite_or (functions[x-1], ite_var(integers[x].num[y]));
+				fprintf(stderr, "%d ", integers[x].num[y]);
+			}
+			functionType[x-1] = PLAINOR;	  
+		}
+		d3_printf2("Building MinMax BDDs - %d\n", num_minmax);
+		for(int x = 0; x < num_minmax; x++) {
          if (x % 1000 == 0) 
-            d2_printf3("\rBuilding MinMax BDDs %d/%d ...       ", x, num_minmax);
+			  d2_printf3("\rBuilding MinMax BDDs %d/%d ...       ", x, num_minmax);
          int set_true = 0;
          qsort(min_max_store[x].num, min_max_store[x].length, sizeof(int), abscompfunc);
-         functions[x+numout] = MinMaxBDD(min_max_store[x].num, min_max_store[x].min,
-               min_max_store[x].max, min_max_store[x].length,
-               set_true);
-     }
-     delete [] min_max_store;
-     numout = numout+num_minmax;
+         functions[x+numout] = MinMaxBDD(min_max_store[x].num, min_max_store[x].min, min_max_store[x].max, min_max_store[x].length, set_true);
+		}
+		delete [] min_max_store;
+		numout = numout+num_minmax;
    }
 	count = -1;
 	
@@ -974,7 +973,7 @@ cnf_process(store *integers, int num_minmax, minmax * min_max_store)
       if (functions[x] == true_ptr)
 		  count--;
 	}
-
+	
 	numout = count+1;
 	nmbrFunctions = numout;
 }	
@@ -1052,7 +1051,10 @@ DNF_to_BDD ()
       exit(1);
    }
    dnf_integers = (store*)ite_calloc(dnf_numout+1, sizeof(store), 9, "integers"); 
-   for(int x = 0; x < dnf_numout; x++) {
+	d3_printf1("Storing DNF Inputs");
+	for(int x = 0; x < dnf_numout; x++) {
+		if (x%1000 == 1)
+		  d2_printf3("\rReading DNF %d/%ld ... ", x, dnf_numout);
       y = 0;
       do {
          if (dnf_integers[x].num_alloc <= y) {
@@ -1093,6 +1095,8 @@ DNF_to_BDD ()
    cnf_integers[cnf_out_idx].num_alloc = dnf_numout+1;
    cnf_integers[cnf_out_idx].num = (int*)ite_calloc(cnf_integers[cnf_out_idx].num_alloc, sizeof(int), 9, "integers[].num");
 	for(int y = 0; y < dnf_numout; y++) {
+		if (y%1000 == 1)
+		  d2_printf3("\rCreating Symbol Table Entries %d/%ld ... ", y, dnf_numout);
       cnf_integers[cnf_out_idx].num[y] = y + dnf_numinp + 1;
 #ifdef CNF_USES_SYMTABLE
       i_getsym_int(y+dnf_numinp+1, SYM_VAR);
@@ -1102,7 +1106,10 @@ DNF_to_BDD ()
    cnf_out_idx++;
 
 	for(int x = 0; x < dnf_numout; x++) {
-      cnf_integers[cnf_out_idx].num_alloc = dnf_integers[x].max+2; /* plus clause var and 0 */
+		if (x%1000 == 1)
+		  d2_printf3("\rTranslating DNF to CNF %d/%ld ...", x, dnf_numout);
+
+		cnf_integers[cnf_out_idx].num_alloc = dnf_integers[x].max+2; /* plus clause var and 0 */
       cnf_integers[cnf_out_idx].num = (int*)ite_calloc(cnf_integers[cnf_out_idx].num_alloc, 
             sizeof(int), 9, "integers[].num");
       cnf_integers[cnf_out_idx].num[0] = x + dnf_numinp + 1;
@@ -1127,21 +1134,26 @@ DNF_to_BDD ()
 	}
    assert(cnf_numout == cnf_out_idx-1);
 
-   long x;
-   for(x = 1; x <= cnf_numout; x++) {
-      cnf_integers[x].length = cnf_integers[x].num_alloc-1;;
-      cnf_integers[x].dag =  -1;
-   }
+	long x;
    numinp = cnf_numinp;
    numout = cnf_numout;
+
+   for(x = 1; x <= cnf_numout; x++) {
+      cnf_integers[x].length = cnf_integers[x].num_alloc-1;
+      cnf_integers[x].dag =  -1;
+   }
+
+	DO_CLUSTER = 0;
    cnf_process(cnf_integers, 0, NULL);
-   for(x = 1; x < cnf_numout + 1; x++) {
+	
+	for(x = 1; x < cnf_numout + 1; x++) {
       ite_free((void**)&cnf_integers[x].num);
 	}
-   for(x = 0; x < dnf_numout + 1; x++) {
+	ite_free((void**)&cnf_integers);
+
+	for(x = 0; x < dnf_numout + 1; x++) {
       ite_free((void**)&dnf_integers[x].num);
 	}
-	ite_free((void**)&cnf_integers);
 	ite_free((void**)&dnf_integers);
 	
 	d3_printf2("Number of BDDs - %ld\n", numout);
