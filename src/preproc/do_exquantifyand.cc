@@ -50,7 +50,6 @@ int Do_ExQuantifyAnd() {
 	MAX_EXQUANTIFY_CLAUSES += 5;
 	MAX_EXQUANTIFY_VARLENGTH +=5;
 	d3_printf2 ("ANDING AND EXISTENTIALLY QUANTIFYING %d - ", countBDDs());
-	d1_printf2("\n%d\n", nmbrFunctions);
 	int cofs = PREP_CHANGED;
 	int ret = PREP_NO_CHANGE;
 	affected = 0;
