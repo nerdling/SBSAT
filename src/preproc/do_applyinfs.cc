@@ -125,7 +125,6 @@ Do_Apply_Inferences ()
 								}
 								if (changeFT == 1) {
 									functionType[j] = UNSURE; //x v (a & b & c)
-									//independantVars[equalityVble[j]] = 1;
 									equalityVble[j] = 0;
 								}
 							} else if (abs (equalityVble[j]) == inferlist->nums[1]) {
@@ -138,7 +137,6 @@ Do_Apply_Inferences ()
 								}
 								if (changeFT == 1) {
 									functionType[j] = UNSURE; //x v (a & b & c)
-									//independantVars[equalityVble[j]] = 1;
 									equalityVble[j] = 0;
 								} else if (equalityVble[j] > 0) {
 									  equalityVble[j] = inferlist->nums[0];
@@ -188,7 +186,6 @@ Do_Apply_Inferences ()
 								if (changeFT == 1) {
 									//functionType[j] = ?????;	//-x -> (-a & -b & -c)
 									  functionType[j] = UNSURE;
-									//independantVars[equalityVble[j]] = 1;
 									equalityVble[j] = 0;
 								}
 							} else if (abs (equalityVble[j]) == -inferlist->nums[1]) {
@@ -202,7 +199,6 @@ Do_Apply_Inferences ()
 								if (changeFT == 1) {
 									//functionType[j] = ?????;	//-x -> (-a & -b & -c)
 									functionType[j] = UNSURE;
-									//independantVars[equalityVble[j]] = 1;
 									equalityVble[j] = 0;
 								} else {
 									if (equalityVble[j] > 0)
@@ -243,7 +239,6 @@ Do_Apply_Inferences ()
 							 ||(functionType[j] == OR  && equalityVble[j] > 0)) {
 							if (abs (equalityVble[j]) == inferlist->nums[0]) {
 								functionType[j] = PLAINOR;	//a v b v c
-								//independantVars[equalityVble[j]] = 1;
 								equalityVble[j] = 0;
 							}
 						}
@@ -272,7 +267,6 @@ Do_Apply_Inferences ()
 							 ||(functionType[j] == OR  && equalityVble[j] < 0)) {
 							if (abs (equalityVble[j]) == abs(inferlist->nums[0])) {
 								functionType[j] = PLAINOR;	//a v b v c
-								//independantVars[equalityVble[j]] = 1;
 								equalityVble[j] = 0;
 							}
 						}
