@@ -46,6 +46,7 @@ int sym_is_flag(int id);
 void sym_set_flag(int id);
 void sym_reset_flag(int id); 
 void sym_clear_all_flag();
+int sym_all_int();
 
 
 /* reg expressions */

@@ -246,12 +246,6 @@ tputsym_truefalse(int sym_type)
      /* cannot reallocate  -- pointers exist to this pool */
      symtmp_table = (symrec*)ite_calloc(SYMTMP_TABLE_SIZE, sizeof(symrec), 9, "symtmp_table");
      symtmp_table_idx = 0;
-     /*
-     assert(0);
-     symtmp_table = (symrec*)ite_recalloc((void*)symtmp_table, symtmp_table_max, 
-           symtmp_table_max+SYMTMP_TABLE_SIZE, sizeof(symrec), 9, "symtmp_table_idx");
-     symtmp_table_max += SYMTMP_TABLE_SIZE;
-     */
   }
   symrec *ptr = &(symtmp_table[symtmp_table_idx]);
   fill_symrec(ptr, sym_type);
@@ -266,12 +260,6 @@ tputsym(int sym_type)
      /* cannot reallocate  -- pointers exist to this pool */
      symtmp_table = (symrec*)ite_calloc(SYMTMP_TABLE_SIZE, sizeof(symrec), 9, "symtmp_table");
      symtmp_table_idx = 0;
-     /*
-     assert(0);
-     symtmp_table = (symrec*)ite_recalloc((void*)symtmp_table, symtmp_table_max, 
-           symtmp_table_max+SYMTMP_TABLE_SIZE, sizeof(symrec), 9, "symtmp_table_idx");
-     symtmp_table_max += SYMTMP_TABLE_SIZE;
-     */
   }
   symrec *ptr = &(symtmp_table[symtmp_table_idx]);
   fill_symrec(ptr, sym_type);
@@ -372,6 +360,18 @@ void
 sym_clear_all_flag()
 {
    int i;
-   for(i=1;i<sym_table_idx;i++)
+   for(i=2;i<sym_table_idx;i++)
       sym_table[i]->flag = 0;
+}
+
+int
+sym_all_int()
+{
+   int i;
+   for(i=2;i<sym_table_idx;i++) {
+      int num;
+      if (sym_table[i] && sym_table[i]->name == NULL) return 0;
+      if (sscanf(sym_table[i]->name, "%d", &num)==0) return 0;
+   }
+   return 1;
 }
