@@ -514,7 +514,12 @@ ctrl_c_proc(int x)
 {
    fprintf(stderr, "Please hold on for phase interruption\n");
    nCtrlC++;
-   if (nCtrlC > 10) exit(1);
+   if (nCtrlC > 10) {
+      fprintf(stderr, "Shutting down...\n");
+      free_terminal_in();
+      free_terminal_out();
+      exit(1);
+   }
 }
 
 void
