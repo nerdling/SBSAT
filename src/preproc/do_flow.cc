@@ -120,12 +120,12 @@ void Do_Flow() {
 
 void Get_Cutx(int x, int *influence, int *equ_funcs, int depth) {
 	if(depth == 0) {
-		for(int y = 0; y <= length[equ_funcs[x]]; y++) {
+		for(int y = 0; y < length[equ_funcs[x]]; y++) {
 			if(x != variables[equ_funcs[x]].num[y])
 			  influence[variables[equ_funcs[x]].num[y]]++;
 		}
 	} else {
-		for(int y = 0; y <= length[equ_funcs[x]]; y++) {
+		for(int y = 0; y < length[equ_funcs[x]]; y++) {
 //			d5_printf3("{%d %d}", x, y);
 			if(x != variables[equ_funcs[x]].num[y]) {
 				if(independantVars[variables[equ_funcs[x]].num[y]] == 1)
@@ -229,7 +229,6 @@ void Do_Flow_Grouping() {
 						}
 					}
 				}
-
 				var_mark[x] = 1;
 			}
 		}
@@ -252,7 +251,7 @@ void Do_Flow_Grouping() {
 
 	/**********************************************************/
 	//looking for min cut for each high flow gate backing up 3 or 4
-	
+
 	int CutSize = 10;
 	
 	d5_printf2("\nCut Size of %d\n", CutSize);
@@ -265,26 +264,36 @@ void Do_Flow_Grouping() {
 			for(int curr_CutSize = CutSize; curr_CutSize >= 0; curr_CutSize--) {
 				for(int y = 1; y <= numinp; y++)
 				  influence[y] = 0;
-				symrec *ptr = getsym_i(x);
-				d5_printf5("%d{%d} (%s) = %5.3f ", x, influences[x].depth, (ptr&&ptr->name?ptr->name:"NULL"), var_score[x]);
+//				symrec *ptr = getsym_i(x);
+//				d5_printf5("%d{%d} (%s) = %5.3f ", x, influences[x].depth, (ptr&&ptr->name?ptr->name:"NULL"), var_score[x]);
 				Get_Cutx(x, influence, equ_funcs, curr_CutSize);
 				int temp_count = 0;
 				for(int y = 1; y <= numinp; y++) {
 					if(influence[y] > 0) {
 						temp_count++;
-						ptr = getsym_i(y);
-						d5_printf3("%d (%s), ", y, (ptr&&ptr->name?ptr->name:"NULL"));
+//						ptr = getsym_i(y);
+//						d5_printf3("%d (%s), ", y, (ptr&&ptr->name?ptr->name:"NULL"));
 					}
 				}
-				if(count >= temp_count) {
+				if(count > temp_count) {
 					count = temp_count;
 					smallest = curr_CutSize;
+					symrec *ptr = getsym_i(x);
+					d5_printf3("\n%d %d ", count, smallest);
+					d5_printf5("%d{%d} (%s) = %5.3f ", x, influences[x].depth, (ptr&&ptr->name?ptr->name:"NULL"), var_score[x]);
+					for(int y = 1; y <= numinp; y++) {
+						if(influence[y] > 0) {
+							temp_count++;
+							ptr = getsym_i(y);
+							d5_printf3("%d (%s), ", y, (ptr&&ptr->name?ptr->name:"NULL"));
+						}
+					}
 				}
-				d5_printf3("\n%d %d\n", count, smallest);
 			}
 		}
-		
 	}
+	d5_printf1("\n");
+	
 	ite_free((void **)&influence);
 	
 	/**********************************************************/
