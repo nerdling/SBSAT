@@ -214,8 +214,6 @@ c3_dump()
    }
 }
 
-#define VARS_MAX 10
-
 BDDNode *
 c3_bdds(int idx, int *vars)
 {
@@ -231,13 +229,13 @@ c3_bdds(int idx, int *vars)
          return c3[idx].bdd;
       }
       bdd1 = c3_bdds(c3[idx].arg1, &vars1);
-      if (vars1 > VARS_MAX) {
+      if (vars1 > prover3_max_vars) {
          bdd1 = tmp_equ_var(bdd1);
          vars1 = 1;
       }
       if (c3[idx].argc == 2) {
          bdd2 = c3_bdds(c3[idx].arg2, &vars2);
-         if (vars2 > VARS_MAX) {
+         if (vars2 > prover3_max_vars) {
             bdd2 = tmp_equ_var(bdd2);
             vars2 = 1;
          }
@@ -250,7 +248,7 @@ c3_bdds(int idx, int *vars)
        case NOT_Tag: bdd = ite_not(bdd1); break;
        default: assert(0); exit(1); break;
       }
-      if (vars1+vars2 > VARS_MAX) {
+      if (vars1+vars2 > prover3_max_vars) {
          
          bdd = tmp_equ_var(bdd);
       }

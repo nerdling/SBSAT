@@ -170,6 +170,8 @@ t_opt options[] = {
                 "Print tree representation"},
 { &PRINT_TREE_WIDTH, "W", "tree-width", P_INT, V(i:0,"0"), V(i:64,"64"), VAR_NORMAL, 0, 
                 "Set tree width"},
+{ &prover3_max_vars, "", "prover3-max-vars", P_INT, V(i:0,"0"), V(i:10,"10"), VAR_NORMAL, 0, 
+                "Max vars per BDD when reading 3 address code (intput format 3)"},
 
 /* 
  * Trace format options
@@ -221,6 +223,8 @@ t_opt options[] = {
 	  "Enable/Disable Large Function Splitting (1/0)"},
 { &max_preproc_time, "",  "max-preproc-time", P_INT, V(i:0,"0"),  V(i:0,"0"), VAR_NORMAL, 0,
 		"set the time limit in seconds (0=no limit)"},
+{ &do_split_max_vars, "",  "do-split-max-vars", P_INT, V(i:0,"0"),  V(i:10,"10"), VAR_NORMAL, 0,
+		"Threashold above which the Sp splits BDDs."},
 	
 /* 
  * Brancher options

@@ -110,7 +110,9 @@ int Split_Large () {
 	max_bdds = 0;
 	num_bdds = 0;
 
-	int k_size = 10;
+	int k_size = 
+      //10;
+      do_split_max_vars;
 	
 	BDDFuncs = (BDDNode **)ite_recalloc(NULL, max_bdds, max_bdds+10, sizeof(BDDNode *), 9, "BDDFuncs");
 	max_bdds += 10;

@@ -142,3 +142,5 @@ char brancher_presets[4096];
 char comment[1024];
 
 char preset_variables_string[2048];
+int prover3_max_vars;
+int do_split_max_vars;
