@@ -67,7 +67,7 @@ int Do_Rewind() {
 		equalityVble[x] = original_equalityVble[x];
 	}
 	nmbrFunctions = original_numout;
-	
+
 	for (int x = 0; x < nmbrFunctions; x++) {
 		int r=Rebuild_BDDx(x);
 		switch (r) {

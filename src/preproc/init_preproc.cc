@@ -358,30 +358,27 @@ Finish_Preprocessing()
 	//Need to remove any function that was set to True during the preprocessing of the BDDs
 	
 	int count = -1;
-	for (long x = 0; x < nmbrFunctions; x++)
-	  {
-		  count++;
-		  functions[count] = functions[x];
-		  functionType[count] = functionType[x];
-		  equalityVble[count] = equalityVble[x];
-		  //parameterizedVars[count] = parameterizedVars[x];
-		  length[count] = length[x];
-		  
-		  if (functions[x] == true_ptr)
-			 count--;
-		  if (functions[x] == false_ptr)
-			 {
-				 /* this might happen but I already know about unsatisfiness */
-				 // ret = TRIV_UNSAT;
-			 }
-		  
-	  }
+	for (long x = 0; x < nmbrFunctions; x++) {
+		count++;
+		functions[count] = functions[x];
+		functionType[count] = functionType[x];
+		equalityVble[count] = equalityVble[x];
+		//parameterizedVars[count] = parameterizedVars[x];
+		length[count] = length[x];
+		
+		if (functions[x] == true_ptr)
+		  count--;
+		if (functions[x] == false_ptr) {
+			/* this might happen but I already know about unsatisfiness */
+			// ret = TRIV_UNSAT;
+		}
+	}
 	nmbrFunctions = count + 1;
 	numout = nmbrFunctions;
 
 	for (long x = 0; x < nmbrFunctions; x++) {
 		//if (length[x] < functionTypeLimits[functionType[x]])
-		  //functionType[x] = UNSURE;
+		//functionType[x] = UNSURE;
 		if(countFalses(functions[x]) == 1)
 		  functionType[x] = PLAINOR;
    }
