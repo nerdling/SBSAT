@@ -77,10 +77,17 @@ solve_free()
    FreeSolver(NULL);
 }
 
-
+int
+solve(Tracer *tracer)
+{
+   int ret = solve_init();
+   if (ret == SOLV_UNKNOWN) ret = Brancher();
+   solve_free();
+   return ret;
+}
 
 int
-solve(Tracer * tracer)
+_solve(Tracer * tracer)
 {
   int ret = SOLV_UNKNOWN;
 

@@ -61,38 +61,59 @@ void ite_io_free();
 int ite_preprocessing();
 
 int check_expected_result(int result);
+int ite_main_load(int argc, char *argv[]);
+int ite_main_init(Tracer *&tracer);
+int ite_main(Tracer *tracer);
 
 int 
 main(int argc, char *argv[])
 {
+   int ret = NO_ERROR;
    Tracer * tracer = NULL;
-   int ret;
+   ret = ite_main_load(argc, argv);
+   if (ret == NO_ERROR) {
+      ret = ite_main_init(tracer);
+      if (ret != TRIV_SAT && ret != TRIV_UNSAT) ret = ite_main(tracer);
+   }
+   return ite_final(ret, tracer);
+}
+
+int 
+ite_main_load(int argc, char *argv[])
+{
+   int ret = NO_ERROR;
 	
    ret = ite_pre_init();
-   if (ret != NO_ERROR) goto ExitNormal;
+   if (ret != NO_ERROR) return ret;
 	
    ret = params_parse_cmd_line(argc, argv);
-   if (ret != NO_ERROR) goto ExitNormal;
+   if (ret != NO_ERROR) return ret;
 	
    if (DEBUG_LVL == 1) d1_printf3("%s %s ", ite_basename(inputfile), comment);
-	
-   ret = ite_init();
-   if (ret != NO_ERROR) goto ExitNormal;
+
+   return NO_ERROR;
+}
+
+int
+ite_main_init(Tracer *&tracer)
+{
+   int ret = ite_init();
+   if (ret != NO_ERROR) return ret;
 	
    ret = ite_io_init();
-   if (ret != NO_ERROR) goto ExitNormal;
+   if (ret != NO_ERROR) return ret;
 	
    /* autodetect the input format  */
    formatin = getformat (finputfile);
 	
    /* read input file */
    ret = read_input(formatin, formatout, tracer);
-   if (ret != NO_ERROR) goto ExitNormal;
+   if (ret != NO_ERROR) return ret;
 
 
    /* preprocessing */
    ret = ite_preprocessing();
-   if (ret == TRIV_SAT || ret == TRIV_UNSAT) goto ExitNormal;
+   if (ret == TRIV_SAT || ret == TRIV_UNSAT) return ret;
 
    {
       /*
@@ -117,8 +138,14 @@ main(int argc, char *argv[])
       }
    }
    /* solver or conversion */
+   return ret;
+}
 
 
+int
+ite_main(Tracer *tracer)
+{
+   int ret = NO_ERROR;
 	switch (formatout) {
     case 'n': break;
     case 'b': ret = solve(tracer); break;
@@ -128,8 +155,7 @@ main(int argc, char *argv[])
              ret = CONV_OUTPUT;
    }
 
-ExitNormal:
-   return ite_final(ret, tracer);
+   return ret;
 }
 
 int
