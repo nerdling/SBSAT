@@ -28,7 +28,7 @@ noinst_LTLIBRARIES = libsolver.la libsolver2.la
 libsolver_la_SOURCES= $(SOURCES)
 libsolver2_la_SOURCES=libsolver.cc
 else
-noinst_LIBRARIES = libsolver.a libsolver2.a
-libsolver_a_SOURCES= $(SOURCES)
-libsolver2_a_SOURCES=libsolver.cc
+#noinst_LIBRARIES = libsolver.a libsolver2.a
+#libsolver_a_SOURCES= $(SOURCES)
+#libsolver2_a_SOURCES=libsolver.cc
 endif

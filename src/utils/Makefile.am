@@ -11,6 +11,6 @@ if MYLIBTOOL
 noinst_LTLIBRARIES = libutils.la
 libutils_la_SOURCES= $(SOURCES)
 else
-noinst_LIBRARIES = libutils.a
-libutils_a_SOURCES= $(SOURCES)
+#noinst_LIBRARIES = libutils.a
+#libutils_a_SOURCES= $(SOURCES)
 endif

@@ -139,33 +139,23 @@ SOURCES = backend.cc
 
 @MYLIBTOOL_TRUE@noinst_LTLIBRARIES = libpostproc.la
 @MYLIBTOOL_TRUE@libpostproc_la_SOURCES = $(SOURCES)
-@MYLIBTOOL_FALSE@noinst_LIBRARIES = libpostproc.a
-@MYLIBTOOL_FALSE@libpostproc_a_SOURCES = $(SOURCES)
 subdir = src/postproc
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/include/config.h
 CONFIG_CLEAN_FILES =
-LIBRARIES = $(noinst_LIBRARIES)
-
-libpostproc_a_AR = $(AR) cru
-libpostproc_a_LIBADD =
-am__libpostproc_a_SOURCES_DIST = backend.cc
-am__objects_1 = backend.$(OBJEXT)
-@MYLIBTOOL_FALSE@am_libpostproc_a_OBJECTS = $(am__objects_1)
-libpostproc_a_OBJECTS = $(am_libpostproc_a_OBJECTS)
 LTLIBRARIES = $(noinst_LTLIBRARIES)
 
 libpostproc_la_LDFLAGS =
 libpostproc_la_LIBADD =
 am__libpostproc_la_SOURCES_DIST = backend.cc
-am__objects_2 = backend.lo
-@MYLIBTOOL_TRUE@am_libpostproc_la_OBJECTS = $(am__objects_2)
+am__objects_1 = backend.lo
+@MYLIBTOOL_TRUE@am_libpostproc_la_OBJECTS = $(am__objects_1)
 libpostproc_la_OBJECTS = $(am_libpostproc_la_OBJECTS)
 
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)/include
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
-@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/backend.Plo ./$(DEPDIR)/backend.Po
+@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/backend.Plo
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 LTCXXCOMPILE = $(LIBTOOL) --mode=compile $(CXX) $(DEFS) \
@@ -174,8 +164,7 @@ LTCXXCOMPILE = $(LIBTOOL) --mode=compile $(CXX) $(DEFS) \
 CXXLD = $(CXX)
 CXXLINK = $(LIBTOOL) --mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-DIST_SOURCES = $(am__libpostproc_a_SOURCES_DIST) \
-	$(am__libpostproc_la_SOURCES_DIST)
+DIST_SOURCES = $(am__libpostproc_la_SOURCES_DIST)
 DIST_COMMON = Makefile.am Makefile.in
 SOURCES = backend.cc
 
@@ -188,15 +177,6 @@ $(srcdir)/Makefile.in:  Makefile.am  $(top_srcdir)/configure.ac $(ACLOCAL_M4)
 	  $(AUTOMAKE) --gnu  src/postproc/Makefile
 Makefile:  $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe)
-
-AR = ar
-
-clean-noinstLIBRARIES:
-	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
-libpostproc.a: $(libpostproc_a_OBJECTS) $(libpostproc_a_DEPENDENCIES) 
-	-rm -f libpostproc.a
-	$(libpostproc_a_AR) libpostproc.a $(libpostproc_a_OBJECTS) $(libpostproc_a_LIBADD)
-	$(RANLIB) libpostproc.a
 
 clean-noinstLTLIBRARIES:
 	-test -z "$(noinst_LTLIBRARIES)" || rm -f $(noinst_LTLIBRARIES)
@@ -216,7 +196,6 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/backend.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/backend.Po@am__quote@
 
 distclean-depend:
 	-rm -rf ./$(DEPDIR)
@@ -351,7 +330,7 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(LIBRARIES) $(LTLIBRARIES)
+all-am: Makefile $(LTLIBRARIES)
 
 installdirs:
 
@@ -381,8 +360,8 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-generic clean-libtool clean-noinstLIBRARIES \
-	clean-noinstLTLIBRARIES mostlyclean-am
+clean-am: clean-generic clean-libtool clean-noinstLTLIBRARIES \
+	mostlyclean-am
 
 distclean: distclean-am
 
@@ -427,17 +406,19 @@ ps-am:
 uninstall-am: uninstall-info-am
 
 .PHONY: CTAGS GTAGS all all-am check check-am clean clean-generic \
-	clean-libtool clean-noinstLIBRARIES clean-noinstLTLIBRARIES \
-	ctags distclean distclean-compile distclean-depend \
-	distclean-generic distclean-libtool distclean-tags distdir dvi \
-	dvi-am info info-am install install-am install-data \
-	install-data-am install-exec install-exec-am install-info \
-	install-info-am install-man install-strip installcheck \
-	installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-compile \
-	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags uninstall uninstall-am uninstall-info-am
+	clean-libtool clean-noinstLTLIBRARIES ctags distclean \
+	distclean-compile distclean-depend distclean-generic \
+	distclean-libtool distclean-tags distdir dvi dvi-am info \
+	info-am install install-am install-data install-data-am \
+	install-exec install-exec-am install-info install-info-am \
+	install-man install-strip installcheck installcheck-am \
+	installdirs maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-compile mostlyclean-generic \
+	mostlyclean-libtool pdf pdf-am ps ps-am tags uninstall \
+	uninstall-am uninstall-info-am
 
+#noinst_LIBRARIES = libpostproc.a
+#libpostproc_a_SOURCES= $(SOURCES)
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

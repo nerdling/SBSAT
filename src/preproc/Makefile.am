@@ -11,6 +11,6 @@ if MYLIBTOOL
 noinst_LTLIBRARIES = libpreproc.la
 libpreproc_la_SOURCES=$(SOURCES)
 else
-noinst_LIBRARIES = libpreproc.a
-libpreproc_a_SOURCES=$(SOURCES)
+#noinst_LIBRARIES = libpreproc.a
+#libpreproc_a_SOURCES=$(SOURCES)
 endif

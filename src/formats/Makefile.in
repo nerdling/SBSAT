@@ -146,25 +146,10 @@ SOURCES = autochk.cc  \
 @MYLIBTOOL_TRUE@noinst_LTLIBRARIES = libformats.la
 @MYLIBTOOL_TRUE@libformats_la_SOURCES = $(SOURCES)
 @MYLIBTOOL_TRUE@libformats_la_LIBADD = 5/libt5.la
-@MYLIBTOOL_FALSE@noinst_LIBRARIES = libformats.a
-@MYLIBTOOL_FALSE@libformats_a_SOURCES = $(SOURCES)
 subdir = src/formats
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/include/config.h
 CONFIG_CLEAN_FILES =
-LIBRARIES = $(noinst_LIBRARIES)
-
-libformats_a_AR = $(AR) cru
-libformats_a_LIBADD =
-am__libformats_a_SOURCES_DIST = autochk.cc smurf.cc bdd2cnf.cc \
-	bddbinary.cc cnf.cc markbdd.cc xorbdd.cc sat.cc read_result.cc \
-	read_input.cc write_output.cc
-am__objects_1 = autochk.$(OBJEXT) smurf.$(OBJEXT) bdd2cnf.$(OBJEXT) \
-	bddbinary.$(OBJEXT) cnf.$(OBJEXT) markbdd.$(OBJEXT) \
-	xorbdd.$(OBJEXT) sat.$(OBJEXT) read_result.$(OBJEXT) \
-	read_input.$(OBJEXT) write_output.$(OBJEXT)
-@MYLIBTOOL_FALSE@am_libformats_a_OBJECTS = $(am__objects_1)
-libformats_a_OBJECTS = $(am_libformats_a_OBJECTS)
 LTLIBRARIES = $(noinst_LTLIBRARIES)
 
 libformats_la_LDFLAGS =
@@ -173,28 +158,21 @@ libformats_la_LDFLAGS =
 am__libformats_la_SOURCES_DIST = autochk.cc smurf.cc bdd2cnf.cc \
 	bddbinary.cc cnf.cc markbdd.cc xorbdd.cc sat.cc read_result.cc \
 	read_input.cc write_output.cc
-am__objects_2 = autochk.lo smurf.lo bdd2cnf.lo bddbinary.lo cnf.lo \
+am__objects_1 = autochk.lo smurf.lo bdd2cnf.lo bddbinary.lo cnf.lo \
 	markbdd.lo xorbdd.lo sat.lo read_result.lo read_input.lo \
 	write_output.lo
-@MYLIBTOOL_TRUE@am_libformats_la_OBJECTS = $(am__objects_2)
+@MYLIBTOOL_TRUE@am_libformats_la_OBJECTS = $(am__objects_1)
 libformats_la_OBJECTS = $(am_libformats_la_OBJECTS)
 
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)/include
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
-@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/autochk.Plo ./$(DEPDIR)/autochk.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/bdd2cnf.Plo ./$(DEPDIR)/bdd2cnf.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/bddbinary.Plo ./$(DEPDIR)/bddbinary.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/cnf.Plo ./$(DEPDIR)/cnf.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/markbdd.Plo ./$(DEPDIR)/markbdd.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/read_input.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/read_input.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/read_result.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/read_result.Po ./$(DEPDIR)/sat.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/sat.Po ./$(DEPDIR)/smurf.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/smurf.Po ./$(DEPDIR)/write_output.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/write_output.Po ./$(DEPDIR)/xorbdd.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/xorbdd.Po
+@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/autochk.Plo ./$(DEPDIR)/bdd2cnf.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/bddbinary.Plo ./$(DEPDIR)/cnf.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/markbdd.Plo ./$(DEPDIR)/read_input.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/read_result.Plo ./$(DEPDIR)/sat.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/smurf.Plo ./$(DEPDIR)/write_output.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/xorbdd.Plo
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 LTCXXCOMPILE = $(LIBTOOL) --mode=compile $(CXX) $(DEFS) \
@@ -203,8 +181,7 @@ LTCXXCOMPILE = $(LIBTOOL) --mode=compile $(CXX) $(DEFS) \
 CXXLD = $(CXX)
 CXXLINK = $(LIBTOOL) --mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-DIST_SOURCES = $(am__libformats_a_SOURCES_DIST) \
-	$(am__libformats_la_SOURCES_DIST)
+DIST_SOURCES = $(am__libformats_la_SOURCES_DIST)
 
 RECURSIVE_TARGETS = info-recursive dvi-recursive pdf-recursive \
 	ps-recursive install-info-recursive uninstall-info-recursive \
@@ -230,15 +207,6 @@ $(srcdir)/Makefile.in:  Makefile.am  $(top_srcdir)/configure.ac $(ACLOCAL_M4)
 Makefile:  $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe)
 
-AR = ar
-
-clean-noinstLIBRARIES:
-	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
-libformats.a: $(libformats_a_OBJECTS) $(libformats_a_DEPENDENCIES) 
-	-rm -f libformats.a
-	$(libformats_a_AR) libformats.a $(libformats_a_OBJECTS) $(libformats_a_LIBADD)
-	$(RANLIB) libformats.a
-
 clean-noinstLTLIBRARIES:
 	-test -z "$(noinst_LTLIBRARIES)" || rm -f $(noinst_LTLIBRARIES)
 	@list='$(noinst_LTLIBRARIES)'; for p in $$list; do \
@@ -257,27 +225,16 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/autochk.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/autochk.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bdd2cnf.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bdd2cnf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bddbinary.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bddbinary.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cnf.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cnf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/markbdd.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/markbdd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/read_input.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/read_input.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/read_result.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/read_result.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sat.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sat.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/smurf.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/smurf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/write_output.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/write_output.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xorbdd.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xorbdd.Po@am__quote@
 
 distclean-depend:
 	-rm -rf ./$(DEPDIR)
@@ -489,7 +446,7 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-recursive
-all-am: Makefile $(LIBRARIES) $(LTLIBRARIES)
+all-am: Makefile $(LTLIBRARIES)
 installdirs: installdirs-recursive
 installdirs-am:
 
@@ -519,8 +476,8 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-recursive
 
-clean-am: clean-generic clean-libtool clean-noinstLIBRARIES \
-	clean-noinstLTLIBRARIES mostlyclean-am
+clean-am: clean-generic clean-libtool clean-noinstLTLIBRARIES \
+	mostlyclean-am
 
 distclean: distclean-recursive
 
@@ -567,9 +524,9 @@ uninstall-am: uninstall-info-am
 uninstall-info: uninstall-info-recursive
 
 .PHONY: $(RECURSIVE_TARGETS) CTAGS GTAGS all all-am check check-am clean \
-	clean-generic clean-libtool clean-noinstLIBRARIES \
-	clean-noinstLTLIBRARIES clean-recursive ctags ctags-recursive \
-	distclean distclean-compile distclean-depend distclean-generic \
+	clean-generic clean-libtool clean-noinstLTLIBRARIES \
+	clean-recursive ctags ctags-recursive distclean \
+	distclean-compile distclean-depend distclean-generic \
 	distclean-libtool distclean-recursive distclean-tags distdir \
 	dvi dvi-am dvi-recursive info info-am info-recursive install \
 	install-am install-data install-data-am install-data-recursive \
@@ -584,6 +541,8 @@ uninstall-info: uninstall-info-recursive
 	tags-recursive uninstall uninstall-am uninstall-info-am \
 	uninstall-info-recursive uninstall-recursive
 
+#noinst_LIBRARIES = libformats.a
+#libformats_a_SOURCES=$(SOURCES)
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

@@ -28,16 +28,16 @@ EXTRA_DIST=bddnode.h functions.h bddnode.cc tracetest.cc p3.h \
 bin_PROGRAMS = tracetest
 tracetest_SOURCES = tracetest.cc  # bddnode.cc
 
+libt5_la_YFLAGS =  -d
 if MYLIBTOOL
 noinst_LTLIBRARIES = libt5.la
 libt5_la_SOURCES = $(SOURCES)
-libt5_la_YFLAGS =  -d
 tracetest_LDADD = ../../preproc/libpreproc.la libt5.la ../../utils/libutils.la
 else
-noinst_LIBRARIES = libt5.a
-libt5_a_SOURCES = $(SOURCES)
-libt5_a_YFLAGS =  -d
-tracetest_LDADD = ../../preproc/libpreproc.a libt5.a ../../utils/libutils.a
+#noinst_LIBRARIES = libt5.a
+#libt5_a_SOURCES = $(SOURCES)
+#libt5_a_YFLAGS =  -d
+#tracetest_LDADD = ../../preproc/libpreproc.a libt5.a ../../utils/libutils.a
 endif
 
 #libt5_a_CXXFLAGS =  -pg

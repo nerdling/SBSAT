@@ -11,6 +11,6 @@ noinst_LTLIBRARIES = libformats.la
 libformats_la_SOURCES=$(SOURCES)
 libformats_la_LIBADD=5/libt5.la
 else
-noinst_LIBRARIES = libformats.a
-libformats_a_SOURCES=$(SOURCES)
+#noinst_LIBRARIES = libformats.a
+#libformats_a_SOURCES=$(SOURCES)
 endif
