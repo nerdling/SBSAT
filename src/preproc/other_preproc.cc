@@ -473,16 +473,16 @@ cheat_replaceall (int *&length,
 	    equalityVble[z] = replaceat;
 	  else if (equalityVble[z] == -x)
 	    equalityVble[z] = -replaceat;
-	  if (parameterizedVars[z] != NULL)
-	    {
-	      for (int i = 1; i <= parameterizedVars[z][0];
-		   i++)
-		{
-		  if (parameterizedVars[z][i] == x)
-		    parameterizedVars[z][i] = replaceat;
-		}
-	    }
-	}
+     //if (parameterizedVars[z] != NULL)
+     //{
+     //   for (int i = 1; i <= parameterizedVars[z][0];
+     //         i++)
+     //   {
+     //      if (parameterizedVars[z][i] == x)
+     //         parameterizedVars[z][i] = replaceat;
+     //   }
+     //}
+   }
     }
 
   /*      
@@ -763,15 +763,15 @@ Stats (int length[], store variables[])
 			 fprintf (stdout, "is an ITE= function and ");
 		  else if (length[x] > PLAINOR_LIMIT) fprintf(stdout, "has more than PLAINOR_LIMIT (error) variables and ");
 		  fprintf (stdout, "has %ld nodes and %d variables.\n", y, length[x]);
-		  if (parameterizedVars[x] != NULL)
-			 {
-				 printBDD (functions[x]);
-				 fprintf (stdout, "\n");
-				 for (int z = 0; z <= parameterizedVars[x][0]; z++)
-					{
-						fprintf (stdout, "%d|", parameterizedVars[x][z]);
-					}
-			 }
+		  //if (parameterizedVars[x] != NULL)
+		//	 {
+		//		 printBDD (functions[x]);
+		//		 fprintf (stdout, "\n");
+		//		 for (int z = 0; z <= parameterizedVars[x][0]; z++)
+		//			{
+		//				fprintf (stdout, "%d|", parameterizedVars[x][z]);
+		//			}
+		//	 }
 		  fprintf (stdout, "\n\n");
 	  }
 	

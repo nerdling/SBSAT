@@ -300,7 +300,7 @@ Finish_Preprocessing()
 		  functions[count] = functions[x];
 		  functionType[count] = functionType[x];
 		  equalityVble[count] = equalityVble[x];
-		  parameterizedVars[count] = parameterizedVars[x];
+		  //parameterizedVars[count] = parameterizedVars[x];
 		  length[count] = length[x];
 		  
 		  if (functions[x] == true_ptr)
