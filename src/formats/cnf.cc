@@ -821,7 +821,8 @@ void CNF_to_BDD(int cnf)
       numout = num;
       d3_printf2("Building ITE BDDs - %d\n", num_ite);
      
-      bdd_circuit_init(numinp, numout+num_ite+recurselen+5+num_minmax);
+      vars_alloc(numinp);
+      functions_alloc(numout+num_ite+recurselen+5+num_minmax);
 
 		//Creates BDD's for the ite_equal clauses
       for(long x = 0; x < num_ite; x++) {
@@ -900,7 +901,8 @@ void CNF_to_BDD(int cnf)
       delete [] min_max_store;
       numout = numout+num_minmax;
    } else {
-      bdd_circuit_init(numinp, numout+num_minmax);
+      vars_alloc(numinp);
+      functions_alloc(numout+num_minmax);
 
       d3_printf2("Building unclustered BDDs - %ld\n", numout);
 

@@ -831,7 +831,8 @@ void bddloop () {
 	defines = new defines_struct[100];
 	no_independent = 1;
 
-	bdd_circuit_init(numinp+2, numout+2);
+   vars_alloc(numinp+2);
+   functions_alloc(numout+2);
 
 	int *keep = new int[numout + 2];
 
@@ -960,7 +961,7 @@ void bddloop () {
       functions[count] = functions[x];
       functionType[count] = functionType[x];
       equalityVble[count] = equalityVble[x];
-      parameterizedVars[count] = parameterizedVars[x];
+      //parameterizedVars[count] = parameterizedVars[x];
       if ((functions[x] == true_ptr) || (keep[x] == 0))
 		  count--;
       else if (functions[x] == false_ptr) {

@@ -453,7 +453,8 @@ Smurfs_to_BDD ()
 	if (flag)
 	  numinp++;
 	
-	bdd_circuit_init(numinp, numout);
+   vars_alloc(numinp);
+   functions_alloc(numout);
 	
 	for (int x = 0; x < numout; x++)
 	  {

@@ -51,6 +51,7 @@ int
 read_input(Tracer * &tracer)
 {
   d9_printf1("read_input\n");
+  bdd_init();
 
   int ret = read_input_open();
   if (ret != NO_ERROR) return ret;
@@ -84,13 +85,16 @@ read_input(Tracer * &tracer)
 					if (tracer->parseInput ()) exit(1);
 				}
 		 } else {
-          numinp=500000;
-          numout=500000;
-          bdd_circuit_init(numinp, numout);
+          //numinp=500000;
+          //numout=500000;
+          //vars_alloc(numinp);
+          //functions_alloc(numout);
           sym_init();
           parser_init();
           trace_in = finputfile;
           trace_parse();
+          numinp = vars_max;
+          numout = functions_max;
           //exit(1);
        }
     } break;

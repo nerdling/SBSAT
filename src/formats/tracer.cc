@@ -614,7 +614,8 @@ we1:
    
    // Pass 3: Build Smurfs (ignore not)
    
-   bdd_circuit_init(nsymbols+2, nsmurfs+2);
+   vars_alloc(nsymbols+2);
+   functions_alloc(nsmurfs+2);
 
    group = 1;
    group_cnt = 0;
@@ -688,15 +689,17 @@ we1:
 	      }
 	     
               functionType[nmbrFunctions] = UNSURE;
-	      parameterGroup[nmbrFunctions] = 
-	      parameterGroup[temp_group];	      
+	      //parameterGroup[nmbrFunctions] = 
+	      //parameterGroup[temp_group];	      
 	     
-	      parameterizedVars[nmbrFunctions] = num_list;
-              
+	      //parameterizedVars[nmbrFunctions] = num_list;
+         assert(0);     /* FIXME: Get rid of parameterizedVars[] */
+         /*
 	      functions[nmbrFunctions++] = 
 	        mitosis(functions[temp_group], 
-			parameterizedVars[temp_group],
+			  parameterizedVars[temp_group],
 			num_list);
+         */
 	      continue;
 	   }
 
@@ -762,7 +765,7 @@ we1:
 		    nots = ite_and(ite_not(ite_var(vthis)), nots);
 		    vars = ite_and(ite_var(vthis), vars);
 		 }
-		 if (in_group) parameterGroup[nmbrFunctions] = group+group_cnt++;
+		 //if (in_group) parameterGroup[nmbrFunctions] = group+group_cnt++;
 		 functions[nmbrFunctions++] = ite_or(nots, vars);
 		 continue;
 	      }
@@ -861,7 +864,7 @@ we1:
 		       fprintf(stderr, "New_int_leaf must have 0 or 1 argument\n");
 		       exit (1);
 		    }
-		    if (in_group) parameterGroup[nmbrFunctions] = group+group_cnt++;
+		    //if (in_group) parameterGroup[nmbrFunctions] = group+group_cnt++;
 		    functions[nmbrFunctions++] = int_leaf;
 		 } else if (!strcmp(op,"")) {
 		    fprintf(stderr, "Null operator?\n");
@@ -900,7 +903,7 @@ we1:
 
 		    equalityVble[nmbrFunctions] = equiv;
 		    independantVars[equiv] = 0;
-		    if (in_group) parameterGroup[nmbrFunctions] = group+group_cnt++;
+		    //if (in_group) parameterGroup[nmbrFunctions] = group+group_cnt++;
 
 		    functions[nmbrFunctions++] = ite_equ( vars, ite_var( equiv ));
 
@@ -928,7 +931,7 @@ we1:
 		    equalityVble[nmbrFunctions] = equiv;
 		    
 		    independantVars[equiv] = 0;
-		    if (in_group) parameterGroup[nmbrFunctions] = group+group_cnt++;
+		    //if (in_group) parameterGroup[nmbrFunctions] = group+group_cnt++;
 
 		    functions[nmbrFunctions++] = ite_equ( ite_not(vars), ite_var( equiv ));
 		 } else if (!strcmp(op,"or")) {
@@ -964,7 +967,7 @@ we1:
 				 
 		    equalityVble[nmbrFunctions] = equiv;
 		    independantVars[equiv] = 0;
-		    if (in_group) parameterGroup[nmbrFunctions] = group+group_cnt++;
+		    //if (in_group) parameterGroup[nmbrFunctions] = group+group_cnt++;
 
 		    functions[nmbrFunctions++] = ite_equ( vars, ite_var( equiv ));
 		 } else if (!strcmp(op,"nor")) {
@@ -980,7 +983,7 @@ we1:
 		    equalityVble[nmbrFunctions] = equiv;
 
 		    independantVars[equiv] = 0;
-		    if (in_group) parameterGroup[nmbrFunctions] = group+group_cnt++;
+		    //if (in_group) parameterGroup[nmbrFunctions] = group+group_cnt++;
 
 		    functions[nmbrFunctions++] = ite_equ( ite_not(vars), ite_var( equiv ));
 		 } else if (!strcmp(op,"xor")) {
@@ -996,7 +999,7 @@ we1:
 		    equalityVble[nmbrFunctions] = equiv;
 		    
 		    independantVars[equiv] = 0;
-		    if (in_group) parameterGroup[nmbrFunctions] = group+group_cnt++;
+		    //if (in_group) parameterGroup[nmbrFunctions] = group+group_cnt++;
 
 		    functions[nmbrFunctions++] = ite_equ( vars, ite_var( equiv ));
 		 } else if (!strcmp(op,"equ") || !strcmp(op, "xnor")) {
@@ -1012,7 +1015,7 @@ we1:
 		    equalityVble[nmbrFunctions] = equiv;
 		    
 		    independantVars[equiv] = 0;
-		    if (in_group) parameterGroup[nmbrFunctions] = group+group_cnt++;
+		    //if (in_group) parameterGroup[nmbrFunctions] = group+group_cnt++;
 
 		    functions[nmbrFunctions++] = ite_equ( ite_not( vars ), ite_var( equiv ));
 		 } else if (!strcmp(op,"limp")) {
@@ -1028,7 +1031,7 @@ we1:
 		    equalityVble[nmbrFunctions] = equiv;
 		    
 		    independantVars[equiv] = 0;
-		    if (in_group) parameterGroup[nmbrFunctions] = group+group_cnt++;
+		    //if (in_group) parameterGroup[nmbrFunctions] = group+group_cnt++;
 
 		    functions[nmbrFunctions++] = ite_equ( vars, ite_var( equiv ));
 		 } else if (!strcmp(op,"lnimp")) {
@@ -1044,7 +1047,7 @@ we1:
 		    equalityVble[nmbrFunctions] = equiv;
 		    
 		    independantVars[equiv] = 0;
-		    if (in_group) parameterGroup[nmbrFunctions] = group+group_cnt++;
+		    //if (in_group) parameterGroup[nmbrFunctions] = group+group_cnt++;
 
 		    functions[nmbrFunctions++] = ite_equ( ite_not( vars ), ite_var( equiv ));
 		 } else if (!strcmp(op,"rimp")) {
@@ -1060,7 +1063,7 @@ we1:
 		    equalityVble[nmbrFunctions] = equiv;
 		    
 		    independantVars[equiv] = 0;
-		    if (in_group) parameterGroup[nmbrFunctions] = group+group_cnt++;
+		    //if (in_group) parameterGroup[nmbrFunctions] = group+group_cnt++;
 
 		    functions[nmbrFunctions++] = ite_equ( vars, ite_var( equiv ));
 		 } else if (!strcmp(op,"rnimp")) {
@@ -1076,7 +1079,7 @@ we1:
 		    equalityVble[nmbrFunctions] = equiv;
 		    
 		    independantVars[equiv] = 0;
-		    if (in_group) parameterGroup[nmbrFunctions] = group+group_cnt++;
+		    //if (in_group) parameterGroup[nmbrFunctions] = group+group_cnt++;
 
 		    functions[nmbrFunctions++] = ite_equ( ite_not( vars ), ite_var( equiv ));
 		 } else if (!strcmp(op,"ite")) {
@@ -1166,7 +1169,7 @@ we1:
 		       functionType[nmbrFunctions] = ITE;
 		       equalityVble[nmbrFunctions] = var_list[equ];
 		       independantVars[var_list[equ]] = 0;
-		       if (in_group) parameterGroup[nmbrFunctions] = group+group_cnt++;
+		       //if (in_group) parameterGroup[nmbrFunctions] = group+group_cnt++;
 
 		       functions[nmbrFunctions++] = 
 			  ite_equ (var_equ, var_ite);
@@ -1227,7 +1230,7 @@ we1:
 		       equalityVble[nmbrFunctions] = var_list[equ];
 		       
 		       independantVars[var_list[equ]] = 0;
-		       if (in_group) parameterGroup[nmbrFunctions] = group+group_cnt++;
+		       //if (in_group) parameterGroup[nmbrFunctions] = group+group_cnt++;
 		       
 		       functions[nmbrFunctions++] =
 			  ite_equ (var_equ, ite_not(var_ite));
@@ -1344,7 +1347,7 @@ we1:
 		             equalityVble[nmbrFunctions] = equiv;
 
                    independantVars[equiv] = 0;
-                   if (in_group) parameterGroup[nmbrFunctions] = group+group_cnt++;
+                   //if (in_group) parameterGroup[nmbrFunctions] = group+group_cnt++;
                    BDDNode *v = ReadSmurf(&y, line_xlate, level, srt_lst, cnt);
                    functions[nmbrFunctions++] = ite_equ(v, ite_var( equiv ));
 
