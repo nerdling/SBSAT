@@ -101,7 +101,7 @@ int ExQuantifyAnd () {
 				d2e_printf3("\rPreprocessing Ea %d/%ld ", i, numinp);
 			}
 
-			if(autark_BDD[i] != -1) continue;
+			//if(autark_BDD[i] != -1) continue;
 			if(variablelist[i].true_false != -1 || variablelist[i].equalvars != 0)
 			  continue;
 			//fprintf(stderr, "%d\n", i);

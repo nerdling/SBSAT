@@ -453,6 +453,7 @@ int Rebuild_BDDx (int x) {
 				startiter = AllocateInference(equalityVble[x], 0, NULL);
 				startiter->next = lastinfer->next;
 				lastinfer->next = startiter;
+				autark_BDD[equalityVble[x]] = -1;
 				//d3_printf3("\n%d|%d=True|", x, equalityVble[x]);
 				//d3_printf1("*T");
 				//printBDD(autarkBDD);
@@ -467,6 +468,7 @@ int Rebuild_BDDx (int x) {
 						startiter = AllocateInference(iterator->nums[0], iterator->nums[1], NULL);
 						startiter->next = lastinfer->next;
 						lastinfer->next = startiter;
+						autark_BDD[equalityVble[x]] = -1;
 						//lastiter->nums[0] = iterator->nums[0];
 						//lastiter->nums[1] = iterator->nums[1];
 						
