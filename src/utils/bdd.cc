@@ -169,7 +169,7 @@ BDDNode *_MinMaxBDD(int *vars, int min, int max, int num_left, int set_true) {
 int countnodes(BDDNode *f) {
    if(IS_TRUE_FALSE(f))
       return 0;
-   return (countnodes(f->thenCase) + countnodes(f->elseCase));	
+   return (countnodes(f->thenCase) + countnodes(f->elseCase) + 1);
 }
 
 float mark_trues(BDDNode *f) {
