@@ -26,6 +26,7 @@ sym_init()
   false_ptr->var_ptr=tputsym();
   ((symrec*)(true_ptr->var_ptr))->id=0;
   ((symrec*)(false_ptr->var_ptr))->id=0;
+  sym_table_idx = 0;
 }
 
 symrec *
@@ -120,6 +121,17 @@ getsym_i(int id)
   if (id > sym_table_idx) return NULL;
   return sym_table[id];
 }
+
+char *
+s_name(int id)
+{
+  if (sym_table == NULL) return NULL;
+  if (id > sym_table_idx) return NULL;
+  symrec *ptr = sym_table[id];
+  if (ptr == NULL) return NULL;
+  return ptr->name;
+}
+
 
 int
 i_getsym (char *sym_name)
