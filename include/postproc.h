@@ -37,7 +37,6 @@
 #ifndef POSTPROC_H
 #define POSTPROC_H
 
-//#include "flatten.h"    /* ++ */
 #include "tracer.h"    /* ++ */
 
 void finalCheck(Tracer *, int *);

@@ -97,7 +97,7 @@ void Do_Flow() {
 				}
 				var_score[x] = score/((float)(num_funcs_var_occurs[x] - 1));
 				if(var_score[x] == 0 && x != numinp+1) {
-					symrec *ptr = getsym_i(x);
+//					symrec *ptr = getsym_i(x);
 //					fprintf(stderr, "%s", ptr->name);
 //					fprintf(stderr, "PROBLEM: Zero weight variable");
 					//exit(0);
@@ -197,7 +197,7 @@ void Do_Flow_Grouping() {
 				}
 				var_score[x] = score/((float)(num_funcs_var_occurs[x] - 1));
 				if(var_score[x] == 0 && x != numinp+1) {
-					symrec *ptr = getsym_i(x);
+//					symrec *ptr = getsym_i(x);
 //					fprintf(stderr, "%s", ptr->name);
 //					fprintf(stderr, "PROBLEM: Zero weight variable");
 					//exit(0);

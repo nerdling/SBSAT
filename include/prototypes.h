@@ -37,10 +37,6 @@
 #ifndef PROTOTYPES_H
 #define PROTOTYPES_H
 
-#include <stdio.h>
-//#include "tracer.h"
-//#include "equivclass.h"
-
 /*
  * great for small problems
  * bigger problems == take more memory or is slower depending on params

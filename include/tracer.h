@@ -145,8 +145,6 @@
 #ifndef TRACER_H
 #define TRACER_H
 
-#include <unistd.h>
-#include "common.h"
 #include "parse.h"
 
 typedef struct flat{

@@ -52,8 +52,6 @@
 #ifndef COMMON_H
 #define COMMON_H
 
-//#include "smurffactory.h"
-
 struct llist{
    int num;
    struct llist *next;
@@ -120,6 +118,11 @@ extern   int *independantVars;
 extern   char **labels;
 extern   int **parameterizedVars;
 extern   int *parameterGroup;
+extern   varinfo *variablelist;
+extern   float *var_score;
+extern   store *variables;
+extern   int *length;
+
 
 typedef struct _t_solution_info {
   int *arrElts;

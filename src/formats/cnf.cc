@@ -233,7 +233,7 @@ void CNF_to_BDD(int cnf)
 	int num_minmax = 0;
 	for(long x = 1; x < numout + 1; x++) {
       if (x%1000 == 1)
-         d2_printf3("\rReading CNF %d/%d ... ", x, numout);
+         d2_printf3("\rReading CNF %ld/%ld ... ", x, numout);
       y = -1;
       do {
 			y++;
@@ -303,7 +303,7 @@ void CNF_to_BDD(int cnf)
       int *greaterneg_temp = (int *)calloc(numinp+1, sizeof(int));
       for(long x = 1; x < numout + 1; x++) {
          if (x%1000 == 1)
-            d2_printf3("\rScanning CNF %d/%d ...        ", x, numout);
+            d2_printf3("\rScanning CNF %ld/%ld ...        ", x, numout);
          if(integers[x].length == 2) {
 				for(y = 0; y < 2; y++) {
 					if(integers[x].num[y] > 0)
@@ -365,7 +365,7 @@ void CNF_to_BDD(int cnf)
 		
 		for(long x = 1; x < numout+1; x++) {
          if (x%1000 == 1)
-            d2_printf3("\rStoring CNF %d/%d ...        ", x, numout);
+            d2_printf3("\rStoring CNF %ld/%ld ...        ", x, numout);
          count = 0;
 			if(integers[x].length == 2) {
 				if(integers[x].num[0] > 0) {
@@ -462,11 +462,11 @@ void CNF_to_BDD(int cnf)
 		//ok...this is where the and= and or= are sorted out.
 		//I'll have to make a good explaination later
 		//cause this was hard to work out.
-      int num_iters = 0;
+      long num_iters = 0;
       int and_or_do = 1;
       while(and_or_do) {
          if (++num_iters%1000 == 1)
-            d2_printf2("\rAND/OR Search CNF %d       ", num_iters);
+            d2_printf2("\rAND/OR Search CNF %ld       ", num_iters);
          and_or_do = 0;
 			for(long x = 1; x < numinp+1; x++) {
 				if(two_pos[x].num[0] > 0) {
@@ -660,7 +660,7 @@ void CNF_to_BDD(int cnf)
       num = 0;
       for(int x = 0; x < numinp+1; x++) {
          if (x%1000 == 0)
-            d2_printf3("\rITE Search CNF %d/%d       ", x, numinp);
+            d2_printf3("\rITE Search CNF %d/%ld       ", x, numinp);
 			v3_1count = 0;
 			v3_2count = 0;
 			for(i = 0; i < three_pos[x].length; i++) {
@@ -816,7 +816,7 @@ void CNF_to_BDD(int cnf)
 		//Creates BDD's for the ite_equal clauses
       for(long x = 0; x < num_ite; x++) {
          if (x%1000 == 0)
-            d2_printf3("\rBuilding ITEs %d/%d ...    ", x, num_ite);
+            d2_printf3("\rBuilding ITEs %ld/%d ...    ", x, num_ite);
          functions[x] = ite_itequ(ite_var(ites[x].vars[0]),
                ite_var(ites[x].vars[1]),
                ite_var(ites[x].vars[2]),
@@ -833,7 +833,7 @@ void CNF_to_BDD(int cnf)
       d3_printf2("Building unclustered BDDs - %ld\n", numout);
       for(long x = 0; x < numout; x++) {
          if (x%1000 == 0)
-            d2_printf3("\rBuilding unclustered BDDs %d/%d ... ", x, numout);
+            d2_printf3("\rBuilding unclustered BDDs %ld/%ld ... ", x, numout);
          qsort(integers[x].num, integers[x].length, sizeof(int), abscompfunc);
          //qsort(integers[x].num, integers[x].length, sizeof(int), absrevcompfunc);
          functions[x+num_ite] = false_ptr;
@@ -851,7 +851,7 @@ void CNF_to_BDD(int cnf)
       d3_printf2("Building and= & or= BDDs - %d\n", recurselen);
       for(long x = 0; x < recurselen; x++) {
          if (x%1000 == 0)
-            d2_printf3("\rBuilding and= & or= BDDs %d/%d ... ", x, recurselen);
+            d2_printf3("\rBuilding and= & or= BDDs %ld/%d ... ", x, recurselen);
          qsort(recurse[x].num, recurse[x].length, sizeof(int), abscompfunc);
          //qsort(recurse[x].num, recurse[x].length, sizeof(int), absrevcompfunc);
          if(recurse[x].dag > 0) {
@@ -895,7 +895,7 @@ void CNF_to_BDD(int cnf)
 
       for(long x = 1; x < numout + 1; x++) {
          if (x % 1000 == 0) 
-            d2_printf3("\rBuilding unclustered BDDs %d/%d ...       ", x, numout);
+            d2_printf3("\rBuilding unclustered BDDs %ld/%ld ...       ", x, numout);
          qsort(integers[x].num, integers[x].length, sizeof(int), abscompfunc);
          //qsort(integers[x].num, integers[x].length, sizeof(int), absrevcompfunc);
 	    functions[x-1] = false_ptr;

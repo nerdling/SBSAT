@@ -38,11 +38,6 @@
 #ifndef BRANCHER_H
 #define BRANCHER_H
 
-#include "smurffactory.h"
-
-#include "common.h"
-#include "lemmainfo.h"
-
 #define LEMMA_CONSTANT 10.0
 
 void DisplayStatistics(int nNumChoicePts, int nNumBacktracks, int nNumBackjumps);

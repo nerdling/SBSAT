@@ -546,7 +546,7 @@ fprintf_desc(FILE *fout, char *desc, char *first_line, char *new_line)
    };
    line_len=strlen((line_no?new_line:first_line));
    //fprintf(stdout, "%d(%d,%d)",line_len,line_no,term_width);
-   while ((line_len + strlen(prev_line)) > (term_width-2)) {
+   while ((int)(line_len + strlen(prev_line)) > (int)(term_width-2)) {
       char tmp_char;
       char *p_line2;
       p_line = prev_line + (term_width-2 - line_len);
@@ -728,11 +728,11 @@ show_help()
       }
 
       if (strchr(options[i].desc_opt, '\n') == NULL &&
-            (strlen(line)+strlen(options[i].desc_opt)+strlen(default_line)) <= (term_width-2))
+            (int)(strlen(line)+strlen(options[i].desc_opt)+strlen(default_line)) <= (int)(term_width-2))
          fprintf(stdhelp, "%s%s %s\n",  line, options[i].desc_opt, default_line);
       else 
       {
-         if (strlen(line)+strlen(options[i].desc_opt) <= term_width-2)
+         if ((int)(strlen(line)+strlen(options[i].desc_opt)) <= (int)(term_width-2))
             fprintf(stdhelp, "%s%s\n                          %s\n",  
                   line, options[i].desc_opt, default_line);
          else 

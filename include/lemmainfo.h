@@ -48,7 +48,6 @@
 #ifndef LEMMAINFO_H
 #define LEMMAINFO_H
 
-#include <stdio.h>
 #include "smurffactory.h"
 
 #define LEMMA_SPACE_SIZE 50000  // initial size -- expandable in these inc.

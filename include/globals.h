@@ -40,11 +40,6 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
-extern varinfo *variablelist;
-extern float *var_score;
-extern store *variables;
-extern int *length;
-
 void ite_free(void **ptr);
 void *ite_calloc(int x, int y, int dbg_lvl, const char *for_what);
 char *ite_basename(char *filename);

@@ -53,7 +53,7 @@ Do_Cofactor()
   for (int x = 0; x < numout; x++)
    {
       if (x%1000 == 0) 
-         d2e_printf3("\rPreprocessing Co %d/%d", x, numout);
+         d2e_printf3("\rPreprocessing Co %d/%ld", x, numout);
       
 
      if (length[x] <= COF_MAX && length[x] > 0)
