@@ -1431,8 +1431,8 @@ BDDNode * _xquantify (BDDNode * f, int v)
 
    if (v > f->variable)		//Does v exist in f?
       return (f->xq_bdd = f);			      //no, then leave
-   BDDNode *r = xquantify (f->thenCase, v);
-   BDDNode *e = xquantify (f->elseCase, v);
+   BDDNode *r = _xquantify (f->thenCase, v);
+   BDDNode *e = _xquantify (f->elseCase, v);
 
 	if (r == e)
       return (f->xq_bdd = r);
