@@ -50,6 +50,7 @@ extern int gnMaxVbleIndex;
 extern int gnNumCachedLemmas;
 extern int nBacktrackStackIndex;
 extern BacktrackStackEntry *pBacktrackTop;     
+extern BacktrackStackEntry *pStartBacktrackStack;     
 extern int *arrBacktrackStackIndex;
 extern ChoicePointStruct *arrChoicePointStack;
 extern ChoicePointStruct *pChoicePointTop;
@@ -99,6 +100,7 @@ extern int nInferredValue;
 extern SmurfState **arrCurrentStates; // Current states of all of the Smurfs, i.e.,
 
 extern ChoicePointStruct *arrChoicePointStack; // Info on previous branch variables.
+extern ChoicePointStruct *pStartChoicePointStack; 
 extern ChoicePointStruct *pChoicePointTop; // Next free position in above stack.
 
 extern int *pInferenceQueueNextElt; // ptr to next available elt in inference queue
@@ -106,17 +108,11 @@ extern int *pInferenceQueueNextElt; // ptr to next available elt in inference qu
 // gives the functions may be affected by updating that variable.
 
 extern int gnNumLemmas;
-extern int *arrBacktrackStackIndex;
-extern int nBacktrackStackIndex;
-extern BacktrackStackEntry *pBacktrackTop; // Next free position in backtrack stack.
-// The next five identifiers are used for identifying and processing
-// a lemma which witnesses a forced assignment which causes a conflict
-// during the search.
-extern int *arrTempLemma;
 
 /* Backtrack arrays */
 extern int *arrUnsetLemmaFlagVars;
 extern bool *arrLemmaFlag;
+extern int *arrTempLemma;
 
 extern int *pInferenceQueueNextEmpty; // ptr to next empty slot in inference queue
 extern int nNumUnresolvedFunctions;

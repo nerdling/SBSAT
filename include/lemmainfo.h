@@ -135,6 +135,9 @@ typedef struct _LemmaInfoStruct {
   // how many times this lemma caused inference
   int nNumLemmaInfs;
 
+  // when was this lemma first time useful
+  int nLemmaFirstUseful;
+
 #ifdef HEURISTIC_USES_LEMMA_COUNTS
   bool bIsInCache;  // True iff the lemma has been moved into the lemma cache.
   int nNumUnknown_LemmaCount;  // Number of uninstantiated literals in

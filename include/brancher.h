@@ -96,7 +96,7 @@ struct AffectedFuncsStruct
 
 struct BacktrackStackEntry
 {
-  int nAtom;
+  int nBranchVble;
   bool bWasChoicePoint;
   LemmaBlock *pLemma;
   // pLemmaInfo will be NULL unless the lemma for this entry
