@@ -60,7 +60,7 @@ int max_integers;
 char *integers;
 int max_macros;
 char *macros;
-int negate;
+int negate_it;
 int expect_integer = 0;
 
 BDDNode *putite(int intnum, BDDNode * bdd)
@@ -646,8 +646,8 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 		  independantVars[numinp-iter] = 0;
 	}
 
-	if(negate == 1) {
-		negate = 0;
+	if(negate_it == 1) {
+		negate_it = 0;
 		return ite_var(-v);
 	} else return ite_var(v);
 
@@ -683,9 +683,9 @@ char getNextSymbol (int &intnum, BDDNode *&bdd) {
 		}
       if (((p >= 'a') && (p <= 'z')) || ((p >= 'A') && (p <= 'Z'))
 			 || (p == '_') || ((p >= '0') && (p <= '9')) || (p == '-')) {
-			negate = 0;
+			negate_it = 0;
 			if (p == '-') {
-				negate = 1;
+				negate_it = 1;
             p = fgetc(finputfile);
             if (p == EOF) {
 					fprintf (stderr, "\nUnexpected EOF...exiting:%d\n", markbdd_line);
@@ -725,7 +725,7 @@ char getNextSymbol (int &intnum, BDDNode *&bdd) {
 					fprintf (stderr, "\nVariable %d is larger than allowed (%ld)...exiting:%d\n",	intnum, numinp - 2, markbdd_line);
 					exit (1);
 				}
-				if (negate) intnum = -intnum;
+				if (negate_it) intnum = -intnum;
 				return 'i';
 			} else if(is_int == 0 && expect_integer == 1) {					  
 				fprintf(stderr, "\nExpecting an integer, found %s...exiting:%d\n", macros, markbdd_line);
@@ -736,8 +736,8 @@ char getNextSymbol (int &intnum, BDDNode *&bdd) {
 					exit (1);
 				}
 			}
-			if(negate) d4_printf2("-%s ", macros);
-			if(!negate) d4_printf2("%s ", macros);
+			if(negate_it) d4_printf2("-%s ", macros);
+			if(!negate_it) d4_printf2("%s ", macros);
 			return 'm';
 		}
       if (p == '#') {
