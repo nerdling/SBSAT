@@ -55,6 +55,7 @@ int vars_max = 0;
 int
 functions_alloc(int n_fns)
 {
+   if (n_fns < functions_max) return 0;
    /* n_fns -- numout */
    equalityVble = (int *)ite_recalloc((void*)equalityVble, functions_max, 
          n_fns, sizeof(int), 9, "equalityVble");
@@ -72,6 +73,7 @@ functions_alloc(int n_fns)
 int
 vars_alloc(int n_vars)
 {
+   if (n_vars < vars_max) return 0;
 
    /* n_vars -- numinp */
    independantVars = (int *)ite_recalloc((void*)independantVars, vars_max,

@@ -22,9 +22,11 @@ void    sym_init();
 symrec *putsym(char *);
 symrec *getsym(char *);
 int     i_getsym(char *);
+int     i_putsym(char *);
 symrec *s_getsym(char *);
 void    s_set_indep(symrec *, int);
 symrec *tputsym();
 symrec *getsym_i(int id);
 void    print_symtable();
+int get_or_putsym_check(char *sym_name, int id);
 #endif

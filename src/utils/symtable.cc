@@ -42,12 +42,26 @@ sym_hash(char *name)
 }
 
 int
-get_or_putsym(char *sym_name) 
+i_putsym(char *sym_name) 
 {
   int i = i_getsym(sym_name);
   if (i) return i;
   putsym(sym_name);
   return i_getsym(sym_name);
+}
+
+int
+get_or_putsym_check(char *sym_name, int id) 
+{
+  int i = i_getsym(sym_name);
+  if (i) {
+     assert(i==id);
+     return i;
+  }
+  putsym(sym_name);
+  i = i_getsym(sym_name);
+  assert(i==id);
+  return i;
 }
 
 void
