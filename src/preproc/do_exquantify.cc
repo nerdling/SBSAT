@@ -149,7 +149,7 @@ int ExQuantify () {
 						for(int iter = 0; iter<str_length; iter++)
 						  d3_printf1("\b");
 						str_length = 0;
-						d3_printf3 ("*{%d|%d}", i, j);
+						d3_printf2 ("*{%d}", i);
 //						printBDD(functions[j]);
 //						fprintf(stderr, "\n");
 						functions[j] = xquantify (functions[j], i);

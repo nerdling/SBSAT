@@ -144,7 +144,12 @@ int ExQuantifyAnd () {
 						out = 1;
 						break;
 					}
-					
+
+					if(length[z] > MAX_EXQUANTIFY_VARLENGTH){
+						out = 1;
+						break;
+					}
+
 					int bdd_length = 0;
 					int *bdd_vars = NULL;
 					switch (int r=Rebuild_BDD(Quantify, &bdd_length, bdd_vars)) {
@@ -160,10 +165,6 @@ int ExQuantifyAnd () {
 						break;
 					}
 					
-					if(length[z] > MAX_EXQUANTIFY_VARLENGTH){
-						out = 1;
-						break;
-					}
 					Quantify = ite_and(Quantify, functions[z]);
 					affected++;
 					
@@ -186,6 +187,7 @@ int ExQuantifyAnd () {
 					continue;
 				}
 				if(out) {
+					if(functions[j] == Quantify) continue;
 					functions[j] = Quantify;
 				} else {
 					functions[j] = Quantify;
@@ -207,7 +209,7 @@ int ExQuantifyAnd () {
 						  d3_printf1("\b");
 						d3_printf2 ("*{%d}", i);
 						str_length = 0;// strlen(p);
-						functions[j] = xquantify (functions[j], i);
+						//functions[j] = xquantify (functions[j], i);
 						variablelist[i].true_false = 2;
 						SetRepeats(j);
 						while(x_infers!=NULL) {
@@ -239,8 +241,9 @@ int ExQuantifyAnd () {
 						bdd_vars = NULL;
 					}
 				}
+				
 				DO_INFERENCES = OLD_DO_INFERENCES;
-
+				
 				switch (int r=Rebuild_BDDx(j)) {
 				 case TRIV_UNSAT:
 				 case TRIV_SAT: 
