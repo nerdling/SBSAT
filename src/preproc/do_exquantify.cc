@@ -172,7 +172,7 @@ int ExQuantify () {
 						//infer *temp = x_infers; x_infers = x_infers->next; delete temp;
 						//}
 
-						functions[j] = xquantify (functions[j], i);
+						//functions[j] = xquantify (functions[j], i);
 						
 						while(x_infers!=NULL) {
 							infer *temp = x_infers; x_infers = x_infers->next; delete temp;

@@ -183,7 +183,7 @@ HEUR_FUNCTION(int *pnBranchAtom, int *pnBranchValue)
          if (arrSolution[i] == BOOL_UNKNOWN)
          {
             fVbleWeight = HEUR_WEIGHT(arrHeurScores[i], i);
-            if (HEUR_COMPARE(fVbleWeight, fMaxWeight))
+				if (HEUR_COMPARE(fVbleWeight, fMaxWeight))
             {
                fMaxWeight = fVbleWeight;
                nBestVble = i;
