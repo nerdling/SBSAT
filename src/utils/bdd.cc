@@ -1370,9 +1370,8 @@ OLD_nmbrVarsInCommon (int bddNmbr1, int bddNmbr2, int *&length,
 
 int
 nmbrVarsInCommon(int bddNmbr1, int bddNmbr2, int *&length,
-      store * &variables, int _stopat)
+      store * &variables, int STOPAT)
 {
-#define STOPAT 2
    static int bdd1pos;
    static int bdd2pos;
    static int varsSoFar;
@@ -1382,6 +1381,8 @@ nmbrVarsInCommon(int bddNmbr1, int bddNmbr2, int *&length,
    bdd1pos = 0;
    bdd2pos = 0;
    varsSoFar = 0;
+	if(length[bddNmbr1] == 0) return 0;
+	if(length[bddNmbr2] == 0) return 0;
    bdd1max = length[bddNmbr1] - STOPAT + 1;
    bdd2max = length[bddNmbr2] - STOPAT + 1;
 
