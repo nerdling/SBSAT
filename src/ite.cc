@@ -169,6 +169,7 @@ ExitNormal:
     case SOLV_UNSAT: strcpy(result_string, "Unsatisfiable"); break;
     case SOLV_UNKNOWN: strcpy(result_string, "Unknown Result"); break;
     case CONV_OUTPUT: strcpy(result_string, "Conversion"); break;
+    case SOLV_ERROR: strcpy(result_string, "SOLVER ERROR: Result is not as expected"); break;
     default: sprintf(result_string, "Error(%d)", ret); break;
    }
 
