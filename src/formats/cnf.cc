@@ -460,6 +460,15 @@ void CNF_to_BDD(int cnf)
 					out = 0;
 					for(z = 0; (greater_neg[x].num[z] != 0) && (out != 1); z++) {
 						count = 0;
+						//An optimization can be placed here I think...
+						//For the future, if the number of literals in the greater_neg clause
+						//is greater than the number of two literal clauses, then it is not
+						//going to be an and= or an or=.
+						//twopos_temp and twoneg_temp variables because i believe they store
+						//How many two literal clauses there are...
+						//Don't need greaterneg_temp though. Just need the clause length.
+						//Which I don't seem to have...maybe it's not a big thing...
+						//I could store the length cause I compute it earlier. (i think)
 						for(y = 0; integers[greater_neg[x].num[z]].num[y] != 0; y++) {
 							if(integers[greater_neg[x].num[z]].dag == -1) {
 								for(i = 0; two_pos[x].num[i] != 0; i++) {
