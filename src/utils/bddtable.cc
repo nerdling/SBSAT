@@ -246,15 +246,6 @@ ite_filesize(char *filename)
 }
 
 void
-reload_bdd_circuit(int _numinp, int _numout,
-                   void *_bddtable, int _bddtable_len,
-                   void *_bddtable_start,
-                   void *_equalityvble, 
-                   void *_functions, 
-                   void *_functiontype, 
-                   void *_length, 
-                   void *_variablelist);
-void
 read_bdd_circuit()
 {
    FILE *fin = NULL;
@@ -267,6 +258,7 @@ read_bdd_circuit()
    void *_functiontype = NULL; 
    void *_length = NULL;
    void *_variablelist = NULL;
+   void *_independantVars = NULL;
    int _numinp = 0;
    int _numout = 0;
 
@@ -331,18 +323,27 @@ read_bdd_circuit()
    fread(_variablelist, sizeof(varinfo), _numinp+1 , fin);
    fclose(fin);
 
+   cerr << "Reading independantVars .. " << endl;
+   assert(_numinp+1 == (int)(ite_filesize("independantVars.bin")/sizeof(int)));
+   fin = ite_fopen("independantVars.bin", "rb");
+   _independantVars = calloc(_numinp+1, sizeof(int));
+   if (!fin) return;
+   fread(_variablelist, sizeof(int), _numinp+1 , fin);
+   fclose(fin);
+
    reload_bdd_circuit(_numinp, _numout, 
                       _bddtable, _bddtable_len,
                       _bddtable_start, 
                       _equalityvble, _functions,
                       _functiontype, _length,
-                      _variablelist);
+                      _variablelist, _independantVars);
    ite_free(_bddtable);
    ite_free(_equalityvble);
    ite_free(_functions);
    ite_free(_functiontype);
    ite_free(_length);
    ite_free(_variablelist);
+   ite_free(_independantVars);
 }
 
 void
@@ -353,9 +354,10 @@ reload_bdd_circuit(int _numinp, int _numout,
                    void *_functions, 
                    void *_functiontype, 
                    void *_length, 
-                   void *_variablelist)
+                   void *_variablelist,
+                   void *_independantVars)
 {
-   d2_printf3("Have %d variables and %d functions .. \n",
+   d2_printf3("Have %ld variables and %ld functions .. \n",
                    numinp, numout);
 
    d2_printf1("BDD and Circuit Init..\n");
@@ -366,6 +368,7 @@ reload_bdd_circuit(int _numinp, int _numout,
    curBDDPos = _bddtable_len;
 	length = new int[numout + 1];
    variablelist = new varinfo[numinp + 1];
+   independantVars = (int *)calloc(numinp + 1, sizeof(int));
 
    assert(bddmemory_vsb[0].max > curBDDPos);
    memmove(bddmemory_vsb[0].memory, _bddtable, sizeof(BDDNode)*curBDDPos);
@@ -374,6 +377,7 @@ reload_bdd_circuit(int _numinp, int _numout,
    memmove(equalityVble, _equalityvble, sizeof(int)*numout);
    memmove(length, _length, sizeof(int)*numout);
    memmove(variablelist, _variablelist, sizeof(varinfo)*(numinp+1));
+   memmove(independantVars, _independantVars, sizeof(int)*(numinp+1));
 
    int shift = (char*)(bddmemory_vsb[0].memory) - (char*)(_bddtable_start);
 
@@ -420,7 +424,8 @@ get_bdd_circuit(int *_numinp, int *_numout,
                    void **_functions,  int *_functions_msize,
                    void **_functiontype, 
                    void **_length, 
-                   void **_variablelist, int *_variablelist_msize)
+                   void **_variablelist, int *_variablelist_msize,
+                   void **_independantVars)
 {
   *_numinp = numinp;
   *_numout = numout;
@@ -434,6 +439,7 @@ get_bdd_circuit(int *_numinp, int *_numout,
   *_length = length;
   *_variablelist = variablelist; 
   *_variablelist_msize = sizeof(varinfo);
+  *_independantVars = independantVars; 
 }
         
 void
@@ -474,6 +480,11 @@ dump_bdd_table()
    fout = ite_fopen("variablelist.bin", "wb");
    if (!fout) return;
    fwrite(variablelist, sizeof(varinfo), numinp+1 , fout);
+   fclose(fout);
+
+   fout = ite_fopen("independantVars.bin", "wb");
+   if (!fout) return;
+   fwrite(independantVars, sizeof(int), numinp+1 , fout);
    fclose(fout);
 
    t_sbsat_env sbsat_env;

@@ -128,26 +128,6 @@ ite_main(Tracer *tracer)
 {
    int ret = NO_ERROR;
    {
-      /*
-       * reversing dependency if requested
-       */
-      if (reverse_independant_dependant)
-      {
-         for (int x = 0; x < numinp + 1; x++)
-         {
-            if (independantVars[x] == 1)
-               independantVars[x] = 0;
-            else if (independantVars[x] == 0)
-               independantVars[x] = 1;
-         }
-      }
-
-      if (clear_dependance)
-      {
-         for (int x = 0; x < numinp + 1; x++)
-            if (independantVars[x] == 0)
-               independantVars[x] = 1;
-      }
    }
 	switch (formatout) {
     case 'n': break;

@@ -59,6 +59,27 @@ solve_init()
 {
   int ret = SOLV_UNKNOWN;
 
+      /*
+       * reversing dependency if requested
+       */
+      if (reverse_independant_dependant)
+      {
+         for (int x = 0; x < numinp + 1; x++)
+         {
+            if (independantVars[x] == 1)
+               independantVars[x] = 0;
+            else if (independantVars[x] == 0)
+               independantVars[x] = 1;
+         }
+      }
+
+      if (clear_dependance)
+      {
+         for (int x = 0; x < numinp + 1; x++)
+            if (independantVars[x] == 0)
+               independantVars[x] = 1;
+      }
+
   ret = InitSolver(); // breakxors, variables, lemma space init, lemma heu init
   if (ret != SOLV_UNKNOWN) return ret;
  

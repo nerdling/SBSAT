@@ -1,5 +1,4 @@
-/* =========FOR INTERNAL USE ONLY. NO DISTRIBUTION PLEASE ========== */
-
+/* =========FOR INTERNAL USE ONLY. NO DISTRIBUTION PLEASE ========== */ 
 /*********************************************************************
  Copyright 1999-2003, University of Cincinnati.  All rights reserved.
  By using this software the USER indicates that he or she has read,
@@ -61,6 +60,7 @@ int nAssertionFailedVble = 0;
 int gnNumCachedLemmas=0;
 extern BacktrackStackEntry *arrBacktrackStack; 
 extern SmurfState **arrRegSmurfInitialStates;
+t_proc_hook proc_hook = NULL;
 
 
 int *arrInferenceQueue; // Indicies of atoms that already have values
@@ -272,6 +272,7 @@ dump_counters(FILE *fd)
    fprintf(fd, "\n");
 }
 
+
 ITE_INLINE int
 ITE_Split(int **path, int *path_size)
 {
@@ -320,6 +321,10 @@ CheckBtHooks()
 
    /* setup bt function as a hook with frequency 1 ? */
    ret = proc_backtrack();
+
+   if (ret==0 && proc_hook && ite_counters[NUM_BACKTRACKS] % 1000 == 0) {
+      proc_hook();
+   }
 
 //#define MK_SPLIT_TEST
 #ifdef MK_SPLIT_TEST

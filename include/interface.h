@@ -37,6 +37,8 @@
 #ifndef INTERFACE_H
 #define INTERFACE_H
 
+typedef int (*t_proc_hook)();
+extern t_proc_hook proc_hook;
 
 /* in interface.cc */
 int ITE_GetNextDecision(int *nInferredAtom, int *nInferredValue);
@@ -46,6 +48,9 @@ int ITE_SolveFree();
 int ITE_GetVarAsgnment(int var);
 int ITE_Brancher();
 int ITE_Final(int ret);
+int ITE_AddHook(t_proc_hook new_hook);
+int ITE_Split(int **path, int *path_size);
+int ITE_SolveReInit();
 
 /* defined somewhere else */
 int ITE_Deduce();

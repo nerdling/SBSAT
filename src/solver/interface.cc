@@ -38,6 +38,8 @@
 #include "ite.h"
 #include "solver.h"
 
+ITE_INLINE void InitBrancherX();
+
 int
 ITE_GetNextDecision(int *nInferredAtom, int *nInferredValue)
 {
@@ -55,10 +57,25 @@ ITE_MakeDecision(int nInferredAtom, int nInferredValue)
 }
 
 int
+ITE_AddHook(t_proc_hook new_hook)
+{
+   proc_hook = new_hook;
+   return 0;
+}
+
+int
 ITE_SolveInit()
 {
    return solve_init();
 }
+
+int
+ITE_SolveReInit()
+{
+   InitBrancherX();
+   return 0;
+}
+
 
 int
 ITE_SolveFree()

@@ -241,6 +241,28 @@ EnterIntoLemmaSpace(int nNumElts, int arrLemmaLiterals[],
 		    bool bRecycleLemmasAsNeeded, LemmaBlock *&pFirstBlock,
 		    LemmaBlock *&pLastBlock, int &nNumBlocks);
 
+void
+reload_bdd_circuit(int _numinp, int _numout,
+                   void *_bddtable, int _bddtable_len,
+                   void *_bddtable_start,
+                   void *_equalityvble, 
+                   void *_functions, 
+                   void *_functiontype, 
+                   void *_length, 
+                   void *_variablelist,
+                   void *_independantVars);
+
+void
+get_bdd_circuit(int *_numinp, int *_numout,
+                   void **_bddtable, int *_bddtable_len, int *_bddtable_msize,
+                   void **_equalityvble, 
+                   void **_functions,  int *_functions_msize,
+                   void **_functiontype, 
+                   void **_length, 
+                   void **_variablelist, int *_variablelist_msize,
+                   void **_independantVars);
+void
+read_bdd_circuit();
 
 //#define MEMCPY memcpy_ite
 #define MEMCPY memcpy
