@@ -354,6 +354,7 @@ reload_bdd_circuit(int _numinp, int _numout,
                    void *_variablelist,
                    void *_independantVars)
 {
+   bdd_init();
    d2_printf3("Have %ld variables and %ld functions .. \n",
                    numinp, numout);
 
