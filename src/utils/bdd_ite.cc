@@ -113,13 +113,17 @@ BDDNode *_ite_x_y_F(BDDNode *x, BDDNode *y)
 			if (r == y->thenCase && e == y->elseCase) return y;
       }
    } else {
-      BDDNode *cached = itetable_find_or_add_node(1, y, x, NULL);
+		//Swap x and y
+      BDDNode *tmp = x;	x = y; y = tmp;
+		//This swap makes itetable work correctly because now
+		//x and y need to be swapped for the itetable call below.
+		BDDNode *cached = itetable_find_or_add_node(1, x, y, NULL);
       if (cached) return cached;
-      v = y->variable;
-      r = _ite_x_y_F(y->thenCase, x);
-      e = _ite_x_y_F(y->elseCase, x);
+      v = x->variable;
+      r = _ite_x_y_F(x->thenCase, y);
+      e = _ite_x_y_F(x->elseCase, y);
 		// this happens but not often enough to bring a speedup
-		if (r == y->thenCase && e == y->elseCase) return y;
+		if (r == x->thenCase && e == x->elseCase) return y;
    } 
 
    if (r == e) return (r);
