@@ -379,8 +379,8 @@ bddtable_alloc_mirr_node(BDDNode *mirr_node)
 void
 bdd_flag_nodes(BDDNode *node)
 {
-   if (node->flag == 1) return;
-   node->flag = 1;
+   if (node->flag == 1001001001) return;
+   node->flag = 1001001001;
    //node->inferences = NULL;
    bdd_flag_nodes(node->thenCase);
    bdd_flag_nodes(node->elseCase);
@@ -413,9 +413,13 @@ bdd_gc(int force)
    }
    bddtable_node_new_last = ite_counters[BDD_NODE_NEW];
 
-   d4_printf2("BDD_GC START (free %d) ", bddtable_free_count);
+   d4_printf2("\nBDD_GC START (free %d) ", bddtable_free_count);
+   struct timeval tv_start;
+   gettimeofday(&tv_start, NULL);
+   double rt_start = get_runtime();
 
    // clean all flags
+  /* 
    for (i=0;i<=numBDDPool;i++)
    {
       int max = bddmemory[i].max;
@@ -423,10 +427,12 @@ bdd_gc(int force)
       for (j=0;j<max;j++) 
          (bddmemory[i].memory+j)->flag = 0;
    }
+  */ 
 
    // flag all referenced nodes
-   true_ptr->flag = 1;
-   false_ptr->flag = 1;
+   true_ptr->flag = 1001001001;
+   false_ptr->flag = 1001001001;
+   bddtable_used_count_last = 0;
    for (i=0;i<nmbrFunctions;i++)
    {
      // printBDDInfs(functions[i]);
@@ -438,14 +444,38 @@ bdd_gc(int force)
       bdd_flag_nodes(original_functions[i]);
    }
 
-   
-   // clean the hash table
+ /* 
+   for (i=0;i<=bddtable_hash_memory_mask; i++)
+   {
+      BDDNode **ptr = &bddtable_hash_memory[i];
+      while (*ptr != NULL) 
+      {
+         if ((*ptr) -> flag != 1001001001) {
+            BDDNode *node = *ptr;
+            (*ptr) = (*ptr)->next;
+//#define GC_REBUILD_INFERENCES
+#ifndef GC_REBUILD_INFERENCES
+            DeallocateInferences_var(node->inferences, node->variable);
+#endif
+				memset(node, 0, sizeof(BDDNode));
+            node->next = bddtable_free;
+            bddtable_free = node;
+            bddtable_free_count++;
+         } else {
+            (*ptr)->flag = 0;
+            ptr = &((*ptr)->next);
+            bddtable_used_count_last++;
+         }
+      }
+   }
+*/
+
+   // remove unreferenced and rehash referenced
    for (i=0;i<=bddtable_hash_memory_mask; i++)
    {
       bddtable_hash_memory[i] = NULL;
    }
-
-   // remove unreferenced and rehash referenced
+   
    bddtable_free = NULL;
    bddtable_free_count = 0;
    bddtable_used_count_last = 0;
@@ -456,17 +486,13 @@ bdd_gc(int force)
       for (j=0;j<max;j++)
       {
          BDDNode *node = (bddmemory[i].memory+j);
-         if (node->flag == 0)
+         if (node->flag != 1001001001)
          {
             // deleted 
 //#define GC_REBUILD_INFERENCES
 #ifndef GC_REBUILD_INFERENCES
             DeallocateInferences_var(node->inferences, node->variable);
 #endif
-
-            node->or_bdd = NULL; //mk
-				node->t_and_not_e_bdd = NULL; //sw
-				node->not_t_and_e_bdd = NULL; //sw
 
 				memset(node, 0, sizeof(BDDNode));
             node->next = bddtable_free;
@@ -487,6 +513,7 @@ bdd_gc(int force)
          }
       }
    }
+  
    true_ptr->flag = 0;
    false_ptr->flag = 0;
    bddtable_free_count_last = bddtable_free_count;
@@ -514,8 +541,15 @@ bdd_gc(int force)
    }
 */
    
-   d4_printf3("BDD_GC END(used %d, free %d)\n", bddtable_used_count_last, bddtable_free_count);
    itetable_removeall();
+   struct timeval tv_stop;
+   gettimeofday(&tv_stop, NULL);
+   double rt_stop = get_runtime();
+   d2_printf5("BDD_GC END(used %d, free %d, time=%dms, cpu=%.0fms)\n", 
+         bddtable_used_count_last, bddtable_free_count,
+         (tv_stop.tv_sec-tv_start.tv_sec)*1000+(tv_stop.tv_usec-tv_start.tv_usec)/1000,
+         (rt_stop-rt_start)*1000);
+
 }
 
 void
