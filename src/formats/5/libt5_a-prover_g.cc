@@ -247,7 +247,7 @@ union yyalloc
 /* YYFINAL -- State number of the termination state. */
 #define YYFINAL  7
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   25
+#define YYLAST   30
 
 /* YYNTOKENS -- Number of terminals. */
 #define YYNTOKENS  11
@@ -308,7 +308,7 @@ static const unsigned char yyprhs[] =
 /* YYRHS -- A `-1'-separated list of the rules' RHS. */
 static const yysigned_char yyrhs[] =
 {
-      12,     0,    -1,    -1,     3,    -1,     5,     3,    -1,     9,
+      12,     0,    -1,    -1,     3,    -1,     5,    12,    -1,     9,
       12,    10,    -1,    12,     6,    12,    -1,    12,     4,    12,
       -1,    12,     8,    12,    -1,    12,     7,    12,    -1
 };
@@ -357,7 +357,7 @@ static const unsigned char yyr2[] =
    means the default is an error.  */
 static const unsigned char yydefact[] =
 {
-       2,     3,     0,     2,     0,     4,     0,     1,     2,     2,
+       2,     3,     2,     2,     0,     4,     0,     1,     2,     2,
        2,     2,     5,     7,     6,     9,     8
 };
 
@@ -372,14 +372,14 @@ static const yysigned_char yydefgoto[] =
 #define YYPACT_NINF -3
 static const yysigned_char yypact[] =
 {
-      16,    -3,    -2,    16,     0,    -3,    10,    -3,    16,    16,
-      16,    16,    -3,    -3,    -3,    -3,    -3
+      21,    -3,    21,    21,    10,    -3,    15,    -3,    21,    21,
+      21,    21,    -3,    -3,    -3,    -3,    -3
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yysigned_char yypgoto[] =
 {
-      -3,     2
+      -3,    -2
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
@@ -389,23 +389,25 @@ static const yysigned_char yypgoto[] =
 #define YYTABLE_NINF -1
 static const unsigned char yytable[] =
 {
-       7,     5,     0,     0,     8,     6,     9,    10,    11,     0,
-      13,    14,    15,    16,     8,     0,     9,    10,    11,     1,
-      12,     2,     0,     0,     0,     3
+       5,     6,     0,     0,     0,     0,    13,    14,    15,    16,
+       7,     0,     0,     0,     8,     0,     9,    10,    11,     8,
+       0,     9,    10,    11,     1,    12,     2,     0,     0,     0,
+       3
 };
 
 static const yysigned_char yycheck[] =
 {
-       0,     3,    -1,    -1,     4,     3,     6,     7,     8,    -1,
-       8,     9,    10,    11,     4,    -1,     6,     7,     8,     3,
-      10,     5,    -1,    -1,    -1,     9
+       2,     3,    -1,    -1,    -1,    -1,     8,     9,    10,    11,
+       0,    -1,    -1,    -1,     4,    -1,     6,     7,     8,     4,
+      -1,     6,     7,     8,     3,    10,     5,    -1,    -1,    -1,
+       9
 };
 
 /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
    symbol of state STATE-NUM.  */
 static const unsigned char yystos[] =
 {
-       0,     3,     5,     9,    12,     3,    12,     0,     4,     6,
+       0,     3,     5,     9,    12,    12,    12,     0,     4,     6,
        7,     8,    10,    12,    12,    12,    12
 };
 
@@ -1019,7 +1021,7 @@ yyreduce:
     }
 
 /* Line 991 of yacc.c.  */
-#line 1022 "libt5_a-prover_g.cc"
+#line 1024 "libt5_a-prover_g.cc"
 
   yyvsp -= yylen;
   yyssp -= yylen;

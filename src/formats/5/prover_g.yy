@@ -56,7 +56,7 @@
 
 exp:  /* empty */
    | ID
-   |  '~' ID
+   |  '~' exp
    |  '(' exp ')'
    |  exp '&' exp
    |  exp '#' exp
