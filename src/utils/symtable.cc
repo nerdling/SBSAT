@@ -36,10 +36,12 @@ sym_init()
 void
 sym_free()
 {
-   for (int i=0; i<= sym_table_idx; i++) {
-      if (sym_table[i] && sym_table[i]->name) {
-         ite_free((void**)&sym_table[i]->name);
-         ite_free((void**)&sym_table[i]);
+   if (sym_table != NULL) {
+      for (int i=0; i<= sym_table_idx; i++) {
+         if (sym_table[i] && sym_table[i]->name) {
+            ite_free((void**)&sym_table[i]->name);
+            ite_free((void**)&sym_table[i]);
+         }
       }
    }
    ite_free((void**)&sym_hash_table);
@@ -88,6 +90,7 @@ fill_symrec_with_id(symrec *ptr, int sym_type, int id)
             sym_table_max+SYM_TABLE_SIZE, sizeof(symrec*), 9, "sym_table_idx");
       sym_table_max += SYM_TABLE_SIZE;
    }
+   if (id > sym_table_idx) sym_table_idx = id;
 
    ptr->id   = id;
    ptr->sym_type   = sym_type;
@@ -113,21 +116,7 @@ fill_symrec(symrec *ptr, int sym_type)
    fill_symrec_with_id(ptr, sym_type, sym_table_idx);
 }
 
-symrec *
-putsym(char *sym_name, int sym_type)
-{
-  symrec *ptr;
-  symrec *tmp_sym_table = sym_hash(sym_name);
-  ptr = (symrec *)ite_calloc (1, sizeof (symrec), 9, "symrec");
-  ptr->name = (char *)ite_calloc (1, strlen (sym_name) + 1, 9, "symrec name");
-  strcpy (ptr->name,sym_name);
-  if (sym_all_int_flag && sscanf(sym_name, "%d", &(ptr->name_int)) == 0) sym_all_int_flag = 0;
-  ptr->next = (struct symrec *)tmp_sym_table->next;
-  tmp_sym_table->next = ptr;
-  fill_symrec(ptr, sym_type);
-  return ptr;
-}
-/*
+
 symrec *
 putsym_with_id(char *sym_name, int sym_type, int id)
 {
@@ -141,7 +130,24 @@ putsym_with_id(char *sym_name, int sym_type, int id)
   fill_symrec_with_id(ptr, sym_type, id);
   return ptr;
 }
-*/
+
+
+symrec *
+putsym(char *sym_name, int sym_type)
+{
+  symrec *ptr;
+  {int id; if (sscanf(sym_name, "%d", &id)==1) return putsym_with_id(sym_name, sym_type, id); }
+  symrec *tmp_sym_table = sym_hash(sym_name);
+  ptr = (symrec *)ite_calloc (1, sizeof (symrec), 9, "symrec");
+  ptr->name = (char *)ite_calloc (1, strlen (sym_name) + 1, 9, "symrec name");
+  strcpy (ptr->name,sym_name);
+  if (sym_all_int_flag && sscanf(sym_name, "%d", &(ptr->name_int)) == 0) sym_all_int_flag = 0;
+  ptr->next = (struct symrec *)tmp_sym_table->next;
+  tmp_sym_table->next = ptr;
+  fill_symrec(ptr, sym_type);
+  return ptr;
+}
+
 symrec *
 getsym(char *sym_name)
 {
