@@ -1200,16 +1200,19 @@ BDDNode * pruning_p1(BDDNode * f, BDDNode * c)
       return r;
    return find_or_add_node (f->variable, r, e);
 }
-int
-countFalses (BDDNode * bdd)
-{
-   if (bdd == false_ptr)
-      return 1;
-   if (bdd == true_ptr)
-      return 0;
 
-   else
-      return countFalses (bdd->thenCase) + countFalses (bdd->elseCase);
+int countX (BDDNode *bdd, BDDNode *X) {
+	if(bdd == X) return 1;
+	if(IS_TRUE_FALSE(bdd)) return 0;
+	return countX(bdd->thenCase, X) + countX(bdd->elseCase, X);	
+}
+
+int countFalses (BDDNode * bdd) {
+	return countX(bdd, false_ptr);
+}
+
+int countTrues (BDDNode * bdd) {
+	return countX(bdd, true_ptr);
 }
 
 int
