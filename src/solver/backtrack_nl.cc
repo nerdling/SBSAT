@@ -62,7 +62,7 @@ BackTrack_NL()
 
   int loop_counter = 1; /* autarky loop counter */
   int mark_found = 0;   /* found the mark of a forced cp inference */
-  int autarky_found = 0;
+  int _num_autarkies = 0;
 
   if (autarky) {
     mark_found = pop_mark_state_information();
@@ -88,12 +88,11 @@ BackTrack_NL()
   nInferredValue = arrSolution[nInferredAtom];
 
 #ifdef DISPLAY_TRACE
-  if (nNumBacktracks >= TRACE_START)
-    {
+  TB_9(
       cout << "Preparing to backtrack from choice assignment of X"
            <<  nInferredAtom << " equal to "
            << (nInferredValue == BOOL_TRUE ? "true" : "false");
-    }
+    )
 #endif
  
   // Pop the num unresolved functions 
@@ -114,19 +113,15 @@ BackTrack_NL()
       int nBacktrackAtom = pBacktrackTop->nAtom;
       arrBacktrackStackIndex[nBacktrackAtom] = gnMaxVbleIndex + 1;
       
-      if (nBacktrackAtom == nInferredAtom) 
-	{
-	  break;
-	} 
+      if (nBacktrackAtom == nInferredAtom) break;
       
 #ifdef DISPLAY_TRACE
-      if (nNumBacktracks >= TRACE_START)
-	{
-	  cout << "Backtracking from forced assignment of X"
-	       << nBacktrackAtom << " equal to "
-	       << (arrSolution[nBacktrackAtom] == BOOL_TRUE ? "true" : "false")
-	       << "." << endl;
-	}
+      TB_9(
+            cout << "Backtracking from forced assignment of X"
+            << nBacktrackAtom << " equal to "
+            << (arrSolution[nBacktrackAtom] == BOOL_TRUE ? "true" : "false")
+            << "." << endl;
+          );
 #endif
       
       arrSolution[nBacktrackAtom] = BOOL_UNKNOWN;
@@ -137,12 +132,12 @@ BackTrack_NL()
     if (autarky && mark_found) {
        mark_found = 0;
        while (is_autarky()) {
-          autarky_found = 1;
+          _num_autarkies++;
           loop_counter++;
        }
 
        if (loop_counter>1) 
-         { d2_printf2("--------------A (%d)--------------\n", loop_counter-1); };
+         { d9_printf2("--------------A (%d)--------------\n", loop_counter-1); };
     }; 
 
     pop_state_information(1);
@@ -150,7 +145,10 @@ BackTrack_NL()
     loop_counter--;
  } while (loop_counter > 0);
 
- if (autarky_found) nNumAutarkies++;
+ if (_num_autarkies) {
+    ite_counters[NUM_AUTARKIES]++;
+    ite_counters[NUM_TOTAL_AUTARKIES]+= _num_autarkies;
+ }
 
   if (autarky) {
     nCurSmurfStatesVersion++;
@@ -170,13 +168,12 @@ BackTrack_NL()
   InferLiteral(nInferredAtom, nInferredValue, true, NULL, NULL, 1);
 
 #ifdef DISPLAY_TRACE
-  if (nNumBacktracks >= TRACE_START)
-    {
-      cout << "Reversed polarity of X" << nInferredAtom
-      << " to " << nInferredValue << endl;
-      //DisplayAllBrancherLemmas();
-      cout << "Would DisplayAllBrancherLemmas here." << endl;
-    }
+  TB_9(
+        cout << "Reversed polarity of X" << nInferredAtom
+        << " to " << nInferredValue << endl;
+        //DisplayAllBrancherLemmas();
+        cout << "Would DisplayAllBrancherLemmas here." << endl;
+      );
 #endif  
   
   // Get the consequences of the branch atoms new value.

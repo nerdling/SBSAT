@@ -51,6 +51,7 @@ ITE_INLINE SmurfState * GetSmurfState(int i);
 ITE_INLINE void J_SetupHeuristicScores();
 ITE_INLINE void J_Setup_arrJWeights();
 ITE_INLINE void GetHeurScoresFromSmurf(int i);
+ITE_INLINE void J_ResetHeuristicScores();
 
 /* 
 
@@ -162,11 +163,11 @@ J_FreeHeurScoresStack ()
 {
    if (arrHeurScoresStackPool) {
       for (int i=0;i<=nHeurScoresStackPoolMax && arrHeurScoresStackPool[i].stack;i++)
-         free(arrHeurScoresStackPool[i].stack);
-      free(arrHeurScoresStackPool);
-      free(arrHeurScoresFlags);
+         ite_free((void*)arrHeurScoresStackPool[i].stack);
+      ite_free((void*)arrHeurScoresStackPool);
+      ite_free((void*)arrHeurScoresFlags);
    }
-   if (arrHeurScores) free(arrHeurScores);
+   ite_free((void*)arrHeurScores);
 }
 
 ITE_INLINE void
@@ -180,36 +181,6 @@ J_InitHeuristicScores()
 
    J_Setup_arrJWeights();
    J_SetupHeuristicScores();
-
-      for (int i = 0; i < nNumSpecialFuncs; i++) {
-         for (int j=0; j<arrSpecialFuncs[i].rhsVbles.nNumElts; j++)
-            arrSumRHSUnknowns[i] += arrJWeights[arrSpecialFuncs[i].rhsVbles.arrElts[j]];
-         arrPrevSumRHSUnknowns[i] = arrSumRHSUnknownsNew[i] = arrSumRHSUnknowns[i];
-      }
-
-
-   for (int i = 0; i < nNumVariables; i++)
-   {
-      arrHeurScores[i].Pos = arrHeurScores[i].Neg = 0; //c_heur;
-   }
-
-   // Loop through the regular Smurfs.
-   for (int i = 0; i < nNumRegSmurfs; i++)
-   {
-      GetHeurScoresFromSmurf(i);
-   } 
-
-   // Loop through the special functions.
-   for (int i = 0; i < nNumSpecialFuncs; i++)
-   {
-      switch (arrSpecialFuncs[i].nFunctionType) {
-       case AND: GetHeurScoresFromSpecialFunc_AND_C(i); break;
-       //case AND: GetHeurScoresFromSpecialFunc_AND(i); break;
-       case XOR: GetHeurScoresFromSpecialFunc_XOR_C(i); break;
-       //case XOR: GetHeurScoresFromSpecialFunc_XOR(i); break;
-       default: assert(0); break;
-      }
-   }
 
    /* 
     DisplayJHeuristicValues();
@@ -234,13 +205,44 @@ J_InitHeuristicScores()
 ITE_INLINE void
 J_FreeHeuristicScores()
 {
-   if (arrJWeights) ite_free((void*)arrJWeights);
+   ite_free((void*)pTrueSmurfState->arrHeuristicXors);
+   ite_free((void*)arrJWeights);
 }
+
+ITE_INLINE void
+J_ResetHeuristicScores()
+{
+   for (int i = 0; i < nNumVariables; i++)
+   {
+      arrHeurScores[i].Pos = arrHeurScores[i].Neg = 0; //c_heur;
+   }
+
+   // Loop through the regular Smurfs.
+   for (int i = 0; i < nNumRegSmurfs; i++)
+   {
+      GetHeurScoresFromSmurf(i);
+   } 
+
+   // Loop through the special functions.
+   for (int i = 0; i < nNumSpecialFuncs; i++)
+   {
+      switch (arrSpecialFuncs[i].nFunctionType) {
+       case AND: GetHeurScoresFromSpecialFunc_AND_C(i); break;
+                 //case AND: GetHeurScoresFromSpecialFunc_AND(i); break;
+       case XOR: GetHeurScoresFromSpecialFunc_XOR_C(i); break;
+                 //case XOR: GetHeurScoresFromSpecialFunc_XOR(i); break;
+       default: assert(0); break;
+      }
+   }
+}
+
 
 #define J_ONE 0
 
 // CLASSIC
 #define J_WEIGHT(x) (J_ONE+x.Pos) * (J_ONE+x.Neg)
+//#define J_WEIGHT(x) (x.Pos*x.Neg+arrVarScores[i].neg>arrVarScores[i].pos?arrVarScores[i].neg:arrVarScores[i].pos)
+//#define J_WEIGHT(x) (arrVarScores[i].neg>arrVarScores[i].pos?arrVarScores[i].neg:arrVarScores[i].pos)
 
 // Var_Score
 //#define J_WEIGHT(x) (var_score[i] * (J_ONE+x.Pos) * (J_ONE+x.Neg))
@@ -256,6 +258,7 @@ J_FreeHeuristicScores()
 
 // NEW??
 //#define J_WEIGHT(x) (((x.nPosInfs+1)*x.nPos)* (x.nNegInfs+1)*x.nNeg)
+//#define J_WEIGHT(x) (J_ONE+x.Pos) * (J_ONE+x.Neg) * (arrLemmaVbleCountsPos[i] + arrLemmaVbleCountsNeg[i])
 
 // slider_80_unsat -- the order from the best to worst is (all J_ONE = 0)
 // CLASSIC
@@ -263,8 +266,12 @@ J_FreeHeuristicScores()
 // ADDITION
 // ABSOLUTE MAXIMUM
 
+// CLASSIC - MAX = THE BEST
+#define J_COMPARE(v, max) (v > max)
 
-// * arrLemmaVbleCountsPos[i] * arrLemmaVbleCountsNeg[i]
+// REVERSED - MIN = THE BEST
+//#define J_COMPARE(v, max) (v < max)
+
 
 ITE_INLINE void
 J_OptimizedHeuristic(int *pnBranchAtom, int *pnBranchValue)
@@ -305,7 +312,7 @@ J_OptimizedHeuristic(int *pnBranchAtom, int *pnBranchValue)
          {
             //if (arrHeurScores[i].Pos == 0 && arrHeurScores[i].Neg == 0) continue;
             fVbleWeight = J_WEIGHT(arrHeurScores[i]);
-            if (fVbleWeight > fMaxWeight)
+            if (J_COMPARE(fVbleWeight, fMaxWeight))
             {
                fMaxWeight = fVbleWeight;
                nBestVble = i;
@@ -347,7 +354,7 @@ J_OptimizedHeuristic(int *pnBranchAtom, int *pnBranchValue)
          {
             //if (arrHeurScores[i].Pos == 0 && arrHeurScores[i].Neg == 0) continue;
             fVbleWeight = J_WEIGHT(arrHeurScores[i]);
-            if (fVbleWeight > fMaxWeight)
+            if (J_COMPARE(fVbleWeight, fMaxWeight))
             {
                fMaxWeight = fVbleWeight;
                nBestVble = i;
@@ -386,7 +393,7 @@ J_OptimizedHeuristic(int *pnBranchAtom, int *pnBranchValue)
          if (arrSolution[i] == BOOL_UNKNOWN)
          {
             fVbleWeight = J_WEIGHT(arrHeurScores[i]);
-            if (fVbleWeight > fMaxWeight)
+            if (J_COMPARE(fVbleWeight, fMaxWeight))
             {
                fMaxWeight = fVbleWeight;
                nBestVble = i;
@@ -770,10 +777,10 @@ J_SetHeurScoresForSmurfs(int nRegSmurfIndex, SmurfState *pState, int nNumXors)
    pState->cFlag = 2;
 
    if (pState->nNumHeuristicXors < nNumXors) {
-        if (pState->arrHeuristicXors) free(pState->arrHeuristicXors);
-         pState->arrHeuristicXors = (double*)ite_calloc(nNumXors, sizeof(double),
-               9, "pState->arrHeuristicXors");
-         pState->nNumHeuristicXors = nNumXors;
+      ite_free((void*)pState->arrHeuristicXors);
+      pState->arrHeuristicXors = (double*)ite_calloc(nNumXors, sizeof(double),
+            9, "pState->arrHeuristicXors");
+      pState->nNumHeuristicXors = nNumXors;
    }
 
    double fTotalTransitions  = 0;
@@ -816,13 +823,12 @@ J_SetupHeuristicScores()
       int nRHSXorVbles = 0;
       int specfn = arrSmurfChain[i].specfn;
       if (specfn != -1)  nRHSXorVbles = arrSpecialFuncs[specfn].rhsVbles.nNumElts+1;
-//#define COUNTING_HEURISTIC
-#ifdef COUNTING_HEURISTIC
-      assert(nRHSXorVbles == 0);
-      J_SetHeurScoresForSmurfs_Counting(i, arrRegSmurfInitialStates[i], nRHSXorVbles);
-#else
-      J_SetHeurScoresForSmurfs(i, arrRegSmurfInitialStates[i], nRHSXorVbles);
-#endif
+      if (sHeuristic[1] == 'C') {
+         assert(nRHSXorVbles == 0);
+         J_SetHeurScoresForSmurfs_Counting(i, arrRegSmurfInitialStates[i], nRHSXorVbles);
+      } else {
+         J_SetHeurScoresForSmurfs(i, arrRegSmurfInitialStates[i], nRHSXorVbles);
+      }
 
    } 
 }

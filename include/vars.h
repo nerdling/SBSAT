@@ -65,6 +65,12 @@
 #define SMURF_NODE_FIND    20
 #define SMURF_NODE_NEW     21
 
+#define NUM_BACKTRACKS	 22
+#define NUM_BACKJUMPS	 23
+#define NUM_TOTAL_BACKJUMPS	 24
+#define NUM_AUTARKIES	 25
+#define NUM_TOTAL_AUTARKIES	 26
+
 #define MAX_COUNTER      30
 
 /* non counter errors */
@@ -163,5 +169,14 @@ extern char lemma_in_file[128];
 extern int _bdd_pool_size;
 extern int nNumAutarkies;
 extern int autarky;
+
+typedef struct {
+   int pos;
+   int last_count_pos;
+   int neg;
+   int last_count_neg;
+} t_arrVarScores;
+
+extern t_arrVarScores *arrVarScores;
 
 #endif

@@ -192,6 +192,11 @@ SmurfFactory()
    FreeVbleMappingArray();
    FreeLemmaLookupSpace();
 
+   if (nHeuristic == JOHNSON_HEURISTIC)  {
+      InitHeuristicTablesForSpecialFuncs(gnMaxVbleIndex);
+      J_InitHeuristicScores();
+   }
+
    // Display statistics.
    double fEndTime = get_runtime();
    ite_counters_f[BUILD_SMURFS] = fEndTime - fStartTime;
@@ -219,8 +224,6 @@ InitSmurfFactory()
    }
 #endif
 
-   if (nHeuristic == JOHNSON_HEURISTIC) 
-      InitHeuristicTablesForSpecialFuncs(gnMaxVbleIndex);
 
    // Make sure that the addons pointer of each BDD is NULL.
    // there are two cycles since the parts of BDD might be shared
@@ -320,6 +323,7 @@ FreeSmurfFactory()
    d2_printf1("FreeSmurfFactory\n");
    if (nHeuristic == JOHNSON_HEURISTIC) {
       FreeHeuristicTablesForSpecialFuncs();
+      J_FreeHeuristicScores();
    }
 
    /* from smurf factory */

@@ -41,10 +41,9 @@
 #include "solver.h"
 
 extern int nCallsToAddLemma;
-extern int nNumBacktracks;
 extern int nLemmaSpaceBlocksAvail;
 
-LemmaBlock *pLemmaSpaceNextAvail = 0;
+LemmaBlock *pLemmaSpaceNextAvail = NULL;
 int nTotalBytesForLemmaInferences  = 0;
 	
 // The next two variables are entry points into the Lemma Priority Queue.
@@ -55,15 +54,15 @@ int nTotalBytesForLemmaInferences  = 0;
 // is moved to the front of the queue.
 // Whenever we run out of lemma space, we delete lemmas from the back
 // of the queue and recover their LemmaBlocks for the lemma space.
-static LemmaInfoStruct *pLPQFirst = 0;
-static LemmaInfoStruct *pLPQLast = 0;
+LemmaInfoStruct *pLPQFirst = NULL;
+LemmaInfoStruct *pLPQLast = NULL;
 
-static LemmaLookupStruct *arrLemmaLookupSpace = 0;
-static int nNumPrimeImplicants;
-static SmurfState **arrPrecomputedStates = 0;
-static int *arrVbleMapping = 0;
-static unsigned long *arrVbleEncoding = 0;
-static IntegerSet_ArrayBased reverseVariableMapping;
+LemmaLookupStruct *arrLemmaLookupSpace = NULL;
+int nNumPrimeImplicants;
+SmurfState **arrPrecomputedStates = NULL;
+int *arrVbleMapping = NULL;
+unsigned long *arrVbleEncoding = NULL;
+IntegerSet_ArrayBased reverseVariableMapping;
 int gnNumLemmas = 0;
 
 typedef struct _tarrLemmaInfo {
@@ -72,7 +71,7 @@ typedef struct _tarrLemmaInfo {
 } tarrLemmaInfo;
 tarrLemmaInfo *head_arrLemmaInfo = NULL;
 
-LemmaInfoStruct *pFreeLemmaInfoStructPool = 0;
+LemmaInfoStruct *pFreeLemmaInfoStructPool = NULL;
 int *arrBacktrackStackIndex;
 
 /*****************************************************/
@@ -302,7 +301,7 @@ void
 FreePrecomputedStatesArray()
 {
    assert(arrPrecomputedStates);
-   free(arrPrecomputedStates);
+   ite_free((void*)arrPrecomputedStates);
    arrPrecomputedStates = 0;
 }
 
@@ -532,9 +531,9 @@ EnterIntoLemmaSpace(int nNumElts,
           ) 
       UpdateHeuristicWithLemma(nNumElts, arrLemmaLiterals);
 
-   if (gnNumCachedLemmas >= MAX_NUM_CACHED_LEMMAS)
+   if (MAX_NUM_CACHED_LEMMAS && gnNumCachedLemmas >= MAX_NUM_CACHED_LEMMAS)
    {
-      FreeLemmas(gnNumCachedLemmas - MAX_NUM_CACHED_LEMMAS);
+      FreeLemmas(gnNumCachedLemmas - MAX_NUM_CACHED_LEMMAS + 1);
    }
 
    if (nNumBlocksRequired > nLemmaSpaceBlocksAvail)
@@ -836,8 +835,6 @@ ITE_INLINE
 void
 DisplayLemma(int *pnLemma)
 {
-   //cout << pnLemma << " ";
-
    int nLength = *pnLemma++;
 
    for (int i = 0; i < nLength; i++)
@@ -854,6 +851,7 @@ DisplayLemma(LemmaBlock *pLemma)
    LemmaBlock *pLemmaBlock = pLemma;
    int *arrLits = pLemmaBlock->arrLits;
    int nLemmaLength = arrLits[0];
+   fprintf(stddbg, "(len: %d) ", nLemmaLength);
    int nLitIndex;
    int nLitIndexInBlock;
    for (nLitIndex = 1, nLitIndexInBlock = 1;
@@ -1004,7 +1002,6 @@ DisplayLemmaInfo(LemmaInfoStruct *pLemmaInfo)
    fprintf(stddbg, "nWatchedVblePolarity[0]: %d nWatchedVblePolarity[1]: %d\n",
          pLemmaInfo->nWatchedVblePolarity[0], pLemmaInfo->nWatchedVblePolarity[1]);
    DisplayLemmaStatus(pLemmaInfo->pLemma);
-   cout << endl;
 }
 
 ITE_INLINE
@@ -1143,10 +1140,11 @@ FreeLemmaInfoArray()
 {
    while (head_arrLemmaInfo) {
       tarrLemmaInfo *t = head_arrLemmaInfo->next;
-      free(head_arrLemmaInfo->memory);
-      free(head_arrLemmaInfo);
+      ite_free((void*)head_arrLemmaInfo->memory);
+      ite_free((void*)head_arrLemmaInfo);
       head_arrLemmaInfo = t;
    }
+   pFreeLemmaInfoStructPool = NULL;
 }
 
 ITE_INLINE
@@ -1206,8 +1204,7 @@ void
 CheckLengthOfLemmaList(int nVble, int nPos, int nWhichWatch,
       int nNumBacktracks)
 {
-   extern AffectedFuncsStruct *garrAFS;
-   AffectedFuncsStruct *pAFS = garrAFS + nVble;
+   AffectedFuncsStruct *pAFS = arrAFS + nVble;
    LemmaInfoStruct *pLemmaInfo;
    if (nPos == 1)
    {
@@ -1245,11 +1242,11 @@ CheckLengthOfLemmaList(int nVble, int nPos, int nWhichWatch,
       nCount++;
    }
    while (pLemmaInfo && nCount < 1000);
-   //cout << endl;
+   
    if (nCount >= 1000)
    {
       cout << "CheckLengthOfLemmaList -- nNumBacktracks = "
-         << nNumBacktracks << endl;
+         << ite_counters[NUM_BACKTRACKS] << endl;
       assert(0);
    }
 }
@@ -1258,8 +1255,7 @@ ITE_INLINE
 void
 DisplayLemmaList(int nVble, int nPos, int nWhichWatch)
 {
-   extern AffectedFuncsStruct *garrAFS;
-   AffectedFuncsStruct *pAFS = garrAFS + nVble;
+   AffectedFuncsStruct *pAFS = arrAFS + nVble;
    LemmaInfoStruct *pLemmaInfo;
    cout << "DisplayLemmaList() " << endl;
    if (nPos == 1)
@@ -1305,8 +1301,7 @@ ITE_INLINE
 void
 VerifyLemmaList(int nVble, int nPos, int nWhichWatch)
 {
-   extern AffectedFuncsStruct *garrAFS;
-   AffectedFuncsStruct *pAFS = garrAFS + nVble;
+   AffectedFuncsStruct *pAFS = arrAFS + nVble;
    LemmaInfoStruct *pLemmaInfo;
    LemmaInfoStruct *pPrev;
    if (nPos == 1)
@@ -1454,6 +1449,7 @@ FreeLemmas(int n)
    // which contains all of the lemmas which have been created
    // by the brancher and moved into the lemma cache.
 {
+   assert(pLPQLast == pLPQFirst || (pLPQLast != NULL && pLPQFirst != NULL));
    LemmaInfoStruct *p = pLPQLast;
    int nNumBlocksFreed = 0;
 
@@ -1511,6 +1507,7 @@ AllocateLemmaInfoStruct()
       // So free a lemma.
       // Better -- allocate more LemmaInfoStructs
       //FreeLemmas(1);
+      d9_printf1("no pFreeLemmaInfoStructPool available\n");
       InitLemmaInfoArray();
    }
 
@@ -1539,7 +1536,7 @@ LPQEnqueue(LemmaInfoStruct *pLemmaInfo)
    }
    pLemmaInfo->pLPQNext = pLPQFirst;
    pLPQFirst = pLemmaInfo;
-   pLPQFirst->pLPQPrev = 0;
+   pLPQFirst->pLPQPrev = NULL;
 }
 
 ITE_INLINE
@@ -1561,13 +1558,13 @@ MoveToFrontOfLPQ(LemmaInfoStruct *pLemmaInfo)
       }
       if (pLemmaInfo == pLPQLast)
       {
-         assert(pNext == 0);
+         assert(pNext == NULL);
          pLPQLast = pPrev;
       }
       assert(!(pLPQFirst->pLPQPrev));
       pLPQFirst->pLPQPrev = pLemmaInfo;
       pLemmaInfo->pLPQNext = pLPQFirst;
-      pLemmaInfo->pLPQPrev = 0;
+      pLemmaInfo->pLPQPrev = NULL;
       pLPQFirst = pLemmaInfo;
    }
 }
@@ -1669,14 +1666,11 @@ AddLemma(int nNumLiterals, int arrLiterals[], bool bPutInCache,
    }
 #endif
 
-   D_9(
-   if (nNumBacktracks >= TRACE_START)
-   {
+   TB_9(
       d9_printf1("Adding lemma: ");
       DisplayLemma(pLemmaInfo->pLemma);
       DisplayLemmaStatus(pLemmaInfo->pLemma);
       d9_printf1("\n");
-   }
    )
 
    assert(IsInLemmaList(pUnitLemmaListTail, pUnitLemmaList));

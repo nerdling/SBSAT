@@ -45,9 +45,6 @@ extern int nNumUnresolvedFunctions;
 /* conflict resolution */
 extern LemmaBlock *pConflictLemma;
 
-/* trace */
-extern int nNumBacktracks;
-
 ITE_INLINE void FillLemmaWithReversedPolarities(LemmaBlock *pLemma);
 
 ITE_INLINE

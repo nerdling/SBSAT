@@ -44,7 +44,6 @@ extern SmurfState **arrCurrentStates;
 extern int nNumRegSmurfs;
 extern ChoicePointStruct *pChoicePointTop;
 extern int nNumUnresolvedFunctions;
-extern int nNumBacktracks;
 extern int *arrBacktrackStackIndex;
 extern int nBacktrackStackIndex;
 extern int *pInferenceQueueNextEmpty;
@@ -63,17 +62,7 @@ SelectNewBranchPoint()
    int nInferredValue = BOOL_UNKNOWN;
 
    // We need to select a new branch point.
-   D_9(
-         if (nNumBacktracks >= TRACE_START)
-         {/*
-           DisplayStatus(nNumRegSmurfs, arrCurrentStates,
-           nNumUnresolvedFunctions,
-           nNumChoicePts, nNumBacktracks);
-           DisplayPartialSolution(nNumVariables, arrSolution);
-           */
-         }
-      )
-      d9_printf2("Calling heuristic to choose choice point #%d\n", nNumChoicePts);
+   d9_printf2("Calling heuristic to choose choice point #%d\n", nNumChoicePts);
 
    if (nHeuristic == JOHNSON_HEURISTIC)
       J_UpdateHeuristic();

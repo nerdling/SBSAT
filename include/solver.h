@@ -48,8 +48,6 @@ extern int nNumVariables;
 extern SmurfState *pTrueSmurfState;
 extern int gnMaxVbleIndex;
 extern int gnNumCachedLemmas;
-extern int nNumBackjumps;
-extern int nNumBacktracks;
 extern int nBacktrackStackIndex;
 extern BacktrackStackEntry *pBacktrackTop;     
 extern int *arrBacktrackStackIndex;
@@ -71,7 +69,6 @@ extern t_fn_inf_queue *pFnInferenceQueueNextElt;
 extern t_fn_inf_queue *pFnInferenceQueueNextEmpty;
 extern t_fn_inf_queue *arrFnInferenceQueue;
 
-extern AffectedFuncsStruct *arrAFS;
 extern LemmaBlock * pConflictLemma;
 extern LemmaInfoStruct * pConflictLemmaInfo;
 extern SmurfState **arrCurrentStates;
@@ -89,7 +86,6 @@ extern int *arrUnsetLemmaFlagVars;
 extern bool *arrLemmaFlag;
 extern int  *arrTempLemma;
 
-extern AffectedFuncsStruct *garrAFS;
 extern SpecialFunc *arrSpecialFuncs;
 extern int nNumSpecialFuncs;
 extern int nNumRegSmurfs; // Number of regular Smurfs.
@@ -98,7 +94,6 @@ extern int *arrFunctionType;
 extern BDDNodeStruct **arrFunctions;
 extern int *arrInferenceQueue;
 extern int nNumVariables;
-extern int nNumBacktracks;
 extern AffectedFuncsStruct *arrAFS; // "Affected Funcs Struct":
 extern int nInferredAtom;
 extern int nInferredValue;
@@ -139,7 +134,6 @@ extern double *arrSumRHSUnknowns;
 extern double *arrSumRHSUnknownsNew;
 extern double *arrPrevSumRHSUnknowns;
 
-extern int nNumBackjumps;
 extern bool *arrLemmaFlag;
 extern int nNumChoicePts;
 
@@ -152,6 +146,9 @@ extern int *arrIte2SolverVarMap;
 extern int *arrSolver2IteVarMap;
 
 extern int total_vars;
+
+extern int *arrLemmaVbleCountsPos;
+extern int *arrLemmaVbleCountsNeg;
 
 ITE_INLINE int InitBrancher();
 ITE_INLINE void FreeSpecialFnStack();
@@ -192,6 +189,9 @@ ITE_INLINE void SmurfStatesDisplayInfo();
 ITE_INLINE void UpdateHeuristic();
 ITE_INLINE void J_UpdateHeuristic();
 ITE_INLINE void J_UpdateHeuristicSmurf(SmurfState *pOldState, SmurfState *pState, int);
+
+ITE_INLINE void Update_arrVarScores();
+
 int solve_init();
 void solve_free();
 

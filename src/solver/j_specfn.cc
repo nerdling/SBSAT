@@ -40,6 +40,7 @@
 #include "solver.h"
 
 extern SpecialFunc *arrSpecialFuncs;
+extern SmurfState **arrRegSmurfInitialStates;
 extern int *arrNumRHSUnknowns;
 
 struct AndEqFalseWghtStruct *arrAndEqFalseWght = NULL;
@@ -107,8 +108,8 @@ InitHeuristicTablesForSpecialFuncs_XOR (int nMaxRHSSize)
 ITE_INLINE void
 FreeHeuristicTablesForSpecialFuncs_XOR()
 {
-  if (arrXorEqWght) free(arrXorEqWght);
-  if (arrXorEqWghtD) free(arrXorEqWghtD);
+  ite_free((void*)arrXorEqWght);
+  ite_free((void*)arrXorEqWghtD);
 }
 
 ITE_INLINE
@@ -192,11 +193,11 @@ InitHeuristicTablesForSpecialFuncs_AND (int nMaxRHSSize)
 ITE_INLINE void
 FreeHeuristicTablesForSpecialFuncs_AND() 
 {
-   if (arrAndEqFalseWght) free(arrAndEqFalseWght);
-   if (arrAndEqWght) free(arrAndEqWght);
-   if (arrAndEqWghtCt) free(arrAndEqWghtCt);
-   if (arrAndEqWghtCx) free(arrAndEqWghtCx);
-   if (arrAndEqWghtCe) free(arrAndEqWghtCe);
+   ite_free((void*)arrAndEqFalseWght);
+   ite_free((void*)arrAndEqWght);
+   ite_free((void*)arrAndEqWghtCt);
+   ite_free((void*)arrAndEqWghtCx);
+   ite_free((void*)arrAndEqWghtCe);
 }
 
 
@@ -334,7 +335,7 @@ GetHeurScoresFromSpecialFunc_XOR (int nSpecFuncIndex)
       HWEIGHT fScore = arrXorEqWght[nNumRHSUnknowns-1];
       J_Update_RHS_AND(pSpecialFunc, fScore, fScore);
    } else {
-      SmurfState *pState = arrCurrentStates[pSpecialFunc->LinkedSmurfs];
+      SmurfState *pState = arrRegSmurfInitialStates[pSpecialFunc->LinkedSmurfs];
       assert(pState->arrHeuristicXors);
 
       if (pState == pTrueSmurfState) {
@@ -374,7 +375,7 @@ GetHeurScoresFromSpecialFunc_XOR_C(int nSpecFuncIndex)
             0, 0, 0, 0, 0, // fLastSum, fLastConstPos, fLastMultiPos, fLastConstNeg, fLastMultiNeg, 
             fSum, 0, arrXorEqWghtD[nNumRHSUnknowns-1], 0, arrXorEqWghtD[nNumRHSUnknowns-1]);
    } else {
-      SmurfState *pState = arrCurrentStates[pSpecialFunc->LinkedSmurfs];
+      SmurfState *pState = arrRegSmurfInitialStates[pSpecialFunc->LinkedSmurfs];
       assert(pState->arrHeuristicXors);
 
       if (pState == pTrueSmurfState) {

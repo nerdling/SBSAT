@@ -46,9 +46,6 @@ extern int *arrBacktrackStackIndex;
 /* conflict resolution */
 extern LemmaBlock *pConflictLemma;
 
-/* trace */
-extern int nNumBacktracks;
-
 ITE_INLINE void
 InferNLits(SpecialFunc *pSpecialFunc, int n);
 

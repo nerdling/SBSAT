@@ -248,12 +248,9 @@ void DisplaySolution(int nMaxVbleIndex)
   printf("\n");
 }
 
-extern int nNumBacktracks;
 extern int gnNumCachedLemmas;
 extern int gnNumLemmas;
 extern int nCallsToAddLemma;
-extern int nNumBackjumps;
-//extern long autarky_count;
 
 ITE_INLINE
 void
@@ -304,7 +301,7 @@ void DisplayBacktrackInfo(double &fPrevEndTime, double &fStartTime)
       double fBacktracksPerSec = BACKTRACKS_PER_STAT_REPORT / (fDurationInSecs>0?fDurationInSecs:0.001);
       fPrevEndTime = fEndTime;
 
-      d2_printf2("Backtracks: %d ", nNumBacktracks);
+      d2_printf2("Backtracks: %ld ", (long)ite_counters[NUM_BACKTRACKS]);
       d2_printf2("Time: %4.3f secs.    ", fTotalDurationInSecs);
       d2_printf2("%4.3f backtracks per sec.\n", fBacktracksPerSec);
 
@@ -366,8 +363,12 @@ void DisplayBacktrackInfo(double &fPrevEndTime, double &fStartTime)
       }
       if (NO_LEMMAS == 0) d2_printf2("lemmas: %lld; ", ite_counters[ERR_BT_LEMMA]);
       d2_printf1("\n");
-      if (backjumping) d2_printf2(" Backjumps: %d\n", nNumBackjumps);
-      if (autarky) d2_printf2(" Autarkies: %d\n", nNumAutarkies);
+      if (backjumping) d2_printf3(" Backjumps: %ld (avg bj len: %.1f)\n", 
+            (long)ite_counters[NUM_TOTAL_BACKJUMPS], 
+            (float)ite_counters[NUM_TOTAL_BACKJUMPS]/(1+ite_counters[NUM_BACKJUMPS]));
+      if (autarky) d2_printf3(" Autarkies: %ld (avg au len: %.1f)\n", 
+            (long)ite_counters[NUM_TOTAL_AUTARKIES], 
+            (float)ite_counters[NUM_TOTAL_AUTARKIES]/(1+ite_counters[NUM_AUTARKIES]));
       //cout << "\n Autark levels: " << autarky_count;
       d2_printf1("\n");
 }

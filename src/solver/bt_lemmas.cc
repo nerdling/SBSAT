@@ -195,13 +195,10 @@ UpdateEachAffectedLemma(AffectedFuncsStruct *pAFS, int nInferredValue)
 
          assert(arrSolution[nWatchedVble] == BOOL_UNKNOWN);
 
-         D_9(
-               if (nNumBacktracks >= TRACE_START)
-               {
+         TB_9(
                d9_printf3("Inferring X %d=%d\n", nWatchedVble, nWatchedVblePolarity);
                d9_printf1("Inference came from unit lemma\n");
                DisplayLemmaInfo(pLemmaListDisagreed);
-               }
             )
 
             ite_counters[INF_LEMMA]++;
@@ -318,13 +315,10 @@ UpdateEachAffectedLemma(AffectedFuncsStruct *pAFS, int nInferredValue)
 
          assert(arrSolution[nWatchedVble] == BOOL_UNKNOWN);
 
-         D_9(
-               if (nNumBacktracks >= TRACE_START)
-               {
+         TB_9(
                d9_printf3("Inferring X %d=%d\n", nWatchedVble, nWatchedVblePolarity);
                d9_printf1("Inference came from unit lemma\n");
                DisplayLemmaInfo(pLemmaListDisagreed);
-               }
             )
 
             ite_counters[INF_LEMMA]++;

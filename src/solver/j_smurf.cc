@@ -37,6 +37,8 @@
 #include "ite.h"
 #include "solver.h"
 
+extern SmurfState **arrRegSmurfInitialStates;
+
 ITE_INLINE void
 J_Update_RHS_AND(SpecialFunc * pSpecialFunc, HWEIGHT fPosDelta, HWEIGHT fNegDelta);
 
@@ -44,8 +46,8 @@ ITE_INLINE void
 GetHeurScoresFromSmurf(int i)
 {
    // Get a ptr to the Smurf state.
-   SmurfState *pState = arrCurrentStates[i];
-
+   SmurfState *pState = arrRegSmurfInitialStates[i];
+                     
    // Do nothing if constraint is trivial.
    if (pState == pTrueSmurfState) return;
 

@@ -41,7 +41,6 @@
 extern int *arrNumRHSUnknowns;
 
 /* trace */
-extern int nNumBacktracks;
 extern SpecialFunc *arrSpecialFuncs;
 extern int *arrChangedSpecialFn;
 

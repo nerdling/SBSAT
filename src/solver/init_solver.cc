@@ -37,12 +37,8 @@
 #include "ite.h"
 #include "solver.h"
 
-void LoadLemmas(char *filename);
-
 int *arrChangedSpecialFn = NULL;
 int *arrChangedSmurfs = NULL;
-
-extern SmurfState **arrRegSmurfInitialStates;
 
 // Stack of the indicies of the previous
 // inferred variables (variables inferred to be true or inferred to be false,
@@ -50,22 +46,18 @@ extern SmurfState **arrRegSmurfInitialStates;
 BacktrackStackEntry *arrBacktrackStack; 
 
 ITE_INLINE void FreeHeuristicTablesForSpecialFuncs();
-ITE_INLINE void InitializeSmurfStatesStack();
-ITE_INLINE void InitializeSpecialFnStack();
 
 
-ITE_INLINE
-int
+ITE_INLINE int
 RecordInitialInferences()
 {
    int i;
    BDDNode *pFunc;
-   int nNumFuncs = nmbrFunctions;
    bool bValueOfVble;
    int nCurrentAtomValue;
    bool bInitialInferenceFound = false;
 
-   for (i = 0; i < nNumFuncs; i++)
+   for (i = 0; i < nmbrFunctions; i++)
    {
       if (IsSpecialFunc(arrFunctionType[i]))
       {
@@ -153,9 +145,7 @@ CreateAffectedFuncsStructures(int nMaxVbleIndex)
    AffectedFuncsStruct *arrAFS;
    arrAFS = (AffectedFuncsStruct*)ite_calloc(nMaxVbleIndex+1, sizeof(AffectedFuncsStruct),
          9, "arrAFS");
-   garrAFS = arrAFS;
 
-   int nNumFuncs = nmbrFunctions;
    int *arrFuncType = functionType;
    int nVble;
 
@@ -185,7 +175,7 @@ CreateAffectedFuncsStructures(int nMaxVbleIndex)
 
    // For each variable, count the number of special funcs
    // and regular Smurfs which will mention it when the brancher starts.
-   for (int nFuncIndex = 0; nFuncIndex < nNumFuncs; nFuncIndex++)
+   for (int nFuncIndex = 0; nFuncIndex < nmbrFunctions; nFuncIndex++)
    {
       IntegerSetIterator isetNext(*(arrFunctions[nFuncIndex]->addons->pReduct->addons->pVbles));
 
@@ -269,13 +259,14 @@ CreateAffectedFuncsStructures(int nMaxVbleIndex)
    // in which functions.
    int nSpecialFuncIndex = 0;
    int nRegSmurfIndex = 0;
-   for (int nFuncIndex = 0; nFuncIndex < nNumFuncs; nFuncIndex++)
+   for (int nFuncIndex = 0; nFuncIndex < nmbrFunctions; nFuncIndex++)
    {
       if (IsSpecialFunc(arrFuncType[nFuncIndex]))
       {
          IntegerSetIterator isetNext(*(arrFunctions[nFuncIndex]->addons->pReduct->addons->pVbles));
          while (isetNext(nVble))
          {
+            assert(nVble != 0);
             nVble = arrIte2SolverVarMap[nVble];
             int nIndex = arrSpecialFuncIndexForVble[nVble];
             arrAFS[nVble].arrSpecFuncsAffected[nIndex]
@@ -408,8 +399,8 @@ CreateAffectedFuncsStructures(int nMaxVbleIndex)
       }
    }
 
-   free(arrRegSmurfIndexForVble);
-   free(arrSpecialFuncIndexForVble);
+   ite_free((void*)arrRegSmurfIndexForVble);
+   ite_free((void*)arrSpecialFuncIndexForVble);
 
    return arrAFS;
 }
@@ -417,17 +408,33 @@ CreateAffectedFuncsStructures(int nMaxVbleIndex)
 ITE_INLINE void
 FreeAFS()
 {
-   free(arrAFSBufferSmurfs);
-   free(arrAFSBufferSpecFn);
-   free(garrAFS);
+   ite_free((void*)arrAFSBufferSmurfs);
+   ite_free((void*)arrAFSBufferSpecFn);
+   ite_free((void*)arrAFS);
 }
+
+ITE_INLINE void
+Update_arrVarScores()
+{
+   for (int i = 1; i<gnMaxVbleIndex; i++)
+   {
+      arrVarScores[i].pos = arrVarScores[i].pos/2 + 
+         arrLemmaVbleCountsPos[i] - arrVarScores[i].last_count_pos;
+      arrVarScores[i].neg = arrVarScores[i].neg/2 + 
+         arrLemmaVbleCountsNeg[i] - arrVarScores[i].last_count_neg;
+      arrVarScores[i].last_count_pos = arrLemmaVbleCountsPos[i];
+      arrVarScores[i].last_count_neg = arrLemmaVbleCountsNeg[i];
+   }
+}
+
 
 ITE_INLINE int
 InitBrancher()
 {
    d2_printf1("InitBrancher\n");
 
-   int nNumFuncs = nmbrFunctions;
+   arrVarScores = (t_arrVarScores*)ite_calloc(gnMaxVbleIndex, sizeof(t_arrVarScores), 9, "arrVarScores");
+   Update_arrVarScores();
 
    /* Backtrack arrays */
    pUnitLemmaList = (LemmaInfoStruct*)ite_calloc(1, sizeof(LemmaInfoStruct),
@@ -443,14 +450,6 @@ InitBrancher()
          arrBacktrackStackIndex = new int[gnMaxVbleIndex+1];,
          "arrBacktrackStackIndex");
 
-   nNumUnresolvedFunctions = nNumRegSmurfs + nNumSpecialFuncs; 
-
-   for(int x = 1; x <= gnMaxVbleIndex; x++) 
-   {
-      arrLemmaFlag[x] = false;
-      arrBacktrackStackIndex[x] = gnMaxVbleIndex+1;
-   }
-   arrBacktrackStackIndex[0] = 0;
 
    // Initialization of variables and data structures
    assert(pTrueSmurfState);  // Should be initialized by SmurfFactory.
@@ -461,9 +460,6 @@ InitBrancher()
    arrInferenceQueue
       = (int *)ite_calloc(nNumVariables, sizeof(*arrInferenceQueue), 2, 
             "inference queue");
-   pInferenceQueueNextElt = pInferenceQueueNextEmpty = arrInferenceQueue;
-
-
    arrAFS = CreateAffectedFuncsStructures(gnMaxVbleIndex);
 
    if(nNumRegSmurfs > 0) {
@@ -475,26 +471,6 @@ InitBrancher()
                "previous states");
    } else
       arrCurrentStates = NULL;
-
-
-   int nRegSmurfIndex = 0;
-   for (int i = 0; i < nNumFuncs; i++)
-   {
-      if (!IsSpecialFunc(arrFunctionType[i]))
-      {
-         arrPrevStates[nRegSmurfIndex] =
-         arrCurrentStates[nRegSmurfIndex] =
-            arrRegSmurfInitialStates[nRegSmurfIndex];
-
-         if (arrCurrentStates[nRegSmurfIndex] == pTrueSmurfState)
-         {
-            nNumUnresolvedFunctions--;
-         }
-         nRegSmurfIndex++;
-      }
-   }
-   InitializeSmurfStatesStack();
-
 
    // Set up the Special Func Stack.
 
@@ -520,6 +496,8 @@ InitBrancher()
       arrPrevSumRHSUnknowns = (double *)ite_calloc(nNumSpecialFuncs, sizeof(double),
             9, "arrPrevSumRHSUnknowns");
 
+
+      assert(arrJWeights);
       for (int i = 0; i < nNumSpecialFuncs; i++) {
          arrPrevNumRHSUnknowns[i] =
          arrNumRHSUnknownsNew[i] =
@@ -527,15 +505,21 @@ InitBrancher()
          arrPrevNumLHSUnknowns[i] =
          arrNumLHSUnknownsNew[i] =
          arrNumLHSUnknowns[i] = arrSpecialFuncs[i].nLHSVble > 0? 1: 0;
+         arrSumRHSUnknowns[i] = 0;
+
+         for (int j=0; j<arrSpecialFuncs[i].rhsVbles.nNumElts; j++)
+            arrSumRHSUnknowns[i] += arrJWeights[arrSpecialFuncs[i].rhsVbles.arrElts[j]];
 
          assert(arrSolution[0]!=BOOL_UNKNOWN);
       }
    }
 
-   /* have to have the stack at least for stages so I don't have to check
-    the existence of special fn every time */
-   InitializeSpecialFnStack();
-
+ITE_INLINE void InitializeSmurfStatesStack();
+ITE_INLINE void InitializeSpecialFnStack();
+  /* have to have the stack at least for stages so I don't have to check
+     the existence of special fn every time */
+  InitializeSmurfStatesStack();
+  InitializeSpecialFnStack();
 
    if (nNumRegSmurfs) {
       arrChangedSmurfs = (int*)ite_calloc(nNumRegSmurfs, sizeof(int),
@@ -552,26 +536,15 @@ InitBrancher()
    arrChoicePointStack 
       = (ChoicePointStruct *)ite_calloc(gnMaxVbleIndex, sizeof(*arrChoicePointStack), 2,
             "choice point stack");
-   pChoicePointTop = arrChoicePointStack;
-
    arrBacktrackStack
       = (BacktrackStackEntry *)ite_calloc(nNumVariables, sizeof(*arrBacktrackStack), 2,
             "backtrack stack");
-   pBacktrackTop = arrBacktrackStack;
-
-   /* init Fn Inference queue */
+    /* init Fn Inference queue */
    arrFnInferenceQueue
       = (t_fn_inf_queue *)ite_calloc(nNumSpecialFuncs+nNumRegSmurfs+1, sizeof(t_fn_inf_queue), 2,
             "function inference queue");
-   pFnInferenceQueueNextElt = pFnInferenceQueueNextEmpty = arrFnInferenceQueue;
 
-   gnNumLemmas = 0;
-   InitLemmaInfoArray();
    //  InitHeuristicTablesForSpecialFuncs(nNumVariables);
-
-   if (*lemma_in_file) LoadLemmas(lemma_in_file);
-
-   if (nHeuristic == JOHNSON_HEURISTIC) J_InitHeuristic();
 
    int ret = RecordInitialInferences();
 
@@ -579,13 +552,15 @@ InitBrancher()
    // the PLAINOR functions).  We force its value to false before the
    // search begins.
    arrSolution[0] = BOOL_FALSE;
-   *(pInferenceQueueNextEmpty++) = 0;
+   /* for restart */
+   for (int i = 1; i<nNumVariables; i++) {
+      //assert(arrSolution[i] == BOOL_UNKNOWN);
+      arrSolution[i] = BOOL_UNKNOWN;
+   }
 
    switch (nHeuristic) {
     case JOHNSON_HEURISTIC:
        proc_call_heuristic = J_OptimizedHeuristic;
-       //= J_OptimizedHeuristic_Berm;
-       J_InitHeuristicScores();
        D_9(
              DisplayJHeuristicValues();
           );
@@ -612,33 +587,31 @@ FreeBrancher()
    delete [] arrTempLemma;
    delete [] arrBacktrackStackIndex;
    delete [] arrLemmaFlag;
-   if (arrInferenceQueue) free(arrInferenceQueue);
-   if (arrFnInferenceQueue) free(arrFnInferenceQueue);
+   ite_free((void*)arrInferenceQueue);
+   ite_free((void*)arrFnInferenceQueue);
 
-   if (arrNumRHSUnknowns)   free(arrNumRHSUnknowns);
-   if (arrNumRHSUnknownsNew) free(arrNumRHSUnknownsNew);
-   if (arrPrevNumRHSUnknowns) free(arrPrevNumRHSUnknowns);
+   ite_free((void*)arrNumRHSUnknowns);
+   ite_free((void*)arrNumRHSUnknownsNew);
+   ite_free((void*)arrPrevNumRHSUnknowns);
 
-   if (arrNumLHSUnknowns)   free(arrNumLHSUnknowns);
-   if (arrNumLHSUnknownsNew) free(arrNumLHSUnknownsNew);
-   if (arrPrevNumLHSUnknowns) free(arrPrevNumLHSUnknowns);
+   ite_free((void*)arrNumLHSUnknowns);
+   ite_free((void*)arrNumLHSUnknownsNew);
+   ite_free((void*)arrPrevNumLHSUnknowns);
 
-   if (arrSumRHSUnknowns)   free(arrSumRHSUnknowns);
-   if (arrSumRHSUnknownsNew) free(arrSumRHSUnknownsNew);
-   if (arrPrevSumRHSUnknowns) free(arrPrevSumRHSUnknowns);
+   ite_free((void*)arrSumRHSUnknowns);
+   ite_free((void*)arrSumRHSUnknownsNew);
+   ite_free((void*)arrPrevSumRHSUnknowns);
 
-   if (arrCurrentStates)    free(arrCurrentStates);
-   if (arrPrevStates)       free(arrPrevStates);
-   if (arrChangedSmurfs)    free(arrChangedSmurfs);
-   if (arrChangedSpecialFn) free(arrChangedSpecialFn);
-   free(arrChoicePointStack);
-   free(arrBacktrackStack);
-   free(pUnitLemmaList);
-   FreeIntNodePool();
-   FreeLemmaInfoArray();
-   if (nHeuristic == JOHNSON_HEURISTIC) {
-      J_FreeHeurScoresStack();
-   }
+   ite_free((void*)arrCurrentStates);
+   ite_free((void*)arrPrevStates);
+   ite_free((void*)arrChangedSmurfs);
+   ite_free((void*)arrChangedSpecialFn);
+   ite_free((void*)arrChoicePointStack);
+   ite_free((void*)arrBacktrackStack);
+   ite_free((void*)pUnitLemmaList);
+   ite_free((void*)arrVarScores);
 
    FreeAFS();
+   FreeSpecialFnStack();
+   FreeSmurfStatesStack();
 }

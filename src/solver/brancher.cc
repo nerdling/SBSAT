@@ -49,6 +49,7 @@ ITE_INLINE void DisplayBacktrackInfo(double &fPrevEndTime, double &fStartTime);
 ITE_INLINE void DisplayStatistics(int nNumChoicePts, int nNumBacktracks, int nNumBackjumps);
 ITE_INLINE int RecordSolution(); 
 ITE_INLINE void graph_free();
+ITE_INLINE void J_ResetHeuristicScores();
 
 extern int nNumRegSmurfs; // Number of regular Smurfs.
 SmurfState *pTrueSmurfState = 0;  // Pointer to the Smurf state
@@ -58,9 +59,10 @@ extern int NO_LEMMAS;
 int *arrFunctionType;
 BDDNodeStruct **arrFunctions;
 int nAssertionFailedVble = 0;
-AffectedFuncsStruct *garrAFS;
 LemmaInfoStruct *pUnitLemmaList=NULL;
 int gnNumCachedLemmas=0;
+extern BacktrackStackEntry *arrBacktrackStack; 
+extern SmurfState **arrRegSmurfInitialStates;
 
 
 int *arrInferenceQueue; // Indicies of atoms that already have values
@@ -83,7 +85,6 @@ t_fn_inf_queue *pFnInferenceQueueNextElt=NULL;
 
 int nNumVariables;
 
-int nNumBacktracks = 0;
 AffectedFuncsStruct *arrAFS; // "Affected Funcs Struct":
 SmurfState **arrCurrentStates=0; // Current states of all of the Smurfs, i.e.,
 // arrCurrentStates[i] is a pointer to the current state of the i-th Smurf.
@@ -120,7 +121,6 @@ double *arrSumRHSUnknowns = 0;
 double *arrSumRHSUnknownsNew = 0;
 double *arrPrevSumRHSUnknowns = 0;
 
-int nNumBackjumps = 0;
 int nNumChoicePts = 0;
 
 extern long nTimeLimit;
@@ -170,9 +170,8 @@ ITE_Deduce()
       // Determine the potentially affected constraints.
       AffectedFuncsStruct *pAFS = arrAFS + nInferredAtom;
 
-      D_9(
-            //if (nNumBacktracks > TRACE_START) 
-            fprintf(stddbg, "\nInferred Atom %c%d\n", 
+      TB_9(
+            d9_printf3("\nInferred Atom %c%d\n", 
                (nInferredValue==BOOL_TRUE?'+':'-'),
                nInferredAtom);
             );
@@ -205,9 +204,8 @@ ITE_Fn_Deduce()
 
       // Determine the potentially affected constraints.
 
-      D_9(
-            //if (nNumBacktracks > TRACE_START) 
-            fprintf(stddbg, "\nInferred Atom %c%d\n", 
+      TB_9(
+            d9_printf3("\nInferred Atom %c%d\n", 
                (nInferredValue==BOOL_TRUE?'+':'-'),
                nInferredAtom);
          )
@@ -230,9 +228,9 @@ int (* proc_backtrack)() = NULL;
 ITE_INLINE int
 CheckBtHooks()
 {
-   nNumBacktracks++;
-   d9_printf2("\nStarting backtrack # %d\n", nNumBacktracks);
-   if (nNumBacktracks % BACKTRACKS_PER_STAT_REPORT == 0) {
+   ite_counters[NUM_BACKTRACKS]++;
+   d9_printf2("\nStarting backtrack # %ld\n", (long)ite_counters[NUM_BACKTRACKS]);
+   if (ite_counters[NUM_BACKTRACKS] % BACKTRACKS_PER_STAT_REPORT == 0) {
 
       if (reports == 0) 
          DisplayBacktrackInfo(fPrevEndTime, fStartTime);
@@ -244,7 +242,9 @@ CheckBtHooks()
          return 1; /* FIXME: ERR_limits!! */
       }
    }
-  
+   if (ite_counters[NUM_BACKTRACKS] % 255 == 0)
+      Update_arrVarScores();
+
    /* setup bt function as a hook with frequency 1 ? */
    return proc_backtrack();
 }
@@ -264,16 +264,9 @@ CheckInitHooks()
 ITE_INLINE int
 CheckFinalHooks()
 {
-   switch (nHeuristic) {
-    case JOHNSON_HEURISTIC:
-       J_FreeHeuristicScores();
-       break;
-    default: break;
-   }
-
    D_2(
          DisplayBacktrackInfo(fPrevEndTime, fStartTime);
-         DisplayStatistics(nNumChoicePts, nNumBacktracks, nNumBackjumps);
+         DisplayStatistics(nNumChoicePts, ite_counters[NUM_BACKTRACKS], ite_counters[NUM_TOTAL_BACKJUMPS]);
       );
 
 #ifdef HAVE_IMAGE_JPEG
@@ -286,6 +279,85 @@ CheckFinalHooks()
 #endif 
    return 0;
 }
+
+ITE_INLINE void
+InitBrancherX()
+{
+   if (nNumRegSmurfs) {
+      memset(arrChangedSmurfs, 0, sizeof(int)*nNumRegSmurfs);
+   }
+
+   if (nNumSpecialFuncs) {
+      memset(arrChangedSpecialFn, 0, sizeof(int)*nNumSpecialFuncs);
+   }
+
+   for (int i = 0; i < nNumSpecialFuncs; i++) {
+      arrPrevNumRHSUnknowns[i] =
+         arrNumRHSUnknownsNew[i] =
+         arrNumRHSUnknowns[i] = arrSpecialFuncs[i].rhsVbles.nNumElts;
+      arrPrevNumLHSUnknowns[i] =
+         arrNumLHSUnknownsNew[i] =
+         arrNumLHSUnknowns[i] = arrSpecialFuncs[i].nLHSVble > 0? 1: 0;
+      arrSumRHSUnknowns[i] = 0;
+
+      for (int j=0; j<arrSpecialFuncs[i].rhsVbles.nNumElts; j++)
+         arrSumRHSUnknowns[i] += arrJWeights[arrSpecialFuncs[i].rhsVbles.arrElts[j]];
+
+      assert(arrSolution[0]!=BOOL_UNKNOWN);
+   }
+
+   /* for restart */
+   for (int i = 1; i<nNumVariables; i++) {
+      //assert(arrSolution[i] == BOOL_UNKNOWN);
+      arrSolution[i] = BOOL_UNKNOWN;
+   }
+   
+   nNumUnresolvedFunctions = nNumRegSmurfs + nNumSpecialFuncs; 
+
+   int nRegSmurfIndex = 0;
+   for (int i = 0; i < nmbrFunctions; i++)
+   {
+      if (!IsSpecialFunc(arrFunctionType[i]))
+      {
+         arrPrevStates[nRegSmurfIndex] =
+         arrCurrentStates[nRegSmurfIndex] =
+            arrRegSmurfInitialStates[nRegSmurfIndex];
+
+         if (arrCurrentStates[nRegSmurfIndex] == pTrueSmurfState)
+         {
+            nNumUnresolvedFunctions--;
+         }
+         nRegSmurfIndex++;
+      }
+   }
+
+   for (int i = 0; i < nNumRegSmurfs; i++) {
+      arrSmurfPath[i].idx = 0;
+   }
+
+   for(int x = 1; x <= gnMaxVbleIndex; x++) 
+   {
+      arrLemmaFlag[x] = false;
+      arrBacktrackStackIndex[x] = gnMaxVbleIndex+1;
+   }
+   arrBacktrackStackIndex[0] = 0;
+   pInferenceQueueNextElt = pInferenceQueueNextEmpty = arrInferenceQueue;
+   pFnInferenceQueueNextElt = pFnInferenceQueueNextEmpty = arrFnInferenceQueue;
+
+  pChoicePointTop = arrChoicePointStack;
+  pConflictLemma = NULL;
+
+  pBacktrackTop = arrBacktrackStack;
+  nBacktrackStackIndex = 1;
+
+  if (nHeuristic == JOHNSON_HEURISTIC)
+     J_ResetHeuristicScores();
+
+ //*(pInferenceQueueNextEmpty++) = 0;
+}
+
+
+
 
 // ITE_INLINE
 int
@@ -300,6 +372,8 @@ Brancher()
    // corresponding variable.
 {  
    int ret = SOLV_UNKNOWN;
+
+   InitBrancherX();
 
    CheckInitHooks(); /* FIXME: check for result */
 
@@ -329,7 +403,7 @@ Brancher()
    ite_counters_f[BRANCHER_TIME] = get_runtime() - fStartTime;
    d2_printf2("Time in brancher:  %4.3f secs.\n", ite_counters_f[BRANCHER_TIME]);
    if (ite_counters_f[BRANCHER_TIME] == 0.0) ite_counters_f[BRANCHER_TIME] = 0.00001; /* something real small */
-   double fBacktracksPerSec = (nNumBacktracks) / ite_counters_f[BRANCHER_TIME];
+   double fBacktracksPerSec = ite_counters[NUM_BACKTRACKS] / ite_counters_f[BRANCHER_TIME];
    d2_printf2("%.3f backtracks per sec.\n", fBacktracksPerSec);      
 
    CheckFinalHooks();
@@ -342,5 +416,6 @@ Brancher()
    else
       ret = SOLV_UNSAT;
 
+   //FreeLemmas(MAX_NUM_CACHED_LEMMAS);
    return ret;
 }

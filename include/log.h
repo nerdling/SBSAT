@@ -101,7 +101,7 @@ extern int DEBUG_LVL;
 
 #if _DEBUG_LVL_COMPILE >= 9
 # define D_9(x) if (DEBUG_LVL >= 9 && DEBUG_LVL<10) { x }
-# define TB_9(x) if (DEBUG_LVL >= 9 && nNumBacktracks >= TRACE_START) { x } 
+# define TB_9(x) if (DEBUG_LVL >= 9 && ite_counters[NUM_BACKTRACKS] >= TRACE_START) { x } 
 #else
 # define D_9(x) {}
 # define TB_9(x) {}

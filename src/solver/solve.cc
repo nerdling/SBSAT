@@ -42,10 +42,15 @@ int *arrSolver2IteVarMap=NULL;
 int *arrIte2SolverVarMap=NULL;
 int nIndepVars=0;
 int nDepVars=0;
+extern BacktrackStackEntry *arrBacktrackStack; 
+ITE_INLINE int RecordInitialInferences();
 
 
 ITE_INLINE int InitSolver();
 ITE_INLINE void FreeSolver(Tracer *tracer);
+void LoadLemmas(char *filename);
+ITE_INLINE void FreeAFS();
+
 
 int
 solve_init()
@@ -72,6 +77,7 @@ solve_free()
 }
 
 
+
 int
 solve(Tracer * tracer)
 {
@@ -93,6 +99,10 @@ solve(Tracer * tracer)
          ret = Brancher();
 
       };
+
+      /* restart?? */
+      //if (ret == SOLV_UNKNOWN || ret == SOLV_UNSAT) ret = Brancher();
+
       FreeBrancher();
     }
     FreeSmurfFactory();
@@ -158,7 +168,7 @@ InitSolver()
         }
 
      if (index != -1) {
-        arrSolution[index] = BOOL_UNKNOWN;
+        //arrSolution[index] = BOOL_UNKNOWN;
         arrSolver2IteVarMap[index] = x;
         arrIte2SolverVarMap[x] = index;
 		  var_score[index] = var_score[x];
@@ -180,6 +190,14 @@ InitSolver()
         ) 
 	       InitLemmaHeurArrays(gnMaxVbleIndex);
 
+   if (nHeuristic == JOHNSON_HEURISTIC) {
+      J_InitHeuristic();
+   }
+
+   gnNumLemmas = 0;
+   InitLemmaInfoArray();
+   if (*lemma_in_file) LoadLemmas(lemma_in_file);
+
   return SOLV_UNKNOWN;
 }
 
@@ -195,13 +213,17 @@ FreeSolver(Tracer *tracer)
         ) 
      DeleteLemmaHeurArrays();
 
-  free(arrSolution);
-  free(arrSolver2IteVarMap);
-  free(arrIte2SolverVarMap);
+  if (nHeuristic == JOHNSON_HEURISTIC) {
+     J_FreeHeurScoresStack();
+  }
 
+  ite_free((void*)arrSolution);
+  ite_free((void*)arrSolver2IteVarMap);
+  ite_free((void*)arrIte2SolverVarMap);
+
+  FreeLemmaInfoArray();
   FreeLemmaSpacePool();
-  FreeSpecialFnStack();
-  FreeSmurfStatesStack();
+  FreeIntNodePool();
 
   if (formatin == 't' && tracer) unlink(tracer->file);
 }

@@ -64,6 +64,7 @@ BackTrack_SBJ()
    int nNumForcedInfsBelowCurrentCP = 0;
    int nInferredAtom; /* the choice point */
    int nInferredValue; /* the value of the choice point */
+   int _num_backjumps = 0;
 
 	int highest_uip_level = gnMaxVbleIndex + 1;
 	int highest_uip_var0 = 0;
@@ -262,15 +263,14 @@ BackTrack_SBJ()
          } // if(pBacktrackTop->bWasChoicePoint == true || ... )
 
 #ifdef DISPLAY_TRACE
-         if (nNumBacktracks >= TRACE_START)
-         {
+         TB_9(
             cout << "Examining lemma:" << endl;
             DisplayLemmaStatus(pBacktrackTop->pLemma, arrSolution);
             cout << "which witnesses inference X"
                << pBacktrackTop->nAtom << " = "
                << arrSolution[pBacktrackTop->nAtom]
                << endl;
-         }
+         )
 #endif
 
          // Check whether the atom at the top of the backtrack stack
@@ -280,10 +280,9 @@ BackTrack_SBJ()
             // The backtrack atom is relevant to the resolution done so far.
             // Therefore, include its attached lemma in the resolution process.
 # ifdef DISPLAY_TRACE
-            if (nNumBacktracks >= TRACE_START)
-            {
-               cout << "Lemma relevant to contradiction." << endl;
-            }
+            TB_9(
+                  cout << "Lemma relevant to contradiction." << endl;
+                );
 # endif
 
 
@@ -317,19 +316,17 @@ BackTrack_SBJ()
             }
          }
 #ifdef DISPLAY_TRACE
-         else if (nNumBacktracks >= TRACE_START)
-         {
-            cout << "Lemma irrelevant to contradiction." << endl;
-         }
+         else TB_9(
+               cout << "Lemma irrelevant to contradiction." << endl;
+               );
          cout << "Star_Count = " << nNumForcedInfsBelowCurrentCP << endl;
 
-         if (nNumBacktracks >= TRACE_START)
-         {
+         TB_9(
             cout << "Backtracking from forced assignment of X"
 				  << nBacktrackAtom << " equal to "
 				  << (arrSolution[nBacktrackAtom] == BOOL_TRUE ? "true" : "false")
 					 << "." << endl;
-         }
+         )
 #endif
 			
          if (pBacktrackTop->pLemmaInfo) {
@@ -340,12 +337,12 @@ BackTrack_SBJ()
       };  //  while (1)
 
       arrSolution[nInferredAtom] = BOOL_UNKNOWN;
-      nNumBackjumps++;
+      _num_backjumps++;
 
 	}  // backjumping loop
    while (arrLemmaFlag[nInferredAtom] == false);
 
-   nNumBackjumps--; /*m last backjump was not just backtrack */
+   _num_backjumps--; /*m last backjump was not just backtrack */
 
    /*m clean up */
    for(int i = 0; i < nUnsetLemmaFlagIndex; i++)
@@ -409,9 +406,14 @@ BackTrack_SBJ()
 		  };  //  while (1)
 		
 		arrSolution[nInferredAtom] = BOOL_UNKNOWN;
-      nNumBackjumps++;
+      _num_backjumps++;
 		
 	}  // backjumping loop
+
+   if (_num_backjumps) {
+      ite_counters[NUM_BACKJUMPS]++;
+      ite_counters[NUM_TOTAL_BACKJUMPS] += _num_backjumps;
+   }
 	
 	LemmaInfoStruct *previous = pUnitLemmaList;
 	for (LemmaInfoStruct *p = previous->pNextLemma[0]; p; p = p->pNextLemma[0])
@@ -451,13 +453,12 @@ BackTrack_SBJ()
    //Heuristic does this automatically.
 
 #ifdef DISPLAY_TRACE
-   if (nNumBacktracks >= TRACE_START)
-   {
+   TB_9(
       cout << "Reversed polarity of X" << nInferredAtom
          << " to " << nInferredValue << endl;
       //DisplayAllBrancherLemmas();
       cout << "Would DisplayAllBrancherLemmas here." << endl;
-   }
+   )
 #endif
 
    // Get the consequences of the branch atoms new value.

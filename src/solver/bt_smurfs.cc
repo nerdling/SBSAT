@@ -98,11 +98,8 @@ CheckSmurfInferences(int nSmurfIndex, int *arrInferences, int nNumInferences,
       else // if (nCurrentAtomValue != value)
       {
          // Conflict -- backtrack.
-         D_9(
-               if (nNumBacktracks >= TRACE_START)
-               {
+         TB_9(
                d9_printf1("Conflict:  goto Backtrack\n");
-               }
             )
 
          pConflictLemma = pLemma;
@@ -176,12 +173,9 @@ UpdateRegularSmurf(int nSmurfIndex)
          if (pState == pTrueSmurfState)
          {
             nNumUnresolvedFunctions--;
-            D_9(
-                  if (nNumBacktracks >= TRACE_START)
-                  {
+            TB_9(
                   d9_printf3("Decremented nNumUnresolvedFunctions to %d due to smurf # %d\n",
                      nNumUnresolvedFunctions, nSmurfIndex);
-                  }
                )
                break; // break the for all vbles in smurf loop
          }

@@ -91,9 +91,7 @@ InferLiteral(int nInferredAtom,
       int infer)
 {
    assert(nInferredValue == BOOL_TRUE || nInferredValue == BOOL_FALSE);
-   D_9(
-         if (nNumBacktracks >= TRACE_START)
-         {
+   TB_9(
          d9_printf3("Inferring %c%d ", (nInferredValue==BOOL_TRUE?'+':'-'),
             nInferredAtom);
          if (pLemma) {
@@ -101,7 +99,6 @@ InferLiteral(int nInferredAtom,
          } else {
          if (infer == 0)
          d9_printf1("(choice point)\n");
-         }
          }
       )
 

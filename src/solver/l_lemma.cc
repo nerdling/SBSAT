@@ -72,12 +72,12 @@ ITE_INLINE
 void
 DeleteLemmaHeurArrays ()
 {
-   delete arrLemmaHeurScoresPos;
-   delete arrLemmaHeurScoresNeg;
-   delete arrLemmaVbleCountsPos;
-   delete arrLemmaVbleCountsNeg;
-   delete arrLastLemmaVbleCountsPos;
-   delete arrLastLemmaVbleCountsNeg;
+   delete [] arrLemmaHeurScoresPos;
+   delete [] arrLemmaHeurScoresNeg;
+   delete [] arrLemmaVbleCountsPos;
+   delete [] arrLemmaVbleCountsNeg;
+   delete [] arrLastLemmaVbleCountsPos;
+   delete [] arrLastLemmaVbleCountsNeg;
 
 }
 
