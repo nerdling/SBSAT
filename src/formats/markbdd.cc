@@ -81,7 +81,7 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 //		Here I need to return an integer if it is actually an integer...
 //		for the defines, and InititalBranch, and others that use integers.
 //		Though I could fix those to use integers correctly......maybe.....
-		d4_printf2("%d ", intnum);
+		d5_printf2("%d ", intnum);
 		return ite_var (intnum);
 	}
 	if (order == 'b')
@@ -208,7 +208,7 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 		//        defines[whereat].string[x] = macros[x];
 		//      defines[whereat].string[x] = 0;      
 		// 
-		d3e_printf2("#define %s ", defines[whereat].string);
+		d4_printf2("#define %s ", defines[whereat].string);
       int v = 0;
 		order = getNextSymbol (intnum, bdd);
 		
@@ -310,7 +310,7 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 		order = getNextSymbol (intnum, bdd);
 
 		for(long i = 0; i < 1 << v1->variable; i++) {
-			d4_printf2("%c", macros[i]);
+			d5_printf2("%c", macros[i]);
 			if(macros[i] == 'T' || macros[i] == 't') {
 				tv[i] = '1';
 			} else if(macros[i] == 'F' || macros[i] == 'f'){
@@ -786,8 +786,8 @@ char getNextSymbol (int &intnum, BDDNode *&bdd) {
 					exit (1);
 				}
 			}
-			if(negate_it) d4_printf2("-%s ", macros);
-			if(!negate_it) d4_printf2("%s ", macros);
+			if(negate_it) d5_printf2("-%s ", macros);
+			if(!negate_it) d5_printf2("%s ", macros);
 			return 'm';
 		}
       if (p == '#') {
@@ -896,13 +896,13 @@ void bddloop () {
 	
 	p = fgetc(finputfile);
 	 
-	d3_printf1("\n");
+	d4_printf1("\n");
 	
 	while (1) {		//(p = fgetc(finputfile))!=EOF) 
 		if(markbdd_line == 1) { d2_printf1("Reading 2"); }
       else {
 			d2e_printf2("\rReading %d ", markbdd_line);
-			d3_printf2("Reading %d ", markbdd_line);
+			d4_printf2("Reading %d ", markbdd_line);
 		}
 		if (p == '\n') {
 			p = fgetc(finputfile);
@@ -910,7 +910,7 @@ void bddloop () {
 				goto Exit;
 			}
 			markbdd_line++;
-			d3_printf1("\r");
+			d4_printf1("\r");
 			continue;
 		}
       if (p == ';') {
@@ -920,7 +920,7 @@ void bddloop () {
 					goto Exit;
 				}
 			}
-			d3_printf1("\r");
+			d4_printf1("\r");
 			continue;
 		}
 		if (p == ' '|| p == ')' || p == '(') {
@@ -930,12 +930,12 @@ void bddloop () {
 					goto Exit;
 				}
 			}
-			p = fgetc(finputfile);
+//			p = fgetc(finputfile);
 			if(p == EOF) {
 				goto Exit;
 			}
 				  
-			d3_printf1("\r");
+			d4_printf1("\r");
 			continue;
 		}
 		if (p == '*') {
@@ -953,7 +953,7 @@ void bddloop () {
 					exit (1);
 				}
 			}
-			d3_printf1("*");
+			d4_printf1("*");
 		} else {
 			ungetc (p, finputfile);
 			if (p == ';')
@@ -971,7 +971,7 @@ void bddloop () {
 				}
 			}
 		}
-      D_3(
+      D_4(
       if ((strcasecmp (macros, "pprint_tree"))
 			 && (strcasecmp (macros, "print_tree"))
 			 && (strcasecmp (macros, "define"))
@@ -1006,7 +1006,7 @@ void bddloop () {
 			if (p != '\n')
 			  goto Exit;
 		}
-		d3_printf1("\n");
+		d4_printf1("\n");
 	}
 	Exit:;
 
@@ -1021,7 +1021,7 @@ void bddloop () {
 				looper++;
 				// found variable and the variable id is id
 				independantVars[id] = 1;
-				d4_printf5("%d indep=%d %s %s\n", looper, id, getsym_i(id)->name, initbranch_vars[x]);
+				d5_printf5("%d indep=%d %s %s\n", looper, id, getsym_i(id)->name, initbranch_vars[x]);
 				id = sym_regex(&myrg);
 				no_independent = 0;
 			}
