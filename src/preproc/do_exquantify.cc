@@ -186,24 +186,30 @@ int ExQuantify () {
 									//so quant_var is necessary.
 									BDDNode **BDDFuncs;
 									BDDFuncs = (BDDNode **)ite_recalloc(NULL, 0, 1, sizeof(BDDNode *), 9, "BDDFuncs");
-									BDDFuncs[0] = strip_x_BDD(Quantify, quant_var);
-									ret = PREP_CHANGED;
-									switch (int r=add_newFunctions(BDDFuncs, 1)) {
-									 case TRIV_UNSAT:
-									 case TRIV_SAT:
-									 case PREP_ERROR: return r;
-									 default: break;
+									//BDDFuncs[0] = strip_x_BDD(Quantify, quant_var);
+									BDDFuncs[0] = Quantify;
+									if(Quantify == possible_BDD(Quantify, quant_var)) {
+										//fprintf(stderr, "\nHERE\n");
+									} else {
+										autark_BDD[quant_var] = 1;
+										switch (int r=add_newFunctions(BDDFuncs, 1)) {
+										 case TRIV_UNSAT:
+										 case TRIV_SAT:
+										 case PREP_ERROR: return r;
+										 default: break;
+										}
+										ite_free((void **)&BDDFuncs);
+										functionType[nmbrFunctions-1] = AUTARKY_FUNC;
+										equalityVble[nmbrFunctions-1] = quant_var;
+										functions[nmbrFunctions-1] = possible_BDD(functions[nmbrFunctions-1], quant_var);
+										switch (int r=Rebuild_BDDx(nmbrFunctions-1)) {
+										 case TRIV_UNSAT:
+										 case TRIV_SAT:
+										 case PREP_ERROR: return r;
+										 default: break;
+										}
 									}
-									ite_free((void **)&BDDFuncs);
-									functionType[nmbrFunctions-1] = AUTARKY_FUNC;
-									equalityVble[nmbrFunctions-1] = quant_var;
-									switch (int r=Rebuild_BDDx(nmbrFunctions-1)) {
-									 case TRIV_UNSAT:
-									 case TRIV_SAT:
-									 case PREP_ERROR: return r;
-									 default: break;
-									}
-
+									
 									//Check whether quant_var was applied as an inference.
 									amount_count = 0;
 									amount_num = -1;
@@ -214,7 +220,6 @@ int ExQuantify () {
 										}
 										if(amount_count > 1) break;
 									}
-									
 									if(amount_count == 1 && amount_num == j) {
 										functions[j] = xquantify (functions[j], quant_var);
 										for(int iter = 0; iter<str_length; iter++)
@@ -222,6 +227,7 @@ int ExQuantify () {
 										d3e_printf2 ("*{%d}", quant_var);
 										str_length = 0;
 										variablelist[quant_var].true_false = 2;
+										ret = PREP_CHANGED;
 									}
 									switch (int r=Rebuild_BDDx(j)) {
 									 case TRIV_UNSAT:
@@ -229,7 +235,6 @@ int ExQuantify () {
 									 case PREP_ERROR: return r;
 									 default: break;
 									}
-
 									changed = 1;
 									break;
 								}
