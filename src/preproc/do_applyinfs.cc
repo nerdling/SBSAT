@@ -412,11 +412,74 @@ int Rebuild_BDDx (int x) {
 	
 	if (functions[x] == false_ptr && functionType[x]!=AUTARKY_FUNC)
 	  return TRIV_UNSAT;
-
+	
 	//Get Inferences	
 	infer *lastiter = NULL;
 	infer *startiter = NULL;
-	if(functions[x]->inferences != NULL && functionType[x]!=AUTARKY_FUNC) {
+	
+	if(functionType[x] == AUTARKY_FUNC) {
+		//fprintf(stderr, "|%d %d|", l->equivCount(equalityVble[x]), l->opposCount(equalityVble[x]));
+		//l->printEquivalence(equalityVble[x]);
+		//l->printOpposite(equalityVble[x]);
+		//l->printEquivVarCount();
+		//l->printOpposVarCount();
+		//l->printWhetherEquiv();
+		//str_length=0;
+		if(l->equivCount(equalityVble[x])==0 && l->opposCount(equalityVble[x])==0) {
+//		if(1) {
+			
+		/*
+		   Is this really what I want to do?
+		   Maybe detecting if a variable has been previously set is wrong.
+		 */
+		
+			//BDDNode *autarkBDD = possible_BDD(functions[x], equalityVble[x]);
+			BDDNode *autarkBDD = functions[x];
+			if(autarkBDD == false_ptr) {
+				startiter = AllocateInference(equalityVble[x], 0, NULL);
+				startiter->next = lastinfer->next;
+				lastinfer->next = startiter;
+				autark_BDD[equalityVble[x]] = -1;
+				//d3_printf3("\n%d|%d=True|\n", x, equalityVble[x]);
+				//d3_printf1("*T");
+				//printBDD(autarkBDD);
+				//d3_printf1("\n");
+				//str_length = 0;
+				functions[x] = true_ptr;		
+				functionType[x] = UNSURE;
+				equalityVble[x] = 0;
+			} else {
+				for(infer *iterator = autarkBDD->inferences; iterator != NULL; iterator = iterator->next) {
+					if(abs(iterator->nums[0]) == equalityVble[x] || abs(iterator->nums[1]) == equalityVble[x]) {
+						startiter = AllocateInference(iterator->nums[0], iterator->nums[1], NULL);
+						startiter->next = lastinfer->next;
+						lastinfer->next = startiter;
+						//lastiter->nums[0] = iterator->nums[0];
+						//lastiter->nums[1] = iterator->nums[1];
+
+						autark_BDD[equalityVble[x]] = -1;
+						//d3_printf4("\n%d|%d, %d|\n", x, iterator->nums[0], iterator->nums[1]);
+						//printBDD(functions[x]);
+						//d3_printf1("\n");
+						//d3_printf1("*");
+						//str_length = 0;
+
+						functions[x] = true_ptr;		
+						functionType[x] = UNSURE;
+						equalityVble[x] = 0;
+						break;
+					}
+				}
+			}
+		} else {			  
+			//Autark variable was infered by some other function.
+			autark_BDD[equalityVble[x]] = -1;
+			//d3_printf3("\n%d|%d gone|\n", x, equalityVble[x]);
+			functions[x] = true_ptr;		
+			functionType[x] = UNSURE;
+			equalityVble[x] = 0;
+		}
+	} else if(functions[x]->inferences != NULL) {
 		lastiter = AllocateInference(0, 0, NULL);
 		startiter = lastiter;
 		for(infer *iterator = functions[x]->inferences; iterator != NULL; iterator = iterator->next) {
@@ -437,60 +500,6 @@ int Rebuild_BDDx (int x) {
 		lastinfer->next = startiter->next;
 		DeallocateOneInference(startiter); 
 	} else lastinfer->next = NULL;
-
-	if(functionType[x] == AUTARKY_FUNC && functions[x]->inferences != NULL) {
-		//fprintf(stderr, "|%d %d|", l->equivCount(equalityVble[x]), l->opposCount(equalityVble[x]));
-		//l->printEquivalence(equalityVble[x]);
-		//l->printOpposite(equalityVble[x]);
-		//l->printEquivVarCount();
-		//l->printOpposVarCount();
-		//l->printWhetherEquiv();
-		//str_length=0;
-		if(l->equivCount(equalityVble[x])==0 && l->opposCount(equalityVble[x])==0) {
-			//BDDNode *autarkBDD = possible_BDD(functions[x], equalityVble[x]);
-			BDDNode *autarkBDD = functions[x];
-			if(autarkBDD == false_ptr) {
-				startiter = AllocateInference(equalityVble[x], 0, NULL);
-				startiter->next = lastinfer->next;
-				lastinfer->next = startiter;
-				autark_BDD[equalityVble[x]] = -1;
-				//d3_printf3("\n%d|%d=True|", x, equalityVble[x]);
-				//d3_printf1("*T");
-				//printBDD(autarkBDD);
-				//d3_printf1("\n");
-				//str_length = 0;
-				functions[x] = true_ptr;		
-				functionType[x] = UNSURE;
-				equalityVble[x] = 0;
-			} else {
-				for(infer *iterator = autarkBDD->inferences; iterator != NULL; iterator = iterator->next) {
-					if(abs(iterator->nums[0]) == equalityVble[x] || abs(iterator->nums[1]) == equalityVble[x]) {
-						startiter = AllocateInference(iterator->nums[0], iterator->nums[1], NULL);
-						startiter->next = lastinfer->next;
-						lastinfer->next = startiter;
-						autark_BDD[equalityVble[x]] = -1;
-						//lastiter->nums[0] = iterator->nums[0];
-						//lastiter->nums[1] = iterator->nums[1];
-						
-						//d3_printf4("\nAB%d|%d, %d|", x, iterator->nums[0], iterator->nums[1]);
-						//printBDD(functions[x]);
-						//d3_printf1("\n");
-						//d3_printf1("*");
-						//str_length = 0;
-
-						functions[x] = true_ptr;		
-						functionType[x] = UNSURE;
-						equalityVble[x] = 0;
-						break;
-					}
-				}
-			}
-		} else {			  
-			functions[x] = true_ptr;		
-			functionType[x] = UNSURE;
-			equalityVble[x] = 0;
-		}
-	}
 
 /*	if(length[x] > 1 && functionType[x] == AUTARKY_FUNC) {
 		functions[x] = true_ptr;

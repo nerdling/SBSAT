@@ -49,7 +49,7 @@ int ExQuantifyAnd();
 int Do_ExQuantifyAnd() {
 	MAX_EXQUANTIFY_CLAUSES += 5;
 	MAX_EXQUANTIFY_VARLENGTH +=5;
-	d3_printf1 ("ANDING AND EXISTENTIALLY QUANTIFYING - ");
+	d3_printf2 ("ANDING AND EXISTENTIALLY QUANTIFYING %d - ", countBDDs());
 	int cofs = PREP_CHANGED;
 	int ret = PREP_NO_CHANGE;
 	affected = 0;
@@ -68,18 +68,56 @@ int Do_ExQuantifyAnd() {
 	}
 	d3_printf1 ("\n");
 	d2e_printf1 ("\r                                      ");
+
+	if(ret == PREP_CHANGED && countBDDs() == 0) return TRIV_SAT;
 	return ret;
 }
+
+int seed1;            /* seed for random */
+struct timeval tv1;
+struct timezone tzp1;
+
+typedef struct rand_list {
+	int num;
+	int prob;	
+};
+
+int rlistfunc (const void *x, const void *y) {
+	rand_list pp, qq;
+	pp = *(const rand_list *) x;
+	qq = *(const rand_list *) y;
+	if (pp.prob < qq.prob)
+	  return -1;
+	if (pp.prob == qq.prob)
+	  return 0;
+	return 1;
+}
+
 
 int ExQuantifyAnd () {
 	int ret = PREP_NO_CHANGE;
 	
 	BDDNode *Quantify;
 	
+	gettimeofday(&tv1,&tzp1);
+	seed1 = (( tv1.tv_sec & 0177 ) * 1000000) + tv1.tv_usec;
+   srandom(seed1);
+
+	rand_list *rlist = (rand_list*)ite_calloc(numinp+1, sizeof(rand_list), 9, "rlist");
+	
+	for(int i = 1;i < numinp+1; i++) {
+		rlist[i].num = i;
+		rlist[i].prob = random()%(numinp*numinp);
+	}
+	
+	qsort(rlist, numinp+1, sizeof(rand_list), rlistfunc);
+	
 	if (enable_gc) bdd_gc(); //Hit it!
 	for (int x = 1; x <= MAX_EXQUANTIFY_CLAUSES; x++) {
-		for (int i = 1; i < numinp + 1; i++) {
+		for (int rnum = 1; rnum <= numinp; rnum++) {
 		//for (int i = numinp; i > 0; i--) {
+			int i = rlist[rnum].num;
+			if(i == 0) continue;
 			char p[100];
 			
 			D_3(
@@ -101,7 +139,7 @@ int ExQuantifyAnd () {
 			if (i % ((numinp/100)+1) == 0) {
 				d2e_printf3("\rPreprocessing Ea %d/%ld ", i, numinp);
 			}
-
+			
 			//if(autark_BDD[i] != -1) continue;
 			if(variablelist[i].true_false != -1 || variablelist[i].equalvars != 0)
 			  continue;
@@ -237,9 +275,10 @@ int ExQuantifyAnd () {
 					}
 					
 					int changed = 1;
+
 					//d3_printf1("Starting...");
 					while(changed == 1) {
-						//d3_printf2("[%d]", j);
+						//d3_printf3("[%d:%d]", j, i);
 						//str_length = 0;
 						changed = 0;
 						//d3_printf1("going...");
@@ -408,9 +447,12 @@ int ExQuantifyAnd () {
 		}
 	}
 	ea_bailout:
+
+	ite_free((void**)&rlist);
 	
 	for(int x = 0; x < nmbrFunctions; x++)
 	  Ea_repeat[x] = 1;
+
 	return ret;
 }
 

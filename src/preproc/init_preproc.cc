@@ -64,7 +64,7 @@ long bdd_tempint_max=0;
 int *bdd_tempint=NULL;
 int *original_functionType;
 int *original_equalityVble;
-int *autark_BDD;
+int *autark_BDD=NULL;
 int Finish_Preprocessing();
 int Init_Preprocessing();
 
@@ -96,8 +96,8 @@ Init_Preprocessing()
 
 	//BDDNodeStruct **original_functions;
 
-	original_functionType = (int *)ite_calloc(nmbrFunctions + 1, sizeof(int), 2, "original functionType");
-	original_equalityVble = (int *)ite_calloc(nmbrFunctions + 1, sizeof(int), 2, "original equalityVble");
+	original_functionType = (int *)ite_calloc(nmbrFunctions + 1, sizeof(int), 9, "original functionType");
+	original_equalityVble = (int *)ite_calloc(nmbrFunctions + 1, sizeof(int), 9, "original equalityVble");
 
 	for(int x = 0; x < nmbrFunctions; x++) {
 	  original_functionType[x] = functionType[x];
@@ -105,14 +105,14 @@ Init_Preprocessing()
 	}
 
 	if(original_functions == NULL) {
-      original_functions = (BDDNode **)ite_calloc(nmbrFunctions+1, sizeof(BDDNode*), 2, "original_functions");
+      original_functions = (BDDNode **)ite_calloc(nmbrFunctions+1, sizeof(BDDNode*), 9, "original_functions");
 		for(int x = 0; x < nmbrFunctions; x++)
 		  original_functions[x] = functions[x];
 		original_numout = nmbrFunctions;
 	}
 
 	if(variablelist==NULL) {
-		variablelist = (varinfo*)ite_calloc(numinp+1, sizeof(varinfo), 2, "variablelist");
+		variablelist = (varinfo*)ite_calloc(numinp+1, sizeof(varinfo), 9, "variablelist");
 		
 		for (int x = 0; x < numinp + 1; x++)
 		  {
@@ -123,7 +123,7 @@ Init_Preprocessing()
 	}
 
 	if(autark_BDD == NULL) {
-      autark_BDD = (int *)ite_calloc(numinp+1, sizeof(int), 2, "autark_BDD");
+      autark_BDD = (int *)ite_calloc(numinp+1, sizeof(int), 9, "autark_BDD");
 		for(int x = 0; x < numinp+1; x++)
 		  autark_BDD[x] = -1;
 	}
