@@ -75,11 +75,11 @@ BDD2Specfn_XOR(int nFnId, BDDNode *pFunc, int nFunctionType, int _nEqualityVble)
       = (int *)ite_calloc(nNumElts, sizeof(int),
             9, "special function polarities");
 
+   qsort(arrSolverFunctions[nFnId].fn_xor.rhsVbles.arrElts, nNumElts, sizeof(int), revcompfunc);
    for(int i=0;i<nNumElts;i++) {
       arrSolverFunctions[nFnId].fn_xor.rhsVbles.arrElts[i] = arrIte2SolverVarMap[arrSolverFunctions[nFnId].fn_xor.rhsVbles.arrElts[i]];
       arrRHSPolarities[i] = BOOL_UNKNOWN;
    }
-   qsort(arrSolverFunctions[nFnId].fn_xor.rhsVbles.arrElts, nNumElts, sizeof(int), revcompfunc);
    arrSolverFunctions[nFnId].fn_xor.rhsVbles.nNumElts = nNumElts;
 
 

@@ -72,6 +72,7 @@ CreateFunctions()
       else {
          d2_printf3("Skipping function %d type %d\n", i, nFunctionType);
          FnCreateSkippedFunction(i, nFunctionType);
+         nNumUnresolvedFunctions--;
       }
    }
    
