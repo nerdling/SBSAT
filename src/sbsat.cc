@@ -1,4 +1,5 @@
 /* =========FOR INTERNAL USE ONLY. NO DISTRIBUTION PLEASE ========== */ 
+
 /*********************************************************************
  Copyright 1999-2004, University of Cincinnati.  All rights reserved.
  By using this software the USER indicates that he or she has read,
@@ -58,6 +59,7 @@ int ite_main_init(int argc, char *argv[]);
 int ite_main_load();
 int ite_main();
 int ite_main_preproc();
+void itetable_init();
 
 int 
 main(int argc, char *argv[])
@@ -102,7 +104,6 @@ ite_main_init(int argc, char *argv[])
       printf("c SATRAM = %d\n", sat_ram);
    }
 
-   void itetable_init();
    bdd_init();
    itetable_init();
    sym_init();

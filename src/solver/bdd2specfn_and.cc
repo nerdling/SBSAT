@@ -111,7 +111,6 @@ BDD2Specfn_AND(BDDNodeStruct *pFunc,
    // Here we assume that the LHS variable does not also occur on
    // the RHS of the equality.
   
-   // FIXME: can do it even better -- if it really is special func
    long tempint_max = 0;
    long y=0;
    unravelBDD(&y, &tempint_max, &pSpecialFunc->rhsVbles.arrElts, pFunc);

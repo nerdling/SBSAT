@@ -55,13 +55,15 @@ Do_Apply_Inferences ()
 	inferlist = inferlist->next;	//NEW Must increment past the empty start node
 	delete temp;
 
-	if (enable_gc && (rand() % 1000 < 1)) bdd_gc();
+	//if (enable_gc && (rand() % 100 < 1)) 
+      bdd_gc();
 	//I know it looks strange to have this here twice, but it's necessary
 	//for preprocessing options that call this but don't have any inferences.
 	
 	while (inferlist != NULL) {
 		//startover:;
-		if (enable_gc && (rand() % 1000 < 4)) bdd_gc();
+		//if (enable_gc && (rand() % 100 < 4)) 
+         bdd_gc();
 		if (inferlist->nums[1] != 0) {
 			if (inferlist->nums[1] > 0) {
 /*				
@@ -302,6 +304,8 @@ int setALLequiv(int nums0, int nums1, int torf) {
 		BDDNode *before = functions[j];
 		functions[j] = num_replace (functions[j], nums1, nums0);
 		if (before != functions[j]) {
+         bddtable_ref_node(functions[j]);
+         bddtable_deref_node(before);
 			if (Rebuild_BDDx(j)==TRIV_UNSAT)
 			  return TRIV_UNSAT;
 		}
@@ -310,7 +314,9 @@ int setALLequiv(int nums0, int nums1, int torf) {
 	BDDNode *before = functions[0];
 	functions[0] = num_replace (functions[0], nums1, nums0);
 	if (before != functions[0]) {
-		if (Rebuild_BDDx(0)==TRIV_UNSAT)
+      bddtable_ref_node(functions[0]);
+      bddtable_deref_node(before);
+      if (Rebuild_BDDx(0)==TRIV_UNSAT)
 		  return TRIV_UNSAT;
 	}
 
@@ -344,7 +350,9 @@ int setALLinfer(int nums0, int torf) {
 		BDDNode *before = functions[j];
 		functions[j] = set_variable (functions[j], nums0, torf);
 		if (before != functions[j]) {
-			if (Rebuild_BDDx(j)==TRIV_UNSAT)
+         bddtable_ref_node(functions[j]);
+         bddtable_deref_node(before);
+         if (Rebuild_BDDx(j)==TRIV_UNSAT)
 			  return TRIV_UNSAT;
 		}
 	}
@@ -352,6 +360,8 @@ int setALLinfer(int nums0, int torf) {
 	BDDNode *before = functions[0];
 	functions[0] = set_variable (functions[0], nums0, torf);
 	if (before != functions[0]) {
+      bddtable_ref_node(functions[0]);
+      bddtable_deref_node(before);
 		if (Rebuild_BDDx(0)==TRIV_UNSAT)
 		  return TRIV_UNSAT;
 	}

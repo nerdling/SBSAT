@@ -57,6 +57,7 @@ int bddtable_hash_memory_mask = 0;
 BDDNode *bddtable_free = NULL;
 int bddtable_free_count = 0;
 int bddtable_free_count_last = 0;
+int bddtable_used_count_last = 0;
 
 void bdd_fix_inferences(BDDNode *node);
 inline void 
@@ -115,6 +116,10 @@ bdd_init()
       true_ptr->thenCase = true_ptr;
       true_ptr->elseCase = true_ptr;
       true_ptr->inferences = NULL;
+#ifdef USE_BDD_REF_COUNT
+      false_ptr->ref_count = 1;
+      true_ptr->ref_count = 1;
+#endif
 
       false_ptr->notCase = true_ptr;
       true_ptr->notCase = false_ptr;
@@ -237,12 +242,47 @@ bddtable_find_or_add_node (int v, BDDNode * r, BDDNode * e)
    return (*node);
 }
 
+#ifdef USE_BDD_REF_COUNT
+inline void
+bddtable_deref_node_node(BDDNode *n)
+{
+   int hash_pos = bddtable_hash_fn(n->variable, n->thenCase, n->elseCase);
+   BDDNode **hash_node = bddtable_hash_memory+hash_pos;
+   if (n == (*hash_node)) {
+      *hash_node = n->next;
+   } else {
+      BDDNode *find_node = *hash_node;
+      while(n != find_node->next) {
+         find_node = find_node->next;
+      }
+      find_node->next = n->next;
+   }
+   n->next = bddtable_free;
+   bddtable_free = n;
+   bddtable_free_count++;
+}
+
+void
+bddtable_deref_node(BDDNode *n)
+{
+   n->ref_count--;
+   if (n->ref_count == 0 && n->notCase->ref_count == 0) {
+      bddtable_deref_node_node(n);
+      bddtable_deref_node_node(n->notCase);
+   }
+}
+#endif
+
 inline void
 bddtable_alloc_node(BDDNode **node, int v, BDDNode *r, BDDNode *e)
 {
    if (bddtable_free != NULL) {
       (*node) = bddtable_free;
       bddtable_free = bddtable_free->next;
+#ifdef USE_BDD_REF_COUNT
+      if ((*node)->thenCase) bddtable_deref_node((*node)->thenCase);
+      if ((*node)->elseCase) bddtable_deref_node((*node)->elseCase);
+#endif
       (*node)->next = NULL;
       bddtable_free_count--;
    } else {
@@ -254,8 +294,12 @@ bddtable_alloc_node(BDDNode **node, int v, BDDNode *r, BDDNode *e)
       (*node) = bddmemory[numBDDPool].memory+curBDDPos++;
    }
    (*node)->variable = v;
-   (*node)->thenCase = r;
-   (*node)->elseCase = e;
+   (*node)->thenCase = r; 
+   (*node)->elseCase = e; 
+#ifdef USE_BDD_REF_COUNT
+   r->ref_count++;
+   e->ref_count++;
+#endif
    GetInferFoAN(*node); //Get Inferences
 }
 
@@ -347,6 +391,7 @@ bdd_flag_nodes(BDDNode *node)
 	node->not_t_and_e_bdd = NULL;
 }
 
+int bddtable_node_new_last = 0;
 
 // BDD Garbage collection
 void
@@ -355,7 +400,12 @@ bdd_gc(int force)
    int i,j;
 
    // don't do it if there are free nodes
-   if (enable_gc == 0 || (force==0 && bddtable_free_count > bddtable_free_count_last/2)) return;
+   if (enable_gc == 0) return;
+   if (force == 0) {
+      if (ite_counters[BDD_NODE_NEW]-bddtable_node_new_last < _bdd_pool_size) return;
+      if (bddtable_free_count > bddtable_free_count_last/2) return;
+   }
+   bddtable_node_new_last = ite_counters[BDD_NODE_NEW];
 
    d4_printf2("BDD_GC START (free %d) ", bddtable_free_count);
 
@@ -392,7 +442,7 @@ bdd_gc(int force)
    // remove unreferenced and rehash referenced
    bddtable_free = NULL;
    bddtable_free_count = 0;
-   int bddtable_used_count = 0;
+   bddtable_used_count_last = 0;
    for (i=0;i<=numBDDPool;i++)
    {
       int max = bddmemory[i].max;
@@ -427,7 +477,7 @@ bdd_gc(int force)
             node->next = *hash_node;;
             *hash_node = node;
             node->flag = 0;
-            bddtable_used_count++;
+            bddtable_used_count_last++;
          }
       }
    }
@@ -458,7 +508,7 @@ bdd_gc(int force)
    }
 */
    
-   d4_printf3("BDD_GC END(used %d, free %d)\n", bddtable_used_count, bddtable_free_count);
+   d4_printf3("BDD_GC END(used %d, free %d)\n", bddtable_used_count_last, bddtable_free_count);
    itetable_removeall();
 }
 

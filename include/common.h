@@ -53,6 +53,15 @@
 #define COMMON_H
 
 //#define BDD_MIRROR_NODE
+//#define USE_BDD_REF_COUNT
+
+#ifdef USE_BDD_REF_COUNT
+void bddtable_deref_node(BDDNode *n);
+void bddtable_ref_node(BDDNode *n);
+#else
+#define bddtable_deref_node(n)
+#define bddtable_ref_node(n)
+#endif
 
 struct llist{
    int num;
@@ -141,8 +150,11 @@ struct store{
 typedef struct BDDNodeStruct {
    int flag;
    int variable;
-   void *var_ptr;
    struct BDDNodeStruct *thenCase, *elseCase, *notCase, *tmp_bdd, *or_bdd, *t_and_not_e_bdd, *not_t_and_e_bdd;
+#ifdef USE_BDD_REF_COUNT
+   int ref_count;
+#endif
+   void *var_ptr;
 #ifdef BDD_MIRROR_NODE
    struct BDDNodeStruct *mirrCase;
 #endif

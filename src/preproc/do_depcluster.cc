@@ -158,22 +158,28 @@ int DepCluster () {
 				int *bdd_vars = NULL;
 				
 				Quantify = ite_and(functions[j], functions[k]);
+            bddtable_ref_node(Quantify);
 				switch (int r=Rebuild_BDD(Quantify, &bdd_length, bdd_vars)) {
 				 case TRIV_UNSAT:
 				 case PREP_ERROR:
 					ret=r;
-					goto ex_bailout;
+               bddtable_deref_node(Quantify);
+               goto ex_bailout;
 				 default: break;
 				}
 				delete [] bdd_vars;
 				bdd_vars = NULL;
-				
+			
+            BDDNode *before = Quantify;   
 				Quantify = xquantify (Quantify, i);
+            bddtable_ref_node(Quantify);
+            bddtable_deref_node(before);
 				switch (int r=Rebuild_BDD(Quantify, &bdd_length, bdd_vars)) {
 				 case TRIV_UNSAT:
 				 case PREP_ERROR:
 					ret=r;
-					goto ex_bailout;
+               bddtable_deref_node(Quantify);
+               goto ex_bailout;
 				 default: break;
 				}
 
@@ -189,7 +195,9 @@ int DepCluster () {
 					(functionType[k] == OR || functionType[k] == AND)) {
 					int equ_var = abs(equalityVble[k]);
 					BDDNode *true_side = set_variable (Quantify, i, 1);
-					BDDNode *false_side = set_variable (Quantify, i, 0);
+               bddtable_ref_node(true_side);
+               BDDNode *false_side = set_variable (Quantify, i, 0);
+               bddtable_ref_node(false_side);
 					if(true_side == ite_not(false_side)) {
 						true_side->notCase = false_side->notCase;
 						false_side->notCase = true_side->notCase;
@@ -198,14 +206,19 @@ int DepCluster () {
 						  functionType[k] = OR;
 						else
 						  functionType[k] = AND;
-					} else {
+                  bddtable_deref_node(true_side);
+                  bddtable_deref_node(false_side);
+               } else {
+                  bddtable_deref_node(true_side);
+                  bddtable_deref_node(false_side);
 						if(bdd_length > MAX_VBLES_PER_SMURF) {	
 							if(DO_INFERENCES) {
 								switch (int r=Do_Apply_Inferences()) {
 								 case TRIV_UNSAT:
 								 case PREP_ERROR:
 									ret=r;
-									goto ex_bailout;
+                           bddtable_deref_node(Quantify);
+                           goto ex_bailout;
 								 default: break;
 								}
 							}
@@ -218,7 +231,8 @@ int DepCluster () {
 							 case TRIV_UNSAT:
 							 case PREP_ERROR:
 								ret=r;
-								goto ex_bailout;
+                        bddtable_deref_node(Quantify);
+                        goto ex_bailout;
 							 default: break;
 							}
 						}
@@ -226,7 +240,8 @@ int DepCluster () {
 #ifndef SEAN_REAL_DC
 					   delete [] bdd_vars;
 						bdd_vars = NULL;
-						continue;
+                  bddtable_deref_node(Quantify);
+                  continue;
 #else
 						equalityVble[k] = 0;
 						functionType[k] = UNSURE;
@@ -239,6 +254,7 @@ int DepCluster () {
 							 case TRIV_UNSAT:
 							 case PREP_ERROR:
 								ret=r;
+                        bddtable_deref_node(Quantify);
 								goto ex_bailout;
 							 default: break;
 							}
@@ -252,14 +268,16 @@ int DepCluster () {
 						 case TRIV_UNSAT:
 						 case PREP_ERROR:
 							ret=r;
-							goto ex_bailout;
+                     bddtable_deref_node(Quantify);
+                     goto ex_bailout;
 						 default: break;
 						}
 					}
 #ifndef SEAN_REAL_DC
 					delete [] bdd_vars;
 					bdd_vars = NULL;
-					continue; 
+               bddtable_deref_node(Quantify);
+               continue; 
 #else
 					equalityVble[k] = 0;
 					functionType[k] = UNSURE;
