@@ -46,80 +46,93 @@
 char getformat (FILE *finputfile) {
 	char a, output;
 	a = fgetc (finputfile);
+   
+   // check for trace format
 	if (a == 'M') {
 		char test[10];
 		int x;
       test[0] = a;
       for (x=1; x < 6; x++) {
 			a = fgetc (finputfile);
+         if (feof(finputfile)) return 0;
 			test[x] = a;
 		}
-      test[6] = 0;
-      if (!strcmp (test, "MODULE")) {
-			for (x=0; x<6; x++)
-			  ungetc (test[5-x], finputfile);
-			return 't';
-		}
-		for (x=0; x<6; x++)
-		  ungetc (test[5-x], finputfile);
-		return 0;
-	} else if (a == 'S') {
+      for (x=0; x<6; x++)
+         ungetc (test[5-x], finputfile);
+
+      if (!strncmp (test, "MODULE", 6)) 
+         return 't';
+      else
+         return 0;
+
+   // check for prover3 format
+   } else if (a == 'S') {
 		char test[10];
 		int x;
       test[0] = a;
       for (x=1; x < 5; x++) {
 			a = fgetc (finputfile);
+         if (feof(finputfile)) return 0;
 			test[x] = a;
 		}
-      if (!strncmp (test, "S0\n&\n", 5)) {
-			for (x=0; x<5; x++)
-			  ungetc (test[4-x], finputfile);
+      for (x=0; x<5; x++)
+         ungetc (test[4-x], finputfile);
+      if (!strncmp (test, "S0\n&\n", 5)) 
 			return '3';
-		}
-		for (x=0; x<5; x++)
-		  ungetc (test[4-x], finputfile);
-		return 0;
-	} else if (a == 'I') {
+      else
+         return 0;
+
+/*
+   } else if (a == 'I') {
 		char test[10];
 		int x;
       test[0] = a;
       for (x=1; x < 5; x++) {
 			a = fgetc (finputfile);
+         if (feof(finputfile)) return 0;
 			test[x] = a;
 		}
-      test[5] = 0;
-      if (!strcmp (test, "INPUT")) {
-			for (x=0; x<5; x++)
-			  ungetc (test[4-x], finputfile);
-			return 'i';
-		}
 		for (x=0; x<5; x++)
-		  ungetc (test[4-x], finputfile);
-		return 0;
+			  ungetc (test[4-x], finputfile);
+      if (!strncmp (test, "INPUT", 5)) 
+			return 'i';
+      else
+		   return 0;
+ */
+   // check for bdd input format ???
 	} else if (a == 'i') {
-		a = fgetc (finputfile);
+		//a = fgetc (finputfile);
 		ungetc (a, finputfile);
 		return 'b';
+
+   // check for smurf input format
 	} else if (a >= '1' && a <= '9') {
       ungetc (a, finputfile);
 		return 'u';		//u for smUrf
-	} else
-	  while (a == 'c') {
-		  while (a != '\n') {
-			  a = fgetc (finputfile);
-		  }
-		  a = fgetc (finputfile);
-	  }
-	while (a != 'p') {
-		a = fgetc (finputfile);
-      
-		//fputc(a, fg);
 	}
-	a = fgetc (finputfile);
-	output = fgetc (finputfile);
-	a = fgetc (finputfile);
-	a = fgetc (finputfile);
-	a = fgetc (finputfile);
+
+   // check for DIMACS
+   if (feof(finputfile)) return 0;
+   while (a == 'c') {
+      while (a != '\n') {
+         a = fgetc (finputfile);
+         if (feof(finputfile)) return 0;
+      }
+      a = fgetc (finputfile);
+      if (feof(finputfile)) return 0;
+   }
+   if (a != 'p') return 0; // unknown format
+
+   a = fgetc (finputfile); // space
+   if (feof(finputfile) || a != ' ') return 0;
+	output = fgetc (finputfile); // format 
+   if (feof(finputfile)) return 0;
+	a = fgetc (finputfile); // format
+   if (feof(finputfile)) return 0;
+	a = fgetc (finputfile); // format
+   if (feof(finputfile)) return 0;
+	a = fgetc (finputfile); // space
+   if (feof(finputfile) || a != ' ') return 0;
 	return output;		// c for CNF d for DNF s for SAT, 
 	// b for BDD's, x for XOR
 }
