@@ -78,26 +78,34 @@ int nCk(int n, int k) {
 	return nCk(n-1, k) + nCk(n-1, k-1);	
 }
 
-void nCk_Sets(int n, int k, int *vars, int *whereat, int n_orig, BDDNode *bdd) {
+void nCk_Sets(int n, int k, int *vars, int *whereat, int n_orig, BDDNode *bdd, int orig_bdd) {
 	if (n==0 && k==0) {
-		//d3_printf2("whereat = %d: \n", (*whereat));
 		//printBDD(tempBDD);
 		//d3_printf1("\n");
-		BDDFuncs[(*whereat)] = bdd;
-		(*whereat)++;
-		if((*whereat) >= max_bdds) {
-			BDDFuncs = (BDDNode **)ite_recalloc(BDDFuncs, max_bdds, max_bdds+25, sizeof(BDDNode *), 9, "BDDFuncs");
-			max_bdds += 25;
-			num_bdds = (*whereat)-1;
+		BDDNode *tempBDD;
+		tempBDD = pruning(functions[orig_bdd], bdd);
+		if(tempBDD == functions[orig_bdd]) return;
+		functions[orig_bdd] = tempBDD;
+		for(int i = 0; i < (*whereat); i++)
+			tempBDD = pruning(bdd, BDDFuncs[i]);
+		if(bdd != true_ptr) {
+			//d3_printf2("whereat = %d: \n", (*whereat));
+			BDDFuncs[(*whereat)] = bdd;
+			(*whereat)++;
+			if((*whereat) >= max_bdds) {
+				BDDFuncs = (BDDNode **)ite_recalloc(BDDFuncs, max_bdds, max_bdds+25, sizeof(BDDNode *), 9, "BDDFuncs");
+				max_bdds += 25;
+				num_bdds = (*whereat)-1;
+			}
 		}
 	} else {
 		if (k>0) { 
-			nCk_Sets(n-1,k-1, vars, whereat, n_orig, bdd);
+			nCk_Sets(n-1,k-1, vars, whereat, n_orig, bdd, orig_bdd);
 		}
 		if (n>k) {
 			BDDNode *bdd_0 = xquantify(bdd, vars[n_orig-n]);
 			if(bdd_0 == true_ptr) return;
-			nCk_Sets(n-1,k, vars, whereat, n_orig, bdd_0);
+			nCk_Sets(n-1,k, vars, whereat, n_orig, bdd_0, orig_bdd);
 		}
 	}
 }
@@ -135,45 +143,45 @@ int Split_Large () {
 			d2e_printf3("\rPreprocessing Sp %d/%d", j, nmbrFunctions);
 		}
 		
-		
-		
 		if (functionType[j] == UNSURE && length[j] > k_size) {
 			//d3_printf2("\n%d: ", j);
 			//printBDD(functions[j]);
 			//d3_printf1("\n");
-			int num_splits = nCk(length[j], k_size);
-			d3_printf4("%d C %d = %d\n", length[j], k_size, num_splits);
-			int whereat = 0;
-			nCk_Sets(length[j], k_size, variables[j].num, &whereat, length[j], functions[j]);
-			d3_printf2("whereat = %d: \n", whereat);
 			
-			BDDNode *tempBDD;
-			for(int i = 0; i < whereat; i++) {
-				tempBDD = pruning(functions[j], BDDFuncs[i]);
-				if(tempBDD != functions[j]) {
-					functions[j] = tempBDD;					
-				}
-			}
-
-			d3_printf2("\n%d: ", j);
-			printBDD(functions[j]);
-			d3_printf1("\n");
+			//Maximum Split Size:
+			//int num_splits = nCk(length[j], k_size);
+			//d3_printf4("%d C %d = %d\n", length[j], k_size, num_splits);
+			
+			int whereat = 0;
+			nCk_Sets(length[j], k_size, variables[j].num, &whereat, length[j], functions[j], j);
+			//d3_printf2("whereat = %d: \n", whereat);
+			
+			/*			
+			 BDDNode *tempBDD;
+			 for(int i = 0; i < whereat; i++) {
+			 tempBDD = pruning(functions[j], BDDFuncs[i]);
+			 if(tempBDD != functions[j]) {
+			 functions[j] = tempBDD;					
+			 }
+			 }
+			 */
+			
+			//d3_printf2("\n%d: ", j);
+			//printBDD(functions[j]);
+			//d3_printf1("\n");
 			
 			switch (int r=Rebuild_BDDx(j)) {
 			 case TRIV_UNSAT:
 			 case TRIV_SAT:
 			 case PREP_ERROR: 
 				ret=r;
-					goto sp_bailout;
+				goto sp_bailout;
 			 default: break;
 			}
-			
 		}
 	}
-	
 	sp_bailout:
 
 	ite_free((void **)&BDDFuncs);
-
 	return ret;
 }

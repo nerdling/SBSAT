@@ -111,15 +111,18 @@ Init_Preprocessing()
 	numout = nmbrFunctions;
 	if(tempint != NULL) delete [] tempint;
    tempint = new int[5000];
-	length = new int[numout + 1];
+
+	length = (int *)ite_recalloc(NULL, 0, nmbrFunctions, sizeof(int), 9, "length");
+	//length = new int[nmbrFunctions];
 	inferlist = new infer;
 	inferlist->next = NULL;
 	lastinfer = inferlist;
-	variables = (store *)calloc(numout+1, sizeof(store));
+	variables = (store *)ite_recalloc(NULL, 0, nmbrFunctions, sizeof(store), 9, "variables");
+	//variables = (store *)calloc(nmbrFunctions+1, sizeof(store));
 	
 	Init_Repeats();
 	
-	numinp = getNuminp();
+	//numinp = getNuminp();
 
 	l = new Linear (numinp + 1, T, F);
 	amount = (llistStruct*)calloc(numinp+1, sizeof(llistStruct));
@@ -132,7 +135,7 @@ Init_Preprocessing()
 	  }
 	*/
 	
-	for (int x = 0; x < numout; x++)
+	for (int x = 0; x < nmbrFunctions; x++)
 	  {
 		  variables[x].num = NULL;
 		  int r=Rebuild_BDDx(x);
@@ -258,12 +261,14 @@ Finish_Preprocessing()
 	
 	ite_free((void**)&num_funcs_var_occurs);
 	
-	for (int x = 0; x < numout; x++)
+	for (int x = 0; x < nmbrFunctions; x++)
 	  {
 		  if (variables[x].num != NULL)
 			 delete [] variables[x].num;
 	  }
-	free(variables);
+	
+	ite_free((void **)&variables);
+	//free(variables);
 	variables = NULL;
 
 	while(inferlist != NULL) {
@@ -288,7 +293,7 @@ Finish_Preprocessing()
 		//Need to remove any function that was set to True during the preprocessing of the BDDs
 	
 	int count = -1;
-	for (long x = 0; x < numout; x++)
+	for (long x = 0; x < nmbrFunctions; x++)
 	  {
 		  count++;
 		  functions[count] = functions[x];
@@ -306,10 +311,10 @@ Finish_Preprocessing()
 			 }
 		  
 	  }
-	numout = count + 1;
-	nmbrFunctions = numout;
+	nmbrFunctions = count + 1;
+	numout = nmbrFunctions;
 
-	for (long x = 0; x < numout; x++) {
+	for (long x = 0; x < nmbrFunctions; x++) {
          if ((functionType[x] == AND && length[x] < AND_EQU_LIMIT)
           || (functionType[x] == OR && length[x] < OR_EQU_LIMIT)
           || (functionType[x] == PLAINOR && length[x] < PLAINOR_LIMIT)
@@ -317,13 +322,13 @@ Finish_Preprocessing()
             functionType[x] = UNSURE;
    }
 
-	d3_printf3 ("Number of BDDs - %ld\nNuminp = %ld\n", numout, numinp);
+	d3_printf3 ("Number of BDDs - %d\nNuminp = %ld\n", nmbrFunctions, numinp);
 	
 	D_3(fflush (stddbg);)
 	  //printCircuitTree();
 	  //printCircuit();
 	  // 
-	  if (numout == 0)
+	  if (nmbrFunctions == 0)
 		 {
 			 /* I need to announce this to the ite.cc!!! 
 			  * how?
@@ -339,4 +344,48 @@ Finish_Preprocessing()
    d2_printf1("\rPreprocessing .... Done\n");
 	
    return ret;
+}
+
+int add_newFunctions(BDDNode **new_bdds, int size) {
+	int ret = PREP_NO_CHANGE;
+	
+	nmbrFunctions = nmbrFunctions+size;
+	functions_alloc(nmbrFunctions);
+
+	length = (int *)ite_recalloc(NULL, nmbrFunctions-size, nmbrFunctions, sizeof(int), 9, "length");
+	variables = (store *)ite_recalloc(NULL, 0, nmbrFunctions-size, sizeof(store), 9, "variables");
+
+	Init_Repeats(); //FIX THIS!!!!!!! add in ite_recalloc plus ite_free methods.
+	                //FIX Delete_Repeats as well
+	
+	//variables;
+	for (int x = nmbrFunctions-size; x < nmbrFunctions; x++) {
+		variables[x].num = NULL;
+		int r=Rebuild_BDDx(x);
+		switch (r) {
+		 case TRIV_UNSAT:
+		 case TRIV_SAT:
+		 case PREP_ERROR: return r;
+		 default: break;
+		}
+	}
+	
+	for (int x = nmbrFunctions-size; x < nmbrFunctions; x++) {
+		for (int i = 0; i < length[x]; i++) {
+			llist *newllist = new llist;
+			newllist->num = x;
+			newllist->next = NULL;
+			if (amount[variables[x].num[i]].head == NULL) {
+				num_funcs_var_occurs[variables[x].num[i]] = 1;
+				amount[variables[x].num[i]].head = newllist;
+				amount[variables[x].num[i]].tail = newllist;
+			} else {
+				num_funcs_var_occurs[variables[x].num[i]]++;
+				amount[variables[x].num[i]].tail->next = newllist;
+				amount[variables[x].num[i]].tail = newllist;
+			}
+		}
+	}
+	
+	return ret;
 }
