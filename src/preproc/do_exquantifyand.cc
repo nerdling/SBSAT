@@ -79,6 +79,7 @@ int ExQuantifyAnd () {
 	if (enable_gc) bdd_gc(); //Hit it!
 	for (int x = 1; x <= MAX_EXQUANTIFY_CLAUSES; x++) {
 		for (int i = 1; i < numinp + 1; i++) {
+		//for (int i = numinp; i > 0; i--) {
 			char p[100];
 			
 			D_3(

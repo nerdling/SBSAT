@@ -294,6 +294,12 @@ Finish_Preprocessing()
    //This would have to change if we replace variables differently.
 
 	int *influence_times = (int *)ite_calloc(numinp + 1, sizeof(int), 9, "influence_times");
+
+	if(arrVarTrueInfluences == NULL) {
+		arrVarTrueInfluences = (float *)ite_calloc(numinp+1, sizeof(float), 9, "arrVarTrueInfluences");
+		for(int i = 0; i < numinp+1; i++)
+		  arrVarTrueInfluences[i] = 0.5;
+	}
 	
 	for (int i = 1; i <= numinp; i++) {
 		if (variablelist[i].equalvars != 0 && variablelist[abs(variablelist[i].equalvars)].equalvars!=0) {
