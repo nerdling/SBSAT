@@ -64,6 +64,7 @@ int
 ITE_SolveFree()
 {
    solve_free();
+   return 0;
 }
 
 int

@@ -206,6 +206,8 @@ J_InitHeuristicScores()
 {
    d2_printf1("Initializing heuristicScores\n");
 
+   pTrueSmurfState->fNodeHeuristicWeight = JHEURISTIC_K_TRUE;
+
    J_Setup_arrJWeights();
    J_SetupHeuristicScores();
 
@@ -696,6 +698,11 @@ J_SumInferenceWeights(Transition *pTransition)
   //return pTransition->positiveInferences.nNumElts +
   //       pTransition->negativeInferences.nNumElts;
 
+//#define MK_WEIGHTS
+#ifdef MK_WEIGHTS
+  return pTransition->pState->vbles.nNumElts - (pTransition->pNextState->vbles.nNumElts + 1);
+#endif
+
   int i=0;
   double fSum = 0;
 
@@ -704,6 +711,13 @@ J_SumInferenceWeights(Transition *pTransition)
 
   for(i=0;i<pTransition->negativeInferences.nNumElts;i++)
     fSum += arrJWeights[pTransition->negativeInferences.arrElts[i]];
+
+//#define MK_WEIGHTS_X
+#ifdef MK_WEIGHTS_X
+  fSum += (pTransition->pState->vbles.nNumElts - (pTransition->pNextState->vbles.nNumElts + 1 +
+      pTransition->positiveInferences.nNumElts + pTransition->negativeInferences.nNumElts));
+     ///JHEURISTIC_K;
+#endif
 
   return fSum;
 }
@@ -728,6 +742,51 @@ J_SetHeurScoreTransition(SmurfState *pState, int i, Transition *pTransition, int
 }
 
 ITE_INLINE void
+J_SetHeurScoresForSmurfs_Counting(int nRegSmurfIndex, SmurfState *pState, int nNumXors)
+{
+   if (pState == pTrueSmurfState) {
+      return;
+   }
+
+   // FIND OUT IF THE HEUR ALREADY COMPUTED 
+   if (pState->cFlag == 2) return;
+   pState->cFlag = 2;
+
+   double fTotalCount = 0;
+
+   for (int i=0;i<pState->vbles.nNumElts;i++)
+   {
+      /* ----- POSITIVE TRANSITIONS ------ */
+      {
+         Transition *pTransition = FindTransition(pState, i, pState->vbles.arrElts[i], BOOL_TRUE);
+         J_SetHeurScoresForSmurfs_Counting(nRegSmurfIndex, pTransition->pNextState, nNumXors);
+         fTotalCount += pTransition->pNextState->fNodeHeuristicWeight;
+      }
+
+      /* ----- NEGATIVE TRANSITIONS ------ */
+      {
+         Transition *pTransition = FindTransition(pState, i, pState->vbles.arrElts[i], BOOL_FALSE);
+         J_SetHeurScoresForSmurfs_Counting(nRegSmurfIndex, pTransition->pNextState, nNumXors);
+         fTotalCount += pTransition->pNextState->fNodeHeuristicWeight;
+      }
+   }
+
+   pState->fNodeHeuristicWeight = 1+fTotalCount;
+
+   for (int i=0;i<pState->vbles.nNumElts;i++)
+   {
+      Transition *pTransition;
+      pTransition = FindTransition(pState, i, pState->vbles.arrElts[i], BOOL_TRUE);
+      pTransition->fHeuristicWeight = 
+         pTransition->pState->fNodeHeuristicWeight - pTransition->pNextState->fNodeHeuristicWeight;
+
+      pTransition = FindTransition(pState, i, pState->vbles.arrElts[i], BOOL_FALSE);
+      pTransition->fHeuristicWeight =
+         pTransition->pState->fNodeHeuristicWeight - pTransition->pNextState->fNodeHeuristicWeight;
+   }
+}
+
+ITE_INLINE void
 J_SetHeurScoresForSmurfs(int nRegSmurfIndex, SmurfState *pState, int nNumXors)
 {
    if (pState == pTrueSmurfState) {
@@ -740,7 +799,6 @@ J_SetHeurScoresForSmurfs(int nRegSmurfIndex, SmurfState *pState, int nNumXors)
    if (pState->cFlag == 2 && pState->nNumHeuristicXors >= nNumXors) return;
    pState->cFlag = 2;
 
-
    if (pState->nNumHeuristicXors < nNumXors) {
         if (pState->arrHeuristicXors) free(pState->arrHeuristicXors);
          pState->arrHeuristicXors = (double*)ite_calloc(nNumXors, sizeof(double),
@@ -751,18 +809,21 @@ J_SetHeurScoresForSmurfs(int nRegSmurfIndex, SmurfState *pState, int nNumXors)
    double fTotalTransitions  = 0;
    for (int i=0;i<pState->vbles.nNumElts;i++)
    {
+      /* ----- POSITIVE TRANSITIONS ------ */
       {
          Transition *pTransition = FindTransition(pState, i, pState->vbles.arrElts[i], BOOL_TRUE);
          J_SetHeurScoresForSmurfs(nRegSmurfIndex, pTransition->pNextState, nNumXors);
          fTotalTransitions  += J_SetHeurScoreTransition(pState, i, pTransition, nRegSmurfIndex, nNumXors, 1);
       }
 
+      /* ----- NEGATIVE TRANSITIONS ------ */
       {
          Transition *pTransition = FindTransition(pState, i, pState->vbles.arrElts[i], BOOL_FALSE);
          J_SetHeurScoresForSmurfs(nRegSmurfIndex, pTransition->pNextState, nNumXors);
          fTotalTransitions  += J_SetHeurScoreTransition(pState, i, pTransition, nRegSmurfIndex, nNumXors, 0);
       }
    }
+
    pState->fNodeHeuristicWeight = fTotalTransitions / (pState->vbles.nNumElts * 2 * JHEURISTIC_K);
 
    if (nNumXors) {
@@ -785,7 +846,14 @@ J_SetupHeuristicScores()
       int nRHSXorVbles = 0;
       int specfn = arrSmurfChain[i].specfn;
       if (specfn != -1)  nRHSXorVbles = arrSpecialFuncs[specfn].rhsVbles.nNumElts+1;
+//#define COUNTING_HEURISTIC
+#ifdef COUNTING_HEURISTIC
+      assert(nRHSXorVbles == 0);
+      J_SetHeurScoresForSmurfs_Counting(i, arrRegSmurfInitialStates[i], nRHSXorVbles);
+#else
       J_SetHeurScoresForSmurfs(i, arrRegSmurfInitialStates[i], nRHSXorVbles);
+#endif
+
    } 
 }
 
@@ -800,6 +868,7 @@ J_Setup_arrJWeights()
       if (sHeuristic[1] == 0) {
          arrJWeights[nVble] = 1;
       } else {
+         assert(BREAK_XORS == 0);
          long sum = arrAFS[nVble].nNumRegSmurfsAffected + 
             arrAFS[nVble].nNumSpecialFuncsAffected;
          if (arrLemmaVbleCountsPos && arrLemmaVbleCountsNeg) {

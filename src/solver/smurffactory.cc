@@ -237,7 +237,6 @@ InitSmurfFactory()
 
    // Initialize info regarding the 'true' function.
    pTrueSmurfState = AllocateSmurfState();
-   pTrueSmurfState->fNodeHeuristicWeight = JHEURISTIC_K_TRUE;
    ITE_NEW_CATCH(
          true_ptr->addons->pImplied = new LiteralSet();,
          "true_ptr->addons->pImplied");

@@ -293,7 +293,8 @@ J_UpdateHeuristicSmurf(SmurfState *pOldState, SmurfState *pState, int nSmurfInde
       }
    }
 
-   // if (pState == pTrueSmurfState) return;
+   /* FIXME: optimize me */
+   //if (pState == pTrueSmurfState) return;
 
    // add heuristic influence 
    arrElts  = pState->vbles.arrElts;

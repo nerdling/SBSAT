@@ -62,6 +62,7 @@ BackTrack_NL()
 
   int loop_counter = 1; /* autarky loop counter */
   int mark_found = 0;   /* found the mark of a forced cp inference */
+  int autarky_found = 0;
 
   if (autarky) {
     mark_found = pop_mark_state_information();
@@ -135,7 +136,10 @@ BackTrack_NL()
 
     if (autarky && mark_found) {
        mark_found = 0;
-       while (is_autarky()) loop_counter++;
+       while (is_autarky()) {
+          autarky_found = 1;
+          loop_counter++;
+       }
 
        if (loop_counter>1) 
          { d2_printf2("--------------A (%d)--------------\n", loop_counter-1); };
@@ -146,6 +150,7 @@ BackTrack_NL()
     loop_counter--;
  } while (loop_counter > 0);
 
+ if (autarky_found) nNumAutarkies++;
 
   if (autarky) {
     nCurSmurfStatesVersion++;

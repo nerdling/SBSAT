@@ -336,25 +336,39 @@ void DisplayBacktrackInfo(double &fPrevEndTime, double &fStartTime)
       		  ite_counters[NO_ERROR],
 		  ite_counters[HEU_DEP_VAR]
 		  );
+      if (NO_LEMMAS == 0)
       d2_printf4("\n Lemmas (cached, non-cached, added): (%d, %d, %d)",
       		  gnNumCachedLemmas,
 		  gnNumLemmas - gnNumCachedLemmas,
 		  nCallsToAddLemma
 		  );
-      d2_printf5("\n Inferences by (smurfs, ANDs, XORs, lemmas): (%lld, %lld, %lld, %lld)",
+      /*d2_printf5("\n Inferences by (smurfs, ANDs, XORs, lemmas): (%lld, %lld, %lld, %lld)",
       		  ite_counters[INF_SMURF],
       		  ite_counters[INF_SPEC_FN_AND],
       		  ite_counters[INF_SPEC_FN_XOR],
       		  ite_counters[INF_LEMMA]
-		  );
-      d2_printf5("\n Backtracks by (smurfs, ANDs, XORs, lemmas): (%lld, %lld, %lld, %lld)",
-      		  ite_counters[ERR_BT_SMURF],
-      		  ite_counters[ERR_BT_SPEC_FN_AND],
-      		  ite_counters[ERR_BT_SPEC_FN_XOR],
-      		  ite_counters[ERR_BT_LEMMA]
-		  );
-      d2_printf2("\n Backjumps: %d", nNumBackjumps);
+		  );*/
+      d2_printf1("\n");
+      d2_printf1(" Inferences by ");
+      if (nNumRegSmurfs) d2_printf2("smurfs: %lld; ", ite_counters[INF_SMURF]);
+      if (nNumSpecialFuncs) {
+         d2_printf2("ANDs: %lld; ", ite_counters[INF_SPEC_FN_AND]);
+         d2_printf2("XORs: %lld; ", ite_counters[INF_SPEC_FN_XOR]);
+      }
+      if (NO_LEMMAS == 0) d2_printf2("lemmas: %lld; ", ite_counters[INF_LEMMA]);
+      d2_printf1("\n");
+
+      d2_printf1(" Backtracks by ");
+      if (nNumRegSmurfs) d2_printf2("smurfs: %lld; ", ite_counters[ERR_BT_SMURF]);
+      if (nNumSpecialFuncs) {
+         d2_printf2("ANDs: %lld; ", ite_counters[ERR_BT_SPEC_FN_AND]);
+         d2_printf2("XORs: %lld; ", ite_counters[ERR_BT_SPEC_FN_XOR]);
+      }
+      if (NO_LEMMAS == 0) d2_printf2("lemmas: %lld; ", ite_counters[ERR_BT_LEMMA]);
+      d2_printf1("\n");
+      if (backjumping) d2_printf2(" Backjumps: %d\n", nNumBackjumps);
+      if (autarky) d2_printf2(" Autarkies: %d\n", nNumAutarkies);
       //cout << "\n Autark levels: " << autarky_count;
-      d2_printf1("\n\n");
+      d2_printf1("\n");
 }
 
