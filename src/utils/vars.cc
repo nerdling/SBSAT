@@ -136,3 +136,5 @@ int _bdd_pool_size=1000000;
 varinfo *variablelist = NULL;
 
 t_arrVarScores *arrVarScores = NULL;
+
+char brancher_presets[4096];
