@@ -38,6 +38,9 @@
 #include "ite.h"
 #include "solver.h"
 
+int USE_BACKBURNER1 = 0;
+int USE_BACKBURNER2 = 1;
+
 ITE_INLINE
 void AFSMoveLemma(LemmaInfoStruct *previous, LemmaInfoStruct *pLemmaListDisagreed, int negativeLit, int nVble, int idx)
 /* #define AFSMoveLemma(previous, pLemmaListDisagreed, negativeLit, nVble, idx) \ */
@@ -112,9 +115,80 @@ UpdateEachAffectedLemma(AffectedFuncsStruct *pAFS, int nInferredValue)
    {
       if(arrSolution[pLemmaListDisagreed->nWatchedVble[1]] == pLemmaListDisagreed->nWatchedVblePolarity[1])
       {
-         previous = pLemmaListDisagreed;
+			//Lemma is currently satisfied by watched variable 1
+
+			
+			if(USE_BACKBURNER1) {
+				//Search for the variable in this lemma that satisfies the lemma
+				//and has the lowest BacktrackStackIndex (highest in the search tree)
+				pLemmaBlock = pLemmaListDisagreed->pLemma;
+				arrLits = pLemmaBlock->arrLits;
+				nLemmaLength = arrLits[0];
+				
+				nLitIndex = nLitIndexInBlock = 1;
+				nLitIndexInBlockLen = nLemmaLength + 1;
+				if (nLitIndexInBlockLen > LITS_PER_LEMMA_BLOCK)
+				  nLitIndexInBlockLen = LITS_PER_LEMMA_BLOCK;
+				
+				int nLowest_BtSI = nBacktrackStackIndex+1;
+				int nNewWatchedVar = 0;
+				int nNewNegativeLit = 0;
+				int nSecond_BtSI = nBacktrackStackIndex+1;
+				int nSecondWatchedVar = 0;
+				int nSecondNegativeLit = 0;
+				
+				while(1) {
+					for(; nLitIndexInBlock < nLitIndexInBlockLen; nLitIndexInBlock++) {
+						nVble = arrLits[nLitIndexInBlock];
+						negativeLit = 0; 
+						if (nVble < 0) {
+							nVble = -1*nVble;
+							negativeLit = 1;
+						}
+						nVbleValue = arrSolution[nVble]; 
+						if((nVbleValue ^ negativeLit) == 1) {
+							//This variable satisfies this lemma
+							int nCurrent_BtSI = arrBacktrackStackIndex[nVble];
+							if(nCurrent_BtSI < nLowest_BtSI) {
+								nSecondWatchedVar = nNewWatchedVar;
+								nSecondNegativeLit = nNewNegativeLit;
+								nSecond_BtSI = nLowest_BtSI;
+								nLowest_BtSI = nCurrent_BtSI;
+								nNewWatchedVar = nVble;
+								nNewNegativeLit = negativeLit;
+							} else if (nCurrent_BtSI < nSecond_BtSI) {
+								nSecondWatchedVar = nVble;
+								nSecondNegativeLit = negativeLit;
+								nSecond_BtSI = nCurrent_BtSI;
+							}
+						}
+					}
+					nLitIndexInBlock = 0;
+					nLitIndex += LITS_PER_LEMMA_BLOCK;
+					nLitIndexInBlockLen = nLemmaLength - nLitIndex + 2;
+					if (nLitIndexInBlockLen <  0) break;
+					if (nLitIndexInBlockLen > LITS_PER_LEMMA_BLOCK)
+					  nLitIndexInBlockLen = LITS_PER_LEMMA_BLOCK;
+					pLemmaBlock = pLemmaBlock->pNext;
+					arrLits = pLemmaBlock->arrLits;
+				}
+				nVble = nNewWatchedVar;
+				negativeLit = nNewNegativeLit;
+				if(nVble != pLemmaListDisagreed->nWatchedVble[1] && nVble!=pLemmaListDisagreed->nWatchedVble[0]) {
+					AFSMoveLemma(pLemmaListDisagreed->pPrevLemma[1], pLemmaListDisagreed, negativeLit, nVble, 1);
+				}
+				if(nSecondWatchedVar != 0) {
+					AFSMoveLemma(previous, pLemmaListDisagreed, nSecondNegativeLit, nSecondWatchedVar, 0);
+					pLemmaListDisagreed = previous;
+				} else  {
+					previous = pLemmaListDisagreed;
+				}
+			} else {
+				previous = pLemmaListDisagreed;
+			}
+
          continue;
-      }	      
+      }
 
       pLemmaBlock = pLemmaListDisagreed->pLemma;
       arrLits = pLemmaBlock->arrLits;
@@ -158,10 +232,64 @@ UpdateEachAffectedLemma(AffectedFuncsStruct *pAFS, int nInferredValue)
                if (nVbleValue == BOOL_UNKNOWN && nVble == pLemmaListDisagreed->nWatchedVble[1]) 
                { bWatchedVbleUnknown = true; continue; }
 
-               // Lemma is now satisfied  or unknown
-
+					if(USE_BACKBURNER2) {
+						if ((nVbleValue ^ negativeLit) == 1) { //Lemma is satisfied
+							//Search for the variable in this lemma that satisfies the lemma
+							//and has the lowest BacktrackStackIndex (highest in the search tree)
+							int nLowest_BtSI = arrBacktrackStackIndex[nVble];
+							int nNewWatchedVar = nVble;
+							int nNewNegativeLit = negativeLit;
+							int nSecond_BtSI = arrBacktrackStackIndex[nVble];
+							int nSecondWatchedVar = 0;
+							int nSecondNegativeLit = 0;
+							nLitIndexInBlock++;
+							while(1) {
+								for(; nLitIndexInBlock < nLitIndexInBlockLen; nLitIndexInBlock++) {
+									nVble = arrLits[nLitIndexInBlock];
+									negativeLit = 0; 
+									if (nVble < 0) {
+										nVble = -1*nVble;
+										negativeLit = 1;
+									}
+									nVbleValue = arrSolution[nVble]; 
+									if((nVbleValue ^ negativeLit) == 1) { //If this variable also satisfies this lemma
+										int nCurrent_BtSI = arrBacktrackStackIndex[nVble];
+										if(nCurrent_BtSI < nLowest_BtSI) {
+											nSecondWatchedVar = nNewWatchedVar;
+											nSecondNegativeLit = nNewNegativeLit;
+											nSecond_BtSI = nLowest_BtSI;
+											nLowest_BtSI = nCurrent_BtSI;
+											nNewWatchedVar = nVble;
+											nNewNegativeLit = negativeLit;
+										} else if (nCurrent_BtSI < nSecond_BtSI) {
+											nSecondWatchedVar = nVble;
+											nSecondNegativeLit = negativeLit;
+											nSecond_BtSI = nCurrent_BtSI;
+										}
+									}
+								}
+								nLitIndexInBlock = 0;
+								nLitIndex += LITS_PER_LEMMA_BLOCK;
+								nLitIndexInBlockLen = nLemmaLength - nLitIndex + 2;
+								if (nLitIndexInBlockLen <  0) break;
+								if (nLitIndexInBlockLen > LITS_PER_LEMMA_BLOCK)
+								  nLitIndexInBlockLen = LITS_PER_LEMMA_BLOCK;
+								pLemmaBlock = pLemmaBlock->pNext;
+								arrLits = pLemmaBlock->arrLits;
+							}
+							nVble = nNewWatchedVar;
+							negativeLit = nNewNegativeLit;
+							if(nSecondWatchedVar != 0) {
+								AFSMoveLemma(pLemmaListDisagreed->pPrevLemma[1], pLemmaListDisagreed, nSecondNegativeLit, nSecondWatchedVar, 1);
+							}
+						}
+					} //END USE_BACKBURNER
+					
+					// Lemma is now satisfied  or unknown
+					//
                // Remove lemma from his old list
-               AFSMoveLemma(previous, pLemmaListDisagreed, negativeLit, nVble, 0);
+					AFSMoveLemma(previous, pLemmaListDisagreed, negativeLit, nVble, 0);
+					
                bWatchedVbleUnknown = false;
                bContinue = true;
                break;
@@ -245,7 +373,76 @@ UpdateEachAffectedLemma(AffectedFuncsStruct *pAFS, int nInferredValue)
    {
       if(arrSolution[pLemmaListDisagreed->nWatchedVble[0]] == pLemmaListDisagreed->nWatchedVblePolarity[0])
       {
-         previous = pLemmaListDisagreed;
+			//Lemma is currently satisfied by watched variable 0.
+
+         if(USE_BACKBURNER1) {
+				//Search for the variable in this lemma that satisfies the lemma
+				//and has the lowest BacktrackStackIndex (highest in the search tree)
+				pLemmaBlock = pLemmaListDisagreed->pLemma;
+				arrLits = pLemmaBlock->arrLits;
+				nLemmaLength = arrLits[0];
+				
+				nLitIndex = nLitIndexInBlock = 1;
+				nLitIndexInBlockLen = nLemmaLength + 1;
+				if (nLitIndexInBlockLen > LITS_PER_LEMMA_BLOCK)
+				  nLitIndexInBlockLen = LITS_PER_LEMMA_BLOCK;
+				
+				int nLowest_BtSI = nBacktrackStackIndex+1;
+				int nNewWatchedVar = 0;
+				int nNewNegativeLit = 0;
+				int nSecond_BtSI = nBacktrackStackIndex+1;
+				int nSecondWatchedVar = 0;
+				int nSecondNegativeLit = 0;
+				
+				while(1) {
+					for(; nLitIndexInBlock < nLitIndexInBlockLen; nLitIndexInBlock++) {
+						nVble = arrLits[nLitIndexInBlock];
+						negativeLit = 0; 
+						if (nVble < 0) {
+							nVble = -1*nVble;
+							negativeLit = 1;
+						}
+						nVbleValue = arrSolution[nVble]; 
+						if((nVbleValue ^ negativeLit) == 1) {
+							//This variable satisfies this lemma
+							int nCurrent_BtSI = arrBacktrackStackIndex[nVble];
+							if(nCurrent_BtSI < nLowest_BtSI) {
+								nSecondWatchedVar = nNewWatchedVar;
+								nSecondNegativeLit = nNewNegativeLit;
+								nSecond_BtSI = nLowest_BtSI;
+								nLowest_BtSI = nCurrent_BtSI;
+								nNewWatchedVar = nVble;
+								nNewNegativeLit = negativeLit;
+							} else if (nCurrent_BtSI < nSecond_BtSI) {
+								nSecondWatchedVar = nVble;
+								nSecondNegativeLit = negativeLit;
+								nSecond_BtSI = nCurrent_BtSI;
+							}
+						}
+					}
+					nLitIndexInBlock = 0;
+					nLitIndex += LITS_PER_LEMMA_BLOCK;
+					nLitIndexInBlockLen = nLemmaLength - nLitIndex + 2;
+					if (nLitIndexInBlockLen <  0) break;
+					if (nLitIndexInBlockLen > LITS_PER_LEMMA_BLOCK)
+					  nLitIndexInBlockLen = LITS_PER_LEMMA_BLOCK;
+					pLemmaBlock = pLemmaBlock->pNext;
+					arrLits = pLemmaBlock->arrLits;
+				}
+				nVble = nNewWatchedVar;
+				negativeLit = nNewNegativeLit;
+				if(nVble != pLemmaListDisagreed->nWatchedVble[0] && nVble!=pLemmaListDisagreed->nWatchedVble[1]) {
+					AFSMoveLemma(pLemmaListDisagreed->pPrevLemma[0], pLemmaListDisagreed, negativeLit, nVble, 0);
+				}
+				if(nSecondWatchedVar != 0) {
+					AFSMoveLemma(previous, pLemmaListDisagreed, nSecondNegativeLit, nSecondWatchedVar, 1);
+					pLemmaListDisagreed = previous;
+				} else  {
+					previous = pLemmaListDisagreed;
+				}
+			} else {
+				previous = pLemmaListDisagreed;
+			}
          continue;
       }
 
@@ -287,9 +484,63 @@ UpdateEachAffectedLemma(AffectedFuncsStruct *pAFS, int nInferredValue)
             if (nVbleValue ^ negativeLit) {
                if (nVbleValue == BOOL_UNKNOWN && nVble == pLemmaListDisagreed->nWatchedVble[0]) 
                { bWatchedVbleUnknown = true; continue; }
-
-               //Lemma is satisfied now or unknown
-               AFSMoveLemma(previous, pLemmaListDisagreed, negativeLit, nVble, 1);
+					
+					if(USE_BACKBURNER2) {
+						if((nVbleValue ^ negativeLit) == 1) { //Lemma is satisfied
+							//Search for the variable in this lemma that satisfies the lemma
+							//and has the lowest BacktrackStackIndex (highest in the search tree)
+							int nLowest_BtSI = arrBacktrackStackIndex[nVble];
+							int nNewWatchedVar = nVble;
+							int nNewNegativeLit = negativeLit;
+							int nSecond_BtSI = arrBacktrackStackIndex[nVble];
+							int nSecondWatchedVar = 0;
+							int nSecondNegativeLit = 0;
+							nLitIndexInBlock++;
+							while(1) {
+								for(; nLitIndexInBlock < nLitIndexInBlockLen; nLitIndexInBlock++) {
+									nVble = arrLits[nLitIndexInBlock];
+									negativeLit = 0; 
+									if (nVble < 0) {
+										nVble = -1*nVble;
+										negativeLit = 1;
+									}
+									nVbleValue = arrSolution[nVble]; 
+									if((nVbleValue ^ negativeLit) == 1) { //If this variable also satisfies this lemma
+										int nCurrent_BtSI = arrBacktrackStackIndex[nVble];
+										if(nCurrent_BtSI < nLowest_BtSI) {
+											nSecondWatchedVar = nNewWatchedVar;
+											nSecondNegativeLit = nNewNegativeLit;
+											nSecond_BtSI = nLowest_BtSI;
+											nLowest_BtSI = nCurrent_BtSI;
+											nNewWatchedVar = nVble;
+											nNewNegativeLit = negativeLit;
+										} else if (nCurrent_BtSI < nSecond_BtSI) {
+											nSecondWatchedVar = nVble;
+											nSecondNegativeLit = negativeLit;
+											nSecond_BtSI = nCurrent_BtSI;
+										}
+									}
+								}
+								nLitIndexInBlock = 0;
+								nLitIndex += LITS_PER_LEMMA_BLOCK;
+								nLitIndexInBlockLen = nLemmaLength - nLitIndex + 2;
+								if (nLitIndexInBlockLen <  0) break;
+								if (nLitIndexInBlockLen > LITS_PER_LEMMA_BLOCK)
+								  nLitIndexInBlockLen = LITS_PER_LEMMA_BLOCK;
+								pLemmaBlock = pLemmaBlock->pNext;
+								arrLits = pLemmaBlock->arrLits;
+							}
+							nVble = nNewWatchedVar;
+							negativeLit = nNewNegativeLit;
+							if(nSecondWatchedVar != 0) {
+								AFSMoveLemma(pLemmaListDisagreed->pPrevLemma[0], pLemmaListDisagreed, nSecondNegativeLit, nSecondWatchedVar, 0);
+							}
+						}
+					} //END USE_BACKBURNER
+					
+					//Lemma is satisfied now or unknown
+					AFSMoveLemma(previous, pLemmaListDisagreed, negativeLit, nVble, 1);
+					
                bWatchedVbleUnknown = false;
                bContinue = true;
                break;
