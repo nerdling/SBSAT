@@ -694,7 +694,10 @@ int Rebuild_BDDx (int x) {
 
 	if (DO_INFERENCES)
 	  return Do_Apply_Inferences();
-
+	
+	//void bdd_gc();
+	//bdd_gc();
+	
 	return PREP_NO_CHANGE;
 }
 

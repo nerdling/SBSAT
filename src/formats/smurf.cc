@@ -319,7 +319,8 @@ void Smurfs_to_BDD () {
 		while (tempint[y] != -1);
 		vars[x].integers = new int[y + 2];
 		for (i = 1; i <= y + 1; i++) {
-			vars[x].integers[i] = tempint[i - 1];
+			//vars[x].integers[i] = tempint[i - 1];
+			vars[x].integers[i] = tempint[i-1]==0?0:i_getsym_int(tempint[i-1], SYM_VAR);
 			if (vars[x].integers[i] > numinp) {
 				fprintf(stderr, "Variable number %d is larger than the allowed %ld\n", vars[x].integers[i], numinp);
 				exit(1);
