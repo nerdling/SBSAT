@@ -34,7 +34,7 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
-#define ITE_INLINE  __inline__
+#define ITE_INLINE  inline
 
 #include "smurffactory.cc"
 
