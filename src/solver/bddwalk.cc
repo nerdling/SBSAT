@@ -125,9 +125,10 @@ int numfalse;		/* number of false clauses */
 
 int *varstoflip;
 double *true_var_weights;
+
 float true_weight_mult = 1.6;
-float taboo_max = 5;
-float taboo_length = 2;
+float taboo_max = 0;//5;
+float taboo_length = 0;//2;
 float true_weight_taboo = 0.5;
 float true_weight_max = 0.5;
 
