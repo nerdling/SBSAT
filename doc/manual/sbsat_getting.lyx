@@ -136,7 +136,7 @@ not available yet
 .
 \layout Standard
 
-All problems in this manual are part of the SBSAT distribution in the tests
+All problems in this manual are part of the SBSAT distribution in the examples
  subdirectory.
 \layout Subsection
 
@@ -310,9 +310,6 @@ c This is a demonstration of the CNF format for the SBSAT solver
 
 \layout Standard
 
-(Illustrate with --debug 0 or 1 to start with? ~Sean/Andy)
-\layout Standard
-
 To run the solver on this file, start the solver (
 \family typewriter 
 \size footnotesize 
@@ -340,122 +337,25 @@ warning: ini file not found /home/fett/ite.ini
 
 
 \size scriptsize 
-Reading File ../examples/small.cnf ....
+Reading File ../examples/small.cnf  ....
 \layout LyX-Code
 
 
 \size scriptsize 
-Storing Inputsnuminp: 8
+Reading CNF ...
+ Done                   
 \layout LyX-Code
 
 
 \size scriptsize 
-Done ScanningStarting SearchDone SavingFinding ITEsBuilding ITE BDDs - 0
+Preprocessing ....
+ Done                            
 \layout LyX-Code
 
 
 \size scriptsize 
-Building unclustered BDDs - 8
-\layout LyX-Code
-
-
-\size scriptsize 
-Building and= & or= BDDs - 0
-\layout LyX-Code
-
-
-\size scriptsize 
-Building MinMax BDDs - 0
-\layout LyX-Code
-
-
-\size scriptsize 
-Cleaning UpNumber of BDDs - 8
-\layout LyX-Code
-
-
-\size scriptsize 
-EXISTENTIALLY QUANTIFYING - 
-\layout LyX-Code
-
-
-\size scriptsize 
-DEPENDENT CLUSTERING - 
-\layout LyX-Code
-
-
-\size scriptsize 
-EXISTENTIALLY QUANTIFYING - 
-\layout LyX-Code
-
-
-\size scriptsize 
-STRENGTHENING - -
-\layout LyX-Code
-
-
-\size scriptsize 
-EXISTENTIALLY QUANTIFYING - 
-\layout LyX-Code
-
-
-\size scriptsize 
-STRENGTHENING - 
-\layout LyX-Code
-
-
-\size scriptsize 
-EXISTENTIALLY QUANTIFYING - 
-\layout LyX-Code
-
-
-\size scriptsize 
-BRANCH PRUNING - 
-\layout LyX-Code
-
-
-\size scriptsize 
-Solver vars: 6/6 (not used: 0)
-\layout LyX-Code
-
-
-\size scriptsize 
-Indep/Dep vars: 6/0 (other vars: 0)
-\layout LyX-Code
-
-
-\size scriptsize 
-Initializing Smurf Factory data structs ...
-\layout LyX-Code
-
-
-\size scriptsize 
-Number of special functions: 0
-\layout LyX-Code
-
-
-\size scriptsize 
-Number of regular Smurfs: 4
-\layout LyX-Code
-
-
-\size scriptsize 
-Number of Smurf states: 23
-\layout LyX-Code
-
-
-\size scriptsize 
-Time to build Smurf states: 0.000 secs.
-\layout LyX-Code
-
-
-\size scriptsize 
-InitBrancher
-\layout LyX-Code
-
-
-\size scriptsize 
-Initializing heuristicScores
+Creating Smurfs ...
+ Done                     
 \layout LyX-Code
 
 
@@ -465,48 +365,43 @@ Solution verified.
 
 
 \size scriptsize 
-Time in brancher: -0.000 secs.
+Time in brancher:  0.000 secs.
 \layout LyX-Code
 
 
 \size scriptsize 
--0.000 backtracks per sec.
+0.000 backtracks per sec.
 \layout LyX-Code
 
 
 \size scriptsize 
-Backtracks: 0 Time: 0.000 secs.
- 10000000.000 backtracks per sec.
+Time: 0.000s.
+ Backtracks: 0 (10000000.000 per sec) Progress:  0.00%
 \layout LyX-Code
 
 
 \size scriptsize 
-Progress: 0/3 0.00%
+ Choices (total, dependent, backjumped): (3, 0, 0)
 \layout LyX-Code
 
 
 \size scriptsize 
-Choices (total, dependent): (3, 0)
+ Lemmas (cached, non-cached, added): (0, 2, 2)
 \layout LyX-Code
 
 
 \size scriptsize 
-Lemmas (cached, non-cached, added): (0, 2, 2)
+ Inferences by smurfs: 2; lemmas: 0; 
 \layout LyX-Code
 
 
 \size scriptsize 
-Inferences by smurfs: 2; lemmas: 0; 
+ Backtracks by smurfs: 0; lemmas: 0; 
 \layout LyX-Code
 
 
 \size scriptsize 
-Backtracks by smurfs: 0; lemmas: 0; 
-\layout LyX-Code
-
-
-\size scriptsize 
-Backjumps: 0 (avg bj len: 0.0)
+ Backjumps: 0 (avg bj len: 0.0)
 \layout LyX-Code
 
 
@@ -521,7 +416,9 @@ Satisfiable
 
 
 \size scriptsize 
-Total Time: 0.010 
+Total Time: 0.010
+\layout LyX-Code
+
 \layout Standard
 
 Decoding the output: 
@@ -595,122 +492,25 @@ warning: ini file not found /home/fett/ite.ini
 
 
 \size scriptsize 
-Reading File ../examples/small.cnf ....
+Reading File ../examples/small.cnf  ....
 \layout LyX-Code
 
 
 \size scriptsize 
-Storing Inputsnuminp: 8
+Reading CNF ...
+ Done                   
 \layout LyX-Code
 
 
 \size scriptsize 
-Done ScanningStarting SearchDone SavingFinding ITEsBuilding ITE BDDs - 0
+Preprocessing ....
+ Done                            
 \layout LyX-Code
 
 
 \size scriptsize 
-Building unclustered BDDs - 8
-\layout LyX-Code
-
-
-\size scriptsize 
-Building and= & or= BDDs - 0
-\layout LyX-Code
-
-
-\size scriptsize 
-Building MinMax BDDs - 0
-\layout LyX-Code
-
-
-\size scriptsize 
-Cleaning UpNumber of BDDs - 8
-\layout LyX-Code
-
-
-\size scriptsize 
-EXISTENTIALLY QUANTIFYING - 
-\layout LyX-Code
-
-
-\size scriptsize 
-DEPENDENT CLUSTERING - 
-\layout LyX-Code
-
-
-\size scriptsize 
-EXISTENTIALLY QUANTIFYING - 
-\layout LyX-Code
-
-
-\size scriptsize 
-STRENGTHENING - -
-\layout LyX-Code
-
-
-\size scriptsize 
-EXISTENTIALLY QUANTIFYING - 
-\layout LyX-Code
-
-
-\size scriptsize 
-STRENGTHENING - 
-\layout LyX-Code
-
-
-\size scriptsize 
-EXISTENTIALLY QUANTIFYING - 
-\layout LyX-Code
-
-
-\size scriptsize 
-BRANCH PRUNING - 
-\layout LyX-Code
-
-
-\size scriptsize 
-Solver vars: 6/6 (not used: 0)
-\layout LyX-Code
-
-
-\size scriptsize 
-Indep/Dep vars: 6/0 (other vars: 0)
-\layout LyX-Code
-
-
-\size scriptsize 
-Initializing Smurf Factory data structs ...
-\layout LyX-Code
-
-
-\size scriptsize 
-Number of special functions: 0
-\layout LyX-Code
-
-
-\size scriptsize 
-Number of regular Smurfs: 4
-\layout LyX-Code
-
-
-\size scriptsize 
-Number of Smurf states: 23
-\layout LyX-Code
-
-
-\size scriptsize 
-Time to build Smurf states: 0.010 secs.
-\layout LyX-Code
-
-
-\size scriptsize 
-InitBrancher
-\layout LyX-Code
-
-
-\size scriptsize 
-Initializing heuristicScores
+Creating Smurfs ...
+ Done                     
 \layout LyX-Code
 
 
@@ -720,48 +520,43 @@ Solution verified.
 
 
 \size scriptsize 
-Time in brancher: -0.000 secs.
+Time in brancher:  0.000 secs.
 \layout LyX-Code
 
 
 \size scriptsize 
--0.000 backtracks per sec.
+0.000 backtracks per sec.
 \layout LyX-Code
 
 
 \size scriptsize 
-Backtracks: 0 Time: 0.000 secs.
- 10000000.000 backtracks per sec.
+Time: 0.010s.
+ Backtracks: 0 (1000000.000 per sec) Progress:  0.00%
 \layout LyX-Code
 
 
 \size scriptsize 
-Progress: 0/3 0.00%
+ Choices (total, dependent, backjumped): (3, 0, 0)
 \layout LyX-Code
 
 
 \size scriptsize 
-Choices (total, dependent): (3, 0)
+ Lemmas (cached, non-cached, added): (0, 2, 2)
 \layout LyX-Code
 
 
 \size scriptsize 
-Lemmas (cached, non-cached, added): (0, 2, 2)
+ Inferences by smurfs: 2; lemmas: 0; 
 \layout LyX-Code
 
 
 \size scriptsize 
-Inferences by smurfs: 2; lemmas: 0; 
+ Backtracks by smurfs: 0; lemmas: 0; 
 \layout LyX-Code
 
 
 \size scriptsize 
-Backtracks by smurfs: 0; lemmas: 0; 
-\layout LyX-Code
-
-
-\size scriptsize 
-Backjumps: 0 (avg bj len: 0.0)
+ Backjumps: 0 (avg bj len: 0.0)
 \layout LyX-Code
 
 
@@ -776,32 +571,13 @@ Choice Points: 2 , Backtracks: 0, Backjumps: 0
 
 
 \size scriptsize 
-1 (1) val:F
+Preprocessing ....
+ Done
 \layout LyX-Code
 
 
 \size scriptsize 
-2 (2) val:F
-\layout LyX-Code
-
-
-\size scriptsize 
-3 (3) val:T
-\layout LyX-Code
-
-
-\size scriptsize 
-4 (4) val:T
-\layout LyX-Code
-
-
-\size scriptsize 
-5 (5) val:F
-\layout LyX-Code
-
-
-\size scriptsize 
-6 (6) val:F
+-1 -2 3 4 -5 -6 
 \layout LyX-Code
 
 
@@ -811,10 +587,12 @@ Satisfiable
 
 
 \size scriptsize 
-Total Time: 0.020 
+Total Time: 0.020
+\layout LyX-Code
+
 \layout Standard
 
-You can see that the solution is mixed with normal output of the solver.
+You can see that the solution is mixed with the normal output of the solver.
  Therefore it might be better to specify the output file for the solution.
 \layout Standard
 
@@ -844,32 +622,9 @@ output.txt:
 
 
 \size scriptsize 
-1 (1) val:F
+-1 -2 3 4 -5 -6 
 \layout LyX-Code
 
-
-\size scriptsize 
-2 (2) val:F
-\layout LyX-Code
-
-
-\size scriptsize 
-3 (3) val:T
-\layout LyX-Code
-
-
-\size scriptsize 
-4 (4) val:T
-\layout LyX-Code
-
-
-\size scriptsize 
-5 (5) val:F
-\layout LyX-Code
-
-
-\size scriptsize 
-6 (6) val:F
 \layout Standard
 
 
@@ -1193,6 +948,10 @@ no
 \layout Subsection
 
 Converting the input file
+\layout Standard
+
+-In 0 -All 0 is the only way to get a direct translation of the original
+ file (aka, no preprocessing whatsoever).
 \layout Subsection
 
 BDD (ITE) format examples
@@ -1356,7 +1115,7 @@ or
 \end_inset 
 </cell>
 </row>
-<row topline="true" bottomline="true">
+<row bottomline="true">
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -1388,7 +1147,7 @@ and
 \end_inset 
 </cell>
 </row>
-<row topline="true" bottomline="true">
+<row bottomline="true">
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -1420,7 +1179,7 @@ not
 \end_inset 
 </cell>
 </row>
-<row topline="true" bottomline="true">
+<row bottomline="true">
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -1452,7 +1211,7 @@ imp
 \end_inset 
 </cell>
 </row>
-<row topline="true" bottomline="true">
+<row bottomline="true">
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -1484,7 +1243,7 @@ ite
 \end_inset 
 </cell>
 </row>
-<row topline="true" bottomline="true">
+<row bottomline="true">
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -1593,109 +1352,25 @@ warning: ini file not found /home/fett/ite.ini
 
 
 \size scriptsize 
-Reading File ../examples/xortest.ite ....
+Reading File ../examples/xortest.ite  ....
 \layout LyX-Code
 
 
 \size scriptsize 
-Done Reading File...
+Reading ITE ...
+ Done
 \layout LyX-Code
 
 
 \size scriptsize 
-EXISTENTIALLY QUANTIFYING - 
+Preprocessing ....
+ Done                            
 \layout LyX-Code
 
 
 \size scriptsize 
-DEPENDENT CLUSTERING - 
-\layout LyX-Code
-
-
-\size scriptsize 
-EXISTENTIALLY QUANTIFYING - 
-\layout LyX-Code
-
-
-\size scriptsize 
-STRENGTHENING - |
-\layout LyX-Code
-
-
-\size scriptsize 
-EXISTENTIALLY QUANTIFYING - 
-\layout LyX-Code
-
-
-\size scriptsize 
-STRENGTHENING - 
-\layout LyX-Code
-
-
-\size scriptsize 
-EXISTENTIALLY QUANTIFYING - 
-\layout LyX-Code
-
-
-\size scriptsize 
-BRANCH PRUNING - 
-\backslash 
-
-\layout LyX-Code
-
-
-\size scriptsize 
-EXISTENTIALLY QUANTIFYING - 
-\layout LyX-Code
-
-
-\size scriptsize 
-BRANCH PRUNING - 
-\layout LyX-Code
-
-
-\size scriptsize 
-Solver vars: 7/7 (not used: 0)
-\layout LyX-Code
-
-
-\size scriptsize 
-Indep/Dep vars: 7/0 (other vars: 0)
-\layout LyX-Code
-
-
-\size scriptsize 
-Initializing Smurf Factory data structs ...
-\layout LyX-Code
-
-
-\size scriptsize 
-Number of special functions: 0
-\layout LyX-Code
-
-
-\size scriptsize 
-Number of regular Smurfs: 2
-\layout LyX-Code
-
-
-\size scriptsize 
-Number of Smurf states: 57
-\layout LyX-Code
-
-
-\size scriptsize 
-Time to build Smurf states: 0.000 secs.
-\layout LyX-Code
-
-
-\size scriptsize 
-InitBrancher
-\layout LyX-Code
-
-
-\size scriptsize 
-Initializing heuristicScores
+Creating Smurfs ...
+ Done                     
 \layout LyX-Code
 
 
@@ -1705,48 +1380,43 @@ Solution verified.
 
 
 \size scriptsize 
-Time in brancher: -0.000 secs.
+Time in brancher:  0.000 secs.
 \layout LyX-Code
 
 
 \size scriptsize 
--0.000 backtracks per sec.
+0.000 backtracks per sec.
 \layout LyX-Code
 
 
 \size scriptsize 
-Backtracks: 0 Time: 0.000 secs.
- 10000000.000 backtracks per sec.
+Time: 0.000s.
+ Backtracks: 0 (10000000.000 per sec) Progress:  0.00%
 \layout LyX-Code
 
 
 \size scriptsize 
-Progress: 0/3 0.00%
+ Choices (total, dependent, backjumped): (3, 0, 0)
 \layout LyX-Code
 
 
 \size scriptsize 
-Choices (total, dependent): (3, 0)
+ Lemmas (cached, non-cached, added): (0, 5, 5)
 \layout LyX-Code
 
 
 \size scriptsize 
-Lemmas (cached, non-cached, added): (0, 5, 5)
+ Inferences by smurfs: 5; lemmas: 0; 
 \layout LyX-Code
 
 
 \size scriptsize 
-Inferences by smurfs: 5; lemmas: 0; 
+ Backtracks by smurfs: 0; lemmas: 0; 
 \layout LyX-Code
 
 
 \size scriptsize 
-Backtracks by smurfs: 0; lemmas: 0; 
-\layout LyX-Code
-
-
-\size scriptsize 
-Backjumps: 0 (avg bj len: 0.0)
+ Backjumps: 0 (avg bj len: 0.0)
 \layout LyX-Code
 
 
@@ -1761,7 +1431,9 @@ Satisfiable
 
 
 \size scriptsize 
-Total Time: 0.010 
+Total Time: 0.020 
+\layout LyX-Code
+
 \layout Subsubsection
 
 add_state example
@@ -1773,13 +1445,13 @@ add_state
 \series default 
 .
  This function has two parameters.
- The first one a BDD function.
+ The first one is a BDD function.
  The second parameter is the shift in the variable number.
  
 \series bold 
 Add_state
 \series default 
- creates a new BDD with structure identical the first parameter but with
+ creates a new BDD with structure identical to the first parameter but with
  each variable incremented by the second parameter.
  
 \layout LyX-Code
@@ -1847,6 +1519,9 @@ p bdd 44 5
 
 \size footnotesize 
 *equ(xor(5, and(-21, 37)), ite(19, or(37, -44), -37)))
+\layout Subsubsection
+
+print_tree and pprint_tree examples
 \layout Subsubsection
 
 Function definition example
@@ -2002,13 +1677,12 @@ ite(2,              ; eqn $7, no smurf created
 \series bold 
 \size large 
 \bar under 
-TIP 
+TIP
 \series default 
 \size default 
 \bar default 
-Although neither parentheses nor commas are required (you can leave them
- out) we recommend you keep them so you can easily orient yourself in the
- file.
+ Although both parentheses and commas are optional, we recommend you keep
+ them in so you can easily orient yourself in the file.
 \layout Section
 \pagebreak_top 
 SBSAT Advanced
@@ -2126,7 +1800,7 @@ Cofactoring
 
 \layout Standard
 
-no
+yes
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
@@ -2317,7 +1991,7 @@ All
 \end_inset 
 </cell>
 </row>
-<row topline="true" bottomline="true">
+<row bottomline="true">
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -2416,8 +2090,8 @@ small.cnf
 
 For some problems the preprocessing might take too long or may not produce
  a desired effect.
- Therefore it is possible to change the preprocessing options turn them
- off/on or change their sequence.
+ Therefore it is possible to enable or disable the preprocessing options
+ or change their sequence.
  
 \layout Standard
 
@@ -2445,8 +2119,8 @@ TIP \SpecialChar ~
 \series default 
 \size default 
 \bar default 
- How to avoid repeating long preprocessing.
- Save the problem after preprocessing in SMURF file format (Using 
+ How to avoid repeating long preprocessing: Save the problem after preprocessing
+ in SMURF file format (Using 
 \family typewriter 
 \size footnotesize 
 \emph on 
@@ -2478,11 +2152,11 @@ TIP \SpecialChar ~
 Changing heuristic and its options
 \layout Standard
 
-Standard brancher has to two available heuristic schemas.
- Johnson heuristic and Lemma (chaff-like) heuristic.
- Both heuristic have their advantages and disadvantages.
+The standard brancher has to two available heuristics, the Johnson heuristic
+ and Lemma (chaff-like) heuristic.
+ Both heuristics have their advantages and disadvantages.
  Usually if one heuristic is better than the other on a specific problem
- then it is the case for the similar problems.
+ then this is also the case for similarly structured problems.
 \layout Standard
 
 Example: 
@@ -2665,7 +2339,7 @@ TIP
 \size default 
 \bar default 
  \SpecialChar ~
- Using the Johnson combined heuristic (
+ Using the Combined heuristic (
 \family typewriter 
 \size footnotesize 
 \emph on 
@@ -2686,15 +2360,14 @@ Lemma cache (non lemma brancher)
 Constraining the time on the preprocessing and brancher
 \layout Standard
 
-In some situations the preprocessing time takes too long.
- One wayt to interrupt the preprocessing is to change the preprocessing
- string to perform less iterations through the preprocessing options (see
- ...
+In some situations the preprocessing takes too long.
+ One way to interrupt the preprocessing is to change the preprocessing string
+ to perform less iterations through the preprocessing options (see ...
  ).
  Another way to cut the preprocessing time is to specify the time limit
- in seconds how long the preprocessing can take.
- After the time is up preprocessor will quit and the control handed to the
- brancher.
+ in seconds for how long the preprocessing can take.
+ After the time limit has been reached the preprocessor will quit and the
+ control will be handed to the brancher.
 \layout Standard
 
 Example: 
@@ -2711,7 +2384,8 @@ ite small.cnf
  --max-branching-time 180
 \layout Standard
 
-This will allow 3 minutes for preprocessing and quits after that.
+This will allow 3 minutes for preprocessing and continue to the brancher
+ after that.
  
 \newline 
 
@@ -2727,7 +2401,7 @@ The similar option exists for the brancher:
 $ ite small.cnf --max-preproc-time 180
 \layout Subsubsection
 
-Creating and using ini file
+Creating and using an ini file
 \layout Standard
 
 If you are working on a problem that requires adding the same command line
@@ -2736,8 +2410,7 @@ If you are working on a problem that requires adding the same command line
  
 \layout Standard
 
-To create the ini file starter with the default values for all available
- options
+To create an ini file with the default values for all available options
 \layout Standard
 
 
@@ -2752,10 +2425,13 @@ To create the ini file starter with the default values for all available
 
 \layout Standard
 
-You can edit ite.ini and change the default values to those of your choice.
+You can edit the ini file and change the values to those of your choice.
  Please note that the command line options take precedence before the ini
  file settings.
  This way you can effectively override all settings.
+ (THIS IS NOT ALWAYS TRUE! Example: './ite -All 0 --ini myini.ini small.cnf'
+ STILL DOES PREPROCESSING...Sean/Andy...for Michal....very BIG, not to be scary though...
+ :) )
 \layout Standard
 
 Also you can create different ini files for different problems.
