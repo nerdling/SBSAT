@@ -787,28 +787,6 @@ BDDNode *_bdd2xdd(BDDNode *x) {
 	return (x->tmp_bdd = find_or_add_node(v, r, e));
 }
 
-inline
-BDDNode *ite_x_F_T(BDDNode *x)
-{
-   // although notCase of true_ptr and false_ptr point at each other
-   // it seems to be faster to check for true and false anyway 
-   if (x == true_ptr) return false_ptr;
-   if (x == false_ptr) return true_ptr;
-
-   if(x->notCase != NULL) {
-      //fprintf(stderr, "N");
-      return x->notCase;
-   }
-   int v = x->variable;
-   BDDNode *r = ite_x_F_T(x->thenCase);
-   BDDNode *e = ite_x_F_T(x->elseCase);
-   //if(r == e) fprintf(stderr, "\nNEVER!!!\n");
-   BDDNode *x_not = find_or_add_node(v, r, e);
-   x->notCase = x_not;
-   x_not->notCase = x;
-   return x_not;
-}
-
 inline BDDNode *_ite_x_y_F(BDDNode *x, BDDNode *y);
 
 inline
@@ -914,7 +892,7 @@ BDDNode *ite_x_y_T(BDDNode *x, BDDNode *y)
    if (x == false_ptr) return true_ptr;
 
    if (y == true_ptr) return true_ptr;
-   if (y == false_ptr) return ite_x_F_T(x);
+   if (y == false_ptr) return ite_not(x);
   
    BDDNode *cached = itetable_find_or_add_node(2, x, y, NULL);
    if (cached) return cached;
@@ -991,7 +969,7 @@ BDDNode *ite_x_F_z(BDDNode *x, BDDNode *z)
    if (x == true_ptr) return false_ptr;
    if (x == false_ptr) return z;
 
-   if (z == true_ptr) return ite_x_F_T(x);
+   if (z == true_ptr) return ite_not(x);
    if (z == false_ptr) return false_ptr;
   
    int v;
@@ -1004,7 +982,7 @@ BDDNode *ite_x_F_z(BDDNode *x, BDDNode *z)
       e = ite_x_F_z(x->elseCase, z);
    } else if (x->variable == z->variable) {
       if (x == z) return false_ptr;
-      else if (x->notCase == z) return ite_x_F_T(x);
+      else if (x->notCase == z) return ite_not(x);
       else {
          v = x->variable;
          r = ite_x_F_z(x->thenCase, z->thenCase);
@@ -1024,10 +1002,10 @@ inline
 BDDNode *ite_x_y_ny(BDDNode *x, BDDNode *y)
 {
    if (x == true_ptr) return y;
-   if (x == false_ptr) return ite_x_F_T(y);
+   if (x == false_ptr) return ite_not(y);
 
    if (y == true_ptr) return x;
-   if (y == false_ptr) return ite_x_F_T(x);
+   if (y == false_ptr) return ite_not(x);
   
 //   BDDNode *cached = itetable_find_or_add_node(5, x, y, NULL);
 //   if (cached) return cached;
@@ -1068,7 +1046,7 @@ BDDNode *ite(BDDNode * x, BDDNode * y, BDDNode * z) {
       if(z == true_ptr) return true_ptr;
       return ite_x_T_z(x, z);
    } else if(y == false_ptr) {
-      if(z == true_ptr) return ite_x_F_T(x);
+      if(z == true_ptr) return ite_not(x);
       if(z == false_ptr) return false_ptr;
       return ite_x_F_z(x, z);
 	}
@@ -1210,11 +1188,11 @@ BDDNode *ite(BDDNode * x, BDDNode * y, BDDNode * z) {
 }
 
 #ifdef NO_BDD_MACROS
-BDDNode * ite_not(BDDNode * a)
-{
-   //return ite (a, false_ptr, true_ptr);
-   return ite_x_F_T(a);
-}
+//BDDNode * ite_not(BDDNode * a)
+//{
+//   //return ite (a, false_ptr, true_ptr);
+//   return ite_x_F_T(a);
+//}
 
 BDDNode * ite_or_te(BDDNode * a)
 {
@@ -1362,16 +1340,12 @@ BDDNode * restrictx (int bddNmbr1, int bddNmbr2)
 //Adds false paths from one BDD to another
 BDDNode *restrict (BDDNode * f, BDDNode * c)
 {
-   //  if (f == c)
-   //    return true_ptr;
+	//if (f == c)
+	//  return true_ptr;
    if ((c == true_ptr) || (f == false_ptr))
       return f;
-//   if (c == ite_not (f))
-	if(f->notCase != NULL && f->notCase == c->notCase)
-	  return false_ptr;
-	else if(c->notCase == NULL && are_oppos(f, c))
-	  return false_ptr;
-	if (f == true_ptr)
+   if (c == ite_not (f))
+	  if (f == true_ptr)
       return c;
 
    // We know that f & c are both BDD's with top variables.
@@ -1476,10 +1450,7 @@ BDDNode * pruning (BDDNode * f, BDDNode * c)
       return true_ptr;
    if ((c == true_ptr) || (f == true_ptr) || (f == false_ptr))
       return f;
-	//if (c == ite_not (f))
-	if(f->notCase != NULL && f->notCase == c->notCase)
-	  return false_ptr;
-	else if(c->notCase == NULL && are_oppos(f, c))
+	if (c == ite_not (f))
 	  return false_ptr;
 	
 	// We know that f & c are both BDD's with top variables.
@@ -1558,11 +1529,7 @@ BDDNode * pruning_p2 (BDDNode * f, BDDNode * c)
 {
    if (f == c)
       return true_ptr;
-   //if (c == ite_not (f))
-	if(f->notCase != NULL && f->notCase == c->notCase)
-	  return false_ptr;
-	else if(c->notCase == NULL && are_oppos(f, c))
-	  //else if(ite_not(f) == c)
+	if (c == ite_not (f))
 	  return false_ptr;
    if ((c == true_ptr) || (f == true_ptr) || (f == false_ptr))
       return f;
@@ -1602,14 +1569,8 @@ BDDNode *Build_BDD_From_Inferences (BDDNode *c)
 
 BDDNode * steal (BDDNode * f, BDDNode * c)
 {
-//	if (c == ite_not (f))
-//	  return false_ptr;
-	if(f->notCase != NULL && f->notCase == c)
+	if (c == ite_not (f))
 	  return false_ptr;
-	else if(c->notCase == NULL && are_oppos(f, c)) {
-		if(c != ite_not(f)) fprintf(stderr, "EEK!");
-		return false_ptr;
-	}
 	if ((c == true_ptr) || (f == false_ptr))
       return f;
    if (f == c)
