@@ -35,16 +35,6 @@
  of the possibility of those damages.
 *********************************************************************/
 
-// lemmainfo.h
-// Started 8/16/01 - J. Ward
-
-// This file and lemmainfo.cc have code used for putting lemma
-// info into the Smurf data structures.
-// Currently lemmas are stored as an array of signed integers.
-// These are to be interpreted as a disjunction of literals.
-// In each case, the lemma is a prime implicant of the constraint
-// represented by the Smurf.
-
 #ifndef LEMMAINFO_H
 #define LEMMAINFO_H
 

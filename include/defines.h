@@ -34,10 +34,6 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
-/*********************************************************************
- *  defines.h (S. Weaver, J. Franco, J. Ward)
- *  Defines used by various modules
- *********************************************************************/
 
 #ifndef DEFINES_H
 #define DEFINES_H
@@ -137,5 +133,12 @@ enum {
    INTERACTIVE_HEURISTIC,
    STATE_HEURISTIC
 };
+
+//#define ite_x_F_z(x,z) ite_x_y_F(ite_not(x), z)
+#define ite_x_F_z(x,z) _ite_x_F_z(x,z)
+//#define ite_x_T_z(x,z) ite_not(ite_x_y_F(ite_not(x), ite_not(z)))
+#define ite_x_T_z(x,z) _ite_x_T_z(x,z)
+//#define ite_x_y_T(x,y) ite_not(ite_x_y_F(x, ite_not(y)))
+#define ite_x_y_T(x,y) _ite_x_y_T(x,y)
 
 #endif

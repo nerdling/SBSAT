@@ -34,20 +34,6 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
-/*********************************************************************
- *  common.h (S. Weaver, J. Franco, J. Ward)
- *  Structures used by various modules
- *********************************************************************/
-
-// In input BDD's, variables are represented by integers
-// 2..nmbrVars+1.  To save a bit of space, in the Smurf villages they
-// will be stored as 0..nmbrVars-1.  Thus, any output procedure is
-// going to have to add 2 to each variable number again.
-
-// variable: the variable number for the decision, or
-// INT_MAX (for true and false)
-// thenCase, elseCase: should point to themselves if variable == INT_MAX
-// this allows for total canonicity of the BDD's
 
 #ifndef COMMON_H
 #define COMMON_H

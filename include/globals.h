@@ -34,9 +34,7 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
-/*********************************************************************
- *  globals.h (S. Weaver, J. Franco)
- *********************************************************************/
+
 #ifndef GLOBALS_H
 #define GLOBALS_H
 

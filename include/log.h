@@ -34,11 +34,9 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
-/*
- * logging support facility
- *
- */
 
+#ifndef LOG_H
+#define LOG_H
 /*
  * What level of debugging gets compiled in.
  * Change this to a lower number for better performance
@@ -201,3 +199,4 @@ extern int DEBUG_LVL;
 #define d9_printf5(x1,x2,x3,x4,x5) D_9(fprintf(stddbg, x1, x2, x3,x4,x5);)
 #define d9_printf6(x1,x2,x3,x4,x5,x6) D_9(fprintf(stddbg, x1, x2, x3,x4,x5,x6);)
 
+#endif

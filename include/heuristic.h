@@ -34,6 +34,7 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
+
 #ifndef HEURISTIC_H
 #define HEURISTIC_H
 

@@ -34,6 +34,7 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
+
 #ifndef FORMATS_H
 #define FORMATS_H
 

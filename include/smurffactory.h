@@ -34,8 +34,6 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
-// smurffactory.h
-// Started 1/3/2001 - J. Ward
 
 #ifndef SMURFFACTORY_H
 #define SMURFFACTORY_H
