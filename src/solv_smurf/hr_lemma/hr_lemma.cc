@@ -117,8 +117,8 @@ HrLemmaUpdate()
 
 //#define HEUR_EXTRA_OUT()  { fprintf(stderr, "%c%d (pos: %d, neg %d)\n", (*pnBranchValue==BOOL_TRUE?'+':'-'), *pnBranchAtom, arrLemmaVbleCountsPos[*pnBranchAtom], arrLemmaVbleCountsNeg[*pnBranchAtom]);}
 #define HEUR_FUNCTION L_OptimizedHeuristic
-#define HEUR_SIGN(nBestVble) \
-  (arrLemmaVbleCountsPos[nBestVble] > arrLemmaVbleCountsNeg[nBestVble]?\
+#define HEUR_SIGN(nBestVble, multPos, multNeg) \
+  (arrLemmaVbleCountsPos[nBestVble]*multPos > arrLemmaVbleCountsNeg[nBestVble]*multNeg?\
    BOOL_TRUE:BOOL_FALSE)
 #include "hr_choice.cc"
 

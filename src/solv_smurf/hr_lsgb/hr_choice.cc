@@ -67,12 +67,54 @@
 ITE_INLINE int
 HEUR_FUNCTION(int *pnBranchAtom, int *pnBranchValue)
 {
-   int nBestVble;
-   int i;
+   int nBestVble = -1;
+   int i,j;
    double fMaxWeight = 0.0;
    double fVbleWeight;
 
    HEUR_EXTRA_IN();
+
+   //
+   // SEARCH PREDEFINED SETS FIRST
+   // 
+   if (arrVarChoiceLevels) {
+      int level=0;
+      for(level=0;level<arrVarChoiceLevelsNum;level++)
+      {
+         j=0;
+         while(arrVarChoiceLevels[level][j] != 0)
+         {
+            i=arrVarChoiceLevels[level][j];
+            if (arrSolution[i] == BOOL_UNKNOWN)
+            {
+               //if (arrHeurScores[i].Pos == 0 && arrHeurScores[i].Neg == 0) continue;
+               nBestVble = i;
+               fMaxWeight = HEUR_WEIGHT(arrHeurScores[i], i);
+               break;
+            }
+            j++;
+         }
+         if (nBestVble >= 0) 
+         {
+            while(arrVarChoiceLevels[level][j] != 0)
+            {
+               i=arrVarChoiceLevels[level][j];
+               if (arrSolution[i] == BOOL_UNKNOWN)
+               {
+                  //if (arrHeurScores[i].Pos == 0 && arrHeurScores[i].Neg == 0) continue;
+                  fVbleWeight = HEUR_WEIGHT(arrHeurScores[i], i);
+                  if (HEUR_COMPARE(fVbleWeight, fMaxWeight))
+                  {
+                     fMaxWeight = fVbleWeight;
+                     nBestVble = i;
+                  }
+               }
+               j++;
+            }
+            goto ReturnHeuristicResult;
+         }
+      }
+   }
 
    //
    // SEARCH INDEPENDENT VARIABLES
@@ -80,8 +122,6 @@ HEUR_FUNCTION(int *pnBranchAtom, int *pnBranchValue)
    // Determine the variable with the highest weight:
    // 
    // Initialize to the lowest indexed variable whose value is uninstantiated.
-   nBestVble = -1;
-
    for (i = 1; i < nIndepVars+1; i++)
    {
       if (arrSolution[i] == BOOL_UNKNOWN)
@@ -195,7 +235,6 @@ HEUR_FUNCTION(int *pnBranchAtom, int *pnBranchValue)
    }
    else
    {
-      dE_printf2 ("Unresolved functions: %d\n", nNumUnresolvedFunctions);
       dE_printf1 ("Error in heuristic routine:  No uninstantiated variable found\n");
       exit (1);
    }
@@ -203,9 +242,13 @@ HEUR_FUNCTION(int *pnBranchAtom, int *pnBranchValue)
 ReturnHeuristicResult:
    assert (arrSolution[nBestVble] == BOOL_UNKNOWN);
    *pnBranchAtom = nBestVble;
-   *pnBranchValue = HEUR_SIGN(nBestVble);
+   if (arrVarTrueInfluences)
+      *pnBranchValue = HEUR_SIGN(nBestVble, arrVarTrueInfluences[nBestVble], (1-arrVarTrueInfluences[nBestVble]));
+   else
+      *pnBranchValue = HEUR_SIGN(nBestVble, 1, 1);
 
    HEUR_EXTRA_OUT();
+
    return NO_ERROR;
 }
 
