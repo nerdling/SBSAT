@@ -214,7 +214,7 @@ Do_Apply_Inferences ()
 					if (before != functions[j]) {
 						if ((functionType[j] == AND && equalityVble[j] > 0)
 							 ||(functionType[j] == OR  && equalityVble[j] < 0)) {
-							if (abs (equalityVble[j]) == -inferlist->nums[0]) {
+							if (abs (equalityVble[j]) == abs(inferlist->nums[0])) {
 								functionType[j] = PLAINOR;	//a v b v c
 								//independantVars[equalityVble[j]] = 1;
 								equalityVble[j] = 0;
