@@ -8,10 +8,8 @@ SBSAT_LIBS= \
 	preproc/libpreproc.la \
 	utils/libutils.la 
 
-lib_LTLIBRARIES = libsbsat2.la
+lib_LTLIBRARIES = libsbsat2.la libsbsat.la
 libsbsat2_la_SOURCES = $(SOURCES)
-
-lib_LTLIBRARIES = libsbsat.la
 libsbsat_la_SOURCES = emptylib.cc #
 libsbsat_la_LDFLAGS = -version-info 1:0:0 -module
 libsbsat_la_LIBADD  = $(SBSAT_LIBS) $(LIBM)

@@ -143,10 +143,10 @@ SBSAT_LIBS = \
 	utils/libutils.la 
 
 
-lib_LTLIBRARIES = libsbsat.la
+lib_LTLIBRARIES = libsbsat2.la libsbsat.la
 libsbsat2_la_SOURCES = $(SOURCES)
 libsbsat_la_SOURCES = emptylib.cc #
-libsbsat_la_LDFLAGS = -version-info 1:0:0 -module -static
+libsbsat_la_LDFLAGS = -version-info 1:0:0 -module
 libsbsat_la_LIBADD = $(SBSAT_LIBS) $(LIBM)
 
 bin_PROGRAMS = sbsat
@@ -167,6 +167,11 @@ libsbsat_la_DEPENDENCIES = libsbsat2.la formats/libformats.la \
 	preproc/libpreproc.la utils/libutils.la
 am_libsbsat_la_OBJECTS = emptylib.lo
 libsbsat_la_OBJECTS = $(am_libsbsat_la_OBJECTS)
+libsbsat2_la_LDFLAGS =
+libsbsat2_la_LIBADD =
+am__objects_1 = sbsat.lo
+am_libsbsat2_la_OBJECTS = $(am__objects_1)
+libsbsat2_la_OBJECTS = $(am_libsbsat2_la_OBJECTS)
 bin_PROGRAMS = sbsat$(EXEEXT)
 PROGRAMS = $(bin_PROGRAMS)
 
@@ -179,7 +184,8 @@ sbsat_DEPENDENCIES = libsbsat2.la formats/libformats.la \
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)/include
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
-@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/empty.Po ./$(DEPDIR)/emptylib.Plo
+@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/empty.Po ./$(DEPDIR)/emptylib.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/sbsat.Plo
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 LTCXXCOMPILE = $(LIBTOOL) --mode=compile $(CXX) $(DEFS) \
@@ -188,7 +194,8 @@ LTCXXCOMPILE = $(LIBTOOL) --mode=compile $(CXX) $(DEFS) \
 CXXLD = $(CXX)
 CXXLINK = $(LIBTOOL) --mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-DIST_SOURCES = $(libsbsat_la_SOURCES) $(sbsat_SOURCES)
+DIST_SOURCES = $(libsbsat_la_SOURCES) $(libsbsat2_la_SOURCES) \
+	$(sbsat_SOURCES)
 
 RECURSIVE_TARGETS = info-recursive dvi-recursive pdf-recursive \
 	ps-recursive install-info-recursive uninstall-info-recursive \
@@ -238,6 +245,8 @@ clean-libLTLIBRARIES:
 	done
 libsbsat.la: $(libsbsat_la_OBJECTS) $(libsbsat_la_DEPENDENCIES) 
 	$(CXXLINK) -rpath $(libdir) $(libsbsat_la_LDFLAGS) $(libsbsat_la_OBJECTS) $(libsbsat_la_LIBADD) $(LIBS)
+libsbsat2.la: $(libsbsat2_la_OBJECTS) $(libsbsat2_la_DEPENDENCIES) 
+	$(CXXLINK) -rpath $(libdir) $(libsbsat2_la_LDFLAGS) $(libsbsat2_la_OBJECTS) $(libsbsat2_la_LIBADD) $(LIBS)
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 install-binPROGRAMS: $(bin_PROGRAMS)
 	@$(NORMAL_INSTALL)
@@ -279,6 +288,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/empty.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/emptylib.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sbsat.Plo@am__quote@
 
 distclean-depend:
 	-rm -rf ./$(DEPDIR)
