@@ -58,6 +58,7 @@ BDDNode *bddtable_free = NULL;
 int bddtable_free_count = 0;
 int bddtable_free_count_last = 0;
 int bddtable_used_count_last = 0;
+int current_bddpool_size = 1000; // progressively increasing up to _bdd_pool_size
 
 void bdd_fix_inferences(BDDNode *node);
 inline void 
@@ -71,7 +72,12 @@ void bddtable_alloc_pool(int pool)
       dE_printf1("Increase the number of BDD Pools\n");
       exit(1);
    }
-   bddmemory[pool].max = _bdd_pool_size; 
+   bddmemory[pool].max = current_bddpool_size;
+   if (current_bddpool_size < _bdd_pool_size) {
+      current_bddpool_size *= 10;
+      if (current_bddpool_size > _bdd_pool_size) 
+         current_bddpool_size = _bdd_pool_size; 
+   }
    bddmemory[pool].memory = (BDDNode*)ite_calloc(bddmemory[pool].max, sizeof(BDDNode), 2, "bdd memory pool");
    d9_printf2("Allocated BDD Memory Pools %d\n", pool+1);
 }
