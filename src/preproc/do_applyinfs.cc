@@ -103,11 +103,9 @@ Do_Apply_Inferences ()
 				d3_printf3 ("{%d=%d}", inferlist->nums[0], inferlist->nums[1]);
 				str_length = 0;
 				variablelist[inferlist->nums[1]].equalvars = inferlist->nums[0];
-				//if(independantVars[inferlist->nums[1]] == 2)
-				//  independantVars[inferlist->nums[0]] = 2;
-				int counts1 = 0;
+				if(independantVars[inferlist->nums[1]] == 2)
+				  independantVars[inferlist->nums[0]] = 2;
 				for (llist * k = amount[inferlist->nums[1]].head; k != NULL;) {
-					counts1++;
 					int j = k->num;
 					k = k->next; //This must be done here because k could be deleted in Rebuild_BDDx()
 					BDDNode *before = functions[j];
@@ -149,13 +147,6 @@ Do_Apply_Inferences ()
 						  return TRIV_UNSAT;
 					}
 				}
-				int counts0 = 0;
-				for (llist * k = amount[inferlist->nums[0]].head; k != NULL; k=k->next) counts0++;
-				if(counts1 > counts0)
-				  independantVars[inferlist->nums[0]] = independantVars[inferlist->nums[1]];
-
-				  
-				
 //				amount[inferlist->nums[0]].tail->next = amount[inferlist->nums[1]].head;
 //				amount[inferlist->nums[0]].tail = amount[inferlist->nums[1]].tail;
 //				amount[inferlist->nums[1]].head = NULL;
@@ -170,11 +161,9 @@ Do_Apply_Inferences ()
 				d3_printf3 ("{%d=%d}", inferlist->nums[0], inferlist->nums[1]);
 				variablelist[-inferlist->nums[1]].equalvars = -inferlist->nums[0];
 				//Gotta keep that (-inferlist->nums[0]) negative...trust me
-				//if(independantVars[-inferlist->nums[1]] == 2)
-				//  independantVars[inferlist->nums[0]] = 2;
-				int counts1 = 0;
+				if(independantVars[-inferlist->nums[1]] == 2)
+				  independantVars[inferlist->nums[0]] = 2;
 				for (llist * k = amount[-inferlist->nums[1]].head; k != NULL;) {
-					counts1++;
 					int j = k->num;
 					k = k->next; //This must be done here because k could be deleted in Rebuild_BDDx()
 					BDDNode *before = functions[j];
@@ -223,11 +212,6 @@ Do_Apply_Inferences ()
 						  return TRIV_UNSAT;
 					}
 				}
-				int counts0 = 0;
-				for (llist * k = amount[inferlist->nums[0]].head; k != NULL; k=k->next) counts0++;
-				if(counts1 > counts0)
-				  independantVars[inferlist->nums[0]] = independantVars[-inferlist->nums[1]];
-
 //				amount[inferlist->nums[0]].tail->next = amount[-inferlist->nums[1]].head;
 //				amount[inferlist->nums[0]].tail = amount[-inferlist->nums[1]].tail;
 //				amount[-inferlist->nums[1]].head = NULL;
