@@ -132,6 +132,8 @@ bddtable_hash_fn(int v, BDDNode *r, BDDNode *e)
    ;
 }
 
+void bddtable_alloc_not_node(BDDNode *not_node);
+
 BDDNode * 
 bddtable_find_or_add_node (int v, BDDNode * r, BDDNode * e)
 {
@@ -217,6 +219,7 @@ bddtable_find_or_add_node (int v, BDDNode * r, BDDNode * e)
 	} else {
       /* could not find the node => allocate new one */
       bddtable_alloc_node(node, v, r, e);
+      bddtable_alloc_not_node((*node));//, v, r->notCase, e->notCase);
    }
    return (*node);
 }
@@ -241,6 +244,30 @@ bddtable_alloc_node(BDDNode **node, int v, BDDNode *r, BDDNode *e)
    (*node)->thenCase = r;
    (*node)->elseCase = e;
    GetInferFoAN(*node); //Get Inferences
+}
+
+inline void
+bddtable_alloc_not_node(BDDNode *not_node)
+{
+   int v = not_node->variable;
+   BDDNode *r = not_node->thenCase->notCase;
+   BDDNode *e = not_node->elseCase->notCase;
+   int hash_pos = bddtable_hash_fn(v, r, e);
+
+   BDDNode **node = bddtable_hash_memory+hash_pos;
+   BDDNode **prev = NULL; 
+   ite_counters[BDD_NODE_STEPS]++;
+
+   while (!(*node == NULL/* || ((*node)->variable == v && (*node)->thenCase == r && (*node)->elseCase == e)*/))
+   {
+      prev = node;
+      node = &((*node)->next);
+      ite_counters[BDD_NODE_STEPS]++;
+   }
+   assert(*node == NULL);
+   bddtable_alloc_node(node, v, r, e);
+   not_node->notCase = *node;
+   (*node)->notCase = not_node;
 }
 
 void
