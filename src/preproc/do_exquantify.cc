@@ -74,6 +74,7 @@ int ExQuantify () {
 	do {
 		loop_again = 0;
 		for (int i = loop_again; i < numinp + 1; i++) {
+			//if(variablelist[i].true_false == 2) continue;
 			char p[100];
 			D_3(
 				 if (i % ((numinp/100)+1) == 0) {
@@ -147,7 +148,9 @@ int ExQuantify () {
 						for(int iter = 0; iter<str_length; iter++)
 						  d3_printf1("\b");
 						str_length = 0;
-						d3_printf2 ("*{%d}", i);
+						d3_printf3 ("*{%d|%d}", i, j);
+//						printBDD(functions[j]);
+//						fprintf(stderr, "\n");
 						functions[j] = xquantify (functions[j], i);
 						variablelist[i].true_false = 2;
 						SetRepeats(j);

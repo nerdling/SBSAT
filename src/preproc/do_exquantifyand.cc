@@ -111,7 +111,8 @@ int ExQuantifyAnd () {
 			if (i % ((numinp/100)+1) == 0) {
 				d2e_printf3("\rPreprocessing Ea %d/%ld ", i, numinp);
 			}
-			
+
+			if(variablelist[i].true_false == 2) continue;
 			//fprintf(stderr, "%d\n", i);
 			
 			int amount_count = 0;
