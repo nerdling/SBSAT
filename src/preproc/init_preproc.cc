@@ -298,7 +298,7 @@ Finish_Preprocessing()
 	// 
 	//Done releasing pointers
 
-		//Need to remove any function that was set to True during the preprocessing of the BDDs
+	//Need to remove any function that was set to True during the preprocessing of the BDDs
 	
 	int count = -1;
 	for (long x = 0; x < nmbrFunctions; x++)
@@ -350,7 +350,7 @@ Finish_Preprocessing()
    d3_printf2("Preprocessing Time: %5.3f seconds.\n",
 					ite_counters_f[PREPROC_TIME]);
    d2_printf1("\rPreprocessing .... Done\n");
-	
+
    return ret;
 }
 
