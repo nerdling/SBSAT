@@ -1,6 +1,6 @@
 INCLUDES=-I$(top_srcdir)/include
 noinst_LIBRARIES = libsolver.a libsolver2.a
-EXTRA_SOURCE=heur_choice.cc
+EXTRA_DIST=heur_choice.cc
 
 libsolver_a_SOURCES= solve.cc bddwalk.cc \
              init_solver.cc brancher.cc \
