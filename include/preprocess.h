@@ -65,6 +65,7 @@ int Rebuild_BDD (BDDNode *, int *, int *&);
 int add_newFunctions(BDDNode **, int);
 int Do_Apply_Inferences ();
 int Do_Apply_Inferences_backend ();
+void printBDDInfs(BDDNode *);
 int Do_Strength();
 int Do_Pruning();
 int Do_Pruning_1();
