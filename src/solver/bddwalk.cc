@@ -496,6 +496,8 @@ inline int getRandomTruePath(int x) {
 				  varstoflip[path_length++] = wvar;
 				bdd = bdd->elseCase;
 			} else if (true_var_weights[wvar] > 1-true_weight_taboo) {
+				//May be another way to do this taking into account
+				//bdd->tbr_weight instead of true_var_weights.
 				//Taboo forces variable wvar to True
 				if(atom[wvar] == 0)
 				  varstoflip[path_length++] = wvar;
