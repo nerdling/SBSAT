@@ -302,6 +302,12 @@ int walkSolve()
 		update_statistics_start_try();
 		numflip = 0;
 		numlook = 0;
+
+		for(int i = 1; i < numinp; i++) {
+			fprintf(stderr, "%d ", atom[i]==1?atoi(s_name(i)):-atoi(s_name(i)));
+		}
+		fprintf(stderr, "\n");
+
 		while((numfalse > target) && (numflip < cutoff)) {
 			print_statistics_start_flip();
 			numflip+=picknoveltyplus();
@@ -1136,7 +1142,7 @@ int picknoveltyplus(void)
 	//fprintf(stderr, "\ntofix: %d\n", tofix);
 	if ((random()%wp_denominator < wp_numerator)) {
 		getRandomTruePath(tofix, &BDDTruePaths[tofix].paths[0]);
-		flippath = 0;
+		flippath = 2;
 		
 		//y = 0;
 		//for(int x = 0; x < wlength[tofix]; x++) {
@@ -1235,15 +1241,16 @@ int picknoveltyplus(void)
 			if((BDDTruePaths[tofix].paths[flippath].num[i] > 0 && atom[abs(BDDTruePaths[tofix].paths[flippath].num[i])] == 0) ||
 				(BDDTruePaths[tofix].paths[flippath].num[i] < 0 && atom[abs(BDDTruePaths[tofix].paths[flippath].num[i])] == 1)) {
 				varstoflip[y] = abs(BDDTruePaths[tofix].paths[flippath].num[i]);
+				fprintf(stderr, "%d, |%d|", varstoflip[y], BDDTruePaths[tofix].paths[flippath].length);
 				y++;
 			}
 		}
 		if(y == 0) goto again;
 		varstoflip[y] = 0;
-		//fprintf(stderr, "{bd=%f, sbd=%f, best=%d, sbest=%d, fp=%d, numfalse=%d}\n", best_diff, second_best_diff, best, second_best, flippath, numfalse);
+		fprintf(stderr, "{bd=%f, sbd=%f, best=%d, sbest=%d, fp=%d, numfalse=%d}\n", best_diff, second_best_diff, best, second_best, flippath, numfalse);
 	} else {
 		//Flipping a random variable
-		//fprintf(stderr, "{rflip=%d, numfalse=%d}\n", varstoflip[0], numfalse);
+		fprintf(stderr, "{rflip=%d, numfalse=%d}\n", varstoflip[0], numfalse);
 	}
 	
 #else
