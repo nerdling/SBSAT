@@ -53,43 +53,44 @@ infer *infer_free = NULL;
 void
 InitializeInferencePool()
 {
-  t_infer_pool *tmp_infer_pool; 
-  tmp_infer_pool = (t_infer_pool*)calloc(1, sizeof(t_infer_pool));
-  tmp_infer_pool->max = INFER_POOL_SIZE;
-  tmp_infer_pool->memory = (infer *)calloc(tmp_infer_pool->max, sizeof(infer));
+   d4_printf1("Init inference pool\n");
+   t_infer_pool *tmp_infer_pool; 
+   tmp_infer_pool = (t_infer_pool*)calloc(1, sizeof(t_infer_pool));
+   tmp_infer_pool->max = INFER_POOL_SIZE;
+   tmp_infer_pool->memory = (infer *)calloc(tmp_infer_pool->max, sizeof(infer));
 
-  if (infer_pool_head == NULL) {
-     infer_pool = tmp_infer_pool;
-     infer_pool_head = infer_pool;
-  } else {
-     infer_pool->next = (struct _t_infer_pool*)tmp_infer_pool;
-     infer_pool = (t_infer_pool*)(infer_pool->next);
-  }
-  infer_pool_index = 0;
+   if (infer_pool_head == NULL) {
+      infer_pool = tmp_infer_pool;
+      infer_pool_head = infer_pool;
+   } else {
+      infer_pool->next = (struct _t_infer_pool*)tmp_infer_pool;
+      infer_pool = (t_infer_pool*)(infer_pool->next);
+   }
+   infer_pool_index = 0;
 }
 
 void
 FreeInferencePool()
 {
- t_infer_pool *tmp_infer_pool = NULL;
- while (infer_pool_head != NULL)
- {
-   free(infer_pool_head->memory);
-   tmp_infer_pool = (t_infer_pool*)(infer_pool_head->next);
-   free(infer_pool_head);
-   infer_pool_head = tmp_infer_pool;
- }
- infer_pool = NULL;
+   t_infer_pool *tmp_infer_pool = NULL;
+   while (infer_pool_head != NULL)
+   {
+      free(infer_pool_head->memory);
+      tmp_infer_pool = (t_infer_pool*)(infer_pool_head->next);
+      free(infer_pool_head);
+      infer_pool_head = tmp_infer_pool;
+   }
+   infer_pool = NULL;
 }
 
 infer * 
 AllocateInference(int num0, int num1, infer *next) {
 
-  infer *infs;
-  //infer * infs = (infer *)calloc(1, sizeof(infer));
-  if (infer_free != NULL) {
-     infs = infer_free;
-     infer_free = infer_free->next;
+   infer *infs;
+   //infer * infs = (infer *)calloc(1, sizeof(infer));
+   if (infer_free != NULL) {
+      infs = infer_free;
+      infer_free = infer_free->next;
   } else {
      if (infer_pool == NULL || infer_pool_index == infer_pool->max) {
         InitializeInferencePool();

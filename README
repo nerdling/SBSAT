@@ -35,12 +35,6 @@
  of the possibility of those damages.
 *********************************************************************/
 
-README file
-
-Still on TODO list...
-
-
-
 To create a CD:
 
 mkisofs -o /SBSatCD1.8/sbsatcd18.iso -V SBSat_1_8 -r -J -hfs /work/CD

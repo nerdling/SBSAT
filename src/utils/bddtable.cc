@@ -57,6 +57,8 @@ BDDNode **bddtable_hash_memory = NULL;
 int bddtable_hash_memory_size = 0;
 int bddtable_hash_memory_mask = 0;
 BDDNode *bddtable_free = NULL;
+int bddtable_free_count = 0;
+int bddtable_free_count_last = 0;
 
 void bdd_fix_inferences(BDDNode *node);
 inline void 
@@ -244,6 +246,7 @@ bddtable_alloc_node(BDDNode **node, int v, BDDNode *r, BDDNode *e)
       (*node) = bddtable_free;
       bddtable_free = bddtable_free->next;
       (*node)->next = NULL;
+      bddtable_free_count--;
    } else {
       if (bddmemory[numBDDPool].max == curBDDPos) {
          ++numBDDPool;
@@ -349,24 +352,14 @@ bdd_flag_nodes(BDDNode *node)
 
 // BDD Garbage collection
 void
-bdd_gc()
+bdd_gc(int force)
 {
    int i,j;
 
    // don't do it if there are free nodes
-   if (bddtable_free != NULL) return;
+   if (enable_gc == 0 || (force==0 && bddtable_free_count > bddtable_free_count_last/2)) return;
 
-   d4_printf1("BDD_GC START\n");
-#ifndef NDEBUG
-   int totalin=0, totalout=0;
-   // count free nodes -- statistics -- can be removed
-   BDDNode *p = bddtable_free;
-   while (p!=NULL) {
-      totalin++;
-      p = p->next;
-   }
-#endif
-
+   d4_printf2("BDD_GC START (free %d) ", bddtable_free_count);
 
    // clean all flags
    for (i=0;i<=numBDDPool;i++)
@@ -392,10 +385,6 @@ bdd_gc()
    }
 
    
-   // deallocate infereces
-   //FreeInferencePool(); 
-   
-
    // clean the hash table
    for (i=0;i<=bddtable_hash_memory_mask; i++)
    {
@@ -404,6 +393,8 @@ bdd_gc()
 
    // remove unreferenced and rehash referenced
    bddtable_free = NULL;
+   bddtable_free_count = 0;
+   int bddtable_used_count = 0;
    for (i=0;i<=numBDDPool;i++)
    {
       int max = bddmemory[i].max;
@@ -414,7 +405,9 @@ bdd_gc()
          if (node->flag == 0)
          {
             // deleted 
+#ifndef GC_REBUILD_INFERENCES
             DeallocateInferences_var(node->inferences, node->variable);
+#endif
 
             node->or_bdd = NULL; //mk
 				node->t_and_not_e_bdd = NULL; //sw
@@ -423,6 +416,7 @@ bdd_gc()
 				memset(node, 0, sizeof(BDDNode));
             node->next = bddtable_free;
             bddtable_free = node;
+            bddtable_free_count++;
          } else
          {
             // rehash
@@ -430,10 +424,19 @@ bdd_gc()
             BDDNode **hash_node = bddtable_hash_memory+hash_pos;
             node->next = *hash_node;;
             *hash_node = node;
+            node->flag = 0;
+            bddtable_used_count++;
          }
       }
    }
-/*
+   true_ptr->flag = 0;
+   false_ptr->flag = 0;
+   bddtable_free_count_last = bddtable_free_count;
+
+   // deallocate infereces
+#ifdef GC_REBUILD_INFERENCES
+   FreeInferencePool(); 
+
    for (i=0;i<nmbrFunctions;i++)
    {
       bdd_fix_inferences(functions[i]);
@@ -442,7 +445,8 @@ bdd_gc()
    {
       bdd_fix_inferences(original_functions[i]);
    }
-   */
+#endif
+   
 /*
    fprintf(stddbg, "out:\n");
    for (i=0;i<nmbrFunctions;i++)
@@ -451,17 +455,8 @@ bdd_gc()
       fprintf(stddbg, "\n");
    }
 */
-#ifndef NDEBUG
-   // count free nodes -- statistics -- can be removed
-   p = bddtable_free;
-   while (p!=NULL) {
-      totalout++;
-      p = p->next;
-   }
-   d4_printf4("BDD_GC %d -> %d (%.02f%%)\n", 
-         totalin, totalout, totalin==0?0:1.0*(totalout-totalin)/totalin);
-#endif
    
+   d4_printf3("BDD_GC END(used %d, free %d)\n", bddtable_used_count, bddtable_free_count);
    itetable_removeall();
 }
 
@@ -470,9 +465,20 @@ bdd_fix_inferences(BDDNode *node)
 {
    if (node == true_ptr || node == false_ptr) return;
    if (node->inferences != NULL) return;
+   if (node->flag == 1) return;
+   node->flag = 1;
    bdd_fix_inferences(node->thenCase); 
    bdd_fix_inferences(node->elseCase); 
+   bdd_fix_inferences(node->notCase); 
+#ifdef BDD_MIRROR_NODE
+   bdd_fix_inferences(node->mirrCase); 
+#endif
    GetInferFoAN(node);
+   infer *ptr = node->inferences;
+   while(ptr != NULL) {
+      assert(ptr->nums[0] != 0);
+      ptr = ptr->next;
+   }
 }
 
 FILE *

@@ -278,6 +278,6 @@ long ite_filesize(char *filename);
 
 BDDNode *tmp_equ_var(BDDNode *p);
 
-void bdd_gc();
+void bdd_gc(int force=0);
 
 #endif

@@ -12346,7 +12346,7 @@ fi
 
 
 
-                                                                                                                                                                                                                            ac_config_files="$ac_config_files Makefile doc/Makefile doc/man1/Makefile doc/manual/Makefile examples/Makefile include/Makefile src/Makefile src/formats/5/Makefile src/formats/Makefile src/generator/Makefile src/postproc/Makefile src/preproc/Makefile src/solver/Makefile src/utils/Makefile tests/Makefile tests/cnf/Makefile tests/longer_tests/Makefile tests/trace_tests/Makefile tests/trace_tests.sh tests/xor_tests.sh tests/longer_tests.sh tests/cnf_tests.sh"
+                                                                                                                                                                                                                  ac_config_files="$ac_config_files Makefile doc/Makefile doc/man1/Makefile examples/Makefile include/Makefile src/Makefile src/formats/5/Makefile src/formats/Makefile src/generator/Makefile src/postproc/Makefile src/preproc/Makefile src/solver/Makefile src/utils/Makefile tests/Makefile tests/cnf/Makefile tests/longer_tests/Makefile tests/trace_tests/Makefile tests/trace_tests.sh tests/xor_tests.sh tests/longer_tests.sh tests/cnf_tests.sh"
 
 
 cat >confcache <<\_ACEOF
@@ -12935,7 +12935,6 @@ do
   "Makefile" ) CONFIG_FILES="$CONFIG_FILES Makefile" ;;
   "doc/Makefile" ) CONFIG_FILES="$CONFIG_FILES doc/Makefile" ;;
   "doc/man1/Makefile" ) CONFIG_FILES="$CONFIG_FILES doc/man1/Makefile" ;;
-  "doc/manual/Makefile" ) CONFIG_FILES="$CONFIG_FILES doc/manual/Makefile" ;;
   "examples/Makefile" ) CONFIG_FILES="$CONFIG_FILES examples/Makefile" ;;
   "include/Makefile" ) CONFIG_FILES="$CONFIG_FILES include/Makefile" ;;
   "src/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;

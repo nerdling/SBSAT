@@ -106,6 +106,8 @@ int Do_Rewind() {
 	int Total_inferences = Pos_replace + Neg_replace + Setting_Pos + Setting_Neg;
 	if (Total_inferences > num_inferences) num_inferences = Total_inferences;
 	else ret = PREP_NO_CHANGE;
-	
+
+   bdd_gc(1);
+
 	return ret;
 }

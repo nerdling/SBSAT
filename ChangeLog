@@ -1,3 +1,128 @@
+2004-03-19 13:12  mkouril
+
+	* doc/Makefile.am, doc/arch.txt, doc/sbsat.1, doc/man1/sbsat.1,
+	  include/brancher.h, include/common.h, include/defines.h,
+	  include/equivclass.h, include/formats.h, include/globals.h,
+	  include/heuristic.h, include/i_heuristic.h, include/interface.h,
+	  include/ite.h, include/itefeatures.h, include/iteheaders.h,
+	  include/j_heuristic.h, include/l_heuristic.h,
+	  include/lemmainfo.h, include/log.h, include/params.h,
+	  include/pools.h, include/postproc.h, include/preprocess.h,
+	  include/prototypes.h, include/smurffactory.h, include/solver.h,
+	  include/symtable.h, include/vars.h, src/sbsat.cc,
+	  src/formats/autochk.cc, src/formats/bdd2cnf.cc,
+	  src/formats/bddbinary.cc, src/formats/cnf.cc,
+	  src/formats/markbdd.cc, src/formats/read_input.cc,
+	  src/formats/read_result.cc, src/formats/sat.cc,
+	  src/formats/smurf.cc, src/formats/write_output.cc,
+	  src/formats/xorbdd.cc, src/formats/5/bddnode.cc,
+	  src/formats/5/bddops.cc, src/formats/5/functions.cc,
+	  src/formats/5/p3.cc, src/formats/5/parser.cc,
+	  src/formats/5/tracetest.cc, src/generator/gentest.cc,
+	  src/generator/rn.cc, src/generator/vanDerWaerden.cc,
+	  src/generator/xorgen.cc, src/postproc/backend.cc,
+	  src/preproc/create_infs.cc, src/preproc/do_applyinfs.cc,
+	  src/preproc/do_clearft.cc, src/preproc/do_cofactor.cc,
+	  src/preproc/do_depcluster.cc, src/preproc/do_exquantify.cc,
+	  src/preproc/do_exquantifyand.cc, src/preproc/do_flow.cc,
+	  src/preproc/do_prover3.cc, src/preproc/do_pruning.cc,
+	  src/preproc/do_pruning_1.cc, src/preproc/do_pruning_2.cc,
+	  src/preproc/do_pruning_pr.cc, src/preproc/do_pruning_restrict.cc,
+	  src/preproc/do_rewind.cc, src/preproc/do_split.cc,
+	  src/preproc/do_steal.cc, src/preproc/do_strength.cc,
+	  src/preproc/init_preproc.cc, src/preproc/other_preproc.cc,
+	  src/preproc/preprocess.cc, src/solver/autarky.cc,
+	  src/solver/backtrack.cc, src/solver/backtrack_nl.cc,
+	  src/solver/backtrack_sbj.cc, src/solver/bdd2smurf.cc,
+	  src/solver/bdd2specfn_and.cc, src/solver/bdd2specfn_minmax.cc,
+	  src/solver/bdd2specfn_xor.cc, src/solver/bddwalk.cc,
+	  src/solver/brancher.cc, src/solver/bt_lemmas.cc,
+	  src/solver/bt_misc.cc, src/solver/bt_smurfs.cc,
+	  src/solver/bt_specfn.cc, src/solver/bt_specfn_and.cc,
+	  src/solver/bt_specfn_minmax.cc, src/solver/bt_specfn_xor.cc,
+	  src/solver/crtwin.cc, src/solver/display.cc,
+	  src/solver/display_sf.cc, src/solver/heur_choice.cc,
+	  src/solver/heur_stack.cc, src/solver/heuristic.cc,
+	  src/solver/i_heuristic.cc, src/solver/init_solver.cc,
+	  src/solver/interface.cc, src/solver/j_heuristic.cc,
+	  src/solver/j_smurf.cc, src/solver/j_specfn.cc,
+	  src/solver/j_specfn_and.cc, src/solver/j_specfn_minmax.cc,
+	  src/solver/j_specfn_xor.cc, src/solver/j_update_heu.cc,
+	  src/solver/ksolve.cc, src/solver/l_heuristic.cc,
+	  src/solver/l_lemma.cc, src/solver/lemmacache.cc,
+	  src/solver/lemmainfo.cc, src/solver/lemmamisc.cc,
+	  src/solver/lemmas.cc, src/solver/lemmas_and.cc,
+	  src/solver/lemmas_minmax.cc, src/solver/lemmas_xor.cc,
+	  src/solver/lemmaspace.cc, src/solver/lemmawlits.cc,
+	  src/solver/libsolver.cc, src/solver/load_lemmas.cc,
+	  src/solver/recordsol.cc, src/solver/select_bp.cc,
+	  src/solver/sf_addons.cc, src/solver/smurfaddons.cc,
+	  src/solver/smurffactory.cc, src/solver/smurfstates.cc,
+	  src/solver/solve.cc, src/solver/state_stacks.cc,
+	  src/solver/transitions.cc, src/solver/update_heu.cc,
+	  src/solver/verify.cc, src/solver/wvf.cc, src/utils/bdd.cc,
+	  src/utils/bdd_circuit_init.cc, src/utils/bddtable.cc,
+	  src/utils/custprint.cc, src/utils/infer.cc,
+	  src/utils/itetable.cc, src/utils/java_wrapper.cc,
+	  src/utils/log.cc, src/utils/params.cc, src/utils/params_fn.cc,
+	  src/utils/symtable.cc, src/utils/termcap.cc, src/utils/utils.cc,
+	  src/utils/vars.cc, src/utils/zread.cc: Updated copyright dates
+
+2004-03-19 12:29  mkouril
+
+	* include/symtable.h: Copyright added
+
+2004-03-18 22:21  mkouril
+
+	* Makefile.am, Makefile.in, src/formats/5/Makefile.am,
+	  src/formats/5/Makefile.in, src/utils/bddtable.cc,
+	  src/utils/itetable.cc: Distribution fixes
+
+2004-03-18 20:57  mkouril
+
+	* src/: formats/Makefile.am, formats/Makefile.in,
+	  formats/5/Makefile.am, formats/5/Makefile.in,
+	  postproc/Makefile.am, postproc/Makefile.in, preproc/Makefile.am,
+	  preproc/Makefile.in, solver/Makefile.am, solver/Makefile.in,
+	  utils/Makefile.am, utils/Makefile.in: Libtool enabled
+
+2004-03-18 20:44  mkouril
+
+	* confdefs.h, configure, configure.ac, libtool, include/config.h,
+	  src/Makefile.in, src/generator/Makefile.in,
+	  src/postproc/Makefile.in, src/preproc/Makefile.in,
+	  src/utils/Makefile.in: Release Candidate 2.2r-1
+
+2004-03-18 20:44  mkouril
+
+	* src/solver/ksolve.cc: Fixed kSolver -- now usable
+
+2004-03-18 20:18  mkouril
+
+	* src/solver/bddwalk.cc: Cleanup
+
+2004-03-18 15:03  mkouril
+
+	* src/solver/: brancher.cc, ksolve.cc: Fixed kSolver -- no real
+	  inferences yet though
+
+2004-03-18 08:32  mkouril
+
+	* ChangeLog, include/vars.h, src/solver/Makefile.am,
+	  src/solver/Makefile.in, src/solver/init_solver.cc,
+	  src/solver/ksolve.cc, src/solver/libsolver.cc,
+	  src/solver/smurffactory.cc, src/solver/solve.cc,
+	  src/utils/params.cc, src/utils/vars.cc: Added K-top-variables
+	  solver
+
+2004-03-18 05:21  mkouril
+
+	* include/Makefile.am, include/Makefile.in,
+	  src/formats/5/Makefile.am, src/formats/5/Makefile.in,
+	  src/formats/5/libt5_la-trace_g.cc, src/solver/Makefile.am,
+	  src/solver/Makefile.in, src/utils/params.cc: Fixes for
+	  distribution
+
 2004-03-09 22:26  fett
 
 	* src/preproc/do_exquantify.cc: now do _exquantify will quantify

@@ -72,7 +72,6 @@ Do_Apply_Inferences ()
 	
 	while (inferlist != NULL) {
 		//startover:;
-		void bdd_gc();
 		if (enable_gc && (rand() % 1000 < 4)) bdd_gc();
 		if (inferlist->nums[1] != 0) {
 			if (inferlist->nums[1] > 0) {
@@ -870,8 +869,8 @@ Rebuild_BDD (BDDNode *bdd, int *bdd_length, int *&bdd_vars)
 						iterator->nums[0] = result->rght;
 						iterator->nums[1] = -result->left;
 					}
-				}
-			}
+            }
+         }
 		}
 		if (iterator->nums[1] != 0)
 		  assert (iterator->nums[0] > 0);
