@@ -80,7 +80,7 @@ int ExQuantifyAnd () {
 	for (int x = 1; x <= MAX_EXQUANTIFY_CLAUSES; x++) {
 		for (int i = 1; i < numinp + 1; i++) {
 			char p[100];
-
+			
 			D_3(
 				 if (i % ((numinp/100)+1) == 0) {
 					 for(int iter = 0; iter<str_length; iter++)
@@ -101,6 +101,7 @@ int ExQuantifyAnd () {
 				d2e_printf3("\rPreprocessing Ea %d/%ld ", i, numinp);
 			}
 
+			if(autark_BDD[i] != -1) continue;
 			if(variablelist[i].true_false != -1 || variablelist[i].equalvars != 0)
 			  continue;
 			//fprintf(stderr, "%d\n", i);
@@ -277,6 +278,8 @@ int ExQuantifyAnd () {
 								BDDFuncs = (BDDNode **)ite_recalloc(NULL, 0, 1, sizeof(BDDNode *), 9, "BDDFuncs");
 								BDDFuncs[0] = strip_x_BDD(Quantify2, quant_var);
 
+								autark_BDD[quant_var] = 1;
+								
 								switch (int r=add_newFunctions(BDDFuncs, 1)) {
 								 case TRIV_UNSAT:
 								 case TRIV_SAT:
