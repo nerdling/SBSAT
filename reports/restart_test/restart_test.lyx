@@ -1,0 +1,259 @@
+#LyX 1.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 221
+\textclass article
+\language english
+\inputencoding auto
+\fontscheme ae
+\graphics default
+\paperfontsize default
+\spacing single 
+\papersize Default
+\paperpackage a4
+\use_geometry 0
+\use_amsmath 0
+\use_natbib 0
+\use_numerical_citations 0
+\paperorientation portrait
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\defskip medskip
+\quotes_language english
+\quotes_times 2
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+
+\layout Title
+
+Test of Restarts in SBSAT
+\layout Author
+
+Michal Kouril
+\layout Date
+
+June 2, 2003
+\layout Standard
+
+The objective of these tests is to evaluate the SBSAT behaviour if the restarts
+ are implemented.
+ While running sbsat on different problems the lemma cache was dumped onto
+ the harddrive every 1000 backtracks.
+ The SBSAT was restarted for every saved lemma cache with standard (non-weight
+ aware) Johnson heuristic and also with variable weight aware Johnson heuristic
+ where the weight of a variable 
+\begin_inset Formula $v$
+\end_inset 
+
+ was 
+\begin_inset Formula $Weight(v)=\sqrt{\left(smurfs(v)+specfn(v)+lemmas(v)\right)}$
+\end_inset 
+
+
+\layout Standard
+
+The graphs show how the number of choice points change depending on which
+ lemma cache is preloaded.
+ 
+\layout Standard
+
+Tested benchmarks: 
+\layout Itemize
+
+dlx2_ca.trace see Figure 
+\begin_inset LatexCommand \ref{cap:dlx2_ca.trace}
+
+\end_inset 
+
+
+\layout Itemize
+
+dlx2_cc.trace see Figure 
+\begin_inset LatexCommand \ref{cap:dlx2_cc.trace}
+
+\end_inset 
+
+
+\layout Itemize
+
+dlx2_cl.trace see Figure 
+\begin_inset LatexCommand \ref{cap:dlx2_cl.trace}
+
+\end_inset 
+
+
+\layout Itemize
+
+dlx2_cs.trace see Figure 
+\begin_inset LatexCommand \ref{cap:dlx2_cs.trace}
+
+\end_inset 
+
+
+\layout Itemize
+
+5-wid_360-var_rr.cnf see Figure 
+\begin_inset LatexCommand \ref{cap:5-wid_360-var_rr.cnf}
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Float figure
+wide false
+collapsed false
+
+\layout Standard
+
+
+\begin_inset Graphics
+	filename dlx2_ca.ps
+	lyxscale 20
+	scale 30
+	rotateAngle 270
+
+\end_inset 
+
+
+\layout Caption
+
+
+\begin_inset LatexCommand \label{cap:dlx2_ca.trace}
+
+\end_inset 
+
+dlx2_ca.trace
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Float figure
+wide false
+collapsed false
+
+\layout Standard
+
+
+\begin_inset Graphics
+	filename dlx2_cc.ps
+	lyxscale 20
+	scale 30
+	rotateAngle 270
+
+\end_inset 
+
+
+\layout Caption
+
+
+\begin_inset LatexCommand \label{cap:dlx2_cc.trace}
+
+\end_inset 
+
+dlx2_cc.trace
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Float figure
+wide false
+collapsed false
+
+\layout Standard
+
+
+\begin_inset Graphics
+	filename dlx2_cl.ps
+	lyxscale 20
+	scale 30
+	rotateAngle 270
+
+\end_inset 
+
+
+\layout Caption
+
+
+\begin_inset LatexCommand \label{cap:dlx2_cl.trace}
+
+\end_inset 
+
+dlx2_cl.trace
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Float figure
+wide false
+collapsed false
+
+\layout Standard
+
+
+\begin_inset Graphics
+	filename dlx2_cs.ps
+	lyxscale 20
+	scale 30
+	rotateAngle 270
+
+\end_inset 
+
+
+\layout Caption
+
+
+\begin_inset LatexCommand \label{cap:dlx2_cs.trace}
+
+\end_inset 
+
+dlx2_cs.trace
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Float figure
+wide false
+collapsed false
+
+\layout Standard
+
+
+\begin_inset Graphics
+	filename cnf5.ps
+	lyxscale 20
+	scale 30
+	rotateAngle 270
+
+\end_inset 
+
+
+\layout Caption
+
+
+\begin_inset LatexCommand \label{cap:5-wid_360-var_rr.cnf}
+
+\end_inset 
+
+5-wid_360-var_rr.cnf
+\end_inset 
+
+
+\layout Section*
+
+Conclusion
+\layout Standard
+
+The graphs indicate that restarting in different points during the execution
+ might bring significant improvement in the number of choice points but
+ also could cause substantial increase in the number of choice points.
+\the_end
