@@ -47,6 +47,8 @@
 int zecc_limit;
 int *zecc_arr;
 
+void cnf_process(store *integers, int num_minmax, minmax * min_max_store);
+
 //If you want character support for strings and things, look in markbdd.c and copy that...
 //returns m - ?, # - for xcnf, i - for integer, e - end/error
 char getNextSymbol_CNF (char macros[20], int *intnum) {
@@ -193,8 +195,7 @@ void CNF_to_BDD(int cnf)
    long tempint_max = 0;
 	char macros[20], order;
 	int intnum;
-	long out, count, num;
-	long y, z, i, j;
+   int y,i;
 
 	
 	//FILE *fin;
@@ -208,7 +209,10 @@ void CNF_to_BDD(int cnf)
 	
 	//Get number of inputs and number of outputs from
 	//the header of the CNF file
-	fscanf(finputfile, "%ld %ld\n", &numinp, &numout);
+	if (fscanf(finputfile, "%ld %ld\n", &numinp, &numout) != 2) {
+         fprintf(stderr, "Error while parsing CNF input: bad header\n");
+         exit(1);
+   };
 	numinp+=2;
 	store *integers = new store[numout+2];
 	store *old_integers = new store[numout+2];
@@ -308,7 +312,24 @@ void CNF_to_BDD(int cnf)
 		}
 		numout = y-1;
 	}
+
+   cnf_process(integers, num_minmax, min_max_store);
+   for(long x = 1; x < old_numout + 1; x++) {
+      delete [] old_integers[x].num;
+	}
+	delete [] integers;
+	delete [] old_integers;
+   ite_free((void**)&tempint); tempint_max = 0;
 	
+	d3_printf2("Number of BDDs - %ld\n", numout);
+	d2_printf1("\rReading CNF ... Done                   \n");
+}
+
+void
+cnf_process(store *integers, int num_minmax, minmax * min_max_store)
+{
+	long out, count, num;
+	long y, z, i, j;
 	d3_printf2("numinp: %ld\n", numinp);
 	if(DO_CLUSTER) {
       int *twopos_temp = (int *)calloc(numinp+1, sizeof(int));
@@ -953,26 +974,186 @@ void CNF_to_BDD(int cnf)
       if (functions[x] == true_ptr)
 		  count--;
 	}
-	
-	for(long x = 1; x < old_numout + 1; x++) {
-		delete [] old_integers[x].num;
-	}
-	delete [] integers;
-	delete [] old_integers;
-   ite_free((void**)&tempint); tempint_max = 0;
-	
+
 	numout = count+1;
 	nmbrFunctions = numout;
-	d3_printf2("Number of BDDs - %ld\n", numout);
-	d2_printf1("\rReading CNF ... Done                   \n");
+}	
+
+
+void DNF_to_CNF () {
+	typedef struct {
+		int num[50];
+   } node1;
+	node1 *integers;
+	int lines = 0, length;
+	int y = 0;
+	if (fscanf(finputfile, "%ld %ld\n", &numinp, &numout) != 2) {
+         fprintf(stderr, "Error while parsing DNF input: bad header\n");
+         exit(1);
+   };
+	length = numout;
+	integers = new node1[numout+1];
+	for(int x = 0; x < length; x++) {
+      y = 0;
+      
+      do {
+			if (fscanf(finputfile, "%d", &integers[x].num[y]) != 1) {
+            fprintf(stderr, "Error while parsing DNF input\n");
+            exit(1);
+         };
+			y++;
+			lines++;
+		}
+      while(integers[x].num[y - 1] != 0);
+	}
+	char string1[1024];
+	lines = lines + 1;
+	sprintf(string1, "p cnf %ld %d\n", numinp + length, lines);
+	fprintf(foutputfile, "%s", string1);
+	for(int y = 0; y < length; y++) {
+      sprintf(string1, "%ld ", y + numinp + 1);
+      fprintf(foutputfile, "%s", string1);
+	}
+	sprintf(string1, "0\n");
+	fprintf(foutputfile, "%s", string1);
+	for(int x = 0; x < numout; x++) {
+      sprintf(string1, "%ld ", x + numinp + 1);
+      fprintf(foutputfile, "%s", string1);
+      for(int y = 0; integers[x].num[y] != 0; y++) {
+			sprintf(string1, "%d ", -integers[x].num[y]);
+			fprintf(foutputfile, "%s", string1);
+		}
+      sprintf(string1, "0\n");
+      fprintf(foutputfile, "%s", string1);
+      for(int y = 0; integers[x].num[y] != 0; y++) {
+			sprintf(string1, "%ld ", -(x + numinp + 1));
+			fprintf(foutputfile, "%s", string1);
+			sprintf(string1, "%d ", integers[x].num[y]);
+			fprintf(foutputfile, "%s", string1);
+			sprintf(string1, "0\n");
+			fprintf(foutputfile, "%s", string1);
+		}
+	}
+	sprintf(string1, "c\n");
+	fprintf(foutputfile, "%s", string1);
 }
+
+
+void 
+DNF_to_BDD () 
+{
+   store *dnf_integers = NULL;
+   long dnf_numinp=0, dnf_numout=0;
+   store *cnf_integers = NULL;
+   long cnf_numinp=0, cnf_numout=0;
+   int y = 0;
+   if (fscanf(finputfile, "%ld %ld\n", &dnf_numinp, &dnf_numout) != 2) {
+      fprintf(stderr, "Error while parsing DNF input: bad header\n");
+      exit(1);
+   }
+   dnf_integers = (store*)ite_calloc(dnf_numout+1, sizeof(store), 9, "integers"); 
+   for(int x = 0; x < dnf_numout; x++) {
+      y = 0;
+      do {
+         if (dnf_integers[x].num_alloc <= y) {
+            dnf_integers[x].num = (int*)ite_recalloc((void*)dnf_integers[x].num, dnf_integers[x].num_alloc, 
+                  dnf_integers[x].num_alloc+100, sizeof(int), 9, "integers[].num");
+            dnf_integers[x].num_alloc += 100;
+         }
+         int intnum;
+         if (fscanf(finputfile, "%d", &intnum) != 1) {
+            fprintf(stderr, "Error while parsing DNF input\n");
+            exit(1);
+         }
+         if(abs(intnum) > dnf_numinp) { //Could change this to be number of vars instead of max vars
+            fprintf(stderr, "Variable in input file is greater than allowed:%ld...exiting\n", (long)dnf_numinp);
+            exit(1);				
+         }
+#ifdef CNF_USES_SYMTABLE
+         intnum = intnum==0?0:i_getsym_int(intnum, SYM_VAR);
+#endif
+         dnf_integers[x].num[y] = intnum;
+         y++;
+         cnf_numout++;
+      } while(dnf_integers[x].num[y - 1] != 0);
+      dnf_integers[x].max = y-1;
+   }
+   int extra=0;
+   if (fscanf(finputfile, "%d", &extra) == 1) {
+      fprintf(stderr, "Error while parsing DNF input: extra data\n");
+      exit(1);
+   }
+
+   // DNF -> CNF
+   cnf_numout = cnf_numout + 1; // add the big clause
+   cnf_numinp = dnf_numinp + dnf_numout; // for every clause add a variable
+   cnf_integers = (store*)ite_calloc(cnf_numout+1, sizeof(store), 9, "integers");  // the big clause
+
+   int cnf_out_idx = 1; /* one based index? */
+   cnf_integers[cnf_out_idx].num_alloc = dnf_numout+1;
+   cnf_integers[cnf_out_idx].num = (int*)ite_calloc(cnf_integers[cnf_out_idx].num_alloc, sizeof(int), 9, "integers[].num");
+	for(int y = 0; y < dnf_numout; y++) {
+      cnf_integers[cnf_out_idx].num[y] = y + dnf_numinp + 1;
+#ifdef CNF_USES_SYMTABLE
+      i_getsym_int(y+dnf_numinp+1, SYM_VAR);
+#endif
+	}
+   cnf_integers[cnf_out_idx].num[dnf_numout] = 0;
+   cnf_out_idx++;
+
+	for(int x = 0; x < dnf_numout; x++) {
+      cnf_integers[cnf_out_idx].num_alloc = dnf_integers[x].max+2; /* plus clause var and 0 */
+      cnf_integers[cnf_out_idx].num = (int*)ite_calloc(cnf_integers[cnf_out_idx].num_alloc, 
+            sizeof(int), 9, "integers[].num");
+      cnf_integers[cnf_out_idx].num[0] = x + dnf_numinp + 1;
+
+      int y;
+      for(y = 0; dnf_integers[x].num[y] != 0; y++) {
+         cnf_integers[cnf_out_idx].num[y+1] = -dnf_integers[x].num[y];
+		}
+      cnf_integers[cnf_out_idx].num[y+1] =  0;
+      assert(y == dnf_integers[x].max);
+      cnf_out_idx++;
+
+      for(int y = 0; dnf_integers[x].num[y] != 0; y++) {
+         cnf_integers[cnf_out_idx].num_alloc = 3;
+         cnf_integers[cnf_out_idx].num = (int*)ite_calloc(cnf_integers[cnf_out_idx].num_alloc, 
+            sizeof(int), 9, "integers[].num");
+         cnf_integers[cnf_out_idx].num[0] = -(x + dnf_numinp + 1);
+         cnf_integers[cnf_out_idx].num[1] = dnf_integers[x].num[y];
+         cnf_integers[cnf_out_idx].num[2] = 0;
+         cnf_out_idx++;
+      }
+	}
+   assert(cnf_numout == cnf_out_idx-1);
+
+   long x;
+   for(x = 1; x <= cnf_numout; x++) {
+      cnf_integers[x].length = cnf_integers[x].num_alloc-1;;
+      cnf_integers[x].dag =  -1;
+   }
+   numinp = cnf_numinp;
+   numout = cnf_numout;
+   cnf_process(cnf_integers, 0, NULL);
+   for(x = 1; x < cnf_numout + 1; x++) {
+      ite_free((void**)&cnf_integers[x].num);
+	}
+   for(x = 0; x < dnf_numout + 1; x++) {
+      ite_free((void**)&dnf_integers[x].num);
+	}
+	ite_free((void**)&cnf_integers);
+	ite_free((void**)&dnf_integers);
+	
+	d3_printf2("Number of BDDs - %ld\n", numout);
+	d2_printf1("\rReading DNF ... Done                   \n");
+}
+
 /*
 void DNF_to_CNF () {
 	typedef struct {
 		int num[50];
    } node1;
 	node1 *integers;
->>>>   char string;
 	int lines = 0, length;
 	int y = 0;
 	fscanf(finputfile, "%ld %ld\n", &numinp, &numout);
@@ -983,7 +1164,6 @@ void DNF_to_CNF () {
       
       do {
 			fscanf(finputfile, "%d", &integers[x].num[y]);
->>>>			string = fgetc(finputfile);
 			y++;
 			lines++;
 		}

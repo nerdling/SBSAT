@@ -42,5 +42,6 @@
 
 void write_output(char formatout, Tracer * &tracer);
 int read_input(Tracer * &tracer);
+void DNF_to_BDD ();
 
 #endif

@@ -116,24 +116,14 @@ read_input(Tracer * &tracer)
 	  
   case 'u': Smurfs_to_BDD (); break;
 
-  case 'c': if (formatout == 'l') {
-               //Do_Lemmas ();
-               return 1; 
-            } else CNF_to_BDD (1);
+  case 'c': CNF_to_BDD (1);
             break;
-/*
-  case 'd': if (formatout == 'd') {
-               if (KEDAR) fprintf (stdout, "S*****\n");
-               DNF_to_CNF ();
-               if (KEDAR) fprintf (stdout, "F*****\n");
-               return 1; 
-            } else CNF_to_BDD (0);
+
+  case 'd': DNF_to_BDD ();
             break;
-*/
+
   case 's': if (formatout == 'c') {
-              if (KEDAR) fprintf (stdout, "S*****\n");
               SAT_to_CNF ();
-              if (KEDAR) fprintf (stdout, "F*****\n");
               return 1;
             } else {
 

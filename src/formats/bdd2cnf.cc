@@ -707,7 +707,7 @@ Recd *resolve (int *truth_table, int sign, int no_vars, int no_out_vars) {
 }
 
 void printBDDToCNFQM () {
-   int *tempint = NULL, z;
+   int *tempint=NULL, z;
    long tempint_max=0;
 	
    func_object **funcs;
