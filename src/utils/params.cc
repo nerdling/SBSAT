@@ -306,6 +306,8 @@ t_opt options[] = {
 { &TRACE_START, "", "brancher-trace-start", P_INT, 
 		V(i:0,"0"), V(i:0,"0"), VAR_NORMAL, 0,
 		"number of backtracks to start the trace (when debug=9)"},
+{ &BDDWalkCutoff, "", "cutoff", P_INT, V(i:0,"0"), V(i:100000,"100000"), VAR_NORMAL, 0,
+		"BDDWalkSAT number of flips per random restart"},
 
 /* 
  * Johnson heuristic options 

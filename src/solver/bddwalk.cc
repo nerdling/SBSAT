@@ -121,12 +121,11 @@ int wp_numerator = 10;//NOVALUE;	/* choose a random path to true with numerator/
 int wp_denominator = 1000;
 
 long int numflip; /* number of single variable flips so far */
-long int numlook; /* used to make sure we don't traversal BDDs we've already */
+long int numlook; /* used to make sure we don't traverse BDDs we've already */
                   /* traversed this same flip */
 
 int numrun = BIG;
-int cutoff = 10000000; //BIG
-int base_cutoff = 1000000;
+long cutoff = 100000; /* number of flips per random restart */
 int target = 0; /* number of BDDs left to be satisfied for a solution */
 int numtry = 0; /* total attempts at solutions */
 int numsol = NOVALUE; /* stop after finding this many solutions */
@@ -222,7 +221,8 @@ void print_statistics_final(void);
 
 int walkSolve()
 {
-	if(numsol == NOVALUE) numsol = max_solutions; //get max_solutions from the command line
+	numsol = max_solutions; //get numsol from the command line
+	cutoff = BDDWalkCutoff; //get cutoff from the command line
 	gettimeofday(&tv,&tzp);
 	seed = (( tv.tv_sec & 0177 ) * 1000000) + tv.tv_usec;
 	if (numsol==NOVALUE || numsol>numrun) numsol = numrun;

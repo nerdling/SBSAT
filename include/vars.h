@@ -221,6 +221,7 @@ extern float JHEURISTIC_K; // Parameter to the Johnson Village heuristic.
 extern float JHEURISTIC_K_TRUE; 
 extern float JHEURISTIC_K_INF; 
 
+extern long BDDWalkCutoff;
 extern char preset_variables_string[2048];
 extern int prover3_max_vars;
 extern int do_split_max_vars;
