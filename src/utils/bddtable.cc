@@ -440,9 +440,9 @@ bdd_gc(int force)
          chain_free = pre_pool_chain_free;
          *chain_free = NULL; 
          bddtable_free_count -= max;
-         for(j=i;j<=numBDDPool;j++) bddmemory[j] = bddmemory[j+1];
+         for(j=i;j<numBDDPool;j++) bddmemory[j] = bddmemory[j+1];
          memset((void*)&(bddmemory[j]), 0, sizeof(bdd_pool_type));
-         numBDDPool--;
+         numBDDPool--; i--;
       }
    }
  
