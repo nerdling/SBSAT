@@ -6,7 +6,6 @@ int arrFnSmurfAuTypes[] = { AUTARKY_FUNC, 0 };
 
 t_smurf_au_chain *arrSmurfAuChain;
 
-
 SmurfAuState *pTrueSmurfAuState = NULL;  // Pointer to the SmurfAu state
 //representing the Boolean function 'true'.
 
@@ -19,7 +18,7 @@ FnSmurfAuInit()
 
       procCreateFunction[i] = SmurfAuCreateFunction;
 
-      // Functino Stack
+      // Function Stack
       procSave2Stack[i] = SmurfAuSave2Stack;
       procRestoreFromStack[i] = SmurfAuRestoreFromStack;
 

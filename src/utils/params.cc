@@ -53,6 +53,7 @@ LONG64 ite_counters[MAX_COUNTER];
 double ite_counters_f[MAX_COUNTER_F];
 int  autarky=0; /* autarkies enabled */
 char debug_dev[128]="stderr";
+int USE_AUTARKY_LEMMAS;
 
 void DO_ALL(int);
 void fn_parse_filename(char *filename);
@@ -281,6 +282,8 @@ t_opt options[] = {
                 "set the maximum # of lemmas"}, 
 { &USE_AUTARKY_SMURFS, "", "autarky-smurfs", P_INT, V(i:0,"0"), V(i:0,"0"), VAR_NORMAL, 0,
 		"Use Autarky Smurfs in the Solver (1/0)"},
+{ &USE_AUTARKY_LEMMAS, "", "autarky-lemmas", P_INT, V(i:0,"0"), V(i:0,"0"), VAR_NORMAL, 0,
+		"Use Autarky Lemmas in the Solver (Currently Unavailiable)"},
 { &K_TOP_VARIABLES, "", "K-top-variables", P_INT, V(i:0,"0"), V(i:0,"0"), VAR_NORMAL, 0,
 		"Try to set top K variables and collect common inferences."},
 { &sbj, "", "sbj", P_INT, V(i:0,"0"), V(i:0,"0"), VAR_NORMAL, 0,
@@ -458,6 +461,9 @@ finish_params()
       exit(1);
    }
 
+	if(USE_AUTARKY_LEMMAS == 1) NO_AU_LEMMAS = 0;
+	else if(USE_AUTARKY_LEMMAS == 0) NO_AU_LEMMAS = 1;
+	
    /* check validity of disabling backjumping AND forcing lemmas to be 0 */
    if (backjumping == 0) {
       if (MAX_NUM_CACHED_LEMMAS == 0) NO_LEMMAS=1;

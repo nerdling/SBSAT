@@ -90,8 +90,7 @@ void printBDDfile(BDDNode * bdd, FILE * fout) {
    printBDDfile(bdd->thenCase, fout);
    //fprintf (stdout, "[%d]", bdd->variable);
 	/* D_4(fprintf(fout, "[%s", s_name(bdd->variable));) */
-	fprintf(fout, "(%d)", bdd->variable);
-	fprintf(fout, "]");
+	fprintf(fout, "[%d]", bdd->variable);
    printBDDfile(bdd->elseCase, fout);
    fprintf(fout, ")");
 }

@@ -39,7 +39,7 @@
 #include "sbsat_solver.h"
 #include "solver.h"
 
-#define SIZE_SMURF_STATE_POOL 20000 // Size of initial pool of SmurfAu states.
+#define SIZE_SMURF_AU_STATE_POOL 20000 // Size of initial pool of SmurfAu states.
 
 typedef struct _t_smurf_austate_pool {
    SmurfAuState *memory;
@@ -58,7 +58,7 @@ InitializeSmurfAuStatePool()
    t_smurf_austate_pool *tmp_smurf_austate_pool;
    tmp_smurf_austate_pool = (t_smurf_austate_pool*)ite_calloc(1, sizeof(t_smurf_austate_pool),
          9, "tmp_smurf_austate_pool");
-   tmp_smurf_austate_pool->max = SIZE_SMURF_STATE_POOL;
+   tmp_smurf_austate_pool->max = SIZE_SMURF_AU_STATE_POOL;
    tmp_smurf_austate_pool->memory = (SmurfAuState *)ite_calloc(tmp_smurf_austate_pool->max, sizeof(SmurfAuState),
         9, "tmp_smurf_austate_pool->memory");
 
@@ -83,7 +83,7 @@ AllocateSmurfAuState()
    }
    smurf_austate = smurf_austate_pool->memory+smurf_austate_pool_index;
    smurf_austate_pool_index++;
-   ite_counters[SMURF_STATES]++;
+   ite_counters[SMURF_AU_STATES]++;
    return smurf_austate;
 }
 
@@ -117,9 +117,6 @@ FreeSmurfAuStatePool()
          }
          if (arrSmurfAuStatePool[i].vbles.arrElts != NULL)
             free(arrSmurfAuStatePool[i].vbles.arrElts);
-         if (arrSmurfAuStatePool[i].arrHeuristicXors != NULL) 
-            free(arrSmurfAuStatePool[i].arrHeuristicXors);
-         
       }
       free(smurf_austate_pool_head->memory);
       tmp_smurf_austate_pool = (t_smurf_austate_pool*)(smurf_austate_pool_head->next);
@@ -131,7 +128,7 @@ FreeSmurfAuStatePool()
 ITE_INLINE void
 SmurfAuStatesDisplayInfo()
 {
-   d3_printf2("Number of SmurfAu states: %ld\n", (long)(ite_counters[SMURF_STATES]));
+   d3_printf2("Number of autarky Smurf states: %ld\n", (long)(ite_counters[SMURF_AU_STATES]));
 }
 
 /* don't use -- bad one */

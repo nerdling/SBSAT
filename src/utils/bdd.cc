@@ -1268,7 +1268,8 @@ BDDNode *_possible_BDD(BDDNode *f, int v) {
 	BDDNode *cached = itetable_find_or_add_node(8, f, var, NULL);
 	if (cached) return (f->tmp_bdd = cached);
 	
-	if(f->variable < v) return (f->tmp_bdd = false_ptr);
+	//if(f->variable < v) return (f->tmp_bdd = false_ptr);
+	if(f->variable < v) return (f->tmp_bdd = var);
 	if(f->variable == v) {
 		BDDNode *r, *e;
 		if(f->t_and_not_e_bdd != NULL) r = f->t_and_not_e_bdd;

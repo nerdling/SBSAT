@@ -73,6 +73,7 @@ int DO_CLEAR_FUNCTION_TYPE = 1;
 int DO_PROVER3 = 1;
 
 int NO_LEMMAS = 0;
+int NO_AU_LEMMAS = 0;
 
 int PARAMS_DUMP = 0;
 

@@ -182,27 +182,27 @@ ITE_INLINE void
 FreeSmurfAuStatePool();
 
 ITE_INLINE TransitionAu *
-FindTransitionAu(SmurfAuState *pState, int nVble, int nVbleValue);
+FindTransitionAu(SmurfAuState *pState, int nVble, int nVbleValue, int nAutarkyVble);
 ITE_INLINE TransitionAu *
-FindOrAddTransitionAu(SmurfAuState *pState, int nVble, int nVbleValue);
+FindOrAddTransitionAu(SmurfAuState *pState, int nVble, int nVbleValue, int nAutarkyVble);
 
 ITE_INLINE void AllocateSmurfAuStatesStack(int newsize);
 ITE_INLINE void AllocateSpecialFnStack(int newsize);
 
 ITE_INLINE TransitionAu *
-CreateTransitionAu(SmurfAuState *pState, int i, int nSolverVble, int value);
+CreateTransitionAu(SmurfAuState *pState, int i, int nSolverVble, int value, int nAutarkyVble);
 ITE_INLINE TransitionAu *
-FindTransitionAuDebug (SmurfAuState * pState, int i, int nVble, int nVbleValue);
+FindTransitionAuDebug (SmurfAuState * pState, int i, int nVble, int nVbleValue, int nAutarkyVble);
 #define FindTransitionAu FindTransitionAuDebug
 //#define FindTransitionAu(pState, i, nVble, nVbleValue) (pState->arrTransitionAus + 2 * i + nVbleValue)
 #define FindOrAddTransitionAu FindTransitionAu
 
 extern SmurfAuState *pTrueSmurfAuState;
-ITE_INLINE SmurfAuState * BDD2SmurfAu(BDDNodeStruct *pFunc);
+ITE_INLINE SmurfAuState * BDD2SmurfAu(BDDNodeStruct *pFunc, int nAutarkyVble);
 
 ITE_INLINE TransitionAu* AddStateTransitionAu(
          SmurfAuState *pSmurfAuState, int i, int nVble,
-         int nValueOfVble, BDDNodeStruct *pFuncEvaled,
+         int nValueOfVble, int nAutarkyVble, BDDNodeStruct *pFuncEvaled,
          SmurfAuState *pSmurfAuStateOfEvaled);
 
 ITE_INLINE void InitializeSmurfAuStatePool (int nNumSmurfAuStatesInPool);

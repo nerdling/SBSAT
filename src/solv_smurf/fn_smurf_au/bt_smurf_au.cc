@@ -51,29 +51,20 @@ CheckSmurfAuInferences(int nSmurfAuIndex, int *arrInferences, int nNumInferences
 
       LemmaBlock *pLemma = NULL;
       LemmaInfoStruct *pLemmaInfo = NULL;
-      if (NO_LEMMAS == 0) {
-        // fprintf(stderr, "FIXME: here\n"); exit(1);
+		if (NO_AU_LEMMAS == 0) {
+			//Au smurfs don't give autarky lemmas just yet. To be added later.
+		}
+      
+		if (NO_LEMMAS == 0) { 
+			//Au smurfs give 1 variable lemmas.
+			//Create lemma 
+         int *arrLits = (int*)ite_calloc(1, sizeof(int), 9, "arrLits"); //Lemma of size 1
+			arrLits[0] = nNewInferredAtom * (value==BOOL_FALSE?-1:1);
          
-         // create lemma 
-         arrSolverFunctions[nSmurfAuIndex].fn_smurf_au.arrSmurfAuPath.literals[arrSolverFunctions[nSmurfAuIndex].fn_smurf_au.arrSmurfAuPath.idx] 
-            = nNewInferredAtom * (value==BOOL_FALSE?-1:1);
-
-#ifdef MATCH_ORIGINAL_LEMMA_ORDER
-         int *arrLits = (int*)ite_calloc(arrSolverFunctions[nSmurfAuIndex].fn_smurf_au.arrSmurfAuPath.idx+1, sizeof(int),
-               9, "arrLits");
-         for (int i=0; i<arrSolverFunctions[nSmurfAuIndex].fn_smurf_au.arrSmurfAuPath.idx+1;i++)
-            arrLits[arrSolverFunctions[nSmurfAuIndex].fn_smurf_au.arrSmurfAuPath.idx+1-i-1] = arrSolverFunctions[nSmurfAuIndex].fn_smurf_au.arrSmurfAuPath.literals[i];
-
-         pLemmaInfo=AddLemma(arrSolverFunctions[nSmurfAuIndex].fn_smurf_au.arrSmurfAuPath.idx+1,
-               arrLits//arrSolverFunctions[nSmurfAuIndex].fn_smurf_au.arrSmurfAuPath.literals
-               , false, NULL, NULL);
+         pLemmaInfo=AddLemma(1, arrLits, false, NULL, NULL);
          pLemma = pLemmaInfo->pLemma;
          free(arrLits);
-#else
-         pLemmaInfo=AddLemma(arrSolverFunctions[nSmurfAuIndex].fn_smurf_au.arrSmurfAuPath.idx+1,
-               arrSolverFunctions[nSmurfAuIndex].fn_smurf_au.arrSmurfAuPath.literals, false, NULL, NULL);
-         pLemma = pLemmaInfo->pLemma;
-#endif
+			
          //DisplayLemmaStatus(pLemma, arrSolution);
       } else {
          //pLemma = NULL;
@@ -82,7 +73,7 @@ CheckSmurfAuInferences(int nSmurfAuIndex, int *arrInferences, int nNumInferences
 
       if (nCurrentAtomValue == BOOL_UNKNOWN)
       {
-         ite_counters[INF_SMURF]++;
+         ite_counters[INF_SMURF_AU]++;
          InferLiteral(nNewInferredAtom, value, false, pLemma, pLemmaInfo, 1);
       }
       else // if (nCurrentAtomValue != value)
@@ -94,7 +85,7 @@ CheckSmurfAuInferences(int nSmurfAuIndex, int *arrInferences, int nNumInferences
 
          pConflictLemma = pLemma;
          pConflictLemmaInfo = pLemmaInfo; /* so we can free it */
-         return ERR_BT_SMURF;
+         return ERR_BT_SMURF_AU;
       }
    }
    return 0;
@@ -105,7 +96,7 @@ UpdateRegularSmurfAu(int nSmurfAuIndex)
 {
    SmurfAuState *pState;
 
-   d9_printf2("Visiting Regular SmurfAu #%d\n", nSmurfAuIndex);
+   d9_printf2("Visiting Autarky Smurf #%d\n", nSmurfAuIndex);
 
    pState = arrSolverFunctions[nSmurfAuIndex].fn_smurf_au.pCurrentState;
 
@@ -122,19 +113,23 @@ UpdateRegularSmurfAu(int nSmurfAuIndex)
 
       /* if no more instantiated variables */
       if (k == nNumElts) break;
-
+		
       //Save_arrCurrentStates(nSmurfAuIndex);
 
-      if (NO_LEMMAS == 0) {
+      if (NO_AU_LEMMAS == 0) {
          // keep track of the path for lemmas
          // the atoms in the path is reversed for lemmas
-         arrSolverFunctions[nSmurfAuIndex].fn_smurf_au.arrSmurfAuPath.literals[arrSolverFunctions[nSmurfAuIndex].fn_smurf_au.arrSmurfAuPath.idx++] 
-            = arrElts[k] * (arrSolution[vble]==BOOL_FALSE?1:-1);
+			
+			// Right now there are no autarky lemmas, so this is commented out
+			// This code will probably have to change as well though.
+			//arrSolverFunctions[nSmurfAuIndex].fn_smurf_au.arrSmurfAuPath.literals[arrSolverFunctions[nSmurfAuIndex].fn_smurf_au.arrSmurfAuPath.idx++] 
+         //   = arrElts[k] * (arrSolution[vble]==BOOL_FALSE?1:-1);
       }
 
       // Get the transition.
-      TransitionAu *pTransitionAu = FindTransitionAu(pState, k, vble, arrSolution[vble]);
-      if (pTransitionAu->pNextState == NULL) pTransitionAu = CreateTransitionAu(pState, k, vble, arrSolution[vble]);
+		int nAutarkyVble = arrSolverFunctions[nSmurfAuIndex].fn_smurf_au.nSmurfAuEqualityVble;
+      TransitionAu *pTransitionAu = FindTransitionAu(pState, k, vble, arrSolution[vble], nAutarkyVble);
+      if (pTransitionAu->pNextState == NULL) pTransitionAu = CreateTransitionAu(pState, k, vble, arrSolution[vble], nAutarkyVble);
       assert(pTransitionAu->pNextState != NULL);
 
       if (pTransitionAu->positiveInferences.nNumElts &&
@@ -142,14 +137,14 @@ UpdateRegularSmurfAu(int nSmurfAuIndex)
                nSmurfAuIndex,
                pTransitionAu->positiveInferences.arrElts,
                   pTransitionAu->positiveInferences.nNumElts,
-                  BOOL_TRUE)) return ERR_BT_SMURF;
+                  BOOL_TRUE)) return ERR_BT_SMURF_AU;
 
          if (pTransitionAu->negativeInferences.nNumElts &&
                CheckSmurfAuInferences(
                   nSmurfAuIndex,
                   pTransitionAu->negativeInferences.arrElts,
                   pTransitionAu->negativeInferences.nNumElts,
-                  BOOL_FALSE)) return ERR_BT_SMURF;
+                  BOOL_FALSE)) return ERR_BT_SMURF_AU;
 
          pState->cVisited |= 1;
          arrSolverFunctions[nSmurfAuIndex].fn_smurf_au.pCurrentState =
@@ -159,7 +154,7 @@ UpdateRegularSmurfAu(int nSmurfAuIndex)
          {
             nNumUnresolvedFunctions--;
             TB_9(
-                  d9_printf3("Decremented nNumUnresolvedFunctions to %d due to smurf_au # %d\n",
+                  d9_printf3("Decremented nNumUnresolvedFunctions to %d due to autarky smurf # %d\n",
                      nNumUnresolvedFunctions, nSmurfAuIndex);
                )
                break; // break the for all vbles in smurf_au loop
@@ -185,7 +180,7 @@ int SmurfAuUpdateAffectedFunction_Infer(void *oneafs, int x)
 int SmurfAuSave2Stack(int nFnId, void *one_stack)
 {
    ((FnStack*)one_stack)->fn_smurf_au.state = arrSolverFunctions[nFnId].fn_smurf_au.pCurrentState;
-   if (NO_LEMMAS == 0) 
+   if (NO_AU_LEMMAS == 0) 
       ((FnStack*)one_stack)->fn_smurf_au.path_idx = arrSolverFunctions[nFnId].fn_smurf_au.arrSmurfAuPath.idx;
    return NO_ERROR;
 }
@@ -195,7 +190,7 @@ int SmurfAuRestoreFromStack(void *one_stack)
    int nFnId = ((FnStack*)one_stack)->nFnId;
    arrSolverFunctions[nFnId].fn_smurf_au.pPrevState =
    arrSolverFunctions[nFnId].fn_smurf_au.pCurrentState = ((FnStack*)one_stack)->fn_smurf_au.state;
-   if (NO_LEMMAS == 0) 
+   if (NO_AU_LEMMAS == 0)
       arrSolverFunctions[nFnId].fn_smurf_au.arrSmurfAuPath.idx = ((FnStack*)one_stack)->fn_smurf_au.path_idx;
    return NO_ERROR;
 }

@@ -44,63 +44,63 @@ AddStateTransitionAu(SmurfAuState *pSmurfAuState,
                    int i,
                    int nVble,
                    int nValueOfVble,
+						 int nAutarkyVble,
                    BDDNodeStruct *pFuncEvaled,
                    SmurfAuState *pSmurfAuStateOfEvaled
                    )
 {
-  assert(pSmurfAuState != pSmurfAuStateOfEvaled);
-
-  TransitionAu *pTransitionAu = FindOrAddTransitionAu(pSmurfAuState, i, nVble, nValueOfVble);
-
-  assert(pTransitionAu->pNextState == NULL);
-  //assert(pTransitionAu->pState == NULL);
-
-  pTransitionAu->pNextState = pSmurfAuStateOfEvaled;
-  //pTransitionAu->pState = pSmurfAuState;
-
-  infer *head = pFuncEvaled->inferences;
-  int size=0;
-  while(head != NULL) {
-     if (head->nums[1] == 0) size++;
-     head = head->next;
-  }
-
-  int *ptr = NULL;
-  if (size) {
-     ptr = (int*)ite_calloc(size, sizeof(int), 9, "inferences");
-
-     // Take the positive inferences from *pFuncEvaled and store them
-     // in the transition.
-     head = pFuncEvaled->inferences;
-     int i=0;
-     while(head != NULL) {
-        if (head->nums[1] == 0) {
-           if (head->nums[0] > 0) {
-              ptr[i++] = arrIte2SolverVarMap[head->nums[0]];
-           }
-        }
-        head = head->next;
-     }
-     pTransitionAu->positiveInferences.arrElts = ptr;
-     pTransitionAu->positiveInferences.nNumElts = i;
-     pTransitionAu->negativeInferences.arrElts = ptr+i;
-     pTransitionAu->negativeInferences.nNumElts = size-i;
-     head = pFuncEvaled->inferences;
-     while(head != NULL) {
-        if (head->nums[1] == 0) {
-           if (head->nums[0] < 0) {
-              ptr[i++] = arrIte2SolverVarMap[-head->nums[0]];
-           }
-        }
-        head = head->next;
-     }
-  }
-  return pTransitionAu;
+	//Make sure the state is not transitioning to itself.
+	assert(pSmurfAuState != pSmurfAuStateOfEvaled);
+	
+	TransitionAu *pTransitionAu = FindOrAddTransitionAu(pSmurfAuState, i, nVble, nValueOfVble, nAutarkyVble);
+	
+	assert(pTransitionAu->pNextState == NULL);
+	//assert(pTransitionAu->pState == NULL);
+	
+	pTransitionAu->pNextState = pSmurfAuStateOfEvaled;
+	//pTransitionAu->pState = pSmurfAuState;
+	
+	infer *head = pFuncEvaled->inferences;
+	int size=0;
+	int *ptr = NULL;
+	if(head != NULL) {
+		//There should never be an inference except on the autarky variable.
+		//If this function has an inference, it must be the autarky variable.
+		ptr = (int*)ite_calloc(1, sizeof(int), 9, "inferences"); //Just 1 inference.
+		pTransitionAu->positiveInferences.arrElts = ptr;
+		pTransitionAu->negativeInferences.arrElts = ptr;
+		
+		int i=0;
+		while(head != NULL) {
+			if (head->nums[1] == 0) {
+				if (head->nums[0] > 0) {
+					if(arrIte2SolverVarMap[head->nums[0]] == nAutarkyVble) {
+						ptr[0] = nAutarkyVble;
+						pTransitionAu->positiveInferences.nNumElts = 1;
+						pTransitionAu->negativeInferences.nNumElts = 0;
+						break;
+					}
+				} else if (head->nums[0] < 0) {
+					if(arrIte2SolverVarMap[-head->nums[0]] == nAutarkyVble) {
+						ptr[0] = nAutarkyVble;
+						pTransitionAu->positiveInferences.nNumElts = 0;
+						pTransitionAu->negativeInferences.nNumElts = 1;
+						break;
+					}
+				}
+			}
+			head = head->next;
+		}
+		assert(head != NULL);
+		//If head == NULL that means the autarky BDD was able to make an inference
+		//that did not involve the autarky variable.
+	}
+	return pTransitionAu;
 }
 
 
 ITE_INLINE TransitionAu *
-FindTransitionAuDebug (SmurfAuState * pState, int i, int nVble, int nVbleValue)
+FindTransitionAuDebug (SmurfAuState * pState, int i, int nVble, int nVbleValue, int nAutarkyVble)
 {
   assert (pState != pTrueSmurfAuState);
   assert (pState->vbles.nNumElts > i);
