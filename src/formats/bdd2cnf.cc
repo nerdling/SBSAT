@@ -925,6 +925,6 @@ void printBDDToCNF () {
 		fprintf (foutputfile, "0\n");
 		delete clauses[x].num;
 	}
-	fprintf(foutputfile, "c");
+	fprintf(foutputfile, "c end");
 	delete clauses;
 }
