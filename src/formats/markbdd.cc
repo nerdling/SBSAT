@@ -167,6 +167,7 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 				sym_regex_free(&myrg);
 			}
 		}
+      strcpy (macros, "initialbranch");
       return true_ptr;
 	}
 	if (!strcasecmp (macros, "define")) {
@@ -460,14 +461,16 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 		fprintf(stdout, "\n");
       print_bdd (v1);
 		fprintf(stdout, "\n");
-      return true_ptr;
+      strcpy (macros, "pprint_tree");
+      return v1;
 	}
 	if (!strcasecmp (macros, "print_tree")) {
       BDDNode * v1;
       int which_zoom = 0;
       v1 = putite (intnum, bdd);
       printBDDTree (v1, &which_zoom);
-      return true_ptr;
+      strcpy (macros, "print_tree");
+      return v1;
 	}
 	if (!strcasecmp (macros, "gcf")) {
       BDDNode * v1, *v2;
