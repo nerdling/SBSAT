@@ -210,12 +210,15 @@ read_ini(char *filename)
          continue;
       }
       ungetc(c, fini);
-      fscanf(fini, "%s=", keyword);
+      fscanf(fini, "%s", keyword);
       p_keyword=strchr(keyword, '='); 
       if (p_keyword) {
          *p_keyword=0;
          p_keyword++;
       }
+
+      //set_param_value(keyword, p_keyword);
+
       if ((p_opt = lookup_keyword(keyword))==NULL || 
             (p_opt->var_type&(VAR_INI+VAR_CHECK))==0)
       {
@@ -231,14 +234,17 @@ read_ini(char *filename)
          continue;
       }
 
+      /* set src for all vars with the same target before this one */
       if (p_opt > options) {
          t_opt *x_opt = p_opt;
          while ((--x_opt)->p_target == p_opt->p_target) x_opt->p_src = 1;
       }
+      /* and after this one */
       {
          t_opt *x_opt = p_opt;
          while ((++x_opt)->p_target == p_opt->p_target) x_opt->p_src = 1;
       }
+      /* set src = ini file */
       p_opt->p_src = 1;
 
       if (p_opt->p_type <= P_NONE || p_opt->p_type == P_FN) 
@@ -334,7 +340,7 @@ read_ini(char *filename)
                 skip_eol(fini);
                 continue;
              };
-             ((p_fn_int)(p_opt->p_target))(arg);
+             ((p_fn_int)(p_opt->p_target))(arg/*, p_keyword*/);
              break;
           default: break;
          }
@@ -453,7 +459,7 @@ read_cmd(int argc, char *argv[])
                 exit(1);
                 continue;
              };
-             ((p_fn_int)(p_opt->p_target))(arg);
+             ((p_fn_int)(p_opt->p_target))(arg/*, argv[i]*/);
              break;
           default: break;
          };

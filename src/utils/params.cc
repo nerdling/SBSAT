@@ -442,8 +442,19 @@ ctrl_c_proc(int x)
 }
 
 void
-DO_ALL(int value)
+DO_ALL(int value/* , char *s_value*/)
 {
+/*
+   char s_value[32];
+   sprintf(s_value, "%d", value);
+   set_param_value("Cl", s_value); // and it knows src //
+   set_param_value("Co", s_value); // and it knows src //
+   set_param_value("Pr", s_value); // and it knows src //
+   set_param_value("St", s_value); // and it knows src //
+   set_param_value("Ex", s_value); // and it knows src //
+   set_param_value("Ea", s_value); // and it knows src //
+   set_param_value("Dc", s_value); // and it knows src //
+*/
    DO_CLUSTER = value;
    DO_COFACTOR = value;
    DO_PRUNING = value;
