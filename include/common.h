@@ -108,7 +108,6 @@ typedef struct BDDNodeStruct {
    infer *inferences;
    SmurfFactoryAddons *addons;
    BDDNodeStruct *next;
-   BDDNodeStruct() { inferences = NULL; variable = 0; addons = NULL; t_var = 0;};
 } BDDNode;
 
 extern   int nmbrFunctions;
