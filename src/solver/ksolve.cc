@@ -42,13 +42,22 @@ ITE_INLINE int InitBrancherX();
 extern BacktrackStackEntry *arrBacktrackStack;
 
 ITE_INLINE void
-k_add2list(int **list, int *list_num, int *list_max)
+k_add2list(int **list, int *list_num, int *list_max, int *my_list, int my_list_len)
 {
    BacktrackStackEntry *ptr = arrBacktrackStack;
-
+   /*
+   fprintf(stderr, "\nnono list: ");
+   for(int i=0;i<my_list_len;i++)
+      fprintf(stderr, "%d ", my_list[i]);
+   fprintf(stderr, "\n");
+*/
    for(;ptr < pBacktrackTop;ptr++) {
       assert(NO_LEMMAS == 0);
-      if (ptr->pLemma == NULL) continue; // won't work for -L 0 !!!
+      int j;
+      for(j=0;j<my_list_len;j++) {
+         if (my_list[j] == (arrSolution[ptr->nBranchVble]==BOOL_TRUE?1:-1)*ptr->nBranchVble) break;
+      }
+      if (j<my_list_len) continue;
       if ((*list_num)+1 >= *list_max) {
          *list = (int*)ite_recalloc(*(void**)list, *list_max, (*list_max)+100, sizeof(int), 9, "add2list list");
          (*list_max) += 100;
@@ -87,7 +96,7 @@ kSolver(int k_top_vars)
    d3_printf2("Starting kSolver with %d top variables\n", k_top_vars);
    int i;
    int nInferredAtom=0, nInferredValue=0;
-   int *infs=NULL, infs_num=0, infs_max=0;
+   int *infs=NULL, infs_num=0, infs_max=0, bt_start=0;
    int *top_vars = (int*)ite_calloc(k_top_vars+2, sizeof(int), 9, "kSolver top_vars");
    int *top_vars_vals = (int*)ite_calloc(k_top_vars+2, sizeof(int), 9, "kSolver top_vars_vals");
    d4_printf1("K-top variables are: ");
@@ -100,27 +109,30 @@ kSolver(int k_top_vars)
    }
    d4_printf1("\n");
    if (i==k_top_vars) {
+ksolver_restart:
       for(int k=1;k<nNumVariables;k++) {
-         fprintf(stderr, " %d/%d\r", k, nNumVariables);
+         fprintf(stderr, " kSolver %d/%d(%d) \r", k, nNumVariables, bt_start);
          int j;
          int counter=0;
          for(j=0;j<k_top_vars;j++) {
             if (top_vars[j] == k) break;
-            top_vars_vals[j] = -1*top_vars[j];
+            top_vars_vals[j+bt_start] = -1*top_vars[j];
          }
          if (j != k_top_vars) continue; // don't use this variable
-         top_vars_vals[k_top_vars] = -1*k;
+         top_vars_vals[k_top_vars+bt_start] = -1*k;
          top_vars[k_top_vars] = k;
          infs_num=0; // reset infs array
          int bt=k_top_vars; // there is k_top_vars+1 variables
          while (1) {
-      /*      for(int m=0;m<=k_top_vars;m++)
+            /*
+            for(int m=0;m<=k_top_vars+bt_start;m++)
                fprintf(stderr, "%d ", top_vars_vals[m]);
             fprintf(stderr, " (");
             for(int m=0;m<infs_num;m++)
                fprintf(stderr, "%d ", infs[m]);
             fprintf(stderr, ")\n");
-*/
+            */
+
             int ret;
             ret = InitBrancherX();
             if (ret != SOLV_UNKNOWN) return ret; // should never happen
@@ -129,7 +141,7 @@ kSolver(int k_top_vars)
             if (ret == SOLV_UNKNOWN) {
                if (counter == 0) {
                   // collect all inferenced literals 
-                  k_add2list(&infs, &infs_num, &infs_max);
+                  k_add2list(&infs, &infs_num, &infs_max, top_vars_vals, k_top_vars+bt_start);
                } else {
                   // intersect inferenced literals
                   k_inter2list(&infs, &infs_num, &infs_max);
@@ -144,11 +156,11 @@ kSolver(int k_top_vars)
                // could be sat?
             }
 
-            while(bt >= 0 && top_vars_vals[bt] > 0) bt--;
+            while(bt >= 0 && top_vars_vals[bt+bt_start] > 0) bt--;
             if (bt < 0) break;
-            top_vars_vals[bt] = -top_vars_vals[bt]; // was false turn it into true
+            top_vars_vals[bt+bt_start] = -top_vars_vals[bt+bt_start]; // was false turn it into true
             bt++;
-            while(bt <= k_top_vars) { top_vars_vals[bt] = -1*top_vars[bt]; bt++; }
+            while(bt <= k_top_vars) { top_vars_vals[bt+bt_start] = -1*top_vars[bt]; bt++; }
             bt--;
             counter++;
          }
@@ -156,9 +168,15 @@ kSolver(int k_top_vars)
          // use them ==> global
          if (infs_num) {
             d4_printf2(" %d infs ", infs_num);
-            for(i=0;i<infs_num;i++) 
-               fprintf(stderr, "%d ", infs[i]);
-            fprintf(stderr, "\n");
+            top_vars_vals = (int*)ite_recalloc((void*)top_vars_vals, bt_start+k_top_vars+2, bt_start+k_top_vars+2+infs_num,sizeof(int), 9, "kSolver top_vars_vals");
+            for(i=0;i<infs_num;i++) {
+               d4_printf2(" globalinfs(%d)", infs[i]);
+               top_vars_vals[bt_start+i] = infs[i];
+               //fprintf(stderr, "%d ", infs[i]);
+            }
+            bt_start += infs_num;
+            //fprintf(stderr, "\n");
+            goto ksolver_restart;
          } else {
             if (bt >= 0) {
                d4_printf2("Early bailout after %d\n", counter);
@@ -168,10 +186,12 @@ kSolver(int k_top_vars)
          }
       }
    }
+   top_vars_vals[bt_start] = 0;
    ite_free((void **)&infs);
    ite_free((void **)&top_vars);
    d3_printf1("kSolver done\n");
-   return InitBrancherX();
+   InitBrancherX();
+   return BrancherPresetInt(top_vars_vals);
    //return SOLV_UNKNOWN;
 }
 
