@@ -68,12 +68,12 @@ XUpdateEachAffectedFunction(AffectedFuncsStruct *pAFS, int x)
 
 
 ITE_INLINE int
-UpdateEachAffectedFunction(AffectedFuncsStruct *pAFS, int x)
+UpdateEachAffectedFunction(AffectedFuncsStruct *pAFS, int max_fn_priority)
 {
    int ret = NO_ERROR;
 
    nLastFnInfPriority = 0;
-   while(nLastFnInfPriority < MAX_FN_PRIORITY)
+   while(nLastFnInfPriority < max_fn_priority)
    {
       while(arrFnInfPriority[nLastFnInfPriority].First != NULL) {
          int nCurFnPriotity = nLastFnInfPriority;

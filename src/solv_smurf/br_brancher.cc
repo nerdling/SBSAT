@@ -103,29 +103,37 @@ ITE_Deduce()
 {
    int err=0;
 
-   // While inference queue is nonempty
-   while (pInferenceQueueNextElt < pInferenceQueueNextEmpty)
-   {
-      // Dequeue atom and value
-      int nInferredAtom = *(pInferenceQueueNextElt++);
-      int nInferredValue = arrSolution[nInferredAtom];
+   do {
+      // While inference queue is nonempty
+      while (pInferenceQueueNextElt < pInferenceQueueNextEmpty)
+      {
+         // Dequeue atom and value
+         int nInferredAtom = *(pInferenceQueueNextElt++);
+         int nInferredValue = arrSolution[nInferredAtom];
 
-      var_stat[nInferredAtom].infs[nInferredValue]++;
+         var_stat[nInferredAtom].infs[nInferredValue]++;
 
-      // Determine the potentially affected constraints.
-      AffectedFuncsStruct *pAFS = arrAFS + nInferredAtom;
+         // Determine the potentially affected constraints.
+         AffectedFuncsStruct *pAFS = arrAFS + nInferredAtom;
 
-      TB_9(
-            d9_printf3("\nInferred Atom %c%d\n", 
-               (nInferredValue==BOOL_TRUE?'+':'-'),
-               nInferredAtom);
-            );
+         TB_9(
+               d9_printf3("\nInferred Atom %c%d\n", 
+                  (nInferredValue==BOOL_TRUE?'+':'-'),
+                  nInferredAtom);
+             );
 
-      if (NO_LEMMAS == 0)
-         if ((err = UpdateEachAffectedLemma(pAFS, nInferredValue))) break;
-      if ((err = UpdateEachAffectedFunction(pAFS, nInferredValue))) break;
+         if (NO_LEMMAS == 0)
+            if ((err = UpdateEachAffectedLemma(pAFS, nInferredValue))) 
+               goto deduce_error;
+         if ((err = UpdateEachAffectedFunction(pAFS, MAX_FN_PRIORITY-1))) 
+            goto deduce_error;
 
-   } // while inference queue is non-empty
+      } // while inference queue is non-empty
+
+      if ((err == UpdateEachAffectedFunction(NULL, MAX_FN_PRIORITY))) 
+         goto deduce_error;
+   } while (pInferenceQueueNextElt < pInferenceQueueNextEmpty);
+deduce_error:
 #ifdef MK_NULL 
    if (err == 0) err = ITE_Fn_Deduce();
 #endif
@@ -189,36 +197,6 @@ Brancher()
    //FreeLemmas(MAX_NUM_CACHED_LEMMAS);
    return ret;
 }
-
-#ifdef MK_NULL
-ITE_INLINE void
-ITE_Fn_Deduce()
-{
-   // While fn inference queue is nonempty
-   while (pFnInferenceQueueNextElt < pFnInferenceQueueNextEmpty)
-   {
-      // Dequeue func and value
-      AffectedFuncsStruct *pAFS = arrAFS + nInferredAtom;
-      int nInferredValue = pFnInferenceQueueNextElt->
-         int nInferredValue = arrSolution[nInferredAtom];
-
-      // Determine the potentially affected constraints.
-
-      TB_9(
-            d9_printf3("\nInferred Atom %c%d\n", 
-               (nInferredValue==BOOL_TRUE?'+':'-'),
-               nInferredAtom);
-         )
-
-         if ((err = UpdateEachAffectedRegularSmurf(pAFS))) break;
-      if ((err = UpdateEachAffectedSpecialFunction(pAFS))) break;
-
-      if (NO_LEMMAS == 0)
-         if ((err = UpdateEachAffectedLemma(pAFS, nInferredValue))) break;
-   } // while fn inference queue is non-empty
-   return err;
-}
-#endif
 
 /*
 ITE_INLINE int

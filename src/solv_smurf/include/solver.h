@@ -369,7 +369,7 @@ void DisplayInference(InferenceType eInfType,
                  int nNewInferredValue);
 #endif
 void DisplaySolution(int nMaxVbleIndex);
-int UpdateEachAffectedFunction(AffectedFuncsStruct *pAFS, int x);
+int UpdateEachAffectedFunction(AffectedFuncsStruct *pAFS, int max_fn_priority);
 void Functions_Update_Inf_End_np();
 void Functions_Update_Inf_End();
 
