@@ -21,7 +21,6 @@
    int trace_varmax = 0;
    int trace_varindex;
 
-   //BDDNode *explist[10][1000];
    BDDNode ***explist = NULL;
    int *expindex = NULL;
    int *expmax = NULL;
@@ -218,7 +217,7 @@ BDDNode *ite_op_exp(t_op2fn fn, BDDNode **_explist)
     1. if they all have just one var => special fn
     2. if they combined have more than X distict var => split it
     */
-   ite_op_flag++; /* FIX: make sure we don't overflow... */
+   ite_op_flag++; 
    if (ite_op_flag > (1<<30)) { sym_clear_all_flag(); ite_op_flag = 1; }
    int spec_fn=0;
    int total_vars = 0;
@@ -234,8 +233,9 @@ BDDNode *ite_op_exp(t_op2fn fn, BDDNode **_explist)
       /* we have a special function */ 
       spec_fn=1;
    } else {
-      /* FIXME: this does not happen -- why ??? */
-      /* that's why untested!!!                */
+      /* this does not happen in the current setup */
+      /* if you decide to keep some special functions in a bigger BDD */
+      /* you can use this to break bigger BDDs appart */
       /* check if they have more than a limit to get broken up */
       if (new_vars >= 5 /*s_limit*/ || num_members>=2 /*limit[fn.fn_type]*/) {
          printf("x");
@@ -262,7 +262,6 @@ BDDNode *ite_op_exp(t_op2fn fn, BDDNode **_explist)
       }
    }
 
-   /* FIXME: if the fn type is not ??imp -- sort the bdds by top_variable */
    if (fn.as_type == AS_FULL) 
       qsort (_explist, num_members, sizeof (BDDNode*), explist_sort);
 

@@ -5,8 +5,8 @@ BDDNode **xorFunctions;
 char filename[128]="stdin";
 extern int s_error;
 
-//#define IN trace_in
-//#define PARSE trace_parse
+#define IN trace_in
+#define PARSE trace_parse
 
 //#define IN blif_in
 //#define PARSE blif_parse
@@ -14,8 +14,8 @@ extern int s_error;
 //#define IN prover_in
 //#define PARSE prover_parse
 
-#define IN prover3_in
-#define PARSE prover3_parse
+//#define IN prover3_in
+//#define PARSE prover3_parse
 
 //#define IN iscas_in
 //#define PARSE iscas_parse
