@@ -34,79 +34,44 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
-//#define ITE_INLINE  __inline__
+// lemmainfo.cc
+// Started 8/16/01 - J. Ward
 
-#include "smurffactory.cc"
+#include "ite.h"
+#include "solver.h"
 
-/* init */
-#include "solve.cc"
-#include "init_solver.cc"
+// ----------------------- special functions lemma construction -------------------------
 
-/* basic brancher */
-#include "brancher.cc"
-#include "select_bp.cc"
-#include "update_heu.cc"
+ITE_INLINE
+void
+ConstructLemmasForLongXorEquals(SpecialFunc *pSpecialFunc)
+{
+   int nNumRHSVbles = pSpecialFunc->rhsVbles.nNumElts;
+   int *arrRHSVbles = pSpecialFunc->rhsVbles.arrElts;
+   LemmaBlock *pFirstBlock;
+   LemmaBlock *pLastBlock;
+   int nNumBlocks;
 
-/* backtracking through ... */
-#include "backtrack.cc"
-#include "backtrack_nl.cc"
-#include "backtrack_sbj.cc"
-#include "bt_misc.cc"
-#include "bt_lemmas.cc"
-#include "bt_smurfs.cc"
-#include "bt_specfn.cc"
-#include "bt_specfn_and.cc"
-#include "bt_specfn_xor.cc"
+   ///////////////////////////
+   // Construct long lemma. //
+   ///////////////////////////
+   // THIS IS USELESS -- WE NEED TO ALLOCATE THE SPACE ONLY
+   // but I left it in here anyway - m
+   ///////////////////////////
 
-/* null heuristic */
-#include "heuristic.cc"
+   int *arrLits;
+   ITE_NEW_CATCH(
+         arrLits = new int[nNumRHSVbles], "arrLits")
+      int nLitIndex = 0;
 
-/* lemma heuristic */
-#include "l_lemma.cc"
-#include "l_heuristic.cc"
+   for (int i = 0; i < nNumRHSVbles; i++)
+   {
+      arrLits[nLitIndex++] = arrRHSVbles[i];
+   }
 
-/* johnson heuristic */
-#include "j_update_heu.cc"
-#include "j_smurf.cc"
-#include "j_specfn.cc"
-#include "j_heuristic.cc"
+   EnterIntoLemmaSpace(nNumRHSVbles, arrLits,
+         false, pFirstBlock, pLastBlock, nNumBlocks);
+   pSpecialFunc->pLongLemma = pFirstBlock;
+   delete [] arrLits;
+}
 
-/* interactive heuristic */
-#include "i_heuristic.cc"
-
-#include "autarky.cc"
-
-#include "bdd2smurf.cc"
-#include "specfn2smurf.cc"
-#include "smurfstates.cc"
-
-#include "state_stacks.cc"
-#include "heur_stack.cc"
-
-#include "lemmainfo.cc"
-#include "lemmaspace.cc"
-#include "lemmawlits.cc"
-#include "lemmamisc.cc"
-#include "lemmacache.cc"
-#include "lemmas.cc"
-#include "lemmas_smurf.cc"
-#include "lemmas_and.cc"
-#include "lemmas_xor.cc"
-#include "verify.cc"
-#include "display.cc"
-#include "display_sf.cc"
-
-#include "recordsol.cc"
-
-#include "transitions.cc"
-#include "sf_addons.cc"
-#include "smurfaddons.cc"
-
-#include "bddwalk.cc"
-#include "wvf.cc"
-
-#include "crtwin.cc"
-
-#include "load_lemmas.cc"
-
-#include "interface.cc"

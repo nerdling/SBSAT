@@ -132,7 +132,8 @@ libsolver_a_SOURCES = solve.cc bddwalk.cc \
              heuristic.cc \
              bt_lemmas.cc bt_specfn.cc bt_smurfs.cc \
              bt_specfn_and.cc bt_specfn_xor.cc \
-             lemmas.cc lemmacache.cc lemmainfo.cc lemmaspace.cc lemmawlits.cc lemmamisc.cc \
+             lemmas.cc lemmas_smurf.cc lemmas_and.cc lemmas_xor.cc \
+	     lemmacache.cc lemmainfo.cc lemmaspace.cc lemmawlits.cc lemmamisc.cc \
              smurffactory.cc smurfstates.cc \
              state_stacks.cc \
 	     bdd2smurf.cc specfn2smurf.cc autarky.cc \
@@ -158,7 +159,8 @@ am_libsolver_a_OBJECTS = solve.$(OBJEXT) bddwalk.$(OBJEXT) \
 	l_heuristic.$(OBJEXT) l_lemma.$(OBJEXT) i_heuristic.$(OBJEXT) \
 	heuristic.$(OBJEXT) bt_lemmas.$(OBJEXT) bt_specfn.$(OBJEXT) \
 	bt_smurfs.$(OBJEXT) bt_specfn_and.$(OBJEXT) \
-	bt_specfn_xor.$(OBJEXT) lemmas.$(OBJEXT) lemmacache.$(OBJEXT) \
+	bt_specfn_xor.$(OBJEXT) lemmas.$(OBJEXT) lemmas_smurf.$(OBJEXT) \
+	lemmas_and.$(OBJEXT) lemmas_xor.$(OBJEXT) lemmacache.$(OBJEXT) \
 	lemmainfo.$(OBJEXT) lemmaspace.$(OBJEXT) lemmawlits.$(OBJEXT) \
 	lemmamisc.$(OBJEXT) smurffactory.$(OBJEXT) \
 	smurfstates.$(OBJEXT) state_stacks.$(OBJEXT) \
@@ -195,10 +197,13 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	./$(DEPDIR)/l_heuristic.Po ./$(DEPDIR)/l_lemma.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/lemmacache.Po ./$(DEPDIR)/lemmainfo.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/lemmamisc.Po ./$(DEPDIR)/lemmas.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/lemmaspace.Po ./$(DEPDIR)/lemmawlits.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/libsolver.Po ./$(DEPDIR)/load_lemmas.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/recordsol.Po ./$(DEPDIR)/select_bp.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/sf_addons.Po ./$(DEPDIR)/smurfaddons.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/lemmas_and.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/lemmas_smurf.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/lemmas_xor.Po ./$(DEPDIR)/lemmaspace.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/lemmawlits.Po ./$(DEPDIR)/libsolver.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/load_lemmas.Po ./$(DEPDIR)/recordsol.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/select_bp.Po ./$(DEPDIR)/sf_addons.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/smurfaddons.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/smurffactory.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/smurfstates.Po ./$(DEPDIR)/solve.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/specfn2smurf.Po \
@@ -275,6 +280,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lemmainfo.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lemmamisc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lemmas.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lemmas_and.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lemmas_smurf.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lemmas_xor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lemmaspace.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lemmawlits.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libsolver.Po@am__quote@

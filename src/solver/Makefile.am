@@ -12,7 +12,8 @@ libsolver_a_SOURCES= solve.cc bddwalk.cc \
              heuristic.cc \
              bt_lemmas.cc bt_specfn.cc bt_smurfs.cc \
              bt_specfn_and.cc bt_specfn_xor.cc \
-             lemmas.cc lemmacache.cc lemmainfo.cc lemmaspace.cc lemmawlits.cc lemmamisc.cc \
+             lemmas.cc lemmas_smurf.cc lemmas_and.cc lemmas_xor.cc \
+	     lemmacache.cc lemmainfo.cc lemmaspace.cc lemmawlits.cc lemmamisc.cc \
              smurffactory.cc smurfstates.cc \
              state_stacks.cc \
 	     bdd2smurf.cc specfn2smurf.cc autarky.cc \
