@@ -116,6 +116,7 @@ extern int *arrTempLemma;
 
 /* Backtrack arrays */
 extern int *arrUnsetLemmaFlagVars;
+extern bool *arrLemmaFlag;
 
 extern int *pInferenceQueueNextEmpty; // ptr to next empty slot in inference queue
 extern int nNumUnresolvedFunctions;
@@ -133,8 +134,6 @@ extern double *arrSumRHSUnknowns;
 extern double *arrSumRHSUnknownsNew;
 extern double *arrPrevSumRHSUnknowns;
 
-extern bool *arrLemmaFlag;
-extern int nNumChoicePts;
 
 extern int compress_smurfs;
 

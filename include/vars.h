@@ -53,9 +53,9 @@
 #define INF_SPEC_FN_XOR  12 
 #define INF_LEMMA        13
 
-#define HEU_DEP_VAR      14
+//#define      14
 
-#define SMURF_STATES	 15
+#define SMURF_STATES	    15
 #define NUM_SOLUTIONS	 16
 
 #define BDD_NODE_FIND    17
@@ -70,6 +70,8 @@
 #define NUM_TOTAL_BACKJUMPS	 24
 #define NUM_AUTARKIES	 25
 #define NUM_TOTAL_AUTARKIES	 26
+#define NUM_CHOICE_POINTS     27
+#define HEU_DEP_VAR      28
 
 #define MAX_COUNTER      30
 
@@ -81,7 +83,9 @@
 #define BUILD_SMURFS      2
 #define PREPROC_TIME      3
 #define BRANCHER_TIME     4
-#define MAX_COUNTER_F    15
+#define CURRENT_TIME      5
+#define PROGRESS          6 
+#define MAX_COUNTER_F    10
 
 enum {
 	CNF_NOQM,
@@ -165,9 +169,10 @@ extern char temp_dir[128];
 
 extern char lemma_out_file[128];
 extern char lemma_in_file[128];
+extern char csv_trace_file[128];
+extern FILE *fd_csv_trace_file;
 
 extern int _bdd_pool_size;
-extern int nNumAutarkies;
 extern int autarky;
 
 typedef struct {
