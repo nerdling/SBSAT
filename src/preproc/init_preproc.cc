@@ -290,7 +290,7 @@ Finish_Preprocessing()
 	
 	/****** Shrink down the hash table ******/
 	//printCircuit();
-	void Stats();
+	//void Stats(int *length, store *variables);
 	//Stats(length, variables);
 	//
 	// cheat_replaceall (length, variables, variablelist);
@@ -379,22 +379,13 @@ Finish_Preprocessing()
 	nmbrFunctions = count + 1;
 	numout = nmbrFunctions;
 
-	for (int x = 0; x < var_nmbrFunctions; x++) {
-		if (variables[x].num != NULL)
-		  delete [] variables[x].num;
-	}
-
-	ite_free((void **)&variables);
-	//free(variables);
-	variables = NULL;
-	
+/*
 	for (long x = 0; x < nmbrFunctions; x++) {
 		if(functionType[x] == AUTARKY_FUNC) continue;
-		if(isOR(functions[x]) == 1)
-		  functionType[x] = PLAINOR;
-		if (length[x] < functionTypeLimits[functionType[x]])
-		  functionType[x] = UNSURE;
+		//If we want to find function types, do this:
+		findandset_fnType(x);
    }
+*/
 
 /*		
 	if(USE_AUTARKY_SMURFS)
@@ -407,6 +398,15 @@ Finish_Preprocessing()
 
 	delete l; //Delete the equiv_class
 	l = NULL;
+
+	for (int x = 0; x < var_nmbrFunctions; x++) {
+		if (variables[x].num != NULL)
+		  delete [] variables[x].num;
+	}
+
+	ite_free((void **)&variables);
+	//free(variables);
+	variables = NULL;
 	
    ite_free((void**)&bdd_tempint); bdd_tempint_max = 0;
 	ite_free((void**)&original_functionType);

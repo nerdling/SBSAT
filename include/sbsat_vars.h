@@ -138,6 +138,7 @@ extern int DO_DEP_CLUSTER;
 extern int DO_SPLIT;
 extern int DO_REWIND;
 extern int DO_CLEAR_FUNCTION_TYPE;
+extern int DO_FIND_FUNCTION_TYPE;
 extern int DO_PROVER3;
 
 extern int PARAMS_DUMP;
@@ -261,6 +262,7 @@ extern int DO_DEP_CLUSTER;
 extern int DO_SPLIT;
 extern int DO_REWIND;
 extern int DO_CLEAR_FUNCTION_TYPE;
+extern int DO_FIND_FUNCTION_TYPE;
 extern int DO_PROVER3;
 extern int MAX_EXQUANTIFY_CLAUSES;     //Number of clauses a variable appears in
                                      //to quantify that variable away.

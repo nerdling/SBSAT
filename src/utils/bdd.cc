@@ -897,14 +897,111 @@ int countTrues (BDDNode * bdd) {
 }
 
 int isOR(BDDNode *bdd) {
+	if(IS_TRUE_FALSE(bdd)) return 0;
 	while(bdd != false_ptr) {
 		if(bdd->thenCase == true_ptr)
 		  bdd = bdd->elseCase;
-		if(bdd->elseCase == true_ptr)
+		else if(bdd->elseCase == true_ptr)
 		  bdd = bdd->thenCase;
 		else return 0;
 	}
 	return 1;
+}
+
+int isAND(BDDNode *bdd) {
+	if(IS_TRUE_FALSE(bdd)) return 0;
+	while(bdd != true_ptr) {
+		if(bdd->thenCase == false_ptr)
+		  bdd = bdd->elseCase;
+		else if(bdd->elseCase == false_ptr)
+		  bdd = bdd->thenCase;
+		else return 0;
+	}
+	return 1;
+}
+
+//returns 0 for NO
+//returns positive equality variable for YES
+//returns negative equality variable for OR_EQU
+int isAND_EQU(BDDNode *bdd, int *bdd_vars, int bdd_len) {
+	if(IS_TRUE_FALSE(bdd)) return 0;
+	for(int x = 0; x < bdd_len; x++) {
+		BDDNode *t_equ_bdd = set_variable(bdd, bdd_vars[x], 1);
+		BDDNode *f_equ_bdd = set_variable(bdd, bdd_vars[x], 0);
+		if(isAND(t_equ_bdd) && isOR(f_equ_bdd) && (bdd == ite_equ(ite_var(bdd_vars[x]), t_equ_bdd)))
+		  return bdd_vars[x];
+		if(isOR(t_equ_bdd) && isAND(f_equ_bdd) && (bdd == ite_equ(ite_var(bdd_vars[x]), t_equ_bdd)))
+		  return -bdd_vars[x];
+	}
+	return 0;
+}
+
+int isXOR(BDDNode *bdd) {
+	if(IS_TRUE_FALSE(bdd)) return 0;
+	for(;!IS_TRUE_FALSE(bdd);bdd = bdd->thenCase) {
+		if(bdd->thenCase != bdd->elseCase->notCase) return 0;
+	}
+	return 1;	
+}
+
+int isMIN_MAX(BDDNode *bdd, int *bdd_vars, int bdd_len) {
+	if(IS_TRUE_FALSE(bdd)) return 0;
+	int max = 0;
+	BDDNode *tmp_bdd;
+	for(tmp_bdd = bdd; !IS_TRUE_FALSE(tmp_bdd); tmp_bdd = tmp_bdd->thenCase) 
+	  max++;
+	if(tmp_bdd != false_ptr) return 0;
+
+	int min = 0;
+	for(tmp_bdd = bdd; !IS_TRUE_FALSE(tmp_bdd); tmp_bdd = tmp_bdd->elseCase)
+	  min++;
+	if(tmp_bdd != false_ptr) return 0;
+
+	//Now have the min and max
+	
+	//Will finish later
+	
+	return 0;
+}
+
+//To set the fnType the function must be UNSURE to start with
+int findandset_fnType(int x) {
+	if(functionType[x] != UNSURE) return 1;
+	
+	if(isOR(functions[x])) {
+		functionType[x] = PLAINOR;
+		if (length[x] < functionTypeLimits[functionType[x]])
+		  functionType[x] = UNSURE;
+		return 1;
+	}
+	
+	if(isXOR(functions[x])) {
+		functionType[x] = PLAINXOR;
+		if (length[x] < functionTypeLimits[functionType[x]])
+		  functionType[x] = UNSURE;
+		return 1;
+	}
+	
+	int equ_var = isAND_EQU(functions[x], variables[x].num, length[x]);
+	if(equ_var != 0) {
+		if(equ_var > 0) {
+			functionType[x] = AND;
+			equalityVble[x] = equ_var;
+			independantVars[equ_var] = reverse_independant_dependant;
+			if (length[x] < functionTypeLimits[functionType[x]])
+			  functionType[x] = UNSURE;
+		} else { //equ_var < 0 for sure
+			functionType[x] = OR;
+			equalityVble[x] = -equ_var;
+			independantVars[-equ_var] = reverse_independant_dependant;
+			if (length[x] < functionTypeLimits[functionType[x]])
+			  functionType[x] = UNSURE;
+		}
+		return 1;
+	}
+
+	//if(isMIN_MAX(functions[x], variables[x].num, length[x])){}
+	return 0;
 }
 
 int
@@ -1134,7 +1231,6 @@ BDDNode * set_variable (BDDNode * f, int num, int torf) {
    start_bdd_flag_number(SETVARIABLE_FLAG_NUMBER);
    return _set_variable(f, num, torf);
 }
-
 
 BDDNode * _set_variable (BDDNode * f, int num, int torf)
 {

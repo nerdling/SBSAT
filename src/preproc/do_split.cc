@@ -160,10 +160,8 @@ int Split_Large () {
 			//d3_printf4("%d C %d = %d\n", length[j], k_size, num_splits);
 			
 			int whereat = 0;
-			if(isOR(functions[j]) == 1) {
-				functionType[j] = PLAINOR;
-				continue;				  
-			}
+			if(findandset_fnType(j) == 1)
+			  continue;
 			
 			//d3_printf2("false paths:%d\n", countFalses (functions[j]));
 			int *vars_copy = new int[length[j]];

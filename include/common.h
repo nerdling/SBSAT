@@ -143,7 +143,7 @@ typedef struct hashrecord {
 	char *data;
 	struct hashrecord *next;
 } Recd;
-                                                                                                                                                 
+
 typedef struct xorrecord {
 	Recd *clauses;
 	char *vars;

@@ -85,6 +85,15 @@ void UnSetRepeats(int x);
 
 int Rebuild_BDDx (int x);
 int Rebuild_BDD (BDDNode *, int *, int *&);
+
+//Finding function types
+int isOR(BDDNode *);
+int isAND(BDDNode *);
+int isAND_EQU(BDDNode *, int *, int);
+int isXOR(BDDNode *);
+int isMIN_MAX(BDDNode *, int *, int);
+int findandset_fnType(int);
+
 BDDNode *strip_x_BDD(BDDNode *, int);
 BDDNode *strip_x(int, int);
 BDDNode *collect_x (BDDNode *, int);
@@ -109,6 +118,7 @@ int Do_DepCluster();
 int Do_Split();
 int Do_Rewind();
 int Do_Clear_FunctionType();
+int Do_Find_FunctionType();
 int Do_Prover3();
 void Do_Flow();
 void Do_Flow_Grouping();
