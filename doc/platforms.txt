@@ -1,0 +1,14 @@
+PC    - Linux   - gcc    - home
+PC    - Linux   - pg     - beowulf
+PC    - Linux   - intel  - beowulf  - no license ?
+PC    - Windows - gcc    - home
+PC    - Windows - VS6    - home     - no makefile ? 
+PC    - Solaris - gcc    - ouzo
+Sparc - Solaris - gcc    - arthur
+Sparc - Solaris - CC     - arthur
+Sparc - Linux   - gcc    - home     - ?
+Mac   - MacOS   - gcc    - home
+Alpha - OSF     - gcc    - naboo
+
+did not link
+SGI   - IRIX    - CC     - cricket
