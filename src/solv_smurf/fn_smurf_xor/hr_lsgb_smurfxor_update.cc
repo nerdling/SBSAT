@@ -39,11 +39,6 @@
 #include "sbsat_solver.h"
 #include "solver.h"
 
-/*
-ITE_INLINE void
-J_Update_RHS_AND(SpecialFunc * pSpecialFunc, HWEIGHT fPosDelta, HWEIGHT fNegDelta);
-*/
-
 ITE_INLINE void
 LSGBSmurfXorGetHeurScores(int nFnId)
 {

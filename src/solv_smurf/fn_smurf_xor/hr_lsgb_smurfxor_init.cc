@@ -63,12 +63,12 @@ LSGBSmurfXorSetHeurScoreTransition(SmurfState *pState, int i, Transition *pTrans
    pTransition->fHeuristicWeight = fTransitionWeight;
 
    if (nNumXors) {
-        if (pState->vbles.arrElts[i] != arrSolverFunctions[nRegSmurfIndex].fn_smurf.nSmurfEqualityVble) {
-           for (int j=3;j<nNumXors;j++) {
-                  pState->arrHeuristicXors[j] += pTransition->pNextState->arrHeuristicXors[j];
-        }
+      if (pState->vbles.arrElts[i] != arrSolverFunctions[nRegSmurfIndex].fn_smurf.nSmurfEqualityVble) {
+         for (int j=3;j<nNumXors;j++) {
+            pState->arrHeuristicXors[j] += pTransition->pNextState->arrHeuristicXors[j];
+         }
       } else {
-        pState->arrHeuristicXors[polarity] = pTransition->fHeuristicWeight;
+         pState->arrHeuristicXors[polarity] = pTransition->fHeuristicWeight;
       }
    }
    return fTransitionWeight;

@@ -39,9 +39,6 @@
 #include "sbsat_solver.h"
 #include "solver.h"
 
-ITE_INLINE void LSGBXorInitHeuristicTables();
-ITE_INLINE void LSGBXorFreeHeuristicTables();
-
 void
 HrLSGBFnXorSmurfInit()
 {
