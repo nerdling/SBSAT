@@ -65,7 +65,7 @@ SpecFn2Smurf (BDDNodeStruct *pFunc,
    switch (nFunctionType) {
     case PLAINOR: 
        // Convert PLAINORs to ANDs
-       nNewFunctionType = AND;
+       nNewFunctionType = SFN_AND;
        // The function is of the form l_1 \/ ... \/ l_n.
        // This is equivalent to X0 = not(l_1 \/ ... \/ l_n)
        // if X0 is set to false.  This is how we will represent
@@ -78,7 +78,7 @@ SpecFn2Smurf (BDDNodeStruct *pFunc,
        break;
     case OR: 
        // Convert ORs to ANDs
-       nNewFunctionType = AND;
+       nNewFunctionType = SFN_AND;
        // The function is of the form l_0 = l_1 \/ ... \/ l_n
        // (this is what it means for the function to be an 'OR'.)
        // This is equivalent to the relation
@@ -90,7 +90,7 @@ SpecFn2Smurf (BDDNodeStruct *pFunc,
        nPolarityOfLHSVble = BOOL_NEG(nPolarityOfLHSVble);
        /* break is missing intentionally */
     case AND:  
-       nNewFunctionType = AND;
+       nNewFunctionType = SFN_AND;
        // Check polarity of LHS variable.
        if (nEqualityVble < 0)
        {
@@ -99,7 +99,7 @@ SpecFn2Smurf (BDDNodeStruct *pFunc,
        }
        break;
     case PLAINXOR: 
-       nNewFunctionType = XOR;
+       nNewFunctionType = SFN_XOR;
        // the result should be ODD for fn to be sat
        // The function is of the form 1 = l_1 + ... + l_n.
        // LHS should be -FALSE ==> TRUE

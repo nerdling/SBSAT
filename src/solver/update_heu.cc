@@ -66,17 +66,17 @@ UPDATE_HEURISTIC()
 #ifdef JHEURISTIC
          d9_printf2("JHeuristic update for special function %d\n", i);
          switch(arrSpecialFuncs[i].nFunctionType) {
-          //case AND: J_UpdateHeuristic_AND(arrSpecialFuncs+i, arrPrevNumRHSUnknowns[i], arrNumRHSUnknowns[i], 
+          //case SFN_AND: J_UpdateHeuristic_AND(arrSpecialFuncs+i, arrPrevNumRHSUnknowns[i], arrNumRHSUnknowns[i], 
           //                arrPrevNumLHSUnknowns[i], arrNumLHSUnknowns[i]);
-          case AND: 
+          case SFN_AND: 
              J_UpdateHeuristic_AND_C(arrSpecialFuncs+i, 
                           arrPrevNumRHSUnknowns[i], arrNumRHSUnknowns[i], 
                           arrPrevNumLHSUnknowns[i], arrNumLHSUnknowns[i],
                           arrPrevSumRHSUnknowns[i], arrSumRHSUnknowns[i]);
                     break;
-          //case XOR: J_UpdateHeuristic_XOR(arrSpecialFuncs+i, 
+          //case SFN_XOR: J_UpdateHeuristic_XOR(arrSpecialFuncs+i, 
           //                arrPrevNumRHSUnknowns[i], arrNumRHSUnknowns[i], -1);
-          case XOR: J_UpdateHeuristic_XOR_C(arrSpecialFuncs+i, 
+          case SFN_XOR: J_UpdateHeuristic_XOR_C(arrSpecialFuncs+i, 
                           arrPrevNumRHSUnknowns[i], arrNumRHSUnknowns[i], 
                           arrPrevSumRHSUnknowns[i], arrSumRHSUnknowns[i], -1);
                     break;
@@ -105,10 +105,10 @@ UPDATE_HEURISTIC()
             arrNumLHSUnknowns[i] != arrPrevNumLHSUnknowns[i])
       {
          switch(arrSpecialFuncs[i].nFunctionType) {
-          case AND: J_UpdateHeuristic_AND(arrSpecialFuncs+i, arrPrevNumRHSUnknowns[i], arrNumRHSUnknowns[i], 
+          case SFN_AND: J_UpdateHeuristic_AND(arrSpecialFuncs+i, arrPrevNumRHSUnknowns[i], arrNumRHSUnknowns[i], 
                           arrPrevNumLHSUnknowns[i], arrNumLHSUnknowns[i]);
                     break;
-          case XOR: J_UpdateHeuristic_XOR(arrSpecialFuncs+i, arrPrevNumRHSUnknowns[i], arrNumRHSUnknowns[i], -1);
+          case SFN_XOR: J_UpdateHeuristic_XOR(arrSpecialFuncs+i, arrPrevNumRHSUnknowns[i], arrNumRHSUnknowns[i], -1);
                     break;
           default: assert(0);
                    exit(1);

@@ -124,10 +124,10 @@ J_ResetHeuristicScores()
    for (int i = 0; i < nNumSpecialFuncs; i++)
    {
       switch (arrSpecialFuncs[i].nFunctionType) {
-       case AND: GetHeurScoresFromSpecialFunc_AND_C(i); break;
-                 //case AND: GetHeurScoresFromSpecialFunc_AND(i); break;
-       case XOR: GetHeurScoresFromSpecialFunc_XOR_C(i); break;
-                 //case XOR: GetHeurScoresFromSpecialFunc_XOR(i); break;
+       case SFN_AND: GetHeurScoresFromSpecialFunc_AND_C(i); break;
+                 //case SFN_AND: GetHeurScoresFromSpecialFunc_AND(i); break;
+       case SFN_XOR: GetHeurScoresFromSpecialFunc_XOR_C(i); break;
+                 //case SFN_XOR: GetHeurScoresFromSpecialFunc_XOR(i); break;
        default: assert(0); break;
       }
    }

@@ -100,7 +100,7 @@ SmurfFactory()
       if (pSpecFunc != NULL) 
       {
          d4_printf1("&");
-         /* spec fn is XOR! */
+         /* spec fn is SFN_XOR! */
       } else {
          if (IsSpecialFunc(nFunctionType))
          {
@@ -133,7 +133,7 @@ SmurfFactory()
 
       if (pSpecFunc != NULL)
       {
-         if (!IsSpecialFunc(nFunctionType)) {
+         if (IsSpecialFunc(nFunctionType) == 0) {
             nFunctionType = PLAINXOR;
             arrSpecialFuncs[nSpecialFuncIndex].LinkedSmurfs = nRegSmurfIndex-1;
          } else {
@@ -168,7 +168,7 @@ SmurfFactory()
    if (nSpecialFuncIndex) {
       for(int i=0; i < nSpecialFuncIndex; i++)
       {
-         if (arrSpecialFuncs[i].nFunctionType == XOR &&
+         if (arrSpecialFuncs[i].nFunctionType == SFN_XOR &&
                arrSpecialFuncs[i].LinkedSmurfs != -1) {
             int smurf = arrSpecialFuncs[i].LinkedSmurfs;
             if (smurf != -1) {

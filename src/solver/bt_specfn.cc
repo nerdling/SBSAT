@@ -78,8 +78,8 @@ UpdateEachAffectedSpecialFunction (AffectedFuncsStruct *pAFS)
 	  d9_printf2("#RHS Unknowns: %d ", arrNumRHSUnknowns[nSpecFuncIndex]);
 
      switch (arrSpecialFuncs[nSpecFuncIndex].nFunctionType) {
-      case AND: ret=UpdateSpecialFunction_AND(pIRS); break;
-      case XOR: ret=UpdateSpecialFunction_XOR(pIRS); break;
+      case SFN_AND: ret=UpdateSpecialFunction_AND(pIRS); break;
+      case SFN_XOR: ret=UpdateSpecialFunction_XOR(pIRS); break;
       default: assert(0); break;
      }
 

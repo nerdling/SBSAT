@@ -51,6 +51,12 @@
 
 #define JOHNSON_HEURISTIC_LEMMA
 
+/* special functions */
+#define SFN_UNKNOWN 0
+#define SFN_AND 1
+#define SFN_XOR 2
+
+
 void FreeAddonsPool();
 
 extern int nIndepVars;
