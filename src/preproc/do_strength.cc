@@ -35,8 +35,8 @@
  of the possibility of those damages.
 *********************************************************************/
 
-#include "ite.h"
-#include "preprocess.h"
+#include "sbsat.h"
+#include "sbsat_preproc.h"
 
 int STRENGTH = 2;		//The number of vars that must be in common to
                      //Strengthen or BranchPrune two BDD's against

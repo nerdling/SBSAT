@@ -35,8 +35,8 @@
  of the possibility of those damages.
 *********************************************************************/
 
-#include "ite.h"
-#include "solver.h"
+#include "sbsat.h"
+#include "sbsat_solver.h"
 #include "params.h"
 
 /*

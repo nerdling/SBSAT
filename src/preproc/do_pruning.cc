@@ -35,8 +35,8 @@
  of the possibility of those damages.
 *********************************************************************/
 
-#include "ite.h"
-#include "preprocess.h"
+#include "sbsat.h"
+#include "sbsat_preproc.h"
 
 void Sort_BDDs (long *tempint_max, int **tempint);
 

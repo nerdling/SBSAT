@@ -35,8 +35,8 @@
  of the possibility of those damages.
 *********************************************************************/
 
-#include "ite.h"
-#include "preprocess.h"
+#include "sbsat.h"
+#include "sbsat_preproc.h"
 
 char *P1_repeat;
 char *P2_repeat;

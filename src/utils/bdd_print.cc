@@ -35,7 +35,7 @@
  of the possibility of those damages.
 *********************************************************************/
 
-#include "ite.h"
+#include "sbsat.h"
 
 #define print_bdd(f) print_bdd1(f, 0)
 void

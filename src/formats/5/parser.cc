@@ -35,7 +35,7 @@
  of the possibility of those damages.
 *********************************************************************/
 
-#include "ite.h"
+#include "sbsat.h"
 #include "bddnode.h"
 
 int  s_error=0;

@@ -135,13 +135,11 @@ sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 EXTRA_DIST = \
-	common.h globals.h ite.h prototypes.h defines.h brancher.h \
-	heuristic.h j_heuristic.h l_heuristic.h i_heuristic.h  \
-	lemmainfo.h smurffactory.h \
-	log.h params.h equivclass.h \
-	preprocess.h pools.h symtable.h solver.h params.h vars.h \
-        iteheaders.h itefeatures.h postproc.h formats.h  \
-        interface.h config.h config.h.in stamp-h stamp-h.in 
+	common.h prototypes.h bdd_ite.h bddtable.h config.h config.h.in \
+	equivclass.h log.h Makefile params.h sat_server_ServerImpl.h \
+	sbsat_features.h sbsat_formats.h sbsat.h sbsat_headers.h \
+	sbsat_interface.h sbsat_postproc.h sbsat_preproc.h sbsat_solver.h \
+	sbsat_utils.h sbsat_vars.h stamp-h stamp-h.in symtable.h
 
 subdir = include
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs

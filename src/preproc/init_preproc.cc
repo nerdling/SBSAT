@@ -35,8 +35,8 @@
  of the possibility of those damages.
 *********************************************************************/
 
-#include "ite.h"
-#include "preprocess.h"
+#include "sbsat.h"
+#include "sbsat_preproc.h"
 
 int Pos_replace = 0;
 int Neg_replace = 0;

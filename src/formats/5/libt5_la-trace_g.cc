@@ -103,7 +103,7 @@
 /* Copy the first part of user declarations.  */
 #line 2 "trace_g.yy"
 
-#include "ite.h"
+#include "sbsat.h"
 #include "bddnode.h"
 #include "symtable.h"
 #include "functions.h"

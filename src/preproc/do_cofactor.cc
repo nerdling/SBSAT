@@ -35,8 +35,8 @@
  of the possibility of those damages.
 *********************************************************************/
 
-#include "ite.h"
-#include "preprocess.h"
+#include "sbsat.h"
+#include "sbsat_preproc.h"
 
 int COF_MAX = 100;		//The max number of variables BDDs can have to be used in cofactoring
 

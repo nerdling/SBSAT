@@ -35,7 +35,8 @@
  of the possibility of those damages.
 *********************************************************************/
 
-#include <ite.h>
+#include "sbsat.h"
+#include "sbsat_solver.h"
 
 //float STATE_TIME = 5000.0;
 int PRINT_TREE_WIDTH = 64;
@@ -145,8 +146,6 @@ char var_stat_file[128] = "";
 int _bdd_pool_size=1000000;
 
 varinfo *variablelist = NULL;
-
-t_arrVarScores *arrVarScores = NULL;
 
 char brancher_presets[4096]="";
 char comment[1024]="";

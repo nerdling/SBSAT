@@ -2,7 +2,7 @@
 #ifndef BDDNODE_H
 #define BDDNODE_H
 
-#include "ite.h"
+#include "sbsat.h"
 #include "symtable.h"
 
 BDDNode * find_or_add_node (int v, BDDNode * r, BDDNode * e);

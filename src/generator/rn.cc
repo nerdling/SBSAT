@@ -37,7 +37,7 @@
 
 #include <stdio.h>
 #include <sys/time.h>
-#include "ite.h"
+#include "sbsat.h"
 
 /* Ramsey numbers R(k,l)=n
  *

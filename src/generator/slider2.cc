@@ -37,7 +37,7 @@
 
 #include <stdio.h>
 #include <sys/time.h>
-#include "ite.h"
+#include "sbsat.h"
 
 void slider2_unsat(char *out_type, int n);
 void slider2_sat(char *out_type, int n);

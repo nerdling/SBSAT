@@ -1,7 +1,7 @@
 #ifndef P3_H
 #define P3_H
 
-#include "ite.h"
+#include "sbsat.h"
 #include "bddnode.h"
 #include "symtable.h"
 #include "functions.h"

@@ -36,7 +36,7 @@
 *********************************************************************/
 
 #include <stdio.h>
-#include "ite.h"
+#include "sbsat.h"
 
 void makeXor(int variables, int functions, int length, int width);
 void vanDerWaerden(char *vdw_type, int n, int k, int p);

@@ -37,7 +37,7 @@
 
 #include <stdio.h>
 #include <sys/time.h>
-#include "ite.h"
+#include "sbsat.h"
 
 /*
  * van der Warden Number problem:
@@ -161,7 +161,7 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
    int prog_sum = ((1+max_step)*max_step)/2;
    int clauses = n+k*(max_step*n-p*prog_sum+prog_sum);
    int clause_count = 0;
-   int sym = 0;
+   //int sym = 0;
    int sym_clauses = 0;
    switch (formula_type) {
     case CNF: 

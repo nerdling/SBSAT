@@ -35,7 +35,7 @@
  of the possibility of those damages.
 *********************************************************************/
 
-#include "ite.h"
+#include "sbsat.h"
 
 #define LLIST_POOL_SIZE 10000
 

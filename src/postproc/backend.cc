@@ -35,10 +35,10 @@
  of the possibility of those damages.
 *********************************************************************/
 
-#include "ite.h"
-#include "preprocess.h"
-#include "postproc.h"
-#include "solver.h"
+#include "sbsat.h"
+#include "sbsat_preproc.h"
+#include "sbsat_postproc.h"
+#include "sbsat_solver.h"
 
 /*
 extern BDDNodeStruct **original_functions;

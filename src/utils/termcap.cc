@@ -35,7 +35,7 @@
  of the possibility of those damages.
 *********************************************************************/
 
-#include "ite.h"
+#include "sbsat.h"
 
 char *cl_string, *cm_string;
 int term_height=25;

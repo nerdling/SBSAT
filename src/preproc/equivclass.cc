@@ -96,7 +96,7 @@
  *    class (the root of the inverted tree).
 **/
 
-#include "ite.h"
+#include "sbsat.h"
 #include "equivclass.h"
 
 #define null -1

@@ -35,8 +35,8 @@
  of the possibility of those damages.
 *********************************************************************/
 
-#include "ite.h"
-#include "solver.h"
+#include "sbsat.h"
+#include "sbsat_solver.h"
 #include "params.h"
 
 extern int params_current_src;
@@ -449,17 +449,6 @@ finish_params()
               break;
    }
 
-   /* decode heuristic type -- johnson, lemma, interactive, state */
-   switch (sHeuristic[0]) {
-    case 'j': nHeuristic = JOHNSON_HEURISTIC; break;
-    case 'l': nHeuristic = C_LEMMA_HEURISTIC; break;
-    case 'i': nHeuristic = INTERACTIVE_HEURISTIC; break;
-    case 'm': nHeuristic = STATE_HEURISTIC; break;
-    default: 
-              dE_printf2("error: Unknown heuristic type %c\n", sHeuristic[0]); 
-              exit(1);
-              break;
-   }
 
    /* limit max vbles per smurf flag -S */
    if (MAX_VBLES_PER_SMURF > MAX_MAX_VBLES_PER_SMURF)
@@ -468,11 +457,6 @@ finish_params()
             MAX_MAX_VBLES_PER_SMURF);
       exit(1);
    }
-
-   /* compute power of three of max vbles per smurf */
-   MAX_NUM_PATH_EQUIV_SETS=1;
-   for (int i=0;i<MAX_VBLES_PER_SMURF;i++)
-      MAX_NUM_PATH_EQUIV_SETS*=3;
 
    /* check validity of disabling backjumping AND forcing lemmas to be 0 */
    if (backjumping == 0) {

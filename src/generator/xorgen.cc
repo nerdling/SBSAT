@@ -37,7 +37,7 @@
 
 #include <stdio.h>
 #include <sys/time.h>
-#include "ite.h"
+#include "sbsat.h"
 
 void makeXor(int variables, int functions, int length, int width) {
 	struct timeval tv;

@@ -488,7 +488,7 @@ char *yytext;
 #line 1 "blif_s.ll"
 #define INITIAL 0
 #line 2 "blif_s.ll"
-#include "ite.h"
+#include "sbsat.h"
 #include "bddnode.h"
 #include "libt5_la-blif_g.h"
 

@@ -35,8 +35,8 @@
  of the possibility of those damages.
 *********************************************************************/
 
-#include "ite.h"
-#include "formats.h"
+#include "sbsat.h"
+#include "sbsat_formats.h"
 
 #define KEDAR 0
 

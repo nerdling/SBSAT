@@ -35,8 +35,8 @@
  of the possibility of those damages.
 *********************************************************************/
 
-#include "ite.h"
-#include "preprocess.h"
+#include "sbsat.h"
+#include "sbsat_preproc.h"
 
 int MAX_EXQUANTIFY_CLAUSES = 20;	  //Number of BDDs a variable appears in
                                    //to quantify that variable away.

@@ -38,10 +38,6 @@
 #ifndef PROTOTYPES_H
 #define PROTOTYPES_H
 
-#define find_or_add_node bddtable_find_or_add_node
-
-int walkSolve();
-int solve();
 
 double get_runtime();
 long get_memusage();
@@ -51,52 +47,6 @@ int revcompfunc (const void *, const void *);
 int abscompfunc (const void *, const void *);
 int absrevcompfunc (const void *, const void *);
 
-void bdd_init();
-void itetable_init();
-BDDNode *find_or_add_node(int, BDDNode *, BDDNode *);
-BDDNode *itetable_find_or_add_node (int v, BDDNode * r, BDDNode * e, BDDNode *cached_ite);
-BDDNode *itetable_add_node(int v, BDDNode * r, BDDNode * e, BDDNode *cached_ite);
-BDDNode *ite(BDDNode *, BDDNode *, BDDNode *);
-void bddtable_load(void *_bddtable, int _bddtable_len, void *_bddtable_start, int *_shift);
-void bddtable_get(void **_bddtable, int *_bddtable_len, int *_bddtable_msize);
-
-#ifdef NO_BDD_MACROS
-BDDNode *ite_var (int);
-//BDDNode *ite_not(BDDNode *);
-#define ite_not(b) (b->notCase)
-BDDNode *ite_and(BDDNode *, BDDNode *);
-BDDNode *ite_or(BDDNode *, BDDNode *);
-BDDNode *ite_or_te(BDDNode *);
-BDDNode *ite_equ(BDDNode *, BDDNode *);
-BDDNode *ite_xor(BDDNode *, BDDNode *);
-BDDNode *ite_imp(BDDNode *, BDDNode *);
-BDDNode *ite_itequ(BDDNode *, BDDNode *, BDDNode *, BDDNode *);
-BDDNode *ite_nand(BDDNode *, BDDNode *);
-BDDNode *ite_nor(BDDNode *, BDDNode *);
-BDDNode *ite_nimp(BDDNode *, BDDNode *);
-BDDNode *reduce_t(int, BDDNode *);
-BDDNode *reduce_f(int, BDDNode *);
-int top_variable(BDDNode *, BDDNode *, BDDNode *);
-#else
-#define ite_var(v)     (v<0?find_or_add_node (-1*v, false_ptr, true_ptr):\
-                            find_or_add_node (   v, true_ptr,  false_ptr))
-#define ite_not(a)     (ite(a, false_ptr, true_ptr))
-#define ite_and(a, b)  (ite(a, b, false_ptr))
-#define ite_or(a, b)   (ite(a, true_ptr, b))
-#define ite_equ(a, b)  (ite_not(ite_xor(a, b)))
-#define ite_xor(a, b)  (ite(a, ite_not(b), b))
-#define ite_imp(a, b)  (ite(a, b, true_ptr))
-#define ite_itequ(a, b, c, d) (ite_equ(d, ite(a, b, c)))
-
-#define ite_nor(a, b)  (ite_not(ite_or(a, b)))
-#define ite_nimp(a, b) (ite_not(ite_imp(a, b)))
-#define ite_nand(a, b) (ite_not(ite_and(a, b)))
-
-#define reduce_t(v, x) ((x)->variable == v ? (x)->thenCase : (x))
-#define reduce_f(v, x) ((x)->variable == v ? (x)->elseCase : (x))
-#define MIN3(x,y,z) (x<y?(x<z?x:z):y<z?y:z)
-#define top_variable(x, y, z) MIN3((x)->variable, (y)->variable, (z)->variable)
-#endif
 
 BDDNode *and_dot(BDDNode *, BDDNode *);
 BDDNode *constant_and(BDDNode *, BDDNode *);
@@ -117,31 +67,6 @@ void myungetc(char c);
 void readfile();
 int look_up(char *s);
 
-BDDNode *ite(BDDNode *, BDDNode *, BDDNode *);
-BDDNode *ite_xor3(BDDNode *, BDDNode *, BDDNode *);
-BDDNode *ite_xor4(BDDNode *, BDDNode *, BDDNode *, BDDNode *);
-BDDNode *ite_xor5(BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *);
-BDDNode *ite_xor6(BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *);
-BDDNode *ite_xor7(BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *);
-BDDNode *ite_xor8(BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *);
-BDDNode *ite_xor9(BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *);
-BDDNode *ite_xor10(BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *);
-BDDNode *ite_and3(BDDNode *, BDDNode *, BDDNode *);
-BDDNode *ite_and4(BDDNode *, BDDNode *, BDDNode *, BDDNode *);
-BDDNode *ite_and5(BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *);
-BDDNode *ite_and6(BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *);
-BDDNode *ite_and7(BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *);
-BDDNode *ite_and8(BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *);
-BDDNode *ite_and9(BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *);
-BDDNode *ite_and10(BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *);
-BDDNode *ite_or3(BDDNode *, BDDNode *, BDDNode *);
-BDDNode *ite_or4(BDDNode *, BDDNode *, BDDNode *, BDDNode *);
-BDDNode *ite_or5(BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *);
-BDDNode *ite_or6(BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *);
-BDDNode *ite_or7(BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *);
-BDDNode *ite_or8(BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *);
-BDDNode *ite_or9(BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *);
-BDDNode *ite_or10(BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *);
 BDDNode *gcf(BDDNode *, BDDNode *);
 int nmbrVarsInCommon(int, int, int);
 BDDNode *strengthen(int, int);
@@ -271,14 +196,14 @@ void print_roller();
 void print_nonroller();
 void print_roller_init();
 
+void DeallocateLLists(llist *next);
+void DeallocateOneLList(llist *next);
+llist *AllocateLList(int x, llist *next);
+
 void DeallocateInferences(infer *next);
 void DeallocateInferences_var(infer *next, int var);
 void DeallocateOneInference(infer *next);
 infer *AllocateInference(int num0, int num1, infer *next);
-
-void DeallocateLLists(llist *next);
-void DeallocateOneLList(llist *next);
-llist *AllocateLList(int x, llist *next);
 
 FILE * ite_fopen(char *filename, const char *fileflags);
 long ite_filesize(char *filename);

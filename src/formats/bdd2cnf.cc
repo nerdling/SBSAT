@@ -43,8 +43,8 @@
  *  Function printBDDToCNF converts a collection of BDDs to CNF.
  ***********************************************************************/
 
-#include "ite.h"
-#include "formats.h"
+#include "sbsat.h"
+#include "sbsat_formats.h"
 
 void print_cnf_symtable() {
 	for(int x = 1; x < numinp; x++)

@@ -35,7 +35,7 @@
  of the possibility of those damages.
 *********************************************************************/
 
-#include "ite.h"
+#include "sbsat.h"
 
 typedef struct {
    BDDNode *memory;
@@ -454,7 +454,7 @@ bdd_gc(int force)
    struct timeval tv_stop;
    gettimeofday(&tv_stop, NULL);
    double rt_stop = get_runtime();
-   d4_printf6("BDD_GC END(used %d, pools %d, free %d, time=%dms, cpu=%.0fms)\n", 
+   d4_printf6("BDD_GC END(used %d, pools %d, free %d, time=%ldms, cpu=%.0fms)\n", 
          bddtable_used_count_last, numBDDPool+1, bddtable_free_count,
          (tv_stop.tv_sec-tv_start.tv_sec)*1000+(tv_stop.tv_usec-tv_start.tv_usec)/1000,
          (rt_stop-rt_start)*1000);

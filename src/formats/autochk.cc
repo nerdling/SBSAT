@@ -41,8 +41,8 @@
  *   Returns a single char representing type.
  ********************************************************************/  
 
-#include "ite.h"
-#include "formats.h"
+#include "sbsat.h"
+#include "sbsat_formats.h"
 
 char getformat (FILE *finputfile) {
 	char a, output;

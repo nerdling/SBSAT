@@ -408,7 +408,7 @@ char *yytext;
 #line 1 "cnf_s.ll"
 #define INITIAL 0
 #line 2 "cnf_s.ll"
-#include "ite.h"
+#include "sbsat.h"
 #include "bddnode.h"
 #include "libt5_la-cnf_g.h"
 extern int s_line;

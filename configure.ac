@@ -1,10 +1,10 @@
 # -*- Autoconf -*- # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.57)
-AC_INIT([sbsat],[2.2r-1],[mkouril@ececs.uc.edu])
+AC_INIT([sbsat],[2.5a-1],[mkouril@ececs.uc.edu])
 AC_LANG([C++])
-AM_INIT_AUTOMAKE(sbsat,2.2r-1)
-AC_CONFIG_SRCDIR([include/brancher.h])
+AM_INIT_AUTOMAKE(sbsat,2.5a-1)
+AC_CONFIG_SRCDIR([include/sbsat.h])
 AC_CONFIG_HEADER([include/config.h])
 
 # compile with optimization and without debugging by default
@@ -250,7 +250,22 @@ AC_CONFIG_FILES([Makefile
                  src/generator/Makefile
                  src/postproc/Makefile
                  src/preproc/Makefile
-                 src/solver/Makefile
+                 src/solv_smurf/Makefile
+                 src/solv_smurf/include/Makefile
+                 src/solv_smurf/fn_xor/Makefile
+                 src/solv_smurf/fn_minmax/Makefile
+                 src/solv_smurf/fn_and/Makefile
+                 src/solv_smurf/fn_lemma_au/Makefile
+                 src/solv_smurf/fn_lemma/Makefile
+                 src/solv_smurf/fn_smurf_au/Makefile
+                 src/solv_smurf/fn_smurf/Makefile
+                 src/solv_smurf/hr_null/Makefile
+                 src/solv_smurf/hr_lsgb_lemma/Makefile
+                 src/solv_smurf/hr_lsgbw/Makefile
+                 src/solv_smurf/hr_lsgb/Makefile
+                 src/solv_smurf/hr_lemma/Makefile
+                 src/solv_bddwalk/Makefile
+                 src/solv_wvf/Makefile
                  src/utils/Makefile
                  tests/Makefile
                  tests/cnf/Makefile

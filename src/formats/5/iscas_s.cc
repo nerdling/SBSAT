@@ -416,7 +416,7 @@ char *yytext;
 #line 1 "iscas_s.ll"
 #define INITIAL 0
 #line 2 "iscas_s.ll"
-#include "ite.h"
+#include "sbsat.h"
 #include "bddnode.h"
 #include "libt5_la-iscas_g.h"
 

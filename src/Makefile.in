@@ -134,13 +134,28 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
+SUBDIRS = solv_smurf solv_bddwalk solv_wvf utils preproc postproc formats generator
+
 INCLUDES = -I$(top_srcdir)/include
 SOURCES = sbsat.cc
 @MYLIBTOOL_FALSE@SBSAT_LIBS = \
 @MYLIBTOOL_FALSE@	libsbsat2.la \
 @MYLIBTOOL_FALSE@	formats/libformats.a \
 @MYLIBTOOL_FALSE@	formats/5/libt5.a \
-@MYLIBTOOL_FALSE@	solver/libsolver2.a  \
+@MYLIBTOOL_FALSE@	solv_smurf/libsolv_smurf.a  \
+@MYLIBTOOL_FALSE@	solv_smurf/hr_null/libhrnull.a  \
+@MYLIBTOOL_FALSE@	solv_smurf/hr_lsgb_lemma/libhrlsgblemma.a  \
+@MYLIBTOOL_FALSE@	solv_smurf/hr_lsgbw/libhrlsgbw.a  \
+@MYLIBTOOL_FALSE@	solv_smurf/hr_lsgb/libhrlsgb.a  \
+@MYLIBTOOL_FALSE@	solv_smurf/hr_lemma/libhrlemma.a  \
+@MYLIBTOOL_FALSE@	solv_smurf/fn_xor/libfnxor.a  \
+@MYLIBTOOL_FALSE@	solv_smurf/fn_minmax/libfnminmax.a  \
+@MYLIBTOOL_FALSE@	solv_smurf/fn_and/libfnand.a  \
+@MYLIBTOOL_FALSE@	solv_smurf/fn_smurf_au/libfnsmurfau.a  \
+@MYLIBTOOL_FALSE@	solv_smurf/fn_smurf/libfnsmurf.a  \
+@MYLIBTOOL_FALSE@	solv_smurf/fn_lemma/libfnlemma.a  \
+@MYLIBTOOL_FALSE@	solv_bddwalk/libsolv_bddwalk.a  \
+@MYLIBTOOL_FALSE@	solv_wvf/libsolv_wvf.a  \
 @MYLIBTOOL_FALSE@	postproc/libpostproc.a \
 @MYLIBTOOL_FALSE@	preproc/libpreproc.a \
 @MYLIBTOOL_FALSE@	utils/libutils.a 
@@ -148,7 +163,20 @@ SOURCES = sbsat.cc
 @MYLIBTOOL_TRUE@SBSAT_LIBS = \
 @MYLIBTOOL_TRUE@	libsbsat2.la \
 @MYLIBTOOL_TRUE@	formats/libformats.la \
-@MYLIBTOOL_TRUE@	solver/libsolver2.la  \
+@MYLIBTOOL_TRUE@	solv_smurf/libsolv_smurf.la  \
+@MYLIBTOOL_TRUE@	solv_smurf/hr_null/libhrnull.la  \
+@MYLIBTOOL_TRUE@	solv_smurf/hr_lsgb_lemma/libhrlsgblemma.la  \
+@MYLIBTOOL_TRUE@	solv_smurf/hr_lsgbw/libhrlsgbw.la  \
+@MYLIBTOOL_TRUE@	solv_smurf/hr_lsgb/libhrlsgb.la  \
+@MYLIBTOOL_TRUE@	solv_smurf/hr_lemma/libhrlemma.la  \
+@MYLIBTOOL_TRUE@	solv_smurf/fn_xor/libfnxor.la  \
+@MYLIBTOOL_TRUE@	solv_smurf/fn_minmax/libfnminmax.la  \
+@MYLIBTOOL_TRUE@	solv_smurf/fn_and/libfnand.la  \
+@MYLIBTOOL_TRUE@	solv_smurf/fn_smurf_au/libfnsmurfau.la  \
+@MYLIBTOOL_TRUE@	solv_smurf/fn_smurf/libfnsmurf.la  \
+@MYLIBTOOL_TRUE@	solv_smurf/fn_lemma/libfnlemma.la  \
+@MYLIBTOOL_TRUE@	solv_bddwalk/libsolv_bddwalk.la  \
+@MYLIBTOOL_TRUE@	solv_wvf/libsolv_wvf.la  \
 @MYLIBTOOL_TRUE@	postproc/libpostproc.la \
 @MYLIBTOOL_TRUE@	preproc/libpreproc.la \
 @MYLIBTOOL_TRUE@	utils/libutils.la 
@@ -165,8 +193,6 @@ sbsat_SOURCES = empty.cc
 sbsat_LDADD = $(SBSAT_LIBS) $(LIBM)
 @SBSAT_STATIC_FALSE@sbsat_LDFLAGS = -static
 @SBSAT_STATIC_TRUE@sbsat_LDFLAGS = -all-static
-
-SUBDIRS = solver utils preproc postproc formats generator
 subdir = src
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/include/config.h
@@ -174,12 +200,38 @@ CONFIG_CLEAN_FILES =
 LTLIBRARIES = $(lib_LTLIBRARIES)
 
 @MYLIBTOOL_TRUE@libsbsat_la_DEPENDENCIES = libsbsat2.la \
-@MYLIBTOOL_TRUE@	formats/libformats.la solver/libsolver2.la \
-@MYLIBTOOL_TRUE@	postproc/libpostproc.la preproc/libpreproc.la \
-@MYLIBTOOL_TRUE@	utils/libutils.la
+@MYLIBTOOL_TRUE@	formats/libformats.la \
+@MYLIBTOOL_TRUE@	solv_smurf/libsolv_smurf.la \
+@MYLIBTOOL_TRUE@	solv_smurf/hr_null/libhrnull.la \
+@MYLIBTOOL_TRUE@	solv_smurf/hr_lsgb_lemma/libhrlsgblemma.la \
+@MYLIBTOOL_TRUE@	solv_smurf/hr_lsgbw/libhrlsgbw.la \
+@MYLIBTOOL_TRUE@	solv_smurf/hr_lsgb/libhrlsgb.la \
+@MYLIBTOOL_TRUE@	solv_smurf/hr_lemma/libhrlemma.la \
+@MYLIBTOOL_TRUE@	solv_smurf/fn_xor/libfnxor.la \
+@MYLIBTOOL_TRUE@	solv_smurf/fn_minmax/libfnminmax.la \
+@MYLIBTOOL_TRUE@	solv_smurf/fn_and/libfnand.la \
+@MYLIBTOOL_TRUE@	solv_smurf/fn_smurf_au/libfnsmurfau.la \
+@MYLIBTOOL_TRUE@	solv_smurf/fn_smurf/libfnsmurf.la \
+@MYLIBTOOL_TRUE@	solv_smurf/fn_lemma/libfnlemma.la \
+@MYLIBTOOL_TRUE@	solv_bddwalk/libsolv_bddwalk.la \
+@MYLIBTOOL_TRUE@	solv_wvf/libsolv_wvf.la postproc/libpostproc.la \
+@MYLIBTOOL_TRUE@	preproc/libpreproc.la utils/libutils.la
 @MYLIBTOOL_FALSE@libsbsat_la_DEPENDENCIES = libsbsat2.la \
 @MYLIBTOOL_FALSE@	formats/libformats.a formats/5/libt5.a \
-@MYLIBTOOL_FALSE@	solver/libsolver2.a postproc/libpostproc.a \
+@MYLIBTOOL_FALSE@	solv_smurf/libsolv_smurf.a \
+@MYLIBTOOL_FALSE@	solv_smurf/hr_null/libhrnull.a \
+@MYLIBTOOL_FALSE@	solv_smurf/hr_lsgb_lemma/libhrlsgblemma.a \
+@MYLIBTOOL_FALSE@	solv_smurf/hr_lsgbw/libhrlsgbw.a \
+@MYLIBTOOL_FALSE@	solv_smurf/hr_lsgb/libhrlsgb.a \
+@MYLIBTOOL_FALSE@	solv_smurf/hr_lemma/libhrlemma.a \
+@MYLIBTOOL_FALSE@	solv_smurf/fn_xor/libfnxor.a \
+@MYLIBTOOL_FALSE@	solv_smurf/fn_minmax/libfnminmax.a \
+@MYLIBTOOL_FALSE@	solv_smurf/fn_and/libfnand.a \
+@MYLIBTOOL_FALSE@	solv_smurf/fn_smurf_au/libfnsmurfau.a \
+@MYLIBTOOL_FALSE@	solv_smurf/fn_smurf/libfnsmurf.a \
+@MYLIBTOOL_FALSE@	solv_smurf/fn_lemma/libfnlemma.a \
+@MYLIBTOOL_FALSE@	solv_bddwalk/libsolv_bddwalk.a \
+@MYLIBTOOL_FALSE@	solv_wvf/libsolv_wvf.a postproc/libpostproc.a \
 @MYLIBTOOL_FALSE@	preproc/libpreproc.a utils/libutils.a
 am_libsbsat_la_OBJECTS = emptylib.lo
 libsbsat_la_OBJECTS = $(am_libsbsat_la_OBJECTS)
@@ -194,12 +246,37 @@ PROGRAMS = $(bin_PROGRAMS)
 am_sbsat_OBJECTS = empty.$(OBJEXT)
 sbsat_OBJECTS = $(am_sbsat_OBJECTS)
 @MYLIBTOOL_TRUE@sbsat_DEPENDENCIES = libsbsat2.la formats/libformats.la \
-@MYLIBTOOL_TRUE@	solver/libsolver2.la postproc/libpostproc.la \
+@MYLIBTOOL_TRUE@	solv_smurf/libsolv_smurf.la \
+@MYLIBTOOL_TRUE@	solv_smurf/hr_null/libhrnull.la \
+@MYLIBTOOL_TRUE@	solv_smurf/hr_lsgb_lemma/libhrlsgblemma.la \
+@MYLIBTOOL_TRUE@	solv_smurf/hr_lsgbw/libhrlsgbw.la \
+@MYLIBTOOL_TRUE@	solv_smurf/hr_lsgb/libhrlsgb.la \
+@MYLIBTOOL_TRUE@	solv_smurf/hr_lemma/libhrlemma.la \
+@MYLIBTOOL_TRUE@	solv_smurf/fn_xor/libfnxor.la \
+@MYLIBTOOL_TRUE@	solv_smurf/fn_minmax/libfnminmax.la \
+@MYLIBTOOL_TRUE@	solv_smurf/fn_and/libfnand.la \
+@MYLIBTOOL_TRUE@	solv_smurf/fn_smurf_au/libfnsmurfau.la \
+@MYLIBTOOL_TRUE@	solv_smurf/fn_smurf/libfnsmurf.la \
+@MYLIBTOOL_TRUE@	solv_smurf/fn_lemma/libfnlemma.la \
+@MYLIBTOOL_TRUE@	solv_bddwalk/libsolv_bddwalk.la \
+@MYLIBTOOL_TRUE@	solv_wvf/libsolv_wvf.la postproc/libpostproc.la \
 @MYLIBTOOL_TRUE@	preproc/libpreproc.la utils/libutils.la
 @MYLIBTOOL_FALSE@sbsat_DEPENDENCIES = libsbsat2.la formats/libformats.a \
-@MYLIBTOOL_FALSE@	formats/5/libt5.a solver/libsolver2.a \
-@MYLIBTOOL_FALSE@	postproc/libpostproc.a preproc/libpreproc.a \
-@MYLIBTOOL_FALSE@	utils/libutils.a
+@MYLIBTOOL_FALSE@	formats/5/libt5.a solv_smurf/libsolv_smurf.a \
+@MYLIBTOOL_FALSE@	solv_smurf/hr_null/libhrnull.a \
+@MYLIBTOOL_FALSE@	solv_smurf/hr_lsgb_lemma/libhrlsgblemma.a \
+@MYLIBTOOL_FALSE@	solv_smurf/hr_lsgbw/libhrlsgbw.a \
+@MYLIBTOOL_FALSE@	solv_smurf/hr_lsgb/libhrlsgb.a \
+@MYLIBTOOL_FALSE@	solv_smurf/hr_lemma/libhrlemma.a \
+@MYLIBTOOL_FALSE@	solv_smurf/fn_xor/libfnxor.a \
+@MYLIBTOOL_FALSE@	solv_smurf/fn_minmax/libfnminmax.a \
+@MYLIBTOOL_FALSE@	solv_smurf/fn_and/libfnand.a \
+@MYLIBTOOL_FALSE@	solv_smurf/fn_smurf_au/libfnsmurfau.a \
+@MYLIBTOOL_FALSE@	solv_smurf/fn_smurf/libfnsmurf.a \
+@MYLIBTOOL_FALSE@	solv_smurf/fn_lemma/libfnlemma.a \
+@MYLIBTOOL_FALSE@	solv_bddwalk/libsolv_bddwalk.a \
+@MYLIBTOOL_FALSE@	solv_wvf/libsolv_wvf.a postproc/libpostproc.a \
+@MYLIBTOOL_FALSE@	preproc/libpreproc.a utils/libutils.a
 
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)/include
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -208,7 +285,7 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	./$(DEPDIR)/sbsat.Plo
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
-LTCXXCOMPILE = $(LIBTOOL) --silent --mode=compile $(CXX) $(DEFS) \
+LTCXXCOMPILE = $(LIBTOOL) --mode=compile $(CXX) $(DEFS) \
 	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
 	$(AM_CXXFLAGS) $(CXXFLAGS)
 CXXLD = $(CXX)
@@ -314,8 +391,7 @@ distclean-depend:
 	-rm -rf ./$(DEPDIR)
 
 .cc.o:
-@am__fastdepCXX_TRUE@	@echo Compiling $*
-@am__fastdepCXX_TRUE@	@if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" \
+@am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" \
 @am__fastdepCXX_TRUE@	  -c -o $@ `test -f '$<' || echo '$(srcdir)/'`$<; \
 @am__fastdepCXX_TRUE@	then mv "$(DEPDIR)/$*.Tpo" "$(DEPDIR)/$*.Po"; \
 @am__fastdepCXX_TRUE@	else rm -f "$(DEPDIR)/$*.Tpo"; exit 1; \
@@ -337,8 +413,7 @@ distclean-depend:
 @am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ `if test -f '$<'; then $(CYGPATH_W) '$<'; else $(CYGPATH_W) '$(srcdir)/$<'; fi`
 
 .cc.lo:
-@am__fastdepCXX_TRUE@	@echo Compiling $*
-@am__fastdepCXX_TRUE@	@if $(LTCXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" \
+@am__fastdepCXX_TRUE@	if $(LTCXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" \
 @am__fastdepCXX_TRUE@	  -c -o $@ `test -f '$<' || echo '$(srcdir)/'`$<; \
 @am__fastdepCXX_TRUE@	then mv "$(DEPDIR)/$*.Tpo" "$(DEPDIR)/$*.Plo"; \
 @am__fastdepCXX_TRUE@	else rm -f "$(DEPDIR)/$*.Tpo"; exit 1; \

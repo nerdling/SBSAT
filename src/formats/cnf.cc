@@ -40,8 +40,8 @@
  *  Routines for converting from CNF to BDD and from DNF to CNF
  **********************************************************************/  
 
-#include "ite.h"
-#include "formats.h"
+#include "sbsat.h"
+#include "sbsat_formats.h"
 
 #define CNF_USES_SYMTABLE
 
