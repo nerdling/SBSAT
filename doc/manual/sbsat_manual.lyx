@@ -1117,14 +1117,12 @@ The STRENGTHEN function takes two(2) arguments, e1 and e2.
 
 
 \series bold 
-PRUNE
-\series default 
- 
+RESTRICT
 \layout Standard
 
-The PRUNE function takes two(2) arguments, e1 and e2.
+The RESTRICT function takes two(2) arguments, e1 and e2.
  This function prunes all branches found in e2 away from e1.
- (See Branch Pruning, page ??) 
+ (See Restrict, page ??) 
 \layout LyX-Code
 
 \layout Standard
@@ -1181,25 +1179,25 @@ The PRINT_TREE function takes one(1) argument.
 Example: PRINT_TREE( OR3(4, 5, -6) ) 
 \layout LyX-Code
 
-Prints to standard output:
+Prints to standard output: 
 \layout LyX-Code
 
---------------------------------------------------- 
+-----------------------------------------------------------
 \layout LyX-Code
 
-                         4 
+                                6
 \layout LyX-Code
 
-               T                   5 
+                5                               T
 \layout LyX-Code
 
-                              T         6 
+        T             4                                
 \layout LyX-Code
 
-                                     F     T 
+                  T       F
 \layout LyX-Code
 
---------------------------------------------------- 
+-----------------------------------------------------------
 \layout LyX-Code
 
 \layout Standard
@@ -1227,10 +1225,7 @@ Prints to standard output:
 -------------------------------------------------------
 \layout LyX-Code
 
-ite 4
-\layout LyX-Code
-
-    T
+ite 6
 \layout LyX-Code
 
     ite 5
@@ -1239,10 +1234,57 @@ ite 4
         T
 \layout LyX-Code
 
-        ite 6 F T
+        ite 4 T F
+\layout LyX-Code
+
+    T
 \layout LyX-Code
 
 ------------------------------------------------------- 
+\layout LyX-Code
+
+\layout Standard
+
+
+\series bold 
+MINMAX
+\layout Standard
+
+The MINMAX function takes at least 4 arguments.
+ The first argument is the number of variables that will be in the resulting
+ BDD.
+ The second argument is the minimum number of variables in the BDD that
+ need to be set to true to make the BDD evaluate to true.
+ The third argument is the maximum number of variables in the BDD that can
+ be set to true for the BDD to evaluate to true.
+ The fourth argument is the list of variables that make up the BDD.
+\layout LyX-Code
+
+Example:PRINT_TREE( MINMAX(4, 1, 3, 13, 12, 11, 10)
+\layout LyX-Code
+
+Prints to standard output:
+\layout LyX-Code
+
+-----------------------------------------------------------------
+\layout LyX-Code
+
+                                13
+\layout LyX-Code
+
+                12                             12
+\layout LyX-Code
+
+        11               T               T             11
+\layout LyX-Code
+
+    10       T                                      T      10
+\layout LyX-Code
+
+  F    T                                                 T    F
+\layout LyX-Code
+
+-----------------------------------------------------------------
 \layout LyX-Code
 
 \layout Standard
@@ -1458,7 +1500,7 @@ The ITE program processes the input given to the program, but the main tool
 Existential Quantification
 \layout Subsection
 
-Branch Pruning
+Restrict
 \layout Subsection
 
 Strengthening
