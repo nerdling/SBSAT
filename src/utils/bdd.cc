@@ -950,6 +950,76 @@ BDDNode * p2 (BDDNode * f, BDDNode * c)
    return find_or_add_node (v, r, e);
 }
 
+BDDNode *strengthen_fun(BDDNode *bddNmbr1, BDDNode *bddNmbr2)
+{	
+	long y = 0;
+	int tempint[5000];
+	unravelBDD(&y, tempint, bddNmbr1);
+	qsort (tempint, y, sizeof (int), compfunc);
+	if (y != 0) {
+		int v = 0;
+		for (int i = 1; i < y; i++) {
+			v++;
+			if (tempint[i] == tempint[i - 1])
+			  v--;
+			tempint[v] = tempint[i];
+		}
+		y = v + 1;
+	}
+	int length1 = y;
+	int *vars1;
+	if(length1 > 0) {
+		vars1 = new int[length1+1];
+		for(int i = 0; i < y; i++)
+		  vars1[i] = tempint[i];
+	}
+	
+	y = 0;
+	unravelBDD(&y, tempint, bddNmbr2);
+	qsort (tempint, y, sizeof (int), compfunc);
+	if (y != 0) {
+		int v = 0;
+		for (int i = 1; i < y; i++) {
+			v++;
+			if (tempint[i] == tempint[i - 1])
+			  v--;
+			tempint[v] = tempint[i];
+		}
+		y = v + 1;
+	}
+	int length2 = y;
+	int *vars2;
+	if(length2 > 0){
+		vars2 = new int[length2+1];
+		for(int i = 0; i < y; i++)
+		  vars2[i] = tempint[i];
+	}
+	
+	BDDNode *quantifiedBDD2 = bddNmbr2;
+	int bdd1pos = 0;
+	int bdd2pos = 0;
+	int bdd1Var = 0, bdd2Var = 0;
+	while(bdd1pos < length1 && bdd2pos < length2) {
+		bdd1Var = vars1[bdd1pos];
+		bdd2Var = vars2[bdd2pos];
+		if (bdd1Var < bdd2Var)
+		  bdd1pos++;
+		else if (bdd1Var == bdd2Var) {
+			bdd1pos++;
+			bdd2pos++;
+		} else {
+			quantifiedBDD2 = xquantify(quantifiedBDD2, bdd2Var);
+			bdd2pos++;
+		}
+	}
+	for (; bdd2pos < length2; bdd2pos++)
+	  quantifiedBDD2 = xquantify(quantifiedBDD2, vars2[bdd2pos]);
+	
+	if(length1 > 0) delete vars1;
+	if(length2 > 0) delete vars2;
+	return ite_and(bddNmbr1, quantifiedBDD2);
+}
+
 BDDNode * pruning(BDDNode * f, BDDNode * c)
 {
    if (f == c)

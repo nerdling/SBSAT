@@ -66,11 +66,6 @@ void Sort_BDDs (int *tempint);
 #endif
 #endif
 
-//#define P1 
-//#define P2
-#define RESTRICT
-//#define REMOVE_FPS (default)
-
 int DO_PRUNING_FN() {
 	int ret = PREP_NO_CHANGE;
 	

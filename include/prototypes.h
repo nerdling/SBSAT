@@ -154,7 +154,8 @@ BDDNode *ite_or9(BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode 
 BDDNode *ite_or10(BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *, BDDNode *);
 BDDNode *gcf(BDDNode *, BDDNode *);
 int nmbrVarsInCommon(int, int, int *&, store *&, int);
-BDDNode* strengthen(int, int, int *&, store *&);
+BDDNode *strengthen(int, int, int *&, store *&);
+BDDNode *strengthen_fun(BDDNode *, BDDNode *);
 BDDNode *xquantify(BDDNode *, int);
 BDDNode *uquantify(BDDNode *, int);
 int countnodes(BDDNode *);
