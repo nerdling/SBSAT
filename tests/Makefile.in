@@ -35,7 +35,6 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-host_triplet = @host@
 ACLOCAL = @ACLOCAL@
 AMDEP_FALSE = @AMDEP_FALSE@
 AMDEP_TRUE = @AMDEP_TRUE@
@@ -65,7 +64,6 @@ LDFLAGS = @LDFLAGS@
 LEX = @LEX@
 LEXLIB = @LEXLIB@
 LEX_OUTPUT_ROOT = @LEX_OUTPUT_ROOT@
-LIBM = @LIBM@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LTLIBOBJS = @LTLIBOBJS@
@@ -92,18 +90,10 @@ am__fastdepCXX_TRUE = @am__fastdepCXX_TRUE@
 am__include = @am__include@
 am__quote = @am__quote@
 bindir = @bindir@
-build = @build@
 build_alias = @build_alias@
-build_cpu = @build_cpu@
-build_os = @build_os@
-build_vendor = @build_vendor@
 datadir = @datadir@
 exec_prefix = @exec_prefix@
-host = @host@
 host_alias = @host_alias@
-host_cpu = @host_cpu@
-host_os = @host_os@
-host_vendor = @host_vendor@
 includedir = @includedir@
 infodir = @infodir@
 install_sh = @install_sh@
@@ -127,8 +117,7 @@ SUBDIRS = trace_tests longer_tests cnf
 subdir = tests
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/include/config.h
-CONFIG_CLEAN_FILES = trace_tests.sh xor_tests.sh longer_tests.sh \
-	cnf_tests.sh
+CONFIG_CLEAN_FILES =
 DIST_SOURCES =
 
 RECURSIVE_TARGETS = info-recursive dvi-recursive pdf-recursive \
@@ -136,25 +125,16 @@ RECURSIVE_TARGETS = info-recursive dvi-recursive pdf-recursive \
 	all-recursive install-data-recursive install-exec-recursive \
 	installdirs-recursive install-recursive uninstall-recursive \
 	check-recursive installcheck-recursive
-DIST_COMMON = Makefile.am Makefile.in cnf_tests.sh.in \
-	longer_tests.sh.in trace_tests.sh.in xor_tests.sh.in
+DIST_COMMON = Makefile.am Makefile.in
 DIST_SUBDIRS = $(SUBDIRS)
 all: all-recursive
 
 .SUFFIXES:
-$(srcdir)/Makefile.in:  Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
+$(srcdir)/Makefile.in:  Makefile.am  $(top_srcdir)/configure.ac $(ACLOCAL_M4)
 	cd $(top_srcdir) && \
 	  $(AUTOMAKE) --gnu  tests/Makefile
 Makefile:  $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe)
-trace_tests.sh: $(top_builddir)/config.status trace_tests.sh.in
-	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
-xor_tests.sh: $(top_builddir)/config.status xor_tests.sh.in
-	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
-longer_tests.sh: $(top_builddir)/config.status longer_tests.sh.in
-	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
-cnf_tests.sh: $(top_builddir)/config.status cnf_tests.sh.in
-	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 uninstall-info-am:
 
 # This directory's subdirectories are mostly independent; you can cd
