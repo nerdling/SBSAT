@@ -56,7 +56,7 @@ read_input(char formatin, char formatout, Tracer * &tracer)
 		 if (tracer5==0) {
 			 char line[2048];
 			 FILE *fg=NULL;
-			 get_tempfile("tracer.tmp", tracer_tmp_filename, 255);
+			 get_freefile("tracer.tmp", temp_dir, tracer_tmp_filename, 255);
 			 if ((fg = fopen (tracer_tmp_filename, "wb+"))==NULL) 
 				{
 					fprintf(stderr, "Can't open the temp file: %s\n", tracer_tmp_filename);

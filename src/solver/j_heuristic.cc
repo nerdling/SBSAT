@@ -783,23 +783,26 @@ J_Setup_arrJWeights()
       if (sHeuristic[1] == 0) {
          arrJWeights[nVble] = 1;
       } else {
+         long sum = arrAFS[nVble].nNumRegSmurfsAffected + 
+            arrAFS[nVble].nNumSpecialFuncsAffected;
+         if (arrLemmaVbleCountsPos && arrLemmaVbleCountsNeg) {
+            sum += arrLemmaVbleCountsPos[nVble];
+            sum += arrLemmaVbleCountsNeg[nVble];
+         }
          if (sHeuristic[1] == 's' || sHeuristic[1] == 'S') {
-            arrJWeights[nVble] += arrAFS[nVble].nNumRegSmurfsAffected + 
-               arrAFS[nVble].nNumSpecialFuncsAffected;
+            arrJWeights[nVble] += sum;
          }
          if (sHeuristic[1] == 'S') {
             arrJWeights[nVble] += 1;
          }
          if (sHeuristic[1] == 'q' || sHeuristic[1] == 'Q') {
-            arrJWeights[nVble] += sqrt((double)(arrAFS[nVble].nNumRegSmurfsAffected) + 
-                  arrAFS[nVble].nNumSpecialFuncsAffected);
+            arrJWeights[nVble] += sqrt((double)sum);
          }
          if (sHeuristic[1] == 'Q') {
             arrJWeights[nVble] += 1;
          }
          if (sHeuristic[1] == 'r' || sHeuristic[1] == 'R') {
-            arrJWeights[nVble] += sqrt((double)(arrAFS[nVble].nNumRegSmurfsAffected) + 
-                  arrAFS[nVble].nNumSpecialFuncsAffected);
+            arrJWeights[nVble] += sqrt((double)sum);
             if (max < arrJWeights[nVble]) max = arrJWeights[nVble];
          }
          if (sHeuristic[1] == 'R') {

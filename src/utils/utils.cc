@@ -485,13 +485,13 @@ int _size2 =  _size&15;
 }
 
 void
-get_tempfile(char *basename, char *filename, int filename_max)
+get_freefile(char *basename, char *file_dir, char *filename, int filename_max)
 {
   struct stat buf;
   int filename_len=0;
 
-  if (*temp_dir != 0) 
-	  strncpy(filename, temp_dir, filename_max);	
+  if (file_dir != NULL && *file_dir != 0) 
+	  strncpy(filename, file_dir, filename_max);	
   else
 	  strcpy(filename, ".");
 

@@ -136,7 +136,7 @@ libsolver_a_SOURCES = solve.cc bddwalk.cc \
 	     bdd2smurf.cc specfn2smurf.cc autarky.cc \
              display.cc display_sf.cc verify.cc \
 	     recordsol.cc graphs.cc sf_addons.cc transitions.cc wvf.cc update_heu.cc \
-	     crtwin.cc
+	     crtwin.cc load_lemmas.cc
 
 
 libsolver2_a_SOURCES = libsolver.cc
@@ -162,7 +162,7 @@ am_libsolver_a_OBJECTS = solve.$(OBJEXT) bddwalk.$(OBJEXT) \
 	display.$(OBJEXT) display_sf.$(OBJEXT) verify.$(OBJEXT) \
 	recordsol.$(OBJEXT) graphs.$(OBJEXT) sf_addons.$(OBJEXT) \
 	transitions.$(OBJEXT) wvf.$(OBJEXT) update_heu.$(OBJEXT) \
-	crtwin.$(OBJEXT)
+	crtwin.$(OBJEXT) load_lemmas.$(OBJEXT)
 libsolver_a_OBJECTS = $(am_libsolver_a_OBJECTS)
 libsolver2_a_AR = $(AR) cru
 libsolver2_a_LIBADD =
@@ -188,8 +188,9 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	./$(DEPDIR)/j_update_heu.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/l_heuristic.Po ./$(DEPDIR)/l_lemma.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/lemmainfo.Po ./$(DEPDIR)/lemmaspace.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/libsolver.Po ./$(DEPDIR)/recordsol.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/select_bp.Po ./$(DEPDIR)/sf_addons.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/libsolver.Po ./$(DEPDIR)/load_lemmas.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/recordsol.Po ./$(DEPDIR)/select_bp.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/sf_addons.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/smurffactory.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/smurfstates.Po ./$(DEPDIR)/solve.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/specfn2smurf.Po \
@@ -262,6 +263,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lemmainfo.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lemmaspace.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libsolver.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/load_lemmas.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/recordsol.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/select_bp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sf_addons.Po@am__quote@

@@ -125,3 +125,6 @@ int max_preproc_time=0;
 int sbj = 0;
 
 int reports = 0;
+
+char lemma_out_file[128] = "";
+char lemma_in_file[128] = "";

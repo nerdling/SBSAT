@@ -152,8 +152,10 @@ crtwin_draw() //double fPrevEndTime, double fStartTime)
 }
 
 void
-dump_lemmas(char *filename)
+dump_lemmas(char *_filename)
 {
+   char filename[128];
+   get_freefile(_filename, NULL, filename, 128);
    DisplayAllBrancherLemmasToFile(filename);
 }
 
@@ -161,7 +163,7 @@ void
 crtwin_cmd(char c)
 {
    switch(c) {
-    case 'L': dump_lemmas("lemmas.txt"); break;
+    case 'L': if (*lemma_out_file) dump_lemmas(lemma_out_file); break;
     case '+': BACKTRACKS_PER_STAT_REPORT *= 2; break;
     case '-': BACKTRACKS_PER_STAT_REPORT /= 2; break;
     default: break;

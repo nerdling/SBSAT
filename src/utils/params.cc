@@ -216,6 +216,12 @@ t_opt options[] = {
  */
 { NULL, "", "", P_NONE, {"0"}, {"0"}, VAR_NORMAL, 0, 
 	        "\nBrancher options:"},
+{ lemma_out_file, "", "lemma-out-file", P_STRING, 
+		V(i:127,"127"), {"lemmas.txt"}, VAR_NORMAL, 0, 
+                "File to dump lemmas to"},
+{ lemma_in_file, "", "lemma-in-file", P_STRING, 
+		V(i:127,"127"), {""}, VAR_NORMAL, 0, 
+                "File to read lemmas from"},
 { &reverse_independant_dependant, "r", "reverse-depend", P_PRE_INT, 
 	     	V(i:1,"1"), V(i:0,"0"), VAR_NORMAL, 0, 
 		"Reverse dependency info on in/dependent variables"},

@@ -231,7 +231,7 @@ FILE * zread(char *filename);
 void xorloop ();
 
 void memcpy_ite(void*, void*, int);
-void get_tempfile(char *basename, char *filename, int filename_max);
+void get_freefile(char *basename, char *file_dir, char *filename, int filename_max);
 void ShowResultLine(FILE *fout, char *var, int var_idx, int negative, int value);
 
 ITE_INLINE void

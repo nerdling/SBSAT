@@ -355,7 +355,7 @@ void printBDDToCNF3SAT () {
    FILE *ft;  char buffer[1024];
    int clause_cnt = 0, t_cnt, max_var_no = 0;
    char tmp_bdd_filename[256];
-   get_tempfile("bdd_tmp.cnf", tmp_bdd_filename, 255);
+   get_freefile("bdd_tmp.cnf", temp_dir, tmp_bdd_filename, 255);
 
    for (int i = 0; i < nmbrFunctions; i++) {
       //if (functionType[i] != 0) {

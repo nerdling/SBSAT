@@ -37,6 +37,8 @@
 #include "ite.h"
 #include "solver.h"
 
+void LoadLemmas(char *filename);
+
 int *arrChangedSpecialFn = NULL;
 int *arrChangedSmurfs = NULL;
 
@@ -568,6 +570,8 @@ InitSolveVillage()
    gnNumLemmas = 0;
    InitLemmaInfoArray();
    //  InitHeuristicTablesForSpecialFuncs(nNumVariables);
+
+   if (*lemma_in_file) LoadLemmas(lemma_in_file);
 
    if (nHeuristic == JOHNSON_HEURISTIC) J_InitHeuristic();
 

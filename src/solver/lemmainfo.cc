@@ -525,7 +525,11 @@ EnterIntoLemmaSpace(int nNumElts,
    int nNumBlocksRequired = nNumEntries / LITS_PER_LEMMA_BLOCK +
       (nNumEntries % LITS_PER_LEMMA_BLOCK>0 ? 1: 0);
 
-   if (nHeuristic == C_LEMMA_HEURISTIC) /* || nHeuristic == JOHNSON_HEURISTIC) */
+   if (nHeuristic == C_LEMMA_HEURISTIC
+#ifdef JOHNSON_HEURISTIC_LEMMA
+          || nHeuristic == JOHNSON_HEURISTIC
+#endif
+          ) 
       UpdateHeuristicWithLemma(nNumElts, arrLemmaLiterals);
 
    if (gnNumCachedLemmas >= MAX_NUM_CACHED_LEMMAS)
@@ -889,7 +893,7 @@ DisplayLemmaToFile(FILE *pFile, LemmaBlock *pLemma)
       //cout << arrLits[nLitIndexInBlock] << " ";
       fprintf(pFile, "%d ", arrLits[nLitIndexInBlock]);
    }
-   fprintf(pFile, "\n");
+   fprintf(pFile, "0\n");
 }
 
 ITE_INLINE
@@ -1430,7 +1434,11 @@ FreeLemma(LemmaInfoStruct *pLemmaInfo, bool bIsCached)
    // cache.
 {
    //#ifdef LHEURISTIC
-   if (nHeuristic == C_LEMMA_HEURISTIC) /* || nHeuristic == JOHNSON_HEURISTIC) */
+   if (nHeuristic == C_LEMMA_HEURISTIC
+#ifdef JOHNSON_HEURISTIC_LEMMA
+         || nHeuristic == JOHNSON_HEURISTIC
+#endif
+         )
       RemoveLemmasHeuristicInfluence(pLemmaInfo);
    //#endif // LHEURISTIC
    FreeLemmaBlocks(pLemmaInfo);

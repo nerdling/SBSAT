@@ -96,3 +96,5 @@
 #include "wvf.cc"
 
 #include "crtwin.cc"
+
+#include "load_lemmas.cc"

@@ -154,4 +154,9 @@ extern int sbj;
 
 extern int reports;
 
+extern char temp_dir[128];
+
+extern char lemma_out_file[128];
+extern char lemma_in_file[128];
+
 #endif

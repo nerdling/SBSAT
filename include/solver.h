@@ -38,6 +38,8 @@
 #ifndef SOLVER_H
 #define SOLVER_H
 
+#define JOHNSON_HEURISTIC_LEMMA
+
 void FreeAddonsPool();
 
 extern int nIndepVars;

@@ -151,7 +151,11 @@ InitSolver()
   d2_printf1 ("Initializing Smurf Factory data structs ...\n");
   InitLemmaSpacePool(0);
 
-  if (nHeuristic == C_LEMMA_HEURISTIC) /* || nHeuristic == JOHNSON_HEURISTIC) */
+  if (nHeuristic == C_LEMMA_HEURISTIC
+#ifdef JOHNSON_HEURISTIC_LEMMA
+        || nHeuristic == JOHNSON_HEURISTIC
+#endif
+        ) 
 	       InitLemmaHeurArrays(gnMaxVbleIndex);
 
   return SOLV_UNKNOWN;
@@ -162,7 +166,11 @@ FreeSolver(Tracer *tracer)
 {
   d2_printf1("FreeSolver\n");
 
-  if (nHeuristic == C_LEMMA_HEURISTIC) /* || nHeuristic == JOHNSON_HEURISTIC) */
+  if (nHeuristic == C_LEMMA_HEURISTIC 
+#ifdef JOHNSON_HEURISTIC_LEMMA
+        || nHeuristic == JOHNSON_HEURISTIC
+#endif
+        ) 
      DeleteLemmaHeurArrays();
 
   free(arrSolution);
