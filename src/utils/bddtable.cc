@@ -120,17 +120,16 @@ bddvsb_init()
    }
 }
 
-/*
+// for optimized code it does not matter whether this is inlined or macro
+// in the debug mode macro is better
 inline int
 hash_fn(int v, BDDNode *r, BDDNode *e)
 {
    return 
-   */
-#define hash_fn(v,r,e) ((v + (*(int*)&r) + (*(int*)&e)) & hash_memory_mask)
-   /*
+//#define hash_fn(v,r,e) 
+      ((v + (*(int*)&r) + (*(int*)&e)) & hash_memory_mask)
    ;
 }
-*/
 
 BDDNode * 
 bddvsb_find_or_add_node (int v, BDDNode * r, BDDNode * e)
