@@ -80,7 +80,7 @@ structure: STRUCTURE lines
 
 lines:  /* empty */
 	      | lines line ';'
-            { if (((++lines) % 100) == 0) fprintf(stderr, "\r%d", lines); }
+            { if (((++lines) % 100) == 0) d2_printf2("\r%d", lines); }
 ;
 
 line:     ID '=' OP '(' exp_list ')'

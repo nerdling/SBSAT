@@ -1113,7 +1113,7 @@ yyreduce:
 
   case 14:
 #line 83 "trace_g.yy"
-    { if (((++lines) % 100) == 0) fprintf(stderr, "\r%d", lines); }
+    { if (((++lines) % 100) == 0) d2_printf2("\r%d", lines); }
     break;
 
   case 15:
