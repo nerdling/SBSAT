@@ -42,6 +42,9 @@
 #include "ite.h"
 
 #define SORT_ITE_OPS
+#define ite_x_F_z(x,z) ite_x_y_F(ite_not(x), z)
+#define ite_x_T_z(x,z) ite_not(ite_x_y_F(ite_not(x), ite_not(z)))
+#define ite_x_y_T(x,y) ite_not(ite_x_y_F(x, ite_not(y)))
 
 enum {
    BDD2XDD_FLAG_NUMBER,
@@ -918,7 +921,7 @@ BDDNode *OLD_ite_x_y_F(BDDNode *x, BDDNode *y)
 }
 
 inline
-BDDNode *ite_x_y_T(BDDNode *x, BDDNode *y)
+BDDNode *_ite_x_y_T(BDDNode *x, BDDNode *y)
 {
    if (x == true_ptr) return y;
    if (x == false_ptr) return true_ptr;
@@ -935,20 +938,20 @@ BDDNode *ite_x_y_T(BDDNode *x, BDDNode *y)
 
    if (x->variable > y->variable) {
       v = x->variable;
-      r = ite_x_y_T(x->thenCase, y);
-      e = ite_x_y_T(x->elseCase, y);
+      r = _ite_x_y_T(x->thenCase, y);
+      e = _ite_x_y_T(x->elseCase, y);
    } else if (x->variable == y->variable) {
       if (x == y) return true_ptr;
       else if (x->notCase == y) return y;
       else {
          v = x->variable;
-         r = ite_x_y_T(x->thenCase, y->thenCase);
-         e = ite_x_y_T(x->elseCase, y->elseCase);
+         r = _ite_x_y_T(x->thenCase, y->thenCase);
+         e = _ite_x_y_T(x->elseCase, y->elseCase);
       }
    } else {
       v = y->variable;
-      r = ite_x_y_T(x, y->thenCase);
-      e = ite_x_y_T(x, y->elseCase);
+      r = _ite_x_y_T(x, y->thenCase);
+      e = _ite_x_y_T(x, y->elseCase);
    } 
 
    if (r == e) return (r);
@@ -957,7 +960,7 @@ BDDNode *ite_x_y_T(BDDNode *x, BDDNode *y)
 }
 
 inline
-BDDNode *ite_x_T_z(BDDNode *x, BDDNode *z)
+BDDNode *_ite_x_T_z(BDDNode *x, BDDNode *z)
 {
    if (x == true_ptr) return true_ptr;
    if (x == false_ptr) return z;
@@ -974,20 +977,20 @@ BDDNode *ite_x_T_z(BDDNode *x, BDDNode *z)
 
    if (x->variable > z->variable) {
       v = x->variable;
-      r = ite_x_T_z(x->thenCase, z);
-      e = ite_x_T_z(x->elseCase, z);
+      r = _ite_x_T_z(x->thenCase, z);
+      e = _ite_x_T_z(x->elseCase, z);
    } else if (x->variable == z->variable) {
       if (x == z) return x;
       else if (x->notCase == z) return true_ptr;
       else {
          v = x->variable;
-         r = ite_x_T_z(x->thenCase, z->thenCase);
-         e = ite_x_T_z(x->elseCase, z->elseCase);
+         r = _ite_x_T_z(x->thenCase, z->thenCase);
+         e = _ite_x_T_z(x->elseCase, z->elseCase);
       }
    } else {
       v = z->variable;
-      r = ite_x_T_z(x, z->thenCase);
-      e = ite_x_T_z(x, z->elseCase);
+      r = _ite_x_T_z(x, z->thenCase);
+      e = _ite_x_T_z(x, z->elseCase);
    } 
 
    if (r == e) return (r);
@@ -996,7 +999,7 @@ BDDNode *ite_x_T_z(BDDNode *x, BDDNode *z)
 }
 
 inline
-BDDNode *ite_x_F_z(BDDNode *x, BDDNode *z)
+BDDNode *_ite_x_F_z(BDDNode *x, BDDNode *z)
 {
    if (x == true_ptr) return false_ptr;
    if (x == false_ptr) return z;
@@ -1010,20 +1013,20 @@ BDDNode *ite_x_F_z(BDDNode *x, BDDNode *z)
 
    if (x->variable > z->variable) {
       v = x->variable;
-      r = ite_x_F_z(x->thenCase, z);
-      e = ite_x_F_z(x->elseCase, z);
+      r = _ite_x_F_z(x->thenCase, z);
+      e = _ite_x_F_z(x->elseCase, z);
    } else if (x->variable == z->variable) {
       if (x == z) return false_ptr;
       else if (x->notCase == z) return ite_not(x);
       else {
          v = x->variable;
-         r = ite_x_F_z(x->thenCase, z->thenCase);
-         e = ite_x_F_z(x->elseCase, z->elseCase);
+         r = _ite_x_F_z(x->thenCase, z->thenCase);
+         e = _ite_x_F_z(x->elseCase, z->elseCase);
       }
    } else {
       v = z->variable;
-      r = ite_x_F_z(x, z->thenCase);
-      e = ite_x_F_z(x, z->elseCase);
+      r = _ite_x_F_z(x, z->thenCase);
+      e = _ite_x_F_z(x, z->elseCase);
    } 
 
    if (r == e) return (r);
