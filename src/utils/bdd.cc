@@ -893,6 +893,7 @@ int countX(BDDNode *bdd, BDDNode *X) {
 
 int _countX(BDDNode *bdd, BDDNode *X) {
    if (bdd->flag == bdd_flag_number) return bdd->tmp_int;
+	if (bdd->notCase->flag == bdd_flag_number) return bdd->notCase->tmp_bdd->tmp_int;
    bdd->flag = bdd_flag_number;
 
 	if(bdd == X) return (bdd->tmp_int = 1);
@@ -1065,8 +1066,9 @@ BDDNode * xquantify (BDDNode * f, int v)
 BDDNode * _xquantify (BDDNode * f, int v)
 {
    if (f->flag == bdd_flag_number) return f->tmp_bdd;
+	//NotCase is not correct to use in this function.
    f->flag = bdd_flag_number;
-
+	
    BDDNode *var = ite_var(v);
    BDDNode *cached = itetable_find_or_add_node(10, f, var, NULL);
    if (cached) return (f->tmp_bdd = cached);
@@ -1190,6 +1192,7 @@ void unravelBDD(long *y, long *max, int **tempint, BDDNode * func) {
 
 void _unravelBDD(long *y, long *max, int **tempint, BDDNode * func) {
    if (func->flag == bdd_flag_number) return;
+	if (func->notCase->flag == bdd_flag_number) return;
    func->flag = bdd_flag_number;
 
 	if ((func == true_ptr) || (func == false_ptr))
@@ -1247,11 +1250,10 @@ BDDNode * set_variable (BDDNode * f, int num, int torf) {
 
 BDDNode * _set_variable (BDDNode * f, int num, int torf)
 {
-	if (f->variable < num)
-      return f;
-   if (f->flag == bdd_flag_number) {
-      return f->tmp_bdd;
-   }
+	if (f->variable < num) return f;
+
+   if (f->flag == bdd_flag_number) return f->tmp_bdd;
+	if (f->notCase->flag == bdd_flag_number) return f->notCase->tmp_bdd->notCase;
    f->flag = bdd_flag_number;
    
 	if (f->variable == num) {
@@ -1287,6 +1289,7 @@ BDDNode * _num_replace (BDDNode * f, int var, int replace) {
 	if (var > f->variable)
 	  return f;
    if (f->flag == bdd_flag_number) return f->tmp_bdd;
+	if (f->notCase->flag == bdd_flag_number) return f->notCase->tmp_bdd->notCase;
    f->flag = bdd_flag_number;
 	if (var == f->variable) {
 		if (replace > 0) {
@@ -1368,6 +1371,7 @@ BDDNode * possible_BDD (BDDNode * f, int v) {
 
 BDDNode *_possible_BDD(BDDNode *f, int v) {
 	if (f->flag == bdd_flag_number) return f->tmp_bdd;
+	//NotCase is not correct to use in this function.
 	f->flag = bdd_flag_number;
 	
 	BDDNode *var = ite_var(v);
