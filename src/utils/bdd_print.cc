@@ -77,30 +77,42 @@ print_bdd1 (BDDNode * f, int print_counter)
    }
 }
 
-void
-printBDDfile(BDDNode * bdd, FILE * fout)
-{
-   if (bdd == true_ptr)
-   {
+void printBDDfile(BDDNode * bdd, FILE * fout) {
+   if (bdd == true_ptr) {
       fprintf (fout, "T");
       return;
    }
-   if (bdd == false_ptr)
-   {
+   if (bdd == false_ptr) {
       fprintf (fout, "F");
       return;
    }
-   fprintf (fout, "(");
+	fprintf (fout, "(");
    printBDDfile(bdd->thenCase, fout);
    //fprintf (stdout, "[%d]", bdd->variable);
-	fprintf(fout, "[%s", s_name(bdd->variable));
-	d4_printf2("(%d)", bdd->variable);
+	/* D_4(fprintf(fout, "[%s", s_name(bdd->variable));) */
+	fprintf(fout, "(%d)", bdd->variable);
 	fprintf(fout, "]");
    printBDDfile(bdd->elseCase, fout);
    fprintf(fout, ")");
 }
+	 
 void printBDD(BDDNode * bdd) { 
-	printBDDfile(bdd, stddbg);
+   if (bdd == true_ptr) {
+      d2_printf1 ("T");
+      return;
+   }
+   if (bdd == false_ptr) {
+      d2_printf1 ("F");
+      return;
+   }
+   d2_printf1 ("(");
+   printBDD(bdd->thenCase);
+   //fprintf (stdout, "[%d]", bdd->variable);
+	d2_printf2("[%s", s_name(bdd->variable));
+	d4_printf2("(%d)", bdd->variable);
+	d2_printf1("]");
+   printBDD(bdd->elseCase);
+   d2_printf1(")");
 }
 
 /*
@@ -283,25 +295,18 @@ printBDDTree(BDDNode * bdd, int *which_zoom)
    y = 0;
    int reference = 0;
    int zoomarr[16];
-	fprintf(stdout, "\n");
+	d2_printf1("\n");
    for (x = 0; x < PRINT_TREE_WIDTH; x++)
-      fprintf (stdout, "-");
-   fprintf (stdout, "\n");
+      d2_printf1("-");
+   d2_printf1("\n");
    for (x = 0; x < 16; x++)
       zoomarr[x] = 0;
-   while ((y < z) && (y < 31))
-   {
+   while ((y < z) && (y < 31)) {
       for (i = 0; i < NUM / 2; i++)
-         fprintf (stdout, " ");
-      for (x = 0; x < (1 << level); x++)
-      {
+		  d2_printf1(" ");
+      for (x = 0; x < (1 << level); x++) {
          if (tempint[y] == -1) {
 				sprintf(aa, "T");
-/*				fprintf (stdout, "T");
-				if ((x + 1) < (1 << level))
-				  for(i = 1; i < NUM; i++)
-					 fprintf(stdout, " ");
-*/
 			}
          else if (tempint[y] == -2) {
 				sprintf(aa, "F");
@@ -314,39 +319,35 @@ printBDDTree(BDDNode * bdd, int *which_zoom)
 				sprintf(aa, "%s", s_name(tempint[y]));
 				D_3(sprintf(aa, "%d", tempint[y]););
 				D_4(sprintf(aa, "%s(%d)", s_name(tempint[y]), tempint[y]););
-
+				
 			}
 			int l = strlen(aa);
-//			fprintf(stdout, "(%d)", l);
-//			if(l > 0 && ((x + 1) <= (1 << level))) {
-				if(l%2 == 0) {
-					for(i = 0; i < l/2-1; i++)
-					  fprintf(stdout, "\b");
-					fprintf (stdout, aa);
-					if ((x + 1) < (1 << level))
-					  for(i = l/2+1;i < NUM; i++)
-						 fprintf(stdout, " ");
-				} else {
-					for(i = 0; i < l/2; i++)
-					  fprintf(stdout, "\b");
-					fprintf (stdout, aa);
-					if ((x + 1) < (1 << level))
-					  for(i = l/2+1;i < NUM; i++)
-						 fprintf(stdout, " ");
-				}
-//			}
+			if(l%2 == 0) {
+				for(i = 0; i < l/2-1; i++)
+				  d2_printf1("\b");
+				d2_printf1(aa);
+				if ((x + 1) < (1 << level))
+				  for(i = l/2+1;i < NUM; i++)
+					 d2_printf1(" ");
+			} else {
+				for(i = 0; i < l/2; i++)
+				  d2_printf1("\b");
+				d2_printf1(aa);
+				if ((x + 1) < (1 << level))
+				  for(i = l/2+1;i < NUM; i++)
+					 d2_printf1(" ");
+			}
 			y++;
 		}
       level++;
       NUM /= 2;
-      fprintf (stdout, "\n\n");
+      d2_printf1("\n\n");
    }
    int now_zoom = *which_zoom;
-   for (x = 0; (zoomarr[x] != 0) && (x < 16); x++)
-   {
-      fprintf (stdout, "\n*%d ", now_zoom - reference + x);
-      printBDDTree (findBranch (0, zoomarr[x], bdd), which_zoom);
-      fprintf (stdout, "\n");
+   for (x = 0; (zoomarr[x] != 0) && (x < 16); x++) {
+		d2_printf2("\n*%d ", now_zoom - reference + x);
+		printBDDTree (findBranch (0, zoomarr[x], bdd), which_zoom);
+      d2_printf1("\n");
    }
 }
 
@@ -402,11 +403,11 @@ printCircuitTree ()
    for (int i = 0; i < nmbrFunctions; i++)
    {
       int which_zoom = 0;
-      fprintf (stdout, "Constraint #%d\n", i);
+      d2_printf2("Constraint #%d\n", i);
       printBDD (functions[i]);
-      fprintf (stdout, "\n");
+      d2_printf1("\n");
       printBDDTree (functions[i], &which_zoom);
-      fprintf (stdout, "\n\n");
+      d2_printf1("\n\n");
    }
 }
 
