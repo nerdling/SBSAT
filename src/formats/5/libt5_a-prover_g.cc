@@ -1318,7 +1318,7 @@ yyreturn:
 
 void set_S_vars_indep(symrec *s)
 {
-   if (s->name[0] == 'S') s_set_indep(s, 0);
+   //if (s->name[0] == 'S') s_set_indep(s, 0);
 }
 
 void push_symbols()

@@ -499,7 +499,7 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 		strcpy (macros, "prune");
 		if (v1 == false_ptr)
 		  return false_ptr;
-		return p2 (v1, v2);
+		return pruning (v1, v2);
 	}
 	if (!strcasecmp (macros, "restrict")) { //Same as prune, above
 		BDDNode * v1, *v2;
@@ -509,7 +509,7 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 		strcpy (macros, "restrict");
 		if (v1 == false_ptr)
 		  return false_ptr;
-		return p2 (v1, v2);
+		return pruning (v1, v2);
 	}
 	if (!strcasecmp (macros, "nimp")) {
       BDDNode * v1, *v2;

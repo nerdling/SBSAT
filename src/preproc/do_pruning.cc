@@ -51,17 +51,22 @@ void Sort_BDDs (int *tempint);
 # define DO_PRUNING_FN Do_Pruning_1
 # define PRUNE_REPEATS P1_repeat
 #else
-#ifdef P2
-# define DO_PRUNING_FN Do_Pruning_2
+#ifdef PRUNING_PR
+# define DO_PRUNING_FN Do_Pruning
 # define PRUNE_REPEATS P2_repeat
 #else
 #ifdef RESTRICT
 # define DO_PRUNING_FN Do_Pruning_Restrict
 # define PRUNE_REPEATS Restct_repeat
 #else
-# define DO_PRUNING_FN Do_Pruning
+#ifdef P2
+# define DO_PRUNING_FN Do_Pruning_2
+# define PRUNE_REPEATS P2_repeat
+#else
+# define DO_PRUNING_FN Do_Pruning_FPS
 # define REMOVE_FPS
 # define PRUNE_REPEATS ReFPS_repeat
+#endif
 #endif
 #endif
 #endif
@@ -127,10 +132,13 @@ int DO_PRUNING_FN() {
 					{
 						BDDNode *currentBDD =
 #ifdef P1
-						  pruning (functions[x], functions[j]);
+						  pruning_p1 (functions[x], functions[j]);
 #endif
 #ifdef P2
-						p2 (functions[x], functions[j]);
+						  pruning_p2 (functions[x], functions[j]);
+#endif
+#ifdef PRUNING_PR
+						pruning (functions[x], functions[j]);
 #endif
 #ifdef RESTRICT
 						restrictx(x, j, length, variables);
@@ -163,10 +171,13 @@ int DO_PRUNING_FN() {
 					{
 						BDDNode *currentBDD =
 #ifdef P1
-						  pruning (functions[j], functions[x]);
+						  pruning_p1 (functions[j], functions[x]);
 #endif
 #ifdef P2
-						p2 (functions[j], functions[x]);
+						  pruning_p2 (functions[j], functions[x]);
+#endif
+#ifdef PRUNING_PR
+						pruning (functions[j], functions[x]);
 #endif
 #ifdef RESTRICT
 						restrictx(j, x, length, variables);

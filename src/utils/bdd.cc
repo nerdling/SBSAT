@@ -924,7 +924,7 @@ BDDNode *remove_fps(BDDNode * f, BDDNode * c)
    return find_or_add_node (v, r, e);
 }
 
-BDDNode * p2 (BDDNode * f, BDDNode * c)
+BDDNode * pruning (BDDNode * f, BDDNode * c)
 {
    if (f == c)
       return true_ptr;
@@ -935,16 +935,16 @@ BDDNode * p2 (BDDNode * f, BDDNode * c)
 
    // We know that f & c are both BDD's with top variables.
    if (f->variable < c->variable)
-      return p2 (f, ite_or (c->thenCase, c->elseCase));	//xquantify(c, c->variable));
+      return pruning (f, ite_or (c->thenCase, c->elseCase));	//xquantify(c, c->variable));
    int v = f->variable;
 
    //v is the top variable of f & c.
    if (reduce_f (v, c) == false_ptr)
-      return p2 (reduce_t (v, f), reduce_t (v, c));
+      return pruning (reduce_t (v, f), reduce_t (v, c));
    if (reduce_t (v, c) == false_ptr)
-      return p2 (reduce_f (v, f), reduce_f (v, c));
-   BDDNode * r = p2 (reduce_t (v, f), reduce_t (v, c));
-   BDDNode * e = p2 (reduce_f (v, f), reduce_f (v, c));
+      return pruning (reduce_f (v, f), reduce_f (v, c));
+   BDDNode * r = pruning (reduce_t (v, f), reduce_t (v, c));
+   BDDNode * e = pruning (reduce_f (v, f), reduce_f (v, c));
    if (r == e)
       return r;
    return find_or_add_node (v, r, e);
@@ -1020,7 +1020,33 @@ BDDNode *strengthen_fun(BDDNode *bddNmbr1, BDDNode *bddNmbr2)
 	return ite_and(bddNmbr1, quantifiedBDD2);
 }
 
-BDDNode * pruning(BDDNode * f, BDDNode * c)
+BDDNode * pruning_p2 (BDDNode * f, BDDNode * c)
+{
+   if (f == c)
+      return true_ptr;
+   if ((c == true_ptr) || (f == true_ptr) || (f == false_ptr))
+      return f;
+   if (c == ite_not (f))
+      return false_ptr;
+
+   // We know that f & c are both BDD's with top variables.
+   if (f->variable < c->variable)
+      return pruning_p2 (f, ite_or (c->thenCase, c->elseCase));	//xquantify(c, c->variable));
+   int v = f->variable;
+
+   //v is the top variable of f & c.
+   if (reduce_f (v, c) == false_ptr)
+      return pruning_p2 (reduce_t (v, f), reduce_t (v, c));
+   if (reduce_t (v, c) == false_ptr)
+      return pruning_p2 (reduce_f (v, f), reduce_f (v, c));
+   BDDNode * r = pruning_p2 (reduce_t (v, f), reduce_t (v, c));
+   BDDNode * e = pruning_p2 (reduce_f (v, f), reduce_f (v, c));
+   if (r == e)
+      return r;
+   return find_or_add_node (v, r, e);
+}
+
+BDDNode * pruning_p1(BDDNode * f, BDDNode * c)
 {
    if (f == c)
       return true_ptr;
@@ -1032,16 +1058,16 @@ BDDNode * pruning(BDDNode * f, BDDNode * c)
          return f->elseCase;
       if (c->elseCase == false_ptr)
          return f->thenCase;
-      BDDNode * r = pruning (f->thenCase, c->thenCase);
-      BDDNode * e = pruning (f->elseCase, c->elseCase);
+      BDDNode * r = pruning_p1 (f->thenCase, c->thenCase);
+      BDDNode * e = pruning_p1 (f->elseCase, c->elseCase);
       if (r == e)
          return r;
       return find_or_add_node (c->variable, r, e);
    }
 
    //  if(f->variable < c->variable)
-   BDDNode * r = pruning (f->thenCase, c);
-   BDDNode * e = pruning (f->elseCase, c);
+   BDDNode * r = pruning_p1 (f->thenCase, c);
+   BDDNode * e = pruning_p1 (f->elseCase, c);
    if (r == e)
       return r;
    return find_or_add_node (f->variable, r, e);
