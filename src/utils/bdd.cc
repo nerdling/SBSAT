@@ -42,9 +42,12 @@
 #include "ite.h"
 
 #define SORT_ITE_OPS
-#define ite_x_F_z(x,z) ite_x_y_F(ite_not(x), z)
-#define ite_x_T_z(x,z) ite_not(ite_x_y_F(ite_not(x), ite_not(z)))
-#define ite_x_y_T(x,y) ite_not(ite_x_y_F(x, ite_not(y)))
+//#define ite_x_F_z(x,z) ite_x_y_F(ite_not(x), z)
+#define ite_x_F_z(x,z) _ite_x_F_z(x,z)
+//#define ite_x_T_z(x,z) ite_not(ite_x_y_F(ite_not(x), ite_not(z)))
+#define ite_x_T_z(x,z) _ite_x_T_z(x,z)
+//#define ite_x_y_T(x,y) ite_not(ite_x_y_F(x, ite_not(y)))
+#define ite_x_y_T(x,y) _ite_x_y_T(x,y)
 
 enum {
    BDD2XDD_FLAG_NUMBER,
