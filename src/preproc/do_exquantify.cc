@@ -214,9 +214,12 @@ int ExQuantify () {
 										  inferBDD = ite_and(inferBDD, ite_var(x_infers->nums[0]));
 										else
 										  inferBDD = ite_and(inferBDD, ite_equ(ite_var(x_infers->nums[0]), ite_var(x_infers->nums[1])));
+                              DeallocateInferences(x_infers);
+                              /*
 										while(x_infers!=NULL) {
 											infer *temp = x_infers; x_infers = x_infers->next; delete temp;
 										}
+                              */
 										
 										int bdd_length = 0;
 										int *bdd_vars = NULL;
@@ -237,7 +240,9 @@ int ExQuantify () {
 										}
 										changed = 1;
 										break;
-									}
+									} else if (x_infers != NULL) {
+                              DeallocateInferences(x_infers);
+                           }
 								}
 							}
 							if(changed == 1) ret = PREP_CHANGED;
