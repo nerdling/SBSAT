@@ -98,6 +98,33 @@ DisplayLemmaToFile(FILE *pFile, LemmaBlock *pLemma)
    fprintf(pFile, "0");
 }
 
+ITE_INLINE int
+LemmaIsSAT(LemmaBlock *pLemma)
+{
+   LemmaBlock *pLemmaBlock = pLemma;
+   int *arrLits = pLemmaBlock->arrLits;
+   int nLemmaLength = arrLits[0];
+   int nLitIndex;
+   int nLitIndexInBlock;
+   for (nLitIndex = 1, nLitIndexInBlock = 1;
+         nLitIndex <= nLemmaLength;
+         nLitIndex++, nLitIndexInBlock++)
+   {
+      if (nLitIndexInBlock == LITS_PER_LEMMA_BLOCK)
+      {
+         nLitIndexInBlock = 0;
+         pLemmaBlock = pLemmaBlock->pNext;
+         arrLits = pLemmaBlock->arrLits;
+      }
+      //cout << arrLits[nLitIndexInBlock] << " ";
+      if(arrSolution[abs(arrLits[nLitIndexInBlock])] == BOOL_TRUE && arrLits[nLitIndexInBlock] > 0)
+		  return 1;
+      if(arrSolution[abs(arrLits[nLitIndexInBlock])] == BOOL_FALSE && arrLits[nLitIndexInBlock] < 0)
+		  return 1;
+   }
+	return 0;
+}
+
 ITE_INLINE void
 DisplayLemmaStatus(LemmaBlock *pLemma)
 {

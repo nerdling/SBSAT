@@ -292,7 +292,7 @@ DisplayAllBrancherLemmasToFile(char *filename, int flag)
          pLemmaInfo = pLemmaInfo->pLPQNext)
    {
       if (flag == 1)
-         fprintf(pFile, "c %d %d %d %d %d %d %d %d\n", 
+         fprintf(pFile, "c %d %d %d %d %d %d %d %d %d\n",
                pLemmaInfo->pLemma->arrLits[0],
                pLemmaInfo->nNumLemmaMoved,
                pLemmaInfo->nNumLemmaConflict,
@@ -302,8 +302,9 @@ DisplayAllBrancherLemmasToFile(char *filename, int flag)
                pLemmaInfo->nLemmaFirstUseful?
                (int)(pLemmaInfo->nLemmaFirstUseful-pLemmaInfo->nLemmaNumber):0,
                pLemmaInfo->nLemmaLastUsed?
-               (int)(pLemmaInfo->nLemmaLastUsed-pLemmaInfo->nLemmaNumber):0);
-      DisplayLemmaToFile(pFile, pLemmaInfo->pLemma);
+               (int)(pLemmaInfo->nLemmaLastUsed-pLemmaInfo->nLemmaNumber):0,
+					LemmaIsSAT(pLemmaInfo->pLemma));
+		DisplayLemmaToFile(pFile, pLemmaInfo->pLemma);
       fprintf(pFile, "\n");
       assert((pLemmaInfo == pLPQLast[0]) == (pLemmaInfo->pLPQNext == NULL));
    }
