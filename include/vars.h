@@ -126,6 +126,7 @@ extern int DO_EXIST_QUANTIFY;
 extern int DO_EXIST_QUANTIFY_AND;
 extern int DO_DEP_CLUSTER;
 extern int DO_SPLIT;
+extern int DO_REWIND;
 
 extern int PARAMS_DUMP;
 
