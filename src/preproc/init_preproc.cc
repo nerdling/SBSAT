@@ -52,7 +52,7 @@ int *length = NULL;
 infer *inferlist;
 infer *lastinfer;
 int notdone;
-int *tempint = NULL;
+//int *tempint = NULL;
 float *var_score = NULL;
 store *variables;
 int *num_funcs_var_occurs = NULL;
@@ -114,8 +114,8 @@ Init_Preprocessing()
 	}
 	
 	numout = nmbrFunctions;
-	if(tempint != NULL) delete [] tempint;
-   tempint = new int[5000];
+	//if(tempint != NULL) delete [] tempint;
+   //tempint = new int[5000];
 
 
 	if(length != NULL) ite_free((void **)&variables);
@@ -337,8 +337,8 @@ Finish_Preprocessing()
 	}
 	inferlist = NULL;
 	
-	delete [] tempint;
-	tempint = NULL;
+	//delete [] tempint;
+	//tempint = NULL;
 	delete l;
 	l = NULL;
 	

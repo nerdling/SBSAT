@@ -279,7 +279,10 @@ int Split_Large () {
 					ret = PREP_CHANGED;
 					intlist *list = new intlist[num];
 					int listx = 0;
-					findPathsToFalse (functions[j], tempint, list, &listx);
+                                        long tempint_max = 0;
+                                        int *tempint = NULL;
+					findPathsToFalse (functions[j], &tempint_max, &tempint, list, &listx);
+                                        ite_free((void**)&tempint); tempint_max = 0;
 					if(listx >= max_bdds) {
 						BDDFuncs = (BDDNode **)ite_recalloc(BDDFuncs, max_bdds, listx+1, sizeof(BDDNode *), 9, "BDDFuncs");
 						max_bdds = listx+1;

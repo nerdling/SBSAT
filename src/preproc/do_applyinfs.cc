@@ -560,18 +560,10 @@ int Rebuild_BDDx (int x) {
 
 	assert(x!=nmbrFunctions+1);
 	long y = 0;
-	unravelBDD(&y, tempint, functions[x]);
-	qsort (tempint, y, sizeof (int), compfunc);
-	if (y != 0) {
-		int v = 0;
-		for (int i = 1; i < y; i++) {
-			v++;
-			if (tempint[i] == tempint[i - 1])
-			  v--;
-			tempint[v] = tempint[i];
-		}
-		y = v + 1;
-	}
+   long tempint_max = 0;
+   int *tempint=NULL;
+	unravelBDD(&y, &tempint_max, &tempint, functions[x]);
+	if (y != 0) qsort (tempint, y, sizeof (int), compfunc);
 	
 	//Checking to see if any variables were added to this BDD
 	//Dependent clustering can add variables, so can Ex_AND, so can Steal
@@ -684,6 +676,7 @@ int Rebuild_BDDx (int x) {
       variables[x].max = tempint[y-1];
    }
 
+   ite_free((void**)&tempint); tempint_max = 0;
 
    //A line like this would be better placed in smurffactory
 	//where the smurfs are made...maybe...we like to be able to preprocess
@@ -855,19 +848,11 @@ Rebuild_BDD (BDDNode *bdd, int *bdd_length, int *&bdd_vars)
 	
 	lastinfer = previous;
 	lastinfer->next = NULL;
-	
-	unravelBDD(&y, tempint, bdd);
-	qsort (tempint, y, sizeof (int), compfunc);
-	if (y != 0) {
-		int v = 0;
-		for (int i = 1; i < y; i++) {
-			v++;
-			if (tempint[i] == tempint[i - 1])
-			  v--;
-			tempint[v] = tempint[i];
-		}
-		y = v + 1;
-	}
+        
+   long tempint_max = 0;
+   int *tempint = NULL;
+	unravelBDD(&y, &tempint_max, &tempint, bdd);
+	if (y != 0) qsort (tempint, y, sizeof (int), compfunc);
 	
 	(*bdd_length) = y;
 	if (bdd_vars != NULL)
@@ -878,6 +863,8 @@ Rebuild_BDD (BDDNode *bdd, int *bdd_length, int *&bdd_vars)
 	
 	//if (DO_INFERENCES)
 	//  return Do_Apply_Inferences();
+
+   ite_free((void**)&tempint); tempint_max = 0;
 	
 	return PREP_NO_CHANGE;
 }

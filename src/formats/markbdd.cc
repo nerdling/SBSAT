@@ -239,20 +239,11 @@ BDDNode *putite(int intnum, BDDNode * bdd)
       defines[whereat].vlist[0] = v;
       defines[whereat].bdd = putite (intnum, bdd);
 
-		long int y = 0;
-      int tempint[5000];
-		unravelBDD (&y, tempint, defines[whereat].bdd);
-      qsort (tempint, y, sizeof (int), compfunc);
-      if (y != 0) {
-			int v = 0;
-			for (int i = 1; i < y; i++) {
-				v++;
-				if (tempint[i] == tempint[i - 1])
-				  v--;
-				tempint[v] = tempint[i];
-			}
-			y = v + 1;
-		}
+      int *tempint=NULL;
+		long y = 0;
+      long tempint_max = 0;
+		unravelBDD (&y, &tempint_max, &tempint, defines[whereat].bdd);
+      if (y != 0) qsort (tempint, y, sizeof (int), compfunc);
       
 		for (int i = 0; i < y; i++) {
 			int found = 0;
@@ -289,6 +280,7 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 			}
 		}
       strcpy (macros, "define");
+      ite_free((void**)&tempint); tempint_max=0;
       return defines[whereat].bdd;
 	}
 	if (!strcasecmp (macros, "add_state")) {
@@ -339,20 +331,12 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 	}
 	if (!strcasecmp(macros, "mitosis")) {
 		BDDNode * v1 = putite (intnum, bdd);
-      long int y = 0;
-      int tempint[5000];
-      unravelBDD (&y, tempint, v1);
-      qsort (tempint, y, sizeof (int), compfunc);
-      if (y != 0) {
-			int v = 0;
-			for (int i = 1; i < y; i++) {
-				v++;
-				if (tempint[i] == tempint[i - 1])
-				  v--;
-				tempint[v] = tempint[i];
-			}
-			y = v + 1;
-		}
+      int *tempint=NULL;
+      long tempint_max = 0;
+      long y = 0;
+      unravelBDD (&y, &tempint_max, &tempint, v1);
+      if (y != 0) qsort (tempint, y, sizeof (int), compfunc);
+
       for (int i = y; i >= 0; i--)
 		  tempint[i + 1] = tempint[i];
       tempint[0] = y;
@@ -369,7 +353,9 @@ BDDNode *putite(int intnum, BDDNode * bdd)
       delete newBDD;
 		functionType[nmbrFunctions] = UNSURE;
       strcpy (macros, "mitosis");
-      return mitosis (v1, tempint, newBDD);
+		BDDNode *tempBDD = mitosis (v1, tempint, newBDD);
+      ite_free((void**)&tempint); tempint_max = 0;
+      return tempBDD;
 	}
 	if (!strcasecmp (macros, "minmax")) {
 		int min, max;

@@ -39,7 +39,7 @@
 
 #include "equivclass.h"
 extern Linear *l;
-extern int *tempint;
+//extern int *tempint;
 extern infer *lastinfer;
 extern int notdone;
 extern infer *inferlist;

@@ -46,7 +46,6 @@
 
 int zecc_limit;
 int *zecc_arr;
-extern int *tempint;
 
 //If you want character support for strings and things, look in markbdd.c and copy that...
 char getNextSymbol_CNF (char macros[20], int &intnum) {
@@ -117,7 +116,7 @@ char getNextSymbol_CNF (char macros[20], int &intnum) {
 	}
 }
 
-store *getMinMax() {
+store *getMinMax(long *tempint_max, int **tempint) {
 	int i = 0, min, max;
 	char macros[20];
 	int p;
@@ -175,7 +174,11 @@ store *getMinMax() {
 		
 		if(i!=0) {
 			macros[i] = 0;
-			tempint[x] = atoi(macros);
+         if (x >= *tempint_max) {
+            *tempint = (int*)ite_recalloc(*(void**)tempint, *tempint_max, *tempint_max+100, sizeof(int), 9, "tempint");
+            *tempint_max += 100;
+         }
+			(*tempint)[x] = atoi(macros);
 			x++;
 		}
 	}
@@ -194,11 +197,11 @@ store *getMinMax() {
 	min_max->num = new int[num_vars];
 	for(x = 0; x < num_vars; x++) {
 #ifdef CNF_USES_SYMTABLE
-		min_max->num[x] = tempint[x]==0?0:i_getsym_int(tempint[x], SYM_VAR);
+		min_max->num[x] = (*tempint)[x]==0?0:i_getsym_int((*tempint)[x], SYM_VAR);
 #else
-		min_max->num[x] = tempint[x];
+		min_max->num[x] = (*tempint)[x];
 #endif
-		if(abs(tempint[x]) > numinp) { //Could change this to be number of vars instead of max vars
+		if(abs((*tempint)[x]) > numinp) { //Could change this to be number of vars instead of max vars
 			fprintf(stderr, "Variable in input file is greater than allowed:%ld...exiting\n", (long)numinp);
 			exit(1);				
 		}
@@ -212,8 +215,8 @@ store *getMinMax() {
 //of pointers to the tranlated BDDs
 void CNF_to_BDD(int cnf)
 {
-//	int tempint[5000]; //global
-   tempint = new int[5000];
+   int *tempint = NULL;
+   long tempint_max = 0;
 	char macros[20], order;
 	int intnum;
 	long out, count, num;
@@ -249,7 +252,7 @@ void CNF_to_BDD(int cnf)
 			y++;
 			order = getNextSymbol_CNF(macros, intnum);
 			if(order == '#') {
-				store *temp = getMinMax();
+				store *temp = getMinMax(&tempint_max, &tempint);
 				integers[x].num = temp->num;
 				integers[x].length = temp->length;
 				integers[x].dag = temp->dag;
@@ -264,6 +267,10 @@ void CNF_to_BDD(int cnf)
 					exit(1);
 				}
 			}
+         if (y >= tempint_max) {
+            tempint = (int*)ite_recalloc((void*)tempint, tempint_max, tempint_max+100, sizeof(int), 9, "tempint");
+            tempint_max += 100;
+         }
 			tempint[y] = intnum;
 		} while(tempint[y] != 0);
 		if(order == '#') {
@@ -959,6 +966,7 @@ void CNF_to_BDD(int cnf)
 	}
 	delete [] integers;
 	delete [] old_integers;
+   ite_free((void**)&tempint); tempint_max = 0;
 	
 	numout = count+1;
 	nmbrFunctions = numout;

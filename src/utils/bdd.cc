@@ -1028,19 +1028,11 @@ BDDNode * pruning (BDDNode * f, BDDNode * c)
 BDDNode *strengthen_fun(BDDNode *bddNmbr1, BDDNode *bddNmbr2)
 {	
 	long y = 0;
-	int tempint[5000];
-	unravelBDD(&y, tempint, bddNmbr1);
-	qsort (tempint, y, sizeof (int), compfunc);
-	if (y != 0) {
-		int v = 0;
-		for (int i = 1; i < y; i++) {
-			v++;
-			if (tempint[i] == tempint[i - 1])
-			  v--;
-			tempint[v] = tempint[i];
-		}
-		y = v + 1;
-	}
+   long tempint_max = 0;
+   int *tempint=NULL;
+        
+	unravelBDD(&y, &tempint_max, &tempint, bddNmbr1);
+	if (y != 0) qsort (tempint, y, sizeof (int), compfunc);
 	int length1 = y;
 	int *vars1;
 	if(length1 > 0) {
@@ -1050,18 +1042,8 @@ BDDNode *strengthen_fun(BDDNode *bddNmbr1, BDDNode *bddNmbr2)
 	}
 	
 	y = 0;
-	unravelBDD(&y, tempint, bddNmbr2);
-	qsort (tempint, y, sizeof (int), compfunc);
-	if (y != 0) {
-		int v = 0;
-		for (int i = 1; i < y; i++) {
-			v++;
-			if (tempint[i] == tempint[i - 1])
-			  v--;
-			tempint[v] = tempint[i];
-		}
-		y = v + 1;
-	}
+	unravelBDD(&y, &tempint_max, &tempint, bddNmbr2);
+	if (y != 0) qsort (tempint, y, sizeof (int), compfunc);
 	int length2 = y;
 	int *vars2;
 	if(length2 > 0){
@@ -1069,7 +1051,9 @@ BDDNode *strengthen_fun(BDDNode *bddNmbr1, BDDNode *bddNmbr2)
 		for(int i = 0; i < y; i++)
 		  vars2[i] = tempint[i];
 	}
-	
+        
+   ite_free((void**)&tempint); tempint_max = 0;
+
 	BDDNode *quantifiedBDD2 = bddNmbr2;
 	int bdd1pos = 0;
 	int bdd2pos = 0;
@@ -1442,7 +1426,7 @@ void countSingleXors(BDDNode *x, int *xor_vars, int *nonxor_vars) {
 	nonxor_vars[nonxor_vars_idx] = 0;
 }
 
-void unravelBDD (long *y, int tempint[5000], BDDNode * func) {
+void OLD_unravelBDD (long *y, int tempint[5000], BDDNode * func) {
    if ((func == true_ptr) || (func == false_ptr))
 	  return;
    tempint[*y] = func->variable;
@@ -1464,9 +1448,39 @@ void unravelBDD (long *y, int tempint[5000], BDDNode * func) {
 		
       //End sorting and duplicates
    } else (*y)++;
-   unravelBDD (y, tempint, func->thenCase);
-   unravelBDD (y, tempint, func->elseCase);
+   OLD_unravelBDD (y, tempint, func->thenCase);
+   OLD_unravelBDD (y, tempint, func->elseCase);
 }
+
+void NEW_unravelBDD(long *y, long *max, int **tempint, BDDNode * func);
+
+void unravelBDD(long *y, long *max, int **tempint, BDDNode * func) {
+  *y=0;
+  // assert (no flag is set );
+  NEW_unravelBDD(y, max, tempint, func);
+  for (int i = 0;i<*y;i++) {
+     // clear the flag
+    sym_reset_flag((*tempint)[i]);
+  }
+}
+
+void NEW_unravelBDD (long *y, long *max, int **tempint, BDDNode * func) {
+  if ((func == true_ptr) || (func == false_ptr))
+    return;
+  if (sym_is_flag(func->variable) == 0)
+  {
+     if (*y >= *max) {
+        *tempint = (int*)ite_recalloc(*(void**)tempint, *max, *max+100, sizeof(int), 9, "tempint");
+        *max += 100;
+     }
+     (*tempint)[*y] = func->variable;
+     sym_set_flag(func->variable);
+     (*y)++;
+  };
+  NEW_unravelBDD (y, max, tempint, func->thenCase);
+  NEW_unravelBDD (y, max, tempint, func->elseCase);
+}
+
 
 BDDNode * num_replace (BDDNode * f, int var, int replace) {
 	if (var > f->variable)
@@ -1498,12 +1512,13 @@ void cheat_replace (BDDNode * f, int var, int replace) {
 }
 
 int getoldNuminp () {
-   int tempint[5000];
+   int *tempint=NULL;
+   long tempint_max=0;
    long y, i;
    numinp = 0;
    for (int x = 0; x < nmbrFunctions; x++) {
       y = 0;
-      unravelBDD (&y, tempint, functions[x]);
+      unravelBDD (&y, &tempint_max, &tempint, functions[x]);
       if (y != 0) {
 			for (i = 0; i < y; i++) {
             if (tempint[i] > numinp)
@@ -1511,6 +1526,7 @@ int getoldNuminp () {
          }
       }
    }
+   ite_free((void**)&tempint); tempint_max = 0;
    return numinp;
 }
 

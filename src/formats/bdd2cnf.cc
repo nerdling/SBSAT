@@ -692,7 +692,8 @@ Recd *resolve (int *truth_table, int sign, int no_vars, int no_out_vars) {
 }
 
 void printBDDToCNFQM () {
-   int tempint[5000], z;
+   int *tempint, z;
+   long tempint_max=0;
 	
    func_object **funcs;
    int no_out_vars;
@@ -717,18 +718,8 @@ void printBDDToCNFQM () {
       int no_vars = 0;
 		
       long y = 0;
-      unravelBDD(&y, tempint, functions[x]);
-      qsort (tempint, y, sizeof (int), compfunc);
-      if (y != 0) {
-			int v = 0;
-			for (int i = 1; i < y; i++) {
-				v++;
-				if (tempint[i] == tempint[i - 1])
-				  v--;
-				tempint[v] = tempint[i];
-			}
-			y = v + 1;
-      }
+      unravelBDD(&y, &tempint_max, &tempint, functions[x]);
+      if (y != 0) qsort(tempint, y, sizeof (int), compfunc);
       
       no_vars = y;
       funcs[x]->no_vars = no_vars;
@@ -825,6 +816,7 @@ void printBDDToCNFQM () {
       }
       delete truth_table;
    }
+   ite_free((void**)&tempint); tempint_max = 0;
    
    z = 0;
    for(int x = 0; x < numout; x++) {
@@ -856,7 +848,8 @@ void printBDDToCNFQM () {
 }
 
 void printBDDToCNF () {
-   int tempint[5000], z;
+   int *tempint, z;
+   long tempint_max = 0;
 	
    int no_out_vars;
    
@@ -879,7 +872,8 @@ void printBDDToCNF () {
 		int numx = countFalses (functions[x]);
       intlist *list = new intlist[numx];
       int listx = 0;
-      findPathsToFalse (functions[x], tempint, list, &listx);
+      findPathsToFalse (functions[x], &tempint_max, &tempint, list, &listx);
+        ite_free((void**)&tempint); tempint_max = 0;
 		
       for (int i = 0; i < listx; i++) {
 			false_paths[z].num = list[i].num;

@@ -134,32 +134,38 @@ amount_compfunc (const void *x, const void *y)
 //IMPORTANT - SEAN
 //could maybe speed up this function by handing nodes from r and e to
 //inferarray instead of creating a new node and copying information???
-infer *GetInfer (long *y, int *tempint, BDDNode * func)
+
+infer *NEW_GetInfer(long *y, long *max, int **tempint, BDDNode * func);
+
+// start
+infer *GetInfer(long *y, long *max, int **tempint, BDDNode * func)
+{
+   *y=0;
+   // assert (no flag is set );
+   infer *ret = NEW_GetInfer(y, max, tempint, func);
+   for (int i = 0;i<*y;i++) {
+      // clear the flag
+      sym_reset_flag((*tempint)[i]);
+   }
+   return ret;
+}
+
+infer *NEW_GetInfer(long *y, long *max, int **tempint, BDDNode * func)
 {
 	if ((func == true_ptr) || (func == false_ptr))
 	  return NULL;
-	tempint[*y] = func->variable;
-	
-	if ((*y) >= 4999)
-	  {
-		  //Sort and remove duplicates
-		  qsort (tempint, *y, sizeof (int), compfunc);
-		  int v = 0;
-		  for (int i = 1; i < (*y) + 1; i++)
-			 {
-				 v++;
-				 if (tempint[i] == tempint[i - 1])
-					v--;
-				 tempint[v] = tempint[i];
-			 }
-		  (*y) = v + 1;
-		  //End sorting and duplicates
-	  }
-	else
-	  (*y)++;
-	
-	infer *r = GetInfer (y, tempint, func->thenCase);
-	infer *e = GetInfer (y, tempint, func->elseCase);
+   if (sym_is_flag(func->variable) == 0)
+   {
+      if (*y >= *max) {
+         *tempint = (int*)ite_recalloc(*(void**)tempint, *max, *max+100, sizeof(int), 9, "tempint");
+         *max += 100;
+      }
+      (*tempint)[*y] = func->variable;
+      sym_set_flag(func->variable);
+      (*y)++;
+   };
+	infer *r = NEW_GetInfer(y, max, tempint, func->thenCase);
+	infer *e = NEW_GetInfer(y, max, tempint, func->elseCase);
 	
 	//If this node is a leaf node, put either func->variable 
 	//  or -(func->variable) as the first element in inferarray
@@ -393,22 +399,13 @@ infer *GetInfer (long *y, int *tempint, BDDNode * func)
 
 void cheat_replaceall (int *&length, store * &variables, varinfo * &variablelist) {
 	//Get the max number of input variables
-	int tempint[5000];
-	long y, v, i;
+	int *tempint=NULL;
+   long tempint_max = 0;
+	long y, i;
 	for (int x = 0; x < numout; x++) {
 		y = 0;
-		unravelBDD (&y, tempint, functions[x]);
-      qsort (tempint, y, sizeof (int), compfunc);
-      if (y != 0) {
-			v = 0;
-			for (i = 1; i < y; i++) {
-				v++;
-				if (tempint[i] == tempint[i - 1])
-				  v--;
-				tempint[v] = tempint[i];
-			}
-			y = v + 1;
-		}
+		unravelBDD (&y, &tempint_max, &tempint, functions[x]);
+      if (y != 0) qsort (tempint, y, sizeof (int), compfunc);
 		length[x] = y;
 		if (variables[x].num != NULL)
 		  delete variables[x].num;
@@ -418,6 +415,7 @@ void cheat_replaceall (int *&length, store * &variables, varinfo * &variablelist
 		variables[x].min = tempint[0];
 		variables[x].max = tempint[y-1];
 	}
+   ite_free((void**)&tempint); tempint_max = 0;
 	
 	numinp = 0;
 	for (int x = 0; x < numout; x++) {
@@ -492,11 +490,11 @@ void cheat_replaceall (int *&length, store * &variables, varinfo * &variablelist
 	numinp = replaceat;
 }
 
-void findPathsToX (BDDNode *bdd, int *path, int pathx, intlist *list, int *listx, BDDNode *X) {
+void findPathsToX (BDDNode *bdd, long *path_max, int **path, int pathx, intlist *list, int *listx, BDDNode *X) {
 	if (bdd == X) {
 		list[(*listx)].num = new int[pathx];
 		for (int x = 0; x < pathx; x++) {
-			list[(*listx)].num[x] = path[x];
+			list[(*listx)].num[x] = (*path)[x];
 		}
 		//list[(*listx)].num[pathx-1] = -list[(*listx)].num[pathx-1];
 		list[(*listx)].length = pathx;
@@ -506,27 +504,33 @@ void findPathsToX (BDDNode *bdd, int *path, int pathx, intlist *list, int *listx
 	if (IS_TRUE_FALSE(bdd))
 	  return;
 	
-	path[pathx] = bdd->variable;
-	findPathsToX (bdd->thenCase, path, pathx + 1, list, listx, X);
-	path[pathx] = -bdd->variable;
-	findPathsToX (bdd->elseCase, path, pathx + 1, list, listx, X);
+        if (pathx >= *path_max) {
+             *path = (int*)ite_recalloc(*(void**)path, *path_max, *path_max+100, sizeof(int), 9, "tempint");
+             *path_max += 100;
+        }
+
+	(*path)[pathx] = bdd->variable;
+	findPathsToX (bdd->thenCase, path_max, path, pathx + 1, list, listx, X);
+	(*path)[pathx] = -bdd->variable;
+	findPathsToX (bdd->elseCase, path_max, path, pathx + 1, list, listx, X);
 }
 
-void findPathsToFalse (BDDNode *bdd, int *path, intlist *list, int *listx) {
+void findPathsToFalse (BDDNode *bdd, long *path_max, int **path, intlist *list, int *listx) {
 	int pathx = 0;
-	findPathsToX (bdd, path, pathx, list, listx, false_ptr);
+	findPathsToX (bdd, path_max, path, pathx, list, listx, false_ptr);
 }
 
-void findPathsToTrue (BDDNode *bdd, int *path, intlist *list, int *listx) {
+void findPathsToTrue (BDDNode *bdd, long *path_max, int **path, intlist *list, int *listx) {
 	int pathx = 0;
-	findPathsToX (bdd, path, pathx, list, listx, true_ptr);
+	findPathsToX (bdd, path_max, path, pathx, list, listx, true_ptr);
 }
 
 void
 Stats (int length[], store variables[])
 {
-  int tempint[5000];
-  long y, v, i;
+  int *tempint=NULL;
+  long tempint_max = 0;
+  long y, i;
   int z;
   intlist *clauses = new intlist[10000];
 
@@ -536,7 +540,7 @@ Stats (int length[], store variables[])
       int numx = countFalses (functions[x]);
       intlist *list = new intlist[numx];
 		int listx = 0;
-      findPathsToFalse (functions[x], tempint, list, &listx);
+      findPathsToFalse (functions[x], &tempint_max, &tempint, list, &listx);
       //      if (functionType[x] != AND
       //	  && functionType[x] != OR
       //	  && functionType[x] != ITE)
@@ -657,20 +661,8 @@ Stats (int length[], store variables[])
 	for (int x = 0; x < numout; x++)
 	  {
 		  y = 0;
-		  unravelBDD (&y, tempint, functions[x]);
-		  qsort (tempint, y, sizeof (int), compfunc);
-		  if (y != 0)
-			 {
-				 v = 0;
-				 for (i = 1; i < y; i++)
-					{
-						v++;
-						if (tempint[i] == tempint[i - 1])
-						  v--;
-						tempint[v] = tempint[i];
-					}
-				 y = v + 1;
-			 }
+		  unravelBDD (&y, &tempint_max, &tempint, functions[x]);
+		  if (y != 0) qsort (tempint, y, sizeof (int), compfunc);
 		  length[x] = y;
 		  if (variables[x].num != NULL)
 			 delete variables[x].num;
@@ -743,7 +735,7 @@ Stats (int length[], store variables[])
 	for (int x = 0; x < numout; x++)
 	  {
 		  y = 0;
-		  unravelBDD (&y, tempint, functions[x]);
+		  unravelBDD (&y, &tempint_max, &tempint, functions[x]);
 		  printBDD (functions[x]);
 		  fprintf (stdout, "\nConstraint %d ", x);
 		  if (functionType[x] == AND)
@@ -788,7 +780,8 @@ Stats (int length[], store variables[])
 	fprintf (stdout,
 				"There are %d Independant Variables and %d Dependant Variables\n",
 				ind, dep);
-	
+
+   ite_free((void**)&tempint); tempint_max = 0;   
 	for (int x = 1; x < numinp + 1; x++)
 	  delete amount[x].num;
 	delete amount;
@@ -820,13 +813,13 @@ node_compfunc (const void *x, const void *y)
 }
 
 void
-Sort_BDDs (int *tempint)
+Sort_BDDs (long *tempint_max, int **tempint)
 {
   long y = 0;
   store *sort = new store[nmbrFunctions];
   for (int x = 0; x < nmbrFunctions; x++)
     {
-      unravelBDD (&y, tempint, functions[x]);
+      unravelBDD (&y, tempint_max, tempint, functions[x]);
       sort[x].dag = y;
       sort[x].length = x;
     }

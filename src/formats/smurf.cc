@@ -125,10 +125,10 @@ int *getANDLiterals(int v, int *variables, int length) {
 void BDD_to_Smurfs () {
 	char p[8192];
 	store * integers;
-	int *tempint;
+	int *tempint=NULL;
+   long tempint_max = 0;
 	long v, y, i;
 	long long x;
-	tempint = (int *) calloc (500, sizeof (int));
 	integers = (store *) calloc (nmbrFunctions + 1, sizeof (store));
 	numinp = 0;
 
@@ -141,27 +141,17 @@ void BDD_to_Smurfs () {
 		if (functions[x] == true_ptr)
 		  continue;
 		y = 0;
-		unravelBDD (&y, tempint, functions[x]);
+		unravelBDD (&y, &tempint_max, &tempint, functions[x]);
 		
 		//Sort the integers
 		qsort (tempint, y, sizeof (int), compfunc);
 		if (numinp < tempint[y - 1])
 		  numinp = tempint[y - 1];
 		
-		//Remove duplicate variables
-		v = 0;
-		for (i = 1; i < y; i++)
-		  {
-			  v++;
-			  if (tempint[i] == tempint[i - 1])
-				 v--;
-			  tempint[v] = tempint[i];
-		  }
-		v++;
-		integers[x].num = (int *) calloc (v + 1, sizeof (int));
-		for (i = 0; i < v; i++)
+		integers[x].num = (int *) calloc (y + 1, sizeof (int));
+		for (i = 0; i < y; i++)
 		  integers[x].num[i] = tempint[i];
-		integers[x].num[v] = 0;
+		integers[x].num[y] = 0;
 	}
 	fprintf (foutputfile, "%ld # Number of Input Variables\n", numinp + 1);
 	fprintf (foutputfile, "%d # Number of Output Variables\n", nmbrFunctions);
@@ -265,6 +255,7 @@ void BDD_to_Smurfs () {
 		  fprintf (foutputfile, "\n");
 	  }
 	fprintf (foutputfile, "@");
+   ite_free((void**)&tempint); tempint_max = 0;
 }
 
 void Smurfs_to_BDD () {
@@ -276,7 +267,8 @@ void Smurfs_to_BDD () {
 	arr * vars = NULL;
 	char string, *outvec;
 	outvec = new char[100];
-	int tempint[500];
+	int *tempint = NULL;
+   long tempint_max = 0;
 	int out = 0, line, i = 0;
 	long long y = 0;
 	bool flag = false;
@@ -325,6 +317,10 @@ void Smurfs_to_BDD () {
 		  
 		  do
 			 {
+             if (y>=tempint_max) {
+                 tempint = (int*)ite_recalloc((void*)tempint, tempint_max, tempint_max+100, sizeof(int), 9, "tempint");
+                tempint_max += 100;
+             }
 				 y++;
 				 //ADD IN SYMBOL TABLE SUPPORT!
 				 fscanf (finputfile, "%d", &tempint[y]);
@@ -558,4 +554,5 @@ void Smurfs_to_BDD () {
 	fprintf (stderr, "\n");
 	numout = count + 1;
 	nmbrFunctions = numout;
+   ite_free((void**)&tempint); tempint_max = 0;
 }

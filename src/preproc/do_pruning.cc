@@ -42,7 +42,7 @@
 #include "preprocess.h"
 
 extern int STRENGTH;
-void Sort_BDDs (int *tempint);
+void Sort_BDDs (long *tempint_max, int **tempint);
 
 #ifdef DO_PRUNING_FN
 # error "DO_PRUNING_FN defined -- undefine it"

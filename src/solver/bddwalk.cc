@@ -347,7 +347,8 @@ void initprob(void)
 	wvariables = new intlist[numBDDs+1];
 	wvisited = new int[numBDDs+1];
 	int *tempmem = new int[numvars+1];
-	int *tempint = new int[MAX_NODES_PER_BDD];
+	int *tempint = NULL; //new int[MAX_NODES_PER_BDD];
+        long tempint_max = 0;
 	
 	changed = new int[numvars+1];
 	breakcount = new int[numvars+1];
@@ -377,18 +378,8 @@ void initprob(void)
 	
 	for(int x = 0; x < numBDDs; x++) {
 		long y = 0;
-		unravelBDD (&y, tempint, functions[x]);
-		qsort (tempint, y, sizeof (int), compfunc);
-		if (y != 0) {
-			int v = 0;
-			for (int i = 1; i < y; i++) {
-				v++;
-				if (tempint[i] == tempint[i-1])
-				  v--;
-				tempint[v] = tempint[i];
-			}
-			y = v+1;
-		}
+		unravelBDD (&y, &tempint_max, &tempint, functions[x]);
+		if (y != 0) qsort (tempint, y, sizeof (int), compfunc);
 		
 		wlength[x] = y;
 		//previousState[x].num = NULL;
@@ -466,18 +457,8 @@ void initprob(void)
 		int no_vars = 0;
 		
 		long y = 0;
-		unravelBDD(&y, tempint, functions[x]);
-		qsort (tempint, y, sizeof (int), compfunc);
-		if (y != 0) {
-			int v = 0;
-			for (int i = 1; i < y; i++) {
-				v++;
-				if (tempint[i] == tempint[i - 1])
-				  v--;
-				tempint[v] = tempint[i];
-			}
-			y = v + 1;
-		}
+		unravelBDD(&y, &tempint_max, &tempint, functions[x]);
+		if (y != 0) qsort (tempint, y, sizeof (int), compfunc);
 		
 		no_vars = y;
 		funcs[x]->no_vars = no_vars;
@@ -588,7 +569,7 @@ void initprob(void)
       int numTrues = countTrues(functions[x]);
       BDDTruePaths[x].paths = new intlist[numTrues];
       BDDTruePaths[x].numpaths = 0;
-      findPathsToTrue (functions[x], tempint, BDDTruePaths[x].paths, &(BDDTruePaths[x].numpaths));
+      findPathsToTrue (functions[x], &tempint_max, &tempint, BDDTruePaths[x].paths, &(BDDTruePaths[x].numpaths));
 	}
 	fprintf(stderr, "         \r");
 	//The paths to true in each BDD have been recorded.
@@ -607,7 +588,7 @@ void initprob(void)
 	}
    */
 #endif
-	delete [] tempint;
+	ite_free((void**)&tempint); tempint_max = 0;
 }
 
 void freemem(void)
