@@ -101,6 +101,11 @@ struct pathStruct {
 	intlist *paths;
 };
 
+struct BDDState { //Used to store the state of BDDs in bddwalk.cc
+	int visited; //Records if this BDD has been visited this flip or not
+	int IsSAT;   //Records the value of this BDD (0 or 1) based on the current assignment
+};
+
 struct varinfo{
    int equalvars;  //for variablelist is 3 = 4
    int replace;    //dag for variablelist is the replaced numbers
