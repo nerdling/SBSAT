@@ -64,9 +64,6 @@ read_input(Tracer * &tracer)
 {
   d9_printf1("read_input\n");
 
-  bdd_init();
-  sym_init();
-
   int ret = read_input_open();
   if (ret != NO_ERROR) return ret;
 

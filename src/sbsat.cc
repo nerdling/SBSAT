@@ -105,6 +105,9 @@ ite_main_init(int argc, char *argv[])
 	
    if (DEBUG_LVL == 1) d1_printf3("%s %s ", ite_basename(inputfile), comment);
 
+   bdd_init();
+   sym_init();
+
    return NO_ERROR;
 }
 
