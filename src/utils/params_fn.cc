@@ -704,6 +704,8 @@ show_help()
             strcat(line, " <number>");
          else if (options[i].p_type==P_STRING) 
             strcat(line, " <string>");
+         else if (options[i].p_type==P_CHAR) 
+            strcat(line, " <char>");
       } else  sprintf(line, "  ");
       if (options[i].l_opt[0]) {
          if (options[i].w_opt[0]) strcat(line, ", "); //else strcat(line, "  ");
@@ -715,6 +717,8 @@ show_help()
             strcat(line, " <number>");
          else if (options[i].p_type==P_STRING) 
             strcat(line, " <string>");
+         else if (options[i].p_type==P_CHAR) 
+            strcat(line, " <char>");
       }
       line_len = strlen(line);
       if (line_len < left_size) 
