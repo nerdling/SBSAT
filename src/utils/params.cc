@@ -403,7 +403,7 @@ finish_params()
             char temp_str[256];
             sprintf(temp_str, "%s%s", 
                   env, ((char*)(p_opt->p_target))+1);
-            strncpy((char*)(p_opt->p_target), temp_str,
+            ite_strncpy((char*)(p_opt->p_target), temp_str,
                   p_opt->p_value.i-1);
             ((char*)(p_opt->p_target))[p_opt->p_value.i]=0;
          }
@@ -420,7 +420,7 @@ finish_params()
             char temp_str[256];
             sprintf(temp_str, "%s%s", 
                   env, ((char*)(p_opt->p_target))+5);
-            strncpy((char*)(p_opt->p_target), temp_str,
+            ite_strncpy((char*)(p_opt->p_target), temp_str,
                   p_opt->p_value.i-1);
             ((char*)(p_opt->p_target))[p_opt->p_value.i]=0;
          } else {

@@ -45,6 +45,7 @@ void *ite_calloc(unsigned int x, unsigned int y, int dbg_lvl, const char *for_wh
 void *ite_recalloc(void *ptr, unsigned int oldx, unsigned int x, unsigned int y, int dbg_lvl, const char *for_what);
 
 char *ite_basename(char *filename);
+void ite_strncpy(char *str_dst, char *str_src, int len);
 
 
 #define ITE_NEW_CATCH(x, desc) \

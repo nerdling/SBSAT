@@ -348,8 +348,8 @@ read_ini(char *filename)
                    continue;
                 }
              }
-             strncpy((char*)(p_opt->p_target), p_keyword+1, p_opt->p_value.i);
-             ((char*)(p_opt->p_target))[p_opt->p_value.i]=0;
+             strncpy((char*)(p_opt->p_target), p_keyword+1, p_opt->p_value.i-1);
+             ((char*)(p_opt->p_target))[p_opt->p_value.i-1]=0;
           } break;
           case P_FN_INT: 
              int arg;
@@ -485,8 +485,8 @@ read_cmd(int argc, char *argv[])
              }; 
              break;
           case P_STRING: 
-             strncpy((char*)(p_opt->p_target), argv[i], p_opt->p_value.i);
-             ((char*)(p_opt->p_target))[p_opt->p_value.i]=0;
+             strncpy((char*)(p_opt->p_target), argv[i], p_opt->p_value.i-1);
+             ((char*)(p_opt->p_target))[p_opt->p_value.i-1]=0;
              break;
           case P_FN_INT: 
              int arg;
@@ -677,6 +677,7 @@ show_help()
    if (left_size < 26) left_size = 26;
    if (left_size > 80) left_size = 80;
    strncpy(left_str, "                                                                                  ", left_size);
+   left_str[left_size] = 0;
 
    fprintf (stdhelp, "%s\n", DESCRIPTION);
    fprintf (stdhelp, 
@@ -818,7 +819,7 @@ fix_ini_filename()
                env, ((char*)(p_opt->p_target))+1);
          strncpy((char*)(p_opt->p_target), temp_str,
                p_opt->p_value.i-1);
-         ((char*)(p_opt->p_target))[p_opt->p_value.i]=0;
+         ((char*)(p_opt->p_target))[p_opt->p_value.i-1]=0;
       }
    }
 }

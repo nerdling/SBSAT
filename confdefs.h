@@ -1,11 +1,11 @@
 
 #define PACKAGE_NAME "sbsat"
 #define PACKAGE_TARNAME "sbsat"
-#define PACKAGE_VERSION "2.1r-1"
-#define PACKAGE_STRING "sbsat 2.1r-1"
+#define PACKAGE_VERSION "2.2b-1"
+#define PACKAGE_STRING "sbsat 2.2b-1"
 #define PACKAGE_BUGREPORT "mkouril@ececs.uc.edu"
 #define PACKAGE "sbsat"
-#define VERSION "2.1r-1"
+#define VERSION "2.2b-1"
 #ifdef __cplusplus
 #include <stdlib.h>
 #endif

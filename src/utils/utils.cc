@@ -558,6 +558,12 @@ ite_basename(char *filename)
    return ptr;
 }
 
+void
+ite_strncpy(char *str_dst, char *str_src, int len)
+{
+   strncpy(str_dst, str_src, len);
+   str_dst[len] = 0;
+}
 
 int signs_idx = 0;
 //#define signs_max 6
