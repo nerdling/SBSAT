@@ -50,20 +50,23 @@ extern int *tempint;
 char getNextSymbol_CNF (char macros[20], int &intnum) {
 	char integers[20];
 	int i = 0;
-	char p = 0;
+	int p = 0;
 	while(1) {
-		if((p = fgetc(finputfile)) == EOF) {
+      p = fgetc(finputfile);
+      if(p == EOF) {
 			fprintf(stderr, "\nUnexpected EOF (%s)...exiting\n", macros);
 			exit (1);
 		}
       if(p == 'c') {
 			while(p != '\n') {
-				if((p = fgetc(finputfile)) == EOF) {
+            p = fgetc(finputfile);
+            if(p == EOF) {
 					fprintf(stderr, "\nUnexpected EOF...exiting\n");
 					exit(1);
 				}
 			}
-			if ((p = fgetc(finputfile)) == EOF) {
+         p = fgetc(finputfile);
+         if (p == EOF) {
 				fprintf(stderr, "\nUnexpected EOF...exiting\n");
 				exit(1);
 			}
@@ -71,7 +74,8 @@ char getNextSymbol_CNF (char macros[20], int &intnum) {
 			continue;
 		}
       if(p == '#') {
-			if((p = fgetc(finputfile)) == EOF) {
+         p = fgetc(finputfile);
+			if(p == EOF) {
 				fprintf(stderr, "\nUnexpected EOF...exiting\n");
 				exit(1);
 			}
@@ -79,7 +83,8 @@ char getNextSymbol_CNF (char macros[20], int &intnum) {
 				while((p != '(') && (p != ' ') && (p != '\n') && (p != ';')) {
 					macros[i] = p;
 					i++;
-					if((p = fgetc(finputfile)) == EOF) {
+               p = fgetc(finputfile);
+               if (p == EOF) {
 						fprintf(stderr, "\nUnexpected EOF (%s)...exiting\n", macros);
 						exit (1);
 					}
@@ -97,7 +102,8 @@ char getNextSymbol_CNF (char macros[20], int &intnum) {
 			while(((p >= '0') && (p <= '9')) || (p == '-')) {
 				integers[i] = p;
 				i++;
-				if((p = fgetc(finputfile)) == EOF) {
+            p = fgetc(finputfile);
+            if(p == EOF) {
 					break;
 					//	fprintf(stderr, "\nUnexpected EOF (%s)...exiting\n", macros);
 					//	exit(1);
@@ -114,7 +120,7 @@ char getNextSymbol_CNF (char macros[20], int &intnum) {
 store *getMinMax() {
 	int i = 0, min, max;
 	char macros[20];
-	char p;
+	int p;
 	
 //	if((p = fgetc(finputfile)) == EOF) {
 //		fprintf(stderr, "\nUnexpected EOF...exiting\n");
@@ -127,7 +133,8 @@ store *getMinMax() {
 		exit(1);
 	}
 	
-	if((p = fgetc(finputfile)) == EOF) {
+   p = fgetc(finputfile);
+   if(p == EOF) {
 		fprintf(stderr, "\nUnexpected EOF (%s)...exiting\n", macros);
 		exit (1);
 	}
@@ -137,12 +144,14 @@ store *getMinMax() {
 			fprintf(stderr, "\nExpecting '[' after min:%d, found (%c)...exiting\n", min, p);
 			exit (1);
 		}
-		if((p = fgetc(finputfile)) == EOF) {
+      p = fgetc(finputfile);
+      if(p == EOF) {
 			fprintf(stderr, "\nUnexpected EOF (%s)...exiting\n", macros);
 			exit (1);
 		}
 	}
-	if((p = fgetc(finputfile)) == EOF) {
+   p = fgetc(finputfile);
+   if (p == EOF) {
 		fprintf(stderr, "\nUnexpected EOF (%s)...exiting\n", macros);
 		exit (1);
 	}
@@ -153,7 +162,8 @@ store *getMinMax() {
 		while((p >= '0') && (p<= '9')) {
 			macros[i] = p;
 			i++;
-			if((p = fgetc(finputfile)) == EOF) {
+         p = fgetc(finputfile);
+         if (p == EOF) {
 				fprintf(stderr, "\nUnexpected EOF (%s)...exiting\n", macros);
 				exit (1);
 			}
@@ -162,7 +172,8 @@ store *getMinMax() {
 			fprintf(stderr, "\nExpecting ']', found (%c)...exiting\n", p);
 			exit (1);
 		}
-		if((p = fgetc(finputfile)) == EOF) {
+      p = fgetc(finputfile);
+      if(p == EOF) {
 			fprintf(stderr, "\nUnexpected EOF (%s)...exiting\n", macros);
 			exit (1);
 		}

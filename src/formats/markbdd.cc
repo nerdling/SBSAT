@@ -100,7 +100,7 @@ BDDNode *putite(char macros[20], int intnum, BDDNode * bdd)
 	}
 	if (!strcasecmp (macros, "initialbranch")) {
 		no_independent = 0;
-		unsigned int p = 0;
+		int p = 0;
 		char integers[10];
 		intnum = 0;
 		int secondnum = 0, i = 0;
@@ -108,9 +108,10 @@ BDDNode *putite(char macros[20], int intnum, BDDNode * bdd)
 		int stop_openbracket = 0;
 		Initialbranch:;
 		while ((p != '\n')	&& !((p == ')') && (openbracket_found))) {
-			if ((p = fgetc (finputfile)) == (unsigned int)EOF)	{
+         p = fgetc(finputfile);
+			if (p == EOF)	{
 				fprintf (stderr, " %d %d ", openbracket_found, stop_openbracket);
-				fprintf (stderr, "\nUnexpected (unsigned int)EOF (%s)...exiting:%d\n",	macros, markbdd_line);
+				fprintf (stderr, "\nUnexpected EOF (%s)...exiting:%d\n",	macros, markbdd_line);
 				exit (1);
 			}
 			if (p == '(') {
@@ -123,8 +124,9 @@ BDDNode *putite(char macros[20], int intnum, BDDNode * bdd)
 				while ((p >= '0') && (p <= '9')) {
 					integers[i] = p;
 					i++;
-					if ((p = fgetc (finputfile)) == (unsigned int)EOF) {
-						fprintf (stderr, "\nUnexpected (unsigned int)EOF (%s)...exiting:%d\n", macros, markbdd_line);
+               p = fgetc(finputfile);
+               if (p == EOF) {
+						fprintf (stderr, "\nUnexpected EOF (%s)...exiting:%d\n", macros, markbdd_line);
 						exit (1);
 					}
 				}
@@ -135,13 +137,15 @@ BDDNode *putite(char macros[20], int intnum, BDDNode * bdd)
 					exit (1);
 				}
 				if (p == '.') {
-					if ((p = fgetc (finputfile)) == (unsigned int)EOF) {
-						fprintf (stderr, "\nUnexpected (unsigned int)EOF (%s)...exiting:%d\n",	macros, markbdd_line);
+               p = fgetc(finputfile);
+               if (p == EOF) {
+						fprintf (stderr, "\nUnexpected EOF (%s)...exiting:%d\n",	macros, markbdd_line);
 						exit (1);
 					}
 					if (p == '.') {
-						if ((p = fgetc (finputfile)) == (unsigned int)EOF) {
-							fprintf (stderr, "\nUnexpected (unsigned int)EOF (%s)...exiting:%d\n", macros, markbdd_line);
+                  p = fgetc(finputfile);
+                  if (p == EOF) {
+							fprintf (stderr, "\nUnexpected EOF (%s)...exiting:%d\n", macros, markbdd_line);
 							exit (1);
 						}
 						if ((p >= '0') && (p <= '9')) {
@@ -149,8 +153,9 @@ BDDNode *putite(char macros[20], int intnum, BDDNode * bdd)
 							while ((p >= '0') && (p <= '9')) {
 								integers[i] = p;
 								i++;
-								if ((p = fgetc (finputfile)) == (unsigned int)EOF) {
-									fprintf (stderr, "\nUnexpected (unsigned int)EOF (%s)...exiting:%d\n",	macros, markbdd_line);
+                        p = fgetc(finputfile);
+                        if (p == EOF) {
+									fprintf (stderr, "\nUnexpected EOF (%s)...exiting:%d\n",	macros, markbdd_line);
 									exit (1);
 								}
 							}
@@ -360,7 +365,7 @@ BDDNode *putite(char macros[20], int intnum, BDDNode * bdd)
 		}
 
 		int *var_list = new int[v1->variable];
-		for (unsigned int x = 0; x < v1->variable; x++) {
+		for (unsigned int x = 0; x < (unsigned int)v1->variable; x++) {
 			BDDNode * v4 = putite (macros, intnum, bdd);
 			if (v4 != ite_var (v4->variable)) {
 				//CHANGE LATER? all positive? or not?
@@ -681,10 +686,11 @@ BDDNode *putite(char macros[20], int intnum, BDDNode * bdd)
 char getNextSymbol (char *&macros, int &intnum, BDDNode *&bdd) {
 	char integers[20];
 	int i = 0;
-	unsigned int p = 0;
+	int p = 0;
 	while (1) {
-		if ((p = fgetc (finputfile)) == (unsigned int)EOF) {
-			//fprintf(stderr, "\nUnexpected (unsigned int)EOF (%s)...exiting\n", macros);
+      p = fgetc(finputfile);
+      if (p == EOF) {
+			//fprintf(stderr, "\nUnexpected EOF (%s)...exiting\n", macros);
 			return 'x';
 		}
       if (p == '*') {
@@ -693,13 +699,15 @@ char getNextSymbol (char *&macros, int &intnum, BDDNode *&bdd) {
 		}
       if (p == ';') {
 			while (p != '\n') {
-				if ((p = fgetc (finputfile)) == (unsigned int)EOF) {
-					fprintf (stderr, "\nUnexpected (unsigned int)EOF...exiting:%d\n", markbdd_line);
+            p = fgetc(finputfile);
+            if (p == EOF) {
+					fprintf (stderr, "\nUnexpected EOF...exiting:%d\n", markbdd_line);
 					exit (1);
 				}
 			}
-			if ((p = fgetc (finputfile)) == (unsigned int)EOF) {
-				fprintf (stderr, "\nUnexpected (unsigned int)EOF...exiting:%d\n", markbdd_line);
+         p = fgetc(finputfile);
+         if (p == EOF) {
+				fprintf (stderr, "\nUnexpected EOF...exiting:%d\n", markbdd_line);
 				exit (1);
 			}
 			ungetc (p, finputfile);
@@ -711,8 +719,9 @@ char getNextSymbol (char *&macros, int &intnum, BDDNode *&bdd) {
 					 || (p == '_') || ((p >= '0') && (p <= '9'))) {
 				macros[i] = p;
 				i++;
-				if ((p = fgetc (finputfile)) == (unsigned int)EOF) {
-					fprintf (stderr, "\nUnexpected (unsigned int)EOF (%s)...exiting:%d\n",	macros, markbdd_line);
+            p = fgetc(finputfile);
+            if (p == EOF) {
+					fprintf (stderr, "\nUnexpected EOF (%s)...exiting:%d\n",	macros, markbdd_line);
 					exit (1);
 				}
 			}
@@ -721,8 +730,9 @@ char getNextSymbol (char *&macros, int &intnum, BDDNode *&bdd) {
 			return 'm';
 		}
       if (p == '#') {
-			if ((p = fgetc (finputfile)) == (unsigned int)EOF) {
-				fprintf (stderr, "\nUnexpected (unsigned int)EOF...exiting\n:%d", markbdd_line);
+         p = fgetc(finputfile);
+         if (p == EOF) {
+				fprintf (stderr, "\nUnexpected EOF...exiting\n:%d", markbdd_line);
 				exit (1);
 			}
 			if (((p >= 'a') && (p <= 'z')) || ((p >= 'A') && (p <= 'Z'))
@@ -731,8 +741,9 @@ char getNextSymbol (char *&macros, int &intnum, BDDNode *&bdd) {
 						 || (p == '_') || ((p >= '0') && (p <= '9'))) {
 					macros[i] = p;
 					i++;
-					if ((p = fgetc (finputfile)) == (unsigned int)EOF) {
-						fprintf (stderr, "\nUnexpected (unsigned int)EOF (%s)...exiting\n:%d",	macros, markbdd_line);
+               p = fgetc(finputfile);
+               if (p == EOF) {
+						fprintf (stderr, "\nUnexpected EOF (%s)...exiting\n:%d",	macros, markbdd_line);
 						exit (1);
 					}
 				}
@@ -744,8 +755,9 @@ char getNextSymbol (char *&macros, int &intnum, BDDNode *&bdd) {
 			}
 		}
       if (p == '$') {
-			if ((p = fgetc (finputfile)) == (unsigned int)EOF) {
-				fprintf (stderr, "\nUnexpected (unsigned int)EOF (%s)...exiting:%d\n", macros, markbdd_line);
+         p = fgetc(finputfile);
+         if (p == EOF) {
+				fprintf (stderr, "\nUnexpected EOF (%s)...exiting:%d\n", macros, markbdd_line);
 				exit (1);
 			}
 			if ((p >= '1') && (p <= '9')) {
@@ -753,8 +765,9 @@ char getNextSymbol (char *&macros, int &intnum, BDDNode *&bdd) {
 				while ((p >= '0') && (p <= '9')) {
 					integers[i] = p;
 					i++;
-					if ((p = fgetc (finputfile)) == (unsigned int)EOF) {
-						fprintf (stderr, "\nUnexpected (unsigned int)EOF (%s)...exiting:%d\n",	macros, markbdd_line);
+               p = fgetc(finputfile);
+               if (p == EOF) {
+						fprintf (stderr, "\nUnexpected EOF (%s)...exiting:%d\n",	macros, markbdd_line);
 						exit (1);
 					}
 				}
@@ -777,16 +790,18 @@ char getNextSymbol (char *&macros, int &intnum, BDDNode *&bdd) {
 			int negate = 0;
 			if (p == '-') {
 				negate = 1;
-				if ((p = fgetc (finputfile)) == (unsigned int)EOF) {
-					fprintf (stderr, "\nUnexpected (unsigned int)EOF (%s)...exiting:%d\n",	macros, markbdd_line);
+            p = fgetc(finputfile);
+            if (p == EOF) {
+					fprintf (stderr, "\nUnexpected EOF (%s)...exiting:%d\n",	macros, markbdd_line);
 					exit (1);
 				}
 			}
 			while ((p >= '0') && (p <= '9')) {
 				integers[i] = p;
 				i++;
-				if ((p = fgetc (finputfile)) == (unsigned int)EOF) {
-					fprintf (stderr, "\nUnexpected (unsigned int)EOF (%s)...exiting:%d\n", macros, markbdd_line);
+            p = fgetc(finputfile);
+				if (p == EOF) {
+					fprintf (stderr, "\nUnexpected EOF (%s)...exiting:%d\n", macros, markbdd_line);
 					exit (1);
 				}
 			}
@@ -811,7 +826,7 @@ void bddloop () {
 	char macros[20];
 	int intnum = 0, keepnum = 0;
 	BDDNode * bdd = NULL;
-	unsigned int p = 0;
+	int p = 0;
 	totaldefines = 0;
 	defines = new defines_struct[100];
 	no_independent = 1;
@@ -826,16 +841,18 @@ void bddloop () {
 	
 	//  p = fgetc(finputfile);
 	// 
-	while (1) {		//(p = fgetc(finputfile))!=(unsigned int)EOF) 
+	while (1) {		//(p = fgetc(finputfile))!=EOF) 
 		markbdd_line++;
       d2_printf2("\rReading %d ", markbdd_line);
       if (p == ';') {
 			while (p != '\n') {
-				if ((p = fgetc (finputfile)) == (unsigned int)EOF) {
+            p = fgetc(finputfile);
+				if (p == EOF) {
 					goto Exit;
 				}
 			}
-			if ((p = fgetc (finputfile)) == (unsigned int)EOF) {
+         p = fgetc(finputfile);
+         if (p == EOF) {
 				goto Exit;
 			}
 			if (p != ';') {
@@ -845,7 +862,8 @@ void bddloop () {
 		}
       if (p == '\n') {
 			while (p == '\n') {
-				if ((p = fgetc (finputfile)) == (unsigned int)EOF) {
+            p = fgetc(finputfile);
+            if (p == EOF) {
 					goto Exit;
 				}
 			}
@@ -853,7 +871,8 @@ void bddloop () {
 			  continue;
 			ungetc (p, finputfile);
 		}
-      if ((p = fgetc (finputfile)) == (unsigned int)EOF) {
+      p = fgetc(finputfile);
+      if (p == EOF) {
 			goto Exit;
 		}
       if (p == '*') {
@@ -902,7 +921,8 @@ void bddloop () {
 				exit(0);
 				continue_all = 1;
 			}
-			while ((p = fgetc (finputfile)) != (unsigned int)EOF) {
+         p = fgetc(finputfile);
+         while (p != EOF) {
 				if (p == '\n')
 				  break;
 				if (p == ';') continue_all = 1;
@@ -911,7 +931,8 @@ void bddloop () {
 					exit(0);
 					continue_all = 1;
 				}
-			}
+            p = fgetc(finputfile);
+         }
 			if (p != '\n')
 			  goto Exit;
 		} else

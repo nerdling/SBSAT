@@ -194,73 +194,83 @@ myungetc (char c)
 void
 readfile ()
 {
-  char c;
+  int c;
   int nl = 0, i, bracket = 0;
 
   C = 0;
-  while ((c = fgetc (finputfile)) != EOF)
+  while (1)
     {
-      switch (c)
-	{
-	case '\n':
-	  nl = 1;
-	case ' ':
-	case '\t':
+       c = fgetc(finputfile);
+       switch (c)
+       {
+        case EOF: break;
+        case '\n':
+           nl = 1;
+        case ' ':
+        case '\t':
 
-	  while ((c = fgetc (finputfile)) == ' ' || c == '\t' || c == '\n')
-	    if (c == '\n')
-	      nl = 1;
+           c = fgetc(finputfile);
+           while (c == ' ' || c == '\t' || c == '\n') {
+              if (c == '\n')
+                 nl = 1;
+              c = fgetc(finputfile);
+           }
 
-	  (nl == 1) ? myputc ('\n') : myputc (' ');
-	  nl = 0;
-	  ungetc (c, finputfile);
-	  break;
+           (nl == 1) ? myputc ('\n') : myputc (' ');
+           nl = 0;
+           ungetc (c, finputfile);
+           break;
 
-	case 'c':
-	  myputc ('c');
-	  for (i = 0;
-	       (c = fgetc (finputfile)) != '\n' && i < LINE_LENGTH - 1 && c != EOF;
-	       i++)
-	    myputc (c);
+        case 'c':
+           myputc ('c');
+           c = fgetc(finputfile);
+           for (i = 0; c != '\n' && i < LINE_LENGTH - 1 && c != EOF;
+                 i++) {
+              myputc (c);
+              c = fgetc(finputfile);
+           }
+       
 
-	  myputc ('\n');
-	  if ((i == LINE_LENGTH - 1 && c != '\n') || c == EOF)
-	    {
-	      ungetc (c, finputfile);
-	      ungetc (' ', finputfile);
-	      ungetc ('c', finputfile);
-	    }
-	  break;
+           myputc ('\n');
+           if ((i == LINE_LENGTH - 1 && c != '\n') || c == EOF)
+           {
+              ungetc (c, finputfile);
+              ungetc (' ', finputfile);
+              ungetc ('c', finputfile);
+           }
+           break;
 
-	case 'p':
-	  myputc (c);
-	  while ((c = fgetc (finputfile)) != '\n' && c != EOF)
-	    myputc (c);
-	  for (i = 0; i < 20; i++, *Acw = ' ', Acw++);
-	  myputc ('\n');
-	  break;
+        case 'p':
+           myputc (c);
+           c = fgetc(finputfile);
+           while (c != '\n' && c != EOF) {
+              myputc (c);
+              c = fgetc(finputfile);
+           }
+           for (i = 0; i < 20; i++, *Acw = ' ', Acw++);
+           myputc ('\n');
+           break;
 
-	case '(':
-	  bracket++;
-	  myputc (c);
-	  break;
+        case '(':
+           bracket++;
+           myputc (c);
+           break;
 
-	case ')':
-	  bracket--;
-	  if (bracket == 2)
-	    C++;
-	  myputc (c);
-	  break;
+        case ')':
+           bracket--;
+           if (bracket == 2)
+              C++;
+           myputc (c);
+           break;
 
-	default:
-	  myputc (c);
-	  break;
-	}
+        default:
+           myputc (c);
+           break;
+       }
     }
   myputc ('\0');
   if (bracket != 0)
-    print_err ("Error in input: Mismatching brackets.", 0);
-
+     print_err ("Error in input: Mismatching brackets.", 0);
 }
 
 //========================================================================
