@@ -65,6 +65,11 @@ Do_Apply_Inferences ()
 	infer *temp = inferlist;
 	inferlist = inferlist->next;	//NEW Must increment past the empty start node
 	delete temp;
+
+	void bdd_gc();
+	if(rand() % 1000 < 4) bdd_gc();
+	//I know it looks strange to have this here twice, but it's necessary
+	//for preprocessing options that call this but don't have any inferences.
 	
 	while (inferlist != NULL) {
 		//startover:;
