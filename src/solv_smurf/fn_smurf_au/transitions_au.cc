@@ -61,7 +61,6 @@ AddStateTransitionAu(SmurfAuState *pSmurfAuState,
 	//pTransitionAu->pState = pSmurfAuState;
 	
 	infer *head = pFuncEvaled->inferences;
-	int size=0;
 	int *ptr = NULL;
 	if(head != NULL) {
 		//There should never be an inference except on the autarky variable.
@@ -70,7 +69,6 @@ AddStateTransitionAu(SmurfAuState *pSmurfAuState,
 		pTransitionAu->positiveInferences.arrElts = ptr;
 		pTransitionAu->negativeInferences.arrElts = ptr;
 		
-		int i=0;
 		while(head != NULL) {
 			if (head->nums[1] == 0) {
 				if (head->nums[0] > 0) {
@@ -91,9 +89,10 @@ AddStateTransitionAu(SmurfAuState *pSmurfAuState,
 			}
 			head = head->next;
 		}
-		assert(head != NULL);
 		//If head == NULL that means the autarky BDD was able to make an inference
-		//that did not involve the autarky variable.
+		//that did not involve the autarky variable. Or and inference was made
+		//like {1=2}. So it is necessary to go through 'head' because
+		//we need to skip by equivalences.
 	}
 	return pTransitionAu;
 }
