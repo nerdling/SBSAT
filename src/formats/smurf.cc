@@ -256,7 +256,10 @@ void BDD_to_Smurfs () {
 			}
 /*		} else if (functionType[v] == MINMAX) {
 			fprintf(foutputfile, "minmax ");
-			BDDNode *p_or = functions[v];
+
+ //Waiting for ability to do positive and negative literals with minmax
+ 
+         BDDNode *p_or = functions[v];
 			for (x = 0; x < integers[v].num[x] != 0; x++) {
 				if (set_variable (p_or, integers[v].num[x], 1) == true_ptr)
 				  fprintf (foutputfile, "1");
