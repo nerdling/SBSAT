@@ -49,6 +49,8 @@ AddStateTransition(SmurfState *pSmurfState,
                    SmurfState *pSmurfStateOfEvaled
                    )
 {
+  assert(pSmurfState != pSmurfStateOfEvaled);
+
   Transition *pTransition = FindOrAddTransition(pSmurfState, i, nVble, nValueOfVble);
 
   assert(pTransition->pNextState == NULL);
