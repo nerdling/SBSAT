@@ -1,5 +1,5 @@
 p bdd 20 11 ; 20 vars, 11 functions
-InitialBranch(var*, a, b, t*e) ; These variables will be branched on first.
+Initial_Branch(var*, a, b, t*e) ; These variables will be branched on first.
                                ; '*' is a wildcard
 
 ite(var1, T, F) ; Function $1, no smurf created
@@ -33,6 +33,7 @@ ite 2            ; Function $7, no smurf created
 *and(var1, var2, var3) ; Function $9, smurf 4
 ;Returning the AND operator to normal;
 #define and(x, y) # ite(x, y, F)
+and(a, b)
 
 print_tree  $7 ; No function created, no smurf created
 pprint_tree $7 ; No function created, no smurf created

@@ -173,7 +173,8 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 				sym_regex_free(&myrg);
 			}
 		}
-      strcpy (macros, "initialbranch");
+      //ungetc(p, finputfile);
+		strcpy (macros, "initialbranch");
       return true_ptr;
 	}
 	if (!strcasecmp (macros, "define")) {
