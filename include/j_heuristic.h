@@ -48,8 +48,7 @@
 typedef struct {
    double Pos;
    double Neg;
-   int    nPos;
-   int    nNeg;
+   /* add more heuristic values here */
 } HeurScores;
 
 typedef union {
