@@ -613,7 +613,6 @@ infer *possible_infer_x(BDDNode *f, int x)
 				inference->next = NULL;
 				return inference;
 			}
-
 			infer *head = NULL;
 			infer *temp = NULL;
 			infer *r = r_BDD->inferences;
@@ -624,7 +623,6 @@ infer *possible_infer_x(BDDNode *f, int x)
 				head->next = NULL;
 				return head;
 			}
-				  
 			BDDNode *e_BDD = ite_and(f->elseCase, ite_not(f->thenCase));
 			                 //Ex_GetInfer(f->elseCase);
 			if(e_BDD == false_ptr) {				  
@@ -634,7 +632,6 @@ infer *possible_infer_x(BDDNode *f, int x)
 				inference->next = NULL;
 				return inference;
 			}
-			
 			infer *e = e_BDD->inferences;
 			if(e == NULL) {
 				//while (r!=NULL) { temp = r; r = r->next; delete temp;	}
