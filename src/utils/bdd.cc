@@ -110,7 +110,6 @@ BDDNode * f_apply (BDDNode * f, BDDNode ** x)
           f_apply (f->elseCase, x)));
 }
 
-
 #define print_bdd(f) print_bdd1(f, 0)
 void
 print_bdd1 (BDDNode * f, int print_counter)

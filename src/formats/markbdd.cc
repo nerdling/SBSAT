@@ -64,8 +64,18 @@ char *macros;
 BDDNode *putite(int intnum, BDDNode * bdd)
 {
 	char order = getNextSymbol (intnum, bdd);
-	if (order == 'i')
-	  return ite_var (intnum);
+	if (order == 'i') { //This becomes unnecessary
+		if(intnum >= max_macros) {
+			macros = (char *)ite_recalloc(macros, max_macros, intnum+2, sizeof(char), 9, "macros");
+			max_macros=intnum+2;
+		}
+		sprintf(macros, "%d", intnum);
+//		intnum = i_getsym(macros);
+//		Here I need to return an integer if it is actually an integer...
+//		for the defines, and InititalBranch, and others that use integers.
+//		Though I could fix those to use integers correctly......maybe.....
+		return ite_var (intnum);
+	}
 	if (order == 'b')
 	  return (bdd);
 	if (order == 'x')
@@ -79,6 +89,8 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 	  return true_ptr;
 	if (!strcasecmp (macros, "f"))
 	  return false_ptr;
+
+	//Search the defines for this word...
 	for (int x = 0; x < totaldefines; x++) {
 		if (!strcasecmp (macros, defines[x].string)) {
 			BDDNode ** BDDS = new BDDNode *[defines[x].vlist[0] + 1];
@@ -88,7 +100,7 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 			delete [] BDDS;
 			return returnbdd;
 		}
-	}
+	} //Must be a variable or a reserved word...
 	if (!strcasecmp (macros, "ite")) {
 		BDDNode * v1, *v2, *v3;
 		v1 = putite (intnum, bdd);
@@ -698,6 +710,9 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 		functionType[nmbrFunctions] = UNSURE;
       return v1;
 	}
+	int v = i_getsym(macros);
+	return ite_var (v);
+	
 	fprintf (stderr, "\nUnknown word (%s)...exiting:%d\n", macros,	markbdd_line);
 	exit (1);
 	return NULL;
