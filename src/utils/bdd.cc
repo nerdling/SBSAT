@@ -49,12 +49,13 @@ enum {
    NUMREPLACEALL_FLAG_NUMBER, /* var/replace list dependent */
    POSSIBLEINFER_FLAG_NUMBER,
    POSSIBLEBDD_FLAG_NUMBER,
+	POSSIBLE_BDD_FLAG_NUMBER,
 	CLEANPOSSIBLE_FLAG_NUMBER,
    PRINTSHAREDBDDS_FLAG_NUMBER,
    REDUCEDREPLACE_FLAG_NUMBER,
    MAX_FLAG_NUMBER
 };
-int last_bdd_flag_number[MAX_FLAG_NUMBER] = {0,0,0,0,0,0,0,0,0,0,0,0};
+int last_bdd_flag_number[MAX_FLAG_NUMBER] = {0,0,0,0,0,0,0,0,0,0,0,0,0};
 int bdd_flag_number = 2;
 
 inline void
@@ -1251,17 +1252,36 @@ BDDNode *_possible_BDD_x(BDDNode *f, int x) {
 }
 
 //JAZZ THIS UP!!! SEAN!!! LOOK HERE!!!
-BDDNode *possible_BDD(BDDNode *f, int x) {
-	if(f->variable < x) return false_ptr;
-	if(f->variable == x) {
-		BDDNode *r = ite_and(f->thenCase, ite_not(f->elseCase));
-		BDDNode *e = ite_and(ite_not(f->thenCase), f->elseCase);
-		return ite(ite_var(x), r, e);
+
+
+BDDNode * _possible_BDD (BDDNode * f, int v);
+BDDNode * possible_BDD (BDDNode * f, int v) {
+	start_bdd_flag_number(POSSIBLE_BDD_FLAG_NUMBER);
+	return _possible_BDD(f, v);
+}
+
+BDDNode *_possible_BDD(BDDNode *f, int v) {
+	if (f->flag == bdd_flag_number) return f->tmp_bdd;
+	f->flag = bdd_flag_number;
+	
+	BDDNode *var = ite_var(v);
+	BDDNode *cached = itetable_find_or_add_node(15, f, var, NULL);
+	if (cached) return (f->tmp_bdd = cached);
+	
+	if(f->variable < v) return (f->tmp_bdd = false_ptr);
+	if(f->variable == v) {
+		BDDNode *r, *e;
+		if(f->t_and_not_e_bdd != NULL) r = f->t_and_not_e_bdd;
+		else f->t_and_not_e_bdd = r = ite_and(f->thenCase, ite_not(f->elseCase));
+		if(f->not_t_and_e_bdd != NULL) e = f->not_t_and_e_bdd;
+		else f->not_t_and_e_bdd = e = ite_and(ite_not(f->thenCase), f->elseCase);
+		return (f->tmp_bdd = ite(ite_var(v), r, e));
 	}
-	BDDNode *r = possible_BDD(f->thenCase, x);
-	BDDNode *e = possible_BDD(f->elseCase, x);
-	if(r == e) return r;
-	return ite(ite_var(f->variable), r, e);
+
+	BDDNode *r = _possible_BDD(f->thenCase, v);
+	BDDNode *e = _possible_BDD(f->elseCase, v);
+	if(r == e) return (f->tmp_bdd = r);
+	return (f->tmp_bdd = itetable_add_node(15, f, var, ite(ite_var(f->variable), r, e)));
 }
 
 infer *_possible_infer_x(BDDNode *f, int x);
