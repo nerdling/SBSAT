@@ -38,6 +38,8 @@
 #include "solver.h"
 #include "params.h"
 
+extern int params_current_src;
+
 void ctrl_c_proc(int x);
 
 char sHeuristic[10]="j";
@@ -101,7 +103,7 @@ t_opt options[] = {
                "Comment to appear next to the filename "},
 /*
 { &input_result_filename, "", "read-result-filename", P_STRING, 
-	       V(i:127,"127",}, V(s:,,""), VAR_NORMAL, 0,
+	       V(i:127,"127"), {""}, VAR_NORMAL, 0,
               "Filename with the partial assignment"},
 */
 { &ctrl_c,  "",   "ctrl-c",   P_INT,  V(i:1,"1"), V(i:0,"0"), VAR_NORMAL, 0,
@@ -320,6 +322,7 @@ t_opt options[] = {
 void
 finish_params()
 {
+   /* special files */
    if (!strcmp(debug_dev, "stdout")) stddbg = stdout;
    else
    if (!strcmp(debug_dev, "stderr")) stddbg = stderr;
@@ -327,6 +330,8 @@ finish_params()
    }
 
 
+   /* temp-dir needs to have the ~ expanded to $HOME */
+   /* and $TEMP expanded to  $TEMP or $TMPDIR or /tmp whichever comes first */
    t_opt *p_opt;
    char a_opt[][255] = { "temp-dir", /*"-any-other-par-",*/ "" };
 
@@ -368,6 +373,7 @@ finish_params()
       }
    }
 
+   /* decode result type -- none, raw, fancy */
    switch (sResult[0]) {
     case 'n': result_display_type = 0; break;
     case 'r': result_display_type = 1; break;
@@ -378,6 +384,7 @@ finish_params()
               break;
    }
 
+   /* decode heuristic type -- johnson, lemma, interactive, state */
    switch (sHeuristic[0]) {
     case 'j': nHeuristic = JOHNSON_HEURISTIC; break;
     case 'l': nHeuristic = C_LEMMA_HEURISTIC; break;
@@ -389,6 +396,7 @@ finish_params()
               break;
    }
 
+   /* limit max vbles per smurf flag -S */
    if (MAX_VBLES_PER_SMURF > MAX_MAX_VBLES_PER_SMURF)
    {
       dE_printf2("error: limit for MAX_VBLES_PER_SMURF -S is %d\n",
@@ -396,10 +404,12 @@ finish_params()
       exit(1);
    }
 
+   /* compute power of three of max vbles per smurf */
    MAX_NUM_PATH_EQUIV_SETS=1;
    for (int i=0;i<MAX_VBLES_PER_SMURF;i++)
       MAX_NUM_PATH_EQUIV_SETS*=3;
 
+   /* check validity of disabling backjumping AND forcing lemmas to be 0 */
    if (backjumping == 0) {
       if (MAX_NUM_CACHED_LEMMAS == 0) NO_LEMMAS=1;
       else 
@@ -410,6 +420,7 @@ finish_params()
       }
    }
 
+   /* check validity of the cnf output format */
    if (!strcmp(cnfformat, "noqm")) n_cnfformat = CNF_NOQM; else
       if (!strcmp(cnfformat, "qm"))   n_cnfformat = CNF_QM; else
          if (!strcmp(cnfformat, "3sat")) n_cnfformat = CNF_3SAT; else
@@ -418,6 +429,7 @@ finish_params()
             exit(1);
          }
 
+   /* install ctrl-c function if ctrl_c enabled */
    if (ctrl_c == 1) {
       signal (SIGINT, ctrl_c_proc);
    }
@@ -457,11 +469,11 @@ DO_ALL(int value/* , char *s_value*/)
    set_param_value("Ea", s_value); // and it knows src //
    set_param_value("Dc", s_value); // and it knows src //
 */
-   DO_CLUSTER = value;
-   DO_COFACTOR = value;
-   DO_PRUNING = value;
-   DO_STRENGTH = value;
-   DO_EXIST_QUANTIFY = value;
-   DO_EXIST_QUANTIFY_AND = value;
-   DO_DEP_CLUSTER = value;
+   set_param_int("Cl", value);
+   set_param_int("Co", value);
+   set_param_int("Pr", value);
+   set_param_int("St", value);
+   set_param_int("Ex", value);
+   set_param_int("Ea", value);
+   set_param_int("Dc", value);
 }

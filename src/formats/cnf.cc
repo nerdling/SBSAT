@@ -477,12 +477,14 @@ void CNF_to_BDD(int cnf)
       while(and_or_do) {
          and_or_do = 0;
 			for(long x = 1; x < numinp+1; x++) {
-				if (x%1000 == 1)
+				if (x%10 == 1)
 				  d2_printf3("\rAND/OR Search CNF %ld/%ld ...       ", x, numinp);
 				if(two_pos[x].num[0] > 0) {
 					out = 0;
 					for(z = 0; (greater_neg[x].num[z] != 0) && (out != 1); z++) {
-						count = 0;
+                  if (z%10 == 1)
+                     d2_printf2("\r*** sub *** AND/OR Search CNF %ld ...       ", z);
+                  count = 0;
 						//An optimization can be placed here I think...
 						//For the future, if the number of literals in the greater_neg clause
 						//is greater than the number of two literal clauses, then it is not

@@ -171,7 +171,7 @@ Init_Preprocessing()
 	DO_INFERENCES = OLD_DO_INFERENCES;
 
    //	Do_Flow();
-   Do_Flow_Grouping();
+   //Do_Flow_Grouping();
 
 	return ret;
 }

@@ -37,8 +37,8 @@
 #include "params.h"
 #include "log.h"
 
-extern int term_width; // FIXME: later
-//#define term_width 80
+extern int term_width; 
+int params_current_src = 0;
 
 #ifndef COPYRIGHT
 #define COPYRIGHT "Copyright (C) 1999-2003, University of Cincinnati.  All rights reserved."
@@ -175,6 +175,19 @@ lookup_short_keyword(char *key)
 }
 
 void
+set_param_int(char *param, int value)
+{
+   t_opt *p_opt = lookup_keyword(param);
+   if (p_opt == NULL) return;
+   assert(p_opt->p_type == P_INT);
+   if (p_opt->p_src <= params_current_src)
+   {
+      *(int*)(p_opt->p_target) = value;
+      p_opt->p_src = params_current_src;
+   }
+}
+
+void
 skip_eol(FILE *fini)
 {
   char c=fgetc(fini);
@@ -190,10 +203,14 @@ read_ini(char *filename)
    char *p_keyword=NULL;
    t_opt *p_opt;
 
+   params_current_src = 1;
+
    if (!fini) 
    { 
-      d2_printf2("warning: ini file not found %s\n", filename); 
+      d3_printf2("warning: ini file not found %s\n", filename); 
       return; 
+   } else {
+      d2_printf2("using ini file %s\n", filename); 
    };
 
    while (!feof(fini))
@@ -229,25 +246,25 @@ read_ini(char *filename)
          skip_eol(fini);
          continue;
       }
-      if (p_opt->p_src > 1) 
+      if (p_opt->p_src > params_current_src) 
       { 
          /* already set from cmd line */
          skip_eol(fini);
          continue;
       }
 
-      /* set src for all vars with the same target before this one */
+      /* set src for all vars with the same target var location before this one variable */
       if (p_opt > options) {
          t_opt *x_opt = p_opt;
-         while ((--x_opt)->p_target == p_opt->p_target) x_opt->p_src = 1;
+         while ((--x_opt)->p_target == p_opt->p_target) x_opt->p_src = params_current_src;
       }
       /* and after this one */
       {
          t_opt *x_opt = p_opt;
-         while ((++x_opt)->p_target == p_opt->p_target) x_opt->p_src = 1;
+         while ((++x_opt)->p_target == p_opt->p_target) x_opt->p_src = params_current_src;
       }
       /* set src = ini file */
-      p_opt->p_src = 1;
+      p_opt->p_src = params_current_src;
 
       if (p_opt->p_type <= P_NONE || p_opt->p_type == P_FN) 
       {
@@ -360,6 +377,8 @@ read_cmd(int argc, char *argv[])
    t_opt *p_opt;
    int params=0; 
 
+   params_current_src = 2;
+
    for (i=1;i<argc;i++)
    {
       d9_printf3("parameter(%d): %s\n", i, argv[i]);
@@ -388,16 +407,31 @@ read_cmd(int argc, char *argv[])
          exit(1);
          continue;
       }
-
+      if (p_opt->p_src > params_current_src) 
+      {
+         /* already set from higher src */
+         // skip = 1;
+         if (p_opt->p_type <= P_NONE || p_opt->p_type == P_FN) {
+            continue;
+         } else {
+            i++;
+            if (i == argc) {
+               printf("error: missing parameter for %s\n", argv[i-1]);
+               exit(1);
+               continue;
+            }
+            continue;
+         }
+      }
       if (p_opt > options) {
          t_opt *x_opt = p_opt;
-         while ((--x_opt)->p_target == p_opt->p_target) x_opt->p_src = 2;
+         while ((--x_opt)->p_target == p_opt->p_target) x_opt->p_src = params_current_src;
       }
       {
          t_opt *x_opt = p_opt;
-         while ((++x_opt)->p_target == p_opt->p_target) x_opt->p_src = 2;
+         while ((++x_opt)->p_target == p_opt->p_target) x_opt->p_src = params_current_src;
       }
-      p_opt->p_src = 2; /* cmd line source */
+      p_opt->p_src = params_current_src; /* cmd line source */
 
       if (p_opt->p_type <= P_NONE || p_opt->p_type == P_FN) {
          d9_printf1("found predefined keyword\n");

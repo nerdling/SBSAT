@@ -157,5 +157,6 @@ void read_ini(char*);
 void dump_params();
 t_opt *lookup_keyword(char *key);
 t_opt *lookup_short_keyword(char *key);
+void set_param_int(char *param, int value);
 
 #endif
