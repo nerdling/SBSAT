@@ -26,7 +26,7 @@
 
 \layout Title
 
-Getting Started With SBSAT
+SBSAT Quick-Start Guide
 \layout Author
 
 
@@ -132,11 +132,11 @@ The solver was successfully tested and compiled on a number of Unix based
  (intel cc?).
 \layout Section
 \pagebreak_top 
-About this manual
+About the Quick-Start Guide
 \layout Standard
 
-The main purpose of this manual is to introduce a new user to the SBSAT
- Solver.
+The main purpose of the Quick-Start Guide is to introduce a new user to
+ the SBSAT Solver.
  We will use a few well chosen examples to demonstrate the different functionali
 ty of the SBSAT solver without getting bogged down in details.
  For a more detailed description of the solver please see the SBSAT Manual
@@ -158,45 +158,29 @@ All problems in this manual are part of the SBSAT distribution in the examples
 Conventions
 \layout Standard
 
-Program options
+Program input and output
 \layout Standard
 
+Fixed sized length font (like a typewriter) shows a line of text as it should
+ appear on the computer screen.
+\layout Standard
 
-\emph on 
-Italic
-\emph default 
- (Example: 
+(Example: 
 \family typewriter 
 \size footnotesize 
-$ ite 
-\emph on 
---help
+Reading file ...
+
 \family default 
 \size default 
-\emph default 
  )
-\newline 
-
-\newline 
-Directive in each input formats
-\layout Standard
-
-
-\series bold 
-Bold
-\series default 
- (Example: *
-\series bold 
-add_state
-\series default 
- $1,2)
 \newline 
 
 \newline 
 Command line demonstration
 \layout Standard
 
-Start with the string character ($) 
+A string character ($) at the beginning of a line represents the command-line
+ prompt.
 \layout Standard
 
 (Example: 
@@ -209,17 +193,47 @@ $ ite small.cnf
 \newline 
 
 \newline 
-Command line intput and output of the program
+Program options
 \layout Standard
 
-Fixed sized length font (Example: 
+Programming options appear in 
+\emph on 
+Italics 
+\emph default 
+to contrast with the option parameters, which appear in plain text.
+ 
+\layout Standard
+
+(Example: 
 \family typewriter 
 \size footnotesize 
-Reading file ...
-
+$ ite 
+\emph on 
+--help
 \family default 
 \size default 
+\emph default 
  )
+\newline 
+
+\newline 
+Keywords in an input format
+\layout Standard
+
+An input format example has keywords in
+\series bold 
+ Bold
+\series default 
+.
+\layout Standard
+
+(Example: *
+\series bold 
+add_state
+\series default 
+ $1,2)
+\newline 
+
 \newline 
 
 \layout Subsection
@@ -607,8 +621,8 @@ Total Time: 0.020
 
 \layout Standard
 
-You can see that the solution is mixed with the normal output of the solver.
- Therefore it might be better to specify the output file for the solution.
+The default output mixes solution information with execution information.
+ Solution information may be separated from execution information as follows.
 \layout Standard
 
 
@@ -2857,7 +2871,7 @@ $ ./configure --static
 Getting more help
 \layout Itemize
 
-Read the real SBSAT Manual
+Read the SBSAT Manual
 \begin_inset Foot
 collapsed true
 
