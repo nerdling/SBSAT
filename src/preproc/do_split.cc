@@ -78,35 +78,26 @@ int nCk(int n, int k) {
 	return nCk(n-1, k) + nCk(n-1, k-1);	
 }
 
-void nCk_Sets(int n, int k, int *arr, int *vars, int *whereat, int n_orig, BDDNode *bdd) {
+void nCk_Sets(int n, int k, int *vars, int *whereat, int n_orig, BDDNode *bdd) {
 	if (n==0 && k==0) {
-		//ExQuantify vars away, save BDD
-		BDDNode *tempBDD = bdd;
-		for (int i=0; i<n_orig && tempBDD!=true_ptr; i++ ) {
-			if(arr[i] == 0) {
-				tempBDD = xquantify(tempBDD, vars[i]);
-			}
-		}
-		if(tempBDD != true_ptr) {
-			d3_printf2("whereat = %d: \n", (*whereat));
-			//printBDD(tempBDD);
-			//d3_printf1("\n");
-			BDDFuncs[(*whereat)] = tempBDD;
-			(*whereat)++;
-			if((*whereat) >= max_bdds) {
-				BDDFuncs = (BDDNode **)ite_recalloc(BDDFuncs, max_bdds, max_bdds+10, sizeof(BDDNode *), 9, "BDDFuncs");
-				max_bdds += 10;
-				num_bdds = (*whereat)-1;
-			}
+		//d3_printf2("whereat = %d: \n", (*whereat));
+		//printBDD(tempBDD);
+		//d3_printf1("\n");
+		BDDFuncs[(*whereat)] = bdd;
+		(*whereat)++;
+		if((*whereat) >= max_bdds) {
+			BDDFuncs = (BDDNode **)ite_recalloc(BDDFuncs, max_bdds, max_bdds+25, sizeof(BDDNode *), 9, "BDDFuncs");
+			max_bdds += 25;
+			num_bdds = (*whereat)-1;
 		}
 	} else {
 		if (k>0) { 
-			arr[n_orig-n]=1;
-			nCk_Sets(n-1,k-1, arr, vars, whereat, n_orig, bdd);
+			nCk_Sets(n-1,k-1, vars, whereat, n_orig, bdd);
 		}
 		if (n>k) {
-			arr[n_orig-n]=0;
-			nCk_Sets(n-1,k, arr, vars, whereat, n_orig, bdd);
+			BDDNode *bdd_0 = xquantify(bdd, vars[n_orig-n]);
+			if(bdd_0 == true_ptr) return;
+			nCk_Sets(n-1,k, vars, whereat, n_orig, bdd_0);
 		}
 	}
 }
@@ -116,6 +107,8 @@ int Split_Large () {
 
 	max_bdds = 0;
 	num_bdds = 0;
+
+	int k_size = 6;
 	
 	BDDFuncs = (BDDNode **)ite_recalloc(NULL, max_bdds, max_bdds+10, sizeof(BDDNode *), 9, "BDDFuncs");
 	max_bdds += 10;
@@ -144,21 +137,22 @@ int Split_Large () {
 		
 		
 		
-		if (functionType[j] == UNSURE && length[j] > 10) { //10?
+		if (functionType[j] == UNSURE && length[j] > k_size) {
 			//d3_printf2("\n%d: ", j);
 			//printBDD(functions[j]);
 			//d3_printf1("\n");
-			int num_splits = nCk(length[j], 10);
-			d3_printf4("%d C %d = %d\n", length[j], 10, num_splits);
-			int *arr = new int[length[j]];
+			int num_splits = nCk(length[j], k_size);
+			d3_printf4("%d C %d = %d\n", length[j], k_size, num_splits);
 			int whereat = 0;
-			nCk_Sets(length[j], 10, arr, variables[j].num, &whereat, length[j], functions[j]);
-			delete []arr;
+			nCk_Sets(length[j], k_size, variables[j].num, &whereat, length[j], functions[j]);
+			d3_printf2("whereat = %d: \n", whereat);
 			
-			/*			
-			if(num_bdds >= max_bdds) {
-				BDDFuncs = (BDDNode **)ite_recalloc(BDDFuncs, max_bdds, max_bdds+10, sizeof(BDDNode *), 9, "BDDFuncs");
-				max_bdds += 10;
+			BDDNode *tempBDD;
+			for(int i = 0; i < whereat; i++) {
+				tempBDD = pruning(functions[j], BDDFuncs[i]);
+				if(tempBDD != functions[j]) {
+					functions[j] = tempBDD;					
+				}
 			}
 
 			switch (int r=Rebuild_BDDx(j)) {
@@ -169,7 +163,6 @@ int Split_Large () {
 					goto sp_bailout;
 			 default: break;
 			}
-			*/
 			
 		}
 	}
