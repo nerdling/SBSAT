@@ -76,7 +76,7 @@
  * If you can think of a way to condense #3 type clauses into a 
  * nice state machine, I would love to hear it.
  */
-
+#define XCNF_CARD 1
 void vanDerWaerden(int n, int k, int p) {
 	//fprintf(stdout, "p cnf %d %d\n", n*k, n+(n*((n-1)/(p-1))));
    // clauses max step = (n-1)/(p-1)  [n is 1 based and k is 1 based]
@@ -89,7 +89,14 @@ void vanDerWaerden(int n, int k, int p) {
    // and make it for each bucket = k*number_of_regressions
    int max_step = (n-1)/(p-1); // max sure this is integer
    int prog_sum = ((1+max_step)*max_step)/2;
-	fprintf(stdout, "p cnf %d %d\n", n*k, n+k*(max_step*n-p*prog_sum+prog_sum));
+   int clauses = n+k*(max_step*n-p*prog_sum+prog_sum);
+   if (XCNF_CARD) {
+      /* nothing else */
+   } else {
+      clauses += n*k*(k-1)/2;
+   }
+   fprintf(stdout, "p cnf %d %d\n", n*k, clauses);
+
    fprintf(stdout, "c max_step %d\n", max_step);
 
    // Problem:
@@ -99,7 +106,7 @@ void vanDerWaerden(int n, int k, int p) {
    fprintf(stdout, "c every integer only in one bucket\n");
    for(int x = 1; x <= n; x++) {
       int y;
-      if (1) {
+      if (XCNF_CARD) {
          fprintf(stdout, "#1 [ %d ", x);
          for(y = 1; y < k; y++)
             fprintf(stdout, "%d ", (y*n)+x);
