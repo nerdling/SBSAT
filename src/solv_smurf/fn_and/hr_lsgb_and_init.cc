@@ -160,6 +160,9 @@ LSGBAndGetHeurScores(int nFnId)
    if (nLHSLitValue == BOOL_TRUE)
    {
       // We should have closed the inference set before calling this routine.
+      fprintf(stderr, "LHS (%c%d) is true (%c%d)\n", 
+            (nLHSPolarity==BOOL_TRUE?'+':'-'), nLHSVble,
+            (nLHSVbleValue==BOOL_TRUE?'+':'-'), nLHSVble);
       assert (nNumRHSUnknowns <= 0);
       return;
    }

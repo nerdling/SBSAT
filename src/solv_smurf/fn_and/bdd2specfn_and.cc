@@ -79,6 +79,7 @@ BDD2Specfn_AND(int nFnId, BDDNode *pFunc, int nFunctionType, int nEqualityVble)
        nPolarityOfLHSVble = BOOL_NEG(nPolarityOfLHSVble);
        /* break is missing intentionally */
     case AND:  
+       assert(nEqualityVble != 0);
        //nNewFunctionType = SFN_AND;
        // Check polarity of LHS variable.
        if (nEqualityVble < 0)
@@ -95,6 +96,8 @@ BDD2Specfn_AND(int nFnId, BDDNode *pFunc, int nFunctionType, int nEqualityVble)
    arrSolverFunctions[nFnId].fn_and.nLHSVble = arrIte2SolverVarMap[nEqualityVble];
    arrSolverFunctions[nFnId].fn_and.nLHSPolarity = nPolarityOfLHSVble;
    //arrSolverFunctions[nFnId].fn_and.nFunctionType = nNewFunctionType;
+   //
+   assert(nEqualityVble == 0 || arrSolverFunctions[nFnId].fn_and.nLHSVble != 0);
 
 
 
@@ -125,6 +128,7 @@ BDD2Specfn_AND(int nFnId, BDDNode *pFunc, int nFunctionType, int nEqualityVble)
   
    
    for (int i=0;i<arrSolverFunctions[nFnId].fn_and.rhsVbles.nNumElts;i++) {
+      assert(arrSolverFunctions[nFnId].fn_and.rhsVbles.arrElts[i] && arrIte2SolverVarMap[arrSolverFunctions[nFnId].fn_and.rhsVbles.arrElts[i]]);
       arrSolverFunctions[nFnId].fn_and.rhsVbles.arrElts[i] = arrIte2SolverVarMap[arrSolverFunctions[nFnId].fn_and.rhsVbles.arrElts[i]];
    }
 
@@ -209,7 +213,7 @@ BDD2Specfn_AND(int nFnId, BDDNode *pFunc, int nFunctionType, int nEqualityVble)
 int AndCreateFunction(int nFnId, BDDNode *bdd, int nFnType, int eqVble)
 {
    arrSolverFunctions[nFnId].nFnId = nFnId;
-   arrSolverFunctions[nFnId].nType = AND_EQU; //nFnType;
+   arrSolverFunctions[nFnId].nType = nFnType; //AND_EQU; //nFnType;
    BDD2Specfn_AND(nFnId, bdd, nFnType, eqVble);
    arrSolverFunctions[nFnId].fn_and.nNumRHSUnknowns = 
       arrSolverFunctions[nFnId].fn_and.nNumRHSUnknownsNew = 
