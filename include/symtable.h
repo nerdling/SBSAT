@@ -44,6 +44,7 @@ int get_or_putsym_check(char *sym_name, int sym_type, int id);
 int sym_is_flag(int id);
 void sym_set_flag(int id);
 void sym_reset_flag(int id); 
+void sym_clear_all_flag();
 
 
 /* reg expressions */

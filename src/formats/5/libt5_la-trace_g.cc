@@ -1504,6 +1504,7 @@ BDDNode *ite_op_exp(t_op2fn fn, BDDNode **explist)
     2. if they combined have more than X distict var => split it
     */
    ite_op_flag++; /* FIX: make sure we don't overflow... */
+   if (ite_op_flag > (1<<30)) { sym_clear_all_flag(); ite_op_flag = 1; }
    int spec_fn=0;
    int total_vars = 0;
    int new_vars = 0;

@@ -303,12 +303,14 @@ sym_regex_test(char *reg)
 void
 sym_reset_flag(int id) 
 {
+   assert(getsym_i(id)->flag & SYM_FLAG_UNRAVEL);
    getsym_i(id)->flag &= ~SYM_FLAG_UNRAVEL;
 }
 
 void
 sym_set_flag(int id) 
 {
+   assert((getsym_i(id)->flag & SYM_FLAG_UNRAVEL) == 0);
    getsym_i(id)->flag |= SYM_FLAG_UNRAVEL;
 }
 
@@ -316,4 +318,12 @@ int
 sym_is_flag(int id) 
 {
    return getsym_i(id)->flag & SYM_FLAG_UNRAVEL;
+}
+
+void
+sym_clear_all_flag()
+{
+   int i;
+   for(i=1;i<sym_table_idx;i++)
+      sym_table[i]->flag = 0;
 }
