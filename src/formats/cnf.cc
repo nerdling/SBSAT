@@ -271,31 +271,31 @@ void CNF_to_BDD(int cnf)
             order = 0;
             continue;
          }*/
+         integers[x].dag = -1;
+         if(y==0) {x--; numout--; continue; }
+         integers[x].num = new int[y + 1];
+         for(i = 0; i < y + 1; i++) {
+#ifdef CNF_USES_SYMTABLE
+            integers[x].num[i] = tempint[i]==0?0:i_getsym_int(tempint[i], SYM_VAR);
+#else
+            integers[x].num[i] = tempint[i];
+#endif         
+            if(abs(tempint[i]) > numinp) { //Could change this to be number of vars instead of max vars
+               fprintf(stderr, "Variable in input file is greater than allowed:%ld...exiting\n", (long)numinp);
+               exit(1);				
+            }
+            //fprintf(stderr, "%d ", integers[x].num[i]);
+         }
+
+         //fprintf(stderr, "\n");
+         integers[x].length = y;
+         old_integers[x] = integers[x];
       } else {
          fprintf(stderr, "Error while parsing CNF input:%ld...exiting\n", x);
          exit(1);
       }
-		integers[x].dag = -1;
-		if(y==0) {x--; numout--; continue; }
-		integers[x].num = new int[y + 1];
-      for(i = 0; i < y + 1; i++) {
-#ifdef CNF_USES_SYMTABLE
-			integers[x].num[i] = tempint[i]==0?0:i_getsym_int(tempint[i], SYM_VAR);
-#else
-			integers[x].num[i] = tempint[i];
-#endif         
-			if(abs(tempint[i]) > numinp) { //Could change this to be number of vars instead of max vars
-				fprintf(stderr, "Variable in input file is greater than allowed:%ld...exiting\n", (long)numinp);
-				exit(1);				
-			}
-			//fprintf(stderr, "%d ", integers[x].num[i]);
-		}
-      
-      //fprintf(stderr, "\n");
-		integers[x].length = y;
-		old_integers[x] = integers[x];
-	}
-	minmax *min_max_store = new minmax[num_minmax+1];
+   }
+   minmax *min_max_store = new minmax[num_minmax+1];
 	if(num_minmax > 0) {
 		int y = 1;
 		num_minmax = 0;
