@@ -44,40 +44,47 @@
 #define NO_ERROR 0
 
 #define ERR_BT_SMURF 1
-#define ERR_BT_SPEC_FN_AND 2
-#define ERR_BT_SPEC_FN_XOR 3
-#define ERR_BT_LEMMA 4
-#define ERR_BT_SOL_LEMMA 5
-#define ERR_LIMITS 6
-#define ERR_BT_SPEC_FN_MINMAX 7
+#define ERR_BT_SMURF_AU 2
+#define ERR_BT_SPEC_FN_AND 3
+#define ERR_BT_SPEC_FN_XOR 4
+#define ERR_BT_LEMMA 5
+#define ERR_BT_SOL_LEMMA 6
+#define ERR_LIMITS 7
+#define ERR_BT_SPEC_FN_MINMAX 8
 
 #define INF_SMURF        10
-#define INF_SPEC_FN_AND  11 
-#define INF_SPEC_FN_XOR  12 
-#define INF_LEMMA        13
-#define INF_SPEC_FN_MINMAX  14 
+#define INF_SMURF_AU     11
+#define INF_SPEC_FN_AND  12 
+#define INF_SPEC_FN_XOR  13 
+#define INF_LEMMA        14
+#define INF_SPEC_FN_MINMAX  15
 
-#define SMURF_STATES	    15
-#define NUM_SOLUTIONS	 16
+#define SMURF_STATES	    18
+#define SMURF_AU_STATES  19
 
-#define BDD_NODE_FIND    17
-#define BDD_NODE_NEW     18
-#define BDD_NODE_STEPS   19
+#define NUM_SOLUTIONS	 20
 
-#define SMURF_NODE_FIND    20
-#define SMURF_NODE_NEW     21
+#define BDD_NODE_FIND    21
+#define BDD_NODE_NEW     22
+#define BDD_NODE_STEPS   23
 
-#define NUM_BACKTRACKS	 22
-#define NUM_BACKJUMPS	 23
-#define NUM_TOTAL_BACKJUMPS	 24
-#define NUM_AUTARKIES	 25
-#define NUM_TOTAL_AUTARKIES	 26
-#define NUM_CHOICE_POINTS     27
-#define HEU_DEP_VAR      28
+#define SMURF_NODE_FIND    24
+#define SMURF_NODE_NEW     25
 
-#define NUM_LEMMA_INTO_CACHE    29
+#define SMURF_AU_NODE_FIND 26
+#define SMURF_AU_NODE_NEW  27
 
-#define MAX_COUNTER      30
+#define NUM_BACKTRACKS	 28
+#define NUM_BACKJUMPS	 29
+#define NUM_TOTAL_BACKJUMPS	 30
+#define NUM_AUTARKIES	 31
+#define NUM_TOTAL_AUTARKIES	 32
+#define NUM_CHOICE_POINTS     33
+#define HEU_DEP_VAR      34
+
+#define NUM_LEMMA_INTO_CACHE    35
+
+#define MAX_COUNTER      36
 
 /* non counter errors */
 #define ERR_IO_INIT	101
@@ -168,6 +175,7 @@ extern int SMURFS_SHARE_PATHS;
 extern int max_preproc_time;
 
 extern int NO_LEMMAS;
+extern int NO_AU_LEMMAS;
 
 extern int sbj;
 

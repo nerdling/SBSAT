@@ -58,6 +58,9 @@ typedef struct BDDNodeStruct {
    /* smurf state */
    void *pState;
    
+	/* autarky smurf state */
+	void *pState_Au;
+	
    /* for tracer5 */
    void *var_ptr;
 
