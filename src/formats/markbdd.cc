@@ -1077,7 +1077,7 @@ void bddloop () {
 	d2_printf1("\rReading ITE ... Done\n");
 	for(int x = 0; x < num_initbranch; x++)
 	  ite_free((void **)&initbranch_vars[x]);
-	ite_free((void **)initbranch_vars);
+	ite_free((void **)&initbranch_vars);
 	ite_free((void **)&keep);
 	for(int x = 0; x < totaldefines; x++)
 	  ite_free((void **)&defines[x].string);
