@@ -2154,6 +2154,7 @@ infer *_possible_infer_x(BDDNode *f, int x) {
 				f->tmp_infer = copy_infer(head);
 				return head;
 			}
+			
 			BDDNode *e_BDD = ite_and(f->elseCase, ite_not(f->thenCase));
 			                 //Ex_GetInfer(f->elseCase);
 			if(e_BDD == false_ptr) {				  
