@@ -20,7 +20,7 @@ do
 done
 
 echo ===========================================
-echo Done - Sucess
+echo Done - Success
 echo ===========================================
 
 exit 0
