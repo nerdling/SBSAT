@@ -80,7 +80,19 @@
 #define XCNF 1
 #define ITE  2
 #define CNF2 3
+
+char name[128];
 int formula_type = XCNF;
+
+char *var(int n, int x, int k) { 
+   int i = k*n+x;
+   if (formula_type != ITE)
+      sprintf(name, "%d", i);
+   else
+      sprintf(name, "b%dv%d", k, x);
+   return name;
+}
+
 void vanDerWaerden(char *vdw_type, int n, int k, int p) {
    if (!strcmp(vdw_type, "cnf")) formula_type = CNF; else 
    if (!strcmp(vdw_type, "xcnf")) formula_type = XCNF; else 
@@ -111,7 +123,11 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
       fprintf(stdout, "p cnf %d %d\n", n*k, clauses);
       break;
     case ITE: 
-      fprintf(stdout, "p bdd %d %d\n", n*k, clauses);
+      fprintf(stdout, "p bdd %d %d\n", n*k, 1+clauses);
+      //fprintf(stdout, "initial_branch(");
+      for(int x=1; x<=n; x++)
+         fprintf(stdout, "%s ", var(n, x, 0));
+      fprintf(stdout, ")\n");
       break;
     case CNF2:
       if (k != 2) {
@@ -135,42 +151,45 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
    if (formula_type == CNF || formula_type == XCNF)
       fprintf(stdout, "c every integer only in one bucket\n");
    for(int x = 1; x <= n; x++) {
-      int y;
+      int bucket;
       switch (formula_type) {
        case CNF: {
           // at least one bucket
-          fprintf(stdout, "%d ", x);
-          for(y = 1; y < k; y++)
-             fprintf(stdout, "%d ", (y*n)+x);
+          fprintf(stdout, "%s ", var(n, x, 0));
+          for(bucket = 1; bucket < k; bucket++)
+             fprintf(stdout, "%s ", var(n, x, bucket));
           fprintf(stdout, "0\n");
           clause_count++;
           // at most one bucket
-          for(y = 0; y < k; y++)
-             for (int z=y+1; z < k; z++) {
-                fprintf(stdout, "-%d -%d 0\n", (y*n)+x, (z*n)+x);
+          for(bucket = 0; bucket < k; bucket++)
+             for (int bucket2=bucket+1; bucket2 < k; bucket2++) {
+                fprintf(stdout, "-%s ", var(n, x, bucket));
+                fprintf(stdout, "-%s 0\n", var(n, x, bucket2));
                 clause_count++;
              }
        } break;
        case XCNF: {
-         fprintf(stdout, "#1 [ %d ", x);
-         for(y = 1; y < k; y++)
-            fprintf(stdout, "%d ", (y*n)+x);
+         fprintf(stdout, "#1 [ %s ", var(n, x, 0));
+         for(bucket = 1; bucket < k; bucket++)
+            fprintf(stdout, "%s ", var(n, x, bucket));
          fprintf(stdout, "] 1\n");
          clause_count++;
        } break;
        case ITE: {
           // at least one bucket
-          fprintf(stdout, "* AND%d( OR%d(%d ", 1+k*(k-1)/2, k, x);
-          for(y = 1; y < k; y++)
-             fprintf(stdout, "%d ", (y*n)+x);
+          fprintf(stdout, "* AND%d( OR%d(%s ", 1+k*(k-1)/2, k, var(n, x, 0));
+          for(bucket = 1; bucket < k; bucket++)
+             fprintf(stdout, "%s ", var(n, x, bucket));
           clause_count++;
           fprintf(stdout, ") ");
           // at most one bucket
-          for(y = 0; y < k; y++)
-             for (int z=y+1; z < k; z++) {
-                fprintf(stdout, "OR(-%d -%d) ", (y*n)+x, (z*n)+x);
+          for(bucket = 0; bucket < k; bucket++) {
+             for (int bucket2=bucket+1; bucket2 < k; bucket2++) {
+                fprintf(stdout, "OR(-%s  ", var(n, x, bucket));
+                fprintf(stdout, "-%s) ", var(n, x, bucket2));
                 clause_count++;
              }
+          }
           fprintf(stdout, ")\n");
        } break;
       }
@@ -184,7 +203,7 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
                if (step * (p-1) + num > n) break;
                int base = num;
                for(int z = 0; z < p; z++) {
-                  fprintf(stdout, "-%d ", base+bucket*n);
+                  fprintf(stdout, "-%s ", var(n, base, bucket));
                   base+=step;
                }
                fprintf(stdout, "0\n");
@@ -198,7 +217,7 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
    } else if (formula_type == ITE) {
       for(int bucket=0; bucket<k; bucket++) {
          for(int num = 1; num <= n; num++) {
-#define MK_TEST
+//#define MK_TEST
 #ifdef MK_TEST
             if ((n-num)/(p-1) == 0) continue;
             fprintf(stdout, "* AND%d(", (n-num)/(p-1));
@@ -212,11 +231,11 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
                fprintf(stdout, "* OR%d( ", p);
 #endif
                for(int z = 0; z < p; z++) {
-                  fprintf(stdout, "-%d ", base+bucket*n);
+                  fprintf(stdout, "-%s ", var(n, base, bucket));
                   base+=step;
                }
 #ifdef MK_TEST
-               fprintf(stdout, ") ");
+               fprintf(stdout, ")");
 #else
                fprintf(stdout, ")\n");
 #endif
@@ -234,14 +253,14 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
             if (step * (p-1) + num > n) break;
             int base = num;
             for(int z = 0; z < p; z++) {
-               fprintf(stdout, "-%d ", base);
+               fprintf(stdout, "-%s ", var(n, base, 0));
                base+=step;
             }
             fprintf(stdout, "0\n");
             clause_count++;
             base = num;
             for(int z = 0; z < p; z++) {
-               fprintf(stdout, "%d ", base);
+               fprintf(stdout, "%s ", var(n, base, 0));
                base+=step;
             }
             fprintf(stdout, "0\n");
