@@ -45,7 +45,7 @@ BDDNode *false_ptr = NULL;
 BDDNode *true_ptr = NULL;
 extern char temp_dir[128];
 
-void *ite_calloc(int x, int y, int dbg_lvl, char *for_what) {
+void *ite_calloc(int x, int y, int dbg_lvl, const char *for_what) {
    void *p = NULL;
    if (x==0 || y==0) {
       dm2_printf2("WARNING: 0 bytes allocation for %s\n", for_what); 
