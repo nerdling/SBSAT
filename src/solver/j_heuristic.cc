@@ -134,7 +134,7 @@ J_ResetHeuristicScores()
 }
 
 
-#define J_ONE 0
+#define J_ONE 1
 
 // CLASSIC
 #define HEUR_WEIGHT(x,i) (J_ONE+x.Pos) * (J_ONE+x.Neg)
@@ -142,7 +142,7 @@ J_ResetHeuristicScores()
 //#define HEUR_WEIGHT(x,i) (arrVarScores[i].neg>arrVarScores[i].pos?arrVarScores[i].neg:arrVarScores[i].pos)
 
 // Var_Score
-//#define HEUR_WEIGHT(x,i) (var_score[i] * (J_ONE+x.Pos) * (J_ONE+x.Neg))
+//#define HEUR_WEIGHT(x,i) (var_score[i] * ((J_ONE+x.Pos) * (J_ONE+x.Neg)))
 
 // ABSOLUTE MAXIMUM
 //#define HEUR_WEIGHT(x,i) (x.Neg > x.Pos ? x.Neg : x.Pos)
@@ -216,6 +216,9 @@ J_ResetHeuristicScores()
 
 
 #define HEUR_WEIGHT(x,i) (x.Pos*x.Neg*(arrLemmaVbleCountsNeg[i]>arrLemmaVbleCountsPos[i]?arrLemmaVbleCountsNeg[i]:arrLemmaVbleCountsPos[i]))
+
+// Var_Score
+//#define HEUR_WEIGHT(x,i) (var_score[i] * ((J_ONE+x.Pos) * (J_ONE+x.Neg)) * (J_ONE+arrLemmaVbleCountsNeg[i]>arrLemmaVbleCountsPos[i]?arrLemmaVbleCountsNeg[i]:arrLemmaVbleCountsPos[i]))
 
 #define HEUR_SIGN(nBestVble) \
    (arrHeurScores[nBestVble].Pos >= arrHeurScores[nBestVble].Neg?BOOL_TRUE:BOOL_FALSE)

@@ -39,9 +39,14 @@
 #include "ite.h"
 #include "solver.h"
 
-#define HEUR_WEIGHT(x,i) \
-           (arrLemmaVbleCountsPos[i] > arrLemmaVbleCountsNeg[i] ? \
-           arrLemmaVbleCountsPos[i] : arrLemmaVbleCountsNeg[i]);
+
+#define J_ONE 1
+#define HEUR_WEIGHT(x,i) (arrLemmaVbleCountsPos[i] > arrLemmaVbleCountsNeg[i] ?  arrLemmaVbleCountsPos[i] : arrLemmaVbleCountsNeg[i]);
+
+//Var Score
+//#define HEUR_WEIGHT(x,i) (var_score[i] * (J_ONE+arrLemmaVbleCountsNeg[i]>arrLemmaVbleCountsPos[i]?arrLemmaVbleCountsNeg[i]:arrLemmaVbleCountsPos[i]))
+
+
 #define HEUR_FUNCTION L_OptimizedHeuristic
 #define HEUR_SIGN(nBestVble) \
   (arrLemmaVbleCountsPos[nBestVble] > arrLemmaVbleCountsNeg[nBestVble]?\
