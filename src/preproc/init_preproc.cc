@@ -46,6 +46,8 @@ int Neg_replace = 0;
 int Setting_Pos = 0;
 int Setting_Neg = 0;
 
+int T;
+int F;
 llistStruct *amount;
 Linear *l;
 infer *inferlist;
@@ -88,7 +90,9 @@ Init_Preprocessing()
 	Setting_Neg = 0;
 	
 	numinp = getNuminp ();
-
+	F = numinp+3;
+	T = numinp+2;
+	
 	//BDDNodeStruct **original_functions;
 
 	original_functionType = (int *)ite_calloc(nmbrFunctions + 1, sizeof(int), 2, "original functionType");

@@ -1653,11 +1653,11 @@ int getoldNuminp () {
 }
 
 int getNuminp () {
-   numinp = 0;
+   int temp_numinp = 0;
    for (int x = 0; x < nmbrFunctions; x++) {
-		if (functions[x]->variable > numinp)
-		  numinp = functions[x]->variable;
+		if (functions[x]->variable > temp_numinp)
+		  temp_numinp = functions[x]->variable;
 	}
-   return numinp;
+   return temp_numinp;
 }
 

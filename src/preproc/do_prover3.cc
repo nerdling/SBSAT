@@ -82,36 +82,33 @@ int Do_Prover3() {
 	ite_free((void **)&variables);
 	
 	Delete_Repeats();
-	
 	for(int x = 1; x < numinp + 1; x++)
-	  if(independantVars[x] == 3) {
+	  if(independantVars[x] == 2) {
 		  variablelist[x].true_false = -1;
 		  variablelist[x].equalvars = 0;
 	  }
-	  
-	//Saving Inferences.
-	delete l;
-	l = new Linear (numinp + 1, T, F);
-	CreateInferences();
-
-	delete [] variablelist;
 	
 	/****** DONE DELETING ARRAYS ********/	
 
 	//Grabbing new prover3 BDDS
    nmbrFunctions = 0;
 	prover3_max_vars = size;
-void p3_done();
+	void p3_done();
    p3_done();
 	
-//	for(int x = 0; x < nmbrFunctions; x++)
-//	  functions[x] = original_functions[x];
-//	delete [] original_functions; //Just for testing! remove this and uncomment
-	                              //delete line up above!
+	//Saving Inferences.
+	int old_numinp = numinp;
+	delete l;
+	numinp = getNuminp();
+	F = numinp+3;
+	T = numinp+2;
+	l = new Linear (numinp + 1, T, F);
+	numinp = old_numinp;
+	CreateInferences();
+	numinp = getNuminp();
+	delete [] variablelist;
 	
 	/****** REALLOCATING ARRAYS *********/
-
-	numinp = getNuminp();
 	
 	variablelist = new varinfo[numinp + 1];
 	for (int x = 0; x < numinp + 1; x++) {

@@ -582,7 +582,7 @@ int Rebuild_BDDx (int x) {
 				}
 			}
 		}
-		//fprintf(stderr, "!%d, %d!\n", iterator->nums[0], iterator->nums[1]);
+		//fprintf(stderr, "!%d, %d!", iterator->nums[0], iterator->nums[1]);
 		//if(iterator->nums[1] > 100000) { 
 		//l->printEquivalences();
 		//	exit(1);

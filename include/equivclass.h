@@ -99,8 +99,6 @@
 #define EQUIVCLASS_H
 
 #define null -1
-#define F (numinp+3)     //False
-#define T (numinp+2)     //True            Head node must be smaller than T and F
 
 typedef struct linear_rec {
     int no_inp_vars; // The number of input variables                   

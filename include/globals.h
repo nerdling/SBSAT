@@ -60,6 +60,8 @@ extern BDDNode *false_ptr, *true_ptr;
 
 //Begin preprocessing globals
 
+extern int T;
+extern int F;
 extern int DO_CLUSTER;  //CNF clustering
 extern int DO_COFACTOR;
 extern int DO_PRUNING;

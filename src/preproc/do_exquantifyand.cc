@@ -87,11 +87,12 @@ int ExQuantifyAnd () {
 	BDDNode *Quantify;
 	
 	void bdd_gc();
-	bdd_gc(); //Hit it!
-
+	if(enable_gc) bdd_gc(); //Hit it!
+	
 	for (int x = 1; x <= MAX_EXQUANTIFY_CLAUSES; x++) {
 		for (int i = 1; i < numinp + 1; i++) {
 			char p[100];
+
 			D_3(
 				 if (i % ((numinp/100)+1) == 0) {
 					 for(int iter = 0; iter<str_length; iter++)
@@ -112,6 +113,7 @@ int ExQuantifyAnd () {
 			}
 			
 			//fprintf(stderr, "%d\n", i);
+			
 			int amount_count = 0;
 			for (llist * k = amount[i].head; k != NULL; k = k->next)
 			  amount_count++;
@@ -125,6 +127,7 @@ int ExQuantifyAnd () {
 				bool OLD_DO_INFERENCES = DO_INFERENCES;
 				DO_INFERENCES = 0;
 				int count1 = 0;
+
 				for (llist * k = amount[i].head->next; k != NULL;) {
 					int z = k->num;
 					count1++;
@@ -177,8 +180,10 @@ int ExQuantifyAnd () {
 					
 					ret = PREP_CHANGED;
 				}
-				DO_INFERENCES = OLD_DO_INFERENCES;
-				if(ret != PREP_CHANGED) continue;
+				if(ret != PREP_CHANGED) {
+					DO_INFERENCES = OLD_DO_INFERENCES; 
+					continue;
+				}
 				if(out) {
 					functions[j] = Quantify;
 				} else {
@@ -201,7 +206,7 @@ int ExQuantifyAnd () {
 						d3_printf2 ("*{%d}", i);
 						str_length = 0;// strlen(p);
 						functions[j] = xquantify (functions[j], i);
-						if(variablelist[i].true_false!=-1) assert(0);
+						//if(variablelist[i].true_false!=-1) assert(0);
 						variablelist[i].true_false = 2;
 						SetRepeats(j);
 					} else {
@@ -230,7 +235,8 @@ int ExQuantifyAnd () {
 						bdd_vars = NULL;
 					}
 				}
-				
+				DO_INFERENCES = OLD_DO_INFERENCES;
+
 				switch (int r=Rebuild_BDDx(j)) {
 				 case TRIV_UNSAT:
 				 case TRIV_SAT: 
