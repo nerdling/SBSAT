@@ -518,19 +518,19 @@ Reading File ../examples/small.cnf  ....
 
 \size scriptsize 
 Reading CNF ...
- Done                   
+ Done
 \layout LyX-Code
 
 
 \size scriptsize 
 Preprocessing ....
- Done                            
+ Done
 \layout LyX-Code
 
 
 \size scriptsize 
 Creating Smurfs ...
- Done                     
+ Done
 \layout LyX-Code
 
 
@@ -566,12 +566,12 @@ Time: 0.000s.
 
 
 \size scriptsize 
- Inferences by smurfs: 2; lemmas: 0; 
+ Inferences by smurfs: 2; lemmas: 0;
 \layout LyX-Code
 
 
 \size scriptsize 
- Backtracks by smurfs: 0; lemmas: 0; 
+ Backtracks by smurfs: 0; lemmas: 0;
 \layout LyX-Code
 
 
@@ -581,7 +581,7 @@ Time: 0.000s.
 
 
 \size scriptsize 
-Choice Points: 2 , Backtracks: 0, Backjumps: 0 
+Choice Points: 2 , Backtracks: 0, Backjumps: 0
 \layout LyX-Code
 
 
@@ -678,19 +678,19 @@ Reading File ../examples/small.cnf  ....
 
 \size scriptsize 
 Reading CNF ...
- Done                   
+ Done
 \layout LyX-Code
 
 
 \size scriptsize 
 Preprocessing ....
- Done                            
+ Done
 \layout LyX-Code
 
 
 \size scriptsize 
 Creating Smurfs ...
- Done                     
+ Done
 \layout LyX-Code
 
 
@@ -726,12 +726,12 @@ Time: 0.010s.
 
 
 \size scriptsize 
- Inferences by smurfs: 2; lemmas: 0; 
+ Inferences by smurfs: 2; lemmas: 0;
 \layout LyX-Code
 
 
 \size scriptsize 
- Backtracks by smurfs: 0; lemmas: 0; 
+ Backtracks by smurfs: 0; lemmas: 0;
 \layout LyX-Code
 
 
@@ -741,7 +741,7 @@ Time: 0.010s.
 
 
 \size scriptsize 
-Choice Points: 2 , Backtracks: 0, Backjumps: 0 
+Choice Points: 2 , Backtracks: 0, Backjumps: 0
 \layout LyX-Code
 
 
@@ -757,7 +757,7 @@ Preprocessing ....
 
 
 \size scriptsize 
--1 -2 3 4 -5 -6 
+-1 -2 3 4 -5 -6
 \layout LyX-Code
 
 
@@ -802,7 +802,7 @@ output.txt:
 
 
 \size scriptsize 
--1 -2 3 4 -5 -6 
+-1 -2 3 4 -5 -6
 \layout Quotation
 
 
@@ -888,7 +888,7 @@ Shortened output:
 
 \size scriptsize 
 SBSat is a SAT solver.
- Usage: 
+ Usage:
 \layout LyX-Code
 
 
@@ -901,72 +901,72 @@ ite [OPTIONS]...
 
 
 \size scriptsize 
-Options: 
+Options:
 \layout LyX-Code
 
 
 \size scriptsize 
---help, -h             Show all program options 
+--help, -h             Show all program options
 \layout LyX-Code
 
 
 \size scriptsize 
---version              Show program version 
+--version              Show program version
 \layout LyX-Code
 
 
 \size scriptsize 
---create-ini           Create ini file 
+--create-ini           Create ini file
 \layout LyX-Code
 
 
 \size scriptsize 
---ini <string>         Set the ini file [default="~/ite.ini"] 
+--ini <string>         Set the ini file [default="~/ite.ini"]
 \layout LyX-Code
 
 
 \size scriptsize 
---debug <number>       debugging level (0-none, 9-max) [default=2] 
+--debug <number>       debugging level (0-none, 9-max) [default=2]
 \layout LyX-Code
 
 
 \size scriptsize 
---debug-dev <string>   debugging device [default="stderr"] 
+--debug-dev <string>   debugging device [default="stderr"]
 \layout LyX-Code
 
 
 \size scriptsize 
---params-dump, -D      dump all internal parameters before processing 
+--params-dump, -D      dump all internal parameters before processing
 \layout LyX-Code
 
 
 \size scriptsize 
---input-file <string>  input filename [default="-"] 
+--input-file <string>  input filename [default="-"]
 \layout LyX-Code
 
 
 \size scriptsize 
---output-file <string> output filename [default="-"] 
+--output-file <string> output filename [default="-"]
 \layout LyX-Code
 
 
 \size scriptsize 
---temp-dir <string>    directory for temporary files [default="$TEMP"] 
+--temp-dir <string>    directory for temporary files [default="$TEMP"]
 \layout LyX-Code
 
 
 \size scriptsize 
---show-result <string>, -R <string> 
+--show-result <string>, -R <string>
 \layout LyX-Code
 
 
 \size scriptsize 
-                       Show result (n=no result, r=raw, f=fancy) 
+                       Show result (n=no result, r=raw, f=fancy)
 \layout LyX-Code
 
 
 \size scriptsize 
-                       [default="n"] 
+                       [default="n"]
 \layout LyX-Code
 
 ...
@@ -1830,13 +1830,13 @@ Reading ITE ...
 
 \size scriptsize 
 Preprocessing ....
- Done                            
+ Done
 \layout LyX-Code
 
 
 \size scriptsize 
 Creating Smurfs ...
- Done                     
+ Done
 \layout LyX-Code
 
 
@@ -1872,12 +1872,12 @@ Time: 0.000s.
 
 
 \size scriptsize 
- Inferences by smurfs: 5; lemmas: 0; 
+ Inferences by smurfs: 5; lemmas: 0;
 \layout LyX-Code
 
 
 \size scriptsize 
- Backtracks by smurfs: 0; lemmas: 0; 
+ Backtracks by smurfs: 0; lemmas: 0;
 \layout LyX-Code
 
 
@@ -1887,7 +1887,7 @@ Time: 0.000s.
 
 
 \size scriptsize 
-Choice Points: 2 , Backtracks: 0, Backjumps: 0 
+Choice Points: 2 , Backtracks: 0, Backjumps: 0
 \layout LyX-Code
 
 
@@ -1897,7 +1897,7 @@ Satisfiable
 
 
 \size scriptsize 
-Total Time: 0.020 
+Total Time: 0.020
 \layout LyX-Code
 
 \layout Subsubsection
@@ -2033,12 +2033,12 @@ InitialBranch (2, 4..12, 15, 16, 18, 1, 3) ; These variables will be branched
 
 
 \size scriptsize 
-ite 4 5 6 ; eqn $1 
+ite 4 5 6 ; eqn $1
 \layout LyX-Code
 
 
 \size scriptsize 
-*or $1 3 ; eqn $2, smurf 1 
+*or $1 3 ; eqn $2, smurf 1
 \layout LyX-Code
 
 
