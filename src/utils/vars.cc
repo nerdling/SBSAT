@@ -68,6 +68,7 @@ int DO_DEP_CLUSTER = 1;
 int DO_SPLIT = 1;
 int DO_REWIND = 1;
 int DO_CLEAR_FUNCTION_TYPE = 1;
+int DO_PROVER3 = 1;
 
 int NO_LEMMAS = 0;
 

@@ -83,9 +83,12 @@ int Do_Rewind() {
 	
 	CreateInferences();
 	for(int x = 1; x < numinp + 1; x++)
-		if(variablelist[x].true_false == 2) 
+	  if(variablelist[x].true_false == 2) {
+		  variablelist[x].replace = x;
+		  variablelist[x].equalvars = 0;
 		  variablelist[x].true_false = -1;
-
+	  }
+	
 	DO_INFERENCES = OLD_DO_INFERENCES;
 	
 	Do_Apply_Inferences();

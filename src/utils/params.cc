@@ -243,6 +243,8 @@ t_opt options[] = {
 	  "Enable/Disable Rewinding of BDDs back to their initial state (1/0)"},
 { &DO_CLEAR_FUNCTION_TYPE, "Cf",  "Cf",  P_INT, V(i:0,"0"),  V(i:1,"1"), VAR_NORMAL, 0,
 	  "Enable/Disable Clearing the Function Type of BDDs (1/0)"},
+{ &DO_PROVER3, "P3",  "P3",  P_INT, V(i:0,"0"),  V(i:1,"1"), VAR_NORMAL, 0,
+	  "Enable/Disable Recreating a new set of prover3 BDDs (1/0)"},
 { &max_preproc_time, "",  "max-preproc-time", P_INT, V(i:0,"0"),  V(i:0,"0"), VAR_NORMAL, 0,
 		"set the time limit in seconds (0=no limit)"},
 { &do_split_max_vars, "",  "do-split-max-vars", P_INT, V(i:0,"0"),  V(i:10,"10"), VAR_NORMAL, 0,
@@ -549,4 +551,7 @@ DO_ALL(int value/* , char *s_value*/)
    set_param_int(strcpy(tmp_str, "Ea"), value);
    set_param_int(strcpy(tmp_str, "Dc"), value);
 	set_param_int(strcpy(tmp_str, "Sp"), value);
+	set_param_int(strcpy(tmp_str, "Rw"), value);
+	set_param_int(strcpy(tmp_str, "Cf"), value);
+	set_param_int(strcpy(tmp_str, "P3"), value);
 }

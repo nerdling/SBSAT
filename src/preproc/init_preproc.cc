@@ -91,10 +91,8 @@ Init_Preprocessing()
 
 	//BDDNodeStruct **original_functions;
 
-	ITE_NEW_CATCH(original_functionType = new int [nmbrFunctions + 1],
-					  "original functionType");
-	ITE_NEW_CATCH(original_equalityVble = new int [nmbrFunctions + 1],
-					  "original equalityVble");
+	original_functionType = (int *)ite_calloc(nmbrFunctions + 1, sizeof(int), 2, "original functionType");
+	original_equalityVble = (int *)ite_calloc(nmbrFunctions + 1, sizeof(int), 2, "original equalityVble");
 
 	for(int x = 0; x < nmbrFunctions; x++) {
 	  original_functionType[x] = functionType[x];
@@ -102,10 +100,8 @@ Init_Preprocessing()
 	}
 
 	if(original_functions == NULL) {
-		ITE_NEW_CATCH(
-						  original_functions = new BDDNode *[nmbrFunctions + 1],
+		ITE_NEW_CATCH(original_functions = new BDDNode *[nmbrFunctions + 1],
 						  "original functions");
-		
 		for(int x = 0; x < nmbrFunctions; x++)
 		  original_functions[x] = functions[x];
 		original_numout = nmbrFunctions;
@@ -123,18 +119,13 @@ Init_Preprocessing()
 	}
 	
 	numout = nmbrFunctions;
-	//if(tempint != NULL) delete [] tempint;
-   //tempint = new int[5000];
-
 
 	if(length != NULL) ite_free((void **)&variables);
 	length = (int *)ite_recalloc(NULL, 0, nmbrFunctions, sizeof(int), 9, "length");
-	//length = new int[nmbrFunctions];
 	inferlist = new infer;
 	inferlist->next = NULL;
 	lastinfer = inferlist;
 	variables = (store *)ite_recalloc(NULL, 0, nmbrFunctions, sizeof(store), 9, "variables");
-	//variables = (store *)calloc(nmbrFunctions+1, sizeof(store));
 	
 	Init_Repeats();
 	
@@ -214,7 +205,7 @@ Init_Preprocessing()
 	  }
 
    num_funcs_var_occurs = (int *)ite_calloc(numinp+1, sizeof(int), 9, "num_funcs_var_occurs");
-	
+
 	for (int x = 0; x < nmbrFunctions; x++) {
 		for (int i = 0; i < length[x]; i++) {
 			llist *newllist = new llist;
@@ -382,6 +373,8 @@ Finish_Preprocessing()
    }
 
    ite_free((void**)&bdd_tempint); bdd_tempint_max = 0;
+	ite_free((void**)&original_functionType);
+	ite_free((void**)&original_equalityVble);
 
 	d3_printf3 ("Number of BDDs - %d\nNuminp = %ld\n", nmbrFunctions, numinp);
 	

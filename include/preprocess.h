@@ -80,6 +80,7 @@ int Do_DepCluster();
 int Do_Split();
 int Do_Rewind();
 int Do_Clear_FunctionType();
+int Do_Prover3();
 void Do_Flow();
 void Do_Flow_Grouping();
 

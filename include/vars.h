@@ -129,6 +129,7 @@ extern int DO_DEP_CLUSTER;
 extern int DO_SPLIT;
 extern int DO_REWIND;
 extern int DO_CLEAR_FUNCTION_TYPE;
+extern int DO_PROVER3;
 
 extern int PARAMS_DUMP;
 

@@ -138,7 +138,8 @@ SOURCES = create_infs.cc do_cofactor.cc   do_exquantify.cc   \
 	do_exquantifyand.cc  do_pruning.cc init_preproc.cc \
 	preprocess.cc do_pruning_1.cc do_pruning_2.cc      \
 	do_pruning_restrict.cc do_flow.cc do_pruning_pr.cc \
-	do_split.cc do_steal.cc do_rewind.cc do_clearft.cc
+	do_split.cc do_steal.cc do_rewind.cc do_clearft.cc \
+	do_prover3.cc
 
 
 noinst_LTLIBRARIES = libpreproc.la
@@ -156,7 +157,7 @@ am__objects_1 = create_infs.lo do_cofactor.lo do_exquantify.lo \
 	do_depcluster.lo do_exquantifyand.lo do_pruning.lo \
 	init_preproc.lo preprocess.lo do_pruning_1.lo do_pruning_2.lo \
 	do_pruning_restrict.lo do_flow.lo do_pruning_pr.lo do_split.lo \
-	do_steal.lo do_rewind.lo do_clearft.lo
+	do_steal.lo do_rewind.lo do_clearft.lo do_prover3.lo
 am_libpreproc_la_OBJECTS = $(am__objects_1)
 libpreproc_la_OBJECTS = $(am_libpreproc_la_OBJECTS)
 
@@ -170,7 +171,8 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	./$(DEPDIR)/do_depcluster.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/do_exquantify.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/do_exquantifyand.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/do_flow.Plo ./$(DEPDIR)/do_pruning.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/do_flow.Plo ./$(DEPDIR)/do_prover3.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/do_pruning.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/do_pruning_1.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/do_pruning_2.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/do_pruning_pr.Plo \
@@ -196,7 +198,8 @@ SOURCES = create_infs.cc do_cofactor.cc   do_exquantify.cc   \
 	do_exquantifyand.cc  do_pruning.cc init_preproc.cc \
 	preprocess.cc do_pruning_1.cc do_pruning_2.cc      \
 	do_pruning_restrict.cc do_flow.cc do_pruning_pr.cc \
-	do_split.cc do_steal.cc do_rewind.cc do_clearft.cc
+	do_split.cc do_steal.cc do_rewind.cc do_clearft.cc \
+	do_prover3.cc
 
 
 all: all-am
@@ -234,6 +237,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_exquantify.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_exquantifyand.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_flow.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_prover3.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_pruning.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_pruning_1.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_pruning_2.Plo@am__quote@
