@@ -114,6 +114,7 @@ EXTRA_DIST = \
 	lemmainfo.h smurffactory.h flatten.h parse.h tracer.h \
 	integerset.h literalset.h log.h params.h equivclass.h \
 	preprocess.h pools.h symtable.h solver.h params.h vars.h \
+        iteheaders.h itefeatures.h postproc.h formats.h  \
         interface.h config.h config.h.in stamp-h stamp-h.in 
 
 subdir = include
