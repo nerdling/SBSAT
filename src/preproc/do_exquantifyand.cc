@@ -77,7 +77,6 @@ int ExQuantifyAnd () {
 	BDDNode *Quantify;
 	
 	if (enable_gc) bdd_gc(); //Hit it!
-	fprintf(stderr, "STARTING OVER\n");
 	for (int x = 1; x <= MAX_EXQUANTIFY_CLAUSES; x++) {
 		for (int i = 1; i < numinp + 1; i++) {
 			char p[100];
