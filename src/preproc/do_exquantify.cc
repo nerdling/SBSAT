@@ -108,124 +108,128 @@ int ExQuantify () {
 		}
 	}
 	BDDNode *Quantify;
-	
-	for (int i = 0; i < numinp + 1; i++) {
-		char p[100];
-		D_3(
-			 if (i % 10000 == 0) {
-				 for(int iter = 0; iter<str_length; iter++)
-					d3_printf1("\b");
-				 sprintf(p, "{%ld:%d/%ld}", affected, i, numinp);
-				 str_length = strlen(p);
-				 d3_printf1(p);
-			 }
-		);
 
-		if(i % 100 == 0) {
-			if (nCtrlC) {
-				d3_printf1("\nBreaking out of Existential Quantification\n");
-				nCtrlC = 0;
-				break;
+	int loop_again;
+	do {
+		loop_again = 0;
+		for (int i = loop_again; i < numinp + 1; i++) {
+			char p[100];
+			D_3(
+				 if (i % 10000 == 0) {
+					 for(int iter = 0; iter<str_length; iter++)
+						d3_printf1("\b");
+					 sprintf(p, "{%ld:%d/%ld}", affected, i, numinp);
+					 str_length = strlen(p);
+					 d3_printf1(p);
+				 }
+				 );
+			
+			if(i % 100 == 0) {
+				if (nCtrlC) {
+					d3_printf1("\nBreaking out of Existential Quantification\n");
+					nCtrlC = 0;
+					break;
+				}
+				d2e_printf3("\rPreprocessing Ex %d/%ld ", i, numinp);
 			}
-		  d2e_printf3("\rPreprocessing Ex %d/%ld ", i, numinp);
-		}
-		
-		if(tempinters[i] == 1) {
-			int j = tempmem[i]->next->BDD;
-			//Only quantify away variables from unknown functions, or functions
-			//who have the quantified variable as the 'head' or LHS variable of 
-			//their function...a LHS variable is a 'Left Hand Side' variable.
-         if ((length[j] < functionTypeLimits[functionType[j]]) ||
-               (i == abs(equalityVble[j])) ||
-				   (functionType[j] == PLAINOR)
-               )
-         /*
-         if ((functionType[j] == OR && length[j] < OR_EQU_LIMIT)
-				 || (functionType[j] == AND && length[j] < AND_EQU_LIMIT)
-				 || (functionType[j] == PLAINOR)
-				 || (i == abs (equalityVble[j]))
-				 || (functionType[j] == UNSURE)) 
-         */
-         {
-
-				Quantify = functions[j];
-				affected++;
-				for(int iter = 0; iter<str_length; iter++)
-					d3_printf1("\b");
-				str_length = 0;
-				d3_printf2 ("*{%d}", i);
-				//fprintf(stderr, "\n%d: ", j);
-				//printBDDerr(functions[j]);
-				//fprintf(stderr, "\n");
-				functions[j] = xquantify (Quantify, i);
-				variablelist[i].true_false = 2;
-				SetRepeats(j);
-				equalityVble[j] = 0;
-				functionType[j] = UNSURE;
-				//fprintf(stderr, "\n");
-				//printBDDerr(functions[j]);
-				//fprintf(stderr, "\n");
-				ret = PREP_CHANGED;
-				if (functions[j] == false_ptr) {
-					ret = TRIV_UNSAT;
-					goto ex_bailout; /* as much as I hate gotos */
-				}
-
-				int *temparr = new int[length[j]];
-				for(int a = 0; a < length[j]; a++)
-				  temparr[a] = variables[j].num[a];
-				int oldlength = length[j];
-				
-				switch (int r=Rebuild_BDDx(j)) {
-				 case TRIV_UNSAT:
-				 case TRIV_SAT:
-				 case PREP_ERROR: 
-					ret=r;
-					goto ex_bailout;
-				 default: break;
-				}
-				
-
-				int *num = variables[j].num;
-				if(length[j] == 0) {
-					num[0] = numinp+2;
-				}
-				  
-			   int index = 0;
-				int done = 0;
-				int new_i = 0;
-				for(int a = 0; a < oldlength; a++) {
-					if(done || temparr[a] < num[index]) {
-						//variable 'temparr[a]' got knocked out
-						if(new_i==0) new_i = temparr[a];
-						for(llBDD *lltemp = tempmem[temparr[a]]->next; lltemp != NULL; lltemp = lltemp->next) {
-							if(lltemp->BDD == j) {
-								llBDD *temp = lltemp;
-								if(lltemp->next!=NULL) lltemp->next->previous = lltemp->previous;
-								lltemp->previous->next = lltemp->next;
-								lltemp = lltemp->previous;
-								tempinters[temparr[a]]--;
-								delete temp;
-								break;
-							}
-						}
-					} else {
-						index++;
-					}
-					if(index >= length[j]){
-					  done = 1;
-					  index = 0;
-					}
-				}
-				
-				delete [] temparr;
-				if(new_i!=0) i = new_i-1;
-				//i = 0;
-				//'i' should equal the lowest indexed variable-1 that got
-				//kicked out.
+			
+			if(tempinters[i] == 1) {
+				int j = tempmem[i]->next->BDD;
+				//Only quantify away variables from unknown functions, or functions
+				//who have the quantified variable as the 'head' or LHS variable of 
+				//their function...a LHS variable is a 'Left Hand Side' variable.
+				if ((length[j] < functionTypeLimits[functionType[j]]) ||
+					 (i == abs(equalityVble[j])) ||
+					 (functionType[j] == PLAINOR)
+					 )
+				  /*
+					if ((functionType[j] == OR && length[j] < OR_EQU_LIMIT)
+					|| (functionType[j] == AND && length[j] < AND_EQU_LIMIT)
+					|| (functionType[j] == PLAINOR)
+					|| (i == abs (equalityVble[j]))
+					|| (functionType[j] == UNSURE)) 
+					*/
+				  {
+					  
+					  Quantify = functions[j];
+					  affected++;
+					  for(int iter = 0; iter<str_length; iter++)
+						 d3_printf1("\b");
+					  str_length = 0;
+					  d3_printf2 ("*{%d}", i);
+					  //fprintf(stderr, "\n%d: ", j);
+					  //printBDDerr(functions[j]);
+					  //fprintf(stderr, "\n");
+					  functions[j] = xquantify (Quantify, i);
+					  variablelist[i].true_false = 2;
+					  SetRepeats(j);
+					  equalityVble[j] = 0;
+					  functionType[j] = UNSURE;
+					  //fprintf(stderr, "\n");
+					  //printBDDerr(functions[j]);
+					  //fprintf(stderr, "\n");
+					  ret = PREP_CHANGED;
+					  if (functions[j] == false_ptr) {
+						  ret = TRIV_UNSAT;
+						  goto ex_bailout; /* as much as I hate gotos */
+					  }
+					  
+					  int *temparr = new int[length[j]];
+					  for(int a = 0; a < length[j]; a++)
+						 temparr[a] = variables[j].num[a];
+					  int oldlength = length[j];
+					  
+					  switch (int r=Rebuild_BDDx(j)) {
+						case TRIV_UNSAT:
+						case TRIV_SAT:
+						case PREP_ERROR: 
+						  ret=r;
+						  goto ex_bailout;
+						default: break;
+					  }
+					  
+					  int *num = variables[j].num;
+					  if(length[j] == 0) {
+						  num[0] = numinp+2;
+					  }
+					  
+					  int index = 0;
+					  int done = 0;
+					  int new_i = 0;
+					  for(int a = 0; a < oldlength; a++) {
+						  if(done || temparr[a] < num[index]) {
+							  //variable 'temparr[a]' got knocked out
+							  if(new_i==0) new_i = temparr[a];
+							  for(llBDD *lltemp = tempmem[temparr[a]]->next; lltemp != NULL; lltemp = lltemp->next) {
+								  if(lltemp->BDD == j) {
+									  llBDD *temp = lltemp;
+									  if(lltemp->next!=NULL) lltemp->next->previous = lltemp->previous;
+									  lltemp->previous->next = lltemp->next;
+									  lltemp = lltemp->previous;
+									  tempinters[temparr[a]]--;
+									  delete temp;
+									  break;
+								  }
+							  }
+						  } else {
+							  index++;
+						  }
+						  if(index >= length[j]){
+							  done = 1;
+							  index = 0;
+						  }
+					  }
+					  
+					  delete [] temparr;
+					  if(new_i!=0) loop_again = new_i-1;
+					  //if(new_i!=0) i = new_i-1;
+					  //i = 0;
+					  //'i' should equal the lowest indexed variable-1 that got
+					  //kicked out.
+				  }
 			}
 		}
-	}
+	} while (loop_again > 0);
 	
 	ex_bailout:
 	for(int x = 0; x < numinp+1; x++) {
