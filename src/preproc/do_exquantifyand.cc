@@ -87,8 +87,8 @@ int ExQuantifyAnd () {
 	BDDNode *Quantify;
 	
 	void bdd_gc();
-	if(enable_gc) bdd_gc(); //Hit it!
-	
+	if (enable_gc) bdd_gc(); //Hit it!
+
 	for (int x = 1; x <= MAX_EXQUANTIFY_CLAUSES; x++) {
 		for (int i = 1; i < numinp + 1; i++) {
 			char p[100];
@@ -206,7 +206,6 @@ int ExQuantifyAnd () {
 						d3_printf2 ("*{%d}", i);
 						str_length = 0;// strlen(p);
 						functions[j] = xquantify (functions[j], i);
-						//if(variablelist[i].true_false!=-1) assert(0);
 						variablelist[i].true_false = 2;
 						SetRepeats(j);
 					} else {
