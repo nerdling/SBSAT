@@ -436,12 +436,14 @@ bdd_gc(int force)
          // can drop this pool
          ite_free((void**)&bddmemory[i].memory);
          chain_free = pre_pool_chain_free;
+         *chain_free = NULL; 
+         bddtable_free_count -= max;
          for(j=i;j<=numBDDPool;j++) bddmemory[j] = bddmemory[j+1];
          memset((void*)&(bddmemory[j]), 0, sizeof(bdd_pool_type));
          numBDDPool--;
       }
    }
-  
+ 
    true_ptr->flag = 0;
    false_ptr->flag = 0;
    bddtable_free_count_last = bddtable_free_count;
