@@ -580,8 +580,13 @@ int Rebuild_BDDx (int x) {
 	variables[x].num = new int[y + 1];	//(int *)calloc(y+1, sizeof(int));
 	for (int i = 0; i < y; i++)
 	  variables[x].num[i] = tempint[i];
-   variables[x].min = tempint[0];
-   variables[x].max = tempint[y-1];
+   if (y==0) {
+      variables[x].min = 0;
+      variables[x].max = 0;
+   } else {
+      variables[x].min = tempint[0];
+      variables[x].max = tempint[y-1];
+   }
 
 
    //A line like this would be better placed in smurffactory
