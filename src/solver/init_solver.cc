@@ -75,16 +75,18 @@ RecordInitialInferences()
       LiteralSetIterator litsetNext(*(SFADDONS(pFunc->addons)->pImplied));
       while (litsetNext(nVble, bValueOfVble))
       {
-         nVble = arrIte2SolverVarMap[nVble];
          if (!bInitialInferenceFound)
          {
             printf("Warning.  Inference found in constraint %d", i);
             printf(" prior to beginning backtracking search:  ");
-            printf("Brancher variable %d = ", nVble);
+            printf("Brancher variable %d(%d) = ", arrIte2SolverVarMap[nVble], nVble);
             assert(bValueOfVble == BOOL_TRUE || bValueOfVble == BOOL_FALSE);
-            printf((bValueOfVble == BOOL_TRUE) ? "true.\n" : "false.\n");
+            printf((bValueOfVble == BOOL_TRUE) ? "true." : "false.");
+            printf(" numinp = %d numout = %d\n", numinp, numout);
+            D_3(printBDD(arrFunctions[i]); fprintf(stddbg, "\n"); )
             //bInitialInferenceFound = true;
          }
+         nVble = arrIte2SolverVarMap[nVble];
 
          nCurrentAtomValue = arrSolution[nVble];
          if (bValueOfVble)
