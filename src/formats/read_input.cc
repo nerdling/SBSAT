@@ -87,10 +87,6 @@ read_input(Tracer * &tracer)
 					if (tracer->parseInput ()) exit(1);
 				}
 		 } else {
-          //numinp=500000;
-          //numout=500000;
-          //vars_alloc(numinp);
-          //functions_alloc(numout);
           parser_init();
           trace_in = finputfile;
           trace_parse();
