@@ -354,7 +354,7 @@ int ExQuantifyAnd () {
 						}
 						if(out == 0) needs_slimming = 0;
 					}
-					if(needs_slimming == 1 && amount[i].head != NULL) {
+					if(needs_slimming == 1 && amount[i].head != NULL && length[j]>30) {
 						//Shouldn't be just i that can be quantified away, 
 						//Should be some variable in this BDD that can be
 						//Quantified away, i is not always even a choice!!!
@@ -384,26 +384,30 @@ int ExQuantifyAnd () {
 					}
 				} else if(functions[j] == Quantify && x!=1) {
 					DO_INFERENCES = 1;
-					switch (int r=Do_Apply_Inferences()) {
+/*					switch (int r=Do_Apply_Inferences()) {
 					 case TRIV_UNSAT:
 					 case TRIV_SAT:
 					 case PREP_ERROR: return r;
 					 default: break;
 					}
+*/
 					continue;
-				} else if(out == 1) {
-					functions[j] = Quantify;
-					equalityVble[j] = 0;
-					functionType[j] = UNSURE;
-					DO_INFERENCES = 1;
-					switch (int r=Rebuild_BDDx(j)) {
-					 case TRIV_UNSAT: 
-					 case TRIV_SAT: 
-					 case PREP_ERROR: 
-						ret = r; goto ea_bailout; /* as much as I hate gotos */
-					 default: break;
+				} else if(out == 1){
+					if(functions[j]!=Quantify) {
+						functions[j] = Quantify;
+						equalityVble[j] = 0;
+						functionType[j] = UNSURE;
+						switch (int r=Rebuild_BDDx(j)) {
+						 case TRIV_UNSAT: 
+						 case TRIV_SAT: 
+						 case PREP_ERROR: 
+							ret = r; goto ea_bailout; /* as much as I hate gotos */
+						 default: break;
+						}
+						ret = PREP_CHANGED;
 					}
-					ret = PREP_CHANGED;
+					DO_INFERENCES = 1;
+					continue;
 				} else if(ex_infer == 0 && amount[i].head->next==NULL && amount[i].head->num == j
 							 && inferlist->next==NULL) {
 					//Triple Extra Protection!

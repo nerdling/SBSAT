@@ -55,15 +55,14 @@ Do_Apply_Inferences ()
 	inferlist = inferlist->next;	//NEW Must increment past the empty start node
 	delete temp;
 
-	//if (enable_gc && (rand() % 100 < 1)) 
+	if (enable_gc && (rand() % 100 < 1)) 
       bdd_gc();
 	//I know it looks strange to have this here twice, but it's necessary
 	//for preprocessing options that call this but don't have any inferences.
 	
 	while (inferlist != NULL) {
 		//startover:;
-		//if (enable_gc && (rand() % 100 < 4)) 
-         bdd_gc();
+		//if (enable_gc && (rand() % 100 < 4)) bdd_gc();
 		if (inferlist->nums[1] != 0) {
 			if (inferlist->nums[1] > 0) {
 /*				
