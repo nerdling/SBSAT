@@ -54,7 +54,7 @@ CreateTransitionAu(SmurfAuState *pSmurfAuState, int i, int nSolverVble, int valu
 	if(nSolverVble == nAutarkyVble) pFuncEvaled = true_ptr;
 	else pFuncEvaled = set_variable(pSmurfAuState->pFunc, nVble, value==BOOL_TRUE?1:0);
 	if(pFuncEvaled == false_ptr) 	//set the autarky variable to true
-	  pFuncEvaled = ite_var(arrSolver2IteVarMap[nAutarkyVble]);
+	  pFuncEvaled = ite_var(-arrSolver2IteVarMap[nAutarkyVble]);
    SmurfAuState *pSmurfAuStateOfEvaled = BDD2SmurfAu(pFuncEvaled, nAutarkyVble);
    assert(pSmurfAuStateOfEvaled != NULL);
    AddStateTransitionAu(pSmurfAuState, i, nSolverVble, value, nAutarkyVble,
