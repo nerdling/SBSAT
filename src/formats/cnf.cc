@@ -863,8 +863,9 @@ cnf_process(store *integers, int num_minmax, minmax * min_max_store)
                ite_var(ites[x].vars[1]),
                ite_var(ites[x].vars[2]),
                ite_var(ites[x].vars[3]));
-         functionType[x] = ITE;
+         functionType[x] = ITE_EQU;
          independantVars[ites[x].vars[3]] = 0;
+         equalityVble[x] = ites[x].vars[3];
       }
       free(ites);
       
