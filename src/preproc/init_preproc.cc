@@ -377,7 +377,7 @@ Finish_Preprocessing()
 	for (long x = 0; x < nmbrFunctions; x++) {
 		//if (length[x] < functionTypeLimits[functionType[x]])
 		//functionType[x] = UNSURE;
-		if(isOR(functions[x]) == 1 && functionType[x]!=AUTARKY_FUNC)
+		if(isOR(functions[x]) == 1 && functionType[x]!=AUTARKY_FUNC && length[x]>=functionTypeLimits[PLAINOR])
 		  functionType[x] = PLAINOR;
    }
 
