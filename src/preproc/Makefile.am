@@ -1,5 +1,5 @@
 INCLUDES=-I$(top_srcdir)/include
-SOURCES= create_infs.cc do_cofactor.cc   do_exquantify.cc   \
+sources= create_infs.cc do_cofactor.cc   do_exquantify.cc   \
 	do_strength.cc other_preproc.cc do_applyinfs.cc do_depcluster.cc  \
 	do_exquantifyand.cc  do_pruning.cc init_preproc.cc \
 	preprocess.cc do_pruning_1.cc do_pruning_2.cc      \
@@ -8,10 +8,10 @@ SOURCES= create_infs.cc do_cofactor.cc   do_exquantify.cc   \
 	do_prover3.cc equivclass.cc do_simpleand.cc \
 	do_possibleanding.cc do_findft.cc
 
-if MYLIBTOOL
+#if MYLIBTOOL
 noinst_LTLIBRARIES = libpreproc.la
-libpreproc_la_SOURCES=$(SOURCES)
-else
+libpreproc_la_SOURCES=$(sources)
+#else
 #noinst_LIBRARIES = libpreproc.a
-#libpreproc_a_SOURCES=$(SOURCES)
-endif
+#libpreproc_a_SOURCES=$(sources)
+#endif

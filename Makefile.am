@@ -4,10 +4,12 @@ SUBDIRS = include src tests examples doc
 # doc intl po src tests
 
 if NO_CVSBUILD
-distdir=$(PACKAGE)-$(PACKAGE_VERSION)
+PKG_DISTDIR=$(PACKAGE)-$(PACKAGE_VERSION)
 else
-distdir=$(PACKAGE)-$(CVSBUILD)
+PKG_DISTDIR=$(PACKAGE)-$(CVSBUILD)
 endif
+
+distdir=$(PKG_DISTDIR)
 
 DISTCLEANFILES = confdefs.h
 

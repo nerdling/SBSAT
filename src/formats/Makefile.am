@@ -1,16 +1,16 @@
 INCLUDES=-I$(top_srcdir)/include
 SUBDIRS=5
-SOURCES=autochk.cc  \
+sources=autochk.cc  \
 	smurf.cc  bdd2cnf.cc  bddbinary.cc \
 	cnf.cc    markbdd.cc xorbdd.cc \
 	sat.cc  \
         read_result.cc read_input.cc write_output.cc
 
-if MYLIBTOOL
+#if MYLIBTOOL
 noinst_LTLIBRARIES = libformats.la
-libformats_la_SOURCES=$(SOURCES)
+libformats_la_SOURCES=$(sources)
 libformats_la_LIBADD=5/libt5.la
-else
+#else
 #noinst_LIBRARIES = libformats.a
-#libformats_a_SOURCES=$(SOURCES)
-endif
+#libformats_a_SOURCES=$(sources)
+#endif

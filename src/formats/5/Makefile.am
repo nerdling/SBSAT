@@ -1,6 +1,6 @@
 INCLUDES=-I$(top_srcdir)/include
 AM_CFLAGS=-DYYDEBUG
-SOURCES=trace_g.yy trace_s.ll \
+sources=trace_g.yy trace_s.ll \
 	cnf_g.yy cnf_s.ll \
 	bdd_g.yy bdd_s.ll \
 	blif_g.yy blif_s.ll \
@@ -32,16 +32,16 @@ bin_PROGRAMS = tracetest
 tracetest_SOURCES = tracetest.cc  # bddnode.cc
 
 libt5_la_YFLAGS =  -d
-if MYLIBTOOL
+#if MYLIBTOOL
 noinst_LTLIBRARIES = libt5.la
-libt5_la_SOURCES = $(SOURCES)
+libt5_la_SOURCES = $(sources)
 tracetest_LDADD = ../../preproc/libpreproc.la libt5.la ../../utils/libutils.la
-else
+#else
 #noinst_LIBRARIES = libt5.a
-#libt5_a_SOURCES = $(SOURCES)
+#libt5_a_SOURCES = $(sources)
 #libt5_a_YFLAGS =  -d
 #tracetest_LDADD = ../../preproc/libpreproc.a libt5.a ../../utils/libutils.a
-endif
+#endif
 
 #libt5_a_CXXFLAGS =  -pg
 #tracetest_CXXFLAGS = -pg

@@ -1,8 +1,8 @@
 SUBDIRS = solv_smurf solv_bddwalk solv_wvf utils preproc postproc formats generator
 
 INCLUDES=-I$(top_srcdir)/include
-SOURCES=sbsat.cc
-if MYLIBTOOL
+sources=sbsat.cc
+#if MYLIBTOOL
 SBSAT_LIBS= \
 	libsbsat2.la \
 	formats/libformats.la \
@@ -25,34 +25,34 @@ SBSAT_LIBS= \
 	postproc/libpostproc.la \
 	preproc/libpreproc.la \
 	utils/libutils.la 
-else
-SBSAT_LIBS= \
-	libsbsat2.la \
-	formats/libformats.a \
-	formats/5/libt5.a \
-	solv_smurf/libsolv_smurf.a  \
-	solv_smurf/hr_null/libhrnull.a  \
-	solv_smurf/hr_lsgb_lemma/libhrlsgblemma.a  \
-	solv_smurf/hr_lsgbw/libhrlsgbw.a  \
-	solv_smurf/hr_lsgb/libhrlsgb.a  \
-	solv_smurf/hr_lemma/libhrlemma.a  \
-	solv_smurf/fn_xor_smurf/libfnxorsmurf.a  \
-	solv_smurf/fn_xor/libfnxor.a  \
-	solv_smurf/fn_minmax/libfnminmax.a  \
-	solv_smurf/fn_and/libfnand.a  \
-	solv_smurf/fn_smurf_xor/libfnsmurfxor.a  \
-	solv_smurf/fn_smurf_au/libfnsmurfau.a  \
-	solv_smurf/fn_smurf/libfnsmurf.a  \
-	solv_smurf/fn_lemma/libfnlemma.a  \
-	solv_bddwalk/libsolv_bddwalk.a  \
-	solv_wvf/libsolv_wvf.a  \
-	postproc/libpostproc.a \
-	preproc/libpreproc.a \
-	utils/libutils.a 
-endif
+#else
+#SBSAT_LIBS= \
+	#libsbsat2.la \
+	#formats/libformats.a \
+	#formats/5/libt5.a \
+	#solv_smurf/libsolv_smurf.a  \
+	#solv_smurf/hr_null/libhrnull.a  \
+	#solv_smurf/hr_lsgb_lemma/libhrlsgblemma.a  \
+	#solv_smurf/hr_lsgbw/libhrlsgbw.a  \
+	#solv_smurf/hr_lsgb/libhrlsgb.a  \
+	#solv_smurf/hr_lemma/libhrlemma.a  \
+	#solv_smurf/fn_xor_smurf/libfnxorsmurf.a  \
+	#solv_smurf/fn_xor/libfnxor.a  \
+	#solv_smurf/fn_minmax/libfnminmax.a  \
+	#solv_smurf/fn_and/libfnand.a  \
+	#solv_smurf/fn_smurf_xor/libfnsmurfxor.a  \
+	#solv_smurf/fn_smurf_au/libfnsmurfau.a  \
+	#solv_smurf/fn_smurf/libfnsmurf.a  \
+	#solv_smurf/fn_lemma/libfnlemma.a  \
+	#solv_bddwalk/libsolv_bddwalk.a  \
+	#solv_wvf/libsolv_wvf.a  \
+	#postproc/libpostproc.a \
+	#preproc/libpreproc.a \
+	#utils/libutils.a 
+#endif
 
 lib_LTLIBRARIES = libsbsat2.la libsbsat.la
-libsbsat2_la_SOURCES = $(SOURCES)
+libsbsat2_la_SOURCES = $(sources)
 libsbsat_la_SOURCES = emptylib.cc #
 libsbsat_la_LDFLAGS = -version-info 1:0:0 -module
 libsbsat_la_LIBADD  = $(SBSAT_LIBS) $(LIBM)

@@ -1,10 +1,10 @@
 INCLUDES=-I$(top_srcdir)/include
-SOURCES= backend.cc
+sources= backend.cc
 
-if MYLIBTOOL
+#if MYLIBTOOL
 noinst_LTLIBRARIES = libpostproc.la
-libpostproc_la_SOURCES= $(SOURCES)
-else
+libpostproc_la_SOURCES= $(sources)
+#else
 #noinst_LIBRARIES = libpostproc.a
-#libpostproc_a_SOURCES= $(SOURCES)
-endif
+#libpostproc_a_SOURCES= $(sources)
+#endif

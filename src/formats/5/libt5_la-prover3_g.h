@@ -1,4 +1,4 @@
-/* A Bison parser, made by GNU Bison 1.875.  */
+/* A Bison parser, made from /usr/home/mkouril/tmp/sbsat/src/formats/5/prover3_g.yy, by GNU bison 1.75.  */
 
 /* Skeleton parser for Yacc-like parsing with Bison,
    Copyright (C) 1984, 1989, 1990, 2000, 2001, 2002 Free Software Foundation, Inc.
@@ -23,6 +23,9 @@
    This special exception was added by the Free Software Foundation
    in version 1.24 of Bison.  */
 
+#ifndef BISON_LIBT__LA_PROVER__G_H
+# define BISON_LIBT__LA_PROVER__G_H
+
 /* Tokens.  */
 #ifndef YYTOKENTYPE
 # define YYTOKENTYPE
@@ -41,22 +44,21 @@
 
 
 
-#if ! defined (YYSTYPE) && ! defined (YYSTYPE_IS_DECLARED)
+#ifndef YYSTYPE
 #line 18 "prover3_g.yy"
-typedef union YYSTYPE {
+typedef union {
     int         num;      /* For returning numbers.               */
     char        id[200];  /* For returning ids.                   */
     t_op2fn     op2fn;    /* For returning op2fn                  */
     BDDNode     *bdd;     /* For returning exp                    */
-} YYSTYPE;
-/* Line 1248 of yacc.c.  */
-#line 53 "libt5_la-prover3_g.h"
-# define yystype YYSTYPE /* obsolescent; will be withdrawn */
-# define YYSTYPE_IS_DECLARED 1
-# define YYSTYPE_IS_TRIVIAL 1
+} yystype;
+/* Line 1281 of /usr/local/share/bison/yacc.c.  */
+#line 57 "libt5_la-prover3_g.h"
+# define YYSTYPE yystype
 #endif
 
 extern YYSTYPE prover3_lval;
 
 
+#endif /* not BISON_LIBT__LA_PROVER__G_H */
 
