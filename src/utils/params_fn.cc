@@ -42,7 +42,7 @@
 #endif
 
 #ifndef AUTHORS
-#define AUTHORS "reserach team lead by John Franco"
+#define AUTHORS "a reserach team lead by John Franco"
 #endif
 
 #ifndef BUGS_EMAIL
