@@ -503,11 +503,13 @@ Finish_Preprocessing()
 			 //d1_printf1 ("Formula was trivially satisfiable.\n");
 	  }
 	
-   ite_counters_f[PREPROC_TIME] = get_runtime() - start_prep;
-   d3_printf2("Preprocessing Time: %5.3f seconds.\n",
-					ite_counters_f[PREPROC_TIME]);
-   d2_printf1("\rPreprocessing .... Done\n");
-
+   if(ite_counters_f[PREPROC_TIME] == 0) {
+		ite_counters_f[PREPROC_TIME] = get_runtime() - start_prep;
+		d3_printf2("Preprocessing Time: %5.3f seconds.\n",
+					  ite_counters_f[PREPROC_TIME]);
+	}
+	d2_printf1("\rPreprocessing .... Done\n");
+	
    return ret;
 }
 
