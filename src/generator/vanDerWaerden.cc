@@ -285,7 +285,7 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
       fprintf(stdout, "c prevent any arithmetic progression of length %d for every bucket %d\n", p, k);
       fprintf(stdout, "#1 [ ");
       for(int y = 1; y <= n; y++)
-         fprintf(stdout, "%d ", var(n, y, 0));
+         fprintf(stdout, "%s ", var(n, y, 0));
       fprintf(stdout, "] %d\n", n/2);
       clause_count++;
       for(int num = 1; num <= n; num++) {
@@ -293,7 +293,7 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
             if (step * (p-1) + num > n) break;
             int base = num;
             for(int z = 0; z < p; z++) {
-               fprintf(stdout, "-%d ", var(n, base, 0));
+               fprintf(stdout, "-%s ", var(n, base, 0));
                base+=step;
             }
             fprintf(stdout, "0\n");
