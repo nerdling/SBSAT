@@ -28,4 +28,5 @@ void ite_strncpy(char *str_dst, char *str_src, int len);
   cerr << "IN FILE " << __FILE__ << " AT " << __LINE__ << endl; \
   exit(1); };
 
+int functions_add(BDDNode *bdd, int fn_type, int equal_var);
 #endif

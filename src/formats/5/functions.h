@@ -3,4 +3,4 @@
 #include "bddnode.h"
 
 BDDNode *tmp_equ_var(BDDNode *p);
-void functions_add(BDDNode *bdd, int fn_type, int equal_var);
+int functions_add(BDDNode *bdd, int fn_type, int equal_var);

@@ -162,7 +162,7 @@ typedef struct _SolverFunction {
    int nFnId;
    int nType;
    int nFnPriority;
-   _SolverFunction *pFnInfNext;;   
+   _SolverFunction *pFnInfNext;
    union {
       Function_AND      fn_and;
       Function_Smurf    fn_smurf;
