@@ -57,11 +57,13 @@
 extern Linear *l;
 extern int *length;
 extern int *tempint;
+extern float *var_score;
 extern store *variables;
 extern infer *lastinfer;
 extern int notdone;
 extern infer *inferlist;
 extern varinfo *variablelist;
+extern int *num_funcs_var_occurs;
 extern llistStruct *amount;
 extern int *P1_repeat;
 extern int *P2_repeat;
@@ -88,6 +90,7 @@ int Do_Cofactor();
 int Do_ExQuantify();
 int Do_ExQuantifyAnd();
 int Do_DepCluster();
+void Do_Flow();
 
 int Finish_Preprocessing();
 int Init_Preprocessing();
