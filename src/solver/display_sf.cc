@@ -51,7 +51,7 @@ extern int nSmurfStatePoolIndex;
 //#define PRINT_SMURF_STATS
 #define DISPLAY_LEMMAS
 
-char * opnames[EQU_BASE] =  {
+const char * opnames[EQU_BASE] =  {
        "UNSURE",
        "AND",
        "NAND",
@@ -77,8 +77,8 @@ ITE_INLINE
 char *
 StringFromFunctionType(int nFuncType)
 {
-  if (nFuncType < EQU_BASE) return opnames[nFuncType];
-  return "UNKNOWN FUNC TYPE";
+  if (nFuncType < EQU_BASE) return (char*)opnames[nFuncType];
+  return (char*)"UNKNOWN FUNC TYPE";
 }
 
 
@@ -132,17 +132,17 @@ DisplaySpecialFunction(SpecialFunc *pSpecialFunc, int nFunctionType)
     {
     case (1):
       // or
-      pszConnective = " or ";
+      pszConnective = (char*)" or ";
       break;
 
     case (3):
       // and=
-      pszConnective = " and ";
+      pszConnective = (char*)" and ";
       break;
 
     case (4):
       // or=
-      pszConnective = " or ";
+      pszConnective = (char*)" or ";
       break;
 
     default:

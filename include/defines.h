@@ -94,7 +94,7 @@ enum {
 #define IS_EQU(fn) (fn>EQU_BASE)
 #define MAKE_EQU(fn) (fn+EQU_BASE)
 
-extern char * opnames[EQU_BASE];
+extern const char * opnames[EQU_BASE];
 #define XNOR 6  //XNOR and EQU are the same function
 
 extern int ZERO_ONE_VAR;

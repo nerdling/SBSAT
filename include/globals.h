@@ -41,7 +41,7 @@
 #define GLOBALS_H
 
 void ite_free(void **ptr);
-void *ite_calloc(int x, int y, int dbg_lvl, char *for_what);
+void *ite_calloc(int x, int y, int dbg_lvl, const char *for_what);
 char *ite_basename(char *filename);
 
 
