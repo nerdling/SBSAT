@@ -131,7 +131,7 @@ int cutoff = 500000;
 int base_cutoff = 1000000;
 int target = 0;
 int numtry = 0;			/* total attempts at solutions */
-int numsol = 10;//NOVALUE;		/* stop after this many tries succeeds */
+int numsol = NOVALUE;	        /* stop after this many tries succeeds */
 
 int makeflag = TRUE;		/* set to true by heuristics that require the make values to be calculated */
 
@@ -261,6 +261,7 @@ extern t_solution_info *solution_info_head;
 int walkSolve()
 {
 	numinp = getNuminp ();
+	if(numsol == NOVALUE) numsol = max_solutions; //get max_solutions from the command line
 	//int oldnuminp = numinp;
 	int *original_variables;
 	ITE_NEW_CATCH(
@@ -280,7 +281,6 @@ int walkSolve()
 	expertime = get_runtime();
 	while ((!abort_flag) && (numsuccesstry < numsol) && (numtry < numrun)) {
 		numtry++;
-		//init_1false(initfile, initoptions);
 		init_CountFalses(initfile, initoptions);
 		update_statistics_start_try();
 		numflip = 0;
@@ -572,84 +572,6 @@ int verifyunsat(int i)
 		  }
 	  }
 	return 1;
-}
-
-void init_1false(char initfile[], int initoptions)
-{
-	int i;
-	int j;
-
-	numfalse = 0;
-
-	for(i = 1;i < numvars+1;i++)
-	  {
-		  changed[i] = -BIG;
-		  breakcount[i] = 0;
-		  makecount[i] = 0;
-	  }
-	
-	for(i = 1;i < numvars+1;i++)
-	  atom[i] = random()%2;  //This makes a random truth assignment
-		
-	/* Initialize breakcount, makecount, and previousState in the following: */
-
-	for(i = 0;i < numBDDs;i++) {
-		BDDNode *f = functions[i];
-		if(previousState[i].num != NULL) delete [] previousState[i].num;
-		previousState[i].num = new int[wlength[i]+2];
-		//Previous state should be initialized before this function
-		//That way I don't have to keep deleting it and reinitializing it
-		if(traverseBDD(f)) {
-			j = 0;
-			while(!IS_TRUE_FALSE(f)) {
-				if(atom[f->variable] == 1) {
-					if(!traverseBDD(f->elseCase)) {
-						breakcount[f->variable]++;
-						previousState[i].num[j++] = f->variable;
-					}
-					f = f->thenCase;
-				} else {
-					if(!traverseBDD(f->thenCase)) {
-						breakcount[f->variable]++;
-						previousState[i].num[j++] = f->variable;
-					}
-					f = f->elseCase;
-				}
-			}
-			previousState[i].num[j] = 0;
-		} else {
-			wherefalse[i] = numfalse;
-			falseBDDs[numfalse] = i;
-			numfalse++;
-			j = 0;
-			while(!IS_TRUE_FALSE(f)) {
-				if(atom[f->variable] == 1) {
-					if(traverseBDD(f->elseCase)) {
-						makecount[f->variable]++;
-						previousState[i].num[j++] = -(f->variable);
-					}
-					f = f->thenCase;
-				} else {
-					if(traverseBDD(f->thenCase)) {
-						makecount[f->variable]++;
-						previousState[i].num[j++] = -(f->variable);
-					}
-					f = f->elseCase;
-				}
-			}
-			previousState[i].num[j] = 0;
-		}
-	}
-
-//	for(int x = 0; x < numvars+1; x++)
-//	  {
-//		  fprintf(stderr, "\n%d: bc=%d, mc=%d, diff=%d", x, breakcount[x], makecount[x], (makecount[x] - breakcount[x]));
-//	  }
-//	fprintf(stderr, "\n");
-	if (hamming_flag) { //Doesn't do this, hamming_flag == false
-		hamming_distance = calc_hamming_dist(atom, hamming_target);
-		fprintf(hamming_fp, "0 %i\n", hamming_distance);
-	}
 }
 
 void init_CountFalses(char initfile[], int initoptions)
@@ -1132,6 +1054,8 @@ save_solution(void)
 {
   if (result_display_type) {
     /* create another node in solution chain */
+    //Should really check against saving multiple solutions
+
     t_solution_info *tmp_solution_info;
     tmp_solution_info = (t_solution_info*)calloc(1, sizeof(t_solution_info));
     
