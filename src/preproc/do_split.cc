@@ -71,16 +71,18 @@ int nCk(int n, int k) {
 }
 
 void nCk_Sets(int n, int k, int *vars, int *whereat, int n_orig, BDDNode *bdd, int orig_bdd) {
+	if(length[orig_bdd] <= k) return;
 	if (n==0 && k==0) {
 		//printBDD(tempBDD);
 		//d3_printf1("\n");
-		BDDNode *tempBDD;
-		tempBDD = pruning(functions[orig_bdd], bdd);
-		if(tempBDD == functions[orig_bdd]) return;
-		functions[orig_bdd] = tempBDD;
-		for(int i = 0; i < (*whereat); i++)
-			tempBDD = pruning(bdd, BDDFuncs[i]);
-		if(bdd != true_ptr) {
+		for(int i = 0; i < (*whereat) && bdd != true_ptr; i++)
+		  bdd = pruning(bdd, BDDFuncs[i]);
+		if(bdd != true_ptr) {				
+			BDDNode *tempBDD;
+			tempBDD = pruning(functions[orig_bdd], bdd);
+			if(tempBDD == functions[orig_bdd]) return;
+			functions[orig_bdd] = tempBDD;
+			Rebuild_BDDx(orig_bdd);
 			//d3_printf2("whereat = %d: \n", (*whereat));
 			BDDFuncs[(*whereat)] = bdd;
 			(*whereat)++;
@@ -145,6 +147,13 @@ int Split_Large () {
 			//d3_printf4("%d C %d = %d\n", length[j], k_size, num_splits);
 			
 			int whereat = 0;
+			int fpaths = countFalses(functions[j]);
+			if(fpaths == 1) {
+				functionType[j] = PLAINOR;
+				continue;				  
+			}
+			
+			//d3_printf2("false paths:%d\n", countFalses (functions[j]));
 			nCk_Sets(length[j], k_size, variables[j].num, &whereat, length[j], functions[j], j);
 			//d3_printf2("whereat = %d: \n", whereat);
 			
