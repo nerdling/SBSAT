@@ -136,17 +136,26 @@ int ExQuantify () {
 						 default: break;
 						}
 						int changed = 1;
+//						d3_printf1("Starting...");
 						while(changed == 1) {
+//							d3_printf2("[%d]", j);
+//							str_length = 0;
 							changed = 0;
+//							d3_printf1("going...");
                      for(int v = 0; v < length[j]; v++) {
 								//If variable v occurs in only this BDD.
 								if(amount[variables[j].num[v]].head->next == NULL) {
+//									d3_printf3("working on %d, %d\n", variables[j].num[v], length[j]);
 									BDDNode *Quantify = functions[j];
 									//Quantify out every Ex variable except variable v
 									for(int y = 0; y < length[j]; y++) {
-										if(v!=y && amount[variables[j].num[y]].head->next == NULL)
-										  Quantify = xquantify(Quantify, variables[j].num[y]);
+										if(v!=y && amount[variables[j].num[y]].head->next == NULL) {
+//											d3_printf2("%d ", variables[j].num[y]);
+											Quantify = xquantify(Quantify, variables[j].num[y]);
+										}
 									}
+									
+//									d3_printf1("\n");
 									
 									int bdd_length = 0;
 									int *bdd_vars = NULL;
@@ -238,10 +247,8 @@ int ExQuantify () {
 						}
 					}
 					//else   If ex-infer != 1
-					if(amount[i].head != NULL) 
-					  {
-										
-						  if(amount[i].head->next == NULL && amount[i].head->num == j) {
+					if(amount[i].head != NULL) {
+						if(amount[i].head->next == NULL && amount[i].head->num == j) {
 							for(int iter = 0; iter<str_length; iter++)
 							  d3_printf1("\b");
 							d3_printf2 ("*{%d}", i);
