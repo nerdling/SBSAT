@@ -407,6 +407,13 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
             clause_count++;
          }
       }
+      /*
+      fprintf(stdout, "* minmax(%d %d %d ", n, p, n/2);
+      for(int num = 1; num <= n; num++) {
+         fprintf(stdout, "%s ", var(n, num, 0));
+      }
+      fprintf(stdout, " )\n");
+      */
       if (clause_count != clauses) {
          fprintf(stderr, "======================== Problem\n");
       }

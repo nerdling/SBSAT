@@ -256,20 +256,19 @@ InitSmurfFactory()
    for (int i = 0; i < nmbrFunctions; i++)
    {
       int nFunctionType = functionType[i];
-      if (nFunctionType != UNSURE && nFunctionType != ITE
-            && !IsSpecialFunc(nFunctionType))
+
+      if (nFunctionType != UNSURE && !IsSpecialFunc(nFunctionType))
       {
          d2_printf3("SmurfFactory -- Unrecognized function type: %d for %d assuming UNSURE\n", 
                nFunctionType, i);
          nFunctionType = UNSURE;
       }
 
-
       if (xorFunctions[i]) {
          nNumSpecialFuncs++;
          nNumRegSmurfs++;
       } else
-      if (IsSpecialFunc(functionType[i])) 
+      if (IsSpecialFunc(nFunctionType)) 
          nNumSpecialFuncs++;
       else
          nNumRegSmurfs++;
