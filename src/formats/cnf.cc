@@ -301,7 +301,7 @@ void CNF_to_BDD(int cnf)
       int *greaterneg_temp = (int *)calloc(numinp+1, sizeof(int));
       for(long x = 1; x < numout + 1; x++) {
          if (x%1000 == 1)
-            d2_printf3("\rScanning CNF %d/%d ... ", x, numout);
+            d2_printf3("\rScanning CNF %d/%d ...        ", x, numout);
          if(integers[x].length == 2) {
 				for(y = 0; y < 2; y++) {
 					if(integers[x].num[y] > 0)
@@ -361,7 +361,7 @@ void CNF_to_BDD(int cnf)
 		//filled with clauses
 		for(long x = 1; x < numout+1; x++) {
          if (x%1000 == 1)
-            d2_printf3("\rStoring CNF %d/%d ... ", x, numout);
+            d2_printf3("\rStoring CNF %d/%d ...        ", x, numout);
          count = 0;
 			if(integers[x].length == 2) {
 				if(integers[x].num[0] > 0) {
@@ -453,7 +453,7 @@ void CNF_to_BDD(int cnf)
 			}
 		}
       num = 0;
-      d3_printf1("Starting Search");
+      d3_printf1("Starting Search\n");
       
 		//ok...this is where the and= and or= are sorted out.
 		//I'll have to make a good explaination later
@@ -462,7 +462,7 @@ void CNF_to_BDD(int cnf)
       int and_or_do = 1;
       while(and_or_do) {
          if (++num_iters%1000 == 1)
-            d2_printf2("\rAND/OR Search CNF %d ", num_iters);
+            d2_printf2("\rAND/OR Search CNF %d       ", num_iters);
          and_or_do = 0;
 			for(long x = 1; x < numinp+1; x++) {
 				if(two_pos[x].num[0] > 0) {
@@ -656,7 +656,7 @@ void CNF_to_BDD(int cnf)
       num = 0;
       for(int x = 0; x < numinp+1; x++) {
          if (x%1000 == 0)
-            d2_printf3("\rITE Search CNF %d/%d ", x, numinp);
+            d2_printf3("\rITE Search CNF %d/%d       ", x, numinp);
 			v3_1count = 0;
 			v3_2count = 0;
 			for(i = 0; i < three_pos[x].length; i++) {
@@ -812,7 +812,7 @@ void CNF_to_BDD(int cnf)
 		//Creates BDD's for the ite_equal clauses
       for(long x = 0; x < num_ite; x++) {
          if (x%1000 == 0)
-            d2_printf3("\rBuilding ITEs %d/%d ... ", x, num_ite);
+            d2_printf3("\rBuilding ITEs %d/%d ...    ", x, num_ite);
          functions[x] = ite_itequ(ite_var(ites[x].vars[0]),
                ite_var(ites[x].vars[1]),
                ite_var(ites[x].vars[2]),
@@ -877,7 +877,7 @@ void CNF_to_BDD(int cnf)
       d3_printf2("Building MinMax BDDs - %d\n", num_minmax);
       for(int x = 0; x < num_minmax; x++) {
          if (x % 1000 == 0) 
-            d2_printf3("\rBuilding MinMax BDDs %d/%d ... ", x, num_minmax);
+            d2_printf3("\rBuilding MinMax BDDs %d/%d ...               ", x, num_minmax);
          int set_true = 0;
          qsort(min_max_store[x].num, min_max_store[x].length, sizeof(int), abscompfunc);
          functions[x+numout] = MinMaxBDD(min_max_store[x].num, min_max_store[x].min, min_max_store[x].max, min_max_store[x].length, set_true);
@@ -891,7 +891,7 @@ void CNF_to_BDD(int cnf)
 
       for(long x = 1; x < numout + 1; x++) {
          if (x % 1000 == 0) 
-            d2_printf3("\rBuilding unclustered BDDs %d/%d ... ", x, numout);
+            d2_printf3("\rBuilding unclustered BDDs %d/%d ...       ", x, numout);
          qsort(integers[x].num, integers[x].length, sizeof(int), abscompfunc);
          //qsort(integers[x].num, integers[x].length, sizeof(int), absrevcompfunc);
 	    functions[x-1] = false_ptr;
@@ -905,7 +905,7 @@ void CNF_to_BDD(int cnf)
 	  d3_printf2("Building MinMax BDDs - %d\n", num_minmax);
 	  for(int x = 0; x < num_minmax; x++) {
          if (x % 1000 == 0) 
-            d2_printf3("\rBuilding MinMax BDDs %d/%d ... ", x, num_minmax);
+            d2_printf3("\rBuilding MinMax BDDs %d/%d ...       ", x, num_minmax);
          int set_true = 0;
          qsort(min_max_store[x].num, min_max_store[x].length, sizeof(int), abscompfunc);
          functions[x+numout] = MinMaxBDD(min_max_store[x].num, min_max_store[x].min,
@@ -938,7 +938,7 @@ void CNF_to_BDD(int cnf)
 	numout = count+1;
 	nmbrFunctions = numout;
 	d3_printf2("Number of BDDs - %ld\n", numout);
-	d2_printf1("\rReading CNF ... Done\n");
+	d2_printf1("\rReading CNF ... Done                   \n");
 }
 
 void DNF_to_CNF () {

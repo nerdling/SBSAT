@@ -47,15 +47,17 @@ Do_Cofactor()
 {
   int ret=PREP_NO_CHANGE;
   BDDNode *cof = NULL;
+  d3_printf1("\nCOFACTORING - ");
 
   for (int x = 0; x < numout; x++)
    {
-      if (x%1000 == 0)
-         d2_printf3("\rPreprocessing Co %d/%d", x, numout);
+      if (x%1000 == 0) 
+         d2e_printf3("\rPreprocessing Co %d/%d", x, numout);
+      
 
      if (length[x] <= COF_MAX && length[x] > 0)
       {
-        d3_printf1 ("*");
+        d3_printf1("*"); 
         cof = functions[x];
         for (int j = 0; j < numout; j++)
          {
@@ -77,5 +79,7 @@ Do_Cofactor()
          }
       }
    }  //This ends Cofactoring
+  d3_printf1("\n");
+  d2e_printf1("\r                                                    ");
   return ret;
 }

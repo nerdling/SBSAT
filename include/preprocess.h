@@ -100,7 +100,4 @@ int Init_Preprocessing();
 
 int CreateInferences();
 
-extern int signs_idx;
-extern char signs[];
-
 #endif

@@ -77,12 +77,13 @@ int DO_PRUNING_FN() {
 	
 	for (int x = 0; x < nmbrFunctions; x++)
 	  repeat_small[x] = PRUNE_REPEATS[x];
-	
-	d3_printf1 ("BRANCH PRUNING - \n");
+
+   D_3(print_roller_init(););
+	d3_printf1 ("BRANCH PRUNING -  ");
 	for (int x = 0; x < nmbrFunctions; x++)
 	  {
         if (x % 100 == 0)
-           d2_printf3("\rPreprocessing Pr %d/%d", x, nmbrFunctions);
+           d2e_printf3("\rPreprocessing Pr %d/%d", x, nmbrFunctions);
         PRUNE_REPEATS[x] = 0;
 		  if (functions[x] == true_ptr)
 			 continue;
@@ -120,8 +121,7 @@ int DO_PRUNING_FN() {
 						if (currentBDD != functions[x])
 						  {
 							  //d2_printf1 ("*");
-							  d3_printf2("%c\b", signs[signs_idx++]);
-                       if (signs[signs_idx] == 0) signs_idx = 0;
+                       D_3(print_roller(););
 
 							  ret = PREP_CHANGED;
 							  SetRepeats(x);
@@ -130,7 +130,7 @@ int DO_PRUNING_FN() {
 							  switch (int r=Rebuild_BDDx(x)) {
 								case TRIV_SAT: 
 								case TRIV_UNSAT: 
-								case PREP_ERROR: ret=r; goto st_bailout; /* As much as ... */
+								case PREP_ERROR: ret=r; goto pr_bailout; /* As much as ... */
 								default: break;
 							  }
 						  }
@@ -157,8 +157,7 @@ int DO_PRUNING_FN() {
 						if (currentBDD != functions[j])
 						  {
 							  //d2_printf1 ("*");
-							  d3_printf2("%c\b", signs[signs_idx++]);
-                       if (signs[signs_idx] == 0) signs_idx = 0;
+                       D_3(print_roller(););
 
 							  ret = PREP_CHANGED;
 							  SetRepeats(j);
@@ -167,17 +166,18 @@ int DO_PRUNING_FN() {
 							  switch (int r=Rebuild_BDDx(j)) {
 								case TRIV_SAT: 
 								case TRIV_UNSAT: 
-								case PREP_ERROR: ret=r; goto st_bailout; /* As much as ... */
+								case PREP_ERROR: ret=r; goto pr_bailout; /* As much as ... */
 								default: break;
 							  }
 						  }
 					}
 			 }
 	  }
+	pr_bailout:
+
+   D_3(print_nonroller(););
 	d3_printf1("\n");
-   d2_printf1("\r                                         ");
-	
-	st_bailout:
+   d2e_printf1("\r                                         ");
 	delete [] repeat_small;
 	return ret;
 }

@@ -36,12 +36,6 @@
  *********************************************************************/
 #include "ite.h"
 
-int signs_idx = 0;
-//#define signs_max 6
-//char signs[signs_max] = "/|\\- ";
-#define signs_max 4
-char signs[signs_max+1] = "/|\\-";
-
 extern char preproc_string[256];
 
 typedef int (*preproc_fn_type)();
@@ -84,6 +78,7 @@ Preprocessor(varinfo *variablelist)
 
   if (DO_INFERENCES) {
     ret = Do_Apply_Inferences();
+    d3_printf1("\n");
     if (ret == TRIV_UNSAT || ret == TRIV_SAT || ret == PREP_ERROR)
       return ret; 
   }

@@ -65,6 +65,7 @@ Do_Apply_Inferences ()
 		if (inferlist->nums[1] != 0) {
 			if (inferlist->nums[1] > 0) {
 				Pos_replace++;
+            D_3(print_nonroller();)
 				d3_printf3 ("{%d=%d}", inferlist->nums[0], inferlist->nums[1]);
 				variablelist[inferlist->nums[1]].equalvars = inferlist->nums[0];
 				for (llist * k = amount[inferlist->nums[1]].head; k != NULL; k = k->next) {
@@ -117,6 +118,7 @@ Do_Apply_Inferences ()
 				//verifyCircuit(inferlist->nums[1]);
 			} else {
 				Neg_replace++;
+            D_3(print_nonroller(););
 				d3_printf3 ("{%d=%d}", inferlist->nums[0], inferlist->nums[1]);
 				variablelist[-inferlist->nums[1]].equalvars = -inferlist->nums[0];
 				//Gotta keep that (-inferlist->nums[0]) negative...trust me
@@ -179,6 +181,7 @@ Do_Apply_Inferences ()
 		} else {
 			if (inferlist->nums[0] > 0) {
 				Setting_Pos++;
+            D_3(print_nonroller(););
 				d3_printf2 ("{%d=T}", abs (inferlist->nums[0]));
 				variablelist[inferlist->nums[0]].true_false = 1;
 				for (llist * k = amount[inferlist->nums[0]].head; k != NULL; k = k->next) {
@@ -203,6 +206,7 @@ Do_Apply_Inferences ()
 				//verifyCircuit(inferlist->nums[0]);
 			} else {
 				Setting_Neg++;
+            D_3(print_nonroller(););
 				d3_printf2 ("{%d=F}", abs (inferlist->nums[0]));
 				variablelist[-inferlist->nums[0]].true_false = 0;
 				for (llist * k = amount[-inferlist->nums[0]].head; k != NULL; k = k->next) {
@@ -236,11 +240,13 @@ Do_Apply_Inferences ()
 	inferlist->next = NULL;
 	lastinfer = inferlist;
 	DO_INFERENCES = 1;
+
 	return ret;
 }
 
 int setALLequiv(int nums0, int nums1, int torf) {
-	d3_printf3 ("{%d=%d}", torf*nums0, torf*nums1);
+   D_3(print_nonroller(););
+   d3_printf3 ("{%d=%d}", torf*nums0, torf*nums1);
 	variablelist[nums1].equalvars = nums0;
 	for (llist * k = amount[nums1].head; k != NULL; k = k->next) {
 		int j = k->num;
@@ -269,10 +275,12 @@ int setALLequiv(int nums0, int nums1, int torf) {
 
 int setALLinfer(int nums0, int torf) {
 	if(torf) {
-		d3_printf2 ("{%d=T}", nums0);
+      D_3(print_nonroller(););
+      d3_printf2 ("{%d=T}", nums0);
 		variablelist[nums0].true_false = 1;
 	} else {
-		d3_printf2 ("{%d=F}", nums0);
+      D_3(print_nonroller(););
+      d3_printf2 ("{%d=F}", nums0);
 		variablelist[nums0].true_false = 0;
 	}
 	for (llist * k = amount[nums0].head; k != NULL; k = k->next) {

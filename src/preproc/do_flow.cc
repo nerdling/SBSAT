@@ -109,7 +109,7 @@ void Do_Flow() {
 	for(int x = 0; x <= numinp; x++) {
 		symrec *ptr = getsym_i(x);
 		var_score[x] = var_score[x] + 1;
-		d3_printf4("%d (%s) = %5.3f\n", x, (ptr&&ptr->name?ptr->name:"NULL"), var_score[x]);
+		d5_printf4("%d (%s) = %5.3f\n", x, (ptr&&ptr->name?ptr->name:"NULL"), var_score[x]);
 	}
 
 	ite_free((void *)equ_funcs);
@@ -220,16 +220,16 @@ void Do_Flow_Grouping() {
 	for(int x = 1; x <= numinp; x++) {
 		symrec *ptr = getsym_i(x);
 		var_score[x] = var_score[x] + 1;
-		d3_printf5("%d{%d} (%s) = %5.3f ", x, influences[x].depth, (ptr&&ptr->name?ptr->name:"NULL"), var_score[x]);
+		d5_printf5("%d{%d} (%s) = %5.3f ", x, influences[x].depth, (ptr&&ptr->name?ptr->name:"NULL"), var_score[x]);
 		if(independantVars[x] == 0) {
 			for(int y = 0; y <= indep_count; y++) {
 				if(influences[x].influence[y] > 0) {
 					ptr = getsym_i(indep_mapping[y]);
-					d3_printf3("%d (%s), ", indep_mapping[y], (ptr&&ptr->name?ptr->name:"NULL"));
+					d5_printf3("%d (%s), ", indep_mapping[y], (ptr&&ptr->name?ptr->name:"NULL"));
 				}
 			}
 		}
-		d3_printf1("\n");
+		d5_printf1("\n");
 	}
 
 	for(int x = 0; x < dep_count; x++) {

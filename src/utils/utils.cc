@@ -523,3 +523,37 @@ ite_basename(char *filename)
    else ptr = ptr+1;
    return ptr;
 }
+
+
+int signs_idx = 0;
+//#define signs_max 6
+//char signs[signs_max] = "/|\\- ";
+#define signs_max 4
+char signs[signs_max+1] = "/|\\-";
+int last_print_roller = 0;
+
+void
+print_roller()
+{
+   if (last_print_roller) {
+      fprintf(stddbg, "\b%c", signs[signs_idx++]);
+   } else {
+      fprintf(stddbg, "%c", signs[signs_idx++]);
+      last_print_roller = 1; 
+   }
+   if (signs[signs_idx] == 0) signs_idx = 0;
+}
+
+void
+print_nonroller()
+{
+   last_print_roller = 0; 
+}
+
+void
+print_roller_init()
+{
+   last_print_roller = 0; 
+   signs_idx = 0;
+}
+

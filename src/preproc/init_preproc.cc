@@ -141,7 +141,6 @@ Init_Preprocessing()
 		  }
 	  }
 
-	
    num_funcs_var_occurs = (int *)ite_calloc(numinp+1, sizeof(int), 9, "num_funcs_var_occurs");
 	
 	for (int x = 0; x < nmbrFunctions; x++)

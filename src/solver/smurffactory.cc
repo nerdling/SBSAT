@@ -90,7 +90,7 @@ SmurfFactory()
    for (int i = 0; i < nmbrFunctions; i++)
    {
       if (i%100 == 0)
-         d2_printf3("\rCreating Smurfs ... %d/%d", i, nmbrFunctions);
+         d2e_printf3("\rCreating Smurfs ... %d/%d", i, nmbrFunctions);
 
       int nFunctionType = functionType[i];
       BDDNodeStruct *pFunc = functions[i];
@@ -110,7 +110,7 @@ SmurfFactory()
 
       if (!IsSpecialFunc(nFunctionType))
       {
-         d3_printf3("Constructing Smurf for %d/%d\r", i, nmbrFunctions);
+         d3_printf3("Constructing Smurf for %d/%d           \r", i, nmbrFunctions);
          arrIte2SolverSmurf[i] = nRegSmurfIndex;
          arrSmurfEqualityVble[nRegSmurfIndex] = arrIte2SolverVarMap[equalityVble[i]];
          SmurfState *pSmurfState = BDD2Smurf(pFunc);
@@ -157,6 +157,7 @@ SmurfFactory()
       printf("\n");
 #endif
    }
+   d3_printf1("\n");
 
    assert(nRegSmurfIndex == nNumRegSmurfs);
    if (nNumRegSmurfs) {
@@ -209,7 +210,7 @@ SmurfFactory()
          (long)(ite_counters[SMURF_NODE_FIND] - ite_counters[SMURF_NODE_NEW]),
          (long)(ite_counters[SMURF_NODE_FIND]),
          ite_counters[SMURF_NODE_FIND]==0?0:1.0 * (ite_counters[SMURF_NODE_FIND] - ite_counters[SMURF_NODE_NEW]) / ite_counters[SMURF_NODE_FIND]);
-   d2_printf1("\rCreating Smurfs ... Done                     \n");
+   d2e_printf1("\rCreating Smurfs ... Done                     \n");
 
    return SOLV_UNKNOWN;
 }
@@ -219,7 +220,7 @@ ITE_INLINE void
 InitSmurfFactory()
 {
    d9_printf1("InitSmurfFactory\n");
-   d2_printf1("Creating Smurfs ... ");
+   d2e_printf1("Creating Smurfs ... ");
 #ifdef DISPLAY_TRACE
    for (int i = 0; i < nmbrFunctions; i++)
    {

@@ -276,4 +276,8 @@ int term_getchar();
 extern char *CM, *SO, *SE, *CL;
 extern int term_width, term_height;
 
+void print_roller();
+void print_nonroller();
+void print_roller_init();
+
 #endif
