@@ -58,7 +58,7 @@ RecordSolution ()
    int  tmp_nNumElts = pChoicePointTop - pChoicePoint;
    int  tmp_nNumElts_allocate;
    if (result_display_type) {
-      tmp_nNumElts_allocate = nNumVariables+1;
+      tmp_nNumElts_allocate = numinp+1;
    } else {
       tmp_nNumElts_allocate = tmp_nNumElts+1;
    }
