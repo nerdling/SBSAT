@@ -112,10 +112,12 @@ int countnodes(BDDNode *f) {
 float mark_trues(BDDNode *f) {
 	if (f->density > -1)
 		return f->density;
-	f->density = mark_trues(f->thenCase);
-   f->density += mark_trues(f->elseCase);
-	f->density = f->density / 2.0;
-   return f->density;
+	float t = mark_trues(f->thenCase);
+	float e = mark_trues(f->elseCase);
+	f->density = (t + e) / 2;
+	f->tbr_weight = t / f->density;
+	//f->fbr_weight = 1-tbr_weight; Unnecessary for our purposes
+	return f->density;
 }
 
 void unmark (BDDNode * f) {
