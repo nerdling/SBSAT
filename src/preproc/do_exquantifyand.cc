@@ -125,6 +125,7 @@ int ExQuantifyAnd () {
 				BDDNode *inferBDD = ite_var(i);
 				int bdd_length = 0;
 				int *bdd_vars = NULL;
+				DO_INFERENCES = 1;
 				switch (int r=Rebuild_BDD(inferBDD, &bdd_length, bdd_vars)) {
 				 case TRIV_UNSAT:
 				 case TRIV_SAT:
@@ -217,13 +218,11 @@ int ExQuantifyAnd () {
 					DO_INFERENCES = 1;
 					continue;
 				}
-				if(functions[j] == Quantify) { 
-					DO_INFERENCES = 1;
-					continue;
-				} else { //functions[j] != Quantify
+				if(ex_infer == 1 && (functions[j]!=Quantify || x==1)) {
 					functions[j] = Quantify;
 					equalityVble[j] = 0;
 					functionType[j] = UNSURE;
+					DO_INFERENCES = 1;
 					switch (int r=Rebuild_BDDx(j)) {
 					 case TRIV_UNSAT: 
 					 case TRIV_SAT: 
@@ -231,162 +230,188 @@ int ExQuantifyAnd () {
 						ret = r; goto ea_bailout; /* as much as I hate gotos */
 					 default: break;
 					}
-					//Ea_repeat[j] = 0;
 					
-					if(ex_infer == 1) {
-						//Check for direct inferences.
-						DO_INFERENCES = 1;
-						switch (int r=Do_Apply_Inferences()) {
-						 case TRIV_UNSAT:
-						 case TRIV_SAT:
-						 case PREP_ERROR: return r;
-						 default: break;
-						}
-						int changed = 1;
-						//d3_printf1("Starting...");
-						while(changed == 1) {
-							//d3_printf2("[%d]", j);
-							//str_length = 0;
-							changed = 0;
-							//d3_printf1("going...");
-							for(int v = 0; v < length[j]; v++) {
-								//If variable v occurs in only this BDD.
-								if(amount[variables[j].num[v]].head->next == NULL) {
-									//d3_printf3("working on %d, %d\n", variables[j].num[v], length[j]);
-									BDDNode *Quantify = functions[j];
-									//Quantify out every Ex variable except variable v
-									int bdd_length;
-									int *bdd_vars = NULL;
-									for(int y = 0; y < length[j]; y++) {
-										if(v!=y && amount[variables[j].num[y]].head->next == NULL) {
-											//d3_printf2("%d ", variables[j].num[y]);
-											Quantify = xquantify(Quantify, variables[j].num[y]);
-										}
-									}
-									//d3_printf1("\n");
-									//printBDD(Quantify);
-									//d3_printf1("\n");
-
-									if(bdd_vars == NULL) {
-										bdd_length = 0;
-										switch (int r=Rebuild_BDD(Quantify, &bdd_length, bdd_vars)) {
-										 case TRIV_UNSAT:
-										 case TRIV_SAT:
-										 case PREP_ERROR: return r;
-										 default: break;
-										}
-									}
-									
-									if(inferlist->next != NULL) {
-										switch (int r=Do_Apply_Inferences()) {
-										 case TRIV_UNSAT:
-										 case TRIV_SAT:
-										 case PREP_ERROR: return r;
-										 default: break;
-										}
-										delete[] bdd_vars;
-										changed = 1;
-										break;
-									}
-									
-									int y;
-									for(y = 0; y < bdd_length; y++) 
-									  if(bdd_vars[y] == variables[j].num[v]) break;
-									delete [] bdd_vars;
-									bdd_vars = NULL;
-
-									if(y == bdd_length || bdd_length == 0) { //If variable dropped out, then set it to True
-										//d3_printf1("setting true ");
-										BDDNode *inferBDD = ite_var(variables[j].num[v]);
-										bdd_length = 0;
-										bdd_vars = NULL;
-										switch (int r=Rebuild_BDD(inferBDD, &bdd_length, bdd_vars)) {
-										 case TRIV_UNSAT:
-										 case TRIV_SAT:
-										 case PREP_ERROR: return r;
-										 default: break;
-										}
-										delete [] bdd_vars;
-										bdd_vars = NULL;
-										switch (int r=Do_Apply_Inferences()) {
-										 case TRIV_UNSAT:
-										 case TRIV_SAT:
-										 case PREP_ERROR: return r;
-										 default: break;
-										}
-										changed = 1;
-										break; //Inference applied, start over.
-									}
-
-									infer *x_infers = NULL;
-									x_infers = possible_infer_x(Quantify, variables[j].num[v]);
-									assert(x_infers!=NULL);
-									
-									if(x_infers->nums[0] != 0) {
-										BDDNode *inferBDD = true_ptr;
-										if(x_infers->nums[1] == 0)
-										  inferBDD = ite_and(inferBDD, ite_var(x_infers->nums[0]));
-										else
-										  inferBDD = ite_and(inferBDD, ite_equ(ite_var(x_infers->nums[0]), ite_var(x_infers->nums[1])));
-										while(x_infers!=NULL) {
-											infer *temp = x_infers; x_infers = x_infers->next; delete temp;
-										}
-										
-										int bdd_length = 0;
-										int *bdd_vars = NULL;
-										switch (int r=Rebuild_BDD(inferBDD, &bdd_length, bdd_vars)) {
-										 case TRIV_UNSAT:
-										 case TRIV_SAT:
-										 case PREP_ERROR: return r;
-										 default: break;
-										}
-										delete [] bdd_vars;
-										bdd_vars = NULL;
-										switch (int r=Do_Apply_Inferences()) {
-										 case TRIV_UNSAT:
-										 case TRIV_SAT:
-										 case PREP_ERROR: return r;
-										 default: break;
-										}
-										changed = 1;										
-										break;
+					int changed = 1;
+					//d3_printf1("Starting...");
+					while(changed == 1) {
+						//d3_printf2("[%d]", j);
+						//str_length = 0;
+						changed = 0;
+						//d3_printf1("going...");
+						for(int v = 0; v < length[j]; v++) {
+							//If variable v occurs in only this BDD.
+							if(amount[variables[j].num[v]].head->next == NULL) {
+								//d3_printf3("working on %d, %d\n", variables[j].num[v], length[j]);
+								BDDNode *Quantify = functions[j];
+								//Quantify out every Ex variable except variable v
+								int bdd_length;
+								int *bdd_vars = NULL;
+								for(int y = 0; y < length[j]; y++) {
+									if(v!=y && amount[variables[j].num[y]].head->next == NULL) {
+										//d3_printf2("%d ", variables[j].num[y]);
+										Quantify = xquantify(Quantify, variables[j].num[y]);
 									}
 								}
-							}
-							if(changed == 1) {
-								ret = PREP_CHANGED;
-								SetRepeats(j);
+								//d3_printf1("\n");
+								//printBDD(Quantify);
+								//d3_printf1("\n");
+								
+								if(bdd_vars == NULL) {
+									bdd_length = 0;
+									switch (int r=Rebuild_BDD(Quantify, &bdd_length, bdd_vars)) {
+									 case TRIV_UNSAT:
+									 case TRIV_SAT:
+									 case PREP_ERROR: return r;
+									 default: break;
+									}
+								}
+								
+								if(inferlist->next != NULL) {
+									switch (int r=Do_Apply_Inferences()) {
+									 case TRIV_UNSAT:
+									 case TRIV_SAT:
+									 case PREP_ERROR: return r;
+									 default: break;
+									}
+									delete[] bdd_vars;
+									changed = 1;
+									break;
+								}
+								
+								int y;
+								for(y = 0; y < bdd_length; y++) 
+								  if(bdd_vars[y] == variables[j].num[v]) break;
+								delete [] bdd_vars;
+								bdd_vars = NULL;
+								
+								if(y == bdd_length || bdd_length == 0) { //If variable dropped out, then set it to True
+									//d3_printf1("setting true ");
+									BDDNode *inferBDD = ite_var(variables[j].num[v]);
+									bdd_length = 0;
+									bdd_vars = NULL;
+									switch (int r=Rebuild_BDD(inferBDD, &bdd_length, bdd_vars)) {
+									 case TRIV_UNSAT:
+									 case TRIV_SAT:
+									 case PREP_ERROR: return r;
+									 default: break;
+									}
+									delete [] bdd_vars;
+									bdd_vars = NULL;
+									switch (int r=Do_Apply_Inferences()) {
+									 case TRIV_UNSAT:
+									 case TRIV_SAT:
+									 case PREP_ERROR: return r;
+									 default: break;
+									}
+									changed = 1;
+									break; //Inference applied, start over.
+								}
+								
+								infer *x_infers = NULL;
+								x_infers = possible_infer_x(Quantify, variables[j].num[v]);
+								assert(x_infers!=NULL);
+								
+								if(x_infers->nums[0] != 0) {
+									BDDNode *inferBDD = true_ptr;
+									if(x_infers->nums[1] == 0)
+									  inferBDD = ite_and(inferBDD, ite_var(x_infers->nums[0]));
+									else
+									  inferBDD = ite_and(inferBDD, ite_equ(ite_var(x_infers->nums[0]), ite_var(x_infers->nums[1])));
+									while(x_infers!=NULL) {
+										infer *temp = x_infers; x_infers = x_infers->next; delete temp;
+									}
+									
+									int bdd_length = 0;
+									int *bdd_vars = NULL;
+									switch (int r=Rebuild_BDD(inferBDD, &bdd_length, bdd_vars)) {
+									 case TRIV_UNSAT:
+									 case TRIV_SAT:
+									 case PREP_ERROR: return r;
+									 default: break;
+									}
+									delete [] bdd_vars;
+									bdd_vars = NULL;
+									switch (int r=Do_Apply_Inferences()) {
+									 case TRIV_UNSAT:
+									 case TRIV_SAT:
+									 case PREP_ERROR: return r;
+									 default: break;
+									}
+									changed = 1;										
+									break;
+								}
 							}
 						}
-					} else {
-						for(int iter = 0; iter<str_length; iter++)
-						  d3_printf1("\b");
-						d3_printf2 ("*{%d}", i);
-						str_length = 0;// strlen(p);
-						functions[j] = xquantify (functions[j], i);
-						variablelist[i].true_false = 2;
-						SetRepeats(j);
-				
-						DO_INFERENCES = 1;
-						
-						switch (int r=Rebuild_BDDx(j)) {
-						 case TRIV_UNSAT:
-						 case TRIV_SAT: 
-						 case PREP_ERROR: 
-							ret = r; goto ea_bailout; /* as much as I hate gotos */
-						 default: break;
+						if(changed == 1) {
+							ret = PREP_CHANGED;
+							SetRepeats(j);
 						}
-						equalityVble[j] = 0;
-						functionType[j] = UNSURE;
-						ret = PREP_CHANGED;
-						goto ea_bailout; /* as much as I hate gotos */
 					}
+				} else if(functions[j] == Quantify && x!=1) {
+					DO_INFERENCES = 1;
+					switch (int r=Do_Apply_Inferences()) {
+					 case TRIV_UNSAT:
+					 case TRIV_SAT:
+					 case PREP_ERROR: return r;
+					 default: break;
+					}
+					continue;
+				} else if(out == 1) {
+					functions[j] = Quantify;
+					equalityVble[j] = 0;
+					functionType[j] = UNSURE;
+					DO_INFERENCES = 1;
+					switch (int r=Rebuild_BDDx(j)) {
+					 case TRIV_UNSAT: 
+					 case TRIV_SAT: 
+					 case PREP_ERROR: 
+						ret = r; goto ea_bailout; /* as much as I hate gotos */
+					 default: break;
+					}
+					ret = PREP_CHANGED;
+				} else if(ex_infer == 0 && amount[i].head->next==NULL && amount[i].head->num == j
+							 && inferlist->next==NULL) {
+					//Triple Extra Protection!
+					functions[j] = Quantify;
+					for(int iter = 0; iter<str_length; iter++)
+					  d3_printf1("\b");
+					d3_printf2 ("*{%d}", i);
+					str_length = 0;// strlen(p);
+					functions[j] = xquantify (functions[j], i);
+					variablelist[i].true_false = 2;
+					SetRepeats(j);
+
+					DO_INFERENCES = 1;					
+					switch (int r=Rebuild_BDDx(j)) {
+					 case TRIV_UNSAT:
+					 case TRIV_SAT: 
+					 case PREP_ERROR: 
+						ret = r; goto ea_bailout; /* as much as I hate gotos */
+					 default: break;
+					}
+					equalityVble[j] = 0;
+					functionType[j] = UNSURE;
+					ret = PREP_CHANGED;
+					//goto ea_bailout; /* as much as I hate gotos */
+				} else {
+					functions[j] = Quantify;
+					DO_INFERENCES = 1;					
+					switch (int r=Rebuild_BDDx(j)) {
+					 case TRIV_UNSAT:
+					 case TRIV_SAT: 
+					 case PREP_ERROR: 
+						ret = r; goto ea_bailout; /* as much as I hate gotos */
+					 default: break;
+					}
+					equalityVble[j] = 0;
+					functionType[j] = UNSURE;
+					ret = PREP_CHANGED;
 				}
 			}
 		}
 	}
 	ea_bailout:
-
+	
 	for(int x = 0; x < nmbrFunctions; x++)
 	  Ea_repeat[x] = 1;
 	return ret;
