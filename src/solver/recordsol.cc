@@ -94,7 +94,8 @@ RecordSolution ()
 			solution_info = (t_solution_info*)(solution_info->next);
       }
       for (int i = 0; i<nNumVariables; i++) {
-			tmp_solution_info->arrElts[arrSolver2IteVarMap[i]] = arrSolution[i];
+         if (arrSolver2IteVarMap[i] <= numinp)
+            tmp_solution_info->arrElts[arrSolver2IteVarMap[i]] = arrSolution[i];
       }
    } else {
       free(tmp_arrElts);
