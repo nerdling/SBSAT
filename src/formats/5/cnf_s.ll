@@ -7,6 +7,9 @@ extern int s_line;
 #define YY_NO_UNPUT
 /* remove warning statement has no effect */
 #define ECHO
+
+#define yyterminate() { cnf__delete_buffer(yy_current_buffer); return YY_NULL; }
+
 %}
 %option noyywrap
 %option debug

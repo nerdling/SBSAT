@@ -522,10 +522,10 @@ int yy_flex_debug = 1;
 
 static yyconst short int yy_rule_linenum[36] =
     {   0,
-       33,   34,   35,   36,   37,   38,   39,   40,   42,   43,
-       45,   46,   47,   48,   49,   50,   51,   53,   54,   55,
-       56,   58,   59,   60,   61,   63,   65,   66,   68,   69,
-       71,   72,   74,   75,   77
+       35,   36,   37,   38,   39,   40,   41,   42,   44,   45,
+       47,   48,   49,   50,   51,   52,   53,   55,   56,   57,
+       58,   60,   61,   62,   63,   65,   67,   68,   70,   71,
+       73,   74,   76,   77,   79
     } ;
 
 /* The intent behind this definition is that it'll catch
@@ -548,6 +548,8 @@ extern int s_line;
 /* remove warning statement has no effect */
 #define ECHO
 
+#define yyterminate() { trace__delete_buffer(yy_current_buffer); return YY_NULL; }
+
 #define FILL_OP(xfn, xfntype, xfnas, xfnneg) { trace_lval.op2fn.fn=xfn; trace_lval.op2fn.fn_type=xfntype; trace_lval.op2fn.as_type=xfnas; trace_lval.op2fn.neg_all=xfnneg; }
 /*%option outfile="trace_s.c" */
 /*INTNUMBER    [+-]?[0-9]+*/
@@ -558,7 +560,7 @@ nand		{ FILL_OP(op_nand, NAND);  return OP; }
 nor		{ FILL_OP(op_nor, NOR);    return OP; }
 nimp		{ FILL_OP(op_nimp, LIMP);  return OP; }
 */
-#line 562 "trace_s.cc"
+#line 564 "trace_s.cc"
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -709,10 +711,10 @@ YY_DECL
 	register char *yy_cp = NULL, *yy_bp = NULL;
 	register int yy_act;
 
-#line 31 "trace_s.ll"
+#line 33 "trace_s.ll"
 
 
-#line 716 "trace_s.cc"
+#line 718 "trace_s.cc"
 
 	if ( yy_init )
 		{
@@ -812,185 +814,185 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 33 "trace_s.ll"
+#line 35 "trace_s.ll"
 return MODULE;
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 34 "trace_s.ll"
+#line 36 "trace_s.ll"
 return ENDMODULE;
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 35 "trace_s.ll"
+#line 37 "trace_s.ll"
 return INPUT;
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 36 "trace_s.ll"
+#line 38 "trace_s.ll"
 return OUTPUT;
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 37 "trace_s.ll"
+#line 39 "trace_s.ll"
 return STRUCTURE;
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 38 "trace_s.ll"
+#line 40 "trace_s.ll"
 return OP_ITE;
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 39 "trace_s.ll"
+#line 41 "trace_s.ll"
 return OP_NEW_INT_LEAF;
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 40 "trace_s.ll"
+#line 42 "trace_s.ll"
 return ARE_EQUAL;
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 42 "trace_s.ll"
+#line 44 "trace_s.ll"
 return TPRINT;
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 43 "trace_s.ll"
+#line 45 "trace_s.ll"
 return C_OP;
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 45 "trace_s.ll"
+#line 47 "trace_s.ll"
 { FILL_OP(op_and, AND, AS_FULL, 0);    return OP; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 46 "trace_s.ll"
+#line 48 "trace_s.ll"
 { FILL_OP(op_or, OR, AS_FULL, 0);      return OP; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 47 "trace_s.ll"
+#line 49 "trace_s.ll"
 { FILL_OP(op_xor, XOR, AS_FULL, 0);    return OP; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 48 "trace_s.ll"
+#line 50 "trace_s.ll"
 { FILL_OP(op_imp, LIMP, AS_LEFT, 0);  return OP; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 49 "trace_s.ll"
+#line 51 "trace_s.ll"
 { FILL_OP(op_imp, RIMP, AS_RIGHT, 0); return OP; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 50 "trace_s.ll"
+#line 52 "trace_s.ll"
 { FILL_OP(op_imp, LIMP, AS_LEFT, 0);   return OP; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 51 "trace_s.ll"
+#line 53 "trace_s.ll"
 { FILL_OP(op_equ, EQU, AS_RIGHT, 0);    return OP; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 53 "trace_s.ll"
+#line 55 "trace_s.ll"
 { FILL_OP(op_imp, LNIMP, AS_LEFT, 1);  return OP; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 54 "trace_s.ll"
+#line 56 "trace_s.ll"
 { FILL_OP(op_imp, RNIMP, AS_RIGHT, 1);  return OP; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 55 "trace_s.ll"
+#line 57 "trace_s.ll"
 { FILL_OP(op_and, NAND, AS_LEFT, 1);  return OP; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 56 "trace_s.ll"
+#line 58 "trace_s.ll"
 { FILL_OP(op_or, NOR, AS_LEFT, 1);  return OP; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 58 "trace_s.ll"
+#line 60 "trace_s.ll"
 { FILL_OP(NULL, 0, 0, 0);        return OP; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 59 "trace_s.ll"
+#line 61 "trace_s.ll"
 { FILL_OP(NULL, 0, 0, 0);        return OP; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 60 "trace_s.ll"
+#line 62 "trace_s.ll"
 { FILL_OP(NULL, 0, 0, 0);        return OP; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 61 "trace_s.ll"
+#line 63 "trace_s.ll"
 {                          return U_OP_NOT; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 63 "trace_s.ll"
+#line 65 "trace_s.ll"
 { strcpy(trace_lval.id, yytext); return U_OP; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 65 "trace_s.ll"
+#line 67 "trace_s.ll"
 { trace_lval.num=atoi(yytext);  return INTNUMBER; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 66 "trace_s.ll"
+#line 68 "trace_s.ll"
 { strcpy(trace_lval.id,yytext); return ID; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 68 "trace_s.ll"
+#line 70 "trace_s.ll"
 return *yytext;
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 69 "trace_s.ll"
+#line 71 "trace_s.ll"
 { strcpy(trace_lval.id,yytext); return STRING; }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 71 "trace_s.ll"
+#line 73 "trace_s.ll"
 /* eat up one-line comments */
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 72 "trace_s.ll"
+#line 74 "trace_s.ll"
 /* eat up one-line comments */
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 74 "trace_s.ll"
+#line 76 "trace_s.ll"
 /* eat up whitespace */
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 75 "trace_s.ll"
+#line 77 "trace_s.ll"
 /* eat up new-lines */ s_line++;
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 77 "trace_s.ll"
+#line 79 "trace_s.ll"
 printf( "Unrecognized character: %s\n", yytext ); 
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 79 "trace_s.ll"
+#line 81 "trace_s.ll"
 ECHO;
 	YY_BREAK
-#line 994 "trace_s.cc"
+#line 996 "trace_s.cc"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1871,6 +1873,6 @@ int main()
 	return 0;
 	}
 #endif
-#line 79 "trace_s.ll"
+#line 81 "trace_s.ll"
 
 

@@ -394,8 +394,8 @@ int yy_flex_debug = 1;
 
 static yyconst short int yy_rule_linenum[14] =
     {   0,
-       25,   26,   27,   28,   29,   30,   31,   33,   35,   37,
-       38,   39,   41
+       27,   28,   29,   30,   31,   32,   33,   35,   37,   39,
+       40,   41,   43
     } ;
 
 /* The intent behind this definition is that it'll catch
@@ -418,13 +418,15 @@ char *yytext;
 /* remove warning statement has no effect */
 #define ECHO
 
+#define yyterminate() { prover3__delete_buffer(yy_current_buffer); return YY_NULL; }
+
 extern int s_line;
 void prover3_ll_nothing() { };
 #define names 1
 #define ttable 2
 
 /*%option outfile="blif_s.c" */
-#line 428 "prover3_s.cc"
+#line 430 "prover3_s.cc"
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -575,10 +577,10 @@ YY_DECL
 	register char *yy_cp = NULL, *yy_bp = NULL;
 	register int yy_act;
 
-#line 23 "prover3_s.ll"
+#line 25 "prover3_s.ll"
 
 
-#line 582 "prover3_s.cc"
+#line 584 "prover3_s.cc"
 
 	if ( yy_init )
 		{
@@ -678,75 +680,75 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 25 "prover3_s.ll"
+#line 27 "prover3_s.ll"
 { return P_EQUIV; }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 26 "prover3_s.ll"
+#line 28 "prover3_s.ll"
 { return P_IMP; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 27 "prover3_s.ll"
+#line 29 "prover3_s.ll"
 { return '#'; } /* or */
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 28 "prover3_s.ll"
+#line 30 "prover3_s.ll"
 { return '&'; } /* and */
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 29 "prover3_s.ll"
+#line 31 "prover3_s.ll"
 { return '('; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 30 "prover3_s.ll"
+#line 32 "prover3_s.ll"
 { return ')'; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 31 "prover3_s.ll"
+#line 33 "prover3_s.ll"
 { return '~'; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 33 "prover3_s.ll"
+#line 35 "prover3_s.ll"
 { strcpy(prover3_lval.id,yytext); return ID; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 35 "prover3_s.ll"
+#line 37 "prover3_s.ll"
 /* eat up one-line comments */
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 37 "prover3_s.ll"
+#line 39 "prover3_s.ll"
 /* eat up whitespace */
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 38 "prover3_s.ll"
+#line 40 "prover3_s.ll"
 /* eat up new-lines */ { s_line++; if (s_line%100==0) d2_printf3("\rLine: %d, Functions: %d", s_line, nmbrFunctions); }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 39 "prover3_s.ll"
+#line 41 "prover3_s.ll"
 /* eat up new-lines */ { s_line++;  if (s_line%100==0) d2_printf3("\rLine: %d, Functions: %d", s_line, nmbrFunctions); }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 41 "prover3_s.ll"
+#line 43 "prover3_s.ll"
 printf( "Unrecognized character: %s\n", yytext ); 
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 43 "prover3_s.ll"
+#line 45 "prover3_s.ll"
 ECHO;
 	YY_BREAK
-#line 750 "prover3_s.cc"
+#line 752 "prover3_s.cc"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(names):
 case YY_STATE_EOF(ttable):
@@ -1629,5 +1631,5 @@ int main()
 	return 0;
 	}
 #endif
-#line 43 "prover3_s.ll"
+#line 45 "prover3_s.ll"
 

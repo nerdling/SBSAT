@@ -42,7 +42,7 @@ int term_height=25;
 int term_width=80;
 int auto_wrap;
 
-char term_buffer[2048];
+char term_buffer[2048]="";
 
 char *CM=NULL, *SO=NULL, *SE=NULL, *CL=NULL;
 char *tv_stype;
@@ -55,8 +55,9 @@ char * qgetstr(char *ref)
 {
    char *tmp=NULL;
 #ifdef HAVE_TERMCAP_H
+   char *tmp_tcapbuf = tcapbuf;
 
-   if ((tmp = tgetstr(ref, (char**)&tcapbuf)) == NULL) {
+   if ((tmp = tgetstr(ref, (char**)&tmp_tcapbuf)) == NULL) {
       printf("/etc/termcap terminal %s must have a %s= entry\n",
             tv_stype, ref);
    }

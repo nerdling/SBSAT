@@ -473,8 +473,8 @@ int yy_flex_debug = 1;
 
 static yyconst short int yy_rule_linenum[18] =
     {   0,
-       30,   31,   32,   33,   34,   35,   37,   38,   39,   40,
-       42,   43,   45,   46,   47,   48,   50
+       32,   33,   34,   35,   36,   37,   39,   40,   41,   42,
+       44,   45,   47,   48,   49,   50,   52
     } ;
 
 /* The intent behind this definition is that it'll catch
@@ -497,6 +497,8 @@ char *yytext;
 /* remove warning statement has no effect */
 #define ECHO
 
+#define yyterminate() { blif__delete_buffer(yy_current_buffer); return YY_NULL; }
+
 extern int s_line;
 void blif_ll_nothing() { };
 #define names 1
@@ -505,7 +507,7 @@ void blif_ll_nothing() { };
 /*%option outfile="blif_s.c" */
 /*INTNUMBER    [+-]?[0-9]+*/
 /* ID           [a-zA-Z_][\[\].-a-zA-Z0-9_]* */
-#line 509 "blif_s.cc"
+#line 511 "blif_s.cc"
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -656,10 +658,10 @@ YY_DECL
 	register char *yy_cp = NULL, *yy_bp = NULL;
 	register int yy_act;
 
-#line 28 "blif_s.ll"
+#line 30 "blif_s.ll"
 
 
-#line 663 "blif_s.cc"
+#line 665 "blif_s.cc"
 
 	if ( yy_init )
 		{
@@ -759,95 +761,95 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 30 "blif_s.ll"
+#line 32 "blif_s.ll"
 { BEGIN(INITIAL); return MODEL; }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 31 "blif_s.ll"
+#line 33 "blif_s.ll"
 { BEGIN(INITIAL); return INPUTS; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 32 "blif_s.ll"
+#line 34 "blif_s.ll"
 { BEGIN(INITIAL); return OUTPUTS; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 33 "blif_s.ll"
+#line 35 "blif_s.ll"
 { BEGIN(INITIAL); return LATCH; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 34 "blif_s.ll"
+#line 36 "blif_s.ll"
 { BEGIN(names); return NAMES; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 35 "blif_s.ll"
+#line 37 "blif_s.ll"
 { BEGIN(INITIAL); return END; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 37 "blif_s.ll"
+#line 39 "blif_s.ll"
 { strcpy(blif_lval.id,yytext); return TT; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 38 "blif_s.ll"
+#line 40 "blif_s.ll"
 { strcpy(blif_lval.id,yytext); return TTONE; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 39 "blif_s.ll"
+#line 41 "blif_s.ll"
 return ZEROONE;
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 40 "blif_s.ll"
+#line 42 "blif_s.ll"
 { strcpy(blif_lval.id,yytext); return ID; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 42 "blif_s.ll"
+#line 44 "blif_s.ll"
 /* eat up one-line comments */
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 43 "blif_s.ll"
+#line 45 "blif_s.ll"
 /* eat up one-line comments */
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 45 "blif_s.ll"
+#line 47 "blif_s.ll"
 /* eat up whitespace */
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 46 "blif_s.ll"
+#line 48 "blif_s.ll"
 /* eat up new-lines */ s_line++;
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 47 "blif_s.ll"
+#line 49 "blif_s.ll"
 { BEGIN(ttable); }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 48 "blif_s.ll"
+#line 50 "blif_s.ll"
 /* eat up new-lines */ s_line++;
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 50 "blif_s.ll"
+#line 52 "blif_s.ll"
 printf( "Unrecognized character: %s\n", yytext ); 
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 52 "blif_s.ll"
+#line 54 "blif_s.ll"
 ECHO;
 	YY_BREAK
-#line 851 "blif_s.cc"
+#line 853 "blif_s.cc"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(names):
 case YY_STATE_EOF(ttable):
@@ -1730,5 +1732,5 @@ int main()
 	return 0;
 	}
 #endif
-#line 52 "blif_s.ll"
+#line 54 "blif_s.ll"
 

@@ -16,6 +16,7 @@
    void     ite_flag_vars(symrec **, int);
    void trace_reallocate_varlist();
    void trace_reallocate_exp();
+   void trace_free();
 
    symrec **trace_varlist = NULL;
    int trace_varmax = 0;
@@ -63,7 +64,7 @@ module:  MODULE ID
 ;
 
 endmodule:  ENDMODULE
-            { /* print_symtable(); */ }
+            { /* print_symtable(); */ trace_free(); }
 ;
 
 input: /* empty */
@@ -155,6 +156,20 @@ trace_reallocate_varlist()
       trace_varlist = (symrec **)ite_recalloc((void*)trace_varlist, trace_varmax, trace_varmax+100, sizeof(symrec *), 9, "trace_varlist");
       trace_varmax += 100;
    }
+}
+
+void
+trace_free()
+{
+   ite_free((void**)&trace_varlist);
+   trace_varmax = 0;
+
+   for(int i=0;i<explevel_max;i++)
+      ite_free((void**)&explist[i]);
+   ite_free((void**)&explist);
+   ite_free((void**)&expindex);
+   ite_free((void**)&expmax);
+   explevel_max = 0;
 }
 
 void

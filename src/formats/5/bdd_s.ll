@@ -9,6 +9,8 @@ extern int s_line;
 /* remove warning statement has no effect */
 #define ECHO
 
+#define yyterminate() { bdd__delete_buffer(yy_current_buffer); return YY_NULL; }
+
 %}
 
 %option noyywrap

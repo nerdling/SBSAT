@@ -401,8 +401,8 @@ int yy_flex_debug = 1;
 
 static yyconst short int yy_rule_linenum[16] =
     {   0,
-       25,   26,   27,   28,   29,   30,   31,   32,   33,   35,
-       37,   39,   40,   41,   43
+       27,   28,   29,   30,   31,   32,   33,   34,   35,   37,
+       39,   41,   42,   43,   45
     } ;
 
 /* The intent behind this definition is that it'll catch
@@ -425,13 +425,15 @@ char *yytext;
 /* remove warning statement has no effect */
 #define ECHO
 
+#define yyterminate() { iscas__delete_buffer(yy_current_buffer); return YY_NULL; }
+
 extern int s_line;
 void iscas_ll_nothing() { };
 #define names 1
 #define ttable 2
 
 /*%option outfile="blif_s.c" */
-#line 435 "iscas_s.cc"
+#line 437 "iscas_s.cc"
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -582,10 +584,10 @@ YY_DECL
 	register char *yy_cp = NULL, *yy_bp = NULL;
 	register int yy_act;
 
-#line 23 "iscas_s.ll"
+#line 25 "iscas_s.ll"
 
 
-#line 589 "iscas_s.cc"
+#line 591 "iscas_s.cc"
 
 	if ( yy_init )
 		{
@@ -685,85 +687,85 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 25 "iscas_s.ll"
+#line 27 "iscas_s.ll"
 { return P_INPUT; }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 26 "iscas_s.ll"
+#line 28 "iscas_s.ll"
 { return P_OUTPUT; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 27 "iscas_s.ll"
+#line 29 "iscas_s.ll"
 { return '='; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 28 "iscas_s.ll"
+#line 30 "iscas_s.ll"
 { return ','; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 29 "iscas_s.ll"
+#line 31 "iscas_s.ll"
 { return P_OR; } /* or */
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 30 "iscas_s.ll"
+#line 32 "iscas_s.ll"
 { return P_AND; } /* and */
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 31 "iscas_s.ll"
+#line 33 "iscas_s.ll"
 { return '('; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 32 "iscas_s.ll"
+#line 34 "iscas_s.ll"
 { return ')'; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 33 "iscas_s.ll"
+#line 35 "iscas_s.ll"
 { return P_NOT; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 35 "iscas_s.ll"
+#line 37 "iscas_s.ll"
 { strcpy(iscas_lval.id,yytext); return ID; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 37 "iscas_s.ll"
+#line 39 "iscas_s.ll"
 /* eat up one-line comments */
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 39 "iscas_s.ll"
+#line 41 "iscas_s.ll"
 /* eat up whitespace */
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 40 "iscas_s.ll"
+#line 42 "iscas_s.ll"
 /* eat up new-lines */ { s_line++; if (s_line%100==0) d2_printf3("\rLine: %d, Functions: %d", s_line, nmbrFunctions); }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 41 "iscas_s.ll"
+#line 43 "iscas_s.ll"
 /* eat up new-lines */ { s_line++;  if (s_line%100==0) d2_printf3("\rLine: %d, Functions: %d", s_line, nmbrFunctions); }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 43 "iscas_s.ll"
+#line 45 "iscas_s.ll"
 printf( "Unrecognized character: %s\n", yytext ); 
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 45 "iscas_s.ll"
+#line 47 "iscas_s.ll"
 ECHO;
 	YY_BREAK
-#line 767 "iscas_s.cc"
+#line 769 "iscas_s.cc"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(names):
 case YY_STATE_EOF(ttable):
@@ -1646,5 +1648,5 @@ int main()
 	return 0;
 	}
 #endif
-#line 45 "iscas_s.ll"
+#line 47 "iscas_s.ll"
 

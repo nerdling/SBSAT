@@ -8,6 +8,8 @@
 /* remove warning statement has no effect */
 #define ECHO
 
+#define yyterminate() { prover3__delete_buffer(yy_current_buffer); return YY_NULL; }
+
 extern int s_line;
 void prover3_ll_nothing() { };
 %}
