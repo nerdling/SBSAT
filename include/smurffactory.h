@@ -151,8 +151,6 @@ struct Transition
   SmurfState *pNextState;
   IntegerSet_ArrayBased positiveInferences;
   IntegerSet_ArrayBased negativeInferences;
-  LemmaBlock **arrPosInferenceLemmas;
-  LemmaBlock **arrNegInferenceLemmas;
   double fHeuristicWeight;
 };
 

@@ -190,27 +190,8 @@ DisplayTransition(Transition *pTransition, int nVble, int nValue)
 	      cout << "Pos Inferences: ";
 	      //Display_ISAB(pTransition->positiveInferences);
 	      cout << endl;
-#ifdef DISPLAY_LEMMAS
-	      int nNumInferences = pTransition->positiveInferences.nNumElts;
-	      LemmaBlock **arrLemmas = pTransition->arrPosInferenceLemmas;
-	      cout << "Lemmas:" << endl;
-	      for (int i = 0; i < nNumInferences; i++)
-		{
-		  DisplayLemma(arrLemmas[i]);
-		}
-#endif
 	      cout << "Neg Inferences: ";
 	      //Display_ISAB(pTransition->negativeInferences);
-	      cout << endl;
-#ifdef DISPLAY_LEMMAS
-	      nNumInferences = pTransition->negativeInferences.nNumElts;
-	      arrLemmas = pTransition->arrNegInferenceLemmas;
-	      cout << "Lemmas:" << endl;
-	      for (int i = 0; i < nNumInferences; i++)
-		{
-		  DisplayLemma(arrLemmas[i]);
-		}
-#endif
 	      cout << endl;
 #ifdef PRINT_HEURISTIC_INFO
 	      if (nHeuristic == JOHNSON_HEURISTIC) 

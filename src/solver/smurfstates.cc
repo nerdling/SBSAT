@@ -110,17 +110,6 @@ FreeSmurfStatePool()
                if (arrSmurfStatePool[i].arrTransitions[2*k+BOOL_FALSE].negativeInferences.arrElts)
                   free(arrSmurfStatePool[i].arrTransitions[2*k+BOOL_FALSE].negativeInferences.arrElts);
 
-               if (arrSmurfStatePool[i].arrTransitions[2*k+BOOL_TRUE].arrPosInferenceLemmas)
-                  free (arrSmurfStatePool[i].arrTransitions[2*k+BOOL_TRUE].arrPosInferenceLemmas);
-	       else
-               if (arrSmurfStatePool[i].arrTransitions[2*k+BOOL_TRUE].arrNegInferenceLemmas)
-                  free (arrSmurfStatePool[i].arrTransitions[2*k+BOOL_TRUE].arrNegInferenceLemmas);
-	       else
-               if (arrSmurfStatePool[i].arrTransitions[2*k+BOOL_FALSE].arrPosInferenceLemmas)
-                  free (arrSmurfStatePool[i].arrTransitions[2*k+BOOL_FALSE].arrPosInferenceLemmas);
-	       else
-               if (arrSmurfStatePool[i].arrTransitions[2*k+BOOL_FALSE].arrNegInferenceLemmas)
-                  free (arrSmurfStatePool[i].arrTransitions[2*k+BOOL_FALSE].arrNegInferenceLemmas);
             }
             free(arrSmurfStatePool[i].arrTransitions);
          }

@@ -38,8 +38,7 @@
 #include "solver.h"
 
 ITE_INLINE int
-CheckSmurfInferences(int nSmurfIndex, int *arrInferences, int nNumInferences, 
-      LemmaBlock **arrInferenceLemmas, int value)
+CheckSmurfInferences(int nSmurfIndex, int *arrInferences, int nNumInferences, int value)
 {
    for (int j = 0; j < nNumInferences; j++)
    {
@@ -50,35 +49,30 @@ CheckSmurfInferences(int nSmurfIndex, int *arrInferences, int nNumInferences,
 
       LemmaBlock *pLemma = NULL;
       LemmaInfoStruct *pLemmaInfo = NULL;
-      if (arrInferenceLemmas == NULL) {
-         if (NO_LEMMAS == 0) {
-            /* create lemma */
-            arrSmurfPath[nSmurfIndex].literals[arrSmurfPath[nSmurfIndex].idx] 
-               = nNewInferredAtom * (value==BOOL_FALSE?-1:1);
+      if (NO_LEMMAS == 0) {
+         /* create lemma */
+         arrSmurfPath[nSmurfIndex].literals[arrSmurfPath[nSmurfIndex].idx] 
+            = nNewInferredAtom * (value==BOOL_FALSE?-1:1);
 
 #ifdef MATCH_ORIGINAL_LEMMA_ORDER
-            int *arrLits = (int*)ite_calloc(arrSmurfPath[nSmurfIndex].idx+1, sizeof(int),
-                  9, "arrLits");
-            for (int i=0; i<arrSmurfPath[nSmurfIndex].idx+1;i++)
-               arrLits[arrSmurfPath[nSmurfIndex].idx+1-i-1] = arrSmurfPath[nSmurfIndex].literals[i];
+         int *arrLits = (int*)ite_calloc(arrSmurfPath[nSmurfIndex].idx+1, sizeof(int),
+               9, "arrLits");
+         for (int i=0; i<arrSmurfPath[nSmurfIndex].idx+1;i++)
+            arrLits[arrSmurfPath[nSmurfIndex].idx+1-i-1] = arrSmurfPath[nSmurfIndex].literals[i];
 
-            pLemmaInfo=AddLemma(arrSmurfPath[nSmurfIndex].idx+1,
-                  arrLits/*arrSmurfPath[nSmurfIndex].literals*/,
-                  false, NULL, NULL);
-            pLemma = pLemmaInfo->pLemma;
-            free(arrLits);
+         pLemmaInfo=AddLemma(arrSmurfPath[nSmurfIndex].idx+1,
+               arrLits/*arrSmurfPath[nSmurfIndex].literals*/,
+               false, NULL, NULL);
+         pLemma = pLemmaInfo->pLemma;
+         free(arrLits);
 #else
-            pLemmaInfo=AddLemma(arrSmurfPath[nSmurfIndex].idx+1,
-                  arrSmurfPath[nSmurfIndex].literals, false, NULL, NULL);
-            pLemma = pLemmaInfo->pLemma;
+         pLemmaInfo=AddLemma(arrSmurfPath[nSmurfIndex].idx+1,
+               arrSmurfPath[nSmurfIndex].literals, false, NULL, NULL);
+         pLemma = pLemmaInfo->pLemma;
 #endif
-            //DisplayLemmaStatus(pLemma, arrSolution);
-         } else {
-            //pLemma = NULL;
-            //pLemmaInfo = NULL;
-         }
+         //DisplayLemmaStatus(pLemma, arrSolution);
       } else {
-         pLemma = arrInferenceLemmas[j];
+         //pLemma = NULL;
          //pLemmaInfo = NULL;
       }
 
@@ -149,7 +143,6 @@ UpdateRegularSmurf(int nSmurfIndex)
                nSmurfIndex,
                pTransition->positiveInferences.arrElts,
                   pTransition->positiveInferences.nNumElts,
-                  pTransition->arrPosInferenceLemmas,
                   BOOL_TRUE)) return ERR_BT_SMURF;
 
          if (pTransition->negativeInferences.nNumElts &&
@@ -157,7 +150,6 @@ UpdateRegularSmurf(int nSmurfIndex)
                   nSmurfIndex,
                   pTransition->negativeInferences.arrElts,
                   pTransition->negativeInferences.nNumElts,
-                  pTransition->arrNegInferenceLemmas,
                   BOOL_FALSE)) return ERR_BT_SMURF;
 
          arrCurrentStates[nSmurfIndex] = 
