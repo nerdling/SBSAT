@@ -188,9 +188,9 @@ int ExQuantify () {
 									BDDFuncs = (BDDNode **)ite_recalloc(NULL, 0, 1, sizeof(BDDNode *), 9, "BDDFuncs");
 									//BDDFuncs[0] = strip_x_BDD(Quantify, quant_var);
 									BDDFuncs[0] = Quantify;
-									if(Quantify == possible_BDD(Quantify, quant_var)) {
+									/*if(Quantify == possible_BDD(Quantify, quant_var)) {
 										//fprintf(stderr, "\nHERE\n");
-									} else {
+									} else */ {
 										autark_BDD[quant_var] = 1;
 										switch (int r=add_newFunctions(BDDFuncs, 1)) {
 										 case TRIV_UNSAT:
@@ -225,6 +225,7 @@ int ExQuantify () {
 										for(int iter = 0; iter<str_length; iter++)
 										  d3_printf1("\b");
 										d3e_printf2 ("*{%d}", quant_var);
+										d4_printf3("*{%s(%d)}", s_name(i), i);
 										str_length = 0;
 										variablelist[quant_var].true_false = 2;
 										ret = PREP_CHANGED;

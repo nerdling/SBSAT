@@ -342,8 +342,6 @@ Finish_Preprocessing()
 	
 	//delete [] tempint;
 	//tempint = NULL;
-	delete l;
-	l = NULL;
 	
 	Delete_Repeats();
 	
@@ -363,9 +361,13 @@ Finish_Preprocessing()
 		//parameterizedVars[count] = parameterizedVars[x];
 		length[count] = length[x];
 		if (functions[x] == true_ptr || (functionType[x]==AUTARKY_FUNC && !USE_AUTARKY_SMURFS)) {
-			count--;
+			count--; //Don't send function to the solver
 		} else if (functionType[x] == AUTARKY_FUNC && USE_AUTARKY_SMURFS){
-			//functions[x] = possible_BDD(functions[x], equalityVble[x]);
+			if (l->equivCount(equalityVble[x])==0 && l->opposCount(equalityVble[x])==0) {
+				//functions[x] = possible_BDD(functions[x], equalityVble[x]);
+			} else {
+				count--; //Don't send function to the solver
+			}
 		} else if (functions[x] == false_ptr) {
 			/* this might happen but I already know about unsatisfiness */
 			// ret = TRIV_UNSAT;
@@ -382,13 +384,18 @@ Finish_Preprocessing()
 		  functionType[x] = UNSURE;
    }
 
+/*		
 	if(USE_AUTARKY_SMURFS)
 	  for(int x = 1; x <= numinp; x++)
 		 if(variablelist[x].true_false == 2) {
 			 variablelist[x].true_false=-1;
 			 independantVars[x] = 3;
 		 }
+*/
 
+	delete l; //Delete the equiv_class
+	l = NULL;
+	
    ite_free((void**)&bdd_tempint); bdd_tempint_max = 0;
 	ite_free((void**)&original_functionType);
 	ite_free((void**)&original_equalityVble);
