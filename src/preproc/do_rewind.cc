@@ -56,6 +56,7 @@ int Do_Rewind() {
 			functionType[y] = AUTARKY_FUNC;
 			equalityVble[y] = equalityVble[x];
 			//fprintf(stderr, "keeping autark %d at %d\n", x, y);
+			Rebuild_BDDx(y);
 			y++;
 		} else {
 			functions[x] = true_ptr;
@@ -65,17 +66,19 @@ int Do_Rewind() {
 		}
 	}
 
+	int *new_funcs = add_newFunctions(original_functions, original_numout);
+	  
 	for(int x = 0; x < original_numout; x++) {
-		functions[y] = original_functions[x];
+		y = new_funcs[x];
 		functionType[y] = original_functionType[x];
 		equalityVble[y] = original_equalityVble[x];
-		y++;
+		Rebuild_BDDx(y);
 	}
-	
+
+	ite_free((void**)&new_funcs);
+
 	//fprintf(stderr, "%d %d\n", original_numout, nmbrFunctions); 
 	
-	nmbrFunctions = y;
-
 	delete l;
 	l = new Linear (numinp + 1, T, F);
 	

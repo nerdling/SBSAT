@@ -87,7 +87,7 @@ int Do_Strength() {
 		  St_repeat[x] = 0;
 		  if (functions[x] == true_ptr)
 			 continue;
-        if(functionType[x] == AUTARKY_FUNC) continue;
+        //if(functionType[x] == AUTARKY_FUNC) continue;
 		  for (int j = x + 1; j < nmbrFunctions; j++)
 			 {
 				 if (functions[j] == true_ptr)
