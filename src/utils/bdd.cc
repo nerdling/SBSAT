@@ -893,7 +893,6 @@ int countX(BDDNode *bdd, BDDNode *X) {
 
 int _countX(BDDNode *bdd, BDDNode *X) {
    if (bdd->flag == bdd_flag_number) return bdd->tmp_int;
-	if (bdd->notCase->flag == bdd_flag_number) return bdd->notCase->tmp_bdd->tmp_int;
    bdd->flag = bdd_flag_number;
 
 	if(bdd == X) return (bdd->tmp_int = 1);
