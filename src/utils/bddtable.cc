@@ -114,14 +114,23 @@ bddvsb_init()
       true_ptr->thenCase = true_ptr;
       true_ptr->elseCase = true_ptr;
       true_ptr->inferences = NULL;
+
+      false_ptr->notCase = true_ptr;
+      true_ptr->notCase = false_ptr;
    }
 }
 
+/*
 inline int
 hash_fn(int v, BDDNode *r, BDDNode *e)
 {
-   return (v + (*(int*)&r) + (*(int*)&e)) & hash_memory_mask;
+   return 
+   */
+#define hash_fn(v,r,e) ((v + (*(int*)&r) + (*(int*)&e)) & hash_memory_mask)
+   /*
+   ;
 }
+*/
 
 BDDNode * 
 bddvsb_find_or_add_node (int v, BDDNode * r, BDDNode * e)

@@ -740,8 +740,9 @@ BDDNode *bdd2xdd(BDDNode *x) {
 inline
 BDDNode *ite_x_F_T(BDDNode *x)
 {
-   if (x == true_ptr) return false_ptr;
-   if (x == false_ptr) return true_ptr;
+   // notCase of true_ptr and false_ptr point at each other
+//   if (x == true_ptr) return false_ptr;
+//   if (x == false_ptr) return true_ptr;
 
    if(x->notCase != NULL) {
       //fprintf(stderr, "N");
