@@ -110,9 +110,7 @@ int Split_Large () {
 	max_bdds = 0;
 	num_bdds = 0;
 
-	int k_size = 
-      //10;
-      do_split_max_vars;
+	int k_size = do_split_max_vars;
 	
 	BDDFuncs = (BDDNode **)ite_recalloc(NULL, max_bdds, max_bdds+10, sizeof(BDDNode *), 9, "BDDFuncs");
 	max_bdds += 10;
@@ -177,7 +175,23 @@ int Split_Large () {
 					goto sp_bailout;
 				 default: break;
 				}
+
+				switch (int r=Rebuild_BDDx(j)) {
+				 case TRIV_UNSAT:
+				 case TRIV_SAT:
+				 case PREP_ERROR: 
+					ret=r;
+					goto sp_bailout;
+				 default: break;
+				}
 				
+				if(length[j] > k_size) {
+					BDDNode *Conjunction = BDDFuncs[0];
+					for(int x = 1; x < whereat; x++)
+					  Conjunction = ite_and(Conjunction, BDDFuncs[x]);
+					functions[j] = ite_or(functions[j], ite_not(Conjunction));
+				}
+
 				switch (int r=Rebuild_BDDx(j)) {
 				 case TRIV_UNSAT:
 				 case TRIV_SAT:
