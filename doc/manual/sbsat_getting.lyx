@@ -43,7 +43,7 @@ SBSAT Version 2.0, August 2003
 
 \layout Section*
 \pagebreak_top 
-Wecolme to SBSAT (abrev?) Solver
+Wecolme to SBSAT (State Based Satisfiability) Solver
 \layout Standard
 
 SBSAT is Unix based SAT (Satisfiability) solver for ...
@@ -58,13 +58,13 @@ SBSAT is Unix based SAT (Satisfiability) solver for ...
 Available branchers:
 \layout Itemize
 
-Classic Brancher
+Backtracking Brancher
 \layout Itemize
 
-Backtracking brancher with lemmas
+Backtracking Brancher with lemmas
 \layout Itemize
 
-BDDWalkSAT Non--- (Incomplete Solver)
+BDDWalkSAT - Incomplete Solver
 \layout Itemize
 
 WVF Brancher Original brancher without lemmas and only one heuristic
@@ -109,8 +109,9 @@ The Solver does not have GUI based interface, rather it uses a command line
 
 The solver was successfully tested and compiled on a number of Unix based
  platforms such as Linux, DEC, Solaris, Mac OS X, Windows/Cygwin with a
- number of different compilers such as gcc2.95, gcc3.x, solaris-cc, dec-cc.
- (pgcc?, intel cc?).
+ number of different compilers such as gcc2.95, gcc3.x, solaris-cc, dec-cc,
+ pgcc.
+ (intel cc?).
 \layout Standard
 
 The SBSAT Solver is free under the GPL licence.
@@ -123,7 +124,16 @@ The main purpose of this manual is to introduce a new user to the SBSAT
  Solver.
  We will use a few well chosen examples to demonstrate the different functionali
 ty of the SBSAT solver without getting bogged down in details.
- For a more detailed description of the solver please see the SBSAT Manual*.
+ For a more detailed description of the solver please see the SBSAT Manual
+\begin_inset Foot
+collapsed true
+
+\layout Standard
+
+not available yet
+\end_inset 
+
+.
 \layout Standard
 
 All problems in this manual are part of the SBSAT distribution in the tests
@@ -190,7 +200,8 @@ Command line intput and output of the program
 Fixed sized length font (Example: 
 \family typewriter 
 \size footnotesize 
-blah blah
+Reading file ...
+
 \family default 
 \size default 
  )
@@ -202,14 +213,17 @@ Hardware requirements
 \layout Standard
 
 A Unix style operating system with c++ compiler installed is required.
- All examples require at least 32MB?? of RAM beyond the requirements of
- the operating system.
- Disk requirements
+ All examples require at least 32MB of RAM beyond the requirements of the
+ operating system.
+ Disk requirements depend on the operating system at least 200MB.
 \layout Standard
 
 In general, SBSAT allocates as much memory as it needs.
- There is no option to limit the amount of memory it allocates (Is that
- true? ~Sean).
+ The amount of memory can be limited only indirectly by changing e.g.
+ the number of lemmas it maintains in the cache or the size of the pools
+ for different stacks (it allocates new pool of the same size if it runs
+ out of the current one).
+ There is no other option to limit the amount of memory it allocates.
  It is expected that the amount of available memory matches the size of
  the problem being solved.
  SBSAT is not multi-threaded and does not take advantage of multiple processors.
@@ -2461,7 +2475,7 @@ TIP \SpecialChar ~
  
 \layout Subsection
 
-Changing Heuristic and its options
+Changing heuristic and its options
 \layout Standard
 
 Standard brancher has to two available heuristic schemas.
