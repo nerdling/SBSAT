@@ -220,8 +220,8 @@ parse_seq(char **p, int parse_only)
                        if (*(preproc[i].enable) == 1) {
                           r = preproc[i].fn();
                           d9_printf3("ps: returning from %s with %d\n", preproc[i].id, r);
-                          void bdd_gc();
-                          bdd_gc();
+                          //void bdd_gc();
+                          //bdd_gc();
                        }
                        else r=PREP_NO_CHANGE;
                     }
