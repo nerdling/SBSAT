@@ -1,3 +1,83 @@
+2004-01-15 22:50  mkouril
+
+	* src/generator/vanDerWaerden.cc: Added ITE2 vdw format
+
+2004-01-15 22:33  mkouril
+
+	* Makefile.am, Makefile.in, README, include/log.h,
+	include/params.h, include/vars.h, src/sbsat.cc,
+	src/postproc/backend.cc, src/solver/display.cc,
+	src/utils/params.cc, src/utils/params_fn.cc, src/utils/vars.cc:
+	Added competition-compatible output (see --competition flag)
+
+2004-01-14 15:44  mkouril
+
+	* src/solver/state_stacks.cc: Memory Allocation problem for stacks
+	fixed
+
+2004-01-14 12:10  fett
+
+	* src/preproc/do_applyinfs.cc: added in more independant/dependant
+	intelligence.
+	
+	   ~Sean
+
+2004-01-13 22:46  mkouril
+
+	* src/formats/bddbinary.cc: Preinitialize all variables in the
+	symtable during binary load
+
+2004-01-13 22:45  mkouril
+
+	* src/: sbsat.cc, formats/read_input.cc: Move bdd_init and sym_init
+
+2004-01-13 22:44  mkouril
+
+	* src/utils/symtable.cc: Don't set max until the array is actually
+	allocated
+
+2004-01-13 16:57  fett
+
+	* src/preproc/do_applyinfs.cc: again!
+
+2004-01-13 16:51  fett
+
+	* src/preproc/do_applyinfs.cc: here
+
+2004-01-13 16:10  fett
+
+	* src/preproc/do_applyinfs.cc: [no log message]
+
+2004-01-13 15:58  fett
+
+	* src/preproc/do_applyinfs.cc: [no log message]
+
+2004-01-13 15:49  fett
+
+	* src/preproc/do_applyinfs.cc: Fixed independant vars to work with
+	equivalences.
+	
+	  ~Sean
+
+2004-01-13 15:43  fett
+
+	* src/preproc/do_applyinfs.cc: backwards
+
+2004-01-13 15:40  fett
+
+	* src/preproc/do_applyinfs.cc: here
+
+2004-01-13 15:13  fett
+
+	* src/: preproc/do_cofactor.cc, utils/bdd.cc: modified
+	vars_in_common to work correctly.
+	
+	   ~Sean
+
+2004-01-13 15:13  fett
+
+	* ChangeLog: oh i did?
+
 2004-01-13 12:29  mkouril
 
 	* confdefs.h: Added generated file
