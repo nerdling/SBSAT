@@ -53,6 +53,7 @@ enum {
    SETVARIABLEALL_FLAG_NUMBER, /* variable list dependent */
    NUMREPLACE_FLAG_NUMBER, /* var/replace dependent */
    NUMREPLACEALL_FLAG_NUMBER, /* var/replace list dependent */
+   POSSIBLEINFER_FLAG_NUMBER,
    MAX_FLAG_NUMBER
 };
 int last_bdd_flag_number[MAX_FLAG_NUMBER] = {0,0,0,0,0,0,0,0,0};
@@ -2049,6 +2050,169 @@ BDDNode * _num_replace (BDDNode * f, int var, int replace) {
 	//return ite (ite_var (f->variable), r, e);
 
 	return (f->tmp_bdd = find_or_add_node(f->variable, r, e));
+}
+
+infer *_possible_infer_x(BDDNode *f, int x);
+	
+infer *possible_infer_x(BDDNode *f, int x) {
+   start_bdd_flag_number(POSSIBLEINFER_FLAG_NUMBER);
+   return _possible_infer_x(f, x);
+}
+
+infer *_possible_infer_x(BDDNode *f, int x) {
+	if(f->variable < x) return NULL; //This could happen on a path that doesn't involve x
+
+   if (f->flag == bdd_flag_number) return f->tmp_infer;
+   f->flag = bdd_flag_number;
+	
+	if(f->variable == x) {
+		if(f->thenCase == true_ptr || f->elseCase == false_ptr) {
+			infer *inference = new infer;
+			inference->nums[0] = x;
+			inference->nums[1] = 0;
+			inference->next = NULL;
+			return (f->tmp_infer = inference);
+		} else if(f->elseCase == true_ptr || f->thenCase == false_ptr) {
+			infer *inference = new infer;
+			inference->nums[0] = -x;
+			inference->nums[1] = 0;
+			inference->next = NULL;
+			return (f->tmp_infer = inference);
+		} else {
+			BDDNode *r_BDD = ite_and(f->thenCase, ite_not(f->elseCase));
+			                 //Ex_GetInfer(f->thenCase);
+			if(r_BDD == false_ptr) {				  
+				infer *inference = new infer;
+				inference->nums[0] = -x;
+				inference->nums[1] = 0;
+				inference->next = NULL;
+				return (f->tmp_infer = inference);
+			}
+			infer *head = NULL;
+			infer *temp = NULL;
+			infer *r = r_BDD->inferences;
+			if(r == NULL) {
+				head = new infer;
+				head->nums[0] = 0;
+				head->nums[1] = 0;
+				head->next = NULL;
+				return (f->tmp_infer = head);
+			}
+			BDDNode *e_BDD = ite_and(f->elseCase, ite_not(f->thenCase));
+			                 //Ex_GetInfer(f->elseCase);
+			if(e_BDD == false_ptr) {				  
+				infer *inference = new infer;
+				inference->nums[0] = x;
+				inference->nums[1] = 0;
+				inference->next = NULL;
+				return (f->tmp_infer = inference);
+			}
+			infer *e = e_BDD->inferences;
+			if(e == NULL) {
+				//while (r!=NULL) { temp = r; r = r->next; delete temp;	}
+				head = new infer;
+				head->nums[0] = 0;
+				head->nums[1] = 0;
+				head->next = NULL;
+				return (f->tmp_infer = head);
+			}
+			
+			for(infer *r_iter=r; r_iter!=NULL; r_iter=r_iter->next) {
+				if(r_iter->nums[1] == 0) {
+					for(infer *e_iter=e; e_iter!=NULL; e_iter=e_iter->next) {
+						if(e_iter->nums[1] == 0) {
+							if(r_iter->nums[0] == -e_iter->nums[0]) {
+								temp = head;
+								head = new infer;
+								head->nums[0] = x;
+								head->nums[1] = r_iter->nums[0];
+								head->next = temp;
+								//fprintf(stderr, "[%d, %d]", x, r_iter->nums[0]);
+							}
+						}
+					}
+				}
+			}
+
+			//while (r!=NULL) { temp = r; r = r->next; delete temp;	}
+			//while (e!=NULL) { temp = e; e = e->next; delete temp;	}
+			
+			if(head == NULL) {
+				head = new infer;
+				head->nums[0] = 0;
+				head->nums[1] = 0;
+				head->next = NULL;
+//			} else {
+//				int w = 0;
+//				printBDDTree(f, &w);
+			}
+			
+			return (f->tmp_infer = head);
+		}
+	} else {
+		infer *r = possible_infer_x(f->thenCase, x);
+		if(r != NULL) 
+		  if(r->nums[0] == 0) return (f->tmp_infer = r);
+
+		infer *e = possible_infer_x(f->elseCase, x);
+		if(e != NULL) {
+		  if(e->nums[0] == 0) {
+			  while (r!=NULL) { infer *temp = r; r = r->next; delete temp; }
+			  return (f->tmp_infer = e);
+		  }
+		}
+		
+		if(r == NULL) return (f->tmp_infer = e);
+		if(e == NULL) return (f->tmp_infer = r);
+		//If both are NULL, NULL is returned;
+		
+		if((r->nums[1] == 0 && e->nums[1] != 0) ||
+			(r->nums[1] == 0 && e->nums[1] == 0 && r->nums[0] != abs(e->nums[0]))) {
+			infer *temp = new infer;
+			temp->nums[0] = 0;
+			temp->nums[1] = 0;
+			temp->next = NULL;
+			return (f->tmp_infer = temp);
+		} else if(r->nums[1] == 0 && e->nums[1] == 0 && r->nums[0] == e->nums[0]) {
+			//Both sides are same inference, return r;
+			while (e!=NULL) { infer *temp = e; e = e->next; delete temp; }
+			return (f->tmp_infer = r);
+		} else if(r->nums[1] == 0 && e->nums[1] == 0 && r->nums[0] == -e->nums[0]) {
+			//Sides are opposite inference, return {f->variable, r->nums[1]};
+			r->nums[1] = r->nums[0]; //r->nums[1] = -e->nums[0];
+			r->nums[0] = f->variable;
+			while (e!=NULL) { infer *temp = e; e = e->next; delete temp; }
+			return (f->tmp_infer = r);
+		}
+		
+		//They share equivalences of x = {y, -y}
+		//or y = {x, -x}
+		//return all matching equivalences
+
+		infer *head = NULL;
+		for(infer *r_iter = r; r_iter != NULL; r_iter=r_iter->next) {
+			for(infer *e_iter = e; e_iter != NULL; e_iter=e_iter->next) {
+				if(r_iter->nums[0] == e_iter->nums[0] && r_iter->nums[1] == e_iter->nums[1]) {
+					infer *temp = head;
+					head = new infer;
+					head->nums[0] = r_iter->nums[0];
+					head->nums[1] = r_iter->nums[1];
+					head->next = temp;
+					break;
+				}
+			}
+		}
+		if(head == NULL) {
+			head = new infer;
+			head->nums[0] = 0;
+			head->nums[1] = 0;
+			head->next = NULL;
+		}
+		infer *temp;
+		while (r!=NULL) { temp = r; r = r->next; delete temp;	}
+		while (e!=NULL) { temp = e; e = e->next; delete temp; }
+		return (f->tmp_infer = head);
+	}	
 }
 
 void cheat_replace (BDDNode * f, int var, int replace) {
