@@ -329,7 +329,7 @@ int ExQuantifyAnd () {
 									ite_free((void **)&BDDFuncs);
 									functionType[new_bdd[0]] = AUTARKY_FUNC;
 									equalityVble[new_bdd[0]] = quant_var;
-									functions[new_bdd[0]] = possible_BDD(functions[nmbrFunctions-1], quant_var);
+									functions[new_bdd[0]] = possible_BDD(functions[new_bdd[0]], quant_var);
 									switch (int r=Rebuild_BDDx(new_bdd[0])) {
 									 case TRIV_UNSAT:
 									 case TRIV_SAT:

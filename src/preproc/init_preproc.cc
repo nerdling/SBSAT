@@ -511,7 +511,6 @@ Finish_Preprocessing()
 }
 
 int *add_newFunctions(BDDNode **new_bdds, int new_size) {
-	int ret = PREP_NO_CHANGE;
 
 	int free_funcs = 0;
 	int *free_spots = (int *)ite_calloc(new_size+1, sizeof(int), 9, "free_spots");
@@ -538,7 +537,7 @@ int *add_newFunctions(BDDNode **new_bdds, int new_size) {
 			variables_size = nmbrFunctions;
 		}
 		Init_Repeats();
-		for(int x = 0;free_funcs < new_size; free_funcs++)
+		for(int x = 0;free_funcs < new_size; x++)
 		  free_spots[free_funcs++] = oldnumfuncs+x;
 	}
 
