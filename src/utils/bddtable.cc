@@ -47,7 +47,6 @@ typedef struct {
 } bdd_pool_type;
 
 bdd_pool_type *bddmemory;
-int bddmemory_index=0;
 int bddmemory_max=0;
 int numBDDPool=0;
 int curBDDPos =0;
@@ -96,7 +95,6 @@ bddtable_free_pools()
    ite_free((void**)&bddtable_hash_memory);
    ite_free((void**)&bddmemory);
    bddmemory_max = 0;
-   bddmemory_index = 0;
 }
 
 void
@@ -400,10 +398,13 @@ bdd_gc(int force)
    bddtable_free = NULL;
    bddtable_free_count = 0;
    bddtable_used_count_last = 0;
+   BDDNode **chain_free = &bddtable_free;
    for (i=0;i<=numBDDPool;i++)
    {
       int max = bddmemory[i].max;
       if (i == numBDDPool) max = curBDDPos;
+      int pre_pool_nodes_taken=bddtable_used_count_last;
+      BDDNode **pre_pool_chain_free = chain_free;
       for (j=0;j<max;j++)
       {
          BDDNode *node = (bddmemory[i].memory+j);
@@ -412,8 +413,10 @@ bdd_gc(int force)
             // deleted 
             DeallocateInferences_var(node->inferences, node->variable);
 				memset(node, 0, sizeof(BDDNode));
-            node->next = bddtable_free;
-            bddtable_free = node;
+            *chain_free = node;
+            chain_free = &(node->next);
+            //node->next = bddtable_free;
+            //bddtable_free = node;
             bddtable_free_count++;
          } else
          {
@@ -425,6 +428,17 @@ bdd_gc(int force)
             node->flag = 0;
             bddtable_used_count_last++;
          }
+      }
+      
+      if (pre_pool_nodes_taken == bddtable_used_count_last &&
+            i != numBDDPool) {
+         d4_printf1(" Removing pool ");
+         // can drop this pool
+         ite_free((void**)&bddmemory[i].memory);
+         chain_free = pre_pool_chain_free;
+         for(j=i;j<=numBDDPool;j++) bddmemory[j] = bddmemory[j+1];
+         memset((void*)&(bddmemory[j]), 0, sizeof(bdd_pool_type));
+         numBDDPool--;
       }
    }
   

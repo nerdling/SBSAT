@@ -87,6 +87,8 @@ solve_init()
   ret = SmurfFactory();
   if (ret != SOLV_UNKNOWN) return ret;
 
+  bdd_gc(1);
+
   ret = InitBrancher();
   if (ret != SOLV_UNKNOWN) return ret;
 
