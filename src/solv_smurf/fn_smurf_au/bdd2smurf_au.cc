@@ -172,6 +172,7 @@ int SmurfAuCreateFunction(int nFnId, BDDNode *bdd, int nFnType, int eqVble)
 {
    arrSolverFunctions[nFnId].nFnId = nFnId;
    arrSolverFunctions[nFnId].nType = nFnType;
+   arrSolverFunctions[nFnId].nFnPriority = MAX_FN_PRIORITY-1;
    arrSolverFunctions[nFnId].fn_smurf_au.nSmurfAuEqualityVble = arrIte2SolverVarMap[abs(eqVble)];
    arrSolverFunctions[nFnId].fn_smurf_au.pInitialState = BDD2SmurfAu(bdd, arrIte2SolverVarMap[abs(eqVble)]);
    arrSolverFunctions[nFnId].fn_smurf_au.pPrevState = arrSolverFunctions[nFnId].fn_smurf_au.pCurrentState = arrSolverFunctions[nFnId].fn_smurf_au.pInitialState;
