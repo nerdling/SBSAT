@@ -748,7 +748,7 @@ Verify_Solver(Tracer *tracer)
    } 
   else 
    {
-     Backend_CNF(numinp, oldnuminp, original_variables);
+		Backend_CNF(numinp, oldnuminp, original_variables);
    }
 
 	while(solution_info_head!=NULL) {
@@ -758,7 +758,7 @@ Verify_Solver(Tracer *tracer)
 		free(solution_info);
 	}
 	solution_info = NULL;
-        delete [] original_variables;
+	delete [] original_variables;
 	original_variables = NULL;
 }
 
@@ -771,7 +771,7 @@ Verify_NoSolver(Tracer *tracer)
   /* 
    * original_variables
    */
-
+	
   ITE_NEW_CATCH(
   original_variables = new int[numinp + 1],
   "input variables");
@@ -785,14 +785,15 @@ Verify_NoSolver(Tracer *tracer)
 
   if (formatin == 't')
    {
-     if (tracer) {
+		if (tracer && result_display_type) {
         Backend_Trace_NoSolver(oldnuminp, original_variables, tracer);
         finalCheck(tracer, original_variables);
      }
    }
   else
    {
-     Backend_CNF_NoSolver(oldnuminp, original_variables);
+		if (result_display_type) 
+		  Backend_CNF_NoSolver(oldnuminp, original_variables);
    }
 
 	while(solution_info_head!=NULL) {
