@@ -1,3 +1,188 @@
+2004-02-11 14:41  mkouril
+
+	* confdefs.h, configure, configure.ac, include/common.h,
+	include/config.h, include/equivclass.h, include/prototypes.h,
+	include/vars.h, src/Makefile.in, src/sbsat.cc,
+	src/formats/Makefile.in, src/formats/5/Makefile.in,
+	src/formats/5/libt5_la-trace_g.cc, src/formats/5/trace_g.yy,
+	src/formats/5/tracetest.cc, src/generator/Makefile.in,
+	src/postproc/Makefile.in, src/postproc/backend.cc,
+	src/preproc/Makefile.in, src/preproc/do_clearft.cc,
+	src/preproc/do_cofactor.cc, src/preproc/do_pruning.cc,
+	src/preproc/do_strength.cc, src/preproc/init_preproc.cc,
+	src/preproc/other_preproc.cc, src/preproc/preprocess.cc,
+	src/solver/Makefile.in, src/utils/Makefile.in, src/utils/bdd.cc,
+	src/utils/params.cc, src/utils/params_fn.cc, src/utils/symtable.cc,
+	src/utils/termcap.cc, src/utils/utils.cc, src/utils/vars.cc: Fixed
+	a few silly warnings from extrawarnings
+
+2004-02-10 16:18  mkouril
+
+	* src/formats/tracer.cc: Fixed sync between tracer symtable and
+	global symtable
+
+2004-02-10 15:41  fett
+
+	* include/globals.h, include/preprocess.h, include/vars.h,
+	src/Makefile.in, src/formats/Makefile.in,
+	src/generator/Makefile.in, src/postproc/Makefile.in,
+	src/preproc/Makefile.am, src/preproc/Makefile.in,
+	src/preproc/do_exquantifyand.cc, src/preproc/preprocess.cc,
+	src/utils/Makefile.in, src/utils/params.cc, src/utils/vars.cc:
+	added in 'Cf' preprocessing option to clear the functionType array.
+	 This changes the function type of all BDDs to UNSURE.
+	
+	  ~Sean
+
+2004-02-10 15:06  fett
+
+	* src/preproc/do_exquantifyand.cc: fixed a bug by throwing out the
+	examount code and using the amount array that's used in
+	do_applyinfs()
+	
+	   ~Sean
+
+2004-02-10 14:07  fett
+
+	* src/preproc/: do_split.cc, init_preproc.cc: fixed a bug where the
+	splitter would segfault because it was holding BDDs that were
+	removed by garbage collection.
+	
+	   ~Sean
+
+2004-02-09 16:35  fett
+
+	* src/preproc/: do_rewind.cc, init_preproc.cc: added in support for
+	functionType and equalityVble
+	
+	  ~Sean
+
+2004-02-09 15:48  mkouril
+
+	* src/solver/smurffactory.cc: Added function type debug print for
+	debug 5 in smurffactory
+
+2004-02-09 15:33  mkouril
+
+	* src/solver/smurffactory.cc: Added extra output for debug 5 when
+	creating smurfs
+
+2004-02-09 15:27  fett
+
+	* src/preproc/: do_rewind.cc, init_preproc.cc: here, checking in
+	more modifications
+	
+	  ~Sean
+
+2004-02-09 15:23  mkouril
+
+	* src/utils/params.cc: Restore terminal after ctrl-c
+
+2004-02-09 14:52  mkouril
+
+	* src/preproc/preprocess.cc: Fixed [] in preprocessing string
+
+2004-02-09 14:47  mkouril
+
+	* src/preproc/preprocess.cc: Added [] into preprocessing string
+
+2004-02-09 14:40  fett
+
+	* include/: preprocess.h, vars.h: header files for do_Rewind
+	
+	  ~Sean
+
+2004-02-09 14:40  fett
+
+	* src/preproc/do_rewind.cc: here! the new rewind thing
+
+2004-02-09 14:37  fett
+
+	* src/: Makefile.in, formats/Makefile.in, formats/5/Makefile.in,
+	generator/Makefile.in, postproc/Makefile.in, preproc/Makefile.am,
+	preproc/Makefile.in, preproc/create_infs.cc,
+	preproc/do_exquantify.cc, preproc/do_exquantifyand.cc,
+	preproc/init_preproc.cc, preproc/preprocess.cc, solver/Makefile.in,
+	utils/Makefile.in, utils/params.cc, utils/vars.cc: added in Rewind
+	ability.
+	
+	   ~Sean
+
+2004-02-09 10:20  fett
+
+	* src/: formats/write_output.cc, utils/params_fn.cc: changed
+	reference to 'ite' to 'sbsat' for --help
+
+2004-02-06 13:54  fett
+
+	* src/preproc/do_split.cc: added comments.
+	
+	  ~Sean
+
+2004-02-06 13:54  fett
+
+	* src/Makefile.in: [no log message]
+
+2004-02-04 10:07  mkouril
+
+	* confdefs.h, configure, configure.ac, libtool, include/config.h,
+	include/globals.h, src/utils/params.cc, src/utils/params_fn.cc,
+	src/utils/utils.cc: Fixed strncpy for --help
+
+2004-02-03 12:46  fett
+
+	* src/solver/bddwalk.cc: Updating
+	
+	   ~Sean
+
+2004-02-03 12:46  fett
+
+	* src/preproc/do_split.cc: re added in nCk splitting code
+	
+	   ~Sean
+
+2004-01-29 09:07  mkouril
+
+	* src/generator/vanDerWaerden.cc: Added xcnf2
+
+2004-01-27 22:33  mkouril
+
+	* src/solver/recordsol.cc: Fixed out of bounds index on xor temp
+	variables being saved into solutions array
+
+2004-01-27 22:29  mkouril
+
+	* src/utils/params_fn.cc: Fixed help on params accepting single
+	char
+
+2004-01-27 17:44  fett
+
+	* src/solver/recordsol.cc: nothing
+
+2004-01-21 14:05  fett
+
+	* src/: Makefile.in, formats/Makefile.in, formats/5/Makefile.in,
+	generator/Makefile.in, postproc/Makefile.in, preproc/Makefile.in,
+	preproc/do_cofactor.cc, preproc/do_exquantifyand.cc,
+	solver/Makefile.in, utils/Makefile.in: I changed themakefiles? oh
+	man...
+	
+	  ~Sean
+
+2004-01-21 14:05  fett
+
+	* ChangeLog: oh yes...teh changelog...
+
+2004-01-21 08:43  mkouril
+
+	* confdefs.h, configure, configure.ac, libtool, include/config.h:
+	version update 2.1r-1
+
+2004-01-19 11:43  mkouril
+
+	* src/: sbsat.cc, formats/tracer.cc, formats/5/prover3_s.cc: Fixed
+	competition output for UNSAT and trace instances
+
 2004-01-15 22:50  mkouril
 
 	* src/generator/vanDerWaerden.cc: Added ITE2 vdw format
