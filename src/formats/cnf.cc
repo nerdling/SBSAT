@@ -233,6 +233,7 @@ void CNF_to_BDD(int cnf)
       if (x == numout+1) {
          // one beyond
          if (order == 'e') break; // all good
+			if ((order == 'i') && (intnum == 0)) break; //Extra 0 at end of file
          fprintf(stderr, "Warning while parsing CNF input: more than %ld functions found\n", numout);
 			break;
          //exit(1);
