@@ -507,7 +507,7 @@ inline int getRandomTruePath(int x) {
 				bdd = bdd->elseCase;
 			} else {
 				//Choose this variable's direction based on it's weight
-				if((random()%100) < ((bdd->tbr_weight + true_var_weights[wvar]) * 100/2)) {
+				if((random()%100) < (bdd->tbr_weight * 100)) {
 					//Variable wvar is chosen True
 					if(atom[wvar] == 0)
 					  varstoflip[path_length++] = wvar;
