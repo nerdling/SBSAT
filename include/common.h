@@ -136,17 +136,23 @@ struct store{
 };
 
 typedef struct BDDNodeStruct {
-   int t_var;
-	int hamming;
-	float density;
-	float tbr_weight;
+   int flag;
    int variable;
    void *var_ptr;
    struct BDDNodeStruct *thenCase, *elseCase;
    infer *inferences;
-   //SmurfFactoryAddons *addons;
-   void *addons;
    BDDNodeStruct *next;
+   void *addons;
+   
+   // bdd2cnf.cc addons
+   int t_var;
+   // bdd2cnf.cc end
+
+   // BDDWalksat addons
+	int hamming;
+	float density;
+	float tbr_weight;
+   // BDDWalksat end
 } BDDNode;
 
 extern   int nmbrFunctions;

@@ -56,6 +56,7 @@ int curBDDPos =0;
 BDDNode **hash_memory = NULL;
 int hash_memory_size = 0;
 int hash_memory_mask = 0;
+BDDNode *bddtable_free = NULL;
 
 void bdd_bdd_alloc_pool(int pool)
 {
@@ -111,6 +112,12 @@ bddvsb_init()
    }
 }
 
+inline int
+hash_fn(int v, BDDNode *r, BDDNode *e)
+{
+   return (v + (*(int*)&r) + (*(int*)&e)) & hash_memory_mask;
+}
+
 BDDNode * 
 bddvsb_find_or_add_node (int v, BDDNode * r, BDDNode * e)
 {
@@ -158,7 +165,8 @@ bddvsb_find_or_add_node (int v, BDDNode * r, BDDNode * e)
    //int hash_pos = (v + (*(int*)&r)/sizeof(BDDNode) + (*(int*)&e)/sizeof(BDDNode)) & hash_memory_mask;
    //int hash_pos = (v^(*(int*)&r)^(*(int*)&e)) & hash_memory_mask; // slow!
    //int hash_pos = (v + (*(int*)&r)>>2 + (*(int*)&e)>>2) & hash_memory_mask;
-   int hash_pos = (v + (*(int*)&r) + (*(int*)&e)) & hash_memory_mask;
+   //int hash_pos = (v + (*(int*)&r) + (*(int*)&e)) & hash_memory_mask;
+   int hash_pos = hash_fn(v, r, e);
 
    BDDNode **node = hash_memory+hash_pos;
    BDDNode **prev = NULL; 
@@ -192,12 +200,19 @@ bddvsb_find_or_add_node (int v, BDDNode * r, BDDNode * e)
 	} else {
       /* count not find the node => allocate new one */
       ite_counters[BDD_NODE_NEW]++;
-      if (bddmemory_vsb[numBDDPool].max == curBDDPos) {
-	  ++numBDDPool;
-	  bdd_bdd_alloc_pool(numBDDPool);
-	  curBDDPos = 0;
+      if (bddtable_free != NULL) {
+         (*node) = bddtable_free;
+         bddtable_free = bddtable_free->next;
+         (*node)->next = NULL;
+      } else
+      {
+         if (bddmemory_vsb[numBDDPool].max == curBDDPos) {
+            ++numBDDPool;
+            bdd_bdd_alloc_pool(numBDDPool);
+            curBDDPos = 0;
+         }
+         (*node) = bddmemory_vsb[numBDDPool].memory+curBDDPos++;
       }
-      (*node) = bddmemory_vsb[numBDDPool].memory+curBDDPos++;
       (*node)->variable = v;
       (*node)->thenCase = r;
       (*node)->elseCase = e;
@@ -205,6 +220,68 @@ bddvsb_find_or_add_node (int v, BDDNode * r, BDDNode * e)
    }
    return *node;
 }
+
+void
+bdd_flag_nodes(BDDNode *node)
+{
+   if (node->flag == 1) return;
+   node->flag = 1;
+   bdd_flag_nodes(node->thenCase);
+   bdd_flag_nodes(node->elseCase);
+}
+
+
+// BDD Garbage collection
+void
+bdd_gc()
+{
+   int i,j;
+   // clean all flags
+   for (i=0;i<=numBDDPool;i++)
+   {
+      for (j=0;j<bddmemory_vsb[i].max;j++)
+         (bddmemory_vsb[i].memory+j)->flag = 0;
+   }
+
+   // flag all referenced nodes
+   true_ptr->flag = 1;
+   false_ptr->flag = 1;
+   for (i=0;i<numout;i++)
+   {
+      bdd_flag_nodes(functions[i]);
+   }
+
+   // clean the hash table
+   for (i=0;i<hash_memory_mask; i++)
+   {
+      hash_memory[i] = NULL;
+   }
+
+   // remove unreferenced and rehash referenced
+   bddtable_free = NULL;
+   for (i=0;i<=numBDDPool;i++)
+   {
+      for (j=0;j<bddmemory_vsb[i].max;j++)
+      {
+         BDDNode *node = (bddmemory_vsb[i].memory+j);
+         if (node->flag == 0)
+         {
+            // deleted 
+            memset(node, 0, sizeof(BDDNode));
+            node->next = bddtable_free;
+            bddtable_free = node;
+         } else
+         {
+            // rehash
+            int hash_pos = hash_fn(node->variable, node->thenCase, node->elseCase);
+            BDDNode **hash_node = hash_memory+hash_pos;
+            node->next = *hash_node;;
+            *hash_node = node;
+         }
+      }
+   }
+}
+
 
 void
 bdd_fix_inferences(BDDNode *node)
