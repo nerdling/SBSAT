@@ -52,6 +52,8 @@
 #ifndef COMMON_H
 #define COMMON_H
 
+//#define BDD_MIRROR_NODE
+
 struct llist{
    int num;
    struct llist *next;
@@ -141,6 +143,9 @@ typedef struct BDDNodeStruct {
    int variable;
    void *var_ptr;
    struct BDDNodeStruct *thenCase, *elseCase, *notCase, *tmp_bdd, *or_bdd;
+#ifdef BDD_MIRROR_NODE
+   struct BDDNodeStruct *mirrCase;
+#endif
    int tmp_int; 
    infer *inferences, *tmp_infer;
    BDDNodeStruct *next;

@@ -117,6 +117,10 @@ bdd_init()
 
       false_ptr->notCase = true_ptr;
       true_ptr->notCase = false_ptr;
+#ifdef BDD_MIRROR_NODE
+      false_ptr->mirrCase = false_ptr;
+      true_ptr->mirrCase = true_ptr;
+#endif
    }
 }
 
@@ -132,6 +136,9 @@ bddtable_hash_fn(int v, BDDNode *r, BDDNode *e)
 }
 
 inline void bddtable_alloc_not_node(BDDNode *not_node);
+#ifdef BDD_MIRROR_NODE
+inline void bddtable_alloc_mirr_node(BDDNode *mirr_node);
+#endif
 
 BDDNode * 
 bddtable_find_or_add_node (int v, BDDNode * r, BDDNode * e)
@@ -218,8 +225,11 @@ bddtable_find_or_add_node (int v, BDDNode * r, BDDNode * e)
 	} else {
       /* could not find the node => allocate new one */
       bddtable_alloc_node(node, v, r, e);
-      BDDNode *ret_node = *node;
-      bddtable_alloc_not_node((*node)); // not_node invalidates node address
+      BDDNode *ret_node = *node; // next function invalidates node memory ptr location
+      bddtable_alloc_not_node(ret_node); 
+#ifdef BDD_MIRROR_NODE
+      bddtable_alloc_mirr_node(ret_node);
+#endif
       return ret_node;
    }
    return (*node);
@@ -266,6 +276,54 @@ bddtable_alloc_not_node(BDDNode *not_node)
    (*node)->next = prev;
 }
 
+#ifdef BDD_MIRROR_NODE
+inline void
+bddtable_alloc_mirr_node(BDDNode *mirr_node)
+{
+   // create mirr_node->mirrCase (could be mirr_node or mirr_node->mirrCase)
+   // create mirr_node->mirrCase->notCase
+   // create mirr_node->mirrCase->mirrCase = mirr_node
+   // create mirr_node->notCase->mirrCase
+   // create mirr_node->notCase->mirrCase->mirrCase = mirr_node->notCase
+   BDDNode *node = NULL;
+   int v = mirr_node->variable;
+   BDDNode *r = mirr_node->elseCase->mirrCase;
+   BDDNode *e = mirr_node->thenCase->mirrCase;
+
+   if (mirr_node->thenCase == r && mirr_node->elseCase == e) {
+      node = mirr_node;
+   } else if (mirr_node->notCase->thenCase == r && mirr_node->notCase->elseCase == e) {
+      node = mirr_node->notCase;
+   } else {
+      int hash_pos = bddtable_hash_fn(v, r, e);
+
+      BDDNode **_node = bddtable_hash_memory+hash_pos;
+      ite_counters[BDD_NODE_STEPS]++;
+      BDDNode *prev = NULL;
+
+      prev = *_node;
+      bddtable_alloc_node(_node, v, r, e);
+      (*_node)->next = prev;
+      node = *_node;
+   }
+   mirr_node->mirrCase = node;
+   node->mirrCase = mirr_node;
+
+   if (mirr_node->mirrCase->notCase == NULL) {
+      bddtable_alloc_not_node(mirr_node->mirrCase); 
+   }
+
+   mirr_node->notCase->mirrCase = mirr_node->mirrCase->notCase;
+   mirr_node->notCase->mirrCase = mirr_node->mirrCase->notCase;
+   mirr_node->mirrCase->notCase->mirrCase = mirr_node->notCase;
+   mirr_node->notCase->mirrCase->notCase = mirr_node->mirrCase;
+
+   assert(mirr_node->mirrCase && mirr_node->notCase->mirrCase);
+   assert(mirr_node->mirrCase->notCase && mirr_node->notCase->mirrCase->notCase);
+   assert(mirr_node->mirrCase->notCase->mirrCase && mirr_node->notCase->mirrCase->notCase->mirrCase);
+}
+#endif
+
 void
 bdd_flag_nodes(BDDNode *node)
 {
@@ -274,8 +332,12 @@ bdd_flag_nodes(BDDNode *node)
    //node->inferences = NULL;
    bdd_flag_nodes(node->thenCase);
    bdd_flag_nodes(node->elseCase);
-	bdd_flag_nodes(node->notCase); //SEAN
-	if(node->or_bdd!=NULL) bdd_flag_nodes(node->or_bdd); //mk
+	bdd_flag_nodes(node->notCase); 
+#ifdef BDD_MIRROR_NODE
+	bdd_flag_nodes(node->mirrCase); 
+	bdd_flag_nodes(node->notCase->mirrCase); 
+#endif
+	if(node->or_bdd!=NULL) bdd_flag_nodes(node->or_bdd); 
 }
 
 
