@@ -124,14 +124,14 @@ ExQuantifyAnd ()
 			 {
 				 char p[100];
 				 D_3(
-					  if (i % 100 == 0) {
+					  if (i % ((numinp/100)+1) == 0) {
 						  for(int iter = 0; iter<str_length; iter++)
 							 d3_printf1("\b");
 						  sprintf(p, "{%ld:%d/%ld}", affected, i, numinp);
 						  str_length = strlen(p);
 						  d3_printf1(p);
 					  }
-				 );
+					  );
 				 
 				 if (nCtrlC) {
 					 d3_printf1("Breaking out of Anding Existential Quantification\n");
@@ -139,7 +139,7 @@ ExQuantifyAnd ()
 					 goto ea_bailout;
 				 }
 				 
-				 if(i % 100 == 0) {
+				 if (i % ((numinp/100)+1) == 0) {
 					 d2e_printf3("\rPreprocessing Ea %d/%ld ", i, numinp);
 				 }
 				 

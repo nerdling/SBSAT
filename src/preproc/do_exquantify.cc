@@ -107,7 +107,7 @@ int ExQuantify () {
 		for (int i = loop_again; i < numinp + 1; i++) {
 			char p[100];
 			D_3(
-				 if (i % 10000 == 0) {
+				 if (i % ((numinp/100)+1) == 0) {
 					 for(int iter = 0; iter<str_length; iter++)
 						d3_printf1("\b");
 					 sprintf(p, "{%ld:%d/%ld}", affected, i, numinp);
@@ -116,12 +116,13 @@ int ExQuantify () {
 				 }
 				 );
 			
-			if(i % 100 == 0) {
-				if (nCtrlC) {
-					d3_printf1("\nBreaking out of Existential Quantification\n");
-					nCtrlC = 0;
-					break;
-				}
+			if (nCtrlC) {
+				d3_printf1("\nBreaking out of Existential Quantification\n");
+				nCtrlC = 0;
+				break;
+			}
+			
+			if (i % ((numinp/100)+1) == 0) {
 				d2e_printf3("\rPreprocessing Ex %d/%ld ", i, numinp);
 			}
 			
