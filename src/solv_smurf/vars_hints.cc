@@ -24,6 +24,9 @@ void AddChoicePointHint(int x)
 
 int GetChoicePointHint()
 {
+   while(nChoicePointHintIndex && 
+         arrChoicePointHint[nChoicePointHintIndex-1] != BOOL_UNKNOWN)
+      nChoicePointHintIndex--;
    if (nChoicePointHintIndex == 0) return 0;
    return arrChoicePointHint[--nChoicePointHintIndex];
 }
