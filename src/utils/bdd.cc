@@ -738,7 +738,25 @@ BDDNode *ite (BDDNode * x, BDDNode * y, BDDNode * z) {
    if (x == true_ptr) return y;
    if (x == false_ptr) return z;
 
-	if(y == true_ptr && z == false_ptr) return x;
+	if(y == true_ptr) {
+	  if(z == false_ptr) return x;
+	} else if(y == false_ptr) {
+		if(z == true_ptr) {
+			if(x->notCase != NULL) {
+				//fprintf(stderr, "N");
+				return x->notCase;
+			}
+			int v = x->variable;
+			BDDNode *r = ite(x->thenCase, false_ptr, true_ptr);
+			BDDNode *e = ite(x->elseCase, false_ptr, true_ptr);
+			//if(r == e) fprintf(stderr, "\nNEVER!!!\n");
+			BDDNode *x_not = find_or_add_node(v, r, e);
+			x->notCase = x_not;
+			x_not->notCase = x;
+			return x_not;
+		}
+	}
+	
 	//int v = top_variable(x, y, z);
    int v;
    BDDNode * r;
