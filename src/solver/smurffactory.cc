@@ -90,7 +90,10 @@ SmurfFactory()
    // Construct the Smurfs.
    for (int i = 0; i < nmbrFunctions; i++)
    {
-      if (i%100 == 0)
+      d5_printf2("Function %d: ", i);
+      D_5( printBDD(functions[i]); );
+      d5_printf1("\n");
+      //if (i%100 == 0)
          d2e_printf3("\rCreating Smurfs ... %d/%d", i, nmbrFunctions);
 
       int nFunctionType = functionType[i];
@@ -111,7 +114,7 @@ SmurfFactory()
 
       if (IsSpecialFunc(nFunctionType) == 0)
       {
-			if(i % 100 == 0)
+			//if(i % 100 == 0)
 			  d3_printf3("Constructing Smurf for %d/%d           \r", i, nmbrFunctions);
          arrIte2SolverSmurf[i] = nRegSmurfIndex;
          arrSmurfEqualityVble[nRegSmurfIndex] = arrIte2SolverVarMap[equalityVble[i]];
@@ -141,7 +144,7 @@ SmurfFactory()
          } else {
             arrSpecialFuncs[nSpecialFuncIndex].LinkedSmurfs = -1;
          }
-			if(i % 100 == 0)
+			//if(i % 100 == 0)
 			  d3_printf3("Constructing Special Function for %d/%d\r", i, nmbrFunctions);
          arrIte2SolverSpecFn[i] = nSpecialFuncIndex;
          switch(nFunctionType) {
