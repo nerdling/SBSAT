@@ -112,9 +112,9 @@ void Do_Flow() {
 		d5_printf4("%d (%s) = %5.3f\n", x, (ptr&&ptr->name?ptr->name:"NULL"), var_score[x]);
 	}
 
-	ite_free((void *)equ_funcs);
-	//ite_free((void *)var_score);
-	ite_free((void *)var_mark);
+	ite_free((void**)&equ_funcs);
+	//ite_free((void**)&var_score);
+	ite_free((void**)&var_mark);
 }
 
 
@@ -233,12 +233,12 @@ void Do_Flow_Grouping() {
 	}
 
 	for(int x = 0; x < dep_count; x++) {
-		ite_free((void *)influences[x].influence);
+		ite_free((void**)&influences[x].influence);
 	}
 
-	ite_free((void *)indep_mapping);
-   ite_free((void *)influences);
-	ite_free((void *)equ_funcs);
-	//ite_free((void *)var_score); //This should be freed after the brancher returns a solution!
-	ite_free((void *)var_mark);
+	ite_free((void**)&indep_mapping);
+   ite_free((void**)&influences);
+	ite_free((void**)&equ_funcs);
+	//ite_free((void**)&var_score); //This should be freed after the brancher returns a solution!
+	ite_free((void**)&var_mark);
 }

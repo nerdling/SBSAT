@@ -64,7 +64,13 @@ init_options()
   for (i=0;!(options[i].p_target==NULL&&options[i].desc_opt[0]==0);i++)
   {
 #ifndef HAVE_DES_INITIALIZERS
-     int v_i, v_sf;
+#ifdef NDEBUG
+#define DEBUG_VSF(x) x;
+#else
+#define DEBUG_VSF(x) { v_sf = x; assert(1==v_sf); }
+     int v_sf;
+#endif
+     int v_i;
      long v_l;
      float v_f;
      switch (options[i].p_type) {
@@ -74,35 +80,28 @@ init_options()
                    break;
       case P_PRE_INT:
       case P_INT: 
-                   v_sf = sscanf(options[i].p_defa.s, "%d", &v_i);
-                   assert(1==v_sf);
+                   DEBUG_VSF(sscanf(options[i].p_defa.s, "%d", &v_i));
                    options[i].p_defa.i = v_i;
-                   v_sf = sscanf(options[i].p_value.s, "%d", &v_i);
-                   assert(1==v_sf);
+                   DEBUG_VSF(sscanf(options[i].p_value.s, "%d", &v_i));
                    options[i].p_value.i = v_i;
                    break;
       case P_PRE_LONG:
       case P_LONG: 
-                   v_sf = sscanf(options[i].p_defa.s, "%ld", &v_l);
-                   assert(1==v_sf);
+                   DEBUG_VSF(sscanf(options[i].p_defa.s, "%ld", &v_l));
                    options[i].p_defa.l = v_l;
-                   v_sf = sscanf(options[i].p_value.s, "%ld", &v_l);
-                   assert(1==v_sf);
+                   DEBUG_VSF(sscanf(options[i].p_value.s, "%ld", &v_l));
                    options[i].p_value.l = v_l;
                    break;
       case P_PRE_FLOAT:
       case P_FLOAT: 
-                   v_sf = sscanf(options[i].p_defa.s, "%f", &v_f);
-                   assert(1==v_sf);
+                   DEBUG_VSF(sscanf(options[i].p_defa.s, "%f", &v_f));
                    options[i].p_defa.f = v_f;
-                   v_sf = sscanf(options[i].p_value.s, "%f", &v_f);
-                   assert(1==v_sf);
+                   DEBUG_VSF(sscanf(options[i].p_value.s, "%f", &v_f));
                    options[i].p_value.f = v_f;
                    break;
       case P_PRE_STRING:
       case P_STRING: 
-                   v_sf = sscanf(options[i].p_value.s, "%d", &v_i);
-                   assert(1==v_sf);
+                   DEBUG_VSF(sscanf(options[i].p_value.s, "%d", &v_i));
                    options[i].p_value.i = v_i;
                    break;
       default: break; /* P_NONE, P_FN, ... */

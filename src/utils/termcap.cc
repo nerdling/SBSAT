@@ -51,7 +51,7 @@ char *ptr;
 /*
  * Get a required termcap string or exit with a message.
  */
-static char * qgetstr(char *ref)
+char * qgetstr(char *ref)
 {
    char *tmp=NULL;
 #ifdef TERMCAP_H

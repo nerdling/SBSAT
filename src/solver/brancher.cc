@@ -128,9 +128,8 @@ ITE_INLINE
 bool
 CheckLimits(double fStartTime)
 {
-   double fEndTime, fDurationInSecs;
+   double fEndTime;
    fEndTime = get_runtime();
-   fDurationInSecs = fEndTime - fStartTime;
 
    if (nCtrlC) {
       return 1;
@@ -251,7 +250,6 @@ BrancherPreset()
        default:
                  dE_printf2("Error in preset string %s\n", ptr);
                  return SOLV_ERROR;
-                 break;
       }
       while (*ptr != ' ' && *ptr != 0) ptr++;
       if (*ptr == ' ') ptr++; // skip space

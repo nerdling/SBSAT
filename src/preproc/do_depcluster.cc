@@ -101,12 +101,12 @@ int DepCluster () {
 		//then come back and do dependent vars (independantVars[i] == 0)
 		if(independantVars[i] != 1) {
 			int j = -1;
-			int print = 0;
+			//int print = 0;
 			int count1 = 0;
 			int count2 = 0;
 			for(llBDD *iter = tempmem[i]->next; iter!=NULL; iter = iter->next) {
 				count1++;
-				if(Dep_repeat[iter->BDD] != 0) print = 1;
+				//if(Dep_repeat[iter->BDD] != 0) print = 1;
 				if(abs(equalityVble[iter->BDD]) == i) {
 					if(j!=-1) {
 						//fprintf(stderr, "\nInconsistent var %d, skipping\n", i);
@@ -140,7 +140,6 @@ int DepCluster () {
 				 case PREP_ERROR:
 					ret=r;
 					goto ex_bailout;
-					break;
 				 default: break;
 				}
 
@@ -150,7 +149,6 @@ int DepCluster () {
 				 case PREP_ERROR:
 					ret=r;
 					goto ex_bailout;
-					break;
 				 default: break;
 				}
 
@@ -181,7 +179,6 @@ int DepCluster () {
 								 case PREP_ERROR:
 									ret=r;
 									goto ex_bailout;
-									break;
 								 default: break;
 								}
 							}
@@ -193,13 +190,16 @@ int DepCluster () {
 							 case PREP_ERROR:
 								ret=r;
 								goto ex_bailout;
-								break;
 							 default: break;
 							}
 						}
-						continue; //Comment out for REAL dependent clustering
+//#define SEAN_REAL_DC //Unomment for REAL dependent clustering
+#ifndef SEAN_REAL_DC
+						continue; 
+#else
 						equalityVble[k] = 0;
 						functionType[k] = UNSURE;
+#endif
 					}
 				} else {
 					if(bdd_length > MAX_VBLES_PER_SMURF) { 
@@ -209,7 +209,6 @@ int DepCluster () {
 							 case PREP_ERROR:
 								ret=r;
 								goto ex_bailout;
-								break;
 							 default: break;
 							}
 						}
@@ -221,13 +220,15 @@ int DepCluster () {
 						 case PREP_ERROR:
 							ret=r;
 							goto ex_bailout;
-							break;
 						 default: break;
 						}
 					}
-					continue; //Comment out for REAL dependent clustering
+#ifndef SEAN_REAL_DC
+					continue; 
+#else
 					equalityVble[k] = 0;
 					functionType[k] = UNSURE;
+#endif
 				}
 				
 				count2++;
@@ -264,7 +265,6 @@ int DepCluster () {
 				 case PREP_ERROR: 
 					ret=r;
 					goto ex_bailout;
-					break;
 				 default: break;
 				}
 				

@@ -151,7 +151,6 @@ ExQuantifyAnd ()
 						case TRIV_SAT: 
 						case PREP_ERROR: 
 						   ret = r; goto ea_bailout; /* as much as I hate gotos */
-                                                   break;
 						default: break;
 						}
 						equalityVble[j] = 0;

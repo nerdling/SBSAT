@@ -420,7 +420,7 @@ FreeSmurfStatesStack()
       free(x);
    }
 
-   ite_free((void*)arrSmurfStatesFlags);
+   ite_free((void**)&arrSmurfStatesFlags);
 }
 
 ITE_INLINE void

@@ -100,11 +100,11 @@ FreeHeurScoresStack ()
 {
    if (arrHeurScoresStackPool) {
       for (int i=0;i<=nHeurScoresStackPoolMax && arrHeurScoresStackPool[i].stack;i++)
-         ite_free((void*)arrHeurScoresStackPool[i].stack);
-      ite_free((void*)arrHeurScoresStackPool);
-      ite_free((void*)arrHeurScoresFlags);
+         ite_free((void**)&arrHeurScoresStackPool[i].stack);
+      ite_free((void**)&arrHeurScoresStackPool);
+      ite_free((void**)&arrHeurScoresFlags);
    }
-   ite_free((void*)arrHeurScores);
+   ite_free((void**)&arrHeurScores);
 }
 
 ITE_INLINE void

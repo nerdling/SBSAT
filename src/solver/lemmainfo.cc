@@ -301,7 +301,7 @@ void
 FreePrecomputedStatesArray()
 {
    assert(arrPrecomputedStates);
-   ite_free((void*)arrPrecomputedStates);
+   ite_free((void**)&arrPrecomputedStates);
    arrPrecomputedStates = 0;
 }
 
@@ -361,9 +361,8 @@ ComputeLemmasForSmurf(SmurfState *pState)
          int nNumInferences = pTransition->positiveInferences.nNumElts;
          int *arrInferences = pTransition->positiveInferences.arrElts;
          assert(pTransition->arrPosInferenceLemmas == 0);
-         LemmaBlock **arrInferenceLemmas = NULL;
          if (nNumInferences > 0) {
-            arrInferenceLemmas = pTransition->arrPosInferenceLemmas = arrInferenceBuffer;
+            pTransition->arrPosInferenceLemmas = arrInferenceBuffer;
             arrInferenceBuffer += nNumInferences;
             for (int j = 0; j < nNumInferences; j++)
             {
@@ -376,7 +375,7 @@ ComputeLemmasForSmurf(SmurfState *pState)
          arrInferences = pTransition->negativeInferences.arrElts;
          assert(pTransition->arrNegInferenceLemmas == 0);
          if (nNumInferences > 0) {
-            arrInferenceLemmas = pTransition->arrNegInferenceLemmas = arrInferenceBuffer;
+            pTransition->arrNegInferenceLemmas = arrInferenceBuffer;
             arrInferenceBuffer += nNumInferences;
             for (int j = 0; j < nNumInferences; j++)
             {
@@ -407,7 +406,7 @@ ComputeLemmasForSmurf(SmurfState *pState)
          arrInferences = pTransition->positiveInferences.arrElts;
          assert(pTransition->arrPosInferenceLemmas == 0);
          if (nNumInferences > 0) {
-            arrInferenceLemmas = pTransition->arrPosInferenceLemmas = arrInferenceBuffer;
+            pTransition->arrPosInferenceLemmas = arrInferenceBuffer;
             arrInferenceBuffer += nNumInferences;
             for (int j = 0; j < nNumInferences; j++)
             {
@@ -421,7 +420,7 @@ ComputeLemmasForSmurf(SmurfState *pState)
          arrInferences = pTransition->negativeInferences.arrElts;
          assert(pTransition->arrNegInferenceLemmas == 0);
          if (nNumInferences) {
-            arrInferenceLemmas = pTransition->arrNegInferenceLemmas = arrInferenceBuffer;
+            pTransition->arrNegInferenceLemmas = arrInferenceBuffer;
             arrInferenceBuffer += nNumInferences;
             for (int j = 0; j < nNumInferences; j++)
             {
@@ -1154,8 +1153,8 @@ FreeLemmaInfoArray()
 {
    while (head_arrLemmaInfo) {
       tarrLemmaInfo *t = head_arrLemmaInfo->next;
-      ite_free((void*)head_arrLemmaInfo->memory);
-      ite_free((void*)head_arrLemmaInfo);
+      ite_free((void**)&head_arrLemmaInfo->memory);
+      ite_free((void**)&head_arrLemmaInfo);
       head_arrLemmaInfo = t;
    }
    pFreeLemmaInfoStructPool = NULL;

@@ -86,6 +86,7 @@ int getEquiv(int v, int *variables, int length) {
 	}
 	dE_printf1("\nEquivilance variable not found in the variable list!\n");
 	exit(0);
+   return 0;
 }
 
 int *getANDLiterals(int v, int *variables, int length) {

@@ -103,9 +103,9 @@ FreeLemmaSpacePool()
  t_lemmaspace_pool *tmp_lemmaspace_pool = NULL;
  while (lemmaspace_pool_head != NULL)
  {
-   ite_free((void*)lemmaspace_pool_head->memory);
+   ite_free((void**)&lemmaspace_pool_head->memory);
    tmp_lemmaspace_pool = (t_lemmaspace_pool*)(lemmaspace_pool_head->next);
-   ite_free((void*)lemmaspace_pool_head);
+   ite_free((void**)&lemmaspace_pool_head);
    lemmaspace_pool_head = tmp_lemmaspace_pool;
  }
 }

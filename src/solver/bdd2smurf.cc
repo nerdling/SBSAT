@@ -116,7 +116,6 @@ ComputeSmurfOfNormalized(BDDNodeStruct *pFunc, PartialAssignmentEncoding encodin
 
    int i=0;
    int nVble;
-   Transition *pTransition;
    for (i=0;i<pSmurfState->vbles.nNumElts;i++)
    {
 
@@ -128,18 +127,16 @@ ComputeSmurfOfNormalized(BDDNodeStruct *pFunc, PartialAssignmentEncoding encodin
       BDDNodeStruct *pFuncEvaled = EvalBdd(pFunc, nVble, true);
       SmurfState *pSmurfStateOfEvaled
          = ComputeSmurfAndInferences(pFuncEvaled, encoding.AddLiteral(nVble, true));
-      pTransition =
-         AddStateTransition(pSmurfState, i, arrIte2SolverVarMap[nVble], BOOL_TRUE,
-               pFuncEvaled, pSmurfStateOfEvaled);
+      AddStateTransition(pSmurfState, i, arrIte2SolverVarMap[nVble], BOOL_TRUE,
+            pFuncEvaled, pSmurfStateOfEvaled);
 
       // Compute transition that occurs when vble is set to false.
       pFuncEvaled = EvalBdd(pFunc, nVble, false);
       pSmurfStateOfEvaled 
          = ComputeSmurfAndInferences(pFuncEvaled, encoding.AddLiteral(nVble, false));
 
-      pTransition = 
-         AddStateTransition(pSmurfState, i, arrIte2SolverVarMap[nVble], BOOL_FALSE,
-               pFuncEvaled, pSmurfStateOfEvaled);
+      AddStateTransition(pSmurfState, i, arrIte2SolverVarMap[nVble], BOOL_FALSE,
+            pFuncEvaled, pSmurfStateOfEvaled);
    }
 
    return pSmurfState;

@@ -70,8 +70,8 @@ Do_Cofactor()
 				  functionType[j] = UNSURE;
 				  equalityVble[j] = 0;
 				  switch (Rebuild_BDDx(j)) {
-					case TRIV_UNSAT: return TRIV_UNSAT; break;
-					case TRIV_SAT:   return TRIV_SAT; break;
+					case TRIV_UNSAT: return TRIV_UNSAT;
+					case TRIV_SAT:   return TRIV_SAT; 
 					default: break;
 				  }
 				  ret = PREP_CHANGED;

@@ -334,13 +334,13 @@ read_bdd_circuit()
                       _equalityvble, _functions,
                       _functiontype, _length,
                       _variablelist, _independantVars);
-   ite_free(_bddtable);
-   ite_free(_equalityvble);
-   ite_free(_functions);
-   ite_free(_functiontype);
-   ite_free(_length);
-   ite_free(_variablelist);
-   ite_free(_independantVars);
+   ite_free(&_bddtable);
+   ite_free(&_equalityvble);
+   ite_free(&_functions);
+   ite_free(&_functiontype);
+   ite_free(&_length);
+   ite_free(&_variablelist);
+   ite_free(&_independantVars);
 }
 
 void

@@ -62,38 +62,39 @@ DisplayStatus(int nNumSmurfs,
        << endl;
 
   return;
-
+/*
   cout << "Unresolved Smurfs: " << endl;
   for (int i = 0; i < nNumSmurfs; i++)
     {
-      /*
-      for (int j = 0; j < 2 && i < nNumSmurfs; j++)
-	{
-	  cout << i << ": " << arrCurrentStates[i];
-	  i++;
-	  cout << "   ";
-	}
-       */
-      if (arrCurrentStates[i] != pTrueSmurfState)
-	{
-	  cout << i << ": " << arrCurrentStates[i] << endl;
-	}
+       
+       for (int j = 0; j < 2 && i < nNumSmurfs; j++)
+       {
+          cout << i << ": " << arrCurrentStates[i];
+          i++;
+          cout << "   ";
+       }
+
+       if (arrCurrentStates[i] != pTrueSmurfState)
+       {
+          cout << i << ": " << arrCurrentStates[i] << endl;
+       }
     }
   
   cout << "Unresolved special functions:" << endl;
   if (nNumSpecialFuncs > 0)
-    {
-      for (int i = 0; i < nNumSpecialFuncs; i++)
-	{
-	  if (arrNumRHSUnknowns[i] > 0)
-	    {
-	      cout << "Special function " << i << ":" << endl;
-	      DisplaySpecialFunc(arrSpecialFuncs + i);
-	      cout << "#RHS Unknowns: "
-		   << arrNumRHSUnknowns[i] << endl;
-	    }
-	}
-    }
+  {
+     for (int i = 0; i < nNumSpecialFuncs; i++)
+     {
+        if (arrNumRHSUnknowns[i] > 0)
+        {
+           cout << "Special function " << i << ":" << endl;
+           DisplaySpecialFunc(arrSpecialFuncs + i);
+           cout << "#RHS Unknowns: "
+              << arrNumRHSUnknowns[i] << endl;
+        }
+     }
+  }
+  */
 }
 
 void

@@ -108,8 +108,8 @@ InitHeuristicTablesForSpecialFuncs_XOR (int nMaxRHSSize)
 ITE_INLINE void
 FreeHeuristicTablesForSpecialFuncs_XOR()
 {
-  ite_free((void*)arrXorEqWght);
-  ite_free((void*)arrXorEqWghtD);
+  ite_free((void**)&arrXorEqWght);
+  ite_free((void**)&arrXorEqWghtD);
 }
 
 ITE_INLINE
@@ -193,11 +193,11 @@ InitHeuristicTablesForSpecialFuncs_AND (int nMaxRHSSize)
 ITE_INLINE void
 FreeHeuristicTablesForSpecialFuncs_AND() 
 {
-   ite_free((void*)arrAndEqFalseWght);
-   ite_free((void*)arrAndEqWght);
-   ite_free((void*)arrAndEqWghtCt);
-   ite_free((void*)arrAndEqWghtCx);
-   ite_free((void*)arrAndEqWghtCe);
+   ite_free((void**)&arrAndEqFalseWght);
+   ite_free((void**)&arrAndEqWght);
+   ite_free((void**)&arrAndEqWghtCt);
+   ite_free((void**)&arrAndEqWghtCx);
+   ite_free((void**)&arrAndEqWghtCe);
 }
 
 

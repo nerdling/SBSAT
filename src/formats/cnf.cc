@@ -205,11 +205,11 @@ void CNF_to_BDD(int cnf)
 	char macros[20], order;
 	int intnum;
 	long out, count, num;
-	long y, z, i, j, temp;
+	long y, z, i, j;
 
 	
-	FILE *fin;
-	fin = fopen ("aa", "rb");
+	//FILE *fin;
+	//fin = fopen ("aa", "rb");
 //	zecc_arr = new int[1000];
 	zecc_limit = 0;
 //	do{
@@ -343,7 +343,7 @@ void CNF_to_BDD(int cnf)
 		//than 2 variables in length.
 		d3_printf1("Done Scanning");
       num = 0;
-      temp = 0;
+      //temp = 0;
       
 		//Storing appropriate array sizes...helps with memory!
 		for(long x = 1; x < numinp + 1; x++) {
@@ -942,13 +942,13 @@ void CNF_to_BDD(int cnf)
 	d3_printf2("Number of BDDs - %ld\n", numout);
 	d2_printf1("\rReading CNF ... Done                   \n");
 }
-
+/*
 void DNF_to_CNF () {
 	typedef struct {
 		int num[50];
    } node1;
 	node1 *integers;
-	char string;
+>>>>   char string;
 	int lines = 0, length;
 	int y = 0;
 	fscanf(finputfile, "%ld %ld\n", &numinp, &numout);
@@ -959,7 +959,7 @@ void DNF_to_CNF () {
       
       do {
 			fscanf(finputfile, "%d", &integers[x].num[y]);
-			string = fgetc(finputfile);
+>>>>			string = fgetc(finputfile);
 			y++;
 			lines++;
 		}
@@ -996,3 +996,4 @@ void DNF_to_CNF () {
 	sprintf(string1, "c\n");
 	fprintf(foutputfile, "%s", string1);
 }
+*/

@@ -147,7 +147,6 @@ print_bdd1 (BDDNode * f, int print_counter)
          printf ("F T\n");
       return;
    }
-   return;
 }
 void
 printBDDfile (BDDNode * bdd, FILE * fout)
@@ -608,7 +607,9 @@ int splitXors() {
       d3_printf2("Adding split function %ld\n", x);
 		total_vars++;
 		xorFunctions[x] = ite_xor(xor_part, ite_var(total_vars));
+#ifndef NDEBUG
       BDDNode *savedF = functions[x];
+#endif
 
 		functions[x] = ite_equ(nonxor_part, ite_var(total_vars));
       
@@ -1013,7 +1014,7 @@ nmbrVarsInCommon (int bddNmbr1, int bddNmbr2, int *&length,
             if (bdd2pos == bdd2max) return varsSoFar;
          }
    }
-   return varsSoFar;
+   //return varsSoFar;
 }
 
 BDDNode * xquantify (BDDNode * f, int v)

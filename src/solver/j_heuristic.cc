@@ -54,7 +54,7 @@ ITE_INLINE void J_ResetHeuristicScores();
 // for that variable in all of the constraints which mention the variable.
 // The Summer 2000 report set c = 1/4096.  MvF used c = 1 in his prototype.
 //static const double c_heur = 1.0 / 4096.0;
-static const double c_heur = 1.0;
+//static const double c_heur = 1.0;
 
 extern int nNumSpecialFuncs;
 extern int nNumRegSmurfs;	// Number of regular Smurfs.
@@ -103,7 +103,7 @@ J_InitHeuristicScores()
 ITE_INLINE void
 J_FreeHeuristicScores()
 {
-   ite_free((void*)arrJWeights);
+   ite_free((void**)&arrJWeights);
 }
 
 ITE_INLINE void
@@ -185,6 +185,14 @@ J_ResetHeuristicScores()
    }
 #endif
 
+#ifdef HEUR_EXTRA_IN
+#undef HEUR_EXTRA_IN
+#endif
+
+#ifdef HEUR_EXTRA_OUT
+#undef HEUR_EXTRA_OUT
+#endif
+
 #define HEUR_EXTRA_IN() D_8(DisplayJHeuristicValues();); d8_printf1("\n");
 #define HEUR_EXTRA_OUT() \
    d8_printf6("JHeuristic: %c%d (%.10f,%.10f) because of %f\n",  \
@@ -200,14 +208,19 @@ J_ResetHeuristicScores()
 #include "heur_choice.cc"
 
 #undef HEUR_WEIGHT
+#undef HEUR_COMPARE
+#undef HEUR_SIGN
+#undef HEUR_FUNCTION
+#undef HEUR_EXTRA_IN
+#undef HEUR_EXTRA_OUT
+
+
 #define HEUR_WEIGHT(x,i) (x.Pos*x.Neg*(arrLemmaVbleCountsNeg[i]>arrLemmaVbleCountsPos[i]?arrLemmaVbleCountsNeg[i]:arrLemmaVbleCountsPos[i]))
 
-#undef HEUR_SIGN
 #define HEUR_SIGN(nBestVble) \
    (arrHeurScores[nBestVble].Pos >= arrHeurScores[nBestVble].Neg?BOOL_TRUE:BOOL_FALSE)
    //(arrLemmaVbleCountsPos[nBestVble]*arrHeurScores[nBestVble].Pos >= arrLemmaVbleCountsNeg[nBestVble]*arrHeurScores[nBestVble].Neg?BOOL_TRUE:BOOL_FALSE)
 
-#undef HEUR_FUNCTION
 #define HEUR_FUNCTION J_OptimizedHeuristic_l
 #include "heur_choice.cc"
 
@@ -254,6 +267,11 @@ J_Heuristic_Lemma(LemmaInfoStruct **ppUnitLemmaList, int *nInferredAtom, int *nI
    }
    *ppUnitLemmaList = NULL;
 }
+#undef HEUR_WEIGHT
+#undef HEUR_COMPARE
+#undef HEUR_SIGN
+#undef HEUR_FUNCTION
+
 
 ITE_INLINE
 double
@@ -519,7 +537,7 @@ J_SetHeurScoresForSmurfs(int nRegSmurfIndex, SmurfState *pState, int nNumXors)
    pState->cFlag = 2;
 
    if (pState->nNumHeuristicXors < nNumXors) {
-      ite_free((void*)pState->arrHeuristicXors);
+      ite_free((void**)&pState->arrHeuristicXors);
       pState->arrHeuristicXors = (double*)ite_calloc(nNumXors, sizeof(double),
             9, "pState->arrHeuristicXors");
       pState->nNumHeuristicXors = nNumXors;

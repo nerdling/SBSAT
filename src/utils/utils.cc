@@ -63,10 +63,10 @@ void *ite_calloc(int x, int y, int dbg_lvl, char *for_what) {
    return p;
 }
 
-void ite_free(void * &ptr) {
-  if (ptr != NULL) {
-    free(ptr);
-    ptr = NULL;
+void ite_free(void **ptr) {
+  if (*ptr != NULL) {
+    free(*ptr);
+    *ptr = NULL;
   }
 }
 

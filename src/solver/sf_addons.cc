@@ -155,7 +155,7 @@ FreeAddons(BDDNodeStruct *pFunc)
          FreeAddons(pFunc->elseCase);
       }
       FreeSmurfFactoryAddons(pFunc->addons);
-      ite_free((void*)pFunc->addons);
+      ite_free((void**)&pFunc->addons);
    }
 }
 

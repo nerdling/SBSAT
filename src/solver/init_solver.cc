@@ -359,8 +359,8 @@ CreateAffectedFuncsStructures(int nMaxVbleIndex)
       }
    }
 
-   ite_free((void*)arrRegSmurfIndexForVble);
-   ite_free((void*)arrSpecialFuncIndexForVble);
+   ite_free((void**)&arrRegSmurfIndexForVble);
+   ite_free((void**)&arrSpecialFuncIndexForVble);
 
    return arrAFS;
 }
@@ -368,9 +368,9 @@ CreateAffectedFuncsStructures(int nMaxVbleIndex)
 ITE_INLINE void
 FreeAFS()
 {
-   ite_free((void*)arrAFSBufferSmurfs);
-   ite_free((void*)arrAFSBufferSpecFn);
-   ite_free((void*)arrAFS);
+   ite_free((void**)&arrAFSBufferSmurfs);
+   ite_free((void**)&arrAFSBufferSpecFn);
+   ite_free((void**)&arrAFS);
 }
 
 ITE_INLINE void
@@ -551,7 +551,7 @@ ITE_INLINE void InitializeSpecialFnStack();
       arrSolution[i] = BOOL_UNKNOWN;
    }
 
-   if (csv_trace_file) {
+   if (*csv_trace_file) {
       fd_csv_trace_file = fopen(csv_trace_file, "w");
    }
 
@@ -565,33 +565,33 @@ FreeBrancher()
 
    if (fd_csv_trace_file) fclose(fd_csv_trace_file);
 
-   ite_free((void*)arrUnsetLemmaFlagVars);
-   ite_free((void*)arrTempLemma);
-   ite_free((void*)arrBacktrackStackIndex);
-   ite_free((void*)arrLemmaFlag);
+   ite_free((void**)&arrUnsetLemmaFlagVars);
+   ite_free((void**)&arrTempLemma);
+   ite_free((void**)&arrBacktrackStackIndex);
+   ite_free((void**)&arrLemmaFlag);
 
-   ite_free((void*)arrInferenceQueue);
-   ite_free((void*)arrFnInferenceQueue);
+   ite_free((void**)&arrInferenceQueue);
+   ite_free((void**)&arrFnInferenceQueue);
 
-   ite_free((void*)arrNumRHSUnknowns);
-   ite_free((void*)arrNumRHSUnknownsNew);
-   ite_free((void*)arrPrevNumRHSUnknowns);
+   ite_free((void**)&arrNumRHSUnknowns);
+   ite_free((void**)&arrNumRHSUnknownsNew);
+   ite_free((void**)&arrPrevNumRHSUnknowns);
 
-   ite_free((void*)arrNumLHSUnknowns);
-   ite_free((void*)arrNumLHSUnknownsNew);
-   ite_free((void*)arrPrevNumLHSUnknowns);
+   ite_free((void**)&arrNumLHSUnknowns);
+   ite_free((void**)&arrNumLHSUnknownsNew);
+   ite_free((void**)&arrPrevNumLHSUnknowns);
 
-   ite_free((void*)arrSumRHSUnknowns);
-   ite_free((void*)arrSumRHSUnknownsNew);
-   ite_free((void*)arrPrevSumRHSUnknowns);
+   ite_free((void**)&arrSumRHSUnknowns);
+   ite_free((void**)&arrSumRHSUnknownsNew);
+   ite_free((void**)&arrPrevSumRHSUnknowns);
 
-   ite_free((void*)arrCurrentStates);
-   ite_free((void*)arrPrevStates);
-   ite_free((void*)arrChangedSmurfs);
-   ite_free((void*)arrChangedSpecialFn);
-   ite_free((void*)arrChoicePointStack);
-   ite_free((void*)arrBacktrackStack);
-   ite_free((void*)arrVarScores);
+   ite_free((void**)&arrCurrentStates);
+   ite_free((void**)&arrPrevStates);
+   ite_free((void**)&arrChangedSmurfs);
+   ite_free((void**)&arrChangedSpecialFn);
+   ite_free((void**)&arrChoicePointStack);
+   ite_free((void**)&arrBacktrackStack);
+   ite_free((void**)&arrVarScores);
 
    FreeAFS();
    if (nHeuristic == JOHNSON_HEURISTIC) {

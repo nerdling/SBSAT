@@ -47,3 +47,7 @@
   (arrLemmaVbleCountsPos[nBestVble] > arrLemmaVbleCountsNeg[nBestVble]?\
    BOOL_TRUE:BOOL_FALSE)
 #include "heur_choice.cc"
+
+#undef HEUR_WEIGHT
+#undef HEUR_SIGN
+#undef HEUR_FUNCTION

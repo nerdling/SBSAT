@@ -56,15 +56,15 @@ IntegerSet::IntegerSet()
 
 IntegerSet::~IntegerSet()
 {
-  return; // LOOKHERE
-  IntNode *pToBeDeleted;
+  return; 
+  //IntNode *pToBeDeleted;
 
-  while (pList)
-    {
-      pToBeDeleted = pList;
-      pList = pList->pNext;
-      free(pToBeDeleted);
-    }
+  //while (pList)
+  //  {
+  //    pToBeDeleted = pList;
+  //    pList = pList->pNext;
+  //    free(pToBeDeleted);
+  //  }
 }
 
 IntNode *

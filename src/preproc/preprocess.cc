@@ -144,7 +144,7 @@ parse_cycle(char **p, int parse_only)
         case TRIV_SAT:    /* Sat */
         case PREP_ERROR:  /* Error */
           d9_printf2("pc: returning with %d\n", ret);
-          return ret; break;
+          return ret; 
         case PREP_CHANGED:   break; /* continuing */
         case PREP_NO_CHANGE: break; /* continuing */
         default: break; /* ?? */
@@ -236,7 +236,7 @@ parse_seq(char **p, int parse_only)
       case TRIV_SAT:    /* Sat */
       case PREP_ERROR:  /* Error */
          d9_printf2("ps: returning with %d\n", r);
-         ret=r; return ret; break;
+         ret=r; return ret; 
       case PREP_CHANGED: ret=PREP_CHANGED; break;
       case PREP_NO_CHANGE: break; /* unchanged */
       default: break;

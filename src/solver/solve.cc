@@ -253,9 +253,10 @@ FreeSolver(Tracer *tracer)
      FreeHeurScoresStack();
   }
 
-  ite_free((void*)arrSolution);
-  ite_free((void*)arrSolver2IteVarMap);
-  ite_free((void*)arrIte2SolverVarMap);
+  //ite_free((void**)&arrSolution);
+  ite_free((void**)&arrSolution);
+  ite_free((void**)&arrSolver2IteVarMap);
+  ite_free((void**)&arrIte2SolverVarMap);
 
   FreeLemmaInfoArray();
   FreeLemmaSpacePool();

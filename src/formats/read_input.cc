@@ -105,7 +105,7 @@ read_input(Tracer * &tracer)
                return 1; 
             } else CNF_to_BDD (1);
             break;
-
+/*
   case 'd': if (formatout == 'd') {
                if (KEDAR) fprintf (stdout, "S*****\n");
                DNF_to_CNF ();
@@ -113,7 +113,7 @@ read_input(Tracer * &tracer)
                return 1; 
             } else CNF_to_BDD (0);
             break;
-
+*/
   case 's': if (formatout == 'c') {
               if (KEDAR) fprintf (stdout, "S*****\n");
               SAT_to_CNF ();

@@ -136,7 +136,7 @@ Init_Preprocessing()
 		  switch (r) {
 			case TRIV_UNSAT:
 			case TRIV_SAT:
-			case PREP_ERROR: return r; break;
+			case PREP_ERROR: return r; 
 			default: break;
 		  }
 	  }
@@ -259,7 +259,7 @@ Finish_Preprocessing()
 	free(amount);
 	amount = NULL;
 	
-	ite_free((void *)num_funcs_var_occurs);
+	ite_free((void**)&num_funcs_var_occurs);
 	
 	for (int x = 0; x < numout; x++)
 	  {

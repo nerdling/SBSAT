@@ -111,11 +111,10 @@ ITE_INLINE int
 UpdateRegularSmurf(int nSmurfIndex)
 {
    SmurfState *pState;
-   SmurfState *pOldState;
 
    d9_printf2("Visiting Regular Smurf #%d\n", nSmurfIndex);
 
-   pOldState = pState = arrCurrentStates[nSmurfIndex];
+   pState = arrCurrentStates[nSmurfIndex];
 
    while(1) 
    {

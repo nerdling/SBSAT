@@ -1461,7 +1461,7 @@ void is_valid_state() {
 /***************************/
 
 void solution_found() { 
-   int a, i, j;
+   int a, i;
 /*
    f = clock();
    brancher_time += (float)(f-s);
@@ -1478,7 +1478,7 @@ void solution_found() {
       printf("\nSystem is satisifiable:   %f %d\n",
 	          (brancher_time / (float)CLOCKS_PER_SEC), trim_count);
       printf("\nCurrent Node Values:\n");
-      j=0;
+
       for (i=0; i<next_inf_history; i++)
 	      if (inf_history_flag[i] == 1) {
 	         if (i%10 == 0) printf("\n");	    

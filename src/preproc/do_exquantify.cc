@@ -143,7 +143,6 @@ int ExQuantify () {
 				 case PREP_ERROR: 
 					ret=r;
 					goto ex_bailout;
-					break;
 				 default: break;
 				}
 				

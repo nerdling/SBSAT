@@ -454,7 +454,7 @@ int truthOf (char *buffer, Tracer *tracer, int *original_variables)
 {
    int left_v, rght_v;
    Integer *equ_var;
-   char *first, *second, *ptr, *arg = (char *) calloc (1, 1024);
+   char *first, /**second,*/ *ptr, *arg = (char *) calloc (1, 1024);
    Hashtable *symbols = tracer->getHashTable ();
    
    StringTokenizer *s = new StringTokenizer ("new", " ");
@@ -622,7 +622,7 @@ int truthOf (char *buffer, Tracer *tracer, int *original_variables)
 		if(arg!=NULL) free(arg);
 		delete s;
       return left_v;
-   } else if (*(second = s->nextToken ()) == '=') {
+   } else if (*(/*second =*/ s->nextToken ()) == '=') {
       if ((equ_var = (Integer *) symbols->get (first)) == NULL) {
 			fprintf(stderr, "\nError:object is not in hashtable\n");
 			exit (1);

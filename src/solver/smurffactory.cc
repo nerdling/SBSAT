@@ -332,20 +332,20 @@ FreeSmurfFactory()
 
    /* from smurf factory */
    for (int i = 0; i < nNumRegSmurfs; i++)
-      ite_free((void*)arrSmurfPath[i].literals);
+      ite_free((void**)&arrSmurfPath[i].literals);
 
-   ite_free((void*)arrSmurfPath);
-   ite_free((void*)arrSmurfChain);
-   ite_free((void*)arrSmurfEqualityVble);
-   ite_free((void*)arrRegSmurfInitialStates);
+   ite_free((void**)&arrSmurfPath);
+   ite_free((void**)&arrSmurfChain);
+   ite_free((void**)&arrSmurfEqualityVble);
+   ite_free((void**)&arrRegSmurfInitialStates);
    nRegSmurfIndex = 0;
 
    for(int i=0; i < nNumSpecialFuncs; i++) {
-      ite_free((void*)arrSpecialFuncs[i].rhsVbles.arrElts);
-      ite_free((void*)arrSpecialFuncs[i].arrRHSPolarities);
-      ite_free((void*)arrSpecialFuncs[i].arrShortLemmas);
+      ite_free((void**)&arrSpecialFuncs[i].rhsVbles.arrElts);
+      ite_free((void**)&arrSpecialFuncs[i].arrRHSPolarities);
+      ite_free((void**)&arrSpecialFuncs[i].arrShortLemmas);
    }
-   ite_free((void*)arrSpecialFuncs);
+   ite_free((void**)&arrSpecialFuncs);
    nSpecialFuncIndex = 0;
 
    FreeAddonsPool();

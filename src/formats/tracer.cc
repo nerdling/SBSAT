@@ -770,9 +770,9 @@ we1:
 	   token = trim->get(t->nextToken());
 	   // Handle all equivalence statements here 
 	   if (!strcmp(token, "=")) {
-	      bool pair_is_comp = false;
-	      bool equiv_in_args = false;
-	      bool equiv_neg_in_args = false;
+	      //bool pair_is_comp = false;
+	      //bool equiv_in_args = false;
+	      //bool equiv_neg_in_args = false;
 	      strncpy(op, trim->get(substring->get(s, indexOf(s,'=')+1,indexOf(s,'('))), 127);
 	      // In cases other than the "not" operator, build a smurf 
 	      if (strcmp(op,"not")) {
@@ -808,31 +808,32 @@ we1:
 		       int i;
 		       for (i=0 ; i < vcount ; i++) {
 			  if (va == var_list[i]) {
-			     if (i == equiv_index && equiv_neg_in_args)
-				pair_is_comp = true;
-			     break;
+			     //if (i == equiv_index && equiv_neg_in_args)
+              //   pair_is_comp = true;
+              break;
 			  }
 			  if (va == -var_list[i]) {
-			     if (i != equiv_index || equiv_in_args)
-				pair_is_comp = true;
+              //if (i != equiv_index || equiv_in_args)
+              //   pair_is_comp = true;
 			     break;
 			  }
 		       }
 		       if (i == vcount) { //if va is not in var_list
-			  for ( ; i > 0 ; i--) {
-			     if (abs(var_list[i-1]) < abs(va)) break;
-			     var_list[i] = var_list[i-1];
-			     if (i-1 == equiv_index) equiv_index++;
-			  }
-			  var_list[i] = va;
-		       }
-		       uns_list[vcount++] = va;
-		     
+                for ( ; i > 0 ; i--) {
+                   if (abs(var_list[i-1]) < abs(va)) break;
+                   var_list[i] = var_list[i-1];
+                   if (i-1 == equiv_index) equiv_index++;
+                }
+                var_list[i] = va;
+             }
+             uns_list[vcount++] = va;
+		    /* 
 		       if (va == equiv) {
-			  equiv_in_args = true;
-		       } else if (va == -equiv) {
-			  equiv_neg_in_args = true;
-		       }
+                equiv_in_args = true;
+             } else if (va == -equiv) {
+                equiv_neg_in_args = true;
+             }
+             */
 		    }
 		 }
 

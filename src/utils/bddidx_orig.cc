@@ -104,4 +104,5 @@ orig_find_or_add_node (int v, BDDNode * r, BDDNode * e) {
 	}
 	fprintf (stderr, "\nPlease allocate more memory for BDD hash table\n");
 	exit(1);
+   return NULL;
 }

@@ -60,7 +60,6 @@ BackTrack_SBJ()
    LemmaInfoStruct *pUnitLemmaListTail = NULL;
    LemmaInfoStruct pUnitLemmaList;
    int nUnsetLemmaFlagIndex = 0; /* literals that we need to unset after bt */
-   LemmaBlock *pNewLemma=NULL; /* last lemma added */
    int nTempLemmaIndex = 0; /* the length of the new/temporary lemma */
    int nNumForcedInfsBelowCurrentCP = 0;
    int nInferredAtom; /* the choice point */
@@ -68,8 +67,8 @@ BackTrack_SBJ()
    int _num_backjumps = 0;
 
 	int highest_uip_level = gnMaxVbleIndex + 1;
-	int highest_uip_var0 = 0;
-	int highest_uip_var1 = 0;
+	//int highest_uip_var0 = 0;
+	//int highest_uip_var1 = 0;
 
 	
    ///assert(pUnitLemmaList.pNextLemma[0] == NULL);
@@ -225,7 +224,7 @@ BackTrack_SBJ()
                assert(IsInLemmaList(pUnitLemmaListTail,
                         &pUnitLemmaList));	  
 					
-               pNewLemma=AddLemma(nTempLemmaIndex,
+               AddLemma(nTempLemmaIndex,
                      arrTempLemma,
                      bFlag,
                      &pUnitLemmaList, /*m lemma is added in here */
@@ -237,8 +236,8 @@ BackTrack_SBJ()
 						highest_uip_level = arrBacktrackStackIndex[0];
 					} else if(arrBacktrackStackIndex[p->nWatchedVble[1]] < highest_uip_level) {
 						highest_uip_level = arrBacktrackStackIndex[p->nWatchedVble[1]];
-						highest_uip_var0 = p->nWatchedVble[0];
-						highest_uip_var1 = p->nWatchedVble[1];
+						//highest_uip_var0 = p->nWatchedVble[0];
+						//highest_uip_var1 = p->nWatchedVble[1];
 					}
             }
 

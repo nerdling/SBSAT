@@ -54,7 +54,7 @@ void Verify_NoSolver(Tracer *tracer);
 void Verify_Solver(Tracer *tracer);
 
 int ite_pre_init();
-void ite_free(Tracer *tracer);
+void ite_main_free(Tracer *tracer);
 int ite_io_init();
 void ite_io_free();
 int ite_preprocessing();
@@ -185,7 +185,7 @@ ite_final(int ret, Tracer *tracer)
    }
 
    ite_io_free();
-   ite_free(tracer);
+   ite_main_free(tracer);
 
    ite_counters_f[RUNNING_TIME] = get_runtime();
    if (DEBUG_LVL == 1) {
@@ -221,9 +221,9 @@ ite_pre_init()
 }
 
 void 
-ite_free(Tracer *tracer)
+ite_main_free(Tracer *tracer)
 {
-   d9_printf1("ite_free\n");
+   d9_printf1("ite_main_free\n");
    if (tracer != NULL) {
       delete tracer;
       d9_printf2("Removing file: %s\n", tracer_tmp_filename);
@@ -234,7 +234,7 @@ ite_free(Tracer *tracer)
    variablelist = NULL;
    delete [] original_functions;
    original_functions = NULL;
-	ite_free((void *)var_score);
+	ite_free((void **)&var_score);
 	
    bdd_bdd_free_pools();
    bdd_circuit_free();

@@ -752,7 +752,7 @@ void print_current_assign(void) {
 void flipatoms()
 {
 	int i, j;			/* loop counter */
-	int toenforce;		/* literal to enforce */
+	//int toenforce;		/* literal to enforce */
 	register int cli;
 	int numocc;
 	int * occptr;
@@ -770,10 +770,10 @@ void flipatoms()
 		flipiter++;
 		
 		changed[toflip] = numflip;
-		if(atom[toflip] > 0)
-		  toenforce = -toflip;
-		else
-		  toenforce = toflip;
+		//if(atom[toflip] > 0)
+		//  toenforce = -toflip;
+		//else
+		//  toenforce = toflip;
 		atom[toflip] = 1-atom[toflip];  //flipped variable
 		
 		if (hamming_flag){ //not turned on

@@ -459,7 +459,7 @@ int countNumberClauses (Recd *clauses) {
 }
 
 Recd *applyBoundedResolution (Recd *clauses,int k,bool *changes, int no_vars) {
-   int pivot, i, comlits, j;
+   int pivot, i, comlits;
    char *tmp;
    Recd *front = clauses;
    Recd *anchor;
@@ -474,7 +474,7 @@ Recd *applyBoundedResolution (Recd *clauses,int k,bool *changes, int no_vars) {
    }
 
    // fprintf(stderr,"resolving...\n");
-   j=0;
+   //j=0;
    for (anchor = clauses ; anchor->next != NULL ; anchor = anchor->next) {
       // fprintf(stderr,"\r%d     ",j++);
       for (sweep = anchor->next ; sweep != NULL ; sweep = sweep->next) {
@@ -516,7 +516,7 @@ Recd *applyBoundedResolution (Recd *clauses,int k,bool *changes, int no_vars) {
 
 Recd *applySubsumption (Recd *clauses, bool *change, int no_vars) {
    Recd *cursor, *tester, *front, *ptr;
-   int i, j;
+   int i/*,j*/;
 	
    if (clauses == NULL) return NULL;
 	
@@ -525,7 +525,7 @@ Recd *applySubsumption (Recd *clauses, bool *change, int no_vars) {
    front->next = clauses;
 	
    // fprintf(stderr,"\nsubsuming...\n");
-   j=0;
+   //j=0;
    for (cursor = clauses ; cursor != NULL ; cursor = cursor->next) {
       // fprintf(stderr,"\r%d     ",j++);
       for (tester = front ; tester->next != NULL ; ) {
