@@ -269,7 +269,6 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 			}
 		}
 
-      strcpy (macros, "define");
       if (whereat == totaldefines) {
 			totaldefines++;
 			if(totaldefines >= max_defines) {
@@ -277,6 +276,7 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 				max_defines+=10;
 			}
 		}
+      strcpy (macros, "define");
       return defines[whereat].bdd;
 	}
 	if (!strcasecmp (macros, "add_state")) {
@@ -543,81 +543,10 @@ BDDNode *putite(int intnum, BDDNode * bdd)
       return v1;
 	}
 	if (!strcasecmp (macros, "equ")) {
-      BDDNode * v1, *v2;
+		BDDNode * v1, *v2;
       v1 = putite (intnum, bdd);
       v2 = putite (intnum, bdd);
-      int v1var = 0;
-      if (v1 == ite_var (v1->variable))
-		  v1var = v1->variable;
-      else if (v1 == ite_var (-(v1->variable)))
-		  v1var = -(v1->variable);
-      else if (v2 == ite_var (v2->variable)) {
-			v1var = v2->variable;
-			BDDNode * temp = v1;
-			v1 = v2;
-			v2 = temp;
-		} else if (v2 == ite_var (-(v2->variable))) {
-			v1var = -(v2->variable);
-			BDDNode * temp = v1;
-			v1 = v2;
-			v2 = temp;
-		}
 		functionType[nmbrFunctions] = UNSURE;
-      if (v1var != 0) {
-			int tempint[5000];
-			long y = 0;
-			unravelBDD (&y, tempint, v2);
-			if (y != 0) {
-				int v = 0;
-				for (int x = 1; x < y; x++) {
-					v++;
-					if (tempint[x] == tempint[x - 1])
-					  v--;
-					tempint[v] = tempint[x];
-				}
-				y = v + 1;
-			}
-			int v2length = y;
-			int isAND = 1;
-			for (int x = 0; x < v2length; x++) {
-				if (set_variable (v2, tempint[x], 0) == false_ptr)
-				  continue;
-				if (set_variable (v2, tempint[x], 1) == false_ptr)
-				  continue;
-				else {
-					isAND = 0;
-					break;
-				}
-			}
-			if (isAND == 1) {
-				functionType[nmbrFunctions] = AND;
-				equalityVble[nmbrFunctions] = v1var;
-				
-				//independantVars[v1var] = 1;
-				//no_independent = 0;
-				//fprintf (foutputfile, "\nAND=\n");
-			} else {
-				int isOR = 1;
-				for (int x = 0; x < v2length; x++) {
-					if (set_variable (v2, tempint[x], 0) == true_ptr)
-					  continue;
-					if (set_variable (v2, tempint[x], 1) == true_ptr)
-					  continue;
-					else {
-						isOR = 0;
-						break;
-					}
-				}
-				if (isOR == 1) {
-					functionType[nmbrFunctions] = OR;
-					equalityVble[nmbrFunctions] = v1var;
-					
-					//independantVars[v1var] = 1;
-					//no_independent = 0;
-					//fprintf (foutputfile, "\nOR=\n");
-				}
-			}
-		}
       return ite_equ (v1, v2);
 	}
 	if (!strcasecmp (macros, "imp")) {
