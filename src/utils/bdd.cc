@@ -366,7 +366,7 @@ BDDNode * findBranch (int y, int z, BDDNode * func)
 void
 printBDDTree (BDDNode * bdd, int *which_zoom)
 {
-   int y = 0, z, NUM = PRINT_TREE_WIDTH, level = 0, len, x, i;
+   int y = 0, z, NUM = PRINT_TREE_WIDTH, level = 0, x, i;
    char aa[10];
    int tempint[100];
    for (x = 0; x < 100; x++)
@@ -392,58 +392,44 @@ printBDDTree (BDDNode * bdd, int *which_zoom)
          fprintf (stdout, " ");
       for (x = 0; x < (1 << level); x++)
       {
-         len = 1;
          if (tempint[y] == -1) {
-            fprintf (stdout, "T");
+				sprintf(aa, "T");
+/*				fprintf (stdout, "T");
 				if ((x + 1) < (1 << level))
 				  for(i = 1; i < NUM; i++)
 					 fprintf(stdout, " ");
+*/
 			}
          else if (tempint[y] == -2) {
-            fprintf (stdout, "F");
-				if ((x + 1) < (1 << level))
-				  for(i = 1; i < NUM; i++)
-					 fprintf(stdout, " ");
+				sprintf(aa, "F");
 			} else if (tempint[y] == 0) {
-				if ((x + 1) < (1 << level))
-				  for(i = 0; i < NUM; i++)
-					 fprintf(stdout, " ");
+				sprintf(aa, " ");
 			} else if (y > 14) {
-            fprintf (stdout, "*%d", (*which_zoom)++);
+				sprintf(aa, "*%d", (*which_zoom)++);
             zoomarr[reference++] = y;
-            len++;
          } else {
 				sprintf(aa, "%d", tempint[y]);
-				int l = strlen(aa);
-				if(l%2 == 0) {				  
+			}
+			int l = strlen(aa);
+//			fprintf(stdout, "(%d)", l);
+//			if(l > 0 && ((x + 1) <= (1 << level))) {
+				if(l%2 == 0) {
 					for(i = 0; i < l/2-1; i++)
 					  fprintf(stdout, "\b");
-					fprintf (stdout, "%d", tempint[y]);
+					fprintf (stdout, aa);
 					if ((x + 1) < (1 << level))
 					  for(i = l/2+1;i < NUM; i++)
 						 fprintf(stdout, " ");
 				} else {
 					for(i = 0; i < l/2; i++)
 					  fprintf(stdout, "\b");
-					fprintf (stdout, "%d", tempint[y]);
+					fprintf (stdout, aa);
 					if ((x + 1) < (1 << level))
 					  for(i = l/2+1;i < NUM; i++)
 						 fprintf(stdout, " ");
 				}
-			}
-			
+//			}
 			y++;
-/*
-         if ((x + 1) < (1 << level)) {
-				if (tempint[y] > 0) {
-					sprintf (aa, "%d", tempint[y - 1]);
-					len += strlen (aa);
-				}
-            for (i = 0; i < (NUM - len) - 1; i++)
-				  fprintf (stdout, "@");
-            fprintf (stdout, " ");
-         }
-*/
 		}
       level++;
       NUM /= 2;
