@@ -48,7 +48,7 @@ int Setting_Neg = 0;
 
 llistStruct *amount;
 Linear *l;
-int *length;
+int *length = NULL;
 infer *inferlist;
 infer *lastinfer;
 int notdone;
@@ -57,6 +57,7 @@ float *var_score = NULL;
 store *variables;
 int *num_funcs_var_occurs = NULL;
 int str_length;
+int preproc_did_nothing = 0;
 long affected;
 BDDNodeStruct **xorFunctions;
 
@@ -71,6 +72,10 @@ double start_prep = 0;
 int
 Init_Preprocessing()
 {
+	if(nmbrFunctions == 0) {
+		preproc_did_nothing = 1;
+		return TRIV_SAT;
+	}
 	bool OLD_DO_INFERENCES = DO_INFERENCES;
 	DO_INFERENCES = 0;
 
@@ -112,6 +117,8 @@ Init_Preprocessing()
 	if(tempint != NULL) delete [] tempint;
    tempint = new int[5000];
 
+
+	if(length != NULL) ite_free((void **)&variables);
 	length = (int *)ite_recalloc(NULL, 0, nmbrFunctions, sizeof(int), 9, "length");
 	//length = new int[nmbrFunctions];
 	inferlist = new infer;
@@ -191,6 +198,7 @@ Triv_Unsat()
 int
 Finish_Preprocessing()
 {	
+	if(preproc_did_nothing == 1) return TRIV_SAT;
 	int ret = PREP_NO_CHANGE;
 	
 	//Call Apply_Inferences to make sure all inferences were applied.
@@ -346,20 +354,22 @@ Finish_Preprocessing()
    return ret;
 }
 
-int add_newFunctions(BDDNode **new_bdds, int size) {
+int add_newFunctions(BDDNode **new_bdds, int new_size) {
 	int ret = PREP_NO_CHANGE;
 	
-	nmbrFunctions = nmbrFunctions+size;
+	nmbrFunctions = nmbrFunctions+new_size;
 	functions_alloc(nmbrFunctions);
 
-	length = (int *)ite_recalloc(NULL, nmbrFunctions-size, nmbrFunctions, sizeof(int), 9, "length");
-	variables = (store *)ite_recalloc(NULL, 0, nmbrFunctions-size, sizeof(store), 9, "variables");
+	length = (int *)ite_recalloc(length, nmbrFunctions-new_size, nmbrFunctions, sizeof(int), 9, "length");
+	variables = (store *)ite_recalloc(variables, nmbrFunctions-new_size, nmbrFunctions, sizeof(store), 9, "variables");
 
-	Init_Repeats(); //FIX THIS!!!!!!! add in ite_recalloc plus ite_free methods.
-	                //FIX Delete_Repeats as well
+	Init_Repeats();
+
+	for(int x = nmbrFunctions-new_size; x < nmbrFunctions; x++) {		  
+		functions[x] = new_bdds[x-(nmbrFunctions-new_size)];		
+	}
 	
-	//variables;
-	for (int x = nmbrFunctions-size; x < nmbrFunctions; x++) {
+	for (int x = nmbrFunctions-new_size; x < nmbrFunctions; x++) {
 		variables[x].num = NULL;
 		int r=Rebuild_BDDx(x);
 		switch (r) {
@@ -370,7 +380,7 @@ int add_newFunctions(BDDNode **new_bdds, int size) {
 		}
 	}
 	
-	for (int x = nmbrFunctions-size; x < nmbrFunctions; x++) {
+	for (int x = nmbrFunctions-new_size; x < nmbrFunctions; x++) {
 		for (int i = 0; i < length[x]; i++) {
 			llist *newllist = new llist;
 			newllist->num = x;

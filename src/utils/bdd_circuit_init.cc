@@ -55,9 +55,9 @@ int vars_max = 0;
 int
 functions_alloc(int n_fns)
 {
-   if (n_fns < functions_max) return 0;
+   if (n_fns <= functions_max) return 0;
    /* n_fns -- numout */
-   equalityVble = (int *)ite_recalloc((void*)equalityVble, functions_max, 
+   equalityVble = (int *)ite_recalloc((void*)equalityVble, functions_max,
          n_fns, sizeof(int), 9, "equalityVble");
    functions = (BDDNode **)ite_recalloc((void*)functions, functions_max,
          n_fns, sizeof(BDDNode*), 9, "functions");

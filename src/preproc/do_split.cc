@@ -51,22 +51,14 @@ char p[100];
 
 int Do_Split() {
    d3_printf1("SPLITTING LARGE FUNCTIONS - ");
-   int cofs = PREP_CHANGED;
    int ret = PREP_NO_CHANGE;
-	affected = 0;
 	D_3(
 		 sprintf(p, "{0:0/%d}", nmbrFunctions);
 		 str_length = strlen(p);
 		 d3_printf1(p);
 	);
-	while (cofs!=PREP_NO_CHANGE) {
-      cofs = Split_Large ();
-      if(cofs == PREP_CHANGED) ret = PREP_CHANGED;
-      else if(cofs == TRIV_UNSAT) {
-			return TRIV_UNSAT;
-		}
-	}
-	
+	ret = Split_Large ();	
+
 	d3_printf1("\n");
    d2e_printf1("\r                                         ");
 	return ret;
@@ -116,19 +108,19 @@ int Split_Large () {
 	max_bdds = 0;
 	num_bdds = 0;
 
-	int k_size = 6;
+	int k_size = 8;
 	
 	BDDFuncs = (BDDNode **)ite_recalloc(NULL, max_bdds, max_bdds+10, sizeof(BDDNode *), 9, "BDDFuncs");
 	max_bdds += 10;
 
-	int affected = 0;
+	affected = 0;
 	
 	for(int j = 0; j < nmbrFunctions; j++) {
 		D_3(
 			 if (j % 100 == 0) {
 				 for(int iter = 0; iter<str_length; iter++)
 					d3_printf1("\b");
-				 sprintf(p, "{%d:%d/%d}", affected, j, nmbrFunctions);
+				 sprintf(p, "{%ld:%d/%d}", affected, j, nmbrFunctions);
 				 str_length = strlen(p);
 				 d3_printf1(p);
 			 }
@@ -156,28 +148,80 @@ int Split_Large () {
 			nCk_Sets(length[j], k_size, variables[j].num, &whereat, length[j], functions[j], j);
 			//d3_printf2("whereat = %d: \n", whereat);
 			
-			/*			
-			 BDDNode *tempBDD;
-			 for(int i = 0; i < whereat; i++) {
-			 tempBDD = pruning(functions[j], BDDFuncs[i]);
-			 if(tempBDD != functions[j]) {
-			 functions[j] = tempBDD;					
-			 }
-			 }
-			 */
+			//add BDDFuncs to functions;
+			if(whereat > 0) {
+				affected++;
+				ret = PREP_CHANGED;
+				switch (int r=add_newFunctions(BDDFuncs, whereat)) {
+				 case TRIV_UNSAT:
+				 case TRIV_SAT:
+				 case PREP_ERROR: 
+					ret=r;
+					goto sp_bailout;
+				 default: break;
+				}
+				
+				switch (int r=Rebuild_BDDx(j)) {
+				 case TRIV_UNSAT:
+				 case TRIV_SAT:
+				 case PREP_ERROR: 
+					ret=r;
+					goto sp_bailout;
+				 default: break;
+				}
+			}
+			if (functionType[j] == UNSURE && length[j] > k_size) { 
+				//Function is still too large, must use alternative method (CNF).
+				//Count the clauses
+				int num = countFalses (functions[j]);
+				if(num == 1) functionType[j] = PLAINOR;
+				else if(num > 1) {
+					affected++;
+					ret = PREP_CHANGED;
+					intlist *list = new intlist[num];
+					int pathx = 0, listx = 0;
+					findPathsToFalse (functions[j], tempint, pathx, list, &listx);
+					if(listx >= max_bdds) {
+						BDDFuncs = (BDDNode **)ite_recalloc(BDDFuncs, max_bdds, listx+1, sizeof(BDDNode *), 9, "BDDFuncs");
+						max_bdds = listx+1;
+						num_bdds = listx;
+					}
+					for (int i = 0; i < listx; i++) {
+						BDDFuncs[i] = false_ptr;
+						for(int x = 0; x < list[i].length; x++)
+						  BDDFuncs[i] = ite_or(BDDFuncs[i], ite_var(list[i].num[x]));
+						delete [] list[i].num;
+					}
+					delete [] list;
+					
+					switch (int r=add_newFunctions(BDDFuncs, listx)) {
+					 case TRIV_UNSAT:
+					 case TRIV_SAT:
+					 case PREP_ERROR: 
+						ret=r;
+						goto sp_bailout;
+					 default: break;
+					}
+					for(int i = nmbrFunctions-listx; i < nmbrFunctions; i++)
+					  functionType[i] = PLAINOR;
+
+					equalityVble[j] = 0;
+					functionType[j] = UNSURE;
+					functions[j] = true_ptr;
+					switch (int r=Rebuild_BDDx(j)) {
+					 case TRIV_UNSAT:
+					 case TRIV_SAT:
+					 case PREP_ERROR: 
+						ret=r;
+						goto sp_bailout;
+					 default: break;
+					}
+				}
+			}
 			
 			//d3_printf2("\n%d: ", j);
 			//printBDD(functions[j]);
 			//d3_printf1("\n");
-			
-			switch (int r=Rebuild_BDDx(j)) {
-			 case TRIV_UNSAT:
-			 case TRIV_SAT:
-			 case PREP_ERROR: 
-				ret=r;
-				goto sp_bailout;
-			 default: break;
-			}
 		}
 	}
 	sp_bailout:

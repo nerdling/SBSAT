@@ -1017,8 +1017,8 @@ BDDNode *strengthen_fun(BDDNode *bddNmbr1, BDDNode *bddNmbr2)
 	for (; bdd2pos < length2; bdd2pos++)
 	  quantifiedBDD2 = xquantify(quantifiedBDD2, vars2[bdd2pos]);
 	
-	if(length1 > 0) delete vars1;
-	if(length2 > 0) delete vars2;
+	if(length1 > 0) delete []vars1;
+	if(length2 > 0) delete []vars2;
 	return ite_and(bddNmbr1, quantifiedBDD2);
 }
 

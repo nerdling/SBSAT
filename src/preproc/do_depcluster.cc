@@ -168,7 +168,9 @@ int DepCluster () {
 					goto ex_bailout;
 				 default: break;
 				}
-
+				delete [] bdd_vars;
+				bdd_vars = NULL;
+				
 				Quantify = xquantify (Quantify, i);
 				switch (int r=Rebuild_BDD(Quantify, &bdd_length, bdd_vars)) {
 				 case TRIV_UNSAT:
@@ -208,6 +210,8 @@ int DepCluster () {
 								 default: break;
 								}
 							}
+							delete [] bdd_vars;
+							bdd_vars = NULL;
 							continue;
 						}
 						if(DO_INFERENCES) {
@@ -221,7 +225,9 @@ int DepCluster () {
 						}
 //#define SEAN_REAL_DC //Unomment for REAL dependent clustering
 #ifndef SEAN_REAL_DC
-						continue; 
+					   delete [] bdd_vars;
+						bdd_vars = NULL;
+						continue;
 #else
 						equalityVble[k] = 0;
 						functionType[k] = UNSURE;
@@ -238,6 +244,8 @@ int DepCluster () {
 							 default: break;
 							}
 						}
+						delete [] bdd_vars;
+						bdd_vars = NULL;
 						continue;
 					}
 					if(DO_INFERENCES) {
@@ -250,6 +258,8 @@ int DepCluster () {
 						}
 					}
 #ifndef SEAN_REAL_DC
+					delete [] bdd_vars;
+					bdd_vars = NULL;
 					continue; 
 #else
 					equalityVble[k] = 0;

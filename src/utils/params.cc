@@ -191,7 +191,7 @@ t_opt options[] = {
 		V(i:2048,"2048"), {""}, VAR_NORMAL, 0, 
                 "Variables forced during preprocessing."},
 { preproc_string, "P", "preprocess-sequence", P_STRING, 
-		V(i:255,"255"), {"(ExDc)*(ExSt)*(ExPr)*(ExSp)"}, VAR_NORMAL, 0,
+		V(i:255,"255"), {"(ExDc)*(ExSp)*(ExSt)*(ExPr)*(ExSp)*"}, VAR_NORMAL, 0,
                 "The preprocessing sequence"},
 { (void*)DO_ALL, "All",  "All", P_FN_INT, V(i:0,"0"), V(i:2,"2"), VAR_CMDLINE+VAR_DUMP, 0, 
 	       "Enable/Disable All Preprocessing Options (1/0)"},

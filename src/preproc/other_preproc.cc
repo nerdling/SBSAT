@@ -46,28 +46,31 @@ int *Restct_repeat;
 int *ReFPS_repeat;
 int *St_repeat;
 int *Dep_repeat;
+int repeat_size = 0;
 
 void Init_Repeats() {
-	P1_repeat = new int[nmbrFunctions];
-	P2_repeat = new int[nmbrFunctions];
-	Restct_repeat = new int[nmbrFunctions];
-	ReFPS_repeat = new int[nmbrFunctions];
-	St_repeat = new int[nmbrFunctions];
-	Dep_repeat = new int[nmbrFunctions];
+	P1_repeat = (int *)ite_recalloc(P1_repeat, repeat_size, nmbrFunctions, sizeof(int), 9, "P1_repeat");
+	P2_repeat = (int *)ite_recalloc(P2_repeat, repeat_size, nmbrFunctions, sizeof(int), 9, "P2_repeat");
+	Restct_repeat = (int *)ite_recalloc(Restct_repeat, repeat_size, nmbrFunctions, sizeof(int), 9, "Restct_repeat");
+	ReFPS_repeat = (int *)ite_recalloc(ReFPS_repeat, repeat_size, nmbrFunctions, sizeof(int), 9, "ReFPS_repeat");
+	St_repeat = (int *)ite_recalloc(St_repeat, repeat_size, nmbrFunctions, sizeof(int), 9, "St_repeat");
+	Dep_repeat = (int *)ite_recalloc(Dep_repeat, repeat_size, nmbrFunctions, sizeof(int), 9, "Dep_repeat");
+	repeat_size = nmbrFunctions;
 }
 
 void Delete_Repeats() {
-	delete [] P1_repeat;
+	repeat_size = 0;
+	ite_free((void **)&P1_repeat);
+	ite_free((void **)&P2_repeat);
+	ite_free((void **)&Restct_repeat);
+	ite_free((void **)&ReFPS_repeat);
+	ite_free((void **)&St_repeat);
+	ite_free((void **)&Dep_repeat);
 	P1_repeat = NULL;
-	delete [] P2_repeat;
 	P2_repeat = NULL;
-	delete [] Restct_repeat;
 	Restct_repeat = NULL;
-	delete [] ReFPS_repeat;
 	ReFPS_repeat = NULL;
-	delete [] St_repeat;
 	St_repeat = NULL;
-	delete [] Dep_repeat;
 	Dep_repeat = NULL;
 }
 
@@ -502,29 +505,26 @@ cheat_replaceall (int *&length,
 }
 
 void
-findPathsToFalse (BDDNode * bdd, int *path, int pathx, intlist * list,
-		  int *listx)
+findPathsToFalse (BDDNode *bdd, int *path, int pathx, intlist *list, int *listx)
 {
-  if (bdd == false_ptr)
-    {
-      list[(*listx)].num = new int[pathx];
-      for (int x = 0; x < pathx; x++)
-	{
-	  list[(*listx)].num[x] = -path[x];
+	if (bdd == false_ptr) {
+		list[(*listx)].num = new int[pathx];
+		for (int x = 0; x < pathx; x++) {
+			list[(*listx)].num[x] = -path[x];
+		}
+		//list[(*listx)].num[pathx-1] = -list[(*listx)].num[pathx-1];
+		list[(*listx)].length = pathx;
+		(*listx)++;
+		return;
 	}
-      //list[(*listx)].num[pathx-1] = -list[(*listx)].num[pathx-1];
-      list[(*listx)].length = pathx;
-      (*listx)++;
-      return;
-    }
-  if (bdd == true_ptr)
-    return;
-
-  path[pathx] = bdd->variable;
-  findPathsToFalse (bdd->thenCase, path, pathx + 1, list, listx);
-
-  path[pathx] = -bdd->variable;
-  findPathsToFalse (bdd->elseCase, path, pathx + 1, list, listx);
+	if (bdd == true_ptr)
+	  return;
+	
+	path[pathx] = bdd->variable;
+	findPathsToFalse (bdd->thenCase, path, pathx + 1, list, listx);
+	
+	path[pathx] = -bdd->variable;
+	findPathsToFalse (bdd->elseCase, path, pathx + 1, list, listx);
 }
 
 void

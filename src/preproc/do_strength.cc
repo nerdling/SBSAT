@@ -190,3 +190,4 @@ BDDNode *strengthen(int bddNmbr1, int bddNmbr2, int *&length, store *&variables)
     }
     return ite_and(functions[bddNmbr1], quantifiedBDD2);
 }
+  
