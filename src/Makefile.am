@@ -1,7 +1,7 @@
 INCLUDES=-I$(top_srcdir)/include
-bin_PROGRAMS = ite
-ite_SOURCES = ite.cc
-ite_LDADD = formats/libformats.a \
+bin_PROGRAMS = sbsat
+sbsat_SOURCES = sbsat.cc
+sbsat_LDADD = formats/libformats.a \
 	    formats/5/libt5.a \
 	    solver/libsolver2.a  \
 	    postproc/libpostproc.a \

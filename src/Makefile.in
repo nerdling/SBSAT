@@ -119,9 +119,9 @@ sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 INCLUDES = -I$(top_srcdir)/include
-bin_PROGRAMS = ite
-ite_SOURCES = ite.cc
-ite_LDADD = formats/libformats.a \
+bin_PROGRAMS = sbsat
+sbsat_SOURCES = sbsat.cc
+sbsat_LDADD = formats/libformats.a \
 	    formats/5/libt5.a \
 	    solver/libsolver2.a  \
 	    postproc/libpostproc.a \
@@ -136,26 +136,26 @@ subdir = src
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/include/config.h
 CONFIG_CLEAN_FILES =
-bin_PROGRAMS = ite$(EXEEXT)
+bin_PROGRAMS = sbsat$(EXEEXT)
 PROGRAMS = $(bin_PROGRAMS)
 
-am_ite_OBJECTS = ite.$(OBJEXT)
-ite_OBJECTS = $(am_ite_OBJECTS)
-ite_DEPENDENCIES = formats/libformats.a formats/5/libt5.a \
+am_sbsat_OBJECTS = sbsat.$(OBJEXT)
+sbsat_OBJECTS = $(am_sbsat_OBJECTS)
+sbsat_DEPENDENCIES = formats/libformats.a formats/5/libt5.a \
 	solver/libsolver2.a postproc/libpostproc.a preproc/libpreproc.a \
 	utils/libutils.a
-ite_LDFLAGS =
+sbsat_LDFLAGS =
 
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)/include
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
-@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/ite.Po
+@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/sbsat.Po
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 CXXLD = $(CXX)
 CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
-DIST_SOURCES = $(ite_SOURCES)
+DIST_SOURCES = $(sbsat_SOURCES)
 
 RECURSIVE_TARGETS = info-recursive dvi-recursive pdf-recursive \
 	ps-recursive install-info-recursive uninstall-info-recursive \
@@ -164,7 +164,7 @@ RECURSIVE_TARGETS = info-recursive dvi-recursive pdf-recursive \
 	check-recursive installcheck-recursive
 DIST_COMMON = Makefile.am Makefile.in
 DIST_SUBDIRS = $(SUBDIRS)
-SOURCES = $(ite_SOURCES)
+SOURCES = $(sbsat_SOURCES)
 
 all: all-recursive
 
@@ -199,9 +199,9 @@ uninstall-binPROGRAMS:
 
 clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
-ite$(EXEEXT): $(ite_OBJECTS) $(ite_DEPENDENCIES) 
-	@rm -f ite$(EXEEXT)
-	$(CXXLINK) $(ite_LDFLAGS) $(ite_OBJECTS) $(ite_LDADD) $(LIBS)
+sbsat$(EXEEXT): $(sbsat_OBJECTS) $(sbsat_DEPENDENCIES) 
+	@rm -f sbsat$(EXEEXT)
+	$(CXXLINK) $(sbsat_LDFLAGS) $(sbsat_OBJECTS) $(sbsat_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT) core *.core
@@ -209,7 +209,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ite.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sbsat.Po@am__quote@
 
 distclean-depend:
 	-rm -rf ./$(DEPDIR)
