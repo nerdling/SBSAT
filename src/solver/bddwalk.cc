@@ -71,7 +71,10 @@
 //#define USE_BRITTLE
 //#define USE_FALSE_PATHS
 //#define USE_SIMPLE_PATH_RES
+
 #define USE_PATHS_TO_TRUE
+#define USE_RANDOM_TRUE_PATHS
+//#define USE_BEST_PATHS
 
 #define MAX_NODES_PER_BDD 5000
 
@@ -119,25 +122,35 @@ int *makecount;	/* number of clauses that become sat if var if flipped */
 int numfalse;		/* number of false clauses */
 
 int *varstoflip;
+double *true_var_weights;
+float true_weight_mult = 1.6;
+float taboo_max = 5;
+float taboo_length = 2;
+float true_weight_taboo = 0.5;
+float true_weight_max = 0.5;
+
+float path_factor = 10; //Number of random paths choosen = number of variables / path_factor;
+//Maybe a special case is needed for clauses?
+
 /************************************/
 /* Global flags and parameters      */
 /************************************/
 
 int abort_flag;
 
-int numerator = 50;//NOVALUE;	/* make random flip with numerator/denominator frequency */
+int numerator = 20;//NOVALUE;	/* make random flip with numerator/denominator frequency */
 
 int denominator = 100;
 
-int wp_numerator = 1;//NOVALUE;	/* walk probability numerator/denominator */
-int wp_denominator = 100;
+int wp_numerator = 10;//NOVALUE;	/* walk probability numerator/denominator */
+int wp_denominator = 1000;
 
 long int numflip;		/* number of changes so far */
 long int numnullflip;		/*  number of times a clause was picked, but no  */
 				/*  variable from it was flipped  */
 long int numlook;
 int numrun = BIG;
-int cutoff = BIG;//1000000;
+int cutoff = 30000; //BIG
 int base_cutoff = 1000000;
 int target = 0;
 int numtry = 0;			/* total attempts at solutions */
@@ -246,7 +259,7 @@ void freemem(void);
 void flipatoms_true_paths(void);
 void flipatoms(void);       /* changes the assignment of the literals */
                             /* specified in varstoflip[] */
-
+void Fill_Weights(void);
 void save_low_assign(void);
 void save_solution(void);
 
@@ -339,6 +352,7 @@ void initprob(void)
 	changed = new int[numvars+1];
 	breakcount = new int[numvars+1];
 	makecount = new int[numvars+1];	
+	true_var_weights = new double[numvars+1];
 	previousState = new dualintlist[numBDDs+1]; //intlist[numBDDs+1];
 	brittlecount = new float[numvars+1];
 	previousBrittle = new floatlist[numBDDs+1];
@@ -346,6 +360,11 @@ void initprob(void)
 	falseBDDs = new int[numBDDs+1];
 	varstoflip = new int[MAX_NODES_PER_BDD];
 
+	for(int x = 0; x < taboo_length; x++)
+	  true_weight_taboo = true_weight_taboo / true_weight_mult;
+	for(int x = 0; x < taboo_max; x++)
+	  true_weight_max = true_weight_max / true_weight_mult;
+	
 #ifdef USE_PATHS_TO_TRUE
 	BDDTruePaths = new pathStruct[numBDDs+1];
 #endif
@@ -353,6 +372,7 @@ void initprob(void)
 	for(int x = 0; x < numvars+1; x++) {
 		brittlecount[x] = 0;
 		tempmem[x] = 0;
+		true_var_weights[x] = 0.5;
 	}
 	
 	for(int x = 0; x < numBDDs; x++) {
@@ -378,6 +398,7 @@ void initprob(void)
 		previousBrittle[x].num = new int[wlength[x]+2];
 		previousBrittle[x].count = new float[wlength[x]+2];
 		wvariables[x].num = new int[y+1];	//(int *)calloc(y+1, sizeof(int));
+		wvariables[x].length = y;
 		for (int i = 0; i < y; i++) {
 			wvariables[x].num[i] = tempint[i];
 			tempmem[tempint[i]]++;
@@ -405,9 +426,163 @@ void initprob(void)
 	//occurence is done.
 	//length is done.
 	
-	Fill_Density(); //Each BDDNode now has the density of True's below it stored.
+	Fill_Weights(); //Each BDDNode now has the density of True's below it stored.
 
 #ifdef USE_PATHS_TO_TRUE
+# ifdef USE_RANDOM_TRUE_PATHS
+   for (int x = 0; x < numBDDs; x++) {
+      BDDTruePaths[x].paths = new intlist[(int)(wlength[x]*path_factor)]; //Same number of paths as variables in a BDD? Good or bad?
+      BDDTruePaths[x].numpaths =(int)(wlength[x]*path_factor);
+		for(int i = 0; i < BDDTruePaths[x].numpaths; i++) {
+			BDDTruePaths[x].paths[i].num = new int[wlength[x]];
+			BDDTruePaths[x].paths[i].length = wlength[x];
+		}
+	}
+# else
+#	ifdef USE_BEST_PATHS
+	
+	int z;
+	
+	func_object **funcs;
+	int no_out_vars;
+	
+	z = 0;
+	for (int x = 0; x < numBDDs; x++) {
+		int numx = countTrues (functions[x]);
+		z+=numx;
+	} //Count the clauses
+	
+	no_out_vars = z;
+	
+	funcs = (func_object **)calloc(1,sizeof(func_object *)*nmbrFunctions);
+	for (int i=0 ; i < nmbrFunctions ; i++) funcs[i] = new func_object;
+	
+	numinp = getNuminp ();
+	
+	z = 0;
+	
+	for (int x = 0; x < numBDDs; x++) {
+		fprintf(stderr, "[%d]     \r", x);
+		int no_vars = 0;
+		
+		long y = 0;
+		unravelBDD(&y, tempint, functions[x]);
+		qsort (tempint, y, sizeof (int), compfunc);
+		if (y != 0) {
+			int v = 0;
+			for (int i = 1; i < y; i++) {
+				v++;
+				if (tempint[i] == tempint[i - 1])
+				  v--;
+				tempint[v] = tempint[i];
+			}
+			y = v + 1;
+		}
+		
+		no_vars = y;
+		funcs[x]->no_vars = no_vars;
+		funcs[x]->var_list = (int *)calloc(1,sizeof(int)*no_vars);
+		char *p = new char[no_vars+1];
+		for (int i = 0; i < no_vars; i++) {
+			funcs[x]->var_list[i] = tempint[i];
+			p[i] = '0';
+		}
+		
+      int *truth_table = new int[1 << no_vars];
+      //printBDDerr(functions[x]);
+      //fprintf(stdout, "\n");
+      for (int tvec = 0; tvec < (1 << no_vars); tvec++) {
+			//1 - to get all the true paths, not false paths!
+         truth_table[tvec] = 1 - getTruth (funcs[x]->var_list, p, no_vars, functions[x]);
+			//fprintf(stdout, "%d ", truth_table[tvec]);
+         bcount (p, (no_vars - 1));
+      }
+      //fprintf(stdout, "\n");
+      delete p;
+		
+      int *literals;
+      int equiv;
+      // Fully QM and resolve the clauses
+      switch (functionType[x]) {
+       case OR:
+       case AND:
+         literals = getANDLiterals(x, funcs[x]->var_list, no_vars);
+         equiv = getEquiv(x, funcs[x]->var_list, no_vars);
+
+			funcs[x]->reduced0 = new Recd;
+         funcs[x]->reduced0->data = (char *)calloc(1,sizeof(char)*no_vars);
+         funcs[x]->reduced0->next = NULL;
+
+         // The long clause
+         for (int i=0 ; i < no_vars ; i++) {
+            if ((literals[i] > 0 && equiv != i) ||
+                (literals[i] < 0 && equiv == i))
+              funcs[x]->reduced0->data[i] = 0;
+            else
+              funcs[x]->reduced0->data[i] = 1;
+         }
+
+         // The short clauses
+         for (int i=0 ; i < no_vars ; i++) {
+            if (equiv == i) continue;
+            Recd *tmp = funcs[x]->reduced0;
+            funcs[x]->reduced0 = new Recd;
+            funcs[x]->reduced0->data = (char *)calloc(1,sizeof(char)*no_vars);
+            funcs[x]->reduced0->next = tmp;
+            for (int j=0 ; j < no_vars ; j++) {
+               if (j == i)
+                 funcs[x]->reduced0->data[j] = (literals[j] > 0) ? 1 : 0;
+               else if (j == equiv)
+                 funcs[x]->reduced0->data[j] = (literals[j] > 0) ? 0 : 1;
+               else funcs[x]->reduced0->data[j] = 2;
+            }
+         }
+			
+         delete literals;
+         literals = NULL;
+         break;
+       default:
+         funcs[x]->reduced0 = resolve (truth_table, 0, no_vars, no_out_vars);
+         break;
+      }
+      delete truth_table;
+	}
+	
+   for(int x = 0; x < numBDDs; x++) {
+		z = 0;
+      Recd *res = funcs[x]->reduced0;
+      for ( ; res != NULL; res=res->next) {
+         z++;
+      }
+		BDDTruePaths[x].numpaths = z;
+		BDDTruePaths[x].paths = new intlist[z];
+   }
+   no_out_vars = z;
+	
+   for(int x = 0; x < numBDDs; x++) {
+      Recd *res = funcs[x]->reduced0;
+		int j = 0;
+      for ( ; res != NULL; res=res->next) {
+         BDDTruePaths[x].paths[j].length = funcs[x]->no_vars;
+			BDDTruePaths[x].paths[j].num = new int[funcs[x]->no_vars];
+			int g = 0;
+			for(int i = 0; i < funcs[x]->no_vars; i++) {
+            int *vlst = funcs[x]->var_list;
+            int literal = (int) res->data[i];
+            if(literal < 2) {
+               if(literal == 1) BDDTruePaths[x].paths[j].num[g] = -vlst[i];
+               else BDDTruePaths[x].paths[j].num[g] = vlst[i];
+					g++;
+            }
+         }
+			BDDTruePaths[x].paths[j].length = g;
+			j++;
+      }
+      getRidOfRecdList (res);
+   }
+	fprintf(stderr, "         \r");
+
+#	else
    for (int x = 0; x < numBDDs; x++) {
       fprintf(stderr, "[%d]     \r", x);
       int numTrues = countTrues(functions[x]);
@@ -415,9 +590,11 @@ void initprob(void)
       BDDTruePaths[x].numpaths = 0;
       findPathsToTrue (functions[x], tempint, BDDTruePaths[x].paths, &(BDDTruePaths[x].numpaths));
 	}
+	fprintf(stderr, "         \r");
 	//The paths to true in each BDD have been recorded.
-
-	/*
+#	endif
+# endif
+   /*
 	for (int x = 0; x < numBDDs; x++) {
 		fprintf(foutputfile, "\n%d: ", x);
 	   printBDD(functions[x]);
@@ -428,11 +605,9 @@ void initprob(void)
 			fprintf (foutputfile, "0\n");
 		}
 	}
-	*/
-	
+   */
 #endif
 	delete [] tempint;
-	
 }
 
 void freemem(void)
@@ -456,6 +631,7 @@ void freemem(void)
 	delete [] breakcount;
 	delete [] makecount;
 	delete [] brittlecount;
+	delete [] true_var_weights;
 	
 	for (int x = 0; x < numBDDs; x++) {
 		delete [] previousState[x].num;
@@ -561,6 +737,27 @@ void print_statistics_start_flip(void)
 //		  print_current_assign();
 //		fflush(stdout);
 //	}
+}
+
+float weight_bdd(BDDNode *f) {
+   if (f->density > -1)
+	  return f->density;
+   float t = weight_bdd(f->thenCase);
+   float e = weight_bdd(f->elseCase);
+   f->density = t*true_var_weights[f->variable] + e*(1-true_var_weights[f->variable]);
+   f->tbr_weight = t*true_var_weights[f->variable] / f->density;
+   //f->fbr_weight = 1-tbr_weight; Unnecessary for our purposes
+   return f->density;
+}
+
+void Fill_Weights() {
+   for(int x = 0; x < numBDDs; x++)
+     unmark(functions[x]);
+   true_ptr->density = 1;
+   false_ptr->density = 0;
+   for(int x = 0; x < nmbrFunctions; x++) {
+      weight_bdd(functions[x]);
+   }
 }
 
 bool traverseBDD(BDDNode *f) {
@@ -847,7 +1044,8 @@ void getmbcountTruePath(intlist *path) {
 				}
 			} else {
 				if(previousState[cli].num[0] > 0) {
-					pathbreak++;
+					//pathbreak++;
+					pathbreak += CountFalseBDD(functions[cli]);
 				}
 			}
 		}
@@ -861,6 +1059,49 @@ void getmbcountTruePath(intlist *path) {
 		}
 	}
 	
+}
+
+void getRandomTruePath(int x, intlist *path) {
+	//path->num is filled in
+	BDDNode *bdd = functions[x];
+	int len = wlength[x];
+	path->length = 0;
+	for(int i = 0; i < len; i++) {
+		int wvar = wvariables[x].num[len-i-1];
+		if(true_var_weights[wvar] < true_weight_taboo) {
+			path->num[i] = -wvar;
+			if(wvar == bdd->variable)
+			  bdd = bdd->elseCase;
+			path->length++;
+		} else if (true_var_weights[wvar] > 1-true_weight_taboo) {
+			path->num[i] = wvar;
+			if(wvar == bdd->variable)
+			  bdd = bdd->thenCase;
+			path->length++;
+		} else if(wvar != bdd->variable) {
+//			if((random()%100) < (true_var_weights[wvar]*100))
+			if(atom[wvar] == 1)
+//			if((random()%2) > 0)
+			path->num[i] = wvar;
+			else
+			  path->num[i] = -wvar;
+			path->length++;
+		} else {
+			if((random()%100) < (bdd->tbr_weight * 100)) {
+				path->num[i] = bdd->variable;  //This chooses this variable's direction randomly
+				bdd = bdd->thenCase;
+			} else {
+				path->num[i] = -bdd->variable;
+				bdd = bdd->elseCase;
+			}
+			path->length++;
+		}
+	}
+
+	//for(int i = 0; i < path->length; i++) {
+	//	fprintf(stderr, "%d ", path->num[i]);
+	//}
+	//fprintf(stderr, "\n");
 }
 
 void update_statistics_start_try(void)
@@ -882,11 +1123,15 @@ void update_statistics_start_try(void)
 
 int picknoveltyplus(void)
 {
+
+	int try_agains = 0;
+	again:;
 	int var, birthdate;
-	float diff;
-	int youngest=0, youngest_birthdate, best=0, second_best=0;
-	float best_diff, second_best_diff;
-	int tofix, BDDsize, i;
+	double diff = 0.0;
+	int youngest=0, youngest_birthdate, best=-1, second_best=-1;
+	double best_diff, second_best_diff;
+	int best_make = 0, second_make = 0;
+	int tofix, BDDsize;
 	
 	tofix = falseBDDs[random()%numfalse]; //Maybe in the future not so random...
 	BDDsize = wlength[tofix];  
@@ -902,64 +1147,126 @@ int picknoveltyplus(void)
 
 	int flipvar = 0;
 	int flippath = 0;
-	int path;
+	int path = 0;
 	int y;
 	//SEAN!!! LOOK HERE!!!
 	//Maybe random variable is good, !should try random true_path as well!.
 	/* hh: inserted modified loop breaker: */
-	if ((random()%wp_denominator < wp_numerator)) flipvar = wvariables[tofix].num[random()%BDDsize];
-	else {
+	//fprintf(stderr, "\ntofix: %d\n", tofix);
+	if ((random()%wp_denominator < wp_numerator)) {
+		getRandomTruePath(tofix, &BDDTruePaths[tofix].paths[0]);
+		flippath = 0;
+		
+		//y = 0;
+		//for(int x = 0; x < wlength[tofix]; x++) {
+		//	if((random()%2) > 0)
+		//	  varstoflip[y++] = wvariables[tofix].num[x];
+		//}
+		//varstoflip[y] = 0;
+		//flippath = -1;
+		
+		//varstoflip[0] = random()%numvars+1;
+		//varstoflip[1] = wvariables[tofix].num[random()%BDDsize];
+		//y = 1;
+		//flippath = -1;
+
+		//varstoflip[0] = wvariables[tofix].num[random()%BDDsize];
+		//varstoflip[1] = 0;
+		//y = 1;
+		//flippath = -1;
+	} else {
 		//	youngest = -1;
 		//	best = -1;
 		//	second_best = -1;
 		youngest_birthdate = -1;
-		best_diff = -BIG;
-		second_best_diff = -BIG;
+		best_diff = -1000000.0;
+		second_best_diff = -1000000.0;
 
 #ifdef USE_PATHS_TO_TRUE
-		for(i = 0; i < BDDTruePaths[tofix].numpaths; i++) {
+# ifdef USE_RANDOM_TRUE_PATHS
+		for(int i = 0; i < numvars; i++) {
+			if(true_var_weights[i] == 0.5) continue;
+			if(true_var_weights[i] < 0.5) { true_var_weights[i] *= true_weight_mult; }
+			if(true_var_weights[i] > 0.5) { true_var_weights[i] = 1-((1-true_var_weights[i])*true_weight_mult); }
+//			fprintf(stderr, "%4.3f ", true_var_weights[i]);
+		}
+//		fprintf(stderr, "\n");
+		unmark(functions[tofix]);
+		weight_bdd(functions[tofix]);
+# endif
+		for(int i = 0; i < BDDTruePaths[tofix].numpaths; i++) {
+# ifdef USE_RANDOM_TRUE_PATHS
+			getRandomTruePath(tofix, &BDDTruePaths[tofix].paths[i]);
+			int same_path = 0;
+			for(int x = 0; x < i; x++) {
+				same_path = 1;
+				for(int y = 0; y < BDDTruePaths[tofix].paths[i].length; y++) {
+					if(BDDTruePaths[tofix].paths[i].num[y] != BDDTruePaths[tofix].paths[x].num[y]) {
+						same_path = 0;
+						break;
+					}
+				}
+				if(same_path==1) break;
+			}
+			if(same_path==1) { 
+				continue;
+			}
+# endif
 			numlook++;
 			getmbcountTruePath(&BDDTruePaths[tofix].paths[i]);
 			path = i;
-			diff = (float)pathmake - (float)pathbreak;
+			//diff = pathmake - pathbreak;
+			diff = -pathbreak;
 			//fprintf(stderr, "{mp=%d, bp=%d, diff=%f}", pathmake, pathbreak, diff);
-			//SEAN!!! LOOK HERE!!! BIRTHDAYS!!!
-			//Ugg...birthdays for multiple variables...ugg! No birthdays right now...
-			//birthdate = changed[path];
-			//if (birthdate > youngest_birthdate){
-			//	youngest_birthdate = birthdate;
-			//	youngest = var;
-			//}
-			if (diff > best_diff || (diff == best_diff)) {// && changed[path] < changed[best])) {
+			
+			if (diff > best_diff || (diff == best_diff && pathmake > best_make)) {// && changed[path] < changed[best])) {
 				/* found new best, demote best to 2nd best */
 				second_best = best;
 				second_best_diff = best_diff;
 				best = path;
 				best_diff = diff;
+				best_make = pathmake;
 			}
-			else if (diff > second_best_diff || (diff == second_best_diff)) {// && changed[var] < changed[second_best])){
+			else if (diff > second_best_diff || (diff == second_best_diff && pathmake > second_make)) {// && changed[var] < changed[second_best])){
 				/* found new second best */
 				second_best = path;
 				second_best_diff = diff;
+				second_make = pathmake;
 			}
 		}
 		//if (best != youngest) flipvar = best;
 		//else
-		if ((random()%denominator < numerator)) flippath = second_best;
+		try_agains++;
+		if(best == -1) goto again;
+		else if(second_best == -1) flippath = best;
+		else if(best_diff == second_best_diff) { second_best = best; best = -1; flippath = second_best; }
+		else if ((random()%denominator < numerator)) flippath = second_best;
 		else flippath = best;
+		if(try_agains < 30) {
+			if(best_diff < -(numfalse/3) && flippath == best) goto again;
+			if(second_best_diff < -(numfalse/2) && flippath == second_best) goto again;
+		}
+	}
+
+	if(flippath != -1) {
+		y = 0;
+		for(int i = 0; i < BDDTruePaths[tofix].paths[flippath].length; i++) {
+			if((BDDTruePaths[tofix].paths[flippath].num[i] > 0 && atom[abs(BDDTruePaths[tofix].paths[flippath].num[i])] == 0) ||
+				(BDDTruePaths[tofix].paths[flippath].num[i] < 0 && atom[abs(BDDTruePaths[tofix].paths[flippath].num[i])] == 1)) {
+				varstoflip[y] = abs(BDDTruePaths[tofix].paths[flippath].num[i]);
+				y++;
+			}
+		}
+		if(y == 0) goto again;
+		varstoflip[y] = 0;
+		//fprintf(stderr, "{bd=%f, sbd=%f, best=%d, sbest=%d, fp=%d, numfalse=%d}\n", best_diff, second_best_diff, best, second_best, flippath, numfalse);
+	} else {
+		//Flipping a random variable
+		//fprintf(stderr, "{rflip=%d, numfalse=%d}\n", varstoflip[0], numfalse);
 	}
 	
-	y = 0;
-	for(i = 0; i < BDDTruePaths[tofix].paths[flippath].length; i++) {
-		if((BDDTruePaths[tofix].paths[flippath].num[i] > 0 && atom[abs(BDDTruePaths[tofix].paths[flippath].num[i])] == 0) ||
-			(BDDTruePaths[tofix].paths[flippath].num[i] < 0 && atom[abs(BDDTruePaths[tofix].paths[flippath].num[i])] == 1)) {
-			varstoflip[y] = abs(BDDTruePaths[tofix].paths[flippath].num[i]);
-			y++;
-		}
-	}	
-	varstoflip[y] = 0;
 #else
-		for(i = 0; i < BDDsize; i++){
+		for(int i = 0; i < BDDsize; i++){
 			var = wvariables[tofix].num[i];
 			diff = (float)makecount[var] - (float)breakcount[var];
 			//diff = brittlecount[var]/(float)occurence[var].length;
@@ -1024,6 +1331,13 @@ void flipatoms_true_paths() {
 		flipiter++;
 		atom[toflip] = 1-atom[toflip];
 		changed[toflip] = numflip;
+
+#ifdef USE_RANDOM_TRUE_PATHS
+		if(atom[toflip] == 0)
+		  true_var_weights[toflip] = true_weight_max;
+		else
+		  true_var_weights[toflip] = 1-true_weight_max;
+#endif
 	}
 	
 	flipiter = 0;
@@ -1107,8 +1421,7 @@ void flipatoms()
 			cli = *(occptr++);
 			
 			//Removing the influence every variable in this BDD has on this BDD.
-#ifndef USE_PATHS_TO_TRUE
-# ifdef USE_FALSE_PATHS
+#ifdef USE_FALSE_PATHS
 			for(j = 0; previousState[cli].num[j]!=0; j++) {
 				if(previousState[cli].num[j] > 0) {
 					breakcount[previousState[cli].num[j]]-=previousState[cli].count[j];
@@ -1116,20 +1429,15 @@ void flipatoms()
 					makecount[-(previousState[cli].num[j])]-=previousState[cli].count[j];
 				}
 			}
-# endif
-# ifdef USE_BRITTLE
+#endif
+#ifdef USE_BRITTLE
 			for(k = 0; previousBrittle[cli].num[k]!=0; k++) {
 				brittlecount[previousBrittle[cli].num[k]]-=previousBrittle[cli].count[k];				  
 			}
-# endif
 #endif
 			if(traverseBDD(functions[cli])) {
 				//BDD is SAT
 				if(previousState[cli].num[0] < 0) {
-#ifdef USE_PATHS_TO_TRUE
-					previousState[cli].num[0] = functions[cli]->variable;
-					previousState[cli].num[1] = 0;
-#endif
 					numfalse--;
 					//fprintf(stderr, "removing fB=%d, moving fB=%d to spot %d\n", falseBDDs[wherefalse[cli]], falseBDDs[numfalse], wherefalse[cli]);
 					falseBDDs[wherefalse[cli]] = falseBDDs[numfalse];
@@ -1138,19 +1446,13 @@ void flipatoms()
 			} else {
 				if(previousState[cli].num[0] > 0) 
 				  {
-#ifdef USE_PATHS_TO_TRUE
-					  previousState[cli].num[0] = -functions[cli]->variable;
-					  previousState[cli].num[1] = 0;
-#endif
 					  //fprintf(stderr, "adding fB=%d to spot %d\n", cli, numfalse);
 					  falseBDDs[numfalse] = cli;
 					  wherefalse[cli] = numfalse;
 					  numfalse++;
 				  }
 			}
-#ifndef USE_PATHS_TO_TRUE
 			updateBDDCounts(cli);
-#endif
 		}
 		//if(countunsat()!=numfalse) assert(0);
 		//	verifymbcount();
