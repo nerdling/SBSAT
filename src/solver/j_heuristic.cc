@@ -103,7 +103,6 @@ J_InitHeuristicScores()
 ITE_INLINE void
 J_FreeHeuristicScores()
 {
-   ite_free((void*)pTrueSmurfState->arrHeuristicXors);
    ite_free((void*)arrJWeights);
 }
 
