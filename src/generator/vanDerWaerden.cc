@@ -80,6 +80,7 @@
 #define XCNF 1
 #define ITE  2
 #define CNF2 3
+#define MINXCNF 4
 
 char name[128];
 int formula_type = XCNF;
@@ -97,7 +98,8 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
    if (!strcmp(vdw_type, "cnf")) formula_type = CNF; else 
    if (!strcmp(vdw_type, "xcnf")) formula_type = XCNF; else 
    if (!strcmp(vdw_type, "cnf2")) formula_type = CNF2; else 
-   if (!strcmp(vdw_type, "ite")) formula_type = ITE; else {
+   if (!strcmp(vdw_type, "ite")) formula_type = ITE; else 
+   if (!strcmp(vdw_type, "minxcnf")) formula_type = MINXCNF; else {
       fprintf(stderr, "Unknown vdw formula type\n");
       exit(1);
    }
@@ -136,6 +138,12 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
       }
       clauses -= n;
       fprintf(stdout, "p cnf %d %d\n", n*k, clauses);
+      break;
+    case MINXCNF:
+      clauses -= n;
+      clauses /= k;
+      clauses++;
+      fprintf(stdout, "p cnf %d %d\n", n, clauses);
       break;
     default: 
       exit(1);
@@ -192,6 +200,9 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
           }
           fprintf(stdout, ")\n");
        } break;
+       case MINXCNF: {
+          /* nothing */
+      } break;
       }
   }
 	
@@ -269,6 +280,29 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
       }
       if (clause_count != clauses) {
          fprintf(stderr, "======================== Problem\n");
+      }
+   } else if (formula_type == MINXCNF) {
+      fprintf(stdout, "c prevent any arithmetic progression of length %d for every bucket %d\n", p, k);
+      fprintf(stdout, "#1 [ ");
+      for(int y = 1; y <= n; y++)
+         fprintf(stdout, "%d ", var(n, y, 0));
+      fprintf(stdout, "] %d\n", n/2);
+      clause_count++;
+      for(int num = 1; num <= n; num++) {
+         for(int step = 1; 1; step++) {
+            if (step * (p-1) + num > n) break;
+            int base = num;
+            for(int z = 0; z < p; z++) {
+               fprintf(stdout, "-%d ", var(n, base, 0));
+               base+=step;
+            }
+            fprintf(stdout, "0\n");
+            clause_count++;
+         }
+      }
+      if (clause_count != clauses) {
+         fprintf(stderr, "======================== Problem (%d != %d)\n",
+               clause_count, clauses);
       }
    }
 }
