@@ -59,7 +59,7 @@ int main(int argc, char **argv) {
       vanDerWaerden(argv[2], n, k, p);
 		return 0;
 	} else
-   if (argc > 1 && !strcmp(argv[1], "vdw")) { 
+   if (argc > 1 && !strcmp(argv[1], "xor")) { 
       if (argc < 6 || (argc > 2 && !strcmp(argv[2], "--help"))) {
          fprintf(stderr, "usage: %s xor #vars #functions length max_width\n", argv[0]);
          return 0;
