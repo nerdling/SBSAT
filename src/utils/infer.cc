@@ -48,6 +48,7 @@ typedef struct _t_infer_pool {
 t_infer_pool *infer_pool = NULL;
 t_infer_pool *infer_pool_head = NULL;
 int infer_pool_index=0;
+infer *infer_free = NULL;
 
 void
 InitializeInferencePool()
@@ -78,6 +79,7 @@ FreeInferencePool()
    free(infer_pool_head);
    infer_pool_head = tmp_infer_pool;
  }
+ infer_pool = NULL;
 }
 
 infer * 
@@ -85,14 +87,30 @@ AllocateInference(int num0, int num1, infer *next) {
 
   infer *infs;
   //infer * infs = (infer *)calloc(1, sizeof(infer));
-  if (infer_pool == NULL || infer_pool_index == infer_pool->max) {
-	  InitializeInferencePool();
+  if (infer_free != NULL) {
+     infs = infer_free;
+     infer_free = infer_free->next;
+  } else {
+     if (infer_pool == NULL || infer_pool_index == infer_pool->max) {
+        InitializeInferencePool();
+     }
+     infs = infer_pool->memory+infer_pool_index;
+     infer_pool_index++;
   }
-  infs = infer_pool->memory+infer_pool_index;
-  infer_pool_index++;
   infs->nums[0] = num0;
   infs->nums[1] = num1;
   infs->next = next;
   return infs;
 }
 
+/* -- can't do this -- some of the inferences are chained together
+void
+DeallocateInferences(infer *next)
+{
+   infer *last = next;
+   if (next == NULL) return;
+   while (last->next != NULL) last = last->next;
+   last->next = infer_free;
+   infer_free = next;
+}
+*/

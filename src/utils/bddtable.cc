@@ -59,6 +59,7 @@ int hash_memory_mask = 0;
 BDDNode *bddtable_free = NULL;
 
 void bdd_gc();
+void bdd_fix_inferences(BDDNode *node);
 
 void bdd_bdd_alloc_pool(int pool)
 {
@@ -235,6 +236,7 @@ bdd_flag_nodes(BDDNode *node)
 {
    if (node->flag == 1) return;
    node->flag = 1;
+   node->inferences = NULL;
    bdd_flag_nodes(node->thenCase);
    bdd_flag_nodes(node->elseCase);
 }
@@ -246,6 +248,9 @@ bdd_gc()
 {
    int i,j;
 
+   // don't do it if there are free nodes
+   if (bddtable_free != NULL) return;
+
 #ifndef NDEBUG
    d3_printf1("BDD_GC START\n");
    int totalin=0, totalout=0;
@@ -256,8 +261,8 @@ bdd_gc()
       p = p->next;
    }
 #endif
-   
-   
+
+
    // clean all flags
    for (i=0;i<=numBDDPool;i++)
    {
@@ -279,6 +284,11 @@ bdd_gc()
       bdd_flag_nodes(original_functions[i]);
    }
 
+   
+   // deallocate infereces
+   FreeInferencePool(); 
+   
+
    // clean the hash table
    for (i=0;i<hash_memory_mask; i++)
    {
@@ -297,6 +307,7 @@ bdd_gc()
          if (node->flag == 0)
          {
             // deleted 
+            //DeallocateInferences(node->inferences);
             memset(node, 0, sizeof(BDDNode));
             node->next = bddtable_free;
             bddtable_free = node;
@@ -310,6 +321,16 @@ bdd_gc()
          }
       }
    }
+
+   for (i=0;i<nmbrFunctions;i++)
+   {
+      bdd_fix_inferences(functions[i]);
+   }
+   for (i=0;i<original_numout;i++)
+   {
+      bdd_fix_inferences(original_functions[i]);
+   }
+
 
 #ifndef NDEBUG
    // count free nodes -- statistics -- can be removed
@@ -328,11 +349,11 @@ bdd_gc()
 void
 bdd_fix_inferences(BDDNode *node)
 {
-  if (node->thenCase->inferences == NULL)
-    bdd_fix_inferences(node->thenCase); 
-  if (node->elseCase->inferences == NULL)
-    bdd_fix_inferences(node->elseCase); 
-  GetInferFoAN(node);
+   if (node == true_ptr || node == false_ptr) return;
+   if (node->inferences != NULL) return;
+   bdd_fix_inferences(node->thenCase); 
+   bdd_fix_inferences(node->elseCase); 
+   GetInferFoAN(node);
 }
 
 typedef struct {

@@ -275,4 +275,7 @@ void print_roller();
 void print_nonroller();
 void print_roller_init();
 
+void DeallocateInferences(infer *next);
+infer *AllocateInference(int num0, int num1, infer *next);
+
 #endif

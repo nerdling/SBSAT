@@ -274,7 +274,7 @@ Do_Apply_Inferences ()
 		inferlist = inferlist->next;
 		delete temp;
 		temp = NULL;
-	}
+   }
 	inferlist = new infer; //NEW
 	inferlist->next = NULL;
 	lastinfer = inferlist;
