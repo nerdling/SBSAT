@@ -12,7 +12,7 @@ do
  if [ -f $i.params ] ; then
    PARAMS=`cat $i.params`
  fi
- ../src/ite --ini @top_srcdir@/tests/emptyite.ini --debug 0 $i $PARAMS
+ ../src/sbsat --ini @top_srcdir@/tests/emptyite.ini --debug 0 $i $PARAMS
  if [ $? != 0 ] ; then
     exit 1;
  fi

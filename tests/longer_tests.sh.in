@@ -9,7 +9,7 @@ echo ===========================================
 for i in @top_srcdir@/tests/longer_tests/*.params
 do
  PARAMS="@top_srcdir@/tests/longer_tests/`cat $i`"
- CMD="../src/ite --debug 1 --ini ../tests/emptyite.ini --ctrl-c 0 $PARAMS"
+ CMD="../src/sbsat --debug 1 --ini ../tests/emptyite.ini --ctrl-c 0 $PARAMS"
 
  $CMD
  if [ $? != 0 ] ; then
