@@ -122,12 +122,15 @@ INCLUDES = -I$(top_srcdir)/include
 AM_CFLAGS = -DYYDEBUG
 EXTRA_DIST = bddnode.h functions.h bddnode.cc tracetest.cc
 noinst_LIBRARIES = libt5.a
-
 #libgen_a_SOURCES= xorgen.cc
-libt5_a_SOURCES = trace_g.yy cnf_g.yy bdd_g.yy trace_s.ll cnf_s.ll bdd_s.ll parser.cc functions.cc bddops.cc blif_g.yy blif_s.ll
-#libt5_a_YFLAGS =  -o y.tab.c -d -y 
-libt5_a_YFLAGS = -d 
 
+# _g.yy first
+libt5_a_SOURCES = trace_g.yy cnf_g.yy bdd_g.yy trace_s.ll cnf_s.ll bdd_s.ll parser.cc functions.cc bddops.cc blif_g.yy blif_s.ll prover_g.yy prover_s.ll
+#libt5_a_YFLAGS =  -o y.tab.c -d -y 
+libt5_a_YFLAGS = -d
+
+# enable --debug for grammer debugging -- need to take out xxx_debug definitions
+# from parser.c
 bin_PROGRAMS = tracetest
 tracetest_SOURCES = tracetest.cc  # bddnode.cc
 #tracetest_LDADD = libt5.a ../../preproc/libpreproc.a ../../utils/libutils.a
@@ -143,7 +146,8 @@ libt5_a_LIBADD =
 am_libt5_a_OBJECTS = libt5_a-trace_g.$(OBJEXT) libt5_a-cnf_g.$(OBJEXT) \
 	libt5_a-bdd_g.$(OBJEXT) trace_s.$(OBJEXT) cnf_s.$(OBJEXT) \
 	bdd_s.$(OBJEXT) parser.$(OBJEXT) functions.$(OBJEXT) \
-	bddops.$(OBJEXT) libt5_a-blif_g.$(OBJEXT) blif_s.$(OBJEXT)
+	bddops.$(OBJEXT) libt5_a-blif_g.$(OBJEXT) blif_s.$(OBJEXT) \
+	libt5_a-prover_g.$(OBJEXT) prover_s.$(OBJEXT)
 libt5_a_OBJECTS = $(am_libt5_a_OBJECTS)
 bin_PROGRAMS = tracetest$(EXEEXT)
 PROGRAMS = $(bin_PROGRAMS)
@@ -163,9 +167,10 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	./$(DEPDIR)/libt5_a-bdd_g.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/libt5_a-blif_g.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/libt5_a-cnf_g.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/libt5_a-prover_g.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/libt5_a-trace_g.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/parser.Po ./$(DEPDIR)/trace_s.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/tracetest.Po
+@AMDEP_TRUE@	./$(DEPDIR)/parser.Po ./$(DEPDIR)/prover_s.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/trace_s.Po ./$(DEPDIR)/tracetest.Po
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 CXXLD = $(CXX)
@@ -182,7 +187,8 @@ DIST_SOURCES = $(libt5_a_SOURCES) $(tracetest_SOURCES)
 DIST_COMMON = Makefile.am Makefile.in bdd_s.cc blif_s.cc cnf_s.cc \
 	libt5_a-bdd_g.cc libt5_a-bdd_g.h libt5_a-blif_g.cc \
 	libt5_a-blif_g.h libt5_a-cnf_g.cc libt5_a-cnf_g.h \
-	libt5_a-trace_g.cc libt5_a-trace_g.h trace_s.cc
+	libt5_a-prover_g.cc libt5_a-prover_g.h libt5_a-trace_g.cc \
+	libt5_a-trace_g.h prover_s.cc trace_s.cc
 SOURCES = $(libt5_a_SOURCES) $(tracetest_SOURCES)
 
 all: all-am
@@ -218,6 +224,11 @@ libt5_a-blif_g.h: libt5_a-blif_g.cc
 	@if test ! -f $@; then \
 	  rm -f libt5_a-blif_g.cc; \
 	  $(MAKE) libt5_a-blif_g.cc; \
+	else :; fi
+libt5_a-prover_g.h: libt5_a-prover_g.cc
+	@if test ! -f $@; then \
+	  rm -f libt5_a-prover_g.cc; \
+	  $(MAKE) libt5_a-prover_g.cc; \
 	else :; fi
 libt5.a: $(libt5_a_OBJECTS) $(libt5_a_DEPENDENCIES) 
 	-rm -f libt5.a
@@ -265,8 +276,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libt5_a-bdd_g.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libt5_a-blif_g.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libt5_a-cnf_g.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libt5_a-prover_g.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libt5_a-trace_g.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/parser.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/prover_s.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/trace_s.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tracetest.Po@am__quote@
 
@@ -312,6 +325,9 @@ libt5_a-bdd_g.cc: bdd_g.yy
 
 libt5_a-blif_g.cc: blif_g.yy
 	$(SHELL) $(YLWRAP) `test -f 'blif_g.yy' || echo '$(srcdir)/'`blif_g.yy y.tab.c libt5_a-blif_g.cc y.tab.h libt5_a-blif_g.h y.output libt5_a-blif_g.output -- $(YACC) $(YFLAGS) $(libt5_a_YFLAGS)
+
+libt5_a-prover_g.cc: prover_g.yy
+	$(SHELL) $(YLWRAP) `test -f 'prover_g.yy' || echo '$(srcdir)/'`prover_g.yy y.tab.c libt5_a-prover_g.cc y.tab.h libt5_a-prover_g.h y.output libt5_a-prover_g.output -- $(YACC) $(YFLAGS) $(libt5_a_YFLAGS)
 uninstall-info-am:
 
 ETAGS = etags
@@ -438,7 +454,10 @@ maintainer-clean-generic:
 	-rm -f libt5_a-blif_g.cc
 	-rm -f libt5_a-trace_g.cc
 	-rm -f bdd_s.cc
+	-rm -f prover_s.cc
+	-rm -f libt5_a-prover_g.h
 	-rm -f blif_s.cc
+	-rm -f libt5_a-prover_g.cc
 	-rm -f libt5_a-cnf_g.cc
 	-rm -f trace_s.cc
 	-rm -f cnf_s.cc
