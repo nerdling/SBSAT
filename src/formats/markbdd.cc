@@ -461,7 +461,12 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 	if (!strcasecmp (macros, "pprint_tree")) {
       BDDNode * v1;
       v1 = putite (intnum, bdd);
+		fprintf(stdout, "\n");
+		for (int i = 0; i < PRINT_TREE_WIDTH - 2; i++)
+		  fprintf (stdout, "-");
+		fprintf(stdout, "\n");
       print_bdd (v1);
+		fprintf(stdout, "\n");
       return true_ptr;
 	}
 	if (!strcasecmp (macros, "print_tree")) {

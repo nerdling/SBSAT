@@ -361,7 +361,8 @@ printBDDTree (BDDNode * bdd, int *which_zoom)
    y = 0;
    int reference = 0;
    int zoomarr[10];
-   for (x = 0; x < PRINT_TREE_WIDTH - 5; x++)
+	fprintf(stdout, "\n");
+   for (x = 0; x < PRINT_TREE_WIDTH - 2; x++)
       fprintf (stdout, "-");
    fprintf (stdout, "\n");
    for (x = 0; x < 10; x++)
@@ -373,37 +374,58 @@ printBDDTree (BDDNode * bdd, int *which_zoom)
       for (x = 0; x < (1 << level); x++)
       {
          len = 1;
-         if (tempint[y] == -1)
+         if (tempint[y] == -1) {
             fprintf (stdout, "T");
-
-         else if (tempint[y] == -2)
+				if ((x + 1) < (1 << level))
+				  for(i = 1; i < NUM; i++)
+					 fprintf(stdout, " ");
+			}
+         else if (tempint[y] == -2) {
             fprintf (stdout, "F");
-
-         else if (tempint[y] == 0)
-            fprintf (stdout, " ");
-
-         else if (y > 14)
-         {
+				if ((x + 1) < (1 << level))
+				  for(i = 1; i < NUM; i++)
+					 fprintf(stdout, " ");
+			} else if (tempint[y] == 0) {
+				if ((x + 1) < (1 << level))
+				  for(i = 0; i < NUM; i++)
+					 fprintf(stdout, " ");
+			} else if (y > 14) {
             fprintf (stdout, "*%d", (*which_zoom)++);
             zoomarr[reference++] = y;
             len++;
-         }
-
-         else
-            fprintf (stdout, "%d", tempint[y]);
-         y++;
-         if ((x + 1) < (1 << level))
-         {
-            if (tempint[y] > 0)
-            {
-               sprintf (aa, "%d", tempint[y - 1]);
-               len += strlen (aa);
-            }
+         } else {
+				sprintf(aa, "%d", tempint[y]);
+				int l = strlen(aa);
+				if(l%2 == 0) {				  
+					for(i = 0; i < l/2-1; i++)
+					  fprintf(stdout, "\b");
+					fprintf (stdout, "%d", tempint[y]);
+					if ((x + 1) < (1 << level))
+					  for(i = l/2+1;i < NUM; i++)
+						 fprintf(stdout, " ");
+				} else {
+					for(i = 0; i < l/2; i++)
+					  fprintf(stdout, "\b");
+					fprintf (stdout, "%d", tempint[y]);
+					if ((x + 1) < (1 << level))
+					  for(i = l/2+1;i < NUM; i++)
+						 fprintf(stdout, " ");
+				}
+			}
+			
+			y++;
+/*
+         if ((x + 1) < (1 << level)) {
+				if (tempint[y] > 0) {
+					sprintf (aa, "%d", tempint[y - 1]);
+					len += strlen (aa);
+				}
             for (i = 0; i < (NUM - len) - 1; i++)
-               fprintf (stdout, " ");
+				  fprintf (stdout, "@");
             fprintf (stdout, " ");
          }
-      }
+*/
+		}
       level++;
       NUM /= 2;
       fprintf (stdout, "\n\n");
