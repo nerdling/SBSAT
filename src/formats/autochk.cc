@@ -63,6 +63,22 @@ char getformat (FILE *finputfile) {
 		for (x=0; x<6; x++)
 		  ungetc (test[5-x], finputfile);
 		return 0;
+	} else if (a == 'S') {
+		char test[10];
+		int x;
+      test[0] = a;
+      for (x=1; x < 5; x++) {
+			a = fgetc (finputfile);
+			test[x] = a;
+		}
+      if (!strncmp (test, "S0\n&\n", 5)) {
+			for (x=0; x<5; x++)
+			  ungetc (test[4-x], finputfile);
+			return '3';
+		}
+		for (x=0; x<5; x++)
+		  ungetc (test[4-x], finputfile);
+		return 0;
 	} else if (a == 'I') {
 		char test[10];
 		int x;

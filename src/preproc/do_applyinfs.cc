@@ -94,6 +94,10 @@ Do_Apply_Inferences ()
 				for(int iter = 0; iter<str_length; iter++)
 				  d3_printf1("\b");
 				d3_printf3 ("{%d=%d}", inferlist->nums[0], inferlist->nums[1]);
+
+            void bdd_gc();
+            if(rand() % 1000 < 4) bdd_gc();
+
 				str_length = 0;
 				variablelist[inferlist->nums[1]].equalvars = inferlist->nums[0];
 				for (llist * k = amount[inferlist->nums[1]].head; k != NULL;) {
@@ -704,11 +708,7 @@ int Rebuild_BDDx (int x) {
 	//if (length[x] < 3)
 	//  functionType[x] = UNSURE;
 
-	void bdd_gc();
-	if(rand() % 1000 < 4) bdd_gc();
-
 	if (DO_INFERENCES) {
-		//bdd_gc();
 		return Do_Apply_Inferences();
 	}
 	

@@ -127,6 +127,7 @@ bddvsb_find_or_add_node (int v, BDDNode * r, BDDNode * e)
 {
    ite_counters[BDD_NODE_FIND]++;
 
+   assert(v != 0);
    assert(v >= r->variable && v >= e->variable);
    if (DEBUG_LVL&32) {
       printf("%d ", v);
