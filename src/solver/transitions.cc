@@ -59,30 +59,41 @@ AddStateTransition(SmurfState *pSmurfState,
   pTransition->pNextState = pSmurfStateOfEvaled;
   pTransition->pState = pSmurfState;
 
-  int size = SFADDONS(pFuncEvaled->addons)->pImplied->GetPtrPositiveInferences()->Size() +
-             SFADDONS(pFuncEvaled->addons)->pImplied->GetPtrNegativeInferences()->Size();
+  infer *head = pFuncEvaled->inferences;
+  int size=0;
+  while(head != NULL) {
+     if (head->nums[1] == 0) size++;
+     head = head->next;
+  }
+
   int *ptr = NULL;
   if (size) {
      ptr = (int*)ite_calloc(size, sizeof(int), 9, "inferences");
 
      // Take the positive inferences from *pFuncEvaled and store them
      // in the transition.
-     SFADDONS(pFuncEvaled->addons)->pImplied->GetPtrPositiveInferences()
-        ->StoreAsArrayBasedSet(pTransition->positiveInferences, ptr);
-     ptr += pTransition->positiveInferences.nNumElts;
-
-     for(int i=0;i<pTransition->positiveInferences.nNumElts;i++) {
-        pTransition->positiveInferences.arrElts[i] = 
-           arrIte2SolverVarMap[pTransition->positiveInferences.arrElts[i]];
+     head = pFuncEvaled->inferences;
+     int i=0;
+     while(head != NULL) {
+        if (head->nums[1] == 0) {
+           if (head->nums[0] > 0) {
+              ptr[i++] = arrIte2SolverVarMap[head->nums[0]];
+           }
+        }
+        head = head->next;
      }
-
-     // Likewise for the negative inferences.
-     SFADDONS(pFuncEvaled->addons)->pImplied->GetPtrNegativeInferences()
-        ->StoreAsArrayBasedSet(pTransition->negativeInferences, ptr);
-
-     for(int i=0;i<pTransition->negativeInferences.nNumElts;i++) {
-        pTransition->negativeInferences.arrElts[i] = 
-           arrIte2SolverVarMap[pTransition->negativeInferences.arrElts[i]];
+     pTransition->positiveInferences.arrElts = ptr;
+     pTransition->positiveInferences.nNumElts = i;
+     pTransition->negativeInferences.arrElts = ptr+i;
+     pTransition->negativeInferences.nNumElts = size-i;
+     head = pFuncEvaled->inferences;
+     while(head != NULL) {
+        if (head->nums[1] == 0) {
+           if (head->nums[0] < 0) {
+              ptr[i++] = arrIte2SolverVarMap[-head->nums[0]];
+           }
+        }
+        head = head->next;
      }
   }
   return pTransition;

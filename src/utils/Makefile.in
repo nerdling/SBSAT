@@ -134,9 +134,9 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 INCLUDES = -I$(top_srcdir)/include
 SOURCES = \
-             integerset.cc literalset.cc bdd.cc utils.cc \
+             bdd.cc utils.cc \
              params.cc params_fn.cc log.cc itetable.cc \
-             bddtable.cc zread.cc vars.cc infer.cc intnode.cc \
+             bddtable.cc zread.cc vars.cc infer.cc \
 	     bdd_circuit_init.cc symtable.cc java_wrapper.cc \
 	     custprint.cc termcap.cc # malloc.cc
 
@@ -153,10 +153,10 @@ LTLIBRARIES = $(noinst_LTLIBRARIES)
 
 libutils_la_LDFLAGS =
 libutils_la_LIBADD =
-am__objects_1 = integerset.lo literalset.lo bdd.lo utils.lo params.lo \
-	params_fn.lo log.lo itetable.lo bddtable.lo zread.lo vars.lo \
-	infer.lo intnode.lo bdd_circuit_init.lo symtable.lo \
-	java_wrapper.lo custprint.lo termcap.lo
+am__objects_1 = bdd.lo utils.lo params.lo params_fn.lo log.lo \
+	itetable.lo bddtable.lo zread.lo vars.lo infer.lo \
+	bdd_circuit_init.lo symtable.lo java_wrapper.lo custprint.lo \
+	termcap.lo
 am_libutils_la_OBJECTS = $(am__objects_1)
 libutils_la_OBJECTS = $(am_libutils_la_OBJECTS)
 
@@ -166,17 +166,15 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/bdd.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/bdd_circuit_init.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/bddtable.Plo ./$(DEPDIR)/custprint.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/infer.Plo ./$(DEPDIR)/integerset.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/intnode.Plo ./$(DEPDIR)/itetable.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/java_wrapper.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/literalset.Plo ./$(DEPDIR)/log.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/infer.Plo ./$(DEPDIR)/itetable.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/java_wrapper.Plo ./$(DEPDIR)/log.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/params.Plo ./$(DEPDIR)/params_fn.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/symtable.Plo ./$(DEPDIR)/termcap.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/utils.Plo ./$(DEPDIR)/vars.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/zread.Plo
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
-LTCXXCOMPILE = $(LIBTOOL) --silent --mode=compile $(CXX) $(DEFS) \
+LTCXXCOMPILE = $(LIBTOOL) --mode=compile $(CXX) $(DEFS) \
 	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
 	$(AM_CXXFLAGS) $(CXXFLAGS)
 CXXLD = $(CXX)
@@ -185,9 +183,9 @@ CXXLINK = $(LIBTOOL) --mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) \
 DIST_SOURCES = $(libutils_la_SOURCES)
 DIST_COMMON = Makefile.am Makefile.in
 SOURCES = \
-             integerset.cc literalset.cc bdd.cc utils.cc \
+             bdd.cc utils.cc \
              params.cc params_fn.cc log.cc itetable.cc \
-             bddtable.cc zread.cc vars.cc infer.cc intnode.cc \
+             bddtable.cc zread.cc vars.cc infer.cc \
 	     bdd_circuit_init.cc symtable.cc java_wrapper.cc \
 	     custprint.cc termcap.cc # malloc.cc
 
@@ -224,11 +222,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bddtable.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/custprint.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/infer.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/integerset.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/intnode.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/itetable.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/java_wrapper.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/literalset.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/log.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/params.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/params_fn.Plo@am__quote@
@@ -253,8 +248,7 @@ distclean-depend:
 @am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ `test -f '$<' || echo '$(srcdir)/'`$<
 
 .cc.obj:
-@am__fastdepCXX_TRUE@	@echo "Compiling $*.cc"
-@am__fastdepCXX_TRUE@	@if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" \
+@am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" \
 @am__fastdepCXX_TRUE@	  -c -o $@ `if test -f '$<'; then $(CYGPATH_W) '$<'; else $(CYGPATH_W) '$(srcdir)/$<'; fi`; \
 @am__fastdepCXX_TRUE@	then mv "$(DEPDIR)/$*.Tpo" "$(DEPDIR)/$*.Po"; \
 @am__fastdepCXX_TRUE@	else rm -f "$(DEPDIR)/$*.Tpo"; exit 1; \
@@ -265,8 +259,7 @@ distclean-depend:
 @am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ `if test -f '$<'; then $(CYGPATH_W) '$<'; else $(CYGPATH_W) '$(srcdir)/$<'; fi`
 
 .cc.lo:
-@am__fastdepCXX_TRUE@	@echo "Compiling $*.cc"
-@am__fastdepCXX_TRUE@	@if $(LTCXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" \
+@am__fastdepCXX_TRUE@	if $(LTCXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" \
 @am__fastdepCXX_TRUE@	  -c -o $@ `test -f '$<' || echo '$(srcdir)/'`$<; \
 @am__fastdepCXX_TRUE@	then mv "$(DEPDIR)/$*.Tpo" "$(DEPDIR)/$*.Plo"; \
 @am__fastdepCXX_TRUE@	else rm -f "$(DEPDIR)/$*.Tpo"; exit 1; \

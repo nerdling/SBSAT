@@ -40,8 +40,6 @@
 #ifndef SMURFFACTORY_H
 #define SMURFFACTORY_H
 
-#include "integerset.h"
-#include "literalset.h"
 #include "heuristic.h"
 
 // debug options
@@ -141,6 +139,11 @@ struct LemmaBlock
   LemmaBlock *pNext;
 };
 
+struct IntegerSet_ArrayBased
+{
+  int nNumElts;
+  int *arrElts;
+};
 
 struct Transition
 {
@@ -201,7 +204,6 @@ struct BDDNodeStruct;
 
 // Data members that are added to the BDDNodeStruct.
 typedef struct {
-  LiteralSet *pImplied;
   BDDNodeStruct *pReduct;
   SmurfState *pState; /* for compressing smurfs */
 } SmurfFactoryAddons;

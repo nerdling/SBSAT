@@ -136,84 +136,9 @@ typedef struct _LemmaInfoStruct {
 
 } LemmaInfoStruct;
 
-class PartialAssignmentEncoding
-{
- public:
-  PartialAssignmentEncoding();
-  PartialAssignmentEncoding AddLiteral(int nVble, bool bPolarity);
-  bool FindOrAddState(SmurfState **ppSmurfState);
- private:
-  PartialAssignmentEncoding(unsigned long n);
-  unsigned long unEncoding;
-};
-
-ITE_INLINE void
-InitVbleEncodingArray();
-
-ITE_INLINE void
-FreeVbleEncodingArray();
-
-ITE_INLINE void
-InitPrecomputedStatesArray();
-
-ITE_INLINE void
-ResetPrecomputedStatesArray();
-
-ITE_INLINE void
-FreePrecomputedStatesArray();
-
-ITE_INLINE void
-InitVbleMappingArray(int nArrayLength);
-
-ITE_INLINE void
-FreeVbleMappingArray();
-
-ITE_INLINE void
-ComputeVariableMapping(IntegerSet &isetVbles);
-
-ITE_INLINE void
-ComputeVariableMapping(IntegerSet_ArrayBased &isetabVbles);
 
 ITE_INLINE void
 ComputeLemmasForSmurf(SmurfState *pState);
-
-class LemmaBitEncoding
-{
- public:
-  ITE_INLINE LemmaBitEncoding();
-  ITE_INLINE LemmaBitEncoding AddLiteral(int nVble, bool bPolarity);
-  bool SubsumedBy(LemmaBitEncoding lbe2);
-  LemmaBlock *EnterNewLemma();
- private:
-  ITE_INLINE LemmaBitEncoding(unsigned long unNewEncoding);
-  unsigned long unEncoding;
-};
-
-struct LemmaLookupStruct
-{
-  LemmaBitEncoding lbe;
-  //int *pnLemma;
-  LemmaBlock *pLemma;
-};
-
-struct LemmatizeQueueCell
-{
-  SmurfState *pState;
-  LemmaBitEncoding lbe;
-  LemmatizeQueueCell *pNext;
-};
-
-class LemmatizeQueue
-{
- public:
-  ITE_INLINE LemmatizeQueue();
-  ITE_INLINE void Enqueue(SmurfState *pState, LemmaBitEncoding lbe);
-  ITE_INLINE void Dequeue(SmurfState *&pState, LemmaBitEncoding &lbe);
-  ITE_INLINE bool IsEmpty();
- private:
-  LemmatizeQueueCell *pFirst;
-  LemmatizeQueueCell *pLast;
-};
 
 ITE_INLINE void DisplayAllBrancherLemmas();
 ITE_INLINE void DisplayAllBrancherLemmasToFile(char *filename, int flag);
@@ -245,58 +170,34 @@ AddLemma(int nNumLiterals,   //Can be used in the brancher
 	 LemmaInfoStruct **pUnitLemmaListTail
 	 );	 
 
-ITE_INLINE void
-FreeLemma(LemmaInfoStruct *pLemmaInfo);
-
-ITE_INLINE void
-FreeLemmas(int n);
-
-ITE_INLINE void
-LPQEnqueue(LemmaInfoStruct *pLemmaInfo);
-
-ITE_INLINE void
-MoveToFrontOfLPQ(LemmaInfoStruct *pLemmaInfo);
-
-ITE_INLINE void
-CheckLengthOfLemmaList(int nVble, int nPos, int nWhichWatch,
+ITE_INLINE void FreeLemma(LemmaInfoStruct *pLemmaInfo);
+ITE_INLINE void FreeLemmas(int n);
+ITE_INLINE void LPQEnqueue(LemmaInfoStruct *pLemmaInfo);
+ITE_INLINE void MoveToFrontOfLPQ(LemmaInfoStruct *pLemmaInfo);
+ITE_INLINE void CheckLengthOfLemmaList(int nVble, int nPos, int nWhichWatch,
 		       int nNumBacktracks);
-
-ITE_INLINE void
-EnterIntoLemmaSpace(int nNumElts, int arrLemmaLiterals[],
+ITE_INLINE void EnterIntoLemmaSpace(int nNumElts, int arrLemmaLiterals[],
 		    bool bRecycleLemmasAsNeeded, LemmaBlock *&pFirstBlock,
 		    LemmaBlock *&pLastBlock, int &nNumBlocks);
 
 // lemmawlits -- watched literals
-ITE_INLINE void
-RemoveLemmaFromWatchedLits(LemmaInfoStruct *pLemmaInfo);
-ITE_INLINE void
-AddLemmaIntoWatchedLits(LemmaInfoStruct *p);
-ITE_INLINE void
-LemmaSetWatchedLits(LemmaInfoStruct *pLemmaInfo, int *arr, int num);
+ITE_INLINE void RemoveLemmaFromWatchedLits(LemmaInfoStruct *pLemmaInfo);
+ITE_INLINE void AddLemmaIntoWatchedLits(LemmaInfoStruct *p);
+ITE_INLINE void LemmaSetWatchedLits(LemmaInfoStruct *pLemmaInfo, int *arr, int num);
 
 // lemmainfo -- lemmainfostruct 
-ITE_INLINE void
-InitLemmaInfoArray();
-ITE_INLINE void
-FreeLemmaInfoArray();
-ITE_INLINE void
-FreeLemmaInfoStruct(LemmaInfoStruct *pLemmaInfo);
-ITE_INLINE LemmaInfoStruct *
-AllocateLemmaInfoStruct();
+ITE_INLINE void InitLemmaInfoArray();
+ITE_INLINE void FreeLemmaInfoArray();
+ITE_INLINE void FreeLemmaInfoStruct(LemmaInfoStruct *pLemmaInfo);
+ITE_INLINE LemmaInfoStruct * AllocateLemmaInfoStruct();
 
 // lemmaspace
-ITE_INLINE void
-InitLemmaSpacePool(int at_least);
-ITE_INLINE void 
-AllocateMoreLemmaSpace(int at_least);
-ITE_INLINE void
-FreeLemmaBlocks(LemmaInfoStruct *pLemmaInfo);
-ITE_INLINE void
-FillLemmaWithReversedPolarities(LemmaBlock *pLemma);
-ITE_INLINE void
-FreeLemmaSpacePool();
-ITE_INLINE void
-EnterIntoLemmaSpace(int nNumElts,
+ITE_INLINE void InitLemmaSpacePool(int at_least);
+ITE_INLINE void AllocateMoreLemmaSpace(int at_least);
+ITE_INLINE void FreeLemmaBlocks(LemmaInfoStruct *pLemmaInfo);
+ITE_INLINE void FillLemmaWithReversedPolarities(LemmaBlock *pLemma);
+ITE_INLINE void FreeLemmaSpacePool();
+ITE_INLINE void EnterIntoLemmaSpace(int nNumElts,
       int arrLemmaLiterals[],
       bool bRecycleLemmasAsNeeded,
       LemmaBlock *&pFirstBlock,

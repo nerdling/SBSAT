@@ -188,7 +188,7 @@ DisplayTransition(Transition *pTransition, int nVble, int nValue)
 		   << pTransition->pNextState << ")" << endl;
 */
 	      cout << "Pos Inferences: ";
-	      Display_ISAB(pTransition->positiveInferences);
+	      //Display_ISAB(pTransition->positiveInferences);
 	      cout << endl;
 #ifdef DISPLAY_LEMMAS
 	      int nNumInferences = pTransition->positiveInferences.nNumElts;
@@ -200,7 +200,7 @@ DisplayTransition(Transition *pTransition, int nVble, int nValue)
 		}
 #endif
 	      cout << "Neg Inferences: ";
-	      Display_ISAB(pTransition->negativeInferences);
+	      //Display_ISAB(pTransition->negativeInferences);
 	      cout << endl;
 #ifdef DISPLAY_LEMMAS
 	      nNumInferences = pTransition->negativeInferences.nNumElts;
@@ -241,9 +241,6 @@ DisplayFunction(BDDNode *pFunc, int nFunctionType, int nMaxVbleIndex)
       return;
     }
 
-  cout << " Implied: ";
-  pFunc->addons->pImplied->Display();
-  cout << endl;
   cout << " pReduct: ";
   cout << pFunc->addons->pReduct;
   cout << endl;

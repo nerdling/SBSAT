@@ -57,8 +57,8 @@ ComputeSmurfOfNormalized(BDDNodeStruct *pFunc)//, PartialAssignmentEncoding enco
    // Collapse 'true' Smurf states.
    if (pFunc == true_ptr) return pTrueSmurfState;
 
-   if (pFunc->addons && SFADDONS(pFunc->addons)->pState) {
-         return SFADDONS(pFunc->addons)->pState;
+   if (SFADDONS(pFunc->addons)->pState) {
+      return SFADDONS(pFunc->addons)->pState;
    }
 
    SmurfState *pSmurfState = AllocateSmurfState();
@@ -68,7 +68,6 @@ ComputeSmurfOfNormalized(BDDNodeStruct *pFunc)//, PartialAssignmentEncoding enco
    pSmurfState->pFunc = pFunc;
    SFADDONS(pFunc->addons)->pState = pSmurfState;
 
-   // FIXME: can do it even better -- if it really is special func
    long tempint_max = 0;
    long y=0;
    unravelBDD(&y, &tempint_max, &pSmurfState->vbles.arrElts, pFunc);
@@ -106,14 +105,16 @@ ComputeSmurfOfNormalized(BDDNodeStruct *pFunc)//, PartialAssignmentEncoding enco
       //d9_printf2("Building Smurf State x with %d\n", nVble);
 
       // Compute transition that occurs when vble is set to true.
-      BDDNodeStruct *pFuncEvaled = EvalBdd(pFunc, nVble, true);
+      BDDNodeStruct *pFuncEvaled = set_variable(pFunc, nVble, 1);
+      InitializeAddons(pFuncEvaled);
       assert(pFuncEvaled != pFunc);
       SmurfState *pSmurfStateOfEvaled = BDD2Smurf(pFuncEvaled);
       AddStateTransition(pSmurfState, i, arrIte2SolverVarMap[nVble], BOOL_TRUE,
             pFuncEvaled, pSmurfStateOfEvaled);
 
       // Compute transition that occurs when vble is set to false.
-      pFuncEvaled = EvalBdd(pFunc, nVble, false);
+      pFuncEvaled = set_variable(pFunc, nVble, 0);
+      InitializeAddons(pFuncEvaled);
       assert(pFuncEvaled != pFunc);
       pSmurfStateOfEvaled = BDD2Smurf(pFuncEvaled);
 
@@ -125,65 +126,6 @@ ComputeSmurfOfNormalized(BDDNodeStruct *pFunc)//, PartialAssignmentEncoding enco
 }
 
 ITE_INLINE
-void
-ComputeImpliedLiterals(BDDNodeStruct *pFunc)
-{
-   if (SFADDONS(pFunc->addons)->pImplied)
-   {
-      // Inference set has already been computed.
-      return;
-   }
-
-   ITE_NEW_CATCH(
-         SFADDONS(pFunc->addons)->pImplied = new LiteralSet();,
-         "pFunc->addons->pImplied");
-   LiteralSet *pImplied = SFADDONS(pFunc->addons)->pImplied;
-   if (pFunc == false_ptr)
-   {
-      pImplied->SetToInconsistent();
-      return;
-   }
-
-   if (pFunc == true_ptr)
-   {
-      assert(pImplied->IsEmpty());
-      return;
-   }
-
-   ComputeImpliedLiterals(pFunc->thenCase);
-   ComputeImpliedLiterals(pFunc->elseCase);
-   ComputeIntersection(*(SFADDONS(pFunc->thenCase->addons)->pImplied),
-         *(SFADDONS(pFunc->elseCase->addons)->pImplied),
-         *pImplied);
-   if (pFunc->thenCase == false_ptr)
-   {
-      pImplied->PushElement(pFunc->variable, false);
-   }
-   else if (pFunc->elseCase == false_ptr)
-   {
-      pImplied->PushElement(pFunc->variable, true);
-   }
-}
-
-ITE_INLINE
-void
-ComputeReduct(BDDNodeStruct *pFunc)
-{ 
-   if (SFADDONS(pFunc->addons)->pReduct) return;
-
-   int nVble;
-   bool bValueOfVble;
-   BDDNodeStruct *pReduct = pFunc;
-
-   LiteralSetIterator litsetNext(*(SFADDONS(pFunc->addons)->pImplied));
-   while (litsetNext(nVble, bValueOfVble))
-   {
-      pReduct = EvalBdd(pReduct, nVble, bValueOfVble);
-   }
-   SFADDONS(pFunc->addons)->pReduct = pReduct;
-}
-
-ITE_INLINE
 SmurfState *
 BDD2Smurf(BDDNodeStruct *pFunc)
    // Constructs a Smurf representation for the constraint *pFunc.
@@ -192,8 +134,8 @@ BDD2Smurf(BDDNodeStruct *pFunc)
    // Otherwise, returns a pointer to the initial Smurf state.
 {
    // Non-special function -- represent with regular state machine.
-   ComputeImpliedLiterals(pFunc);
-   ComputeReduct(pFunc);
+   SFADDONS(pFunc->addons)->pReduct = set_variable_all_infs(pFunc);
+   InitializeAddons(SFADDONS(pFunc->addons)->pReduct);
 
    return ComputeSmurfOfNormalized(SFADDONS(pFunc->addons)->pReduct);
 }

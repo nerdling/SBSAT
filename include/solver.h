@@ -38,9 +38,6 @@
 #ifndef SOLVER_H
 #define SOLVER_H
 
-#include "integerset.h"  /*   / */
-#include "literalset.h"  /* /   */
-
 #include "heuristic.h"
 
 #include "smurffactory.h" /*  /   / */
@@ -190,8 +187,6 @@ ITE_INLINE int VerifySolution();
 
 ITE_INLINE void InitializeAddons(BDDNodeStruct *pFunc);
 ITE_INLINE void AssertNullAddons(BDDNodeStruct *pFunc);
-ITE_INLINE BDDNodeStruct *EvalBdd(BDDNodeStruct *pFunc, int nVble, bool bValueOfVble);
-ITE_INLINE void ComputeVbleSet(BDDNode *pFunc);
 
 ITE_INLINE SmurfState * BDD2Smurf(BDDNodeStruct *pFunc);
 ITE_INLINE void BDD2Specfn_AND(BDDNodeStruct *pFunc, int nFunctionType,
@@ -200,8 +195,6 @@ ITE_INLINE void BDD2Specfn_XOR(BDDNodeStruct *pFunc, int nFunctionType,
                int nEqualityVble,  SpecialFunc *pSpecialFunc);
 ITE_INLINE void BDD2Specfn_MINMAX(BDDNodeStruct *pFunc, int nFunctionType,
                int nEqualityVble,  SpecialFunc *pSpecialFunc);
-ITE_INLINE BDDNodeStruct *EvalBdd(BDDNodeStruct *pFunc,
-               int nVble, bool bValueOfVble);
 ITE_INLINE Transition* AddStateTransition(
          SmurfState *pSmurfState, int i, int nVble,
          int nValueOfVble, BDDNodeStruct *pFuncEvaled,

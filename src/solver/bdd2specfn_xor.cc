@@ -49,7 +49,6 @@ BDD2Specfn_XOR(BDDNodeStruct *pFunc,
    assert(/*nFunctionType == XOR ||*/ nFunctionType == PLAINXOR);
 
    // We assume that special func has no implied literals.
-   SFADDONS(pFunc->addons)->pImplied = 0;
    SFADDONS(pFunc->addons)->pReduct = pFunc;
 
    /* -------------- Left Hand Side -------------- */
@@ -102,7 +101,6 @@ BDD2Specfn_XOR(BDDNodeStruct *pFunc,
    }
 
    /* 1. Create BDD representing RHS. */
-   //BDDNodeStruct *pRHSFunc = EvalBdd(pFunc, 0, false);
    BDDNodeStruct *pRHSFunc = pFunc;
 
    /* 2. Traverse the BDD, storing the variable index and polarity  for each literal. */

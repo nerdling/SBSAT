@@ -44,36 +44,6 @@ extern int *arrSolver2IteVarMap;
 ITE_INLINE void InitializeAddons(BDDNodeStruct *pFunc);
 SmurfFactoryAddons * AllocateSmurfFactoryAddons();
 
-/* this function uses real variables */
-ITE_INLINE BDDNodeStruct *
-EvalBdd(BDDNodeStruct *pFunc, int nVble, bool bValueOfVble)
-  // Evaluate a BDD at a variable.
-{
-  int nTopVble = pFunc->variable;
-
-  if (pFunc == false_ptr || pFunc == true_ptr || nVble > nTopVble)
-    {
-      return pFunc;
-    }
-
-  if (nVble == nTopVble)
-    {
-      return (bValueOfVble ? pFunc->thenCase : pFunc->elseCase);
-    }
-
-
-  BDDNode *r = EvalBdd(pFunc->thenCase, nVble, bValueOfVble);
-  BDDNode *e = EvalBdd(pFunc->elseCase, nVble, bValueOfVble);
-  BDDNode *pReturn;
-
-  if(r == e) pReturn = r;
-  else pReturn = find_or_add_node(pFunc->variable, r, e);
-
-  InitializeAddons(pReturn);
-
-  return pReturn;
-}
-
 ITE_INLINE void
 AssertNullAddons(BDDNodeStruct *pFunc)
 {

@@ -194,6 +194,7 @@ void GetInferFoAN(BDDNode *);
 infer *GetInfer(long *, long *, int **, BDDNode *);
 void set_variable_all(llist *, int, int);
 BDDNode *set_variable(BDDNode *, int, int);
+BDDNode *set_variable_all_infs(BDDNode *);
 extern int vars_max;
 int vars_alloc(int);
 extern int functions_max;

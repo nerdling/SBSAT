@@ -246,10 +246,6 @@ InitSmurfFactory()
 
    // Initialize info regarding the 'true' function.
    pTrueSmurfState = AllocateSmurfState();
-   ITE_NEW_CATCH(
-         SFADDONS(true_ptr->addons)->pImplied = new LiteralSet();,
-         "true_ptr->addons->pImplied");
-   assert(SFADDONS(true_ptr->addons)->pImplied->IsEmpty());
    SFADDONS(true_ptr->addons)->pReduct = true_ptr;
 
    // Count number of special functions

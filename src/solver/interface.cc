@@ -38,7 +38,7 @@
 #include "ite.h"
 #include "solver.h"
 
-ITE_INLINE void InitBrancherX();
+ITE_INLINE int InitBrancherX();
 
 int
 ITE_GetNextDecision(int *nInferredAtom, int *nInferredValue)
@@ -72,8 +72,7 @@ ITE_SolveInit()
 int
 ITE_SolveReInit()
 {
-   InitBrancherX();
-   return 0;
+   return InitBrancherX();
 }
 
 

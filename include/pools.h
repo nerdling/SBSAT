@@ -41,9 +41,6 @@
 void InitializeInferencePool();
 void FreeInferencePool();
 
-void InitializeIntNodePool();
-void FreeIntNodePool();
-
 void InitializeAddonsPool();
 void FreeAddonsPool();
 

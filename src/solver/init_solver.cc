@@ -55,7 +55,6 @@ RecordInitialInferences()
 {
    int i;
    BDDNode *pFunc;
-   bool bValueOfVble;
    int nCurrentAtomValue;
    bool bInitialInferenceFound = false;
 
@@ -67,29 +66,39 @@ RecordInitialInferences()
          continue;
       }
       pFunc = arrFunctions[i];
-      if (SFADDONS(pFunc->addons)->pImplied == NULL) {
-         // There is no literal implicant for this smurf ??
-         dE_printf1("CHECK ME -- no implicant for the smurf\n");
-         continue;
-      }
-      LiteralSetIterator litsetNext(*(SFADDONS(pFunc->addons)->pImplied));
-      while (litsetNext(nVble, bValueOfVble))
+      infer *head = pFunc->inferences;
+      while(head != NULL)
       {
+         if (head->nums[1] != 0) { head=head->next; continue; }
+         int nVble = head->nums[0];
+         head=head->next;
+         int nValueOfVble = BOOL_TRUE;;
+         if (nVble < 0) { 
+            nVble = -nVble; 
+            nValueOfVble = BOOL_FALSE; 
+         }
+
          if (!bInitialInferenceFound)
          {
-            printf("Warning.  Inference found in constraint %d", i);
-            printf(" prior to beginning backtracking search:  ");
-            printf("Brancher variable %d(%d) = ", arrIte2SolverVarMap[nVble], nVble);
-            assert(bValueOfVble == BOOL_TRUE || bValueOfVble == BOOL_FALSE);
-            printf((bValueOfVble == BOOL_TRUE) ? "true." : "false.");
-            printf(" numinp = %ld numout = %ld\n", (long)numinp, (long)numout);
-            D_3(printBDD(arrFunctions[i]); fprintf(stddbg, "\n"); )
-            //bInitialInferenceFound = true;
+            printf("\nWarning.  Inference found in constraint %d", i);
+            printf("\n prior to beginning backtracking search:  ");
+            printf("\nBrancher variable %d(%d) = ", arrIte2SolverVarMap[nVble], nVble);
+            assert(nValueOfVble == BOOL_TRUE || nValueOfVble == BOOL_FALSE);
+            printf((nValueOfVble == BOOL_TRUE) ? "true." : "false.");
+            printf("\nCurrent value = ");
+            printf((arrSolution[arrIte2SolverVarMap[nVble]] == BOOL_TRUE) ? "true." :
+                  (arrSolution[arrIte2SolverVarMap[nVble]] == BOOL_FALSE) ?  "false." :
+               "unknown");
+            printf("\n numinp = %ld numout = %ld", (long)numinp, (long)numout);
+            D_3(printBDD(arrFunctions[i]); )
+            printf("\nThis message will appear only once for the first inference found\n");
+//            bInitialInferenceFound = true;
          }
          nVble = arrIte2SolverVarMap[nVble];
+         assert(nVble != 0);
 
          nCurrentAtomValue = arrSolution[nVble];
-         if (bValueOfVble)
+         if (nValueOfVble == BOOL_TRUE)
          {
             // Positive inference
             if (nCurrentAtomValue == BOOL_FALSE)
@@ -474,8 +483,6 @@ ITE_INLINE void InitializeSpecialFnStack();
 
    //  InitHeuristicTablesForSpecialFuncs(nNumVariables);
 
-   int ret = RecordInitialInferences();
-
    // The variable with index 0 plays a special role (which is in handling
    // the PLAINOR functions).  We force its value to false before the
    // search begins.
@@ -490,7 +497,7 @@ ITE_INLINE void InitializeSpecialFnStack();
       fd_csv_trace_file = fopen(csv_trace_file, "w");
    }
 
-   return ret;
+   return SOLV_UNKNOWN;
 }
 
 ITE_INLINE void

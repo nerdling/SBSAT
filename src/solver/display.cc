@@ -141,19 +141,6 @@ DisplaySpecialFunc(SpecialFunc *p)
 //enum InferenceType {REG_SMURF, LEMMA, SPECIAL_FUNC};
 
 void
-DisplayRelevantVbleAssignments(BDDNode *pBDD)
-{
-  int nVble;
-  IntegerSetIterator isetNext(*(pBDD->addons->pVbles));
-  while (isetNext(nVble))
-    {
-      cout << "X" << nVble << ": "
-           << arrSolution[nVble] << "  ";
-    }
-  cout << endl;
-}
-
-void
 DisplayInference(InferenceType eInfType,
 		 void *pConstraintInfo,
 		 int nNewInferredAtom,

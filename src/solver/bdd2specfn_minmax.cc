@@ -49,7 +49,6 @@ BDD2Specfn_MINMAX(BDDNodeStruct *pFunc,
    assert(nFunctionType == MINMAX); // PLAINMINMAX?
 
    // We assume that special func has no implied literals.
-   SFADDONS(pFunc->addons)->pImplied = 0;
    SFADDONS(pFunc->addons)->pReduct = pFunc;
 
    /* -------------- Left Hand Side -------------- */
@@ -99,7 +98,6 @@ BDD2Specfn_MINMAX(BDDNodeStruct *pFunc,
    }
 
    /* 1. Create BDD representing RHS. */
-   //BDDNodeStruct *pRHSFunc = EvalBdd(pFunc, 0, false);
    BDDNodeStruct *pRHSFunc = pFunc;
    assert(pFunc != true_ptr && pFunc != false_ptr); // FIXME:
 

@@ -99,10 +99,5 @@ ITE_INLINE void
 FreeSmurfFactoryAddons(SmurfFactoryAddons *f)
 {
 
-  if (f->pImplied != NULL)
-   {
-     delete f->pImplied;
-     f->pImplied = NULL;
-   }
 }
 

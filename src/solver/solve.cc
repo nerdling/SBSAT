@@ -51,7 +51,7 @@ ITE_INLINE int InitSolver();
 ITE_INLINE void FreeSolver();
 void LoadLemmas(char *filename);
 ITE_INLINE void FreeAFS();
-ITE_INLINE void InitBrancherX();
+ITE_INLINE int InitBrancherX();
 
 
 int
@@ -88,9 +88,10 @@ solve_init()
   if (ret != SOLV_UNKNOWN) return ret;
 
   ret = InitBrancher();
-
   if (ret != SOLV_UNKNOWN) return ret;
-  InitBrancherX();
+
+  ret = InitBrancherX();
+  if (ret != SOLV_UNKNOWN) return ret;
   return ret;
 }
 
@@ -260,5 +261,4 @@ FreeSolver()
 
   FreeLemmaInfoArray();
   FreeLemmaSpacePool();
-  FreeIntNodePool();
 }

@@ -48,6 +48,7 @@ ITE_INLINE void DisplayBacktrackInfo(double &fPrevEndTime, double &fStartTime);
 ITE_INLINE void DisplayStatistics(int nNumChoicePts, int nNumBacktracks, int nNumBackjumps);
 ITE_INLINE int RecordSolution(); 
 ITE_INLINE void J_ResetHeuristicScores();
+ITE_INLINE int RecordInitialInferences();
 
 extern int nNumRegSmurfs; // Number of regular Smurfs.
 SmurfState *pTrueSmurfState = 0;  // Pointer to the Smurf state
@@ -366,7 +367,7 @@ CheckFinalHooks()
    return 0;
 }
 
-ITE_INLINE void
+ITE_INLINE int
 InitBrancherX()
 {
    assert(arrSolution[0]!=BOOL_UNKNOWN);
@@ -445,7 +446,7 @@ InitBrancherX()
      J_ResetHeuristicScores();
   }
 
- //*(pInferenceQueueNextEmpty++) = 0;
+  return RecordInitialInferences();
 }
 
 
