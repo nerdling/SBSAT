@@ -29,7 +29,7 @@
 Getting Started With SBSAT
 \layout Author
 
-Michal Kouril
+Michal Kouril, Sean Weaver
 \layout Standard
 
 SBSAT Version 2.0, August 2003
@@ -2156,29 +2156,37 @@ TIP \SpecialChar ~
  in SMURF file format (Using 
 \family typewriter 
 \size footnotesize 
+$
+\emph on 
+ 
+\emph default 
+ite 
 \emph on 
 --output-file
 \family default 
 \size default 
-\emph default 
- and 
+ 
 \family typewriter 
 \size footnotesize 
+\emph default 
+newfile.smurf
 \emph on 
--s
+ -s 
+\emph default 
+myoldfile
 \family default 
 \size default 
-\emph default 
-) and disable (
+) and disable the preprocessing next time you run your problem (Using 
 \family typewriter 
 \size footnotesize 
+$ ite 
 \emph on 
 --All 
 \emph default 
-0
+0 newfile.smurf
 \family default 
 \size default 
-) the preprocessing next time you run your problem.
+) .
  
 \layout Subsection
 
@@ -2430,8 +2438,11 @@ The similar option exists for the brancher:
 
 \family typewriter 
 \size footnotesize 
+$ ite small.cnf 
 \emph on 
-$ ite small.cnf --max-preproc-time 180
+--max-preproc-time 
+\emph default 
+180
 \layout Subsubsection
 
 Creating and using an ini file
@@ -2449,7 +2460,7 @@ To create an ini file with the default values for all available options
 
 \family typewriter 
 \size footnotesize 
-# ite 
+$ ite 
 \emph on 
 --create-ini
 \emph default 
@@ -2463,7 +2474,9 @@ You can edit the ini file and change the values to those of your choice.
  file settings.
  This way you can effectively override all settings.
  (THIS IS NOT ALWAYS TRUE! Example: './ite -All 0 --ini myini.ini small.cnf'
- STILL DOES PREPROCESSING...Sean/Andy...for Michal....very BIG, not to be scary though...
+ STILL DOES PREPROCESSING ...Sean/Andy...
+ for Michal....
+ very BIG, not to be scary though...
  :) )
 \layout Standard
 
@@ -2475,7 +2488,7 @@ Also you can create different ini files for different problems.
 
 \family typewriter 
 \size footnotesize 
-# ite 
+$ ite 
 \emph on 
 --ini
 \emph default 
@@ -2499,7 +2512,17 @@ TIP
 input-file="small.cnf"
 \family default 
 \size default 
-) and start sbsat with the ini file only.
+) and start sbsat with the ini file only (using 
+\family typewriter 
+\size footnotesize 
+$ ite 
+\emph on 
+--ini
+\emph default 
+ myini.ini
+\family default 
+\size default 
+).
 \layout Subsection
 
 Debugging your problem
