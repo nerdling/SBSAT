@@ -78,6 +78,7 @@ extern int DO_CLUSTER;  //CNF clustering
 extern int DO_COFACTOR;
 extern int DO_PRUNING;
 extern int DO_STRENGTH;
+extern int DO_SIMPLEAND;
 extern int DO_STEAL;
 extern int DO_INFERENCES;
 extern int DO_EXIST_QUANTIFY;

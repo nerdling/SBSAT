@@ -42,6 +42,7 @@ char *P2_repeat;
 char *Restct_repeat;
 char *ReFPS_repeat;
 char *St_repeat;
+char *Sa_repeat;
 char *Dep_repeat;
 char *Steal_repeat;
 char *Ea_repeat;
@@ -53,6 +54,7 @@ void Init_Repeats() {
 	Restct_repeat = (char *)ite_recalloc(Restct_repeat, repeat_size, nmbrFunctions, sizeof(char), 9, "Restct_repeat");
 	ReFPS_repeat = (char *)ite_recalloc(ReFPS_repeat, repeat_size, nmbrFunctions, sizeof(char), 9, "ReFPS_repeat");
 	St_repeat = (char *)ite_recalloc(St_repeat, repeat_size, nmbrFunctions, sizeof(char), 9, "St_repeat");
+	Sa_repeat = (char *)ite_recalloc(Sa_repeat, repeat_size, nmbrFunctions, sizeof(char), 9, "Sa_repeat");
 	Dep_repeat = (char *)ite_recalloc(Dep_repeat, repeat_size, nmbrFunctions, sizeof(char), 9, "Dep_repeat");
 	Steal_repeat = (char *)ite_recalloc(Steal_repeat, repeat_size, nmbrFunctions, sizeof(char), 9, "Steal_repeat");
 	Ea_repeat = (char *)ite_recalloc(Ea_repeat, repeat_size, nmbrFunctions, sizeof(char), 9, "Ea_repeat");
@@ -67,6 +69,7 @@ void Delete_Repeats() {
 	ite_free((void **)&Restct_repeat);
 	ite_free((void **)&ReFPS_repeat);
 	ite_free((void **)&St_repeat);
+	ite_free((void **)&Sa_repeat);
 	ite_free((void **)&Dep_repeat);
 	ite_free((void **)&Steal_repeat);
 	ite_free((void **)&Ea_repeat);
@@ -78,6 +81,7 @@ void SetRepeats(int x) {
 	Restct_repeat[x] = 1;
 	ReFPS_repeat[x] = 1;
 	St_repeat[x] = 1;
+	Sa_repeat[x] = 1;
 	Dep_repeat[x] = 1;
 	Steal_repeat[x] = 1;
 	Ea_repeat[x] = 1;
@@ -89,6 +93,7 @@ void UnSetRepeats(int x) {
 	Restct_repeat[x] = 0;
 	ReFPS_repeat[x] = 0;
 	St_repeat[x] = 0;
+	Sa_repeat[x] = 0;
 	Dep_repeat[x] = 0;
 	Steal_repeat[x] = 0;
 	Ea_repeat[x] = 0;

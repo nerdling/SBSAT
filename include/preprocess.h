@@ -54,6 +54,7 @@ extern char *Steal_repeat;
 extern char *St_repeat;
 extern char *Dep_repeat;
 extern char *Ea_repeat;
+extern char *Sa_repeat;
 extern int str_length;
 extern long affected;
 
@@ -85,6 +86,7 @@ int Do_Apply_Inferences_backend ();
 void printBDDInfs(BDDNode *);
 infer *possible_infer_x(BDDNode *f, int x);
 int Do_Strength();
+int Do_SimpleAnd();
 int Do_Pruning();
 int Do_Pruning_1();
 int Do_Pruning_2();

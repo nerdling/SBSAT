@@ -54,7 +54,8 @@ typedef struct {
 /* Try to keep the fixed size */
 
 preproc_type preproc[] = {
-  { "St", 2, Do_Strength,    &DO_STRENGTH  },
+  { "St", 2, Do_Strength,    &DO_STRENGTH },
+  { "Sa", 2, Do_SimpleAnd,   &DO_SIMPLEAND },
   { "Pr", 2, Do_Pruning,     &DO_PRUNING },
   { "P1", 2, Do_Pruning_1,   &DO_PRUNING },
   { "P2", 2, Do_Pruning_2,   &DO_PRUNING },
@@ -67,7 +68,7 @@ preproc_type preproc[] = {
   { "Sp", 2, Do_Split, &DO_SPLIT },	
   { "Rw", 2, Do_Rewind, &DO_REWIND },
   { "Cf", 2, Do_Clear_FunctionType, &DO_CLEAR_FUNCTION_TYPE },
-	  { "P3", 2, Do_Prover3, &DO_PROVER3},
+  { "P3", 2, Do_Prover3, &DO_PROVER3},
   { "", 0, NULL, NULL }
 };
 
