@@ -811,10 +811,16 @@ We would like to ask this question - Do I dislike all flowers that are not
  This gives:
 \layout Enumerate
 
-nope(y)
+Ax ( Colored(x) -> Scented(x) )
 \layout Enumerate
 
-yep(x)
+Ax ( -OpenAir(x) -> -Like(x) )
+\layout Enumerate
+
+Ax ( OpenAir(x) -> Colored(x) )
+\layout Standard
+
+The question becomes: Ax ( -Scented(x) -> -Like(x) )
 \layout Subsection
 
 Choosing a different solver
@@ -2473,11 +2479,6 @@ You can edit the ini file and change the values to those of your choice.
  Please note that the command line options take precedence before the ini
  file settings.
  This way you can effectively override all settings.
- (THIS IS NOT ALWAYS TRUE! Example: './ite -All 0 --ini myini.ini small.cnf'
- STILL DOES PREPROCESSING ...Sean/Andy...
- for Michal....
- very BIG, not to be scary though...
- :) )
 \layout Standard
 
 Also you can create different ini files for different problems.
