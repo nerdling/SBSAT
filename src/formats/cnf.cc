@@ -359,6 +359,8 @@ void CNF_to_BDD(int cnf)
       
 		//This is where two_pos, two_neg, greater_pos, and greater_neg are
 		//filled with clauses
+		//SEAN! This could be sped up! Needs to be sped up!
+		
 		for(long x = 1; x < numout+1; x++) {
          if (x%1000 == 1)
             d2_printf3("\rStoring CNF %d/%d ...        ", x, numout);
