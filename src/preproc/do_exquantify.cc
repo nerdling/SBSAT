@@ -140,7 +140,8 @@ int ExQuantify () {
 					//!!!!!!!Should really go through each variable i that occurs only in this bdd!!!!!!!!
 					//Maybe a silly thing, but could lead to more inferences!
 					infer *x_infers = possible_infer_x(functions[j], i);
-					
+					//infer *x_infers = new infer;
+					//x_infers->nums[0] = 0;
 					if(x_infers == NULL) {
 						//continue, variable was inferenced away earlier.
 						//It will get picked up next loop around
@@ -156,6 +157,7 @@ int ExQuantify () {
 						SetRepeats(j);
 						equalityVble[j] = 0;
 						functionType[j] = UNSURE;
+						delete x_infers;
 					} else {
 						BDDNode *inferBDD = true_ptr;
 						while (x_infers!=NULL) {
