@@ -107,9 +107,9 @@ intlist *wvariables;  /* a list of variables in each BDD, could be used to */
                       /* makes 'wlength' an unnecessary variable */
 int *wvisited;
 
-intlist *occurence;	/* where each variable occurs */
-                     /* indexed as occurence[variable].num[occurence_num] */
-                     /* numoccurence is now occurence[variable].length */
+intlist *occurance;	/* where each variable occurs */
+                     /* indexed as occurance[variable].num[occurance_num] */
+                     /* numoccurance is now occurance[variable].length */
 							/* which is the number of times each variable occurs */
 
 int *atom;		      /* value of each atom */ 
@@ -346,7 +346,7 @@ void initprob(void)
 	lowatom = new int[numvars+1];
 	solution = new int[numvars+1];
 	
-	occurence = new intlist[numvars+1];
+	occurance = new intlist[numvars+1];
 	wlength = new int[numBDDs+1];
 	wvariables = new intlist[numBDDs+1];
 	wvisited = new int[numBDDs+1];
@@ -402,8 +402,8 @@ void initprob(void)
 	
 	for (int x = 0; x < numvars+1; x++)
 	  {
-		  occurence[x].num = new int[tempmem[x]+1];
-		  occurence[x].length = 0;
+		  occurance[x].num = new int[tempmem[x]+1];
+		  occurance[x].length = 0;
 	  }
 	delete [] tempmem;
 	
@@ -411,14 +411,14 @@ void initprob(void)
 	  {
 		  for (int i = 0; i < wlength[x]; i++)
 			 {
-				 occurence[wvariables[x].num[i]].num[occurence[wvariables[x].num[i]].length] = x;
-				 occurence[wvariables[x].num[i]].length++;
+				 occurance[wvariables[x].num[i]].num[occurance[wvariables[x].num[i]].length] = x;
+				 occurance[wvariables[x].num[i]].length++;
 			 }
 	  }
 	
 	//Need "variables" for later! Don't delete!
 	
-	//occurence is done.
+	//occurance is done.
 	//length is done.
 	
 	Fill_Weights(); //Each BDDNode now has the density of True's below it stored.
@@ -602,8 +602,8 @@ void freemem(void)
 	delete [] solution;
 	
 	for (int x = 0; x < numvars+1; x++)
-	  delete [] occurence[x].num;
-	delete [] occurence;
+	  delete [] occurance[x].num;
+	delete [] occurance;
 	
 	for (int x = 0; x < numBDDs; x++)
 	  delete [] wvariables[x].num;
@@ -1018,12 +1018,12 @@ void getmbcountTruePath(intlist *path) {
 	}
 	for(int x = 0; x < path->length; x++) {
 		
-		int numocc = occurence[abs(path->num[x])].length;
-		int *occptr = occurence[abs(path->num[x])].num;
+		int numocc = occurance[abs(path->num[x])].length;
+		int *occptr = occurance[abs(path->num[x])].num;
 		
 		for(int i = 0; i < numocc ;i++) {
 			int cli = *(occptr++);
-			//cli = occurence[toflip].num[i];
+			//cli = occurance[toflip].num[i];
 			if(wvisited[cli] == numlook) continue;
 			wvisited[cli] = numlook;
 			//Removing the influence every variable in this BDD has on this BDD.
@@ -1189,7 +1189,8 @@ int picknoveltyplus(void)
 		unmark(functions[tofix]);
 		weight_bdd(functions[tofix]);
 # endif
-		for(int i = 0; i < BDDTruePaths[tofix].numpaths; i++) {
+		int pathminus = 0;
+		for(int i = 0; i < BDDTruePaths[tofix].numpaths - pathminus; i++) {
 # ifdef USE_RANDOM_TRUE_PATHS
 			getRandomTruePath(tofix, &BDDTruePaths[tofix].paths[i]);
 			int same_path = 0;
@@ -1204,6 +1205,8 @@ int picknoveltyplus(void)
 				if(same_path==1) break;
 			}
 			if(same_path==1) { 
+				i=i-1;
+				pathminus++;
 				continue;
 			}
 # endif
@@ -1265,9 +1268,9 @@ int picknoveltyplus(void)
 		for(int i = 0; i < BDDsize; i++){
 			var = wvariables[tofix].num[i];
 			diff = (float)makecount[var] - (float)breakcount[var];
-			//diff = brittlecount[var]/(float)occurence[var].length;
+			//diff = brittlecount[var]/(float)occurance[var].length;
 			//diff = brittlecount[var];
-		   //diff = ((float)makecount[var] - (float)breakcount[var]) + (brittlecount[var]/(float)occurence[var].length);
+		   //diff = ((float)makecount[var] - (float)breakcount[var]) + (brittlecount[var]/(float)occurance[var].length);
 			//diff = ((float)makecount[var] - (float)breakcount[var]) + brittlecount[var];
 			//fprintf(stderr, "{%f4.3:", diff);
 			//fprintf(stderr, "%f4.3}", brittlecount[var]);
@@ -1340,12 +1343,12 @@ void flipatoms_true_paths() {
 	while(varstoflip[flipiter]!=0) {
 		toflip = varstoflip[flipiter];
 		flipiter++;
-		int numocc = occurence[toflip].length;
-		int *occptr = occurence[toflip].num;
+		int numocc = occurance[toflip].length;
+		int *occptr = occurance[toflip].num;
 		
 		for(int i = 0; i < numocc ;i++) {
 			int cli = *(occptr++);
-			//cli = occurence[toflip].num[i];
+			//cli = occurance[toflip].num[i];
 			if(wvisited[cli] == numlook) continue;
 			wvisited[cli] = numlook;
 			//Removing the influence every variable in this BDD has on this BDD.
@@ -1412,11 +1415,11 @@ void flipatoms()
 			  fprintf(hamming_fp, "%ld %i\n", numflip, hamming_distance);
 		}
 		
-		numocc = occurence[toflip].length;
-		occptr = occurence[toflip].num;
+		numocc = occurance[toflip].length;
+		occptr = occurance[toflip].num;
 		
 		for(i = 0; i < numocc ;i++) {
-			//cli = occurence[toflip].num[i];
+			//cli = occurance[toflip].num[i];
 			cli = *(occptr++);
 			
 			//Removing the influence every variable in this BDD has on this BDD.
