@@ -54,7 +54,7 @@ char *ptr;
 char * qgetstr(char *ref)
 {
    char *tmp=NULL;
-#ifdef TERMCAP_H
+#ifdef HAVE_TERMCAP_H
 
    if ((tmp = tgetstr(ref, &ptr)) == NULL) {
       printf("/etc/termcap terminal %s must have a %s= entry\n",
@@ -68,7 +68,7 @@ char * qgetstr(char *ref)
 int
 init_terminal_out()
 {
-#ifdef TERMCAP_H
+#ifdef HAVE_TERMCAP_H
    char *termtype = getenv("TERM");
    int success;
    extern char *getenv(), *realloc();
@@ -111,7 +111,7 @@ init_terminal_out()
  */
 int ttputc(int c)
 {
-#ifdef TERMCAP_H
+#ifdef HAVE_TERMCAP_H
    fputc(c, stdout);
 #endif
    return 0;
@@ -124,7 +124,7 @@ int ttputc(int c)
  */
 void putpad(char *str)
 {
-#ifdef TERMCAP_H
+#ifdef HAVE_TERMCAP_H
    tputs(str, 1, ttputc);
 #endif
 }
@@ -135,20 +135,20 @@ void putpad(char *str)
 void
 move(int col, int row)
 {
-#ifdef TERMCAP_H
+#ifdef HAVE_TERMCAP_H
    putpad(tgoto(CM, col, row));
 #endif
 }
 
 
-#ifdef TERMCAP_H
+#ifdef HAVE_TERMCAP_H
 struct termios  newtty, origtty;            /* tty modes          */
 #endif
 
 int
 init_terminal_in()
 {
-#ifdef TERMCAP_H
+#ifdef HAVE_TERMCAP_H
    if (isatty(0/*fileno(stdin)*/)) {
       if (tcgetattr(0, &origtty) < 0) {
          fprintf(stderr, "tcgetattr: stdin");
@@ -177,7 +177,7 @@ init_terminal_in()
 int
 term_getchar()
 {
-#ifdef TERMCAP_H
+#ifdef HAVE_TERMCAP_H
    fd_set rfds;
    struct timeval tv;
    int retval = 0;
