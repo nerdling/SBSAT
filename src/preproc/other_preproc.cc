@@ -430,8 +430,9 @@ infer *Ex_GetInfer(BDDNode * func)
 
 	//If either branch(thenCase or elseCase) carries true (is NULL)
 	//Push up the inferences.
-	if (r == NULL) return e;
-	if (e == NULL) return r;
+//	if (r == NULL) return e;
+//	if (e == NULL) return r;
+   if(r == NULL || e == NULL) return NULL;
 	//If both are NULL, NULL is returned
 	
 	//If none of the above cases then we have two lists(r and e) which we

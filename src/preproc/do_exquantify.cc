@@ -160,15 +160,19 @@ int ExQuantify () {
 						delete x_infers;
 					} else {
 						BDDNode *inferBDD = true_ptr;
-						while (x_infers!=NULL) {
+						//while (x_infers!=NULL) {
 							//fprintf(stderr, "%d|%d, %d|", j, x_infers->nums[0], x_infers->nums[1]);
 							if(x_infers->nums[1] == 0)
 							  inferBDD = ite_and(inferBDD, ite_var(x_infers->nums[0]));
 							else 
 							  inferBDD = ite_and(inferBDD, ite_equ(ite_var(x_infers->nums[0]), ite_var(x_infers->nums[1])));
+						   //infer *temp = x_infers; x_infers = x_infers->next; delete temp;
+						//}
+						
+						while(x_infers!=NULL) {
 							infer *temp = x_infers; x_infers = x_infers->next; delete temp;
 						}
-						
+
 						int bdd_length = 0;
 						int *bdd_vars = NULL;
 						switch (int r=Rebuild_BDD(inferBDD, &bdd_length, bdd_vars)) {
