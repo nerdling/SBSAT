@@ -223,8 +223,8 @@ ITE_INLINE Transition *
 CreateTransition(SmurfState *pState, int i, int nSolverVble, int value);
 ITE_INLINE Transition *
 FindTransitionDebug (SmurfState * pState, int i, int nVble, int nVbleValue);
-//#define FindTransition FindTransitionDebug
-#define FindTransition(pState, i, nVble, nVbleValue) (pState->arrTransitions + 2 * i + nVbleValue)
+#define FindTransition FindTransitionDebug
+//#define FindTransition(pState, i, nVble, nVbleValue) (pState->arrTransitions + 2 * i + nVbleValue)
 #define FindOrAddTransition FindTransition
 
 void
