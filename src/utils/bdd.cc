@@ -1251,9 +1251,6 @@ BDDNode *_possible_BDD_x(BDDNode *f, int x) {
 	}
 }
 
-//JAZZ THIS UP!!! SEAN!!! LOOK HERE!!!
-
-
 BDDNode * _possible_BDD (BDDNode * f, int v);
 BDDNode * possible_BDD (BDDNode * f, int v) {
 	start_bdd_flag_number(POSSIBLE_BDD_FLAG_NUMBER);
