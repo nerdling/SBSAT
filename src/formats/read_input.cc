@@ -51,7 +51,9 @@ int
 read_input(Tracer * &tracer)
 {
   d9_printf1("read_input\n");
+
   bdd_init();
+  sym_init();
 
   int ret = read_input_open();
   if (ret != NO_ERROR) return ret;
@@ -89,7 +91,6 @@ read_input(Tracer * &tracer)
           //numout=500000;
           //vars_alloc(numinp);
           //functions_alloc(numout);
-          sym_init();
           parser_init();
           trace_in = finputfile;
           trace_parse();
