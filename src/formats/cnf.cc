@@ -232,8 +232,9 @@ void CNF_to_BDD(int cnf)
       if (x == numout+1) {
          // one beyond
          if (order == 'e') break; // all good
-         fprintf(stderr, "Error while parsing CNF input: too many functions\n");
-         exit(1);
+         fprintf(stderr, "Warning while parsing CNF input: more than %ld functions found\n", numout);
+			break;
+         //exit(1);
       }
       if(order == 'e') { // error
          fprintf(stderr, "Error while parsing CNF input:premature end of file ...exiting\n");
@@ -940,7 +941,6 @@ cnf_process(store *integers, int num_minmax, minmax * min_max_store)
 			  d2_printf3("\rBuilding unclustered BDDs %ld/%ld ...       ", x, numout);
          qsort(integers[x].num, integers[x].length, sizeof(int), abscompfunc);
          //qsort(integers[x].num, integers[x].length, sizeof(int), absrevcompfunc);
-			//fprintf(stderr, "here");
 			functions[x-1] = false_ptr;
 			//fprintf(stderr, "\n%d ", integers[x].num[0]);
 			for(y = 0; y < integers[x].length; y++) {
