@@ -64,7 +64,7 @@ get_or_putsym_check(char *sym_name, int sym_type, int id)
 void
 fill_symrec(symrec *ptr, int sym_type)
 {
-  if (sym_table_idx >= (vars_max+1)) 
+  if ((sym_table_idx+1) >= vars_max) 
       vars_alloc(sym_table_idx+100);
    
   ptr->id   = ++sym_table_idx;
