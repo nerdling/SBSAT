@@ -54,7 +54,7 @@ char getNextSymbol_CNF (char macros[20], int &intnum) {
 	while(1) {
       p = fgetc(finputfile);
       if(p == EOF) {
-			fprintf(stderr, "\nUnexpected EOF (%s)...exiting\n", macros);
+			fprintf(stderr, "\nUnexpected EOF...exiting\n");
 			exit (1);
 		}
       if(p == 'c') {
@@ -85,7 +85,7 @@ char getNextSymbol_CNF (char macros[20], int &intnum) {
 					i++;
                p = fgetc(finputfile);
                if (p == EOF) {
-						fprintf(stderr, "\nUnexpected EOF (%s)...exiting\n", macros);
+						fprintf(stderr, "\nUnexpected EOF...exiting\n");
 						exit (1);
 					}
 				}
@@ -105,8 +105,6 @@ char getNextSymbol_CNF (char macros[20], int &intnum) {
             p = fgetc(finputfile);
             if(p == EOF) {
 					break;
-					//	fprintf(stderr, "\nUnexpected EOF (%s)...exiting\n", macros);
-					//	exit(1);
 				}
 			}
 			ungetc(p, finputfile);
@@ -122,10 +120,6 @@ store *getMinMax() {
 	char macros[20];
 	int p;
 	
-//	if((p = fgetc(finputfile)) == EOF) {
-//		fprintf(stderr, "\nUnexpected EOF...exiting\n");
-//		exit (1);
-//	}
 
 	char order = getNextSymbol_CNF (macros, min);
 	if(order != 'i' || min < 0) {
@@ -135,7 +129,7 @@ store *getMinMax() {
 	
    p = fgetc(finputfile);
    if(p == EOF) {
-		fprintf(stderr, "\nUnexpected EOF (%s)...exiting\n", macros);
+		fprintf(stderr, "\nUnexpected EOF...exiting\n");
 		exit (1);
 	}
 
@@ -146,13 +140,13 @@ store *getMinMax() {
 		}
       p = fgetc(finputfile);
       if(p == EOF) {
-			fprintf(stderr, "\nUnexpected EOF (%s)...exiting\n", macros);
+			fprintf(stderr, "\nUnexpected EOF...exiting\n");
 			exit (1);
 		}
 	}
    p = fgetc(finputfile);
    if (p == EOF) {
-		fprintf(stderr, "\nUnexpected EOF (%s)...exiting\n", macros);
+		fprintf(stderr, "\nUnexpected EOF...exiting\n");
 		exit (1);
 	}
 	
@@ -164,7 +158,7 @@ store *getMinMax() {
 			i++;
          p = fgetc(finputfile);
          if (p == EOF) {
-				fprintf(stderr, "\nUnexpected EOF (%s)...exiting\n", macros);
+				fprintf(stderr, "\nUnexpected EOF...exiting\n");
 				exit (1);
 			}
 		}
@@ -174,7 +168,7 @@ store *getMinMax() {
 		}
       p = fgetc(finputfile);
       if(p == EOF) {
-			fprintf(stderr, "\nUnexpected EOF (%s)...exiting\n", macros);
+			fprintf(stderr, "\nUnexpected EOF...exiting\n");
 			exit (1);
 		}
 		
