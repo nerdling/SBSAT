@@ -274,7 +274,7 @@ void CNF_to_BDD(int cnf)
             y++;
          };
          integers[x].dag = -1;
-         if(y==0) {x--; numout--; continue; }
+         if(y==0) {x--; numout--; old_numout--; continue; }
          integers[x].num = new int[y + 1];
          for(i = 0; i < y + 1; i++) {
 #ifdef CNF_USES_SYMTABLE
@@ -318,7 +318,7 @@ void CNF_to_BDD(int cnf)
 
    cnf_process(integers, num_minmax, min_max_store);
    for(long x = 1; x < old_numout + 1; x++) {
-      delete [] old_integers[x].num;
+		delete [] old_integers[x].num;
 	}
 	delete [] integers;
 	delete [] old_integers;
