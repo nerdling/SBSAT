@@ -222,6 +222,44 @@ double fEndTime;
 double fPrevEndTime;
 int (* proc_backtrack)() = NULL;
 
+ITE_INLINE int
+BrancherPreset()
+{
+   // brancher_presets
+   char *ptr = brancher_presets;
+   int lit, sign;
+   while (*ptr != 0) {
+
+      if (*ptr == '=' || *ptr == '!' || *ptr == '#') {
+         if (*(ptr+1) != ' ' && *(ptr+1) != 0) { 
+            dE_printf2("Error in preset string %s\n", ptr);
+            return SOLV_ERROR;
+         }
+         ITE_GetNextDecision(&lit, &sign);
+      } else {
+         if (*ptr == '-' || *ptr == '+') lit = atoi(ptr+1);
+         else lit = atoi(ptr);
+      }
+      switch (*ptr) {
+       case '-': sign = 0; break;
+       case '+': sign = 1; break;
+       case '#':
+       case '!': sign = 1-sign; break;
+       case '=': break;
+       default:
+                 dE_printf2("Error in preset string %s\n", ptr);
+                 return SOLV_ERROR;
+                 break;
+      }
+      while (*ptr != ' ' && *ptr != 0) ptr++;
+      if (*ptr == ' ') ptr++; // skip space
+      ITE_MakeDecision(lit, sign);
+      if (ITE_Deduce() != 0) return SOLV_UNSAT;
+   }
+   return SOLV_UNKNOWN;
+}
+
+
 ITE_INLINE void
 dump_counters(FILE *fd)
 {
@@ -262,13 +300,16 @@ CheckBtHooks()
 ITE_INLINE int
 CheckInitHooks()
 {
+   int ret = SOLV_UNKNOWN;
    if (NO_LEMMAS == 1) proc_backtrack = BackTrack_NL;
    else if (sbj) proc_backtrack = BackTrack_SBJ;
    else proc_backtrack = BackTrack;
 
    if (reports != 0) crtwin_init();
 
-   return 0;
+   if (*brancher_presets) ret = BrancherPreset();
+
+   return ret;
 }
 
 ITE_INLINE int
@@ -383,13 +424,14 @@ Brancher()
 {  
    int ret = SOLV_UNKNOWN;
 
-   InitBrancherX();
-
-   CheckInitHooks(); /* FIXME: check for result */
-
    // Main inferencing loop.
    fPrevEndTime = fStartTime = get_runtime();
 
+   InitBrancherX();
+
+   ret = CheckInitHooks(); /* FIXME: check for result */
+
+   if (ret == SOLV_UNKNOWN)
    while (1)
    {
       if (ITE_Deduce()==0)
@@ -410,10 +452,12 @@ Brancher()
       if (CheckBtHooks() != 0) break;
    }
 
+   if (ite_counters_f[BRANCHER_TIME] < 0.0) ite_counters_f[BRANCHER_TIME] = 0.0; 
    ite_counters_f[BRANCHER_TIME] = get_runtime() - fStartTime;
    d2_printf2("Time in brancher:  %4.3f secs.\n", ite_counters_f[BRANCHER_TIME]);
-   if (ite_counters_f[BRANCHER_TIME] == 0.0) ite_counters_f[BRANCHER_TIME] = 0.00001; /* something real small */
-   double fBacktracksPerSec = ite_counters[NUM_BACKTRACKS] / ite_counters_f[BRANCHER_TIME];
+   double fBacktracksPerSec;
+   if (ite_counters_f[BRANCHER_TIME] == 0.0) fBacktracksPerSec = 0;
+   else fBacktracksPerSec = ite_counters[NUM_BACKTRACKS] / ite_counters_f[BRANCHER_TIME];
    d2_printf2("%.3f backtracks per sec.\n", fBacktracksPerSec);      
 
    CheckFinalHooks();
