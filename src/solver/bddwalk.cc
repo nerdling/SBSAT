@@ -68,8 +68,9 @@
 #define TRUE 1
 #define FALSE 0
 
-#define USE_BRITTLE
+//#define USE_BRITTLE
 #define USE_FALSE_PATHS
+//#define USE_SIMPLE_PATH_RES
 
 #define MAX_NODES_PER_BDD 5000
 
@@ -131,7 +132,7 @@ long int numflip;		/* number of changes so far */
 long int numnullflip;		/*  number of times a clause was picked, but no  */
 				/*  variable from it was flipped  */
 int numrun = BIG;
-int cutoff = 100000;
+int cutoff = BIG;//1000000;
 int base_cutoff = 1000000;
 int target = 0;
 int numtry = 0;			/* total attempts at solutions */
@@ -396,7 +397,7 @@ void initprob(void)
 	//occurence is done.
 	//length is done.
 	
-	Fill_Density(); //Each BDDNode now has the number of True's below it stored.
+	Fill_Density(); //Each BDDNode now has the density of True's below it stored.
 
 }
 
@@ -607,7 +608,11 @@ void updateBDDCounts(int i) {
 	float top_density = f->density;
 	int count = 0;
 #ifdef USE_FALSE_PATHS
+# ifdef USE_SIMPLE_PATH_RES
 	count = CountFalseBDD(f);
+# else
+	if(!traverseBDD(f)) count = 1;
+# endif
 #else
 	if(!traverseBDD(f)) count = 1;
 #endif
@@ -619,7 +624,12 @@ void updateBDDCounts(int i) {
 			top_density = f->density;
 			if(atom[f->variable] == 1) {
 #ifdef USE_FALSE_PATHS
+# ifdef USE_SIMPLE_PATH_RES				
 				int false_count = CountFalseBDD(f->elseCase);
+# else
+				int false_count = 0;
+				if(!traverseBDD(f->elseCase)) false_count = 1;
+# endif
 				if(false_count > 0) { 
 					breakcount[f->variable]+=false_count;
 					previousState[i].count[j] = false_count;
@@ -634,7 +644,12 @@ void updateBDDCounts(int i) {
 				f = f->thenCase;
 			} else {
 #ifdef USE_FALSE_PATHS
+# ifdef USE_SIMPLE_PATH_RES				
 				int false_count = CountFalseBDD(f->thenCase);
+# else
+				int false_count = 0;
+				if(!traverseBDD(f->thenCase)) false_count = 1;
+# endif
 				if(false_count > 0) {
 					breakcount[f->variable]+=false_count;
 					previousState[i].count[j] = false_count;
@@ -663,7 +678,12 @@ void updateBDDCounts(int i) {
 			top_density = f->density;
 			if(atom[f->variable] == 1) {
 #ifdef USE_FALSE_PATHS
+# ifdef USE_SIMPLE_PATH_RES				
 				int false_count = CountFalseBDD(f->elseCase);
+# else
+				int false_count = 0;
+				if(!traverseBDD(f->elseCase)) false_count = 1;
+# endif
 				if(false_count != count) {
 					makecount[f->variable]+=count-false_count;
 					previousState[i].count[j] = count-false_count;
@@ -678,7 +698,12 @@ void updateBDDCounts(int i) {
 				f = f->thenCase;
 			} else {
 #ifdef USE_FALSE_PATHS
+# ifdef USE_SIMPLE_PATH_RES				
 				int false_count = CountFalseBDD(f->thenCase);
+# else
+				int false_count = 0;
+				if(!traverseBDD(f->thenCase)) false_count = 1;
+# endif
 				if(false_count != count) {
 					makecount[f->variable]+=count-false_count;
 					previousState[i].count[j] = count-false_count;
@@ -796,12 +821,11 @@ int picknoveltyplus(void)
 				break;
 			}
  */
-			//diff = (float)makecount[var] - (float)breakcount[var];
+			diff = (float)makecount[var] - (float)breakcount[var];
 			//diff = brittlecount[var]/(float)occurence[var].length;
 			//diff = brittlecount[var];
 		   //diff = ((float)makecount[var] - (float)breakcount[var]) + (brittlecount[var]/(float)occurence[var].length);
-			if(makecount[var] < 0) assert(0);
-			diff = ((float)makecount[var] - (float)breakcount[var]) + brittlecount[var];
+			//diff = ((float)makecount[var] - (float)breakcount[var]) + brittlecount[var];
 			//fprintf(stderr, "{%f4.3:", diff);
 			//fprintf(stderr, "%f4.3}", brittlecount[var]);
 			birthdate = changed[var];
@@ -1016,6 +1040,7 @@ void update_and_print_statistics_end_try(void)
 			printf(" %9.2f", std_dev_x);
 		}
 	}
+//	printf("%d", numflip);
 	printf("\n");
 	
 	if(numfalse == 0 && countunsat() != 0){
