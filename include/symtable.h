@@ -4,14 +4,14 @@
 /* Data type for links in the chain of symbols.      */
 struct symrec
 {
-  char *name;             /* name of symbol          */
-  struct symrec *next;    /* link field              */
-  int id;
-  int flag;
-  int indep;
-  int sym_type;
-  BDDNode true_false;
-  BDDNode false_true;
+   char *name;  /* name of symbol          */
+   struct symrec *next;    /* link field              */
+   int id;
+   int flag;
+   int indep;
+   int sym_type;
+   BDDNode true_false;
+   BDDNode false_true;
 };
 
 typedef struct symrec symrec;

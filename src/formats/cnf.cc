@@ -940,12 +940,12 @@ cnf_process(store *integers, int num_minmax, minmax * min_max_store)
 			  d2_printf3("\rBuilding unclustered BDDs %ld/%ld ...       ", x, numout);
          qsort(integers[x].num, integers[x].length, sizeof(int), abscompfunc);
          //qsort(integers[x].num, integers[x].length, sizeof(int), absrevcompfunc);
-			fprintf(stderr, "here");
+			//fprintf(stderr, "here");
 			functions[x-1] = false_ptr;
 			//fprintf(stderr, "\n%d ", integers[x].num[0]);
 			for(y = 0; y < integers[x].length; y++) {
 				functions[x - 1] = ite_or (functions[x-1], ite_var(integers[x].num[y]));
-				fprintf(stderr, "%d ", integers[x].num[y]);
+				//fprintf(stderr, "%d ", integers[x].num[y]);
 			}
 			functionType[x-1] = PLAINOR;	  
 		}
@@ -1097,11 +1097,13 @@ DNF_to_BDD ()
 	for(int y = 0; y < dnf_numout; y++) {
 		if (y%1000 == 1)
 		  d2_printf3("\rCreating Symbol Table Entries %d/%ld ... ", y, dnf_numout);
-      cnf_integers[cnf_out_idx].num[y] = y + dnf_numinp + 1;
+      cnf_integers[cnf_out_idx].num[y] = 
 #ifdef CNF_USES_SYMTABLE
       i_getsym_int(y+dnf_numinp+1, SYM_VAR);
+#else
+      y + dnf_numinp + 1;
 #endif
-	}
+   }
    cnf_integers[cnf_out_idx].num[dnf_numout] = 0;
    cnf_out_idx++;
 
@@ -1112,7 +1114,7 @@ DNF_to_BDD ()
 		cnf_integers[cnf_out_idx].num_alloc = dnf_integers[x].max+2; /* plus clause var and 0 */
       cnf_integers[cnf_out_idx].num = (int*)ite_calloc(cnf_integers[cnf_out_idx].num_alloc, 
             sizeof(int), 9, "integers[].num");
-      cnf_integers[cnf_out_idx].num[0] = x + dnf_numinp + 1;
+      cnf_integers[cnf_out_idx].num[0] = cnf_integers[1].num[x]; // clause id
 
       int y;
       for(y = 0; dnf_integers[x].num[y] != 0; y++) {
@@ -1126,8 +1128,8 @@ DNF_to_BDD ()
          cnf_integers[cnf_out_idx].num_alloc = 3;
          cnf_integers[cnf_out_idx].num = (int*)ite_calloc(cnf_integers[cnf_out_idx].num_alloc, 
             sizeof(int), 9, "integers[].num");
-         cnf_integers[cnf_out_idx].num[0] = -(x + dnf_numinp + 1);
-         cnf_integers[cnf_out_idx].num[1] = dnf_integers[x].num[y];
+         cnf_integers[cnf_out_idx].num[0] = -cnf_integers[1].num[x]; // -clause id
+         cnf_integers[cnf_out_idx].num[1] = dnf_integers[x].num[y];  
          cnf_integers[cnf_out_idx].num[2] = 0;
          cnf_out_idx++;
       }

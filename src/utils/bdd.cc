@@ -41,6 +41,8 @@
 
 #include "ite.h"
 
+#define SORT_ITE_OPS
+
 BDDNode *f_mitosis (BDDNode *f, BDDNode **x, int *structureBDD)
 {
    if (IS_TRUE_FALSE(f))
@@ -776,7 +778,12 @@ BDDNode * ite_not (BDDNode * a)
 
 BDDNode * ite_or (BDDNode * a, BDDNode * b)
 {
-   return ite (a, true_ptr, b);
+#ifdef SORT_ITE_OPS
+   if (a->variable < b->variable)
+      return ite (b, true_ptr, a);
+   else
+#endif
+      return ite (a, true_ptr, b);
 }
 
 BDDNode * ite_nor (BDDNode * a, BDDNode * b)
@@ -796,6 +803,11 @@ BDDNode * ite_nimp (BDDNode * a, BDDNode * b)
 
 BDDNode * ite_xor (BDDNode * a, BDDNode * b)
 {
+#ifdef SORT_ITE_OPS
+   if (a->variable < b->variable)
+      return ite (b, ite_not (a), a);
+   else
+#endif
    return ite (a, ite_not (b), b);
 }
 
@@ -806,11 +818,21 @@ BDDNode * ite_equ (BDDNode * a, BDDNode * b)
 
 BDDNode * ite_and (BDDNode * a, BDDNode * b)
 {
+#ifdef SORT_ITE_OPS
+   if (a->variable < b->variable)
+      return ite (b, a, false_ptr);
+   else
+#endif
    return ite (a, b, false_ptr);
 }
 
 BDDNode * ite_nand (BDDNode * a, BDDNode * b)
 {
+#ifdef SORT_ITE_OPS
+   if (a->variable < b->variable)
+      return ite_not (ite_and (b, a));
+   else
+#endif
    return ite_not (ite_and (a, b));
 }
 
