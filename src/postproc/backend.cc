@@ -65,33 +65,36 @@ ShowResultLine(FILE *fout, char *var, int var_idx, int negative, int value)
 	  sprintf(var, "%d", var_idx);
   }
   
-  switch (result_display_type) {
-  case 4:
-  case 1:
-         /* raw result format */
-         switch (value) {
-         case BOOL_TRUE : fprintf (fout,  "%s", var); break;
-         case BOOL_FALSE: fprintf (fout, "-%s", var); break;
-         default: fprintf (fout, "*%s", var); break;
-         }
-         fprintf(fout, " ");
-	break;
-  case 2:
-        /* fancy/franco result format */
-        fprintf (fout,  "%s\t%c(%d)\tval:", var, (negative?'-':' '), var_idx);
-        switch (value) {
-        case BOOL_TRUE : fprintf (fout, "T"); break;
-        case BOOL_FALSE: fprintf (fout, "F"); break;
-        default: fprintf (fout, "-"); break;
-        }
-        fprintf(fout, "\n");
-	break;
-  case 3:
-        fprintf(fout, "%c", value==BOOL_TRUE?'+':value==BOOL_FALSE?'-':'?');
-   break;
-  default: break;
-  }
-
+	switch (result_display_type) {
+	 case 4:
+	 case 1:
+		/* raw result format */
+		switch (value) {
+		 case BOOL_TRUE : fprintf (fout,  "%s", var); break;
+		 case BOOL_FALSE: fprintf (fout, "-%s", var); break;
+		 case -1: fprintf (fout, "*%s", var); break;
+		 default: fprintf (fout, negative?"%s=%s":"%s=-%s", var, s_name(value)); break;
+		}
+		fprintf(fout, " ");
+		break;
+	 case 2:
+		/* fancy/franco result format */
+		fprintf (fout,  "%s\t%c(%d)\tval:", var, (negative?'-':' '), var_idx);
+		switch (value) {
+		 case BOOL_TRUE : fprintf (fout, "T"); break;
+		 case BOOL_FALSE: fprintf (fout, "F"); break;
+		 case -1: fprintf(fout, "-"); break;
+		 default: fprintf (fout, "%d", abs(value)); break;
+		}
+		fprintf(fout, "\n");
+		break;
+	 case 3:
+		if(value==BOOL_TRUE || value == BOOL_FALSE || value==-1)
+		  fprintf(fout, "%c", value==BOOL_TRUE?'+':value==BOOL_FALSE?'-':'?');
+		else fprintf(fout, "%d", negative?-value:value);
+		break;
+	 default: break;
+	}
 }
 
 void GetSolution(int oldnuminp, int nMaxVbleIndex) {
@@ -134,7 +137,7 @@ void GetSolution(int oldnuminp, int nMaxVbleIndex) {
 void ProcessSolution(int oldnuminp, int *original_variables) {
 	int i;
 
-	for (i = 1; i <= oldnuminp; i++) {
+	for (i = oldnuminp; i > 0; i--) {
 		if (variablelist[i].equalvars != 0) {
 			if ((variablelist[i].true_false==3)) {
 				variablelist[i].true_false = -1;
@@ -142,9 +145,11 @@ void ProcessSolution(int oldnuminp, int *original_variables) {
 				if (variablelist[i].equalvars<0) {
 					variablelist[i].true_false = 
 					  variablelist[-(variablelist[i].equalvars)].true_false==0?1:0;
-				} else {
+				} else if((variablelist[abs(variablelist[i].equalvars)].true_false!=2)) {
 					variablelist[i].true_false =
 					  variablelist[variablelist[i].equalvars].true_false==0?0:1;
+				} else {
+					//nothing
 				}
 			} else {
 				if (variablelist[i].equalvars>0)
@@ -155,7 +160,7 @@ void ProcessSolution(int oldnuminp, int *original_variables) {
 		}
 	}
 	
-	for (i = 1; i <= oldnuminp; i++)
+	for (i = oldnuminp; i > 0; i--)
 	  {
 		  if(original_variables[i]==-1)// && variablelist[i].true_false!=2)
 			 original_variables[i] = variablelist[i].true_false;
@@ -163,8 +168,8 @@ void ProcessSolution(int oldnuminp, int *original_variables) {
 			  original_variables[i] = 0;
 			  variablelist[i].true_false = 0;
 		  }
-		  //fprintf(stderr, "%d = %d/%d ", i, variablelist[i].true_false, variablelist[i].equalvars);
-		  //fprintf(stderr, "%d = %d\n ", i, original_variables[i]);
+		  fprintf(stderr, "%d = %d/%d ", i, variablelist[i].true_false, variablelist[i].equalvars);
+		  fprintf(stderr, "%d = %d\n ", i, original_variables[i]);
 		  //fprintf(stderr, "%d = %d\n", i, arrSolution[i]);
 	  }
 	//1 = True  0 = False  -1 = Don't Care
@@ -241,7 +246,15 @@ Backend_NoSolver (int oldnuminp, int *original_variables)
    for (int i = 1; i <= oldnuminp; i++)
 	  {
         if (result_display_type == 4 && (i%20) == 0) fprintf(foutputfile, "\nv ");
-		  ShowResultLine(foutputfile, s_name(i), i, 0, original_variables[i]);
+		  int negate = 0;
+		  if(original_variables[i] == 2) original_variables[i] = -1;
+		  if(original_variables[i] == -1 && variablelist[i].equalvars>0) {
+			  original_variables[i] = variablelist[i].equalvars;
+		  } else if(original_variables[i] == -1 && variablelist[i].equalvars<0) {
+			  original_variables[i] = variablelist[i].equalvars;
+			  negate = 1;
+		  } 
+		  ShowResultLine(foutputfile, s_name(i), i, negate, original_variables[i]);
 	  }
    if (result_display_type == 4) fprintf(foutputfile, " 0");
 	fprintf(foutputfile, "\n");
@@ -282,7 +295,15 @@ Backend(int nMaxVbleIndex, int oldnuminp, int *original_variables)
       if (result_display_type == 4) fprintf(foutputfile, "v ");
       for (int i = 1; i <= oldnuminp; i++) {
          if (result_display_type == 4 && (i%20) == 0) fprintf(foutputfile, "\nv ");
-         ShowResultLine(foutputfile, s_name(i), i, 0, original_variables[i]);
+			int negate = 0;
+			if(original_variables[i] == 2) original_variables[i] = -1;
+			if(original_variables[i] == -1 && variablelist[i].equalvars>0) {
+				original_variables[i] = variablelist[i].equalvars;
+			} else if(original_variables[i] == -1 && variablelist[i].equalvars<0) {
+				original_variables[i] = variablelist[i].equalvars;
+				negate = 1;
+			} 
+         ShowResultLine(foutputfile, s_name(i), i, negate, original_variables[i]);
 		}
       if (result_display_type == 4) fprintf(foutputfile, " 0");
       fprintf(foutputfile, "\n");
