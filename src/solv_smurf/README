@@ -24,12 +24,53 @@ Add new function type
    The function is called HrYYYYYFnXxxxxInit() where YYYY is a heuristic name
    and Xxxxxx is the function type name. 
 
+Hooks for each function type
+----------------------------
+(i is the function type number) 
+procCreateFunction[i] = XxxxCreateFunction(int nFnId, /* function id */
+                        BDDNode *bdd, /* functions[nFnId] */
+                        int nFnType, /* functionType[nFnId] */
+                        int eqVble) /* equalityVble[nFnId] */
+
+procFunctionFree[i] = XxxxFreeFunction(int nFnId); /* not implemented yet */
+
+// Function Stack
+procSave2Stack[i] = XxxxSave2Stack(int nFnId, /* function id */
+                        void *one_stack) /* (FnStack*) type */
+
+procRestoreFromStack[i] = XxxxRestoreFromStack(void *one_stack);
+                        /* (FnStack*) -- includes nFnId */
+
+// Create and Update Affected Functions per variable
+procCreateAFS[i] = XxxxCreateAFS(int nFnId, /* function id */
+                      int nVarId,  /* variable id */
+                      int nAFSIndex) /* index in arrOneAFS -- see below*/
+                   /* arrAFS[nVarId].arrOneAFS[nAFSIndex].. */
+
+procAffectedVarList[i] = XorAffectedVarList(int nFnId, 
+                int **arr1, int *num1, /* first set -- return NULL/0 if not 
+                                        e.g. lhs */
+                int **arr2, int *num2) /* second set -- return NULL/0 if not 
+                                        e.g. rhs */
+
+procUpdateAffectedFunction[i] = XorUpdateAffectedFunction(int nFnId) 
+                        /* function id -- big update*/
+procUpdateAffectedFunction_Infer[i] = XorUpdateAffectedFunction_Infer
+                        (void *oneafs, /* OneAFS structure small update */
+                         int x); /* reserved -- ignore please */
+procUpdateFunctionInfEnd[i] = XorUpdateFunctionInfEnd(int nFnId);
+                        /* update after all inferences are applied
+                           before choosing next choice point */
+
+
+
 
 Add new heuristic 
 -----------------
 *  Create directory hr_xxxx
-*  Create source file hr_xxxx.cc in hr_xxxx with HrXXXXInit(), HrXXXXBacktrack(), 
-   HrXXXXUpdate(), HrXXXXSelect() and HrXXXXFree()
+*  Create source file hr_xxxx.cc in hr_xxxx with HrXXXXInit(), 
+        HrXXXXBacktrack(), HrXXXXUpdate(), HrXXXXSelect() and HrXXXXFree()
+        /* see below the hooks */
    (follow the examples in hr_lsgb/hr_lsgb.c)
 *  Create header file hr_xxxx.h in include
 *  Create hr_xxxx/Makefile.am
@@ -43,6 +84,13 @@ Add new heuristic
     functions -- first one is used to updated the scores in the begining, the second
     one during backtracking -- before choosing a new choicepoint)
 
+Hooks for each heuristic
+------------------------
+procHeurBacktrack = HrXXXXXBacktrack(int n) /* n - number of levels to backtrack */
+procHeurUpdate = HrXXXXUpdate() /* push one level in -- before procHeurSelect */
+procHeurFree = HrXXXXFree()
+procHeurSelect = HrXXXXSelect(int *nInferredAtom, /* returns variable */
+                int *nInferredValue); /* returns value BOOL_TRUE/BOOL_FALSE */
 
 TODO:
 * rename X_OptimizedHeuristic to HrXXXXSelect
