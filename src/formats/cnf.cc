@@ -266,11 +266,6 @@ void CNF_to_BDD(int cnf)
             }
             y++;
          };
-         /* ????
-          * if(order == '#') {
-            order = 0;
-            continue;
-         }*/
          integers[x].dag = -1;
          if(y==0) {x--; numout--; continue; }
          integers[x].num = new int[y + 1];

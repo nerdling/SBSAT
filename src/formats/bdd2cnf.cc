@@ -45,6 +45,11 @@
 #include "ite.h"
 #include "formats.h"
 
+void print_cnf_symtable() {
+	for(int x = 1; x < numinp; x++)
+	  fprintf(foutputfile, "c %d = %s\n", x, getsym_i(x)->name);
+}
+
 void getMaxNo (BDDNode * bdd, int *no) {
    if (bdd == false_ptr || bdd == true_ptr)
       return;
@@ -101,6 +106,9 @@ int getMaxVarNoInBDD (BDDNode * bdd) {
 //   ft:     file "bdd_tmp.cnf"                                                
 #define F (numinp+3)
 #define T (numinp+2)
+
+int use_symtable = 0;
+
 void bdd2cnf (BDDNode * bdd, int *curr, int *cl_cnt, FILE * ft) {
    int i, t, e,			// made-up vars: i=if, t=then, e=else
       v;			// Actual variable of node
@@ -112,10 +120,10 @@ void bdd2cnf (BDDNode * bdd, int *curr, int *cl_cnt, FILE * ft) {
    }
 
    if (bdd->thenCase == true_ptr && bdd->elseCase == false_ptr) {
-      bdd->t_var = bdd->variable;
+      bdd->t_var = use_symtable?atoi(getsym_i(bdd->variable)->name):bdd->variable;
       return;
    } else if (bdd->thenCase == false_ptr && bdd->elseCase == true_ptr) {
-      bdd->t_var = -bdd->variable;
+      bdd->t_var = use_symtable?-atoi(getsym_i(bdd->variable)->name):-bdd->variable;
       return;
    } else {
       // Setup values for at most four variables involved at a BDD node    
@@ -153,7 +161,7 @@ void bdd2cnf (BDDNode * bdd, int *curr, int *cl_cnt, FILE * ft) {
 			bdd->t_var = i;
       }
 		
-      v = bdd->variable;
+      v = use_symtable?atoi(getsym_i(bdd->variable)->name):bdd->variable;
 		
       // Ready to output clauses to file:                    
       // Generally it's:                                     
@@ -336,6 +344,8 @@ void printBDDToCNF3SAT () {
    char tmp_bdd_filename[256];
    get_freefile("bdd_tmp.cnf", temp_dir, tmp_bdd_filename, 255);
 
+	use_symtable = sym_all_int();
+	
    for (int i = 0; i < nmbrFunctions; i++) {
       //if (functionType[i] != 0) {
       // fprintf(stderr, 
@@ -357,9 +367,9 @@ void printBDDToCNF3SAT () {
       bdd2cnf (functions[i], &max_var_no, &clause_cnt, ft);
       sprintf (buffer, "%d 0\n", functions[i]->t_var);
       if (fputs (buffer, ft) < 0) {
-	 fprintf(stderr, "Error writing to bdd_tmp.cnf\n");
-	 unlink ("bdd_tmp.cnf");
-	 exit (1);
+			fprintf(stderr, "Error writing to bdd_tmp.cnf\n");
+			unlink ("bdd_tmp.cnf");
+			exit (1);
       }
       clause_cnt++;
    }
@@ -370,7 +380,12 @@ void printBDDToCNF3SAT () {
       fprintf(stderr, "Cannot open bdd_tmp.cnf for reading\n");
       exit(1);
    }
-   fprintf (foutputfile, "p cnf %d %d\n", max_var_no - 1, clause_cnt);
+
+	if(!use_symtable) {
+		print_cnf_symtable();
+	}
+   
+	fprintf (foutputfile, "p cnf %d %d\n", max_var_no - 1, clause_cnt);
    while (fgets (buffer, 1023, ft) != NULL)
       fprintf (foutputfile, "%s", buffer);
    fclose (ft);
@@ -826,7 +841,12 @@ void printBDDToCNFQM () {
       }
    }
    no_out_vars = z;
-	
+
+	use_symtable = sym_all_int();
+	if(!use_symtable) {
+		print_cnf_symtable();
+	}
+
    fprintf(foutputfile, "p cnf %ld %d\n", numinp, no_out_vars);
 	
    for(int x = 0; x < numout; x++) {
@@ -836,8 +856,8 @@ void printBDDToCNFQM () {
 				int *vlst = funcs[x]->var_list;
 				int literal = (int) res->data[i];
 				if(literal < 2) {
-					if(literal == 1) fprintf(foutputfile, "%d ", -vlst[i]);
-					else fprintf(foutputfile, "%d ", vlst[i]);
+					if(literal == 1) fprintf(foutputfile, "%d ", use_symtable?-atoi(getsym_i(vlst[i])->name):-vlst[i]);
+					else fprintf(foutputfile, "%d ", use_symtable?atoi(getsym_i(vlst[i])->name):vlst[i]);
 				}
 			}
 			fprintf(foutputfile, "0\n");
@@ -887,11 +907,16 @@ void printBDDToCNF () {
       }
 		delete list;
 	}
+
+	use_symtable = sym_all_int();
+	if(!use_symtable) {
+		print_cnf_symtable();
+	}
 	
    fprintf(foutputfile, "p cnf %ld %d\n", numinp, no_out_vars);
 	for (int x = 0; x < no_out_vars; x++) {
 		for (int a = 0; a < false_paths[x].length; a++)
-		  fprintf (foutputfile, "%d ", -false_paths[x].num[a]); //Need to negate all literals!
+		  fprintf (foutputfile, "%d ", use_symtable?-atoi(getsym_i(false_paths[x].num[a])->name):-false_paths[x].num[a]); //Need to negate all literals!
 		fprintf (foutputfile, "0\n");
 		delete false_paths[x].num;
 	}
