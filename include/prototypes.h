@@ -267,6 +267,8 @@ read_bdd_circuit();
 // termcap 
 int init_terminal_out();
 int init_terminal_in();
+void free_terminal_in();
+void free_terminal_out();
 void move(int col, int row);
 void putpad(char *str);
 int term_getchar();

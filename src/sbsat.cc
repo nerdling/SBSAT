@@ -54,7 +54,6 @@ void bdd_circuit_free();
 void wvfSolve();
 void Verify_NoSolver(Tracer *tracer);
 void Verify_Solver(Tracer *tracer);
-void free_terminal_out();
 
 int ite_pre_init();
 void ite_main_free(Tracer *tracer);
@@ -208,6 +207,7 @@ ite_final(int ret, Tracer *tracer)
       }
    }
 
+   free_terminal_in();
    free_terminal_out();
 
    if (ret == SOLV_ERROR) return 1;

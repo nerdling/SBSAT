@@ -149,6 +149,7 @@ move(int col, int row)
 
 #ifdef HAVE_TERMCAP_H
 struct termios  newtty, origtty;            /* tty modes          */
+int origtty_set = 0;
 #endif
 
 int
@@ -161,6 +162,7 @@ init_terminal_in()
          return 1;
       }
 
+      origtty_set = 1;
       newtty = origtty;
       newtty.c_lflag &= ~(ICANON);
       newtty.c_cc[VMIN] = 1;
@@ -203,3 +205,12 @@ term_getchar()
 }
 
 
+void
+free_terminal_in()
+{
+#ifdef HAVE_TERMCAP_H
+   if (origtty_set && tcsetattr(0, TCSANOW, &origtty) < 0) {
+      fprintf(stderr, "tcgetattr: stdin");
+   }
+#endif
+}
