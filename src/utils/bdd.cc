@@ -1188,12 +1188,13 @@ BDDNode *ite(BDDNode * x, BDDNode * y, BDDNode * z) {
 }
 
 #ifdef NO_BDD_MACROS
-//BDDNode * ite_not(BDDNode * a)
-//{
-//   //return ite (a, false_ptr, true_ptr);
-//   return ite_x_F_T(a);
-//}
-
+/*
+BDDNode * ite_not(BDDNode * a)
+{
+   //return ite (a, false_ptr, true_ptr);
+   return ite_x_F_T(a);
+}
+*/
 BDDNode * ite_or_te(BDDNode * a)
 {
    if (a->or_bdd != NULL) return a->or_bdd;

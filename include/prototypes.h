@@ -61,7 +61,8 @@ void bddtable_get(void **_bddtable, int *_bddtable_len, int *_bddtable_msize);
 
 #ifdef NO_BDD_MACROS
 BDDNode *ite_var (int);
-BDDNode *ite_not(BDDNode *);
+//BDDNode *ite_not(BDDNode *);
+#define ite_not(b) (b->notCase)
 BDDNode *ite_and(BDDNode *, BDDNode *);
 BDDNode *ite_or(BDDNode *, BDDNode *);
 BDDNode *ite_or_te(BDDNode *);
