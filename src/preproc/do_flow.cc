@@ -89,9 +89,10 @@ void Do_Flow() {
 					go_again = 1;
 					continue;
 				}
-				if((num_funcs_var_occurs[x] - 1) == 0) { 
-					fprintf(stderr, "\ndivide by zero\n");
-					exit(0);
+				if((num_funcs_var_occurs[x] - 1) == 0) {
+					fprintf(stddbg, "\ndivide by zero in Do_Flow\n");
+					break;
+					//exit(0);
 				}
 				var_score[x] = score/((float)(num_funcs_var_occurs[x] - 1));
 				if(var_score[x] == 0 && x != numinp+1) {

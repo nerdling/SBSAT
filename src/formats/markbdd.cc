@@ -822,9 +822,21 @@ void bddloop () {
       )
       p = fgetc (finputfile);
       if (p != '\n') {
-			while ((p = fgetc (finputfile)) != EOF)
-			  if (p == '\n')
-				 break;
+			int continue_all = 0;
+			if(p==';') continue_all = 1;
+			else if (p!=' ' && p!='(' && p!=')' && p!=',') {
+				fprintf(stderr, "Warning: Extra characters following line %d\n", markbdd_line);
+				continue_all = 1;
+			}
+			while ((p = fgetc (finputfile)) != EOF) {
+				if (p == '\n')
+				  break;
+				if (p == ';') continue_all = 1;
+				if (continue_all == 0 && p!=' ' && p!='(' && p!=')' && p!=',') {
+					fprintf(stderr, "Warning: Extra characters following line %d\n", markbdd_line);
+					continue_all = 1;
+				}
+			}
 			if (p != '\n')
 			  goto Exit;
 		} else
