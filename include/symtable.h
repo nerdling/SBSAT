@@ -25,6 +25,7 @@ int     i_getsym(char *);
 int     i_putsym(char *);
 symrec *s_getsym(char *);
 void    s_set_indep(symrec *, int);
+char   *s_name(int);
 symrec *tputsym();
 symrec *getsym_i(int id);
 void    print_symtable();

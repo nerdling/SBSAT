@@ -42,7 +42,7 @@
 void finalCheck(Tracer *, int *);
 void Backend_Trace(int, int, int *, Tracer *);
 void Backend_Trace_NoSolver(int, int *, Tracer *);
-void Backend_CNF(int, int, int *);
-void Backend_CNF_NoSolver(int, int *);
+void Backend(int, int, int *);
+void Backend_NoSolver(int, int *);
 
 #endif
