@@ -68,13 +68,10 @@ BackTrack_SBJ()
    int _num_backjumps = 0;
 
 	int highest_uip_level = gnMaxVbleIndex + 1;
-	//int highest_uip_var0 = 0;
-	//int highest_uip_var1 = 0;
 
-	
-   ///assert(pUnitLemmaList.pNextLemma[0] == NULL);
    pUnitLemmaList.pNextLemma[0] = NULL;
-
+	pUnitLemmaListTail = NULL;
+	
    // Copy the conflict lemma into arrTempLemma.
    nTempLemmaIndex = ConstructTempLemma();
 
@@ -159,9 +156,6 @@ BackTrack_SBJ()
 				 nBacktrackAtom == nInferredAtom))
          {
             //nBacktrackAtom is a UIP-unique implication point
-            if (pBacktrackTop->bWasChoicePoint == false) {
-               pBacktrackTop->pUnitLemmaList = NULL;
-            }
 
             pBacktrackTop->bWasChoicePoint = false;
 
@@ -244,22 +238,6 @@ BackTrack_SBJ()
 
             /*m while (1) - the end of backtrack */
             if(nBacktrackAtom == nInferredAtom) break; 
-
-
-            if(pBacktrackTop->pUnitLemmaList != NULL) 
-            {
-					//I do need this cause of backjumping???
-					//Maybe i don't need this?
-               /*m join pUnitLemmaList with the pBacktrackTop->pUnitLemmaList */
-					assert(IsInLemmaList(pBacktrackTop->pUnitLemmaListTail,
-                        pBacktrackTop->pUnitLemmaList));
-               pBacktrackTop->pUnitLemmaListTail->pNextLemma[0]
-                  = pUnitLemmaList.pNextLemma[0];
-               pUnitLemmaList.pNextLemma[0] = pBacktrackTop->pUnitLemmaList;
-               if(pUnitLemmaListTail == NULL) 
-                  pUnitLemmaListTail = pBacktrackTop->pUnitLemmaListTail;
-               assert(IsInLemmaList(pUnitLemmaListTail, &pUnitLemmaList));
-            }
 
          } // if(pBacktrackTop->bWasChoicePoint == true || ... )
 
@@ -439,23 +417,7 @@ BackTrack_SBJ()
 		p = previous;			
 	} // for (LemmaInfoStruct *p = pUnitLemmaList->pNextLemma[0]; ; p = p->pNextLemma[0])
 
-   BacktrackStackEntry *pBacktrackStackOldBranchPoint = pBacktrackTop;
-   pBacktrackStackOldBranchPoint->pUnitLemmaList = NULL;
-   pBacktrackStackOldBranchPoint->pUnitLemmaListTail = NULL;
-	//I may not need to maintain pBacktrackStackOldBranchPoint...
-
 	ite_counters[NO_ERROR]--;
-	//Re-apply the choicepoint.
-   //Heuristic does this automatically.
-
-#ifdef DISPLAY_TRACE
-   TB_9(
-      cout << "Reversed polarity of X" << nInferredAtom
-         << " to " << nInferredValue << endl;
-      //DisplayAllBrancherLemmas();
-      cout << "Would DisplayAllBrancherLemmas here." << endl;
-   )
-#endif
 
    // Get the consequences of the branch atoms new value.
    return 0; /* NO_ERROR */
