@@ -217,7 +217,7 @@ verifyCircuit (int x)
    {
       if(!verifyBDD (functions[i], x)) {
          fprintf (stderr, "\nPROBLEM: function %d contains variable %d\n", i, x);
-         exit(1);
+         //exit(1);
       }
    }
 }

@@ -80,7 +80,7 @@ int numliterals;
 
 int **clause;			/* clauses to be satisfied */
 
-intlist *previousState;  /* records which BDDs are true, and which are false */
+dualintlist *previousState;  /* records which BDDs are true, and which are false */
                          /* along with which variables changed the makecount(-) */
                          /* or breakcount(+) */
 
@@ -127,7 +127,7 @@ long int numflip;		/* number of changes so far */
 long int numnullflip;		/*  number of times a clause was picked, but no  */
 				/*  variable from it was flipped  */
 int numrun = BIG;
-int cutoff = 100000;
+int cutoff = 500000;
 int base_cutoff = 1000000;
 int target = 0;
 int numtry = 0;			/* total attempts at solutions */
@@ -224,11 +224,13 @@ int samplefreq = 1;
 
 int picknoveltyplus(void);
 
-double elapsed_seconds(void);
 int countunsat(void);
+int countunsatfalses(void);
 void verifymbcount();
 void scanone(int argc, char *argv[], int i, int *varptr);
-void init(char initfile[], int initoptions);
+//void init(char initfile[], int initoptions);
+void init_1false(char initfile[], int initoptions);
+void init_CountFalses(char initfile[], int initoptions);
 void initprob(void);                 /* create a new problem */
 void freemem(void);
 void flipatoms(void);       /* changes the assignment of the literals */
@@ -262,9 +264,8 @@ int walkSolve()
 	//int oldnuminp = numinp;
 	int *original_variables;
 	ITE_NEW_CATCH(
-					  original_variables = new int[numinp + 1], 
-					  "input variables");
-	
+		      original_variables = new int[numinp + 1], 
+		      "input variables");
 	for (int x = 0; x <= numinp; x++)
 	  original_variables[x] = -1;
 	
@@ -276,10 +277,12 @@ int walkSolve()
 	initialize_statistics();
 	print_statistics_header();
 	abort_flag = FALSE;
-	(void) elapsed_seconds();
+	expertime = get_runtime();
 	while ((!abort_flag) && (numsuccesstry < numsol) && (numtry < numrun)) {
 		numtry++;
-		init(initfile, initoptions);
+		//init(initfile, initoptions);
+		//init_1false(initfile, initoptions);
+		init_CountFalses(initfile, initoptions);
 		update_statistics_start_try();
 		numflip = 0;
 		while((numfalse > target) && (numflip < cutoff)) {
@@ -290,7 +293,7 @@ int walkSolve()
 		}
 		update_and_print_statistics_end_try();
 	}
-	expertime = elapsed_seconds();
+	expertime = get_runtime() - expertime;
 	print_statistics_final();
 	freemem();
 	if (numsol!=NOVALUE) return SOLV_SAT;
@@ -319,7 +322,7 @@ void initprob(void)
   changed = new int[numvars+1];
   breakcount = new int[numvars+1];
   makecount = new int[numvars+1];	
-  previousState = new intlist[numBDDs+1];
+  previousState = new dualintlist[numBDDs+1]; //intlist[numBDDs+1];
   wherefalse = new int[numBDDs+1];
   falseBDDs = new int[numBDDs+1];
   varstoflip = new int[MAX_NODES_PER_BDD];
@@ -328,6 +331,8 @@ void initprob(void)
     tempmem[x] = 0;
   
   for(int x = 0; x < numBDDs; x++) {
+    previousState[x].num = NULL;
+    previousState[x].count = NULL;
     long y = 0;
     unravelBDD (&y, tempint, functions[x]);
     qsort (tempint, y, sizeof (int), compfunc);
@@ -393,8 +398,11 @@ void freemem(void)
   delete breakcount;
   delete makecount;
 
-  for (int x = 0; x < numBDDs; x++)
-    delete previousState[x].num;
+  for (int x = 0; x < numBDDs; x++) {
+	  delete previousState[x].num;
+	  delete previousState[x].count;
+  }
+
   delete previousState;
 
   delete wherefalse;
@@ -403,8 +411,7 @@ void freemem(void)
 }
 
 void initialize_statistics(void)
-{
-   //it doesn't seem that this does too much...ask hoos if he wants
+{  //it doesn't seem that this does too much...ask holger if he wants
 	//to have this functionality (reading in hamming files)
 	x = 0; r = 0;
 	if (hamming_flag) {
@@ -484,33 +491,37 @@ void print_statistics_start_flip(void)
 //	}
 }
 
-double elapsed_seconds(void)
-{
-    double answer;
-
-    static struct tms prog_tms;
-    static long prev_times = 0;
-
-    (void) times(&prog_tms);
-
-    answer = ((double)(((long)prog_tms.tms_utime)-prev_times))/((double) CLK_TCK);
-
-    prev_times = (long) prog_tms.tms_utime;
-
-    return answer;
-}
-
-bool traverseBDD(BDDNode *f) 
-{
-	while(!IS_TRUE_FALSE(f))
-	  {
-		  if(atom[f->variable] == TRUE)
-			 f = f->thenCase;
-		  else f = f->elseCase;		  
-	  }
+bool traverseBDD(BDDNode *f) {
+	while(!IS_TRUE_FALSE(f)) {
+		if(atom[f->variable] == TRUE) {
+			f = f->thenCase;
+		} else {
+			f = f->elseCase;			  
+		}
+	}
 	if(f == false_ptr) return false;
 	assert(f == true_ptr);
-       	return true;
+	return true;
+}
+
+int CountFalseBDD(BDDNode *f) {
+	int count = 0;
+	if(f == false_ptr) return 1;
+	while(!IS_TRUE_FALSE(f)) {
+		if(atom[f->variable] == TRUE) {
+			if(f->thenCase == false_ptr) {
+				f = f->elseCase;
+				count++;
+			} else f = f->thenCase;
+		} else {
+			if(f->elseCase == false_ptr) {
+				f = f->thenCase;
+				count++;
+			} else f = f->elseCase;			  
+		}
+	}
+	//fprintf(stderr, "{%d}", count);
+	return count;
 }
 
 int findTrue(BDDNode *f)
@@ -564,7 +575,7 @@ int verifyunsat(int i)
 	return 1;
 }
 
-void init(char initfile[], int initoptions)
+void init_1false(char initfile[], int initoptions)
 {
 	int i;
 	int j;
@@ -585,7 +596,10 @@ void init(char initfile[], int initoptions)
 
 	for(i = 0;i < numBDDs;i++) {
 		BDDNode *f = functions[i];
+		if(previousState[i].num != NULL) delete [] previousState[i].num;
 		previousState[i].num = new int[wlength[i]+2];
+		//Previous state should be initialized before this function
+		//That way I don't have to keep deleting it and reinitializing it
 		if(traverseBDD(f)) {
 			j = 0;
 			while(!IS_TRUE_FALSE(f)) {
@@ -639,6 +653,87 @@ void init(char initfile[], int initoptions)
 	}
 }
 
+void init_CountFalses(char initfile[], int initoptions)
+{
+	int i;
+	int j;
+
+	numfalse = 0;
+
+	for(i = 1;i < numvars+1;i++)
+	  {
+		  changed[i] = -BIG;
+		  breakcount[i] = 0;
+		  makecount[i] = 0;
+	  }
+	
+	for(i = 1;i < numvars+1;i++)
+	  atom[i] = random()%2;  //This makes a random truth assignment
+		
+	/* Initialize breakcount, makecount, and previousState in the following: */
+
+	for(i = 0;i < numBDDs;i++) {
+		BDDNode *f = functions[i];
+		if(previousState[i].num != NULL) delete [] previousState[i].num;
+		previousState[i].num = new int[wlength[i]+2];
+		if(previousState[i].num != NULL) delete [] previousState[i].count;
+		previousState[i].count = new int[wlength[i]+2];
+		//Previous state should be initialized before this function
+		//That way I don't have to keep deleting it and reinitializing it
+		int count = CountFalseBDD(f);
+		if(count==0) { //BDD is SAT
+			j = 0;
+			while(!IS_TRUE_FALSE(f)) {
+				if(atom[f->variable] == 1) {
+					int false_count = CountFalseBDD(f->elseCase);
+					breakcount[f->variable]+=false_count;
+					previousState[i].count[j] = false_count;
+					if(false_count > 0) previousState[i].num[j++] = f->variable;
+					f = f->thenCase;
+				} else {
+					int false_count = CountFalseBDD(f->thenCase);
+					breakcount[f->variable]+=false_count;
+					previousState[i].count[j] = false_count;
+					if(false_count > 0) previousState[i].num[j++] = f->variable;
+					f = f->elseCase;
+				}
+			}
+			previousState[i].num[j] = 0;
+		} else { //BDD is UNSAT
+			wherefalse[i] = numfalse;
+			falseBDDs[numfalse] = i;
+			numfalse++;
+			j = 0;
+			while(!IS_TRUE_FALSE(f)) {
+				if(atom[f->variable] == 1) {
+					int false_count = CountFalseBDD(f->elseCase);
+					makecount[f->variable]+=count-false_count;
+					previousState[i].count[j] = count-false_count;
+					if(false_count != count) previousState[i].num[j++] = -(f->variable);
+					f = f->thenCase;
+				} else {
+					int false_count = CountFalseBDD(f->thenCase);
+					makecount[f->variable]+=count-false_count;
+					previousState[i].count[j] = count-false_count;
+					if(false_count != count) previousState[i].num[j++] = -(f->variable);
+					f = f->elseCase;
+				}
+			}
+			previousState[i].num[j] = 0;
+		}
+	}
+
+//	for(int x = 1; x < numvars+1; x++)
+//	  {
+//		  fprintf(stderr, "\n%d: bc=%d, mc=%d, diff=%d", x, breakcount[x], makecount[x], (makecount[x] - breakcount[x]));
+//	  }
+//	fprintf(stderr, "\n");
+	if (hamming_flag) { //Doesn't do this, hamming_flag == false
+		hamming_distance = calc_hamming_dist(atom, hamming_target);
+		fprintf(hamming_fp, "0 %i\n", hamming_distance);
+	}
+}
+
 void update_statistics_start_try(void)
 {
 	int i;
@@ -662,7 +757,7 @@ int picknoveltyplus(void)
 	int youngest=0, youngest_birthdate, best=0, second_best=0, best_diff, second_best_diff;
 	int tofix, BDDsize, i;
 	
-	tofix = falseBDDs[random()%numfalse];
+	tofix = falseBDDs[random()%numfalse]; //Maybe in the future not so random...
 	BDDsize = wlength[tofix];  
 
 //	fprintf(stderr, "\ntofix=%d\n", tofix);
@@ -743,8 +838,8 @@ void flipatoms()
 	int toflip;
 	int flipiter = 0;
 	
-//	fprintf(stderr, "flipping %i\n", toflip);
-//	fprintf(stderr, "bc=%d, mc=%d, diff=%d\n", breakcount[toflip], makecount[toflip], (makecount[toflip] - breakcount[toflip]));
+	//	fprintf(stderr, "flipping %i\n", toflip);
+	//	fprintf(stderr, "bc=%d, mc=%d, diff=%d\n", breakcount[toflip], makecount[toflip], (makecount[toflip] - breakcount[toflip]));
 	while(varstoflip[flipiter]!=0) {
 		toflip = varstoflip[flipiter];
 		if (toflip == NOVALUE){
@@ -773,73 +868,77 @@ void flipatoms()
 		occptr = occurence[toflip].num;
 		
 		for(i = 0; i < numocc ;i++) {
-		  //cli = occurence[toflip].num[i];
-		  cli = *(occptr++);
-		  
-		  BDDNode *f = functions[cli];
-		  
-		  for(j = 0; previousState[cli].num[j]!=0; j++) {
-		    if(previousState[cli].num[j] > 0) 
-		      breakcount[previousState[cli].num[j]]--;
-		    else
-		      makecount[-(previousState[cli].num[j])]--;
-		  }
-		  
-		  if(traverseBDD(f)) {
-		    if(previousState[cli].num[0] < 0) {
-		      numfalse--;
-		      //fprintf(stderr, "removing fB=%d, moving fB=%d to spot %d\n", falseBDDs[wherefalse[cli]], falseBDDs[numfalse], wherefalse[cli]);
-		      falseBDDs[wherefalse[cli]] = falseBDDs[numfalse];
-		      wherefalse[falseBDDs[numfalse]] = wherefalse[cli];
-		    }
-		    j = 0;
-		    while(!IS_TRUE_FALSE(f)) {
-		      if(atom[f->variable] == 1) {
-			if(!traverseBDD(f->elseCase)) {
-			  breakcount[f->variable]++;
-			  previousState[cli].num[j++] = f->variable;
+			//cli = occurence[toflip].num[i];
+			cli = *(occptr++);
+			
+			BDDNode *f = functions[cli];
+
+			//Removing the influence every variable in this BDD has on this BDD.
+			for(j = 0; previousState[cli].num[j]!=0; j++) {
+				if(previousState[cli].num[j] > 0) 
+				  breakcount[previousState[cli].num[j]]-=previousState[cli].count[j];
+				else
+				  makecount[-(previousState[cli].num[j])]-=previousState[cli].count[j];
 			}
-			f = f->thenCase;
-		      } else {
-			if(!traverseBDD(f->thenCase)) {
-			  breakcount[f->variable]++;
-			  previousState[cli].num[j++] = f->variable;
+
+			int count = CountFalseBDD(f);
+			if(count==0) {
+				//BDD is SAT
+				if(previousState[cli].num[0] < 0) {
+					numfalse--;
+					//fprintf(stderr, "removing fB=%d, moving fB=%d to spot %d\n", falseBDDs[wherefalse[cli]], falseBDDs[numfalse], wherefalse[cli]);
+					falseBDDs[wherefalse[cli]] = falseBDDs[numfalse];
+					wherefalse[falseBDDs[numfalse]] = wherefalse[cli];
+				}
+				j = 0;
+				while(!IS_TRUE_FALSE(f)) {
+					if(atom[f->variable] == 1) {
+						int false_count = CountFalseBDD(f->elseCase);
+						breakcount[f->variable]+=false_count;
+						previousState[cli].count[j] = false_count;
+						if(false_count > 0) previousState[cli].num[j++] = f->variable;
+						f = f->thenCase;
+					} else {
+						int false_count = CountFalseBDD(f->thenCase);
+						breakcount[f->variable]+=false_count;
+						previousState[cli].count[j] = false_count;
+						if(false_count > 0) previousState[cli].num[j++] = f->variable;
+						f = f->elseCase;
+					}
+				}
+				previousState[cli].num[j] = 0;
+			} else {
+				//BDD is UNSAT
+				if(previousState[cli].num[0] > 0) {
+					//				fprintf(stderr, "adding fB=%d to spot %d\n", cli, numfalse);
+					falseBDDs[numfalse] = cli;
+					wherefalse[cli] = numfalse;
+					numfalse++;
+				}
+				j = 0;
+				while(!IS_TRUE_FALSE(f)) {
+					if(atom[f->variable] == 1) {
+						int false_count = CountFalseBDD(f->elseCase);
+						makecount[f->variable]+=count-false_count;
+						previousState[cli].count[j] = count-false_count;
+						if(false_count != count) previousState[cli].num[j++] = -(f->variable);
+						f = f->thenCase;
+					} else {
+						int false_count = CountFalseBDD(f->thenCase);
+						makecount[f->variable]+=count-false_count;
+						previousState[cli].count[j] = count-false_count;
+						if(false_count != count) previousState[cli].num[j++] = -(f->variable);
+						f = f->elseCase;
+					}
+				}
+				previousState[cli].num[j] = 0;
 			}
-			f = f->elseCase;
-		      }
-		    }
-		    previousState[cli].num[j] = 0;
-		  } else {
-		    if(previousState[cli].num[0] > 0) {
-		      //				fprintf(stderr, "adding fB=%d to spot %d\n", cli, numfalse);
-		      falseBDDs[numfalse] = cli;
-		      wherefalse[cli] = numfalse;
-		      numfalse++;
-		    }
-		    j = 0;
-		    while(!IS_TRUE_FALSE(f)) {
-		      if(atom[f->variable] == 1) {
-			if(traverseBDD(f->elseCase)) {
-			  makecount[f->variable]++;
-			  previousState[cli].num[j++] = -(f->variable);
-			}
-			f = f->thenCase;
-		      } else {
-			if(traverseBDD(f->thenCase)) {
-			  makecount[f->variable]++;
-			  previousState[cli].num[j++] = -(f->variable);
-			}
-			f = f->elseCase;
-		      }
-		    }
-		    previousState[cli].num[j] = 0;
-		  }
 		}
-		//	if(countunsat()!=numfalse) exit(0);
+		//if(countunsat()!=numfalse) assert(0);
 		//	verifymbcount();
 	}
 }
-	
+
 void update_statistics_end_flip(void)
 {
 	if (numfalse < lowbad){
@@ -1032,35 +1131,51 @@ void print_sol_cnf(void)
 void
 save_solution(void)
 {
-	if (result_display_type) {
-		/* create another node in solution chain */
-		t_solution_info *tmp_solution_info;
-		tmp_solution_info = (t_solution_info*)calloc(1, sizeof(t_solution_info));
-		
-		if (solution_info_head == NULL) {
-         solution_info = tmp_solution_info;
-         solution_info_head = solution_info;
-      } else {
-			solution_info->next = (struct _t_solution_info*)tmp_solution_info;
-			solution_info = (t_solution_info*)(solution_info->next);
-      }
-      tmp_solution_info->nNumElts = numvars+1;
-		tmp_solution_info->arrElts = new int[numvars+2];
-		
-      for (int i = 0; i<=numvars; i++) {
-			tmp_solution_info->arrElts[i] = (atom[i]>0)?BOOL_TRUE:BOOL_FALSE;
-      }
-   }
+  if (result_display_type) {
+    /* create another node in solution chain */
+    t_solution_info *tmp_solution_info;
+    tmp_solution_info = (t_solution_info*)calloc(1, sizeof(t_solution_info));
+    
+    if (solution_info_head == NULL) {
+      solution_info = tmp_solution_info;
+      solution_info_head = solution_info;
+    } else {
+      solution_info->next = (struct _t_solution_info*)tmp_solution_info;
+      solution_info = (t_solution_info*)(solution_info->next);
+    }
+    tmp_solution_info->nNumElts = numvars+1;
+    tmp_solution_info->arrElts = new int[numvars+2];
+    
+    for (int i = 0; i<=numvars; i++) {
+      tmp_solution_info->arrElts[i] = (atom[i]>0)?BOOL_TRUE:BOOL_FALSE;
+    }
+  }
+  
+  int i;
+  
+  for (i=1; i<=numvars; i++)
+    solution[i] = atom[i];
+  //	for(i = 1;i <= numvars+1;i++) {
+  //		printf("v %i\n", solution[i] == 1 ? i : -i);
+  //		printf("v %d\n", solution_info->arrElts[i]);
+  //	}
+  
+}
+
+int countunsatfalses(void) 
+{
+	int i, unsat;
 	
-	int i;
-	
-	for (i=1; i<=numvars; i++)
-	  solution[i] = atom[i];
-//	for(i = 1;i <= numvars+1;i++) {
-//		printf("v %i\n", solution[i] == 1 ? i : -i);
-//		printf("v %d\n", solution_info->arrElts[i]);
-//	}
-	
+	unsat = 0;
+	for (i=0;i < numBDDs;i++) {
+		int count = CountFalseBDD(functions[i]);
+		if(count > 0) {
+			//printBDDerr(functions[i]);
+			//fprintf(stderr, "\n");
+			unsat+=count;
+		}
+	}
+	return unsat;
 }
 
 int countunsat(void)

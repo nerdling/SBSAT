@@ -167,6 +167,7 @@ int countnodes(BDDNode *);
 
 #define print_bdd(f) print_bdd1(f, 0)
 void print_bdd1(BDDNode *, int);
+int verifyBDD (BDDNode *, int);
 void verifyCircuit(int);
 void printBDDerr(BDDNode *);
 void printBDD(BDDNode *);

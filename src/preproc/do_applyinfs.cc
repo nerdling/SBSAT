@@ -208,7 +208,7 @@ Do_Apply_Inferences ()
 				for (llist * k = amount[-inferlist->nums[0]].head; k != NULL; k = k->next) {
 					int j = k->num;
 					BDDNode *before = functions[j];
-					functions[j] = set_variable (functions[j],	-inferlist->nums[0], 0);
+					functions[j] = set_variable (functions[j], -inferlist->nums[0], 0);
 					if (functions[j] == false_ptr)
 					  return TRIV_UNSAT;
 					if (before != functions[j]) {
@@ -224,7 +224,7 @@ Do_Apply_Inferences ()
 						  return TRIV_UNSAT;
 					}
 				}
-				//verifyCircuit(-inferlist->nums[0]);        
+				//verifyCircuit(-inferlist->nums[0]);
 			}
 		}
 		temp = inferlist;
@@ -338,7 +338,7 @@ int Rebuild_BDDx (int x) {
 	//Get Inferences
 	
 	//This still does more new statements than necessary, but it's definetly faster.
-	
+
 	infer *lastiter = NULL;
 	infer *startiter = NULL;
 	if(functions[x]->inferences != NULL) {
@@ -510,6 +510,9 @@ int Rebuild_BDDx (int x) {
 		}
 		y = v + 1;
 	}
+
+	//Need to check to see if any variables were added to this BDD
+	//Dependent clustering can add variables, so can Ex_AND
 	
 	length[x] = y;
 	if (variables[x].num != NULL)
@@ -518,15 +521,15 @@ int Rebuild_BDDx (int x) {
 	for (int i = 0; i < y; i++)
 	  variables[x].num[i] = tempint[i];
 
-	//A line like this would be better placed in smurffactory 
+	//A line like this would be better placed in smurffactory
 	//where the smurfs are made...maybe...we like to be able to preprocess
 	//things that have been made small...
 	//if (length[x] < 3)
 	//  functionType[x] = UNSURE;
-	
+
 	if (DO_INFERENCES)
 	  return Do_Apply_Inferences();
-	
+
 	return PREP_NO_CHANGE;
 }
 

@@ -69,6 +69,12 @@ struct infer{
    struct infer *next;
 };
 
+struct dualintlist {
+	int length;
+	int *num;
+	int *count;
+};
+
 struct intlist{
   int length;
   int *num;

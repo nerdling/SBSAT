@@ -49,7 +49,7 @@ int Do_Strength() {
 	int ret = PREP_NO_CHANGE;
 	
 	int *repeat_small = new int[nmbrFunctions + 1];
-	
+
 	for (int x = 0; x < nmbrFunctions; x++)
 	  repeat_small[x] = St_repeat[x];
 	
@@ -134,7 +134,7 @@ int Do_Strength() {
 
 //Strengthen bdd1 using bdd2
 BDDNode *strengthen(int bddNmbr1, int bddNmbr2, int *&length, store *&variables)
-{
+{	
     BDDNode *quantifiedBDD2 = functions[bddNmbr2];
     int bdd1pos = 0;
     int bdd2pos = 0;
@@ -156,9 +156,9 @@ BDDNode *strengthen(int bddNmbr1, int bddNmbr2, int *&length, store *&variables)
       quantifiedBDD2 = xquantify(quantifiedBDD2, variables[bddNmbr2].num[bdd2pos]);
 
     if(quantifiedBDD2 == functions[bddNmbr2]) {
-      functions[bddNmbr2] = true_ptr;
-      Rebuild_BDDx(bddNmbr2);
-      //  fprintf(stderr, "Removing %d ", bddNmbr2);
+		 functions[bddNmbr2] = true_ptr;
+		 //d2_printf2("Removing %d ", bddNmbr2);
+		 Rebuild_BDDx(bddNmbr2);
     }
     return ite_and(functions[bddNmbr1], quantifiedBDD2);
 }

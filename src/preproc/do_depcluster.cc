@@ -184,6 +184,16 @@ int DepCluster () {
 							}
 							continue;
 						}
+						if(DO_INFERENCES) {
+							switch (int r=Do_Apply_Inferences()) {
+							 case TRIV_UNSAT:
+							 case PREP_ERROR:
+								ret=r;
+								goto ex_bailout;
+								break;
+							 default: break;
+							}
+						}
 						continue; //Comment out for REAL dependent clustering
 						equalityVble[k] = 0;
 						functionType[k] = UNSURE;
@@ -201,6 +211,16 @@ int DepCluster () {
 							}
 						}
 						continue;
+					}
+					if(DO_INFERENCES) {
+						switch (int r=Do_Apply_Inferences()) {
+						 case TRIV_UNSAT:
+						 case PREP_ERROR:
+							ret=r;
+							goto ex_bailout;
+							break;
+						 default: break;
+						}
 					}
 					continue; //Comment out for REAL dependent clustering
 					equalityVble[k] = 0;

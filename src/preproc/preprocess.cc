@@ -88,9 +88,9 @@ Preprocessor(varinfo *variablelist)
       return ret; 
   }
 
-  p = preproc_string;
-  ret = parse_seq(&p, 0);
-  return ret;
+	p = preproc_string;
+	ret = parse_seq(&p, 0);
+	return ret;
 }
 
 int
@@ -177,10 +177,10 @@ parse_cycle(char **p, int parse_only)
     }
 
   /* if it had to repeat at least once then everything needs to repeat */
-  if (ret == PREP_NO_CHANGE && loop_counter>1) 
-    ret=PREP_CHANGED;
-  d9_printf2("pc: returning with %d\n", ret);
-  return ret;
+	if (ret == PREP_NO_CHANGE && loop_counter>1) 
+	  ret=PREP_CHANGED;
+	d9_printf2("pc: returning with %d\n", ret);
+	return ret;
 }
 
 
