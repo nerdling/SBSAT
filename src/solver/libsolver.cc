@@ -81,6 +81,7 @@
 #include "smurfstates.cc"
 
 #include "state_stacks.cc"
+#include "heur_stack.cc"
 
 #include "lemmainfo.cc"
 #include "lemmaspace.cc"

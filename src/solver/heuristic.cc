@@ -37,7 +37,8 @@
 #include "ite.h"
 #include "solver.h"
 
-t_call_heuristic proc_call_heuristic;
+t_call_heuristic proc_call_heuristic = NULL;
+t_update_heuristic proc_update_heuristic = NULL;
 
 ITE_INLINE
 void

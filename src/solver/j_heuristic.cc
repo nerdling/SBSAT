@@ -35,46 +35,16 @@
  of the possibility of those damages.
  *********************************************************************/
 
-// assert USE_LEMMA_VAR_HEURISTIC is not set... !
-
 #include "ite.h"
 #include "solver.h"
 
-extern int *arrLemmaVbleCountsPos;
-extern int *arrLemmaVbleCountsNeg;
-
-extern SmurfState **arrRegSmurfInitialStates;
-extern int gnMaxVbleIndex;
-double *arrJWeights; 
+double *arrJWeights;
 
 ITE_INLINE SmurfState * GetSmurfState(int i);
 ITE_INLINE void J_SetupHeuristicScores();
 ITE_INLINE void J_Setup_arrJWeights();
 ITE_INLINE void GetHeurScoresFromSmurf(int i);
 ITE_INLINE void J_ResetHeuristicScores();
-
-/* 
-
- other files and j_heuristic.cc
- ------------------------------
-
- select_bp.cc -- calls this heuristic
- -- push the stack
-
- backtrack.cc -- pop the stack 
-
- init_solver.cc -- allocates arrHeurScoresNeg, Pos
-
- bt_smurfs.cc  -- one part (Update heuristic scores from 
- info stored on the transition)
-
- smurffactory.cc -- jheuristic 
- -- jheuristic_optimization:
- * calls HeuristicDisplayTransitionInfo
- * setup heuristic (delta arrays) info on transitions
-
- */
-
 
 // The constant c is taken from the documentation on the heuristics
 // which was provided in the Summer 2000 progress report.
@@ -90,84 +60,13 @@ extern int nNumSpecialFuncs;
 extern int nNumRegSmurfs;	// Number of regular Smurfs.
 extern int nNumVariables;
 
-HeurScores *arrHeurScores=NULL;
-
 extern SpecialFunc *arrSpecialFuncs;
-
-ITE_INLINE void Mark_arrHeurScoresStack(int vx);
 
 void
 DisplayUpdatesToHeuristicTransScores(Transition *pTransition);
 
 void
 J_UpdateHeuristicScoresFromTransition(Transition *pTransition);
-
-#define HEUR_SCORES_STACK_ALLOC_MULT 6 /* >= 2 */
-#define MAX_HEUR_SCORES_STACK_POOL 100
-int nCurHeurScoresVersion=1;
-int nHeurScoresStackIdx=0;
-int nMaxHeurScoresStackIdx=0;
-tHeurScoresStack *arrHeurScoresStack=NULL;
-int *arrHeurScoresFlags=NULL;
-typedef struct { tHeurScoresStack *stack; int max; } tHeurScoresStackPool;
-tHeurScoresStackPool *arrHeurScoresStackPool=NULL;
-int nHeurScoresStackPool=0;    
-int nHeurScoresStackPoolMax=MAX_HEUR_SCORES_STACK_POOL;
-
-ITE_INLINE void
-J_AllocateHeurScoresStack(int newsize)
-{
-   assert(newsize > 0);
-
-   if (arrHeurScoresFlags==NULL) {
-      arrHeurScoresFlags = (int*)ite_calloc(nNumVariables, sizeof(int),
-            9, "arrHeurScoresFlags");
-      arrHeurScoresStackPool = (tHeurScoresStackPool*)ite_calloc(
-            nHeurScoresStackPoolMax, sizeof (tHeurScoresStackPool),
-            9, "arrHeurScoresStackPool");
-   }
-
-   if (nHeurScoresStackPool >= nHeurScoresStackPoolMax) {
-      fprintf(stderr, "Increase MAX_HEUR_SCORES_STACK_POOL or realloc array\n");
-      exit(1);
-   }
-
-   if (arrHeurScoresStackPool[nHeurScoresStackPool].stack == NULL) {
-      newsize += INIT_STACK_BACKTRACKS_ALLOC*4; 
-
-      arrHeurScoresStackPool[nHeurScoresStackPool].max = newsize;
-
-      arrHeurScoresStackPool[nHeurScoresStackPool].stack =
-         (tHeurScoresStack*)ite_calloc(newsize, sizeof(tHeurScoresStack), 2,
-                                   "j heuristic states stack");
-
-      tHeurScoresStack* prev_arrHeurScoresStack = arrHeurScoresStack;
-      arrHeurScoresStack = arrHeurScoresStackPool[nHeurScoresStackPool].stack;
-
-      /* save the prev index*/
-      arrHeurScoresStack[0].u.index_pool  = nHeurScoresStackIdx;
-      arrHeurScoresStack[1].u.next_pool   = (void *)prev_arrHeurScoresStack;
-      arrHeurScoresStack[2].v             = POOL_START;
-      arrHeurScoresStack[newsize-1].v     = POOL_END;
-
-   } else {
-      arrHeurScoresStack = arrHeurScoresStackPool[nHeurScoresStackPool].stack;
-   }
-
-   nHeurScoresStackIdx    = 2;
-}
-
-ITE_INLINE void
-J_FreeHeurScoresStack ()
-{
-   if (arrHeurScoresStackPool) {
-      for (int i=0;i<=nHeurScoresStackPoolMax && arrHeurScoresStackPool[i].stack;i++)
-         ite_free((void*)arrHeurScoresStackPool[i].stack);
-      ite_free((void*)arrHeurScoresStackPool);
-      ite_free((void*)arrHeurScoresFlags);
-   }
-   ite_free((void*)arrHeurScores);
-}
 
 ITE_INLINE void
 J_InitHeuristicScores()
@@ -239,25 +138,25 @@ J_ResetHeuristicScores()
 #define J_ONE 0
 
 // CLASSIC
-#define HEUR_WEIGHT(x) (J_ONE+x.Pos) * (J_ONE+x.Neg)
-//#define HEUR_WEIGHT(x) (x.Pos*x.Neg+arrVarScores[i].neg>arrVarScores[i].pos?arrVarScores[i].neg:arrVarScores[i].pos)
-//#define HEUR_WEIGHT(x) (arrVarScores[i].neg>arrVarScores[i].pos?arrVarScores[i].neg:arrVarScores[i].pos)
+#define HEUR_WEIGHT(x,i) (J_ONE+x.Pos) * (J_ONE+x.Neg)
+//#define HEUR_WEIGHT(x,i) (x.Pos*x.Neg+arrVarScores[i].neg>arrVarScores[i].pos?arrVarScores[i].neg:arrVarScores[i].pos)
+//#define HEUR_WEIGHT(x,i) (arrVarScores[i].neg>arrVarScores[i].pos?arrVarScores[i].neg:arrVarScores[i].pos)
 
 // Var_Score
-//#define HEUR_WEIGHT(x) (var_score[i] * (J_ONE+x.Pos) * (J_ONE+x.Neg))
+//#define HEUR_WEIGHT(x,i) (var_score[i] * (J_ONE+x.Pos) * (J_ONE+x.Neg))
 
 // ABSOLUTE MAXIMUM
-//#define HEUR_WEIGHT(x) (x.Neg > x.Pos ? x.Neg : x.Pos)
+//#define HEUR_WEIGHT(x,i) (x.Neg > x.Pos ? x.Neg : x.Pos)
 
 // BERM
-//#define HEUR_WEIGHT(x) (x.Neg>x.Pos?((x.Pos*2) + x.Neg):((x.Neg*2) + x.Pos)) 
+//#define HEUR_WEIGHT(x,i) (x.Neg>x.Pos?((x.Pos*2) + x.Neg):((x.Neg*2) + x.Pos)) 
 
 // ADDITION
-//#define HEUR_WEIGHT(x) (J_ONE+x.Pos) + (J_ONE+x.Neg)
+//#define HEUR_WEIGHT(x,i) (J_ONE+x.Pos) + (J_ONE+x.Neg)
 
 // NEW??
-//#define HEUR_WEIGHT(x) (((x.nPosInfs+1)*x.nPos)* (x.nNegInfs+1)*x.nNeg)
-//#define HEUR_WEIGHT(x) (J_ONE+x.Pos) * (J_ONE+x.Neg) * (arrLemmaVbleCountsPos[i] + arrLemmaVbleCountsNeg[i])
+//#define HEUR_WEIGHT(x,i) (((x.nPosInfs+1)*x.nPos)* (x.nNegInfs+1)*x.nNeg)
+//#define HEUR_WEIGHT(x,i) (J_ONE+x.Pos) * (J_ONE+x.Neg) * (arrLemmaVbleCountsPos[i] + arrLemmaVbleCountsNeg[i])
 
 // slider_80_unsat -- the order from the best to worst is (all J_ONE = 0)
 // CLASSIC
@@ -302,7 +201,12 @@ J_ResetHeuristicScores()
 #include "heur_choice.cc"
 
 #undef HEUR_WEIGHT
-#define HEUR_WEIGHT(x) (x.Pos*x.Neg*(arrLemmaVbleCountsNeg[i]>arrLemmaVbleCountsPos[i]?arrLemmaVbleCountsNeg[i]:arrLemmaVbleCountsPos[i]))
+#define HEUR_WEIGHT(x,i) (x.Pos*x.Neg*(arrLemmaVbleCountsNeg[i]>arrLemmaVbleCountsPos[i]?arrLemmaVbleCountsNeg[i]:arrLemmaVbleCountsPos[i]))
+
+#undef HEUR_SIGN
+#define HEUR_SIGN(nBestVble) \
+   (arrHeurScores[nBestVble].Pos >= arrHeurScores[nBestVble].Neg?BOOL_TRUE:BOOL_FALSE)
+   //(arrLemmaVbleCountsPos[nBestVble]*arrHeurScores[nBestVble].Pos >= arrLemmaVbleCountsNeg[nBestVble]*arrHeurScores[nBestVble].Neg?BOOL_TRUE:BOOL_FALSE)
 
 #undef HEUR_FUNCTION
 #define HEUR_FUNCTION J_OptimizedHeuristic_l
@@ -335,7 +239,7 @@ J_Heuristic_Lemma(LemmaInfoStruct **ppUnitLemmaList, int *nInferredAtom, int *nI
          if (arrSolution[i] == BOOL_UNKNOWN)
          {
             fprintf(stderr, "?");
-            fVbleWeight = HEUR_WEIGHT(arrHeurScores[i]);
+            fVbleWeight = HEUR_WEIGHT(arrHeurScores[i],i);
             if (HEUR_COMPARE(fVbleWeight, fMaxWeight))
             {
                fMaxWeight = fVbleWeight;
@@ -385,90 +289,6 @@ GetHeurWeight(SmurfState *pState, int i, int nVble, int nValue)
    if ((pTransition=FindTransition(pState, i, nVble, nValue))==NULL) return 0;
 
    return pTransition->fHeuristicWeight;
-}
-
-ITE_INLINE
-void
-J_InitHeuristic()
-{
-   arrHeurScores = (HeurScores *)ite_calloc(nNumVariables, sizeof(HeurScores), 2,
-         "heuristic scores");
-
-   J_AllocateHeurScoresStack (nNumVariables * HEUR_SCORES_STACK_ALLOC_MULT);
-}
-
-
-ITE_INLINE
-void
-J_PushHeuristicScores()
-{
-   nCurHeurScoresVersion++;
-   Mark_arrHeurScoresStack(LEVEL_START);
-}
-
-ITE_INLINE
-void
-Mark_arrHeurScoresStack(int vx)
-{
-   nHeurScoresStackIdx++;
-   if (arrHeurScoresStack[nHeurScoresStackIdx].v == POOL_END)
-   {
-      nHeurScoresStackPool++;
-      J_AllocateHeurScoresStack (nNumVariables * HEUR_SCORES_STACK_ALLOC_MULT);
-      nHeurScoresStackIdx++;
-   }
-   arrHeurScoresStack[nHeurScoresStackIdx].v = vx;
-}
-
-ITE_INLINE
-void
-Add_arrHeurScoresStack(int vx)
-{
-   nHeurScoresStackIdx++;
-   if (arrHeurScoresStack[nHeurScoresStackIdx].v == POOL_END)
-   {
-      nHeurScoresStackPool++;
-      J_AllocateHeurScoresStack (nNumVariables * HEUR_SCORES_STACK_ALLOC_MULT);
-      nHeurScoresStackIdx++;
-   }
-
-   arrHeurScoresStack[nHeurScoresStackIdx].v = vx;  
-   arrHeurScoresStack[nHeurScoresStackIdx].h = arrHeurScores[vx];
-   arrHeurScoresStack[nHeurScoresStackIdx].prev  = arrHeurScoresFlags[vx]; 
-   arrHeurScoresFlags[vx]=nCurHeurScoresVersion;
-}
-
-ITE_INLINE
-void
-J_PopHeuristicScores()
-{
-   /* pop heur scores stack */
-   assert(nHeurScoresStackIdx>0);
-
-   /* until LEVEL_START */
-   while (arrHeurScoresStack[nHeurScoresStackIdx].v != LEVEL_START) 
-   {
-      int v=arrHeurScoresStack[nHeurScoresStackIdx].v;
-      if (v == POOL_START) {
-         nHeurScoresStackPool--;
-         nHeurScoresStackIdx--;
-         tHeurScoresStack *new_arrHeurScoresStack = 
-            (tHeurScoresStack*)
-            (arrHeurScoresStack[nHeurScoresStackIdx--].u.next_pool);
-         nHeurScoresStackIdx =
-            arrHeurScoresStack[nHeurScoresStackIdx].u.index_pool;
-         assert(new_arrHeurScoresStack[nHeurScoresStackIdx].v==POOL_END);
-         arrHeurScoresStack = new_arrHeurScoresStack;
-      } else
-         if (v >= 0) {
-            arrHeurScores[v] =arrHeurScoresStack[nHeurScoresStackIdx].h;
-            arrHeurScoresFlags[v]=arrHeurScoresStack[nHeurScoresStackIdx].prev;
-         }
-      nHeurScoresStackIdx--;
-   }
-   nHeurScoresStackIdx--; /* skip the LEVEL_START */
-   assert(nHeurScoresStackIdx>0);
-   nCurHeurScoresVersion--;
 }
 
 ITE_INLINE void

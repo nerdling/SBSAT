@@ -99,8 +99,7 @@ BackTrack_NL()
   nNumUnresolvedFunctions = pChoicePointTop->nNumUnresolved;
 
   // Pop heuristic scores.
-  if (nHeuristic == JOHNSON_HEURISTIC || nHeuristic == STATE_HEURISTIC)
-	J_PopHeuristicScores();
+  if (arrHeurScores) PopHeuristicScores();
 
   // Pop the backtrack stack until we pop the branch atom.
   while (1)

@@ -395,7 +395,8 @@ InitBrancher()
 
    switch (nHeuristic) {
     case JOHNSON_HEURISTIC:
-      if (sHeuristic[1] == 'l') {
+       proc_update_heuristic = J_UpdateHeuristic;
+       if (sHeuristic[1] == 'l') {
          int i = strlen(sHeuristic);
          if (i>8) i=8;
          memmove(sHeuristic+1, sHeuristic+2, i-1); 
@@ -409,9 +410,11 @@ InitBrancher()
        break;
     case C_LEMMA_HEURISTIC:
        proc_call_heuristic = L_OptimizedHeuristic;
+       proc_update_heuristic = UpdateHeuristic;
        break;
     case INTERACTIVE_HEURISTIC:
        proc_call_heuristic = I_OptimizedHeuristic;
+       proc_update_heuristic = UpdateHeuristic;
        break;
     default:
        dE_printf1("Unknown heuristic\n");

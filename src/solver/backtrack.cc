@@ -109,8 +109,7 @@ BackTrack()
       pop_state_information(1);
 
       // Pop heuristic scores.
-      if (nHeuristic == JOHNSON_HEURISTIC || nHeuristic == STATE_HEURISTIC)
-         J_PopHeuristicScores();
+      if (arrHeurScores) PopHeuristicScores();
 
       // Pop the backtrack stack until we pop the branch atom.
       // backtracking loop

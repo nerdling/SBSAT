@@ -88,7 +88,7 @@ HEUR_FUNCTION(int *pnBranchAtom, int *pnBranchValue)
       {
         //if (arrHeurScores[i].Pos == 0 && arrHeurScores[i].Neg == 0) continue;
          nBestVble = i;
-         fMaxWeight = HEUR_WEIGHT(arrHeurScores[i]);
+         fMaxWeight = HEUR_WEIGHT(arrHeurScores[i], i);
          break;
       }
    }
@@ -101,7 +101,7 @@ HEUR_FUNCTION(int *pnBranchAtom, int *pnBranchValue)
          if (arrSolution[i] == BOOL_UNKNOWN)
          {
             //if (arrHeurScores[i].Pos == 0 && arrHeurScores[i].Neg == 0) continue;
-            fVbleWeight = HEUR_WEIGHT(arrHeurScores[i]);
+            fVbleWeight = HEUR_WEIGHT(arrHeurScores[i], i);
             if (HEUR_COMPARE(fVbleWeight, fMaxWeight))
             {
                fMaxWeight = fVbleWeight;
@@ -130,7 +130,7 @@ HEUR_FUNCTION(int *pnBranchAtom, int *pnBranchValue)
       {
          //if (arrHeurScores[i].Pos == 0 && arrHeurScores[i].Neg == 0) continue;
          nBestVble = i;
-         fMaxWeight = HEUR_WEIGHT(arrHeurScores[i]);
+         fMaxWeight = HEUR_WEIGHT(arrHeurScores[i], i);
          break;
       }
    }
@@ -143,7 +143,7 @@ HEUR_FUNCTION(int *pnBranchAtom, int *pnBranchValue)
          if (arrSolution[i] == BOOL_UNKNOWN)
          {
             //if (arrHeurScores[i].Pos == 0 && arrHeurScores[i].Neg == 0) continue;
-            fVbleWeight = HEUR_WEIGHT(arrHeurScores[i]);
+            fVbleWeight = HEUR_WEIGHT(arrHeurScores[i], i);
             if (HEUR_COMPARE(fVbleWeight, fMaxWeight))
             {
                fMaxWeight = fVbleWeight;
@@ -170,7 +170,7 @@ HEUR_FUNCTION(int *pnBranchAtom, int *pnBranchValue)
       if (arrSolution[i] == BOOL_UNKNOWN)
       {
          nBestVble = i;
-         fMaxWeight = HEUR_WEIGHT(arrHeurScores[i]);
+         fMaxWeight = HEUR_WEIGHT(arrHeurScores[i], i);
          break;
       }
    }
@@ -182,7 +182,7 @@ HEUR_FUNCTION(int *pnBranchAtom, int *pnBranchValue)
       {
          if (arrSolution[i] == BOOL_UNKNOWN)
          {
-            fVbleWeight = HEUR_WEIGHT(arrHeurScores[i]);
+            fVbleWeight = HEUR_WEIGHT(arrHeurScores[i], i);
             if (HEUR_COMPARE(fVbleWeight, fMaxWeight))
             {
                fMaxWeight = fVbleWeight;

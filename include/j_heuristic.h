@@ -181,29 +181,12 @@ ITE_INLINE void GetHeurScoresFromSpecialFunc_XOR_C(int nSpecFuncIndex);
 
 ITE_INLINE int TransitionIndex_FromInt(int n, int nValueOfVble);
 
-ITE_INLINE void
-J_InitHeuristicScores();
-
-ITE_INLINE void
-J_FreeHeuristicScores();
-
-ITE_INLINE void
-J_FreeHeurScoresStack();
-
-ITE_INLINE void
-J_PushHeuristicScores();
-
-ITE_INLINE void
-J_PopHeuristicScores();
-
-ITE_INLINE void
-J_PopHeuristicScores();
+ITE_INLINE void J_InitHeuristicScores();
+ITE_INLINE void J_FreeHeuristicScores();
 
 ITE_INLINE void
 J_UpdateHeuristicScoresFromTransition(Transition *);
 
-ITE_INLINE void
-J_InitHeuristic();
 
 
 ITE_INLINE void J_OptimizedHeuristic (int *pnBranchAtom, int *pnBranchValue);

@@ -55,8 +55,10 @@ enum {
 typedef void (* t_call_heuristic) (
 		int *pnBranchAtom,
 		int *pnBranchValue);
+typedef void (* t_update_heuristic) ();
 
 extern t_call_heuristic proc_call_heuristic;
+extern t_update_heuristic proc_update_heuristic;
 
 ITE_INLINE void
 NullInitHeuristicScores();

@@ -195,7 +195,7 @@ InitSolver()
 	       InitLemmaHeurArrays(gnMaxVbleIndex);
 
    if (nHeuristic == JOHNSON_HEURISTIC) {
-      J_InitHeuristic();
+      InitHeurScoresStack();
    }
 
    gnNumLemmas = 0;
@@ -218,7 +218,7 @@ FreeSolver(Tracer *tracer)
      DeleteLemmaHeurArrays();
 
   if (nHeuristic == JOHNSON_HEURISTIC) {
-     J_FreeHeurScoresStack();
+     FreeHeurScoresStack();
   }
 
   ite_free((void*)arrSolution);

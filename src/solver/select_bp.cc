@@ -63,10 +63,7 @@ SelectNewBranchPoint()
    // We need to select a new branch point.
    d9_printf2("Calling heuristic to choose choice point #%ld\n", (long)ite_counters[NUM_CHOICE_POINTS]);
 
-   if (nHeuristic == JOHNSON_HEURISTIC)
-      J_UpdateHeuristic();
-   else
-      UpdateHeuristic();
+   if (proc_update_heuristic) proc_update_heuristic();
 
 //#define SEAN_ZECCHINA
 #ifdef SEAN_ZECCHINA
@@ -112,8 +109,7 @@ SelectNewBranchPoint()
    pChoicePointTop->nNumUnresolved = nNumUnresolvedFunctions;
 
    // Push heuristic scores.
-   if (nHeuristic == JOHNSON_HEURISTIC)
-      J_PushHeuristicScores();
+   if (arrHeurScores) PushHeuristicScores();
 
    pChoicePointTop++;
    pFnInferenceQueueNextElt = pFnInferenceQueueNextEmpty = arrFnInferenceQueue;

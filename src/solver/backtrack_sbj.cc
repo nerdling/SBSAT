@@ -118,8 +118,7 @@ BackTrack_SBJ()
       pop_state_information(1);
 
       // Pop heuristic scores.
-      if (nHeuristic == JOHNSON_HEURISTIC || nHeuristic == STATE_HEURISTIC)
-         J_PopHeuristicScores();
+      if (arrHeurScores) PopHeuristicScores();
 
       // Pop the backtrack stack until we pop the branch atom.
       while (1)
@@ -378,8 +377,7 @@ BackTrack_SBJ()
 		
 		pop_state_information(1);
 		// Pop heuristic scores.
-		if (nHeuristic == JOHNSON_HEURISTIC || nHeuristic == STATE_HEURISTIC)
-		  J_PopHeuristicScores();
+		if (arrHeurScores) PopHeuristicScores();
 
 		// Pop the backtrack stack until we pop the branch atom.
 		while (1)

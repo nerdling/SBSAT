@@ -137,7 +137,7 @@ libsolver_a_SOURCES = solve.cc bddwalk.cc \
 	     bdd2smurf.cc specfn2smurf.cc autarky.cc \
              display.cc display_sf.cc verify.cc \
 	     recordsol.cc sf_addons.cc transitions.cc wvf.cc update_heu.cc \
-	     crtwin.cc load_lemmas.cc interface.cc
+	     crtwin.cc load_lemmas.cc interface.cc heur_stack.cc
 
 
 libsolver2_a_SOURCES = libsolver.cc
@@ -164,7 +164,7 @@ am_libsolver_a_OBJECTS = solve.$(OBJEXT) bddwalk.$(OBJEXT) \
 	display.$(OBJEXT) display_sf.$(OBJEXT) verify.$(OBJEXT) \
 	recordsol.$(OBJEXT) sf_addons.$(OBJEXT) transitions.$(OBJEXT) \
 	wvf.$(OBJEXT) update_heu.$(OBJEXT) crtwin.$(OBJEXT) \
-	load_lemmas.$(OBJEXT) interface.$(OBJEXT)
+	load_lemmas.$(OBJEXT) interface.$(OBJEXT) heur_stack.$(OBJEXT)
 libsolver_a_OBJECTS = $(am_libsolver_a_OBJECTS)
 libsolver2_a_AR = $(AR) cru
 libsolver2_a_LIBADD =
@@ -184,7 +184,8 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	./$(DEPDIR)/bt_specfn_and.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/bt_specfn_xor.Po ./$(DEPDIR)/crtwin.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/display.Po ./$(DEPDIR)/display_sf.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/heuristic.Po ./$(DEPDIR)/i_heuristic.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/heur_stack.Po ./$(DEPDIR)/heuristic.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/i_heuristic.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/init_solver.Po ./$(DEPDIR)/interface.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/j_heuristic.Po ./$(DEPDIR)/j_smurf.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/j_specfn.Po ./$(DEPDIR)/j_update_heu.Po \
@@ -254,6 +255,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/crtwin.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/display.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/display_sf.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/heur_stack.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/heuristic.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/i_heuristic.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/init_solver.Po@am__quote@
@@ -285,7 +287,8 @@ distclean-depend:
 	-rm -rf ./$(DEPDIR)
 
 .cc.o:
-@am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" \
+@am__fastdepCXX_TRUE@	@echo Compiling $*
+@am__fastdepCXX_TRUE@	@if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" \
 @am__fastdepCXX_TRUE@	  -c -o $@ `test -f '$<' || echo '$(srcdir)/'`$<; \
 @am__fastdepCXX_TRUE@	then mv "$(DEPDIR)/$*.Tpo" "$(DEPDIR)/$*.Po"; \
 @am__fastdepCXX_TRUE@	else rm -f "$(DEPDIR)/$*.Tpo"; exit 1; \

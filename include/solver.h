@@ -72,6 +72,7 @@ extern t_fn_inf_queue *arrFnInferenceQueue;
 
 extern LemmaBlock * pConflictLemma;
 extern LemmaInfoStruct * pConflictLemmaInfo;
+extern SmurfState **arrRegSmurfInitialStates;
 extern SmurfState **arrCurrentStates;
 extern SmurfState **arrPrevStates;
 extern int *arrSmurfEqualityVble;
@@ -221,6 +222,12 @@ void DisplayInference(InferenceType eInfType,
                  int nNewInferredValue);
 #endif
 void DisplaySolution(int nMaxVbleIndex);
+
+ITE_INLINE void InitHeurScoresStack();
+ITE_INLINE void FreeHeurScoresStack();
+ITE_INLINE void PushHeuristicScores();
+ITE_INLINE void PopHeuristicScores();
+
 
 /* crtwin */
 void crtwin();
