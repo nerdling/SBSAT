@@ -267,10 +267,7 @@ SBSat general options are:
 --show-result <string>, -R <string>
 \layout Standard
 
-Show result (n=no result, r=raw, f=fancy)
-\layout Standard
-
-[default="n"]
+Show result (n=no result, r=raw, f=fancy) [default="n"]
 \layout Standard
 
 
@@ -290,17 +287,13 @@ Report error if the result is not as specified
 Options are SAT, UNSAT, TRIV_SAT, TRIV_UNSAT, SOLV_S
 \layout Standard
 
-and SOLV_UNSAT
-\layout Standard
-
-[default=""]
+and SOLV_UNSAT [default=""]
 \layout Standard
 
 
 \emph on 
 --ctrl-c <number> 
-\layout Standard
-
+\emph default 
 Enable/Disable Ctrl-c handler to end preproc/brancher
 \layout Standard
 
@@ -323,10 +316,18 @@ BDD table options
 BDD options:
 \layout Standard
 
---num-buckets <number> Set the number of buckets in power of 2 [default=16]
+
+\emph on 
+--num-buckets <number>
+\emph default 
+ Set the number of buckets in power of 2 [default=16]
 \layout Standard
 
---size-buckets <number> Set the size of a bucket in power of 2 [default=5]
+
+\emph on 
+--size-buckets <number>
+\emph default 
+ Set the size of a bucket in power of 2 [default=5]
 \layout Subsection
 
 Input options
@@ -335,6 +336,8 @@ Input options
 Input options:
 \layout Standard
 
+
+\emph on 
 --limit-and-equ <number>
 \layout Standard
 
@@ -348,14 +351,22 @@ u
 [default=2]
 \layout Standard
 
---limit-or-equ <number> The minimum # of literals to flag sp.
+
+\emph on 
+--limit-or-equ <number> 
+\emph default 
+The minimum # of literals to flag sp.
  function or_equ
 \layout Standard
 
 [default=2]
 \layout Standard
 
---limit-or <number> The minimum # of literals to flag sp.
+
+\emph on 
+--limit-or <number> 
+\emph default 
+The minimum # of literals to flag sp.
  function plaino
 \layout Standard
 
@@ -375,7 +386,11 @@ or
 [default=5]
 \layout Standard
 
---break-xors <number> Break XORS into linear and non-linear functions
+
+\emph on 
+--break-xors <number>
+\emph default 
+ Break XORS into linear and non-linear functions
 \layout Standard
 
 [default=1]
@@ -387,37 +402,77 @@ Output options
 Output options:
 \layout Standard
 
--b Start regular brancher [default]
+
+\emph on 
+-b
+\emph default 
+ Start regular brancher [default]
 \layout Standard
 
--w Start walksat brancher 
+
+\emph on 
+-w
+\emph default 
+ Start walksat brancher 
 \layout Standard
 
--m Start WVF brancher 
+
+\emph on 
+-m
+\emph default 
+ Start WVF brancher 
 \layout Standard
 
--n Don't start any brancher or conversion 
+
+\emph on 
+-n
+\emph default 
+ Don't start any brancher or conversion 
 \layout Standard
 
--s Output in SMURF format 
+
+\emph on 
+-s
+\emph default 
+ Output in SMURF format 
 \layout Standard
 
--c Output in CNF format 
+
+\emph on 
+-c
+\emph default 
+ Output in CNF format 
 \layout Standard
 
--p Output in tree like format 
+
+\emph on 
+-p
+\emph default 
+ Output in tree like format 
 \layout Standard
 
---cnf <string> Format of CNF output (3sat, qm, noqm)
+
+\emph on 
+--cnf <string>
+\emph default 
+ Format of CNF output (3sat, qm, noqm)
 \layout Standard
 
 [default="noqm"]
 \layout Standard
 
---tree, -tree Print tree representation 
+
+\emph on 
+--tree, -tree
+\emph default 
+ Print tree representation 
 \layout Standard
 
---tree-width <number>, -W <number> Set tree width [default=64]
+
+\emph on 
+--tree-width <number>, -W <number>
+\emph default 
+ Set tree width [default=64]
 \layout Subsection
 
 Trace format options
@@ -426,7 +481,11 @@ Trace format options
 Trace format options:
 \layout Standard
 
---module-dir <string> directory to find extra modules [default="./Modules"]
+
+\emph on 
+--module-dir <string>
+\emph default 
+ directory to find extra modules [default="./Modules"]
 \layout Subsection
 
 Preprocessing options
@@ -435,6 +494,8 @@ Preprocessing options
 Preprocessing options:
 \layout Standard
 
+
+\emph on 
 --preprocess-sequence <string>, -P <string>
 \layout Standard
 
@@ -444,37 +505,70 @@ The preprocessing sequence
 [default="(ExDc)*(ExSt)*(ExPr)*"]
 \layout Standard
 
---All, -All Enable/Disable All Preprocessing Options (1/0) 
+
+\emph on 
+--All, -All
+\emph default 
+ Enable/Disable All Preprocessing Options (1/0) 
 \layout Standard
 
---Cl <number>, -Cl <number> Enable/Disable Clustering (1/0) [default=1]
+
+\emph on 
+--Cl <number>, -Cl <number>
+\emph default 
+ Enable/Disable Clustering (1/0) [default=1]
 \layout Standard
 
---Co <number>, -Co <number> Enable/Disable Cofactoring (1/0) [default=1]
+
+\emph on 
+--Co <number>, -Co <number>
+\emph default 
+ Enable/Disable Cofactoring (1/0) [default=1]
 \layout Standard
 
---Pr <number>, -Pr <number> Enable/Disable Pruning (1/0) [default=1]
+
+\emph on 
+--Pr <number>, -Pr <number>
+\emph default 
+ Enable/Disable Pruning (1/0) [default=1]
 \layout Standard
 
---St <number>, -St <number>Enable/Disable Strengthening (1/0) [default=1]
+
+\emph on 
+--St <number>, -St <number>
+\emph default 
+ Enable/Disable Strengthening (1/0) [default=1]
 \layout Standard
 
---In <number>, -In <number>Enable/Disable Inferences (1/0) [default=1]
+
+\emph on 
+--In <number>, -In <number>
+\emph default 
+ Enable/Disable Inferences (1/0) [default=1]
 \layout Standard
 
---Ex <number>, -Ex <number>Enable/Disable Existential Quantification (1/0)
- [default=1]
+
+\emph on 
+--Ex <number>, -Ex <number>
+\emph default 
+ Enable/Disable Existential Quantification (1/0) [default=1]
 \layout Standard
 
---Dc <number>, -Dc <number>Enable/Disable Dependent Variable Clustering
- (1/0)
+
+\emph on 
+--Dc <number>, -Dc <number>
+\emph default 
+ Enable/Disable Dependent Variable Clustering (1/0)
 \layout Standard
 
 [default=1]
 \layout Standard
 
---max-preproc-time <number> set the time limit in seconds (0=no limit)[default=0
-]
+
+\emph on 
+--max-preproc-time <number>
+\emph default 
+ set the time limit in seconds (0=no limit)[default=0]
 \layout Subsection
 
 Brancher options
@@ -483,12 +577,22 @@ Brancher options
 Brancher options:
 \layout Standard
 
---reverse-depend, -r Reverse dependency info on in/dependent variables 
+
+\emph on 
+--reverse-depend, -r
+\emph default 
+ Reverse dependency info on in/dependent variables 
 \layout Standard
 
---clear-depend, -e Clear dependency information on variables 
+
+\emph on 
+--clear-depend, -e
+\emph default 
+ Clear dependency information on variables 
 \layout Standard
 
+
+\emph on 
 --heuristic <string>, -H <string>
 \layout Standard
 
@@ -496,50 +600,85 @@ Choose heuristic j=Johnson, l=Chaff-like lemma h.
  i=Interactive [default="j"]
 \layout Standard
 
---backjumping <number> Enable/Disable backjumping (1/0) [default=1]
+
+\emph on 
+--backjumping <number>
+\emph default 
+ Enable/Disable backjumping (1/0) [default=1]
 \layout Standard
 
+
+\emph on 
 --max-cached-lemmas <number>, -L <number>
 \layout Standard
 
 set the maximum # of lemmas [default=5000]
 \layout Standard
 
---max-solutions <number>Set the maximum number of solutions to search for.[defaul
-t=1]
+
+\emph on 
+--max-solutions <number>
+\emph default 
+Set the maximum number of solutions to search for.[default=1]
 \layout Standard
 
---sbj <number> Super backjumping.
+
+\emph on 
+--sbj <number>
+\emph default 
+ Super backjumping.
  [default=0]
 \layout Standard
 
+
+\emph on 
 --max-vbles-per-smurf <number>, -S <number>
 \layout Standard
 
 set the maximum number variables per smurf [default=8]
 \layout Standard
 
---backtracks-per-report <number>set the number of backtracks per report[default=
-10000]
+
+\emph on 
+--backtracks-per-report <number>
+\emph default 
+set the number of backtracks per report[default=10000]
 \layout Standard
 
---max-brancher-time <number>set the time limit in seconds (0=no limit)[default=0
-]
+
+\emph on 
+--max-brancher-time <number>
+\emph default 
+set the time limit in seconds (0=no limit)[default=0]
 \layout Standard
 
---max-brancher-cp <number> set the choice point limit (0=no limit) [default=0]
+
+\emph on 
+--max-brancher-cp <number>
+\emph default 
+ set the choice point limit (0=no limit) [default=0]
 \layout Standard
 
+
+\emph on 
 --brancher-trace-start <number>
 \layout Standard
 
 number of backtracks to start the trace (when debug=9)[default=0]
 \layout Standard
 
---compress-smurfs <number> Share states among smurfs [default=1]
+
+\emph on 
+--compress-smurfs <number>
+\emph default 
+ Share states among smurfs [default=1]
 \layout Standard
 
---smurfs-share-paths <number> Share paths among smurfs [default=0]
+
+\emph on 
+--smurfs-share-paths <number>
+\emph default 
+ Share paths among smurfs [default=0]
 \layout Subsection
 
 Johnson heuristic options
@@ -548,13 +687,25 @@ Johnson heuristic options
 Johnson heuristic options:
 \layout Standard
 
---jheuristic-k <number>, -K <number> set the value of K [default=3.000000]
+
+\emph on 
+--jheuristic-k <number>, -K <number>
+\emph default 
+ set the value of K [default=3.000000]
 \layout Standard
 
---jheuristic-k-true <number> set the value of True state [default=0.000000]
+
+\emph on 
+--jheuristic-k-true <number>
+\emph default 
+ set the value of True state [default=0.000000]
 \layout Standard
 
---jheuristic-k-inf <number> set the value of the inference multiplier
+
+\emph on 
+--jheuristic-k-inf <number>
+\emph default 
+ set the value of the inference multiplier
 \layout Standard
 
 [default=1.000000]
@@ -999,19 +1150,104 @@ The ITE program processes the input given to the program, but the main tool
  ??).
  These functions give the user total control over their problem data.
  
+\layout Subsection
+
+Existential Quantification
+\layout Subsection
+
+Branch Pruning
+\layout Subsection
+
+Strengthening
+\layout Subsection
+
+Dependent clustering
+\layout Subsection
+
+Cofactoring
 \layout Section
 
 Solver
+\layout Standard
+
+The execution is handed to the solver after preprocessing is done.
+ There are four different options controlled by the command line (ini file):
+\layout Itemize
+
+SMURF brancher (default or when -b specified on the command line)
+\layout Itemize
+
+BDD WalkSat (-w)
+\layout Itemize
+
+WVF brancher (original pre-sbsat brancher)
+\layout Itemize
+
+or it will start conversion of the internal problem representation into
+ one of the specified formats.
 \layout Subsection
 
-Brancher
+SMURF Brancher
+\layout Standard
+
+SMURF Brancher is given the problem as a collection of BDDs.
+ Some of the BDDs are marked as special functions (AND, OR, AND=, XOR, ...).
+ It converts non-special function BDDs and BDDs where the special function
+ is not recognized (IMP, ...) into SMURF state machines.
+ Special functions are handled using non-SMURF data structures in order
+ to save memory space.
+ 
+\layout Standard
+
+After conversion into SMURFs the process of solving the problem starts.
+ There are ..
+ major parts:
+\layout Itemize
+
+heuristic - after processing all inferences without contradiction the new
+ literal is chosen by looking at the heuristic values.
+ Please see 
+\begin_inset LatexCommand \prettyref{sec:Solver-heuristics}
+
+\end_inset 
+
+
+\layout Itemize
+
+inference queue - every new inference is first put into the inference queue
+ but the value of the inference is set as soon as it is found.
+ The consequences of the inferences are processed in FIFO style (updating
+ the SMURFs, special functions and lemmas).
+\layout Itemize
+
+smurf update
+\layout Itemize
+
+special function update
+\layout Itemize
+
+lemma update
+\layout Itemize
+
+lemmas
+\layout Itemize
+
+backtracking
 \layout Subsection
 
 BDDWalkSat
+\layout Standard
+
+(Sean!)
 \layout Subsection
 
 WVF Brancher
 \layout Section
+
+
+\begin_inset LatexCommand \label{sec:Solver-heuristics}
+
+\end_inset 
 
 Solver heuristics
 \layout Subsection
@@ -1025,9 +1261,8 @@ Chaff like lemma heuristic
 Output formats
 \layout Standard
 
-For format description please see Section\SpecialChar ~
-
-\begin_inset LatexCommand \ref{sec:Input-formats}
+For format description please see 
+\begin_inset LatexCommand \prettyref{sec:Input-formats}
 
 \end_inset 
 
