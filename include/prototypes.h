@@ -77,6 +77,8 @@ int absrevcompfunc (const void *, const void *);
 void bdd_init();
 BDDNode *find_or_add_node(int, BDDNode *, BDDNode *);
 BDDNode *ite(BDDNode *, BDDNode *, BDDNode *);
+void bddtable_load(void *_bddtable, int _bddtable_len, void *_bddtable_start, int *_shift);
+void bddtable_get(void **_bddtable, int *_bddtable_len, int *_bddtable_msize);
 
 #ifdef NO_BDD_MACROS
 BDDNode *ite_var (int);
@@ -282,5 +284,8 @@ void print_roller_init();
 void DeallocateInferences(infer *next);
 void DeallocateInferences_var(infer *next, int var);
 infer *AllocateInference(int num0, int num1, infer *next);
+
+FILE * ite_fopen(char *filename, char *fileflags);
+long ite_filesize(char *filename);
 
 #endif

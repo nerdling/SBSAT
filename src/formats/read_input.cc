@@ -110,17 +110,17 @@ read_input(Tracer * &tracer)
        }
     } break;
 
-  case 'b': bddloop (); break;
+  case 'b': bddloop(); break;
 
-  case 'x': xorloop (); break;
+  case 'x': xorloop(); break;
 	  
-  case 'u': Smurfs_to_BDD (); break;
+  case 'u': Smurfs_to_BDD(); break;
 
-  case 'c': CNF_to_BDD (1);
-            break;
+  case 'c': CNF_to_BDD(1); break;
 
-  case 'd': DNF_to_BDD ();
-            break;
+  case 'd': DNF_to_BDD(); break;
+
+  case 'B': Binary_to_BDD(); break;
 
   case 's': if (formatout == 'c') {
               SAT_to_CNF ();

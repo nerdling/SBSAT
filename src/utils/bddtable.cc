@@ -360,7 +360,6 @@ bdd_gc()
    
 }
 
-
 void
 bdd_fix_inferences(BDDNode *node)
 {
@@ -370,13 +369,6 @@ bdd_fix_inferences(BDDNode *node)
    bdd_fix_inferences(node->elseCase); 
    GetInferFoAN(node);
 }
-
-typedef struct {
-   void *bddtable_start;
-   int   bddtable_pos;
-   int   num_variables;
-   int   num_functions;
-} t_sbsat_env;
 
 FILE *
 ite_fopen(char *filename, char *fileflags)
@@ -399,159 +391,34 @@ ite_filesize(char *filename)
    return buf.st_size;
 }
 
-void
-read_bdd_circuit()
+
+void 
+bddtable_load(void *_bddtable, int _bddtable_len, void *_bddtable_start, int *_shift)
 {
-   FILE *fin = NULL;
-   t_sbsat_env sbsat_env;
-   void *_bddtable = NULL;
-   void *_bddtable_start = NULL;
-   int   _bddtable_len = 0;
-   void *_equalityvble = NULL; 
-   void *_functions = NULL;
-   void *_functiontype = NULL; 
-   void *_length = NULL;
-   void *_variablelist = NULL;
-   void *_independantVars = NULL;
-   int _numinp = 0;
-   int _numout = 0;
-
-   cerr << "Reading sbsatenv .. " << endl;
-   assert(ite_filesize("sbsatenv.bin") == sizeof(t_sbsat_env));
-   fin = fopen("sbsatenv.bin", "rb");
-   if (!fin) return;
-   fread(&sbsat_env, sizeof(t_sbsat_env), 1, fin);
-   fclose(fin);
-
-   _numinp = sbsat_env.num_variables;
-   _numout = sbsat_env.num_functions;
-   _bddtable_len = sbsat_env.bddtable_pos;
-   _bddtable_start = sbsat_env.bddtable_start;
-
-
-   cerr << "Reading bddtable .. " << endl;
-   assert(_bddtable_len == (int)(ite_filesize("bddtable.bin")/sizeof(BDDNode)));
-   fin = ite_fopen("bddtable.bin", "rb");
-   if (!fin) return;
-   _bddtable = calloc(_bddtable_len, sizeof(BDDNode));
-   fread(_bddtable, sizeof(BDDNode), _bddtable_len, fin);
-   fclose(fin);
-
-   cerr << "Reading functions .. " << endl;
-   assert(_numout == (int)(ite_filesize("functions.bin")/sizeof(BDDNode*)));
-   fin = ite_fopen("functions.bin", "rb");
-   if (!fin) return;
-   _functions = calloc(_numout, sizeof(BDDNode*));
-   fread(_functions, sizeof(BDDNode*), _numout , fin);
-   fclose(fin);
-
-   cerr << "Reading function types .. " << endl;
-   assert(_numout == (int)(ite_filesize("functiontype.bin")/sizeof(int)));
-   fin = ite_fopen("functiontype.bin", "rb");
-   if (!fin) return;
-   _functiontype = calloc(_numout, sizeof(int));
-   fread(_functiontype, sizeof(int), _numout , fin);
-   fclose(fin);
-
-   cerr << "Reading equality Vble.. " << endl;
-   assert(_numout == (int)(ite_filesize("equalityvble.bin")/sizeof(int)));
-   fin = ite_fopen("equalityvble.bin", "rb");
-   if (!fin) return;
-   _equalityvble = calloc(_numout, sizeof(int));
-   fread(_equalityvble, sizeof(int), _numout , fin);
-   fclose(fin);
-
-   cerr << "Reading length .. " << endl;
-   assert(_numout == (int)(ite_filesize("length.bin")/sizeof(int)));
-   fin = ite_fopen("length.bin", "rb");
-   if (!fin) return;
-   _length = calloc(_numout, sizeof(int));
-   fread(_length, sizeof(int), _numout , fin);
-   fclose(fin);
-
-   cerr << "Reading variablelist .. " << endl;
-   assert(_numinp+1 == (int)(ite_filesize("variablelist.bin")/sizeof(varinfo)));
-   fin = ite_fopen("variablelist.bin", "rb");
-   _variablelist = calloc(_numinp+1, sizeof(varinfo));
-   if (!fin) return;
-   fread(_variablelist, sizeof(varinfo), _numinp+1 , fin);
-   fclose(fin);
-
-   cerr << "Reading independantVars .. " << endl;
-   assert(_numinp+1 == (int)(ite_filesize("independantVars.bin")/sizeof(int)));
-   fin = ite_fopen("independantVars.bin", "rb");
-   _independantVars = calloc(_numinp+1, sizeof(int));
-   if (!fin) return;
-   fread(_variablelist, sizeof(int), _numinp+1 , fin);
-   fclose(fin);
-
-   reload_bdd_circuit(_numinp, _numout, 
-                      _bddtable, _bddtable_len,
-                      _bddtable_start, 
-                      _equalityvble, _functions,
-                      _functiontype, _length,
-                      _variablelist, _independantVars);
-   ite_free(&_bddtable);
-   ite_free(&_equalityvble);
-   ite_free(&_functions);
-   ite_free(&_functiontype);
-   ite_free(&_length);
-   ite_free(&_variablelist);
-   ite_free(&_independantVars);
-}
-
-void
-reload_bdd_circuit(int _numinp, int _numout,
-                   void *_bddtable, int _bddtable_len,
-                   void *_bddtable_start,
-                   void *_equalityvble, 
-                   void *_functions, 
-                   void *_functiontype, 
-                   void *_length, 
-                   void *_variablelist,
-                   void *_independantVars)
-{
-   bdd_init();
-   d2_printf3("Have %ld variables and %ld functions .. \n",
-                   numinp, numout);
-
-   d2_printf1("BDD and Circuit Init..\n");
-   numinp = _numinp;
-   numout = _numout;
-   vars_alloc(numinp+1);
-   functions_alloc(numout);
-   nmbrFunctions = numout;
+   int i;
    curBDDPos = _bddtable_len;
-	length = new int[numout + 1];
-   variablelist = new varinfo[numinp + 1];
-   independantVars = (int *)calloc(numinp + 1, sizeof(int));
-
    assert(bddmemory_vsb[0].max > curBDDPos);
    memmove(bddmemory_vsb[0].memory, _bddtable, sizeof(BDDNode)*curBDDPos);
-   memmove(functions, _functions, sizeof(BDDNode*)*numout);
-   memmove(functionType, _functiontype, sizeof(int)*numout);
-   memmove(equalityVble, _equalityvble, sizeof(int)*numout);
-   memmove(length, _length, sizeof(int)*numout);
-   memmove(variablelist, _variablelist, sizeof(varinfo)*(numinp+1));
-   memmove(independantVars, _independantVars, sizeof(int)*(numinp+1));
-
    int shift = (char*)(bddmemory_vsb[0].memory) - (char*)(_bddtable_start);
-
-   /* fix functions */
-   d2_printf1("Fixing functions .. \n");
-   int i;
-   for (i=0;i<numout;i++) {
-      if (functions[i]) functions[i] = (BDDNode*)((char*)(functions[i])+shift);
-   }
+   *_shift = shift;
+   bddtable_free = NULL;
 
    /* fix bdd table */
    d2_printf1("Fixing bdd table .. \n");
    for (i=0;i<curBDDPos;i++) {
-      bddmemory_vsb[0].memory[i].thenCase = (BDDNode*)
-         ((char*)bddmemory_vsb[0].memory[i].thenCase + shift);
-      bddmemory_vsb[0].memory[i].elseCase = (BDDNode*)
-         ((char*)bddmemory_vsb[0].memory[i].elseCase + shift);
-      bddmemory_vsb[0].memory[i].next = NULL;
+      if (bddmemory_vsb[0].memory[i].thenCase) {
+         bddmemory_vsb[0].memory[i].thenCase = (BDDNode*)
+            ((char*)bddmemory_vsb[0].memory[i].thenCase + shift);
+         bddmemory_vsb[0].memory[i].elseCase = (BDDNode*)
+            ((char*)bddmemory_vsb[0].memory[i].elseCase + shift);
+         if (bddmemory_vsb[0].memory[i].notCase != NULL)
+            bddmemory_vsb[0].memory[i].notCase = (BDDNode*)
+               ((char*)bddmemory_vsb[0].memory[i].notCase + shift);
+         bddmemory_vsb[0].memory[i].next = NULL;
+      } else {
+         bddmemory_vsb[0].memory[i].next = bddtable_free;
+         bddtable_free = bddmemory_vsb[0].memory[i].next;
+      }
 
       /* fix bdd hash table */
       int v = bddmemory_vsb[0].memory[i].variable;
@@ -563,115 +430,28 @@ reload_bdd_circuit(int _numinp, int _numout,
       bddmemory_vsb[0].memory[i].inferences = NULL;
       *node = bddmemory_vsb[0].memory + i;
    }
+   false_ptr = bddmemory_vsb[0].memory;
+   true_ptr = bddmemory_vsb[0].memory+1;
 
    d2_printf1("Fixing bdd table inferences .. \n");
    GetInferFoAN(bddmemory_vsb[0].memory+0);
    GetInferFoAN(bddmemory_vsb[0].memory+1);
    for (i=2;i<curBDDPos;i++) {
-      if (bddmemory_vsb[0].memory[i].inferences == NULL)
+      if (bddmemory_vsb[0].memory[i].inferences == NULL && // no inferences yet
+            bddmemory_vsb[0].memory[i].thenCase != NULL) // not free
          bdd_fix_inferences(bddmemory_vsb[0].memory+i);
    }
-}        
-
-void
-get_bdd_circuit(int *_numinp, int *_numout,
-                   void **_bddtable, int *_bddtable_len, int *_bddtable_msize,
-                   void **_equalityvble, 
-                   void **_functions,  int *_functions_msize,
-                   void **_functiontype, 
-                   void **_length, 
-                   void **_variablelist, int *_variablelist_msize,
-                   void **_independantVars)
-{
-  *_numinp = numinp;
-  *_numout = numout;
-  *_bddtable = bddmemory_vsb[0].memory;
-  *_bddtable_len = curBDDPos;
-  *_bddtable_msize = sizeof(BDDNode);
-  *_equalityvble = equalityVble;
-  *_functions = functions;
-  *_functions_msize = sizeof(BDDNode*);
-  *_functiontype = functionType;
-  *_length = length;
-  *_variablelist = variablelist; 
-  *_variablelist_msize = sizeof(varinfo);
-  *_independantVars = independantVars; 
 }
-        
-void
-dump_bdd_table()
+
+void 
+bddtable_get(void **_bddtable, int *_bddtable_len, int *_bddtable_msize)
 {
-   cerr << "dump_bdd_table ---------------------------------" << endl;
    if (numBDDPool) {
       cerr << "Can't dump split BDD pool -- please increase bdd-pool-size" << endl;
+      exit(1);
       return;
    }
-   FILE *fout = NULL;
-
-   fout = ite_fopen("bddtable.bin", "wb");
-   if (!fout) return;
-   fwrite(bddmemory_vsb[0].memory, sizeof(BDDNode), curBDDPos, fout);
-   fclose(fout);
-
-   fout = ite_fopen("functions.bin", "wb");
-   if (!fout) return;
-   fwrite(functions, sizeof(BDDNode*), numout , fout);
-   fclose(fout);
-
-   fout = ite_fopen("functiontype.bin", "wb");
-   if (!fout) return;
-   fwrite(functionType, sizeof(int), numout , fout);
-   fclose(fout);
-
-   fout = ite_fopen("equalityvble.bin", "wb");
-   if (!fout) return;
-   fwrite(equalityVble, sizeof(int), numout , fout);
-   fclose(fout);
-
-   fout = ite_fopen("length.bin", "wb");
-   if (!fout) return;
-   fwrite(length, sizeof(int), numout , fout);
-   fclose(fout);
-
-   fout = ite_fopen("variablelist.bin", "wb");
-   if (!fout) return;
-   fwrite(variablelist, sizeof(varinfo), numinp+1 , fout);
-   fclose(fout);
-
-   fout = ite_fopen("independantVars.bin", "wb");
-   if (!fout) return;
-   fwrite(independantVars, sizeof(int), numinp+1 , fout);
-   fclose(fout);
-
-   t_sbsat_env sbsat_env;
-   sbsat_env.bddtable_start = bddmemory_vsb[0].memory;
-   sbsat_env.bddtable_pos = curBDDPos;
-   sbsat_env.num_variables = numinp;
-   sbsat_env.num_functions = numout;
-   fout = fopen("sbsatenv.bin", "wb");
-   if (!fout) return;
-   fwrite(&sbsat_env, sizeof(t_sbsat_env), 1, fout);
-   fclose(fout);
-
-
-
-   /*
-   for (char* i=bddmemory_vsb[0].memory;i<bddmemory_vsb[i].memory+curBDDPos;i++)
-   cout << "Pool is starting at " << bddmemory_vsb[0].memory << endl;
-   for (int i=0;i<curBDDPos;i++) {
-      BDDNode *bdd = (bddmemory_vsb[0].memory + i);
-
-      cout << "var: " << bdd->variable << endl;
-      cout << "then: " << bdd->thenCase << " idx: " << bdd->thenCase-bddmemory_vsb[0].memory << endl;
-      cout << "else: " << bdd->elseCase << " idx: " << bdd->elseCase-bddmemory_vsb[0].memory << endl;
-      // have to fix next anyway 
-      // cout << "next: " << next << endl;
-
-      // must be 0 (NULL)
-      //int t_var;
-      //void *var_ptr;
-      //infer *inferences;
-      //SmurfFactoryAddons *addons;
-   }
-   */
+   *_bddtable = bddmemory_vsb[0].memory;
+   *_bddtable_len = curBDDPos;
+   *_bddtable_msize = sizeof(BDDNode);
 }

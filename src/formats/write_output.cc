@@ -70,6 +70,10 @@ write_output (char formatout, Tracer * &tracer)
 
     case 'i': printSchlipfCircuit (); break;
 
+    case 'B': 
+              BDD_to_Binary();
+              break;
+
     default:
       fprintf (stderr, "Usage: ite -formatout [inputfile [outputfile]]\n");
       fprintf (stderr, "Problem: Unknown Output Format\n");

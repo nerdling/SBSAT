@@ -148,6 +148,20 @@ putsym(char *sym_name, int sym_type)
   return ptr;
 }
 
+void
+create_all_syms(int sym_max_id)
+{
+   for(int i=1;i<=sym_max_id;i++)
+   {
+      if (i>sym_table_idx ||
+            sym_table[i] == NULL) {
+         char num[10];
+         sprintf(num, "%d", i);
+         putsym_with_id(num, SYM_VAR, i);
+      }
+   }
+}
+
 symrec *
 getsym(char *sym_name)
 {

@@ -169,6 +169,8 @@ t_opt options[] = {
                 "Output in CNF format"},
 { &formatout, "p", "", P_PRE_CHAR, V(c:'p',"p"), V(c:'b',"b"), VAR_NORMAL, 0, 
                 "Output in tree like format"},
+{ &formatout,  "", "formatout", P_CHAR, V(i:0,"0"), V(c:'b',"b"), VAR_NORMAL, 0, 
+                "Output format"},
 { cnfformat,  "", "cnf", P_STRING, V(i:127,"127"), {"noqm"}, VAR_NORMAL, 0, 
                 "Format of CNF output (3sat, qm, noqm)"},
 
