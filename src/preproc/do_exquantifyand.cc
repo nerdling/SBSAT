@@ -144,15 +144,17 @@ int ExQuantifyAnd () {
 				continue;
 			}
 			
-			if (amount_count <= x) {
+			//if (amount_count <= x) {
+			if (amount_count == x) {
 				int j = amount[i].head->num;
 				Quantify = functions[j];
 				int out = 0;
-				if(length[j]>MAX_EXQUANTIFY_VARLENGTH) continue;
+				//if(length[j]>MAX_EXQUANTIFY_VARLENGTH) continue;
+				if(length[j]>MAX_EXQUANTIFY_VARLENGTH) out = 1;
 				DO_INFERENCES = 0;
 				int count1 = 0;
 
-				for (llist * k = amount[i].head->next; k != NULL;) {
+				for (llist * k = amount[i].head->next; k != NULL && out==0;) {
 					int z = k->num;
 					count1++;
 					k = k->next;
@@ -219,6 +221,7 @@ int ExQuantifyAnd () {
 					continue;
 				}
 				if(ex_infer == 1 && (functions[j]!=Quantify || x==1)) {
+					int needs_slimming = 1;
 					functions[j] = Quantify;
 					equalityVble[j] = 0;
 					functionType[j] = UNSURE;
@@ -345,6 +348,36 @@ int ExQuantifyAnd () {
 						if(changed == 1) {
 							ret = PREP_CHANGED;
 							SetRepeats(j);
+							needs_slimming = 0;
+						}
+						if(out == 0) needs_slimming = 0;
+					}
+					if(needs_slimming == 1 && amount[i].head != NULL) {
+						//Shouldn't be just i that can be quantified away, 
+						//Should be some variable in this BDD that can be
+						//Quantified away, i is not always even a choice!!!
+						if(amount[i].head->next==NULL && amount[i].head->num == j
+							&& inferlist->next==NULL) {
+							//Triple Extra Protection!
+							for(int iter = 0; iter<str_length; iter++)
+							  d3_printf1("\b");
+							d3_printf2 ("*{%d}", i);
+							str_length = 0;// strlen(p);
+							functions[j] = xquantify (functions[j], i);
+							variablelist[i].true_false = 2;
+							SetRepeats(j);
+							
+							switch (int r=Rebuild_BDDx(j)) {
+							 case TRIV_UNSAT:
+							 case TRIV_SAT: 
+							 case PREP_ERROR: 
+								ret = r; goto ea_bailout; /* as much as I hate gotos */
+							 default: break;
+							}
+							equalityVble[j] = 0;
+							functionType[j] = UNSURE;
+							ret = PREP_CHANGED;
+							//goto ea_bailout; /* as much as I hate gotos */
 						}
 					}
 				} else if(functions[j] == Quantify && x!=1) {
