@@ -54,10 +54,10 @@ AddStateTransition(SmurfState *pSmurfState,
   Transition *pTransition = FindOrAddTransition(pSmurfState, i, nVble, nValueOfVble);
 
   assert(pTransition->pNextState == NULL);
-  assert(pTransition->pState == NULL);
+  //assert(pTransition->pState == NULL);
 
   pTransition->pNextState = pSmurfStateOfEvaled;
-  pTransition->pState = pSmurfState;
+  //pTransition->pState = pSmurfState;
 
   infer *head = pFuncEvaled->inferences;
   int size=0;

@@ -147,7 +147,7 @@ struct IntegerSet_ArrayBased
 
 struct Transition
 {
-  SmurfState *pState;
+  //SmurfState *pState;
   SmurfState *pNextState;
   IntegerSet_ArrayBased positiveInferences;
   IntegerSet_ArrayBased negativeInferences;

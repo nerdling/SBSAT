@@ -541,11 +541,11 @@ J_SetHeurScoresForSmurfs_Counting(int nRegSmurfIndex, SmurfState *pState, int nN
       Transition *pTransition;
       pTransition = FindTransition(pState, i, pState->vbles.arrElts[i], BOOL_TRUE);
       pTransition->fHeuristicWeight = 
-         pTransition->pState->fNodeHeuristicWeight - pTransition->pNextState->fNodeHeuristicWeight;
+         pState->fNodeHeuristicWeight - pTransition->pNextState->fNodeHeuristicWeight;
 
       pTransition = FindTransition(pState, i, pState->vbles.arrElts[i], BOOL_FALSE);
       pTransition->fHeuristicWeight =
-         pTransition->pState->fNodeHeuristicWeight - pTransition->pNextState->fNodeHeuristicWeight;
+         pState->fNodeHeuristicWeight - pTransition->pNextState->fNodeHeuristicWeight;
    }
 }
 

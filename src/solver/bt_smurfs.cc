@@ -135,8 +135,6 @@ UpdateRegularSmurf(int nSmurfIndex)
 
       // Get the transition.
       Transition *pTransition = FindTransition(pState, k, vble, arrSolution[vble]);
-      assert(pTransition);
-      assert(pTransition->pNextState != pState);
 
       if (pTransition->positiveInferences.nNumElts &&
             CheckSmurfInferences(
