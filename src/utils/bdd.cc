@@ -48,12 +48,13 @@ enum {
    NUMREPLACE_FLAG_NUMBER, /* var/replace dependent */
    NUMREPLACEALL_FLAG_NUMBER, /* var/replace list dependent */
    POSSIBLEINFER_FLAG_NUMBER,
+   POSSIBLEBDD_FLAG_NUMBER,
 	CLEANPOSSIBLE_FLAG_NUMBER,
    PRINTSHAREDBDDS_FLAG_NUMBER,
    REDUCEDREPLACE_FLAG_NUMBER,
    MAX_FLAG_NUMBER
 };
-int last_bdd_flag_number[MAX_FLAG_NUMBER] = {0,0,0,0,0,0,0,0,0,0,0};
+int last_bdd_flag_number[MAX_FLAG_NUMBER] = {0,0,0,0,0,0,0,0,0,0,0,0};
 int bdd_flag_number = 2;
 
 inline void
@@ -1205,6 +1206,52 @@ BDDNode * _num_replace (BDDNode * f, int var, int replace) {
 	return (f->tmp_bdd = find_or_add_node(f->variable, r, e));
 }
 
+BDDNode *_possible_BDD_x(BDDNode *f, int x);
+	
+BDDNode *possible_BDD_x(BDDNode *f, int x) {
+   start_bdd_flag_number(POSSIBLEBDD_FLAG_NUMBER);
+   BDDNode *result = _possible_BDD_x(f, x);
+	return result;
+}
+
+BDDNode *_possible_BDD_x(BDDNode *f, int x) {
+	if(f->variable < x) return true_ptr; //This could happen on a path that doesn't involve x
+
+   if(f->flag == bdd_flag_number) return f->tmp_bdd;
+   f->flag = bdd_flag_number;
+   assert(f->tmp_infer == NULL);
+	
+	if(f->variable == x) {
+		BDDNode *r;
+		if(f->t_and_not_e_bdd != NULL) r = f->t_and_not_e_bdd;
+		else r = and_dot(f->thenCase, ite_not(f->elseCase));
+//		if(r == false_ptr) {				  
+//			return f->tmp_bdd = ite_var(-x); //Question! Maybe better to comment this out.
+//		}
+		BDDNode *e;
+		if(f->not_t_and_e_bdd != NULL) e = f->not_t_and_e_bdd;
+		else e = and_dot(f->elseCase, ite_not(f->thenCase));
+//		if(e == false_ptr) {
+//			return f->tmp_bdd = ite_var(x); //Question! Maybe better to comment this out.
+//		}
+
+		return (f->tmp_bdd = find_or_add_node(x, r, e));
+
+	} else {
+		BDDNode *r = _possible_BDD_x(f->thenCase, x);
+		BDDNode *e = _possible_BDD_x(f->elseCase, x);
+
+		//if(IS_TRUE_FALSE(r)) return (f->tmp_bdd = e);
+		if(r == true_ptr) return (f->tmp_bdd = e);
+		//The above leaves some inferences in.
+		//if(IS_TRUE_FALSE(e)) return (f->tmp_bdd = r);
+		if(e == true_ptr) return (f->tmp_bdd = r);
+		//The above leaves some inferences in.
+		if(r == e) return (f->tmp_bdd = r);
+		return (f->tmp_bdd = find_or_add_node(f->variable, r, e));
+	}
+}
+
 infer *_possible_infer_x(BDDNode *f, int x);
 void clean_possible_infer_x(BDDNode *f, int x);
 	
@@ -1486,10 +1533,10 @@ infer *_possible_infer_x(BDDNode *f, int x) {
 
 void clean_possible_infer_x(BDDNode *f, int x) {
 	if(f->variable < x) return;
-   if(f->flag == bdd_flag_number) return;
-   f->flag = bdd_flag_number;
-   DeallocateInferences(f->tmp_infer); f->tmp_infer = NULL;
-	//while (f->tmp_infer!=NULL) { infer *temp = f->tmp_infer; f->tmp_infer = f->tmp_infer->next; delete temp; }
+	if(f->flag == bdd_flag_number) return;
+	f->flag = bdd_flag_number;
+	DeallocateInferences(f->tmp_infer); f->tmp_infer = NULL;
+	//while (f->tmp_infer!=NULL) { infer *temp = f->tmp_infer; f->tmp_infer = f-$
 	clean_possible_infer_x(f->thenCase, x);
 	clean_possible_infer_x(f->elseCase, x);
 }

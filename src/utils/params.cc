@@ -224,6 +224,8 @@ t_opt options[] = {
 		"Enable/Disable Existential Quantification (1/0)"},
 { &DO_EXIST_QUANTIFY_AND, "Ea",  "Ea",  P_INT,  V(i:0,"0"),  V(i:1,"1"), VAR_NORMAL, 0, 
 		"Enable/Disable AND-Existential Quantification (1/0)"},
+{ &DO_POSSIBLE_ANDING, "Pa",  "Pa",  P_INT,  V(i:0,"0"),  V(i:1,"1"), VAR_NORMAL, 0,
+		"Enable/Disable clustering to find possible values to variables (1/0)"},
 { &DO_DEP_CLUSTER, "Dc",  "Dc",  P_INT, V(i:0,"0"),  V(i:1,"1"), VAR_NORMAL, 0,
 	  "Enable/Disable Dependent Variable Clustering (1/0)"},
 { &DO_SPLIT, "Sp",  "Sp",  P_INT, V(i:0,"0"),  V(i:0,"0"), VAR_NORMAL, 0,
@@ -539,6 +541,7 @@ DO_ALL(int value/* , char *s_value*/)
 	set_param_int(strcpy(tmp_str, "Sa"), value);
    set_param_int(strcpy(tmp_str, "Ex"), value);
    set_param_int(strcpy(tmp_str, "Ea"), value);
+	set_param_int(strcpy(tmp_str, "Pa"), value);
    set_param_int(strcpy(tmp_str, "Dc"), value);
 	set_param_int(strcpy(tmp_str, "Sp"), value);
 	set_param_int(strcpy(tmp_str, "Rw"), value);

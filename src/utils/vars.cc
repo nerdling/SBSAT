@@ -57,13 +57,14 @@ char input_result_filename[128] = "";
 
 int DO_CLUSTER = 1;   //CNF clustering
 int DO_COFACTOR = 1;  //Cofactoring doesn't help for any benchmark i've tried
-                      //Except small xor-chain files.
+                      //Except small xor-chain files. Even then Ea works better.
 int DO_PRUNING = 1;
 int DO_STRENGTH = 1;
 int DO_SIMPLEAND = 1;
 int DO_INFERENCES = 1;
 int DO_EXIST_QUANTIFY = 1;
 int DO_EXIST_QUANTIFY_AND = 1;
+int DO_POSSIBLE_ANDING = 1;
 int DO_DEP_CLUSTER = 1;
 int DO_SPLIT = 1;
 int DO_REWIND = 1;
