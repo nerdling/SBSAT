@@ -1,3 +1,36 @@
+2004-08-09 13:30  fett
+
+	* src/preproc/do_exquantifyand.cc: Added another ite function,
+	ite_xvar_y_z which is used by num_replace and a few others. 
+	Changed add_newFunctions() to add new functions into the already
+	existing functions array where true_ptr BDDs exist, instead of
+	adding all new functions onto the end of the array. Saves time and
+	space (slows down some smaller problems with lots of existental
+	quantification)
+	
+	  ~Sean
+
+2004-08-09 13:08  fett
+
+	* src/preproc/: do_exquantify.cc, do_exquantifyand.cc,
+	init_preproc.cc: fixed
+
+2004-08-09 13:00  fett
+
+	* ChangeLog, include/bddtable.h, include/sbsat_preproc.h,
+	src/preproc/do_exquantify.cc, src/preproc/do_exquantifyand.cc,
+	src/preproc/do_split.cc, src/preproc/init_preproc.cc,
+	src/utils/bdd.cc, src/utils/bdd_ite.cc, src/utils/bdd_print.cc:
+	broke for now.
+
+2004-08-06 12:28  fett
+
+	* src/preproc/: do_applyinfs.cc, do_exquantifyand.cc,
+	init_preproc.cc: fixed bug with existand. Variables would disappear
+	and be set to true that should not of been disappearing.
+	
+	  ~Sean
+
 2004-08-03 17:11  fett
 
 	* src/utils/bdd.cc: sped up replaces and inferences a bit.
