@@ -355,9 +355,11 @@ Add_arrNumRHSUnknowns(int vx)
 ITE_INLINE void
 InitializeSmurfStatesStack()
 {
-   arrSmurfStatesFlags = (int*)ite_calloc(nNumRegSmurfs+1, sizeof(int), 
-         9, "arrSmurfStatesFlags");
-   AllocateSmurfStatesStack((nNumRegSmurfs+1)*SMURF_STATES_STACK_ALLOC_MULT);
+   if (arrSmurfStatesFlags == NULL)
+      arrSmurfStatesFlags = (int*)ite_calloc(nNumRegSmurfs+1, sizeof(int), 
+            9, "arrSmurfStatesFlags");
+   if (arrSmurfStatesStackPool == NULL)
+      AllocateSmurfStatesStack((nNumRegSmurfs+1)*SMURF_STATES_STACK_ALLOC_MULT);
 }
 
 ITE_INLINE void
@@ -381,11 +383,13 @@ NextSmurfStatesStack()
 ITE_INLINE void
 AllocateSmurfStatesStack(int newsize)
 {
+   int prevsize = 0;
    assert(newsize > 0);
 
    newsize += 10000; /* it does not hurt to allocate a little bit more
                       * for backtracking stack */
 
+   if (arrSmurfStatesStackPool) prevsize = arrSmurfStatesStackPool->max;
    arrSmurfStatesStackPool = (tSmurfStatesStackPool*)ite_calloc(1, sizeof (tSmurfStatesStackPool),
          9, "arrSmurfStatesStackPool");
 
@@ -407,6 +411,9 @@ AllocateSmurfStatesStack(int newsize)
    arrSmurfStatesStack[2].smurf         = POOL_START;
    arrSmurfStatesStack[newsize-2].smurf = POOL_END;
    arrSmurfStatesStack[newsize-1].u.next_pool   = (void *)NULL;
+   if (prev_arrSmurfStatesStack != NULL) {
+      prev_arrSmurfStatesStack[prevsize-1].u.next_pool = (void*)arrSmurfStatesStack;
+   }
 
    nSmurfStatesStackIdx    = 2;
 }
@@ -421,15 +428,19 @@ FreeSmurfStatesStack()
       free(x);
    }
 
+   arrSmurfStatesStackPool = NULL;
+   arrSmurfStatesStack = NULL;
    ite_free((void**)&arrSmurfStatesFlags);
 }
 
 ITE_INLINE void
 InitializeSpecialFnStack()
 {
-   arrSpecialFnFlags = (int*)ite_calloc(nNumSpecialFuncs+1, sizeof(int),
-         9, "arrSpecialFnFlags");
-   AllocateSpecialFnStack((nNumSpecialFuncs+1)*SPECIAL_FN_STACK_ALLOC_MULT);
+   if (arrSpecialFnFlags == NULL)
+      arrSpecialFnFlags = (int*)ite_calloc(nNumSpecialFuncs+1, sizeof(int),
+            9, "arrSpecialFnFlags");
+   if (arrSpecialFnStackPool == NULL)
+      AllocateSpecialFnStack((nNumSpecialFuncs+1)*SPECIAL_FN_STACK_ALLOC_MULT);
 }
 
 ITE_INLINE void
@@ -453,10 +464,12 @@ NextSpecialFnStack()
 ITE_INLINE void
 AllocateSpecialFnStack(int newsize)
 {
+   int prevsize;
    assert(newsize > 0);
    newsize += 10000; /* it does not hurt to allocate a little bit more
                       * for backtracking stack */
 
+   if (arrSpecialFnStackPool) prevsize = arrSpecialFnStackPool->max;
    arrSpecialFnStackPool = (tSpecialFnStackPool*)ite_calloc(1, sizeof (tSpecialFnStackPool),
          9, "arrSpecialFnStackPool");
 
@@ -476,9 +489,11 @@ AllocateSpecialFnStack(int newsize)
    arrSpecialFnStack[2].fn = POOL_START;
    arrSpecialFnStack[newsize-2].fn = POOL_END;
    arrSpecialFnStack[newsize-1].u.next_pool  = (void *)NULL;
+   if (prev_arrSpecialFnStack != NULL) {
+      prev_arrSpecialFnStack[prevsize-1].u.next_pool = (void*)arrSpecialFnStack;
+   }
 
    nSpecialFnStackIdx      = 2;
-
 }
 
 ITE_INLINE void
@@ -491,8 +506,7 @@ FreeSpecialFnStack()
       free(x);
    }
 
-   if (arrSpecialFnFlags != NULL) {
-      free(arrSpecialFnFlags);
-      arrSpecialFnFlags = NULL;
-   }
+   arrSpecialFnStackPool = NULL;
+   arrSpecialFnStack = NULL;
+   ite_free((void**)&arrSpecialFnFlags);
 }
