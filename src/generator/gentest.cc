@@ -41,6 +41,7 @@
 void makeXor(int variables, int functions, int length, int width);
 void vanDerWaerden(char *vdw_type, int n, int k, int p);
 void rn(char *rn_type, int n, int k, int l);
+void slider2(char *out_type, int n, int sat);
 
 int main(int argc, char **argv) {
    if (argc > 1 && !strcmp(argv[1], "vdw")) { 
@@ -83,10 +84,23 @@ int main(int argc, char **argv) {
 		int l = atoi(argv[4]);
       rn("cnf", n, k, l);
 		return 0;
+	} else
+   if (argc > 1 && !strcmp(argv[1], "slider2")) { 
+      if (argc < 3 || (argc > 2 && !strcmp(argv[2], "--help"))) {
+         fprintf(stderr, "usage: %s size sat\n", argv[0]);
+         fprintf(stderr, "       size - num variables\n");
+         //fprintf(stderr, "       sat - 0/1 = un/sat\n");
+         return 0;
+      }
+      int size = atoi(argv[2]);
+      int sat = atoi(argv[3]);
+      slider2("ite", size, sat);
+		return 0;
 	}
 
 	fprintf(stderr, "usage: %s xor --help\n", argv[0]);
 	fprintf(stderr, "usage: %s vdw --help\n", argv[0]);
 	fprintf(stderr, "usage: %s rn --help\n", argv[0]);
+	fprintf(stderr, "usage: %s slider2 --help\n", argv[0]);
 	return 0;
 }
