@@ -130,9 +130,6 @@ The solver was successfully tested and compiled on a number of Unix based
  number of different compilers such as gcc2.95, gcc3.x, solaris-cc, dec-cc,
  pgcc.
  (intel cc?).
-\layout Standard
-
-The SBSAT Solver is free under the GPL licence.
 \layout Section
 \pagebreak_top 
 About this manual
