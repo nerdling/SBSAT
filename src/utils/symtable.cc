@@ -12,9 +12,9 @@ symrec *sym_hash_table=NULL;
 #define SYM_TABLE_SIZE 5000
 
 int sym_table_idx = 0;
-int sym_table_max = SYM_TABLE_SIZE;
+int sym_table_max = 0;
 int symtmp_table_idx = 0;
-int symtmp_table_max = SYMTMP_TABLE_SIZE;
+int symtmp_table_max = 0;
 int sym_all_int_flag = 1;
 
 symrec * tputsym_truefalse(int sym_type);
@@ -24,7 +24,9 @@ void
 sym_init()
 {
   sym_hash_table = (symrec*)ite_calloc(SYM_HASH_SIZE, sizeof(symrec), 9, "sym_hash_table");
+  symtmp_table_max = SYMTMP_TABLE_SIZE;
   symtmp_table = (symrec*)ite_calloc(SYMTMP_TABLE_SIZE, sizeof(symrec), 9, "symtmp_table");
+  sym_table_max = SYM_TABLE_SIZE;
   sym_table = (symrec**)ite_calloc(SYM_TABLE_SIZE, sizeof(symrec*), 9, "sym_table");
   true_ptr->var_ptr=tputsym_truefalse(SYM_VAR);
   false_ptr->var_ptr=tputsym_truefalse(SYM_VAR);
