@@ -707,7 +707,7 @@ Recd *resolve (int *truth_table, int sign, int no_vars, int no_out_vars) {
 }
 
 void printBDDToCNFQM () {
-   int *tempint, z;
+   int *tempint = NULL, z;
    long tempint_max=0;
 	
    func_object **funcs;
@@ -868,7 +868,7 @@ void printBDDToCNFQM () {
 }
 
 void printBDDToCNF () {
-   int *tempint, z;
+   int *tempint = NULL, z;
    long tempint_max = 0;
 	
    int no_out_vars;
@@ -893,7 +893,6 @@ void printBDDToCNF () {
       intlist *list = new intlist[numx];
       int listx = 0;
       findPathsToFalse (functions[x], &tempint_max, &tempint, list, &listx);
-        ite_free((void**)&tempint); tempint_max = 0;
 		
       for (int i = 0; i < listx; i++) {
 			false_paths[z].num = list[i].num;
@@ -908,6 +907,8 @@ void printBDDToCNF () {
 		delete list;
 	}
 
+	ite_free((void**)&tempint); tempint_max = 0;
+	
 	use_symtable = sym_all_int();
 	if(!use_symtable) {
 		print_cnf_symtable();

@@ -368,7 +368,7 @@ int
 sym_all_int()
 {
    int i;
-   for(i=2;i<sym_table_idx;i++) {
+   for(i=1;i<sym_table_idx;i++) {
       int num;
       if (sym_table[i] == NULL) continue;
       if (sym_table[i]->name == NULL) return 0;

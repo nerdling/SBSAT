@@ -518,19 +518,11 @@ void findPathsToX (BDDNode *bdd, long *path_max, int **path, int pathx, intlist 
 
 void findPathsToFalse (BDDNode *bdd, long *path_max, int **path, intlist *list, int *listx) {
 	int pathx = 0;
-	if (*path_max == 0) {
-		*path = (int*)ite_recalloc(NULL, 0, 10, sizeof(int), 9, "path");
-		*path_max = 10;
-	}
 	findPathsToX (bdd, path_max, path, pathx, list, listx, false_ptr);
 }
 
 void findPathsToTrue (BDDNode *bdd, long *path_max, int **path, intlist *list, int *listx) {
 	int pathx = 0;
-	if (*path_max == 0) {
-		*path = (int*)ite_recalloc(NULL, 0, 10, sizeof(int), 9, "path");
-		*path_max = 10;
-	}
 	findPathsToX (bdd, path_max, path, pathx, list, listx, true_ptr);
 }
 

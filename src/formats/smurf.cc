@@ -132,12 +132,16 @@ void BDD_to_Smurfs () {
 	integers = (store *) calloc (nmbrFunctions + 1, sizeof (store));
 	numinp = 0;
 
+	int use_symtable = sym_all_int();
+	//if(!use_symtable) {
+   //  print_cnf_symtable();	
+   //}
+
 	for (x = 0; x < nmbrFunctions; x++) {
-		if (functions[x] == false_ptr)
-		  {
-			  fprintf (foutputfile, "UNSATISFIABLE");
-			  return;
-		  }
+		if (functions[x] == false_ptr) {
+			fprintf (foutputfile, "UNSATISFIABLE");
+			return;
+		}
 		if (functions[x] == true_ptr)
 		  continue;
 		y = 0;
@@ -158,102 +162,99 @@ void BDD_to_Smurfs () {
 	for (x = 0; x < nmbrFunctions; x++)
 	  fprintf (foutputfile, "1");
 	fprintf (foutputfile, " # Output Vector\n");
-	for (v = 0; v < nmbrFunctions; v++)
-	  {
-		  fprintf (foutputfile, "#\n%ld\n", v);
-		  if (functions[v] == true_ptr)
-			 {
-				 fprintf (foutputfile, "-1\n1\n");
-				 continue;
-			 }
-		  for (x = 0; integers[v].num[x] != 0; x++)
-			 {
-				 p[x] = '0';
-				 fprintf (foutputfile, "%d ", integers[v].num[x]);
-			 }
-		  fprintf (foutputfile, "-1\n");
-//SEAN! ADD IN SUPPORT FOR PLAINORs and PLAINXORs
-		  if (functionType[v] == PLAINOR) {
-			  fprintf(foutputfile, "plainor ");
-			  BDDNode *p_or = functions[v];
-			  for (int x = 0; x < integers[v].num[x] != 0; x++) {
-				  if (set_variable (p_or, integers[v].num[x], 1) == true_ptr)
-					 fprintf (foutputfile, "1");
-				  else if (set_variable (p_or, integers[v].num[x], 0) == true_ptr)
-					 fprintf (foutputfile, "0");
-				  else {
-					  fprintf (stderr, "Error! %d", functionType[v]);
-					  fprintf (stderr, "\n");
-					  printBDDerr (functions[v]);
-					  fprintf (stderr, "\n");
-					  exit (1);
-				  }
-			  }
-		  } else if (functionType[v] == AND || functionType[v] == OR) {
-			  int validated = 0;
-			  int torf = equalityVble[v] > 0 ? 1 : 0;
-			  if ((torf == 1 && functionType[v] == AND) || 
-					(torf == 0 && functionType[v] == OR)) {
-				  fprintf (foutputfile, "and= ");
-				  BDDNode * true_and =
-					 set_variable (functions[v], abs (equalityVble[v]), 1);
-				  for (int x = 0; x < integers[v].num[x] != 0; x++) {
-					  if (integers[v].num[x] == abs (equalityVble[v])) {
-						  fprintf (foutputfile, "3");
-						  validated = 1;
-						  continue;
-					  }
-					  if (set_variable (true_and, integers[v].num[x], 0) == false_ptr)
-						 fprintf (foutputfile, "1");
-					  else if (set_variable (true_and, integers[v].num[x], 1) == false_ptr)
-						 fprintf (foutputfile, "0");
-					  else {
-						  fprintf (stderr, "Error! %d", functionType[v]);
-						  fprintf (stderr, "\n");
-						  printBDDerr (true_and);
-						  fprintf (stderr, "\n");
-						  printBDDerr (functions[v]);
-						  fprintf (stderr, "\n");
-						  exit (1);
-					  }
-				  }
-				  if (validated == 0) {
-					  fprintf (stderr, "\nERROR: Equivalence Variable Not Correct!\n");
-					  exit (1);
-				  }
-			  } else {
-				  fprintf (foutputfile, "or= ");
-				  BDDNode * true_or = set_variable (functions[v], abs (equalityVble[v]), 1);
-				  for (int x = 0; x < integers[v].num[x] != 0; x++) {
-					  if (integers[v].num[x] == abs (equalityVble[v])) {
-						  fprintf (foutputfile, "3");
-						  continue;
-					  }
-					  if (set_variable (true_or, integers[v].num[x], 1) == true_ptr)
-						 fprintf (foutputfile, "1");
-					  else if (set_variable (true_or, integers[v].num[x], 0) == true_ptr)
-						 fprintf (foutputfile, "0");
-					  else {
-						  fprintf (stderr, "Error! %d", functionType[v]);
-						  fprintf (stderr, "\n");
-						  printBDDerr (true_or);
-						  fprintf (stderr, "\n");
-						  printBDDerr (functions[v]);
-						  fprintf (stderr, "\n");
-						  exit (1);
-					  }
-				  }
-			  }
-		  } else {
-			  if(x > MAX_MAX_VBLES_PER_SMURF)
-				 fprintf(stderr, "Function %ld has %lld variables and it may take a while to consider all 2^%lld truth table values\n", v, x, x);
-			  for (long long tvec = 0; tvec < ((long long)1 << x); tvec++) {
-				  fprintf (foutputfile, "%d", getTruth (integers[v].num, p, x, functions[v]));
-				  bcount (p, (x - 1));
-			  }
-		  }
-		  fprintf (foutputfile, "\n");
-	  }
+	for (v = 0; v < nmbrFunctions; v++) {
+		fprintf (foutputfile, "#\n%ld\n", v);
+		if (functions[v] == true_ptr) {
+			fprintf (foutputfile, "-1\n1\n");
+			continue;
+		}
+		for (x = 0; integers[v].num[x] != 0; x++) {
+			p[x] = '0';
+			fprintf (foutputfile, "%d ", use_symtable?atoi(getsym_i(integers[v].num[x])->name):integers[v].num[x]);
+		}
+		fprintf (foutputfile, "-1\n");
+		//SEAN! ADD IN SUPPORT FOR PLAINORs and PLAINXORs
+		if (functionType[v] == PLAINOR) {
+			fprintf(foutputfile, "plainor ");
+			BDDNode *p_or = functions[v];
+			for (int x = 0; x < integers[v].num[x] != 0; x++) {
+				if (set_variable (p_or, integers[v].num[x], 1) == true_ptr)
+				  fprintf (foutputfile, "1");
+				else if (set_variable (p_or, integers[v].num[x], 0) == true_ptr)
+				  fprintf (foutputfile, "0");
+				else {
+					fprintf (stderr, "Error! %d", functionType[v]);
+					fprintf (stderr, "\n");
+					printBDDerr (functions[v]);
+					fprintf (stderr, "\n");
+					exit (1);
+				}
+			}
+		} else if (functionType[v] == AND || functionType[v] == OR) {
+			int validated = 0;
+			int torf = equalityVble[v] > 0 ? 1 : 0;
+			if ((torf == 1 && functionType[v] == AND) || 
+				 (torf == 0 && functionType[v] == OR)) {
+				fprintf (foutputfile, "and= ");
+				BDDNode * true_and =
+				  set_variable (functions[v], abs (equalityVble[v]), 1);
+				for (int x = 0; x < integers[v].num[x] != 0; x++) {
+					if (integers[v].num[x] == abs (equalityVble[v])) {
+						fprintf (foutputfile, "3");
+						validated = 1;
+						continue;
+					}
+					if (set_variable (true_and, integers[v].num[x], 0) == false_ptr)
+					  fprintf (foutputfile, "1");
+					else if (set_variable (true_and, integers[v].num[x], 1) == false_ptr)
+					  fprintf (foutputfile, "0");
+					else {
+						fprintf (stderr, "Error! %d", functionType[v]);
+						fprintf (stderr, "\n");
+						printBDDerr (true_and);
+						fprintf (stderr, "\n");
+						printBDDerr (functions[v]);
+						fprintf (stderr, "\n");
+						exit (1);
+					}
+				}
+				if (validated == 0) {
+					fprintf (stderr, "\nERROR: Equivalence Variable Not Correct!\n");
+					exit (1);
+				}
+			} else {
+				fprintf (foutputfile, "or= ");
+				BDDNode * true_or = set_variable (functions[v], abs (equalityVble[v]), 1);
+				for (int x = 0; x < integers[v].num[x] != 0; x++) {
+					if (integers[v].num[x] == abs (equalityVble[v])) {
+						fprintf (foutputfile, "3");
+						continue;
+					}
+					if (set_variable (true_or, integers[v].num[x], 1) == true_ptr)
+					  fprintf (foutputfile, "1");
+					else if (set_variable (true_or, integers[v].num[x], 0) == true_ptr)
+					  fprintf (foutputfile, "0");
+					else {
+						fprintf (stderr, "Error! %d", functionType[v]);
+						fprintf (stderr, "\n");
+						printBDDerr (true_or);
+						fprintf (stderr, "\n");
+						printBDDerr (functions[v]);
+						fprintf (stderr, "\n");
+						exit (1);
+					}
+				}
+			}
+		} else {
+			if(x > MAX_MAX_VBLES_PER_SMURF)
+			  fprintf(stderr, "Function %ld has %lld variables and it may take a while to consider all 2^%lld truth table values\n", v, x, x);
+			for (long long tvec = 0; tvec < ((long long)1 << x); tvec++) {
+				fprintf (foutputfile, "%d", getTruth (integers[v].num, p, x, functions[v]));
+				bcount (p, (x - 1));
+			}
+		}
+		fprintf (foutputfile, "\n");
+	}
 	fprintf (foutputfile, "@");
    ite_free((void**)&tempint); tempint_max = 0;
 }
