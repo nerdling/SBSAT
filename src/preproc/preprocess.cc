@@ -64,6 +64,7 @@ preproc_type preproc[] = {
   { "Ex", 2, Do_ExQuantify,  &DO_EXIST_QUANTIFY },
   { "Ea", 2, Do_ExQuantifyAnd, &DO_EXIST_QUANTIFY_AND },
   { "Dc", 2, Do_DepCluster, &DO_DEP_CLUSTER },
+  { "Sp", 2, Do_Split, &DO_SPLIT },	
   { "", 0, NULL, NULL }
 };
 
@@ -246,5 +247,3 @@ parse_seq(char **p, int parse_only)
   d9_printf2("ps: returning ret with %d\n", ret);
   return ret;
 }
-
-

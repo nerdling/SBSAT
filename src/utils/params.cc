@@ -134,7 +134,7 @@ t_opt options[] = {
                 "The minimum # of literals to flag sp. function or_equ"},
 { &PLAINOR_LIMIT, "", "limit-or", P_INT, V(i:0,"0"), V(i:8,"8"), VAR_NORMAL, 0, 
                 "The minimum # of literals to flag sp. function plainor"},
-{ &PLAINXOR_LIMIT, "", "limit-xor", P_INT, V(i:0,"0"), V(i:5,"5"), VAR_NORMAL, 0, 
+{ &PLAINXOR_LIMIT, "", "limit-xor", P_INT, V(i:0,"0"), V(i:5,"5"), VAR_NORMAL, 0,
                 "The minimum # of literals to flag sp. function plainxor"},
 { &BREAK_XORS, "", "break-xors", P_INT, V(i:0,"0"), V(i:1,"1"), VAR_NORMAL, 0, 
                 "Break XORS into linear and non-linear functions"},
@@ -191,7 +191,7 @@ t_opt options[] = {
 		V(i:2048,"2048"), {""}, VAR_NORMAL, 0, 
                 "Variables forced during preprocessing."},
 { preproc_string, "P", "preprocess-sequence", P_STRING, 
-		V(i:255,"255"), {"(ExDc)*(ExSt)*(ExPr)*"}, VAR_NORMAL, 0, 
+		V(i:255,"255"), {"(ExDc)*(ExSt)*(ExPr)*(ExSp)"}, VAR_NORMAL, 0,
                 "The preprocessing sequence"},
 { (void*)DO_ALL, "All",  "All", P_FN_INT, V(i:0,"0"), V(i:2,"2"), VAR_CMDLINE+VAR_DUMP, 0, 
 	       "Enable/Disable All Preprocessing Options (1/0)"},
@@ -217,6 +217,8 @@ t_opt options[] = {
 		"Enable/Disable AND-Existential Quantification (1/0)"},
 { &DO_DEP_CLUSTER, "Dc",  "Dc",  P_INT, V(i:0,"0"),  V(i:1,"1"), VAR_NORMAL, 0,
 	  "Enable/Disable Dependent Variable Clustering (1/0)"},
+{ &DO_SPLIT, "Sp",  "Sp",  P_INT, V(i:0,"0"),  V(i:0,"0"), VAR_NORMAL, 0,
+	  "Enable/Disable Large Function Splitting (1/0)"},
 { &max_preproc_time, "",  "max-preproc-time", P_INT, V(i:0,"0"),  V(i:0,"0"), VAR_NORMAL, 0,
 		"set the time limit in seconds (0=no limit)"},
 	
@@ -471,6 +473,7 @@ DO_ALL(int value/* , char *s_value*/)
    set_param_value("Ex", s_value); // and it knows src //
    set_param_value("Ea", s_value); // and it knows src //
    set_param_value("Dc", s_value); // and it knows src //
+   set_param_value("Sp", s_value); // and it knows src //
 */
    set_param_int("Cl", value);
    set_param_int("Co", value);
@@ -479,4 +482,5 @@ DO_ALL(int value/* , char *s_value*/)
    set_param_int("Ex", value);
    set_param_int("Ea", value);
    set_param_int("Dc", value);
+	set_param_int("Sp", value);
 }

@@ -63,7 +63,7 @@ Do_ExQuantifyAnd()
 	affected = 0;
 	char p[100];
 	D_3(
-		 sprintf(p, "{0:0/%d}", numinp);
+		 sprintf(p, "{0:0/%ld}", numinp);
 		 str_length = strlen(p);
 		 d3_printf1(p);
 	);

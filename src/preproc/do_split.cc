@@ -41,18 +41,10 @@
 #include "ite.h"
 #include "preprocess.h"
 
-//!These two flags should not be changed until ExQuantify is redone!
-
-int MAX_EXQUANTIFY_CLAUSES = 3;	//Number of BDDs a variable appears in
-				     //to quantify that variable away.
-int MAX_EXQUANTIFY_VARLENGTH = 18;	//Limits size of number of vars in 
-				     //constraints created by ExQuantify
-//!
-
 int Split_Large();
 
-int Do_Split_Large() {
-   d3_printf1("Splitting Large Functions - ");
+int Do_Split() {
+   d3_printf1("SPLITTING LARGE FUNCTIONS - ");
    int cofs = PREP_CHANGED;
    int ret = PREP_NO_CHANGE;
 	affected = 0;
@@ -75,6 +67,13 @@ int Do_Split_Large() {
 	return ret;
 }
 
+int nCk(int n, int k) {
+	if(n == k) return 1;
+	if(k == 0) return 1;
+	return nCk(n-1, k) + nCk(n-1, k-1);	
+}
+
+
 int Split_Large () {
 	int ret = PREP_NO_CHANGE;
 
@@ -85,24 +84,32 @@ int Split_Large () {
 	
 	for(int j = 0; j < nmbrFunctions; j++) {
 		if (functionType[j] == UNSURE && length[j] > 10) { //10?
-			d3_printf1("\n");
+			d3_printf2("\n%d: ", j);
 			printBDD(functions[j]);
 			d3_printf1("\n");			
+			int num_splits = nCk(length[j], 10);
+			d3_printf4("%dC%d = %d\n", length[j], 10, num_splits);
+			
+			
 			
 			if(num_bdds >= max_bdds) {
 				BDDFuncs = (BDDNode **)ite_recalloc(BDDFuncs, max_bdds, max_bdds+10, sizeof(BDDNode *), 9, "BDDFuncs");
 				max_bdds += 10;
 			}
 
-							switch (int r=Rebuild_BDDx(j)) {
-				 case TRIV_UNSAT:
-				 case TRIV_SAT:
-				 case PREP_ERROR: 
-					ret=r;
+			
+			
+			
+			/*
+			switch (int r=Rebuild_BDDx(j)) {
+			 case TRIV_UNSAT:
+			 case TRIV_SAT:
+			 case PREP_ERROR: 
+				ret=r;
 					goto sp_bailout;
-				 default: break;
-				}
-
+			 default: break;
+			}
+			*/
 			
 		}
 	}
