@@ -110,7 +110,8 @@ SmurfFactory()
 
       if (!IsSpecialFunc(nFunctionType))
       {
-         d3_printf3("Constructing Smurf for %d/%d           \r", i, nmbrFunctions);
+			if(i % 100 == 0)
+			  d3_printf3("Constructing Smurf for %d/%d           \r", i, nmbrFunctions);
          arrIte2SolverSmurf[i] = nRegSmurfIndex;
          arrSmurfEqualityVble[nRegSmurfIndex] = arrIte2SolverVarMap[equalityVble[i]];
          SmurfState *pSmurfState = BDD2Smurf(pFunc);
@@ -138,7 +139,8 @@ SmurfFactory()
          } else {
             arrSpecialFuncs[nSpecialFuncIndex].LinkedSmurfs = -1;
          }
-         d3_printf3("Constructing Special Function for %d/%d\r", i, nmbrFunctions);
+			if(i % 100 == 0)
+			  d3_printf3("Constructing Special Function for %d/%d\r", i, nmbrFunctions);
          arrIte2SolverSpecFn[i] = nSpecialFuncIndex;
          SpecFn2Smurf(pSpecFunc, nFunctionType,
                equalityVble[i], &(arrSpecialFuncs[nSpecialFuncIndex]));
