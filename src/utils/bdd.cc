@@ -61,6 +61,7 @@ enum {
    NUMREPLACEALL_FLAG_NUMBER, /* var/replace list dependent */
    POSSIBLEINFER_FLAG_NUMBER,
 	CLEANPOSSIBLE_FLAG_NUMBER,
+   PRINTSHAREDBDDS_FLAG_NUMBER, 
 	MAX_FLAG_NUMBER
 };
 int last_bdd_flag_number[MAX_FLAG_NUMBER] = {0,0,0,0,0,0,0,0,0,0};
@@ -320,6 +321,43 @@ void printBDD(BDDNode * bdd) {
 	printBDDfile(bdd, stddbg);
 }
 
+void _printBDDshared(BDDNode *bdd, FILE *fout);
+int bdd_shared_no=1;
+void
+printBDDshared(BDDNode *bdd, FILE *fout)
+{
+   start_bdd_flag_number(PRINTSHAREDBDDS_FLAG_NUMBER);
+}
+
+void
+_printBDDshared(BDDNode * bdd, FILE * fout)
+{
+   if (bdd == true_ptr)
+   {
+      fprintf (fout, "T");
+      return;
+   }
+   if (bdd == false_ptr)
+   {
+      fprintf (fout, "F");
+      return;
+   }
+   if (bdd->flag == bdd_flag_number) {
+      if (bdd->tmp_int == 0) bdd->tmp_int = bdd_shared_no++;
+      fprintf (fout, "{%d}", bdd->tmp_int);
+      return;
+   }
+   bdd->flag = bdd_flag_number;
+   bdd->tmp_int = 0;
+   fprintf (fout, "(");
+   printBDDshared(bdd->thenCase, fout);
+   //fprintf (stdout, "[%d]", bdd->variable);
+	fprintf(fout, "[%s", s_name(bdd->variable));
+	d4_printf2("(%d)", bdd->variable);
+	fprintf(fout, "]");
+   printBDDshared(bdd->elseCase, fout);
+   fprintf(fout, ")");
+}
 
 //Make sure variable x does NOT occur in bdd
 int
@@ -463,14 +501,14 @@ int unravelBDDTree (int y, int tempint[100], BDDNode * func)
    return e;
 }
 
-BDDNode * findBranch (int y, int z, BDDNode * func) 
+BDDNode * findBranch(int y, int z, BDDNode * func) 
 {
    if (y == z)
       return func;
    if (IS_TRUE_FALSE(func))
       return func;
-   BDDNode * r = findBranch (y * 2 + 1, z, func->thenCase);
-   BDDNode * e = findBranch (y * 2 + 2, z, func->elseCase);
+   BDDNode * r = findBranch(y * 2 + 1, z, func->thenCase);
+   BDDNode * e = findBranch(y * 2 + 2, z, func->elseCase);
    if (r->variable > e->variable)
       return r;
    return e;
@@ -479,7 +517,7 @@ BDDNode * findBranch (int y, int z, BDDNode * func)
 
 // Top level call should have *which_zoom equal to zero.
 void
-printBDDTree (BDDNode * bdd, int *which_zoom)
+printBDDTree(BDDNode * bdd, int *which_zoom)
 {
    int y = 0, z, NUM = PRINT_TREE_WIDTH, level = 0, x, i;
    char aa[10];
@@ -558,6 +596,7 @@ printBDDTree (BDDNode * bdd, int *which_zoom)
       fprintf (stdout, "\n");
    }
 }
+
 void
 printITEBDD (BDDNode * bdd)
 {
