@@ -59,6 +59,9 @@ ITE_INLINE void push_special_fn_onto_stack();
 ITE_INLINE void
 SelectNewBranchPoint()
 {
+   int nInferredAtom = 0;
+   int nInferredValue = BOOL_UNKNOWN;
+
    // We need to select a new branch point.
    D_9(
          if (nNumBacktracks >= TRACE_START)
@@ -76,11 +79,6 @@ SelectNewBranchPoint()
       J_UpdateHeuristic();
    else
       UpdateHeuristic();
-
-   // Call heuristic.
-   int nInferredAtom;
-   int nInferredValue;
-   proc_call_heuristic(&nInferredAtom, &nInferredValue);
 
 //#define SEAN_ZECCHINA
 #ifdef SEAN_ZECCHINA
@@ -102,6 +100,10 @@ SelectNewBranchPoint()
       }
    }
 #endif
+
+   // Call heuristic.
+   if (nInferredAtom == 0)
+      proc_call_heuristic(&nInferredAtom, &nInferredValue);
 
    assert(nInferredValue == BOOL_TRUE || nInferredValue == BOOL_FALSE);
    assert(arrSolution[nInferredAtom] == BOOL_UNKNOWN);

@@ -50,6 +50,8 @@ double *arrJWeights;
 ITE_INLINE SmurfState * GetSmurfState(int i);
 ITE_INLINE void J_SetupHeuristicScores();
 ITE_INLINE void J_Setup_arrJWeights();
+ITE_INLINE void GetHeurScoresFromSmurf(int i);
+
 /* 
 
  other files and j_heuristic.cc
@@ -168,44 +170,6 @@ J_FreeHeurScoresStack ()
 }
 
 ITE_INLINE void
-GetHeurScoresFromSmurf(int i)
-{
-   // Get a ptr to the Smurf state.
-   SmurfState *pState = arrCurrentStates[i];
-
-   // Do nothing if constraint is trivial.
-   if (pState == pTrueSmurfState) return;
-
-   int *arrElts = pState->vbles.arrElts;
-   int j=0;
-   int k;
-   if (arrSmurfChain[i].specfn == -1) {
-      for (k = 0; k < pState->vbles.nNumElts; k++) {
-         int nVble = arrElts[k];
-         arrHeurScores[nVble].Pos += pState->arrTransitions[j+BOOL_TRUE].fHeuristicWeight;
-         arrHeurScores[nVble].Neg += pState->arrTransitions[j+BOOL_FALSE].fHeuristicWeight;
-
-         if (pState->arrTransitions[j+BOOL_TRUE].fHeuristicWeight)
-            arrHeurScores[nVble].nPos++;
-         if (pState->arrTransitions[j+BOOL_FALSE].fHeuristicWeight)
-            arrHeurScores[nVble].nNeg++;
-
-         j+=2;
-      }
-   } else {
-      int n = arrNumRHSUnknowns[arrSmurfChain[i].specfn];
-      for (k = 0; k < pState->vbles.nNumElts; k++) {
-         int nVble = arrElts[k];
-         arrHeurScores[nVble].Pos +=
-            pState->arrTransitions[j+BOOL_TRUE].pNextState->arrHeuristicXors[n];
-         arrHeurScores[nVble].Neg +=
-            pState->arrTransitions[j+BOOL_FALSE].pNextState->arrHeuristicXors[n];
-         j+=2;
-      }
-   }
-}
-
-ITE_INLINE void
 J_InitHeuristicScores()
 // Initialize the heuristic scores for all of the variables
 // the problem.  Called before the search begins.
@@ -288,7 +252,7 @@ J_FreeHeuristicScores()
 //#define J_WEIGHT(x) (J_ONE+x.Pos) + (J_ONE+x.Neg)
 
 // NEW??
-//#define J_WEIGHT(x) (x.Pos * x.Neg * (x.nPos * x.nNeg))
+//#define J_WEIGHT(x) (((x.nPosInfs+1)*x.nPos)* (x.nNegInfs+1)*x.nNeg)
 
 // slider_80_unsat -- the order from the best to worst is (all J_ONE = 0)
 // CLASSIC

@@ -125,7 +125,7 @@ libsolver_a_SOURCES = solve.cc bddwalk.cc \
              init_solver.cc brancher.cc \
 	     backtrack.cc backtrack_nl.cc backtrack_sbj.cc bt_misc.cc \
              select_bp.cc \
-             j_heuristic.cc j_specfn.cc j_update_heu.cc \
+             j_heuristic.cc j_smurf.cc j_specfn.cc j_update_heu.cc \
              l_heuristic.cc l_lemma.cc \
 	     i_heuristic.cc \
              heuristic.cc \
@@ -152,11 +152,12 @@ am_libsolver_a_OBJECTS = solve.$(OBJEXT) bddwalk.$(OBJEXT) \
 	init_solver.$(OBJEXT) brancher.$(OBJEXT) backtrack.$(OBJEXT) \
 	backtrack_nl.$(OBJEXT) backtrack_sbj.$(OBJEXT) \
 	bt_misc.$(OBJEXT) select_bp.$(OBJEXT) j_heuristic.$(OBJEXT) \
-	j_specfn.$(OBJEXT) j_update_heu.$(OBJEXT) l_heuristic.$(OBJEXT) \
-	l_lemma.$(OBJEXT) i_heuristic.$(OBJEXT) heuristic.$(OBJEXT) \
-	bt_lemmas.$(OBJEXT) bt_specfn.$(OBJEXT) bt_smurfs.$(OBJEXT) \
-	bt_specfn_and.$(OBJEXT) bt_specfn_xor.$(OBJEXT) \
-	lemmainfo.$(OBJEXT) lemmaspace.$(OBJEXT) smurffactory.$(OBJEXT) \
+	j_smurf.$(OBJEXT) j_specfn.$(OBJEXT) j_update_heu.$(OBJEXT) \
+	l_heuristic.$(OBJEXT) l_lemma.$(OBJEXT) i_heuristic.$(OBJEXT) \
+	heuristic.$(OBJEXT) bt_lemmas.$(OBJEXT) bt_specfn.$(OBJEXT) \
+	bt_smurfs.$(OBJEXT) bt_specfn_and.$(OBJEXT) \
+	bt_specfn_xor.$(OBJEXT) lemmainfo.$(OBJEXT) \
+	lemmaspace.$(OBJEXT) smurffactory.$(OBJEXT) \
 	smurfstates.$(OBJEXT) state_stacks.$(OBJEXT) \
 	bdd2smurf.$(OBJEXT) specfn2smurf.$(OBJEXT) autarky.$(OBJEXT) \
 	display.$(OBJEXT) display_sf.$(OBJEXT) verify.$(OBJEXT) \
@@ -185,8 +186,8 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	./$(DEPDIR)/graphs.Po ./$(DEPDIR)/heuristic.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/i_heuristic.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/init_solver.Po ./$(DEPDIR)/interface.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/j_heuristic.Po ./$(DEPDIR)/j_specfn.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/j_update_heu.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/j_heuristic.Po ./$(DEPDIR)/j_smurf.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/j_specfn.Po ./$(DEPDIR)/j_update_heu.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/l_heuristic.Po ./$(DEPDIR)/l_lemma.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/lemmainfo.Po ./$(DEPDIR)/lemmaspace.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/libsolver.Po ./$(DEPDIR)/load_lemmas.Po \
@@ -259,6 +260,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/init_solver.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/interface.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/j_heuristic.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/j_smurf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/j_specfn.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/j_update_heu.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/l_heuristic.Po@am__quote@

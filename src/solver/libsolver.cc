@@ -67,6 +67,7 @@
 
 /* johnson heuristic */
 #include "j_update_heu.cc"
+#include "j_smurf.cc"
 #include "j_specfn.cc"
 #include "j_heuristic.cc"
 
