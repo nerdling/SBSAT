@@ -110,7 +110,7 @@ BackTrack_NL()
       assert(nBacktrackStackIndex >= 0);
       
       /*m invalidating arrBacktrackStackIndex but keep the prev value */
-      int nBacktrackAtom = pBacktrackTop->nAtom;
+      int nBacktrackAtom = pBacktrackTop->nBranchVble;
       arrBacktrackStackIndex[nBacktrackAtom] = gnMaxVbleIndex + 1;
       
       if (nBacktrackAtom == nInferredAtom) break;

@@ -132,7 +132,7 @@ BackTrack()
          }
 
          /*m invalidating arrBacktrackStackIndex but keep the prev value */
-         int nBacktrackAtom = pBacktrackTop->nAtom;
+         int nBacktrackAtom = pBacktrackTop->nBranchVble;
          int nBacktrackAtomStackIndex = arrBacktrackStackIndex[nBacktrackAtom];
          arrBacktrackStackIndex[nBacktrackAtom] = gnMaxVbleIndex + 1;
 
@@ -223,8 +223,8 @@ BackTrack()
             cout << "Examining lemma:" << endl;
             DisplayLemmaStatus(pBacktrackTop->pLemma);
             cout << "which witnesses inference X"
-               << pBacktrackTop->nAtom << " = "
-               << arrSolution[pBacktrackTop->nAtom]
+               << pBacktrackTop->nBranchVble << " = "
+               << arrSolution[pBacktrackTop->nBranchVble]
                << endl;
          )
 #endif

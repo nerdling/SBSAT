@@ -183,7 +183,7 @@ InferLiteral(int nInferredAtom,
 
    arrBacktrackStackIndex[nInferredAtom] = nBacktrackStackIndex++;
 
-   pBacktrackTop->nAtom = nInferredAtom;
+   pBacktrackTop->nBranchVble = nInferredAtom;
    pBacktrackTop->bWasChoicePoint = bWasChoicePoint;
    pBacktrackTop->pLemma = pLemma;
    pBacktrackTop->pLemmaInfo = pCachedLemma;

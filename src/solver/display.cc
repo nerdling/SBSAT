@@ -277,7 +277,7 @@ CalculateProgress(int *_whereAmI, int *_total)
       total += 1;
       count++;
     }else
-    if (pBacktrack->nAtom == pChoicePoint->nBranchVble) {
+    if (pBacktrack->nBranchVble == pChoicePoint->nBranchVble) {
       whereAmI *= 2;
       total *= 2;
       total += 1;

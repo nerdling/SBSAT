@@ -272,17 +272,24 @@ dump_counters(FILE *fd)
 }
 
 ITE_INLINE int
-ITE_Split(int *lit)
+ITE_Split(int **path, int *path_size)
 {
    if (pStartChoicePointStack >= pChoicePointTop) return 1;
-
+   int vble = pStartChoicePointStack->nBranchVble;
    pStartChoicePointStack++;
-   return 0;
-}
 
-ITE_INLINE int
-ITE_GetPath(int **path, int *path_size)
-{
+   int i=1;
+   for (BacktrackStackEntry *ptr = arrBacktrackStack; 
+         ptr->nBranchVble != vble; ptr++) i++;
+   *path_size = i;
+   i=0;
+   *path = (int*)ite_calloc(*path_size, sizeof(int), 9, "path");
+   BacktrackStackEntry *ptr = arrBacktrackStack; 
+   for (; ptr->nBranchVble != vble; ptr++) {
+      (*path)[i] = (ptr->nBranchVble << 1) + arrSolution[ptr->nBranchVble];
+      i++;
+   }
+   (*path)[i] = (ptr->nBranchVble << 1) + 1-arrSolution[ptr->nBranchVble];
    return 0;
 }
 
@@ -315,11 +322,14 @@ CheckBtHooks()
 
 //#define MK_SPLIT_TEST
 #ifdef MK_SPLIT_TEST
-   if (ite_counters[NUM_BACKTRACKS] == 10000) {
-      int lit;
+   if (ite_counters[NUM_BACKTRACKS] % 10000 == 0) {
       int *path, path_size;
-      if (ITE_Split(&lit) == 0) {
-         ITE_GetPath(&path, &path_size);
+      if (ITE_Split(&path, &path_size) == 0) {
+         // got it!
+         d2_printf1("------------- Split! -------------\n");
+         for(int i=0;i<path_size;i++)
+           d2_printf3("%c%d ", (path[i]&1?'+':'-'), path[i]>>1);
+         d2_printf1("\n");
       }
    } 
 #endif
