@@ -80,7 +80,7 @@ Do_Cofactor()
       
 		if (length[x] <= COF_MAX && length[x] > 0)
 		  {
-			  d3_printf1("*"); 
+			  //d3_printf1("*"); 
 			  cof = functions[x];
 			  for (int j = 0; j < numout; j++)
 				 {

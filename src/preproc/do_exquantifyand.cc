@@ -45,7 +45,7 @@
 
 int MAX_EXQUANTIFY_CLAUSES = 10;	  //Number of BDDs a variable appears in
                                    //to quantify that variable away.
-int MAX_EXQUANTIFY_VARLENGTH = 8; //Limits size of number of vars in 
+int MAX_EXQUANTIFY_VARLENGTH = 7; //Limits size of number of vars in 
                                    //constraints created by ExQuantify
 //!
 
@@ -151,6 +151,8 @@ ExQuantifyAnd ()
 						int out = 0;
 						if(x==1) ret = PREP_CHANGED;
 						if(length[j]>MAX_EXQUANTIFY_VARLENGTH && ret!=PREP_CHANGED) continue;
+					   bool OLD_DO_INFERENCES = DO_INFERENCES;
+						DO_INFERENCES = 0;
 						for(int z = 1; z < examount[i].length; z++) {
 							if (nCtrlC) {
 								out = 1;
@@ -162,32 +164,79 @@ ExQuantifyAnd ()
 							}
 							Quantify = ite_and(Quantify, functions[examount[i].num[z]]);
 							affected++;
+							
 							functions[examount[i].num[z]] = true_ptr;
+							switch (int r=Rebuild_BDDx(examount[i].num[z])) {
+							 case TRIV_UNSAT: 
+							 case TRIV_SAT: 
+							 case PREP_ERROR: 
+								ret = r; goto ea_bailout; /* as much as I hate gotos */
+							 default: break;
+							}
 							UnSetRepeats(examount[i].num[z]);
 							equalityVble[examount[i].num[z]] = 0;
 							functionType[examount[i].num[z]] = UNSURE;
-							length[examount[i].num[z]] = 0;
-							if(variables[examount[i].num[z]].num!=NULL)
-							  delete variables[examount[i].num[z]].num;
-							variables[examount[i].num[z]].num = NULL;
+							//length[examount[i].num[z]] = 0;
+							//if(variables[examount[i].num[z]].num!=NULL)
+							//  delete variables[examount[i].num[z]].num;
+							//variables[examount[i].num[z]].num = NULL;
 							ret = PREP_CHANGED;
 						}
+						DO_INFERENCES = OLD_DO_INFERENCES;
 						if(ret != PREP_CHANGED) continue;
 						if(out) {
 							functions[j] = Quantify;
 						} else {
-							for(int iter = 0; iter<str_length; iter++)
-							  d3_printf1("\b");
-							d3_printf2 ("*{%d}", i);
-							str_length = 0;// strlen(p);
-							functions[j] = xquantify (Quantify, i);
+							
+							functions[j] = Quantify;
+							switch (int r=Rebuild_BDDx(j)) {
+							 case TRIV_UNSAT: 
+							 case TRIV_SAT: 
+							 case PREP_ERROR: 
+								ret = r; goto ea_bailout; /* as much as I hate gotos */
+							 default: break;
+							}
+
+							infer *x_infers = possible_infer_x(functions[j], i);
+
+							if(x_infers == NULL) {
+								//do nothing. //Variable dropped out or was inferred during ANDing.
+							} else if(x_infers->nums[0] == 0) {
+								for(int iter = 0; iter<str_length; iter++)
+								  d3_printf1("\b");
+								d3_printf2 ("*{%d}", i);
+								str_length = 0;// strlen(p);
+								functions[j] = xquantify (functions[j], i);
+								variablelist[i].true_false = 2;
+								SetRepeats(j);
+							} else {
+								BDDNode *inferBDD = true_ptr;
+								while (x_infers!=NULL) {
+									//fprintf(stderr, "%d|%d, %d|", j, x_infers->nums[0], x_infers->nums[1]);
+									if(x_infers->nums[1] == 0)
+									  inferBDD = ite_and(inferBDD, ite_var(x_infers->nums[0]));
+									else
+									  inferBDD = ite_and(inferBDD, ite_equ(ite_var(x_infers->nums[0]), ite_var(x_infers->nums[1])));
+									infer *temp = x_infers; x_infers = x_infers->next; delete temp;
+								}
+								int bdd_length = 0;
+								int *bdd_vars = NULL;
+								switch (int r=Rebuild_BDD(inferBDD, &bdd_length, bdd_vars)) {
+								 case TRIV_UNSAT:
+								 case TRIV_SAT:
+								 case PREP_ERROR: return r;
+								 default: break;
+								}
+								delete [] bdd_vars;
+								bdd_vars = NULL;
+							}
 						}
 						switch (int r=Rebuild_BDDx(j)) {
-						case TRIV_UNSAT: 
-						case TRIV_SAT: 
-						case PREP_ERROR: 
-						   ret = r; goto ea_bailout; /* as much as I hate gotos */
-						default: break;
+						 case TRIV_UNSAT:
+						 case TRIV_SAT: 
+						 case PREP_ERROR: 
+							ret = r; goto ea_bailout; /* as much as I hate gotos */
+						 default: break;
 						}
 						equalityVble[j] = 0;
 						functionType[j] = UNSURE;

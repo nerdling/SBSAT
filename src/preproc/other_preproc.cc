@@ -131,10 +131,6 @@ amount_compfunc (const void *x, const void *y)
  *  ... moved to utils/utils.cc
  */
 
-//IMPORTANT - SEAN
-//could maybe speed up this function by handing nodes from r and e to
-//inferarray instead of creating a new node and copying information???
-
 infer *NEW_GetInfer(long *y, long *max, int **tempint, BDDNode * func);
 
 // start
@@ -397,6 +393,69 @@ infer *NEW_GetInfer(long *y, long *max, int **tempint, BDDNode * func)
 	return NULL;
 }
 
+infer *Ex_GetInfer(BDDNode * func)
+{
+	if ((func == true_ptr) || (func == false_ptr))
+	  return NULL;
+	
+	infer *r = Ex_GetInfer(func->thenCase);
+	infer *e = Ex_GetInfer(func->elseCase);
+	
+	if (IS_TRUE_FALSE(func->thenCase) && IS_TRUE_FALSE(func->elseCase)) {
+		infer *inferarray = new infer;
+		inferarray->next = NULL;
+		if (func->thenCase == false_ptr)
+		  inferarray->nums[0] = -(func->variable);
+		else
+		  inferarray->nums[0] = func->variable;
+		inferarray->nums[1] = 0;
+		return inferarray;
+	}
+	
+	if (func->elseCase == false_ptr) {
+		infer *inferarray = new infer;
+		inferarray->nums[0] = func->variable;
+		inferarray->nums[1] = 0;
+		inferarray->next = r;
+		return inferarray;
+	}
+	
+	if (func->thenCase == false_ptr) {
+		infer *inferarray = new infer;
+		inferarray->nums[0] = -(func->variable);
+		inferarray->nums[1] = 0;
+		inferarray->next = e;
+		return inferarray;
+	}
+
+	//If either branch(thenCase or elseCase) carries true (is NULL)
+	//Push up the inferences.
+	if (r == NULL) return e;
+	if (e == NULL) return r;
+	//If both are NULL, NULL is returned
+	
+	//If none of the above cases then we have two lists(r and e) which we
+	//return all like single inferences that occur on both side of this node.
+
+	infer *head = NULL;
+	for(infer *r_iter = r; r_iter != NULL; r_iter=r_iter->next) {
+		for(infer *e_iter = e; e_iter != NULL; e_iter=e_iter->next) {
+			if(r_iter->nums[0] == e_iter->nums[0]) {
+				infer *temp = head;
+				head = new infer;
+				head->nums[0] = r_iter->nums[0];
+				head->nums[1] = r_iter->nums[1];
+				head->next = temp;
+				break;
+			}
+		}
+	}
+	infer *temp;
+	while (r!=NULL) { temp = r; r = r->next; delete temp;	}
+	while (e!=NULL) { temp = e; e = e->next; delete temp; }
+	return head;
+}
+
 void cheat_replaceall (int *&length, store * &variables, varinfo * &variablelist) {
 	//Get the max number of input variables
 	int *tempint=NULL;
@@ -524,6 +583,145 @@ void findPathsToFalse (BDDNode *bdd, long *path_max, int **path, intlist *list, 
 void findPathsToTrue (BDDNode *bdd, long *path_max, int **path, intlist *list, int *listx) {
 	int pathx = 0;
 	findPathsToX (bdd, path_max, path, pathx, list, listx, true_ptr);
+}
+
+infer *possible_infer_x(BDDNode *f, int x)
+{
+	if(f->variable < x) return NULL; //This could happen on a path that doesn't involve x
+	//if(IS_TRUE_FALSE(bdd)) return NULL;
+	if(f->variable == x) {
+		if(f->thenCase == true_ptr || f->elseCase == false_ptr) {
+			infer *inference = new infer;
+			inference->nums[0] = x;
+			inference->nums[1] = 0;
+			inference->next = NULL;
+			return inference;
+		} else if(f->elseCase == true_ptr || f->thenCase == false_ptr) {
+			infer *inference = new infer;
+			inference->nums[0] = -x;
+			inference->nums[1] = 0;
+			inference->next = NULL;
+			return inference;
+		} else {
+			infer *head = NULL;
+			infer *temp = NULL;
+			infer *r = Ex_GetInfer(f->thenCase);
+			if(r == NULL) {
+				head = new infer;
+				head->nums[0] = 0;
+				head->nums[1] = 0;
+				head->next = NULL;
+				return head;
+			}
+				  
+			infer *e = Ex_GetInfer(f->elseCase);
+			if(e == NULL) {
+				while (r!=NULL) { temp = r; r = r->next; delete temp;	}
+				head = new infer;
+				head->nums[0] = 0;
+				head->nums[1] = 0;
+				head->next = NULL;
+				return head;
+			}
+			
+			for(infer *r_iter=r; r_iter!=NULL; r_iter=r_iter->next) {
+				for(infer *e_iter=e; e_iter!=NULL; e_iter=e_iter->next) {
+					if(r_iter->nums[0] == -e_iter->nums[0]) {
+						temp = head;
+						head = new infer;
+						head->nums[0] = x;
+						head->nums[1] = r_iter->nums[0];
+						head->next = temp;
+					}
+				}
+			}
+
+			while (r!=NULL) { temp = r; r = r->next; delete temp;	}
+			while (e!=NULL) { temp = e; e = e->next; delete temp;	}
+			
+			if(head == NULL) {
+				head = new infer;
+				head->nums[0] = 0;
+				head->nums[1] = 0;
+				head->next = NULL;
+			}
+			return head;
+		}
+	} else {
+		infer *r = possible_infer_x(f->thenCase, x);
+		if(r != NULL) 
+		  if(r->nums[0] == 0) return r;
+
+		infer *e = possible_infer_x(f->elseCase, x);
+		if(e != NULL) {
+		  if(e->nums[0] == 0) {
+			  while (r!=NULL) { infer *temp = r; r = r->next; delete temp; }
+			  return e;
+		  }
+		}
+		
+		if(r == NULL) return e;
+		if(e == NULL) return r;
+		//If both are NULL, NULL is returned;
+		
+		if((r->nums[1] == 0 && e->nums[1] != 0) ||
+			(r->nums[1] == 0 && e->nums[1] == 0 && r->nums[0] != abs(e->nums[0]))) {
+			infer *temp = new infer;
+			temp->nums[0] = 0;
+			temp->nums[1] = 0;
+			temp->next = NULL;
+			return temp;
+		} else if(r->nums[1] == 0 && e->nums[1] == 0 && r->nums[0] == e->nums[0]) {
+			//Both sides are same inference, return r;
+			while (e!=NULL) { infer *temp = e; e = e->next; delete temp; }
+			return r;
+		} else if(r->nums[1] == 0 && e->nums[1] == 0 && r->nums[0] == -e->nums[0]) {
+			//Sides are opposite inference, return {f->variable, r->nums[1]};
+			r->nums[1] = r->nums[0]; //r->nums[1] = -e->nums[0];
+			r->nums[0] = f->variable;
+			while (e!=NULL) { infer *temp = e; e = e->next; delete temp; }
+			return r;
+		}
+		
+		//They share equivalences of x = {y, -y}
+		//or y = {x, -x}
+		//return all matching equivalences
+
+		infer *head = NULL;
+		for(infer *r_iter = r; r_iter != NULL; r_iter=r_iter->next) {
+			for(infer *e_iter = e; e_iter != NULL; e_iter=e_iter->next) {
+				if(r_iter->nums[0] == e_iter->nums[0] && r_iter->nums[1] == e_iter->nums[1]) {
+					infer *temp = head;
+					head = new infer;
+					head->nums[0] = r_iter->nums[0];
+					head->nums[1] = r_iter->nums[1];
+					head->next = temp;
+					break;
+				} else if(r_iter->nums[0] == e_iter->nums[0] && r_iter->nums[1] == -e_iter->nums[1]) {
+					//delete head, r and e, return 0;
+					infer *temp;
+					while (head!=NULL) {	temp = head; head = head->next; delete temp; }
+					while (r!=NULL) { temp = r; r = r->next; delete temp;	}
+					while (e!=NULL) { temp = e; e = e->next; delete temp; }
+					temp = new infer;
+					temp->nums[0] = 0;
+					temp->nums[1] = 0;
+					temp->next = NULL;
+					return temp;
+				}
+			}
+		}
+		if(head == NULL) {
+			head = new infer;
+			head->nums[0] = 0;
+			head->nums[1] = 0;
+			head->next = NULL;
+		}
+		infer *temp;
+		while (r!=NULL) { temp = r; r = r->next; delete temp;	}
+		while (e!=NULL) { temp = e; e = e->next; delete temp; }
+		return head;
+	}	
 }
 
 void

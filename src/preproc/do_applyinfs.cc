@@ -878,7 +878,7 @@ Rebuild_BDD (BDDNode *bdd, int *bdd_length, int *&bdd_vars)
 	lastinfer->next = NULL;
         
 	unravelBDD(&y, &bdd_tempint_max, &bdd_tempint, bdd);
-   int *tempint = bdd_tempint;;
+   int *tempint = bdd_tempint;
 	if (y != 0) qsort (tempint, y, sizeof (int), compfunc);
 	
 	(*bdd_length) = y;

@@ -66,6 +66,7 @@ int add_newFunctions(BDDNode **, int);
 int Do_Apply_Inferences ();
 int Do_Apply_Inferences_backend ();
 void printBDDInfs(BDDNode *);
+infer *possible_infer_x(BDDNode *f, int x);
 int Do_Strength();
 int Do_Pruning();
 int Do_Pruning_1();

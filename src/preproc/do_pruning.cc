@@ -85,7 +85,7 @@ int DO_PRUNING_FN() {
 	  repeat_small[x] = PRUNE_REPEATS[x];
 
 //   D_3(print_roller_init(););
-	d3_printf1 ("BRANCH PRUNING -  ");
+	d3_printf1 ("BRANCH PRUNING - ");
 	affected = 0;
 	char p[100];
 	D_3(

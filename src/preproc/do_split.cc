@@ -291,7 +291,7 @@ int Split_Large () {
 				}
 				for (int i = 0; i < listx; i++) {
 					BDDFuncs[i] = false_ptr;
-					for(int x = 0; x < list[i].length; x++)
+					for(int x = list[i].length-1; x >= 0; x--)
 					  BDDFuncs[i] = ite_or(BDDFuncs[i], ite_var(-list[i].num[x])); //Need to negate all literals to get CNF!
 					delete [] list[i].num;
 				}

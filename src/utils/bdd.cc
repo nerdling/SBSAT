@@ -739,7 +739,6 @@ BDDNode *ite (BDDNode * x, BDDNode * y, BDDNode * z) {
    if (x == false_ptr) return z;
 
 	if(y == true_ptr && z == false_ptr) return x;
-   
 	//int v = top_variable(x, y, z);
    int v;
    BDDNode * r;
