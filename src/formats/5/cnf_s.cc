@@ -394,7 +394,7 @@ int yy_flex_debug = 1;
 
 static yyconst short int yy_rule_linenum[10] =
     {   0,
-       18,   19,   22,   23,   24,   25,   27,   28,   30
+       22,   23,   26,   27,   28,   29,   31,   32,   34
     } ;
 
 /* The intent behind this definition is that it'll catch
@@ -412,8 +412,12 @@ char *yytext;
 #include "bddnode.h"
 #include "libt5_a-cnf_g.h"
 extern int s_line;
+/* remove warning about unput not used */
+#define YY_NO_UNPUT
+/* remove warning statement has no effect */
+#define ECHO
 /*%option outfile="cnf_s.c"*/
-#line 417 "cnf_s.cc"
+#line 421 "cnf_s.cc"
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -564,10 +568,10 @@ YY_DECL
 	register char *yy_cp = NULL, *yy_bp = NULL;
 	register int yy_act;
 
-#line 16 "cnf_s.ll"
+#line 20 "cnf_s.ll"
 
 
-#line 571 "cnf_s.cc"
+#line 575 "cnf_s.cc"
 
 	if ( yy_init )
 		{
@@ -667,55 +671,55 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 18 "cnf_s.ll"
+#line 22 "cnf_s.ll"
 return P_CNF;
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 19 "cnf_s.ll"
+#line 23 "cnf_s.ll"
 { cnf_lval.num=atoi(yytext); if (cnf_lval.num==0) return ZERO; else return NON_ZERO; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 22 "cnf_s.ll"
+#line 26 "cnf_s.ll"
 /* eat up one-line comments */
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 23 "cnf_s.ll"
+#line 27 "cnf_s.ll"
 /* eat up one-line comments */
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 24 "cnf_s.ll"
+#line 28 "cnf_s.ll"
 /* eat up one-line comments */
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 25 "cnf_s.ll"
+#line 29 "cnf_s.ll"
 /* eat up one-line comments */
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 27 "cnf_s.ll"
+#line 31 "cnf_s.ll"
 /* eat up whitespace */
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 28 "cnf_s.ll"
+#line 32 "cnf_s.ll"
 /* eat up new-lines */ s_line++;
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 30 "cnf_s.ll"
+#line 34 "cnf_s.ll"
 printf( "Unrecognized character: %s\n", yytext ); 
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 32 "cnf_s.ll"
+#line 36 "cnf_s.ll"
 ECHO;
 	YY_BREAK
-#line 719 "cnf_s.cc"
+#line 723 "cnf_s.cc"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1596,6 +1600,6 @@ int main()
 	return 0;
 	}
 #endif
-#line 32 "cnf_s.ll"
+#line 36 "cnf_s.ll"
 
 

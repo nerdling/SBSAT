@@ -3,6 +3,10 @@
 #include "bddnode.h"
 #include "libt5_a-trace_g.h"
 extern int s_line;
+/* remove warning about unput not used */
+#define YY_NO_UNPUT
+/* remove warning statement has no effect */
+#define ECHO
 
 #define FILL_OP(xfn, xfntype) { trace_lval.op2fn.fn=xfn; trace_lval.op2fn.fn_type=xfntype; }
 %}

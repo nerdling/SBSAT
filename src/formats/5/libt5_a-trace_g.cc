@@ -1,4 +1,4 @@
-/* A Bison parser, made from /home/mkouril/tmp/sbsat-2.0b-5/src/formats/5/trace_g.yy
+/* A Bison parser, made from /oldhome/mkouril/sbsat/src/formats/5/trace_g.yy
    by GNU bison 1.35.  */
 
 #define YYBISON 1  /* Identify Bison output.  */

@@ -29,6 +29,8 @@
    extern int spec_fn_bdds;
    extern int t_sym_max;
 
+   void blif_nothing() { /*unput (0);*/ }
+
 #ifndef __attribute__
 #define __attribute__(x)
 #endif
@@ -42,8 +44,8 @@
     BDDNode     *bdd;     /* For returning exp                    */
 }
 
-%token MODEL INPUTS OUTPUTS LATCH NAMES END TT TTONE ID ZEROONE
-%type <id> ID TT TTONE // STRING U_OP
+%token MODEL INPUTS OUTPUTS LATCH NAMES END ID ZEROONE TT TTONE
+//%type <id> ID TT TTONE // STRING U_OP
 // %type <num> INTNUMBER
 // %type <op2fn> OP
 //%type <bdd> exp exp_start
@@ -84,6 +86,7 @@ output:  OUTPUTS varlist
 
 commandslist: /* empty */
          | commandslist commands
+;
 
 commands:  latch
          | names
