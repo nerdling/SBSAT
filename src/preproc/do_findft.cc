@@ -43,7 +43,7 @@ int Do_Find_FunctionType() {
 	affected = 0;
 	d3_printf1("FINDING FUNCTION TYPES - ");
 	D_3(
-		 sprintf(p, "{0:0/%ld}", nmbrFunctions);
+		 sprintf(p, "{0:0/%d}", nmbrFunctions);
 		 str_length = strlen(p);
 		 d3_printf1(p);
 	);
@@ -52,7 +52,7 @@ int Do_Find_FunctionType() {
 			 if (i % ((numinp/100)+1) == 0) {
 				 for(int iter = 0; iter<str_length; iter++)
 					d3_printf1("\b");
-				 sprintf(p, "{%ld:%d/%ld}", affected, i, nmbrFunctions);
+				 sprintf(p, "{%ld:%d/%d}", affected, i, nmbrFunctions);
 				 str_length = strlen(p);
 				 d3_printf1(p);
 			 }

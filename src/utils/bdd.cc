@@ -327,7 +327,7 @@ int splitXors() {
 		total_vars++;
 
 #ifndef NDEBUG
-      BDDNode *savedF = functions[x];
+      //BDDNode *savedF = functions[x];
 #endif
 
 		//xorFunctions[x] = ite_xor(xor_part, ite_var(s_ptr->id));

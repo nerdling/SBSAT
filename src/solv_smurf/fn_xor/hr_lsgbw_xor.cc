@@ -121,8 +121,8 @@ LSGBWXorUpdateFunctionInfEnd(int nFnId)
    fprintf(stderr, "Xor Error: LSGBW is not ready yet\n");
    exit(1);
 
-   int nOldNumRHSUnknowns = arrSolverFunctions[nFnId].fn_xor.nNumRHSUnknownsPrev;
-   int nNumRHSUnknowns = arrSolverFunctions[nFnId].fn_xor.nNumRHSUnknowns;
+   //int nOldNumRHSUnknowns = arrSolverFunctions[nFnId].fn_xor.nNumRHSUnknownsPrev;
+   //int nNumRHSUnknowns = arrSolverFunctions[nFnId].fn_xor.nNumRHSUnknowns;
    //int fOldSumRHSUnknowns = arrSolverFunctions[nFnId].fn_xor.fSumRHSUnknownsPrev;
    //int fSumRHSUnknowns = arrSolverFunctions[nFnId].fn_xor.fSumRHSUnknowns;
    //int counter = arrSolverFunctions[nFnId].fn_xor.counter;
