@@ -68,7 +68,7 @@
 #define TRUE 1
 #define FALSE 0
 
-//#define USE_BRITTLE
+#define USE_BRITTLE
 #define USE_FALSE_PATHS
 
 #define MAX_NODES_PER_BDD 5000
@@ -80,8 +80,6 @@ int numvars; //number of variables
 int numBDDs; //number of BDDs (numout | nmbrFunctions)
 
 int numliterals;
-
-int **clause;			/* clauses to be satisfied */
 
 float *brittlecount;   /* records the brittleness a BDD changes to by flipping a var */
 
@@ -133,7 +131,7 @@ long int numflip;		/* number of changes so far */
 long int numnullflip;		/*  number of times a clause was picked, but no  */
 				/*  variable from it was flipped  */
 int numrun = BIG;
-int cutoff = 10000000;
+int cutoff = 100000;
 int base_cutoff = 1000000;
 int target = 0;
 int numtry = 0;			/* total attempts at solutions */
@@ -606,7 +604,7 @@ int verifyunsat(int i)
 void updateBDDCounts(int i) {
 	BDDNode *f = functions[i];
 	int j = 0, k = 0;
-	float top_t_var = f->t_var;
+	float top_density = f->density;
 	int count = 0;
 #ifdef USE_FALSE_PATHS
 	count = CountFalseBDD(f);
@@ -618,7 +616,7 @@ void updateBDDCounts(int i) {
 		previousState[i].num[0] = f->variable;
 #endif
 		while(!IS_TRUE_FALSE(f)) {
-			top_t_var = f->t_var;
+			top_density = f->density;
 			if(atom[f->variable] == 1) {
 #ifdef USE_FALSE_PATHS
 				int false_count = CountFalseBDD(f->elseCase);
@@ -629,9 +627,9 @@ void updateBDDCounts(int i) {
 				}
 #endif
 #ifdef USE_BRITTLE
-				previousBrittle[i].count[k] = ((float)f->elseCase->t_var - (float)f->thenCase->t_var)/top_t_var;
+				previousBrittle[i].count[k] = (f->elseCase->density - f->thenCase->density)/top_density;
 				previousBrittle[i].num[k++] = f->variable;
-				brittlecount[f->variable]+=((float)f->elseCase->t_var - (float)f->thenCase->t_var)/top_t_var;
+				brittlecount[f->variable]+=(f->elseCase->density - f->thenCase->density)/top_density;
 #endif
 				f = f->thenCase;
 			} else {
@@ -644,9 +642,9 @@ void updateBDDCounts(int i) {
 				}
 #endif
 #ifdef USE_BRITTLE
-				previousBrittle[i].count[k] = ((float)f->thenCase->t_var - (float)f->elseCase->t_var)/top_t_var;
+				previousBrittle[i].count[k] = (f->thenCase->density - f->elseCase->density)/top_density;
 				previousBrittle[i].num[k++] = f->variable;
-				brittlecount[f->variable]+=((float)f->thenCase->t_var - (float)f->elseCase->t_var)/top_t_var;
+				brittlecount[f->variable]+=(f->thenCase->density - f->elseCase->density)/top_density;
 #endif
 				f = f->elseCase;
 			}
@@ -662,7 +660,7 @@ void updateBDDCounts(int i) {
 		previousState[i].num[0] = -(f->variable);
 #endif
 		while(!IS_TRUE_FALSE(f)) {
-			top_t_var = f->t_var;
+			top_density = f->density;
 			if(atom[f->variable] == 1) {
 #ifdef USE_FALSE_PATHS
 				int false_count = CountFalseBDD(f->elseCase);
@@ -673,9 +671,9 @@ void updateBDDCounts(int i) {
 				}
 #endif
 #ifdef USE_BRITTLE
-				previousBrittle[i].count[k] = ((float)f->elseCase->t_var - (float)f->thenCase->t_var)/top_t_var;
+				previousBrittle[i].count[k] = (f->elseCase->density - f->thenCase->density)/top_density;
 				previousBrittle[i].num[k++] = f->variable;
-				brittlecount[f->variable]+=((float)f->elseCase->t_var - (float)f->thenCase->t_var)/top_t_var;
+				brittlecount[f->variable]+=(f->elseCase->density - f->thenCase->density)/top_density;
 #endif
 				f = f->thenCase;
 			} else {
@@ -688,9 +686,9 @@ void updateBDDCounts(int i) {
 				}
 #endif
 #ifdef USE_BRITTLE
-				previousBrittle[i].count[k] = ((float)f->thenCase->t_var - (float)f->elseCase->t_var)/top_t_var;
+				previousBrittle[i].count[k] = (f->thenCase->density - f->elseCase->density)/top_density;
 				previousBrittle[i].num[k++] = f->variable;
-				brittlecount[f->variable]+=((float)f->thenCase->t_var - (float)f->elseCase->t_var)/top_t_var;
+				brittlecount[f->variable]+=(f->thenCase->density - f->elseCase->density)/top_density;
 #endif
 				f = f->elseCase;
 			}
@@ -793,13 +791,19 @@ int picknoveltyplus(void)
 		
 		for(i = 0; i < BDDsize; i++){
 			var = wvariables[tofix].num[i];
-			diff = (float)makecount[var] - (float)breakcount[var];
+/*			if(breakcount[var] == 0 && makecount[var] > 0) {
+				best = var;
+				break;
+			}
+ */
+			//diff = (float)makecount[var] - (float)breakcount[var];
 			//diff = brittlecount[var]/(float)occurence[var].length;
 			//diff = brittlecount[var];
 		   //diff = ((float)makecount[var] - (float)breakcount[var]) + (brittlecount[var]/(float)occurence[var].length);
-			//diff = ((float)makecount[var] - (float)breakcount[var]) + brittlecount[var];
-			//fprintf(stderr, "{%f:", diff);
-			//fprintf(stderr, "%f}", brittlecount[var]);
+			if(makecount[var] < 0) assert(0);
+			diff = ((float)makecount[var] - (float)breakcount[var]) + brittlecount[var];
+			//fprintf(stderr, "{%f4.3:", diff);
+			//fprintf(stderr, "%f4.3}", brittlecount[var]);
 			birthdate = changed[var];
 			if (birthdate > youngest_birthdate){
 				youngest_birthdate = birthdate;
@@ -892,9 +896,9 @@ void flipatoms()
 #ifdef USE_FALSE_PATHS
 			for(j = 0; previousState[cli].num[j]!=0; j++) {
 				if(previousState[cli].num[j] > 0) {
-				  breakcount[previousState[cli].num[j]]-=previousState[cli].count[j];
+					breakcount[previousState[cli].num[j]]-=previousState[cli].count[j];
 				} else {
-				  makecount[-(previousState[cli].num[j])]-=previousState[cli].count[j];
+					makecount[-(previousState[cli].num[j])]-=previousState[cli].count[j];
 				}
 			}
 #endif

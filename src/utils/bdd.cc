@@ -109,19 +109,20 @@ int countnodes(BDDNode *f) {
    return (countnodes(f->thenCase) + countnodes(f->elseCase));	
 }
 
-int mark_trues(BDDNode *f) {
-	if (f->t_var > -1)
-		return f->t_var;
-	f->t_var = mark_trues(f->thenCase);
-   f->t_var += mark_trues(f->elseCase);
-   return f->t_var;
+float mark_trues(BDDNode *f) {
+	if (f->density > -1)
+		return f->density;
+	f->density = mark_trues(f->thenCase);
+   f->density += mark_trues(f->elseCase);
+	f->density = f->density / 2.0;
+   return f->density;
 }
 
 void unmark (BDDNode * f) {
    if (IS_TRUE_FALSE(f))
 	  return;
-	if(f->t_var == -1) return; //Slower or faster?
-   f->t_var = -1;
+	if(f->density == -1) return; //Slower or faster?
+   f->density = -1;
    unmark (f->thenCase);
    unmark (f->elseCase);
    return;
@@ -130,10 +131,10 @@ void unmark (BDDNode * f) {
 void Fill_Density() {
 	for(int x = 0; x < nmbrFunctions; x++)
 	  unmark(functions[x]);
-	true_ptr->t_var = 1;
-	false_ptr->t_var = 0;
+	true_ptr->density = 1;
+	false_ptr->density = 0;
 	for(int x = 0; x < nmbrFunctions; x++) {
-		functions[x]->t_var = mark_trues(functions[x]);
+		functions[x]->density = mark_trues(functions[x]);
 	}
 }
 
