@@ -69,6 +69,8 @@
 #include "j_update_heu.cc"
 #include "j_smurf.cc"
 #include "j_specfn.cc"
+#include "j_specfn_and.cc"
+#include "j_specfn_xor.cc"
 #include "j_heuristic.cc"
 
 /* interactive heuristic */
