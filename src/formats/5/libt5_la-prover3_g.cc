@@ -1343,6 +1343,15 @@ c3_alloc(int max)
 }
 
 void
+prover3_free()
+{
+   for (int i=0;i<c3_max;i++) {
+      ite_free((void**)&c3[i].refs);
+   }
+   ite_free((void**)&c3); c3_max = 0;
+}
+      
+void
 p3_add(char *dst, int argc, int tag, char *arg1, char *arg2)
 {
    int i_dst = s2id(dst);

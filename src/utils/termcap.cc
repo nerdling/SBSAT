@@ -106,6 +106,12 @@ init_terminal_out()
    return 0;
 }
 
+void
+free_terminal_out()
+{
+   ite_free((void**)&ptr);
+}
+
 /*
  * output char function.
  */

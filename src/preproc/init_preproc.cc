@@ -60,6 +60,8 @@ int str_length;
 int preproc_did_nothing = 0;
 long affected;
 BDDNodeStruct **xorFunctions;
+extern long bdd_tempint_max;
+extern int *bdd_tempint;
 
 int Finish_Preprocessing();
 int Init_Preprocessing();
@@ -380,6 +382,8 @@ Finish_Preprocessing()
           */
             functionType[x] = UNSURE;
    }
+
+   ite_free((void**)&bdd_tempint); bdd_tempint_max = 0;
 
 	d3_printf3 ("Number of BDDs - %d\nNuminp = %ld\n", nmbrFunctions, numinp);
 	

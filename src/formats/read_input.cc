@@ -51,6 +51,7 @@ int prover_parse();
 extern FILE *prover_in;
 
 int prover3_parse();
+void prover3_free();
 extern FILE *prover3_in;
 
 int iscas_parse();
@@ -148,6 +149,7 @@ read_input(Tracer * &tracer)
      parser_init();
      prover3_in = finputfile;
      prover3_parse();
+     prover3_free();
      numinp = vars_max;
      numout = functions_max;
   } break;

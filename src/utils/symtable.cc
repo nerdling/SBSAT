@@ -32,6 +32,20 @@ sym_init()
   sym_table_idx = 0;
 }
 
+void
+sym_free()
+{
+   for (int i=0; i< sym_table_idx; i++) {
+      if (sym_table[i] && sym_table[i]->name) {
+         ite_free((void**)&sym_table[i]->name);
+         ite_free((void**)&sym_table[i]);
+      }
+   }
+   ite_free((void**)&sym_hash_table);
+   ite_free((void**)&symtmp_table);
+   ite_free((void**)&sym_table);
+}
+
 symrec *
 sym_hash(char *name)
 {

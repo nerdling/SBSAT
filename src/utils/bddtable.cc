@@ -70,6 +70,7 @@ void bdd_bdd_alloc_pool(int pool)
    }
    bddmemory_vsb[pool].max = _bdd_pool_size; 
    bddmemory_vsb[pool].memory = (BDDNode*)ite_calloc(bddmemory_vsb[pool].max, sizeof(BDDNode), 2, "bdd memory pool");
+   d9_printf2("Allocated BDD Memory Pools %d\n", pool+1);
 }
 
 void FreeInferencePool();
@@ -251,8 +252,8 @@ bdd_gc()
    // don't do it if there are free nodes
    if (bddtable_free != NULL) return;
 
-#ifndef NDEBUG
    d3_printf1("BDD_GC START\n");
+#ifndef NDEBUG
    int totalin=0, totalout=0;
    // count free nodes -- statistics -- can be removed
    BDDNode *p = bddtable_free;

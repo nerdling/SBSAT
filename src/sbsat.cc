@@ -54,6 +54,7 @@ void bdd_circuit_free();
 void wvfSolve();
 void Verify_NoSolver(Tracer *tracer);
 void Verify_Solver(Tracer *tracer);
+void free_terminal_out();
 
 int ite_pre_init();
 void ite_main_free(Tracer *tracer);
@@ -188,6 +189,8 @@ ite_final(int ret, Tracer *tracer)
 
    ite_io_free();
    ite_main_free(tracer);
+   sym_free();
+   ite_free((void**)&length);
 
    ite_counters_f[RUNNING_TIME] = get_runtime();
    if (DEBUG_LVL == 1) {
@@ -204,6 +207,8 @@ ite_final(int ret, Tracer *tracer)
          printf("%s\n", result_string);
       }
    }
+
+   free_terminal_out();
 
    if (ret == SOLV_ERROR) return 1;
    return 0;

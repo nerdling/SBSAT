@@ -47,6 +47,9 @@ extern int Setting_Pos;
 extern int Setting_Neg;
 
 int Rebuild_BDDx (int x);
+long bdd_tempint_max=0;
+int *bdd_tempint=NULL;
+
 
 int
 Do_Apply_Inferences ()
@@ -567,9 +570,8 @@ int Rebuild_BDDx (int x) {
 
 	assert(x!=nmbrFunctions+1);
 	long y = 0;
-   long tempint_max = 0;
-   int *tempint=NULL;
-	unravelBDD(&y, &tempint_max, &tempint, functions[x]);
+	unravelBDD(&y, &bdd_tempint_max, &bdd_tempint, functions[x]);
+   int *tempint=bdd_tempint;
 //	fprintf(stderr, "%d|", y);
 	if (y != 0) qsort (tempint, y, sizeof (int), compfunc);
 //	fprintf(stderr, "%d|", y);
@@ -691,16 +693,14 @@ int Rebuild_BDDx (int x) {
       variables[x].max = tempint[y-1];
    }
 
-   ite_free((void**)&tempint); tempint_max = 0;
-
    //A line like this would be better placed in smurffactory
 	//where the smurfs are made...maybe...we like to be able to preprocess
 	//things that have been made small...
 	//if (length[x] < 3)
 	//  functionType[x] = UNSURE;
 
-	//void bdd_gc();
-	//if(rand() % 100 < 4) bdd_gc();
+	void bdd_gc();
+	if(rand() % 1000 < 4) bdd_gc();
 
 	if (DO_INFERENCES) {
 		//bdd_gc();
@@ -869,9 +869,8 @@ Rebuild_BDD (BDDNode *bdd, int *bdd_length, int *&bdd_vars)
 	lastinfer = previous;
 	lastinfer->next = NULL;
         
-   long tempint_max = 0;
-   int *tempint = NULL;
-	unravelBDD(&y, &tempint_max, &tempint, bdd);
+	unravelBDD(&y, &bdd_tempint_max, &bdd_tempint, bdd);
+   int *tempint = bdd_tempint;;
 	if (y != 0) qsort (tempint, y, sizeof (int), compfunc);
 	
 	(*bdd_length) = y;
@@ -884,7 +883,5 @@ Rebuild_BDD (BDDNode *bdd, int *bdd_length, int *&bdd_vars)
 	//if (DO_INFERENCES)
 	//  return Do_Apply_Inferences();
 
-   ite_free((void**)&tempint); tempint_max = 0;
-	
 	return PREP_NO_CHANGE;
 }
