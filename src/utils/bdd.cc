@@ -41,6 +41,28 @@
 
 #include "ite.h"
 
+BDDNode *f_mitosis (BDDNode *f, BDDNode **x, int *structureBDD)
+{
+   if (IS_TRUE_FALSE(f))
+      return f;
+
+   int v, num = 0;
+   v = f->variable;
+	
+   //  fprintf(stderr, "v %d|", v);
+   for (int iter = 1; iter <= structureBDD[0]; iter++)
+	  if (structureBDD[iter] == v) {
+		  num = iter;
+		  break;
+	  }
+   if (num == 0) {
+      fprintf(stderr, "\nVariable %s not found in translation array...quantifying it away\n", getsym_i(v)->name);
+		return ite_or(f_mitosis(f->thenCase, x, structureBDD), f_mitosis (f->elseCase, x, structureBDD));
+   }
+	return (ite (x[num], f_mitosis (f->thenCase, x, structureBDD), f_mitosis (f->elseCase, x, structureBDD)));
+}
+
+
 BDDNode * mitosis (BDDNode * bdd, int *structureBDD, int *newBDD)
 {
    if (IS_TRUE_FALSE(bdd))	//Takes care of True and False
@@ -57,7 +79,6 @@ BDDNode * mitosis (BDDNode * bdd, int *structureBDD, int *newBDD)
       }
    if (num == 0)
    {
-
       //    fprintf(stderr, "\nVariable %d not found in translation array...quantifying it away\n", v);
       return mitosis (xquantify (bdd, v), structureBDD, newBDD);
    }
@@ -105,9 +126,7 @@ BDDNode * f_apply (BDDNode * f, BDDNode ** x)
 {
    if (IS_TRUE_FALSE(f))
       return f;
-   return (ite
-         (x[f->variable], f_apply (f->thenCase, x),
-          f_apply (f->elseCase, x)));
+   return (ite (x[f->variable], f_apply (f->thenCase, x), f_apply (f->elseCase, x)));
 }
 
 #define print_bdd(f) print_bdd1(f, 0)
