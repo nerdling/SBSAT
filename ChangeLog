@@ -1,3 +1,31 @@
+2004-06-14 11:28  mkouril
+
+	* src/: preproc/do_exquantify.cc,
+	solv_smurf/fn_smurf_au/bt_smurf_au.cc: Autarky smurfs asserts
+
+2004-06-14 10:45  fett
+
+	* src/preproc/init_preproc.cc: added more print statements when
+	finishing reprocessing.
+	
+	  ~Sean
+
+2004-06-13 12:04  fett
+
+	* src/utils/bdd.cc: now possible_bdd will do what it did a few days
+	ago, just reverted the change. It produces more general bdds this
+	way.
+	
+	  ~Sean
+
+2004-06-13 12:03  fett
+
+	* src/solv_smurf/fn_smurf_au/transitions_au.cc: Changed a comment.
+
+2004-06-13 12:03  fett
+
+	* ChangeLog: nothing
+
 2004-06-13 00:29  fett
 
 	* src/solv_smurf/fn_smurf_au/: bdd2smurf_au.cc, transitions_au.cc:
