@@ -5,7 +5,7 @@ SOURCES= create_infs.cc do_cofactor.cc   do_exquantify.cc   \
 	preprocess.cc do_pruning_1.cc do_pruning_2.cc      \
 	do_pruning_restrict.cc do_flow.cc do_pruning_pr.cc \
 	do_split.cc do_steal.cc do_rewind.cc do_clearft.cc \
-	do_prover3.cc
+	do_prover3.cc equivclass.cc
 
 if MYLIBTOOL
 noinst_LTLIBRARIES = libpreproc.la
