@@ -126,8 +126,6 @@ Tracer::Tracer (char *filename) {
    nsmurfs = 0;
    max_inp_lst_sz = 7;
    hash_table = false;
-   symbols->put("(true)", new Integer(nsymbols++, "(true)"));
-   symbols->put("(false)", new Integer(nsymbols++, "(false)"));
 }
 
 Tracer::Tracer (char *filename, int sw) {
