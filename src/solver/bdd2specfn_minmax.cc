@@ -45,7 +45,6 @@ BDD2Specfn_MINMAX(BDDNodeStruct *pFunc,
       SpecialFunc *pSpecialFunc
       )
 {
-   if (NO_LEMMAS==0) { fprintf(stderr, "Lemmas for MINMAX are not ready\n"); exit(1); }
    assert(nFunctionType == MINMAX); // PLAINMINMAX?
 
    // We assume that special func has no implied literals.

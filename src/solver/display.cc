@@ -337,6 +337,7 @@ void DisplayBacktrackInfo(double &fPrevEndTime, double &fStartTime)
       if (nNumSpecialFuncs) {
          d2_printf2("ANDs: %lld; ", ite_counters[INF_SPEC_FN_AND]);
          d2_printf2("XORs: %lld; ", ite_counters[INF_SPEC_FN_XOR]);
+         d2_printf2("MINMAXs: %lld; ", ite_counters[INF_SPEC_FN_MINMAX]);
       }
       if (NO_LEMMAS == 0) d2_printf2("lemmas: %lld; ", ite_counters[INF_LEMMA]);
       d2_printf1("\n");
@@ -346,6 +347,7 @@ void DisplayBacktrackInfo(double &fPrevEndTime, double &fStartTime)
       if (nNumSpecialFuncs) {
          d2_printf2("ANDs: %lld; ", ite_counters[ERR_BT_SPEC_FN_AND]);
          d2_printf2("XORs: %lld; ", ite_counters[ERR_BT_SPEC_FN_XOR]);
+         d2_printf2("MINMAXs: %lld; ", ite_counters[ERR_BT_SPEC_FN_MINMAX]);
       }
       if (NO_LEMMAS == 0) d2_printf2("lemmas: %lld; ", ite_counters[ERR_BT_LEMMA]);
       d2_printf1("\n");

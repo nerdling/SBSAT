@@ -48,7 +48,7 @@ extern LemmaBlock *pConflictLemma;
 ITE_INLINE void FillLemmaWithReversedPolarities(LemmaBlock *pLemma);
 
 ITE_INLINE void
-InferNLits_MINMAX(SpecialFunc *pSpecialFunc, int n, int value)
+InferNLits_MINMAX(SpecialFunc *pSpecialFunc, int nNumRHSUnknowns, int value)
 {
    int nNumElts = pSpecialFunc->rhsVbles.nNumElts;
    int *arrElts = pSpecialFunc->rhsVbles.arrElts;
@@ -60,18 +60,46 @@ InferNLits_MINMAX(SpecialFunc *pSpecialFunc, int n, int value)
       arrNewPolar[BOOL_TRUE] = BOOL_FALSE;
       arrNewPolar[BOOL_FALSE] = BOOL_TRUE;
    }
-   for (int j = 0; j < nNumElts && n; j++)
+   if (NO_LEMMAS == 1) 
    {
-      if (arrSolution[arrElts[j]] == BOOL_UNKNOWN)
+      for (int j = 0; j < nNumElts; j++)
       {
-         n--;
-         InferLiteral(arrElts[j], arrNewPolar[pSpecialFunc->arrRHSPolarities[j]],
-               false,
-               NULL/*pSpecialFunc->arrShortLemmas[j]*/, // FIXME: set up lemmas
-               NULL, 1);
+         int vble = arrElts[j];
+         if (arrSolution[vble] == BOOL_UNKNOWN)
+         {
+            InferLiteral(vble, arrNewPolar[pSpecialFunc->arrRHSPolarities[j]],
+                  false, NULL, NULL, 1);
+         }
       }
+   } else {
+      int *arrLits = (int*)ite_calloc(nNumElts-nNumRHSUnknowns+1, sizeof(int), 
+            9, "arrlits for minmax infer lemma");
+      int nLitsPos = 0;
+      for(int j=0; j<nNumElts; j++)
+      {
+         int vble = arrElts[j];
+         if (arrSolution[vble]!=BOOL_UNKNOWN)
+         {
+            arrLits[nLitsPos++] = vble * (arrSolution[vble]==pSpecialFunc->arrRHSPolarities[j]?-1:1);
+         }
+      }
+      assert(nLitsPos == nNumElts-nNumRHSUnknowns);
+      LemmaBlock *pLemma = NULL;
+      LemmaInfoStruct *pLemmaInfo = NULL;
+      for (int j = 0; j < nNumElts; j++)
+      {
+         int vble = arrElts[j];
+         if (arrSolution[vble] == BOOL_UNKNOWN)
+         {
+            arrLits[nLitsPos++] = vble * (arrNewPolar[pSpecialFunc->arrRHSPolarities[j]]==BOOL_TRUE?1:-1);
+            pLemmaInfo=AddLemma(nNumElts-nNumRHSUnknowns+1, arrLits, false, NULL, NULL);
+            pLemma = pLemmaInfo->pLemma;
+            InferLiteral(vble, arrNewPolar[pSpecialFunc->arrRHSPolarities[j]],
+                  false, pLemma, pLemmaInfo, 1);
+         }
+      }
+      free(arrLits);
    }
-   assert(n==0);
 }
 
 
@@ -115,9 +143,26 @@ UpdateSpecialFunction_MINMAX(IndexRoleStruct *pIRS)
          // Conflict -- backtrack.
          // create lemma 
          if (NO_LEMMAS == 0) {
-            assert(pSpecialFunc->pLongLemma);
-            FillLemmaWithReversedPolarities(pSpecialFunc->pLongLemma);
-            pConflictLemma = pSpecialFunc->pLongLemma;
+            //assert(pSpecialFunc->pLongLemma);
+            //FillLemmaWithReversedPolarities(pSpecialFunc->pLongLemma);
+            //pConflictLemma = pSpecialFunc->pLongLemma;
+            
+            /* assign it to pConflictLemmaInfo so we can free it */
+            int *arrLits = (int*)ite_calloc(nNumElts-nNumRHSUnknowns, sizeof(int), 
+                  9, "arrlits for minmax conflict lemma");
+            int nLitsPos=0;
+            for(int j=0; j<nNumElts; j++)
+            {
+               int vble = arrElts[j];
+               if (arrSolution[vble]!=BOOL_UNKNOWN)
+               {
+                  // reverse all polarities
+                  arrLits[nLitsPos++] = vble * (arrSolution[vble]==pSpecialFunc->arrRHSPolarities[j]?-1:1);
+               }
+            }
+            pConflictLemmaInfo = AddLemma(nLitsPos, arrLits, false, NULL, NULL);
+            pConflictLemma = pConflictLemmaInfo->pLemma;
+            free(arrLits);
          }
          // goto_Backtrack;
          return ERR_BT_SPEC_FN_MINMAX;
