@@ -169,7 +169,7 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 			if(found_word == 1) {
 				macros[i] = '$';
 				macros[i+1] = 0;
-				initbranch_vars[num_initbranch] = new char[i+1];
+				initbranch_vars[num_initbranch] = new char[i+2];
 				strcpy(initbranch_vars[num_initbranch], macros);
 				num_initbranch++;
 				if(num_initbranch >= max_initbranch) {
@@ -213,7 +213,7 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 		order = getNextSymbol (intnum, bdd);
 		
 		int max_vlist = 0;
-		defines[whereat].vlist = (int *)ite_recalloc(defines[whereat].vlist, max_vlist, max_vlist+10, sizeof(int), 9, "defines[whereat].vlist");
+		defines[whereat].vlist = (int *)ite_recalloc(NULL, max_vlist, max_vlist+10, sizeof(int), 9, "defines[whereat].vlist");
 		max_vlist+=10;
 
       while (order != '#') {
@@ -314,7 +314,7 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 			ints[i] = v2->variable;
 		}
 		ints[0] = v1->variable;
-		char *tv = new char[1 << v1->variable];
+		char *tv = new char[(1 << v1->variable) +1];
 		order = getNextSymbol (intnum, bdd);
 
 		for(long i = 0; i < 1 << v1->variable; i++) {
@@ -333,7 +333,9 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 		int level = 0;
 		functionType[nmbrFunctions] = UNSURE;
       strcpy (macros, "truth_table");
-	   return ReadSmurf (&y, tv, level, &(ints[1]), ints[0]);
+		BDDNode *tempBDD = ReadSmurf (&y, tv, level, &(ints[1]), ints[0]);
+		delete [] tv;
+		return tempBDD;
 	}
 	if (!strcasecmp(macros, "mitosis")) {
 		BDDNode * v1 = putite (intnum, bdd);
@@ -413,7 +415,9 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 		qsort(var_list, v1->variable, sizeof(int), abscompfunc);
 		functionType[nmbrFunctions] = MINMAX;
       strcpy (macros, "minmax");
-		return MinMaxBDD(var_list, min, max, v1->variable, set_true);
+		BDDNode *tempBDD = MinMaxBDD(var_list, min, max, v1->variable, set_true);
+		delete [] var_list;
+		return tempBDD;
 	}
 	if (!strcasecmp (macros, "exist")) {
 		BDDNode * v1 = putite (intnum, bdd);
@@ -1076,11 +1080,13 @@ void bddloop () {
 	}
 	d2_printf1("\rReading ITE ... Done\n");
 	for(int x = 0; x < num_initbranch; x++)
-	  ite_free((void **)&initbranch_vars[x]);
+	  delete [] initbranch_vars[x];
 	ite_free((void **)&initbranch_vars);
 	ite_free((void **)&keep);
-	for(int x = 0; x < totaldefines; x++)
+	for(int x = 0; x < totaldefines; x++) {
 	  ite_free((void **)&defines[x].string);
+	  ite_free((void **)&defines[x].vlist);
+	}
 	ite_free((void **)&defines);
 	ite_free((void **)&integers);
 	ite_free((void **)&macros);

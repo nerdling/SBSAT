@@ -149,199 +149,199 @@ void bdd2cnf (BDDNode * bdd, int *curr, int *cl_cnt, FILE * ft) {
       // i (if):     made-up variable: true iff v=T and t=T or v=F and e=T 
       e = bdd->elseCase->t_var;
       if (e == 0) {
-	 if (bdd->elseCase == true_ptr) {
-	    e = T;
-	 } else if (bdd->elseCase == false_ptr) {
-	    e = F;
-	 } else {
-	    bdd2cnf (bdd->elseCase, curr, cl_cnt, ft);
-	    e = bdd->elseCase->t_var;
-	 }
+			if (bdd->elseCase == true_ptr) {
+				e = T;
+			} else if (bdd->elseCase == false_ptr) {
+				e = F;
+			} else {
+				bdd2cnf (bdd->elseCase, curr, cl_cnt, ft);
+				e = bdd->elseCase->t_var;
+			}
       }
-
+		
       t = bdd->thenCase->t_var;
       if (t == 0) {
-	 if (bdd->thenCase == true_ptr) {
-	    t = T;
-	 } else if (bdd->thenCase == false_ptr) {
-	    t = F;
-	 } else {
-	    bdd2cnf (bdd->thenCase, curr, cl_cnt, ft);
-	    t = bdd->thenCase->t_var;
-	 }
+			if (bdd->thenCase == true_ptr) {
+				t = T;
+			} else if (bdd->thenCase == false_ptr) {
+				t = F;
+			} else {
+				bdd2cnf (bdd->thenCase, curr, cl_cnt, ft);
+				t = bdd->thenCase->t_var;
+			}
       }
-
+		
       i = bdd->t_var;
       if (i == 0) {
-	 i = (*curr)++;
-	 bdd->t_var = i;
+			i = (*curr)++;
+			bdd->t_var = i;
       }
-
+		
       v = bdd->variable;
-
+		
       // Ready to output clauses to file:                    
       // Generally it's:                                     
       // (i, v, !e) & (i, !v, !t) & (!i, v, e) & (!i, !v, t) 
       // First clause:
       if (e == T) {
-	 if (abs (i) < abs (v))
-	    sprintf (buffer, "%d %d 0\n", i, v);
-	 else
-	    sprintf (buffer, "%d %d 0\n", v, i);
-	 if (fputs (buffer, ft) < 0) {
-	    fprintf(stderr, "Error writing to bdd_tmp.cnf\n");
-	    unlink ("bdd_tmp.cnf");
-	    exit (1);
-	 }
-	 (*cl_cnt)++;
+			if (abs (i) < abs (v))
+			  sprintf (buffer, "%d %d 0\n", i, v);
+			else
+			  sprintf (buffer, "%d %d 0\n", v, i);
+			if (fputs (buffer, ft) < 0) {
+				fprintf(stderr, "Error writing to bdd_tmp.cnf\n");
+				unlink ("bdd_tmp.cnf");
+				exit (1);
+			}
+			(*cl_cnt)++;
       } else if (e != F) {
-	 if (abs (i) < abs (v)) {
-	    if (abs (i) < abs (e)) {
-	       if (abs (v) < abs (e))
-		  sprintf (buffer, "%d %d %d 0\n", i, v, -e);
-	       else
-		  sprintf (buffer, "%d %d %d 0\n", i, -e, v);
-	    } else {
-	       sprintf (buffer, "%d %d %d 0\n", -e, i, v);
-	    }
-	 } else {
-	    if (abs (e) < abs (v)) {
-	       sprintf (buffer, "%d %d %d 0\n", -e, v, i);
-	    } else {
-	       if (abs (i) < abs (e))
-		  sprintf (buffer, "%d %d %d 0\n", v, i, -e);
-	       else
-		  sprintf (buffer, "%d %d %d 0\n", v, -e, i);
-	    }
-	 }
-	 if (fputs (buffer, ft) < 0) {
-	    fprintf(stderr, "Error writing to bdd_tmp.cnf\n");
-	    unlink ("bdd_tmp.cnf");
-	    exit (1);
-	 }
-	 (*cl_cnt)++;
+			if (abs (i) < abs (v)) {
+				if (abs (i) < abs (e)) {
+					if (abs (v) < abs (e))
+					  sprintf (buffer, "%d %d %d 0\n", i, v, -e);
+					else
+					  sprintf (buffer, "%d %d %d 0\n", i, -e, v);
+				} else {
+					sprintf (buffer, "%d %d %d 0\n", -e, i, v);
+				}
+			} else {
+				if (abs (e) < abs (v)) {
+					sprintf (buffer, "%d %d %d 0\n", -e, v, i);
+				} else {
+					if (abs (i) < abs (e))
+					  sprintf (buffer, "%d %d %d 0\n", v, i, -e);
+					else
+					  sprintf (buffer, "%d %d %d 0\n", v, -e, i);
+				}
+			}
+			if (fputs (buffer, ft) < 0) {
+				fprintf(stderr, "Error writing to bdd_tmp.cnf\n");
+				unlink ("bdd_tmp.cnf");
+				exit (1);
+			}
+			(*cl_cnt)++;
       }
       // Second clause:
       if (t == T) {
-	 if (abs (i) < abs (v))
-	    sprintf (buffer, "%d -%d 0\n", i, v);
-	 else
-	    sprintf (buffer, "-%d %d 0\n", v, i);
-	 if (fputs (buffer, ft) < 0) {
-	    fprintf(stderr, "Error writing to bdd_tmp.cnf\n");
-	    unlink ("bdd_tmp.cnf");
-	    exit (1);
-	 }
-	 (*cl_cnt)++;
+			if (abs (i) < abs (v))
+			  sprintf (buffer, "%d -%d 0\n", i, v);
+			else
+			  sprintf (buffer, "-%d %d 0\n", v, i);
+			if (fputs (buffer, ft) < 0) {
+				fprintf(stderr, "Error writing to bdd_tmp.cnf\n");
+				unlink ("bdd_tmp.cnf");
+				exit (1);
+			}
+			(*cl_cnt)++;
       } else if (t != F) {
-	 if (abs (i) < abs (v)) {
-	    if (abs (i) < abs (t)) {
-	       if (abs (v) < abs (t))
-		  sprintf (buffer, "%d -%d %d 0\n", i, v, -t);
-	       else
-		  sprintf (buffer, "%d %d -%d 0\n", i, -t, v);
-	    } else {
-	       sprintf (buffer, "%d %d -%d 0\n", -t, i, v);
-	    }
-	 } else {
-	    if (abs (t) < abs (v)) {
-	       sprintf (buffer, "%d -%d %d 0\n", -t, v, i);
-	    } else {
-	       if (abs (i) < abs (t))
-		  sprintf (buffer, "-%d %d %d 0\n", v, i, -t);
-	       else
-		  sprintf (buffer, "-%d %d %d 0\n", v, -t, i);
-	    }
-	 }
-	 if (fputs (buffer, ft) < 0) {
-	    fprintf(stderr, "Error writing to bdd_tmp.cnf\n");
-	    unlink ("bdd_tmp.cnf");
-	    exit (1);
-	 }
-	 (*cl_cnt)++;
+			if (abs (i) < abs (v)) {
+				if (abs (i) < abs (t)) {
+					if (abs (v) < abs (t))
+					  sprintf (buffer, "%d -%d %d 0\n", i, v, -t);
+					else
+					  sprintf (buffer, "%d %d -%d 0\n", i, -t, v);
+				} else {
+					sprintf (buffer, "%d %d -%d 0\n", -t, i, v);
+				}
+			} else {
+				if (abs (t) < abs (v)) {
+					sprintf (buffer, "%d -%d %d 0\n", -t, v, i);
+				} else {
+					if (abs (i) < abs (t))
+					  sprintf (buffer, "-%d %d %d 0\n", v, i, -t);
+					else
+					  sprintf (buffer, "-%d %d %d 0\n", v, -t, i);
+				}
+			}
+			if (fputs (buffer, ft) < 0) {
+				fprintf(stderr, "Error writing to bdd_tmp.cnf\n");
+				unlink ("bdd_tmp.cnf");
+				exit (1);
+			}
+			(*cl_cnt)++;
       }
       // Third clause:
       if (e == F) {
-	 if (abs (i) < abs (v))
-	    sprintf (buffer, "%d %d 0\n", -i, v);
-	 else
-	    sprintf (buffer, "%d %d 0\n", v, -i);
-	 if (fputs (buffer, ft) < 0) {
-	    fprintf(stderr, "Error writing to bdd_tmp.cnf\n");
-	    unlink ("bdd_tmp.cnf");
-	    exit (1);
-	 }
-	 (*cl_cnt)++;
+			if (abs (i) < abs (v))
+			  sprintf (buffer, "%d %d 0\n", -i, v);
+			else
+			  sprintf (buffer, "%d %d 0\n", v, -i);
+			if (fputs (buffer, ft) < 0) {
+				fprintf(stderr, "Error writing to bdd_tmp.cnf\n");
+				unlink ("bdd_tmp.cnf");
+				exit (1);
+			}
+			(*cl_cnt)++;
       } else if (e != T) {
-	 if (abs (i) < abs (v)) {
-	    if (abs (i) < abs (e)) {
-	       if (abs (v) < abs (e))
-		  sprintf (buffer, "%d %d %d 0\n", -i, v, e);
-	       else
-		  sprintf (buffer, "%d %d %d 0\n", -i, e, v);
-	    } else {
-	       sprintf (buffer, "%d %d %d 0\n", e, -i, v);
-	    }
-	 } else {
-	    if (abs (e) < abs (v)) {
-	       sprintf (buffer, "%d %d %d 0\n", e, v, -i);
-	    } else {
-	       if (abs (i) < abs (e))
-		  sprintf (buffer, "%d %d %d 0\n", v, -i, e);
-	       else
-		  sprintf (buffer, "%d %d %d 0\n", v, e, -i);
-	    }
-	 }
-	 if (fputs (buffer, ft) < 0) {
-	    fprintf(stderr, "Error writing to bdd_tmp.cnf\n");
-	    unlink ("bdd_tmp.cnf");
-	    exit (1);
-	 }
-	 (*cl_cnt)++;
+			if (abs (i) < abs (v)) {
+				if (abs (i) < abs (e)) {
+					if (abs (v) < abs (e))
+					  sprintf (buffer, "%d %d %d 0\n", -i, v, e);
+					else
+					  sprintf (buffer, "%d %d %d 0\n", -i, e, v);
+				} else {
+					sprintf (buffer, "%d %d %d 0\n", e, -i, v);
+				}
+			} else {
+				if (abs (e) < abs (v)) {
+					sprintf (buffer, "%d %d %d 0\n", e, v, -i);
+				} else {
+					if (abs (i) < abs (e))
+					  sprintf (buffer, "%d %d %d 0\n", v, -i, e);
+					else
+					  sprintf (buffer, "%d %d %d 0\n", v, e, -i);
+				}
+			}
+			if (fputs (buffer, ft) < 0) {
+				fprintf(stderr, "Error writing to bdd_tmp.cnf\n");
+				unlink ("bdd_tmp.cnf");
+				exit (1);
+			}
+			(*cl_cnt)++;
       }
       // Fourth clause:
       if (t == F) {
-	 if (abs (i) < abs (v))
-	    sprintf (buffer, "%d -%d 0\n", -i, v);
-	 else
-	    sprintf (buffer, "-%d %d 0\n", v, -i);
-	 if (fputs (buffer, ft) < 0) {
-	    fprintf(stderr, "Error writing to bdd_tmp.cnf\n");
-	    unlink ("bdd_tmp.cnf");
-	    exit (1);
-	 }
-	 (*cl_cnt)++;
+			if (abs (i) < abs (v))
+			  sprintf (buffer, "%d -%d 0\n", -i, v);
+			else
+			  sprintf (buffer, "-%d %d 0\n", v, -i);
+			if (fputs (buffer, ft) < 0) {
+				fprintf(stderr, "Error writing to bdd_tmp.cnf\n");
+				unlink ("bdd_tmp.cnf");
+				exit (1);
+			}
+			(*cl_cnt)++;
       } else if (t != T) {
-	 if (abs (i) < abs (v)) {
-	    if (abs (i) < abs (t)) {
-	       if (abs (v) < abs (t))
-		  sprintf (buffer, "%d -%d %d 0\n", -i, v, t);
-	       else
-		  sprintf (buffer, "%d %d -%d 0\n", -i, t, v);
-	    } else {
-	       sprintf (buffer, "%d %d -%d 0\n", t, -i, v);
-	    }
-	 } else {
-	    if (abs (t) < abs (v)) {
-	       sprintf (buffer, "%d -%d %d 0\n", t, v, -i);
-	    } else {
-	       if (abs (i) < abs (t))
-		  sprintf (buffer, "-%d %d %d 0\n", v, -i, t);
-	       else
-		  sprintf (buffer, "-%d %d %d 0\n", v, t, -i);
-	    }
-	 }
-	 if (fputs (buffer, ft) < 0) {
-	    fprintf(stderr, "Error writing to bdd_tmp.cnf\n");
-	    unlink ("bdd_tmp.cnf");
-	    exit (1);
-	 }
-	 (*cl_cnt)++;
+			if (abs (i) < abs (v)) {
+				if (abs (i) < abs (t)) {
+					if (abs (v) < abs (t))
+					  sprintf (buffer, "%d -%d %d 0\n", -i, v, t);
+					else
+					  sprintf (buffer, "%d %d -%d 0\n", -i, t, v);
+				} else {
+					sprintf (buffer, "%d %d -%d 0\n", t, -i, v);
+				}
+			} else {
+				if (abs (t) < abs (v)) {
+					sprintf (buffer, "%d -%d %d 0\n", t, v, -i);
+				} else {
+					if (abs (i) < abs (t))
+					  sprintf (buffer, "-%d %d %d 0\n", v, -i, t);
+					else
+					  sprintf (buffer, "-%d %d %d 0\n", v, t, -i);
+				}
+			}
+			if (fputs (buffer, ft) < 0) {
+				fprintf(stderr, "Error writing to bdd_tmp.cnf\n");
+				unlink ("bdd_tmp.cnf");
+				exit (1);
+			}
+			(*cl_cnt)++;
       }
    }
 }
 
-// Makes a CNF expression from a given _ircuit "c"                             
+// Makes a CNF expression from a given _ircuit "c"
 // Output is standard out                                                      
 // Input is a _ircuit "c" consisting of BDDs with variables identified as ints 
 // Process depends on creating new (made-up) variables, at most one for each   
