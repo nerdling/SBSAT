@@ -103,7 +103,8 @@ Do_Apply_Inferences ()
 				d3_printf3 ("{%d=%d}", inferlist->nums[0], inferlist->nums[1]);
 				str_length = 0;
 				variablelist[inferlist->nums[1]].equalvars = inferlist->nums[0];
-				independantVars[inferlist->nums[0]] = independantVars[inferlist->nums[1]];
+				if(independantVars[inferlist->nums[1]] == 2)
+				  independantVars[inferlist->nums[0]] = 2;
 				for (llist * k = amount[inferlist->nums[1]].head; k != NULL;) {
 					int j = k->num;
 					k = k->next; //This must be done here because k could be deleted in Rebuild_BDDx()
@@ -160,7 +161,8 @@ Do_Apply_Inferences ()
 				d3_printf3 ("{%d=%d}", inferlist->nums[0], inferlist->nums[1]);
 				variablelist[-inferlist->nums[1]].equalvars = -inferlist->nums[0];
 				//Gotta keep that (-inferlist->nums[0]) negative...trust me
-				independantVars[inferlist->nums[0]] = independantVars[-inferlist->nums[1]];
+				if(independantVars[-inferlist->nums[1]] == 2)
+				  independantVars[inferlist->nums[0]] = 2;
 				for (llist * k = amount[-inferlist->nums[1]].head; k != NULL;) {
 					int j = k->num;
 					k = k->next; //This must be done here because k could be deleted in Rebuild_BDDx()
