@@ -1,0 +1,25 @@
+#!/bin/sh
+
+echo ===========================================
+echo Checking example tests
+echo ===========================================
+
+for i in @top_srcdir@/examples/*.???
+do
+ echo @ECHO_N@ "`basename $i` ... @ECHO_C@"
+ PARAMS=
+ if [ -f $i.params ] ; then
+   PARAMS=`cat $i.params`
+ fi
+ ../src/sbsat --ini @top_srcdir@/tests/emptyite.ini --debug 0 $i $PARAMS
+ if [ $? != 0 ] ; then
+    exit 1;
+ fi
+done
+
+echo ===========================================
+echo Done - Sucess
+echo ===========================================
+
+exit 0
+
