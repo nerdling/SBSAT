@@ -40,9 +40,11 @@
  **********************************************************************/  
 
 #include "ite.h"
+#include "formats.h"
 
 int zecc_limit;
 int *zecc_arr;
+extern int *tempint;
 
 //If you want character support for strings and things, look in markbdd.c and copy that...
 char getNextSymbol_CNF (char macros[20], int &intnum) {

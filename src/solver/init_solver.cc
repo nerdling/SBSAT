@@ -66,12 +66,12 @@ RecordInitialInferences()
          continue;
       }
       pFunc = arrFunctions[i];
-      if (pFunc->addons->pImplied == NULL) {
+      if (SFADDONS(pFunc->addons)->pImplied == NULL) {
          // There is no literal implicant for this smurf ??
          dE_printf1("CHECK ME -- no implicant for the smurf\n");
          continue;
       }
-      LiteralSetIterator litsetNext(*(pFunc->addons->pImplied));
+      LiteralSetIterator litsetNext(*(SFADDONS(pFunc->addons)->pImplied));
       while (litsetNext(nVble, bValueOfVble))
       {
          nVble = arrIte2SolverVarMap[nVble];
@@ -157,7 +157,7 @@ CreateAffectedFuncsStructures(int nMaxVbleIndex)
    // and regular Smurfs which will mention it when the brancher starts.
    for (int nFuncIndex = 0; nFuncIndex < nmbrFunctions; nFuncIndex++)
    {
-      IntegerSetIterator isetNext(*(arrFunctions[nFuncIndex]->addons->pReduct->addons->pVbles));
+      IntegerSetIterator isetNext(*(SFADDONS(SFADDONS(arrFunctions[nFuncIndex]->addons)->pReduct->addons)->pVbles));
 
       if (IsSpecialFunc(arrFuncType[nFuncIndex]))
       {
@@ -177,7 +177,7 @@ CreateAffectedFuncsStructures(int nMaxVbleIndex)
 
          if (xorFunctions[nFuncIndex])
          {
-            IntegerSetIterator isetNext(*(xorFunctions[nFuncIndex]->addons->pReduct->addons->pVbles));
+            IntegerSetIterator isetNext(*(SFADDONS(SFADDONS(xorFunctions[nFuncIndex]->addons)->pReduct->addons)->pVbles));
             while (isetNext(nVble))
             {
                arrAFS[arrIte2SolverVarMap[nVble]].nNumSpecialFuncsAffected++;
@@ -223,7 +223,7 @@ CreateAffectedFuncsStructures(int nMaxVbleIndex)
    {
       if (IsSpecialFunc(arrFuncType[nFuncIndex]))
       {
-         IntegerSetIterator isetNext(*(arrFunctions[nFuncIndex]->addons->pReduct->addons->pVbles));
+         IntegerSetIterator isetNext(*(SFADDONS(SFADDONS(arrFunctions[nFuncIndex]->addons)->pReduct->addons)->pVbles));
          while (isetNext(nVble))
          {
             assert(nVble != 0);
@@ -284,7 +284,7 @@ CreateAffectedFuncsStructures(int nMaxVbleIndex)
       }
       else
       {
-         IntegerSetIterator isetNext(*(arrFunctions[nFuncIndex]->addons->pReduct->addons->pVbles));
+         IntegerSetIterator isetNext(*(SFADDONS(SFADDONS(arrFunctions[nFuncIndex]->addons)->pReduct->addons)->pVbles));
 
          // Current constraint is represented as a regular Smurf.
          while (isetNext(nVble))
@@ -297,7 +297,7 @@ CreateAffectedFuncsStructures(int nMaxVbleIndex)
          }
          nRegSmurfIndex++;
          if (xorFunctions[nFuncIndex]) {
-            IntegerSetIterator isetNext(*(xorFunctions[nFuncIndex]->addons->pReduct->addons->pVbles));
+            IntegerSetIterator isetNext(*(SFADDONS(SFADDONS(xorFunctions[nFuncIndex]->addons)->pReduct->addons)->pVbles));
             /* FIXME: copy from the above -- create function for this: */
          while (isetNext(nVble))
          {

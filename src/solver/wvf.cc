@@ -20,6 +20,8 @@
 //#define TRACE_FLAG // to enable trace feature
 
 //#define ZERO_ONE_VAR 65535
+#define ZERO_ONE_VAR ((1 << 20) - 1)
+
 #undef T
 
 // defines to control memory management

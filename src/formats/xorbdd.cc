@@ -40,6 +40,7 @@
  *********************************************************/  
 
 #include "ite.h"
+#include "formats.h"
 
 char getNextSymbol (char *&, int &intnum, BDDNode * &);
 

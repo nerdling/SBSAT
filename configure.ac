@@ -7,46 +7,6 @@ AM_INIT_AUTOMAKE(sbsat,2.0b-22)
 AC_CONFIG_SRCDIR([include/brancher.h])
 AC_CONFIG_HEADER([include/config.h])
 
-# Checks for programs.
-AC_PROG_AWK
-AC_PROG_CXX
-#AC_PROG_CC
-AC_PROG_RANLIB
-AM_PROG_LEX
-AC_PROG_YACC
-
-# Checks for libraries.
-
-# Checks for header files.
-AC_HEADER_STDC
-AC_CHECK_HEADERS([fcntl.h inttypes.h limits.h memory.h stddef.h stdint.h stdlib.h string.h strings.h sys/param.h sys/time.h termios.h unistd.h])
-
-# Also check for these headers
-AC_CHECK_HEADERS([string])
-AC_CHECK_HEADERS([signal.h assert.h])
-AC_CHECK_HEADERS([iostream.h fstream.h iostream fstream ])
-AC_CHECK_HEADERS([sys/types.h sys/times.h sys/resource.h sys/wait.h])
-AC_CHECK_HEADERS([sys/stat.h ctype.h math.h])
-AC_CHECK_HEADERS([termcap.h])
-
-
-# Checks for typedefs, structures, and compiler characteristics.
-AC_HEADER_STDBOOL
-AC_C_CONST
-AC_C_INLINE
-AC_TYPE_SIZE_T
-AC_HEADER_TIME
-AC_CHECK_TYPES([ptrdiff_t])
-
-# Checks for library functions.
-AC_FUNC_MALLOC
-AC_FUNC_MMAP
-AC_FUNC_REALLOC
-AC_FUNC_SELECT_ARGTYPES
-AC_TYPE_SIGNAL
-AC_FUNC_STAT
-AC_CHECK_FUNCS([getpagesize gettimeofday memmove memset munmap select sqrt strcasecmp strchr strncasecmp strrchr])
-
 # compile with optimization and without debugging by default
 MYCXXFLAGS=" -O2 -DNDEBUG "
 MYCCFLAGS=" -DNDEBUG "
@@ -105,6 +65,47 @@ AC_ARG_ENABLE(static,
 
 CXXFLAGS="${CXXFLAGS} ${MYCXXFLAGS} ${INCL}"
 CCFLAGS="${CCFLAGS} ${MYCCFLAGS} ${INCL}"
+
+# Checks for programs.
+AC_PROG_AWK
+AC_PROG_CXX
+#AC_PROG_CC
+AC_PROG_RANLIB
+AM_PROG_LEX
+AC_PROG_YACC
+
+
+# Checks for libraries.
+
+# Checks for header files.
+AC_HEADER_STDC
+AC_CHECK_HEADERS([fcntl.h inttypes.h limits.h memory.h stddef.h stdint.h stdlib.h string.h strings.h sys/param.h sys/time.h termios.h unistd.h])
+
+# Also check for these headers
+AC_CHECK_HEADERS([string])
+AC_CHECK_HEADERS([signal.h assert.h])
+AC_CHECK_HEADERS([iostream.h fstream.h iostream fstream ])
+AC_CHECK_HEADERS([sys/types.h sys/times.h sys/resource.h sys/wait.h])
+AC_CHECK_HEADERS([sys/stat.h ctype.h math.h])
+AC_CHECK_HEADERS([termcap.h])
+
+
+# Checks for typedefs, structures, and compiler characteristics.
+AC_HEADER_STDBOOL
+AC_C_CONST
+AC_C_INLINE
+AC_TYPE_SIZE_T
+AC_HEADER_TIME
+AC_CHECK_TYPES([ptrdiff_t])
+
+# Checks for library functions.
+AC_FUNC_MALLOC
+AC_FUNC_MMAP
+AC_FUNC_REALLOC
+AC_FUNC_SELECT_ARGTYPES
+AC_TYPE_SIGNAL
+AC_FUNC_STAT
+AC_CHECK_FUNCS([getpagesize gettimeofday memmove memset munmap select sqrt strcasecmp strchr strncasecmp strrchr])
 
 ## Does the compiler support the "std" namespace?
 ## GCC version 3 not only supports this but insists on it, 

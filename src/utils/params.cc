@@ -307,9 +307,6 @@ t_opt options[] = {
 "MAX_EXQUANTIFY_CLAUSES: %d\n", MAX_EXQUANTIFY_CLAUSES);
 "COF_MAX: %d\n",                COF_MAX);
 "MAX_EXQUANTIFY_VARLENGTH: %d\n", MAX_EXQUANTIFY_VARLENGTH);
-"MAXFILE_LENGTH: %ld\n",     (long)MAXFILE_LENGTH);
-"LINE_LENGTH: %ld\n",        (long)LINE_LENGTH);
-"SIZE_SMURF_STATE_POOL: %ld\n", (long)SIZE_SMURF_STATE_POOL);
 */
 // "HEURISTIC: %d\n",               nHeuristic);
 // "STATE_TIME: %f\n",        STATE_TIME);

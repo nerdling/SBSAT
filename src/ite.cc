@@ -43,6 +43,8 @@
  **********************************************************/  
 
 #include "ite.h"
+#include "formats.h"
+#include "preprocess.h"
 
 extern char tracer_tmp_filename[256];
 extern BDDNodeStruct **original_functions;
@@ -58,6 +60,7 @@ void ite_main_free(Tracer *tracer);
 int ite_io_init();
 void ite_io_free();
 int ite_preprocessing();
+int ite_final(int ret, Tracer *tracer);
 
 int check_expected_result(int result);
 int ite_main_init(int argc, char *argv[]);
@@ -127,7 +130,7 @@ ite_main(Tracer *tracer)
 
 	switch (formatout) {
     case 'n': break;
-    case 'b': ret = solve(tracer); break;
+    case 'b': ret = solve(); break;
     case 'w': ret = walkSolve(); break;
     case 'm': wvfSolve(); break;
     default: write_output(formatout, tracer);   
@@ -227,7 +230,8 @@ ite_main_free(Tracer *tracer)
    if (tracer != NULL) {
       delete tracer;
       d9_printf2("Removing file: %s\n", tracer_tmp_filename);
-      unlink (tracer_tmp_filename);
+      unlink(tracer->file);
+      unlink(tracer_tmp_filename);
    }
 
    delete [] variablelist;
@@ -362,3 +366,10 @@ check_expected_result(int result)
    }	
    return result;
 };
+
+int
+ITE_Final(int ret, Tracer *tracer)
+{
+   return ite_final(ret, tracer); 
+}
+

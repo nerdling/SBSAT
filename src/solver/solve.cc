@@ -48,7 +48,7 @@ ITE_INLINE int RecordInitialInferences();
 
 
 ITE_INLINE int InitSolver();
-ITE_INLINE void FreeSolver(Tracer *tracer);
+ITE_INLINE void FreeSolver();
 void LoadLemmas(char *filename);
 ITE_INLINE void FreeAFS();
 ITE_INLINE void InitBrancherX();
@@ -99,11 +99,11 @@ solve_free()
 {
    FreeBrancher();
    FreeSmurfFactory();
-   FreeSolver(NULL);
+   FreeSolver();
 }
 
 int
-solve(Tracer *tracer)
+solve()
 {
    int ret = solve_init();
    if (ret == SOLV_UNKNOWN) ret = Brancher();
@@ -112,7 +112,7 @@ solve(Tracer *tracer)
 }
 
 int
-_solve(Tracer * tracer)
+_solve()
 {
   int ret = SOLV_UNKNOWN;
 
@@ -141,7 +141,7 @@ _solve(Tracer * tracer)
     FreeSmurfFactory();
   }
 
-  FreeSolver(tracer);
+  FreeSolver();
 
   return ret;
 }
@@ -238,7 +238,7 @@ InitSolver()
 }
 
 ITE_INLINE void
-FreeSolver(Tracer *tracer)
+FreeSolver()
 {
   d4_printf1("FreeSolver\n");
 
@@ -261,6 +261,4 @@ FreeSolver(Tracer *tracer)
   FreeLemmaInfoArray();
   FreeLemmaSpacePool();
   FreeIntNodePool();
-
-  if (formatin == 't' && tracer) unlink(tracer->file);
 }

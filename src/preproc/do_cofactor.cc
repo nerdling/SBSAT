@@ -39,6 +39,7 @@
  *********************************************************/
 
 #include "ite.h"
+#include "preprocess.h"
 
 int COF_MAX = 100;		//The max number of variables BDDs can have to be used in cofactoring
 

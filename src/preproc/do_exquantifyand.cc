@@ -39,6 +39,7 @@
  *********************************************************/
 
 #include "ite.h"
+#include "preprocess.h"
 
 //!These two flags should not be changed until ExQuantify is redone!
 

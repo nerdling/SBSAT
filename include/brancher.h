@@ -118,10 +118,4 @@ ConsistentPartialSolution(int nMaxVbleIndex);
 AffectedFuncsStruct *
 CreateAffectedFuncsStructures(int nMaxVbleIndex);
 
-typedef struct _t_solution_info {
-  int *arrElts;
-  int nNumElts;
-  struct _t_solution_info *next;
-} t_solution_info;
-
 #endif // BRANCHER_H

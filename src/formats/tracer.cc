@@ -109,6 +109,7 @@
 //                                                                       
 
 #include "ite.h"
+#include "formats.h"
 
 
 extern char *builtin_ops[];

@@ -115,7 +115,7 @@ libutils_a_SOURCES = \
              integerset.cc literalset.cc bdd.cc utils.cc \
              params.cc params_fn.cc log.cc bddidx.cc bddidx_orig.cc \
              bddtable.cc zread.cc vars.cc infer.cc intnode.cc \
-	     smurfaddons.cc bdd_circuit_init.cc symtable.cc \
+	     bdd_circuit_init.cc symtable.cc \
 	     custprint.cc termcap.cc # malloc.cc
 
 
@@ -133,8 +133,8 @@ am_libutils_a_OBJECTS = integerset.$(OBJEXT) literalset.$(OBJEXT) \
 	params_fn.$(OBJEXT) log.$(OBJEXT) bddidx.$(OBJEXT) \
 	bddidx_orig.$(OBJEXT) bddtable.$(OBJEXT) zread.$(OBJEXT) \
 	vars.$(OBJEXT) infer.$(OBJEXT) intnode.$(OBJEXT) \
-	smurfaddons.$(OBJEXT) bdd_circuit_init.$(OBJEXT) \
-	symtable.$(OBJEXT) custprint.$(OBJEXT) termcap.$(OBJEXT)
+	bdd_circuit_init.$(OBJEXT) symtable.$(OBJEXT) \
+	custprint.$(OBJEXT) termcap.$(OBJEXT)
 libutils_a_OBJECTS = $(am_libutils_a_OBJECTS)
 
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)/include
@@ -147,10 +147,9 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	./$(DEPDIR)/infer.Po ./$(DEPDIR)/integerset.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/intnode.Po ./$(DEPDIR)/literalset.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/log.Po ./$(DEPDIR)/params.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/params_fn.Po ./$(DEPDIR)/smurfaddons.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/symtable.Po ./$(DEPDIR)/termcap.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/utils.Po ./$(DEPDIR)/vars.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/zread.Po
+@AMDEP_TRUE@	./$(DEPDIR)/params_fn.Po ./$(DEPDIR)/symtable.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/termcap.Po ./$(DEPDIR)/utils.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/vars.Po ./$(DEPDIR)/zread.Po
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 CXXLD = $(CXX)
@@ -198,7 +197,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/log.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/params.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/params_fn.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/smurfaddons.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/symtable.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/termcap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/utils.Po@am__quote@
@@ -221,7 +219,8 @@ distclean-depend:
 @am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ `test -f '$<' || echo '$(srcdir)/'`$<
 
 .cc.obj:
-@am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" \
+@am__fastdepCXX_TRUE@	@echo Compiling $*
+@am__fastdepCXX_TRUE@	@if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" \
 @am__fastdepCXX_TRUE@	  -c -o $@ `if test -f '$<'; then $(CYGPATH_W) '$<'; else $(CYGPATH_W) '$(srcdir)/$<'; fi`; \
 @am__fastdepCXX_TRUE@	then mv "$(DEPDIR)/$*.Tpo" "$(DEPDIR)/$*.Po"; \
 @am__fastdepCXX_TRUE@	else rm -f "$(DEPDIR)/$*.Tpo"; exit 1; \

@@ -39,6 +39,7 @@
  ***********************************************************************/  
 
 #include "ite.h"
+#include "formats.h"
 
 void bcount (char *p, int i) {
 	int flip;

@@ -35,6 +35,7 @@
   of the possibility of those damages.
  *********************************************************************/
 #include "ite.h"
+#include "preprocess.h"
 
 extern char preproc_string[256];
 

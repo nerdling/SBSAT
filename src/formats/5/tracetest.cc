@@ -13,7 +13,7 @@ extern int s_error;
 #define PARSE blif_parse
 
 extern FILE *IN;
-void PARSE();
+int PARSE();
 
 int main(int argc, char **argv)
 {

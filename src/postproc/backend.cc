@@ -45,6 +45,8 @@
  ********************************************************************/
 
 #include "ite.h"
+#include "preprocess.h"
+#include "postproc.h"
 
 extern char tracer_tmp_filename[256];
 

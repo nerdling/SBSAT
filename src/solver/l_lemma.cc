@@ -35,6 +35,7 @@
  of the possibility of those damages.
  *********************************************************************/
 #include "ite.h"
+#include "solver.h"
 
 double *arrLemmaHeurScoresPos;
 double *arrLemmaHeurScoresNeg;

@@ -68,8 +68,8 @@ ComputeSmurfOfNormalized(BDDNodeStruct *pFunc, PartialAssignmentEncoding encodin
       return pTrueSmurfState;
    }
 
-   if (compress_smurfs && pFunc->addons && pFunc->addons->pState) {
-         return pFunc->addons->pState;
+   if (compress_smurfs && pFunc->addons && SFADDONS(pFunc->addons)->pState) {
+         return SFADDONS(pFunc->addons)->pState;
    }
 
    SmurfState *pSmurfState;
@@ -87,11 +87,11 @@ ComputeSmurfOfNormalized(BDDNodeStruct *pFunc, PartialAssignmentEncoding encodin
    ite_counters[SMURF_NODE_NEW]++;
 
    pSmurfState->pFunc = pFunc;
-   pFunc->addons->pState = pSmurfState;
+   SFADDONS(pFunc->addons)->pState = pSmurfState;
 
    ComputeVbleSet(pFunc);
 
-   pFunc->addons
+   SFADDONS(pFunc->addons)
       ->pVbles->StoreAsArrayBasedSet(pSmurfState->vbles, NULL);
    /* mapping ite->solver variables */
    for (int i=0;i<pSmurfState->vbles.nNumElts;i++) {
@@ -146,16 +146,16 @@ ITE_INLINE
 void
 ComputeImpliedLiterals(BDDNodeStruct *pFunc)
 {
-   if (pFunc->addons->pImplied)
+   if (SFADDONS(pFunc->addons)->pImplied)
    {
       // Inference set has already been computed.
       return;
    }
 
    ITE_NEW_CATCH(
-         pFunc->addons->pImplied = new LiteralSet();,
+         SFADDONS(pFunc->addons)->pImplied = new LiteralSet();,
          "pFunc->addons->pImplied");
-   LiteralSet *pImplied = pFunc->addons->pImplied;
+   LiteralSet *pImplied = SFADDONS(pFunc->addons)->pImplied;
    if (pFunc == false_ptr)
    {
       pImplied->SetToInconsistent();
@@ -170,8 +170,8 @@ ComputeImpliedLiterals(BDDNodeStruct *pFunc)
 
    ComputeImpliedLiterals(pFunc->thenCase);
    ComputeImpliedLiterals(pFunc->elseCase);
-   ComputeIntersection(*(pFunc->thenCase->addons->pImplied),
-         *(pFunc->elseCase->addons->pImplied),
+   ComputeIntersection(*(SFADDONS(pFunc->thenCase->addons)->pImplied),
+         *(SFADDONS(pFunc->elseCase->addons)->pImplied),
          *pImplied);
    if (pFunc->thenCase == false_ptr)
    {
@@ -187,18 +187,18 @@ ITE_INLINE
 void
 ComputeReduct(BDDNodeStruct *pFunc)
 { 
-   if (pFunc->addons->pReduct) return;
+   if (SFADDONS(pFunc->addons)->pReduct) return;
 
    int nVble;
    bool bValueOfVble;
    BDDNodeStruct *pReduct = pFunc;
 
-   LiteralSetIterator litsetNext(*(pFunc->addons->pImplied));
+   LiteralSetIterator litsetNext(*(SFADDONS(pFunc->addons)->pImplied));
    while (litsetNext(nVble, bValueOfVble))
    {
       pReduct = EvalBdd(pReduct, nVble, bValueOfVble);
    }
-   pFunc->addons->pReduct = pReduct;
+   SFADDONS(pFunc->addons)->pReduct = pReduct;
 }
 
 ITE_INLINE
@@ -209,7 +209,7 @@ ComputeSmurfAndInferences(BDDNodeStruct *pFunc, PartialAssignmentEncoding encodi
    ComputeImpliedLiterals(pFunc);
    ComputeReduct(pFunc);
 
-   return ComputeSmurfOfNormalized(pFunc->addons->pReduct, encoding);
+   return ComputeSmurfOfNormalized(SFADDONS(pFunc->addons)->pReduct, encoding);
 }
 
 ITE_INLINE
@@ -226,7 +226,7 @@ BDD2Smurf(BDDNodeStruct *pFunc)
    PartialAssignmentEncoding encoding;
 
    ComputeVbleSet(pFunc); /* LOOK -- should it be here? */
-   ComputeVariableMapping(*(pFunc->addons->pVbles));
+   ComputeVariableMapping(*(SFADDONS(pFunc->addons)->pVbles));
 
    return
       ComputeSmurfAndInferences(pFunc, encoding);

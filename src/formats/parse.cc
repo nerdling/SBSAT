@@ -41,6 +41,7 @@
  *********************************************************/
 
 #include "ite.h"
+#include "formats.h"
 
 int indexOf(char *str, char c) {
    if (str == NULL) return -1;

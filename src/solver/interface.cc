@@ -92,12 +92,6 @@ ITE_Brancher()
 
 
 int
-ITE_Final(int ret)
-{
-   return ite_final(ret, NULL); 
-}
-
-int
 ITE_GetVarAsgnment(int var)
 {
    fprintf(stderr, "ITE_GetVarAsgnment(var=%d) = %d\n", 

@@ -39,6 +39,7 @@
  *********************************************************/
 
 #include "ite.h"
+#include "preprocess.h"
 
 extern int STRENGTH;
 void Sort_BDDs (int *tempint);

@@ -43,6 +43,7 @@
  ***********************************************************************/
 
 #include "ite.h"
+#include "formats.h"
 
 typedef struct hashrecord {
    bool used;
@@ -122,6 +123,8 @@ int getMaxVarNoInBDD (BDDNode * bdd) {
 //   curr:   first available number for naming a made-up variable              
 //   cl_cnt: will contain a count of clauses formed                            
 //   ft:     file "bdd_tmp.cnf"                                                
+#define F (numinp+3)
+#define T (numinp+2)
 void bdd2cnf (BDDNode * bdd, int *curr, int *cl_cnt, FILE * ft) {
    int i, t, e,			// made-up vars: i=if, t=then, e=else
       v;			// Actual variable of node

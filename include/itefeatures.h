@@ -35,27 +35,11 @@
  of the possibility of those damages.
 *********************************************************************/
 
-#ifndef ITE_H
-#define ITE_H
+#ifndef ITEFEATURES_H
+#define ITEFEATURES_H
 
-#include "itefeatures.h"
-#include "iteheaders.h"
+/* configuration */
+#define FORCE_STABLE_QSORT
+#define NO_BDD_MACROS
 
-/* independent */
-#include "defines.h" /* first ! */
-
-#include "vars.h"
-#include "params.h"
-#include "log.h"
-
-#include "common.h" 
-
-#include "prototypes.h"
-
-#include "globals.h"
-#include "pools.h"
-#include "symtable.h"
-
-#include "interface.h"
-
-#endif // ITE_H
+#endif

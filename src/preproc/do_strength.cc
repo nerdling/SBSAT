@@ -39,6 +39,7 @@
  *********************************************************/
 
 #include "ite.h"
+#include "preprocess.h"
 
 int STRENGTH = 2;		//The number of vars that must be in common to
                      //Strengthen or BranchPrune two BDD's against

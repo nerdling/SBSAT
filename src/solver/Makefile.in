@@ -126,7 +126,7 @@ libsolver_a_SOURCES = solve.cc bddwalk.cc \
              state_stacks.cc \
 	     bdd2smurf.cc specfn2smurf.cc autarky.cc \
              display.cc display_sf.cc verify.cc \
-	     recordsol.cc sf_addons.cc transitions.cc wvf.cc update_heu.cc \
+	     recordsol.cc sf_addons.cc smurfaddons.cc transitions.cc wvf.cc update_heu.cc \
 	     crtwin.cc load_lemmas.cc interface.cc heur_stack.cc
 
 
@@ -152,9 +152,10 @@ am_libsolver_a_OBJECTS = solve.$(OBJEXT) bddwalk.$(OBJEXT) \
 	smurfstates.$(OBJEXT) state_stacks.$(OBJEXT) \
 	bdd2smurf.$(OBJEXT) specfn2smurf.$(OBJEXT) autarky.$(OBJEXT) \
 	display.$(OBJEXT) display_sf.$(OBJEXT) verify.$(OBJEXT) \
-	recordsol.$(OBJEXT) sf_addons.$(OBJEXT) transitions.$(OBJEXT) \
-	wvf.$(OBJEXT) update_heu.$(OBJEXT) crtwin.$(OBJEXT) \
-	load_lemmas.$(OBJEXT) interface.$(OBJEXT) heur_stack.$(OBJEXT)
+	recordsol.$(OBJEXT) sf_addons.$(OBJEXT) smurfaddons.$(OBJEXT) \
+	transitions.$(OBJEXT) wvf.$(OBJEXT) update_heu.$(OBJEXT) \
+	crtwin.$(OBJEXT) load_lemmas.$(OBJEXT) interface.$(OBJEXT) \
+	heur_stack.$(OBJEXT)
 libsolver_a_OBJECTS = $(am_libsolver_a_OBJECTS)
 libsolver2_a_AR = $(AR) cru
 libsolver2_a_LIBADD =
@@ -183,7 +184,7 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	./$(DEPDIR)/lemmainfo.Po ./$(DEPDIR)/lemmaspace.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/libsolver.Po ./$(DEPDIR)/load_lemmas.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/recordsol.Po ./$(DEPDIR)/select_bp.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/sf_addons.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/sf_addons.Po ./$(DEPDIR)/smurfaddons.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/smurffactory.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/smurfstates.Po ./$(DEPDIR)/solve.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/specfn2smurf.Po \
@@ -263,6 +264,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/recordsol.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/select_bp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sf_addons.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/smurfaddons.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/smurffactory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/smurfstates.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/solve.Po@am__quote@
@@ -277,7 +279,8 @@ distclean-depend:
 	-rm -rf ./$(DEPDIR)
 
 .cc.o:
-@am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" \
+@am__fastdepCXX_TRUE@	@echo Compiling $*
+@am__fastdepCXX_TRUE@	@if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" \
 @am__fastdepCXX_TRUE@	  -c -o $@ `test -f '$<' || echo '$(srcdir)/'`$<; \
 @am__fastdepCXX_TRUE@	then mv "$(DEPDIR)/$*.Tpo" "$(DEPDIR)/$*.Po"; \
 @am__fastdepCXX_TRUE@	else rm -f "$(DEPDIR)/$*.Tpo"; exit 1; \

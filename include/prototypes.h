@@ -38,8 +38,8 @@
 #define PROTOTYPES_H
 
 #include <stdio.h>
-#include "tracer.h"
-#include "equivclass.h"
+//#include "tracer.h"
+//#include "equivclass.h"
 
 /*
  * great for small problems
@@ -68,9 +68,7 @@
 #endif
 
 int walkSolve();
-int solve(Tracer * tracer);
-void write_output(char formatout, Tracer * &tracer);
-int read_input(Tracer * &tracer);
+int solve();
 
 double get_runtime();
 long get_memusage();
@@ -214,12 +212,6 @@ int Preprocessor(varinfo *);
 int getNuminp();
 int countFalses(BDDNode *);
 int makeAllResolutions(intlist *&, int, int);
-void SolveItSTDIN(Tracer *);
-void finalCheck(Tracer *, int *);
-void Backend_Trace(int, int, int *, Tracer *);
-void Backend_Trace_NoSolver(int, int *, Tracer *);
-void Backend_CNF(int, int, int *);
-void Backend_CNF_NoSolver(int, int *);
 void writeCircuit();
 void readCircuit_wvf();
 
@@ -230,16 +222,10 @@ int check_gzip (char *filename);
 FILE * zread(char *filename);
 
 void xorloop ();
-int ite_final(int ret, Tracer *tracer);
 
 void memcpy_ite(void*, void*, int);
 void get_freefile(char *basename, char *file_dir, char *filename, int filename_max);
 void ShowResultLine(FILE *fout, char *var, int var_idx, int negative, int value);
-
-ITE_INLINE void
-EnterIntoLemmaSpace(int nNumElts, int arrLemmaLiterals[],
-		    bool bRecycleLemmasAsNeeded, LemmaBlock *&pFirstBlock,
-		    LemmaBlock *&pLastBlock, int &nNumBlocks);
 
 void
 reload_bdd_circuit(int _numinp, int _numout,
@@ -263,9 +249,6 @@ get_bdd_circuit(int *_numinp, int *_numout,
                    void **_independantVars);
 void
 read_bdd_circuit();
-
-//#define MEMCPY memcpy_ite
-#define MEMCPY memcpy
 
 // termcap 
 int init_terminal_out();

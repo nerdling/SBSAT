@@ -190,4 +190,27 @@ extern t_arrVarScores *arrVarScores;
 extern char brancher_presets[4096];
 extern char comment[1024];
 
+#define _BACKTRACKS_PER_STAT_REPORT 10000
+extern int BACKTRACKS_PER_STAT_REPORT;
+#define BACKTRACKS_MAX            100000
+
+extern int PRINT_TREE_WIDTH;
+extern float STATE_TIME;
+
+#define MAX_MAX_VBLES_PER_SMURF 17
+#define _MAX_VBLES_PER_SMURF 8
+extern int MAX_VBLES_PER_SMURF;
+
+// MAX_NUM_NON_CHACHED_LEMMAS -- soft limit -- lemmas are added as needed
+#define MAX_NUM_NON_CACHED_LEMMAS 1000
+#define MAX_NUM_LEMMAS (MAX_NUM_CACHED_LEMMAS + MAX_NUM_NON_CACHED_LEMMAS)
+
+#define _MAX_NUM_CACHED_LEMMAS 5000 /* default */
+extern int MAX_NUM_CACHED_LEMMAS;
+
+#define _JHEURISTIC_K 3.0 // Parameter to the Johnson Village heuristic.
+extern float JHEURISTIC_K; // Parameter to the Johnson Village heuristic.
+extern float JHEURISTIC_K_TRUE; 
+extern float JHEURISTIC_K_INF; 
+
 #endif

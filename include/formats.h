@@ -34,27 +34,13 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
-#ifndef HEURISTIC_H
-#define HEURISTIC_H
+#ifndef FORMATS_H
+#define FORMATS_H
 
+#include "flatten.h"    /* ++ */
+#include "tracer.h"    /* ++ */
 
-/* header files for available heuristics */
-#include "j_heuristic.h"
-#include "l_heuristic.h"
-#include "i_heuristic.h"
+void write_output(char formatout, Tracer * &tracer);
+int read_input(Tracer * &tracer);
 
-#include "smurffactory.h"
-
-typedef void (* t_call_heuristic) (
-		int *pnBranchAtom,
-		int *pnBranchValue);
-typedef void (* t_update_heuristic) ();
-
-extern t_call_heuristic proc_call_heuristic;
-extern t_update_heuristic proc_update_heuristic;
-
-ITE_INLINE void
-NullInitHeuristicScores();
-
-
-#endif // HEURISTIC_H
+#endif

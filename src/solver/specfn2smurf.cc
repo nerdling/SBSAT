@@ -54,8 +54,8 @@ SpecFn2Smurf (BDDNodeStruct *pFunc,
    int nNewFunctionType = 0;
 
    // We assume that an special func has no implied literals.
-   pFunc->addons->pImplied = 0;
-   pFunc->addons->pReduct = pFunc;
+   SFADDONS(pFunc->addons)->pImplied = 0;
+   SFADDONS(pFunc->addons)->pReduct = pFunc;
 
 
 
@@ -124,7 +124,7 @@ SpecFn2Smurf (BDDNodeStruct *pFunc,
    // Store variable set of RHS.
    // Here we assume that the LHS variable does not also occur on
    // the RHS of the equality.
-   pFunc->addons->pVbles
+   SFADDONS(pFunc->addons)->pVbles
       ->StoreAsArrayBasedSet_OmitElt(pSpecialFunc->rhsVbles, nEqualityVble);
 
    for (int i=0;i<pSpecialFunc->rhsVbles.nNumElts;i++) {

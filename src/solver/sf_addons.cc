@@ -36,6 +36,7 @@
 *********************************************************************/
 
 #include "ite.h"
+#include "solver.h"
 
 extern int *arrIte2SolverVarMap;
 extern int *arrSolver2IteVarMap;
@@ -55,28 +56,28 @@ ComputeVbleSet(BDDNode *pFunc)
   // closer to the root of the BDD.  (That variable sets are stored
   // in increasing order is used by some of the subsequent routines.)
 {
-  if (pFunc->addons->pVbles)
+  if (SFADDONS(pFunc->addons)->pVbles)
     {
       // Variable set has already been computed.
       return;
     }
 
   ITE_NEW_CATCH(
-  pFunc->addons->pVbles = new IntegerSet();,
+  SFADDONS(pFunc->addons)->pVbles = new IntegerSet();,
   "pFunc->addons->pVbles");
 
   if (pFunc == false_ptr || pFunc == true_ptr)
     {
-      assert(pFunc->addons->pVbles->IsEmpty());
+      assert(SFADDONS(pFunc->addons)->pVbles->IsEmpty());
       return;
     }
 
   ComputeVbleSet(pFunc->thenCase);
   ComputeVbleSet(pFunc->elseCase);
-  ComputeUnion(*(pFunc->thenCase->addons->pVbles),
-               *(pFunc->elseCase->addons->pVbles),
-               *(pFunc->addons->pVbles));
-  pFunc->addons->pVbles->PushElement(pFunc->variable);
+  ComputeUnion(*(SFADDONS(pFunc->thenCase->addons)->pVbles),
+               *(SFADDONS(pFunc->elseCase->addons)->pVbles),
+               *(SFADDONS(pFunc->addons)->pVbles));
+  SFADDONS(pFunc->addons)->pVbles->PushElement(pFunc->variable);
 }
 
 /* this function uses real variables */
@@ -112,10 +113,10 @@ EvalBdd(BDDNodeStruct *pFunc, int nVble, bool bValueOfVble)
 ITE_INLINE void
 AssertNullAddons(BDDNodeStruct *pFunc)
 {
-  if (pFunc->addons != 0)
+  if (pFunc->addons != NULL)
     {
       cout << "BDD node with non-zero addons pointer." << endl;    
-      assert(pFunc->addons == 0);
+      assert(pFunc->addons == NULL);
       exit(1);
     }
   if (!IS_TRUE_FALSE(pFunc))
@@ -131,7 +132,7 @@ InitializeAddons(BDDNodeStruct *pFunc)
 {
    if (pFunc->addons == NULL)
    {
-      pFunc->addons = AllocateSmurfFactoryAddons();
+      SFADDONS(pFunc->addons) = AllocateSmurfFactoryAddons();
       if (pFunc->addons == NULL ) {
          dE_printf1("Error: Can't allocate memory for addons\n");
          exit(1);
@@ -154,7 +155,7 @@ FreeAddons(BDDNodeStruct *pFunc)
          FreeAddons(pFunc->thenCase);
          FreeAddons(pFunc->elseCase);
       }
-      FreeSmurfFactoryAddons(pFunc->addons);
+      FreeSmurfFactoryAddons(SFADDONS(pFunc->addons));
       ite_free((void**)&pFunc->addons);
    }
 }

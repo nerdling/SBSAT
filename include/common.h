@@ -52,7 +52,7 @@
 #ifndef COMMON_H
 #define COMMON_H
 
-#include "smurffactory.h"
+//#include "smurffactory.h"
 
 struct llist{
    int num;
@@ -106,7 +106,8 @@ typedef struct BDDNodeStruct {
    void *var_ptr;
    struct BDDNodeStruct *thenCase, *elseCase;
    infer *inferences;
-   SmurfFactoryAddons *addons;
+   //SmurfFactoryAddons *addons;
+   void *addons;
    BDDNodeStruct *next;
 } BDDNode;
 
@@ -119,6 +120,12 @@ extern   int *independantVars;
 extern   char **labels;
 extern   int **parameterizedVars;
 extern   int *parameterGroup;
+
+typedef struct _t_solution_info {
+  int *arrElts;
+  int nNumElts;
+  struct _t_solution_info *next;
+} t_solution_info;
 
 #endif
 

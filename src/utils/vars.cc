@@ -103,8 +103,6 @@ int TRACE_START=0;
 //char png_filename[128]="";
 char jpg_filename[128]="";
 
-int ZERO_ONE_VAR=((1 << 20) - 1);
-
 int AND_EQU_LIMIT=0;
 int OR_EQU_LIMIT=0;
 int PLAINXOR_LIMIT=0;

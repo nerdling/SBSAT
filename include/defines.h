@@ -42,12 +42,29 @@
 #ifndef DEFINES_H
 #define DEFINES_H
 
+#define NO_RESULT       0 // NO_ERROR
+
+/* preprocessor result codes */
+#define TRIV_UNSAT      1
+#define TRIV_SAT        2
+#define PREP_CHANGED    3
+#define PREP_NO_CHANGE  4
+#define PREP_ERROR      5
+#define PREP_MAX        6
+
+/* solver result codes */
+#define SOLV_SAT	   7
+#define SOLV_UNSAT	8
+#define SOLV_UNKNOWN	9
+#define SOLV_ERROR  10	
+
+/* conversion result codes */
+#define CONV_OUTPUT    11	
+
+
 #ifndef ITE_INLINE
 #define ITE_INLINE
 #endif
-
-#define TOTAL_SIZE 8
-#define waittime 65500
 
 enum {
   UNSURE=0,  /* 0 */
@@ -97,21 +114,9 @@ enum {
 extern const char * opnames[EQU_BASE];
 #define XNOR 6  //XNOR and EQU are the same function
 
-extern int ZERO_ONE_VAR;
-#define F (ZERO_ONE_VAR)     //False
-#define T (ZERO_ONE_VAR - 1) //True            Head node must be smaller than T and F
-
-#define MAXFILE_LENGTH 4000000
-#define LINE_LENGTH 1024
-
-#define SIZE_SMURF_STATE_POOL 20000 // Size of initial pool of Smurf states.
 #define BOOL_FALSE 0
 #define BOOL_TRUE 1
 #define BOOL_UNKNOWN 2
-
-#define _BACKTRACKS_PER_STAT_REPORT 10000
-extern int BACKTRACKS_PER_STAT_REPORT;
-#define BACKTRACKS_MAX            100000
 
 /* various stacks */
 #define LEVEL_START -1
@@ -121,5 +126,13 @@ extern int BACKTRACKS_PER_STAT_REPORT;
 
 //#define IS_TRUE_FALSE(f) (f->variable == INT_MAX
 #define IS_TRUE_FALSE(f) (f==true_ptr || f==false_ptr)
+
+/* list of available heuristics */
+enum {
+   JOHNSON_HEURISTIC,
+   C_LEMMA_HEURISTIC,
+   INTERACTIVE_HEURISTIC,
+   STATE_HEURISTIC
+};
 
 #endif

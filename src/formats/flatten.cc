@@ -6,6 +6,7 @@
  *********************************************************************/
 
 #include <ite.h>
+#include "formats.h"
 
 char *builtin_ops[] = { "and", "nand", "or", "nor", "xor", "xnor", "equ",
                         "rimp", "rnimp", "limp", "lnimp", "ite", "nite",

@@ -36,6 +36,7 @@
 *********************************************************************/
 
 #include "ite.h"
+#include "integerset.h"
 
 #define INTNODE_POOL_SIZE 10000
 

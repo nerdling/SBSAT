@@ -135,18 +135,6 @@ ITE_INLINE void Add_arrNumRHSUnknowns(int vx);
 
 #define Save_arrNumRHSUnknowns(vx)  { if (arrSpecialFnFlags[vx]!=nCurSpecialFnVersion) Add_arrNumRHSUnknowns(vx); }
 
-
-//#ifdef JHEURISTIC
-#define _JHEURISTIC_K 3.0 // Parameter to the Johnson Village heuristic.
-extern float JHEURISTIC_K; // Parameter to the Johnson Village heuristic.
-extern float JHEURISTIC_K_TRUE; 
-extern float JHEURISTIC_K_INF; 
-//#endif
-
-#define MAX_MAX_VBLES_PER_SMURF 17
-#define _MAX_VBLES_PER_SMURF 8
-extern int MAX_VBLES_PER_SMURF;
-
 //#define LITS_PER_LEMMA_BLOCK (MAX_VBLES_PER_SMURF + 2)
 #define LITS_PER_LEMMA_BLOCK (8 + 2)
 
@@ -222,6 +210,8 @@ typedef struct {
   IntegerSet *pVbles;
   SmurfState *pState; /* for compressing smurfs */
 } SmurfFactoryAddons;
+
+#define SFADDONS(x) ((SmurfFactoryAddons*)(x))
 
 ITE_INLINE void FreeSmurfFactoryAddons(SmurfFactoryAddons *f);
 ITE_INLINE void InitHeuristicTablesForSpecialFuncs(int nMaxRHSSize);

@@ -41,6 +41,7 @@
  *   Returns a single char representing type.
  ********************************************************************/  
 #include "ite.h"
+#include "formats.h"
 
   char
 getformat (FILE *finputfile) 

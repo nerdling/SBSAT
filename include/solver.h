@@ -38,6 +38,17 @@
 #ifndef SOLVER_H
 #define SOLVER_H
 
+#include "integerset.h"  /*   / */
+#include "literalset.h"  /* /   */
+
+#include "heuristic.h"
+
+#include "smurffactory.h" /*  /   / */
+#include "lemmainfo.h"    /* /      */
+
+#include "brancher.h"
+
+
 #define JOHNSON_HEURISTIC_LEMMA
 
 void FreeAddonsPool();

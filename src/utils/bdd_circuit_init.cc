@@ -55,8 +55,6 @@ bdd_circuit_init(int n_vars, int n_fns) /* numinp, numout */
 {
    int x;
 
-   ZERO_ONE_VAR = n_vars + 3;
-
    bdd_init();
 
    /* n_vars -- numinp */

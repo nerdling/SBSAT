@@ -39,6 +39,7 @@
  *********************************************************/
 
 #include "ite.h"
+#include "preprocess.h"
 
 int Pos_replace = 0;
 int Neg_replace = 0;

@@ -37,34 +37,12 @@
 #ifndef PREPROC_H
 #define PREPROC_H
 
-#define NO_RESULT       0 // NO_ERROR
-
-/* preprocessor result codes */
-#define TRIV_UNSAT      1
-#define TRIV_SAT        2
-#define PREP_CHANGED    3
-#define PREP_NO_CHANGE  4
-#define PREP_ERROR      5
-#define PREP_MAX        6
-
-/* solver result codes */
-#define SOLV_SAT	   7
-#define SOLV_UNSAT	8
-#define SOLV_UNKNOWN	9
-#define SOLV_ERROR  10	
-
-/* conversion result codes */
-#define CONV_OUTPUT    11	
-
+#include "equivclass.h"
 extern Linear *l;
-extern int *length;
 extern int *tempint;
-extern float *var_score;
-extern store *variables;
 extern infer *lastinfer;
 extern int notdone;
 extern infer *inferlist;
-extern varinfo *variablelist;
 extern int *num_funcs_var_occurs;
 extern llistStruct *amount;
 extern int *P1_repeat;

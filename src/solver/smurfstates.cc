@@ -35,6 +35,9 @@
  of the possibility of those damages.
 *********************************************************************/
 #include "ite.h"
+#include "solver.h"
+
+#define SIZE_SMURF_STATE_POOL 20000 // Size of initial pool of Smurf states.
 
 typedef struct _t_smurfstate_pool {
    SmurfState *memory;

@@ -310,7 +310,7 @@ ac_includes_default="\
 # include <unistd.h>
 #endif"
 
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA CYGPATH_W PACKAGE VERSION ACLOCAL AUTOCONF AUTOMAKE AUTOHEADER MAKEINFO AMTAR install_sh STRIP ac_ct_STRIP INSTALL_STRIP_PROGRAM AWK SET_MAKE am__leading_dot CXX CXXFLAGS LDFLAGS CPPFLAGS ac_ct_CXX EXEEXT OBJEXT DEPDIR am__include am__quote AMDEP_TRUE AMDEP_FALSE AMDEPBACKSLASH CXXDEPMODE am__fastdepCXX_TRUE am__fastdepCXX_FALSE RANLIB ac_ct_RANLIB LEX LEXLIB LEX_OUTPUT_ROOT YACC CXXCPP EGREP LIBOBJS LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA CYGPATH_W PACKAGE VERSION ACLOCAL AUTOCONF AUTOMAKE AUTOHEADER MAKEINFO AMTAR install_sh STRIP ac_ct_STRIP INSTALL_STRIP_PROGRAM AWK SET_MAKE CXX CXXFLAGS LDFLAGS CPPFLAGS ac_ct_CXX EXEEXT OBJEXT DEPDIR am__include am__quote AMDEP_TRUE AMDEP_FALSE AMDEPBACKSLASH CXXDEPMODE am__fastdepCXX_TRUE am__fastdepCXX_FALSE RANLIB ac_ct_RANLIB LEX LEXLIB LEX_OUTPUT_ROOT YACC CXXCPP EGREP LIBOBJS LTLIBOBJS'
 ac_subst_files=''
 
 # Initialize some variables set by options.
@@ -848,13 +848,13 @@ if test -n "$ac_init_help"; then
 Optional Features:
   --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
-  --disable-dependency-tracking Speeds up one-time builds
-  --enable-dependency-tracking  Do not reject slow dependency extractors
   --enable-optimization   Turn on compiler optimization (default=no)
   --enable-debug          Turn on compiler debugging information (default=no)
   --enable-profile        Turn on compiler profiling information (default=no)
   --enable-extrawarning   Turn on compiler extra warning information (default=no)
   --enable-static         Turn on linking libraries staticly (default=no)
+  --disable-dependency-tracking Speeds up one-time builds
+  --enable-dependency-tracking  Do not reject slow dependency extractors
 
 Some influential environment variables:
   CXX         C++ compiler command
@@ -1532,15 +1532,6 @@ echo "${ECHO_T}no" >&6
   SET_MAKE="MAKE=${MAKE-make}"
 fi
 
-rm -rf .tst 2>/dev/null
-mkdir .tst 2>/dev/null
-if test -d .tst; then
-  am__leading_dot=.
-else
-  am__leading_dot=_
-fi
-rmdir .tst 2>/dev/null
-
  # test to see if srcdir already configured
 if test "`cd $srcdir && pwd`" != "`pwd`" &&
    test -f $srcdir/config.status; then
@@ -1690,6 +1681,75 @@ INSTALL_STRIP_PROGRAM="\${SHELL} \$(install_sh) -c -s"
 
           ac_config_headers="$ac_config_headers include/config.h"
 
+
+# compile with optimization and without debugging by default
+MYCXXFLAGS=" -O2 -DNDEBUG "
+MYCCFLAGS=" -DNDEBUG "
+INCL=""
+
+# Check whether --enable-optimization or --disable-optimization was given.
+if test "${enable_optimization+set}" = set; then
+  enableval="$enable_optimization"
+  if eval "test x$enable_optimization = xyes"; then
+        MYCXXFLAGS="-O3 -DNDEBUG -ffast-math -fstrict-aliasing -funroll-all-loops -fno-peephole -fexpensive-optimizations -fomit-frame-pointer "
+	MYCCFLAGS="-xO5 -KPIC -dalign -native"
+    fi
+fi;
+
+# Check whether --enable-debug or --disable-debug was given.
+if test "${enable_debug+set}" = set; then
+  enableval="$enable_debug"
+  if eval "test x$enable_debug = xyes"; then
+       if eval "test x$enable_optimization = xyes"; then
+	echo "error: can not turn on debuging and extra optimization"
+	exit
+       else
+         MYCXXFLAGS=" -g -Wall "
+         MYCCFLAGS=" -g -Wall "
+       fi
+    fi
+fi;
+
+# Check whether --enable-profile or --disable-profile was given.
+if test "${enable_profile+set}" = set; then
+  enableval="$enable_profile"
+  if eval "test x$enable_profile = xyes"; then
+       if eval "test x$enable_optimization = xyes"; then
+	echo "error: can not turn on profiling and extra optimization"
+	exit
+       else
+         MYCXXFLAGS="${MYCXXFLAGS}  -pg -Wall "
+         MYCCFLAGS="${MYCCFLAGS}  -pg -Wall "
+       fi
+    fi
+fi;
+
+# Check whether --enable-extrawarning or --disable-extrawarning was given.
+if test "${enable_extrawarning+set}" = set; then
+  enableval="$enable_extrawarning"
+  if eval "test x$enable_extrawarning = xyes"; then
+	MYCXXFLAGS="${MYCXXFLAGS} -pedantic -W -Winline -Wmissing-prototypes -Wpointer-arith -Wcast-qual -Wcast-align -Wsign-compare -Wno-unused -Wconversion -Waggregate-return -Wshadow -Wwrite-strings "
+    fi
+fi;
+
+# Check whether --enable-static or --disable-static was given.
+if test "${enable_static+set}" = set; then
+  enableval="$enable_static"
+  if eval "test x$enable_static = xyes"; then
+        MYCXXFLAGS="${MYCXXFLAGS} -static"
+        MYCCFLAGS="${MYCCFLAGS} -static"
+    fi
+fi;
+
+# Extra libraries 'with'-options
+# AC_ARG_WITH(gd-inc,[  --with-gd-inc=DIR       location of the gd includes],
+# [INCL="${INCL} -I${withval}"])
+
+# AC_ARG_WITH(gd-lib,[  --with-gd-lib=DIR       location of the gd library],
+# [LIBS="${LIBS} -L${withval}"])
+
+CXXFLAGS="${CXXFLAGS} ${MYCXXFLAGS} ${INCL}"
+CCFLAGS="${CCFLAGS} ${MYCCFLAGS} ${INCL}"
 
 # Checks for programs.
 for ac_prog in gawk mawk nawk awk
@@ -2254,16 +2314,24 @@ ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
-DEPDIR="${am__leading_dot}deps"
+rm -f .deps 2>/dev/null
+mkdir .deps 2>/dev/null
+if test -d .deps; then
+  DEPDIR=.deps
+else
+  # MS-DOS does not allow filenames that begin with a dot.
+  DEPDIR=_deps
+fi
+rmdir .deps 2>/dev/null
+
 
           ac_config_commands="$ac_config_commands depfiles"
 
 
 am_make=${MAKE-make}
 cat > confinc << 'END'
-am__doit:
+doit:
 	@echo done
-.PHONY: am__doit
 END
 # If we don't find an include directive, just comment out the code.
 echo "$as_me:$LINENO: checking for style of include used by $am_make" >&5
@@ -2338,32 +2406,18 @@ else
   # using a relative directory.
   cp "$am_depcomp" conftest.dir
   cd conftest.dir
-  # We will build objects and dependencies in a subdirectory because
-  # it helps to detect inapplicable dependency modes.  For instance
-  # both Tru64's cc and ICC support -MD to output dependencies as a
-  # side effect of compilation, but ICC will put the dependencies in
-  # the current directory while Tru64 will put them in the object
-  # directory.
-  mkdir sub
 
   am_cv_CXX_dependencies_compiler_type=none
   if test "$am_compiler_list" = ""; then
      am_compiler_list=`sed -n 's/^#*\([a-zA-Z0-9]*\))$/\1/p' < ./depcomp`
   fi
   for depmode in $am_compiler_list; do
-    # Setup a source with many dependencies, because some compilers
-    # like to wrap large dependency lists on column 80 (with \), and
-    # we should not choose a depcomp mode which is confused by this.
-    #
     # We need to recreate these files for each test, as the compiler may
     # overwrite some of them when testing with obscure command lines.
     # This happens at least with the AIX C compiler.
-    : > sub/conftest.c
-    for i in 1 2 3 4 5 6; do
-      echo '#include "conftst'$i'.h"' >> sub/conftest.c
-      : > sub/conftst$i.h
-    done
-    echo "${am__include} ${am__quote}sub/conftest.Po${am__quote}" > confmf
+    echo '#include "conftest.h"' > conftest.c
+    echo 'int i;' > conftest.h
+    echo "${am__include} ${am__quote}conftest.Po${am__quote}" > confmf
 
     case $depmode in
     nosideeffect)
@@ -2381,20 +2435,13 @@ else
     # mode.  It turns out that the SunPro C++ compiler does not properly
     # handle `-M -o', and we need to detect this.
     if depmode=$depmode \
-       source=sub/conftest.c object=sub/conftest.${OBJEXT-o} \
-       depfile=sub/conftest.Po tmpdepfile=sub/conftest.TPo \
-       $SHELL ./depcomp $depcc -c -o sub/conftest.${OBJEXT-o} sub/conftest.c \
-         >/dev/null 2>conftest.err &&
-       grep sub/conftst6.h sub/conftest.Po > /dev/null 2>&1 &&
-       grep sub/conftest.${OBJEXT-o} sub/conftest.Po > /dev/null 2>&1 &&
+       source=conftest.c object=conftest.o \
+       depfile=conftest.Po tmpdepfile=conftest.TPo \
+       $SHELL ./depcomp $depcc -c -o conftest.o conftest.c >/dev/null 2>&1 &&
+       grep conftest.h conftest.Po > /dev/null 2>&1 &&
        ${MAKE-make} -s -f confmf > /dev/null 2>&1; then
-      # icc doesn't choke on unknown options, it will just issue warnings
-      # (even with -Werror).  So we grep stderr for any message
-      # that says an option was ignored.
-      if grep 'ignoring option' conftest.err >/dev/null 2>&1; then :; else
-        am_cv_CXX_dependencies_compiler_type=$depmode
-        break
-      fi
+      am_cv_CXX_dependencies_compiler_type=$depmode
+      break
     fi
   done
 
@@ -2790,6 +2837,7 @@ fi
   test -n "$YACC" && break
 done
 test -n "$YACC" || YACC="yacc"
+
 
 
 # Checks for libraries.
@@ -6102,75 +6150,6 @@ fi
 done
 
 
-# compile with optimization and without debugging by default
-MYCXXFLAGS=" -O2 -DNDEBUG "
-MYCCFLAGS=" -DNDEBUG "
-INCL=""
-
-# Check whether --enable-optimization or --disable-optimization was given.
-if test "${enable_optimization+set}" = set; then
-  enableval="$enable_optimization"
-  if eval "test x$enable_optimization = xyes"; then
-        MYCXXFLAGS="-O3 -DNDEBUG -ffast-math -fstrict-aliasing -funroll-all-loops -fno-peephole -fexpensive-optimizations -fomit-frame-pointer "
-	MYCCFLAGS="-xO5 -KPIC -dalign -native"
-    fi
-fi;
-
-# Check whether --enable-debug or --disable-debug was given.
-if test "${enable_debug+set}" = set; then
-  enableval="$enable_debug"
-  if eval "test x$enable_debug = xyes"; then
-       if eval "test x$enable_optimization = xyes"; then
-	echo "error: can not turn on debuging and extra optimization"
-	exit
-       else
-         MYCXXFLAGS=" -g -Wall "
-         MYCCFLAGS=" -g -Wall "
-       fi
-    fi
-fi;
-
-# Check whether --enable-profile or --disable-profile was given.
-if test "${enable_profile+set}" = set; then
-  enableval="$enable_profile"
-  if eval "test x$enable_profile = xyes"; then
-       if eval "test x$enable_optimization = xyes"; then
-	echo "error: can not turn on profiling and extra optimization"
-	exit
-       else
-         MYCXXFLAGS="${MYCXXFLAGS}  -pg -Wall "
-         MYCCFLAGS="${MYCCFLAGS}  -pg -Wall "
-       fi
-    fi
-fi;
-
-# Check whether --enable-extrawarning or --disable-extrawarning was given.
-if test "${enable_extrawarning+set}" = set; then
-  enableval="$enable_extrawarning"
-  if eval "test x$enable_extrawarning = xyes"; then
-	MYCXXFLAGS="${MYCXXFLAGS} -pedantic -W -Winline -Wmissing-prototypes -Wpointer-arith -Wcast-qual -Wcast-align -Wsign-compare -Wno-unused -Wconversion -Waggregate-return -Wshadow -Wwrite-strings "
-    fi
-fi;
-
-# Check whether --enable-static or --disable-static was given.
-if test "${enable_static+set}" = set; then
-  enableval="$enable_static"
-  if eval "test x$enable_static = xyes"; then
-        MYCXXFLAGS="${MYCXXFLAGS} -static"
-        MYCCFLAGS="${MYCCFLAGS} -static"
-    fi
-fi;
-
-# Extra libraries 'with'-options
-# AC_ARG_WITH(gd-inc,[  --with-gd-inc=DIR       location of the gd includes],
-# [INCL="${INCL} -I${withval}"])
-
-# AC_ARG_WITH(gd-lib,[  --with-gd-lib=DIR       location of the gd library],
-# [LIBS="${LIBS} -L${withval}"])
-
-CXXFLAGS="${CXXFLAGS} ${MYCXXFLAGS} ${INCL}"
-CCFLAGS="${CCFLAGS} ${MYCCFLAGS} ${INCL}"
-
 ## Does the compiler support the "std" namespace?
 ## GCC version 3 not only supports this but insists on it,
 ## so if this feature is supported, we always use it.
@@ -7027,7 +7006,6 @@ s,@ac_ct_STRIP@,$ac_ct_STRIP,;t t
 s,@INSTALL_STRIP_PROGRAM@,$INSTALL_STRIP_PROGRAM,;t t
 s,@AWK@,$AWK,;t t
 s,@SET_MAKE@,$SET_MAKE,;t t
-s,@am__leading_dot@,$am__leading_dot,;t t
 s,@CXX@,$CXX,;t t
 s,@CXXFLAGS@,$CXXFLAGS,;t t
 s,@LDFLAGS@,$LDFLAGS,;t t
@@ -7479,16 +7457,7 @@ echo "$as_me: error: cannot create directory \"$ac_dir\"" >&2;}
     cat $tmp/config.h
     rm -f $tmp/config.h
   fi
-# Compute $ac_file's index in $config_headers.
-_am_stamp_count=1
-for _am_header in $config_headers :; do
-  case $_am_header in
-    $ac_file | $ac_file:* )
-      break ;;
-    * )
-      _am_stamp_count=`expr $_am_stamp_count + 1` ;;
-  esac
-done
+_am_stamp_count=`expr ${_am_stamp_count-0} + 1`
 echo "timestamp for $ac_file" >`(dirname $ac_file) 2>/dev/null ||
 $as_expr X$ac_file : 'X\(.*[^/]\)//*[^/][^/]*/*$' \| \
          X$ac_file : 'X\(//\)[^/]' \| \

@@ -35,27 +35,95 @@
  of the possibility of those damages.
 *********************************************************************/
 
-#ifndef ITE_H
-#define ITE_H
+#ifndef ITEHEADERS_H
+#define ITEHEADERS_H
 
-#include "itefeatures.h"
-#include "iteheaders.h"
+#if HAVE_CONFIG_H
+#include "config.h"
+#endif
 
-/* independent */
-#include "defines.h" /* first ! */
 
-#include "vars.h"
-#include "params.h"
-#include "log.h"
+# include <stdio.h>
 
-#include "common.h" 
+#if HAVE_SYS_TYPES_H
+# include <sys/types.h>
+#endif
+#if HAVE_SYS_STAT_H
+# include <sys/stat.h>
+#endif
+#if HAVE_SYS_TIME_H
+# include <sys/time.h>
+#endif
+#if STDC_HEADERS
+# include <stdlib.h>
+# include <stddef.h>
+#else
+# if HAVE_STDLIB_H
+#  include <stdlib.h>
+# endif
+#endif
+#if HAVE_STRING_H
+# if !STDC_HEADERS && HAVE_MEMORY_H
+#  include <memory.h>
+# endif
+# include <string.h>
+#endif
+#if HAVE_STRINGS_H
+# include <strings.h>
+#endif
+#if HAVE_INTTYPES_H
+# include <inttypes.h>
+#else
+# if HAVE_STDINT_H
+#  include <stdint.h>
+# endif
+#endif
+#if HAVE_UNISTD_H
+# include <unistd.h>
+#endif
+#if HAVE_CTYPE_H
+# include <ctype.h>
+#endif
+#if HAVE_LIMITS_H
+# include <limits.h>
+#endif
+#if HAVE_ASSERT_H
+# include <assert.h>
+#endif
+#if HAVE_SIGNAL_H
+# include <signal.h>
+#endif
+#if HAVE_MATH_H
+# include <math.h>
+#endif
+#if HAVE_TERMCAP_H
+# include <termcap.h>
+#endif
+#if HAVE_TERMIOS_H
+# include <termios.h>
+#endif
+#if HAVE_IOSTREAM
+# include <iostream>
+#else
+# if HAVE_IOSTREAM_H
+#  include <iostream.h>
+# endif
+#endif
+#if HAVE_FSTREAM
+# include <fstream>
+#else
+# if HAVE_FSTREAM_H
+#  include <fstream.h>
+# endif
+#endif
 
-#include "prototypes.h"
+#ifndef INT_MAX
+#define INT_MAX 2147483647
+#endif
 
-#include "globals.h"
-#include "pools.h"
-#include "symtable.h"
+/* system */
+#ifdef HAVE_USING_NAMESPACE_STD
+using namespace std;
+#endif
 
-#include "interface.h"
-
-#endif // ITE_H
+#endif

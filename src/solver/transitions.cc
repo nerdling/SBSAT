@@ -57,15 +57,15 @@ AddStateTransition(SmurfState *pSmurfState,
   pTransition->pNextState = pSmurfStateOfEvaled;
   pTransition->pState = pSmurfState;
 
-  int size = pFuncEvaled->addons->pImplied->GetPtrPositiveInferences()->Size() +
-             pFuncEvaled->addons->pImplied->GetPtrNegativeInferences()->Size();
+  int size = SFADDONS(pFuncEvaled->addons)->pImplied->GetPtrPositiveInferences()->Size() +
+             SFADDONS(pFuncEvaled->addons)->pImplied->GetPtrNegativeInferences()->Size();
   int *ptr = NULL;
   if (size) {
      ptr = (int*)ite_calloc(size, sizeof(int), 9, "inferences");
 
      // Take the positive inferences from *pFuncEvaled and store them
      // in the transition.
-     pFuncEvaled->addons->pImplied->GetPtrPositiveInferences()
+     SFADDONS(pFuncEvaled->addons)->pImplied->GetPtrPositiveInferences()
         ->StoreAsArrayBasedSet(pTransition->positiveInferences, ptr);
      ptr += pTransition->positiveInferences.nNumElts;
 
@@ -75,7 +75,7 @@ AddStateTransition(SmurfState *pSmurfState,
      }
 
      // Likewise for the negative inferences.
-     pFuncEvaled->addons->pImplied->GetPtrNegativeInferences()
+     SFADDONS(pFuncEvaled->addons)->pImplied->GetPtrNegativeInferences()
         ->StoreAsArrayBasedSet(pTransition->negativeInferences, ptr);
 
      for(int i=0;i<pTransition->negativeInferences.nNumElts;i++) {
