@@ -370,7 +370,8 @@ sym_all_int()
    int i;
    for(i=2;i<sym_table_idx;i++) {
       int num;
-      if (sym_table[i] && sym_table[i]->name == NULL) return 0;
+      if (sym_table[i] == NULL) continue;
+      if (sym_table[i]->name == NULL) return 0;
       if (sscanf(sym_table[i]->name, "%d", &num)==0) return 0;
    }
    return 1;
