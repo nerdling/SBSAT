@@ -34,70 +34,48 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
-//#define ITE_INLINE  __inline__
 
-#include "smurffactory.cc"
+#include "ite.h"
+#include "solver.h"
 
-/* init */
-#include "solve.cc"
-#include "init_solver.cc"
+int
+ITE_GetNextDecision(int *nInferredAtom, int *nInferredValue)
+{
+   proc_call_heuristic(nInferredAtom, nInferredValue);
+   return 0;
+}
 
-/* basic brancher */
-#include "brancher.cc"
-#include "select_bp.cc"
-#include "update_heu.cc"
+void
+ITE_MakeDecision(int nInferredAtom, int nInferredValue)
+{
+   fprintf(stderr, "ITE_MakeDecision(nInferredAtom=%d, nInferredValue=%d)\n",
+         nInferredAtom, nInferredValue);
+   InferLiteral(nInferredAtom, nInferredValue,
+         false, NULL, NULL, 0);
+}
 
-/* backtracking through ... */
-#include "backtrack.cc"
-#include "backtrack_nl.cc"
-#include "backtrack_sbj.cc"
-#include "bt_misc.cc"
-#include "bt_lemmas.cc"
-#include "bt_smurfs.cc"
-#include "bt_specfn.cc"
-#include "bt_specfn_and.cc"
-#include "bt_specfn_xor.cc"
+int
+ITE_SolveInit()
+{
+   return solve_init();
+}
 
-/* null heuristic */
-#include "heuristic.cc"
+int
+ITE_SolveFree()
+{
+   solve_free();
+}
 
-/* lemma heuristic */
-#include "l_lemma.cc"
-#include "l_heuristic.cc"
+int
+ITE_Brancher()
+{
+   return Brancher();
+}
 
-/* johnson heuristic */
-#include "j_update_heu.cc"
-#include "j_specfn.cc"
-#include "j_heuristic.cc"
-
-/* interactive heuristic */
-#include "i_heuristic.cc"
-
-#include "autarky.cc"
-
-#include "bdd2smurf.cc"
-#include "specfn2smurf.cc"
-#include "smurfstates.cc"
-
-#include "state_stacks.cc"
-
-#include "lemmainfo.cc"
-#include "lemmaspace.cc"
-#include "verify.cc"
-#include "display.cc"
-#include "display_sf.cc"
-
-#include "recordsol.cc"
-#include "graphs.cc"
-
-#include "transitions.cc"
-#include "sf_addons.cc"
-
-#include "bddwalk.cc"
-#include "wvf.cc"
-
-#include "crtwin.cc"
-
-#include "load_lemmas.cc"
-
-#include "interface.cc"
+int
+ITE_GetVarAsgnment(int var)
+{
+   fprintf(stderr, "ITE_GetVarAsgnment(var=%d) = %d\n", 
+         var, arrSolution[var]);
+    return arrSolution[var];
+}

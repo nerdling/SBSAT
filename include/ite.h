@@ -164,4 +164,6 @@ using namespace std;
 #include "pools.h"
 #include "symtable.h"
 
+#include "interface.h"
+
 #endif // ITE_H

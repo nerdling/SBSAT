@@ -81,7 +81,6 @@ ConstructTempLemma()
    return nTempLemmaIndex;
 }
 
-
 ITE_INLINE
 void
 InferLiteral(int nInferredAtom,

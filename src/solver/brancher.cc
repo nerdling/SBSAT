@@ -54,7 +54,6 @@ extern int nNumRegSmurfs; // Number of regular Smurfs.
 SmurfState *pTrueSmurfState = 0;  // Pointer to the Smurf state
 //representing the Boolean function 'true'.
 extern int NO_LEMMAS;
-extern t_solution_info *solution_info_head;
 
 int *arrFunctionType;
 BDDNodeStruct **arrFunctions;
@@ -159,7 +158,7 @@ CheckLimits(double fStartTime)
 ITE_INLINE int
 ITE_Deduce()
 {
-   int err;
+   int err=0;
 
    // While inference queue is nonempty
    while (pInferenceQueueNextElt < pInferenceQueueNextEmpty)
@@ -259,25 +258,6 @@ CheckInitHooks()
 
    if (reports != 0) crtwin_init();
 
-   switch (nHeuristic) {
-    case JOHNSON_HEURISTIC:
-       proc_call_heuristic = J_OptimizedHeuristic;
-       //= J_OptimizedHeuristic_Berm;
-       J_InitHeuristicScores();
-       D_9(
-             DisplayJHeuristicValues();
-          );
-       break;
-    case C_LEMMA_HEURISTIC:
-       proc_call_heuristic = L_OptimizedHeuristic;
-       break;
-    case INTERACTIVE_HEURISTIC:
-       proc_call_heuristic = I_OptimizedHeuristic;
-       break;
-    default:
-       dE_printf1("Unknown heuristic\n");
-       exit(1);
-   }
    return 0;
 }
 

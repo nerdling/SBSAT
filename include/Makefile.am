@@ -4,4 +4,4 @@ EXTRA_DIST=\
 	lemmainfo.h smurffactory.h flatten.h parse.h tracer.h \
 	integerset.h literalset.h log.h params.h equivclass.h \
 	preprocess.h pools.h symtable.h solver.h params.h vars.h \
-        config.h config.h.in stamp-h stamp-h.in 
+        interface.h config.h config.h.in stamp-h stamp-h.in 

@@ -16,7 +16,7 @@ libsolver_a_SOURCES= solve.cc bddwalk.cc \
 	     bdd2smurf.cc specfn2smurf.cc autarky.cc \
              display.cc display_sf.cc verify.cc \
 	     recordsol.cc graphs.cc sf_addons.cc transitions.cc wvf.cc update_heu.cc \
-	     crtwin.cc load_lemmas.cc
+	     crtwin.cc load_lemmas.cc interface.cc
 
 libsolver2_a_SOURCES=libsolver.cc
 

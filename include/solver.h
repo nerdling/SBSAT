@@ -192,6 +192,8 @@ ITE_INLINE void SmurfStatesDisplayInfo();
 ITE_INLINE void UpdateHeuristic();
 ITE_INLINE void J_UpdateHeuristic();
 ITE_INLINE void J_UpdateHeuristicSmurf(SmurfState *pOldState, SmurfState *pState, int);
+int solve_init();
+void solve_free();
 
 ITE_INLINE Transition *
 FindTransitionDebug (SmurfState * pState, int i, int nVble, int nVbleValue);

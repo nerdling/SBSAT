@@ -581,6 +581,26 @@ InitBrancher()
    arrSolution[0] = BOOL_FALSE;
    *(pInferenceQueueNextEmpty++) = 0;
 
+   switch (nHeuristic) {
+    case JOHNSON_HEURISTIC:
+       proc_call_heuristic = J_OptimizedHeuristic;
+       //= J_OptimizedHeuristic_Berm;
+       J_InitHeuristicScores();
+       D_9(
+             DisplayJHeuristicValues();
+          );
+       break;
+    case C_LEMMA_HEURISTIC:
+       proc_call_heuristic = L_OptimizedHeuristic;
+       break;
+    case INTERACTIVE_HEURISTIC:
+       proc_call_heuristic = I_OptimizedHeuristic;
+       break;
+    default:
+       dE_printf1("Unknown heuristic\n");
+       exit(1);
+   }
+
    return ret;
 }
 
