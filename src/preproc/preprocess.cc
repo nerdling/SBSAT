@@ -203,8 +203,10 @@ parse_seq(char **p, int parse_only)
      }
      else if (**p == '[')
      {
+        (*p)++;
         r = parse_seq(p, parse_only);
         assert(**p == ']');
+        (*p)++;
         if (r == PREP_CHANGED) r = PREP_NO_CHANGE;
      }
      else if (**p == ']')
