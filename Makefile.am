@@ -4,7 +4,7 @@ SUBDIRS = include src tests examples doc
 # doc intl po src tests
 
 if NO_CVSBUILD
-distdir = $(PACKAGE)-$(VERSION)
+distdir=$(PACKAGE)-$(PACKAGE_VERSION)
 else
 distdir=$(PACKAGE)-$(CVSBUILD)
 endif

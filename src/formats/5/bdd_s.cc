@@ -443,7 +443,7 @@ char *yytext;
 #line 2 "bdd_s.ll"
 #include "ite.h"
 #include "bddnode.h"
-#include "libt5_a-bdd_g.h"
+#include "libt5_la-bdd_g.h"
 extern int s_line;
 
 /* remove warning about unput not used */

@@ -1,9 +1,9 @@
 #                                               -*- Autoconf -*- # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.57)
-AC_INIT([sbsat],[2.1b-1],[mkouril@ececs.uc.edu])
+AC_INIT([sbsat],[2.1b-2],[mkouril@ececs.uc.edu])
 AC_LANG([C++])
-AM_INIT_AUTOMAKE(sbsat,2.1b-1)
+AM_INIT_AUTOMAKE(sbsat,2.1b-2)
 AC_CONFIG_SRCDIR([include/brancher.h])
 AC_CONFIG_HEADER([include/config.h])
 
@@ -49,12 +49,12 @@ AC_ARG_ENABLE(extrawarning,
 	MYCXXFLAGS="${MYCXXFLAGS} -pedantic -W -Winline -Wmissing-prototypes -Wpointer-arith -Wcast-qual -Wcast-align -Wsign-compare -Wno-unused -Wconversion -Waggregate-return -Wshadow -Wwrite-strings "
     fi])
 
+sbsat_static=false
 AC_ARG_ENABLE(static, 
 [  --enable-static         Turn on linking libraries staticly (default=no)],
-    [if eval "test x$enable_static = xyes"; then
-        MYCXXFLAGS="${MYCXXFLAGS} -static"
-        MYCCFLAGS="${MYCCFLAGS} -static"
-    fi])
+    [sbsat_static=true])
+
+AM_CONDITIONAL(SBSAT_STATIC, test x$sbsat_static = xtrue)
 
 # Extra libraries 'with'-options
 # AC_ARG_WITH(gd-inc,[  --with-gd-inc=DIR       location of the gd includes],
@@ -66,23 +66,94 @@ AC_ARG_ENABLE(static,
 CXXFLAGS="${CXXFLAGS} ${MYCXXFLAGS} ${INCL}"
 CCFLAGS="${CCFLAGS} ${MYCCFLAGS} ${INCL}"
 
+cvsbuild=false
 AC_ARG_ENABLE(cvsbuild,
 [  --enable-cvsbuild Create nightly build],
 [case "${enableval}" in
-  no)  cvsbuild=false ;;
+  no) cvsbuild=false ;;
   *) cvsbuild=${enableval} ;;
 esac],[debug=false])
 AM_CONDITIONAL(NO_CVSBUILD, test x$cvsbuild = xfalse)
 CVSBUILD=$cvsbuild
 AC_SUBST(CVSBUILD)
 
+AC_ARG_WITH(java-os,
+[  --with-java-os=OS       Use OS to include machine-dependent java header],[
+  if test "$withval" != "no" ; then
+    if test "$withval" != "yes"; then
+      JAVA_OS_INCL="$withval"
+    else
+      AC_MSG_ERROR([Missing argument for --with-java-os])
+   fi
+  fi
+])
+
+AC_ARG_WITH(java,
+[  --with-java[[=DIR]]       Use java to create shared object use JDK DIR],[
+  if test "$withval" != "no" ; then
+    if test "$withval" != "yes"; then
+      JAVA_DIR=$withval
+      CPPFLAGS="${CPPFLAGS} -I$withval/include"
+      LDFLAGS="${LDFLAGS} -L$withval/lib"
+    else
+      AC_CHECK_FILE(
+         [$JAVA_HOME/include/jni.h],[
+            JAVA_DIR="$JAVA_HOME"
+            CPPFLAGS="${CPPFLAGS} -I$JAVA_DIR/include"
+            LDFLAGS="${LDFLAGS} -L$JAVA_DIR/lib"
+         ],[])
+   fi
+   if test x$JAVA_OS_INCL != "x" ; then
+      JAVA_OS_INCL=" -I$JAVA_DIR/include/$JAVA_OS_INCL "
+   fi
+   CPPFLAGS="${CPPFLAGS} ${JAVA_OS_INCL}";
+   AC_CHECK_HEADERS(jni_md.h, [], 
+        AC_MSG_ERROR(
+            [Could not find jni_md.h include file please check JAVA_HOME enviroment variable or specify --with-java=DIR and specify --with-java-os=OS or check config.log.]))
+   AC_CHECK_HEADERS(jni.h,
+      [], AC_MSG_ERROR(
+            [Could not find jni.h include file please check JAVA_HOME enviroment variable or specify --with-java=DIR or check config.log.]))
+ fi
+], [])
+
+#AC_ARG_WITH(zlib,
+#[  --with-zlib[[=DIR]]       use libz in DIR],[
+  #if test "$withval" != "no" -a "$withval" != "yes"; then
+    #Z_DIR=$withval
+    #CPPFLAGS="${CPPFLAGS} -I$withval/include"
+    #LDFLAGS="${LDFLAGS} -L$withval/lib"
+  #fi
+#])
+#if test "$with_zlib" = "no"; then
+    #echo "Disabling compression support"
+#else
+    #AC_CHECK_HEADERS(zlib.h,
+        #AC_CHECK_LIB(z, gzread,[
+            #AC_DEFINE(HAVE_LIBZ)
+            #if test "x${Z_DIR}" != "x"; then
+                #Z_CFLAGS="-I${Z_DIR}/include"
+                #Z_LIBS="-L${Z_DIR}/lib -lz"
+                #[case ${host} in
+                    #*-*-solaris*)
+                        #Z_LIBS="-L${Z_DIR}/lib -R${Z_DIR}/lib -lz"
+                        #;;
+                #esac]
+            #else
+                #Z_LIBS="-lz"
+            #fi]))
+#fi
+#
+#AC_SUBST(Z_CFLAGS)
+#AC_SUBST(Z_LIBS)
+
 # Checks for programs.
 AC_PROG_AWK
 AC_PROG_CXX
 #AC_PROG_CC
-AC_PROG_RANLIB
+#AC_PROG_RANLIB # obsolete by LIBTOOL
 AM_PROG_LEX
 AC_PROG_YACC
+AC_PROG_LIBTOOL
 
 AC_SUBST(ECHO_N)
 AC_SUBST(ECHO_C)
@@ -100,7 +171,6 @@ AC_CHECK_HEADERS([iostream.h fstream.h iostream fstream ])
 AC_CHECK_HEADERS([sys/types.h sys/times.h sys/resource.h sys/wait.h])
 AC_CHECK_HEADERS([sys/stat.h ctype.h math.h regex.h])
 AC_CHECK_HEADERS([termcap.h])
-
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_HEADER_STDBOOL

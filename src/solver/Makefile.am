@@ -1,8 +1,5 @@
 INCLUDES=-I$(top_srcdir)/include
-noinst_LIBRARIES = libsolver.a libsolver2.a
-EXTRA_DIST=heur_choice.cc
-
-libsolver_a_SOURCES= solve.cc \
+SOURCES= solve.cc \
              init_solver.cc brancher.cc \
 	     backtrack.cc backtrack_nl.cc backtrack_sbj.cc bt_misc.cc \
              select_bp.cc \
@@ -25,5 +22,8 @@ libsolver_a_SOURCES= solve.cc \
 	     crtwin.cc load_lemmas.cc interface.cc heur_stack.cc \
 	     bddwalk.cc wvf.cc 
 
-libsolver2_a_SOURCES=libsolver.cc
+noinst_LTLIBRARIES = libsolver.la libsolver2.la
+libsolver_la_SOURCES= $(SOURCES)
+libsolver2_la_SOURCES=libsolver.cc
 
+EXTRA_DIST=heur_choice.cc

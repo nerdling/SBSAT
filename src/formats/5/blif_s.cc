@@ -490,7 +490,7 @@ char *yytext;
 #line 2 "blif_s.ll"
 #include "ite.h"
 #include "bddnode.h"
-#include "libt5_a-blif_g.h"
+#include "libt5_la-blif_g.h"
 
 /* remove warning about unput not used */
 #define YY_NO_UNPUT

@@ -54,6 +54,9 @@
 #if HAVE_SYS_TIME_H
 # include <sys/time.h>
 #endif
+#if HAVE_SYS_WAIT_H
+# include <sys/wait.h>
+#endif
 #if STDC_HEADERS
 # include <stdlib.h>
 # include <stddef.h>

@@ -410,7 +410,7 @@ char *yytext;
 #line 2 "cnf_s.ll"
 #include "ite.h"
 #include "bddnode.h"
-#include "libt5_a-cnf_g.h"
+#include "libt5_la-cnf_g.h"
 extern int s_line;
 /* remove warning about unput not used */
 #define YY_NO_UNPUT

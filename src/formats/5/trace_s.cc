@@ -536,7 +536,7 @@ char *yytext;
 #line 2 "trace_s.ll"
 #include "ite.h"
 #include "bddnode.h"
-#include "libt5_a-trace_g.h"
+#include "libt5_la-trace_g.h"
 extern int s_line;
 /* remove warning about unput not used */
 #define YY_NO_UNPUT

@@ -1,4 +1,6 @@
 INCLUDES=-I$(top_srcdir)/include
-noinst_LIBRARIES = libpostproc.a
-libpostproc_a_SOURCES= backend.cc
+SOURCES= backend.cc
+
+noinst_LTLIBRARIES = libpostproc.la
+libpostproc_la_SOURCES= $(SOURCES)
 

@@ -1,23 +1,34 @@
 INCLUDES=-I$(top_srcdir)/include
 AM_CFLAGS=-DYYDEBUG
-EXTRA_DIST=bddnode.h functions.h bddnode.cc tracetest.cc
-noinst_LIBRARIES = libt5.a
-#libgen_a_SOURCES= xorgen.cc
-
+SOURCES=trace_g.yy trace_s.ll \
+	cnf_g.yy cnf_s.ll \
+	bdd_g.yy bdd_s.ll \
+	blif_g.yy blif_s.ll \
+	prover_g.yy prover_s.ll \
+	prover3_g.yy prover3_s.ll \
+        parser.cc functions.cc bddops.cc 
 # _g.yy first
-libt5_a_SOURCES = trace_g.yy cnf_g.yy bdd_g.yy trace_s.ll cnf_s.ll bdd_s.ll parser.cc functions.cc bddops.cc blif_g.yy blif_s.ll prover_g.yy prover_s.ll prover3_g.yy prover3_s.ll
-#libt5_a_YFLAGS =  -o y.tab.c -d -y 
-libt5_a_YFLAGS =  -d
-# enable --debug for grammer debugging -- need to take out xxx_debug definitions
-# from parser.c
+EXTRA_DIST=bddnode.h functions.h bddnode.cc tracetest.cc
 
-bin_PROGRAMS = tracetest
-tracetest_SOURCES = tracetest.cc  # bddnode.cc
-#tracetest_LDADD = libt5.a ../../preproc/libpreproc.a ../../utils/libutils.a
-tracetest_LDADD = ../../preproc/libpreproc.a libt5.a ../../utils/libutils.a
+#noinst_LIBRARIES = libt5.a
+#libt5_a_SOURCES = 
+#libt5_a_LIBADD = libt5.la
 
+#if SBSAT_SHARED_BUILD
+noinst_LTLIBRARIES = libt5.la
+libt5_la_SOURCES = $(SOURCES)
+libt5_la_YFLAGS =  -d
+#endif
+
+#bin_PROGRAMS = tracetest
+#tracetest_SOURCES = tracetest.cc  # bddnode.cc
+#tracetest_LDADD = ../../preproc/libpreproc.a libt5.a ../../utils/libutils.a
 
 #libt5_a_CXXFLAGS =  -pg
 #tracetest_CXXFLAGS = -pg
 #tracetest_LDFLAGS = -pg
+
+#libt5_a_YFLAGS =  -d
+# enable --debug for grammer debugging -- 
+# need to take out xxx_debug definitions from parser.c
 

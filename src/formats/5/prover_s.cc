@@ -411,7 +411,7 @@ char *yytext;
 #line 2 "prover_s.ll"
 #include "ite.h"
 #include "bddnode.h"
-#include "libt5_a-prover_g.h"
+#include "libt5_la-prover_g.h"
 
 /* remove warning about unput not used */
 #define YY_NO_UNPUT
