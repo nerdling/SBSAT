@@ -206,7 +206,7 @@ sym_regex_init(t_myregex *rg, char *exp)
    assert(rg != NULL);
    memset(rg, 0, sizeof(t_myregex));
    rg->last_id = 1;
-   return regcomp(&(rg->rg), exp, REG_NOSUB);
+   return regcomp(&(rg->rg), exp, REG_NOSUB+REG_EXTENDED+REG_ICASE);
    /* REG_EXTENDED REG_ICASE REG_NEWLINE */
 }
 
