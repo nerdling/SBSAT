@@ -56,13 +56,15 @@ int sym_all_int_flag = 1;
 
 symrec * tputsym_truefalse(int sym_type);
 void fill_symrec_with_id(symrec *ptr, int sym_type, int id);
+void free_symrec_name_pool_chain();
+void free_symrec_rec_pool_chain();
+void free_symtmp_table();
+void symrec_rec_pool_alloc();
 
 void
 sym_init()
 {
   sym_hash_table = (symrec*)ite_calloc(SYM_HASH_SIZE, sizeof(symrec), 9, "sym_hash_table");
-  symtmp_table_max = SYMTMP_TABLE_SIZE;
-  symtmp_table = (symrec*)ite_calloc(SYMTMP_TABLE_SIZE, sizeof(symrec), 9, "symtmp_table");
   sym_table_max = SYM_TABLE_SIZE;
   sym_table = (symrec**)ite_calloc(SYM_TABLE_SIZE, sizeof(symrec*), 9, "sym_table");
   true_ptr->var_ptr=tputsym_truefalse(SYM_VAR);
@@ -70,22 +72,17 @@ sym_init()
   ((symrec*)(true_ptr->var_ptr))->id=0;
   ((symrec*)(false_ptr->var_ptr))->id=0;
   sym_table_idx = 0;
+  symrec_rec_pool_alloc();
 }
 
 void
 sym_free()
 {
-   if (sym_table != NULL) {
-      for (int i=0; i<= sym_table_idx; i++) {
-         if (sym_table[i] && sym_table[i]->name) {
-            ite_free((void**)&sym_table[i]->name);
-            ite_free((void**)&sym_table[i]);
-         }
-      }
-   }
    ite_free((void**)&sym_hash_table);
-   ite_free((void**)&symtmp_table);
    ite_free((void**)&sym_table);
+   free_symrec_name_pool_chain();
+   free_symrec_rec_pool_chain();
+   free_symtmp_table();
 }
 
 symrec *
@@ -155,15 +152,128 @@ fill_symrec(symrec *ptr, int sym_type)
    fill_symrec_with_id(ptr, sym_type, sym_table_idx);
 }
 
+/* ------------------- name rec pool ------------------- */
+
+char *symrec_name_pool = NULL;
+int symrec_name_pool_max = 0;
+int symrec_name_pool_index = 0;
+typedef struct _symrec_name_pool_chain_type {
+   char *pool;
+   struct _symrec_name_pool_chain_type * next;
+} symrec_name_pool_chain_type;
+symrec_name_pool_chain_type * symrec_name_pool_chain_head=NULL;
+symrec_name_pool_chain_type * symrec_name_pool_chain=NULL;
+
+void
+free_symrec_name_pool_chain()
+{
+   symrec_name_pool_chain_type * next = symrec_name_pool_chain_head;
+   while(next) {
+      symrec_name_pool_chain_type *current = next;
+      next = next->next;
+      free(current->pool);
+      free(current);
+   }
+   symrec_name_pool_chain_head = NULL;
+   symrec_name_pool_chain = NULL;
+   symrec_name_pool_max = 0;
+   symrec_name_pool_index = 0;
+}
+
+void
+symrec_name_pool_alloc(int min)
+{
+   symrec_name_pool_chain_type *tmp_symrec_name_pool_chain = 
+      (symrec_name_pool_chain_type*)ite_calloc(1, sizeof(symrec_name_pool_chain_type), 9, "symrec_name_pool_chain");
+   if (symrec_name_pool_chain == NULL) {
+      symrec_name_pool_chain_head = symrec_name_pool_chain = tmp_symrec_name_pool_chain;
+   } else {
+      symrec_name_pool_chain->next = tmp_symrec_name_pool_chain;
+      symrec_name_pool_chain = tmp_symrec_name_pool_chain;
+   }
+   symrec_name_pool_max = 100000;
+   if (symrec_name_pool_max < min) symrec_name_pool_max = min;
+   symrec_name_pool_chain->pool = (char*)ite_calloc(symrec_name_pool_max, sizeof(char), 9, "symrec_name_pool");
+   symrec_name_pool = symrec_name_pool_chain->pool;
+   symrec_name_pool_index = 0;
+}
+
+char *
+symrec_name_alloc(char *name)
+{
+   int len = strlen(name)+1;
+   if (symrec_name_pool_index + len >= symrec_name_pool_max) {
+      symrec_name_pool_alloc(len);
+   }
+   strcpy(symrec_name_pool + symrec_name_pool_index, name);
+   symrec_name_pool_index += len;
+   return (symrec_name_pool + symrec_name_pool_index - len);
+}
+
+/* ------------------- sym rec pool ------------------ */
+
+symrec *symrec_rec_pool = NULL;
+int symrec_rec_pool_max = 0;
+int symrec_rec_pool_index = 0;
+typedef struct _symrec_rec_pool_chain_type {
+   symrec *pool;
+   struct _symrec_rec_pool_chain_type * next;
+} symrec_rec_pool_chain_type;
+symrec_rec_pool_chain_type * symrec_rec_pool_chain_head=NULL;
+symrec_rec_pool_chain_type * symrec_rec_pool_chain=NULL;
+
+void
+free_symrec_rec_pool_chain()
+{
+   symrec_rec_pool_chain_type * next = symrec_rec_pool_chain_head;
+   while(next) {
+      symrec_rec_pool_chain_type *current = next;
+      next = next->next;
+      free(current->pool);
+      free(current);
+   }
+   symrec_rec_pool_chain_head = NULL;
+   symrec_rec_pool_chain = NULL;
+   symrec_rec_pool_max = 0;
+   symrec_rec_pool_index = 0;
+}
+
+void
+symrec_rec_pool_alloc()
+{
+   symrec_rec_pool_chain_type *tmp_symrec_rec_pool_chain = 
+      (symrec_rec_pool_chain_type*)ite_calloc(1, sizeof(symrec_rec_pool_chain_type), 9, "symrec_rec_pool_chain");
+   if (symrec_rec_pool_chain == NULL) {
+      symrec_rec_pool_chain_head = symrec_rec_pool_chain = tmp_symrec_rec_pool_chain;
+   } else {
+      symrec_rec_pool_chain->next = tmp_symrec_rec_pool_chain;
+      symrec_rec_pool_chain = tmp_symrec_rec_pool_chain;
+   }
+   symrec_rec_pool_max = 100000;
+   symrec_rec_pool_chain->pool = (symrec*)ite_calloc(symrec_rec_pool_max, sizeof(symrec), 9, "symrec_rec_pool");
+   symrec_rec_pool = symrec_rec_pool_chain->pool;
+   symrec_rec_pool_index = 0;
+}
+
+symrec *
+symrec_rec_alloc()
+{
+   if (symrec_rec_pool_index + 1 >= symrec_rec_pool_max) {
+      symrec_rec_pool_alloc();
+   }
+   symrec_rec_pool_index += 1;
+   return (symrec_rec_pool + symrec_rec_pool_index - 1);
+}
+
+/* ----------------------------------------------------------- */
 
 symrec *
 putsym_with_id(char *sym_name, int sym_type, int id)
 {
   symrec *ptr;
   symrec *tmp_sym_table = sym_hash(sym_name);
-  ptr = (symrec *)ite_calloc (1, sizeof (symrec), 9, "symrec");
-  ptr->name = (char *)ite_calloc (1, strlen (sym_name) + 1, 9, "symrec name");
-  strcpy (ptr->name,sym_name);
+  ptr = symrec_rec_alloc();
+  ptr->name = symrec_name_alloc(sym_name);
   ptr->next = (struct symrec *)tmp_sym_table->next;
   tmp_sym_table->next = ptr;
   fill_symrec_with_id(ptr, sym_type, id);
@@ -177,9 +287,8 @@ putsym(char *sym_name, int sym_type)
   symrec *ptr;
   //{int id; if (sscanf(sym_name, "%d", &id)==1 && id!=0) return putsym_with_id(sym_name, sym_type, id); }
   symrec *tmp_sym_table = sym_hash(sym_name);
-  ptr = (symrec *)ite_calloc (1, sizeof (symrec), 9, "symrec");
-  ptr->name = (char *)ite_calloc (1, strlen (sym_name) + 1, 9, "symrec name");
-  strcpy (ptr->name,sym_name);
+  ptr = symrec_rec_alloc();
+  ptr->name = symrec_name_alloc(sym_name);
   if (sym_all_int_flag && sscanf(sym_name, "%d", &(ptr->name_int)) == 0) sym_all_int_flag = 0;
   ptr->next = (struct symrec *)tmp_sym_table->next;
   tmp_sym_table->next = ptr;
@@ -307,6 +416,47 @@ s_is_indep(symrec *ptr)
    //ptr->indep = i;
 }
 
+typedef struct _symtmp_table_pools_type {
+   symrec *pool;
+   struct _symtmp_table_pools_type * next;
+} symtmp_table_pools_type;
+
+symtmp_table_pools_type * symtmp_table_pools_head=NULL;
+symtmp_table_pools_type * symtmp_table_pools=NULL;
+
+void
+symtmp_table_alloc()
+{
+   symtmp_table_pools_type * tmp_symtmp_table_pools = (symtmp_table_pools_type*)ite_calloc(1, sizeof(symtmp_table_pools_type), 9, "symtmp_table_pools");
+   if (symtmp_table_pools_head == NULL) {
+      symtmp_table_pools_head = 
+         symtmp_table_pools = tmp_symtmp_table_pools;
+   } else {
+      symtmp_table_pools->next = tmp_symtmp_table_pools;
+      symtmp_table_pools = symtmp_table_pools->next;
+   }
+   /* cannot reallocate  -- pointers exist to this pool */
+   symtmp_table_max = SYMTMP_TABLE_SIZE;
+   symtmp_table = (symrec*)ite_calloc(symtmp_table_max, sizeof(symrec), 9, "symtmp_table");
+   symtmp_table_idx = 0;
+   symtmp_table_pools->pool = symtmp_table;
+}
+
+void
+free_symtmp_table()
+{
+   symtmp_table_pools_type * next = symtmp_table_pools_head;
+   while (next) {
+      symtmp_table_pools_type * current = next;
+      next = next->next;
+      ite_free((void**)&current->pool);
+      ite_free((void**)&current);
+   }
+   symtmp_table_pools_head = NULL;
+   symtmp_table_pools = NULL;
+   symtmp_table_max = 0;
+   symtmp_table_idx = 0;
+}
 
 symrec *
 tputsym_truefalse(int sym_type)
@@ -315,9 +465,7 @@ tputsym_truefalse(int sym_type)
    /* e.g. for cnf that takes absolute ids the id 1 would be set to be temp indep */
 
   if (symtmp_table_idx >= symtmp_table_max) {
-     /* cannot reallocate  -- pointers exist to this pool */
-     symtmp_table = (symrec*)ite_calloc(SYMTMP_TABLE_SIZE, sizeof(symrec), 9, "symtmp_table");
-     symtmp_table_idx = 0;
+     symtmp_table_alloc();
   }
   symrec *ptr = &(symtmp_table[symtmp_table_idx]);
   fill_symrec(ptr, sym_type);
@@ -329,9 +477,7 @@ symrec *
 tputsym(int sym_type)
 {
   if (symtmp_table_idx >= symtmp_table_max) {
-     /* cannot reallocate  -- pointers exist to this pool */
-     symtmp_table = (symrec*)ite_calloc(SYMTMP_TABLE_SIZE, sizeof(symrec), 9, "symtmp_table");
-     symtmp_table_idx = 0;
+     symtmp_table_alloc();
   }
   symrec *ptr = &(symtmp_table[symtmp_table_idx]);
   fill_symrec(ptr, sym_type);

@@ -59,9 +59,8 @@ ConstructLemmasForMINMAX(SpecialFunc *pSpecialFunc)
    ///////////////////////////
 
    int *arrLits;
-   ITE_NEW_CATCH(
-         arrLits = new int[nNumRHSVbles], "arrLits")
-      int nLitIndex = 0;
+   int *arrLits = (int*)ite_calloc(nNumElts, sizeof(int), 9, "arrLits");
+   int nLitIndex = 0;
 
    for (int i = 0; i < nNumRHSVbles; i++)
    {
@@ -71,7 +70,7 @@ ConstructLemmasForMINMAX(SpecialFunc *pSpecialFunc)
    EnterIntoLemmaSpace(nNumRHSVbles, arrLits,
          false, pFirstBlock, pLastBlock, nNumBlocks);
    pSpecialFunc->pLongLemma = pFirstBlock;
-   delete [] arrLits;
+   ite_free((void**)&arrLits);
    */
 }
 

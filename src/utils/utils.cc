@@ -45,7 +45,8 @@ BDDNode *false_ptr = NULL;
 BDDNode *true_ptr = NULL;
 extern char temp_dir[128];
 
-void *ite_calloc(unsigned int x, unsigned int y, int dbg_lvl, const char *for_what) {
+void *_ite_calloc(unsigned int x, unsigned int y, int dbg_lvl, const char *for_what) {
+   //fprintf(stderr, "ite_calloc(x=%d, y=%d, dbg_lvl=%d, for_what=%s)\n", x, y, dbg_lvl, for_what);
    void *p = NULL;
    LONG64 r = x;
    r *= y;
@@ -69,7 +70,7 @@ void *ite_calloc(unsigned int x, unsigned int y, int dbg_lvl, const char *for_wh
    return p;
 }
 
-void ite_free(void **ptr) {
+void _ite_free(void **ptr) {
   if (*ptr != NULL) {
     free(*ptr);
     *ptr = NULL;
@@ -77,7 +78,8 @@ void ite_free(void **ptr) {
 }
 
 
-void *ite_recalloc(void *ptr, unsigned int oldx, unsigned int x, unsigned int y, int dbg_lvl, const char *for_what) {
+void *_ite_recalloc(void *ptr, unsigned int oldx, unsigned int x, unsigned int y, int dbg_lvl, const char *for_what) {
+   //fprintf(stderr, "ite_recalloc(ptr, oldx=%d, x=%d, y=%d, dbg_lvl=%d, for_what=%s)\n", oldx, x, y, dbg_lvl, for_what);
    void *p = NULL;
    LONG64 r = x;
    r *= y;
@@ -104,6 +106,33 @@ void *ite_recalloc(void *ptr, unsigned int oldx, unsigned int x, unsigned int y,
    return p;
 }
 
+void *_ite_realloc(void *ptr, unsigned int oldx, unsigned int x, unsigned int y, int dbg_lvl, const char *for_what) {
+   //fprintf(stderr, "ite_realloc(ptr, oldx=%d, x=%d, y=%d, dbg_lvl=%d, for_what=%s)\n", oldx, x, y, dbg_lvl, for_what);
+   void *p = NULL;
+   LONG64 r = x;
+   r *= y;
+   if (r >= INT_MAX) {
+         fprintf(stderr, "ERROR: Unable to allocate %u (%u * %u) bytes for %s\n", x*y, x, y, for_what); 
+         exit(1); 
+   }
+   assert(oldx<x);
+   if (x==0 || y==0) {
+      dm2_printf2("WARNING: 0 bytes allocation for %s\n", for_what); 
+   } else {
+      p=realloc(ptr, x*y);
+      if (!p) {
+         fprintf(stderr, "ERROR: Unable to allocate %d bytes for %s\n", x*y, for_what); 
+         exit(1); 
+      } 
+      //void *pp = (char*)p+oldx*y;
+      //memset(pp, 0, (x-oldx)*y);
+   }
+   DM_2(
+         if ((DEBUG_LVL&15) >= dbg_lvl) 
+         fprintf(stddbg, "ReAllocated %d bytes for %s\n", x*y, for_what); 
+      );
+   return p;
+}
 
 //Returns run time in seconds.
 double

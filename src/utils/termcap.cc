@@ -44,7 +44,7 @@ int auto_wrap;
 
 char term_buffer[2048];
 
-char *CM, *SO, *SE, *CL;
+char *CM=NULL, *SO=NULL, *SE=NULL, *CL=NULL;
 char *tv_stype;
 char tcapbuf[1024]="";
 
@@ -102,7 +102,10 @@ void
 free_terminal_out()
 {
 #ifdef HAVE_TERMCAP_H
-   
+   ite_free((void**)&CM);
+   ite_free((void**)&CL);
+   ite_free((void**)&SO);
+   ite_free((void**)&SE);
 #endif
 }
 

@@ -66,10 +66,8 @@ ConstructLemmasForAND(SpecialFunc *pSpecialFunc)
    nNumElts
       = (bSkipLHSLit ? nNumRHSVbles : nNumRHSVbles + 1);
 
-   int *arrLits;
-   ITE_NEW_CATCH(
-         arrLits = new int[nNumElts], "arrLits")
-      int nLitIndex = 0;
+   int *arrLits = (int*)ite_calloc(nNumElts, sizeof(int), 9, "arrLits");
+   int nLitIndex = 0;
 
    // Store literals.
    if (!bSkipLHSLit)
@@ -111,5 +109,5 @@ ConstructLemmasForAND(SpecialFunc *pSpecialFunc)
       arrShortLemmas[i] = pFirstBlock;
    }
 
-   delete [] arrLits;
+   ite_free((void**)&arrLits);
 }

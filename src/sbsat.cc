@@ -60,6 +60,7 @@ int ite_main_load();
 int ite_main();
 int ite_main_preproc();
 void itetable_init();
+void itetable_free_pools();
 
 int 
 main(int argc, char *argv[])
@@ -263,6 +264,7 @@ ite_main_free()
 	ite_free((void **)&var_score);
 	
    bddtable_free_pools();
+   itetable_free_pools();
    bdd_circuit_free();
 }
 

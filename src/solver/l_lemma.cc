@@ -49,14 +49,12 @@ ITE_INLINE
 void
 InitLemmaHeurArrays (int nMaxVbleIndex)
 {
-   ITE_NEW_CATCH(
-         arrLemmaHeurScoresPos = new double[nMaxVbleIndex + 1];
-         arrLemmaHeurScoresNeg = new double[nMaxVbleIndex + 1];
-         arrLemmaVbleCountsPos = new int[nMaxVbleIndex + 1];
-         arrLemmaVbleCountsNeg = new int[nMaxVbleIndex + 1];
-         arrLastLemmaVbleCountsPos = new int[nMaxVbleIndex + 1];
-         arrLastLemmaVbleCountsNeg = new int[nMaxVbleIndex + 1];,
-         "InitLemmaHeurArrays");
+   arrLemmaHeurScoresPos = (double*)ite_calloc(nMaxVbleIndex+1, sizeof(double), 9, "arrLemmaHeurScoresPos");
+   arrLemmaHeurScoresNeg = (double*)ite_calloc(nMaxVbleIndex+1, sizeof(double), 9, "arrLemmaHeurScoresNeg");
+   arrLemmaVbleCountsPos = (int*)ite_calloc(nMaxVbleIndex+1, sizeof(int), 9, "arrLemmaVbleCountsPos");
+   arrLemmaVbleCountsNeg = (int*)ite_calloc(nMaxVbleIndex+1, sizeof(int), 9, "arrLemmaVbleCountsNeg");
+   arrLastLemmaVbleCountsPos = (int*)ite_calloc(nMaxVbleIndex+1, sizeof(int), 9, "arrLastLemmaVbleCountsPos");
+   arrLastLemmaVbleCountsNeg = (int*)ite_calloc(nMaxVbleIndex+1, sizeof(int), 9, "arrLastLemmaVbleCountsNeg");
 
    for (int i = 0; i <= nMaxVbleIndex; i++)
    {
@@ -74,13 +72,12 @@ ITE_INLINE
 void
 DeleteLemmaHeurArrays ()
 {
-   delete [] arrLemmaHeurScoresPos;
-   delete [] arrLemmaHeurScoresNeg;
-   delete [] arrLemmaVbleCountsPos;
-   delete [] arrLemmaVbleCountsNeg;
-   delete [] arrLastLemmaVbleCountsPos;
-   delete [] arrLastLemmaVbleCountsNeg;
-
+   ite_free((void**)&arrLemmaHeurScoresPos);
+   ite_free((void**)&arrLemmaHeurScoresNeg);
+   ite_free((void**)&arrLemmaVbleCountsPos);
+   ite_free((void**)&arrLemmaVbleCountsNeg);
+   ite_free((void**)&arrLastLemmaVbleCountsPos);
+   ite_free((void**)&arrLastLemmaVbleCountsNeg);
 }
 
 //#define fWght 1000;

@@ -1235,7 +1235,7 @@ infer *copy_infer(infer *inference) {
    delete tmp_infer;
 
    return result;
-/* better: ?*/
+   better: ?*/
    infer *head = NULL;
    infer **infs = &(head);
 	for(infer *infer_iter=inference; infer_iter!=NULL; infer_iter=infer_iter->next)
@@ -1294,7 +1294,7 @@ infer *_possible_infer_x(BDDNode *f, int x) {
 				return copy_infer(f->tmp_infer);
 			}
 			infer *head = NULL;
-			infer *temp = NULL;
+			//infer *temp = NULL;
 			infer *r = r_BDD->inferences;
 			if(r == NULL) {
             /*

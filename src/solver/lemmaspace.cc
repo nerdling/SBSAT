@@ -84,7 +84,6 @@ InitLemmaSpacePool(int at_least)
   for (int i = 0; i < LEMMA_SPACE_SIZE - 1; i++)
     {
       arrLemmaSpace[i].pNext = arrLemmaSpace + i + 1;
-      //arrLemmaSpace[i].arrLits = (int *)new int[LITS_PER_LEMMA_BLOCK];
     }
 
   arrLemmaSpace[LEMMA_SPACE_SIZE - 1].pNext = pLemmaSpaceNextAvail;

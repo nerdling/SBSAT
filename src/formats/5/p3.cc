@@ -141,7 +141,7 @@ s2id(char *s_id)
    i = atoi(s_id+1);
    return i;
 }
-
+/*
 void
 p3_dump()
 {
@@ -159,7 +159,7 @@ p3_dump()
             p3[i].refs_idx, p3[i].refs_max);
    }
 }
-
+*/
 BDDNode *
 p3_bdds(int idx, int *vars)
 {

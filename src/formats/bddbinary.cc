@@ -176,7 +176,7 @@ reload_bdd_circuit(int _numinp, int _numout,
                    void *_independantVars)
 {
    bdd_init();
-   d2_printf3("Have %ld variables and %ld functions .. \n",
+   d2_printf3("Have %d variables and %d functions .. \n",
                    _numinp, _numout);
 
    d2_printf1("BDD and Circuit Init..\n");
