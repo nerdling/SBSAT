@@ -38,9 +38,6 @@
 #include "ite.h"
 #include "solver.h"
 
-#include <termcap.h>
-#include <termios.h>
-
 ITE_INLINE void DisplayBacktrackInfo(double &fPrevEndTime, double &fStartTime);
 char *cl_string, *cm_string;
 int height;
