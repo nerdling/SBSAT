@@ -1089,7 +1089,7 @@ countFalses (BDDNode * bdd)
 }
 
 int
-nmbrVarsInCommon (int bddNmbr1, int bddNmbr2, int *&length,
+OLD_nmbrVarsInCommon (int bddNmbr1, int bddNmbr2, int *&length,
       store * &variables, int stopat)
 {
    int bdd1pos = 0;
@@ -1130,6 +1130,45 @@ nmbrVarsInCommon (int bddNmbr1, int bddNmbr2, int *&length,
          }
    }
    //return varsSoFar;
+}
+
+int
+nmbrVarsInCommon(int bddNmbr1, int bddNmbr2, int *&length,
+      store * &variables, int _stopat)
+{
+#define STOPAT 2
+   static int bdd1pos;
+   static int bdd2pos;
+   static int varsSoFar;
+   static int bdd1max;
+   static int bdd2max;
+
+   bdd1pos = 0;
+   bdd2pos = 0;
+   varsSoFar = 0;
+   bdd1max = length[bddNmbr1] - STOPAT + 1;
+   bdd2max = length[bddNmbr2] - STOPAT + 1;
+
+   //fprintf(stdout, "(%d)%d - %d\n", bddNmbr1, length[bddNmbr1], length[bddNmbr2]);
+
+   while (1)
+   {
+      while (variables[bddNmbr1].num[bdd1pos] < variables[bddNmbr2].num[bdd2pos]) {
+         if (++bdd1pos == bdd1max) return 0; 
+      }
+
+      while (variables[bddNmbr1].num[bdd1pos] > variables[bddNmbr2].num[bdd2pos]) {
+         if (++bdd2pos == bdd2max) return 0; 
+      }
+
+      if (variables[bddNmbr1].num[bdd1pos] == variables[bddNmbr2].num[bdd2pos])
+      {
+         if (++varsSoFar == STOPAT) return 1; 
+
+         bdd1max++; bdd1pos++;
+         bdd2max++; bdd2pos++;
+      }
+   }
 }
 
 BDDNode * xquantify (BDDNode * f, int v)

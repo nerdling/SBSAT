@@ -116,13 +116,9 @@ void
 c3_done()
 {
    c3[0].top_and = 1;
-   fprintf(stderr, "c3_traverse_ref\n");
    c3_traverse_ref(0, -1);
-   //fprintf(stderr, "c3_dump\n");
    //c3_dump();
-   fprintf(stderr, "c3_top_bdds\n");
    c3_top_bdds(0);
-   fprintf(stderr, "all done\n");
 }
 
 void

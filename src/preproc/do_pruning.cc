@@ -122,6 +122,10 @@ int DO_PRUNING_FN() {
 					continue;
 				 if ((!repeat_small[j] && !repeat_small[x]))
 					continue;
+             if (variables[x].num[0] >= variables[j].num[length[j]-1]) 
+                continue;
+             if (variables[j].num[0] >= variables[x].num[length[x]-1]) 
+                continue;
 				 if (nmbrVarsInCommon (x, j, length, variables, STRENGTH) < STRENGTH)
 					continue;
 				 

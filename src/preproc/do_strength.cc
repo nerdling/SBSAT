@@ -97,7 +97,11 @@ int Do_Strength() {
 					continue;
 				 if ((!repeat_small[j] && !repeat_small[x]))
 					continue;
-				 if (nmbrVarsInCommon (x, j, length, variables, STRENGTH) < STRENGTH)
+             if (variables[x].num[0] >= variables[j].num[length[j]-1])
+                continue;
+             if (variables[j].num[0] >= variables[x].num[length[x]-1]) 
+                continue;
+				 if (nmbrVarsInCommon (x, j, length, variables, STRENGTH) == 0) // < STRENGTH)
 					continue;
 				 
 				 if ((functionType[x] != AND || length[x] < AND_EQU_LIMIT) 
