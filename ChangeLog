@@ -1,3 +1,94 @@
+2004-06-22 22:43  mkouril
+
+	* doc/: Makefile.am, Makefile.in: Fixed distcheck
+
+2004-06-16 19:18  mkouril
+
+	* src/solv_smurf/fn_smurf_au/bt_smurf_au.cc: When lemmas autarky
+	make choicepoints/no lemmas - inferences
+
+2004-06-16 19:05  mkouril
+
+	* src/solv_smurf/vars_hints.cc: Fixed
+
+2004-06-16 19:03  mkouril
+
+	* src/solv_smurf/: Makefile.am, Makefile.in, br_backtrack.cc,
+	br_backtrack_nl.cc, br_backtrack_sbj.cc, br_select_bp.cc,
+	vars_hints.cc, vars_init.cc, fn_smurf_au/bt_smurf_au.cc,
+	include/solver.h: Added Choice point hint queue
+
+2004-06-15 09:57  fett
+
+	* src/preproc/init_preproc.cc: fixed a divide by zero even better.
+	
+	  ~Sean
+
+2004-06-15 09:41  fett
+
+	* src/solv_smurf/fn_smurf_au/bt_smurf_au.cc: added a comment
+	
+	  ~Sean
+
+2004-06-15 09:41  fett
+
+	* src/solv_smurf/vars_inferlit.cc: added another place for
+	nLastFnInfPriority to be updated.
+	
+	  ~Sean
+
+2004-06-15 09:39  fett
+
+	* src/solv_smurf/fn_smurf_au/bdd2smurf_au.cc: fixing comments
+	
+	   ~Sean
+
+2004-06-15 09:39  fett
+
+	* src/solv_smurf/fn_update.cc: fixed a small loop hole where
+	autakry smurfs could be checked before lemmas.
+	
+	   ~Sean
+
+2004-06-14 22:43  fett
+
+	* src/solv_smurf/: br_backtrack.cc, fn_update.cc,
+	fn_smurf_au/bdd2smurf_au.cc, fn_smurf_au/bt_smurf_au.cc: Small
+	fixes.
+	
+	  ~Sean
+
+2004-06-14 22:43  fett
+
+	* src/preproc/do_exquantify.cc: uncommented a section.
+	
+	  ~Sean
+
+2004-06-14 22:17  fett
+
+	* ChangeLog: nothing
+
+2004-06-14 22:10  mkouril
+
+	* src/solv_smurf/: br_brancher.cc, fn_update.cc: Fixed and formated
+	better
+
+2004-06-14 21:20  mkouril
+
+	* src/: preproc/do_exquantify.cc, solv_smurf/br_brancher.cc,
+	solv_smurf/fn_update.cc, solv_smurf/include/solver.h: All functions
+	and lemmas except autarkies first
+
+2004-06-14 21:03  mkouril
+
+	* src/solv_smurf/fn_smurf_au/bt_smurf_au.cc: No exceptions for
+	autarky smurfs
+
+2004-06-14 21:03  mkouril
+
+	* src/solv_smurf/: br_brancher.cc, fn_smurf_au/bt_smurf_au.cc:
+	Lemmas first
+
 2004-06-14 11:28  mkouril
 
 	* src/: preproc/do_exquantify.cc,

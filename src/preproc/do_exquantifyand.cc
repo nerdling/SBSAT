@@ -79,7 +79,6 @@ int ExQuantifyAnd () {
 	if (enable_gc) bdd_gc(); //Hit it!
 	for (int x = 1; x <= MAX_EXQUANTIFY_CLAUSES; x++) {
 		for (int i = 1; i < numinp + 1; i++) {
-			if(countBDDs() == 0) goto ea_bailout;
 			char p[100];
 			
 			D_3(
@@ -143,6 +142,7 @@ int ExQuantifyAnd () {
 			if (amount_count == x){// && independantVars[i]==0) {
 				int j = amount_num;
 				Quantify = functions[j];
+				assert(functionType[j]!=AUTARKY_FUNC);
 				int out = 0;
 				if(length[j]>MAX_EXQUANTIFY_VARLENGTH) out = 1;
 				DO_INFERENCES = 0;
@@ -170,7 +170,7 @@ int ExQuantifyAnd () {
 					}
 
 					count1++;
-					
+				
 					Quantify = ite_and(Quantify, functions[z]);
 					affected++;
 
