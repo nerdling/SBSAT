@@ -62,30 +62,30 @@ Do_Apply_Inferences ()
 	infer *temp = inferlist;
 	inferlist = inferlist->next;	//NEW Must increment past the empty start node
 	delete temp;
-
-			for (infer * iterator = inferlist; iterator != NULL;
-			  iterator = iterator->next) {
-			//d3_printf2("|%d ", iterator->nums[0]);
-			//d3_printf2("%d ", iterator->nums[1]);
-			
-			if(iterator->nums[1] != 0) {
-				iterator->nums[0] = l->get_equiv(iterator->nums[0]);
-				if (iterator->nums[0] == T) {
-					iterator->nums[0] = iterator->nums[1];
-					iterator->nums[1] = 0;
-				} else if (iterator->nums[0] == F) {
-					iterator->nums[0] = -iterator->nums[1];
-					iterator->nums[1] = 0;
-				}
-				if (iterator->nums[0] < 0) {
-					iterator->nums[0] = -iterator->nums[0];
-					iterator->nums[1] = -iterator->nums[1];					
-				}
-				
-				//d3_printf2("%d ", iterator->nums[0]);
-				//d3_printf2("%d|", iterator->nums[1]);
+	
+	for (infer * iterator = inferlist; iterator != NULL;
+		  iterator = iterator->next) {
+		//d3_printf2("|%d ", iterator->nums[0]);
+		//d3_printf2("%d ", iterator->nums[1]);
+		
+		if(iterator->nums[1] != 0) {
+			iterator->nums[0] = l->get_equiv(iterator->nums[0]);
+			if (iterator->nums[0] == T) {
+				iterator->nums[0] = iterator->nums[1];
+				iterator->nums[1] = 0;
+			} else if (iterator->nums[0] == F) {
+				iterator->nums[0] = -iterator->nums[1];
+				iterator->nums[1] = 0;
 			}
+			if (iterator->nums[0] < 0) {
+				iterator->nums[0] = -iterator->nums[0];
+				iterator->nums[1] = -iterator->nums[1];					
+			}
+			
+			//d3_printf2("%d ", iterator->nums[0]);
+			//d3_printf2("%d|", iterator->nums[1]);
 		}
+	}
 	
 	while (inferlist != NULL) {
 		if (inferlist->nums[1] != 0) {
@@ -94,9 +94,9 @@ Do_Apply_Inferences ()
 				//            D_3(print_nonroller();)
 				for(int iter = 0; iter<str_length; iter++)
 				  d3_printf1("\b");
+				d3_printf3 ("{%d=%d}", inferlist->nums[0], inferlist->nums[1]);
 				str_length = 0;
 				variablelist[inferlist->nums[1]].equalvars = inferlist->nums[0];
-				int howmany = 0;
 				for (llist * k = amount[inferlist->nums[1]].head; k != NULL; k = k->next) {
 					int j = k->num;
 					BDDNode *before = functions[j];
