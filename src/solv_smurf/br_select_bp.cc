@@ -42,6 +42,8 @@
 extern int zecc_limit;
 extern int *zecc_arr;
 
+extern long long *arrCPsDepthBreadth;
+
 ITE_INLINE void
 SelectNewBranchPoint()
 {
@@ -111,6 +113,9 @@ SelectNewBranchPoint()
    pFnInfQueueUpdate = arrFnInferenceQueue;
 
    assert(nLastFnInfPriority == 0);
+
+   //fprintf(stderr, "%d\n", pChoicePointTop-arrChoicePointStack);
+   arrCPsDepthBreadth[pChoicePointTop-arrChoicePointStack]++;
 
    InferLiteral(nInferredAtom, nInferredValue, false, NULL, NULL, 0);
    return;

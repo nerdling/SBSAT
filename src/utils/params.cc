@@ -278,6 +278,9 @@ t_opt options[] = {
 { var_stat_file, "", "var-stat-file", P_STRING, 
 		V(i:127,"127"), {""}, VAR_NORMAL, 0, 
                 "File to save var stats"},
+{ csv_depth_breadth_file, "", "csv-depth-breadth-file", P_STRING, 
+		V(i:127,"127"), {""}, VAR_NORMAL, 0, 
+                "Save depth/breadth statistic"},
 { &backjumping, "", "backjumping", P_INT, V(i:0,"0"), V(i:1,"1"), VAR_NORMAL, 0,
 		"Enable/Disable backjumping (1/0)"},
 { &MAX_NUM_CACHED_LEMMAS, "L", "max-cached-lemmas", P_INT, 
@@ -448,6 +451,7 @@ finish_params()
 
    /* decode result type -- none, raw, fancy */
    switch (sResult[0]) {
+    case 'i': result_display_type = -1; break;
     case 'n': result_display_type = 0; break;
     case 'r': result_display_type = 1; break;
     case 'f': result_display_type = 2; break;

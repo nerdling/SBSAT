@@ -197,6 +197,7 @@ extern char csv_trace_file[128];
 extern FILE *fd_csv_trace_file;
 
 extern char var_stat_file[128];
+extern char csv_depth_breadth_file[128];
 
 extern int _bdd_pool_size;
 extern int autarky;

@@ -143,6 +143,7 @@ char csv_trace_file[128] = "";
 FILE *fd_csv_trace_file = NULL;
 
 char var_stat_file[128] = "";
+char csv_depth_breadth_file[128]="";
 
 int _bdd_pool_size=1000000;
 

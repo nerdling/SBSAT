@@ -48,7 +48,7 @@ LemmaBlock * pConflictLemma=NULL;
 LemmaInfoStruct * pConflictLemmaInfo=NULL;
 bool *arrLemmaFlag=NULL;
 int  *arrTempLemma=NULL;
-
+extern long long *arrInfsDepthBreadth;
 
 ITE_INLINE
 void
@@ -147,6 +147,8 @@ InferLiteral(int nInferredAtom,
    pBacktrackTop->pLemma = pLemma;
    pBacktrackTop->pLemmaInfo = pCachedLemma;
    pBacktrackTop++;
+
+   arrInfsDepthBreadth[pBacktrackTop-arrBacktrackStack]++;
 }
 
 

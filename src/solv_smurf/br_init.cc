@@ -48,6 +48,9 @@ BacktrackStackEntry *arrBacktrackStack=NULL;
 BacktrackStackEntry *pStartBacktrackStack=NULL; 
 int * arrBacktrackStackIndex = NULL;
 
+long long *arrInfsDepthBreadth=NULL;
+long long *arrCPsDepthBreadth=NULL;
+
 ITE_INLINE int
 InitBrancherX()
 {
@@ -57,40 +60,6 @@ InitBrancherX()
    return SOLV_UNKNOWN;
 }
 
-/*
-   int nRegSmurfIndex = 0;
-   for (int i = 0; i < nmbrFunctions; i++)
-   {
-      if (!IsSpecialFunc(arrFunctionType[i]))
-      {
-         arrPrevStates[nRegSmurfIndex] =
-         arrCurrentStates[nRegSmurfIndex] =
-            arrRegSmurfInitialStates[nRegSmurfIndex];
-
-         if (arrCurrentStates[nRegSmurfIndex] == pTrueSmurfState)
-         {
-            nNumUnresolvedFunctions--;
-         }
-         nRegSmurfIndex++;
-      }
-   }
-   for (int i = 0; i < nNumFuncs; i++) {
-      arrSmurfPath[i].idx = 0;
-   }
-*/
-
-/*
-  if (nHeuristic == JOHNSON_HEURISTIC) {
-      for (int i = 0; i < nNumSpecialFuncs; i++) {
-         arrSumRHSUnknowns[i] = 0;
-
-         for (int j=0; j<arrSpecialFuncs[i].rhsVbles.nNumElts; j++)
-            arrSumRHSUnknowns[i] += arrJWeights[arrSpecialFuncs[i].rhsVbles.arrElts[j]];
-      }
-
-     J_ResetHeuristicScores();
-  }
-*/
 //  return RecordInitialInferences();
    //  InitHeuristicTablesForSpecialFuncs(nNumVariables);
 
@@ -130,6 +99,11 @@ BtStackInit()
       arrFnInfPriority[i].Last = NULL;
    }
    nLastFnInfPriority = 0;
+
+   arrInfsDepthBreadth=(long long *)ite_calloc(gnMaxVbleIndex+1, sizeof(long long), 2,
+         "arrInfsDepthBreadth");
+   arrCPsDepthBreadth=(long long *)ite_calloc(gnMaxVbleIndex+1, sizeof(long long), 2,
+         "arrCPsDepthBreadth");
 }
 ITE_INLINE void
 BtStackClear()
@@ -167,4 +141,21 @@ BtStackFree()
    ite_free((void**)&arrChangedFn);
    ite_free((void**)&arrChoicePointStack);
    ite_free((void**)&arrBacktrackStack);
+
+   if (*csv_depth_breadth_file && arrCPsDepthBreadth && arrInfsDepthBreadth) {
+      FILE *fd_csv_depth_breadth_file = fopen(csv_depth_breadth_file, "w");
+      if (fd_csv_depth_breadth_file) {
+         int i=0;
+         for(i=1;i<=gnMaxVbleIndex-1;i++) // one less
+         {
+            fprintf(fd_csv_depth_breadth_file, "%d, %lld, %lld\n", i,
+                  arrCPsDepthBreadth[i],
+                  arrInfsDepthBreadth[i]);
+         }
+
+         fclose(fd_csv_depth_breadth_file);
+      }
+   }
+   ite_free((void**)&arrCPsDepthBreadth);
+   ite_free((void**)&arrInfsDepthBreadth);
 }
