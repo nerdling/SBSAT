@@ -117,6 +117,11 @@ BackTrack()
          nBacktrackStackIndex--;
          assert(nBacktrackStackIndex >= 0);
 
+         /*m invalidating arrBacktrackStackIndex but keep the prev value */
+         int nBacktrackAtom = pBacktrackTop->nBranchVble;
+         int nBacktrackAtomStackIndex = arrBacktrackStackIndex[nBacktrackAtom];
+         arrBacktrackStackIndex[nBacktrackAtom] = gnMaxVbleIndex + 1;
+
          if (pBacktrackTop->pLemmaInfo && 
                pBacktrackTop->pLemmaInfo->nBacktrackStackReferences > 0)
          {
@@ -125,17 +130,15 @@ BackTrack()
             // (When the count reaches zero, the lemma can be recycled.)
             (pBacktrackTop->pLemmaInfo->nBacktrackStackReferences)--;
 
-            // Move lemma to front of lemma priority queue.
-            MoveToFrontOfLPQ(pBacktrackTop->pLemmaInfo);
+               // Move lemma to front of lemma priority queue.
+#define MK_UP_RELEVANT_LEMMAS
+#ifdef MK_UP_RELEVANT_LEMMAS
+            if(arrLemmaFlag[nBacktrackAtom]) 
+#endif
+               MoveToFrontOfLPQ(pBacktrackTop->pLemmaInfo);
 
             pBacktrackTop->pLemmaInfo = NULL;
          }
-
-         /*m invalidating arrBacktrackStackIndex but keep the prev value */
-         int nBacktrackAtom = pBacktrackTop->nBranchVble;
-         int nBacktrackAtomStackIndex = arrBacktrackStackIndex[nBacktrackAtom];
-         arrBacktrackStackIndex[nBacktrackAtom] = gnMaxVbleIndex + 1;
-
 
          //Handle old choicepoints
          /*m is atom relevant */
