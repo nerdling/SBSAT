@@ -935,8 +935,8 @@ BDDNode *ite_x_T_z(BDDNode *x, BDDNode *z)
    if (z == true_ptr) return true_ptr;
    if (z == false_ptr) return x;
   
-//   BDDNode *cached = itetable_find_or_add_node(3, x, z, NULL);
-//   if (cached) return cached;
+   BDDNode *cached = itetable_find_or_add_node(3, x, z, NULL);
+   if (cached) return cached;
 
    int v;
    BDDNode * r;
@@ -961,7 +961,7 @@ BDDNode *ite_x_T_z(BDDNode *x, BDDNode *z)
    } 
 
    if (r == e) return (r);
-//   return itetable_add_node(3, x, z, find_or_add_node(v, r, e));
+   return itetable_add_node(3, x, z, find_or_add_node(v, r, e));
    return find_or_add_node(v, r, e);
 }
 
