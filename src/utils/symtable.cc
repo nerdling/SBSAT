@@ -16,14 +16,16 @@ int sym_table_max = SYM_TABLE_SIZE;
 int symtmp_table_idx = 0;
 int symtmp_table_max = SYMTMP_TABLE_SIZE;
 
+symrec * tputsym_truefalse(int sym_type);
+
 void
 sym_init()
 {
   sym_hash_table = (symrec*)ite_calloc(SYM_HASH_SIZE, sizeof(symrec), 9, "sym_hash_table");
   symtmp_table = (symrec*)ite_calloc(SYMTMP_TABLE_SIZE, sizeof(symrec), 9, "symtmp_table");
   sym_table = (symrec**)ite_calloc(SYM_TABLE_SIZE, sizeof(symrec*), 9, "sym_table");
-  true_ptr->var_ptr=tputsym(SYM_VAR);
-  false_ptr->var_ptr=tputsym(SYM_VAR);
+  true_ptr->var_ptr=tputsym_truefalse(SYM_VAR);
+  false_ptr->var_ptr=tputsym_truefalse(SYM_VAR);
   ((symrec*)(true_ptr->var_ptr))->id=0;
   ((symrec*)(false_ptr->var_ptr))->id=0;
   sym_table_idx = 0;
@@ -174,6 +176,29 @@ s_is_indep(symrec *ptr)
    //ptr->indep = i;
 }
 
+
+symrec *
+tputsym_truefalse(int sym_type)
+{
+   /* special temp var -- don't set their independance */
+   /* e.g. for cnf that takes absolute ids the id 1 would be set to be temp indep */
+
+  if (symtmp_table_idx >= symtmp_table_max) {
+     /* cannot reallocate  -- pointers exist to this pool */
+     symtmp_table = (symrec*)ite_calloc(SYMTMP_TABLE_SIZE, sizeof(symrec), 9, "symtmp_table");
+     symtmp_table_idx = 0;
+     /*
+     assert(0);
+     symtmp_table = (symrec*)ite_recalloc((void*)symtmp_table, symtmp_table_max, 
+           symtmp_table_max+SYMTMP_TABLE_SIZE, sizeof(symrec), 9, "symtmp_table_idx");
+     symtmp_table_max += SYMTMP_TABLE_SIZE;
+     */
+  }
+  symrec *ptr = &(symtmp_table[symtmp_table_idx]);
+  fill_symrec(ptr, sym_type);
+  symtmp_table_idx++;
+  return ptr;
+}
 
 symrec *
 tputsym(int sym_type)
