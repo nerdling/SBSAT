@@ -44,6 +44,7 @@ void
 crtwin_draw() 
 {
    double fPrevEndTime=0, fStartTime=0;
+#ifdef MK_NULL // enable when needed
    putpad(CL);/* clear the screen */
 
    move(30, 5);
@@ -52,6 +53,7 @@ crtwin_draw()
    putpad(SE);/* end standout mode */
 
    move(0, 7);
+#endif
 
    {
       FILE *tmpstd = stddbg;

@@ -44,7 +44,9 @@ int auto_wrap;
 
 char term_buffer[2048]="";
 
+#ifdef MK_NULL // enable when needed
 char *CM=NULL, *SO=NULL, *SE=NULL, *CL=NULL;
+#endif
 char *tv_stype;
 char tcapbuf[1024]="";
 
@@ -89,10 +91,12 @@ init_terminal_out()
    }
 
    char tmp_str[5];
+#ifdef MK_NULL // enable when needed
    CM = qgetstr(strcpy(tmp_str, "cm")); /* this string used by tgoto() */
    CL = qgetstr(strcpy(tmp_str, "cl")); /* this string used to clear screen */
    SO = qgetstr(strcpy(tmp_str, "so")); /* this string used to set standout */
    SE = qgetstr(strcpy(tmp_str, "se")); /* this string used by clear standout */
+#endif
    term_height = tgetnum(strcpy(tmp_str, "li"));
    term_width = tgetnum(strcpy(tmp_str, "co"));
 #endif
@@ -103,10 +107,12 @@ void
 free_terminal_out()
 {
 #ifdef HAVE_TERMCAP_H
+#ifdef MK_NULL // enable when needed
    ite_free((void**)&CM);
    ite_free((void**)&CL);
    ite_free((void**)&SO);
    ite_free((void**)&SE);
+#endif
 #endif
 }
 
@@ -140,7 +146,9 @@ void
 move(int col, int row)
 {
 #ifdef HAVE_TERMCAP_H
+#ifdef MK_NULL // enable when needed
    putpad(tgoto(CM, col, row));
+#endif
 #endif
 }
 

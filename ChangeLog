@@ -1,3 +1,144 @@
+2004-03-29 14:55  fett
+
+	* src/preproc/: do_exquantifyand.cc, do_rewind.cc: minor changes
+
+2004-03-29 14:55  fett
+
+	* src/generator/slider2.cc: fixed a typo
+
+2004-03-26 09:17  mkouril
+
+	* src/solver/smurffactory.cc: ITE and ITE_EQU are smurfs
+
+2004-03-26 09:04  mkouril
+
+	* src/formats/cnf.cc: Change ITE to ITE_EQU in cnf
+
+2004-03-26 00:15  mkouril
+
+	* src/utils/bddtable.cc: Fixed a bug.
+
+2004-03-25 22:39  fett
+
+	* src/utils/bdd.cc: fixed countNodes() to return the number of
+	  nodes in a BDD, instead of 0
+
+	    ~Sean
+
+2004-03-25 18:34  fett
+
+	* src/preproc/: do_exquantifyand.cc, do_rewind.cc: minor
+	  modifications.
+
+2004-03-25 18:34  fett
+
+	* src/formats/cnf.cc: fixed printing
+
+2004-03-24 11:36  mkouril
+
+	* configure.ac, doc/Makefile.in, src/Makefile.in,
+	  src/formats/Makefile.in, src/formats/5/Makefile.in,
+	  src/generator/Makefile.in, src/postproc/Makefile.in,
+	  src/preproc/Makefile.in, src/solver/Makefile.in,
+	  src/solver/libsolver.cc, src/utils/Makefile.in: Fixed inline and
+	  configure
+
+2004-03-24 10:22  mkouril
+
+	* configure, configure.ac, src/Makefile.in,
+	  src/formats/Makefile.in, src/formats/5/Makefile.in,
+	  src/generator/Makefile.in, src/postproc/Makefile.in,
+	  src/preproc/Makefile.in, src/utils/Makefile.in: Added
+	  --enable-coverage. Use gcov to view it.
+
+2004-03-24 10:04  mkouril
+
+	* src/: postproc/backend.cc, preproc/create_infs.cc: Fixed
+	  create_infs
+
+2004-03-24 09:28  mkouril
+
+	* include/log.h, include/preprocess.h, include/prototypes.h,
+	  src/sbsat.cc, src/preproc/do_applyinfs.cc,
+	  src/preproc/do_depcluster.cc, src/preproc/do_prover3.cc,
+	  src/preproc/equivclass.cc, src/preproc/init_preproc.cc,
+	  src/preproc/other_preproc.cc, src/utils/Makefile.am,
+	  src/utils/Makefile.in, src/utils/bddtable.cc, src/utils/llist.cc:
+	  Added llist pools plus cleanups and optimizations
+
+2004-03-24 08:36  mkouril
+
+	* include/equivclass.h, src/preproc/Makefile.am,
+	  src/preproc/Makefile.in, src/preproc/equivclass.cc: Equivclass
+	  body moved from h to cc file
+
+2004-03-23 21:55  fett
+
+	* include/preprocess.h: rewind now does not ignore the inital
+	  inference made.
+
+	    ~Sean
+
+2004-03-23 21:55  fett
+
+	* src/preproc/: do_exquantifyand.cc, do_rewind.cc, init_preproc.cc,
+	  preprocess.cc: rewind now does not ignore the initial inferences
+	  made.
+
+	    ~Sean
+
+2004-03-23 20:46  mkouril
+
+	* include/prototypes.h, src/preproc/create_infs.cc,
+	  src/preproc/do_applyinfs.cc, src/preproc/init_preproc.cc,
+	  src/utils/infer.cc: Inferences in the preprocessing use infer.cc
+
+2004-03-23 20:41  mkouril
+
+	* src/utils/bddtable.cc: Fixed bddtable deleting pools
+
+2004-03-23 19:51  fett
+
+	* src/preproc/: do_applyinfs.cc, do_exquantifyand.cc: added in a
+	  limit to exquantify
+
+2004-03-23 16:33  mkouril
+
+	* src/: solver/solve.cc, utils/bddtable.cc: Deleting unused BDD
+	  Pools
+
+2004-03-23 16:03  mkouril
+
+	* src/solver/: brancher.cc, j_specfn_and.cc: Fixed j heuristic spec
+	  fn AND
+
+2004-03-23 14:48  mkouril
+
+	* src/: formats/5/bdd_s.cc, formats/5/bdd_s.ll,
+	  formats/5/blif_s.cc, formats/5/blif_s.ll, formats/5/cnf_s.cc,
+	  formats/5/cnf_s.ll, formats/5/iscas_s.cc, formats/5/iscas_s.ll,
+	  formats/5/libt5_la-trace_g.cc, formats/5/prover3_s.cc,
+	  formats/5/prover3_s.ll, formats/5/prover_s.cc,
+	  formats/5/prover_s.ll, formats/5/trace_g.yy,
+	  formats/5/trace_s.cc, formats/5/trace_s.ll, utils/termcap.cc:
+	  Fixed more memory leaks
+
+2004-03-23 13:39  mkouril
+
+	* ChangeLog, include/globals.h, src/sbsat.cc,
+	  src/formats/bddbinary.cc, src/formats/5/p3.cc,
+	  src/solver/l_lemma.cc, src/solver/lemmas_and.cc,
+	  src/solver/lemmas_minmax.cc, src/solver/lemmas_xor.cc,
+	  src/solver/lemmaspace.cc, src/solver/solve.cc, src/utils/bdd.cc,
+	  src/utils/bdd_circuit_init.cc, src/utils/symtable.cc,
+	  src/utils/termcap.cc, src/utils/utils.cc: Fixed a few memory
+	  leaks
+
+2004-03-23 10:35  mkouril
+
+	* src/: preproc/do_exquantify.cc, preproc/do_exquantifyand.cc,
+	  utils/bdd.cc: possible_infer uses inference infer.cc
+
 2004-03-23 09:29  mkouril
 
 	* src/solver/: bdd2specfn_and.cc, bdd2specfn_minmax.cc,
