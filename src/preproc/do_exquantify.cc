@@ -236,8 +236,12 @@ int ExQuantify () {
 							}
 							if(changed == 1) ret = PREP_CHANGED;
 						}
-					} else {  //If ex-infer != 1
-						if(amount[i].head->next == NULL && amount[i].head->num == j) {
+					}
+					//else   If ex-infer != 1
+					if(amount[i].head != NULL) 
+					  {
+										
+						  if(amount[i].head->next == NULL && amount[i].head->num == j) {
 							for(int iter = 0; iter<str_length; iter++)
 							  d3_printf1("\b");
 							d3_printf2 ("*{%d}", i);
