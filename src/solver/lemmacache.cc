@@ -76,7 +76,7 @@ int L0Filter(LemmaInfoStruct *p)
           || p->nLemmaLastUsed 
       ) {
       p->nLemmaLastUsed = 0;
-      L2PQEnqueue(p);
+      L1PQEnqueue(p);
       return 1;
    }
    FreeLemma(p);
