@@ -52,6 +52,7 @@ extern int *ReFPS_repeat;
 extern int *Steal_repeat;
 extern int *St_repeat;
 extern int *Dep_repeat;
+extern int *Ea_repeat;
 extern int str_length;
 extern long affected;
 
