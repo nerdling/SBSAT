@@ -64,34 +64,118 @@ SBSAT Version 2.0, August 2003
 Wecolme to SBSAT (State Based Satisfiability) Solver
 \layout Standard
 
-SBSAT is Unix based SAT (Satisfiability) solver for ...
- The solving begins with the user encoding the input problem into one of
- the input formats acceptable by SBSAT into a single file.
- The SBSAT solver first reads the input, runs the preprocessor which massages
- and prepares the input for the brancher.
- The preprocessed problem goes either into one of the branchers or is converted
- into a different format.
+SBSAT is a software package for solving instances of a generalization of
+ the well-known Satisfiability problem.
+ In particular, the problem solved by SBSAT is the following: 
+\layout LyX-Code
+
+Given:  Input variable set V={v1...vn} of Boolean variables
+\layout LyX-Code
+
+        Set of Boolean functions F={f1...fm} where for all
+\layout LyX-Code
+
+        i, fi maps an assignment of values to variables of
+\layout LyX-Code
+
+        V to {T,F} (denote by V|t an assignment t of values) 
+\layout LyX-Code
+
+Result: An assignment t of values to variables of V such
+\layout LyX-Code
+
+        that for all i fi(V|t) = T, or "unsatisfiable" if
+\layout LyX-Code
+
+        no such assignment is possible.
+ 
 \layout Standard
 
-Available branchers:
-\layout Itemize
-
-Backtracking Brancher
-\layout Itemize
-
-Backtracking Brancher with lemmas
-\layout Itemize
-
-BDDWalkSAT - Incomplete Solver
-\layout Itemize
-
-WVF Brancher Original brancher without lemmas and only one heuristic
+If, for all i, fi is a function corresponding to the conjunction of a subset
+ of variables of V, then the problem is reduced to the well studied Boolean
+ Satisfiability Problem.
+ If the variables of V are allowed to take arbitrarily many values, then
+ the problem becomes the well-studied Constraint Satisfaction Problem.
 \layout Standard
 
-Available formats BDD (ITE), CNF, SMURF, TRACE
+The functions F may be specified in several different ways.
+ There is one canonical input specification format, in terms of BDDs, which
+ may be the target of any user-supplied translation from a particular user-defin
+ed set of functions.
+ Specific supported input formats and examples of how to translate a user-define
+d format for use by SBSAT are given in Section~
+\backslash 
+ref{the-examples-section}.
 \layout Standard
 
-Picture here:
+SBSAT executes in several phases.
+ First, an instance is read from file.
+ Second, depending on switches set on the command line when invoking SBSAT,
+ various levels of preprocessing are applied to the input instance with
+ the intention of producing an internal Satisfiability-equivalent set of
+ constraints which supports smaller searches through judicious use of search
+ heuristics and learning (Lemmas - see below).
+ Details of the kinds of preprocessing available and their effects are given
+ in Section~
+\backslash 
+ref{details-section} and examples of their use are given in Section~
+\backslash 
+ref{examples-section}.
+ Third, the internal form is searched for a solution.
+\layout Standard
+
+The user is given a choice of four ways to perform a search.
+ These are:
+\layout Enumerate
+
+Backtracking 
+\layout Enumerate
+
+Backtracking with Lemmas 
+\layout Enumerate
+
+BDD Walksat (incomplete solver) 
+\layout Enumerate
+
+WVF (I do not understand what your explanation is trying to say)
+\layout Standard
+
+Search heuristics are used to help control the size of the search space.
+ There are several provided:
+\layout Enumerate
+
+Chaff-like 
+\layout Enumerate
+
+Johnson generatization 
+\layout Enumerate
+
+Others?
+\layout Standard
+
+The size of the search space can be further controlled through learning.
+ As backtracks occur, new constraints, called Lemmas, are added to the internal
+ constraint set.
+ These can prevent some fruitless backtracking later in the search.
+\layout Standard
+
+Available input formats are...
+ 
+\layout Enumerate
+
+CNF
+\layout Enumerate
+
+BDD (ITE)
+\layout Enumerate
+
+Truth Table (Smurf)
+\layout Enumerate
+
+Tracer
+\layout Enumerate
+
+XOR
 \layout LyX-Code
 
 
@@ -234,8 +318,6 @@ add_state
  $1,2)
 \newline 
 
-\newline 
-
 \layout Subsection
 
 Hardware requirements
@@ -256,12 +338,76 @@ In general, SBSAT allocates as much memory as it needs.
  It is expected that the amount of available memory matches the size of
  the problem being solved.
  SBSAT is not multi-threaded and does not take advantage of multiple processors.
+\layout Subsection
+
+Definitions
+\layout Itemize
+
+Preprocessing
+\layout Itemize
+
+Backjumping, backjumps
+\layout Itemize
+
+Lemma
+\layout Itemize
+
+DIMACS CNF
+\layout Itemize
+
+Solution
+\layout Itemize
+
+Satisfiable output
+\layout Itemize
+
+Unsatisfiable output
+\layout Itemize
+
+Standard input and output
+\layout Itemize
+
+for all, there exists
+\layout Itemize
+
+imp, or, and, nor, nand, not, nimp, xor, equ, ...
+\layout Itemize
+
+add_state
+\layout Itemize
+
+'*' (star in the begining of the line)
+\layout Subsection
+
+How to compile
+\layout Subsection
+
+How to install
 \layout Section
 \pagebreak_top 
-SBSAT Basics
+Running SBSAT: the basics
+\layout Quotation
+
+
+\color red
+I see nothing that says where ite is to be run from, whether there needs
+ to be a path variable set, what the directory structure is expected to
+ be, or even where the example "small.cnf" is.
+ A novice user will certainly give up right here! I would.
 \layout Subsection
 
 Simple CNF Example
+\layout Quotation
+
+
+\color red
+Page 5: There is no such thing as a "CNF file".
+ There could be a file whose contents represent an instance of CNF in, say,
+ DIMACS format.
+ Please always consider whether a term you are using has been defined somewhere
+ previously.
+ You might use CNF file as shorthand for something else but a novice user
+ has no idea this is the case if not told.
 \layout Standard
 
 We will start by using SBSAT to solve a simple CNF file.
@@ -448,6 +594,11 @@ Satisfiable
 Total Time: 0.010
 \layout LyX-Code
 
+\layout Quotation
+
+
+\color red
+Page 6: What does "decoding the output: satisfiable" mean?
 \layout Standard
 
 Decoding the output: 
@@ -652,8 +803,13 @@ output.txt:
 
 \size scriptsize 
 -1 -2 3 4 -5 -6 
-\layout LyX-Code
+\layout Quotation
 
+
+\color red
+Page 7: There is no explantion given of the meaning of the solution    
+     information.
+  Add some.
 \layout Standard
 
 
@@ -697,6 +853,12 @@ Note: dash (
 \size default 
 ) instead of the filename denotes the standard input or standard output
  depending on the context.
+\layout Quotation
+
+
+\color red
+Page 7: It says dash denotes standard input.
+ Now what? No example?
 \layout Standard
 
 All available options can be printed by specifying '
@@ -811,6 +973,26 @@ Options:
 \layout Subsection
 
 Converting your problem into a SAT problem
+\layout Quotation
+
+
+\color red
+Page 7: The section on converting to SAT does not belong here.
+ At this point the user is trying to figure out how to use SBSAT.
+ Either move it to a later section, probably on its own, or save it for
+ the detailed sections (I still believe we will have one user manual when
+ we are done and one documentation manual).
+\layout Quotation
+
+
+\color red
+Page 8: Conventions section should include all conventions you use.
+ Thus, "for all" and "there exists" and so on are in the conventions section.
+\layout Quotation
+
+
+\color red
+Page 8: What does "*imp(1,2)" mean? Conventions again, maybe?
 \layout Standard
 
 Any NP-Complete problem can be translated into a SAT problem.
@@ -1042,6 +1224,12 @@ c is 'YES', otherwise the answer is 'NO'.
 \layout Subsection
 
 Choosing a different solver
+\layout Quotation
+
+
+\color red
+All pages: is -bw the same as -b -w or what? (Some people might assume it
+ is).
 \layout Standard
 
 
@@ -1205,6 +1393,11 @@ no
 \layout Subsection
 
 Converting the input file
+\layout Quotation
+
+
+\color red
+Section 2.4: I have no idea what you are talking about.
 \layout Standard
 
 -In 0 -All 0 is the only way to get a direct translation of the original
@@ -1215,6 +1408,22 @@ BDD (ITE) format examples
 \layout Subsubsection
 
 Structure of BDD(ITE) format
+\layout Quotation
+
+
+\color red
+Page 9: You wait to here to tell me what the "*" is? We already used it
+ on a previous page!!! Conventions maybe?
+\layout Quotation
+
+
+\color red
+Vicinity of Page 9.
+ Somewhere we have to be more specific about limitations.
+ The user is led to believe that putting "*" in front of anything will give
+ a function that SBSAT can create.
+ I do not think this is the case and the user must be informed of some rules
+ that will prevent a crash.
 \layout Standard
 
 As with the CNF format the file starts with the header '
@@ -1694,6 +1903,14 @@ Total Time: 0.020
 \layout Subsubsection
 
 add_state example
+\layout Quotation
+
+
+\color red
+Section 2.5.3: add_state is a really bad name because the user may easily
+ get confused about the meaning of state.
+ Perhaps add_duplicate_function is more like what the user is expecting.
+ The section also needs to explain why we have such a crazy operation anyway.
 \layout Standard
 
 Another important function is 
@@ -1946,6 +2163,14 @@ SBSAT Advanced
 \layout Subsection
 
 Changing Preprocessor Options
+\layout Quotation
+
+
+\color red
+Page 13: There really needs to be some explanation of the preprocessing
+ options.
+ Also some tips about when a preprocessing option might pay off and when
+ might it be a liability.
 \layout Standard
 
 The available preprocessing options are :
@@ -2415,6 +2640,20 @@ $ ite
 \layout Subsection
 
 Changing heuristic and its options
+\layout Quotation
+
+
+\color red
+Page 13: We do not implement a Johnson heuristic.
+ We implement a heuristic that is designed to skew locally by favoring inference
+s and balance globally by favoring relatively equal "probabilities" of satisfyin
+g search subtrees.
+ Call this the LSGB for Locally Skewed, Globally Balanced heuristic.
+ Say that LSGB becomes Johnson when F is a bunch of disjunctions and k=2.
+ Mention that the parameter k controls how much inferences are favored (deep
+ vs.
+ shallow) and can have a major impact on performance.
+ Mention when high k might pay off, same for low k.
 \layout Standard
 
 The standard brancher has to two available heuristics, the Johnson heuristic
@@ -2449,7 +2688,7 @@ Heuristic
 
 \layout Standard
 
-Option
+Default
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
@@ -2457,7 +2696,7 @@ Option
 
 \layout Standard
 
-Default
+Option
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
@@ -2483,13 +2722,7 @@ Johnson heuristic
 
 \layout Standard
 
-
-\family typewriter 
-\size footnotesize 
-\emph on 
--H
-\emph default 
- j
+yes
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
@@ -2497,7 +2730,13 @@ Johnson heuristic
 
 \layout Standard
 
-yes
+
+\family typewriter 
+\size footnotesize 
+\emph on 
+-H
+\emph default 
+ j
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
@@ -2522,13 +2761,7 @@ Lemma heuristc
 
 \layout Standard
 
-
-\family typewriter 
-\size footnotesize 
-\emph on 
--H
-\emph default 
- l
+no
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
@@ -2536,7 +2769,13 @@ Lemma heuristc
 
 \layout Standard
 
-no
+
+\family typewriter 
+\size footnotesize 
+\emph on 
+-H
+\emph default 
+ l
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
@@ -2561,13 +2800,7 @@ Combined heuristic
 
 \layout Standard
 
-
-\family typewriter 
-\size footnotesize 
-\emph on 
--H
-\emph default 
- jl
+no
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
@@ -2575,7 +2808,13 @@ Combined heuristic
 
 \layout Standard
 
-no
+
+\family typewriter 
+\size footnotesize 
+\emph on 
+-H
+\emph default 
+ jl
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
@@ -2617,6 +2856,16 @@ TIP
 \layout Subsection
 
 Adjusting other parameters
+\layout Quotation
+
+
+\color red
+Page 14: Say what a lemma is, say that lemmas are stored with a particular
+ replacement policy.
+ Say what a backjump is.
+ Conventions? Perhaps change Conventions section to Conventions and Definitions
+ and stick in some definitions that you are right now assuming that everyone
+ knows about.
 \layout Subsubsection
 
 Lemma cache
@@ -2684,11 +2933,15 @@ For some problems this will yield significantly better results than when
 \layout Standard
 
 Note: the lemma heuristic is not compatible with the situation when the
- lemmas are disable.
+ lemmas are disabled.
  Also the effectivness of the lemma heuristic is decreasing with descreasing
  the lemma cache.
-\newline 
+\layout Quotation
 
+
+\color red
+Page 15: Now you say what backjumps are???!!! Stick in the new Conventions
+ and Definitions section.
 \layout Standard
 
 Backjumping refers to the backtracking property where the literal previously
@@ -2696,7 +2949,14 @@ Backjumping refers to the backtracking property where the literal previously
  with the reversed sign.
 \layout Subsubsection
 
-Constraining the time on the preprocessing and brancher
+Controlling the time on the preprocessing and brancher
+\layout Quotation
+
+
+\color red
+Section 3.3.2: what does it mean for the preprocessing to take too long? You
+ might want to say that preprocessing time exceeds the savings in time realized
+ by the search engine, if that is what you mean.
 \layout Standard
 
 In some situations the preprocessing takes too long.
@@ -2725,9 +2985,13 @@ ite small.cnf
 
 This will allow 3 minutes for preprocessing and continue to the brancher
  after that.
- 
-\newline 
+\layout Quotation
 
+
+\color red
+Section 3.3.2: If the preprocessor is cancelled after some time limit, what
+ is guaranteed about the resulting massaged input that is handed to the
+ search engine, if anything?
 \layout Standard
 
 The similar option exists for the brancher:
@@ -2744,6 +3008,14 @@ $ ite small.cnf
 \layout Subsubsection
 
 Creating and using an ini file
+\layout Quotation
+
+
+\color red
+Section 3.3.3: This section should be higher in the section hierarchy.
+ 
+\color magenta
+(You don't need an ini file to run sbsat)
 \layout Standard
 
 If you are working on a problem that requires adding the same command line
@@ -2926,4 +3198,39 @@ Sean
 Weaver
 \noun default 
  fett@gauss.ececs.uc.edu
+\layout Quotation
+
+
+\color red
+Vicinity of Page 8: Man are things out of order.
+ Let's fix the sections first then we can talk about section order.
+\layout Quotation
+
+
+\color red
+I can see sections 2.5.4, 2.5.5, and 2.5.6 are not ready yet.
+\layout Quotation
+
+
+\color red
+Sections 3.4 and 3.5 are not ready, I see.
+\layout Quotation
+
+
+\color blue
+Why is the order of some charts ...
+ default, option ...
+ and some ...
+ option, default...
+ This is really confusing!! Can we have some standardization?
+\layout Quotation
+
+
+\color blue
+Page 14: lemmas are disable => lemmas are disabled
+\layout Quotation
+
+
+\color blue
+Section 3.3.2: change the title to "Controlling the time on..."
 \the_end
