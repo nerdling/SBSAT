@@ -156,6 +156,9 @@ int HammingDistance (BDDNode *f, BDDNode *c) {
 */
 
 int are_oppos(BDDNode *f, BDDNode *c) {
+	if(f->notCase != NULL && f->notCase == c) {
+		return 1;
+	} else if (f != c->notCase) return 0;
 	if(f == true_ptr) {
 		if(c == false_ptr) return 1;
 		else return 0;
@@ -1003,9 +1006,11 @@ BDDNode *restrict (BDDNode * f, BDDNode * c)
    if ((c == true_ptr) || (f == false_ptr))
       return f;
 //   if (c == ite_not (f))
-	if(are_oppos(f, c))
+	if(f->notCase != NULL && f->notCase == c->notCase)
 	  return false_ptr;
-   if (f == true_ptr)
+	else if(c->notCase == NULL && are_oppos(f, c))
+	  return false_ptr;
+	if (f == true_ptr)
       return c;
 
    // We know that f & c are both BDD's with top variables.
@@ -1111,10 +1116,12 @@ BDDNode * pruning (BDDNode * f, BDDNode * c)
    if ((c == true_ptr) || (f == true_ptr) || (f == false_ptr))
       return f;
 	//if (c == ite_not (f))
-	if(are_oppos(f, c))
-      return false_ptr;
-
-   // We know that f & c are both BDD's with top variables.
+	if(f->notCase != NULL && f->notCase == c->notCase)
+	  return false_ptr;
+	else if(c->notCase == NULL && are_oppos(f, c))
+	  return false_ptr;
+	
+	// We know that f & c are both BDD's with top variables.
    if (f->variable < c->variable)
       return pruning (f, ite_or (c->thenCase, c->elseCase));	//xquantify(c, c->variable));
    int v = f->variable;
@@ -1190,7 +1197,10 @@ BDDNode * pruning_p2 (BDDNode * f, BDDNode * c)
    if (f == c)
       return true_ptr;
    //if (c == ite_not (f))
-	if(are_oppos(f, c))
+	if(f->notCase != NULL && f->notCase == c->notCase)
+	  return false_ptr;
+	else if(c->notCase == NULL && are_oppos(f, c))
+	  //else if(ite_not(f) == c)
 	  return false_ptr;
    if ((c == true_ptr) || (f == true_ptr) || (f == false_ptr))
       return f;
@@ -1230,9 +1240,14 @@ BDDNode *Build_BDD_From_Inferences (BDDNode *c)
 
 BDDNode * steal (BDDNode * f, BDDNode * c)
 {
-   //if (c == ite_not (f))
-	if(are_oppos(f, c))
+//	if (c == ite_not (f))
+//	  return false_ptr;
+	if(f->notCase != NULL && f->notCase == c)
 	  return false_ptr;
+	else if(c->notCase == NULL && are_oppos(f, c)) {
+		if(c != ite_not(f)) fprintf(stderr, "EEK!");
+		return false_ptr;
+	}
 	if ((c == true_ptr) || (f == false_ptr))
       return f;
    if (f == c)

@@ -41,11 +41,9 @@
 #include "ite.h"
 #include "preprocess.h"
 
-//!These two flags should not be changed until ExQuantify is redone!
-
-int MAX_EXQUANTIFY_CLAUSES = 10;	  //Number of BDDs a variable appears in
+int MAX_EXQUANTIFY_CLAUSES = 40;	  //Number of BDDs a variable appears in
                                    //to quantify that variable away.
-int MAX_EXQUANTIFY_VARLENGTH = 7; //Limits size of number of vars in 
+int MAX_EXQUANTIFY_VARLENGTH = 5; //Limits size of number of vars in 
                                    //constraints created by ExQuantify
 //!
 
@@ -54,9 +52,9 @@ int ExQuantifyAnd();
 int
 Do_ExQuantifyAnd()
 {
-	MAX_EXQUANTIFY_CLAUSES += 10;
-	MAX_EXQUANTIFY_VARLENGTH +=2;
-	d3_printf1 ("ANDING AND EXISTENTIALLY QUANTIFYING -  ");
+	MAX_EXQUANTIFY_CLAUSES += 20;
+	MAX_EXQUANTIFY_VARLENGTH +=15;
+	d3_printf1 ("ANDING AND EXISTENTIALLY QUANTIFYING - ");
 	int cofs = PREP_CHANGED;
 	int ret = PREP_NO_CHANGE;
 	affected = 0;
