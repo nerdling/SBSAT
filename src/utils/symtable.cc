@@ -193,5 +193,63 @@ print_symtable()
      if (ptr)
        printf("%d \"%s\" %d %d\n", i, (ptr->name?ptr->name:""), s_is_indep(ptr), independantVars[i]);
   } 
+}
 
+/* set myregex = NULL */
+/* call sym_reg_init(&myregex, "expression") */
+/* call sym_reg(&myregex) returns the first id or 0 */
+/* call sym_reg_free(&myregex) */
+
+int
+sym_reg_init(t_myregex **rg, char *exp)
+{
+   assert(*rg == NULL);
+   *rg = (t_myregex*)ite_calloc(1, sizeof(t_myregex), 9, "regex");
+   regcomp(&((*rg)->rg), exp, REG_NOSUB);
+   /* REG_EXTENDED REG_ICASE REG_NEWLINE */
+   (*rg)->last_id = 1;
+   return 0;
+}
+
+int
+sym_reg(t_myregex *rg)
+{
+   assert(rg != NULL);
+   for(;rg->last_id < sym_table_idx; rg->last_id++)
+   {
+      symrec *ptr = getsym_i(rg->last_id);
+      if (ptr && ptr->name &&
+            regexec(&(rg->rg), ptr->name, 0, NULL, 0) == 0)
+      {
+         /* found one */
+         rg->last_id++;
+         return rg->last_id-1;
+      }
+   }
+   return 0;
+}
+
+int
+sym_reg_free(t_myregex **rg)
+{
+   assert(*rg!=NULL);
+   regfree(&((*rg)->rg));
+   ite_free((void**)rg);
+   return 0;
+}
+
+/* here is the test -- to use it call this from e.g. read_input */
+void
+sym_reg_test()
+{
+   t_myregex *myrg = NULL;
+   sym_reg_init(&myrg, "TakeBranchALU*");
+   int id = sym_reg(myrg);
+   while (id) {
+      /* found variable and the variable id is id */
+      fprintf(stderr, "%d %s\n", id, getsym_i(id)->name);
+      id = sym_reg(myrg);
+   }
+   sym_reg_free(&myrg);
+   exit(1);
 }

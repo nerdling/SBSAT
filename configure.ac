@@ -88,7 +88,7 @@ AC_CHECK_HEADERS([string])
 AC_CHECK_HEADERS([signal.h assert.h])
 AC_CHECK_HEADERS([iostream.h fstream.h iostream fstream ])
 AC_CHECK_HEADERS([sys/types.h sys/times.h sys/resource.h sys/wait.h])
-AC_CHECK_HEADERS([sys/stat.h ctype.h math.h])
+AC_CHECK_HEADERS([sys/stat.h ctype.h math.h regex.h])
 AC_CHECK_HEADERS([termcap.h])
 
 

@@ -96,6 +96,9 @@
 #if HAVE_MATH_H
 # include <math.h>
 #endif
+#if HAVE_REGEX_H
+# include <regex.h>
+#endif
 #if HAVE_TERMCAP_H
 # include <termcap.h>
 #endif

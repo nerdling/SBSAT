@@ -118,7 +118,12 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-EXTRA_DIST = README sbsat_manual.lyx sbsat_manual.ps sbsat_manual.pdf sbsat_manual.html sbsat_manual.tex sbsat_getting.lyx sbsat_getting.pdf
+EXTRA_DIST = README \
+        sbsat_manual.lyx \
+        sbsat_manual.ps sbsat_manual.pdf sbsat_manual.html sbsat_manual.tex \
+        sbsat_getting.lyx \
+        sbsat_getting.ps sbsat_getting.pdf sbsat_getting.html sbsat_getting.tex
+
 subdir = doc/manual
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/include/config.h

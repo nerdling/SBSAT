@@ -30,4 +30,14 @@ symrec *tputsym();
 symrec *getsym_i(int id);
 void    print_symtable();
 int get_or_putsym_check(char *sym_name, int id);
+
+/* reg expressions */
+typedef struct {
+   int last_id;
+   regex_t rg;
+} t_myregex;
+int sym_reg_init(t_myregex **rg, char *exp);
+int sym_reg(t_myregex **rg);
+int sym_reg_free(t_myregex **rg);
+
 #endif
