@@ -36,6 +36,7 @@
 *********************************************************************/
 
 #include "ite.h"
+#include "solver.h"
 
 #define ADDONS_POOL_SIZE 10000
 
@@ -49,7 +50,7 @@ t_addons_pool *addons_pool = NULL;
 t_addons_pool *addons_pool_head = NULL;
 int addons_pool_index=0;
 
-void
+ITE_INLINE void
 InitializeAddonsPool()
 {
   t_addons_pool *tmp_addons_pool; 
@@ -67,7 +68,7 @@ InitializeAddonsPool()
   addons_pool_index = 0;
 }
 
-void
+ITE_INLINE void
 FreeAddonsPool()
 {
  t_addons_pool *tmp_addons_pool = NULL;
@@ -82,7 +83,7 @@ FreeAddonsPool()
  }
 }
 
-SmurfFactoryAddons * 
+ITE_INLINE SmurfFactoryAddons * 
 AllocateSmurfFactoryAddons() {
 
   SmurfFactoryAddons *addons;
@@ -94,7 +95,7 @@ AllocateSmurfFactoryAddons() {
   return addons;
 }
 
-void
+ITE_INLINE void
 FreeSmurfFactoryAddons(SmurfFactoryAddons *f)
 {
 
