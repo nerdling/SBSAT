@@ -141,7 +141,9 @@ move(int col, int row)
 }
 
 
+#ifdef TERMCAP_H
 struct termios  newtty, origtty;            /* tty modes          */
+#endif
 
 int
 init_terminal_in()
