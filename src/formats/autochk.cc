@@ -43,64 +43,67 @@
 #include "ite.h"
 #include "formats.h"
 
-  char
-getformat (FILE *finputfile) 
-{
-  char a, output;
-  a = fgetc (finputfile);
-  if (a == 'M')
-    {
-      char test[10];
-      int x;
+char getformat (FILE *finputfile) {
+	char a, output;
+	a = fgetc (finputfile);
+	if (a == 'M') {
+		char test[10];
+		int x;
       test[0] = a;
-      for (x=1; x < 6; x++)
-	{
-	  a = fgetc (finputfile);
-	  test[x] = a;
-	}
+      for (x=1; x < 6; x++) {
+			a = fgetc (finputfile);
+			test[x] = a;
+		}
       test[6] = 0;
-      if (!strcmp (test, "MODULE"))
-	{
-          for (x=0; x<6; x++)
-	     ungetc (test[5-x], finputfile);
-	  return 't';
-	}
-       for (x=0; x<6; x++)
-          ungetc (test[5-x], finputfile);
-       return 0;
-    } else
-  if (a == 'i')
-    {
-      a = fgetc (finputfile);
+      if (!strcmp (test, "MODULE")) {
+			for (x=0; x<6; x++)
+			  ungetc (test[5-x], finputfile);
+			return 't';
+		}
+		for (x=0; x<6; x++)
+		  ungetc (test[5-x], finputfile);
+		return 0;
+	} else if (a == 'I') {
+		char test[10];
+		int x;
+      test[0] = a;
+      for (x=1; x < 5; x++) {
+			a = fgetc (finputfile);
+			test[x] = a;
+		}
+      test[5] = 0;
+      if (!strcmp (test, "INPUT")) {
+			for (x=0; x<5; x++)
+			  ungetc (test[4-x], finputfile);
+			return 'i';
+		}
+		for (x=0; x<5; x++)
+		  ungetc (test[4-x], finputfile);
+		return 0;
+	} else if (a == 'i') {
+		a = fgetc (finputfile);
+		ungetc (a, finputfile);
+		return 'b';
+	} else if (a >= '1' && a <= '9') {
       ungetc (a, finputfile);
-      return 'b';
-    } else
-  if (a >= '1' && a <= '9')
-    {
-      ungetc (a, finputfile);
-      return 'u';		//u for smUrf
-    } else
-  while (a == 'c')
-    {
-      while (a != '\n')
-	{
-	  a = fgetc (finputfile);
-	}
-      a = fgetc (finputfile);
-    }
-  while (a != 'p')
-    {
-      a = fgetc (finputfile);
+		return 'u';		//u for smUrf
+	} else
+	  while (a == 'c') {
+		  while (a != '\n') {
+			  a = fgetc (finputfile);
+		  }
+		  a = fgetc (finputfile);
+	  }
+	while (a != 'p') {
+		a = fgetc (finputfile);
       
-	//fputc(a, fg);
-    }
-  a = fgetc (finputfile);
-  output = fgetc (finputfile);
-  a = fgetc (finputfile);
-  a = fgetc (finputfile);
-  a = fgetc (finputfile);
-  return output;		// c for CNF d for DNF s for SAT, 
-  				// b for BDD's, x for XOR
+		//fputc(a, fg);
+	}
+	a = fgetc (finputfile);
+	output = fgetc (finputfile);
+	a = fgetc (finputfile);
+	a = fgetc (finputfile);
+	a = fgetc (finputfile);
+	return output;		// c for CNF d for DNF s for SAT, 
+	// b for BDD's, x for XOR
 }
-
-
