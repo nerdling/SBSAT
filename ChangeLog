@@ -1,3 +1,187 @@
+2004-05-10 08:39  mkouril
+
+	* src/solver/lemmamisc.cc: Added LemmaLitsUnset
+
+2004-05-06 17:45  fett
+
+	* src/preproc/do_exquantify.cc: fixed a bug where a variable could
+	be quantified away but still exist.  I think the bug is really in
+	strip_x_BDD()...it's just not finished yet.
+	
+	  ~Sean
+
+2004-05-06 17:24  fett
+
+	* src/solver/bt_lemmas.cc: Added in a partial backburner idea.
+	
+	   ~Sean
+
+2004-05-05 22:33  fett
+
+	* src/preproc/do_applyinfs.cc: [no log message]
+
+2004-05-04 12:31  fett
+
+	* src/solver/lemmacache.cc: added a line to omit printing lemmas
+	that currently reference an inference.	comment or uncomment
+	depending on whether or not you want to display these lemmas.
+	
+	  ~Sean
+
+2004-05-04 12:22  mkouril
+
+	* src/solver/lemmacache.cc: Print all 3 lemma caches...
+
+2004-05-03 11:59  fett
+
+	* src/postproc/backend.cc: fixed 2 mismatched free/delete[] in the
+	backend.
+	
+	   ~Sean
+
+2004-05-03 11:27  fett
+
+	* src/postproc/backend.cc: Now every variable will have a value.
+	Equivalences are percolated along.
+	
+	  ~Sean
+
+2004-04-30 13:48  fett
+
+	* include/lemmainfo.h: added a new function LemmaIsSAT
+
+2004-04-30 13:48  fett
+
+	* src/solver/: lemmacache.cc, lemmamisc.cc: Added a new function
+	LemmaIsSAT()
+
+2004-04-30 13:48  fett
+
+	* src/preproc/do_applyinfs.cc: ?
+
+2004-04-30 12:15  fett
+
+	* src/utils/bdd.cc: modified num_replace. Better??
+	
+	  ~Sean
+
+2004-04-30 12:15  fett
+
+	* src/preproc/: do_applyinfs.cc, do_exquantifyand.cc,
+	init_preproc.cc: autarky bdds are now stored in their
+	possible_BDD() state.
+	
+	  ~Sean
+
+2004-04-30 11:07  fett
+
+	* src/utils/bdd.cc: Sped up possible_BDD()
+	
+	  ~Sean
+
+2004-04-30 11:06  fett
+
+	* src/preproc/do_exquantifyand.cc: now during subsequent passes
+	ex_and will not try to cluster together a variable it has achieved
+	a result for before.
+	
+	  ~Sean
+
+2004-04-29 14:41  fett
+
+	* src/preproc/init_preproc.cc: now ex_variables are set to
+	temporary variables.
+	
+	  ~Sean
+
+2004-04-29 13:19  fett
+
+	* src/postproc/backend.cc: removed comments
+
+2004-04-29 11:46  fett
+
+	* src/preproc/init_preproc.cc: all exquantified away variables are
+	now Temp variables when autarky_smurfs are being used.
+	
+	   ~Sean
+
+2004-04-29 11:44  fett
+
+	* src/postproc/backend.cc: fixed a problem with displaying the
+	solution when 2 variables were equal and 1 of them was quantfied
+	away.  There is a problem in backend.cc when displaying the
+	solution we do not distinguish between variable number 1 and
+	BOOL_TRUE. So it is hard to say variable 4 = variable 1 because it
+	shows up as 4=T instead of 4=1.
+	
+	   ~Sean
+
+2004-04-28 22:47  fett
+
+	* src/preproc/do_exquantifyand.cc: removed print debug statements.
+	
+	  ~Sean
+
+2004-04-28 22:44  fett
+
+	* src/preproc/: do_applyinfs.cc, do_exquantify.cc,
+	do_exquantifyand.cc, do_prover3.cc, do_rewind.cc, init_preproc.cc:
+	fixing bugs! It is much better now.  Added in functionality so now
+	the amount[] array is updated automatically in Rebuild_BDDx()
+	instead of having to do it manually everytime a new BDD was added.
+	
+	  ~Sean
+
+2004-04-28 19:22  fett
+
+	* src/preproc/init_preproc.cc: Sending Actual Autarky BDDs into the
+	solver.
+	
+	    ~Sean
+
+2004-04-28 19:11  fett
+
+	* tests/longer_tests/12.trace.gz.params: Nothing
+	
+	   ~Sean
+
+2004-04-28 19:10  fett
+
+	* src/solver/Makefile.in: Nothing?
+	
+	   ~Sean
+
+2004-04-28 19:10  fett
+
+	* src/: preproc/do_applyinfs.cc, preproc/do_clearft.cc,
+	preproc/do_cofactor.cc, preproc/do_depcluster.cc,
+	preproc/do_exquantify.cc, preproc/do_exquantifyand.cc,
+	preproc/do_possibleanding.cc, preproc/do_prover3.cc,
+	preproc/do_pruning.cc, preproc/do_rewind.cc,
+	preproc/do_simpleand.cc, preproc/do_split.cc,
+	preproc/do_strength.cc, preproc/equivclass.cc,
+	preproc/init_preproc.cc, preproc/other_preproc.cc, utils/bdd.cc,
+	utils/params.cc, utils/vars.cc: Added in support for Autarky BDDs
+	
+	   ~Sean
+
+2004-04-28 19:10  fett
+
+	* src/formats/cnf.cc: ?
+	
+	   ~Sean
+
+2004-04-28 19:10  fett
+
+	* include/: defines.h, preprocess.h, prototypes.h, vars.h: Added in
+	support for autarky BDDs.
+	
+	   ~Sean
+
+2004-04-28 19:10  fett
+
+	* ChangeLog: nothing
+
 2004-04-14 16:28  mkouril
 
 	* src/utils/utils.cc: More temp files (1000000)

@@ -302,9 +302,9 @@ int walkSolve()
 		numlook = 0;
 
 		for(int i = 1; i < numinp; i++) {
-			fprintf(stderr, "%d ", atom[i]==1?atoi(s_name(i)):-atoi(s_name(i)));
+			//fprintf(stderr, "%d ", atom[i]==1?atoi(s_name(i)):-atoi(s_name(i)));
 		}
-		fprintf(stderr, "\n");
+		//fprintf(stderr, "\n");
 
 		while((numfalse > target) && (numflip < cutoff)) {
 			print_statistics_start_flip();
