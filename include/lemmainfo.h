@@ -130,6 +130,7 @@ typedef struct _LemmaInfoStruct {
 ITE_INLINE void
 ComputeLemmasForSmurf(SmurfState *pState);
 
+ITE_INLINE int LemmaIsSAT(LemmaBlock *pLemma);
 ITE_INLINE void DisplayAllBrancherLemmas();
 ITE_INLINE void DisplayAllBrancherLemmasToFile(char *filename, int flag);
 ITE_INLINE void DisplayLemma(LemmaBlock *pLemma);
