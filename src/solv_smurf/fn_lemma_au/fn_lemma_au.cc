@@ -3,6 +3,12 @@
 #include "solver.h"
 
 ITE_INLINE int
+FnLemmaAuInit() {
+   // not used
+}
+
+#if 0
+ITE_INLINE int
 FnLemmaInit() {
    InitLemmaSpacePool(0);
    InitLemmaInfoArray();
@@ -77,3 +83,4 @@ ConstructTempLemma()
    }
    return nTempLemmaIndex;
 }
+#endif

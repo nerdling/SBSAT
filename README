@@ -35,6 +35,12 @@
  of the possibility of those damages.
 *********************************************************************/
 
+Compatibility testing:
+i386 Linux RH7.3 and EL WS3
+i386 Windows Cygwin
+Sparc Solaris 9
+G4 Mac OS X 10.3.5
+
 To create a CD:
 
 mkisofs -o /SBSatCD1.8/sbsatcd18.iso -V SBSat_1_8 -r -J -hfs /work/CD
