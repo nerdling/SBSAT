@@ -55,6 +55,7 @@
 #define SFN_UNKNOWN 0
 #define SFN_AND 1
 #define SFN_XOR 2
+#define SFN_MINMAX 3
 
 
 void FreeAddonsPool();
@@ -197,7 +198,8 @@ ITE_INLINE void BDD2Specfn_AND(BDDNodeStruct *pFunc, int nFunctionType,
                int nEqualityVble,  SpecialFunc *pSpecialFunc);
 ITE_INLINE void BDD2Specfn_XOR(BDDNodeStruct *pFunc, int nFunctionType,
                int nEqualityVble,  SpecialFunc *pSpecialFunc);
-ITE_INLINE void ComputeVbleSet(BDDNode *pFunc);
+ITE_INLINE void BDD2Specfn_MINMAX(BDDNodeStruct *pFunc, int nFunctionType,
+               int nEqualityVble,  SpecialFunc *pSpecialFunc);
 ITE_INLINE BDDNodeStruct *EvalBdd(BDDNodeStruct *pFunc,
                int nVble, bool bValueOfVble);
 ITE_INLINE Transition* AddStateTransition(

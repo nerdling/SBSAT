@@ -83,9 +83,6 @@ SmurfFactory()
    // Construct the Smurfs.
    for (int i = 0; i < nmbrFunctions; i++)
    {
-      //if (i%100 == 0)
-         d2e_printf3("\rCreating Smurfs ... %d/%d", i, nmbrFunctions);
-
       int nFunctionType = functionType[i];
       BDDNodeStruct *pFunc = functions[i];
       if (pFunc == false_ptr)  return SOLV_UNSAT;
@@ -108,6 +105,9 @@ SmurfFactory()
 
       if (IsSpecialFunc(nFunctionType) == 0)
       {
+         //if (i%100 == 0)
+           d2e_printf3("\rCreating Smurfs ... %d/%d", i, nmbrFunctions);
+
 			//if(i % 100 == 0)
 			  d3_printf3("Constructing Smurf for %d/%d           \r", i, nmbrFunctions);
          arrIte2SolverSmurf[i] = nRegSmurfIndex;
@@ -130,6 +130,8 @@ SmurfFactory()
 
       if (pSpecFunc != NULL)
       {
+         //if (i%100 == 0)
+           d2e_printf3("\rCreating Special Function ... %d/%d", i, nmbrFunctions);
          if (IsSpecialFunc(nFunctionType) == 0) {
             nFunctionType = PLAINXOR;
             arrSpecialFuncs[nSpecialFuncIndex].LinkedSmurfs = nRegSmurfIndex-1;
@@ -151,11 +153,9 @@ SmurfFactory()
                    equalityVble[i], &(arrSpecialFuncs[nSpecialFuncIndex]));
              break;
           case MINMAX:
-             /*
              BDD2Specfn_MINMAX(pSpecFunc, nFunctionType,
                    equalityVble[i], &(arrSpecialFuncs[nSpecialFuncIndex]));
              break;
-             */
           default: assert(0); exit(1);
          }
 

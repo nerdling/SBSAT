@@ -40,78 +40,37 @@
 #include "ite.h"
 #include "solver.h"
 
-int nTotalBytesForLemmaInferences  = 0;
-	
 // ----------------------- special functions lemma construction -------------------------
-ITE_INLINE
-void
-ConstructLemmasForAND(SpecialFunc *pSpecialFunc)
+
+ITE_INLINE void
+ConstructLemmasForMINMAX(SpecialFunc *pSpecialFunc)
 {
    int nNumRHSVbles = pSpecialFunc->rhsVbles.nNumElts;
    int *arrRHSVbles = pSpecialFunc->rhsVbles.arrElts;
-   int *arrRHSPolarities = pSpecialFunc->arrRHSPolarities;
-   int nLHSVble = pSpecialFunc->nLHSVble;
    LemmaBlock *pFirstBlock;
    LemmaBlock *pLastBlock;
    int nNumBlocks;
-   int nNumElts;  // Number of literals in the lemma.
 
    ///////////////////////////
    // Construct long lemma. //
    ///////////////////////////
-
-   // nLHSVble would be 0 in a PLAINOR constraint.
-   // We do not want to put vble 0 in our lemma.
-   bool bSkipLHSLit = (nLHSVble == 0 ? true : false);
-
-   // Store lemma length.
-   nNumElts
-      = (bSkipLHSLit ? nNumRHSVbles : nNumRHSVbles + 1);
+   // THIS IS USELESS -- WE NEED TO ALLOCATE THE SPACE ONLY
+   // but I left it in here anyway - m
+   ///////////////////////////
 
    int *arrLits;
    ITE_NEW_CATCH(
-         arrLits = new int[nNumElts], "arrLits")
+         arrLits = new int[nNumRHSVbles], "arrLits")
       int nLitIndex = 0;
 
-   // Store literals.
-   if (!bSkipLHSLit)
-   {
-      arrLits[nLitIndex++]
-         = ((pSpecialFunc->nLHSPolarity == BOOL_TRUE) ? nLHSVble : -nLHSVble);
-   }
-
    for (int i = 0; i < nNumRHSVbles; i++)
    {
-      arrLits[nLitIndex++]
-         = ((arrRHSPolarities[i] == BOOL_TRUE)
-               ? -arrRHSVbles[i] : arrRHSVbles[i]);
+      arrLits[nLitIndex++] = arrRHSVbles[i];
    }
 
-   EnterIntoLemmaSpace(nNumElts, arrLits,
+   EnterIntoLemmaSpace(nNumRHSVbles, arrLits,
          false, pFirstBlock, pLastBlock, nNumBlocks);
    pSpecialFunc->pLongLemma = pFirstBlock;
-
-   ////////////////////////////////////
-   // Construct set of short lemmas. //
-   ////////////////////////////////////
-   pSpecialFunc->arrShortLemmas 
-      = (LemmaBlock **)ite_calloc(nNumRHSVbles, sizeof(LemmaBlock*),
-            9, "pSpecialFunc->arrShortLemmas");
-   nTotalBytesForLemmaInferences  += nNumRHSVbles*sizeof(LemmaBlock*);
-   LemmaBlock **arrShortLemmas = pSpecialFunc->arrShortLemmas;
-   for (int i = 0; i < nNumRHSVbles; i++)
-   {
-      // Store literals.  Each short lemma has exactly two literals.
-      arrLits[0]
-         = ((pSpecialFunc->nLHSPolarity == BOOL_TRUE) ? -nLHSVble : nLHSVble);
-      arrLits[1]
-         = ((arrRHSPolarities[i] == BOOL_TRUE)
-               ? arrRHSVbles[i] : -arrRHSVbles[i]);
-
-      EnterIntoLemmaSpace(2, arrLits, false,
-            pFirstBlock, pLastBlock, nNumBlocks);
-      arrShortLemmas[i] = pFirstBlock;
-   }
-
    delete [] arrLits;
 }
+

@@ -194,6 +194,7 @@ struct SpecialFunc
   // has n "short lemmas" of the form ~lit \/ lit_i, 0 <= i <= n-1.
   // Each of these clauses are also prime implicants of the constraint. 
   int LinkedSmurfs; // function was split into special function and smurfs 
+  int min, max; // MinMax Special function bounds
 };
 
 struct BDDNodeStruct;

@@ -215,68 +215,27 @@ class LemmatizeQueue
   LemmatizeQueueCell *pLast;
 };
 
-ITE_INLINE void
-DisplayAllBrancherLemmas();
-
-ITE_INLINE void
-DisplayAllBrancherLemmasToFile(char *filename, int flag);
-
-ITE_INLINE LemmaBlock *
-FindOrAddLemma(LemmaBitEncoding lbe);   //Used with SmurfFactory ONLY
-
-ITE_INLINE void
-//DisplayLemma(int *pnLemma);
-DisplayLemma(LemmaBlock *pLemma);
-
-ITE_INLINE void
-DisplayLemmaToFile(FILE *pFile, LemmaBlock *pLemma);
-
-ITE_INLINE void
-//DisplayLemmaStatus(int *pnLemma, int arrSolution[]);
-DisplayLemmaStatus(LemmaBlock *pLemma);
-
-ITE_INLINE void
-//DisplayLemmaLevels(int *pnLemma, int arrLevel[]);
-DisplayLemmaLevels(LemmaBlock *pLemma, int arrLevel[]);
-
-ITE_INLINE void
-DisplayLemmaInfo(LemmaInfoStruct *pLemmaInfo);
-
-ITE_INLINE void
-InitLemmaSpacePool(int at_least);
-
-ITE_INLINE void
-FreeLemmaSpacePool();
-
-ITE_INLINE void
-AllocateMoreLemmaSpace(int at_least);
-
-ITE_INLINE void
-InitLemmaLookupSpace();
-
-ITE_INLINE void
-ResetLemmaLookupSpace();
-
-ITE_INLINE void
-FreeLemmaLookupSpace();
-
-ITE_INLINE void
-InitLemmaHeurArrays(int nMaxVbleIndex);
-
-ITE_INLINE void
-DeleteLemmaHeurArrays();
-
-ITE_INLINE void
-ConstructLemmasForLongAndEquals(SpecialFunc *pSpecialFunc);
-
-ITE_INLINE void
-InitLemmaInfoArray();
-
-ITE_INLINE void
-FreeLemmaInfoArray();
-
-ITE_INLINE bool
-IsInLemmaList(LemmaInfoStruct *pLemmaInfo, LemmaInfoStruct *pList);
+ITE_INLINE void DisplayAllBrancherLemmas();
+ITE_INLINE void DisplayAllBrancherLemmasToFile(char *filename, int flag);
+ITE_INLINE void DisplayLemma(LemmaBlock *pLemma);
+ITE_INLINE void DisplayLemmaToFile(FILE *pFile, LemmaBlock *pLemma);
+ITE_INLINE void DisplayLemmaStatus(LemmaBlock *pLemma);
+ITE_INLINE void DisplayLemmaLevels(LemmaBlock *pLemma, int arrLevel[]);
+ITE_INLINE void DisplayLemmaInfo(LemmaInfoStruct *pLemmaInfo);
+ITE_INLINE void InitLemmaSpacePool(int at_least);
+ITE_INLINE void FreeLemmaSpacePool();
+ITE_INLINE void AllocateMoreLemmaSpace(int at_least);
+ITE_INLINE void InitLemmaLookupSpace();
+ITE_INLINE void ResetLemmaLookupSpace();
+ITE_INLINE void FreeLemmaLookupSpace();
+ITE_INLINE void InitLemmaHeurArrays(int nMaxVbleIndex);
+ITE_INLINE void DeleteLemmaHeurArrays();
+ITE_INLINE void ConstructLemmasForAND(SpecialFunc *pSpecialFunc);
+ITE_INLINE void ConstructLemmasForXOR(SpecialFunc *pSpecialFunc);
+ITE_INLINE void ConstructLemmasForMINMAX(SpecialFunc *pSpecialFunc);
+ITE_INLINE void InitLemmaInfoArray();
+ITE_INLINE void FreeLemmaInfoArray();
+ITE_INLINE bool IsInLemmaList(LemmaInfoStruct *pLemmaInfo, LemmaInfoStruct *pList);
 
 ITE_INLINE LemmaInfoStruct *
 AddLemma(int nNumLiterals,   //Can be used in the brancher

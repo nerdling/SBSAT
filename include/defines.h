@@ -119,6 +119,7 @@ extern const char * opnames[EQU_BASE];
 #define BOOL_FALSE 0
 #define BOOL_TRUE 1
 #define BOOL_UNKNOWN 2
+#define BOOL_MAX 3
 
 /* various stacks */
 #define LEVEL_START -1

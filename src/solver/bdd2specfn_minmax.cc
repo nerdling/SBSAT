@@ -38,15 +38,15 @@
 #include "ite.h"
 #include "solver.h"
 
-
 ITE_INLINE void
-BDD2Specfn_XOR(BDDNodeStruct *pFunc,
+BDD2Specfn_MINMAX(BDDNodeStruct *pFunc,
       int nFunctionType,
       int _nEqualityVble,
       SpecialFunc *pSpecialFunc
       )
 {
-   assert(/*nFunctionType == XOR ||*/ nFunctionType == PLAINXOR);
+   if (NO_LEMMAS==0) { fprintf(stderr, "Lemmas for MINMAX are not ready\n"); exit(1); }
+   assert(nFunctionType == MINMAX); // PLAINMINMAX?
 
    // We assume that special func has no implied literals.
    SFADDONS(pFunc->addons)->pImplied = 0;
@@ -60,7 +60,7 @@ BDD2Specfn_XOR(BDDNodeStruct *pFunc,
    // Store LHS variable. and polarity
    pSpecialFunc->nLHSVble = arrIte2SolverVarMap[0]; /* ALWAYS FALSE VARIABLE */
    pSpecialFunc->nLHSPolarity = BOOL_FALSE;
-   pSpecialFunc->nFunctionType = SFN_XOR;
+   pSpecialFunc->nFunctionType = SFN_MINMAX;
 
    /* -------------- Right Hand Side -------------- */
    /* 0. Create the List of Variables and Polarities */		  
@@ -68,9 +68,6 @@ BDD2Specfn_XOR(BDDNodeStruct *pFunc,
    // Store variable set of RHS.
    // Here we assume that the LHS variable does not also occur on
    // the RHS of the equality.
-   //
-  
-   // FIXME: can do it even better -- if it really is special func
    long tempint_max = 0;
    long y=0;
    unravelBDD(&y, &tempint_max, &pSpecialFunc->rhsVbles.arrElts, pFunc);
@@ -104,6 +101,7 @@ BDD2Specfn_XOR(BDDNodeStruct *pFunc,
    /* 1. Create BDD representing RHS. */
    //BDDNodeStruct *pRHSFunc = EvalBdd(pFunc, 0, false);
    BDDNodeStruct *pRHSFunc = pFunc;
+   assert(pFunc != true_ptr && pFunc != false_ptr); // FIXME:
 
    /* 2. Traverse the BDD, storing the variable index and polarity  for each literal. */
    BDDNodeStruct *pCurrentNode = pRHSFunc;
@@ -117,18 +115,31 @@ BDD2Specfn_XOR(BDDNodeStruct *pFunc,
       }
       assert(pSpecialFunc->rhsVbles.arrElts[i] == arrIte2SolverVarMap[pCurrentNode->variable]);
       arrRHSPolarities[i] = BOOL_TRUE;
-      pCurrentNode = pCurrentNode->thenCase;
+      if (pCurrentNode->thenCase != true_ptr && pCurrentNode->thenCase != false_ptr)
+         pCurrentNode = pCurrentNode->thenCase;
+      else
+         pCurrentNode = pCurrentNode->elseCase;
       i++;
    }
-   /* the function result should be ODD to be sat */
-   /* all true infers true while even number of nodes */
-   /* all false infers true while odd number of nodes */
-   if ((pCurrentNode == true_ptr  && (i % 2)==1) ||
-         (pCurrentNode == false_ptr && (i % 2)==0) )
-      arrRHSPolarities[0] = BOOL_TRUE; 
-   else
-      arrRHSPolarities[0] = BOOL_FALSE;
 
-   ConstructLemmasForXOR(pSpecialFunc);
+   pSpecialFunc->max=0;
+   pCurrentNode = pRHSFunc;
+   while (pCurrentNode != true_ptr && pCurrentNode != false_ptr)
+   {
+      pCurrentNode = pCurrentNode->thenCase;
+      pSpecialFunc->max++;
+   }
+   pSpecialFunc->max--;
+
+   pSpecialFunc->min=pSpecialFunc->rhsVbles.nNumElts;
+   pCurrentNode = pRHSFunc;
+   while (pCurrentNode != true_ptr && pCurrentNode != false_ptr)
+   {
+      pCurrentNode = pCurrentNode->elseCase;
+      pSpecialFunc->min--;
+   }
+   pSpecialFunc->min++;
+
+   ConstructLemmasForMINMAX(pSpecialFunc);
 }
 

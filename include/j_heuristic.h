@@ -171,21 +171,21 @@ UpdateHeuristicWithLemma(int nNumLiterals,
 ITE_INLINE void
 UpdateHeuristicScoresFromTransition(Transition *pTransition);
 
-ITE_INLINE void
-RemoveLemmasHeuristicInfluence(LemmaInfoStruct *pLemmaInfo);
+ITE_INLINE void RemoveLemmasHeuristicInfluence(LemmaInfoStruct *pLemmaInfo);
 
 ITE_INLINE void GetHeurScoresFromSpecialFunc_AND(int nSpecFuncIndex);
 ITE_INLINE void GetHeurScoresFromSpecialFunc_AND_C(int nSpecFuncIndex);
 ITE_INLINE void GetHeurScoresFromSpecialFunc_XOR(int nSpecFuncIndex);
 ITE_INLINE void GetHeurScoresFromSpecialFunc_XOR_C(int nSpecFuncIndex);
+ITE_INLINE void GetHeurScoresFromSpecialFunc_MINMAX(int nSpecFuncIndex);
+ITE_INLINE void GetHeurScoresFromSpecialFunc_MINMAX_C(int nSpecFuncIndex);
 
 ITE_INLINE int TransitionIndex_FromInt(int n, int nValueOfVble);
 
 ITE_INLINE void J_InitHeuristicScores();
 ITE_INLINE void J_FreeHeuristicScores();
 
-ITE_INLINE void
-J_UpdateHeuristicScoresFromTransition(Transition *);
+ITE_INLINE void J_UpdateHeuristicScoresFromTransition(Transition *);
 
 
 
@@ -208,6 +208,11 @@ J_UpdateHeuristic_AND_C(SpecialFunc *pSpecialFunc,
       int nOldNumRHSUnknowns, int nNumRHSUnknowns, 
       int nOldNumLHSUnknowns, int nNumLHSUnknowns,
       double nOldSumRHSUnknowns, double nSumRHSUnknowns);
+ITE_INLINE void
+J_UpdateHeuristic_MINMAX_C(SpecialFunc *pSpecialFunc, 
+      int nOldNumRHSUnknowns, int nNumRHSUnknowns, 
+      double fOldSumRHSUnknowns, double fSumRHSUnknowns, 
+      int counter);
 
 // Update scores of RHS variables.
 ITE_INLINE void

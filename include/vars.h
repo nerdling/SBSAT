@@ -48,13 +48,13 @@
 #define ERR_BT_LEMMA 4
 #define ERR_BT_SOL_LEMMA 5
 #define ERR_LIMITS 6
+#define ERR_BT_SPEC_FN_MINMAX 7
 
 #define INF_SMURF        10
 #define INF_SPEC_FN_AND  11 
 #define INF_SPEC_FN_XOR  12 
 #define INF_LEMMA        13
-
-//#define      14
+#define INF_SPEC_FN_MINMAX  14 
 
 #define SMURF_STATES	    15
 #define NUM_SOLUTIONS	 16

@@ -82,8 +82,9 @@
 #define CNF2 3
 #define MINXCNF 4
 #define ITE2  5
-#define XCNF2 6
-#define CNF2MK 7
+#define XITE2  6
+#define XCNF2 7
+#define CNF2MK 8
 
 char name[128];
 int formula_type = XCNF;
@@ -105,6 +106,7 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
    if (!strcmp(vdw_type, "cnf2mk")) formula_type = CNF2MK; else 
    if (!strcmp(vdw_type, "ite")) formula_type = ITE; else 
    if (!strcmp(vdw_type, "ite2")) formula_type = ITE2; else 
+   if (!strcmp(vdw_type, "xite2")) formula_type = XITE2; else 
    if (!strcmp(vdw_type, "minxcnf")) formula_type = MINXCNF; else {
       fprintf(stderr, "Unknown vdw formula type\n");
       exit(1);
@@ -165,10 +167,19 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
       break;
     case ITE2: 
       if (k != 2) {
-         fprintf(stderr, "Can't use CNF2 for any other k but 2\n");
+         fprintf(stderr, "Can't use ITE2 for any other k but 2\n");
          exit(1);
       }
       clauses -= n;
+      fprintf(stdout, "p bdd %d %d\n", n, clauses+sym_clauses);
+      break;
+    case XITE2: 
+      if (k != 2) {
+         fprintf(stderr, "Can't use XITE2 for any other k but 2\n");
+         exit(1);
+      }
+      clauses -= n;
+      clauses /= 2;
       fprintf(stdout, "p bdd %d %d\n", n, clauses+sym_clauses);
       break;
     case MINXCNF:
@@ -375,6 +386,24 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
                base+=step;
             }
             fprintf(stdout, " ] %d\n", p-1);
+            clause_count++;
+         }
+      }
+      if (clause_count != clauses) {
+         fprintf(stderr, "======================== Problem\n");
+      }
+   } else if (formula_type == XITE2) {
+      fprintf(stdout, "; prevent any arithmetic progression of length %d for every bucket %d\n", p, k);
+      for(int num = 1; num <= n; num++) {
+         for(int step = 1; 1; step++) {
+            if (step * (p-1) + num > n) break;
+            fprintf(stdout, "* minmax(%d 1 %d ", p, p-1);
+            int base = num;
+            for(int z = 0; z < p; z++) {
+               fprintf(stdout, "%s ", var(n, base, 0));
+               base+=step;
+            }
+            fprintf(stdout, " )\n");
             clause_count++;
          }
       }

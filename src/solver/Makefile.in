@@ -138,17 +138,17 @@ SOURCES = solve.cc \
 	     backtrack.cc backtrack_nl.cc backtrack_sbj.cc bt_misc.cc \
              select_bp.cc \
              j_heuristic.cc j_smurf.cc j_update_heu.cc \
-	     j_specfn.cc j_specfn_and.cc j_specfn_xor.cc \
+	     j_specfn.cc j_specfn_and.cc j_specfn_xor.cc j_specfn_minmax.cc \
 	     l_heuristic.cc l_lemma.cc \
 	     i_heuristic.cc \
              heuristic.cc \
              bt_lemmas.cc bt_specfn.cc bt_smurfs.cc \
-             bt_specfn_and.cc bt_specfn_xor.cc \
+             bt_specfn_and.cc bt_specfn_xor.cc bt_specfn_minmax.cc \
              lemmas.cc lemmas_and.cc lemmas_xor.cc \
 	     lemmacache.cc lemmainfo.cc lemmaspace.cc lemmawlits.cc lemmamisc.cc \
              smurffactory.cc smurfstates.cc \
              state_stacks.cc \
-	     bdd2smurf.cc bdd2specfn_and.cc bdd2specfn_xor.cc \
+	     bdd2smurf.cc bdd2specfn_and.cc bdd2specfn_xor.cc bdd2specfn_minmax.cc \
 	     autarky.cc \
 	     display.cc display_sf.cc verify.cc \
 	     recordsol.cc sf_addons.cc smurfaddons.cc transitions.cc \
@@ -173,16 +173,17 @@ libsolver_la_LIBADD =
 am__objects_1 = solve.lo init_solver.lo brancher.lo backtrack.lo \
 	backtrack_nl.lo backtrack_sbj.lo bt_misc.lo select_bp.lo \
 	j_heuristic.lo j_smurf.lo j_update_heu.lo j_specfn.lo \
-	j_specfn_and.lo j_specfn_xor.lo l_heuristic.lo l_lemma.lo \
-	i_heuristic.lo heuristic.lo bt_lemmas.lo bt_specfn.lo \
-	bt_smurfs.lo bt_specfn_and.lo bt_specfn_xor.lo lemmas.lo \
-	lemmas_and.lo lemmas_xor.lo lemmacache.lo lemmainfo.lo \
-	lemmaspace.lo lemmawlits.lo lemmamisc.lo smurffactory.lo \
-	smurfstates.lo state_stacks.lo bdd2smurf.lo bdd2specfn_and.lo \
-	bdd2specfn_xor.lo autarky.lo display.lo display_sf.lo verify.lo \
-	recordsol.lo sf_addons.lo smurfaddons.lo transitions.lo \
-	update_heu.lo crtwin.lo load_lemmas.lo interface.lo \
-	heur_stack.lo bddwalk.lo wvf.lo
+	j_specfn_and.lo j_specfn_xor.lo j_specfn_minmax.lo \
+	l_heuristic.lo l_lemma.lo i_heuristic.lo heuristic.lo \
+	bt_lemmas.lo bt_specfn.lo bt_smurfs.lo bt_specfn_and.lo \
+	bt_specfn_xor.lo bt_specfn_minmax.lo lemmas.lo lemmas_and.lo \
+	lemmas_xor.lo lemmacache.lo lemmainfo.lo lemmaspace.lo \
+	lemmawlits.lo lemmamisc.lo smurffactory.lo smurfstates.lo \
+	state_stacks.lo bdd2smurf.lo bdd2specfn_and.lo \
+	bdd2specfn_xor.lo bdd2specfn_minmax.lo autarky.lo display.lo \
+	display_sf.lo verify.lo recordsol.lo sf_addons.lo \
+	smurfaddons.lo transitions.lo update_heu.lo crtwin.lo \
+	load_lemmas.lo interface.lo heur_stack.lo bddwalk.lo wvf.lo
 am_libsolver_la_OBJECTS = $(am__objects_1)
 libsolver_la_OBJECTS = $(am_libsolver_la_OBJECTS)
 libsolver2_la_LDFLAGS =
@@ -199,11 +200,13 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	./$(DEPDIR)/backtrack_sbj.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/bdd2smurf.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/bdd2specfn_and.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/bdd2specfn_minmax.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/bdd2specfn_xor.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/bddwalk.Plo ./$(DEPDIR)/brancher.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/bt_lemmas.Plo ./$(DEPDIR)/bt_misc.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/bt_smurfs.Plo ./$(DEPDIR)/bt_specfn.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/bt_specfn_and.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/bt_specfn_minmax.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/bt_specfn_xor.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/crtwin.Plo ./$(DEPDIR)/display.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/display_sf.Plo \
@@ -215,6 +218,7 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	./$(DEPDIR)/j_heuristic.Plo ./$(DEPDIR)/j_smurf.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/j_specfn.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/j_specfn_and.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/j_specfn_minmax.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/j_specfn_xor.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/j_update_heu.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/l_heuristic.Plo ./$(DEPDIR)/l_lemma.Plo \
@@ -250,17 +254,17 @@ SOURCES = solve.cc \
 	     backtrack.cc backtrack_nl.cc backtrack_sbj.cc bt_misc.cc \
              select_bp.cc \
              j_heuristic.cc j_smurf.cc j_update_heu.cc \
-	     j_specfn.cc j_specfn_and.cc j_specfn_xor.cc \
+	     j_specfn.cc j_specfn_and.cc j_specfn_xor.cc j_specfn_minmax.cc \
 	     l_heuristic.cc l_lemma.cc \
 	     i_heuristic.cc \
              heuristic.cc \
              bt_lemmas.cc bt_specfn.cc bt_smurfs.cc \
-             bt_specfn_and.cc bt_specfn_xor.cc \
+             bt_specfn_and.cc bt_specfn_xor.cc bt_specfn_minmax.cc \
              lemmas.cc lemmas_and.cc lemmas_xor.cc \
 	     lemmacache.cc lemmainfo.cc lemmaspace.cc lemmawlits.cc lemmamisc.cc \
              smurffactory.cc smurfstates.cc \
              state_stacks.cc \
-	     bdd2smurf.cc bdd2specfn_and.cc bdd2specfn_xor.cc \
+	     bdd2smurf.cc bdd2specfn_and.cc bdd2specfn_xor.cc bdd2specfn_minmax.cc \
 	     autarky.cc \
 	     display.cc display_sf.cc verify.cc \
 	     recordsol.cc sf_addons.cc smurfaddons.cc transitions.cc \
@@ -304,6 +308,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/backtrack_sbj.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bdd2smurf.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bdd2specfn_and.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bdd2specfn_minmax.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bdd2specfn_xor.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bddwalk.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/brancher.Plo@am__quote@
@@ -312,6 +317,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bt_smurfs.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bt_specfn.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bt_specfn_and.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bt_specfn_minmax.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bt_specfn_xor.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/crtwin.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/display.Plo@am__quote@
@@ -325,6 +331,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/j_smurf.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/j_specfn.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/j_specfn_and.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/j_specfn_minmax.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/j_specfn_xor.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/j_update_heu.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/l_heuristic.Plo@am__quote@

@@ -80,6 +80,10 @@ UPDATE_HEURISTIC()
                           arrPrevNumRHSUnknowns[i], arrNumRHSUnknowns[i], 
                           arrPrevSumRHSUnknowns[i], arrSumRHSUnknowns[i], -1);
                     break;
+          case SFN_MINMAX: J_UpdateHeuristic_MINMAX_C(arrSpecialFuncs+i, 
+                          arrPrevNumRHSUnknowns[i], arrNumRHSUnknowns[i], 
+                          arrPrevSumRHSUnknowns[i], arrSumRHSUnknowns[i], -1);
+                    break;
           default: assert(0);
                    exit(1);
                    break;

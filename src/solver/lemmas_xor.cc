@@ -44,7 +44,7 @@
 
 ITE_INLINE
 void
-ConstructLemmasForLongXorEquals(SpecialFunc *pSpecialFunc)
+ConstructLemmasForXOR(SpecialFunc *pSpecialFunc)
 {
    int nNumRHSVbles = pSpecialFunc->rhsVbles.nNumElts;
    int *arrRHSVbles = pSpecialFunc->rhsVbles.arrElts;

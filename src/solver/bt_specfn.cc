@@ -48,6 +48,8 @@ ITE_INLINE int UpdateSpecialFunction_AND(IndexRoleStruct *pIRS);
 ITE_INLINE int J_UpdateSpecialFunction_AND(IndexRoleStruct *pIRS);
 ITE_INLINE int UpdateSpecialFunction_XOR(IndexRoleStruct *pIRS);
 ITE_INLINE int J_UpdateSpecialFunction_XOR(IndexRoleStruct *pIRS);
+ITE_INLINE int UpdateSpecialFunction_MINMAX(IndexRoleStruct *pIRS);
+ITE_INLINE int J_UpdateSpecialFunction_MINMAX(IndexRoleStruct *pIRS);
 
 ITE_INLINE
 int
@@ -80,6 +82,7 @@ UpdateEachAffectedSpecialFunction (AffectedFuncsStruct *pAFS)
      switch (arrSpecialFuncs[nSpecFuncIndex].nFunctionType) {
       case SFN_AND: ret=UpdateSpecialFunction_AND(pIRS); break;
       case SFN_XOR: ret=UpdateSpecialFunction_XOR(pIRS); break;
+      case SFN_MINMAX: ret=UpdateSpecialFunction_MINMAX(pIRS); break;
       default: assert(0); break;
      }
 

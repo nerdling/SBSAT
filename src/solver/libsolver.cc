@@ -57,6 +57,7 @@
 #include "bt_specfn.cc"
 #include "bt_specfn_and.cc"
 #include "bt_specfn_xor.cc"
+#include "bt_specfn_minmax.cc"
 
 /* null heuristic */
 #include "heuristic.cc"
@@ -71,6 +72,7 @@
 #include "j_specfn.cc"
 #include "j_specfn_and.cc"
 #include "j_specfn_xor.cc"
+#include "j_specfn_minmax.cc"
 #include "j_heuristic.cc"
 
 /* interactive heuristic */
@@ -81,6 +83,7 @@
 #include "bdd2smurf.cc"
 #include "bdd2specfn_and.cc"
 #include "bdd2specfn_xor.cc"
+#include "bdd2specfn_minmax.cc"
 #include "smurfstates.cc"
 
 #include "state_stacks.cc"
@@ -94,6 +97,7 @@
 #include "lemmas.cc"
 #include "lemmas_and.cc"
 #include "lemmas_xor.cc"
+#include "lemmas_minmax.cc"
 #include "verify.cc"
 #include "display.cc"
 #include "display_sf.cc"

@@ -38,9 +38,6 @@
 #include "ite.h"
 #include "solver.h"
 
-ITE_INLINE void ConstructLemmasForLongAndEquals(SpecialFunc *pSpecialFunc);
-
-
 ITE_INLINE void
 BDD2Specfn_AND(BDDNodeStruct *pFunc,
       int nFunctionType,
@@ -216,7 +213,7 @@ BDD2Specfn_AND(BDDNodeStruct *pFunc,
              i++;
           }
        }
-       ConstructLemmasForLongAndEquals(pSpecialFunc);
+       ConstructLemmasForAND(pSpecialFunc);
        break;
     default: assert(0); exit(1); break;
    }
