@@ -97,7 +97,7 @@ UpdateRegularSmurfAu(int nSmurfAuIndex)
    SmurfAuState *pState;
 
    d9_printf2("Visiting Autarky Smurf #%d\n", nSmurfAuIndex);
-
+/*
    if (
         nSmurfAuIndex == 2654
       )
@@ -109,7 +109,7 @@ UpdateRegularSmurfAu(int nSmurfAuIndex)
             nNumUnresolvedFunctions, nSmurfAuIndex);
       return NO_ERROR;
    }
-   
+ */  
 
    pState = arrSolverFunctions[nSmurfAuIndex].fn_smurf_au.pCurrentState;
    assert(pState != pTrueSmurfAuState);
