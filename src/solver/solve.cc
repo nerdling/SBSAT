@@ -51,6 +51,7 @@ ITE_INLINE int InitSolver();
 ITE_INLINE void FreeSolver(Tracer *tracer);
 void LoadLemmas(char *filename);
 ITE_INLINE void FreeAFS();
+ITE_INLINE void InitBrancherX();
 
 
 int
@@ -66,6 +67,9 @@ solve_init()
   if (ret != SOLV_UNKNOWN) return ret;
 
   ret = InitBrancher();
+
+  if (ret != SOLV_UNKNOWN) return ret;
+  InitBrancherX();
   return ret;
 }
 

@@ -465,8 +465,6 @@ Brancher()
    // Main inferencing loop.
    fPrevEndTime = fStartTime = get_runtime();
 
-   InitBrancherX();
-
    ret = CheckInitHooks(); /* FIXME: check for result */
 
    if (ret == SOLV_UNKNOWN)
