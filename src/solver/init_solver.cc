@@ -226,6 +226,10 @@ CreateAffectedFuncsStructures(int nMaxVbleIndex)
          arrAFS[nVble].arrSpecFuncsAffected = arrAFSBufferSpecFn + nAFSBufferSpecFnIdx;
          nAFSBufferSpecFnIdx += arrAFS[nVble].nNumSpecialFuncsAffected;
       }
+		arrAFS[nVble].LemmasWherePosTail[0].pNextLemma[0] = &(arrAFS[nVble].LemmasWherePos[0]);
+		arrAFS[nVble].LemmasWherePosTail[1].pNextLemma[1] = &(arrAFS[nVble].LemmasWherePos[1]);
+		arrAFS[nVble].LemmasWhereNegTail[0].pNextLemma[0] = &(arrAFS[nVble].LemmasWhereNeg[0]);
+		arrAFS[nVble].LemmasWhereNegTail[1].pNextLemma[1] = &(arrAFS[nVble].LemmasWhereNeg[1]);
    }
 
    // Setup two arrays of indicies used to keep track of
