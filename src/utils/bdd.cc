@@ -1200,9 +1200,9 @@ BDDNode * _num_replace (BDDNode * f, int var, int replace) {
    BDDNode * e = _num_replace (f->elseCase, var, replace);
    if (r == e)
 	  return (f->tmp_bdd = r);
-	return (f->tmp_bdd = ite (ite_var (f->variable), r, e));
+	return (f->tmp_bdd = itetable_add_node(11, ite_var(f->variable), f, ite (ite_var (f->variable), r, e)));
 
-	return (f->tmp_bdd = find_or_add_node(f->variable, r, e));
+	//return (f->tmp_bdd = find_or_add_node(f->variable, r, e));
 }
 
 BDDNode *_possible_BDD_x(BDDNode *f, int x);
@@ -1265,7 +1265,7 @@ BDDNode *_possible_BDD(BDDNode *f, int v) {
 	f->flag = bdd_flag_number;
 	
 	BDDNode *var = ite_var(v);
-	BDDNode *cached = itetable_find_or_add_node(15, f, var, NULL);
+	BDDNode *cached = itetable_find_or_add_node(8, f, var, NULL);
 	if (cached) return (f->tmp_bdd = cached);
 	
 	if(f->variable < v) return (f->tmp_bdd = false_ptr);
@@ -1281,7 +1281,7 @@ BDDNode *_possible_BDD(BDDNode *f, int v) {
 	BDDNode *r = _possible_BDD(f->thenCase, v);
 	BDDNode *e = _possible_BDD(f->elseCase, v);
 	if(r == e) return (f->tmp_bdd = r);
-	return (f->tmp_bdd = itetable_add_node(15, f, var, ite(ite_var(f->variable), r, e)));
+	return (f->tmp_bdd = itetable_add_node(8, f, var, ite(ite_var(f->variable), r, e)));
 }
 
 infer *_possible_infer_x(BDDNode *f, int x);
