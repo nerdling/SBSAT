@@ -299,3 +299,21 @@ sym_regex_test(char *reg)
    sym_regex_free(&myrg);
    exit(1);
 }
+
+void
+sym_reset_flag(int id) 
+{
+   getsym_i(id)->flag &= ~SYM_FLAG_UNRAVEL;
+}
+
+void
+sym_set_flag(int id) 
+{
+   getsym_i(id)->flag |= SYM_FLAG_UNRAVEL;
+}
+
+int
+sym_is_flag(int id) 
+{
+   return getsym_i(id)->flag & SYM_FLAG_UNRAVEL;
+}

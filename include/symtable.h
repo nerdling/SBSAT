@@ -21,6 +21,9 @@ typedef struct symrec symrec;
 #define SYM_FN    2
 #define SYM_OTHER 3
 
+// flags
+#define SYM_FLAG_UNRAVEL 0x10
+
 /* The symbol table: a chain of `struct symrec'.     */
 //extern symrec **sym_table;
 
@@ -37,6 +40,11 @@ symrec *tputsym(int);
 symrec *getsym_i(int id);
 void    print_symtable();
 int get_or_putsym_check(char *sym_name, int sym_type, int id);
+
+int sym_is_flag(int id);
+void sym_set_flag(int id);
+void sym_reset_flag(int id); 
+
 
 /* reg expressions */
 typedef struct {
