@@ -127,7 +127,7 @@ long int numflip;		/* number of changes so far */
 long int numnullflip;		/*  number of times a clause was picked, but no  */
 				/*  variable from it was flipped  */
 int numrun = BIG;
-int cutoff = 500000;
+int cutoff = 50000;
 int base_cutoff = 1000000;
 int target = 0;
 int numtry = 0;			/* total attempts at solutions */
