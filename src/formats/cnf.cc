@@ -48,49 +48,36 @@ int zecc_limit;
 int *zecc_arr;
 
 //If you want character support for strings and things, look in markbdd.c and copy that...
-char getNextSymbol_CNF (char macros[20], int &intnum) {
+//returns m - ?, # - for xcnf, i - for integer, e - end/error
+char getNextSymbol_CNF (char macros[20], int *intnum) {
 	char integers[20];
 	int i = 0;
 	int p = 0;
+   macros[0] = 0;
 	while(1) {
       p = fgetc(finputfile);
-      if(p == EOF) {
-			fprintf(stderr, "\nUnexpected EOF...exiting\n");
-			exit (1);
-		}
+      if(p == EOF) return 'e';
       if(p == 'c') {
 			while(p != '\n') {
             p = fgetc(finputfile);
-            if(p == EOF) {
-					fprintf(stderr, "\nUnexpected EOF...exiting\n");
-					exit(1);
-				}
+            if(p == EOF) return 'e';
 			}
          p = fgetc(finputfile);
-         if (p == EOF) {
-				fprintf(stderr, "\nUnexpected EOF...exiting\n");
-				exit(1);
-			}
+         if (p == EOF) return 'e';
 			ungetc(p, finputfile);
 			continue;
 		}
       if(p == '#') {
          p = fgetc(finputfile);
-			if(p == EOF) {
-				fprintf(stderr, "\nUnexpected EOF...exiting\n");
-				exit(1);
-			}
+			if(p == EOF) return 'e';
 			if(((p >= 'a') && (p <= 'z')) || ((p >= 'A') && (p <= 'Z'))) {
 				while((p != '(') && (p != ' ') && (p != '\n') && (p != ';')) {
 					macros[i] = p;
 					i++;
                p = fgetc(finputfile);
-               if (p == EOF) {
-						fprintf(stderr, "\nUnexpected EOF...exiting\n");
-						exit (1);
-					}
+               if (p == EOF) break;
 				}
-				ungetc(p, finputfile);
+            if (p != EOF) ungetc(p, finputfile);
 				macros[i] = 0;
 				return 'm';
 			} else {
@@ -110,7 +97,7 @@ char getNextSymbol_CNF (char macros[20], int &intnum) {
 			}
 			ungetc(p, finputfile);
 			integers[i] = 0;
-			intnum = atoi(integers);
+			*intnum = atoi(integers);
 			return 'i';
 		}
 	}
@@ -121,17 +108,15 @@ store *getMinMax(long *tempint_max, int **tempint) {
 	char macros[20];
 	int p;
 	
-	char order = getNextSymbol_CNF (macros, min);
+	char order = getNextSymbol_CNF (macros, &min);
+   if(order == 'e') return NULL;
 	if(order != 'i' || min < 0) {
 		fprintf(stderr, "Error looking for min while parsing CNF input (%s)...exiting\n", macros);
 		exit(1);
 	}
 	
    p = fgetc(finputfile);
-   if(p == EOF) {
-		fprintf(stderr, "\nUnexpected EOF...exiting\n");
-		exit (1);
-	}
+   if(p == EOF)  return NULL;
 
 	while(p != '[') {
 		if(p != ' ') {
@@ -139,16 +124,10 @@ store *getMinMax(long *tempint_max, int **tempint) {
 			exit (1);
 		}
       p = fgetc(finputfile);
-      if(p == EOF) {
-			fprintf(stderr, "\nUnexpected EOF...exiting\n");
-			exit (1);
-		}
+      if(p == EOF) return NULL;
 	}
    p = fgetc(finputfile);
-   if (p == EOF) {
-		fprintf(stderr, "\nUnexpected EOF...exiting\n");
-		exit (1);
-	}
+   if (p == EOF) return NULL;
 	
 	int x = 0;
 	while(p != ']') {
@@ -157,20 +136,14 @@ store *getMinMax(long *tempint_max, int **tempint) {
 			macros[i] = p;
 			i++;
          p = fgetc(finputfile);
-         if (p == EOF) {
-				fprintf(stderr, "\nUnexpected EOF...exiting\n");
-				exit (1);
-			}
+         if (p == EOF) return NULL;
 		}
 		if(p!=' ' && p!=']') {
 			fprintf(stderr, "\nExpecting ']', found (%c)...exiting\n", p);
 			exit (1);
 		}
       p = fgetc(finputfile);
-      if(p == EOF) {
-			fprintf(stderr, "\nUnexpected EOF...exiting\n");
-			exit (1);
-		}
+      if(p == EOF) return NULL;
 		
 		if(i!=0) {
 			macros[i] = 0;
@@ -183,7 +156,8 @@ store *getMinMax(long *tempint_max, int **tempint) {
 		}
 	}
 	int num_vars = x;
-	order = getNextSymbol_CNF (macros, max);	
+	order = getNextSymbol_CNF (macros, &max);	
+   if(order == 'e') return NULL;
 	if(order != 'i' || max < 0) {
 		fprintf(stderr, "Error looking for max while parsing CNF input (%s)...exiting\n", macros);
 		exit(1);
@@ -244,39 +218,63 @@ void CNF_to_BDD(int cnf)
 	int old_numout = numout;
 	//Get and store the CNF clauses from STDIN
 	int num_minmax = 0;
-	for(long x = 1; x < numout + 1; x++) {
+   long x = 0;
+   while(1) {
+      x++;
       if (x%1000 == 1)
          d2_printf3("\rReading CNF %ld/%ld ... ", x, numout);
-      y = -1;
-      do {
-			y++;
-			order = getNextSymbol_CNF(macros, intnum);
-			if(order == '#') {
-				store *temp = getMinMax(&tempint_max, &tempint);
-				integers[x].num = temp->num;
-				integers[x].length = temp->length;
-				integers[x].dag = temp->dag;
-				integers[x].andor = temp->andor;
-				delete temp;
-				old_integers[x] = integers[x];
-				num_minmax++;
-				break;
-			} else {
-				if(order != 'i') {
-					fprintf(stderr, "Error while parsing CNF input:%ld...exiting\n", x);
-					exit(1);
-				}
-			}
-         if (y >= tempint_max) {
-            tempint = (int*)ite_recalloc((void*)tempint, tempint_max, tempint_max+100, sizeof(int), 9, "tempint");
-            tempint_max += 100;
+
+      order = getNextSymbol_CNF(macros, &intnum);
+      if (x == numout+1) {
+         // one beyond
+         if (order == 'e') break; // all good
+         fprintf(stderr, "Error while parsing CNF input: too many functions\n");
+         exit(1);
+      }
+      if(order == 'e') { // error
+         fprintf(stderr, "Error while parsing CNF input:premature end of file ...exiting\n");
+         exit(1);
+      } else
+      if(order == '#') { // special line (check for xcnf format?)
+         store *temp = getMinMax(&tempint_max, &tempint);
+         if(temp == NULL) {
+            fprintf(stderr, "Error while parsing CNF input:%ld...exiting\n", x);
+            exit(1);
          }
-			tempint[y] = intnum;
-		} while(tempint[y] != 0);
-		if(order == '#') {
-			order = 0;
-			continue;
-		}
+         integers[x].num = temp->num;
+         integers[x].length = temp->length;
+         integers[x].dag = temp->dag;
+         integers[x].andor = temp->andor;
+         delete temp;
+         old_integers[x] = integers[x];
+         num_minmax++;
+      } else
+      if(order == 'i') { // integers...
+         y = 0;
+         while(1) 
+         {
+            if (y >= tempint_max) {
+               tempint = (int*)ite_recalloc((void*)tempint, tempint_max, tempint_max+100, sizeof(int), 9, "tempint");
+               tempint_max += 100;
+            }
+            tempint[y] = intnum;
+            if (tempint[y] == 0) break;
+            order = getNextSymbol_CNF(macros, &intnum);
+            if (order != 'i') {
+               fprintf(stderr, "Error while parsing CNF input:%ld...exiting\n", x);
+               exit(1);
+            }
+            y++;
+         };
+         /* ????
+          * if(order == '#') {
+            order = 0;
+            continue;
+         }*/
+      } else {
+         fprintf(stderr, "Error while parsing CNF input:%ld...exiting\n", x);
+         exit(1);
+      }
 		integers[x].dag = -1;
 		if(y==0) {x--; numout--; continue; }
 		integers[x].num = new int[y + 1];
