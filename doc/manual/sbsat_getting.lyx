@@ -49,16 +49,28 @@ Wecolme to SBSAT (abrev?) Solver
 SBSAT is Unix based SAT (Satisfiability) solver for ...
  The solving begins with the user encoding the input problem into one of
  the input formats acceptable by SBSAT into a single file.
- The SBSAT solver first reads the input, runs preprocessor which ....
- Preprocessed problem goes either into one of the branchers or is converted
- into a different format:
+ The SBSAT solver first reads the input, runs the preprocessor which massages
+ and prepares the input for the brancher.
+ The preprocessed problem goes either into one of the branchers or is converted
+ into a different format.
 \layout Standard
 
-Available branchers Classic Brancher Backtracking brancher with lemmas BDDWalkSA
-T Non--- WVF Brancher Original brancher without lemmas and only one heuristic
+Available branchers:
+\layout Itemize
+
+Classic Brancher
+\layout Itemize
+
+Backtracking brancher with lemmas
+\layout Itemize
+
+BDDWalkSAT Non--- (Incomplete Solver)
+\layout Itemize
+
+WVF Brancher Original brancher without lemmas and only one heuristic
 \layout Standard
 
-Available formats BDD (ITE) CNF SMURF TRACE
+Available formats BDD (ITE), CNF, SMURF, TRACE
 \layout Standard
 
 Picture here:
@@ -90,27 +102,28 @@ read input --> preprocessing --> write output
 -> wvf brancher
 \layout Standard
 
-The Solver does not have GUI based interface -- it is rather use command
- line interface.
+The Solver does not have GUI based interface, rather it uses a command line
+ interface.
  
 \layout Standard
 
-The solver was successfully tested on compiled on a number of Unix based
+The solver was successfully tested and compiled on a number of Unix based
  platforms such as Linux, DEC, Solaris, Mac OS X, Windows/Cygwin with a
  number of different compilers such as gcc2.95, gcc3.x, solaris-cc, dec-cc.
  (pgcc?, intel cc?).
 \layout Standard
 
-The SBSAT Solver is free under GPL licence.
+The SBSAT Solver is free under the GPL licence.
 \layout Section
 \pagebreak_top 
 About this manual
 \layout Standard
 
-The main purpose of this manual is to introduce the user to the SBSAT Solver.
- We will use a few well chosen examples to demonstrate different functionality
- of the SBSAT solver without getting bogged down in details.
- For the more detailed description of the solver please see the SBSAT Manual*.
+The main purpose of this manual is to introduce a new user to the SBSAT
+ Solver.
+ We will use a few well chosen examples to demonstrate the different functionali
+ty of the SBSAT solver without getting bogged down in details.
+ For a more detailed description of the solver please see the SBSAT Manual*.
 \layout Standard
 
 All problems in this manual are part of the SBSAT distribution in the tests
@@ -188,18 +201,18 @@ blah blah
 Hardware requirements
 \layout Standard
 
-Unix style operating system with c++ compiler installed.
+A Unix style operating system with c++ compiler installed is required.
  All examples require at least 32MB?? of RAM beyond the requirements of
  the operating system.
  Disk requirements
 \layout Standard
 
-Limits In general, SBSAT allocate as much memory as it needs.
- There is not option to limit the amount of memory it allocates.
+In general, SBSAT allocates as much memory as it needs.
+ There is no option to limit the amount of memory it allocates (Is that
+ true? ~Sean).
  It is expected that the amount of available memory matches the size of
  the problem being solved.
- SBSAT is not multi-threaded and does not take any advantage of multiple
- processors.
+ SBSAT is not multi-threaded and does not take advantage of multiple processors.
 \layout Section
 \pagebreak_top 
 SBSAT Basics
@@ -213,19 +226,19 @@ We will start by using SBSAT to solve a simple CNF file.
  "
 \family typewriter 
 \size footnotesize 
-p cnf num_of_var num_of_fn
+p cnf num_of_vars num_of_fns
 \family default 
 \size default 
 " where 
 \family typewriter 
 \size footnotesize 
-num_of_var
+num_of_vars
 \family default 
 \size default 
  is the number of variables present in the input file and 
 \family typewriter 
 \size footnotesize 
-num_of_fn
+num_of_fns
 \family default 
 \size default 
  is the number of functions present in the input file.
@@ -235,15 +248,16 @@ num_of_fn
 'c'
 \family default 
 \size default 
- indicate comment and are ignored.
- Functions are in conjuctional normal form, each function ends with 
+ indicate a comment and are ignored.
+ Functions are expressed as a string of positive and negative integers,
+ representing clauses in conjunctive normal form.
+ Each function (clause?) ends with 
 \family typewriter 
 \size footnotesize 
 '0'
 \family default 
 \size default 
- (number zero).
- '-' (minus) in front of a variable indicates negation.
+ (number zero) and a '-' (minus) in front of a variable indicates negation.
  
 \layout Standard
 
@@ -253,7 +267,7 @@ Example (file small.cnf):
 p cnf 6 8 
 \layout LyX-Code
 
-c This is the demonstration of the CNF format c for the SBSAT solver 
+c This is a demonstration of the CNF format for the SBSAT solver 
 \layout LyX-Code
 
 1 2 3 0
@@ -282,6 +296,9 @@ c This is the demonstration of the CNF format c for the SBSAT solver
 
 \layout Standard
 
+(Illustrate with --debug 0 or 1 to start with? ~Sean/Andy)
+\layout Standard
+
 To run the solver on this file, start the solver (
 \family typewriter 
 \size footnotesize 
@@ -300,18 +317,197 @@ $ ite small.cnf
 \layout Standard
 
 The output is as follows:
-\layout Standard
+\layout LyX-Code
 
 
-\family typewriter 
-\size footnotesize 
-....
- (copy) ...
-\family default 
-\size default 
+\size scriptsize 
+warning: ini file not found /home/fett/ite.ini
+\layout LyX-Code
 
-\newline 
 
+\size scriptsize 
+Reading File ../examples/small.cnf ....
+\layout LyX-Code
+
+
+\size scriptsize 
+Storing Inputsnuminp: 8
+\layout LyX-Code
+
+
+\size scriptsize 
+Done ScanningStarting SearchDone SavingFinding ITEsBuilding ITE BDDs - 0
+\layout LyX-Code
+
+
+\size scriptsize 
+Building unclustered BDDs - 8
+\layout LyX-Code
+
+
+\size scriptsize 
+Building and= & or= BDDs - 0
+\layout LyX-Code
+
+
+\size scriptsize 
+Building MinMax BDDs - 0
+\layout LyX-Code
+
+
+\size scriptsize 
+Cleaning UpNumber of BDDs - 8
+\layout LyX-Code
+
+
+\size scriptsize 
+EXISTENTIALLY QUANTIFYING - 
+\layout LyX-Code
+
+
+\size scriptsize 
+DEPENDENT CLUSTERING - 
+\layout LyX-Code
+
+
+\size scriptsize 
+EXISTENTIALLY QUANTIFYING - 
+\layout LyX-Code
+
+
+\size scriptsize 
+STRENGTHENING - -
+\layout LyX-Code
+
+
+\size scriptsize 
+EXISTENTIALLY QUANTIFYING - 
+\layout LyX-Code
+
+
+\size scriptsize 
+STRENGTHENING - 
+\layout LyX-Code
+
+
+\size scriptsize 
+EXISTENTIALLY QUANTIFYING - 
+\layout LyX-Code
+
+
+\size scriptsize 
+BRANCH PRUNING - 
+\layout LyX-Code
+
+
+\size scriptsize 
+Solver vars: 6/6 (not used: 0)
+\layout LyX-Code
+
+
+\size scriptsize 
+Indep/Dep vars: 6/0 (other vars: 0)
+\layout LyX-Code
+
+
+\size scriptsize 
+Initializing Smurf Factory data structs ...
+\layout LyX-Code
+
+
+\size scriptsize 
+Number of special functions: 0
+\layout LyX-Code
+
+
+\size scriptsize 
+Number of regular Smurfs: 4
+\layout LyX-Code
+
+
+\size scriptsize 
+Number of Smurf states: 23
+\layout LyX-Code
+
+
+\size scriptsize 
+Time to build Smurf states: 0.000 secs.
+\layout LyX-Code
+
+
+\size scriptsize 
+InitBrancher
+\layout LyX-Code
+
+
+\size scriptsize 
+Initializing heuristicScores
+\layout LyX-Code
+
+
+\size scriptsize 
+Solution verified.
+\layout LyX-Code
+
+
+\size scriptsize 
+Time in brancher: -0.000 secs.
+\layout LyX-Code
+
+
+\size scriptsize 
+-0.000 backtracks per sec.
+\layout LyX-Code
+
+
+\size scriptsize 
+Backtracks: 0 Time: 0.000 secs.
+ 10000000.000 backtracks per sec.
+\layout LyX-Code
+
+
+\size scriptsize 
+Progress: 0/3 0.00%
+\layout LyX-Code
+
+
+\size scriptsize 
+Choices (total, dependent): (3, 0)
+\layout LyX-Code
+
+
+\size scriptsize 
+Lemmas (cached, non-cached, added): (0, 2, 2)
+\layout LyX-Code
+
+
+\size scriptsize 
+Inferences by smurfs: 2; lemmas: 0; 
+\layout LyX-Code
+
+
+\size scriptsize 
+Backtracks by smurfs: 0; lemmas: 0; 
+\layout LyX-Code
+
+
+\size scriptsize 
+Backjumps: 0 (avg bj len: 0.0)
+\layout LyX-Code
+
+
+\size scriptsize 
+Choice Points: 2 , Backtracks: 0, Backjumps: 0 
+\layout LyX-Code
+
+
+\size scriptsize 
+Satisfiable
+\layout LyX-Code
+
+
+\size scriptsize 
+Total Time: 0.010 
 \layout Standard
 
 Decoding the output: 
@@ -349,7 +545,7 @@ TIP
 \size default 
 \bar default 
  \SpecialChar ~
- The order of the parameters on the command like does not matter.
+ The order of the parameters on the command line does not matter.
  (With the exception of 
 \family typewriter 
 \size footnotesize 
@@ -376,17 +572,232 @@ $ ite small.cnf
 \layout Standard
 
 Output:
-\layout Standard
+\layout LyX-Code
 
 
-\family typewriter 
-\size footnotesize 
-....
-\family default 
-\size default 
+\size scriptsize 
+warning: ini file not found /home/fett/ite.ini
+\layout LyX-Code
 
-\newline 
 
+\size scriptsize 
+Reading File ../examples/small.cnf ....
+\layout LyX-Code
+
+
+\size scriptsize 
+Storing Inputsnuminp: 8
+\layout LyX-Code
+
+
+\size scriptsize 
+Done ScanningStarting SearchDone SavingFinding ITEsBuilding ITE BDDs - 0
+\layout LyX-Code
+
+
+\size scriptsize 
+Building unclustered BDDs - 8
+\layout LyX-Code
+
+
+\size scriptsize 
+Building and= & or= BDDs - 0
+\layout LyX-Code
+
+
+\size scriptsize 
+Building MinMax BDDs - 0
+\layout LyX-Code
+
+
+\size scriptsize 
+Cleaning UpNumber of BDDs - 8
+\layout LyX-Code
+
+
+\size scriptsize 
+EXISTENTIALLY QUANTIFYING - 
+\layout LyX-Code
+
+
+\size scriptsize 
+DEPENDENT CLUSTERING - 
+\layout LyX-Code
+
+
+\size scriptsize 
+EXISTENTIALLY QUANTIFYING - 
+\layout LyX-Code
+
+
+\size scriptsize 
+STRENGTHENING - -
+\layout LyX-Code
+
+
+\size scriptsize 
+EXISTENTIALLY QUANTIFYING - 
+\layout LyX-Code
+
+
+\size scriptsize 
+STRENGTHENING - 
+\layout LyX-Code
+
+
+\size scriptsize 
+EXISTENTIALLY QUANTIFYING - 
+\layout LyX-Code
+
+
+\size scriptsize 
+BRANCH PRUNING - 
+\layout LyX-Code
+
+
+\size scriptsize 
+Solver vars: 6/6 (not used: 0)
+\layout LyX-Code
+
+
+\size scriptsize 
+Indep/Dep vars: 6/0 (other vars: 0)
+\layout LyX-Code
+
+
+\size scriptsize 
+Initializing Smurf Factory data structs ...
+\layout LyX-Code
+
+
+\size scriptsize 
+Number of special functions: 0
+\layout LyX-Code
+
+
+\size scriptsize 
+Number of regular Smurfs: 4
+\layout LyX-Code
+
+
+\size scriptsize 
+Number of Smurf states: 23
+\layout LyX-Code
+
+
+\size scriptsize 
+Time to build Smurf states: 0.010 secs.
+\layout LyX-Code
+
+
+\size scriptsize 
+InitBrancher
+\layout LyX-Code
+
+
+\size scriptsize 
+Initializing heuristicScores
+\layout LyX-Code
+
+
+\size scriptsize 
+Solution verified.
+\layout LyX-Code
+
+
+\size scriptsize 
+Time in brancher: -0.000 secs.
+\layout LyX-Code
+
+
+\size scriptsize 
+-0.000 backtracks per sec.
+\layout LyX-Code
+
+
+\size scriptsize 
+Backtracks: 0 Time: 0.000 secs.
+ 10000000.000 backtracks per sec.
+\layout LyX-Code
+
+
+\size scriptsize 
+Progress: 0/3 0.00%
+\layout LyX-Code
+
+
+\size scriptsize 
+Choices (total, dependent): (3, 0)
+\layout LyX-Code
+
+
+\size scriptsize 
+Lemmas (cached, non-cached, added): (0, 2, 2)
+\layout LyX-Code
+
+
+\size scriptsize 
+Inferences by smurfs: 2; lemmas: 0; 
+\layout LyX-Code
+
+
+\size scriptsize 
+Backtracks by smurfs: 0; lemmas: 0; 
+\layout LyX-Code
+
+
+\size scriptsize 
+Backjumps: 0 (avg bj len: 0.0)
+\layout LyX-Code
+
+
+\size scriptsize 
+Choice Points: 2 , Backtracks: 0, Backjumps: 0 
+\layout LyX-Code
+
+
+\size scriptsize 
+// Solution #1
+\layout LyX-Code
+
+
+\size scriptsize 
+1 (1) val:F
+\layout LyX-Code
+
+
+\size scriptsize 
+2 (2) val:F
+\layout LyX-Code
+
+
+\size scriptsize 
+3 (3) val:T
+\layout LyX-Code
+
+
+\size scriptsize 
+4 (4) val:T
+\layout LyX-Code
+
+
+\size scriptsize 
+5 (5) val:F
+\layout LyX-Code
+
+
+\size scriptsize 
+6 (6) val:F
+\layout LyX-Code
+
+
+\size scriptsize 
+Satisfiable
+\layout LyX-Code
+
+
+\size scriptsize 
+Total Time: 0.020 
 \layout Standard
 
 You can see that the solution is mixed with normal output of the solver.
@@ -409,18 +820,42 @@ $ ite small.cnf
 
 \layout Standard
 
-Output:
-\layout Standard
+output.txt:
+\layout LyX-Code
 
 
-\family typewriter 
-\size footnotesize 
-....
-\family default 
-\size default 
+\size scriptsize 
+// Solution #1
+\layout LyX-Code
 
-\newline 
 
+\size scriptsize 
+1 (1) val:F
+\layout LyX-Code
+
+
+\size scriptsize 
+2 (2) val:F
+\layout LyX-Code
+
+
+\size scriptsize 
+3 (3) val:T
+\layout LyX-Code
+
+
+\size scriptsize 
+4 (4) val:T
+\layout LyX-Code
+
+
+\size scriptsize 
+5 (5) val:F
+\layout LyX-Code
+
+
+\size scriptsize 
+6 (6) val:F
 \layout Standard
 
 
@@ -432,10 +867,9 @@ TIP
 \size default 
 \bar default 
  \SpecialChar ~
-Some of the command line options have to versions.
- Long and short.
+Some of the command line options have both a short and a long flag.
  They can be used interchangably.
- For example '
+ For example the '
 \family typewriter 
 \size footnotesize 
 \emph on 
@@ -493,7 +927,7 @@ Shortened output:
 
 
 \size scriptsize 
-SBSat is SAT solver.
+SBSat is a SAT solver.
  Usage: 
 \layout LyX-Code
 
