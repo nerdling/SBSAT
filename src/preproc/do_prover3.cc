@@ -70,6 +70,10 @@ int Do_Prover3() {
 		  delete [] variables[x].num;
 	}
 	ite_free((void **)&variables);
+	variables_size = 0;
+	ite_free((void **)&length);
+	length_size = 0;
+	ite_free((void **)&autark_BDD);
 	
 	Delete_Repeats();
 	for(int x = 1; x < numinp + 1; x++)
@@ -117,10 +121,13 @@ int Do_Prover3() {
 	}
 	original_numout = nmbrFunctions;
 	length = (int *)ite_recalloc(NULL, 0, nmbrFunctions, sizeof(int), 9, "length");
+	length_size = nmbrFunctions;
 	variables = (store *)ite_recalloc(NULL, 0, nmbrFunctions, sizeof(store), 9, "variables");
+	variables_size = nmbrFunctions;
    num_funcs_var_occurs = (int *)ite_calloc(numinp+1, sizeof(int), 9, "num_funcs_var_occurs");
 	amount = (llistStruct*)calloc(numinp+1, sizeof(llistStruct));
-
+	autark_BDD = (int *)ite_calloc(numinp+1, sizeof(int), 2, "autark_BDD");
+	
 	/****** DONE REALLOCATING ARRAYS ******/
 	
 	/****** INITIALIZING ARRAYS ***********/
@@ -136,6 +143,9 @@ int Do_Prover3() {
 		 default: break;
 		}
 	}
+
+	for(int x = 0; x < numinp+1; x++)
+	  autark_BDD[x] = -1;
 	
 	for (int x = 0; x < nmbrFunctions; x++) {
 		for (int i = 0; i < length[x]; i++) {

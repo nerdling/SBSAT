@@ -50,6 +50,7 @@ char *Ea_repeat;
 int repeat_size = 0;
 
 void Init_Repeats() {
+	if(repeat_size >= nmbrFunctions) return;
 	P1_repeat = (char *)ite_recalloc(P1_repeat, repeat_size, nmbrFunctions, sizeof(char), 9, "P1_repeat");
 	P2_repeat = (char *)ite_recalloc(P2_repeat, repeat_size, nmbrFunctions, sizeof(char), 9, "P2_repeat");
 	Restct_repeat = (char *)ite_recalloc(Restct_repeat, repeat_size, nmbrFunctions, sizeof(char), 9, "Restct_repeat");
@@ -59,7 +60,6 @@ void Init_Repeats() {
 	Dep_repeat = (char *)ite_recalloc(Dep_repeat, repeat_size, nmbrFunctions, sizeof(char), 9, "Dep_repeat");
 	Steal_repeat = (char *)ite_recalloc(Steal_repeat, repeat_size, nmbrFunctions, sizeof(char), 9, "Steal_repeat");
 	Ea_repeat = (char *)ite_recalloc(Ea_repeat, repeat_size, nmbrFunctions, sizeof(char), 9, "Ea_repeat");
-	
 	repeat_size = nmbrFunctions;
 }
 
@@ -126,8 +126,30 @@ amount_compfunc (const void *x, const void *y)
 int countBDDs() {
 	int count = 0;
 	for(int x = 0; x < nmbrFunctions; x++)
-	  if(functions[x]!=true_ptr) count++;
+	  if(functions[x]!=true_ptr && functionType[x]!=AUTARKY_FUNC) count++;
 	return count;
+}
+
+BDDNode *strip_x_BDD(BDDNode *bdd, int x) {
+	int bdd_length = 0;
+	int *bdd_vars = NULL;
+	Rebuild_BDD(bdd, &bdd_length, bdd_vars);
+	if(bdd_length < 3)
+	  return bdd;
+	if(x == bdd_vars[0])
+		return collect_x(bdd, x);
+	int new_x = bdd_vars[0];
+	int new_v0 = bdd_vars[bdd_length-1] + 1;
+	BDDNode *bdd_r = num_replace(bdd, new_x, new_v0);
+	bdd_r = num_replace(bdd_r, x, new_x);
+	BDDNode *bdd_x = collect_x(bdd_r, new_x);
+	bdd_x = num_replace(bdd_x, new_x, x);
+	bdd_x = num_replace(bdd_x, new_v0, new_x);
+	
+	delete [] bdd_vars;
+	bdd_vars = NULL;
+	
+	return bdd_x;
 }
 
 BDDNode *strip_x (int bdd, int x) {
@@ -140,6 +162,19 @@ BDDNode *strip_x (int bdd, int x) {
 		DO_INFERENCES = OLD_DO_INFERENCES;
 		return ret_bdd;
 	}
+	if(x == variables[bdd].num[0]) {
+		BDDNode *f = functions[bdd];
+		BDDNode *f_x = collect_x(f, x);
+		f = pruning(f, f_x);
+		functions[bdd] = f;
+		int OLD_DO_INFERENCES = DO_INFERENCES;
+		DO_INFERENCES = 0;
+		//printBDD(functions[bdd]);
+		Rebuild_BDDx(bdd);
+		DO_INFERENCES = OLD_DO_INFERENCES;
+		return f_x;
+	}
+
 	int new_x = variables[bdd].num[0]; //Really if variable 1 doesn't exist
 	                                   //in this BDD then I don't have to do
 	                                   //two replaces
@@ -161,11 +196,13 @@ BDDNode *strip_x (int bdd, int x) {
 }
 
 BDDNode *collect_x (BDDNode *f, int x) {
-	if(f->variable <= x) return f;
+	if(f->variable < x) return true_ptr;
+	if(f->variable == x) return f;
 	BDDNode *r = collect_x(f->thenCase, x);
 	BDDNode *e = collect_x(f->elseCase, x);
-	if(r == false_ptr) return e;
-	if(e == false_ptr) return r;
+	if(r == e) return r;
+	if(f->thenCase == false_ptr) r = false_ptr;
+	if(f->elseCase == false_ptr) e = false_ptr;
 	return find_or_add_node (f->variable, r, e);	
 }
 

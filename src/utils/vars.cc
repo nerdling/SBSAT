@@ -126,6 +126,8 @@ int SMURFS_SHARE_PATHS=1;
 
 int max_preproc_time=0;
 
+int USE_AUTARKY_SMURFS=0;
+
 int sbj = 0;
 
 int reports = 0;

@@ -709,9 +709,12 @@ class Linear {
       for (a=x ; equiv_fwd[a] >= 0 ; a=equiv_fwd[a]);
       int s = -equiv_fwd[a];
       int other = (equiv_lft[s] == a) ? equiv_rgt[s] : equiv_lft[s];
-      return equiv_cnt[other] - 1;
+		int count = 0;
+      for(a=other; a!=null; a=equiv_bck[a]) count++;
+		return count;
+		//return equiv_cnt[other] - 1;
    }
-   
+
    void Linear::printEquivalences () {
    int x;
 

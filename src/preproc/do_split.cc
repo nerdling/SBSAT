@@ -127,6 +127,7 @@ int Split_Large () {
 	int old_nmbrFunctions = nmbrFunctions;
 	
 	for(int j = 0; j < old_nmbrFunctions; j++) {
+		if(functionType[j] == AUTARKY_FUNC) continue;
 		D_3(
 			 if (j % 100 == 0) {
 				 for(int iter = 0; iter<str_length; iter++)

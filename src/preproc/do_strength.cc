@@ -87,6 +87,7 @@ int Do_Strength() {
 		  St_repeat[x] = 0;
 		  if (functions[x] == true_ptr)
 			 continue;
+        if(functionType[x] == AUTARKY_FUNC) continue;
 		  for (int j = x + 1; j < nmbrFunctions; j++)
 			 {
 				 if (functions[j] == true_ptr)
@@ -98,77 +99,61 @@ int Do_Strength() {
              if (variables[j].min >= variables[x].max) 
                 continue;
 				 int did_vars_incommon = 0;
-             if (length[x] < functionTypeLimits[functionType[x]])
-             /*
-				 if ((functionType[x] != AND || length[x] < AND_EQU_LIMIT) 
-					  && (functionType[x] != OR || length[x] < OR_EQU_LIMIT)
-					  && (functionType[x] != PLAINOR || length[x] < PLAINOR_LIMIT)
-					  && (functionType[x] != PLAINXOR || length[x] < PLAINXOR_LIMIT))
-             */
-					{
-						if (nmbrVarsInCommon (x, j, STRENGTH) == 0) // < STRENGTH)
-						  continue;
-						did_vars_incommon = 1;
-						BDDNode *currentBDD = strengthen (x, j);
-						if (currentBDD != functions[x])
-						  {
-							  //fprintf(stderr, "\nSt%d: ", x);
-							  //printBDDerr(functions[x]);
-							  //fprintf(stderr, "\n");
-							  //printBDDerr(currentBDD);
-							  //fprintf(stderr, "\n");
-
-							  //d2_printf1("*");
-//                       D_3(print_roller();)
-							  affected++; 
-							  ret = PREP_CHANGED;
-							  SetRepeats(x);
-							  functions[x] = currentBDD;
-							  functionType[x] = UNSURE;
-							  switch (int r=Rebuild_BDDx(x)) {
-								case TRIV_SAT: 
-								case TRIV_UNSAT: 
-								case PREP_ERROR: ret=r; goto st_bailout; /* As much as ... */
-								default: break;
-							  }
-						  }
-					}
-				 
-             if (length[j] < functionTypeLimits[functionType[j]])
-             /*
-				 if ((functionType[j] != AND || length[j] < AND_EQU_LIMIT)
-					  && (functionType[j] != OR || length[j] < OR_EQU_LIMIT)
-					  && (functionType[j] != PLAINOR || length[j] < PLAINOR_LIMIT)
-					  && (functionType[j] != PLAINXOR || length[j] < PLAINXOR_LIMIT))
-             */
-					{
-						if(did_vars_incommon == 0) {
-							if (nmbrVarsInCommon (x, j, STRENGTH) == 0) // < STRENGTH)
-							  continue;
-						}
-						BDDNode *currentBDD = strengthen (j, x);
-						if (currentBDD != functions[j])
-						  {
-							  //d2_printf1 ("*");
-//                       D_3(print_roller();)
-							  affected++; 
-							  ret = PREP_CHANGED;
-							  SetRepeats(j);
-							  functions[j] = currentBDD;
-							  functionType[j] = UNSURE;
-							  switch (int r=Rebuild_BDDx(j)) {
-								case TRIV_SAT: 
-								case TRIV_UNSAT: 
-								case PREP_ERROR: ret=r; goto st_bailout; /* As much as ... */
-								default: break;
-							  }
-						  }
-					}
+				 if(functionType[j] == AUTARKY_FUNC) continue;
+             if (length[x] < functionTypeLimits[functionType[x]]) {
+					 if (nmbrVarsInCommon (x, j, STRENGTH) == 0) // < STRENGTH)
+						continue;
+					 did_vars_incommon = 1;
+					 BDDNode *currentBDD = strengthen (x, j);
+					 if (currentBDD != functions[x]) {
+						 //fprintf(stderr, "\nSt%d: ", x);
+						 //printBDDerr(functions[x]);
+						 //fprintf(stderr, "\n");
+						 //printBDDerr(currentBDD);
+						 //fprintf(stderr, "\n");
+						 
+						 //d2_printf1("*");
+						 //                       D_3(print_roller();)
+						 affected++; 
+						 ret = PREP_CHANGED;
+						 SetRepeats(x);
+						 functions[x] = currentBDD;
+						 functionType[x] = UNSURE;
+						 switch (int r=Rebuild_BDDx(x)) {
+						  case TRIV_SAT: 
+						  case TRIV_UNSAT: 
+						  case PREP_ERROR: ret=r; goto st_bailout; /* As much as ... */
+						  default: break;
+						 }
+					 }
+				 }
+             if (length[j] < functionTypeLimits[functionType[j]]) {
+					 if(did_vars_incommon == 0) {
+						 if (nmbrVarsInCommon (x, j, STRENGTH) == 0) // < STRENGTH)
+							continue;
+					 }
+					 BDDNode *currentBDD = strengthen (j, x);
+					 if (currentBDD != functions[j])	{
+						 //d2_printf1 ("*");
+						 //                       D_3(print_roller();)
+						 affected++; 
+						 ret = PREP_CHANGED;
+						 SetRepeats(j);
+						 functions[j] = currentBDD;
+						 functionType[j] = UNSURE;
+						 switch (int r=Rebuild_BDDx(j)) {
+						  case TRIV_SAT: 
+						  case TRIV_UNSAT: 
+						  case PREP_ERROR: ret=r; goto st_bailout; /* As much as ... */
+						  default: break;
+						 }
+					 }
+				 }
 			 }
 	  }
 	st_bailout:
-
-//   D_3(print_nonroller();)
+	
+	//   D_3(print_nonroller();)
 	d3_printf1 ("\n");
    d2e_printf1("\r                                         ");
 	delete [] repeat_small;

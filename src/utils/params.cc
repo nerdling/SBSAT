@@ -278,6 +278,8 @@ t_opt options[] = {
                 "set the maximum # of lemmas"}, 
 { &autarky, "", "autarky", P_INT, V(i:0,"0"), V(i:0,"0"), VAR_CHECK+VAR_DUMP, 0,
 		"Enable/Disable autarkies (1/0)"},
+{ &USE_AUTARKY_SMURFS, "", "autarky-smurfs", P_INT, V(i:0,"0"), V(i:0,"0"), VAR_NORMAL, 0,
+		"Use Autarky Smurfs in the Brancher (1/0)"},
 { &max_solutions, "", "max-solutions", P_INT, V(i:0,"0"), V(i:1,"1"), VAR_NORMAL, 0,
 		"Set the maximum number of solutions to search for. 0 will cause the solver to search for as many solutions as it can find. The algorithm does not guarrantie that it reports all possible solutions."},
 { &K_TOP_VARIABLES, "", "K-top-variables", P_INT, V(i:0,"0"), V(i:0,"0"), VAR_NORMAL, 0,

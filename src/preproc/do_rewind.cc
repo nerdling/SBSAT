@@ -48,23 +48,39 @@ int Do_Rewind() {
 	DO_INFERENCES = 0;
 
 	Pos_replace = Neg_replace = Setting_Pos = Setting_Neg = 0;
-	
-	for(int x = 0; x < nmbrFunctions; x++) {
+
+	for(int x = 0; x < original_numout; x++) {
 		functions[x] = original_functions[x];
 		functionType[x] = original_functionType[x];
 		equalityVble[x] = original_equalityVble[x];
 	}
-	nmbrFunctions = original_numout;
 
-	for (int x = 0; x < nmbrFunctions; x++) {
-		int r=Rebuild_BDDx(x);
-		switch (r) {
-		 case TRIV_UNSAT:
-		 case TRIV_SAT:
-		 case PREP_ERROR: return r; 
-		 default: break;
+	//fprintf(stderr, "%d %d\n", original_numout, nmbrFunctions); 
+	
+	int y = original_numout;
+	for(int x = original_numout; x < nmbrFunctions; x++) {
+		//fprintf(stderr, "%d ", functionType[x]);
+		if(functionType[x] == AUTARKY_FUNC) {
+			functions[y] = functions[x];
+			functionType[y] = AUTARKY_FUNC;
+			equalityVble[y] = equalityVble[x];
+			//fprintf(stderr, "keeping %d at %d\n", x, y);
+			if(x != y) {
+				functions[x] = true_ptr;
+				functionType[x] = UNSURE;
+				equalityVble[x] = 0;
+				Rebuild_BDDx(x);
+			}
+			y++;
+		} else {
+			functions[x] = true_ptr;
+			functionType[x] = UNSURE;
+			equalityVble[x] = 0;
+			Rebuild_BDDx(x);
 		}
 	}
+	
+	nmbrFunctions = y;
 
 	delete l;
 	l = new Linear (numinp + 1, T, F);
@@ -76,6 +92,19 @@ int Do_Rewind() {
 		  variablelist[x].equalvars = 0;
 		  variablelist[x].true_false = -1;
 	  }
+
+	//Very important that this comes after CreateInferences()
+	//Because the inferences that come from the autarky BDDs
+	//may not be valid.
+	for (int x = 0; x < nmbrFunctions; x++) {
+		int r=Rebuild_BDDx(x);
+		switch (r) {
+		 case TRIV_UNSAT:
+		 case TRIV_SAT:
+		 case PREP_ERROR: return r; 
+		 default: break;
+		}
+	}
 	
 	DO_INFERENCES = OLD_DO_INFERENCES;
 	
@@ -96,7 +125,7 @@ int Do_Rewind() {
 	int Total_inferences = Pos_replace + Neg_replace + Setting_Pos + Setting_Neg;
 	if (Total_inferences > num_inferences) num_inferences = Total_inferences;
 	else ret = PREP_NO_CHANGE;
-	fprintf(stderr, "%d/%d ", Total_inferences, numinp);
+	fprintf(stderr, "%d/%ld ", Total_inferences, numinp);
 
 	//bdd_gc(1);
 	

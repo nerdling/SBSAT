@@ -145,6 +145,7 @@ int DepCluster () {
 			}
 			if(j==-1) continue;
 //			if(print == 1) d2_printf2 ("*(%d)", i);
+			if(functionType[j] == AUTARKY_FUNC) continue;
 			int depj = Dep_repeat[j];
 			Dep_repeat[j] = 0;
 			for(llBDD *iter = tempmem[i]->next; iter!=NULL; iter = iter->next) {
@@ -152,6 +153,7 @@ int DepCluster () {
 				if(Dep_repeat[k] == 0 && depj == 0) continue;
 				Dep_repeat[k] = 0;
 				if(k == j) continue; //Skip over the function we are using to combine
+				if(functionType[k] == AUTARKY_FUNC) continue;
 				//if(length[j] > MAX_VBLES_PER_SMURF) continue;
 				//if(length[k] > MAX_VBLES_PER_SMURF) continue;
 				int bdd_length = 0;
@@ -266,37 +268,6 @@ int DepCluster () {
 #endif
 				}
 				count2++;
-
-				
-				//This is being done in Rebuild_BDDx now
-				//Need to add BDD k into the inference list of any variable that wasn't
-				//originally in k.
-/*				
-				int a = 0, b = 0;
-				while(a < bdd_length && b < length[k]) {
-					if(bdd_vars[a] > variables[k].num[b]) {
-						b++;
-					} else if(bdd_vars[a] < variables[k].num[b]) {
-                  llist *newllist = AllocateLList(k, NULL);
-                  //llist *newllist = new llist;
-						//newllist->num = k;
-						//newllist->next = NULL;
-						amount[bdd_vars[a]].tail->next = newllist;
-						amount[bdd_vars[a]].tail = newllist;
-						a++;
-					} else { a++; b++; }
-				}
-				
-				while(a < bdd_length) {
-               llist *newllist = AllocateLList(k, NULL);
-					//llist *newllist = new llist;
-					//newllist->num = k;
-					//newllist->next = NULL;
-					amount[bdd_vars[a]].tail->next = newllist;
-					amount[bdd_vars[a]].tail = newllist;
-					a++;
-				}
-*/
 				
 				affected++;
 				functions[k] = Quantify;
@@ -313,11 +284,6 @@ int DepCluster () {
 				ret = PREP_CHANGED;
 				delete [] bdd_vars;
 				bdd_vars = NULL;
-			}
-			//Dep_repeat[j] = 0;
-			if(count1 == (count2+1)) {
-				//fprintf(stderr, "HEY!!! %d %d %d Ex this var %d!!!!", count1, count2, tempinters[i], i);
-				//Do_ExQuantify();
 			}
 			if(ret == PREP_CHANGED) goto ex_bailout;
 			//lazy...lazy...lazy...

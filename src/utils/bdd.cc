@@ -241,7 +241,7 @@ BDDNode * f_apply (BDDNode * f, BDDNode ** x)
    return (ite (x[f->variable], f_apply (f->thenCase, x), f_apply (f->elseCase, x)));
 }
 
-//Make sure variable x does NOT occur in bdd
+//Make sure variable x does NOT occur in this bdd
 int
 verifyBDD (BDDNode * bdd, int x)
 {
@@ -262,11 +262,9 @@ verifyBDD (BDDNode * bdd, int x)
 
 
 //Make sure variable x does NOT occur in any bdd
-void
-verifyCircuit (int x)
-{
-   for (int i = 0; i < nmbrFunctions; i++)
-   {
+void verifyCircuit (int x) {
+   for (int i = 0; i < nmbrFunctions; i++) {
+		if(functionType[i] == AUTARKY_FUNC) continue;
       if(!verifyBDD (functions[i], x)) {
          fprintf (stderr, "\nPROBLEM: function %d contains variable %d\n", i, x);
          //exit(1);
@@ -1250,6 +1248,20 @@ BDDNode *_possible_BDD_x(BDDNode *f, int x) {
 		if(r == e) return (f->tmp_bdd = r);
 		return (f->tmp_bdd = find_or_add_node(f->variable, r, e));
 	}
+}
+
+//JAZZ THIS UP!!! SEAN!!! LOOK HERE!!!
+BDDNode *possible_BDD(BDDNode *f, int x) {
+	if(f->variable < x) return false_ptr;
+	if(f->variable == x) {
+		BDDNode *r = ite_and(f->thenCase, ite_not(f->elseCase));
+		BDDNode *e = ite_and(ite_not(f->thenCase), f->elseCase);
+		return ite(ite_var(x), r, e);
+	}
+	BDDNode *r = possible_BDD(f->thenCase, x);
+	BDDNode *e = possible_BDD(f->elseCase, x);
+	if(r == e) return r;
+	return ite(ite_var(f->variable), r, e);
 }
 
 infer *_possible_infer_x(BDDNode *f, int x);

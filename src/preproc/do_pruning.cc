@@ -113,6 +113,7 @@ int DO_PRUNING_FN() {
         PRUNE_REPEATS[x] = 0;
 		  if (functions[x] == true_ptr)
 			 continue;
+        if(functionType[x] == AUTARKY_FUNC) continue;
 		  for (int j = x + 1; j < nmbrFunctions; j++)
 			 {
 				 if (functions[j] == true_ptr)
@@ -125,7 +126,7 @@ int DO_PRUNING_FN() {
                 continue;
              if (nmbrVarsInCommon (x, j, STRENGTH) == 0)
                 continue;
-
+				 if (functionType[j] == AUTARKY_FUNC) continue;
              if (length[x] < functionTypeLimits[functionType[x]])
              /*
 				 if ((functionType[x] != AND || length[x] < AND_EQU_LIMIT)
@@ -179,62 +180,52 @@ int DO_PRUNING_FN() {
 						  }
 					}
 				 
-             if (length[j] < functionTypeLimits[functionType[j]])
-             /*
-				 if ((functionType[j] != AND || length[j] < AND_EQU_LIMIT)
-					  && (functionType[j] != OR || length[j] < OR_EQU_LIMIT)
-					  && (functionType[j] != PLAINOR || length[j] < PLAINOR_LIMIT)
-					  && (functionType[j] != PLAINXOR || length[j] < PLAINXOR_LIMIT))
-             */
-					{
-						//fprintf(stderr, "\n\n%d: ", j);
-						//printBDDerr(functions[j]);
-						//fprintf(stderr, "\n");
-						BDDNode *currentBDD =
+             if (length[j] < functionTypeLimits[functionType[j]]) {
+					 //fprintf(stderr, "\n\n%d: ", j);
+					 //printBDDerr(functions[j]);
+					 //fprintf(stderr, "\n");
+					 BDDNode *currentBDD =
 #ifdef P1
-						  pruning_p1 (functions[j], functions[x]);
+						pruning_p1 (functions[j], functions[x]);
 #endif
 #ifdef P2
-						pruning_p2 (functions[j], functions[x]);
+					 pruning_p2 (functions[j], functions[x]);
 #endif
 #ifdef STEAL
-						steal (functions[j], functions[x]);
+					 steal (functions[j], functions[x]);
 #endif
 #ifdef PRUNING_PR
-						pruning (functions[j], functions[x]);
+					 pruning (functions[j], functions[x]);
 #endif
 #ifdef RESTRICT
-						restrictx(j, x);
+					 restrictx(j, x);
 #endif
 #ifdef REMOVE_FPS
-						remove_fpsx(j, x);
+					 remove_fpsx(j, x);
 #endif
-						if (currentBDD != functions[j])
-						  {
-
-							  //printBDDerr(currentBDD);
-							  //fprintf(stderr, "\n");
-							  
-							  //d2_printf1 ("*");
-//                       D_3(print_roller(););
-							  affected++;
-							  ret = PREP_CHANGED;
-							  SetRepeats(j);
-							  functions[j] = currentBDD;
-							  functionType[j] = UNSURE;
-							  switch (int r=Rebuild_BDDx(j)) {
-								case TRIV_SAT: 
-								case TRIV_UNSAT: 
-								case PREP_ERROR: ret=r; goto pr_bailout; /* As much as ... */
-								default: break;
-							  }
-						  }
-					}
+					 if (currentBDD != functions[j]) {
+						 //printBDDerr(currentBDD);
+						 //fprintf(stderr, "\n");
+						 //d2_printf1 ("*");
+						 //                       D_3(print_roller(););
+						 affected++;
+						 ret = PREP_CHANGED;
+						 SetRepeats(j);
+						 functions[j] = currentBDD;
+						 functionType[j] = UNSURE;
+						 switch (int r=Rebuild_BDDx(j)) {
+						  case TRIV_SAT: 
+						  case TRIV_UNSAT: 
+						  case PREP_ERROR: ret=r; goto pr_bailout; /* As much as ... */
+						  default: break;
+						 }
+					 }
+				 }
 			 }
 	  }
 	pr_bailout:
-
-//   D_3(print_nonroller(););
+	
+	//   D_3(print_nonroller(););
 	d3_printf1("\n");
    d2e_printf1("\r                                         ");
 	delete [] repeat_small;

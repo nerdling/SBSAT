@@ -57,12 +57,14 @@ int *num_funcs_var_occurs = NULL;
 int str_length;
 int preproc_did_nothing = 0;
 long affected;
+int length_size;
+int variables_size;
 BDDNodeStruct **xorFunctions;
 long bdd_tempint_max=0;
 int *bdd_tempint=NULL;
 int *original_functionType;
 int *original_equalityVble;
-
+int *autark_BDD;
 int Finish_Preprocessing();
 int Init_Preprocessing();
 
@@ -118,6 +120,15 @@ Init_Preprocessing()
 			  variablelist[x].true_false = -1;
 		  }
 	}
+
+	if(autark_BDD == NULL) {
+      autark_BDD = (int *)ite_calloc(numinp+1, sizeof(int), 2, "autark_BDD");
+		for(int x = 0; x < numinp+1; x++)
+		  autark_BDD[x] = -1;
+	}
+
+	length_size = nmbrFunctions;
+   variables_size = nmbrFunctions;
 	
 	numout = nmbrFunctions;
 
@@ -258,13 +269,12 @@ Finish_Preprocessing()
 	int ret = PREP_NO_CHANGE;
 	
 	//Call Apply_Inferences to make sure all inferences were applied.
-	if (DO_INFERENCES)
-	  {
-		  /* need to handle the result
-			* e.g. if error
-			*/
-        ret = Do_Apply_Inferences();
-	  }
+	if (DO_INFERENCES) {
+		/* need to handle the result
+		 * e.g. if error
+		 */
+		ret = Do_Apply_Inferences();
+	}
 //	Do_Flow();
 	
 	int *tmp = new int[numinp+2];
@@ -309,44 +319,28 @@ Finish_Preprocessing()
 	
 	//Need to release these pointers
 	
-	for (int x = 0; x < numinp + 1; x++)
-	  {
-        DeallocateLLists(amount[x].head);
-        /*
-        llist *k = amount[x].head;
-		  while (k != NULL)
-			 {
-				 llist *temp = k;
-				 k = k->next;
-				 //delete temp;
-			 }
-          */
-		  amount[x].head = NULL;
-		  amount[x].tail = NULL;
-	  }
+	for (int x = 0; x < numinp + 1; x++) {
+		DeallocateLLists(amount[x].head);
+		amount[x].head = NULL;
+		amount[x].tail = NULL;
+	}
 	free(amount);
 	amount = NULL;
 	
 	ite_free((void**)&num_funcs_var_occurs);
 	
-	for (int x = 0; x < nmbrFunctions; x++)
-	  {
-		  if (variables[x].num != NULL)
-			 delete [] variables[x].num;
-	  }
-	
+	for (int x = 0; x < nmbrFunctions; x++) {
+		if (variables[x].num != NULL)
+		  delete [] variables[x].num;
+	}
+
+	ite_free((void **)&autark_BDD);
+
 	ite_free((void **)&variables);
 	//free(variables);
 	variables = NULL;
 
    DeallocateInferences(inferlist);
-   /*
-	while(inferlist != NULL) {
-		infer *temp = inferlist;
-		inferlist = inferlist->next;
-		//delete temp;
-	}
-   */
 	inferlist = NULL;
 	
 	//delete [] tempint;
@@ -371,8 +365,7 @@ Finish_Preprocessing()
 		equalityVble[count] = equalityVble[x];
 		//parameterizedVars[count] = parameterizedVars[x];
 		length[count] = length[x];
-		
-		if (functions[x] == true_ptr)
+		if (functions[x] == true_ptr || (functionType[x]==AUTARKY_FUNC && !USE_AUTARKY_SMURFS))
 		  count--;
 		if (functions[x] == false_ptr) {
 			/* this might happen but I already know about unsatisfiness */
@@ -385,7 +378,7 @@ Finish_Preprocessing()
 	for (long x = 0; x < nmbrFunctions; x++) {
 		//if (length[x] < functionTypeLimits[functionType[x]])
 		//functionType[x] = UNSURE;
-		if(isOR(functions[x]) == 1)
+		if(isOR(functions[x]) == 1 && functionType[x]!=AUTARKY_FUNC)
 		  functionType[x] = PLAINOR;
    }
 
@@ -393,21 +386,17 @@ Finish_Preprocessing()
 	ite_free((void**)&original_functionType);
 	ite_free((void**)&original_equalityVble);
 
-	d3_printf3 ("Number of BDDs - %d\nNuminp = %ld\n", nmbrFunctions, numinp);
-	
+	d3_printf3 ("Number of BDDs - %d\nNuminp = %ld\n", countBDDs(), numinp);
+	if(countBDDs()!=nmbrFunctions) d3_printf2("Number of Autarky BDDs - %d\n", nmbrFunctions-countBDDs());
+	  
 	D_3(fflush (stddbg);)
 	  //printCircuitTree();
 	  //printCircuit();
 	  // 
-	  if (nmbrFunctions == 0)
-		 {
-			 /* I need to announce this to the ite.cc!!! 
-			  * how?
-			  * ret = TRIV_SAT;
-			  */
+	  if (countBDDs() <=1) {
 			 ret = TRIV_SAT;
 			 //d1_printf1 ("Formula was trivially satisfiable.\n");
-		 }
+	  }
 	
    ite_counters_f[PREPROC_TIME] = get_runtime() - start_prep;
    d3_printf2("Preprocessing Time: %5.3f seconds.\n",
@@ -423,8 +412,14 @@ int add_newFunctions(BDDNode **new_bdds, int new_size) {
 	nmbrFunctions = nmbrFunctions+new_size;
 	functions_alloc(nmbrFunctions);
 
-	length = (int *)ite_recalloc(length, nmbrFunctions-new_size, nmbrFunctions, sizeof(int), 9, "length");
-	variables = (store *)ite_recalloc(variables, nmbrFunctions-new_size, nmbrFunctions, sizeof(store), 9, "variables");
+   if(length_size<nmbrFunctions) {
+		length = (int *)ite_recalloc(length, length_size, nmbrFunctions, sizeof(int), 9, "length");
+		length_size = nmbrFunctions;
+	}
+	if(variables_size<nmbrFunctions) {
+		variables = (store *)ite_recalloc(variables, variables_size, nmbrFunctions, sizeof(store), 9, "variables");
+		variables_size = nmbrFunctions;
+	}
 
 	Init_Repeats();
 
@@ -433,7 +428,6 @@ int add_newFunctions(BDDNode **new_bdds, int new_size) {
 	}
 	
 	for (int x = nmbrFunctions-new_size; x < nmbrFunctions; x++) {
-		variables[x].num = NULL;
 		int r=Rebuild_BDDx(x);
 		switch (r) {
 		 case TRIV_UNSAT:

@@ -41,7 +41,8 @@
 int Do_Clear_FunctionType() {
 	d3_printf1("CLEARING FUNCTION TYPE");
 	for(int x = 0; x < nmbrFunctions; x++)
-		functionType[x] = UNSURE;
+	  if(functionType[x] != AUTARKY_FUNC)
+		 functionType[x] = UNSURE;
 	
 	d3_printf1("\n");
    d2e_printf1("\r                                         ");

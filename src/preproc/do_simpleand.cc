@@ -83,6 +83,7 @@ int Do_SimpleAnd() {
 		Sa_repeat[x] = 0;
 		if (functions[x] == true_ptr)
 		  continue;
+		if(functionType[x] == AUTARKY_FUNC) continue;
 		for (int j = x + 1; j < nmbrFunctions; j++) {
 			if (functions[j] == true_ptr)
 			  continue;
@@ -94,6 +95,7 @@ int Do_SimpleAnd() {
 			  continue;
 			if (nmbrVarsInCommon (x, j, 2)== 0)//STRENGTH) == 0) // < STRENGTH)
 			  continue;
+        if(functionType[j] == AUTARKY_FUNC) continue;
 			//BDDNode *currentBDD = simple_and(x, j);
 			BDDNode *currentBDD = and_dot(functions[x], functions[j]);
 			if(currentBDD->inferences != NULL) {
@@ -120,7 +122,7 @@ int Do_SimpleAnd() {
 			}
 		}
 	}
-	sa_bailout:
+	//sa_bailout:
 	
 	//   D_3(print_nonroller();)
 	d3_printf1 ("\n");
