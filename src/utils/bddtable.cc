@@ -60,6 +60,7 @@ BDDNode *bddtable_free = NULL;
 
 void bdd_gc();
 void bdd_fix_inferences(BDDNode *node);
+void AllocateBDDNode(BDDNode **node, int v, BDDNode *r, BDDNode *e);
 
 void bdd_bdd_alloc_pool(int pool)
 {
@@ -204,33 +205,31 @@ bddvsb_find_or_add_node (int v, BDDNode * r, BDDNode * e)
 		
 	} else {
       /* could not find the node => allocate new one */
-      ite_counters[BDD_NODE_NEW]++;
-      /* not safe
-      if (bddtable_free == NULL && bddmemory_vsb[numBDDPool].max == curBDDPos) {
-         bdd_gc();
-         node = hash_memory+hash_pos;
-         while (!(*node == NULL)) node = &((*node)->next);
-      }
-      */
-      if (bddtable_free != NULL) {
-         (*node) = bddtable_free;
-         bddtable_free = bddtable_free->next;
-         (*node)->next = NULL;
-      } else
-      {
-         if (bddmemory_vsb[numBDDPool].max == curBDDPos) {
-            ++numBDDPool;
-            bdd_bdd_alloc_pool(numBDDPool);
-            curBDDPos = 0;
-         }
-         (*node) = bddmemory_vsb[numBDDPool].memory+curBDDPos++;
-      }
-      (*node)->variable = v;
-      (*node)->thenCase = r;
-      (*node)->elseCase = e;
-      GetInferFoAN(*node); //Get Inferences
+      AllocateBDDNode(node, v, r, e);
    }
-   return *node;
+   return (*node);
+}
+
+inline void
+AllocateBDDNode(BDDNode **node, int v, BDDNode *r, BDDNode *e)
+{
+   ite_counters[BDD_NODE_NEW]++;
+   if (bddtable_free != NULL) {
+      (*node) = bddtable_free;
+      bddtable_free = bddtable_free->next;
+      (*node)->next = NULL;
+   } else {
+      if (bddmemory_vsb[numBDDPool].max == curBDDPos) {
+         ++numBDDPool;
+         bdd_bdd_alloc_pool(numBDDPool);
+         curBDDPos = 0;
+      }
+      (*node) = bddmemory_vsb[numBDDPool].memory+curBDDPos++;
+   }
+   (*node)->variable = v;
+   (*node)->thenCase = r;
+   (*node)->elseCase = e;
+   GetInferFoAN(*node); //Get Inferences
 }
 
 void
