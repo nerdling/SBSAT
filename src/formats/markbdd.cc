@@ -334,22 +334,31 @@ BDDNode *putite(char macros[20], int intnum, BDDNode * bdd)
       return mitosis (v1, tempint, newBDD);
 	}
 	if (!strcasecmp (macros, "minmax")) {
-
+		int min, max;
 		BDDNode * v1 = putite (macros, intnum, bdd);
 		if (v1 != ite_var (v1->variable)) {
 			fprintf (stderr, "\nKeyword 'minmax' needs a positive integer as a first argument (%s)...exiting:%d\n", macros, markbdd_line);
 			exit (1);
 		}
 		BDDNode * v2 = putite (macros, intnum, bdd);
-		if (v2 != ite_var (v2->variable)) {
+		if (v2 != ite_var (v2->variable) && v2!=false_ptr) {
 			fprintf (stderr, "\nKeyword 'minmax' needs a positive integer as a second argument (%s)...exiting:%d\n", macros, markbdd_line);
 			exit (1);
 		}
+		if(v2 == false_ptr) min = 0;
+		else min = v2->variable;
       BDDNode * v3 = putite (macros, intnum, bdd);
-		if (v3 != ite_var (v3->variable)) {
+		if (v3 != ite_var (v3->variable) && v3!=false_ptr) {
 			fprintf (stderr, "\nKeyword 'minmax' needs a positive integer as a third argument (%s)...exiting:%d\n", macros, markbdd_line);
 			exit (1);
 		}
+		if(v3 == false_ptr) max = 0;
+		else max = v3->variable;
+		if(max<min) {
+			fprintf (stderr, "\nKeyword 'minmax' cannot have it's third argument (%d) less than it's second argument (%d)...exiting:%d\n", max, min, markbdd_line);
+			exit (1);
+		}
+
 		int *var_list = new int[v1->variable];
 		for (unsigned int x = 0; x < v1->variable; x++) {
 			BDDNode * v4 = putite (macros, intnum, bdd);
@@ -363,7 +372,7 @@ BDDNode *putite(char macros[20], int intnum, BDDNode * bdd)
 		int set_true = 0;
 		qsort(var_list, v1->variable, sizeof(int), abscompfunc);
 		functionType[nmbrFunctions] = MINMAX;
-		return MinMaxBDD(var_list, v2->variable, v3->variable, v1->variable, set_true);
+		return MinMaxBDD(var_list, min, max, v1->variable, set_true);
 	}
 	if (!strcasecmp (macros, "exist")) {
 		BDDNode * v1 = putite (macros, intnum, bdd);
@@ -763,7 +772,7 @@ char getNextSymbol (char *&macros, int &intnum, BDDNode *&bdd) {
 				exit (1);
 			}
 		}
-      if (((p >= '1') && (p <= '9')) || (p == '-')) {
+      if (((p >= '0') && (p <= '9')) || (p == '-')) {
 			i = 0;
 			int negate = 0;
 			if (p == '-') {
