@@ -15,8 +15,11 @@ extern int s_error;
 //#define IN prover_in
 //#define PARSE prover_parse
 
-#define IN prover3_in
-#define PARSE prover3_parse
+//#define IN prover3_in
+//#define PARSE prover3_parse
+
+#define IN iscas_in
+#define PARSE iscas_parse
 
 extern FILE *IN;
 int PARSE();

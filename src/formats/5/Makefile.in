@@ -140,6 +140,7 @@ SOURCES = trace_g.yy trace_s.ll \
 	blif_g.yy blif_s.ll \
 	prover_g.yy prover_s.ll \
 	prover3_g.yy prover3_s.ll \
+	iscas_g.yy iscas_s.ll \
         parser.cc functions.cc bddops.cc 
 
 # _g.yy first
@@ -153,6 +154,11 @@ EXTRA_DIST = bddnode.h functions.h bddnode.cc tracetest.cc
 noinst_LTLIBRARIES = libt5.la
 libt5_la_SOURCES = $(SOURCES)
 libt5_la_YFLAGS = -d
+
+#endif
+bin_PROGRAMS = tracetest
+tracetest_SOURCES = tracetest.cc  # bddnode.cc
+tracetest_LDADD = ../../preproc/libpreproc.la libt5.la ../../utils/libutils.la
 subdir = src/formats/5
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/include/config.h
@@ -164,25 +170,35 @@ libt5_la_LIBADD =
 am__objects_1 = libt5_la-trace_g.lo trace_s.lo libt5_la-cnf_g.lo \
 	cnf_s.lo libt5_la-bdd_g.lo bdd_s.lo libt5_la-blif_g.lo \
 	blif_s.lo libt5_la-prover_g.lo prover_s.lo \
-	libt5_la-prover3_g.lo prover3_s.lo parser.lo functions.lo \
-	bddops.lo
+	libt5_la-prover3_g.lo prover3_s.lo libt5_la-iscas_g.lo \
+	iscas_s.lo parser.lo functions.lo bddops.lo
 am_libt5_la_OBJECTS = $(am__objects_1)
 libt5_la_OBJECTS = $(am_libt5_la_OBJECTS)
+bin_PROGRAMS = tracetest$(EXEEXT)
+PROGRAMS = $(bin_PROGRAMS)
+
+am_tracetest_OBJECTS = tracetest.$(OBJEXT)
+tracetest_OBJECTS = $(am_tracetest_OBJECTS)
+tracetest_DEPENDENCIES = ../../preproc/libpreproc.la libt5.la \
+	../../utils/libutils.la
+tracetest_LDFLAGS =
 
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)/include
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 @AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/bdd_s.Plo ./$(DEPDIR)/bddops.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/blif_s.Plo ./$(DEPDIR)/cnf_s.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/functions.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/functions.Plo ./$(DEPDIR)/iscas_s.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/libt5_la-bdd_g.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/libt5_la-blif_g.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/libt5_la-cnf_g.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/libt5_la-iscas_g.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/libt5_la-prover3_g.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/libt5_la-prover_g.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/libt5_la-trace_g.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/parser.Plo ./$(DEPDIR)/prover3_s.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/prover_s.Plo ./$(DEPDIR)/trace_s.Plo
+@AMDEP_TRUE@	./$(DEPDIR)/prover_s.Plo ./$(DEPDIR)/trace_s.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/tracetest.Po
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 LTCXXCOMPILE = $(LIBTOOL) --mode=compile $(CXX) $(DEFS) \
@@ -203,10 +219,11 @@ LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) \
 CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-DIST_SOURCES = $(libt5_la_SOURCES)
+DIST_SOURCES = $(libt5_la_SOURCES) $(tracetest_SOURCES)
 DIST_COMMON = Makefile.am Makefile.in bdd_s.cc blif_s.cc cnf_s.cc \
-	libt5_la-bdd_g.cc libt5_la-bdd_g.h libt5_la-blif_g.cc \
-	libt5_la-blif_g.h libt5_la-cnf_g.cc libt5_la-cnf_g.h \
+	iscas_s.cc libt5_la-bdd_g.cc libt5_la-bdd_g.h \
+	libt5_la-blif_g.cc libt5_la-blif_g.h libt5_la-cnf_g.cc \
+	libt5_la-cnf_g.h libt5_la-iscas_g.cc libt5_la-iscas_g.h \
 	libt5_la-prover3_g.cc libt5_la-prover3_g.h libt5_la-prover_g.cc \
 	libt5_la-prover_g.h libt5_la-trace_g.cc libt5_la-trace_g.h \
 	prover3_s.cc prover_s.cc trace_s.cc
@@ -216,6 +233,7 @@ SOURCES = trace_g.yy trace_s.ll \
 	blif_g.yy blif_s.ll \
 	prover_g.yy prover_s.ll \
 	prover3_g.yy prover3_s.ll \
+	iscas_g.yy iscas_s.ll \
         parser.cc functions.cc bddops.cc 
 
 
@@ -267,8 +285,45 @@ libt5_la-prover3_g.h: libt5_la-prover3_g.cc
 	  rm -f libt5_la-prover3_g.cc; \
 	  $(MAKE) libt5_la-prover3_g.cc; \
 	else :; fi
+libt5_la-iscas_g.h: libt5_la-iscas_g.cc
+	@if test ! -f $@; then \
+	  rm -f libt5_la-iscas_g.cc; \
+	  $(MAKE) libt5_la-iscas_g.cc; \
+	else :; fi
 libt5.la: $(libt5_la_OBJECTS) $(libt5_la_DEPENDENCIES) 
 	$(CXXLINK)  $(libt5_la_LDFLAGS) $(libt5_la_OBJECTS) $(libt5_la_LIBADD) $(LIBS)
+binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
+install-binPROGRAMS: $(bin_PROGRAMS)
+	@$(NORMAL_INSTALL)
+	$(mkinstalldirs) $(DESTDIR)$(bindir)
+	@list='$(bin_PROGRAMS)'; for p in $$list; do \
+	  p1=`echo $$p|sed 's/$(EXEEXT)$$//'`; \
+	  if test -f $$p \
+	     || test -f $$p1 \
+	  ; then \
+	    f=`echo "$$p1" | sed 's,^.*/,,;$(transform);s/$$/$(EXEEXT)/'`; \
+	   echo " $(INSTALL_PROGRAM_ENV) $(LIBTOOL) --mode=install $(binPROGRAMS_INSTALL) $$p $(DESTDIR)$(bindir)/$$f"; \
+	   $(INSTALL_PROGRAM_ENV) $(LIBTOOL) --mode=install $(binPROGRAMS_INSTALL) $$p $(DESTDIR)$(bindir)/$$f || exit 1; \
+	  else :; fi; \
+	done
+
+uninstall-binPROGRAMS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(bin_PROGRAMS)'; for p in $$list; do \
+	  f=`echo "$$p" | sed 's,^.*/,,;s/$(EXEEXT)$$//;$(transform);s/$$/$(EXEEXT)/'`; \
+	  echo " rm -f $(DESTDIR)$(bindir)/$$f"; \
+	  rm -f $(DESTDIR)$(bindir)/$$f; \
+	done
+
+clean-binPROGRAMS:
+	@list='$(bin_PROGRAMS)'; for p in $$list; do \
+	  f=`echo $$p|sed 's/$(EXEEXT)$$//'`; \
+	  echo " rm -f $$p $$f"; \
+	  rm -f $$p $$f ; \
+	done
+tracetest$(EXEEXT): $(tracetest_OBJECTS) $(tracetest_DEPENDENCIES) 
+	@rm -f tracetest$(EXEEXT)
+	$(CXXLINK) $(tracetest_LDFLAGS) $(tracetest_OBJECTS) $(tracetest_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT) core *.core
@@ -281,9 +336,11 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/blif_s.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cnf_s.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/functions.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/iscas_s.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libt5_la-bdd_g.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libt5_la-blif_g.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libt5_la-cnf_g.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libt5_la-iscas_g.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libt5_la-prover3_g.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libt5_la-prover_g.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libt5_la-trace_g.Plo@am__quote@
@@ -291,6 +348,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/prover3_s.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/prover_s.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/trace_s.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tracetest.Po@am__quote@
 
 distclean-depend:
 	-rm -rf ./$(DEPDIR)
@@ -351,6 +409,9 @@ libt5_la-prover_g.cc: prover_g.yy
 
 libt5_la-prover3_g.cc: prover3_g.yy
 	$(SHELL) $(YLWRAP) `test -f 'prover3_g.yy' || echo '$(srcdir)/'`prover3_g.yy y.tab.c libt5_la-prover3_g.cc y.tab.h libt5_la-prover3_g.h y.output libt5_la-prover3_g.output -- $(YACC) $(YFLAGS) $(libt5_la_YFLAGS)
+
+libt5_la-iscas_g.cc: iscas_g.yy
+	$(SHELL) $(YLWRAP) `test -f 'iscas_g.yy' || echo '$(srcdir)/'`iscas_g.yy y.tab.c libt5_la-iscas_g.cc y.tab.h libt5_la-iscas_g.h y.output libt5_la-iscas_g.output -- $(YACC) $(YFLAGS) $(libt5_la_YFLAGS)
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -449,9 +510,10 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(LTLIBRARIES)
+all-am: Makefile $(LTLIBRARIES) $(PROGRAMS)
 
 installdirs:
+	$(mkinstalldirs) $(DESTDIR)$(bindir)
 
 install: install-am
 install-exec: install-exec-am
@@ -477,12 +539,15 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
+	-rm -f libt5_la-iscas_g.h
 	-rm -f libt5_la-prover3_g.cc
+	-rm -f libt5_la-iscas_g.cc
 	-rm -f libt5_la-prover_g.h
 	-rm -f libt5_la-blif_g.cc
 	-rm -f prover_s.cc
 	-rm -f blif_s.cc
 	-rm -f libt5_la-cnf_g.h
+	-rm -f iscas_s.cc
 	-rm -f cnf_s.cc
 	-rm -f libt5_la-trace_g.h
 	-rm -f libt5_la-trace_g.cc
@@ -497,8 +562,8 @@ maintainer-clean-generic:
 	-rm -f libt5_la-prover3_g.h
 clean: clean-am
 
-clean-am: clean-generic clean-libtool clean-noinstLTLIBRARIES \
-	mostlyclean-am
+clean-am: clean-binPROGRAMS clean-generic clean-libtool \
+	clean-noinstLTLIBRARIES mostlyclean-am
 
 distclean: distclean-am
 
@@ -515,7 +580,7 @@ info-am:
 
 install-data-am:
 
-install-exec-am:
+install-exec-am: install-binPROGRAMS
 
 install-info: install-info-am
 
@@ -540,25 +605,21 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-info-am
+uninstall-am: uninstall-binPROGRAMS uninstall-info-am
 
-.PHONY: CTAGS GTAGS all all-am check check-am clean clean-generic \
-	clean-libtool clean-noinstLTLIBRARIES ctags distclean \
-	distclean-compile distclean-depend distclean-generic \
+.PHONY: CTAGS GTAGS all all-am check check-am clean clean-binPROGRAMS \
+	clean-generic clean-libtool clean-noinstLTLIBRARIES ctags \
+	distclean distclean-compile distclean-depend distclean-generic \
 	distclean-libtool distclean-tags distdir dvi dvi-am info \
-	info-am install install-am install-data install-data-am \
-	install-exec install-exec-am install-info install-info-am \
-	install-man install-strip installcheck installcheck-am \
-	installdirs maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-compile mostlyclean-generic \
-	mostlyclean-libtool pdf pdf-am ps ps-am tags uninstall \
-	uninstall-am uninstall-info-am
+	info-am install install-am install-binPROGRAMS install-data \
+	install-data-am install-exec install-exec-am install-info \
+	install-info-am install-man install-strip installcheck \
+	installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-compile \
+	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
+	tags uninstall uninstall-am uninstall-binPROGRAMS \
+	uninstall-info-am
 
-#endif
-
-#bin_PROGRAMS = tracetest
-#tracetest_SOURCES = tracetest.cc  # bddnode.cc
-#tracetest_LDADD = ../../preproc/libpreproc.a libt5.a ../../utils/libutils.a
 
 #libt5_a_CXXFLAGS =  -pg
 #tracetest_CXXFLAGS = -pg

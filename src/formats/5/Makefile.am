@@ -6,6 +6,7 @@ SOURCES=trace_g.yy trace_s.ll \
 	blif_g.yy blif_s.ll \
 	prover_g.yy prover_s.ll \
 	prover3_g.yy prover3_s.ll \
+	iscas_g.yy iscas_s.ll \
         parser.cc functions.cc bddops.cc 
 # _g.yy first
 EXTRA_DIST=bddnode.h functions.h bddnode.cc tracetest.cc
@@ -20,9 +21,9 @@ libt5_la_SOURCES = $(SOURCES)
 libt5_la_YFLAGS =  -d
 #endif
 
-#bin_PROGRAMS = tracetest
-#tracetest_SOURCES = tracetest.cc  # bddnode.cc
-#tracetest_LDADD = ../../preproc/libpreproc.a libt5.a ../../utils/libutils.a
+bin_PROGRAMS = tracetest
+tracetest_SOURCES = tracetest.cc  # bddnode.cc
+tracetest_LDADD = ../../preproc/libpreproc.la libt5.la ../../utils/libutils.la
 
 #libt5_a_CXXFLAGS =  -pg
 #tracetest_CXXFLAGS = -pg
