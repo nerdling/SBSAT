@@ -1,0 +1,12 @@
+MODULE test
+INPUT
+   a;
+OUTPUT b;
+STRUCTURE
+  e = not(a);
+  f = not(a);
+  c = new_int_leaf(1);
+  d = new_int_leaf(0);
+  e = new_int_leaf(1);
+  f = new_int_leaf(0);
+ENDMODULE

@@ -1,0 +1,17 @@
+MODULE ww
+INPUT
+  0, 1, 2;
+OUTPUT  3;
+STRUCTURE
+  4 = not(0);
+  5 = not(1);
+  6 = not(2);
+  3 = lnimp(0, 1, 2);
+  3 = lnimp(4, 5, 6);
+  3 = lnimp(0, 1, 6);
+  3 = lnimp(4, 5, 2);
+  3 = lnimp(0, 5, 2);
+  3 = lnimp(4, 1, 6);
+  3 = lnimp(0, 5, 6);
+  3 = lnimp(4, 1, 2);
+ENDMODULE

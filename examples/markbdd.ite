@@ -1,0 +1,23 @@
+p bdd 18 13 ; 18 vars, 13 functions
+#define fun 1 2 3 4 # ite 1 and 2 3 or 3 4 ; parms must be consecutive integers from 1
+#define g 1 2 3 # ite f 1 2 3 -2 T 3
+InitialBranch (2, 4..12, 15, 16, 18, 1, 3) ; These variables will be labeled as independent variables, the rest are labeled as dependent
+ite 4 5 6       ; eqn $1
+*or $1 3        ; eqn $2, smurf 1
+*or 5 -6        ; eqn $3, smurf 2
+*and $1 -4      ; eqn $4, smurf 3
+*imp $1 $4      ; eqn $5, smurf 4
+#define imp 1 2 3 # or3(1, 2, 3); Notice the 'imp' operator was overloaded to be the or of 3 variables.
+*imp(3 4 5) ; eqn $6, smurf 5 ; this is a really bad idea, it probably shouldn't be allowed
+print_tree $5; no equation created, no smurf created
+pprint_tree $5 ; no equation created, no smurf created
+ite 2           ; eqn $7
+    ite 3 4 5   ; plus comments are ignored, even in the middle of a function
+    ite 4 5 F
+*f 4 -5 2 3         ; eqn $8, smurf 5
+*f g -5 4 $6 2 3 4  ; eqn $9, smurf 6
+*equ(xor3(2, and(-3, 4), nand(7, 5), ite(15, or(4, -7), nor(4, -7)))) ; eqn $10, smurf 7
+*add_state($10, 1) ; eqn $11, smurf 7 ; add_state creates a BDD which is identical to the first argument but with all it's variables incremented by the second argument.
+*add_state($10, 2) ; eqn $12, smurf 8
+*add_state($10, 3) ; eqn $13, smurf 9
+

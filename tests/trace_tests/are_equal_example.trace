@@ -1,0 +1,30 @@
+MODULE ww
+INPUT
+  0, 1, 2;
+OUTPUT  3;
+STRUCTURE
+  are_equal(0, 1, 2);
+  are_equal(0, 1, 6);
+  are_equal(0, 5, 2);
+  are_equal(0, 5, 6);
+  are_equal(4, 1, 2);
+  are_equal(4, 1, 6);
+  are_equal(4, 5, 2);
+  are_equal(4, 5, 6);
+  are_equal(2, 0, 1);
+  are_equal(6, 0, 1);
+  are_equal(2, 0, 5);
+  are_equal(6, 0, 5);
+  are_equal(2, 4, 1);
+  are_equal(6, 4, 1);
+  are_equal(2, 4, 5);
+  are_equal(6, 4, 5);
+  are_equal(1, 2, 0);
+  are_equal(1, 6, 0);
+  are_equal(5, 2, 0);
+  are_equal(5, 6, 0);
+  are_equal(1, 2, 4);
+  are_equal(1, 6, 4);
+  are_equal(5, 2, 4);
+  are_equal(5, 6, 4);
+ENDMODULE

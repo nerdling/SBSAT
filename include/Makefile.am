@@ -1,0 +1,7 @@
+EXTRA_DIST=\
+	common.h globals.h ite.h prototypes.h defines.h brancher.h \
+	heuristic.h j_heuristic.h l_heuristic.h i_heuristic.h  \
+	lemmainfo.h smurffactory.h flatten.h parse.h tracer.h \
+	integerset.h literalset.h log.h params.h equivclass.h \
+	preprocess.h pools.h symtable.h solver.h params.h vars.h \
+        config.h config.h.in stamp-h stamp-h.in 

@@ -1,0 +1,65 @@
+
+Notes to compiling and running SBSAT on different architectures
+
+SBSAT 1.8.x was successfully tested on the following architectures:
+
+* Linux RedHat 7.x, 8.x and gcc 2.9x - 3.x
+* DEC Alpha running OSF1 5.1 and cxx 6.2 or gcc 2.9x
+* Windows 2000/cygwin and gcc 2.9x
+* Sun Sparc Solaris 2.x and gcc 2.9x or CC
+* PPC running Mac OS X and gcc 3.x
+
+SBSAT 1.8.x was unsuccessfully tested on the following architectures:
+
+* SGI Irix 6.5 and cc
+
+
+Quick installation checklist:
+
+- get sbsat-x.x.x.tar.gz
+- unpack tar -xvzf sbsat-x.x.x.tar.gz (directory called sbsat-x.x.x will be created)
+  (alternatively use gzip -dc sbsat-x.x.x.tar.gz | tar -xvf - )
+- cd sbsat-x.x.x
+- ./configure [options]
+  (please use ./configure --help to list the options)
+- make  (to create executable src/ite )
+- make check  (to run a few tests)
+
+
+./configure options:
+
+  --enable-optimization   Turn on compiler optimization (default=no)
+			  Turns on extra optimization flags for gcc and CC.
+  --enable-debug          Turn on compiler debugging information (default=no)
+  --enable-profile        Turn on compiler profiling information (default=no)
+  --enable-warning        Turn on compiler warning information (default=no)
+  --enable-extrawarning   Turn on compiler extra warning information
+			   (default=no)
+  --enable-static         Turn on linking libraries staticly (default=no)
+  --enable-efence         Use this if you want Electric Fence linked
+			  (default=no).
+
+For maximum speed please use ./configure --enable-optimization
+
+
+Notes for selected architectures:
+
+* Windows 2000
+
+In order to create unix-like environment it is necessary to install
+cygwin environment. Please go to www.cygwin.com and follow the instructions.
+
+Quick checklist: 
+- download setup.exe
+- run it
+- choose the mirror
+- accept the standard packages
+- wait for the installer to finish
+
+* DEC Alpha
+
+tar might not accept -z option. If this is the case please
+use the alternative version to unpack the executable
+gzip -dc sbsat-x.x.x.tar.gz | tar -xvf -
+
+
