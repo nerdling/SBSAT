@@ -479,9 +479,6 @@ AllocateSpecialFnStack(int newsize)
 
    nSpecialFnStackIdx      = 2;
 
-   d3_printf2("New Stack %x\n", arrSpecialFnStack);
-   d3_printf2("New Stack index_pool = %d\n", nSpecialFnStackIdx);
-   d3_printf2("New Stack next_pool = %x\n", prev_arrSpecialFnStack);
 }
 
 ITE_INLINE void

@@ -158,9 +158,8 @@ RemoveLemmasFromCache(int c, int num_lemmas_to_remove)
 ITE_INLINE void
 L0PQEnqueue(LemmaInfoStruct *p)
 {
-   /* the only place to increase gnNumCachedLemmas */
    if (nNumCachedLemmas[0] > MAX_NUM_CACHED_LEMMAS_0) 
-      RemoveLemmasFromCache(0, MAX_NUM_CACHED_LEMMAS_0-nNumCachedLemmas[0]);
+      RemoveLemmasFromCache(0, nNumCachedLemmas[0]-MAX_NUM_CACHED_LEMMAS_0+1);
 
    LPQEnqueue(0, p);
 }
@@ -168,9 +167,8 @@ L0PQEnqueue(LemmaInfoStruct *p)
 ITE_INLINE void
 L1PQEnqueue(LemmaInfoStruct *p)
 {
-   /* the only place to increase gnNumCachedLemmas */
    if (nNumCachedLemmas[1] > MAX_NUM_CACHED_LEMMAS) 
-      RemoveLemmasFromCache(1, MAX_NUM_CACHED_LEMMAS-nNumCachedLemmas[1]);
+      RemoveLemmasFromCache(1, nNumCachedLemmas[1]-MAX_NUM_CACHED_LEMMAS+1);
 
    LPQEnqueue(1, p);
 }
@@ -178,9 +176,8 @@ L1PQEnqueue(LemmaInfoStruct *p)
 ITE_INLINE void
 L2PQEnqueue(LemmaInfoStruct *p)
 {
-   /* the only place to increase gnNumCachedLemmas */
    if (nNumCachedLemmas[2] > MAX_NUM_CACHED_LEMMAS_2) 
-      RemoveLemmasFromCache(2, MAX_NUM_CACHED_LEMMAS_2-nNumCachedLemmas[2]);
+      RemoveLemmasFromCache(2, nNumCachedLemmas[2]-MAX_NUM_CACHED_LEMMAS_2+1);
 
    LPQEnqueue(2, p);
 }

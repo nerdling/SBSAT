@@ -43,7 +43,7 @@ extern int nNumSpecialFuncs;
 extern int *arrFcnIndexRegSmurf;
 extern BDDNodeStruct **arrFunctions;
 extern int nNumRegSmurfs;
-
+extern int nNumCachedLemmas[3]; 
 
 void
 DisplaySpecialFunc(SpecialFunc *p);
@@ -330,9 +330,9 @@ void DisplayBacktrackInfo(double &fPrevEndTime, double &fStartTime)
       if (backjumping) d2_printf2(", %lld", ite_counters[NUM_TOTAL_BACKJUMPS]);
       d2_printf1(")");
       if (NO_LEMMAS == 0)
-      d2_printf4("\n Lemmas (cached, non-cached, added): (%d, %d, %d)",
-      		  gnNumCachedLemmas,
-		  gnNumLemmas - gnNumCachedLemmas,
+      d2_printf6("\n Lemmas (0, 1, 2, non-cached, added): (%d, %d, %d, %d, %d)",
+      		  nNumCachedLemmas[0], nNumCachedLemmas[1], nNumCachedLemmas[2],
+		  gnNumLemmas - (nNumCachedLemmas[0]+nNumCachedLemmas[1]+nNumCachedLemmas[2]),
 		  nCallsToAddLemma
 		  );
       /*d2_printf5("\n Inferences by (smurfs, ANDs, XORs, lemmas): (%lld, %lld, %lld, %lld)",
