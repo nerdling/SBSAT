@@ -77,7 +77,7 @@ intlist *wvariables;  /* a list of variables in each BDD */
 
 intlist *occurance;	/* where each variable occurs */
                      /* indexed as occurance[variable].num[occurance_num] */
-                     /* the number of BDDs each variable occurs in 
+                     /* the number of BDDs each variable occurs in */
 							/* is occurance[variable].length */
 
 int *atom;		      /* value of each atom, the current assignment */
@@ -602,7 +602,7 @@ int picknoveltyplus(void)
 	float percent_unsatisfied = 1.0-percent_satisfied;
 	path_factor = 11.0-(percent_unsatisfied*10.0);
 	
-	again:;
+	//again:;
 	double diff = 0.0;
 	int tofix, BDDsize;
 	int flippath = 0;
