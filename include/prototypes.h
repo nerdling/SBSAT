@@ -285,7 +285,9 @@ void DeallocateInferences(infer *next);
 void DeallocateInferences_var(infer *next, int var);
 infer *AllocateInference(int num0, int num1, infer *next);
 
-FILE * ite_fopen(char *filename, char *fileflags);
+FILE * ite_fopen(char *filename, const char *fileflags);
 long ite_filesize(char *filename);
+
+BDDNode *tmp_equ_var(BDDNode *p);
 
 #endif

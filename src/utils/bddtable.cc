@@ -371,7 +371,7 @@ bdd_fix_inferences(BDDNode *node)
 }
 
 FILE *
-ite_fopen(char *filename, char *fileflags)
+ite_fopen(char *filename, const char *fileflags)
 {
    FILE *f = fopen(filename, fileflags);
    if (!f) {

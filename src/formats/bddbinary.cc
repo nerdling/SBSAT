@@ -65,10 +65,12 @@ Binary_to_BDD()
    void *_independantVars = NULL;
    int _numinp = 0;
    int _numout = 0;
+   char tmp_str[32];
 
-   cerr << "Reading sbsatenv .. " << endl;
-   assert(ite_filesize("sbsatenv.bin") == sizeof(t_sbsat_env));
-   fin = fopen("sbsatenv.bin", "rb");
+   strcpy(tmp_str, "sbsatenv.bin");
+   cerr << "Reading " << tmp_str << endl;
+   assert(ite_filesize(tmp_str) == sizeof(t_sbsat_env));
+   fin = fopen(tmp_str, "rb");
    if (!fin) return;
    fread(&sbsat_env, sizeof(t_sbsat_env), 1, fin);
    fclose(fin);
@@ -79,63 +81,70 @@ Binary_to_BDD()
    _bddtable_start = sbsat_env.bddtable_start;
 
 
-   cerr << "Reading bddtable .. " << endl;
-   assert(_bddtable_len == (int)(ite_filesize("bddtable.bin")/sizeof(BDDNode)));
-   fin = ite_fopen("bddtable.bin", "rb");
+   strcpy(tmp_str, "bddtable.bin");
+   cerr << "Reading " << tmp_str << endl;
+   assert(_bddtable_len == (int)(ite_filesize(tmp_str)/sizeof(BDDNode)));
+   fin = ite_fopen(tmp_str, "rb");
    if (!fin) return;
    _bddtable = calloc(_bddtable_len, sizeof(BDDNode));
    if (fread(_bddtable, sizeof(BDDNode), _bddtable_len, fin) != (size_t)_bddtable_len)
       fprintf(stderr, "fread on bddtable failed\n");
    fclose(fin);
 
-   cerr << "Reading functions .. " << endl;
-   assert(_numout == (int)(ite_filesize("functions.bin")/sizeof(BDDNode*)));
-   fin = ite_fopen("functions.bin", "rb");
+   strcpy(tmp_str, "functions.bin");
+   cerr << "Reading " << tmp_str << endl;
+   assert(_numout == (int)(ite_filesize(tmp_str)/sizeof(BDDNode*)));
+   fin = ite_fopen(tmp_str, "rb");
    if (!fin) return;
    _functions = calloc(_numout, sizeof(BDDNode*));
    if (fread(_functions, sizeof(BDDNode*), _numout , fin) != (size_t)_numout)
       fprintf(stderr, "fread on functions failed\n");
    fclose(fin);
 
-   cerr << "Reading function types .. " << endl;
-   assert(_numout == (int)(ite_filesize("functiontype.bin")/sizeof(int)));
-   fin = ite_fopen("functiontype.bin", "rb");
+   strcpy(tmp_str, "functiontype.bin");
+   cerr << "Reading " << tmp_str << endl;
+   assert(_numout == (int)(ite_filesize(tmp_str)/sizeof(int)));
+   fin = ite_fopen(tmp_str, "rb");
    if (!fin) return;
    _functiontype = calloc(_numout, sizeof(int));
    if (fread(_functiontype, sizeof(int), _numout , fin) != (size_t)_numout)
       fprintf(stderr, "fread on functiontype failed\n");
    fclose(fin);
 
-   cerr << "Reading equality Vble.. " << endl;
-   assert(_numout == (int)(ite_filesize("equalityvble.bin")/sizeof(int)));
-   fin = ite_fopen("equalityvble.bin", "rb");
+   strcpy(tmp_str, "equalityvble.bin");
+   cerr << "Reading " << tmp_str << endl;
+   assert(_numout == (int)(ite_filesize(tmp_str)/sizeof(int)));
+   fin = ite_fopen(tmp_str, "rb");
    if (!fin) return;
    _equalityvble = calloc(_numout, sizeof(int));
    if (fread(_equalityvble, sizeof(int), _numout , fin) != (size_t)_numout)
       fprintf(stderr, "fread on equalityvble failed\n");
    fclose(fin);
 
-   cerr << "Reading length .. " << endl;
-   assert(_numout == (int)(ite_filesize("length.bin")/sizeof(int)));
-   fin = ite_fopen("length.bin", "rb");
+   strcpy(tmp_str, "length.bin");
+   cerr << "Reading " << tmp_str << endl;
+   assert(_numout == (int)(ite_filesize(tmp_str)/sizeof(int)));
+   fin = ite_fopen(tmp_str, "rb");
    if (!fin) return;
    _length = calloc(_numout, sizeof(int));
    if (fread(_length, sizeof(int), _numout , fin) != (size_t)_numout)
       fprintf(stderr, "fread on length failed\n");
    fclose(fin);
 
-   cerr << "Reading variablelist .. " << endl;
-   assert(_numinp+1 == (int)(ite_filesize("variablelist.bin")/sizeof(varinfo)));
-   fin = ite_fopen("variablelist.bin", "rb");
+   strcpy(tmp_str, "variablelist.bin");
+   cerr << "Reading " << tmp_str << endl;
+   assert(_numinp+1 == (int)(ite_filesize(tmp_str)/sizeof(varinfo)));
+   fin = ite_fopen(tmp_str, "rb");
    _variablelist = calloc(_numinp+1, sizeof(varinfo));
    if (!fin) return;
    if (fread(_variablelist, sizeof(varinfo), _numinp+1 , fin) != (size_t)_numinp+1)
       fprintf(stderr, "fread on variablelist failed\n");
    fclose(fin);
 
-   cerr << "Reading independantVars .. " << endl;
-   assert(_numinp+1 == (int)(ite_filesize("independantVars.bin")/sizeof(int)));
-   fin = ite_fopen("independantVars.bin", "rb");
+   strcpy(tmp_str, "independantVars.bin");
+   cerr << "Reading " << tmp_str << endl;
+   assert(_numinp+1 == (int)(ite_filesize(tmp_str)/sizeof(int)));
+   fin = ite_fopen(tmp_str, "rb");
    _independantVars = calloc(_numinp+1, sizeof(int));
    if (!fin) return;
    if (fread(_independantVars, sizeof(int), _numinp+1 , fin) != (size_t)_numinp+1)
@@ -232,39 +241,47 @@ BDD_to_Binary()
    int _bddtable_msize;
    cerr << "dump_bdd_table ---------------------------------" << endl;
    FILE *fout = NULL;
+   char tmp_str[32];
 
-   fout = ite_fopen("bddtable.bin", "wb");
+   strcpy(tmp_str, "bddtable.bin");
+   fout = ite_fopen(tmp_str, "wb");
    if (!fout) return;
    bddtable_get(&_bddtable, &_bddtable_len, &_bddtable_msize);
    fwrite(_bddtable, _bddtable_msize, _bddtable_len, fout);
    fclose(fout);
 
-   fout = ite_fopen("functions.bin", "wb");
+   strcpy(tmp_str, "functions.bin");
+   fout = ite_fopen(tmp_str, "wb");
    if (!fout) return;
    fwrite(functions, sizeof(BDDNode*), numout , fout);
    fclose(fout);
 
-   fout = ite_fopen("functiontype.bin", "wb");
+   strcpy(tmp_str, "functiontype.bin");
+   fout = ite_fopen(tmp_str, "wb");
    if (!fout) return;
    fwrite(functionType, sizeof(int), numout , fout);
    fclose(fout);
 
-   fout = ite_fopen("equalityvble.bin", "wb");
+   strcpy(tmp_str, "equalityvble.bin");
+   fout = ite_fopen(tmp_str, "wb");
    if (!fout) return;
    fwrite(equalityVble, sizeof(int), numout , fout);
    fclose(fout);
 
-   fout = ite_fopen("length.bin", "wb");
+   strcpy(tmp_str, "length.bin");
+   fout = ite_fopen(tmp_str, "wb");
    if (!fout) return;
    fwrite(length, sizeof(int), numout , fout);
    fclose(fout);
 
-   fout = ite_fopen("variablelist.bin", "wb");
+   strcpy(tmp_str, "variablelist.bin");
+   fout = ite_fopen(tmp_str, "wb");
    if (!fout) return;
    fwrite(variablelist, sizeof(varinfo), numinp+1 , fout);
    fclose(fout);
 
-   fout = ite_fopen("independantVars.bin", "wb");
+   strcpy(tmp_str, "independantVars.bin");
+   fout = ite_fopen(tmp_str, "wb");
    if (!fout) return;
    fwrite(independantVars, sizeof(int), numinp+1 , fout);
    fclose(fout);

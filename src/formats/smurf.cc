@@ -128,7 +128,7 @@ void BDD_to_Smurfs () {
 	int *tempint=NULL;
    long tempint_max = 0;
 	long v, y, i;
-	long long x;
+	long x;
 	integers = (store *) calloc (nmbrFunctions + 1, sizeof (store));
 	numinp = 0;
 
@@ -177,7 +177,7 @@ void BDD_to_Smurfs () {
 		if (functionType[v] == PLAINOR) {
 			fprintf(foutputfile, "plainor ");
 			BDDNode *p_or = functions[v];
-			for (int x = 0; x < integers[v].num[x] != 0; x++) {
+			for (x = 0; x < integers[v].num[x] != 0; x++) {
 				if (set_variable (p_or, integers[v].num[x], 1) == true_ptr)
 				  fprintf (foutputfile, "1");
 				else if (set_variable (p_or, integers[v].num[x], 0) == true_ptr)
@@ -198,7 +198,7 @@ void BDD_to_Smurfs () {
 				fprintf (foutputfile, "and= ");
 				BDDNode * true_and =
 				  set_variable (functions[v], abs (equalityVble[v]), 1);
-				for (int x = 0; x < integers[v].num[x] != 0; x++) {
+				for (x = 0; x < integers[v].num[x] != 0; x++) {
 					if (integers[v].num[x] == abs (equalityVble[v])) {
 						fprintf (foutputfile, "3");
 						validated = 1;
@@ -225,7 +225,7 @@ void BDD_to_Smurfs () {
 			} else {
 				fprintf (foutputfile, "or= ");
 				BDDNode * true_or = set_variable (functions[v], abs (equalityVble[v]), 1);
-				for (int x = 0; x < integers[v].num[x] != 0; x++) {
+				for (x = 0; x < integers[v].num[x] != 0; x++) {
 					if (integers[v].num[x] == abs (equalityVble[v])) {
 						fprintf (foutputfile, "3");
 						continue;
@@ -247,7 +247,7 @@ void BDD_to_Smurfs () {
 			}
 		} else {
 			if(x > MAX_MAX_VBLES_PER_SMURF)
-			  fprintf(stderr, "Function %ld has %lld variables and it may take a while to consider all 2^%lld truth table values\n", v, x, x);
+			  fprintf(stderr, "Function %ld has %ld variables and it may take a while to consider all 2^%ld truth table values\n", v, x, x);
 			for (long long tvec = 0; tvec < ((long long)1 << x); tvec++) {
 				fprintf (foutputfile, "%d", getTruth (integers[v].num, p, x, functions[v]));
 				bcount (p, (x - 1));
@@ -271,9 +271,9 @@ void Smurfs_to_BDD () {
 	int *tempint = NULL;
    long tempint_max = 0;
 	int out = 0, line, i = 0;
-	long long y = 0;
 	bool flag = false;
-	while (out < 3) {
+   long long y = 0;
+   while (out < 3) {
 		string = getc (finputfile);
 		if ((string >= '0') && (string <= '9')) {
 			i = 0;
@@ -307,7 +307,7 @@ void Smurfs_to_BDD () {
 			fprintf (stderr, "Should be function %d\n", x);
 			exit (1);
 		}
-		y = -1;
+      y = -1;
 		do {
 			y++;
 			if (y>=tempint_max) {
@@ -339,7 +339,7 @@ void Smurfs_to_BDD () {
 		if ((string == '0') || (string == '1')) {
 			vars[x].tv = new char[((long long)1 << y) + 1];
 			vars[x].tv[0] = string;
-			for (int i = 1; i < ((long long)1 << y); i++) {
+			for(i = 1; i < ((long long)1 << y); i++) {
 				string = getc (finputfile);
 				if ((string != '0') && (string != '1')) {
 					fprintf (stderr, "\nProblem with truth vector in function %d\n", line);
@@ -351,7 +351,7 @@ void Smurfs_to_BDD () {
 		} else if (string == 'p') {
 			vars[x].tv = new char[y + 1];
 			char test[10];
-			for (int i = 0; i < 7; i++) {
+			for(i = 0; i < 7; i++) {
 				string = fgetc (finputfile);
 				test[i] = string;
 			}
@@ -360,7 +360,7 @@ void Smurfs_to_BDD () {
 				fprintf (stderr, "\nProblem with truth vector in function %d\n", line);
 				exit (1);
 			}
-			for (int i = 0; i < y; i++) {
+			for(i = 0; i < y; i++) {
 				string = getc (finputfile);
 				if ((string != '0') && (string != '1')) {
 					fprintf (stderr, "\nProblem with truth vector in function %d\n", line);
@@ -372,7 +372,7 @@ void Smurfs_to_BDD () {
 		} else if (string == 'a') {
 			vars[x].tv = new char[y + 1];
 			char test[10];
-			for (int i = 0; i < 4; i++) {
+			for(i = 0; i < 4; i++) {
 				string = fgetc (finputfile);
 				test[i] = string;
 			}
@@ -381,7 +381,7 @@ void Smurfs_to_BDD () {
 				fprintf (stderr, "\nProblem with truth vector in function %d\n", line);
 				exit (1);
 			}
-			for (int i = 0; i < y; i++) {
+			for(i = 0; i < y; i++) {
 				string = getc (finputfile);
 				if ((string != '0') && (string != '1') && (string != '3')) {
 					fprintf (stderr, "\nProblem with truth vector in function %d\n", line);
@@ -393,7 +393,7 @@ void Smurfs_to_BDD () {
 		} else if (string == 'o') {
 			vars[x].tv = new char[y + 1];
 			char test[10];
-			for (int i = 0; i < 3; i++) {
+			for(i = 0; i < 3; i++) {
 				string = fgetc (finputfile);
 				test[i] = string;
 			}
@@ -402,7 +402,7 @@ void Smurfs_to_BDD () {
 				fprintf (stderr, "\nProblem with truth vector in function %d\n", line);
 				exit (1);
 			}
-			for (int i = 0; i < y; i++) {
+			for(i = 0; i < y; i++) {
 				string = getc (finputfile);
 				if ((string != '0') && (string != '1') && (string != '3')) {
 					fprintf (stderr, "\nProblem with truth vector in function %d\n", line);
@@ -431,14 +431,14 @@ void Smurfs_to_BDD () {
 			continue;
 		}
 		if (vars[x].andor == UNSURE) {
-			int y = 0;
+			int tmp_y = 0;
 			int level = 0;
 			int *reverse = new int[vars[x].integers[0] + 1];
-			for (int i = 0; i < vars[x].integers[0]; i++) {
+			for (i = 0; i < vars[x].integers[0]; i++) {
 				reverse[vars[x].integers[0] - i] = vars[x].integers[i + 1];
 			}
 			reverse[0] = vars[x].integers[0];
-			functions[x] = ReadSmurf (&y, vars[x].tv, level, &(reverse[1]), reverse[0]);	//vars[x].integers);
+			functions[x] = ReadSmurf(&tmp_y, vars[x].tv, level, &(reverse[1]), reverse[0]);	//vars[x].integers);
 			functionType[x] = vars[x].andor;
 			delete [] reverse;
 		} else if (vars[x].andor == PLAINOR) {

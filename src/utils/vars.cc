@@ -143,12 +143,12 @@ varinfo *variablelist = NULL;
 
 t_arrVarScores *arrVarScores = NULL;
 
-char brancher_presets[4096];
-char comment[1024];
+char brancher_presets[4096]="";
+char comment[1024]="";
 
-char preset_variables_string[2048];
-int prover3_max_vars;
-int do_split_max_vars;
+char preset_variables_string[2048]="";
+int prover3_max_vars=10;
+int do_split_max_vars=10;
 
 int functionTypeLimits[MAX_FUNC];
 
