@@ -377,12 +377,16 @@ void
 finish_params()
 {
    if (competition_enable) {
-      DEBUG_LVL = 0;
+      char tmp_str[32];
+      t_opt *p_opt_r = lookup_keyword(strcpy(tmp_str, "reverse-depend"));
+      if (p_opt_r->p_src == 0) clear_dependance = 1;
+      if (DEBUG_LVL <= 2) DEBUG_LVL = 0;
       if (sResult[0] == 'n') sResult[0] = 'c';
-   }
+      if (sat_timeout == 0) sat_timeout = getSATlimit("SATTIMEOUT");
+      if (sat_ram == 0) sat_ram = getSATlimit("SATRAM");
 
-   if (sat_timeout == 0) sat_timeout = getSATlimit("SATTIMEOUT");
-   if (sat_ram == 0) sat_ram = getSATlimit("SATRAM");
+      if (sat_timeout > 0) max_preproc_time = sat_timeout / 2;
+   }
 
    /* special files */
    if (!strcmp(debug_dev, "stdout")) stddbg = stdout;

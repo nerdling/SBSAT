@@ -196,7 +196,10 @@ parse_seq(char **p, int parse_only)
      if (max_preproc_time)
      d2_printf5("Checking preproc time: %f - %f = %f > %d\n", mytime, start_prep, mytime - start_prep, max_preproc_time);
      if (max_preproc_time && (mytime - start_prep) > max_preproc_time) {
-        return PREP_ERROR;
+        DO_STRENGTH = 0;
+        DO_PRUNING = 0;
+        DO_DEP_CLUSTER = 0;
+        //return PREP_ERROR;
      }
   
      if (**p == '(')
