@@ -273,7 +273,7 @@ printBDDTree(BDDNode * bdd, int *which_zoom)
    char aa[10];
    int tempint[100];
    for (x = 0; x < 100; x++)
-      tempint[x] = 0;
+	  tempint[x] = 0;
    z = unravelBDDTree (y, tempint, bdd);
 
    //    if(z == -1) {
