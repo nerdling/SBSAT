@@ -57,6 +57,7 @@ extern int *Ea_repeat;
 extern int str_length;
 extern long affected;
 
+extern int num_inferences;
 extern int Pos_replace;
 extern int Neg_replace;
 extern int Setting_Pos;
