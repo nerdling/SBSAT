@@ -50,6 +50,9 @@ extern FILE *trace_in;
 int prover_parse();
 extern FILE *prover_in;
 
+int prover3_parse();
+extern FILE *prover3_in;
+
 int read_input_open();
 
 int
@@ -134,6 +137,13 @@ read_input(Tracer * &tracer)
      parser_init();
      prover_in = finputfile;
      prover_parse();
+     numinp = vars_max;
+     numout = functions_max;
+  } break;
+  case '3': {
+     parser_init();
+     prover3_in = finputfile;
+     prover3_parse();
      numinp = vars_max;
      numout = functions_max;
   } break;
