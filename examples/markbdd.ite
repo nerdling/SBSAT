@@ -1,5 +1,7 @@
 p bdd 20 11 ; 20 vars, 11 functions
-Initial_Branch(var*, a, b, t*e) ; These variables will be branched on first.
+Initial_Branch(#1, var*%25, a%10, b, t*e) ; These variables will be branched on first.
+                               ; '*' is a wildcard
+Initial_Branch(#2, x, var*, b%10, 5, v2) ; These variables will be branched on second.
                                ; '*' is a wildcard
 
 ite(var1, T, F) ; Function $1, no smurf created
