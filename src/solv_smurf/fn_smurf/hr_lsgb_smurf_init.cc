@@ -42,7 +42,7 @@
 void
 HrLSGBFnSmurfInit()
 {
-   for(int i=0;i<40;i++)
+   for(int i=0;i<MAX_FUNC;i++)
    {
       procHeurUpdateFunctionInfEnd[i] = LSGBSmurfUpdateFunctionInfEnd;
       procHeurGetScores[i] = LSGBSmurfGetHeurScores;

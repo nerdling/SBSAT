@@ -42,7 +42,7 @@
 void
 HrLSGBWFnSmurfInit()
 {
-   for(int i=0;i<40;i++)
+   for(int i=0;i<MAX_FUNC;i++)
    {
       // can reuse LSGB Update instead of LSGBW
       procHeurUpdateFunctionInfEnd[i] = LSGBSmurfUpdateFunctionInfEnd; 

@@ -28,9 +28,9 @@ SmurfState *pTrueSmurfState = NULL;  // Pointer to the Smurf state
 ITE_INLINE int
 FnSmurfInit() 
 {
-   ExtendFns(40);
+   ExtendFns(MAX_FUNC);
 
-   for(int i=0;i<40;i++)
+   for(int i=0;i<MAX_FUNC;i++)
    {
       procCreateFunction[i] = SmurfCreateFunction;
 
