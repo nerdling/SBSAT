@@ -1380,16 +1380,16 @@ BDDNode * num_replace (BDDNode * f, int var, int replace) {
 	  return f;
    if (var == f->variable) {
 		if (replace > 0)
-		  return ite(ite_var(replace), f->thenCase, f->elseCase);
+		  return find_or_add_node(replace, f->thenCase, f->elseCase);
       else if (replace < 0)
-		  return ite (ite_var(-replace), f->elseCase, f->thenCase);
+		  return find_or_add_node(-replace, f->elseCase, f->thenCase);
    }
    BDDNode * r = num_replace (f->thenCase, var, replace);
    BDDNode * e = num_replace (f->elseCase, var, replace);
    if (r == e)
 	  return r;
-   return ite (ite_var (f->variable), r, e);
-	
+	return ite (ite_var (f->variable), r, e);
+
    //return find_or_add_node(f->variable, r, e);
 }
 
