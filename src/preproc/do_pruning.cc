@@ -123,7 +123,7 @@ int DO_PRUNING_FN() {
 					continue;
 				 if ((!repeat_small[j] && !repeat_small[x]))
 					continue;
-             if (variables[x].min >= variables[j].max) 
+             if (variables[x].min >= variables[j].max)
                 continue;
              if (variables[j].min >= variables[x].max) 
                 continue;

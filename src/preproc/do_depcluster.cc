@@ -267,9 +267,12 @@ int DepCluster () {
 #endif
 				}
 				count2++;
+
 				
+				//This is being done in Rebuild_BDDx now
 				//Need to add BDD k into the inference list of any variable that wasn't
 				//originally in k.
+/*				
 				int a = 0, b = 0;
 				while(a < bdd_length && b < length[k]) {
 					if(bdd_vars[a] > variables[k].num[b]) {
@@ -292,6 +295,7 @@ int DepCluster () {
 					amount[bdd_vars[a]].tail = newllist;
 					a++;
 				}
+*/
 				
 				affected++;
 				functions[k] = Quantify;

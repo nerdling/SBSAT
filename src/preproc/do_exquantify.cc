@@ -112,7 +112,7 @@ int ExQuantify () {
 	for (int i = 0; i < numinp + 1; i++) {
 		char p[100];
 		D_3(
-			 if (i % 100 == 0) {
+			 if (i % 10000 == 0) {
 				 for(int iter = 0; iter<str_length; iter++)
 					d3_printf1("\b");
 				 sprintf(p, "{%ld:%d/%ld}", affected, i, numinp);

@@ -1116,6 +1116,12 @@ BDDNode * steal (BDDNode * f, BDDNode * c)
 	  return true_ptr;
 	if (f == true_ptr) {
 		BDDNode *Inf_bdd = Build_BDD_From_Inferences(c);
+		//Only copy over inferences with variables that were originally in f.
+		//BDDNode *Inf_BDD = Build_BDD_From_Inferences_Restricted(c, f_variables); 
+      
+		//For last two, go back one recursive call, then do these operations.
+      //BDDNode *Inf_bdd = strengthen(f, c);
+		//BDDNode *Inf_bdd = ite_and(f, c);		
 		return Inf_bdd;
 	}
    // We know that f & c are both BDD's with top variables.
@@ -1124,10 +1130,14 @@ BDDNode * steal (BDDNode * f, BDDNode * c)
    int v = f->variable;
 
    //v is the top variable of f & c.
-   if (reduce_f (v, c) == false_ptr && reduce_f(v, f) != false_ptr)
-      return steal (reduce_t (v, f), reduce_t (v, c));
-   if (reduce_t (v, c) == false_ptr && reduce_t(v, f) != false_ptr)
-      return steal (reduce_f (v, f), reduce_f (v, c));
+   if (reduce_f (v, c) == false_ptr && reduce_f(v, f) == false_ptr) {
+      //BDDNode *Inf_bdd = ite_and(Build_BDD_From_Inferences(f->thenCase), Build_BDD_From_Inferences(f->elseCase));
+      //BDDNode *steal_bdd = steal (reduce_t (v, f), reduce_t (v, c));
+		//return ite(v, steal_bdd, Inf_bdd);
+      //return steal (reduce_t(v, f), reduce_t(v, c));
+	}
+//   if (reduce_t (v, c) == false_ptr && reduce_t(v, f) == false_ptr)
+      //return steal (reduce_f (v, f), reduce_f (v, c));
    BDDNode * r = steal (reduce_t (v, f), reduce_t (v, c));
    BDDNode * e = steal (reduce_f (v, f), reduce_f (v, c));
    if (r == e)

@@ -89,10 +89,6 @@ int Do_Strength() {
 			 continue;
 		  for (int j = x + 1; j < nmbrFunctions; j++)
 			 {
-				 //fprintf(stderr, "\n\n");
-				 //printBDDerr(functions[x]);
-				 //fprintf(stderr, "\n");
-				 
 				 if (functions[j] == true_ptr)
 					continue;
 				 if ((!repeat_small[j] && !repeat_small[x]))
@@ -101,18 +97,25 @@ int Do_Strength() {
                 continue;
              if (variables[j].min >= variables[x].max) 
                 continue;
-				 if (nmbrVarsInCommon (x, j, length, variables, STRENGTH) == 0) // < STRENGTH)
-					continue;
-				 
+				 int did_vars_incommon = 0;
 				 if ((functionType[x] != AND || length[x] < AND_EQU_LIMIT) 
 					  && (functionType[x] != OR || length[x] < OR_EQU_LIMIT)
 					  && (functionType[x] != PLAINOR || length[x] < PLAINOR_LIMIT)
 					  && (functionType[x] != PLAINXOR || length[x] < PLAINXOR_LIMIT))
 					{
+						if (nmbrVarsInCommon (x, j, length, variables, STRENGTH) == 0) // < STRENGTH)
+						  continue;
+						did_vars_incommon = 1;
 						BDDNode *currentBDD =
 						  strengthen (x, j, length, variables);
 						if (currentBDD != functions[x])
 						  {
+							  //fprintf(stderr, "\nSt%d: ", x);
+							  //printBDDerr(functions[x]);
+							  //fprintf(stderr, "\n");
+							  //printBDDerr(currentBDD);
+							  //fprintf(stderr, "\n");
+
 							  //d2_printf1("*");
 //                       D_3(print_roller();)
 							  affected++; 
@@ -134,6 +137,10 @@ int Do_Strength() {
 					  && (functionType[j] != PLAINOR || length[j] < PLAINOR_LIMIT)
 					  && (functionType[j] != PLAINXOR || length[j] < PLAINXOR_LIMIT))
 					{
+						if(did_vars_incommon == 0) {
+							if (nmbrVarsInCommon (x, j, length, variables, STRENGTH) == 0) // < STRENGTH)
+							  continue;
+						}
 						BDDNode *currentBDD =
 						  strengthen (j, x, length, variables);
 						if (currentBDD != functions[j])

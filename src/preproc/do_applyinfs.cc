@@ -64,7 +64,7 @@ Do_Apply_Inferences ()
 	delete temp;
 	
 	while (inferlist != NULL) {
-		startover:;
+		//startover:;
 		if (inferlist->nums[1] != 0) {
 			if (inferlist->nums[1] > 0) {
 /*				
@@ -93,14 +93,14 @@ Do_Apply_Inferences ()
 				d3_printf3 ("{%d=%d}", inferlist->nums[0], inferlist->nums[1]);
 				str_length = 0;
 				variablelist[inferlist->nums[1]].equalvars = inferlist->nums[0];
-				for (llist * k = amount[inferlist->nums[1]].head; k != NULL; k = k->next) {
+				for (llist * k = amount[inferlist->nums[1]].head; k != NULL;) {
 					int j = k->num;
+					k = k->next; //This must be done here because k could be deleted in Rebuild_BDDx()
 					BDDNode *before = functions[j];
 					functions[j] = num_replace (functions[j], inferlist->nums[1], inferlist->nums[0]);
 					if (functions[j] == false_ptr)
 					  return TRIV_UNSAT;
 					if (before != functions[j]) {
-
 						int changeFT = 0;
 						if (functionType[j] == AND || functionType[j] == OR) {
 							if (abs (equalityVble[j]) == inferlist->nums[0]) {
@@ -138,22 +138,23 @@ Do_Apply_Inferences ()
 						  return TRIV_UNSAT;
 					}
 				}
-				amount[inferlist->nums[0]].tail->next = amount[inferlist->nums[1]].head;
-				amount[inferlist->nums[0]].tail = amount[inferlist->nums[1]].tail;
-				amount[inferlist->nums[1]].head = NULL;
-				amount[inferlist->nums[1]].tail = NULL;
+//				amount[inferlist->nums[0]].tail->next = amount[inferlist->nums[1]].head;
+//				amount[inferlist->nums[0]].tail = amount[inferlist->nums[1]].tail;
+//				amount[inferlist->nums[1]].head = NULL;
+//				amount[inferlist->nums[1]].tail = NULL;
 				//verifyCircuit(inferlist->nums[1]);
 			} else {
 				Neg_replace++;
 //            D_3(print_nonroller(););
 				for(int iter = 0; iter<str_length; iter++)
-					d3_printf1("\b");
+				  d3_printf1("\b");
 				str_length = 0;  
 				d3_printf3 ("{%d=%d}", inferlist->nums[0], inferlist->nums[1]);
 				variablelist[-inferlist->nums[1]].equalvars = -inferlist->nums[0];
 				//Gotta keep that (-inferlist->nums[0]) negative...trust me
-				for (llist * k = amount[-inferlist->nums[1]].head; k != NULL; k = k->next) {
+				for (llist * k = amount[-inferlist->nums[1]].head; k != NULL;) {
 					int j = k->num;
+					k = k->next; //This must be done here because k could be deleted in Rebuild_BDDx()
 					BDDNode *before = functions[j];
 					//printBDDerr(before);
 					//fprintf(stderr, "\n");
@@ -202,10 +203,10 @@ Do_Apply_Inferences ()
 						  return TRIV_UNSAT;
 					}
 				}
-				amount[inferlist->nums[0]].tail->next = amount[-inferlist->nums[1]].head;
-				amount[inferlist->nums[0]].tail = amount[-inferlist->nums[1]].tail;
-				amount[-inferlist->nums[1]].head = NULL;
-				amount[-inferlist->nums[1]].tail = NULL;
+//				amount[inferlist->nums[0]].tail->next = amount[-inferlist->nums[1]].head;
+//				amount[inferlist->nums[0]].tail = amount[-inferlist->nums[1]].tail;
+//				amount[-inferlist->nums[1]].head = NULL;
+//				amount[-inferlist->nums[1]].tail = NULL;
 				//verifyCircuit(-inferlist->nums[1]);
 			}
 		} else {
@@ -217,8 +218,9 @@ Do_Apply_Inferences ()
 				str_length = 0;  
 				d3_printf2 ("{%d=T}", abs (inferlist->nums[0]));
 				variablelist[inferlist->nums[0]].true_false = 1;
-				for (llist * k = amount[inferlist->nums[0]].head; k != NULL; k = k->next) {
+				for (llist * k = amount[inferlist->nums[0]].head; k != NULL;) {
 					int j = k->num;
+					k = k->next; //This must be done here because k could be deleted in Rebuild_BDDx()
 					BDDNode *before = functions[j];
 					functions[j] = set_variable (functions[j], inferlist->nums[0], 1);
 					if (functions[j] == false_ptr)
@@ -245,8 +247,9 @@ Do_Apply_Inferences ()
 				str_length = 0;  
 				d3_printf2 ("{%d=F}", abs (inferlist->nums[0]));
 				variablelist[-inferlist->nums[0]].true_false = 0;
-				for (llist * k = amount[-inferlist->nums[0]].head; k != NULL; k = k->next) {
+				for (llist * k = amount[-inferlist->nums[0]].head; k != NULL;) {
 					int j = k->num;
+					k = k->next; //This must be done here because k could be deleted in Rebuild_BDDx()
 					BDDNode *before = functions[j];
 					functions[j] = set_variable (functions[j], -inferlist->nums[0], 0);
 					if (functions[j] == false_ptr)
@@ -287,8 +290,9 @@ int setALLequiv(int nums0, int nums1, int torf) {
 	str_length = 0;  
    d3_printf3 ("{%d=%d}", torf*nums0, torf*nums1);
 	variablelist[nums1].equalvars = nums0;
-	for (llist * k = amount[nums1].head; k != NULL; k = k->next) {
+	for (llist * k = amount[nums1].head; k != NULL;) {
 		int j = k->num;
+		k = k->next; //This must be done here because k could be deleted in Rebuild_BDDx()
 		BDDNode *before = functions[j];
 		functions[j] = num_replace (functions[j], nums1, nums0);
 		if (before != functions[j]) {
@@ -304,10 +308,10 @@ int setALLequiv(int nums0, int nums1, int torf) {
 		  return TRIV_UNSAT;
 	}
 
-	amount[torf*nums0].tail->next = amount[nums1].head;
-	amount[torf*nums0].tail = amount[nums1].tail;
-	amount[nums1].head = NULL;
-	amount[nums1].tail = NULL;
+//	amount[torf*nums0].tail->next = amount[nums1].head;
+//	amount[torf*nums0].tail = amount[nums1].tail;
+//	amount[nums1].head = NULL;
+//	amount[nums1].tail = NULL;
 	//verifyCircuit(nums1);
 	return PREP_NO_CHANGE;
 }
@@ -328,8 +332,9 @@ int setALLinfer(int nums0, int torf) {
       d3_printf2 ("{%d=F}", nums0);
 		variablelist[nums0].true_false = 0;
 	}
-	for (llist * k = amount[nums0].head; k != NULL; k = k->next) {
+	for (llist * k = amount[nums0].head; k != NULL;) {
 		int j = k->num;
+		k = k->next; //This must be done here because k could be deleted in Rebuild_BDDx()
 		BDDNode *before = functions[j];
 		functions[j] = set_variable (functions[j], nums0, torf);
 		if (before != functions[j]) {
@@ -381,7 +386,6 @@ int Do_Apply_Inferences_backend () {
 }
 
 int Rebuild_BDDx (int x) {
-	long y = 0;
 	SetRepeats(x);
 	Result *result;
 	
@@ -555,6 +559,7 @@ int Rebuild_BDDx (int x) {
 	lastinfer->next = NULL;
 
 	assert(x!=nmbrFunctions+1);
+	long y = 0;
 	unravelBDD(&y, tempint, functions[x]);
 	qsort (tempint, y, sizeof (int), compfunc);
 	if (y != 0) {
@@ -567,17 +572,110 @@ int Rebuild_BDDx (int x) {
 		}
 		y = v + 1;
 	}
-
-	//Need to check to see if any variables were added to this BDD
-	//Dependent clustering can add variables, so can Ex_AND
 	
-	length[x] = y;
+	//Checking to see if any variables were added to this BDD
+	//Dependent clustering can add variables, so can Ex_AND, so can Steal
 
-	if (variables[x].num != NULL)
-	  delete [] variables[x].num;
+	//Need to add BDD x into the inference list of any variable that wasn't
+	//originally in x.
+	if (variables[x].num != NULL) {
+		int a = 0, b = 0;
+		while(a < y && b < length[x]) {
+			if(tempint[a] > variables[x].num[b]) {
+				//could remove bdd x from variables[x].num[b]'s inference list.
+				llist *k = amount[variables[x].num[b]].head;
+				llist *follow = NULL;
+				while (k != NULL) {
+					if(k->num == x) {
+						//fprintf(stderr, "{deleting1 %d %d}\n", x, variables[x].num[b]);
+						num_funcs_var_occurs[variables[x].num[b]]--;
+						llist *temp = k;
+						k = k->next;
+						delete temp;
+						if(follow != NULL) follow->next = k;
+						else amount[variables[x].num[b]].head = k;
+						if(k == NULL) amount[variables[x].num[b]].tail = follow;
+						k = NULL; //to break out now that we've deleted the entry.
+					} else {
+						follow = k;
+						k = k->next;
+					}
+				}
+//				if(follow == NULL) {
+//					amount[variables[x].num[b]].head = NULL;
+//					amount[variables[x].num[b]].tail = NULL;
+//				}
+				b++;
+			} else if(tempint[a] < variables[x].num[b]) {
+				llist *newllist = new llist;
+				//fprintf(stderr, "{adding1 %d %d}\n", x, tempint[a]);
+				newllist->num = x;
+				newllist->next = NULL;
+				if (amount[tempint[a]].head == NULL) {
+					num_funcs_var_occurs[tempint[a]] = 1;
+					amount[tempint[a]].head = newllist;
+					amount[tempint[a]].tail = newllist;
+				} else {
+					num_funcs_var_occurs[tempint[a]]++;
+					amount[tempint[a]].tail->next = newllist;
+					amount[tempint[a]].tail = newllist;
+				}
+				a++;
+			} else { a++; b++; }
+		}
+		
+		while(b < length[x]) {
+			//could remove bdd x from variables[x].num[b]'s inference list.
+			llist *k = amount[variables[x].num[b]].head;
+			llist *follow = NULL;
+			while (k != NULL) {
+				if(k->num == x) {
+					//fprintf(stderr, "{deleting2 %d %d}\n", x, variables[x].num[b]);
+					num_funcs_var_occurs[variables[x].num[b]]--;
+					llist *temp = k;
+					k = k->next;
+					delete temp;
+					if(follow != NULL) follow->next = k;
+					else amount[variables[x].num[b]].head = k;
+					if(k == NULL) amount[variables[x].num[b]].tail = follow;
+					k = NULL; //to break out now that we've deleted the entry.
+				} else {
+					follow = k;
+					k = k->next;
+				}
+			}
+//			if(follow == NULL) {
+//				amount[variables[x].num[b]].head = NULL;
+//				amount[variables[x].num[b]].tail = NULL;
+//			}
+			b++;			  
+		}
+		
+		while(a < y) {
+			llist *newllist = new llist;
+			//fprintf(stderr, "{adding2 %d %d}\n", x, tempint[a]);
+			newllist->num = x;
+			newllist->next = NULL;
+			if (amount[tempint[a]].head == NULL) {
+				num_funcs_var_occurs[tempint[a]] = 1;
+				amount[tempint[a]].head = newllist;
+				amount[tempint[a]].tail = newllist;
+			} else {
+				num_funcs_var_occurs[tempint[a]]++;
+				amount[tempint[a]].tail->next = newllist;
+				amount[tempint[a]].tail = newllist;
+			}
+			a++;
+		}
+		//Done adding BDD x into the inferences lists.
+		delete [] variables[x].num;	
+	}
+
+	length[x] = y;
+		
 	variables[x].num = new int[y + 1]; //(int *)calloc(y+1, sizeof(int));
 	for (int i = 0; i < y; i++)
-		variables[x].num[i] = tempint[i];
+	  variables[x].num[i] = tempint[i];
    if (y==0) {
       variables[x].min = 0;
       variables[x].max = 0;

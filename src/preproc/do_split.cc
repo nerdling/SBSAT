@@ -104,6 +104,17 @@ void nCk_Sets(int n, int k, int *vars, int *whereat, int n_orig, BDDNode *bdd, i
 	}
 }
 
+BDDNode *level_x_decomp(BDDNode *f, int level) {
+	if(f == true_ptr) return f;
+	if(f->inferences != NULL) return Build_BDD_From_Inferences(f);
+	//if(level == 0)	return Build_BDD_From_Inferences(f);
+	int v = f->variable;
+	BDDNode *r = level_x_decomp(f->thenCase, level-1);
+	BDDNode *e = level_x_decomp(f->elseCase, level-1);
+	if(r == e) return r;
+	return ite(ite_var(v), r, e);
+}
+
 int Split_Large () {
 	int ret = PREP_NO_CHANGE;
 
@@ -200,6 +211,63 @@ int Split_Large () {
 					goto sp_bailout;
 				 default: break;
 				}
+			}
+			if (functionType[j] == UNSURE && length[j] > k_size) {
+/*				
+				int whereat = 0;
+				//Here is another idea for how to break BDDS:
+				//Look at a BDD, traverse it down to a level where the inferences != NULL
+				//Then build just those inferences, return that so you get a smaller BDD,
+				//Then branch prune (restrict) that BDD against the original BDD.
+				//That is a new bdd, continue.
+				//Called a level x decomposition...like level 3 decomposition, or whatever max level you use.
+				int level = 11;
+
+				fprintf(stderr, "\norig: ");
+				printBDDerr(functions[j]);
+				fprintf(stderr, "\nlev%d: ", level);
+				
+				BDDNode *level_bdd = level_x_decomp(functions[j], level);
+				printBDDerr(level_bdd);
+				fprintf(stderr, "\nnew1:");
+				
+				functions[j] = pruning(functions[j], level_bdd);
+				printBDDerr(functions[j]);
+				fprintf(stderr, "\n");
+
+				BDDFuncs[whereat] = level_bdd;
+				whereat++;
+				if(whereat >= max_bdds) {
+					BDDFuncs = (BDDNode **)ite_recalloc(BDDFuncs, max_bdds, max_bdds+25, sizeof(BDDNode *), 9, "BDDFuncs");
+					max_bdds += 25;
+				}
+				
+				int fpaths = countFalses(functions[j]);
+				if(fpaths == 1) {
+					functionType[j] = PLAINOR;
+					continue;				  
+				}
+				
+				switch (int r=add_newFunctions(BDDFuncs, whereat)) {
+				 case TRIV_UNSAT:
+				 case TRIV_SAT:
+				 case PREP_ERROR:
+					ret=r;
+					goto sp_bailout;
+				 default: break;
+				}
+				switch (int r=Rebuild_BDDx(j)) {
+				 case TRIV_UNSAT:
+				 case TRIV_SAT:
+				 case PREP_ERROR: 
+					ret=r;
+					goto sp_bailout;
+				 default: break;
+				}
+				
+				
+				
+*/				
 			}
 			if (functionType[j] == UNSURE && length[j] > k_size) { 
 				//Function is still too large, must use alternative method (CNF).
