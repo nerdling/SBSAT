@@ -43,12 +43,17 @@
 
 int Split_Large();
 
+int max_bdds;
+int num_bdds;
+BDDNode **BDDFuncs;
+char p[100];
+
+
 int Do_Split() {
    d3_printf1("SPLITTING LARGE FUNCTIONS - ");
    int cofs = PREP_CHANGED;
    int ret = PREP_NO_CHANGE;
 	affected = 0;
-	char p[100];
 	D_3(
 		 sprintf(p, "{0:0/%d}", nmbrFunctions);
 		 str_length = strlen(p);
@@ -73,36 +78,89 @@ int nCk(int n, int k) {
 	return nCk(n-1, k) + nCk(n-1, k-1);	
 }
 
+void nCk_Sets(int n, int k, int *arr, int *vars, int *whereat, int n_orig, BDDNode *bdd) {
+	if (n==0 && k==0) {
+		//ExQuantify vars away, save BDD
+		BDDNode *tempBDD = bdd;
+		for (int i=0; i<n_orig && tempBDD!=true_ptr; i++ ) {
+			if(arr[i] == 0) {
+				tempBDD = xquantify(tempBDD, vars[i]);
+			}
+		}
+		if(tempBDD != true_ptr) {
+			d3_printf2("whereat = %d: \n", (*whereat));
+			//printBDD(tempBDD);
+			//d3_printf1("\n");
+			BDDFuncs[(*whereat)] = tempBDD;
+			(*whereat)++;
+			if((*whereat) >= max_bdds) {
+				BDDFuncs = (BDDNode **)ite_recalloc(BDDFuncs, max_bdds, max_bdds+10, sizeof(BDDNode *), 9, "BDDFuncs");
+				max_bdds += 10;
+				num_bdds = (*whereat)-1;
+			}
+		}
+	} else {
+		if (k>0) { 
+			arr[n_orig-n]=1;
+			nCk_Sets(n-1,k-1, arr, vars, whereat, n_orig, bdd);
+		}
+		if (n>k) {
+			arr[n_orig-n]=0;
+			nCk_Sets(n-1,k, arr, vars, whereat, n_orig, bdd);
+		}
+	}
+}
 
 int Split_Large () {
 	int ret = PREP_NO_CHANGE;
 
-	int max_bdds = 0;
-	int num_bdds = 0;
-	fprintf(stderr, "HERE1");
-	BDDNode **BDDFuncs = (BDDNode **)ite_recalloc(NULL, max_bdds, max_bdds+10, sizeof(BDDNode *), 9, "BDDFuncs");
-	fprintf(stderr, "HERE2");
+	max_bdds = 0;
+	num_bdds = 0;
+	
+	BDDFuncs = (BDDNode **)ite_recalloc(NULL, max_bdds, max_bdds+10, sizeof(BDDNode *), 9, "BDDFuncs");
 	max_bdds += 10;
+
+	int affected = 0;
 	
 	for(int j = 0; j < nmbrFunctions; j++) {
+		D_3(
+			 if (j % 100 == 0) {
+				 for(int iter = 0; iter<str_length; iter++)
+					d3_printf1("\b");
+				 sprintf(p, "{%d:%d/%d}", affected, j, nmbrFunctions);
+				 str_length = strlen(p);
+				 d3_printf1(p);
+			 }
+			 );
+		if (j % 100 == 0) {
+			if (nCtrlC) {
+				d3_printf1("\nBreaking out of Splitting");
+				//for(; j < nmbrFunctions; j++) SPLIT_REPEATS[x] = 0; ??
+				nCtrlC = 0;
+				break;
+			}
+			d2e_printf3("\rPreprocessing Sp %d/%d", j, nmbrFunctions);
+		}
+		
+		
+		
 		if (functionType[j] == UNSURE && length[j] > 10) { //10?
-			d3_printf2("\n%d: ", j);
-			printBDD(functions[j]);
-			d3_printf1("\n");			
+			//d3_printf2("\n%d: ", j);
+			//printBDD(functions[j]);
+			//d3_printf1("\n");
 			int num_splits = nCk(length[j], 10);
-			d3_printf4("%dC%d = %d\n", length[j], 10, num_splits);
+			d3_printf4("%d C %d = %d\n", length[j], 10, num_splits);
+			int *arr = new int[length[j]];
+			int whereat = 0;
+			nCk_Sets(length[j], 10, arr, variables[j].num, &whereat, length[j], functions[j]);
+			delete []arr;
 			
-			
-			
+			/*			
 			if(num_bdds >= max_bdds) {
 				BDDFuncs = (BDDNode **)ite_recalloc(BDDFuncs, max_bdds, max_bdds+10, sizeof(BDDNode *), 9, "BDDFuncs");
 				max_bdds += 10;
 			}
 
-			
-			
-			
-			/*
 			switch (int r=Rebuild_BDDx(j)) {
 			 case TRIV_UNSAT:
 			 case TRIV_SAT:
@@ -115,13 +173,10 @@ int Split_Large () {
 			
 		}
 	}
-
+	
 	sp_bailout:
 
-	for(int j = 0; j < num_bdds; j++) {
-		ite_free((void **)&BDDFuncs[j]);	
-	}
-	ite_free((void **)BDDFuncs);
+	ite_free((void **)&BDDFuncs);
 
 	return ret;
 }
