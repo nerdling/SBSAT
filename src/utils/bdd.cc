@@ -1068,10 +1068,10 @@ BDDNode * pruning_p2 (BDDNode * f, BDDNode * c)
 {
    if (f == c)
       return true_ptr;
-   if ((c == true_ptr) || (f == true_ptr) || (f == false_ptr))
-      return f;
    if (c == ite_not (f))
       return false_ptr;
+   if ((c == true_ptr) || (f == true_ptr) || (f == false_ptr))
+      return f;
 
    // We know that f & c are both BDD's with top variables.
    if (f->variable < c->variable)
@@ -1085,6 +1085,51 @@ BDDNode * pruning_p2 (BDDNode * f, BDDNode * c)
       return pruning_p2 (reduce_f (v, f), reduce_f (v, c));
    BDDNode * r = pruning_p2 (reduce_t (v, f), reduce_t (v, c));
    BDDNode * e = pruning_p2 (reduce_f (v, f), reduce_f (v, c));
+   if (r == e)
+      return r;
+   return find_or_add_node (v, r, e);
+}
+
+BDDNode *Build_BDD_From_Inferences (BDDNode *c) 
+{
+	BDDNode *tempBDD = true_ptr;
+	if(c->inferences != NULL) {
+		for(infer *iterator = c->inferences; iterator != NULL; iterator = iterator->next) {
+			if (iterator->nums[1] == 0) {
+				tempBDD = ite_and(tempBDD, ite_var(iterator->nums[0]));
+			} else {
+				tempBDD = ite_and(tempBDD, ite_equ(ite_var(iterator->nums[0]), ite_var(iterator->nums[1])));
+			}
+		//fprintf(stderr, "%d|%d, %d|", x, iterator->nums[0], iterator->nums[1]);
+		}
+	}
+	return tempBDD;
+}
+
+BDDNode * steal (BDDNode * f, BDDNode * c)
+{
+   if (c == ite_not (f))
+      return false_ptr;
+	if ((c == true_ptr) || (f == false_ptr))
+      return f;
+   if (f == c)
+	  return true_ptr;
+	if (f == true_ptr) {
+		BDDNode *Inf_bdd = Build_BDD_From_Inferences(c);
+		return Inf_bdd;
+	}
+   // We know that f & c are both BDD's with top variables.
+   if (f->variable < c->variable)
+      return steal (f, ite_or (c->thenCase, c->elseCase));	//xquantify(c, c->variable));
+   int v = f->variable;
+
+   //v is the top variable of f & c.
+   if (reduce_f (v, c) == false_ptr && reduce_f(v, f) != false_ptr)
+      return steal (reduce_t (v, f), reduce_t (v, c));
+   if (reduce_t (v, c) == false_ptr && reduce_t(v, f) != false_ptr)
+      return steal (reduce_f (v, f), reduce_f (v, c));
+   BDDNode * r = steal (reduce_t (v, f), reduce_t (v, c));
+   BDDNode * e = steal (reduce_f (v, f), reduce_f (v, c));
    if (r == e)
       return r;
    return find_or_add_node (v, r, e);
