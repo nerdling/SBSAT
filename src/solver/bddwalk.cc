@@ -56,8 +56,6 @@
 
 #define BIG 100000000
 
-#define Var(CLAUSE, POSITION) (ABS(clause[CLAUSE][POSITION]))
-
 #define NOVALUE -1
 #define INIT_PARTIAL 1
 #define HISTMAX 101		/* length of histogram of tail */
@@ -115,7 +113,7 @@ float taboo_length = taboo_max-1;//2;
 float true_weight_taboo = 0.5;
 float true_weight_max = 0.5;
 
-float path_factor = 10; //Number of random paths choosen = total number of variables * path_factor;
+float path_factor = 1; //Number of random paths choosen = total number of variables * path_factor;
 //Maybe a special case is needed for clauses?
 
 /************************************/
@@ -130,8 +128,7 @@ int wp_numerator = 10;//NOVALUE;	/* walk probability numerator/denominator */
 int wp_denominator = 1000;
 
 long int numflip;		/* number of changes so far */
-long int numnullflip;		/*  number of times a clause was picked, but no  */
-				/*  variable from it was flipped  */
+
 long int numlook;
 int numrun = BIG;
 int cutoff = 100000; //BIG
@@ -594,11 +591,11 @@ int getRandomTruePath(int x) {
 	varstoflip[path_length] = 0;
 	
 	//Verify the path:
-	if(bdd!=true_ptr) {
-		fprintf(stderr, "ERROR! PATH DOES NOT SATISFY BDD\n");
-		printBDDerr(bdd);
-		exit(0);		  
-	}
+	//if(bdd!=true_ptr) {
+	//	fprintf(stderr, "ERROR! PATH DOES NOT SATISFY BDD\n");
+	//	printBDDerr(bdd);
+	//	exit(0);		  
+	//}
 	
 	//Print the path:
 	//printBDDerr(functions[x]);
@@ -739,11 +736,20 @@ int picknoveltyplus(void)
 		else if(best_diff == second_best_diff) { second_best = best; best = -1; flippath = 2; }
 		else if ((random()%denominator < numerator)) flippath = 2;
 		else flippath = 1;
-		if(try_agains < 30) {
-			if(best_diff < -(numfalse/3) && flippath == 1) goto again;
-			if(second_best_diff < -(numfalse/2) && flippath == 2) goto again;
+		if(try_agains < 20) {
+			if(best_diff < -(numfalse/3) && flippath == 1) { 
+				path_factor++;
+				goto again;
+			}
+			if(second_best_diff < -(numfalse/2) && flippath == 2) {
+				path_factor++;
+				goto again;
+			}
 		}
 	}
+
+	//path_factor = 1;
+	path_factor = 10-(((numfalse)/numBDDs)*10)+1;
 	
 	if(flippath == 1) { //Choose best path
 		for(int i = 0; i<best_to_flip_length+1; i++)
