@@ -45,18 +45,22 @@
 
 #define J_HEUR_SCORES_STACK_ALLOC 1000000
 
+typedef struct {
+   double Pos;
+   double Neg;
+   int    nPos;
+   int    nNeg;
+} HeurScores;
+
 typedef union {
-   double pos;
    void *next_pool;
    int   index_pool;
 } tHeurScoresStackValue;
 
-
-
 typedef struct { 
     int v;
     tHeurScoresStackValue u;
-    double neg;
+    HeurScores h;
     int prev;
 } tHeurScoresStack;
 
@@ -150,11 +154,6 @@ struct AndEqWghtStruct
 };
 
 //---------------------------------------------------------------------
-
-typedef struct {
-   double Pos;
-   double Neg;
-} HeurScores;
 
 extern HeurScores *arrHeurScores;
 extern struct AndEqFalseWghtStruct *arrAndEqFalseWght;

@@ -184,6 +184,12 @@ GetHeurScoresFromSmurf(int i)
          int nVble = arrElts[k];
          arrHeurScores[nVble].Pos += pState->arrTransitions[j+BOOL_TRUE].fHeuristicWeight;
          arrHeurScores[nVble].Neg += pState->arrTransitions[j+BOOL_FALSE].fHeuristicWeight;
+
+         if (pState->arrTransitions[j+BOOL_TRUE].fHeuristicWeight)
+            arrHeurScores[nVble].nPos++;
+         if (pState->arrTransitions[j+BOOL_FALSE].fHeuristicWeight)
+            arrHeurScores[nVble].nNeg++;
+
          j+=2;
       }
    } else {
@@ -270,19 +276,19 @@ J_FreeHeuristicScores()
 #define J_ONE 0
 
 // CLASSIC
-#define J_WEIGHT(pos, neg) (J_ONE+pos) * (J_ONE+neg)
+#define J_WEIGHT(x) (J_ONE+x.Pos) * (J_ONE+x.Neg)
 
 // ABSOLUTE MAXIMUM
-//#define J_WEIGHT(pos, neg) (neg > pos ? neg : pos)
+//#define J_WEIGHT(x) (x.Neg > x.Pos ? x.Neg : x.Pos)
 
 // BERM
-//#define J_WEIGHT(pos, neg) (neg>pos?((pos*2) + neg):((neg*2) + pos)) 
+//#define J_WEIGHT(x) (x.Neg>x.Pos?((x.Pos*2) + x.Neg):((x.Neg*2) + x.Pos)) 
 
 // ADDITION
-//#define J_WEIGHT(pos, neg) (J_ONE+pos) + (J_ONE+neg)
+//#define J_WEIGHT(x) (J_ONE+x.Pos) + (J_ONE+x.Neg)
 
 // NEW??
-//#define J_WEIGHT(pos, neg) (neg>pos?((pos*3) + neg) : ((neg*3) + pos))
+//#define J_WEIGHT(x) (x.Pos * x.Neg * (x.nPos * x.nNeg))
 
 // slider_80_unsat -- the order from the best to worst is (all J_ONE = 0)
 // CLASSIC
@@ -318,7 +324,7 @@ J_OptimizedHeuristic(int *pnBranchAtom, int *pnBranchValue)
       {
         //if (arrHeurScores[i].Pos == 0 && arrHeurScores[i].Neg == 0) continue;
          nBestVble = i;
-         fMaxWeight = J_WEIGHT(arrHeurScores[i].Pos, arrHeurScores[i].Neg);
+         fMaxWeight = J_WEIGHT(arrHeurScores[i]);
          break;
       }
    }
@@ -331,8 +337,7 @@ J_OptimizedHeuristic(int *pnBranchAtom, int *pnBranchValue)
          if (arrSolution[i] == BOOL_UNKNOWN)
          {
             //if (arrHeurScores[i].Pos == 0 && arrHeurScores[i].Neg == 0) continue;
-            fVbleWeight = J_WEIGHT(arrHeurScores[i].Pos, arrHeurScores[i].Neg);
-            ;
+            fVbleWeight = J_WEIGHT(arrHeurScores[i]);
             if (fVbleWeight > fMaxWeight)
             {
                fMaxWeight = fVbleWeight;
@@ -361,7 +366,7 @@ J_OptimizedHeuristic(int *pnBranchAtom, int *pnBranchValue)
       {
          //if (arrHeurScores[i].Pos == 0 && arrHeurScores[i].Neg == 0) continue;
          nBestVble = i;
-         fMaxWeight = J_WEIGHT(arrHeurScores[i].Pos, arrHeurScores[i].Neg);
+         fMaxWeight = J_WEIGHT(arrHeurScores[i]);
          break;
       }
    }
@@ -374,7 +379,7 @@ J_OptimizedHeuristic(int *pnBranchAtom, int *pnBranchValue)
          if (arrSolution[i] == BOOL_UNKNOWN)
          {
             //if (arrHeurScores[i].Pos == 0 && arrHeurScores[i].Neg == 0) continue;
-            fVbleWeight = J_WEIGHT(arrHeurScores[i].Pos, arrHeurScores[i].Neg);
+            fVbleWeight = J_WEIGHT(arrHeurScores[i]);
             if (fVbleWeight > fMaxWeight)
             {
                fMaxWeight = fVbleWeight;
@@ -401,7 +406,7 @@ J_OptimizedHeuristic(int *pnBranchAtom, int *pnBranchValue)
       if (arrSolution[i] == BOOL_UNKNOWN)
       {
          nBestVble = i;
-         fMaxWeight = J_WEIGHT(arrHeurScores[i].Pos, arrHeurScores[i].Neg);
+         fMaxWeight = J_WEIGHT(arrHeurScores[i]);
          break;
       }
    }
@@ -413,7 +418,7 @@ J_OptimizedHeuristic(int *pnBranchAtom, int *pnBranchValue)
       {
          if (arrSolution[i] == BOOL_UNKNOWN)
          {
-            fVbleWeight = J_WEIGHT(arrHeurScores[i].Pos, arrHeurScores[i].Neg);
+            fVbleWeight = J_WEIGHT(arrHeurScores[i]);
             if (fVbleWeight > fMaxWeight)
             {
                fMaxWeight = fVbleWeight;
@@ -531,8 +536,7 @@ Add_arrHeurScoresStack(int vx)
    }
 
    arrHeurScoresStack[nHeurScoresStackIdx].v = vx;  
-   arrHeurScoresStack[nHeurScoresStackIdx].u.pos = arrHeurScores[vx].Pos;  
-   arrHeurScoresStack[nHeurScoresStackIdx].neg   = arrHeurScores[vx].Neg; 
+   arrHeurScoresStack[nHeurScoresStackIdx].h = arrHeurScores[vx];
    arrHeurScoresStack[nHeurScoresStackIdx].prev  = arrHeurScoresFlags[vx]; 
    arrHeurScoresFlags[vx]=nCurHeurScoresVersion;
 }
@@ -560,8 +564,7 @@ J_PopHeuristicScores()
          arrHeurScoresStack = new_arrHeurScoresStack;
       } else
          if (v >= 0) {
-            arrHeurScores[v].Pos=arrHeurScoresStack[nHeurScoresStackIdx].u.pos;
-            arrHeurScores[v].Neg=arrHeurScoresStack[nHeurScoresStackIdx].neg;
+            arrHeurScores[v] =arrHeurScoresStack[nHeurScoresStackIdx].h;
             arrHeurScoresFlags[v]=arrHeurScoresStack[nHeurScoresStackIdx].prev;
          }
       nHeurScoresStackIdx--;
@@ -857,6 +860,13 @@ J_SetupHeuristicScores()
    } 
 }
 
+/*
+ * -H j -- standard Johnson (inference = 1)
+ * -H js -- inference weight is the sum of # of smurfs, specfn, lemmas
+ * -H jq -- sqared sum
+ * -H jr -- squared and scaled
+ *
+ */
 ITE_INLINE void
 J_Setup_arrJWeights()
 {

@@ -255,6 +255,10 @@ J_UpdateHeuristicSmurf(SmurfState *pOldState, SmurfState *pState, int nSmurfInde
                pOldState->arrTransitions[j+BOOL_TRUE].fHeuristicWeight;
             arrHeurScores[nVble].Neg -= 
                pOldState->arrTransitions[j+BOOL_FALSE].fHeuristicWeight;
+
+            arrHeurScores[nVble].nPos--;
+            arrHeurScores[nVble].nNeg--;
+            
             j+=2;
          }
       } else {
@@ -293,8 +297,7 @@ J_UpdateHeuristicSmurf(SmurfState *pOldState, SmurfState *pState, int nSmurfInde
       }
    }
 
-   /* FIXME: optimize me */
-   //if (pState == pTrueSmurfState) return;
+   //if (pState == pTrueSmurfState) { return; }
 
    // add heuristic influence 
    arrElts  = pState->vbles.arrElts;
@@ -314,6 +317,10 @@ J_UpdateHeuristicSmurf(SmurfState *pOldState, SmurfState *pState, int nSmurfInde
                pState->arrTransitions[j+BOOL_TRUE].fHeuristicWeight;
             arrHeurScores[nVble].Neg += 
                pState->arrTransitions[j+BOOL_FALSE].fHeuristicWeight;
+
+            arrHeurScores[nVble].nPos++;
+            arrHeurScores[nVble].nNeg++;
+
             j+=2;
          }
       } else {
