@@ -291,9 +291,7 @@ BackTrack()
          )
 #endif
 
-         if (pBacktrackTop->pLemmaInfo) {
-            FreeLemma(pBacktrackTop->pLemmaInfo, false);
-         }
+         if (pBacktrackTop->pLemmaInfo) FreeLemma(pBacktrackTop->pLemmaInfo);
 
          arrSolution[nBacktrackAtom] = BOOL_UNKNOWN;
 
@@ -359,8 +357,16 @@ BackTrack()
          previous->pNextLemma[0] = p->pNextLemma[0];
          if (p == pUnitLemmaListTail) pUnitLemmaListTail = previous;
 
-         AddLemmaIntoCache(p);
-
+         if (p->bPutInCache) //Add p to the two corresponding lemma lists...
+         {
+            AddLemmaIntoCache(p);
+         }
+         else
+         {
+            // The lemma does not go into the lemma cache.
+            // Recycle the lemma immediately.
+            FreeLemma(p);
+         }
          p = previous;
       }
       else

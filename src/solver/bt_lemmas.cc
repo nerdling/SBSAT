@@ -202,9 +202,9 @@ UpdateEachAffectedLemma(AffectedFuncsStruct *pAFS, int nInferredValue)
             );
 
          pLemmaListDisagreed->nNumLemmaInfs++;
-         pLemmaListDisagreed->nLemmaLastUsed = ite_counters[NUM_LPQ_ENQUEUE];
+         pLemmaListDisagreed->nLemmaLastUsed = ite_counters[NUM_LEMMA_INTO_CACHE];
          if (pLemmaListDisagreed->nLemmaFirstUseful == 0) 
-            pLemmaListDisagreed->nLemmaFirstUseful = ite_counters[NUM_LPQ_ENQUEUE];
+            pLemmaListDisagreed->nLemmaFirstUseful = ite_counters[NUM_LEMMA_INTO_CACHE];
          ite_counters[INF_LEMMA]++;
          InferLiteral(nWatchedVble, nWatchedVblePolarity, false,
                pLemmaListDisagreed->pLemma,
@@ -221,9 +221,9 @@ UpdateEachAffectedLemma(AffectedFuncsStruct *pAFS, int nInferredValue)
          continue;
       }
       pLemmaListDisagreed->nNumLemmaConflict++;
-      pLemmaListDisagreed->nLemmaLastUsed = ite_counters[NUM_LPQ_ENQUEUE];
+      pLemmaListDisagreed->nLemmaLastUsed = ite_counters[NUM_LEMMA_INTO_CACHE];
       if (pLemmaListDisagreed->nLemmaFirstUseful == 0) 
-         pLemmaListDisagreed->nLemmaFirstUseful = ite_counters[NUM_LPQ_ENQUEUE];
+         pLemmaListDisagreed->nLemmaFirstUseful = ite_counters[NUM_LEMMA_INTO_CACHE];
       pConflictLemma = pLemmaListDisagreed->pLemma;
       // goto_Backtrack;
       return ERR_BT_LEMMA;
@@ -330,9 +330,9 @@ UpdateEachAffectedLemma(AffectedFuncsStruct *pAFS, int nInferredValue)
             );
 
          pLemmaListDisagreed->nNumLemmaInfs++;
-         pLemmaListDisagreed->nLemmaLastUsed = ite_counters[NUM_LPQ_ENQUEUE];
+         pLemmaListDisagreed->nLemmaLastUsed = ite_counters[NUM_LEMMA_INTO_CACHE];
          if (pLemmaListDisagreed->nLemmaFirstUseful == 0) 
-            pLemmaListDisagreed->nLemmaFirstUseful = ite_counters[NUM_LPQ_ENQUEUE];
+            pLemmaListDisagreed->nLemmaFirstUseful = ite_counters[NUM_LEMMA_INTO_CACHE];
          ite_counters[INF_LEMMA]++;
          InferLiteral(nWatchedVble, nWatchedVblePolarity, false,
                pLemmaListDisagreed->pLemma, pLemmaListDisagreed, 1);
@@ -349,9 +349,9 @@ UpdateEachAffectedLemma(AffectedFuncsStruct *pAFS, int nInferredValue)
          continue;
       }
       pLemmaListDisagreed->nNumLemmaConflict++;
-      pLemmaListDisagreed->nLemmaLastUsed = ite_counters[NUM_LPQ_ENQUEUE];
+      pLemmaListDisagreed->nLemmaLastUsed = ite_counters[NUM_LEMMA_INTO_CACHE];
       if (pLemmaListDisagreed->nLemmaFirstUseful == 0) 
-         pLemmaListDisagreed->nLemmaFirstUseful = ite_counters[NUM_LPQ_ENQUEUE];
+         pLemmaListDisagreed->nLemmaFirstUseful = ite_counters[NUM_LEMMA_INTO_CACHE];
       pConflictLemma = pLemmaListDisagreed->pLemma;
       // goto_Backtrack;
       return ERR_BT_LEMMA;

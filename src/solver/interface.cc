@@ -50,8 +50,8 @@ ITE_GetNextDecision(int *nInferredAtom, int *nInferredValue)
 void
 ITE_MakeDecision(int nInferredAtom, int nInferredValue)
 {
-   fprintf(stderr, "ITE_MakeDecision(nInferredAtom=%d, nInferredValue=%d)\n",
-         nInferredAtom, nInferredValue);
+//   fprintf(stderr, "ITE_MakeDecision(nInferredAtom=%d, nInferredValue=%d)\n",
+//         nInferredAtom, nInferredValue);
    InferLiteral(nInferredAtom, nInferredValue,
          false, NULL, NULL, 0);
 }
@@ -94,7 +94,7 @@ ITE_Brancher()
 int
 ITE_GetVarAsgnment(int var)
 {
-   fprintf(stderr, "ITE_GetVarAsgnment(var=%d) = %d\n", 
-         var, arrSolution[var]);
+//   fprintf(stderr, "ITE_GetVarAsgnment(var=%d) = %d\n", 
+//         var, arrSolution[var]);
     return arrSolution[var];
 }

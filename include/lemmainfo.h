@@ -105,6 +105,7 @@ typedef struct _LemmaInfoStruct {
   // The next two members are store links into the Lemma Priority Queue.
   // They are not initialized until the lemma is moved into the lemma cache.
   // (Lemmas are recycled from the lemma cache only.)
+  int cache;
   _LemmaInfoStruct *pLPQPrev;
   _LemmaInfoStruct *pLPQNext;
 
@@ -121,7 +122,7 @@ typedef struct _LemmaInfoStruct {
   // how many times this lemma caused contradiction
   int nNumLemmaConflict;
 
-  // NUM_LPQ_ENQUEUE
+  // NUM_LEMMA_INTO_CACHE
   int nLemmaNumber;
 
   // how many times this lemma caused inference
@@ -133,12 +134,6 @@ typedef struct _LemmaInfoStruct {
   // when was this lemma used the last time
   int nLemmaLastUsed;
 
-#ifdef HEURISTIC_USES_LEMMA_COUNTS
-  bool bIsInCache;  // True iff the lemma has been moved into the lemma cache.
-  int nNumUnknown_LemmaCount;  // Number of uninstantiated literals in
-  // the lemma the last time that the literals were counted.  This value
-  // is reliable only if bIsInCache is true
-#endif
 } LemmaInfoStruct;
 
 class PartialAssignmentEncoding
@@ -292,7 +287,7 @@ AddLemma(int nNumLiterals,   //Can be used in the brancher
 	 );	 
 
 ITE_INLINE void
-FreeLemma(LemmaInfoStruct *pLemmaInfo, bool bIsCached);
+FreeLemma(LemmaInfoStruct *pLemmaInfo);
 
 ITE_INLINE void
 FreeLemmas(int n);
@@ -312,5 +307,41 @@ EnterIntoLemmaSpace(int nNumElts, int arrLemmaLiterals[],
 		    bool bRecycleLemmasAsNeeded, LemmaBlock *&pFirstBlock,
 		    LemmaBlock *&pLastBlock, int &nNumBlocks);
 
+// lemmawlits -- watched literals
+ITE_INLINE void
+RemoveLemmaFromWatchedLits(LemmaInfoStruct *pLemmaInfo);
+ITE_INLINE void
+AddLemmaIntoWatchedLits(LemmaInfoStruct *p);
+ITE_INLINE void
+LemmaSetWatchedLits(LemmaInfoStruct *pLemmaInfo, int *arr, int num);
+
+// lemmainfo -- lemmainfostruct 
+ITE_INLINE void
+InitLemmaInfoArray();
+ITE_INLINE void
+FreeLemmaInfoArray();
+ITE_INLINE void
+FreeLemmaInfoStruct(LemmaInfoStruct *pLemmaInfo);
+ITE_INLINE LemmaInfoStruct *
+AllocateLemmaInfoStruct();
+
+// lemmaspace
+ITE_INLINE void
+InitLemmaSpacePool(int at_least);
+ITE_INLINE void 
+AllocateMoreLemmaSpace(int at_least);
+ITE_INLINE void
+FreeLemmaBlocks(LemmaInfoStruct *pLemmaInfo);
+ITE_INLINE void
+FillLemmaWithReversedPolarities(LemmaBlock *pLemma);
+ITE_INLINE void
+FreeLemmaSpacePool();
+ITE_INLINE void
+EnterIntoLemmaSpace(int nNumElts,
+      int arrLemmaLiterals[],
+      bool bRecycleLemmasAsNeeded,
+      LemmaBlock *&pFirstBlock,
+      LemmaBlock *&pLastBlock,
+      int &nNumBlocks);
 
 #endif

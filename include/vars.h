@@ -73,7 +73,7 @@
 #define NUM_CHOICE_POINTS     27
 #define HEU_DEP_VAR      28
 
-#define NUM_LPQ_ENQUEUE      29
+#define NUM_LEMMA_INTO_CACHE    29
 
 #define MAX_COUNTER      30
 

@@ -56,11 +56,6 @@
 #define SHARE_STATES_IF_PATHS_MATCH
 
 
-//#define HEURISTIC_USES_LEMMA_COUNTS
-#ifdef HEURISTIC_USES_LEMMA_COUNTS
-#define LEMMA_COUNT_FREQUENCY 1000
-#endif
-
 #define IsSpecialFunc(nFuncType) ((nFuncType) == OR || (nFuncType) == AND || (nFuncType) == PLAINOR || (nFuncType) == PLAINXOR)
 #define BOOL_NEG(nBoolValue) ((nBoolValue) == BOOL_TRUE ? BOOL_FALSE : BOOL_TRUE)
 

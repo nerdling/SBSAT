@@ -75,7 +75,7 @@ ConstructTempLemma()
       arrLemmaFlag[nConflictVble] = true;
    }
    if (pConflictLemmaInfo) {
-      FreeLemma(pConflictLemmaInfo, false);
+      FreeLemma(pConflictLemmaInfo);
       pConflictLemmaInfo = NULL;
    }
    return nTempLemmaIndex;
@@ -209,60 +209,4 @@ InferNLits(SpecialFunc *pSpecialFunc, int n)
    assert(n==0);
 }
 
-
-ITE_INLINE
-void
-AddLemmaIntoCache(LemmaInfoStruct *p)
-{
-   if(p->bPutInCache) //Add p to the two corresponding lemma lists...
-   {
-      /* the only place to increase gnNumCachedLemmas */
-      if (++gnNumCachedLemmas > MAX_NUM_CACHED_LEMMAS) FreeLemmas(1);
-
-#ifdef HEURISTIC_USES_LEMMA_COUNTS
-      p->bIsInCache = true;
-#endif
-      //Add to watched literal 1s lemma list
-      AffectedFuncsStruct *pAFS = arrAFS + p->nWatchedVble[0];
-      if(p->nWatchedVblePolarity[0])
-      {
-         p->pNextLemma[0] = pAFS->LemmasWherePos[0].pNextLemma[0];
-         p->pPrevLemma[0] = &(pAFS->LemmasWherePos[0]);
-         pAFS->LemmasWherePos[0].pNextLemma[0] = p;
-         if (p->pNextLemma[0]) p->pNextLemma[0]->pPrevLemma[0] = p;
-      }
-      else
-      {
-         p->pNextLemma[0] = pAFS->LemmasWhereNeg[0].pNextLemma[0];
-         p->pPrevLemma[0] = &(pAFS->LemmasWhereNeg[0]);
-         pAFS->LemmasWhereNeg[0].pNextLemma[0] = p;
-         if (p->pNextLemma[0]) p->pNextLemma[0]->pPrevLemma[0] = p;
-      }
-
-      //Add to watched literal 2s lemma list
-      pAFS = arrAFS + p->nWatchedVble[1];
-      if(p->nWatchedVblePolarity[1])
-      {
-         p->pNextLemma[1] = pAFS->LemmasWherePos[1].pNextLemma[1];
-         p->pPrevLemma[1] = &(pAFS->LemmasWherePos[1]);
-         pAFS->LemmasWherePos[1].pNextLemma[1] = p;
-         if (p->pNextLemma[1]) p->pNextLemma[1]->pPrevLemma[1] = p;
-      }
-      else
-      {
-         p->pNextLemma[1] = pAFS->LemmasWhereNeg[1].pNextLemma[1];
-         p->pPrevLemma[1] = &(pAFS->LemmasWhereNeg[1]);
-         pAFS->LemmasWhereNeg[1].pNextLemma[1] = p;
-         if (p->pNextLemma[1]) p->pNextLemma[1]->pPrevLemma[1] = p;
-      }
-
-      LPQEnqueue(p);
-   }
-   else
-   {
-      // The lemma does not go into the lemma cache.
-      // Recycle the lemma immediately.
-      FreeLemma(p, false);
-   }
-}
 

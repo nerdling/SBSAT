@@ -132,7 +132,8 @@ libsolver_a_SOURCES = solve.cc bddwalk.cc \
              heuristic.cc \
              bt_lemmas.cc bt_specfn.cc bt_smurfs.cc \
              bt_specfn_and.cc bt_specfn_xor.cc \
-             lemmainfo.cc lemmaspace.cc smurffactory.cc smurfstates.cc \
+             lemmas.cc lemmacache.cc lemmainfo.cc lemmaspace.cc lemmawlits.cc lemmamisc.cc \
+             smurffactory.cc smurfstates.cc \
              state_stacks.cc \
 	     bdd2smurf.cc specfn2smurf.cc autarky.cc \
              display.cc display_sf.cc verify.cc \
@@ -157,8 +158,9 @@ am_libsolver_a_OBJECTS = solve.$(OBJEXT) bddwalk.$(OBJEXT) \
 	l_heuristic.$(OBJEXT) l_lemma.$(OBJEXT) i_heuristic.$(OBJEXT) \
 	heuristic.$(OBJEXT) bt_lemmas.$(OBJEXT) bt_specfn.$(OBJEXT) \
 	bt_smurfs.$(OBJEXT) bt_specfn_and.$(OBJEXT) \
-	bt_specfn_xor.$(OBJEXT) lemmainfo.$(OBJEXT) \
-	lemmaspace.$(OBJEXT) smurffactory.$(OBJEXT) \
+	bt_specfn_xor.$(OBJEXT) lemmas.$(OBJEXT) lemmacache.$(OBJEXT) \
+	lemmainfo.$(OBJEXT) lemmaspace.$(OBJEXT) lemmawlits.$(OBJEXT) \
+	lemmamisc.$(OBJEXT) smurffactory.$(OBJEXT) \
 	smurfstates.$(OBJEXT) state_stacks.$(OBJEXT) \
 	bdd2smurf.$(OBJEXT) specfn2smurf.$(OBJEXT) autarky.$(OBJEXT) \
 	display.$(OBJEXT) display_sf.$(OBJEXT) verify.$(OBJEXT) \
@@ -191,7 +193,9 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	./$(DEPDIR)/j_heuristic.Po ./$(DEPDIR)/j_smurf.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/j_specfn.Po ./$(DEPDIR)/j_update_heu.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/l_heuristic.Po ./$(DEPDIR)/l_lemma.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/lemmainfo.Po ./$(DEPDIR)/lemmaspace.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/lemmacache.Po ./$(DEPDIR)/lemmainfo.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/lemmamisc.Po ./$(DEPDIR)/lemmas.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/lemmaspace.Po ./$(DEPDIR)/lemmawlits.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/libsolver.Po ./$(DEPDIR)/load_lemmas.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/recordsol.Po ./$(DEPDIR)/select_bp.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/sf_addons.Po ./$(DEPDIR)/smurfaddons.Po \
@@ -267,8 +271,12 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/j_update_heu.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/l_heuristic.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/l_lemma.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lemmacache.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lemmainfo.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lemmamisc.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lemmas.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lemmaspace.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lemmawlits.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libsolver.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/load_lemmas.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/recordsol.Po@am__quote@

@@ -85,6 +85,10 @@
 
 #include "lemmainfo.cc"
 #include "lemmaspace.cc"
+#include "lemmawlits.cc"
+#include "lemmamisc.cc"
+#include "lemmacache.cc"
+#include "lemmas.cc"
 #include "verify.cc"
 #include "display.cc"
 #include "display_sf.cc"

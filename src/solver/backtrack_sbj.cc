@@ -329,9 +329,7 @@ BackTrack_SBJ()
          )
 #endif
 			
-         if (pBacktrackTop->pLemmaInfo) {
-            FreeLemma(pBacktrackTop->pLemmaInfo, false);
-         }
+         if (pBacktrackTop->pLemmaInfo) FreeLemma(pBacktrackTop->pLemmaInfo);
 			
          arrSolution[nBacktrackAtom] = BOOL_UNKNOWN;
       };  //  while (1)
@@ -395,7 +393,7 @@ BackTrack_SBJ()
 					  
 				  pBacktrackTop->pLemmaInfo = NULL;
 			  }
-			  if (pBacktrackTop->pLemmaInfo) FreeLemma(pBacktrackTop->pLemmaInfo, false);
+			  if (pBacktrackTop->pLemmaInfo) FreeLemma(pBacktrackTop->pLemmaInfo);
 			  
 			  /*m invalidating arrBacktrackStackIndex but keep the prev value */
 			  int nBacktrackAtom = pBacktrackTop->nBranchVble;
