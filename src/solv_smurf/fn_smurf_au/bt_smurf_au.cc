@@ -98,6 +98,19 @@ UpdateRegularSmurfAu(int nSmurfAuIndex)
 
    d9_printf2("Visiting Autarky Smurf #%d\n", nSmurfAuIndex);
 
+   /*if (
+        nSmurfAuIndex == 2654
+      )
+   {
+      nNumUnresolvedFunctions--;
+      arrSolverFunctions[nSmurfAuIndex].fn_smurf_au.pCurrentState =
+         pState = pTrueSmurfAuState;
+      d9_printf3("Decremented nNumUnresolvedFunctions to %d due to autarky smurf # %d\n",
+            nNumUnresolvedFunctions, nSmurfAuIndex);
+      return NO_ERROR;
+   }
+   */
+
    pState = arrSolverFunctions[nSmurfAuIndex].fn_smurf_au.pCurrentState;
    assert(pState != pTrueSmurfAuState);
 
@@ -138,28 +151,38 @@ UpdateRegularSmurfAu(int nSmurfAuIndex)
                nSmurfAuIndex,
                pTransitionAu->positiveInferences.arrElts,
                   pTransitionAu->positiveInferences.nNumElts,
-                  BOOL_TRUE)) return ERR_BT_SMURF_AU;
+                  BOOL_TRUE)) {
+         assert(0);
+         dE_printf1("Autarky Smurf contradiction\n");
+         exit(1);
+         break;
+      }
 
-         if (pTransitionAu->negativeInferences.nNumElts &&
-               CheckSmurfAuInferences(
-                  nSmurfAuIndex,
-                  pTransitionAu->negativeInferences.arrElts,
-                  pTransitionAu->negativeInferences.nNumElts,
-                  BOOL_FALSE)) return ERR_BT_SMURF_AU;
+      if (pTransitionAu->negativeInferences.nNumElts &&
+            CheckSmurfAuInferences(
+               nSmurfAuIndex,
+               pTransitionAu->negativeInferences.arrElts,
+               pTransitionAu->negativeInferences.nNumElts,
+               BOOL_FALSE)) {
+         assert(0);
+         dE_printf1("Autarky Smurf contradiction\n");
+         exit(1);
+         break;
+      }
 
-         pState->cVisited |= 1;
-         arrSolverFunctions[nSmurfAuIndex].fn_smurf_au.pCurrentState =
-            pState = pTransitionAu->pNextState;
-         assert(pState != NULL);
-         if (pState == pTrueSmurfAuState)
-         {
-            nNumUnresolvedFunctions--;
-            TB_9(
-                  d9_printf3("Decremented nNumUnresolvedFunctions to %d due to autarky smurf # %d\n",
-                     nNumUnresolvedFunctions, nSmurfAuIndex);
-               )
-               break; // break the for all vbles in smurf_au loop
-         }
+      pState->cVisited |= 1;
+      arrSolverFunctions[nSmurfAuIndex].fn_smurf_au.pCurrentState =
+         pState = pTransitionAu->pNextState;
+      assert(pState != NULL);
+      if (pState == pTrueSmurfAuState)
+      {
+         nNumUnresolvedFunctions--;
+         TB_9(
+               d9_printf3("Decremented nNumUnresolvedFunctions to %d due to autarky smurf # %d\n",
+                  nNumUnresolvedFunctions, nSmurfAuIndex);
+             )
+            break; // break the for all vbles in smurf_au loop
+      }
 
    } // while (1) there is a instantiated variable
 
