@@ -689,20 +689,20 @@ Rebuild_BDD (BDDNode *bdd, int *bdd_length, int *&bdd_vars)
 					iterator->nums[0] = -result->left;
 					iterator->nums[1] = 0;
 				} else if (abs (result->left) < abs (result->rght)) {
-					if (result->rght < 0) {
-						iterator->nums[0] = -result->rght;
-						iterator->nums[1] = -result->left;
-					} else {
-						iterator->nums[0] = result->rght;
-						iterator->nums[1] = result->left;
-					}
-				} else {
 					if (result->left < 0) {
 						iterator->nums[0] = -result->left;
 						iterator->nums[1] = -result->rght;
 					} else {
 						iterator->nums[0] = result->left;
 						iterator->nums[1] = result->rght;
+					}
+				} else {
+					if (result->rght < 0) {
+						iterator->nums[0] = -result->rght;
+						iterator->nums[1] = -result->left;
+					} else {
+						iterator->nums[0] = result->rght;
+						iterator->nums[1] = result->left;
 					}
 				}
 			} else {
@@ -728,20 +728,20 @@ Rebuild_BDD (BDDNode *bdd, int *bdd_length, int *&bdd_vars)
 					iterator->nums[0] = result->left;
 					iterator->nums[1] = 0;
 				} else if (abs (result->left) < abs (result->rght)) {
-					if (result->rght < 0) {
-						iterator->nums[0] = -result->rght;
-						iterator->nums[1] = result->left;
-					} else {
-						iterator->nums[0] = result->rght;
-						iterator->nums[1] = -result->left;
-					}
-				} else {
 					if (result->left < 0) {
 						iterator->nums[0] = -result->left;
 						iterator->nums[1] = result->rght;
 					} else {
 						iterator->nums[0] = result->left;
 						iterator->nums[1] = -result->rght;
+					}
+				} else {
+					if (result->rght < 0) {
+						iterator->nums[0] = -result->rght;
+						iterator->nums[1] = result->left;
+					} else {
+						iterator->nums[0] = result->rght;
+						iterator->nums[1] = -result->left;
 					}
 				}
 			}
