@@ -48,7 +48,6 @@ CreateTransition(SmurfState *pSmurfState, int i, int nSolverVble, int value)
 
    // Compute transition that occurs when vble is set to true.
    BDDNodeStruct *pFuncEvaled = set_variable(pSmurfState->pFunc, nVble, value==BOOL_TRUE?1:0);
-   InitializeAddons(pFuncEvaled);
    SmurfState *pSmurfStateOfEvaled = BDD2Smurf(pFuncEvaled);
    assert(pSmurfStateOfEvaled != NULL);
    AddStateTransition(pSmurfState, i, nSolverVble, value,
@@ -73,16 +72,14 @@ ComputeSmurfOfNormalized(BDDNodeStruct *pFunc)
    // Collapse 'true' Smurf states.
    if (pFunc == true_ptr) return pTrueSmurfState;
 
-   if (SFADDONS(pFunc->addons)->pState) {
-      return SFADDONS(pFunc->addons)->pState;
-   }
+   if (pFunc->pState) return (SmurfState*)(pFunc->pState);
 
    SmurfState *pSmurfState = AllocateSmurfState();
 
    ite_counters[SMURF_NODE_NEW]++;
 
    pSmurfState->pFunc = pFunc;
-   SFADDONS(pFunc->addons)->pState = pSmurfState;
+   pFunc->pState = (void*)pSmurfState;
 
    // get all the variables
    long tempint_max = 0;
@@ -137,8 +134,7 @@ BDD2Smurf(BDDNodeStruct *pFunc)
    // Otherwise, returns a pointer to the initial Smurf state.
 {
    // Non-special function -- represent with regular state machine.
-   SFADDONS(pFunc->addons)->pReduct = set_variable_all_infs(pFunc);
-   InitializeAddons(SFADDONS(pFunc->addons)->pReduct);
+   BDDNodeStruct *pReduct = set_variable_all_infs(pFunc);
 
-   return ComputeSmurfOfNormalized(SFADDONS(pFunc->addons)->pReduct);
+   return ComputeSmurfOfNormalized(pReduct);
 }

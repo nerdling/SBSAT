@@ -39,15 +39,6 @@
 #define COMMON_H
 
 //#define BDD_MIRROR_NODE
-//#define USE_BDD_REF_COUNT
-
-#ifdef USE_BDD_REF_COUNT
-void bddtable_deref_node(BDDNode *n);
-void bddtable_ref_node(BDDNode *n);
-#else
-#define bddtable_deref_node(n)
-#define bddtable_ref_node(n)
-#endif
 
 struct llist{
    int num;
@@ -134,21 +125,26 @@ struct store{
 };
 
 typedef struct BDDNodeStruct {
-   int flag;
    int variable;
-   struct BDDNodeStruct *thenCase, *elseCase, *notCase, *tmp_bdd, *or_bdd, *t_and_not_e_bdd, *not_t_and_e_bdd;
-#ifdef USE_BDD_REF_COUNT
-   int ref_count;
-#endif
-   void *var_ptr;
+   BDDNodeStruct *next;
+   struct BDDNodeStruct *thenCase, *elseCase, *notCase;
+
+   /* memoised values */
+   int flag;
+   int tmp_int; 
+   infer *inferences, *tmp_infer;
+   struct BDDNodeStruct *tmp_bdd, *or_bdd, *t_and_not_e_bdd, *not_t_and_e_bdd;
+
 #ifdef BDD_MIRROR_NODE
    struct BDDNodeStruct *mirrCase;
 #endif
-   int tmp_int; 
-   infer *inferences, *tmp_infer;
-   BDDNodeStruct *next;
-   void *addons;
+
+   /* smurf state */
+   void *pState;
    
+   /* for tracer5 */
+   void *var_ptr;
+
    // BDDWalksat addons
 	int hamming;
 	float density;

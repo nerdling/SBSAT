@@ -304,8 +304,6 @@ int setALLequiv(int nums0, int nums1, int torf) {
 		BDDNode *before = functions[j];
 		functions[j] = num_replace (functions[j], nums1, nums0);
 		if (before != functions[j]) {
-         bddtable_ref_node(functions[j]);
-         bddtable_deref_node(before);
 			if (Rebuild_BDDx(j)==TRIV_UNSAT)
 			  return TRIV_UNSAT;
 		}
@@ -314,8 +312,6 @@ int setALLequiv(int nums0, int nums1, int torf) {
 	BDDNode *before = functions[0];
 	functions[0] = num_replace (functions[0], nums1, nums0);
 	if (before != functions[0]) {
-      bddtable_ref_node(functions[0]);
-      bddtable_deref_node(before);
       if (Rebuild_BDDx(0)==TRIV_UNSAT)
 		  return TRIV_UNSAT;
 	}
@@ -350,8 +346,6 @@ int setALLinfer(int nums0, int torf) {
 		BDDNode *before = functions[j];
 		functions[j] = set_variable (functions[j], nums0, torf);
 		if (before != functions[j]) {
-         bddtable_ref_node(functions[j]);
-         bddtable_deref_node(before);
          if (Rebuild_BDDx(j)==TRIV_UNSAT)
 			  return TRIV_UNSAT;
 		}
@@ -360,8 +354,6 @@ int setALLinfer(int nums0, int torf) {
 	BDDNode *before = functions[0];
 	functions[0] = set_variable (functions[0], nums0, torf);
 	if (before != functions[0]) {
-      bddtable_ref_node(functions[0]);
-      bddtable_deref_node(before);
 		if (Rebuild_BDDx(0)==TRIV_UNSAT)
 		  return TRIV_UNSAT;
 	}

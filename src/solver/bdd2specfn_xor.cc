@@ -47,9 +47,6 @@ BDD2Specfn_XOR(BDDNodeStruct *pFunc,
 {
    assert(/*nFunctionType == XOR ||*/ nFunctionType == PLAINXOR);
 
-   // We assume that special func has no implied literals.
-   SFADDONS(pFunc->addons)->pReduct = pFunc;
-
    /* -------------- Left Hand Side -------------- */
 
    // the result should be ODD for fn to be sat

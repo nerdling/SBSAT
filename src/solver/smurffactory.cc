@@ -223,23 +223,8 @@ InitSmurfFactory()
    }
 #endif
 
-
-   // Make sure that the addons pointer of each BDD is NULL.
-   // there are two cycles since the parts of BDD might be shared
-   //for (int i = 0; i < nmbrFunctions; i++)
-   //    AssertNullAddons(functions[i]);
-
-   for (int i = 0; i < nmbrFunctions; i++) {
-      InitializeAddons(functions[i]);
-      if (xorFunctions[i])
-         InitializeAddons(xorFunctions[i]);
-   }
-
-   InitializeAddons(true_ptr);
-
    // Initialize info regarding the 'true' function.
    pTrueSmurfState = AllocateSmurfState();
-   SFADDONS(true_ptr->addons)->pReduct = true_ptr;
 
    // Count number of special functions
    // See "struct SpecialFunc" in SmurfFactory.h for a description
@@ -358,7 +343,6 @@ FreeSmurfFactory()
    ite_free((void**)&arrSpecialFuncs);
    nSpecialFuncIndex = 0;
 
-   FreeAddonsPool();
    FreeSmurfStatePool();
 }
 

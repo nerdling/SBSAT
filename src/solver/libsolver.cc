@@ -106,8 +106,6 @@
 #include "recordsol.cc"
 
 #include "transitions.cc"
-#include "sf_addons.cc"
-#include "smurfaddons.cc"
 
 #include "bddwalk.cc"
 #include "wvf.cc"

@@ -116,10 +116,6 @@ bdd_init()
       true_ptr->thenCase = true_ptr;
       true_ptr->elseCase = true_ptr;
       true_ptr->inferences = NULL;
-#ifdef USE_BDD_REF_COUNT
-      false_ptr->ref_count = 1;
-      true_ptr->ref_count = 1;
-#endif
 
       false_ptr->notCase = true_ptr;
       true_ptr->notCase = false_ptr;
@@ -242,57 +238,12 @@ bddtable_find_or_add_node (int v, BDDNode * r, BDDNode * e)
    return (*node);
 }
 
-#ifdef USE_BDD_REF_COUNT
-void
-bddtable_ref_node(BDDNode *n)
-{
-   n->ref_count++;
-}
-
-inline void
-bddtable_deref_node_node(BDDNode *n)
-{
-   int hash_pos = bddtable_hash_fn(n->variable, n->thenCase, n->elseCase);
-   BDDNode **hash_node = bddtable_hash_memory+hash_pos;
-   if (n == (*hash_node)) {
-      *hash_node = n->next;
-   } else {
-      BDDNode *find_node = *hash_node;
-      while(n != find_node->next) {
-         find_node = find_node->next;
-      }
-      find_node->next = n->next;
-   }
-   n->next = bddtable_free;
-   bddtable_free = n;
-   bddtable_free_count++;
-}
-
-void
-bddtable_deref_node(BDDNode *n)
-{
-   n->ref_count--;
-   if (n->ref_count == 0 && n->notCase->ref_count == 0) {
-      bddtable_deref_node_node(n);
-      bddtable_deref_node_node(n->notCase);
-   }
-}
-#endif
-
 inline void
 bddtable_alloc_node(BDDNode **node, int v, BDDNode *r, BDDNode *e)
 {
-#ifdef USE_BDD_REF_COUNT
-   bddtable_ref_node(r);
-   bddtable_ref_node(e);
-#endif
    if (bddtable_free != NULL) {
       (*node) = bddtable_free;
       bddtable_free = bddtable_free->next;
-#ifdef USE_BDD_REF_COUNT
-      if ((*node)->thenCase) bddtable_deref_node((*node)->thenCase);
-      if ((*node)->elseCase) bddtable_deref_node((*node)->elseCase);
-#endif
       (*node)->next = NULL;
       bddtable_free_count--;
    } else {
@@ -418,58 +369,18 @@ bdd_gc(int force)
    gettimeofday(&tv_start, NULL);
    double rt_start = get_runtime();
 
-   // clean all flags
-  /* 
-   for (i=0;i<=numBDDPool;i++)
-   {
-      int max = bddmemory[i].max;
-      if (i == numBDDPool) max = curBDDPos;
-      for (j=0;j<max;j++) 
-         (bddmemory[i].memory+j)->flag = 0;
-   }
-  */ 
-
    // flag all referenced nodes
    true_ptr->flag = 1001001001;
    false_ptr->flag = 1001001001;
-   bddtable_used_count_last = 0;
    for (i=0;i<nmbrFunctions;i++)
    {
-     // printBDDInfs(functions[i]);
-     // fprintf(stddbg, "\n");
       bdd_flag_nodes(functions[i]);
    }
    for (i=0;i<original_numout;i++)
    {
       bdd_flag_nodes(original_functions[i]);
    }
-
- /* 
-   for (i=0;i<=bddtable_hash_memory_mask; i++)
-   {
-      BDDNode **ptr = &bddtable_hash_memory[i];
-      while (*ptr != NULL) 
-      {
-         if ((*ptr) -> flag != 1001001001) {
-            BDDNode *node = *ptr;
-            (*ptr) = (*ptr)->next;
-//#define GC_REBUILD_INFERENCES
-#ifndef GC_REBUILD_INFERENCES
-            DeallocateInferences_var(node->inferences, node->variable);
-#endif
-				memset(node, 0, sizeof(BDDNode));
-            node->next = bddtable_free;
-            bddtable_free = node;
-            bddtable_free_count++;
-         } else {
-            (*ptr)->flag = 0;
-            ptr = &((*ptr)->next);
-            bddtable_used_count_last++;
-         }
-      }
-   }
-*/
-
+   
    // remove unreferenced and rehash referenced
    for (i=0;i<=bddtable_hash_memory_mask; i++)
    {
@@ -489,20 +400,13 @@ bdd_gc(int force)
          if (node->flag != 1001001001)
          {
             // deleted 
-//#define GC_REBUILD_INFERENCES
-#ifndef GC_REBUILD_INFERENCES
             DeallocateInferences_var(node->inferences, node->variable);
-#endif
-
 				memset(node, 0, sizeof(BDDNode));
             node->next = bddtable_free;
             bddtable_free = node;
             bddtable_free_count++;
          } else
          {
-#ifdef GC_REBUILD_INFERENCES
-            node->inferences = NULL;
-#endif
             // rehash
             int hash_pos = bddtable_hash_fn(node->variable, node->thenCase, node->elseCase);
             BDDNode **hash_node = bddtable_hash_memory+hash_pos;
@@ -518,34 +422,11 @@ bdd_gc(int force)
    false_ptr->flag = 0;
    bddtable_free_count_last = bddtable_free_count;
 
-   // deallocate infereces
-#ifdef GC_REBUILD_INFERENCES
-   FreeInferencePool(); 
-
-   for (i=0;i<nmbrFunctions;i++)
-   {
-      bdd_fix_inferences(functions[i]);
-   }
-   for (i=0;i<original_numout;i++)
-   {
-      bdd_fix_inferences(original_functions[i]);
-   }
-#endif
-   
-/*
-   fprintf(stddbg, "out:\n");
-   for (i=0;i<nmbrFunctions;i++)
-   {
-      printBDDInfs(functions[i]);
-      fprintf(stddbg, "\n");
-   }
-*/
-   
    itetable_removeall();
    struct timeval tv_stop;
    gettimeofday(&tv_stop, NULL);
    double rt_stop = get_runtime();
-   d2_printf5("BDD_GC END(used %d, free %d, time=%dms, cpu=%.0fms)\n", 
+   d4_printf5("BDD_GC END(used %d, free %d, time=%dms, cpu=%.0fms)\n", 
          bddtable_used_count_last, bddtable_free_count,
          (tv_stop.tv_sec-tv_start.tv_sec)*1000+(tv_stop.tv_usec-tv_start.tv_usec)/1000,
          (rt_stop-rt_start)*1000);

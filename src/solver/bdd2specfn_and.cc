@@ -49,9 +49,6 @@ BDD2Specfn_AND(BDDNodeStruct *pFunc,
    int nPolarityOfLHSVble = 0;
    int nNewFunctionType = 0;
 
-   // We assume that special func has no implied literals.
-   SFADDONS(pFunc->addons)->pReduct = pFunc;
-
    /* -------------- Left Hand Side -------------- */
 
    nPolarityOfLHSVble = BOOL_TRUE;
@@ -164,7 +161,6 @@ BDD2Specfn_AND(BDDNodeStruct *pFunc,
           pRHSFunc
              = set_variable(pFunc, nEqualityVble,
                    nPolarityOfLHSVble == BOOL_TRUE ? 1 : 0);
-          InitializeAddons(pRHSFunc);
        }
        break;
     default: assert(0); exit(1); break;
