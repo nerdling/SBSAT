@@ -269,7 +269,7 @@ int Split_Large () {
 			 */				
 		}
 		if (functionType[j] == UNSURE && length[j] > k_size) { 
-			//Function is still too large, must use alternative method (CNF).
+			//Function is still too large, must use alternative method (Break into CNF clauses).
 			//Count the clauses
 			int num = countFalses (functions[j]);
 			if(num == 1) functionType[j] = PLAINOR;
