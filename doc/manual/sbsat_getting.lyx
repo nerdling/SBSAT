@@ -1,0 +1,2915 @@
+#LyX 1.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 221
+\textclass article
+\language english
+\inputencoding auto
+\fontscheme ae
+\graphics default
+\paperfontsize default
+\spacing onehalf 
+\papersize Default
+\paperpackage a4
+\use_geometry 0
+\use_amsmath 0
+\use_natbib 0
+\use_numerical_citations 0
+\paperorientation portrait
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\defskip medskip
+\quotes_language english
+\quotes_times 2
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+
+\layout Title
+
+Getting Started With SBSAT
+\layout Author
+
+
+\noun on 
+Michal
+\noun default 
+ 
+\noun on 
+Kouril
+\noun default 
+, 
+\noun on 
+Sean
+\noun default 
+ 
+\noun on 
+Weaver
+\noun default 
+, 
+\noun on 
+Andy Vogel
+\layout Standard
+
+SBSAT Version 2.0, August 2003
+\layout Standard
+\pagebreak_top 
+
+\begin_inset LatexCommand \tableofcontents{}
+
+\end_inset 
+
+
+\layout Section*
+\pagebreak_top 
+Wecolme to SBSAT (State Based Satisfiability) Solver
+\layout Standard
+
+SBSAT is Unix based SAT (Satisfiability) solver for ...
+ The solving begins with the user encoding the input problem into one of
+ the input formats acceptable by SBSAT into a single file.
+ The SBSAT solver first reads the input, runs the preprocessor which massages
+ and prepares the input for the brancher.
+ The preprocessed problem goes either into one of the branchers or is converted
+ into a different format.
+\layout Standard
+
+Available branchers:
+\layout Itemize
+
+Backtracking Brancher
+\layout Itemize
+
+Backtracking Brancher with lemmas
+\layout Itemize
+
+BDDWalkSAT - Incomplete Solver
+\layout Itemize
+
+WVF Brancher Original brancher without lemmas and only one heuristic
+\layout Standard
+
+Available formats BDD (ITE), CNF, SMURF, TRACE
+\layout Standard
+
+Picture here:
+\layout LyX-Code
+
+
+\size footnotesize 
+read input --> preprocessing --> write output 
+\layout LyX-Code
+
+
+\size footnotesize 
+                             
+\backslash 
+-> brancher   --> print solutions 
+\layout LyX-Code
+
+
+\size footnotesize 
+                             
+\backslash 
+-> bddwalksat / 
+\layout LyX-Code
+
+
+\size footnotesize 
+                             
+\backslash 
+-> wvf brancher
+\layout Standard
+
+The Solver does not have GUI based interface, rather it uses a command line
+ interface.
+ 
+\layout Standard
+
+The solver was successfully tested and compiled on a number of Unix based
+ platforms such as Linux, DEC, Solaris, Mac OS X, Windows/Cygwin with a
+ number of different compilers such as gcc2.95, gcc3.x, solaris-cc, dec-cc,
+ pgcc.
+ (intel cc?).
+\layout Section
+\pagebreak_top 
+About this manual
+\layout Standard
+
+The main purpose of this manual is to introduce a new user to the SBSAT
+ Solver.
+ We will use a few well chosen examples to demonstrate the different functionali
+ty of the SBSAT solver without getting bogged down in details.
+ For a more detailed description of the solver please see the SBSAT Manual
+\begin_inset Foot
+collapsed true
+
+\layout Standard
+
+not available yet
+\end_inset 
+
+.
+\layout Standard
+
+All problems in this manual are part of the SBSAT distribution in the examples
+ subdirectory.
+\layout Subsection
+
+Conventions
+\layout Standard
+
+Program options
+\layout Standard
+
+
+\emph on 
+Italic
+\emph default 
+ (Example: 
+\family typewriter 
+\size footnotesize 
+$ ite 
+\emph on 
+--help
+\family default 
+\size default 
+\emph default 
+ )
+\newline 
+
+\newline 
+Directive in each input formats
+\layout Standard
+
+
+\series bold 
+Bold
+\series default 
+ (Example: *
+\series bold 
+add_state
+\series default 
+ $1,2)
+\newline 
+
+\newline 
+Command line demonstration
+\layout Standard
+
+Start with the string character ($) 
+\layout Standard
+
+(Example: 
+\family typewriter 
+\size footnotesize 
+$ ite small.cnf
+\family default 
+\size default 
+ )
+\newline 
+
+\newline 
+Command line intput and output of the program
+\layout Standard
+
+Fixed sized length font (Example: 
+\family typewriter 
+\size footnotesize 
+Reading file ...
+
+\family default 
+\size default 
+ )
+\newline 
+
+\layout Subsection
+
+Hardware requirements
+\layout Standard
+
+A Unix style operating system with c++ compiler installed is required.
+ All examples require at least 32MB of RAM beyond the requirements of the
+ operating system.
+ Disk requirements depend on the operating system at least 200MB.
+\layout Standard
+
+In general, SBSAT allocates as much memory as it needs.
+ The amount of memory can be limited only indirectly by changing e.g.
+ the number of lemmas it maintains in the cache or the size of the pools
+ for different stacks (it allocates new pool of the same size if it runs
+ out of the current one).
+ There is no other option to limit the amount of memory it allocates.
+ It is expected that the amount of available memory matches the size of
+ the problem being solved.
+ SBSAT is not multi-threaded and does not take advantage of multiple processors.
+\layout Section
+\pagebreak_top 
+SBSAT Basics
+\layout Subsection
+
+Simple CNF Example
+\layout Standard
+
+We will start by using SBSAT to solve a simple CNF file.
+ According to the DIMACS standards every CNF file starts with the header
+ "
+\family typewriter 
+\size footnotesize 
+p cnf num_of_vars num_of_fns
+\family default 
+\size default 
+" where 
+\family typewriter 
+\size footnotesize 
+num_of_vars
+\family default 
+\size default 
+ is the number of variables present in the input file and 
+\family typewriter 
+\size footnotesize 
+num_of_fns
+\family default 
+\size default 
+ is the number of functions present in the input file.
+ Lines starting with 
+\family typewriter 
+\size footnotesize 
+'c'
+\family default 
+\size default 
+ indicate a comment and are ignored.
+ Functions are expressed as a string of positive and negative integers,
+ representing clauses in conjunctive normal form.
+ Each function (clause?) ends with 
+\family typewriter 
+\size footnotesize 
+'0'
+\family default 
+\size default 
+ (number zero) and a '-' (minus) in front of a variable indicates negation.
+ 
+\layout Standard
+
+Example (file small.cnf):
+\layout LyX-Code
+
+p cnf 6 8 
+\layout LyX-Code
+
+c This is a demonstration of the CNF format for the SBSAT solver 
+\layout LyX-Code
+
+1 2 3 0
+\layout LyX-Code
+
+2 3 4 0
+\layout LyX-Code
+
+3 4 5 0 
+\layout LyX-Code
+
+4 5 6 0
+\layout LyX-Code
+
+-1 -2 -3 0
+\layout LyX-Code
+
+-2 -3 -4 0
+\layout LyX-Code
+
+-3 -4 -5 0
+\layout LyX-Code
+
+-4 -5 -6 0
+\newline 
+
+\layout Standard
+
+To run the solver on this file, start the solver (
+\family typewriter 
+\size footnotesize 
+ite
+\family default 
+\size default 
+) with the filename of this problem on the command line:
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+$ ite small.cnf
+\newline 
+
+\layout Standard
+
+The output is as follows:
+\layout LyX-Code
+
+
+\size scriptsize 
+warning: ini file not found /home/fett/ite.ini
+\layout LyX-Code
+
+
+\size scriptsize 
+Reading File ../examples/small.cnf  ....
+\layout LyX-Code
+
+
+\size scriptsize 
+Reading CNF ...
+ Done                   
+\layout LyX-Code
+
+
+\size scriptsize 
+Preprocessing ....
+ Done                            
+\layout LyX-Code
+
+
+\size scriptsize 
+Creating Smurfs ...
+ Done                     
+\layout LyX-Code
+
+
+\size scriptsize 
+Solution verified.
+\layout LyX-Code
+
+
+\size scriptsize 
+Time in brancher:  0.000 secs.
+\layout LyX-Code
+
+
+\size scriptsize 
+0.000 backtracks per sec.
+\layout LyX-Code
+
+
+\size scriptsize 
+Time: 0.000s.
+ Backtracks: 0 (10000000.000 per sec) Progress:  0.00%
+\layout LyX-Code
+
+
+\size scriptsize 
+ Choices (total, dependent, backjumped): (3, 0, 0)
+\layout LyX-Code
+
+
+\size scriptsize 
+ Lemmas (cached, non-cached, added): (0, 2, 2)
+\layout LyX-Code
+
+
+\size scriptsize 
+ Inferences by smurfs: 2; lemmas: 0; 
+\layout LyX-Code
+
+
+\size scriptsize 
+ Backtracks by smurfs: 0; lemmas: 0; 
+\layout LyX-Code
+
+
+\size scriptsize 
+ Backjumps: 0 (avg bj len: 0.0)
+\layout LyX-Code
+
+
+\size scriptsize 
+Choice Points: 2 , Backtracks: 0, Backjumps: 0 
+\layout LyX-Code
+
+
+\size scriptsize 
+Satisfiable
+\layout LyX-Code
+
+
+\size scriptsize 
+Total Time: 0.010
+\layout LyX-Code
+
+\layout Standard
+
+Decoding the output: 
+\family typewriter 
+\size footnotesize 
+Satisfiable
+\layout Standard
+
+In order to get the actual satisfiable assignment from the solver we need
+ to add the input parameter instructing the solver to output the solution.
+\newline 
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+$ ite
+\emph on 
+ -R 
+\emph default 
+r small.cnf
+\emph on 
+
+\newline 
+
+\layout Standard
+
+
+\series bold 
+\size large 
+\bar under 
+TIP
+\series default 
+\size default 
+\bar default 
+ \SpecialChar ~
+ The order of the parameters on the command line does not matter.
+ (With the exception of 
+\family typewriter 
+\size footnotesize 
+\emph on 
+-All
+\family default 
+\size default 
+\emph default 
+ preprocessing switch and preprocessing enable/disable switches).
+ So in this case the following command line would do exactly the same as
+ the one above.
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+$ ite small.cnf 
+\emph on 
+-R
+\emph default 
+ r
+\newline 
+
+\layout Standard
+
+Output:
+\layout LyX-Code
+
+
+\size scriptsize 
+warning: ini file not found /home/fett/ite.ini
+\layout LyX-Code
+
+
+\size scriptsize 
+Reading File ../examples/small.cnf  ....
+\layout LyX-Code
+
+
+\size scriptsize 
+Reading CNF ...
+ Done                   
+\layout LyX-Code
+
+
+\size scriptsize 
+Preprocessing ....
+ Done                            
+\layout LyX-Code
+
+
+\size scriptsize 
+Creating Smurfs ...
+ Done                     
+\layout LyX-Code
+
+
+\size scriptsize 
+Solution verified.
+\layout LyX-Code
+
+
+\size scriptsize 
+Time in brancher:  0.000 secs.
+\layout LyX-Code
+
+
+\size scriptsize 
+0.000 backtracks per sec.
+\layout LyX-Code
+
+
+\size scriptsize 
+Time: 0.010s.
+ Backtracks: 0 (1000000.000 per sec) Progress:  0.00%
+\layout LyX-Code
+
+
+\size scriptsize 
+ Choices (total, dependent, backjumped): (3, 0, 0)
+\layout LyX-Code
+
+
+\size scriptsize 
+ Lemmas (cached, non-cached, added): (0, 2, 2)
+\layout LyX-Code
+
+
+\size scriptsize 
+ Inferences by smurfs: 2; lemmas: 0; 
+\layout LyX-Code
+
+
+\size scriptsize 
+ Backtracks by smurfs: 0; lemmas: 0; 
+\layout LyX-Code
+
+
+\size scriptsize 
+ Backjumps: 0 (avg bj len: 0.0)
+\layout LyX-Code
+
+
+\size scriptsize 
+Choice Points: 2 , Backtracks: 0, Backjumps: 0 
+\layout LyX-Code
+
+
+\size scriptsize 
+// Solution #1
+\layout LyX-Code
+
+
+\size scriptsize 
+Preprocessing ....
+ Done
+\layout LyX-Code
+
+
+\size scriptsize 
+-1 -2 3 4 -5 -6 
+\layout LyX-Code
+
+
+\size scriptsize 
+Satisfiable
+\layout LyX-Code
+
+
+\size scriptsize 
+Total Time: 0.020
+\layout LyX-Code
+
+\layout Standard
+
+You can see that the solution is mixed with the normal output of the solver.
+ Therefore it might be better to specify the output file for the solution.
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+$ ite small.cnf 
+\emph on 
+-R
+\emph default 
+ r 
+\emph on 
+--output-file
+\emph default 
+ output.txt
+\newline 
+
+\layout Standard
+
+output.txt:
+\layout LyX-Code
+
+
+\size scriptsize 
+// Solution #1
+\layout LyX-Code
+
+
+\size scriptsize 
+-1 -2 3 4 -5 -6 
+\layout LyX-Code
+
+\layout Standard
+
+
+\series bold 
+\size large 
+\bar under 
+TIP
+\series default 
+\size default 
+\bar default 
+ \SpecialChar ~
+Some of the command line options have both a short and a long flag.
+ They can be used interchangably.
+ For example the '
+\family typewriter 
+\size footnotesize 
+\emph on 
+-R
+\family default 
+\size default 
+\emph default 
+' option is also 
+\family typewriter 
+\size footnotesize 
+\emph on 
+'--show-result
+\family default 
+\size default 
+\emph default 
+'.
+ 
+\newline 
+
+\layout Standard
+
+Note: dash (
+\family typewriter 
+\size footnotesize 
+-
+\family default 
+\size default 
+) instead of the filename denotes the standard input or standard output
+ depending on the context.
+\layout Standard
+
+All available options can be printed by specifying '
+\family typewriter 
+\size footnotesize 
+\emph on 
+--help
+\family default 
+\size default 
+\emph default 
+'.
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+$ ite 
+\emph on 
+--help
+\newline 
+
+\layout Standard
+
+Shortened output:
+\layout LyX-Code
+
+
+\size scriptsize 
+SBSat is a SAT solver.
+ Usage: 
+\layout LyX-Code
+
+
+\size scriptsize 
+ite [OPTIONS]...
+ [inputfile] [outputfile]
+\layout LyX-Code
+
+\layout LyX-Code
+
+
+\size scriptsize 
+Options: 
+\layout LyX-Code
+
+
+\size scriptsize 
+--help, -h             Show all program options 
+\layout LyX-Code
+
+
+\size scriptsize 
+--version              Show program version 
+\layout LyX-Code
+
+
+\size scriptsize 
+--create-ini           Create ini file 
+\layout LyX-Code
+
+
+\size scriptsize 
+--ini <string>         Set the ini file [default="~/ite.ini"] 
+\layout LyX-Code
+
+
+\size scriptsize 
+--debug <number>       debugging level (0-none, 9-max) [default=2] 
+\layout LyX-Code
+
+
+\size scriptsize 
+--debug-dev <string>   debugging device [default="stderr"] 
+\layout LyX-Code
+
+
+\size scriptsize 
+--params-dump, -D      dump all internal parameters before processing 
+\layout LyX-Code
+
+
+\size scriptsize 
+--input-file <string>  input filename [default="-"] 
+\layout LyX-Code
+
+
+\size scriptsize 
+--output-file <string> output filename [default="-"] 
+\layout LyX-Code
+
+
+\size scriptsize 
+--temp-dir <string>    directory for temporary files [default="$TEMP"] 
+\layout LyX-Code
+
+
+\size scriptsize 
+--show-result <string>, -R <string> 
+\layout LyX-Code
+
+
+\size scriptsize 
+                       Show result (n=no result, r=raw, f=fancy) 
+\layout LyX-Code
+
+
+\size scriptsize 
+                       [default="n"] 
+\layout LyX-Code
+
+...
+\layout Subsection
+
+Converting your problem into a SAT problem
+\layout Standard
+
+Any NP-Complete problem can be translated into a SAT problem.
+ Two such problems are demonstrated here.
+ The first is a problem from AI where we have a database of information
+ and we'd like to ask a question about the database.
+ Here is a sample database taken from Charles Dodgson's (aka Lewis Carroll)
+ book 
+\emph on 
+Symbolic Logic
+\emph default 
+:
+\layout Enumerate
+
+Coloured flowers are always scented.
+\layout Enumerate
+
+I dislike flowers that are not grown in the open air.
+\layout Enumerate
+
+No flowers grown in the open air are colourless.
+\layout Standard
+
+We would like to ask this question - Do I dislike all flowers that are not
+ scented? Now we must translate these statements into First Order Logic.
+ This gives:
+\layout Enumerate
+
+
+\begin_inset Formula $\forall$
+\end_inset 
+
+
+\emph on 
+w
+\emph default 
+ ( Colored(
+\emph on 
+w
+\emph default 
+) 
+\begin_inset Formula $\Rightarrow$
+\end_inset 
+
+ Scented(
+\emph on 
+w
+\emph default 
+) )
+\layout Enumerate
+
+
+\begin_inset Formula $\forall$
+\end_inset 
+
+
+\emph on 
+x
+\emph default 
+ ( 
+\begin_inset Formula $\neg$
+\end_inset 
+
+OpenAir(
+\emph on 
+x
+\emph default 
+)
+\begin_inset Formula $\Rightarrow$
+\end_inset 
+
+ 
+\begin_inset Formula $\neg$
+\end_inset 
+
+Like(
+\emph on 
+x
+\emph default 
+) )
+\layout Enumerate
+
+
+\begin_inset Formula $\forall$
+\end_inset 
+
+
+\emph on 
+y
+\emph default 
+ ( OpenAir(
+\emph on 
+y
+\emph default 
+) 
+\begin_inset Formula $\Rightarrow$
+\end_inset 
+
+ Colored(
+\emph on 
+y
+\emph default 
+) )
+\layout Standard
+
+The question becomes: 
+\begin_inset Formula $\forall$
+\end_inset 
+
+
+\emph on 
+z
+\emph default 
+ ( 
+\begin_inset Formula $\neg$
+\end_inset 
+
+Scented(
+\emph on 
+z
+\emph default 
+) 
+\begin_inset Formula $\Rightarrow$
+\end_inset 
+
+
+\begin_inset Formula $\neg$
+\end_inset 
+
+Like(
+\emph on 
+z
+\emph default 
+) )
+\layout Standard
+
+We can now translate these statements into one of the acceptable formats
+ used by SBSAT.
+ Both CNF and ITE(BDD) are demonstrated here.
+\layout Standard
+
+Example(file flowers.ite):
+\layout LyX-Code
+
+p bdd 4 4
+\layout LyX-Code
+
+;Coloured flowers are always scented.
+\layout LyX-Code
+
+;I dislike flowers that are not grown in the open air.
+\layout LyX-Code
+
+;No flowers grown in the open air are colourless.
+\layout LyX-Code
+
+;Do I dislike all flowers that are not scented?
+\layout LyX-Code
+
+;Where Colored=1, Scented=2, Like=3, Grown in the Open Air=4
+\layout LyX-Code
+
+;The question must be negated and added to the database.
+\layout LyX-Code
+
+;If SBSAT returns 'unsat' then the answer to the question
+\layout LyX-Code
+
+;is 'YES', otherwise the answer is 'NO'.
+\layout LyX-Code
+
+*imp(1, 2)
+\layout LyX-Code
+
+*imp(-3, -4)
+\layout LyX-Code
+
+*imp(3, 1)
+\layout LyX-Code
+
+*not(imp(-2, -4)) 
+\layout Standard
+
+Example(file flowers.cnf):
+\layout LyX-Code
+
+p cnf 4 5
+\layout LyX-Code
+
+c Coloured flowers are always scented.
+\layout LyX-Code
+
+c I dislike flowers that are not grown in the open air.
+\layout LyX-Code
+
+c No flowers grown in the open air are colourless.
+\layout LyX-Code
+
+c Do I dislike all flowers that are not scented?
+\layout LyX-Code
+
+c Where Colored=1, Scented=2, Like=3, Grown in the Open Air=4
+\layout LyX-Code
+
+c The question must be negated and added to the database.
+\layout LyX-Code
+
+c If SBSAT returns 'unsat' then the answer to the question
+\layout LyX-Code
+
+c is 'YES', otherwise the answer is 'NO'.
+\layout LyX-Code
+
+-1 2 0
+\layout LyX-Code
+
+3 -4 0
+\layout LyX-Code
+
+-3 1 0
+\layout LyX-Code
+
+-2 0
+\layout LyX-Code
+
+4 0
+\layout LyX-Code
+
+\layout Subsection
+
+Choosing a different solver
+\layout Standard
+
+
+\begin_inset  Tabular
+<lyxtabular version="3" rows="4" columns="4">
+<features>
+<column alignment="center" valignment="top" leftline="true" width="0(null)">
+<column alignment="center" valignment="top" leftline="true" width="0(null)">
+<column alignment="center" valignment="top" leftline="true" width="0(null)">
+<column alignment="center" valignment="top" leftline="true" rightline="true" width="0(null)">
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Solver
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Default
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Option
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Description
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Smurf Brancher
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+yes
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+\emph on 
+-b
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+BDD WalkSAT
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+no
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+\emph on 
+-w
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+WVF Brancher(obsolete)
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+no
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+\emph on 
+-m
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset 
+
+
+\layout Subsection
+
+Converting the input file
+\layout Standard
+
+-In 0 -All 0 is the only way to get a direct translation of the original
+ file (aka, no preprocessing whatsoever).
+\layout Subsection
+
+BDD (ITE) format examples
+\layout Subsubsection
+
+Structure of BDD(ITE) format
+\layout Standard
+
+As with the CNF format the file starts with the header '
+\family typewriter 
+\size footnotesize 
+p bdd num_inp_vars num_fns
+\family default 
+\size default 
+'
+\layout Standard
+
+Each line starting with start 
+\family typewriter 
+\size footnotesize 
+'*'
+\family default 
+\size default 
+ denotes a new BDD function.
+ The table shows the basic built-in functions:
+\layout Standard
+
+
+\begin_inset  Tabular
+<lyxtabular version="3" rows="9" columns="4">
+<features>
+<column alignment="center" valignment="top" leftline="true" width="0(null)">
+<column alignment="center" valignment="top" leftline="true" width="0(null)">
+<column alignment="center" valignment="top" leftline="true" width="0(null)">
+<column alignment="center" valignment="top" leftline="true" rightline="true" width="0(null)">
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Function
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Number of params
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+equ
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+2+
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+and
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+2+
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+or
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+2+
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
+<row bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+and
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+2+
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
+<row bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+not
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+1
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
+<row bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+imp
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+2+
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
+<row bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+ite
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+3
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
+<row bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+xor
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+2+
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset 
+
+
+\layout Standard
+
+The parameters of the functions are either variables in the form of numbers
+ or another function in the form of 
+\family typewriter 
+\size footnotesize 
+'$'
+\family default 
+\size default 
+ and the index of the function in the file (starting with 1).
+\layout Standard
+
+For the functions where the number of parameters can vary the number of
+ parameters is attached right after the function name.
+ Example:
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+xor3(1, 2, 3)
+\layout Subsubsection
+
+Simple XOR Example
+\layout Standard
+
+Here is the file called xortest.ite:
+\layout LyX-Code
+
+
+\size footnotesize 
+p bdd 7 3
+\layout LyX-Code
+
+
+\size footnotesize 
+*equ(xor( xor(1, 2), 3), F)
+\layout LyX-Code
+
+
+\size footnotesize 
+*equ(xor(3, and3(5, 4, 6)), T)
+\layout LyX-Code
+
+
+\size footnotesize 
+*equ(xor(and3(1, 2, 3), and3(4, 5, 7)), F)
+\layout LyX-Code
+
+\layout LyX-Code
+
+\layout Standard
+
+Run the example:
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+$ ite xortest.ite
+\layout Standard
+
+The output:
+\layout LyX-Code
+
+
+\size scriptsize 
+warning: ini file not found /home/fett/ite.ini
+\layout LyX-Code
+
+
+\size scriptsize 
+Reading File ../examples/xortest.ite  ....
+\layout LyX-Code
+
+
+\size scriptsize 
+Reading ITE ...
+ Done
+\layout LyX-Code
+
+
+\size scriptsize 
+Preprocessing ....
+ Done                            
+\layout LyX-Code
+
+
+\size scriptsize 
+Creating Smurfs ...
+ Done                     
+\layout LyX-Code
+
+
+\size scriptsize 
+Solution verified.
+\layout LyX-Code
+
+
+\size scriptsize 
+Time in brancher:  0.000 secs.
+\layout LyX-Code
+
+
+\size scriptsize 
+0.000 backtracks per sec.
+\layout LyX-Code
+
+
+\size scriptsize 
+Time: 0.000s.
+ Backtracks: 0 (10000000.000 per sec) Progress:  0.00%
+\layout LyX-Code
+
+
+\size scriptsize 
+ Choices (total, dependent, backjumped): (3, 0, 0)
+\layout LyX-Code
+
+
+\size scriptsize 
+ Lemmas (cached, non-cached, added): (0, 5, 5)
+\layout LyX-Code
+
+
+\size scriptsize 
+ Inferences by smurfs: 5; lemmas: 0; 
+\layout LyX-Code
+
+
+\size scriptsize 
+ Backtracks by smurfs: 0; lemmas: 0; 
+\layout LyX-Code
+
+
+\size scriptsize 
+ Backjumps: 0 (avg bj len: 0.0)
+\layout LyX-Code
+
+
+\size scriptsize 
+Choice Points: 2 , Backtracks: 0, Backjumps: 0 
+\layout LyX-Code
+
+
+\size scriptsize 
+Satisfiable
+\layout LyX-Code
+
+
+\size scriptsize 
+Total Time: 0.020 
+\layout LyX-Code
+
+\layout Subsubsection
+
+add_state example
+\layout Standard
+
+Another important function is 
+\series bold 
+add_state
+\series default 
+.
+ This function has two parameters.
+ The first one is a BDD function.
+ The second parameter is the shift in the variable number.
+ 
+\series bold 
+Add_state
+\series default 
+ creates a new BDD with structure identical to the first parameter but with
+ each variable incremented by the second parameter.
+ 
+\layout LyX-Code
+
+\layout LyX-Code
+
+
+\size footnotesize 
+p bdd 44 5
+\layout LyX-Code
+
+
+\size footnotesize 
+*equ(xor(1, and(-17, 33)), ite(15, or(33, -40), -33))) 
+\layout LyX-Code
+
+
+\size footnotesize 
+*add_state($1, 1) 
+\layout LyX-Code
+
+
+\size footnotesize 
+*add_state($1, 2) 
+\layout LyX-Code
+
+
+\size footnotesize 
+*add_state($1, 3) 
+\layout LyX-Code
+
+
+\size footnotesize 
+*add_state($1, 4) 
+\layout Standard
+
+The example will be expanded into the following form:
+\layout LyX-Code
+
+
+\size footnotesize 
+p bdd 44 5 
+\layout LyX-Code
+
+
+\size footnotesize 
+*equ(xor(1, and(-17, 33)), ite(15, or(33, -40), -33))) 
+\layout LyX-Code
+
+
+\size footnotesize 
+*equ(xor(2, and(-18, 34)), ite(16, or(34, -41), -34)))
+\layout LyX-Code
+
+
+\size footnotesize 
+*equ(xor(3, and(-19, 35)), ite(17, or(35, -42), -35)))
+\layout LyX-Code
+
+
+\size footnotesize 
+*equ(xor(4, and(-20, 36)), ite(18, or(36, -43), -36)))
+\layout LyX-Code
+
+
+\size footnotesize 
+*equ(xor(5, and(-21, 37)), ite(19, or(37, -44), -37)))
+\layout Subsubsection
+
+print_tree and pprint_tree examples
+\layout Subsubsection
+
+Function definition example
+\layout LyX-Code
+
+
+\size footnotesize 
+#define g 1 2 3 # ite(1, 2, and(-2, 3)) 
+\layout Subsubsection
+
+Complex example
+\layout LyX-Code
+
+
+\size scriptsize 
+p bdd 18 13 ; 18 vars, 13 functions 
+\layout LyX-Code
+
+
+\size scriptsize 
+#define fun 1 2 3 4 # ite 1 and 2 3 or 3 4 ; parms must be consecutive integers
+ from 1 
+\layout LyX-Code
+
+
+\size scriptsize 
+#define g 1 2 3 # ite(fun(1, 2, 3, -2), T, 3) 
+\layout LyX-Code
+
+
+\size scriptsize 
+InitialBranch (2, 4..12, 15, 16, 18, 1, 3) ; These variables will be branched
+ on first 
+\layout LyX-Code
+
+
+\size scriptsize 
+ite 4 5 6 ; eqn $1 
+\layout LyX-Code
+
+
+\size scriptsize 
+*or $1 3 ; eqn $2, smurf 1 
+\layout LyX-Code
+
+
+\size scriptsize 
+*or 5 -6 ; eqn $3, smurf 2 
+\layout LyX-Code
+
+
+\size scriptsize 
+*and $1 -4 ; eqn $4, smurf 3 
+\layout LyX-Code
+
+
+\size scriptsize 
+*imp $1 $4 ; eqn $5, smurf 4 
+\layout LyX-Code
+
+
+\size scriptsize 
+#define imp 1 2 # or3(1, 2, 3); Notice the 'imp' operator was overloaded.
+ 
+\layout LyX-Code
+
+
+\size scriptsize 
+*imp(3 4 5)    ; eqn $6, smurf 5 
+\layout LyX-Code
+
+
+\size scriptsize 
+               ; this is a really bad idea, it probably shouldn't be allowed
+\layout LyX-Code
+
+
+\size scriptsize 
+print_tree $5  ; no equation created, no smurf created
+\layout LyX-Code
+
+
+\size scriptsize 
+pprint_tree $5 ; no equation created, no smurf created 
+\layout LyX-Code
+
+
+\size scriptsize 
+ite(2,              ; eqn $7, no smurf created
+\layout LyX-Code
+
+
+\size scriptsize 
+      ite(3, 4, 5), ; plus comments are ignored, even in the middle of a
+ function 
+\layout LyX-Code
+
+
+\size scriptsize 
+      ite(4, 5, F))
+\layout LyX-Code
+
+
+\size scriptsize 
+*fun 4 -5 2 3 ; eqn $8, smurf 6 
+\layout LyX-Code
+
+
+\size scriptsize 
+*fun g -5 4 $6 2 3 4 ; eqn $9, smurf 7
+\layout LyX-Code
+
+
+\size scriptsize 
+*equ(5, xor3(and(-3, 4), nand(7, 5), ite(15, 4, nor(4, -7)))) ; eqn $10,
+ smurf 8
+\layout LyX-Code
+
+
+\size scriptsize 
+*add_state($10, 1) ; eqn $11, smurf 9
+\layout LyX-Code
+
+
+\size scriptsize 
+                   ; add_state creates a BDD which is identical to the first
+\layout LyX-Code
+
+
+\size scriptsize 
+                   ; argument but with all it's variables incremented by
+ the
+\layout LyX-Code
+
+
+\size scriptsize 
+                   ; second argument.
+\layout LyX-Code
+
+
+\size scriptsize 
+*add_state($10, 2) ; eqn $12, smurf 10 
+\layout LyX-Code
+
+
+\size scriptsize 
+*add_state($10, 3) ; eqn $13, smurf 11
+\layout LyX-Code
+
+\layout Standard
+
+
+\series bold 
+\size large 
+\bar under 
+TIP
+\series default 
+\size default 
+\bar default 
+ Although both parentheses and commas are optional, we recommend you keep
+ them in so you can easily orient yourself in the file.
+\layout Section
+\pagebreak_top 
+SBSAT Advanced
+\layout Subsection
+
+Changing Preprocessor Options
+\layout Standard
+
+The available preprocessing options are :
+\layout Standard
+
+
+\begin_inset  Tabular
+<lyxtabular version="3" rows="8" columns="5">
+<features>
+<column alignment="center" valignment="top" leftline="true" width="0(null)">
+<column alignment="center" valignment="top" leftline="true" width="0(null)">
+<column alignment="center" valignment="top" leftline="true" width="0(null)">
+<column alignment="center" valignment="top" leftline="true" width="0(null)">
+<column alignment="center" valignment="top" leftline="true" rightline="true" width="0(null)">
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Name
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Default
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Short
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Formats
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Description
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Clustering
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+yes
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Cl
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+CNF
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Cofactoring
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+yes
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Co
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+All
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Pruning
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+yes
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Pr
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+All
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Strengthening
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+yes
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+St
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+All
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Inferences
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+yes
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+In
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+All
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Existential Quantification
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+yes
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Ex
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+All
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
+<row bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Dependent Var.
+ Clustering
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+yes
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Dc
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+All
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset 
+
+
+\newline 
+
+\layout Standard
+
+Preprocessing sequence: 
+\family typewriter 
+\size footnotesize 
+(ExDc)*(ExSt)*(ExPr)*
+\layout Standard
+
+The sequence in which the preprocessing options are applied is specified
+ by the 'preprocessing sequence' string.
+ The parentheses '()' border the repeated sequences and are followed with
+ the number of repeats.
+ A star '*' means repeat until there is no change.
+\layout Standard
+
+Example:
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+$ ite 
+\emph on 
+--preprocess-sequence
+\emph default 
+ '(ExDc)3(ExSt)2(ExPr)10'
+\family default 
+\size default 
+ 
+\family typewriter 
+\size footnotesize 
+small.cnf
+\family default 
+\size default 
+
+\newline 
+(or
+\family typewriter 
+\size footnotesize 
+ $ ite 
+\emph on 
+-P
+\emph default 
+ '(ExDc)3(ExSt)2(ExPr)10 small.cnf')
+\newline 
+
+\layout Standard
+
+For some problems the preprocessing might take too long or may not produce
+ a desired effect.
+ Therefore it is possible to enable or disable the preprocessing options
+ or change their sequence.
+ 
+\layout Standard
+
+Example:
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+$ ite 
+\emph on 
+-St
+\emph default 
+ 0 small.cnf
+\newline 
+
+\layout Standard
+
+
+\series bold 
+\size large 
+\bar under 
+TIP \SpecialChar ~
+
+\series default 
+\size default 
+\bar default 
+ How to avoid repeating long preprocessing: Save the problem after preprocessing
+ in SMURF file format (Using 
+\family typewriter 
+\size footnotesize 
+$
+\emph on 
+ 
+\emph default 
+ite 
+\emph on 
+--output-file
+\family default 
+\size default 
+ 
+\family typewriter 
+\size footnotesize 
+\emph default 
+newfile.smurf
+\emph on 
+ -s 
+\emph default 
+myoldfile
+\family default 
+\size default 
+) and disable the preprocessing next time you run your problem (Using 
+\family typewriter 
+\size footnotesize 
+$ ite 
+\emph on 
+--All 
+\emph default 
+0 newfile.smurf
+\family default 
+\size default 
+) .
+ 
+\layout Subsection
+
+Changing heuristic and its options
+\layout Standard
+
+The standard brancher has to two available heuristics, the Johnson heuristic
+ and Lemma (chaff-like) heuristic.
+ Both heuristics have their advantages and disadvantages.
+ Usually if one heuristic is better than the other on a specific problem
+ then this is also the case for similarly structured problems.
+\layout Standard
+
+Example: 
+\layout Standard
+
+
+\begin_inset  Tabular
+<lyxtabular version="3" rows="4" columns="4">
+<features>
+<column alignment="center" valignment="top" leftline="true" width="0(null)">
+<column alignment="center" valignment="top" leftline="true" width="0(null)">
+<column alignment="center" valignment="top" leftline="true" width="0(null)">
+<column alignment="center" valignment="top" leftline="true" rightline="true" width="0(null)">
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Heuristic
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Option
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Default
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Description
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Johnson heuristic
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+\emph on 
+-H
+\emph default 
+ j
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+yes
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Lemma heuristc
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+\emph on 
+-H
+\emph default 
+ l
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+no
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Combined heuristic
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+\emph on 
+-H
+\emph default 
+ jl
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+no
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset 
+
+
+\newline 
+
+\layout Standard
+
+
+\series bold 
+\size large 
+\bar under 
+TIP
+\series default 
+\size default 
+\bar default 
+ \SpecialChar ~
+ Using the Combined heuristic (
+\family typewriter 
+\size footnotesize 
+\emph on 
+-H
+\emph default 
+ jl
+\family default 
+\size default 
+) might be a good compromise if you are unsure which heuristic to choose.
+\layout Subsection
+
+Adjusting other parameters
+\layout Subsubsection
+
+Lemma cache
+\layout Standard
+
+The size of the cache in which the lemmas are stored is fixed throughout
+ the branching process.
+ Necessary amount of memory is automatically allocated to accomodate all
+ lemmas in the cache.
+ Usually the bigger the memory cache the slower the branching process.
+ Therefore increasing lemma cache might not improve the overall branching
+ time.
+\layout Standard
+
+The parameter to use for controlling the lemma cache is 
+\family typewriter 
+\size footnotesize 
+\emph on 
+-L
+\family default 
+\size default 
+\emph default 
+ or 
+\family typewriter 
+\size footnotesize 
+\emph on 
+--max-cached-lemmas
+\emph default 
+.
+
+\family default 
+\size default 
+ 
+\layout Standard
+
+Example:
+\layout Standard
+
+$ ite -L 1000 problem.cnf
+\newline 
+
+\layout Standard
+
+It is possible to set the lemma cache to 0.
+ This will prevent any lemma from being stored beyond the point they are
+ needed.
+ The brancher will still generate lemmas during backtracking and inferencing.
+ 
+\layout Standard
+
+To prevent the lemmas from being created and used the backjumping must be
+ disabled together with setting the lemma cache to 0.
+\layout Standard
+
+Example:
+\layout Standard
+
+$ ite -L 0 --backjumping 0 slider_80_unsat.ite
+\newline 
+
+\layout Standard
+
+For some problems this will yield significantly better results than when
+ the lemmas are used.
+\layout Standard
+
+Note: the lemma heuristic is not compatible with the situation when the
+ lemmas are disable.
+ Also the effectivness of the lemma heuristic is decreasing with descreasing
+ the lemma cache.
+\newline 
+
+\layout Standard
+
+Backjumping refers to the backtracking property where the literal previously
+ chosen by heuristic and not involved in contradition is not considered
+ with the reversed sign.
+\layout Subsubsection
+
+Constraining the time on the preprocessing and brancher
+\layout Standard
+
+In some situations the preprocessing takes too long.
+ One way to interrupt the preprocessing is to change the preprocessing string
+ to perform less iterations through the preprocessing options (see ...
+ ).
+ Another way to cut the preprocessing time is to specify the time limit
+ in seconds for how long the preprocessing can take.
+ After the time limit has been reached the preprocessor will quit and the
+ control will be handed to the brancher.
+\layout Standard
+
+Example: 
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+\emph on 
+$ 
+\emph default 
+ite small.cnf
+\emph on 
+ --max-branching-time 180
+\layout Standard
+
+This will allow 3 minutes for preprocessing and continue to the brancher
+ after that.
+ 
+\newline 
+
+\layout Standard
+
+The similar option exists for the brancher:
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+$ ite small.cnf 
+\emph on 
+--max-preproc-time 
+\emph default 
+180
+\layout Subsubsection
+
+Creating and using an ini file
+\layout Standard
+
+If you are working on a problem that requires adding the same command line
+ options over and over it is better to create an ini file.
+ SBSAT automatically looks for ite.ini in your home dicrectory.
+ 
+\layout Standard
+
+To create an ini file with the default values for all available options
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+$ ite 
+\emph on 
+--create-ini
+\emph default 
+ > ~/ite.ini
+\newline 
+
+\layout Standard
+
+You can edit the ini file and change the values to those of your choice.
+ Please note that the command line options take precedence before the ini
+ file settings.
+ This way you can effectively override all settings.
+\layout Standard
+
+Also you can create different ini files for different problems.
+ To use them use --ini option.
+ Example:
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+$ ite 
+\emph on 
+--ini
+\emph default 
+ myini.ini small.cnf
+\newline 
+
+\layout Standard
+
+
+\series bold 
+\size large 
+\bar under 
+TIP
+\series default 
+\size default 
+\bar default 
+ \SpecialChar ~
+ You can specify the name of the input file in the ini file (using 
+\family typewriter 
+\size footnotesize 
+input-file="small.cnf"
+\family default 
+\size default 
+) and start sbsat with the ini file only (using 
+\family typewriter 
+\size footnotesize 
+$ ite 
+\emph on 
+--ini
+\emph default 
+ myini.ini
+\family default 
+\size default 
+).
+\layout Subsection
+
+Debugging your problem
+\layout Itemize
+
+try converting to another format
+\layout Itemize
+
+debug prints (in ITE format)
+\layout Itemize
+
+print internal data from the solver: 
+\layout Itemize
+
+be familiar with BDDs 
+\layout Itemize
+
+output the BDDs before preprocessing 
+\layout Itemize
+
+match them to your original problem
+\layout Itemize
+
+if you think you discovered a bug in SBSAT email us!
+\layout Subsection
+
+Troubleshooting the compilation
+\layout Itemize
+
+use different compiler 
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+$ ./configure CXX=g++ 
+\newline 
+
+\layout Itemize
+
+link the libraries staticly 
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+$ ./configure --static
+\family default 
+\size default 
+ 
+\layout Section
+\pagebreak_top 
+Getting more help
+\layout Itemize
+
+Read the real SBSAT Manual
+\begin_inset Foot
+collapsed true
+
+\layout Standard
+
+not available yet
+\end_inset 
+
+
+\layout Itemize
+
+Check out the SBSAT Web Pages
+\begin_inset Foot
+collapsed true
+
+\layout Standard
+
+not available yet
+\end_inset 
+
+
+\layout Itemize
+
+Email us: 
+\newline 
+
+\noun on 
+John
+\noun default 
+ 
+\noun on 
+Franco
+\noun default 
+ franco@gauss.ececs.uc.edu 
+\newline 
+
+\noun on 
+Michal
+\noun default 
+ 
+\noun on 
+Kouril
+\noun default 
+ mkouril@ececs.uc.edu
+\newline 
+
+\noun on 
+Sean
+\noun default 
+ 
+\noun on 
+Weaver
+\noun default 
+ fett@gauss.ececs.uc.edu
+\the_end
