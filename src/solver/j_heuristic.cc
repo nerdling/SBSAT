@@ -239,25 +239,25 @@ J_ResetHeuristicScores()
 #define J_ONE 0
 
 // CLASSIC
-#define J_WEIGHT(x) (J_ONE+x.Pos) * (J_ONE+x.Neg)
-//#define J_WEIGHT(x) (x.Pos*x.Neg+arrVarScores[i].neg>arrVarScores[i].pos?arrVarScores[i].neg:arrVarScores[i].pos)
-//#define J_WEIGHT(x) (arrVarScores[i].neg>arrVarScores[i].pos?arrVarScores[i].neg:arrVarScores[i].pos)
+#define HEUR_WEIGHT(x) (J_ONE+x.Pos) * (J_ONE+x.Neg)
+//#define HEUR_WEIGHT(x) (x.Pos*x.Neg+arrVarScores[i].neg>arrVarScores[i].pos?arrVarScores[i].neg:arrVarScores[i].pos)
+//#define HEUR_WEIGHT(x) (arrVarScores[i].neg>arrVarScores[i].pos?arrVarScores[i].neg:arrVarScores[i].pos)
 
 // Var_Score
-//#define J_WEIGHT(x) (var_score[i] * (J_ONE+x.Pos) * (J_ONE+x.Neg))
+//#define HEUR_WEIGHT(x) (var_score[i] * (J_ONE+x.Pos) * (J_ONE+x.Neg))
 
 // ABSOLUTE MAXIMUM
-//#define J_WEIGHT(x) (x.Neg > x.Pos ? x.Neg : x.Pos)
+//#define HEUR_WEIGHT(x) (x.Neg > x.Pos ? x.Neg : x.Pos)
 
 // BERM
-//#define J_WEIGHT(x) (x.Neg>x.Pos?((x.Pos*2) + x.Neg):((x.Neg*2) + x.Pos)) 
+//#define HEUR_WEIGHT(x) (x.Neg>x.Pos?((x.Pos*2) + x.Neg):((x.Neg*2) + x.Pos)) 
 
 // ADDITION
-//#define J_WEIGHT(x) (J_ONE+x.Pos) + (J_ONE+x.Neg)
+//#define HEUR_WEIGHT(x) (J_ONE+x.Pos) + (J_ONE+x.Neg)
 
 // NEW??
-//#define J_WEIGHT(x) (((x.nPosInfs+1)*x.nPos)* (x.nNegInfs+1)*x.nNeg)
-//#define J_WEIGHT(x) (J_ONE+x.Pos) * (J_ONE+x.Neg) * (arrLemmaVbleCountsPos[i] + arrLemmaVbleCountsNeg[i])
+//#define HEUR_WEIGHT(x) (((x.nPosInfs+1)*x.nPos)* (x.nNegInfs+1)*x.nNeg)
+//#define HEUR_WEIGHT(x) (J_ONE+x.Pos) * (J_ONE+x.Neg) * (arrLemmaVbleCountsPos[i] + arrLemmaVbleCountsNeg[i])
 
 // slider_80_unsat -- the order from the best to worst is (all J_ONE = 0)
 // CLASSIC
@@ -266,24 +266,18 @@ J_ResetHeuristicScores()
 // ABSOLUTE MAXIMUM
 
 // CLASSIC - MAX = THE BEST
-#define J_COMPARE(v, max) (v > max)
+#define HEUR_COMPARE(v, max) (v > max)
 
 // REVERSED - MIN = THE BEST
-//#define J_COMPARE(v, max) (v < max)
+//#define HEUR_COMPARE(v, max) (v < max)
 
-
-ITE_INLINE void
-J_OptimizedHeuristic(int *pnBranchAtom, int *pnBranchValue)
-{
-   int nBestVble;
-   int i;
-   double fMaxWeight = 0.0;
-   double fVbleWeight;
+#define HEUR_FUNCTION J_OptimizedHeuristic
 
 //#define MK_J_HEURISTIC_LEMMA
 #ifdef MK_J_HEURISTIC_LEMMA
    /* this needs a variable with the UnitLemmaList from the brancher */
    /* used to be global pUnitLemmaList */
+// #define HEUR_EXTRA_IN
    ITE_INLINE void 
    J_Heuristic_Lemma(LemmaInfoStruct **p, int *nInferredAtom, int *nInferredValue);
    if (pUnitLemmaList->pNextLemma[0] && pUnitLemmaList->pNextLemma[0]->pNextLemma[0])  {
@@ -293,153 +287,26 @@ J_OptimizedHeuristic(int *pnBranchAtom, int *pnBranchValue)
    }
 #endif
 
-
-   D_8(DisplayJHeuristicValues(););
-   d8_printf1("\n");
-
-   //
-   // SEARCH INDEPENDENT VARIABLES
-   //
-   // Determine the variable with the highest weight:
-   // 
-   // Initialize to the lowest indexed variable whose value is uninstantiated.
-   nBestVble = -1;
-
-   for (i = 1; i < nIndepVars+1; i++)
-   {
-      if (arrSolution[i] == BOOL_UNKNOWN)
-      {
-        //if (arrHeurScores[i].Pos == 0 && arrHeurScores[i].Neg == 0) continue;
-         nBestVble = i;
-         fMaxWeight = J_WEIGHT(arrHeurScores[i]);
-         break;
-      }
-   }
-
-   if (nBestVble >= 0)
-   {
-      // Search through the remaining uninstantiated independent variables.
-      for (i = nBestVble + 1; i < nIndepVars+1; i++)
-      {
-         if (arrSolution[i] == BOOL_UNKNOWN)
-         {
-            //if (arrHeurScores[i].Pos == 0 && arrHeurScores[i].Neg == 0) continue;
-            fVbleWeight = J_WEIGHT(arrHeurScores[i]);
-            if (J_COMPARE(fVbleWeight, fMaxWeight))
-            {
-               fMaxWeight = fVbleWeight;
-               nBestVble = i;
-            }
-         }
-      }
-
-# ifdef TRACE_HEURISTIC
-      cout << endl << "X" << nBestVble << "*: then "
-         << arrHeurScores[nBestVble].Pos
-         << " else " << arrHeurScores[nBestVble].Neg
-         << " -> " << fMaxWeight << "  ";
-# endif
-
-      goto ReturnHeuristicResult;
-   }
-
-   //
-   // SEARCH DEPENDENT VARIABLES
-   //
-   // Initialize to first uninstantiated variable.
-   for (i = nIndepVars+1; i < nIndepVars+1+nDepVars; i++)
-   {
-      if (arrSolution[i] == BOOL_UNKNOWN)
-      {
-         //if (arrHeurScores[i].Pos == 0 && arrHeurScores[i].Neg == 0) continue;
-         nBestVble = i;
-         fMaxWeight = J_WEIGHT(arrHeurScores[i]);
-         break;
-      }
-   }
-
-   if (nBestVble >= 0)
-   {
-      // Search through the remaining uninstantiated independent variables.
-      for (i = nBestVble + 1; i < nIndepVars+1+nDepVars; i++)
-      {
-         if (arrSolution[i] == BOOL_UNKNOWN)
-         {
-            //if (arrHeurScores[i].Pos == 0 && arrHeurScores[i].Neg == 0) continue;
-            fVbleWeight = J_WEIGHT(arrHeurScores[i]);
-            if (J_COMPARE(fVbleWeight, fMaxWeight))
-            {
-               fMaxWeight = fVbleWeight;
-               nBestVble = i;
-            }
-         }
-      }
-
-#ifdef TRACE_HEURISTIC
-      cout << endl << "X" << nBestVble << ": then "
-         << arrHeurScores[nBestVble].Pos
-         << " else " << arrHeurScores[nBestVble].Neg
-         << " -> " << fMaxWeight << "  ";
-#endif
-      goto ReturnHeuristicResult;
-   }
-
-   //
-   // SEARCH TEMP VARIABLES
-   //
-   // Initialize to first uninstantiated variable.
-   for (i = nIndepVars+1+nDepVars; i < nNumVariables; i++)
-   {
-      if (arrSolution[i] == BOOL_UNKNOWN)
-      {
-         nBestVble = i;
-         fMaxWeight = J_WEIGHT(arrHeurScores[i]);
-         break;
-      }
-   }
-
-   if (nBestVble >= 0)
-   {
-      // Search through the remaining uninstantiated independent variables.
-      for (i = nBestVble + 1; i < nNumVariables; i++)
-      {
-         if (arrSolution[i] == BOOL_UNKNOWN)
-         {
-            fVbleWeight = J_WEIGHT(arrHeurScores[i]);
-            if (J_COMPARE(fVbleWeight, fMaxWeight))
-            {
-               fMaxWeight = fVbleWeight;
-               nBestVble = i;
-            }
-         }
-      }
-
-      goto ReturnHeuristicResult;
-   }
-   else
-   {
-      dE_printf1 ("Error in heuristic routine:  No uninstantiated variable found\n");
-      exit (1);
-   }
-
-ReturnHeuristicResult:
-   assert (arrSolution[nBestVble] == BOOL_UNKNOWN);
-   *pnBranchAtom = nBestVble;
-   if (arrHeurScores[nBestVble].Pos >= arrHeurScores[nBestVble].Neg)
-   {
-      *pnBranchValue = BOOL_TRUE;
-   }
-   else
-   {
-      *pnBranchValue = BOOL_FALSE;
-   }
-   d8_printf6("JHeuristic: %c%d (%.10f,%.10f) because of %f\n", 
-         (*pnBranchValue==BOOL_TRUE?'+':'-'),
-         nBestVble, 
-         arrHeurScores[nBestVble].Pos,
-         arrHeurScores[nBestVble].Neg,
+#define HEUR_EXTRA_IN() D_8(DisplayJHeuristicValues();); d8_printf1("\n");
+#define HEUR_EXTRA_OUT() \
+   d8_printf6("JHeuristic: %c%d (%.10f,%.10f) because of %f\n",  \
+         (*pnBranchValue==BOOL_TRUE?'+':'-'), \
+         nBestVble,  \
+         arrHeurScores[nBestVble].Pos, \
+         arrHeurScores[nBestVble].Neg, \
          fMaxWeight);
-}
+
+#define HEUR_SIGN(nBestVble) \
+   (arrHeurScores[nBestVble].Pos >= arrHeurScores[nBestVble].Neg?BOOL_TRUE:BOOL_FALSE)
+
+#include "heur_choice.cc"
+
+#undef HEUR_WEIGHT
+#define HEUR_WEIGHT(x) (x.Pos*x.Neg*(arrLemmaVbleCountsNeg[i]>arrLemmaVbleCountsPos[i]?arrLemmaVbleCountsNeg[i]:arrLemmaVbleCountsPos[i]))
+
+#undef HEUR_FUNCTION
+#define HEUR_FUNCTION J_OptimizedHeuristic_l
+#include "heur_choice.cc"
 
 ITE_INLINE void 
 J_Heuristic_Lemma(LemmaInfoStruct **ppUnitLemmaList, int *nInferredAtom, int *nInferredValue)
@@ -468,8 +335,8 @@ J_Heuristic_Lemma(LemmaInfoStruct **ppUnitLemmaList, int *nInferredAtom, int *nI
          if (arrSolution[i] == BOOL_UNKNOWN)
          {
             fprintf(stderr, "?");
-            fVbleWeight = J_WEIGHT(arrHeurScores[i]);
-            if (J_COMPARE(fVbleWeight, fMaxWeight))
+            fVbleWeight = HEUR_WEIGHT(arrHeurScores[i]);
+            if (HEUR_COMPARE(fVbleWeight, fMaxWeight))
             {
                fMaxWeight = fVbleWeight;
                nBestVble = i;
@@ -480,14 +347,7 @@ J_Heuristic_Lemma(LemmaInfoStruct **ppUnitLemmaList, int *nInferredAtom, int *nI
    if (nBestVble != 0) 
    {
       *nInferredAtom = nBestVble;
-      if (arrHeurScores[nBestVble].Pos >= arrHeurScores[nBestVble].Neg)
-      {
-         *nInferredValue = BOOL_TRUE;
-      }
-      else
-      {
-         *nInferredValue = BOOL_FALSE;
-      }
+      *nInferredValue = HEUR_SIGN(nBestVble);
    }
    *ppUnitLemmaList = NULL;
 }

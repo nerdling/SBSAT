@@ -60,8 +60,8 @@ InitLemmaHeurArrays (int nMaxVbleIndex)
    {
       arrLemmaHeurScoresPos[i] = 0.0;
       arrLemmaHeurScoresNeg[i] = 0.0;
-      arrLemmaVbleCountsPos[i] = 0;
-      arrLemmaVbleCountsNeg[i] = 0;
+      arrLemmaVbleCountsPos[i] = 1; // to satisfy the heuristic
+      arrLemmaVbleCountsNeg[i] = 1; // to satisfy the heuristic
       arrLastLemmaVbleCountsPos[i] = 0;
       arrLastLemmaVbleCountsNeg[i] = 0;
    }

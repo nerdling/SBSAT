@@ -858,12 +858,6 @@ Optional Features:
   --disable-dependency-tracking Speeds up one-time builds
   --enable-dependency-tracking  Do not reject slow dependency extractors
 
-Optional Packages:
-  --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
-  --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
-  --with-gd-inc=DIR       location of the gd includes
-  --with-gd-lib=DIR       location of the gd library
-
 Some influential environment variables:
   CXX         C++ compiler command
   CXXFLAGS    C++ compiler flags
@@ -1748,18 +1742,6 @@ if test "${enable_static+set}" = set; then
 fi;
 
 
-# Check whether --with-gd-inc or --without-gd-inc was given.
-if test "${with_gd_inc+set}" = set; then
-  withval="$with_gd_inc"
-  INCL="${INCL} -I${withval}"
-fi;
-
-
-# Check whether --with-gd-lib or --without-gd-lib was given.
-if test "${with_gd_lib+set}" = set; then
-  withval="$with_gd_lib"
-  LIBS="${LIBS} -L${withval}"
-fi;
 
 CXXFLAGS="${CXXFLAGS} ${MYCXXFLAGS} ${INCL}"
 CCFLAGS="${CCFLAGS} ${MYCCFLAGS} ${INCL}"

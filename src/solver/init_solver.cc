@@ -393,6 +393,32 @@ InitBrancher()
 {
    d2_printf1("InitBrancher\n");
 
+   switch (nHeuristic) {
+    case JOHNSON_HEURISTIC:
+      if (sHeuristic[1] == 'l') {
+         int i = strlen(sHeuristic);
+         if (i>8) i=8;
+         memmove(sHeuristic+1, sHeuristic+2, i-1); 
+         proc_call_heuristic = J_OptimizedHeuristic_l;
+      } else {
+         proc_call_heuristic = J_OptimizedHeuristic;
+      }
+      D_9(
+             DisplayJHeuristicValues();
+          );
+       break;
+    case C_LEMMA_HEURISTIC:
+       proc_call_heuristic = L_OptimizedHeuristic;
+       break;
+    case INTERACTIVE_HEURISTIC:
+       proc_call_heuristic = I_OptimizedHeuristic;
+       break;
+    default:
+       dE_printf1("Unknown heuristic\n");
+       exit(1);
+   }
+
+
    arrVarScores = (t_arrVarScores*)ite_calloc(gnMaxVbleIndex, 
          sizeof(t_arrVarScores), 9, "arrVarScores");
    Update_arrVarScores();
@@ -520,24 +546,6 @@ ITE_INLINE void InitializeSpecialFnStack();
    for (int i = 1; i<nNumVariables; i++) {
       //assert(arrSolution[i] == BOOL_UNKNOWN);
       arrSolution[i] = BOOL_UNKNOWN;
-   }
-
-   switch (nHeuristic) {
-    case JOHNSON_HEURISTIC:
-       proc_call_heuristic = J_OptimizedHeuristic;
-       D_9(
-             DisplayJHeuristicValues();
-          );
-       break;
-    case C_LEMMA_HEURISTIC:
-       proc_call_heuristic = L_OptimizedHeuristic;
-       break;
-    case INTERACTIVE_HEURISTIC:
-       proc_call_heuristic = I_OptimizedHeuristic;
-       break;
-    default:
-       dE_printf1("Unknown heuristic\n");
-       exit(1);
    }
 
    if (csv_trace_file) {
