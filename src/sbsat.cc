@@ -65,9 +65,17 @@ int ite_main_preproc();
 void itetable_init();
 void itetable_free_pools();
 
+int seed1;            /* seed for random */
+struct timeval tv1;
+struct timezone tzp1;
+
 int 
 main(int argc, char *argv[])
 {
+	gettimeofday(&tv1,&tzp1);
+	seed1 = (( tv1.tv_sec & 0177 ) * 1000000) + tv1.tv_usec;
+   srandom(seed1);
+	
    int ret = NO_ERROR;
    ret = ite_main_init(argc, argv);
    if (ret == NO_ERROR) {

@@ -49,29 +49,13 @@ int Do_Rewind() {
 
 	Pos_replace = Neg_replace = Setting_Pos = Setting_Neg = 0;
 
-	for(int x = 0; x < original_numout; x++) {
-		functions[x] = original_functions[x];
-		functionType[x] = original_functionType[x];
-		equalityVble[x] = original_equalityVble[x];
-	}
-
-	//fprintf(stderr, "%d %d\n", original_numout, nmbrFunctions); 
-	
-	int y = original_numout;
-	for(int x = original_numout; x < nmbrFunctions; x++) {
-		//fprintf(stderr, "%d ", functionType[x]);
+	int y = 0;
+	for(int x = 0; x < nmbrFunctions; x++) {
 		if(functionType[x] == AUTARKY_FUNC) {
 			functions[y] = functions[x];
 			functionType[y] = AUTARKY_FUNC;
 			equalityVble[y] = equalityVble[x];
-			//fprintf(stderr, "keeping %d at %d\n", x, y);
-			if(x != y) {
-				functions[x] = true_ptr;
-				functionType[x] = UNSURE;
-				equalityVble[x] = 0;
-				Rebuild_BDDx(x);
-			}
-			//Rebuild_BDDx(y);
+			//fprintf(stderr, "keeping autark %d at %d\n", x, y);
 			y++;
 		} else {
 			functions[x] = true_ptr;
@@ -80,6 +64,15 @@ int Do_Rewind() {
 			Rebuild_BDDx(x);
 		}
 	}
+
+	for(int x = 0; x < original_numout; x++) {
+		functions[y] = original_functions[x];
+		functionType[y] = original_functionType[x];
+		equalityVble[y] = original_equalityVble[x];
+		y++;
+	}
+	
+	//fprintf(stderr, "%d %d\n", original_numout, nmbrFunctions); 
 	
 	nmbrFunctions = y;
 

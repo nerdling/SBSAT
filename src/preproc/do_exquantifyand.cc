@@ -73,10 +73,6 @@ int Do_ExQuantifyAnd() {
 	return ret;
 }
 
-int seed1;            /* seed for random */
-struct timeval tv1;
-struct timezone tzp1;
-
 typedef struct rand_list {
 	int num;
 	int prob;	
@@ -99,10 +95,6 @@ int ExQuantifyAnd () {
 	
 	BDDNode *Quantify;
 	
-	gettimeofday(&tv1,&tzp1);
-	seed1 = (( tv1.tv_sec & 0177 ) * 1000000) + tv1.tv_usec;
-   srandom(seed1);
-
 	rand_list *rlist = (rand_list*)ite_calloc(numinp+1, sizeof(rand_list), 9, "rlist");
 	
 	for(int i = 1;i < numinp+1; i++) {
