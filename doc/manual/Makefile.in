@@ -266,7 +266,7 @@ sbsat_manual.ps: sbsat_manual.lyx
 	lyx -e ps sbsat_manual.lyx
 
 sbsat_manual.tex: sbsat_manual.lyx
-	lyx -e tex sbsat_manual.lyx
+	lyx -e latex sbsat_manual.lyx
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
