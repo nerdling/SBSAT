@@ -937,8 +937,8 @@ void bddloop () {
 			d3_printf1("\r");
 			continue;
 		}
-		if (p == ' ') {
-			while (p != ' ') {
+		if (p == ' '|| p == ')' || p == '(') {
+			while (p == ' ' || p == ')' || p == '(') {
             p = fgetc(finputfile);
 				if (p == EOF) {
 					goto Exit;
