@@ -677,12 +677,17 @@ int Rebuild_BDDx (int x) {
 			a++;
 		}
 		//Done adding BDD x into the inferences lists.
-		delete [] variables[x].num;	
+		// delete [] variables[x].num;
 	}
 
 	length[x] = y;
-		
-	variables[x].num = new int[y + 1]; //(int *)calloc(y+1, sizeof(int));
+	
+   if (variables[x].num_alloc < y+1) {
+      if (variables[x].num_alloc > 0) delete [] variables[x].num;
+      variables[x].num = new int[y + 1]; //(int *)calloc(y+1, sizeof(int));
+      variables[x].num_alloc = y+1;
+   }
+
 	for (int i = 0; i < y; i++)
 	  variables[x].num[i] = tempint[i];
    if (y==0) {

@@ -410,6 +410,7 @@ void cheat_replaceall (int *&length, store * &variables, varinfo * &variablelist
 		if (variables[x].num != NULL)
 		  delete variables[x].num;
       variables[x].num = new int[y + 1];	//(int *)calloc(y+1, sizeof(int));
+      variables[x].num_alloc = y+1;
       for (i = 0; i < y; i++)
 		  variables[x].num[i] = tempint[i];
 		variables[x].min = tempint[0];

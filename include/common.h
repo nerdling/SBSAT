@@ -128,6 +128,7 @@ struct minmax {
 
 struct store{
    int *num;
+   int num_alloc;
    int min;
    int max;
    int length;//length for variablelist is 3 = 4
