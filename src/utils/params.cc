@@ -92,7 +92,7 @@ t_opt options[] = {
 { temp_dir, "", "temp-dir", P_STRING, 
 		V(i:127,"127"), {"$TEMP"}, VAR_NORMAL, 0, 
                 "directory for temporary files"},
-{ sResult,   "R",   "show-result",   P_STRING,  V(i:1,"1"), {"n"}, VAR_NORMAL, 0,
+{ sResult,   "R",   "show-result",   P_STRING,  V(i:2,"2"), {"n"}, VAR_NORMAL, 0,
                "Show result (n=no result, r=raw, f=fancy)"},
 { &verify_solution,   "",  "verify-solution",   P_INT,  V(i:0,"0"), V(i:1,"1"), VAR_NORMAL, 0,
                "Verify solution"},
@@ -440,7 +440,7 @@ finish_params()
     case 'm': result_display_type = 3; break;
     case 'c': result_display_type = 4; break;
     default: 
-              dE_printf2("error: Unknown result type %c\n", sResult[0]); 
+              dE_printf2("error: Unknown result type '%c'\n", sResult[0]); 
               exit(1);
               break;
    }
