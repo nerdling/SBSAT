@@ -91,7 +91,7 @@ Init_Preprocessing()
 	numinp = getNuminp ();
 
 	//BDDNodeStruct **original_functions;
-	
+
 	if(original_functions == NULL) {
 		ITE_NEW_CATCH(
 						  original_functions = new BDDNode *[nmbrFunctions + 1],
@@ -134,13 +134,64 @@ Init_Preprocessing()
 	l = new Linear (numinp + 1, T, F);
 	amount = (llistStruct*)calloc(numinp+1, sizeof(llistStruct));
 	
-	/*
-	for (int x = 0; x < numinp + 1; x++)
-	  {
-		  amount[x].head = NULL;
-		  amount[x].tail = NULL;
-	  }
-	*/
+	//Working with preset variables.
+
+	BDDNode *preset_bdd = true_ptr;
+	int iter = 0;
+	int str_length = strlen(preset_variables_string);
+	int begin = iter;
+	while(iter < str_length) {
+		while(preset_variables_string[iter] == ' ' && iter < str_length) iter++;
+		if(iter == str_length) break;
+		int sign;
+		char p = preset_variables_string[iter];
+		if(p == '+') {
+			sign = 1;
+		} else if(p == '-') {
+			sign = 0;
+		} else {
+			fprintf (stderr, "\nExpected '+' or '-' in --preset-variables, found '%c'", p);
+			fprintf (stderr, "\nAll variables must be preceeded by either '+' or '-'...exiting\n");
+			exit (1);
+		}
+		iter++;
+		begin = iter;
+		p = preset_variables_string[iter];
+		while (((p >= 'a') && (p <= 'z')) || ((p >= 'A') && (p <= 'Z'))
+				 || (p == '_') || ((p >= '0') && (p <= '9'))) {
+			iter++;
+			p = preset_variables_string[iter];
+			if(iter == str_length) break;
+		}
+		if((p != ' ' && p != 0) || begin == iter) {
+			fprintf(stderr, "\nUnexpected character '%c' in --preset-variables...exiting\n", p);
+			exit(1);
+		}
+		preset_variables_string[iter] = 0;
+		int intnum = i_getsym(preset_variables_string+begin, SYM_VAR);
+		//fprintf(stderr, "{%d %s}", intnum, preset_variables_string+begin);
+		if(intnum > numinp) {
+			fprintf(stderr, "\nUnknown variable %s found in --preset-variables...exiting\n", preset_variables_string+begin);
+			exit(1);
+		}
+		if(sign==0) intnum = -intnum;
+		preset_bdd = ite_and(preset_bdd, ite_var(intnum));
+		
+		if(iter < str_length) preset_variables_string[iter] = ' ';
+	}
+
+	int bdd_length = 0;
+	int *bdd_vars = NULL;
+	switch (int r=Rebuild_BDD(preset_bdd, &bdd_length, bdd_vars)) {
+	 case TRIV_UNSAT:
+	 case TRIV_SAT:
+	 case PREP_ERROR: return r; 
+	 default: break;
+	}
+	delete [] bdd_vars;
+	bdd_vars = NULL;
+
+	//Done working with preset variables.
 	
 	for (int x = 0; x < nmbrFunctions; x++)
 	  {
