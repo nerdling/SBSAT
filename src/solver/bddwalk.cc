@@ -95,11 +95,11 @@ int second_to_flip_length; /* length of second_to_flip */
 
 double *true_var_weights;         /* holds the taboo weights */
 float true_weight = 0.5;          /* the prob. of picking a variable to be true */
-float true_weight_mult = 1.5;     /* multiplier to decrease the probability */
+float true_weight_multi = NOVALUE;/* multiplier to decrease the probability */
                                   /* of flipping a variable */
-float taboo_max = 6;              /* how many multi-flips until a variable's */
+float taboo_max=NOVALUE;          /* how many multi-flips until a variable's */
                                   /* weight will return to normal (true_weight) */
-float taboo_length = taboo_max-1; /* how many multi-flips will pass before */
+float taboo_length = NOVALUE;     /* how many multi-flips will pass before */
                                   /* a variable is allowed to be flipped again */
 float true_weight_taboo = true_weight; /* used to determine the probability of flipping */
                                        /* a variable again after it's just been flipped */
@@ -125,10 +125,10 @@ long int numlook; /* used to make sure we don't traverse BDDs we've already */
                   /* traversed this same flip */
 
 int numrun = BIG;
-long cutoff = 100000; /* number of flips per random restart */
+int cutoff = 100000; /* number of flips per random restart (on the command line --cutoff) */
 int target = 0; /* number of BDDs left to be satisfied for a solution */
 int numtry = 0; /* total attempts at solutions */
-int numsol = NOVALUE; /* stop after finding this many solutions */
+int numsol = NOVALUE; /* stop after finding this many solutions (on the command line --max-solutions) */
 
 /* Histogram of tail */
 
@@ -200,7 +200,7 @@ int picknoveltyplus(void);
 
 int countunsat(void);
 void init_CountFalses();
-void initprob(void);                 /* create a new problem */
+void initprob(void); /* Initialize data structures for the problem */
 void freemem(void);
 void flipatoms(void);
 
@@ -212,6 +212,7 @@ void print_current_assign(void);
 void print_statistics_header(void);
 void update_statistics_start_try(void);
 void update_and_print_statistics_end_try(void);
+void print_statistics_mid_try(void);
 void update_statistics_end_flip(void);
 void print_statistics_final(void);
 
@@ -221,8 +222,13 @@ void print_statistics_final(void);
 
 int walkSolve()
 {
-	numsol = max_solutions; //get numsol from the command line
-	cutoff = BDDWalkCutoff; //get cutoff from the command line
+	/* Get values from the command line */
+	numsol = max_solutions;
+	cutoff = BDDWalkCutoff;
+	true_weight_multi = (float)BDDWalktaboo_multi;
+	taboo_max = (float)BDDWalktaboo_max;
+	taboo_length = taboo_max-1.0;
+
 	gettimeofday(&tv,&tzp);
 	seed = (( tv.tv_sec & 0177 ) * 1000000) + tv.tv_usec;
 	if (numsol==NOVALUE || numsol>numrun) numsol = numrun;
@@ -237,19 +243,26 @@ int walkSolve()
 		numflip = 0;
 		numlook = 0;
 
-		//Print the current assignment
-		/*for(int i = 1; i < numvars; i++)
-			fprintf(stderr, "%d ", atom[i]==1?atoi(s_name(i)):-atoi(s_name(i)));
-		fprintf(stderr, "\n");*/
-
 		while((numfalse > target) && (numflip < cutoff)) {
 			numflip+=picknoveltyplus();
 			flipatoms();
+			update_statistics_end_flip();
 			if (nCtrlC) {
-				d3_printf1("Breaking out of BDD WalkSAT\n");
+				d2_printf1("Breaking out of BDD WalkSAT\n");
 				break;
 			}
-			update_statistics_end_flip();
+			char term_char = term_getchar();
+			if (term_char==' ') { //Display status
+				d2_printf1("\b");
+				print_statistics_mid_try();
+			} else if (term_char=='r') { //Force a random restart
+				d2_printf1("\b");
+				break;
+			} else if (term_char=='q') { //Quit
+				d2_printf1("\b");
+				nCtrlC = 1;
+				break;
+			}
 		}
 		update_and_print_statistics_end_try();
 		if (nCtrlC) {
@@ -272,28 +285,27 @@ void initprob(void)
 	atom = new int[numvars+1];
 	
 	occurance = new intlist[numvars+1];
-	wlength = new int[numBDDs+1];
-	wvariables = new intlist[numBDDs+1];
+	wlength = new int[numBDDs];
+	wvariables = new intlist[numBDDs];
 	int *tempmem = new int[numvars+1];
-	int *tempint = NULL; //new int[MAX_NODES_PER_BDD];
+	int *tempint = NULL;
 	long tempint_max = 0;
 	
 	true_var_weights = new double[numvars+1];
-	previousState = new BDDState[numBDDs+1]; //intlist[numBDDs+1];
-	wherefalse = new int[numBDDs+1];
-	falseBDDs = new int[numBDDs+1];
+	previousState = new BDDState[numBDDs];
+	wherefalse = new int[numBDDs];
+	falseBDDs = new int[numBDDs];
 	varstoflip = new int[numvars+1];
 	best_to_flip = new int[numvars+1];
 	second_to_flip = new int[numvars+1];
 	
 	for(int x = 0; x < taboo_length; x++)
-	  true_weight_taboo = true_weight_taboo / true_weight_mult;
+	  true_weight_taboo = true_weight_taboo / true_weight_multi;
 	for(int x = 0; x < taboo_max; x++)
-	  true_weight_max = true_weight_max / true_weight_mult;
+	  true_weight_max = true_weight_max / true_weight_multi;
 	
-	for(int x = 0; x < numvars+1; x++) {
+	for(int x = 0; x <= numvars; x++) {
 		tempmem[x] = 0;
-		true_var_weights[x] = true_weight;
 	}
 	
 	for(int x = 0; x < numBDDs; x++) {
@@ -302,9 +314,7 @@ void initprob(void)
 		if (y != 0) qsort (tempint, y, sizeof (int), compfunc);
 		
 		wlength[x] = y;
-		previousState[x].visited = 0;
-		previousState[x].IsSAT = 0;
-		wvariables[x].num = new int[y+1];	//(int *)calloc(y+1, sizeof(int));
+		wvariables[x].num = new int[y];	//(int *)calloc(y+1, sizeof(int));
 		wvariables[x].length = y;
 		for (int i = 0; i < y; i++) {
 			wvariables[x].num[i] = tempint[i];
@@ -315,8 +325,8 @@ void initprob(void)
 	//length is done
 	//wvariables is done
 	
-	for (int x = 0; x < numvars+1; x++) {
-		occurance[x].num = new int[tempmem[x]+1];
+	for (int x = 0; x <= numvars; x++) {
+		occurance[x].num = new int[tempmem[x]];
 		occurance[x].length = 0;
 	}
 	delete [] tempmem;
@@ -339,7 +349,7 @@ void freemem(void)
 {
 	delete [] atom;
 	
-	for (int x = 0; x < numvars+1; x++)
+	for (int x = 0; x <= numvars; x++)
 	  delete [] occurance[x].num;
 	delete [] occurance;
 	
@@ -363,14 +373,14 @@ void freemem(void)
 
 void print_statistics_header(void)
 {
-    printf("numvars = %i, numBDDs = %i\n",numvars,numBDDs);
-    printf("wff read in\n\n");
-    printf("    lowest     final       avg     noise     noise     total                 avg      mean      mean\n");
-    printf("    #unsat    #unsat     noise   std dev     ratio     flips              length     flips     flips\n");
-    printf("      this      this      this      this      this      this   success   success     until       std\n");
-    printf("       try       try       try       try       try       try      rate     tries    assign       dev\n\n");
+	d2_printf3("numvars = %i, numBDDs = %i\n",numvars,numBDDs);
+   d2_printf1("wff read in\n\n");
+	d2_printf1("    lowest     final       avg     noise     noise     total                 avg      mean      mean\n");
+	d2_printf1("    #unsat    #unsat     noise   std dev     ratio     flips              length     flips     flips\n");
+	d2_printf1("      this      this      this      this      this      this   success   success     until       std\n");
+	d2_printf1("       try       try       try       try       try       try      rate     tries    assign       dev\n\n");
 
-    fflush(stdout);
+   fflush(stdout);
 
 }
 
@@ -397,7 +407,7 @@ void Fill_Weights() {
 
 //Traverse the BDD and return if the current path (stored in atom[])
 //satisfies or unsatisfies BDD f
-bool traverseBDD(BDDNode *f) {
+inline bool traverseBDD(BDDNode *f) {
 	assert(!IS_TRUE_FALSE(f)); //Assume every BDD is more complex than true or false
 	while(1) {
 		if(atom[f->variable] == TRUE) {
@@ -442,9 +452,12 @@ void init_CountFalses() {
 	best_to_flip_length = 0;
 	second_to_flip_length = 0;
 	
-	for(i = 1;i < numvars+1;i++)
-	  atom[i] = random()%2;  //This fills atom with a random truth assignment
-	
+	for(i = 1;i <= numvars; i++) {
+		atom[i] = random()%2;  //This fills atom with a random truth assignment
+		true_var_weights[i] = true_weight; //Reset the taboo weights
+		//Comment out for a small type of learning
+	}
+
 	/* Initialize previousState, wherefalse and falseBDDs in the following: */
 	
 	for(i = 0;i < numBDDs;i++) {
@@ -463,7 +476,7 @@ void init_CountFalses() {
 //This function finds a random path to True in BDD x and stores it
 //in varstoflip[]. varstoflip[] consists of only variables in the path
 //with opposite values of the current assignment.
-int getRandomTruePath(int x) {
+inline int getRandomTruePath(int x) {
 	BDDNode *bdd = functions[x];
 	int len = wlength[x]; //Number of variables in this BDD
 	int path_length = 0;
@@ -494,7 +507,7 @@ int getRandomTruePath(int x) {
 				bdd = bdd->elseCase;
 			} else {
 				//Choose this variable's direction based on it's weight
-				if((random()%100) < (bdd->tbr_weight * 100)) {
+				if((random()%100) < ((bdd->tbr_weight + true_var_weights[wvar]) * 100/2)) {
 					//Variable wvar is chosen True
 					if(atom[wvar] == 0)
 					  varstoflip[path_length++] = wvar;
@@ -592,7 +605,6 @@ void getmbcountTruePath() {
 
 int picknoveltyplus(void)
 {
-	int try_agains = 0;
 	int best_make = 0, second_best_make = 0;
 	double best_diff, second_best_diff;
 	int youngest_birthdate, best=0, second_best=0;
@@ -602,7 +614,6 @@ int picknoveltyplus(void)
 	float percent_unsatisfied = 1.0-percent_satisfied;
 	path_factor = 11.0-(percent_unsatisfied*10.0);
 	
-	//again:;
 	double diff = 0.0;
 	int tofix, BDDsize;
 	int flippath = 0;
@@ -616,7 +627,6 @@ int picknoveltyplus(void)
 	int path_length = 0;
 
 	/* hh: inserted modified loop breaker: */
-	//fprintf(stderr, "\ntofix: %d\n", tofix);
 	if ((random()%wp_denominator < wp_numerator)) {
 		flippath = 0;
 		
@@ -657,7 +667,7 @@ int picknoveltyplus(void)
 			if (diff > best_diff || (diff == best_diff && makecount > best_make)) {
 				/* found new best, demote best to 2nd best */
 				if(best) {
-					for(int z = 0; z < best_to_flip_length+1; z++)
+					for(int z = 0; z <= best_to_flip_length; z++)
 					  second_to_flip[z] = best_to_flip[z];
 					second_to_flip_length = best_to_flip_length;
 					second_best_diff = best_diff;
@@ -665,14 +675,14 @@ int picknoveltyplus(void)
 					second_best = 1;
 				} else best = 1;
 				
-				for(int z = 0; z<path_length+1; z++)
+				for(int z = 0; z <= path_length; z++)
 				  best_to_flip[z] = varstoflip[z];
 				best_to_flip_length = path_length;
 				best_diff = diff;
 				best_make = makecount;
 			} else if (diff > second_best_diff || (diff == second_best_diff && makecount > second_best_make)) {
 				/* found new second best */
-				for(int z = 0; z < path_length+1; z++)
+				for(int z = 0; z <= path_length; z++)
 				  second_to_flip[z] = varstoflip[z];
 				second_to_flip_length = path_length;
 				second_best_diff = diff;
@@ -681,30 +691,18 @@ int picknoveltyplus(void)
 			}
 		}
 
-		try_agains++;
-
 		if(!second_best) flippath = 1;
 		else if(best_diff == second_best_diff) flippath = 1;
 		else if ((random()%denominator < numerator)) flippath = 2;
 		else flippath = 1;
-/*
-      if(try_agains < 20) { //Try up to 20 mostly different unsat BDDs.
-			if(best_diff < -(numfalse/3) && flippath == 1) {
-				goto again;
-			}
-			if(second_best_diff < -(numfalse/2) && flippath == 2) {
-				goto again;
-			}
-		}
-*/
 	}
 	
 	if(flippath == 1) { //Choose best path
-		for(int z = 0; z < best_to_flip_length+1; z++)
+		for(int z = 0; z <= best_to_flip_length; z++)
 		  varstoflip[z] = best_to_flip[z];
 		path_length = best_to_flip_length;
 	} else if(flippath == 2) { //Choose second_best path
-		for(int z = 0; z < second_to_flip_length+1; z++)
+		for(int z = 0; z <= second_to_flip_length; z++)
 		  varstoflip[z] = second_to_flip[z];
 		path_length = second_to_flip_length;
 	}
@@ -718,10 +716,10 @@ void flipatoms() {
 	int flipiter = 0;
 
 	//Decrease the taboo value of each variable
-	for(int i = 0; i < numvars; i++) {
+	for(int i = 1; i <= numvars; i++) {
 		if(true_var_weights[i] == true_weight) continue;
-		if(true_var_weights[i] < true_weight) { true_var_weights[i] *= true_weight_mult; }
-		if(true_var_weights[i] > true_weight) { true_var_weights[i] = 1-((1-true_var_weights[i])*true_weight_mult); }
+		if(true_var_weights[i] < true_weight) { true_var_weights[i] *= true_weight_multi; }
+		if(true_var_weights[i] > true_weight) { true_var_weights[i] = 1-((1-true_var_weights[i])*true_weight_multi); }
 		//fprintf(stderr, "%4.3f ", true_var_weights[i]);
 	}
 	//fprintf(stderr, "\n");
@@ -776,13 +774,13 @@ void flipatoms() {
 void print_current_assign(void) {
 	int i;
 	
-	printf("Begin assign at flip = %ld\n", numflip);
+	d2_printf2("Begin assign at flip = %ld\n", numflip);
 	for (i=1; i<=numvars; i++){
-		printf(" %d", atom[i]==0 ? -i : i);
-		if (i % 10 == 0) printf("\n");
+		d2_printf2(" %d", atom[i]==0 ? -i : i);
+		if (i % 10 == 0) d2_printf1("\n");
 	}
-	if ((i-1) % 10 != 0) printf("\n");
-	printf("End assign\n");
+	if ((i-1) % 10 != 0) d2_printf1("\n");
+	d2_printf1("End assign\n");
 }
 
 void update_statistics_start_try(void) {
@@ -813,6 +811,37 @@ void update_statistics_end_flip(void) {
 			sample_size ++;
 		}
 	}
+}
+
+void print_statistics_mid_try(void) {
+	if (sample_size > 0) {
+		avgfalse = sumfalse/sample_size;
+		second_moment_avgfalse = sumfalse_squared / sample_size;
+		variance_avgfalse = second_moment_avgfalse - (avgfalse * avgfalse);
+		if (sample_size > 1) { variance_avgfalse = (variance_avgfalse * sample_size)/(sample_size - 1); }
+		std_dev_avgfalse = sqrt(variance_avgfalse);
+		
+		ratio_avgfalse = avgfalse / std_dev_avgfalse;
+	} else {
+		avgfalse = 0;
+		variance_avgfalse = 0;
+		std_dev_avgfalse = 0;
+		ratio_avgfalse = 0;
+	}
+	
+	d2_printf8("*%9li %9i %9.2f %9.2f %9.2f %9li %9i",
+				  lowbad,numfalse,avgfalse, std_dev_avgfalse,ratio_avgfalse,numflip, (numtry>1?((numsuccesstry*100)/(numtry-1)):0));
+	if (numsuccesstry > 1) {
+		d2_printf2(" %9li", totalsuccessflip/numsuccesstry);
+		d2_printf2(" %9.2f", mean_x);
+		if (numsuccesstry > 1){
+			d2_printf2(" %9.2f", std_dev_x);
+		}
+	}
+//	d2_printf2("%d", numflip);
+	d2_printf1("\r");
+	
+	fflush(stdout);
 }
 
 void update_and_print_statistics_end_try(void) {
@@ -850,7 +879,6 @@ void update_and_print_statistics_end_try(void) {
 	}
 	
 	if(numfalse == 0) {
-		
 		save_solution();
 		numsuccesstry++;
 		
@@ -875,17 +903,17 @@ void update_and_print_statistics_end_try(void) {
 		flips_r = 0;
 	}
 
-	printf(" %9li %9i %9.2f %9.2f %9.2f %9li %9i",
+	d2_printf8(" %9li %9i %9.2f %9.2f %9.2f %9li %9i",
 			 lowbad,numfalse,avgfalse, std_dev_avgfalse,ratio_avgfalse,numflip, (numsuccesstry*100)/numtry);
 	if (numsuccesstry > 0) {
-		printf(" %9li", totalsuccessflip/numsuccesstry);
-		printf(" %9.2f", mean_x);
+		d2_printf2(" %9li", totalsuccessflip/numsuccesstry);
+	   d2_printf2(" %9.2f", mean_x);
 		if (numsuccesstry > 1){
-			printf(" %9.2f", std_dev_x);
+			d2_printf2(" %9.2f", std_dev_x);
 		}
 	}
-//	printf("%d", numflip);
-	printf("\n");
+//	d2_printf2("%d", numflip);
+	d2_printf1("\n");
 	
 	if(numfalse == 0 && countunsat() != 0) {
 		fprintf(stderr, "Program error, verification of solution fails!\n");
@@ -897,33 +925,33 @@ void update_and_print_statistics_end_try(void) {
 
 void print_statistics_final(void) {
 	seconds_per_flip = expertime / totalflip;
-	printf("\ntotal elapsed seconds = %f\n", expertime);
-	printf("average flips per second = %ld\n", (long)(totalflip/expertime));
-	printf("number solutions found = %d\n", numsuccesstry);
-	printf("final success rate = %f\n", ((double)numsuccesstry * 100.0)/numtry);
-	printf("average length successful tries = %li\n", numsuccesstry ? (totalsuccessflip/numsuccesstry) : 0);
+	d2_printf2("\ntotal elapsed seconds = %f\n", expertime);
+	d2_printf2("average flips per second = %ld\n", (long)(totalflip/expertime));
+	d2_printf2("number solutions found = %d\n", numsuccesstry);
+	d2_printf2("final success rate = %f\n", ((double)numsuccesstry * 100.0)/numtry);
+	d2_printf2("average length successful tries = %li\n", numsuccesstry ? (totalsuccessflip/numsuccesstry) : 0);
 	if (numsuccesstry > 0) {
-		printf("mean flips until assign = %f\n", mean_x);
+		d2_printf2("mean flips until assign = %f\n", mean_x);
 		if (numsuccesstry>1) {
-			printf("  variance = %f\n", variance_x);
-			printf("  standard deviation = %f\n", std_dev_x);
-			printf("  standard error of mean = %f\n", std_error_mean_x);
+			d2_printf2("  variance = %f\n", variance_x);
+			d2_printf2("  standard deviation = %f\n", std_dev_x);
+			d2_printf2("  standard error of mean = %f\n", std_error_mean_x);
 		}
-		printf("mean seconds until assign = %f\n", mean_x * seconds_per_flip);
+		d2_printf2("mean seconds until assign = %f\n", mean_x * seconds_per_flip);
 		if (numsuccesstry>1) {
-			printf("  variance = %f\n", variance_x * seconds_per_flip * seconds_per_flip);
-			printf("  standard deviation = %f\n", std_dev_x * seconds_per_flip);
-			printf("  standard error of mean = %f\n", std_error_mean_x * seconds_per_flip);
+			d2_printf2("  variance = %f\n", variance_x * seconds_per_flip * seconds_per_flip);
+			d2_printf2("  standard deviation = %f\n", std_dev_x * seconds_per_flip);
+			d2_printf2("  standard error of mean = %f\n", std_error_mean_x * seconds_per_flip);
 		}
-		printf("mean restarts until assign = %f\n", mean_r);
+		d2_printf2("mean restarts until assign = %f\n", mean_r);
 		if (numsuccesstry>1) {
 			variance_r = (sum_r_squared / numsuccesstry) - (mean_r * mean_r);
 			if (numsuccesstry > 1) variance_r = (variance_r * numsuccesstry)/(numsuccesstry - 1);	   
 			std_dev_r = sqrt(variance_r);
 			std_error_mean_r = std_dev_r / sqrt((double)numsuccesstry);
-			printf("  variance = %f\n", variance_r);
-			printf("  standard deviation = %f\n", std_dev_r);
-			printf("  standard error of mean = %f\n", std_error_mean_r);
+			d2_printf2("  variance = %f\n", variance_r);
+			d2_printf2("  standard deviation = %f\n", std_dev_r);
+			d2_printf2("  standard error of mean = %f\n", std_error_mean_r);
 		}
 	}
 	
@@ -951,23 +979,23 @@ void print_statistics_final(void) {
 			nonsuc_ratio_mean_avgfalse = 0;
       }
 		
-      printf("final noise level statistics\n");
-      printf("    statistics over all runs:\n");
-      printf("      overall mean average noise level = %f\n", mean_avgfalse);
-      printf("      overall mean noise std deviation = %f\n", mean_std_dev_avgfalse);
-      printf("      overall ratio mean noise to mean std dev = %f\n", ratio_mean_avgfalse);
-      printf("    statistics on successful runs:\n");
-      printf("      successful mean average noise level = %f\n", suc_mean_avgfalse);
-      printf("      successful mean noise std deviation = %f\n", suc_mean_std_dev_avgfalse);
-      printf("      successful ratio mean noise to mean std dev = %f\n", suc_ratio_mean_avgfalse);
-      printf("    statistics on nonsuccessful runs:\n");
-      printf("      nonsuccessful mean average noise level = %f\n", nonsuc_mean_avgfalse);
-      printf("      nonsuccessful mean noise std deviation = %f\n", nonsuc_mean_std_dev_avgfalse);
-      printf("      nonsuccessful ratio mean noise to mean std dev = %f\n", nonsuc_ratio_mean_avgfalse);
+      d2_printf1("final noise level statistics\n");
+      d2_printf1("    statistics over all runs:\n");
+      d2_printf2("      overall mean average noise level = %f\n", mean_avgfalse);
+      d2_printf2("      overall mean noise std deviation = %f\n", mean_std_dev_avgfalse);
+      d2_printf2("      overall ratio mean noise to mean std dev = %f\n", ratio_mean_avgfalse);
+      d2_printf1("    statistics on successful runs:\n");
+      d2_printf2("      successful mean average noise level = %f\n", suc_mean_avgfalse);
+      d2_printf2("      successful mean noise std deviation = %f\n", suc_mean_std_dev_avgfalse);
+      d2_printf2("      successful ratio mean noise to mean std dev = %f\n", suc_ratio_mean_avgfalse);
+      d2_printf1("    statistics on nonsuccessful runs:\n");
+      d2_printf2("      nonsuccessful mean average noise level = %f\n", nonsuc_mean_avgfalse);
+      d2_printf2("      nonsuccessful mean noise std deviation = %f\n", nonsuc_mean_std_dev_avgfalse);
+      d2_printf2("      nonsuccessful ratio mean noise to mean std dev = %f\n", nonsuc_ratio_mean_avgfalse);
 	}
 	
-	if (numsuccesstry > 0) printf("ASSIGNMENT FOUND\n");
-	else printf("ASSIGNMENT NOT FOUND\n");
+	if (numsuccesstry > 0) { d2_printf1("ASSIGNMENT FOUND\n"); }
+	else { d2_printf1("ASSIGNMENT NOT FOUND\n"); }
 }
 
 void save_solution(void) {
