@@ -48,6 +48,8 @@ extern int Setting_Neg;
 extern int *original_functionType;
 extern int *original_equalityVble;
 
+void p3_top_bdds(int);
+
 int size = 10;
 
 int Do_Prover3() {
@@ -62,7 +64,7 @@ int Do_Prover3() {
 	/****** DELETING ARRAYS ********/
 	ite_free((void**)&original_functionType);
 	ite_free((void**)&original_equalityVble);
-//   delete [] original_functions;
+   delete [] original_functions;
 	for (int x = 0; x < numinp + 1; x++) {
 		llist *k = amount[x].head;
 		while (k != NULL) {
@@ -99,11 +101,12 @@ int Do_Prover3() {
 	/****** DONE DELETING ARRAYS ********/	
 
 	//Grabbing new prover3 BDDS
-	//Prover3(size);
+	prover3_max_vars = size;
+	p3_top_bdds(0);
 	
-	for(int x = 0; x < nmbrFunctions; x++)
-	  functions[x] = original_functions[x];
-	delete [] original_functions; //Just for testing! remove this and uncomment
+//	for(int x = 0; x < nmbrFunctions; x++)
+//	  functions[x] = original_functions[x];
+//	delete [] original_functions; //Just for testing! remove this and uncomment
 	                              //delete line up above!
 	
 	/****** REALLOCATING ARRAYS *********/
