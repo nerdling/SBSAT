@@ -202,6 +202,13 @@ bddvsb_find_or_add_node (int v, BDDNode * r, BDDNode * e)
 	} else {
       /* could not find the node => allocate new one */
       ite_counters[BDD_NODE_NEW]++;
+      /* not safe
+      if (bddtable_free == NULL && bddmemory_vsb[numBDDPool].max == curBDDPos) {
+         bdd_gc();
+         node = hash_memory+hash_pos;
+         while (!(*node == NULL)) node = &((*node)->next);
+      }
+      */
       if (bddtable_free != NULL) {
          (*node) = bddtable_free;
          bddtable_free = bddtable_free->next;
@@ -263,9 +270,13 @@ bdd_gc()
    // flag all referenced nodes
    true_ptr->flag = 1;
    false_ptr->flag = 1;
-   for (i=0;i<numout;i++)
+   for (i=0;i<nmbrFunctions;i++)
    {
       bdd_flag_nodes(functions[i]);
+   }
+   for (i=0;i<original_numout;i++)
+   {
+      bdd_flag_nodes(original_functions[i]);
    }
 
    // clean the hash table

@@ -88,6 +88,8 @@ long nNumChoicePointLimit = 0;
 /* former CircuitStruct */
 int nmbrFunctions=0;
 struct BDDNodeStruct **functions=NULL;
+int original_numout=0;
+BDDNodeStruct **original_functions = NULL;
 int *functionType=NULL;
 int *equalityVble=NULL; ///< Variable on the LHS of an ite=, and=, or or= BDD.
 int *independantVars=NULL;

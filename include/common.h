@@ -156,7 +156,9 @@ typedef struct BDDNodeStruct {
 } BDDNode;
 
 extern   int nmbrFunctions;
+extern   int original_numout;
 extern   struct BDDNodeStruct **functions;
+extern   struct BDDNodeStruct **original_functions;
 extern   struct BDDNodeStruct **xorFunctions;
 extern   int *functionType;
 extern   int *equalityVble; // Variable on the LHS of an ite=, and=, or or= BDD.

@@ -61,9 +61,6 @@ int preproc_did_nothing = 0;
 long affected;
 BDDNodeStruct **xorFunctions;
 
-int original_numout;
-BDDNodeStruct **original_functions = NULL;
-
 int Finish_Preprocessing();
 int Init_Preprocessing();
 
