@@ -39,7 +39,7 @@
 #include "solver.h"
 
 int USE_BACKBURNER1 = 0;
-int USE_BACKBURNER2 = 1;
+int USE_BACKBURNER2 = 0;
 
 ITE_INLINE
 void AFSMoveLemma(LemmaInfoStruct *previous, LemmaInfoStruct *pLemmaListDisagreed, LemmaInfoStruct *pLemmaListTail, int negativeLit, int nVble, int idx)
@@ -54,7 +54,6 @@ void AFSMoveLemma(LemmaInfoStruct *previous, LemmaInfoStruct *pLemmaListDisagree
 		pLemmaListTail->pNextLemma[idx] = pLemmaListDisagreed->pPrevLemma[idx];
 	}
 
-	
    /* Add him into his new list */
    {
       LemmaInfoStruct *pLemmasWhere;
@@ -226,7 +225,10 @@ UpdateEachAffectedLemma(AffectedFuncsStruct *pAFS, int nInferredValue)
 				nVble = nNewWatchedVar;
 				negativeLit = nNewNegativeLit;
 				if(nVble != pLemmaListDisagreed->nWatchedVble[1] && nVble!=pLemmaListDisagreed->nWatchedVble[0]) {
-					AFSMoveLemma(pLemmaListDisagreed->pPrevLemma[1], pLemmaListDisagreed, pLemmaListTail, negativeLit, nVble, 1);
+					if(pLemmaListDisagreed->nWatchedVblePolarity[1])
+					  AFSMoveLemma(pLemmaListDisagreed->pPrevLemma[1], pLemmaListDisagreed, &(pAFS->LemmasWherePosTail[1]), negativeLit, nVble, 1);
+					else
+					  AFSMoveLemma(pLemmaListDisagreed->pPrevLemma[1], pLemmaListDisagreed, &(pAFS->LemmasWhereNegTail[1]), negativeLit, nVble, 1);
 				}
 				if(nSecondWatchedVar != 0) {
 					AFSMoveLemma(previous, pLemmaListDisagreed, pLemmaListTail, nSecondNegativeLit, nSecondWatchedVar, 0);
@@ -331,7 +333,10 @@ UpdateEachAffectedLemma(AffectedFuncsStruct *pAFS, int nInferredValue)
 							nVble = nNewWatchedVar;
 							negativeLit = nNewNegativeLit;
 							if(nSecondWatchedVar != 0) {
-								AFSMoveLemma(pLemmaListDisagreed->pPrevLemma[1], pLemmaListDisagreed, pLemmaListTail, nSecondNegativeLit, nSecondWatchedVar, 1);
+								if(pLemmaListDisagreed->nWatchedVblePolarity[1])
+								  AFSMoveLemma(pLemmaListDisagreed->pPrevLemma[1], pLemmaListDisagreed, &(pAFS->LemmasWherePosTail[1]), nSecondNegativeLit, nSecondWatchedVar, 1);
+								else
+								  AFSMoveLemma(pLemmaListDisagreed->pPrevLemma[1], pLemmaListDisagreed, &(pAFS->LemmasWhereNegTail[1]), nSecondNegativeLit, nSecondWatchedVar, 1);
 							}
 						}
 					} //END USE_BACKBURNER
@@ -409,10 +414,13 @@ UpdateEachAffectedLemma(AffectedFuncsStruct *pAFS, int nInferredValue)
       return ERR_BT_LEMMA;
    }
 
-   if (nInferredValue == BOOL_TRUE)
+   if (nInferredValue == BOOL_TRUE) {
       pLemmaListDisagreed = &(pAFS->LemmasWhereNeg[1]);
-   else
+		pLemmaListTail = &(pAFS->LemmasWhereNegTail[1]);
+	} else {
       pLemmaListDisagreed = &(pAFS->LemmasWherePos[1]);
+		pLemmaListTail = &(pAFS->LemmasWherePosTail[1]);
+	}
 
    previous = pLemmaListDisagreed;
    bContinue = false;
@@ -483,7 +491,10 @@ UpdateEachAffectedLemma(AffectedFuncsStruct *pAFS, int nInferredValue)
 				nVble = nNewWatchedVar;
 				negativeLit = nNewNegativeLit;
 				if(nVble != pLemmaListDisagreed->nWatchedVble[0] && nVble!=pLemmaListDisagreed->nWatchedVble[1]) {
-					AFSMoveLemma(pLemmaListDisagreed->pPrevLemma[0], pLemmaListDisagreed, pLemmaListTail, negativeLit, nVble, 0);
+					if(pLemmaListDisagreed->nWatchedVblePolarity[0])
+					  AFSMoveLemma(pLemmaListDisagreed->pPrevLemma[0], pLemmaListDisagreed, &(pAFS->LemmasWherePosTail[0]), negativeLit, nVble, 0);
+					else
+					  AFSMoveLemma(pLemmaListDisagreed->pPrevLemma[0], pLemmaListDisagreed, &(pAFS->LemmasWhereNegTail[0]), negativeLit, nVble, 0);
 				}
 				if(nSecondWatchedVar != 0) {
 					AFSMoveLemma(previous, pLemmaListDisagreed, pLemmaListTail, nSecondNegativeLit, nSecondWatchedVar, 1);
@@ -584,7 +595,10 @@ UpdateEachAffectedLemma(AffectedFuncsStruct *pAFS, int nInferredValue)
 							nVble = nNewWatchedVar;
 							negativeLit = nNewNegativeLit;
 							if(nSecondWatchedVar != 0) {
-								AFSMoveLemma(pLemmaListDisagreed->pPrevLemma[0], pLemmaListDisagreed, pLemmaListTail, nSecondNegativeLit, nSecondWatchedVar, 0);
+								if(pLemmaListDisagreed->nWatchedVblePolarity[0])
+								  AFSMoveLemma(pLemmaListDisagreed->pPrevLemma[0], pLemmaListDisagreed, &(pAFS->LemmasWherePosTail[0]), nSecondNegativeLit, nSecondWatchedVar, 0);
+								else
+								  AFSMoveLemma(pLemmaListDisagreed->pPrevLemma[0], pLemmaListDisagreed, &(pAFS->LemmasWhereNegTail[0]), nSecondNegativeLit, nSecondWatchedVar, 0);
 							}
 						}
 					} //END USE_BACKBURNER
