@@ -143,13 +143,12 @@ int ExQuantify () {
 						}
 					}
 */
-					
 					if(x_infers == NULL) {
 						//continue, variable was inferenced away earlier.
 						//It will get picked up next loop around
 						//continue;
 						//goto ex_bailout;
-					} else if(x_infers->nums[0] == 0) {
+					} else if(x_infers->nums[0] == 0 || !ex_infer) {
 						for(int iter = 0; iter<str_length; iter++)
 						  d3_printf1("\b");
 						str_length = 0;
@@ -159,7 +158,9 @@ int ExQuantify () {
 						SetRepeats(j);
 						equalityVble[j] = 0;
 						functionType[j] = UNSURE;
-						delete x_infers;
+						while(x_infers!=NULL) {
+							infer *temp = x_infers; x_infers = x_infers->next; delete temp;
+						}
 					} else {
 						BDDNode *inferBDD = true_ptr;
 						//while (x_infers!=NULL) {
@@ -170,7 +171,9 @@ int ExQuantify () {
 						  inferBDD = ite_and(inferBDD, ite_equ(ite_var(x_infers->nums[0]), ite_var(x_infers->nums[1])));
 						//infer *temp = x_infers; x_infers = x_infers->next; delete temp;
 						//}
-	
+
+						functions[j] = xquantify (functions[j], i);
+						
 						while(x_infers!=NULL) {
 							infer *temp = x_infers; x_infers = x_infers->next; delete temp;
 						}
