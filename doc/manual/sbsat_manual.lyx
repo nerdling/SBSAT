@@ -787,21 +787,37 @@ Keywords
 Keywords are not case sensitive.
  The current keywords used, with a brief description of each are as follows:
  
-\layout Itemize
+\layout LyX-Code
 
-INITIALBRANCH InitialBranch allows the user to specify which variables should
- be branched on first during search.
+\layout Standard
+
+
+\series bold 
+INITIALBRANCH
+\layout Standard
+
+InitialBranch allows the user to specify which variables should be branched
+ on first during search.
  InitialBranch is a command that should only be used when the user is sure
  he knows more information about the nature of the input file the attached
  solver will be able to derive.
  This keyword takes any number of positive integer arguments Example Use:
  InitialBranch( 1, 3, 5..18, 4, 24..39) This will mark variables 1, 3, 5..18 (inclusiv
 e), 4, 24..39 (inclusive) to be branched on first.
- *Note that this keyword is the only keyword which requires parenthesis
- around it's argument list* 
-\layout Itemize
+\layout Standard
 
-VAR is the Base keyword to all equations.
+*Note that this keyword is the only keyword which requires parenthesis around
+ it's argument list* 
+\layout LyX-Code
+
+\layout Standard
+
+
+\series bold 
+VAR
+\layout Standard
+
+VAR is the base keyword to all equations.
  It takes one(1) argument, which must be an integer.
  VAR creates a BDD for the variable following it.
  This BDD will have a true branch and a false branch.
@@ -812,15 +828,33 @@ The keyword VAR has been made obsolete.
  It is now assumed that all integers are variables unless preceded by a
  '$'.
  All integers preceded by a '$' refer to equations instead of variables.
-\layout Itemize
+\layout LyX-Code
 
-NOT The NOT function takes one(1) argument and forms a BDD which represents
+\layout Standard
+
+
+\series bold 
+NOT
+\series default 
+ 
+\layout Standard
+
+The NOT function takes one(1) argument and forms a BDD which represents
  the negation of that argument.
  When negating a single variable, a negative sign ("-") can be placed directly
  in front of the variable as a shortcut (See Shortcuts)
-\layout Itemize
+\layout LyX-Code
 
-ITE The ITE function takes three(3) arguments and forms a BDD which expresses
+\layout Standard
+
+
+\series bold 
+ITE
+\series default 
+ 
+\layout Standard
+
+The ITE function takes three(3) arguments and forms a BDD which expresses
  the If-Then-Else relation of the three(3) arguments.
  The function builds a BDD so that if the first parameter evaluates to true,
  then the second parameter must be true, else the third parameter must be
@@ -832,134 +866,304 @@ ITE The ITE function takes three(3) arguments and forms a BDD which expresses
 Example: ITE( ITE( 3, $5, -5), 4, 7) 
 \layout LyX-Code
 
-(Assume $5 has been previously defined.
- *Note that the use of parenthesis and commas here is allowed but not required*)
+Assume BDD $5 has been previously defined.
+\layout LyX-Code
+
+*Note that the use of parenthesis and commas here is allowed but not required*
+\layout Standard
+
+
+\series bold 
+AND
+\series default 
  
-\layout Itemize
+\layout Standard
 
-AND takes two(2) arguments and creates a BDD which expresses the logical
- AND of the two(2) arguments.
- Example: AND 3 4 
-\layout Itemize
+The AND function takes two(2) arguments and creates a BDD which expresses
+ the logical AND of the two(2) arguments.
+\layout LyX-Code
 
-AND# AND followed directly by a positive integer is a shortcut designed
- to allow the user to send more than two(2) arguments to the AND function.
- Any number of arguments is supported here.
- Example 1: AND4(1, 2, 3, 4) Example 2: AND5(-1, AND3(2, 3, $4), 5, $6,
- 7) Assume $4 and $6 have been previously defined.
- *Note that the use of white space here is allowed but not required* 
-\layout Itemize
+Example: AND 3 4 
+\layout LyX-Code
 
-NAND takes two(2) arguments and creates a BDD which expresses NOT of the
- logical AND of the two(2) arguments.
- 
-\layout Itemize
+\layout Standard
 
-NAND# NAND followed directly by a positive integer is a shortcut designed
- to allow the user to send more than two(2) arguments to the NAND function.
- Any number of arguments is supported here.
- 
-\layout Itemize
 
-OR OR takes two(2) arguments and creates a BDD which expresses the logical
- OR of the two(2) arguments.
- 
-\layout Itemize
+\series bold 
+AND#
+\layout Standard
 
-OR# OR followed directly by a positive integer is a shortcut designed to
- allow the user to send more than two(2) arguments to the OR function.
+AND followed directly by a positive integer is a shortcut designed to allow
+ the user to send more than two(2) arguments to the AND function.
  Any number of arguments is supported here.
  
-\layout Itemize
+\layout LyX-Code
 
-NOR NOR takes two(2) arguments and creates a BDD which expresses the NOT
- of the logical OR of the two(2) arguments.
+Example 1: AND4(1, 2, 3, 4)
+\layout LyX-Code
+
+Example 2: AND5(-1, 
+\layout LyX-Code
+
+                   AND3(2, 3, $4),
+\layout LyX-Code
+
+                                  5, $6, 7)
+\layout LyX-Code
+
+Assume $4 and $6 have been previously defined.
+\layout LyX-Code
+
+*Note that the use of white space here is allowed but not required* 
+\layout LyX-Code
+
+\layout Standard
+
+
+\series bold 
+NAND
+\layout Standard
+
+The NAND function takes two(2) arguments and creates a BDD which expresses
+ NOT of the logical AND of the two(2) arguments.
  
-\layout Itemize
+\layout LyX-Code
 
-NOR# NOR followed directly by a positive integer is a shortcut designed
- to allow the user to send more than two(2) arguments to the NOR function.
+\layout Standard
+
+
+\series bold 
+NAND#
+\layout Standard
+
+NAND followed directly by a positive integer is a shortcut designed to allow
+ the user to send more than two(2) arguments to the NAND function.
  Any number of arguments is supported here.
  
-\layout Itemize
+\layout LyX-Code
 
-EQU EQU takes two(2) arguments and creates a BDD which expresses that these
- two(2) arguments are equal to each other.
+\layout Standard
+
+
+\series bold 
+OR
+\layout Standard
+
+The OR function takes two(2) arguments and creates a BDD which expresses
+ the logical OR of the two(2) arguments.
  
-\layout Itemize
+\layout LyX-Code
 
-EQU# EQU followed directly by a positive integer is a shortcut designed
- to allow the user to send more than two(2) arguments to the EQU function.
+\layout Standard
+
+
+\series bold 
+OR#
+\layout Standard
+
+OR followed directly by a positive integer is a shortcut designed to allow
+ the user to send more than two(2) arguments to the OR function.
  Any number of arguments is supported here.
  
-\layout Itemize
+\layout LyX-Code
 
-XOR XOR takes two(2) arguments and creates a BDD which expresses that these
- two(2) arguments are opposite of each other.
+\layout Standard
+
+
+\series bold 
+NOR
+\layout Standard
+
+The NOR function takes two(2) arguments and creates a BDD which expresses
+ the NOT of the logical OR of the two(2) arguments.
  
-\layout Itemize
+\layout LyX-Code
 
-XOR# XOR followed directly by a positive integer is a shortcut designed
- to allow the user to send more than two(2) arguments to the XOR function.
+\layout Standard
+
+
+\series bold 
+NOR#
+\layout Standard
+
+NOR followed directly by a positive integer is a shortcut designed to allow
+ the user to send more than two(2) arguments to the NOR function.
  Any number of arguments is supported here.
  
-\layout Itemize
+\layout LyX-Code
 
-IMP IMP takes two(2) arguments and creates a BDD which expresses the logical
- implication of the two(2) arguments.
- *Take note that IMP does not support multiple arguments as many of the
+\layout Standard
+
+
+\series bold 
+EQU
+\layout Standard
+
+The EQU function takes two(2) arguments and creates a BDD which expresses
+ that these two(2) arguments are equal to each other.
+ 
+\layout LyX-Code
+
+\layout Standard
+
+
+\series bold 
+EQU#
+\layout Standard
+
+EQU followed directly by a positive integer is a shortcut designed to allow
+ the user to send more than two(2) arguments to the EQU function.
+ Any number of arguments is supported here.
+ 
+\layout LyX-Code
+
+\layout Standard
+
+
+\series bold 
+XOR
+\layout Standard
+
+The XOR function takes two(2) arguments and creates a BDD which expresses
+ that these two(2) arguments are opposite of each other.
+ 
+\layout LyX-Code
+
+\layout Standard
+
+
+\series bold 
+XOR#
+\layout Standard
+
+XOR followed directly by a positive integer is a shortcut designed to allow
+ the user to send more than two(2) arguments to the XOR function.
+ Any number of arguments is supported here.
+ 
+\layout LyX-Code
+
+\layout Standard
+
+
+\series bold 
+IMP
+\layout Standard
+
+The IMP function takes two(2) arguments and creates a BDD which expresses
+ the logical implication of the two(2) arguments.
+\layout Standard
+
+*Take note that IMP does not support multiple arguments as many of the other
+ keywords do, this is because the implication operator has strict variable
+ ordering dependence.* 
+\layout LyX-Code
+
+\layout Standard
+
+
+\series bold 
+NIMP
+\layout Standard
+
+The NIMP function takes two(2) arguments and creates a BDD which expresses
+ the NOT of the logical implication of the two(2) arguments.
+\layout Standard
+
+*Take note that NIMP does not support multiple arguments as many of the
  other keywords do, this is because the implication operator has strict
  variable ordering dependence.* 
-\layout Itemize
+\layout LyX-Code
 
-NIMP NIMP takes two(2) arguments and creates a BDD which expresses the NOT
- of the logical implication of the two(2) arguments.
- *Take note that NIMP does not support multiple arguments as many of the
- other keywords do, this is because the implication operator has strict
- variable ordering dependence.* 
-\layout Itemize
+\layout Standard
 
-GCF The GCF keyword takes two(2) arguments.
+
+\series bold 
+GCF
+\series default 
+ 
+\layout Standard
+
+The GCF function takes two(2) arguments.
  This function finds all solutions of both parameters and then creates a
  BDD which represents the intersection of these solutions.
  GCF stands for Generalized Co-Factoring.
  
-\layout Itemize
+\layout LyX-Code
 
-STRENGTHEN STRENGTHEN takes two(2) arguments, e1 and e2.
+\layout Standard
+
+
+\series bold 
+STRENGTHEN
+\layout Standard
+
+The STRENGTHEN function takes two(2) arguments, e1 and e2.
  This function uses the information in e2 to strengthen e1.
- (See Strengthening, page ??) 
-\layout Itemize
+ (See Strengthening, page ??)
+\layout LyX-Code
 
-PRUNE PRUNE takes two(2) arguments, e1 and e2.
+\layout Standard
+
+
+\series bold 
+PRUNE
+\series default 
+ 
+\layout Standard
+
+The PRUNE function takes two(2) arguments, e1 and e2.
  This function prunes all branches found in e2 away from e1.
  (See Branch Pruning, page ??) 
-\layout Itemize
+\layout LyX-Code
 
-EXIST EXIST takes two(2) arguments, the first argument can be an equation
- or a variable (e1), the second argument must be a variable (v1).
+\layout Standard
+
+
+\series bold 
+EXIST
+\layout Standard
+
+The EXIST function takes two(2) arguments, the first argument can be an
+ equation or a variable (e1), the second argument must be a variable (v1).
  This function searches for and finds everyplace in e1 where v1 occurs.
  Every time v1 is found it is replaced by the logical OR of it's true branch
  and it's false branch.
  This function effectively removes v1 from e1.
  (See Existential Quantification, page ??) 
-\layout Itemize
+\layout LyX-Code
 
-UNIVERSE UNIVERSE takes two(2) arguments, the first argument can be an equation
- or a variable (e1), the second argument must be a variable (v1).
+\layout Standard
+
+
+\series bold 
+UNIVERSE
+\layout Standard
+
+The UNIVERSE function takes two(2) arguments, the first argument can be
+ an equation or a variable (e1), the second argument must be a variable
+ (v1).
  This function searches for and finds everyplace in e1 where v1 occurs.
  Every time v1 is found it is replaced by the logical AND of it's true branch
  and it's false branch.
  This function effectively removes v1 from e1.
  
-\layout Itemize
+\layout LyX-Code
 
-PRINT_TREE This function takes one(1) argument.
+\layout Standard
+
+
+\series bold 
+PRINT_TREE
+\series default 
+ 
+\layout Standard
+
+The PRINT_TREE function takes one(1) argument.
  The argument is printed to standard out in a nice, easily readable tree
  form.
  The argument is printed from the top down.
- To the branch to the left is the true branch, the branch to the right is
- the false branch.
+ The branch to the left is the true branch, the branch to the right is the
+ false branch.
  
 \layout LyX-Code
 
@@ -972,22 +1176,29 @@ Prints to standard output:
 --------------------------------------------------- 
 \layout LyX-Code
 
-4 
+                         4 
 \layout LyX-Code
 
-T 5 
+               T                   5 
 \layout LyX-Code
 
-T 6 
+                              T         6 
 \layout LyX-Code
 
-F T 
+                                     F     T 
 \layout LyX-Code
 
 --------------------------------------------------- 
-\layout Itemize
+\layout LyX-Code
 
-PPRINT_TREE This function takes one(1) argument.
+\layout Standard
+
+
+\series bold 
+PPRINT_TREE
+\layout Standard
+
+The PPRINT_TREE function takes one(1) argument.
  The argument is printed to standard out in a different form than PRINT_TREE.
  If the true and false branches are T and F then they are printed on the
  same line, otherwise, the true and false branches are indented from the
@@ -1005,13 +1216,32 @@ Prints to standard output:
 -------------------------------------------------------
 \layout LyX-Code
 
-ite 4 T ite 5 T ite 6 F T
+ite 4
+\layout LyX-Code
+
+    T
+\layout LyX-Code
+
+    ite 5
+\layout LyX-Code
+
+        T
+\layout LyX-Code
+
+        ite 6 F T
 \layout LyX-Code
 
 ------------------------------------------------------- 
-\layout Itemize
+\layout LyX-Code
 
-ADD_STATE This function takes two(2) arguments.
+\layout Standard
+
+
+\series bold 
+ADD_STATE
+\layout Standard
+
+The ADD_STATE function takes two(2) arguments.
  The first argument (e1) must be an equation and the second argument must
  be a positive integer (i1).
  ADD_STATE creates a new BDD with structure identical e1 but with each variable
@@ -1019,8 +1249,10 @@ ADD_STATE This function takes two(2) arguments.
  
 \layout LyX-Code
 
-Example: ADD_STATE( AND(3, 4), 5 ) This will create the BDD - AND(8, 9)
- 
+Example: ADD_STATE( AND(3, 4), 5 )
+\layout LyX-Code
+
+This will create the BDD - AND(8, 9) 
 \layout Subsubsection
 
 Variable Names 
@@ -1051,7 +1283,7 @@ p bdd 18 13 ; 18 vars, 13 functions
 
 
 \size scriptsize 
-#define g 1 2 3 # ite fun 1 2 3 -2 T 3 
+#define g 1 2 3 # ite(fun(1, 2, 3, -2), T, 3) 
 \layout LyX-Code
 
 
@@ -1100,7 +1332,6 @@ ite 4 5 6 ; eqn $1
 
 \size scriptsize 
                ; this is a really bad idea, it probably shouldn't be allowed
- 
 \layout LyX-Code
 
 
@@ -1115,39 +1346,39 @@ pprint_tree $5 ; no equation created, no smurf created
 
 
 \size scriptsize 
-ite 2          ; eqn $7
+ite(2,              ; eqn $7, no smurf created
 \layout LyX-Code
 
 
 \size scriptsize 
-ite 3 4 5      ; plus comments are ignored, even in the middle of a function
- 
+      ite(3, 4, 5), ; plus comments are ignored, even in the middle of a
+ function 
 \layout LyX-Code
 
 
 \size scriptsize 
-ite 4 5 F 
+      ite(4, 5, F))
 \layout LyX-Code
 
 
 \size scriptsize 
-*fun 4 -5 2 3 ; eqn $8, smurf 5 
+*fun 4 -5 2 3 ; eqn $8, smurf 6 
 \layout LyX-Code
 
 
 \size scriptsize 
-*fun g -5 4 $6 2 3 4 ; eqn $9, smurf 6 
+*fun g -5 4 $6 2 3 4 ; eqn $9, smurf 7
 \layout LyX-Code
 
 
 \size scriptsize 
 *equ(xor3(2, and(-3, 4), nand(7, 5), ite(15, or(4, -7), nor(4, -7)))) ;
- eqn $10, smurf 7 
+ eqn $10, smurf 8
 \layout LyX-Code
 
 
 \size scriptsize 
-*add_state($10, 1) ; eqn $11, smurf 7
+*add_state($10, 1) ; eqn $11, smurf 9
 \layout LyX-Code
 
 
@@ -1158,17 +1389,17 @@ ite 4 5 F
 
 
 \size scriptsize 
-                   ;with all it's variables incremented by the second argument.
+                   ; with all it's variables incremented by the second argument.
 \layout LyX-Code
 
 
 \size scriptsize 
-*add_state($10, 2) ; eqn $12, smurf 8 
+*add_state($10, 2) ; eqn $12, smurf 10 
 \layout LyX-Code
 
 
 \size scriptsize 
-*add_state($10, 3) ; eqn $13, smurf 9
+*add_state($10, 3) ; eqn $13, smurf 11
 \layout LyX-Code
 
 \layout Subsection
@@ -1295,7 +1526,7 @@ backtracking
 BDDWalkSat
 \layout Standard
 
-(Sean!)
+(Sean!) Woohoo!
 \layout Subsection
 
 WVF Brancher
