@@ -123,7 +123,7 @@ t_opt options[] = {
 { &_bdd_pool_size, "", "bdd-pool-size", P_INT, V(i:0,"0"), V(i:1000000,"1000000"), VAR_NORMAL, 0, 
                 "The size of the bdd pool increment"},
 { &enable_gc, "", "gc", P_INT, V(i:1,"1"), V(i:1,"1"), VAR_NORMAL, 0, 
-                "Garbage collection"},
+                "Use Garbage collection"},
 
 /* 
  * Input options
@@ -158,11 +158,11 @@ t_opt options[] = {
 { NULL, "", "", P_NONE, {"0"}, {"0"}, VAR_NORMAL, 0, 
 	        "\nOutput options:"},
 { &formatout, "b", "", P_PRE_CHAR, V(c:'b',"b"), V(c:'b',"b"), VAR_NORMAL, 0, 
-                "Start regular brancher"},
+                "Start SMURF Solver"},
 { &formatout, "w", "", P_PRE_CHAR, V(c:'w',"w"), V(c:'b',"b"), VAR_NORMAL, 0, 
-                "Start walksat brancher"},
+                "Start BDDWalkSAT Solver"},
 { &formatout, "m", "", P_PRE_CHAR, V(c:'m',"m"), V(c:'b',"b"), VAR_NORMAL, 0, 
-                "Start WVF brancher"},
+                "Start WVF Solver"},
 { &formatout, "n", "", P_PRE_CHAR, V(c:'n',"n"), V(c:'b',"b"), VAR_NORMAL, 0, 
                 "Don't start any brancher or conversion"},
 { &formatout, "s", "", P_PRE_CHAR, V(c:'s',"s"), V(c:'b',"b"), VAR_NORMAL, 0, 
@@ -180,21 +180,13 @@ t_opt options[] = {
 
 { &formatin,  "", "formatin", P_CHAR, V(i:0,"0"), V(c:' '," "), VAR_NORMAL, 0, 
                 "Input format"},
-{ &print_tree, "tree", "tree", P_PRE_INT, V(i:1,"1"), V(i:0,"0"), VAR_CMD, 0, 
-                "Print tree representation"},
+{ &print_tree, "", "tree", P_PRE_INT, V(i:1,"1"), V(i:0,"0"), VAR_CMD, 0, 
+                "Output BDDs in tree representation (used in conjunction with -p)"},
 { &PRINT_TREE_WIDTH, "W", "tree-width", P_INT, V(i:0,"0"), V(i:64,"64"), VAR_NORMAL, 0, 
-                "Set tree width"},
+                "Set BDD tree printing width"},
 { &prover3_max_vars, "", "prover3-max-vars", P_INT, V(i:0,"0"), V(i:10,"10"), VAR_NORMAL, 0, 
                 "Max vars per BDD when reading 3 address code (intput format 3)"},
 
-/* 
- * Trace format options
- */
-{ NULL, "", "", P_NONE, {"0"}, {"0"}, VAR_NORMAL, 0, 
-	        "\nTrace format options:"},
-{ module_root, "", "module-dir", P_STRING, 
-		V(i:127,"127"), {"./Modules"}, VAR_NORMAL, 0, 
-                "directory to find extra modules"},
 /* 
  * Preprocessing options
  */
@@ -244,10 +236,32 @@ t_opt options[] = {
 		"Enable/Disable Ex Quantification to try to infer variables before they are quantified away."},
 	
 /* 
- * Brancher options
+ * General Solver options
  */
 { NULL, "", "", P_NONE, {"0"}, {"0"}, VAR_NORMAL, 0, 
-	        "\nBrancher options:"},
+	        "\nGeneral Solver options:"},
+{ brancher_presets, "", "brancher-presets", P_STRING, 
+		V(i:4095,"4095"), {""}, VAR_NORMAL, 0, 
+                "Variables that are preset before the brancher is called. Options are ([[=|!|#|+var|-var] ]*)"},
+{ &reverse_independant_dependant, "r", "reverse-depend", P_PRE_INT, 
+	     	V(i:1,"1"), V(i:0,"0"), VAR_NORMAL, 0, 
+		"Reverse dependency info on in/dependent variables"},
+{ &clear_dependance, "e",  "clear-depend", P_PRE_INT, 
+		V(i:1,"1"), V(i:0,"0"), VAR_NORMAL, 0, 
+		"Clear dependency information on variables"},
+{ &max_solutions, "", "max-solutions", P_INT, V(i:0,"0"), V(i:1,"1"), VAR_NORMAL, 0,
+		"Set the maximum number of solutions to search for. 0 will cause the solver to search for as many solutions as it can find. The algorithm does not guarantee that it reports all possible solutions."},
+{ &autarky, "", "autarky", P_INT, V(i:0,"0"), V(i:0,"0"), VAR_CHECK+VAR_DUMP, 0,
+		"Enable/Disable autarkies (1/0)"},
+{ &nTimeLimit, "", "max-brancher-time", P_INT, 
+		V(i:0,"0"), V(i:0,"0"), VAR_NORMAL, 0,
+		"set the time limit in seconds (0=no limit)"},
+
+/* 
+ * SMURF Solver options
+ */
+{ NULL, "", "", P_NONE, {"0"}, {"0"}, VAR_NORMAL, 0, 
+	        "\nSMURF Solver options:"},
 { lemma_out_file, "", "lemma-out-file", P_STRING, 
 		V(i:127,"127"), {""}, VAR_NORMAL, 0, 
                 "File to dump lemmas to"},
@@ -260,28 +274,13 @@ t_opt options[] = {
 { var_stat_file, "", "var-stat-file", P_STRING, 
 		V(i:127,"127"), {""}, VAR_NORMAL, 0, 
                 "File to save var stats"},
-{ brancher_presets, "", "brancher-presets", P_STRING, 
-		V(i:4095,"4095"), {""}, VAR_NORMAL, 0, 
-                "Variables that are preset before the brancher is called. Options are ([[=|!|#|+var|-var] ]*)"},
-{ &reverse_independant_dependant, "r", "reverse-depend", P_PRE_INT, 
-	     	V(i:1,"1"), V(i:0,"0"), VAR_NORMAL, 0, 
-		"Reverse dependency info on in/dependent variables"},
-{ &clear_dependance, "e",  "clear-depend", P_PRE_INT, 
-		V(i:1,"1"), V(i:0,"0"), VAR_NORMAL, 0, 
-		"Clear dependency information on variables"},
-{ sHeuristic, "H", "heuristic", P_STRING, V(i:8,"8"), {"j"}, VAR_NORMAL, 0,
-		"Choose heuristic j=Johnson, l=Chaff-like lemma heuristic and i=Interactive"},
 { &backjumping, "", "backjumping", P_INT, V(i:0,"0"), V(i:1,"1"), VAR_NORMAL, 0,
 		"Enable/Disable backjumping (1/0)"},
 { &MAX_NUM_CACHED_LEMMAS, "L", "max-cached-lemmas", P_INT, 
 		V(i:0,"0"), V(i:5000, "5000"), VAR_NORMAL, 0,
                 "set the maximum # of lemmas"}, 
-{ &autarky, "", "autarky", P_INT, V(i:0,"0"), V(i:0,"0"), VAR_CHECK+VAR_DUMP, 0,
-		"Enable/Disable autarkies (1/0)"},
 { &USE_AUTARKY_SMURFS, "", "autarky-smurfs", P_INT, V(i:0,"0"), V(i:0,"0"), VAR_NORMAL, 0,
-		"Use Autarky Smurfs in the Brancher (1/0)"},
-{ &max_solutions, "", "max-solutions", P_INT, V(i:0,"0"), V(i:1,"1"), VAR_NORMAL, 0,
-		"Set the maximum number of solutions to search for. 0 will cause the solver to search for as many solutions as it can find. The algorithm does not guarrantie that it reports all possible solutions."},
+		"Use Autarky Smurfs in the Solver (1/0)"},
 { &K_TOP_VARIABLES, "", "K-top-variables", P_INT, V(i:0,"0"), V(i:0,"0"), VAR_NORMAL, 0,
 		"Try to set top K variables and collect common inferences."},
 { &sbj, "", "sbj", P_INT, V(i:0,"0"), V(i:0,"0"), VAR_NORMAL, 0,
@@ -297,27 +296,14 @@ t_opt options[] = {
 { &BACKTRACKS_PER_STAT_REPORT, "", "backtracks-per-report", P_INT, 
 		V(i:0,"0"), V(i:10000,"10000"), VAR_NORMAL, 0,
 		"set the number of backtracks per report"},
-{ &nTimeLimit, "", "max-brancher-time", P_INT, 
-		V(i:0,"0"), V(i:0,"0"), VAR_NORMAL, 0,
-		"set the time limit in seconds (0=no limit)"},
 { &nNumChoicePointLimit, "", "max-brancher-cp", P_INT, 
 		V(i:0,"0"), V(i:0,"0"), VAR_NORMAL, 0,
 		"set the choice point limit (0=no limit)"},
 { &TRACE_START, "", "brancher-trace-start", P_INT, 
 		V(i:0,"0"), V(i:0,"0"), VAR_NORMAL, 0,
 		"number of backtracks to start the trace (when debug=9)"},
-{ &BDDWalkCutoff, "", "cutoff", P_INT, V(i:0,"0"), V(i:100000,"100000"), VAR_NORMAL, 0,
-		"BDDWalkSAT number of flips per random restart"},
-{ &BDDWalktaboo_max, "", "taboo-max", P_INT, V(i:0,"0"), V(i:6,"6"), VAR_NORMAL, 0,
-		"BDDWalkSAT length of taboo list"},
-{ &BDDWalktaboo_multi, "", "taboo-multi", P_FLOAT, V(i:0,"0"), V(f:1.5,"1.5"), VAR_NORMAL, 0,
-		"BDDWalkSAT multiplier for the probablity of picking variables with taboo"},
-
-/* 
- * Johnson heuristic options 
- */
-{ NULL, "", "", P_NONE, {"0"}, {"0"}, VAR_NORMAL, 0, 
-	        "\nJohnson heuristic options:"},
+{ sHeuristic, "H", "heuristic", P_STRING, V(i:8,"8"), {"j"}, VAR_NORMAL, 0,
+		"Choose heuristic j=Johnson, l=Chaff-like lemma heuristic and i=Interactive"},
 { &JHEURISTIC_K, "K", "jheuristic-k", P_FLOAT, 
 		V(i:0,"0"), V(f:3.0, "3.0"), VAR_NORMAL, 0,
 		"set the value of K"},
@@ -327,6 +313,21 @@ t_opt options[] = {
 { &JHEURISTIC_K_INF, "", "jheuristic-k-inf", P_FLOAT, 
 		V(i:0,"0"), V(f:1.0, "1.0"), VAR_NORMAL, 0,
 		"set the value of the inference multiplier"},
+
+
+
+/* 
+ * BDDWalkSAT Solver options
+ */
+{ NULL, "", "", P_NONE, {"0"}, {"0"}, VAR_NORMAL, 0, 
+	        "\nBDDWalkSAT Solver options:"},
+{ &BDDWalkCutoff, "", "cutoff", P_INT, V(i:0,"0"), V(i:100000,"100000"), VAR_NORMAL, 0,
+		"BDDWalkSAT number of flips per random restart"},
+{ &BDDWalktaboo_max, "", "taboo-max", P_INT, V(i:0,"0"), V(i:6,"6"), VAR_NORMAL, 0,
+		"BDDWalkSAT length of taboo list"},
+{ &BDDWalktaboo_multi, "", "taboo-multi", P_FLOAT, V(i:0,"0"), V(f:1.5,"1.5"), VAR_NORMAL, 0,
+		"BDDWalkSAT multiplier for the probablity of picking variables with taboo"},
+
 /* 
  * the end
  */
