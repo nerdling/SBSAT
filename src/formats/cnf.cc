@@ -503,12 +503,12 @@ cnf_process(store *integers, int num_minmax, minmax * min_max_store)
       while(and_or_do) {
          and_or_do = 0;
 			for(long x = 1; x < numinp+1; x++) {
-				if (x%10 == 1)
+				if (x%100 == 1)
 				  d2_printf3("\rAND/OR Search CNF %ld/%ld ...                                     ", x, numinp);
 				if(two_pos[x].num[0] > 0) {
 					out = 0;
 					for(z = 0; (greater_neg[x].num[z] != 0) && (out != 1); z++) {
-                  if (z%10 == 1)
+                  if ((x+z)%100 == 1)
                      d2_printf4("\rAND/OR Search CNF %ld/%ld ... *** sub1 *** AND/OR Search CNF %ld ...       ", x, numinp, z);
                   count = 0;
 						
@@ -552,7 +552,7 @@ cnf_process(store *integers, int num_minmax, minmax * min_max_store)
 				if(two_neg[x].num[0] > 0) {
 					out = 0;
 					for(z = 0; (greater_pos[x].num[z] != 0) && (out != 1); z++) {
-                  if (z%10 == 1)
+                  if ((x+z)%100 == 1)
 						  d2_printf4("\rAND/OR Search CNF %ld/%ld ... *** sub2 *** AND/OR Search CNF %ld ...       ", x, numinp, z);
 						count = 0;
 						
