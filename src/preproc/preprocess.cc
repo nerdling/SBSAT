@@ -201,42 +201,50 @@ parse_seq(char **p, int parse_only)
      {
         r = parse_cycle(p, parse_only);
      }
+     else if (**p == '[')
+     {
+        r = parse_seq(p, parse_only);
+        assert(**p == ']');
+        if (r == PREP_CHANGED) r = PREP_NO_CHANGE;
+     }
+     else if (**p == ']')
+     {
+        break;
+     }
+     else if (**p == ')')
+     {
+        break;
+     }
+     else if (**p == 0)
+     {
+        break;
+     }
      else
-        if (**p == ')')
-        {
-           break;
-        }
-        else 
-           if (**p == 0)
-           {
+     { 
+        r = PREP_MAX;
+        for (int i=0;preproc[i].id[0];i++) {
+           if (!strncmp(preproc[i].id, *p, preproc[i].id_len)) 
+           {	
+              if (parse_only == 0) {
+                 if (*(preproc[i].enable) == 1) {
+                    r = preproc[i].fn();
+                    d9_printf3("ps: returning from %s with %d\n", preproc[i].id, r);
+                    void bdd_gc();
+                    if (enable_gc) bdd_gc();
+                 }
+                 else r=PREP_NO_CHANGE;
+              }
+              else r=PREP_NO_CHANGE;
+              (*p)+=preproc[i].id_len;
               break;
            }
-           else
-           { 
-              r = PREP_MAX;
-              for (int i=0;preproc[i].id[0];i++) {
-                 if (!strncmp(preproc[i].id, *p, preproc[i].id_len)) 
-                 {	
-                    if (parse_only == 0) {
-                       if (*(preproc[i].enable) == 1) {
-                          r = preproc[i].fn();
-                          d9_printf3("ps: returning from %s with %d\n", preproc[i].id, r);
-                          void bdd_gc();
-                          if (enable_gc) bdd_gc();
-                       }
-                       else r=PREP_NO_CHANGE;
-                    }
-                    else r=PREP_NO_CHANGE;
-                    (*p)+=preproc[i].id_len;
-                    break;
-                 }
-              }
-              if (r == PREP_MAX) {
-                 dE_printf2("The preprocessing function at the position %s was not found.\n", *p);
-                 r = PREP_ERROR;
-                 break;
-              };
-           }
+        }
+        if (r == PREP_MAX) {
+           dE_printf2("The preprocessing function at the position %s was not found.\n", *p);
+           r = PREP_ERROR;
+           break;
+        };
+     }
      switch (r) {
       case TRIV_UNSAT:  /* Unsat */
       case TRIV_SAT:    /* Sat */
