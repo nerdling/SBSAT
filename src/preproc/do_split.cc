@@ -49,21 +49,21 @@ int MAX_EXQUANTIFY_VARLENGTH = 18;	//Limits size of number of vars in
 				     //constraints created by ExQuantify
 //!
 
-int ExQuantify();
+int Split_Large();
 
-int Do_ExQuantify() {
-   d3_printf1("EXISTENTIALLY QUANTIFYING - ");
+int Do_Split_Large() {
+   d3_printf1("Splitting Large Functions - ");
    int cofs = PREP_CHANGED;
    int ret = PREP_NO_CHANGE;
 	affected = 0;
 	char p[100];
 	D_3(
-		 sprintf(p, "{0:0/%d}", numinp);
+		 sprintf(p, "{0:0/%d}", nmbrFunctions);
 		 str_length = strlen(p);
 		 d3_printf1(p);
 	);
 	while (cofs!=PREP_NO_CHANGE) {
-      cofs = ExQuantify ();
+      cofs = Split_Large ();
       if(cofs == PREP_CHANGED) ret = PREP_CHANGED;
       else if(cofs == TRIV_UNSAT) {
 			return TRIV_UNSAT;
@@ -75,7 +75,7 @@ int Do_ExQuantify() {
 	return ret;
 }
 
-int ExQuantify () {
+int Split_Large () {
 	int ret = PREP_NO_CHANGE;
 	
 	typedef struct LinkedListofBDDs {

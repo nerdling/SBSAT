@@ -215,20 +215,14 @@ Finish_Preprocessing()
 	delete []tmp;	
 	
 	/****** Shrink down the hash table ******/
-	//  printCircuit();
+	//printCircuit();
 	//Stats(length, variables);
-	// 
-	// 
+	//
 	// cheat_replaceall (length, variables, variablelist);
-	// need to do cheat_replaceall a different way!
-	// conflicts with the backend!
-	// It probably goes to another place in the code now w/ so many changes.
-	// Really bad idea to do with the backend!!!!!!!!!!!!!
+	// doing cheat_replaceall a different way!
+	// will conflict with the backend!
+	// It is now being handled by the brancher
 	// Do NOT uncomment...
-	// BDDs must never be manipulated beyond this point.
-	// if they need to be manipulated beyond this point
-	// then uncomment this section.
-	// 
 	/****** Shrunk down the hash table ******/
 	
 	int Total_inferences = Pos_replace + Neg_replace + Setting_Pos + Setting_Neg;
