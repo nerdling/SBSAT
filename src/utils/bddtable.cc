@@ -338,9 +338,12 @@ bdd_flag_nodes(BDDNode *node)
 	bdd_flag_nodes(node->mirrCase); 
 	bdd_flag_nodes(node->notCase->mirrCase); 
 #endif
-	if(node->or_bdd!=NULL) bdd_flag_nodes(node->or_bdd); 
-	if(node->t_and_not_e_bdd!=NULL) bdd_flag_nodes(node->t_and_not_e_bdd);
-	if(node->not_t_and_e_bdd!=NULL) bdd_flag_nodes(node->not_t_and_e_bdd);
+	//if(node->or_bdd!=NULL) bdd_flag_nodes(node->or_bdd); 
+	node->or_bdd = NULL;
+	//if(node->t_and_not_e_bdd!=NULL) bdd_flag_nodes(node->t_and_not_e_bdd);
+	node->t_and_not_e_bdd = NULL;
+	//if(node->not_t_and_e_bdd!=NULL) bdd_flag_nodes(node->not_t_and_e_bdd)
+	node->not_t_and_e_bdd = NULL;
 }
 
 
