@@ -195,6 +195,7 @@ BDDNode *strengthen(int bddNmbr1, int bddNmbr2)
                  bdd2pos++;
           } else {
                  quantifiedBDD2 = xquantify(quantifiedBDD2, bdd2Var);
+                 //if (quantifiedBDD2 == true_ptr) return functions[bddNmbr1];
                  bdd2pos++;
           }
     }

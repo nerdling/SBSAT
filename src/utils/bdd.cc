@@ -1996,15 +1996,14 @@ BDDNode * num_replace (BDDNode * f, int var, int replace) {
 BDDNode * _num_replace (BDDNode * f, int var, int replace) {
 	if (var > f->variable)
 	  return f;
-   if (f->flag == bdd_flag_number) {
-      return f->tmp_bdd;
-   }
+   if (f->flag == bdd_flag_number) return f->tmp_bdd;
    f->flag = bdd_flag_number;
 	if (var == f->variable) {
-		if (replace > 0)
-		  return (f->tmp_bdd = ite(ite_var(replace), f->thenCase, f->elseCase));//find_or_add_node(replace, f->thenCase, f->elseCase);
-      else if (replace < 0)
-		  return (f->tmp_bdd = ite(ite_var(-replace), f->elseCase, f->thenCase));//find_or_add_node(-replace, f->elseCase, f->thenCase);
+		if (replace > 0) {
+         return (f->tmp_bdd = ite(ite_var(replace), f->thenCase, f->elseCase));//find_or_add_node(replace, f->thenCase, f->elseCase);
+      } else if (replace < 0) {
+         return (f->tmp_bdd = ite(ite_var(-replace), f->elseCase, f->thenCase));//find_or_add_node(-replace, f->elseCase, f->thenCase);
+      }
    }
    BDDNode * r = _num_replace (f->thenCase, var, replace);
    BDDNode * e = _num_replace (f->elseCase, var, replace);
