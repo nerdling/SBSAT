@@ -1,4 +1,7 @@
 #include "ite.h"
+#include "bddnode.h"
+#include "symtable.h"
+#include "functions.h"
 
 #define MAX_FUNCTION 1000000
 //int nmbrFunctions=0;
@@ -7,6 +10,15 @@
 //int *equalityVble=NULL;
 int normal_bdds=0;
 int spec_fn_bdds=0;
+
+BDDNode *tmp_equ_var(BDDNode *p) 
+{
+    symrec *s_ptr = tputsym(SYM_VAR); 
+    BDDNode *ret=ite_vars(s_ptr); 
+    BDDNode *e=ite_equ(ret, p); 
+    functions_add(e, UNSURE, /*0*/s_ptr->id); /*printf("ex\n"); */
+    return ret;
+}
 
 void
 functions_add(BDDNode *bdd, int fn_type, int equal_var)

@@ -7,22 +7,11 @@
 
    int prover_lex();
    void prover_error(const char *);
-   BDDNode *ite_op(proc_op2fn fn, int *);
-   void     ite_op_id_equ(char *var, BDDNode *bdd);
-   void     ite_op_equ(char *var, t_op2fn fn, BDDNode **);
-   BDDNode *ite_op_exp(t_op2fn fn, BDDNode **);
-   void     ite_op_are_equal(BDDNode **);
-   void     ite_new_int_leaf(char *, char *);
-   void     ite_flag_vars(symrec **, int);
-   BDDNode *tmp_equ_var(BDDNode *p);
+
    void push_symbols();
    void pop_symbols();
    void set_S_vars_indep(symrec *s);
 
-   extern int lines;
-   extern int normal_bdds;
-   extern int spec_fn_bdds;
-   extern int t_sym_max;
    int level = 0;
    int orlevel = 0;
    int symbols = 0;
@@ -103,11 +92,3 @@ void pop_symbols()
    symbols += p_symbols[p_level];
 }
 
-BDDNode *tmp_equ_var(BDDNode *p) 
-{
-    symrec *s_ptr = tputsym(SYM_VAR); 
-    BDDNode *ret=ite_vars(s_ptr); 
-    BDDNode *e=ite_equ(ret, p); 
-    functions_add(e, UNSURE, /*0*/s_ptr->id); /*printf("ex\n"); */
-    return ret;
-}

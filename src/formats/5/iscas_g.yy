@@ -7,28 +7,17 @@
 
    int iscas_lex();
    void iscas_error(const char *);
-   BDDNode *ite_op(proc_op2fn fn, int *);
-   void     ite_op_id_equ(char *var, BDDNode *bdd);
-   void     ite_op_equ(char *var, t_op2fn fn, BDDNode **);
+
    BDDNode *ite_op_exp(t_op2fn fn, BDDNode **);
-   void     ite_op_are_equal(BDDNode **);
-   void     ite_new_int_leaf(char *, char *);
-   void     ite_flag_vars(symrec **, int);
-   BDDNode *tmp_equ_var(BDDNode *p);
-   void set_S_vars_indep(symrec *s);
 
    BDDNode **iscas_explist=NULL;
    int iscas_expmax=0;
    int iscas_expindex=0;
 
-   extern int lines;
-   extern int normal_bdds;
-   extern int spec_fn_bdds;
-
-void iscas_not(char *v1, char *v2);
-void iscas_and_equ(char *var, BDDNode **explist);
-void iscas_or_equ(char *var, BDDNode **explist);
-void iscas_reallocate_explist();
+   void iscas_not(char *v1, char *v2);
+   void iscas_and_equ(char *var, BDDNode **explist);
+   void iscas_or_equ(char *var, BDDNode **explist);
+   void iscas_reallocate_explist();
 
 #ifndef __attribute__
 #define __attribute__(x)

@@ -7,7 +7,7 @@ SOURCES=trace_g.yy trace_s.ll \
 	prover_g.yy prover_s.ll \
 	prover3_g.yy prover3_s.ll \
 	iscas_g.yy iscas_s.ll \
-        parser.cc functions.cc bddops.cc 
+        parser.cc functions.cc bddops.cc p3.cc
 # _g.yy first
 EXTRA_DIST=bddnode.h functions.h bddnode.cc tracetest.cc
 

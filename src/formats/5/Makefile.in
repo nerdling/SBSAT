@@ -141,7 +141,7 @@ SOURCES = trace_g.yy trace_s.ll \
 	prover_g.yy prover_s.ll \
 	prover3_g.yy prover3_s.ll \
 	iscas_g.yy iscas_s.ll \
-        parser.cc functions.cc bddops.cc 
+        parser.cc functions.cc bddops.cc p3.cc
 
 # _g.yy first
 EXTRA_DIST = bddnode.h functions.h bddnode.cc tracetest.cc
@@ -171,7 +171,7 @@ am__objects_1 = libt5_la-trace_g.lo trace_s.lo libt5_la-cnf_g.lo \
 	cnf_s.lo libt5_la-bdd_g.lo bdd_s.lo libt5_la-blif_g.lo \
 	blif_s.lo libt5_la-prover_g.lo prover_s.lo \
 	libt5_la-prover3_g.lo prover3_s.lo libt5_la-iscas_g.lo \
-	iscas_s.lo parser.lo functions.lo bddops.lo
+	iscas_s.lo parser.lo functions.lo bddops.lo p3.lo
 am_libt5_la_OBJECTS = $(am__objects_1)
 libt5_la_OBJECTS = $(am_libt5_la_OBJECTS)
 bin_PROGRAMS = tracetest$(EXEEXT)
@@ -195,7 +195,7 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	./$(DEPDIR)/libt5_la-iscas_g.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/libt5_la-prover3_g.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/libt5_la-prover_g.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/libt5_la-trace_g.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/libt5_la-trace_g.Plo ./$(DEPDIR)/p3.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/parser.Plo ./$(DEPDIR)/prover3_s.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/prover_s.Plo ./$(DEPDIR)/trace_s.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/tracetest.Po
@@ -234,7 +234,7 @@ SOURCES = trace_g.yy trace_s.ll \
 	prover_g.yy prover_s.ll \
 	prover3_g.yy prover3_s.ll \
 	iscas_g.yy iscas_s.ll \
-        parser.cc functions.cc bddops.cc 
+        parser.cc functions.cc bddops.cc p3.cc
 
 
 all: all-am
@@ -344,6 +344,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libt5_la-prover3_g.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libt5_la-prover_g.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libt5_la-trace_g.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/p3.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/parser.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/prover3_s.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/prover_s.Plo@am__quote@

@@ -84,22 +84,11 @@
 
    int prover_lex();
    void prover_error(const char *);
-   BDDNode *ite_op(proc_op2fn fn, int *);
-   void     ite_op_id_equ(char *var, BDDNode *bdd);
-   void     ite_op_equ(char *var, t_op2fn fn, BDDNode **);
-   BDDNode *ite_op_exp(t_op2fn fn, BDDNode **);
-   void     ite_op_are_equal(BDDNode **);
-   void     ite_new_int_leaf(char *, char *);
-   void     ite_flag_vars(symrec **, int);
-   BDDNode *tmp_equ_var(BDDNode *p);
+
    void push_symbols();
    void pop_symbols();
    void set_S_vars_indep(symrec *s);
 
-   extern int lines;
-   extern int normal_bdds;
-   extern int spec_fn_bdds;
-   extern int t_sym_max;
    int level = 0;
    int orlevel = 0;
    int symbols = 0;
@@ -128,7 +117,7 @@
 #endif
 
 #if ! defined (YYSTYPE) && ! defined (YYSTYPE_IS_DECLARED)
-#line 40 "prover_g.yy"
+#line 29 "prover_g.yy"
 typedef union YYSTYPE {
     int         num;      /* For returning numbers.               */
     char        id[200];  /* For returning ids.                   */
@@ -136,7 +125,7 @@ typedef union YYSTYPE {
     BDDNode     *bdd;     /* For returning exp                    */
 } YYSTYPE;
 /* Line 191 of yacc.c.  */
-#line 139 "libt5_la-prover_g.cc"
+#line 128 "libt5_la-prover_g.cc"
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
 # define YYSTYPE_IS_TRIVIAL 1
@@ -148,7 +137,7 @@ typedef union YYSTYPE {
 
 
 /* Line 214 of yacc.c.  */
-#line 151 "libt5_la-prover_g.cc"
+#line 140 "libt5_la-prover_g.cc"
 
 #if ! defined (yyoverflow) || YYERROR_VERBOSE
 
@@ -319,8 +308,8 @@ static const yysigned_char yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const unsigned char yyrline[] =
 {
-       0,    61,    61,    63,    65,    67,    70,    72,    74,    74,
-      74,    76,    78,    78,    80,    82
+       0,    50,    50,    52,    54,    56,    59,    61,    63,    63,
+      63,    65,    67,    67,    69,    71
 };
 #endif
 
@@ -1027,67 +1016,67 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 62 "prover_g.yy"
+#line 51 "prover_g.yy"
     { symrec *s=s_getsym(yyvsp[0].id, SYM_VAR); assert(s); set_S_vars_indep(s); BDDNode *ret = ite_vars(s); functions_add(ret, UNSURE, 0); }
     break;
 
   case 3:
-#line 64 "prover_g.yy"
+#line 53 "prover_g.yy"
     {  functions_add(ite_not(yyvsp[0].bdd), UNSURE, 0); assert(p_level==0); }
     break;
 
   case 4:
-#line 66 "prover_g.yy"
+#line 55 "prover_g.yy"
     {  functions_add(yyvsp[-1].bdd, UNSURE, 0); assert(p_level==0); }
     break;
 
   case 6:
-#line 71 "prover_g.yy"
+#line 60 "prover_g.yy"
     { symrec *s=s_getsym(yyvsp[0].id, SYM_VAR); assert(s); set_S_vars_indep(s); yyval.bdd = ite_vars(s); symbols++; }
     break;
 
   case 7:
-#line 73 "prover_g.yy"
+#line 62 "prover_g.yy"
     { yyval.bdd = ite_not( yyvsp[0].bdd ); }
     break;
 
   case 8:
-#line 74 "prover_g.yy"
+#line 63 "prover_g.yy"
     { /*push_symbols();*/ }
     break;
 
   case 9:
-#line 74 "prover_g.yy"
+#line 63 "prover_g.yy"
     { /*if (symbols >= 10) { $3=tmp_equ_var($3); symbols=0;}; pop_symbols();*/ }
     break;
 
   case 10:
-#line 75 "prover_g.yy"
+#line 64 "prover_g.yy"
     { yyval.bdd = yyvsp[-2].bdd; }
     break;
 
   case 11:
-#line 77 "prover_g.yy"
+#line 66 "prover_g.yy"
     { yyval.bdd = ite_and(yyvsp[-2].bdd, yyvsp[0].bdd); }
     break;
 
   case 12:
-#line 78 "prover_g.yy"
+#line 67 "prover_g.yy"
     { if (orlevel==0 && p_level==0) { /*$1 = tmp_equ_var($1);*/ } orlevel++; }
     break;
 
   case 13:
-#line 79 "prover_g.yy"
+#line 68 "prover_g.yy"
     { orlevel--; if (orlevel==0 && p_level==0) { } yyval.bdd=ite_or(yyvsp[-3].bdd,yyvsp[0].bdd); }
     break;
 
   case 14:
-#line 81 "prover_g.yy"
+#line 70 "prover_g.yy"
     { yyval.bdd = ite_equ(yyvsp[-2].bdd, yyvsp[0].bdd); }
     break;
 
   case 15:
-#line 83 "prover_g.yy"
+#line 72 "prover_g.yy"
     { yyval.bdd = ite_imp(yyvsp[-2].bdd, yyvsp[0].bdd); }
     break;
 
@@ -1095,7 +1084,7 @@ yyreduce:
     }
 
 /* Line 991 of yacc.c.  */
-#line 1098 "libt5_la-prover_g.cc"
+#line 1087 "libt5_la-prover_g.cc"
 
   yyvsp -= yylen;
   yyssp -= yylen;
@@ -1304,7 +1293,7 @@ yyreturn:
 }
 
 
-#line 87 "prover_g.yy"
+#line 76 "prover_g.yy"
 
 
 void set_S_vars_indep(symrec *s)
@@ -1324,12 +1313,4 @@ void pop_symbols()
    symbols += p_symbols[p_level];
 }
 
-BDDNode *tmp_equ_var(BDDNode *p) 
-{
-    symrec *s_ptr = tputsym(SYM_VAR); 
-    BDDNode *ret=ite_vars(s_ptr); 
-    BDDNode *e=ite_equ(ret, p); 
-    functions_add(e, UNSURE, /*0*/s_ptr->id); /*printf("ex\n"); */
-    return ret;
-}
 

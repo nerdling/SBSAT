@@ -90,28 +90,17 @@
 
    int iscas_lex();
    void iscas_error(const char *);
-   BDDNode *ite_op(proc_op2fn fn, int *);
-   void     ite_op_id_equ(char *var, BDDNode *bdd);
-   void     ite_op_equ(char *var, t_op2fn fn, BDDNode **);
+
    BDDNode *ite_op_exp(t_op2fn fn, BDDNode **);
-   void     ite_op_are_equal(BDDNode **);
-   void     ite_new_int_leaf(char *, char *);
-   void     ite_flag_vars(symrec **, int);
-   BDDNode *tmp_equ_var(BDDNode *p);
-   void set_S_vars_indep(symrec *s);
 
    BDDNode **iscas_explist=NULL;
    int iscas_expmax=0;
    int iscas_expindex=0;
 
-   extern int lines;
-   extern int normal_bdds;
-   extern int spec_fn_bdds;
-
-void iscas_not(char *v1, char *v2);
-void iscas_and_equ(char *var, BDDNode **explist);
-void iscas_or_equ(char *var, BDDNode **explist);
-void iscas_reallocate_explist();
+   void iscas_not(char *v1, char *v2);
+   void iscas_and_equ(char *var, BDDNode **explist);
+   void iscas_or_equ(char *var, BDDNode **explist);
+   void iscas_reallocate_explist();
 
 #ifndef __attribute__
 #define __attribute__(x)
@@ -133,7 +122,7 @@ void iscas_reallocate_explist();
 #endif
 
 #if ! defined (YYSTYPE) && ! defined (YYSTYPE_IS_DECLARED)
-#line 39 "iscas_g.yy"
+#line 28 "iscas_g.yy"
 typedef union YYSTYPE {
     int         num;      /* For returning numbers.               */
     char        id[200];  /* For returning ids.                   */
@@ -141,7 +130,7 @@ typedef union YYSTYPE {
     BDDNode     *bdd;     /* For returning exp                    */
 } YYSTYPE;
 /* Line 191 of yacc.c.  */
-#line 144 "libt5_la-iscas_g.cc"
+#line 133 "libt5_la-iscas_g.cc"
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
 # define YYSTYPE_IS_TRIVIAL 1
@@ -153,7 +142,7 @@ typedef union YYSTYPE {
 
 
 /* Line 214 of yacc.c.  */
-#line 156 "libt5_la-iscas_g.cc"
+#line 145 "libt5_la-iscas_g.cc"
 
 #if ! defined (yyoverflow) || YYERROR_VERBOSE
 
@@ -324,8 +313,8 @@ static const yysigned_char yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const unsigned char yyrline[] =
 {
-       0,    51,    51,    52,    56,    58,    61,    63,    65,    69,
-      71
+       0,    40,    40,    41,    45,    47,    50,    52,    54,    58,
+      60
 };
 #endif
 
@@ -1033,38 +1022,38 @@ yyreduce:
   switch (yyn)
     {
         case 4:
-#line 57 "iscas_g.yy"
+#line 46 "iscas_g.yy"
     { symrec  *s_ptr = s_getsym(yyvsp[-1].id, SYM_VAR); s_set_indep(s_ptr, 1); }
     break;
 
   case 5:
-#line 59 "iscas_g.yy"
+#line 48 "iscas_g.yy"
     { symrec  *s_ptr = s_getsym(yyvsp[-1].id, SYM_VAR); s_set_indep(s_ptr, 0); 
          functions_add(ite_equ(ite_vars(s_ptr), true_ptr), UNSURE, s_ptr->id); }
     break;
 
   case 6:
-#line 62 "iscas_g.yy"
+#line 51 "iscas_g.yy"
     { iscas_explist[iscas_expindex] = NULL; iscas_and_equ(yyvsp[-5].id, iscas_explist); }
     break;
 
   case 7:
-#line 64 "iscas_g.yy"
+#line 53 "iscas_g.yy"
     { iscas_explist[iscas_expindex] = NULL; iscas_or_equ(yyvsp[-5].id, iscas_explist); }
     break;
 
   case 8:
-#line 66 "iscas_g.yy"
+#line 55 "iscas_g.yy"
     { iscas_not(yyvsp[-5].id, yyvsp[-1].id); }
     break;
 
   case 9:
-#line 70 "iscas_g.yy"
+#line 59 "iscas_g.yy"
     { iscas_expindex=0; iscas_reallocate_explist(); iscas_explist[iscas_expindex++] = ite_vars(s_getsym(yyvsp[0].id, SYM_VAR)); }
     break;
 
   case 10:
-#line 72 "iscas_g.yy"
+#line 61 "iscas_g.yy"
     { iscas_reallocate_explist(); iscas_explist[iscas_expindex++] = ite_vars(s_getsym(yyvsp[0].id, SYM_VAR)); }
     break;
 
@@ -1072,7 +1061,7 @@ yyreduce:
     }
 
 /* Line 991 of yacc.c.  */
-#line 1075 "libt5_la-iscas_g.cc"
+#line 1064 "libt5_la-iscas_g.cc"
 
   yyvsp -= yylen;
   yyssp -= yylen;
@@ -1281,7 +1270,7 @@ yyreturn:
 }
 
 
-#line 75 "iscas_g.yy"
+#line 64 "iscas_g.yy"
 
 
 void

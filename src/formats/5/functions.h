@@ -2,8 +2,7 @@
 
 #include "bddnode.h"
 
-void
-functions_init();
+BDDNode *tmp_equ_var(BDDNode *p);
 
-void
-functions_add(BDDNode *bdd, int fn_type, int equal_var);
+void functions_init();
+void functions_add(BDDNode *bdd, int fn_type, int equal_var);
