@@ -451,14 +451,15 @@ InitialBranch allows the user to specify which variables should be
 branched on first during search. InitialBranch is a command that should
 only be used when the user is sure he knows more information about
 the nature of the input file the attached solver will be able to derive.
-This keyword takes any number of positive integer arguments Example
-Use: InitialBranch( 1, 3, 5..18, 4, 24..39) This will mark variables
-1, 3, 5..18 (inclusive), 4, 24..39 (inclusive) to be branched on first.
-
-{*}Note that this keyword is the only keyword which requires parenthesis
-around it's argument list{*} 
+This keyword takes any number of positive integer arguments
 
 \begin{lyxcode}
+Example:~InitialBranch(~1,~3,~5..18,~4,~24..39)
+
+This~will~mark~variables~1,~3,~5..18~(inclusive),~4,~24..39~(inclusive)~to~be~branched~on~first.
+
+{*}Note~that~this~keyword~is~the~only~keyword~which~requires~parenthesis~around~it's~argument~list{*}~
+
 
 \end{lyxcode}
 \textbf{VAR}
