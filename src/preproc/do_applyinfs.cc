@@ -67,7 +67,6 @@ Do_Apply_Inferences ()
 		startover:;
 		if (inferlist->nums[1] != 0) {
 			if (inferlist->nums[1] > 0) {
-
 /*				
 				//d3_printf2("|%d ", inferlist->nums[0]);
 				//d3_printf2("%d ", inferlist->nums[1]);
@@ -84,11 +83,9 @@ Do_Apply_Inferences ()
 					inferlist->nums[0] = -inferlist->nums[0];
 					inferlist->nums[1] = -inferlist->nums[1];					
 				}
-				
 				//d3_printf2("%d ", inferlist->nums[0]);
 				//d3_printf2("%d|", inferlist->nums[1]);
 */
-				
 				//            D_3(print_nonroller();)
 				Pos_replace++;
 				for(int iter = 0; iter<str_length; iter++)
@@ -575,11 +572,12 @@ int Rebuild_BDDx (int x) {
 	//Dependent clustering can add variables, so can Ex_AND
 	
 	length[x] = y;
+
 	if (variables[x].num != NULL)
 	  delete [] variables[x].num;
-	variables[x].num = new int[y + 1];	//(int *)calloc(y+1, sizeof(int));
+	variables[x].num = new int[y + 1]; //(int *)calloc(y+1, sizeof(int));
 	for (int i = 0; i < y; i++)
-	  variables[x].num[i] = tempint[i];
+		variables[x].num[i] = tempint[i];
    if (y==0) {
       variables[x].min = 0;
       variables[x].max = 0;

@@ -357,29 +357,26 @@ infer *GetInfer (long *y, int *tempint, BDDNode * func)
 	e = ehead;
 	
 	infer *temp;
-	while (r != NULL)
-	  {
-		  temp = r;
-		  r = r->next;
-		  delete temp;
-	  }
-	while (e != NULL)
-	  {
-		  temp = e;
-		  e = e->next;
-		  delete temp;
-	  }
+	while (r != NULL) {
+		temp = r;
+		r = r->next;
+		delete temp;
+	}
+	while (e != NULL) {
+		temp = e;
+		e = e->next;
+		delete temp;
+	}
 	
 	if (notnull)
 	  return head;
 	//fprintf(stderr, "Both inference lists were different all were lost\n");
 	inferarray = head;
-	while (inferarray != NULL)
-	  {
-		  temp = inferarray;
-		  inferarray = inferarray->next;
-		  delete temp;
-	  }
+	while (inferarray != NULL) {
+		temp = inferarray;
+		inferarray = inferarray->next;
+		delete temp;
+	}
 	rhead = NULL;
 	ehead = NULL;
 	inferarray = NULL;
@@ -417,92 +414,79 @@ void cheat_replaceall (int *&length, store * &variables, varinfo * &variablelist
 	}
 	
 	numinp = 0;
-  for (int x = 0; x < numout; x++)
-    {
+	for (int x = 0; x < numout; x++) {
       if (variables[x].num[length[x] - 1] > numinp)
-	numinp = variables[x].num[length[x] - 1];
-    }
-
-  store *amount = new store[numinp + 2];
-  int *tempmem = new int[numinp + 2];
-
-  for (int i = 0; i < numinp + 1; i++)
-    tempmem[i] = 0;
-
-  for (int x = 0; x < nmbrFunctions; x++)
-    {
-      for (int i = 0; i < length[x]; i++)
-	{
-	  tempmem[variables[x].num[i]]++;
+		  numinp = variables[x].num[length[x] - 1];
 	}
-    }
-
-  for (int x = 1; x < numinp + 1; x++)
-    {
-      amount[x].num = new int[tempmem[x] + 1];
+	
+	store *amount = new store[numinp + 2];
+	int *tempmem = new int[numinp + 2];
+	
+	for (int i = 0; i < numinp + 1; i++)
+	  tempmem[i] = 0;
+	
+	for (int x = 0; x < nmbrFunctions; x++) {
+      for (int i = 0; i < length[x]; i++) {
+			tempmem[variables[x].num[i]]++;
+		}
+	}
+	
+	for (int x = 1; x < numinp + 1; x++) {
+		amount[x].num = new int[tempmem[x] + 1];
       amount[x].length = 0;
-    }
-
-  for (int x = 0; x < nmbrFunctions; x++)
-    {
-      for (int i = 0; i < length[x]; i++)
-	{
-	  amount[variables[x].num[i]].num[amount[variables[x].num[i]].
-					  length] = x;
-	  amount[variables[x].num[i]].length++;
 	}
-    }
-
-  int replaceat = 0;
-  for (int x = 1; x < numinp + 1; x++)
-    {
+	
+  for (int x = 0; x < nmbrFunctions; x++) {
+	  for (int i = 0; i < length[x]; i++) {
+		  amount[variables[x].num[i]].num[amount[variables[x].num[i]].length] = x;
+		  amount[variables[x].num[i]].length++;
+	  }
+  }
+	
+	int replaceat = 0;
+	for (int x = 1; x < numinp + 1; x++) {
       if (amount[x].length == 0)
-	continue;
+		  continue;
       replaceat++;
       variablelist[replaceat].replace = x;
       //    fprintf(stderr, "Replacing %d with %d\n", x, replaceat);
-      independantVars[replaceat] =
-	independantVars[x];
+      independantVars[replaceat] = independantVars[x];
       for (int z = 0; z < amount[x].length; z++)
-	cheat_replace (functions[amount[x].num[z]], x,
-		       replaceat);
-      for (int z = 0; z < nmbrFunctions; z++)
-	{
-	  if (equalityVble[z] == x)
-	    equalityVble[z] = replaceat;
-	  else if (equalityVble[z] == -x)
-	    equalityVble[z] = -replaceat;
-     //if (parameterizedVars[z] != NULL)
-     //{
-     //   for (int i = 1; i <= parameterizedVars[z][0];
-     //         i++)
-     //   {
-     //      if (parameterizedVars[z][i] == x)
-     //         parameterizedVars[z][i] = replaceat;
-     //   }
-     //}
-   }
-    }
-
-  /*      
-     for(int x = 0; x < numinp+1; x++)
-     independantVars[x] = 1; 
-     for(int x = 0; x < nmbrFunctions; x++) {
-     //fprintf(stdout, "here - %d %d\n", x, equalityVble[x]);
-     if(equalityVble[x]!=0) 
-     independantVars[equalityVble[x]] = 0;
-     }
-   */
-
-  for (int x = 1; x < numinp + 1; x++)
-    delete amount[x].num;
-
-  numinp = replaceat;
+		  cheat_replace (functions[amount[x].num[z]], x, replaceat);
+      for (int z = 0; z < nmbrFunctions; z++) {
+			if (equalityVble[z] == x)
+			  equalityVble[z] = replaceat;
+			else if (equalityVble[z] == -x)
+			  equalityVble[z] = -replaceat;
+			//if (parameterizedVars[z] != NULL)
+			//{
+			//   for (int i = 1; i <= parameterizedVars[z][0];
+			//         i++)
+			//   {
+			//      if (parameterizedVars[z][i] == x)
+			//         parameterizedVars[z][i] = replaceat;
+			//   }
+			//}
+		}
+	}
+	
+	/*      
+	 for(int x = 0; x < numinp+1; x++)
+	 independantVars[x] = 1; 
+	 for(int x = 0; x < nmbrFunctions; x++) {
+	 //fprintf(stdout, "here - %d %d\n", x, equalityVble[x]);
+	 if(equalityVble[x]!=0) 
+	 independantVars[equalityVble[x]] = 0;
+	 }
+	 */
+	
+	for (int x = 1; x < numinp + 1; x++)
+	  delete amount[x].num;
+	
+	numinp = replaceat;
 }
 
-void
-findPathsToFalse (BDDNode *bdd, int *path, int pathx, intlist *list, int *listx)
-{
+void findPathsToFalse (BDDNode *bdd, int *path, int pathx, intlist *list, int *listx) {
 	if (bdd == false_ptr) {
 		list[(*listx)].num = new int[pathx];
 		for (int x = 0; x < pathx; x++) {

@@ -54,10 +54,9 @@ int ExQuantifyAnd();
 int
 Do_ExQuantifyAnd()
 {
-	MAX_EXQUANTIFY_CLAUSES = 20;
+	MAX_EXQUANTIFY_CLAUSES = 200;
 	MAX_EXQUANTIFY_VARLENGTH = 18;
 	d3_printf1 ("ANDING AND EXISTENTIALLY QUANTIFYING -  ");
-   int num_iters = 0;
 	int cofs = PREP_CHANGED;
 	int ret = PREP_NO_CHANGE;
 	affected = 0;
@@ -142,7 +141,7 @@ ExQuantifyAnd ()
 					 d2e_printf3("\rPreprocessing Ea %d/%ld ", i, numinp);
 				 }
 				 
-				 //				 fprintf(stderr, "%d\n", i);
+				 //fprintf(stderr, "%d\n", i);
 				 if ((examount[i].length <= x) && (examount[i].length > 0))
 					{
 						int j = examount[i].num[0];
