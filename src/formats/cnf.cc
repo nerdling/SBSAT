@@ -192,8 +192,8 @@ store *getMinMax() {
 	min_max->length = num_vars;
 	min_max->num = new int[num_vars];
 	for(x = 0; x < num_vars; x++) {
-		min_max->num[x] = tempint[x];
-		if(abs(tempint[x]) > numinp) {
+		min_max->num[x] = tempint[x]==0?0:i_getsym_int(tempint[x], SYM_VAR);
+		if(abs(tempint[x]) > numinp) { //Could change this to be number of vars instead of max vars
 			fprintf(stderr, "Variable in input file is greater than allowed:%ld...exiting\n", (long)numinp);
 			exit(1);				
 		}
@@ -269,8 +269,8 @@ void CNF_to_BDD(int cnf)
 		if(y==0) {x--; numout--; continue; }
 		integers[x].num = new int[y + 1];
       for(i = 0; i < y + 1; i++) {
-			integers[x].num[i] = tempint[i];
-			if(abs(tempint[i]) > numinp) {
+			integers[x].num[i] = tempint[i]==0?0:i_getsym_int(tempint[i], SYM_VAR);
+			if(abs(tempint[i]) > numinp) { //Could change this to be number of vars instead of max vars
 				fprintf(stderr, "Variable in input file is greater than allowed:%ld...exiting\n", (long)numinp);
 				exit(1);				
 			}

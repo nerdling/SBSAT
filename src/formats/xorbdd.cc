@@ -123,8 +123,9 @@ char getNextSymbol () {
 				fprintf (stderr, "\nUnexpected (unsigned int)EOF...exiting:%d\n", xorbdd_line);
 				exit (0);
 			}
+			integers[0] = 'x';
 			if ((p >= '1') && (p <= '9')) {
-				i = 0;
+				i = 1;
 				while ((p >= '0') && (p <= '9')) {
 					integers[i] = p;
 					i++;
@@ -136,7 +137,8 @@ char getNextSymbol () {
 				}
 				ungetc (p, finputfile);
 				integers[i] = 0;
-				intnum = atoi (integers);
+				//intnum = atoi (integers+1);
+				intnum = i_getsym(integers, SYM_VAR);
 				if (intnum > numinp) {
 					fprintf (stderr, "\nVariable %d is larger than allowed (%ld)...exiting:%d\n",	intnum, numinp - 2, xorbdd_line);
 					exit (0);

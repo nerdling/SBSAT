@@ -317,8 +317,7 @@ void Smurfs_to_BDD () {
 		  fscanf (finputfile, "%d", &line);
 		  if (line != x)
 			 {
-				 fprintf (stderr,
-							 "\nFunction numbers do not match on function %d\n", line);
+				 fprintf (stderr, "\nFunction numbers do not match on function %d\n", line);
 				 fprintf (stderr, "Should be function %d\n", x);
 				 exit (1);
 			 }
@@ -327,6 +326,7 @@ void Smurfs_to_BDD () {
 		  do
 			 {
 				 y++;
+				 //ADD IN SYMBOL TABLE SUPPORT!
 				 fscanf (finputfile, "%d", &tempint[y]);
 			 }
 		  while (tempint[y] != -1);

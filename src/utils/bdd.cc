@@ -180,29 +180,16 @@ printBDDfile (BDDNode * bdd, FILE * fout)
       return;
    }
    fprintf (fout, "(");
-   printBDDfile (bdd->thenCase, fout);
-   fprintf (fout, "[%d]", bdd->variable);
-   printBDDfile (bdd->elseCase, fout);
+   printBDD (bdd->thenCase);
+   //fprintf (stdout, "[%d]", bdd->variable);
+	fprintf(fout, "[%s", s_name(bdd->variable));
+	d4_printf2("(%d)", bdd->variable);
+	fprintf(fout, "]");
+   printBDD (bdd->elseCase);
    fprintf (fout, ")");
 }
-void
-printBDD (BDDNode * bdd)
-{
-   if (bdd == true_ptr)
-   {
-      fprintf (stdout, "T");
-      return;
-   }
-   if (bdd == false_ptr)
-   {
-      fprintf (stdout, "F");
-      return;
-   }
-   fprintf (stdout, "(");
-   printBDD (bdd->thenCase);
-   fprintf (stdout, "[%d]", bdd->variable);
-   printBDD (bdd->elseCase);
-   fprintf (stdout, ")");
+void printBDD (BDDNode * bdd) { 
+	printBDDfile(bdd, stddbg);
 }
 
 
