@@ -70,7 +70,7 @@ CreateFunctions()
       if (procCreateFunction[nFunctionType])
          procCreateFunction[nFunctionType](i, functions[i], nFunctionType, equalityVble[i]);
       else {
-         d3_printf3("Skipping function %d type %d\n", i, nFunctionType);
+         d4_printf3("Skipping function %d type %d\n", i, nFunctionType);
          FnCreateSkippedFunction(i, nFunctionType);
          nNumUnresolvedFunctions--;
       }

@@ -82,8 +82,9 @@ Init_Preprocessing()
 
 	int ret = PREP_NO_CHANGE;
 	
-	start_prep = get_runtime ();	//Start clock
-	
+	//start_prep = get_runtime ();	//Start clock
+												//The clock is start earlier now
+											   //before reading the input file.	
 	Pos_replace = 0;
 	Neg_replace = 0;
 	Setting_Pos = 0;
@@ -412,11 +413,14 @@ Finish_Preprocessing()
 	ite_free((void**)&original_functionType);
 	ite_free((void**)&original_equalityVble);
 
-	d3_printf2 ("Number of normal BDDs - %d\n", countBDDs());
 	if(countBDDs()!=nmbrFunctions){
+		d3_printf2 ("Number of normal BDDs - %d\n", countBDDs());
 		d3_printf2("Number of autark BDDs - %d\n", nmbrFunctions-countBDDs());
 		d3_printf2("Total number of BDDs  - %d\n", nmbrFunctions);
+	} else {
+		d3_printf2 ("Number of BDDs - %d\n", countBDDs());	  
 	}
+	
 	d3_printf2("Number of variables   - %ld\n", numinp);
 	
 	D_3(fflush (stddbg);)
