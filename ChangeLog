@@ -1,3 +1,336 @@
+2004-06-13 00:29  fett
+
+	* src/solv_smurf/fn_smurf_au/: bdd2smurf_au.cc, transitions_au.cc:
+	Fixed a problem where an autarky BDD was transitioning incorrectly
+	when it had inferences otehr than the autarky variable.
+	
+	  ~Sean
+
+2004-06-13 00:28  fett
+
+	* src/solv_smurf/vars_verify.cc: fixed autkarybdds and the verifier
+	
+	  ~Sean
+
+2004-06-12 22:50  mkouril
+
+	* src/solv_smurf/: br_init.cc, fn_create.cc,
+	fn_and/bdd2specfn_and.cc, fn_smurf_au/bdd2smurf_au.cc,
+	fn_smurf_au/bt_smurf_au.cc, fn_smurf_au/transitions_au.cc,
+	hr_lsgb/hr_choice.cc: Fixes for autarky smurfs
+
+2004-06-12 18:16  fett
+
+	* src/solv_smurf/fn_smurf_au/bdd2smurf_au.cc: added the lowest
+	function priority so the autarky smurfs are checked last out of all
+	smurfs.
+	
+	   ~Sean
+
+2004-06-12 15:58  mkouril
+
+	* src/solv_smurf/: br_backtrack.cc, br_backtrack_nl.cc,
+	br_backtrack_sbj.cc, br_brancher.cc, br_init.cc, br_select_bp.cc,
+	fn_update.cc, solver.cc, vars_inferlit.cc,
+	fn_and/bdd2specfn_and.cc, fn_and/bt_specfn_and.cc,
+	fn_minmax/bt_specfn_minmax.cc, fn_smurf/bt_smurf.cc,
+	fn_smurf_au/bt_smurf_au.cc, fn_xor/bt_specfn_xor.cc,
+	include/fn_and.h, include/fn_minmax.h, include/fn_smurf.h,
+	include/fn_smurf_au.h, include/fn_xor.h, include/solver.h: Added
+	function priority inference processing
+
+2004-06-12 12:16  fett
+
+	* src/solv_smurf/fn_smurf_au/bdd2smurf_au.cc: fixed a few mistakes
+	dealing with sorting arrElts and the autarky variable, and also
+	mistakes dealing with arrIte2SolverVarMap vs. arrSolver2IteVarMap
+	
+	   ~Sean
+
+2004-06-11 19:40  fett
+
+	* src/solv_smurf/: fn_smurf/hr_lsgb_smurf_init.cc,
+	fn_smurf_au/bdd2smurf_au.cc, include/fn_smurf_au.h: fixing things
+
+2004-06-11 15:52  fett
+
+	* src/solv_smurf/fn_smurf_au/transitions_au.cc: Took out an
+	inappropriate assert
+	
+	  ~Sean
+
+2004-06-11 15:51  fett
+
+	* src/preproc/do_exquantifyand.cc: made more autarky bdds stick
+	around
+	
+	  ~Sean
+
+2004-06-11 15:33  fett
+
+	* src/preproc/: do_exquantify.cc, init_preproc.cc: fixd small
+	memory leak, i'm pretty sure.
+	
+	  ~Sean
+
+2004-06-11 15:22  fett
+
+	* src/utils/bdd.cc: Playing with possible_bdd
+	
+	   ~Sean
+
+2004-06-11 15:22  fett
+
+	* src/preproc/: do_applyinfs.cc, do_exquantify.cc, init_preproc.cc:
+	fixed a bug that occured when variables that had been existentially
+	quantified away and were brought back into existence by an
+	equivalence made by an autarky smurf were still known as
+	existential variables.
+	
+	   ~Sean
+
+2004-06-11 14:11  mkouril
+
+	* src/solv_smurf/fn_and/: bdd2specfn_and.cc, hr_lsgb_and_init.cc:
+	Extra asserts
+
+2004-06-11 12:32  fett
+
+	* src/formats/cnf.cc: fixed a small memory bug	 ~Sean
+
+2004-06-11 09:33  fett
+
+	* src/solv_smurf/: fn_smurf/fn_smurf.cc,
+	fn_smurf/hr_lsgb_smurf_init.cc, fn_smurf/hr_lsgbw_smurf_init.cc,
+	fn_smurf_xor/hr_lsgb_smurf_init.cc,
+	fn_smurf_xor/hr_lsgbw_smurf_init.cc: Changed all instances of
+	constant 40, to MAX_FUNC
+	
+	   ~Sean
+
+2004-06-10 18:22  fett
+
+	* src/: solv_smurf/fn_smurf_au/bdd2smurf_au.cc,
+	solv_smurf/fn_smurf_au/bt_smurf_au.cc,
+	solv_smurf/fn_smurf_au/fn_smurf_au.cc,
+	solv_smurf/fn_smurf_au/smurfstates_au.cc,
+	solv_smurf/fn_smurf_au/transitions_au.cc,
+	solv_smurf/include/fn_smurf_au.h, utils/bdd.cc, utils/bdd_print.cc,
+	utils/params.cc, utils/vars.cc: Working on building autarky smurfs.
+	
+	  ~Sean
+
+2004-06-10 18:22  fett
+
+	* src/solv_smurf/: fn_create.cc, fn_smurf/fn_smurf.cc: fixed
+	spelling mistake
+	
+	  ~Sean
+
+2004-06-10 18:22  fett
+
+	* src/preproc/: do_exquantify.cc, init_preproc.cc: Fixing autarky
+	problems.
+	
+	  ~Sean
+
+2004-06-10 18:22  fett
+
+	* include/: bddtable.h, sbsat_vars.h: added in some variables for
+	autarky smurfs.
+	
+	  ~Sean
+
+2004-06-09 16:46  fett
+
+	* ChangeLog, confdefs.h, libtool, doc/Makefile.in, src/Makefile.in,
+	src/formats/Makefile.in, src/formats/5/Makefile.in,
+	src/generator/Makefile.in, src/postproc/Makefile.in,
+	src/preproc/Makefile.in, src/solv_bddwalk/Makefile.in,
+	src/solv_bddwalk/bddwalk.cc, src/solv_smurf/Makefile.in,
+	src/solv_smurf/fn_and/Makefile.in,
+	src/solv_smurf/fn_lemma/Makefile.in,
+	src/solv_smurf/fn_minmax/Makefile.in,
+	src/solv_smurf/fn_smurf/Makefile.in,
+	src/solv_smurf/fn_smurf_au/Makefile.in,
+	src/solv_smurf/fn_xor/Makefile.in,
+	src/solv_smurf/hr_lemma/Makefile.in,
+	src/solv_smurf/hr_lsgb/Makefile.in,
+	src/solv_smurf/hr_lsgb_lemma/Makefile.in,
+	src/solv_smurf/hr_lsgbw/Makefile.in,
+	src/solv_smurf/hr_null/Makefile.in, src/solv_wvf/Makefile.in,
+	src/utils/Makefile.in: what?
+
+2004-06-09 16:25  mkouril
+
+	* src/: solv_bddwalk/Makefile.am, solv_bddwalk/Makefile.in,
+	solv_bddwalk/bddwalk.cc, solv_smurf/Makefile.am,
+	solv_smurf/Makefile.in, solv_smurf/br_afs.cc,
+	solv_smurf/br_backtrack.cc, solv_smurf/br_backtrack_nl.cc,
+	solv_smurf/br_backtrack_sbj.cc, solv_smurf/br_brancher.cc,
+	solv_smurf/br_checks.cc, solv_smurf/br_init.cc,
+	solv_smurf/br_select_bp.cc, solv_smurf/display.cc,
+	solv_smurf/display_sf.cc, solv_smurf/fn_create.cc,
+	solv_smurf/fn_init.cc, solv_smurf/fn_stack.cc,
+	solv_smurf/fn_update.cc, solv_smurf/hr_choice.cc,
+	solv_smurf/solver.cc, solv_smurf/vars_inferlit.cc,
+	solv_smurf/vars_init.cc, solv_smurf/vars_initinfs.cc,
+	solv_smurf/vars_map.cc, solv_smurf/vars_recordsol.cc,
+	solv_smurf/vars_verify.cc, solv_smurf/features/autarky.cc,
+	solv_smurf/features/breakxors.cc, solv_smurf/features/crtwin.cc,
+	solv_smurf/features/interface.cc, solv_smurf/features/ksolve.cc,
+	solv_smurf/fn_and/Makefile.am, solv_smurf/fn_and/Makefile.in,
+	solv_smurf/fn_and/bdd2specfn_and.cc,
+	solv_smurf/fn_and/bt_specfn_and.cc, solv_smurf/fn_and/fn_and.cc,
+	solv_smurf/fn_and/hr_lsgb_and_init.cc,
+	solv_smurf/fn_and/hr_lsgb_and_update.cc,
+	solv_smurf/fn_and/hr_lsgbw_and_init.cc,
+	solv_smurf/fn_and/hr_lsgbw_and_update.cc,
+	solv_smurf/fn_and/lemmas_and.cc, solv_smurf/fn_lemma/Makefile.am,
+	solv_smurf/fn_lemma/Makefile.in, solv_smurf/fn_lemma/bt_lemmas.cc,
+	solv_smurf/fn_lemma/fn_lemma.cc,
+	solv_smurf/fn_lemma/fn_lemma_backtrack.cc,
+	solv_smurf/fn_lemma/lemmacache.cc,
+	solv_smurf/fn_lemma/lemmainfo.cc, solv_smurf/fn_lemma/lemmamisc.cc,
+	solv_smurf/fn_lemma/lemmas.cc, solv_smurf/fn_lemma/lemmaspace.cc,
+	solv_smurf/fn_lemma/lemmawlits.cc,
+	solv_smurf/fn_lemma/load_lemmas.cc,
+	solv_smurf/fn_lemma_au/Makefile.am,
+	solv_smurf/fn_lemma_au/Makefile.in,
+	solv_smurf/fn_lemma_au/bt_lemmas_au.cc,
+	solv_smurf/fn_lemma_au/fn_lemma_au.cc,
+	solv_smurf/fn_lemma_au/lemmacache_au.cc,
+	solv_smurf/fn_lemma_au/lemmas_au.cc,
+	solv_smurf/fn_lemma_au/lemmawlits_au.cc,
+	solv_smurf/fn_minmax/Makefile.am, solv_smurf/fn_minmax/Makefile.in,
+	solv_smurf/fn_minmax/bdd2specfn_minmax.cc,
+	solv_smurf/fn_minmax/bt_specfn_minmax.cc,
+	solv_smurf/fn_minmax/fn_minmax.cc,
+	solv_smurf/fn_minmax/hr_lsgb_minmax.cc,
+	solv_smurf/fn_plainor/fn_plainor.cc,
+	solv_smurf/fn_smurf/Makefile.am, solv_smurf/fn_smurf/Makefile.in,
+	solv_smurf/fn_smurf/bdd2smurf.cc, solv_smurf/fn_smurf/bt_smurf.cc,
+	solv_smurf/fn_smurf/fn_smurf.cc,
+	solv_smurf/fn_smurf/hr_lsgb_smurf_init.cc,
+	solv_smurf/fn_smurf/hr_lsgb_smurf_update.cc,
+	solv_smurf/fn_smurf/hr_lsgbw_smurf_init.cc,
+	solv_smurf/fn_smurf/hr_lsgbw_smurf_update.cc,
+	solv_smurf/fn_smurf/smurfstates.cc,
+	solv_smurf/fn_smurf/transitions.cc,
+	solv_smurf/fn_smurf_au/Makefile.am,
+	solv_smurf/fn_smurf_au/Makefile.in,
+	solv_smurf/fn_smurf_au/bdd2smurf_au.cc,
+	solv_smurf/fn_smurf_au/bt_smurf_au.cc,
+	solv_smurf/fn_smurf_au/fn_smurf_au.cc,
+	solv_smurf/fn_smurf_au/smurfstates_au.cc,
+	solv_smurf/fn_smurf_au/transitions_au.cc,
+	solv_smurf/fn_smurf_xor/hr_lsgb_smurf_init.cc,
+	solv_smurf/fn_smurf_xor/hr_lsgb_smurf_update.cc,
+	solv_smurf/fn_smurf_xor/hr_lsgbw_smurf_init.cc,
+	solv_smurf/fn_smurf_xor/hr_lsgbw_smurf_update.cc,
+	solv_smurf/fn_xor/Makefile.am, solv_smurf/fn_xor/Makefile.in,
+	solv_smurf/fn_xor/bdd2specfn_xor.cc,
+	solv_smurf/fn_xor/bt_specfn_xor.cc, solv_smurf/fn_xor/fn_xor.cc,
+	solv_smurf/fn_xor/hr_lsgb_xor.cc,
+	solv_smurf/fn_xor/hr_lsgbw_xor.cc, solv_smurf/fn_xor/lemmas_xor.cc,
+	solv_smurf/fn_xor_smurf/hr_lsgb_xor.cc,
+	solv_smurf/fn_xor_smurf/hr_lsgbw_xor.cc,
+	solv_smurf/hr_inter/heur_i.cc, solv_smurf/hr_inter/hr_inter.cc,
+	solv_smurf/hr_lemma/Makefile.am, solv_smurf/hr_lemma/Makefile.in,
+	solv_smurf/hr_lemma/file, solv_smurf/hr_lemma/hr_choice.cc,
+	solv_smurf/hr_lemma/hr_lemma.cc,
+	solv_smurf/hr_lemma/hr_lemma_update.cc,
+	solv_smurf/hr_lsgb/Makefile.am, solv_smurf/hr_lsgb/Makefile.in,
+	solv_smurf/hr_lsgb/hr_choice.cc, solv_smurf/hr_lsgb/hr_lsgb.cc,
+	solv_smurf/hr_lsgb/hr_stack.cc, solv_smurf/hr_lsgb/libhrlsgbw.la,
+	solv_smurf/hr_lsgb_lemma/Makefile.am,
+	solv_smurf/hr_lsgb_lemma/Makefile.in,
+	solv_smurf/hr_lsgb_lemma/hr_choice.cc,
+	solv_smurf/hr_lsgb_lemma/hr_lsgb_lemma.cc,
+	solv_smurf/hr_lsgbw/Makefile.am, solv_smurf/hr_lsgbw/Makefile.in,
+	solv_smurf/hr_lsgbw/hr_lsgbw.cc,
+	solv_smurf/hr_lsgbw/hr_lsgbw_init.cc,
+	solv_smurf/hr_lsgbw/libhrlsgb.la, solv_smurf/hr_null/Makefile.am,
+	solv_smurf/hr_null/Makefile.in, solv_smurf/hr_null/hr_null.cc,
+	solv_smurf/hr_null/libhnull.la, solv_smurf/include/Makefile.am,
+	solv_smurf/include/Makefile.in, solv_smurf/include/brancher.h,
+	solv_smurf/include/fn_and.h, solv_smurf/include/fn_lemma.h,
+	solv_smurf/include/fn_minmax.h, solv_smurf/include/fn_plainor.h,
+	solv_smurf/include/fn_smurf.h, solv_smurf/include/fn_smurf_au.h,
+	solv_smurf/include/fn_xor.h, solv_smurf/include/heur_i.h,
+	solv_smurf/include/heuristic.h, solv_smurf/include/hr_lemma.h,
+	solv_smurf/include/hr_lsgb.h, solv_smurf/include/hr_lsgb_lemma.h,
+	solv_smurf/include/hr_lsgbw.h, solv_smurf/include/hr_null.h,
+	solv_smurf/include/solver.h, solv_smurf/include/solver_features.h,
+	solv_wvf/Makefile.am, solv_wvf/Makefile.in, solv_wvf/wvf.cc: New
+	version 2.5
+
+2004-06-09 16:21  mkouril
+
+	* configure, configure.ac, src/Makefile.am, src/Makefile.in,
+	src/sbsat.cc: New version 2.5
+
+2004-06-09 16:18  mkouril
+
+	* include/brancher.h, include/Makefile.am, include/Makefile.in,
+	include/common.h, include/config.h, include/prototypes.h,
+	include/bdd_ite.h, include/bddtable.h, include/sbsat.h,
+	include/sbsat_features.h, include/sbsat_formats.h,
+	include/sbsat_headers.h, include/sbsat_interface.h,
+	include/sbsat_postproc.h, include/sbsat_preproc.h,
+	include/sbsat_solver.h, include/sbsat_utils.h,
+	include/sbsat_vars.h, src/preproc/Makefile.in,
+	src/preproc/create_infs.cc, src/preproc/do_applyinfs.cc,
+	src/preproc/do_clearft.cc, src/preproc/do_cofactor.cc,
+	src/preproc/do_depcluster.cc, src/preproc/do_exquantify.cc,
+	src/preproc/do_exquantifyand.cc, src/preproc/do_flow.cc,
+	src/preproc/do_possibleanding.cc, src/preproc/do_prover3.cc,
+	src/preproc/do_pruning.cc, src/preproc/do_rewind.cc,
+	src/preproc/do_simpleand.cc, src/preproc/do_split.cc,
+	src/preproc/do_strength.cc, src/preproc/equivclass.cc,
+	src/preproc/init_preproc.cc, src/preproc/other_preproc.cc,
+	src/preproc/preprocess.cc, src/formats/Makefile.in,
+	src/formats/autochk.cc, src/formats/bdd2cnf.cc,
+	src/formats/bddbinary.cc, src/formats/cnf.cc,
+	src/formats/markbdd.cc, src/formats/read_input.cc,
+	src/formats/read_result.cc, src/formats/sat.cc,
+	src/formats/smurf.cc, src/formats/write_output.cc,
+	src/formats/xorbdd.cc, src/formats/5/Makefile.in,
+	src/formats/5/bdd_s.cc, src/formats/5/bddnode.h,
+	src/formats/5/blif_s.cc, src/formats/5/cnf_s.cc,
+	src/formats/5/functions.cc, src/formats/5/iscas_s.cc,
+	src/formats/5/libt5_la-blif_g.cc,
+	src/formats/5/libt5_la-iscas_g.cc,
+	src/formats/5/libt5_la-prover3_g.cc,
+	src/formats/5/libt5_la-prover_g.cc,
+	src/formats/5/libt5_la-trace_g.cc, src/formats/5/p3.cc,
+	src/formats/5/p3.h, src/formats/5/parser.cc,
+	src/formats/5/prover3_s.cc, src/formats/5/prover_s.cc,
+	src/formats/5/trace_s.cc, src/formats/5/tracetest.cc,
+	src/utils/Makefile.in, src/utils/bdd.cc,
+	src/utils/bdd_circuit_init.cc, src/utils/bdd_ite.cc,
+	src/utils/bdd_print.cc, src/utils/bddtable.cc,
+	src/utils/custprint.cc, src/utils/infer.cc, src/utils/itetable.cc,
+	src/utils/java_wrapper.cc, src/utils/llist.cc, src/utils/log.cc,
+	src/utils/params.cc, src/utils/symtable.cc, src/utils/termcap.cc,
+	src/utils/utils.cc, src/utils/vars.cc, src/utils/zread.cc,
+	src/postproc/Makefile.in, src/postproc/backend.cc,
+	src/generator/Makefile.in, src/generator/gentest.cc,
+	src/generator/rn.cc, src/generator/slider2.cc,
+	src/generator/vanDerWaerden.cc, src/generator/xorgen.cc: New
+	version 2.5
+
+2004-06-09 16:16  mkouril
+
+	* include/ite.h: OK
+
+2004-06-09 16:14  mkouril
+
+	* include/: defines.h, formats.h, globals.h, heuristic.h,
+	i_heuristic.h, interface.h, itefeatures.h, iteheaders.h,
+	j_heuristic.h, l_heuristic.h, lemmainfo.h, postproc.h,
+	preprocess.h, smurffactory.h, solver.h, vars.h: New version 2.5
+
 2004-06-05 09:54  fett
 
 	* src/: formats/markbdd.cc, utils/bdd_print.cc: moved the bdd
