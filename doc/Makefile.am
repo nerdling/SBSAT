@@ -1,8 +1,8 @@
 SUBDIRS=manual
-EXTRA_DIST=ftest.c arch.txt Doxyfile ite.1 platforms.txt
+EXTRA_DIST=ftest.c arch.txt Doxyfile sbsat.1 platforms.txt
 
-ite.1: 
-	help2man ../src/ite > ite.1
+sbsat.1: 
+	help2man ../src/sbsat > sbsat.1
 
 doc:
 	doxygen
