@@ -152,7 +152,7 @@ SpecFn2Smurf (BDDNodeStruct *pFunc,
    }
 
    /* 1. Create BDD representing RHS. */
-   BDDNodeStruct *pRHSFunc;
+   BDDNodeStruct *pRHSFunc=NULL;
    switch (nFunctionType) {
     case PLAINOR:
        pRHSFunc = ite_not(pFunc);
@@ -174,6 +174,7 @@ SpecFn2Smurf (BDDNodeStruct *pFunc,
        break;
     default:
        assert(0);
+       exit(1);
        break;
    }
 

@@ -659,7 +659,7 @@ void update_statistics_start_try(void)
 int picknoveltyplus(void)
 {
 	int var, diff, birthdate;
-	int youngest, youngest_birthdate, best, second_best, best_diff, second_best_diff;
+	int youngest=0, youngest_birthdate, best=0, second_best=0, best_diff, second_best_diff;
 	int tofix, BDDsize, i;
 	
 	tofix = falseBDDs[random()%numfalse];

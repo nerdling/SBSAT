@@ -227,9 +227,9 @@ ITE_INLINE void
 J_UpdateHeuristicSmurf(SmurfState *pOldState, SmurfState *pState, int nSmurfIndex) {
    int k,j;
    int *arrElts;
-   int n;
-   int neg_idx;
-   SpecialFunc *pSpecialFunc;
+   int nPrevNumRHSUnknowns=0;
+   int neg_idx=0;
+   SpecialFunc *pSpecialFunc=NULL;
    HWEIGHT fScorePos = 0;
    HWEIGHT fScoreNeg = 0;
 
@@ -246,8 +246,8 @@ J_UpdateHeuristicSmurf(SmurfState *pOldState, SmurfState *pState, int nSmurfInde
       }
    } else {
       pSpecialFunc = arrSpecialFuncs + arrSmurfChain[nSmurfIndex].specfn;
-      n = arrPrevNumRHSUnknowns[arrSmurfChain[nSmurfIndex].specfn];
-      if (n == 0)  {
+      nPrevNumRHSUnknowns = arrPrevNumRHSUnknowns[arrSmurfChain[nSmurfIndex].specfn];
+      if (nPrevNumRHSUnknowns == 0)  {
          for (k = 0; k < pOldState->vbles.nNumElts; k++) {
             int nVble = arrElts[k];
             Save_arrHeurScores(nVble);
@@ -258,23 +258,24 @@ J_UpdateHeuristicSmurf(SmurfState *pOldState, SmurfState *pState, int nSmurfInde
             j+=2;
          }
       } else {
+         /* nPrevNumRHSUnknowns > 0 */
          for (k = 0; k < pOldState->vbles.nNumElts; k++) {
             int nVble = arrElts[k];
             Save_arrHeurScores(nVble);
             arrHeurScores[nVble].Pos -= 
-               pOldState->arrTransitions[j+BOOL_TRUE].pNextState->arrHeuristicXors[n];
+               pOldState->arrTransitions[j+BOOL_TRUE].pNextState->arrHeuristicXors[nPrevNumRHSUnknowns];
             arrHeurScores[nVble].Neg -= 
-               pOldState->arrTransitions[j+BOOL_FALSE].pNextState->arrHeuristicXors[n];
+               pOldState->arrTransitions[j+BOOL_FALSE].pNextState->arrHeuristicXors[nPrevNumRHSUnknowns];
             j+=2;
          }
       }
       // update special function 
       if (pOldState == pTrueSmurfState) {
          fScorePos = 
-         fScoreNeg = -pOldState->arrHeuristicXors[n];
-      } else if (n > 2) {
+         fScoreNeg = -pOldState->arrHeuristicXors[nPrevNumRHSUnknowns];
+      } else if (nPrevNumRHSUnknowns > 2) {
          fScorePos = 
-         fScoreNeg = -pOldState->arrHeuristicXors[n-1];
+         fScoreNeg = -pOldState->arrHeuristicXors[nPrevNumRHSUnknowns-1];
       } else {
          int counter=0;
          int nNumElts = pSpecialFunc->rhsVbles.nNumElts;
@@ -305,7 +306,7 @@ J_UpdateHeuristicSmurf(SmurfState *pOldState, SmurfState *pState, int nSmurfInde
          j+=2;
       }
    } else {
-      if (n == 0) {
+      if (nPrevNumRHSUnknowns == 0) {
          for (k = 0; k < pState->vbles.nNumElts; k++) {
             int nVble = arrElts[k];
             arrHeurScores[nVble].Pos += 
@@ -315,23 +316,24 @@ J_UpdateHeuristicSmurf(SmurfState *pOldState, SmurfState *pState, int nSmurfInde
             j+=2;
          }
       } else {
+         /* nPrevNumRHSUnknowns > 0 */
          for (k = 0; k < pState->vbles.nNumElts; k++) {
             int nVble = arrElts[k];
             arrHeurScores[nVble].Pos += 
-               pState->arrTransitions[j+BOOL_TRUE].pNextState->arrHeuristicXors[n];
+               pState->arrTransitions[j+BOOL_TRUE].pNextState->arrHeuristicXors[nPrevNumRHSUnknowns];
             arrHeurScores[nVble].Neg += 
-               pState->arrTransitions[j+BOOL_FALSE].pNextState->arrHeuristicXors[n];
+               pState->arrTransitions[j+BOOL_FALSE].pNextState->arrHeuristicXors[nPrevNumRHSUnknowns];
             j+=2;
          }
       }
 
       // update special function 
       if (pState == pTrueSmurfState) {
-         fScorePos += pState->arrHeuristicXors[n];
-         fScoreNeg += pState->arrHeuristicXors[n];
-      } else if (n > 2) {
-         fScorePos += pState->arrHeuristicXors[n-1];
-         fScoreNeg += pState->arrHeuristicXors[n-1];
+         fScorePos += pState->arrHeuristicXors[nPrevNumRHSUnknowns];
+         fScoreNeg += pState->arrHeuristicXors[nPrevNumRHSUnknowns];
+      } else if (nPrevNumRHSUnknowns > 2) {
+         fScorePos += pState->arrHeuristicXors[nPrevNumRHSUnknowns-1];
+         fScoreNeg += pState->arrHeuristicXors[nPrevNumRHSUnknowns-1];
       } else {
          fScorePos += pState->arrHeuristicXors[1-neg_idx]; 
          fScoreNeg += pState->arrHeuristicXors[neg_idx];

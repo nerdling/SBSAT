@@ -38,7 +38,7 @@
 #include "solver.h"
 
 ITE_INLINE
-int AFSMoveLemma(LemmaInfoStruct *previous, LemmaInfoStruct *pLemmaListDisagreed, int negativeLit, int nVble, int idx)
+void AFSMoveLemma(LemmaInfoStruct *previous, LemmaInfoStruct *pLemmaListDisagreed, int negativeLit, int nVble, int idx)
 /* #define AFSMoveLemma(previous, pLemmaListDisagreed, negativeLit, nVble, idx) \ */
 { \
    previous->pNextLemma[idx] \

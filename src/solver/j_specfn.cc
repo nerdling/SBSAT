@@ -367,7 +367,7 @@ GetHeurScoresFromSpecialFunc_XOR_C(int nSpecFuncIndex)
 {
    SpecialFunc *pSpecialFunc = arrSpecialFuncs + nSpecFuncIndex;
    int nNumRHSUnknowns = arrNumRHSUnknowns[nSpecFuncIndex];
-   double fSum;
+   double fSum = arrSumRHSUnknowns[nSpecFuncIndex];
 
    if (pSpecialFunc->LinkedSmurfs == -1) {
       J_Update_RHS_AND_C(pSpecialFunc, 

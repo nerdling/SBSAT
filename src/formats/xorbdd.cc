@@ -271,7 +271,7 @@ void xorloop () {
 	
 	while (1) {				//(p = fgetc(finputfile))!=EOF) 
 		xorbdd_line++;
-      d2_printf3("\rReading %d/%d", xorbdd_line, numout);
+      d2_printf3("\rReading %d/%ld", xorbdd_line, (long)numout);
 		if(p == ';') {
 			while (p != '\n') {
 				if ((p = fgetc(finputfile)) == EOF) {
@@ -347,7 +347,7 @@ void xorloop () {
 			}
 		}
 	
-		BDDNode *linear = false_ptr;
+		/*BDDNode *linear = false_ptr;*/
 		BDDNode *excess = false_ptr;
 		for(int i = 0; i < nmbrxors; i++) {
 			  excess = ite_xor(excess, bdds[i]);
