@@ -83,10 +83,12 @@ struct AffectedFuncsStruct
   // the variable is the first of the two literals in the lemma
   // which are being watched by the brancher.
   LemmaInfoStruct LemmasWherePos[2];
+  LemmaInfoStruct LemmasWherePosTail[2];
   // pLemmasWherePos2 is the same thing, except that in each of these lemmas
   // the variable is the _second_ of the two literals which are being watched
   // by the brancher.
   LemmaInfoStruct LemmasWhereNeg[2];
+  LemmaInfoStruct LemmasWhereNegTail[2];
 };
 
 struct BacktrackStackEntry
