@@ -620,24 +620,26 @@ int splitXors() {
          continue;
       }
       d4_printf2("Adding split function %ld\n", x);
+      symrec *s_ptr = tputsym(SYM_VAR);
+
 		total_vars++;
-		xorFunctions[x] = ite_xor(xor_part, ite_var(total_vars));
+		xorFunctions[x] = ite_xor(xor_part, ite_var(s_ptr->id));
 #ifndef NDEBUG
       BDDNode *savedF = functions[x];
 #endif
 
-		functions[x] = ite_equ(nonxor_part, ite_var(total_vars));
+		functions[x] = ite_equ(nonxor_part, ite_var(s_ptr->id));
       
-		//functions[x] = ite_xor(nonxor_part, ite_var(total_vars));
+		//functions[x] = ite_xor(nonxor_part, ite_var(s_ptr->id));
 		//functions[x] = ite_equ(nonxor_part, false_ptr);
 
       length[x] = length[x]-y; /* the linear part is y */
-      assert(equalityVble[x] == 0);
-      equalityVble[x] = total_vars;
+      //assert(equalityVble[x] == 0);
+      equalityVble[x] = s_ptr->id;
 
 #ifndef NDEBUG
       BDDNode *testBDD = ite_and(xorFunctions[x], functions[x]);
-      testBDD = xquantify(testBDD, total_vars);
+      testBDD = xquantify(testBDD, s_ptr->id);
       if (testBDD != savedF) {
          assert(0);
       }
