@@ -57,6 +57,12 @@ int Do_Rewind() {
 			equalityVble[y] = equalityVble[x];
 			//fprintf(stderr, "keeping autark %d at %d\n", x, y);
 			Rebuild_BDDx(y);
+			if(x!=y) {
+				functions[x] = true_ptr;
+				functionType[x] = UNSURE;
+				equalityVble[x] = 0;
+				Rebuild_BDDx(x);
+			}
 			y++;
 		} else {
 			functions[x] = true_ptr;

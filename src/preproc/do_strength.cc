@@ -87,7 +87,7 @@ int Do_Strength() {
 		  St_repeat[x] = 0;
 		  if (functions[x] == true_ptr)
 			 continue;
-        //if(functionType[x] == AUTARKY_FUNC) continue;
+        if(functionType[x] == AUTARKY_FUNC) continue;
 		  for (int j = x + 1; j < nmbrFunctions; j++)
 			 {
 				 if (functions[j] == true_ptr)
@@ -100,25 +100,19 @@ int Do_Strength() {
                 continue;
 				 int did_vars_incommon = 0;
 				 if(functionType[j] == AUTARKY_FUNC) continue;
-             if (length[x] < functionTypeLimits[functionType[x]]) {
+             if (length[x] < functionTypeLimits[functionType[x]]) {// &&
+					 //(functionType[j] != AUTARKY_FUNC)) {
 					 if (nmbrVarsInCommon (x, j, STRENGTH) == 0) // < STRENGTH)
 						continue;
 					 did_vars_incommon = 1;
 					 BDDNode *currentBDD = strengthen (x, j);
 					 if (currentBDD != functions[x]) {
-						 //fprintf(stderr, "\nSt%d: ", x);
-						 //printBDDerr(functions[x]);
-						 //fprintf(stderr, "\n");
-						 //printBDDerr(currentBDD);
-						 //fprintf(stderr, "\n");
-						 
-						 //d2_printf1("*");
-						 //                       D_3(print_roller();)
 						 affected++; 
 						 ret = PREP_CHANGED;
 						 SetRepeats(x);
 						 functions[x] = currentBDD;
-						 functionType[x] = UNSURE;
+						 //if(functionType[x]!=AUTARKY_FUNC)
+							functionType[x] = UNSURE;
 						 switch (int r=Rebuild_BDDx(x)) {
 						  case TRIV_SAT: 
 						  case TRIV_UNSAT: 
@@ -127,20 +121,21 @@ int Do_Strength() {
 						 }
 					 }
 				 }
-             if (length[j] < functionTypeLimits[functionType[j]]) {
+				 //if(functionType[x] == AUTARKY_FUNC) continue;
+             if (length[j] < functionTypeLimits[functionType[j]]) {// &&
+					 //(functionType[x] != AUTARKY_FUNC)) {
 					 if(did_vars_incommon == 0) {
 						 if (nmbrVarsInCommon (x, j, STRENGTH) == 0) // < STRENGTH)
 							continue;
 					 }
 					 BDDNode *currentBDD = strengthen (j, x);
 					 if (currentBDD != functions[j])	{
-						 //d2_printf1 ("*");
-						 //                       D_3(print_roller();)
-						 affected++; 
+						 affected++;
 						 ret = PREP_CHANGED;
 						 SetRepeats(j);
 						 functions[j] = currentBDD;
-						 functionType[j] = UNSURE;
+						 //if(functionType[j]!=AUTARKY_FUNC)
+							functionType[j] = UNSURE;
 						 switch (int r=Rebuild_BDDx(j)) {
 						  case TRIV_SAT: 
 						  case TRIV_UNSAT: 

@@ -73,7 +73,8 @@ int
 main(int argc, char *argv[])
 {
 	gettimeofday(&tv1,&tzp1);
-	seed1 = (( tv1.tv_sec & 0177 ) * 1000000) + tv1.tv_usec;
+	seed1 = (( tv1.tv_sec & 0177 ) * 1000000) + tv1.tv_usec; //87586000; (slider_40_sat + strengthening)
+	fprintf(stderr, "\n%d\n", seed1);
    srandom(seed1);
 	
    int ret = NO_ERROR;

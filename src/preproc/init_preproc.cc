@@ -289,10 +289,6 @@ Finish_Preprocessing()
 		 variablelist[x].true_false = 3;
 	delete []tmp;	
 	
-	//After this all equalvars should point to their respective supernodes
-	//in the inverse tree (equivclass).
-   //This would have to change if we replace variables differently.
-
 	int *influence_times = (int *)ite_calloc(numinp + 1, sizeof(int), 9, "influence_times");
 
 	if(arrVarTrueInfluences == NULL) {
@@ -300,7 +296,12 @@ Finish_Preprocessing()
 		for(int i = 0; i < numinp+1; i++)
 		  arrVarTrueInfluences[i] = 0.5;
 	}
+
 	
+	//After this all equalvars should point to their respective supernodes
+	//in the inverse tree (equivclass).
+   //This would have to change if we replace variables differently.
+
 	for (int i = 1; i <= numinp; i++) {
 		if (variablelist[i].equalvars != 0 && variablelist[abs(variablelist[i].equalvars)].equalvars!=0) {
 			if(variablelist[i].equalvars>0) variablelist[i].equalvars = variablelist[variablelist[i].equalvars].equalvars;

@@ -42,6 +42,14 @@ int
 CreateInferences () {
 	
 	Result *equivresult;
+
+   //Compress the inverse tree that is variablelist.	
+	for (int i = 1; i <= numinp; i++) {		  
+		if (variablelist[i].equalvars != 0 && variablelist[abs(variablelist[i].equalvars)].equalvars!=0) {
+			if(variablelist[i].equalvars>0) variablelist[i].equalvars = variablelist[variablelist[i].equalvars].equalvars;
+			else variablelist[i].equalvars = -variablelist[-variablelist[i].equalvars].equalvars;
+		}
+	}
 	
 	//Create Inferences from variablelist
 	
