@@ -90,9 +90,6 @@ BDDNode *ite_itequ(BDDNode *, BDDNode *, BDDNode *, BDDNode *);
 BDDNode *ite_nand(BDDNode *, BDDNode *);
 BDDNode *ite_nor(BDDNode *, BDDNode *);
 BDDNode *ite_nimp(BDDNode *, BDDNode *);
-BDDNode *bdd2xdd(BDDNode *);
-int splitXors();
-void countSingleXors(BDDNode *, int *, int *);
 BDDNode *reduce_t(int, BDDNode *);
 BDDNode *reduce_f(int, BDDNode *);
 int top_variable(BDDNode *, BDDNode *, BDDNode *);
@@ -117,6 +114,11 @@ int top_variable(BDDNode *, BDDNode *, BDDNode *);
 #define top_variable(x, y, z) MIN3((x)->variable, (y)->variable, (z)->variable)
 #endif
 
+BDDNode *bdd2xdd(BDDNode *);
+int splitXors();
+void countSingleXors(BDDNode *, int *, int *);
+int are_oppos(BDDNode *, BDDNode *);
+	
 void SAT_to_CNF();
 void Smurfs_to_BDD();
 void Do_Lemmas();

@@ -193,7 +193,8 @@ int DepCluster () {
 					int equ_var = abs(equalityVble[k]);
 					BDDNode *true_side = set_variable (Quantify, i, 1);
 					BDDNode *false_side = set_variable (Quantify, i, 0);
-					if(true_side == ite_not(false_side)) {
+//					if(true_side == ite_not(false_side)) {
+					if(are_oppos(true_side, false_side)) {
 						equalityVble[k] = equ_var; //could of been negative, now it's positive for sure
 						if(true_side->thenCase == true_ptr || true_side->elseCase == true_ptr)
 						  functionType[k] = OR;

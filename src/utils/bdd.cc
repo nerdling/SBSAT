@@ -155,6 +155,23 @@ int HammingDistance (BDDNode *f, BDDNode *c) {
 }
 */
 
+int are_oppos(BDDNode *f, BDDNode *c) {
+	if(f == true_ptr) {
+		if(c == false_ptr) return 1;
+		else return 0;
+	}
+	if(f == false_ptr) {
+	  if(c == true_ptr) return 1;
+	  else return 0;
+	}
+	if(f->variable == c->variable) {
+		int i = are_oppos(f->thenCase, c->thenCase);
+		if(i == 0) return 0;
+		return are_oppos(f->elseCase, c->elseCase);		
+	}
+	return 0;
+}
+
 BDDNode * f_apply (BDDNode * f, BDDNode ** x)
 {
    if (IS_TRUE_FALSE(f))
@@ -728,8 +745,6 @@ BDDNode *ite (BDDNode * x, BDDNode * y, BDDNode * z) {
    BDDNode * r;
    BDDNode * e;
 	
-	//else if(y == false_ptr && z == true_ptr) return ite_not(x);
-	
 	if (x->variable > y->variable) {
       if (x->variable > z->variable) {
 			if(y == z) return y;
@@ -970,8 +985,9 @@ BDDNode *restrict (BDDNode * f, BDDNode * c)
    //    return true_ptr;
    if ((c == true_ptr) || (f == false_ptr))
       return f;
-   if (c == ite_not (f))
-      return false_ptr;
+//   if (c == ite_not (f))
+	if(are_oppos(f, c))
+	  return false_ptr;
    if (f == true_ptr)
       return c;
 
@@ -1077,7 +1093,8 @@ BDDNode * pruning (BDDNode * f, BDDNode * c)
       return true_ptr;
    if ((c == true_ptr) || (f == true_ptr) || (f == false_ptr))
       return f;
-   if (c == ite_not (f))
+	//if (c == ite_not (f))
+	if(are_oppos(f, c))
       return false_ptr;
 
    // We know that f & c are both BDD's with top variables.
@@ -1155,8 +1172,9 @@ BDDNode * pruning_p2 (BDDNode * f, BDDNode * c)
 {
    if (f == c)
       return true_ptr;
-   if (c == ite_not (f))
-      return false_ptr;
+   //if (c == ite_not (f))
+	if(are_oppos(f, c))
+	  return false_ptr;
    if ((c == true_ptr) || (f == true_ptr) || (f == false_ptr))
       return f;
 
@@ -1195,8 +1213,9 @@ BDDNode *Build_BDD_From_Inferences (BDDNode *c)
 
 BDDNode * steal (BDDNode * f, BDDNode * c)
 {
-   if (c == ite_not (f))
-      return false_ptr;
+   //if (c == ite_not (f))
+	if(are_oppos(f, c))
+	  return false_ptr;
 	if ((c == true_ptr) || (f == false_ptr))
       return f;
    if (f == c)
