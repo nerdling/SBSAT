@@ -238,7 +238,7 @@ InitSmurfFactory()
    {
       int nFunctionType = functionType[i];
 
-      if (nFunctionType != UNSURE && !IsSpecialFunc(nFunctionType))
+      if (nFunctionType != UNSURE && nFunctionType != ITE && nFunctionType != ITE_EQU && !IsSpecialFunc(nFunctionType))
       {
          d2_printf3("SmurfFactory -- Unrecognized function type: %d for %d assuming UNSURE\n", 
                nFunctionType, i);
