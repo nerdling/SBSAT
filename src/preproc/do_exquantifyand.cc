@@ -298,7 +298,10 @@ int ExQuantifyAnd () {
 									}
 									if(amount_count == 1) { //amount[variables[j].num[y]].head->next == NULL) {
 										//d3_printf2("%d ", variables[j].num[y]);
-										Quantify2 = xquantify(Quantify2, variables[j].num[y]);
+										
+										//HERE
+										//Quantify2 = xquantify(Quantify2, variables[j].num[y]);
+										
 									}
 								}
 								//d3_printf1("\n");

@@ -446,19 +446,19 @@ int Rebuild_BDDx (int x) {
 				startiter->next = lastinfer->next;
 				lastinfer->next = startiter;
 				autark_BDD[equalityVble[x]] = -1;
-				d3_printf3("\n%d|%d=True|\n", x, equalityVble[x]);
-				d3_printf1("*T");
+				//d3_printf3("\n%d|%d=True|\n", x, equalityVble[x]);
+				//d3_printf1("*T");
 				//printBDD(autarkBDD);
-				d3_printf1("\n");
-				str_length = 0;
+				//d3_printf1("\n");
+				//str_length = 0;
 				functions[x] = true_ptr;		
 				functionType[x] = UNSURE;
 				equalityVble[x] = 0;
 			} else if(autarkBDD == true_ptr) {
 				//Autark variable was probably infered by some other function.
 				autark_BDD[equalityVble[x]] = -1;
-				d3_printf3("\n%d|%d gone|\n", x, equalityVble[x]);
-				str_length = 0;
+				//d3_printf3("\n%d|%d gone|\n", x, equalityVble[x]);
+				//str_length = 0;
 				functionType[x] = UNSURE;
 				equalityVble[x] = 0;
 			} else {
@@ -468,11 +468,11 @@ int Rebuild_BDDx (int x) {
 						startiter->next = lastinfer->next;
 						lastinfer->next = startiter;
 						autark_BDD[equalityVble[x]] = -1;
-						d3_printf4("\n%d|%d, %d|\n", x, iterator->nums[0], iterator->nums[1]);
+						//d3_printf4("\n%d|%d, %d|\n", x, iterator->nums[0], iterator->nums[1]);
 						//printBDD(functions[x]);
-						d3_printf1("\n");
-						d3_printf1("*");
-						str_length = 0;
+						//d3_printf1("\n");
+						//d3_printf1("*");
+						//str_length = 0;
 						functions[x] = true_ptr;		
 						functionType[x] = UNSURE;
 						equalityVble[x] = 0;
