@@ -861,6 +861,12 @@ BDDNode * ite_not (BDDNode * a)
    return ite (a, false_ptr, true_ptr);
 }
 
+BDDNode * ite_or_te(BDDNode * a)
+{
+   if (a->or_bdd != NULL) return a->or_bdd;
+   return (a->or_bdd = ite_or(a->thenCase, a->elseCase));
+}
+
 BDDNode * ite_or (BDDNode * a, BDDNode * b)
 {
 #ifdef SORT_ITE_OPS
@@ -1123,7 +1129,8 @@ BDDNode * pruning (BDDNode * f, BDDNode * c)
 	
 	// We know that f & c are both BDD's with top variables.
    if (f->variable < c->variable)
-      return pruning (f, ite_or (c->thenCase, c->elseCase));	//xquantify(c, c->variable));
+      return pruning (f, ite_or_te(c));	//xquantify(c, c->variable));
+      //return pruning (f, ite_or (c->thenCase, c->elseCase));	//xquantify(c, c->variable));
    int v = f->variable;
 
    //v is the top variable of f & c.
@@ -1427,7 +1434,8 @@ BDDNode * _xquantify (BDDNode * f, int v)
    }
    f->flag = bdd_flag_number;
    if (f->variable == v)
-      return (f->xq_bdd = ite_or (f->thenCase, f->elseCase));
+      return (f->xq_bdd = ite_or_te(f));
+      //return (f->xq_bdd = ite_or (f->thenCase, f->elseCase));
 
    if (v > f->variable)		//Does v exist in f?
       return (f->xq_bdd = f);			      //no, then leave

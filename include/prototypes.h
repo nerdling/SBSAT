@@ -85,6 +85,7 @@ BDDNode *ite_var (int);
 BDDNode *ite_not(BDDNode *);
 BDDNode *ite_and(BDDNode *, BDDNode *);
 BDDNode *ite_or(BDDNode *, BDDNode *);
+BDDNode *ite_or_te(BDDNode *);
 BDDNode *ite_equ(BDDNode *, BDDNode *);
 BDDNode *ite_xor(BDDNode *, BDDNode *);
 BDDNode *ite_imp(BDDNode *, BDDNode *);
