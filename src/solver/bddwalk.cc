@@ -239,6 +239,7 @@ void print_current_assign(void);
 void print_statistics_header(void);
 void update_statistics_start_try(void);
 void update_and_print_statistics_end_try(void);
+void update_statistics_end_flip(void);
 void print_statistics_final(void);
 void print_sol_cnf(void);
 
@@ -281,6 +282,7 @@ int walkSolve()
 				d3_printf1("Breaking out of BDD WalkSAT\n");
 				break;
 			}
+			update_statistics_end_flip();
 		}
 		update_and_print_statistics_end_try();
 		if (nCtrlC) {
