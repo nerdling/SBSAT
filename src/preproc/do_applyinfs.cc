@@ -485,6 +485,13 @@ int Rebuild_BDDx (int x) {
 			equalityVble[x] = 0;
 		}
 	}
+
+/*	if(length[x] > 1 && functionType[x] == AUTARKY_FUNC) {
+		functions[x] = true_ptr;
+		functionType[x] = UNSURE;		  
+		equalityVble[x] = 0;
+	}
+*/
 	
 	infer *previous = lastinfer;
 	
