@@ -14,14 +14,18 @@
    void     ite_op_are_equal(BDDNode **);
    void     ite_new_int_leaf(char *, char *);
    void     ite_flag_vars(symrec **, int);
+   void trace_reallocate_varlist();
+   void trace_reallocate_exp();
 
-   /* FIXME: make it more dynamic! */
-   symrec *varlist[1000];
-   int varindex;
+   symrec **trace_varlist = NULL;
+   int trace_varmax = 0;
+   int trace_varindex;
 
-   /* FIXME: make it more dynamic! */
-   BDDNode *explist[10][1000];
-   int expindex[10];
+   //BDDNode *explist[10][1000];
+   BDDNode ***explist = NULL;
+   int *expindex = NULL;
+   int *expmax = NULL;
+   int explevel_max;
    int explevel;
 
 
@@ -65,13 +69,13 @@ endmodule:  ENDMODULE
 
 input: /* empty */
 	      | INPUT varlist ';'
-            { varlist[varindex] = NULL; ite_flag_vars(varlist, /*independent - 1*/1);  }
+            { trace_varlist[trace_varindex] = NULL; trace_reallocate_varlist(); ite_flag_vars(trace_varlist, /*independent - 1*/1);  }
 	      | INPUT ';'
 ;
 
 output: /* empty */
 	      | OUTPUT varlist ';'
-            { varlist[varindex] = NULL; ite_flag_vars(varlist, /*dependent - 0*/0);  }
+            { trace_varlist[trace_varindex] = NULL; trace_reallocate_varlist(); ite_flag_vars(trace_varlist, /*dependent - 0*/0);  }
 	      | OUTPUT ';'
 ;
 
@@ -84,13 +88,13 @@ lines:  /* empty */
 ;
 
 line:     ID '=' OP '(' exp_list ')'
-	         { explist[explevel][expindex[explevel]] = NULL; ite_op_equ($1, $3, explist[explevel]); explevel--; }
+	         { trace_reallocate_exp(); explist[explevel][expindex[explevel]] = NULL; ite_op_equ($1, $3, explist[explevel]); explevel--; }
         | ID '=' exp_start
 	         { ite_op_id_equ($1,$3); }
 	     | ID '=' OP_NEW_INT_LEAF '(' ID ')'
             { ite_new_int_leaf($1, $5); }
 	     | ARE_EQUAL '(' exp_list ')'
-            { explist[explevel][expindex[explevel]] = NULL; ite_op_are_equal(explist[explevel]); explevel--; }
+            { trace_reallocate_exp(); explist[explevel][expindex[explevel]] = NULL; ite_op_are_equal(explist[explevel]); explevel--; }
 	     | C_OP '(' INTNUMBER ')'
             { fprintf(stderr, "nonhandled are_c_op\n"); assert(0); }
 	     | TPRINT '(' STRING ')'
@@ -98,9 +102,9 @@ line:     ID '=' OP '(' exp_list ')'
 ;
 
 varlist:   ID
-	         { varindex=0; varlist[varindex++] = s_getsym($1, SYM_VAR); assert(varlist[varindex-1]); }
+	         { trace_varindex=0; trace_reallocate_varlist(); trace_varlist[trace_varindex++] = s_getsym($1, SYM_VAR); assert(trace_varlist[trace_varindex-1]); }
 	      | varlist ',' ID
-	         { varlist[varindex++] = s_getsym($3, SYM_VAR);  assert(varlist[varindex-1]);}
+	         { trace_reallocate_varlist(); trace_varlist[trace_varindex++] = s_getsym($3, SYM_VAR);  assert(trace_varlist[trace_varindex-1]);}
 ;
 
 exp_start: exp
@@ -108,9 +112,9 @@ exp_start: exp
 ;
 
 exp_list:  exp 
-	          { explevel++; expindex[explevel]=0; explist[explevel][expindex[explevel]++] = $1; }
+	          { explevel++; trace_reallocate_exp(); expindex[explevel]=0; explist[explevel][expindex[explevel]++] = $1; }
          | exp_list ',' exp
-	          { explist[explevel][expindex[explevel]++] = $3; }
+	          { trace_reallocate_exp(); explist[explevel][expindex[explevel]++] = $3; }
 ;
 
 exp:      ID
@@ -118,7 +122,7 @@ exp:      ID
 	     | OP_ITE '(' exp_start ',' exp_start ',' exp_start ')'
 	         { $$ = ite_s( $3, $5, $7); }
 	     | OP '(' exp_list ')'
-	         { explist[explevel][expindex[explevel]] = NULL; $$ = ite_op_exp($1,explist[explevel]); explevel--; }
+	         { trace_reallocate_exp(); explist[explevel][expindex[explevel]] = NULL; $$ = ite_op_exp($1,explist[explevel]); explevel--; }
 	     | U_OP_NOT '(' ID ')'
 	         { symrec *s=s_getsym($3, SYM_VAR); assert(s); $$ = ite_not_s(ite_vars(s)); }
 	     | U_OP '(' ID ')'
@@ -126,6 +130,33 @@ exp:      ID
 ;
 
 %%
+
+void
+trace_reallocate_exp()
+{
+   if (explevel >= explevel_max)
+   {
+      explist = (BDDNode ***)ite_recalloc((void*)explist, explevel_max, explevel_max+10, sizeof(BDDNode **), 9, "explist");
+      expindex = (int *)ite_recalloc((void*)expindex, explevel_max, explevel_max+10, sizeof(int), 9, "expindex");
+      expmax = (int *)ite_recalloc((void*)expmax, explevel_max, explevel_max+10, sizeof(int), 9, "expmax");
+      explevel_max += 10;
+   }
+   if (expindex[explevel] >= expmax[explevel])
+   {
+      explist[explevel] = (BDDNode **)ite_recalloc((void*)explist[explevel], expmax[explevel], expmax[explevel]+100, sizeof(BDDNode *), 9, "explist array");
+      expmax[explevel] += 100;
+   }
+}
+
+void
+trace_reallocate_varlist()
+{
+   if (trace_varindex >= trace_varmax)
+   {
+      trace_varlist = (symrec **)ite_recalloc((void*)trace_varlist, trace_varmax, trace_varmax+100, sizeof(symrec *), 9, "trace_varlist");
+      trace_varmax += 100;
+   }
+}
 
 void
 ite_op_id_equ(char *var, BDDNode *bdd)

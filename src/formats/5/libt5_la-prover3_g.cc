@@ -96,15 +96,6 @@
    void pop_symbols();
    void set_S_vars_indep(symrec *s);
 
-   /* FIXME: make it more dynamic! */
-   extern symrec *varlist[1000];
-   extern int varindex;
-
-   /* FIXME: make it more dynamic! */
-   extern BDDNode *explist[10][1000];
-   extern int expindex[10];
-   extern int explevel;
-
    extern int lines;
    extern int normal_bdds;
    extern int spec_fn_bdds;
@@ -139,7 +130,7 @@
 #endif
 
 #if ! defined (YYSTYPE) && ! defined (YYSTYPE_IS_DECLARED)
-#line 51 "prover3_g.yy"
+#line 42 "prover3_g.yy"
 typedef union YYSTYPE {
     int         num;      /* For returning numbers.               */
     char        id[200];  /* For returning ids.                   */
@@ -147,7 +138,7 @@ typedef union YYSTYPE {
     BDDNode     *bdd;     /* For returning exp                    */
 } YYSTYPE;
 /* Line 191 of yacc.c.  */
-#line 150 "libt5_la-prover3_g.cc"
+#line 141 "libt5_la-prover3_g.cc"
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
 # define YYSTYPE_IS_TRIVIAL 1
@@ -159,7 +150,7 @@ typedef union YYSTYPE {
 
 
 /* Line 214 of yacc.c.  */
-#line 162 "libt5_la-prover3_g.cc"
+#line 153 "libt5_la-prover3_g.cc"
 
 #if ! defined (yyoverflow) || YYERROR_VERBOSE
 
@@ -330,7 +321,7 @@ static const yysigned_char yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const unsigned char yyrline[] =
 {
-       0,    67,    67,    71,    72,    76,    78,    80,    82,    84
+       0,    58,    58,    62,    63,    67,    69,    71,    73,    75
 };
 #endif
 
@@ -1035,32 +1026,32 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 68 "prover3_g.yy"
+#line 59 "prover3_g.yy"
     { if (strcmp(yyvsp[-1].id, "S0")) { fprintf(stderr, "missing S0\n"); exit(1); } c3_done(); }
     break;
 
   case 5:
-#line 77 "prover3_g.yy"
+#line 68 "prover3_g.yy"
     { p3_add(yyvsp[-4].id, 1, NOT_Tag, yyvsp[-1].id, NULL); }
     break;
 
   case 6:
-#line 79 "prover3_g.yy"
+#line 70 "prover3_g.yy"
     { p3_add(yyvsp[-5].id, 2, OR_Tag, yyvsp[-3].id, yyvsp[-1].id); }
     break;
 
   case 7:
-#line 81 "prover3_g.yy"
+#line 72 "prover3_g.yy"
     { p3_add(yyvsp[-5].id, 2, AND_Tag, yyvsp[-3].id, yyvsp[-1].id); }
     break;
 
   case 8:
-#line 83 "prover3_g.yy"
+#line 74 "prover3_g.yy"
     { p3_add(yyvsp[-7].id, 2, EQUIV_Tag, yyvsp[-4].id, yyvsp[-2].id); }
     break;
 
   case 9:
-#line 85 "prover3_g.yy"
+#line 76 "prover3_g.yy"
     { p3_add(yyvsp[-7].id, 2, IMP_Tag, yyvsp[-4].id, yyvsp[-2].id); }
     break;
 
@@ -1068,7 +1059,7 @@ yyreduce:
     }
 
 /* Line 991 of yacc.c.  */
-#line 1071 "libt5_la-prover3_g.cc"
+#line 1062 "libt5_la-prover3_g.cc"
 
   yyvsp -= yylen;
   yyssp -= yylen;
@@ -1277,7 +1268,7 @@ yyreturn:
 }
 
 
-#line 89 "prover3_g.yy"
+#line 80 "prover3_g.yy"
 
 
 typedef

@@ -19,15 +19,6 @@
    void pop_symbols();
    void set_S_vars_indep(symrec *s);
 
-   /* FIXME: make it more dynamic! */
-   extern symrec *varlist[1000];
-   extern int varindex;
-
-   /* FIXME: make it more dynamic! */
-   extern BDDNode *explist[100][1000];
-   extern int expindex[100];
-   extern int explevel;
-
    extern int lines;
    extern int normal_bdds;
    extern int spec_fn_bdds;

@@ -68,7 +68,7 @@
 
 
 #if ! defined (YYSTYPE) && ! defined (YYSTYPE_IS_DECLARED)
-#line 38 "trace_g.yy"
+#line 42 "trace_g.yy"
 typedef union YYSTYPE {
     int         num;      /* For returning numbers.               */
     char        id[200];  /* For returning ids.                   */

@@ -106,14 +106,9 @@
    void     ite_new_int_leaf(char *, char *);
    void     ite_flag_vars(symrec **, int);
 
-   /* FIXME: make it more dynamic! */
-   extern symrec *varlist[1000];
-   extern int varindex;
-
-   /* FIXME: make it more dynamic! */
-   extern BDDNode *explist[10][1000];
-   extern int expindex[10];
-   extern int explevel;
+   symrec **blif_varlist = NULL;
+   int blif_varmax = 0;
+   int blif_varindex;
 
    extern int lines;
    extern int normal_bdds;
@@ -121,6 +116,7 @@
    extern int t_sym_max;
 
    void blif_nothing() { /*unput (0);*/ }
+   void blif_reallocate_varlist();
 
 #ifndef __attribute__
 #define __attribute__(x)
@@ -142,7 +138,7 @@
 #endif
 
 #if ! defined (YYSTYPE) && ! defined (YYSTYPE_IS_DECLARED)
-#line 40 "blif_g.yy"
+#line 36 "blif_g.yy"
 typedef union YYSTYPE {
     int         num;      /* For returning numbers.               */
     char        id[200];  /* For returning ids.                   */
@@ -150,7 +146,7 @@ typedef union YYSTYPE {
     BDDNode     *bdd;     /* For returning exp                    */
 } YYSTYPE;
 /* Line 191 of yacc.c.  */
-#line 153 "libt5_la-blif_g.cc"
+#line 149 "libt5_la-blif_g.cc"
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
 # define YYSTYPE_IS_TRIVIAL 1
@@ -162,7 +158,7 @@ typedef union YYSTYPE {
 
 
 /* Line 214 of yacc.c.  */
-#line 165 "libt5_la-blif_g.cc"
+#line 161 "libt5_la-blif_g.cc"
 
 #if ! defined (yyoverflow) || YYERROR_VERBOSE
 
@@ -336,9 +332,9 @@ static const yysigned_char yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const unsigned char yyrline[] =
 {
-       0,    56,    56,    57,    60,    61,    64,    65,    69,    70,
-      73,    75,    78,    79,    82,    84,    87,    88,    91,    92,
-      96,    99,   102,   105,   108,   110,   114,   115,   118,   119
+       0,    52,    52,    53,    56,    57,    60,    61,    65,    66,
+      69,    71,    74,    75,    78,    80,    83,    84,    87,    88,
+      92,    95,    98,   101,   104,   106,   110,   111,   114,   115
 };
 #endif
 
@@ -1051,35 +1047,35 @@ yyreduce:
   switch (yyn)
     {
         case 7:
-#line 66 "blif_g.yy"
+#line 62 "blif_g.yy"
     { /* print_symtable(); */ }
     break;
 
   case 10:
-#line 74 "blif_g.yy"
-    { varlist[varindex] = NULL; ite_flag_vars(varlist, /*independent - 1*/1);  }
+#line 70 "blif_g.yy"
+    { blif_varlist[blif_varindex] = NULL; ite_flag_vars(blif_varlist, /*independent - 1*/1);  }
     break;
 
   case 14:
-#line 83 "blif_g.yy"
-    { varlist[varindex] = NULL; ite_flag_vars(varlist, /*dependent - 0*/0);  }
+#line 79 "blif_g.yy"
+    { blif_varlist[blif_varindex] = NULL; ite_flag_vars(blif_varlist, /*dependent - 0*/0);  }
     break;
 
   case 24:
-#line 109 "blif_g.yy"
-    { varindex=0; varlist[varindex++] = 0; /*s_getsym($1);*/ }
+#line 105 "blif_g.yy"
+    { blif_varindex=0; blif_reallocate_varlist(); blif_varlist[blif_varindex++] = 0; /*s_getsym($1);*/ }
     break;
 
   case 25:
-#line 111 "blif_g.yy"
-    { varlist[varindex++] = 0; /*s_getsym($2);*/ }
+#line 107 "blif_g.yy"
+    { blif_reallocate_varlist(); blif_varlist[blif_varindex++] = 0; /*s_getsym($2);*/ }
     break;
 
 
     }
 
 /* Line 991 of yacc.c.  */
-#line 1082 "libt5_la-blif_g.cc"
+#line 1078 "libt5_la-blif_g.cc"
 
   yyvsp -= yylen;
   yyssp -= yylen;
@@ -1288,7 +1284,17 @@ yyreturn:
 }
 
 
-#line 122 "blif_g.yy"
+#line 118 "blif_g.yy"
 
+
+void
+blif_reallocate_varlist()
+{
+   if (blif_varindex >= blif_varmax)
+   {
+      blif_varlist = (symrec **)ite_recalloc((void*)blif_varlist, blif_varmax, blif_varmax+100, sizeof(int), 9, "blif_varlist");
+      blif_varmax += 100;
+   }
+}
 
 

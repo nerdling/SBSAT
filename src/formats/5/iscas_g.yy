@@ -17,9 +17,8 @@
    BDDNode *tmp_equ_var(BDDNode *p);
    void set_S_vars_indep(symrec *s);
 
-   /* FIXME: make it more dynamic! */
-   BDDNode *iscas_explist[30480];
-   int iscas_expmax=30480;
+   BDDNode **iscas_explist=NULL;
+   int iscas_expmax=0;
    int iscas_expindex=0;
 
    extern int lines;
@@ -29,6 +28,7 @@
 void iscas_not(char *v1, char *v2);
 void iscas_and_equ(char *var, BDDNode **explist);
 void iscas_or_equ(char *var, BDDNode **explist);
+void iscas_reallocate_explist();
 
 #ifndef __attribute__
 #define __attribute__(x)
@@ -67,12 +67,23 @@ top_exp:
 ;
 
 varlist:   ID
-     { iscas_expindex=0; iscas_explist[iscas_expindex++] = ite_vars(s_getsym($1, SYM_VAR)); }
+     { iscas_expindex=0; iscas_reallocate_explist(); iscas_explist[iscas_expindex++] = ite_vars(s_getsym($1, SYM_VAR)); }
    | varlist ',' ID
-     { if (iscas_expindex == iscas_expmax) perror("expindex over"); iscas_explist[iscas_expindex++] = ite_vars(s_getsym($3, SYM_VAR)); }
+     { iscas_reallocate_explist(); iscas_explist[iscas_expindex++] = ite_vars(s_getsym($3, SYM_VAR)); }
 ;
 
 %%
+
+void
+iscas_reallocate_explist()
+{
+   if (iscas_expindex >= iscas_expmax)
+   {
+      iscas_explist = (BDDNode **)ite_recalloc((void*)iscas_explist, iscas_expmax, iscas_expmax+100, sizeof(int), 9, "iscas_explist");
+      iscas_expmax += 100;
+   }
+}
+
 
 void
 iscas_not(char *v1, char *v2)

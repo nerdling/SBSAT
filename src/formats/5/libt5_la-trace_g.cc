@@ -117,14 +117,18 @@
    void     ite_op_are_equal(BDDNode **);
    void     ite_new_int_leaf(char *, char *);
    void     ite_flag_vars(symrec **, int);
+   void trace_reallocate_varlist();
+   void trace_reallocate_exp();
 
-   /* FIXME: make it more dynamic! */
-   symrec *varlist[1000];
-   int varindex;
+   symrec **trace_varlist = NULL;
+   int trace_varmax = 0;
+   int trace_varindex;
 
-   /* FIXME: make it more dynamic! */
-   BDDNode *explist[10][1000];
-   int expindex[10];
+   //BDDNode *explist[10][1000];
+   BDDNode ***explist = NULL;
+   int *expindex = NULL;
+   int *expmax = NULL;
+   int explevel_max;
    int explevel;
 
 
@@ -152,7 +156,7 @@
 #endif
 
 #if ! defined (YYSTYPE) && ! defined (YYSTYPE_IS_DECLARED)
-#line 38 "trace_g.yy"
+#line 42 "trace_g.yy"
 typedef union YYSTYPE {
     int         num;      /* For returning numbers.               */
     char        id[200];  /* For returning ids.                   */
@@ -160,7 +164,7 @@ typedef union YYSTYPE {
     BDDNode     *bdd;     /* For returning exp                    */
 } YYSTYPE;
 /* Line 191 of yacc.c.  */
-#line 163 "libt5_la-trace_g.cc"
+#line 167 "libt5_la-trace_g.cc"
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
 # define YYSTYPE_IS_TRIVIAL 1
@@ -172,7 +176,7 @@ typedef union YYSTYPE {
 
 
 /* Line 214 of yacc.c.  */
-#line 175 "libt5_la-trace_g.cc"
+#line 179 "libt5_la-trace_g.cc"
 
 #if ! defined (yyoverflow) || YYERROR_VERBOSE
 
@@ -353,10 +357,10 @@ static const yysigned_char yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const unsigned char yyrline[] =
 {
-       0,    55,    55,    56,    59,    62,    66,    67,    69,    72,
-      73,    75,    78,    81,    82,    86,    88,    90,    92,    94,
-      96,   100,   102,   106,   110,   112,   116,   118,   120,   122,
-     124
+       0,    59,    59,    60,    63,    66,    70,    71,    73,    76,
+      77,    79,    82,    85,    86,    90,    92,    94,    96,    98,
+     100,   104,   106,   110,   114,   116,   120,   122,   124,   126,
+     128
 };
 #endif
 
@@ -1097,102 +1101,102 @@ yyreduce:
   switch (yyn)
     {
         case 5:
-#line 63 "trace_g.yy"
+#line 67 "trace_g.yy"
     { /* print_symtable(); */ }
     break;
 
   case 7:
-#line 68 "trace_g.yy"
-    { varlist[varindex] = NULL; ite_flag_vars(varlist, /*independent - 1*/1);  }
+#line 72 "trace_g.yy"
+    { trace_varlist[trace_varindex] = NULL; trace_reallocate_varlist(); ite_flag_vars(trace_varlist, /*independent - 1*/1);  }
     break;
 
   case 10:
-#line 74 "trace_g.yy"
-    { varlist[varindex] = NULL; ite_flag_vars(varlist, /*dependent - 0*/0);  }
+#line 78 "trace_g.yy"
+    { trace_varlist[trace_varindex] = NULL; trace_reallocate_varlist(); ite_flag_vars(trace_varlist, /*dependent - 0*/0);  }
     break;
 
   case 14:
-#line 83 "trace_g.yy"
+#line 87 "trace_g.yy"
     { if (((++lines) % 100) == 0) d2_printf2("\r%d", lines); }
     break;
 
   case 15:
-#line 87 "trace_g.yy"
-    { explist[explevel][expindex[explevel]] = NULL; ite_op_equ(yyvsp[-5].id, yyvsp[-3].op2fn, explist[explevel]); explevel--; }
+#line 91 "trace_g.yy"
+    { trace_reallocate_exp(); explist[explevel][expindex[explevel]] = NULL; ite_op_equ(yyvsp[-5].id, yyvsp[-3].op2fn, explist[explevel]); explevel--; }
     break;
 
   case 16:
-#line 89 "trace_g.yy"
+#line 93 "trace_g.yy"
     { ite_op_id_equ(yyvsp[-2].id,yyvsp[0].bdd); }
     break;
 
   case 17:
-#line 91 "trace_g.yy"
+#line 95 "trace_g.yy"
     { ite_new_int_leaf(yyvsp[-5].id, yyvsp[-1].id); }
     break;
 
   case 18:
-#line 93 "trace_g.yy"
-    { explist[explevel][expindex[explevel]] = NULL; ite_op_are_equal(explist[explevel]); explevel--; }
+#line 97 "trace_g.yy"
+    { trace_reallocate_exp(); explist[explevel][expindex[explevel]] = NULL; ite_op_are_equal(explist[explevel]); explevel--; }
     break;
 
   case 19:
-#line 95 "trace_g.yy"
+#line 99 "trace_g.yy"
     { fprintf(stderr, "nonhandled are_c_op\n"); assert(0); }
     break;
 
   case 20:
-#line 97 "trace_g.yy"
+#line 101 "trace_g.yy"
     { printf("%s\n", yyvsp[-1].id); }
     break;
 
   case 21:
-#line 101 "trace_g.yy"
-    { varindex=0; varlist[varindex++] = s_getsym(yyvsp[0].id, SYM_VAR); assert(varlist[varindex-1]); }
+#line 105 "trace_g.yy"
+    { trace_varindex=0; trace_reallocate_varlist(); trace_varlist[trace_varindex++] = s_getsym(yyvsp[0].id, SYM_VAR); assert(trace_varlist[trace_varindex-1]); }
     break;
 
   case 22:
-#line 103 "trace_g.yy"
-    { varlist[varindex++] = s_getsym(yyvsp[0].id, SYM_VAR);  assert(varlist[varindex-1]);}
+#line 107 "trace_g.yy"
+    { trace_reallocate_varlist(); trace_varlist[trace_varindex++] = s_getsym(yyvsp[0].id, SYM_VAR);  assert(trace_varlist[trace_varindex-1]);}
     break;
 
   case 23:
-#line 107 "trace_g.yy"
+#line 111 "trace_g.yy"
     { yyval.bdd = yyvsp[0].bdd; }
     break;
 
   case 24:
-#line 111 "trace_g.yy"
-    { explevel++; expindex[explevel]=0; explist[explevel][expindex[explevel]++] = yyvsp[0].bdd; }
+#line 115 "trace_g.yy"
+    { explevel++; trace_reallocate_exp(); expindex[explevel]=0; explist[explevel][expindex[explevel]++] = yyvsp[0].bdd; }
     break;
 
   case 25:
-#line 113 "trace_g.yy"
-    { explist[explevel][expindex[explevel]++] = yyvsp[0].bdd; }
+#line 117 "trace_g.yy"
+    { trace_reallocate_exp(); explist[explevel][expindex[explevel]++] = yyvsp[0].bdd; }
     break;
 
   case 26:
-#line 117 "trace_g.yy"
+#line 121 "trace_g.yy"
     { symrec *s=s_getsym(yyvsp[0].id, SYM_VAR); assert(s); yyval.bdd = ite_vars(s); }
     break;
 
   case 27:
-#line 119 "trace_g.yy"
+#line 123 "trace_g.yy"
     { yyval.bdd = ite_s( yyvsp[-5].bdd, yyvsp[-3].bdd, yyvsp[-1].bdd); }
     break;
 
   case 28:
-#line 121 "trace_g.yy"
-    { explist[explevel][expindex[explevel]] = NULL; yyval.bdd = ite_op_exp(yyvsp[-3].op2fn,explist[explevel]); explevel--; }
+#line 125 "trace_g.yy"
+    { trace_reallocate_exp(); explist[explevel][expindex[explevel]] = NULL; yyval.bdd = ite_op_exp(yyvsp[-3].op2fn,explist[explevel]); explevel--; }
     break;
 
   case 29:
-#line 123 "trace_g.yy"
+#line 127 "trace_g.yy"
     { symrec *s=s_getsym(yyvsp[-1].id, SYM_VAR); assert(s); yyval.bdd = ite_not_s(ite_vars(s)); }
     break;
 
   case 30:
-#line 125 "trace_g.yy"
+#line 129 "trace_g.yy"
     { fprintf(stderr, "nonhandled u_op\n"); yyval.bdd = NULL; }
     break;
 
@@ -1200,7 +1204,7 @@ yyreduce:
     }
 
 /* Line 991 of yacc.c.  */
-#line 1203 "libt5_la-trace_g.cc"
+#line 1207 "libt5_la-trace_g.cc"
 
   yyvsp -= yylen;
   yyssp -= yylen;
@@ -1409,8 +1413,35 @@ yyreturn:
 }
 
 
-#line 128 "trace_g.yy"
+#line 132 "trace_g.yy"
 
+
+void
+trace_reallocate_exp()
+{
+   if (explevel >= explevel_max)
+   {
+      explist = (BDDNode ***)ite_recalloc((void*)explist, explevel_max, explevel_max+10, sizeof(BDDNode **), 9, "explist");
+      expindex = (int *)ite_recalloc((void*)expindex, explevel_max, explevel_max+10, sizeof(int), 9, "expindex");
+      expmax = (int *)ite_recalloc((void*)expmax, explevel_max, explevel_max+10, sizeof(int), 9, "expmax");
+      explevel_max += 10;
+   }
+   if (expindex[explevel] >= expmax[explevel])
+   {
+      explist[explevel] = (BDDNode **)ite_recalloc((void*)explist[explevel], expmax[explevel], expmax[explevel]+100, sizeof(BDDNode *), 9, "explist array");
+      expmax[explevel] += 100;
+   }
+}
+
+void
+trace_reallocate_varlist()
+{
+   if (trace_varindex >= trace_varmax)
+   {
+      trace_varlist = (symrec **)ite_recalloc((void*)trace_varlist, trace_varmax, trace_varmax+100, sizeof(symrec *), 9, "trace_varlist");
+      trace_varmax += 100;
+   }
+}
 
 void
 ite_op_id_equ(char *var, BDDNode *bdd)
