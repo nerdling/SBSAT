@@ -52,39 +52,40 @@ extern int no_independent;
 char getNextSymbol () {
 	char integers[20];
 	int i = 0;
-	char p = 0;
+	int p = 0;
 	while (1) {
-		if ((p = fgetc (finputfile)) == EOF) {
-			//fprintf(stderr, "\nUnexpected EOF...exiting\n");
+		if ((p = fgetc (finputfile)) == (unsigned int)EOF) {
+			//fprintf(stderr, "\nUnexpected (unsigned int)EOF...exiting\n");
 			return 'x';
 		}
+		if (feof(finputfile)) return 'x';
 		if (p == ';') {
 			while (p != '\n') {
-				if ((p = fgetc (finputfile)) == EOF) {
+				if ((p = fgetc (finputfile)) == (unsigned int)EOF) {
 					return 'x';
-					//fprintf (stderr, "\nUnexpected EOF...exiting:%d\n", xorbdd_line);
+					//fprintf (stderr, "\nUnexpected (unsigned int)EOF...exiting:%d\n", xorbdd_line);
 					//exit (0);
 				}
 			}
-			if ((p = fgetc (finputfile)) == EOF) {
+			if ((p = fgetc (finputfile)) == (unsigned int)EOF) {
 				return 'x';	  
-				//fprintf (stderr, "\nUnexpected EOF...exiting:%d\n", xorbdd_line);
+				//fprintf (stderr, "\nUnexpected (unsigned int)EOF...exiting:%d\n", xorbdd_line);
 				//exit (0);
 			}
 			ungetc (p, finputfile);
 			continue;
 		}
 		if (p == '=') {
-			if ((p = fgetc (finputfile)) == EOF) {
-				fprintf (stderr, "\nUnexpected EOF...exiting:%d\n", xorbdd_line);
+			if ((p = fgetc (finputfile)) == (unsigned int)EOF) {
+				fprintf (stderr, "\nUnexpected (unsigned int)EOF...exiting:%d\n", xorbdd_line);
 				exit (0);
 			}
 			if (p != ' ') {
 				fprintf (stderr, "\n' ' expected...exiting:%d\n", xorbdd_line);
 				exit (0);
 			}
-			if ((p = fgetc (finputfile)) == EOF) {
-				fprintf (stderr, "\nUnexpected EOF...exiting:%d\n", xorbdd_line);
+			if ((p = fgetc (finputfile)) == (unsigned int)EOF) {
+				fprintf (stderr, "\nUnexpected (unsigned int)EOF...exiting:%d\n", xorbdd_line);
 				exit (0);
 			}
 			char ret = p;
@@ -94,7 +95,7 @@ char getNextSymbol () {
 			}
 			
 			while (p != '\n' && p != ';') {
-				if ((p = fgetc (finputfile)) == EOF) {
+				if ((p = fgetc (finputfile)) == (unsigned int)EOF) {
 					ungetc (p, finputfile);
 					return ret;
 				}
@@ -111,8 +112,8 @@ char getNextSymbol () {
 			return ' ';
 		}
 		if (p == 'x') {
-			if ((p = fgetc (finputfile)) == EOF) {
-				fprintf (stderr, "\nUnexpected EOF...exiting:%d\n", xorbdd_line);
+			if ((p = fgetc (finputfile)) == (unsigned int)EOF) {
+				fprintf (stderr, "\nUnexpected (unsigned int)EOF...exiting:%d\n", xorbdd_line);
 				exit (0);
 			}
 			if ((p >= '1') && (p <= '9')) {
@@ -120,8 +121,8 @@ char getNextSymbol () {
 				while ((p >= '0') && (p <= '9')) {
 					integers[i] = p;
 					i++;
-					if ((p = fgetc (finputfile)) == EOF) {
-						fprintf (stderr, "\nUnexpected EOF...exiting:%d\n", xorbdd_line);
+					if ((p = fgetc (finputfile)) == (unsigned int)EOF) {
+						fprintf (stderr, "\nUnexpected (unsigned int)EOF...exiting:%d\n", xorbdd_line);
 						exit (0);
 					}
 				}
@@ -148,8 +149,8 @@ char getNextSymbol () {
 					 && (i < 13)) {
 				macros[i] = p;
 				i++;
-				if ((p = fgetc (finputfile)) == EOF) {
-					fprintf (stderr, "\nUnexpected EOF (%s)...exiting:%d\n", macros, xorbdd_line);
+				if ((p = fgetc (finputfile)) == (unsigned int)EOF) {
+					fprintf (stderr, "\nUnexpected (unsigned int)EOF (%s)...exiting:%d\n", macros, xorbdd_line);
 					exit (1);
 				}
 			}
@@ -167,9 +168,9 @@ char getNextSymbol () {
 			int stop_openbracket = 0;
 			Initialbranch:;
 			while ((p != '\n')	&& !((p == ')') && (openbracket_found))) {
-				if ((p = fgetc (finputfile)) == EOF)	{
+				if ((p = fgetc (finputfile)) == (unsigned int)EOF)	{
 					fprintf (stderr, " %d %d ", openbracket_found, stop_openbracket);
-					fprintf (stderr, "\nUnexpected EOF (%s)...exiting:%d\n",	macros, xorbdd_line);
+					fprintf (stderr, "\nUnexpected (unsigned int)EOF (%s)...exiting:%d\n",	macros, xorbdd_line);
 					exit (1);
 				}
 				if (p == '(') {
@@ -182,8 +183,8 @@ char getNextSymbol () {
 					while ((p >= '0') && (p <= '9')) {
 						integers[i] = p;
 						i++;
-						if ((p = fgetc (finputfile)) == EOF) {
-							fprintf (stderr, "\nUnexpected EOF (%s)...exiting:%d\n", macros, xorbdd_line);
+						if ((p = fgetc (finputfile)) == (unsigned int)EOF) {
+							fprintf (stderr, "\nUnexpected (unsigned int)EOF (%s)...exiting:%d\n", macros, xorbdd_line);
 							exit (1);
 						}
 					}
@@ -194,13 +195,13 @@ char getNextSymbol () {
 						exit (1);
 					}
 					if (p == '.') {
-						if ((p = fgetc (finputfile)) == EOF) {
-							fprintf (stderr, "\nUnexpected EOF (%s)...exiting:%d\n",	macros, xorbdd_line);
+						if ((p = fgetc (finputfile)) == (unsigned int)EOF) {
+							fprintf (stderr, "\nUnexpected (unsigned int)EOF (%s)...exiting:%d\n",	macros, xorbdd_line);
 							exit (1);
 						}
 						if (p == '.') {
-							if ((p = fgetc (finputfile)) == EOF) {
-								fprintf (stderr, "\nUnexpected EOF (%s)...exiting:%d\n", macros, xorbdd_line);
+							if ((p = fgetc (finputfile)) == (unsigned int)EOF) {
+								fprintf (stderr, "\nUnexpected (unsigned int)EOF (%s)...exiting:%d\n", macros, xorbdd_line);
 								exit (1);
 							}
 							if ((p >= '0') && (p <= '9')) {
@@ -208,8 +209,8 @@ char getNextSymbol () {
 								while ((p >= '0') && (p <= '9')) {
 									integers[i] = p;
 									i++;
-									if ((p = fgetc (finputfile)) == EOF) {
-										fprintf (stderr, "\nUnexpected EOF (%s)...exiting:%d\n",	macros, xorbdd_line);
+									if ((p = fgetc (finputfile)) == (unsigned int)EOF) {
+										fprintf (stderr, "\nUnexpected (unsigned int)EOF (%s)...exiting:%d\n",	macros, xorbdd_line);
 										exit (1);
 									}
 								}
@@ -270,16 +271,16 @@ void xorloop () {
 		independantVars[x] = 0;
 	}
 	
-	while (1) {				//(p = fgetc(finputfile))!=EOF) 
+	while (1) {				//(p = fgetc(finputfile))!=(unsigned int)EOF) 
 		xorbdd_line++;
       d2_printf3("\rReading XOR %d/%ld", xorbdd_line, (long)numout);
 		if(p == ';') {
 			while (p != '\n') {
-				if ((p = fgetc(finputfile)) == EOF) {
+				if ((p = fgetc(finputfile)) == (unsigned int)EOF) {
 					goto Exit;
 				}
 			}
-			if((p == fgetc(finputfile)) == EOF) {
+			if((p == fgetc(finputfile)) == (unsigned int)EOF) {
 				goto Exit;
 			}
 			if(p!=';') {
@@ -289,14 +290,14 @@ void xorloop () {
 		}
 		if(p=='\n') {
 			while (p != '\n') {
-				if ((p = fgetc(finputfile)) == EOF) {
+				if ((p = fgetc(finputfile)) == (unsigned int)EOF) {
 					goto Exit;
 				}
 			}
 			if(p==';') continue;
 			ungetc(p, finputfile);
 		}
-		if((p = fgetc(finputfile))==EOF) {
+		if((p = fgetc(finputfile))==(unsigned int)EOF) {
 			goto Exit;
 		}
 		ungetc(p, finputfile);
@@ -321,7 +322,7 @@ void xorloop () {
 				p = getNextSymbol();
 				if(p == 'i') { vars[intnum] = 1; vars[intnum_prev] = 1;}
 				if(p == 'x') {
-					fprintf (stderr, "\nUnexpected EOF, '=' expected...exiting:%d\n", xorbdd_line);
+					fprintf (stderr, "\nUnexpected (unsigned int)EOF, '=' expected...exiting:%d\n", xorbdd_line);
 					exit (0);	
 				}
 				num_spaces = 0;
@@ -339,7 +340,7 @@ void xorloop () {
 			nmbrxors++;
 			p = getNextSymbol();
 			if(p == 'x') {
-				fprintf (stderr, "\nUnexpected EOF, '=' expected...exiting:%d\n", xorbdd_line);
+				fprintf (stderr, "\nUnexpected (unsigned int)EOF, '=' expected...exiting:%d\n", xorbdd_line);
 				exit (0);
 			}
 		}
@@ -374,7 +375,7 @@ void xorloop () {
 		
 		p = fgetc (finputfile);
 		if (p != '\n') {
-			while ((p = fgetc (finputfile)) != EOF)
+			while ((p = fgetc (finputfile)) != (unsigned int)EOF)
 			  if (p == '\n')
 				 break;
 			if (p != '\n')
