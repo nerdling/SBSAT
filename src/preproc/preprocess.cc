@@ -66,6 +66,7 @@ preproc_type preproc[] = {
   { "Ea", 2, Do_ExQuantifyAnd, &DO_EXIST_QUANTIFY_AND },
   { "Dc", 2, Do_DepCluster, &DO_DEP_CLUSTER },
   { "Sp", 2, Do_Split, &DO_SPLIT },	
+  { "Rw", 2, Do_Rewind, &DO_REWIND },
   { "", 0, NULL, NULL }
 };
 

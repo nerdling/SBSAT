@@ -66,6 +66,7 @@ int DO_EXIST_QUANTIFY = 1;
 int DO_EXIST_QUANTIFY_AND = 1;
 int DO_DEP_CLUSTER = 1;
 int DO_SPLIT = 1;
+int DO_REWIND = 1;
 
 int NO_LEMMAS = 0;
 

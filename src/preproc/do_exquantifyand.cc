@@ -41,7 +41,7 @@
 #include "ite.h"
 #include "preprocess.h"
 
-int MAX_EXQUANTIFY_CLAUSES = 3000;	  //Number of BDDs a variable appears in
+int MAX_EXQUANTIFY_CLAUSES = 20;	  //Number of BDDs a variable appears in
                                    //to quantify that variable away.
 int MAX_EXQUANTIFY_VARLENGTH = 5; //Limits size of number of vars in 
                                    //constraints created by ExQuantify

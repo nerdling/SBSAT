@@ -100,7 +100,7 @@ Init_Preprocessing()
 		  original_functions[x] = functions[x];
 		original_numout = nmbrFunctions;
 	}
-	
+
 	if(variablelist==NULL) {
 		variablelist = new varinfo[numinp + 1];
 		
@@ -205,27 +205,22 @@ Init_Preprocessing()
 
    num_funcs_var_occurs = (int *)ite_calloc(numinp+1, sizeof(int), 9, "num_funcs_var_occurs");
 	
-	for (int x = 0; x < nmbrFunctions; x++)
-	  {
-		  for (int i = 0; i < length[x]; i++)
-			 {
-				 llist *newllist = new llist;
-				 newllist->num = x;
-				 newllist->next = NULL;
-				 if (amount[variables[x].num[i]].head == NULL)
-					{
-						num_funcs_var_occurs[variables[x].num[i]] = 1;
-						amount[variables[x].num[i]].head = newllist;
-						amount[variables[x].num[i]].tail = newllist;
-					}
-				 else
-					{
-						num_funcs_var_occurs[variables[x].num[i]]++;
-						amount[variables[x].num[i]].tail->next = newllist;
-						amount[variables[x].num[i]].tail = newllist;
-					}
-			 }
-	  }
+	for (int x = 0; x < nmbrFunctions; x++) {
+		for (int i = 0; i < length[x]; i++) {
+			llist *newllist = new llist;
+			newllist->num = x;
+			newllist->next = NULL;
+			if (amount[variables[x].num[i]].head == NULL) {
+				num_funcs_var_occurs[variables[x].num[i]] = 1;
+				amount[variables[x].num[i]].head = newllist;
+				amount[variables[x].num[i]].tail = newllist;
+			} else {
+				num_funcs_var_occurs[variables[x].num[i]]++;
+				amount[variables[x].num[i]].tail->next = newllist;
+				amount[variables[x].num[i]].tail = newllist;
+			}
+		}
+	}
 	
 	DO_INFERENCES = OLD_DO_INFERENCES;
 

@@ -105,16 +105,11 @@ int ExQuantify () {
 				if ((length[j] < functionTypeLimits[functionType[j]]) || (i == abs(equalityVble[j])) || (functionType[j] == PLAINOR)) {
 					affected++;
 					
-					//fprintf(stderr, "\n%d: ", j);
-					//printBDDerr(functions[j]);
-					//fprintf(stderr, "\n");
-					
 					//!!!!!!!Should really go through each variable i that occurs only in this bdd!!!!!!!!
 					//Maybe a silly thing, but could lead to more inferences!
 					infer *x_infers = possible_infer_x(functions[j], i);
 					//infer *x_infers = new infer;
 					//x_infers->nums[0] = 0;
-
 					
 					
 /*					BDDNode *quant = xquantify(functions[j], i);
