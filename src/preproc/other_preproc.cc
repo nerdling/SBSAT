@@ -505,11 +505,11 @@ void findPathsToX (BDDNode *bdd, long *path_max, int **path, int pathx, intlist 
 	if (IS_TRUE_FALSE(bdd))
 	  return;
 	
-        if (pathx >= *path_max) {
-             *path = (int*)ite_recalloc(*(void**)path, *path_max, *path_max+100, sizeof(int), 9, "tempint");
-             *path_max += 100;
-        }
-
+	if (pathx >= *path_max) {
+		*path = (int*)ite_recalloc(*(void**)path, *path_max, *path_max+10, sizeof(int), 9, "path");
+		*path_max += 10;
+	}
+	
 	(*path)[pathx] = bdd->variable;
 	findPathsToX (bdd->thenCase, path_max, path, pathx + 1, list, listx, X);
 	(*path)[pathx] = -bdd->variable;
@@ -518,11 +518,19 @@ void findPathsToX (BDDNode *bdd, long *path_max, int **path, int pathx, intlist 
 
 void findPathsToFalse (BDDNode *bdd, long *path_max, int **path, intlist *list, int *listx) {
 	int pathx = 0;
+	if (*path_max == 0) {
+		*path = (int*)ite_recalloc(NULL, 0, 10, sizeof(int), 9, "path");
+		*path_max = 10;
+	}
 	findPathsToX (bdd, path_max, path, pathx, list, listx, false_ptr);
 }
 
 void findPathsToTrue (BDDNode *bdd, long *path_max, int **path, intlist *list, int *listx) {
 	int pathx = 0;
+	if (*path_max == 0) {
+		*path = (int*)ite_recalloc(NULL, 0, 10, sizeof(int), 9, "path");
+		*path_max = 10;
+	}
 	findPathsToX (bdd, path_max, path, pathx, list, listx, true_ptr);
 }
 

@@ -915,8 +915,13 @@ void printBDDToCNF () {
 	
    fprintf(foutputfile, "p cnf %ld %d\n", numinp, no_out_vars);
 	for (int x = 0; x < no_out_vars; x++) {
-		for (int a = 0; a < false_paths[x].length; a++)
-		  fprintf (foutputfile, "%d ", use_symtable?-atoi(getsym_i(false_paths[x].num[a])->name):-false_paths[x].num[a]); //Need to negate all literals!
+		for (int a = false_paths[x].length-1; a >= 0; a--) {
+			int lit = false_paths[x].num[a];
+			if(lit > 0)
+			  fprintf (foutputfile, "%d ", use_symtable?-atoi(getsym_i(lit)->name):-lit); //Need to negate all literals!
+			else
+			  fprintf (foutputfile, "%d ", use_symtable?atoi(getsym_i(-lit)->name):-lit); //Need to negate all literals!
+		}
 		fprintf (foutputfile, "0\n");
 		delete false_paths[x].num;
 	}
