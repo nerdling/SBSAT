@@ -124,7 +124,7 @@ libpreproc_a_SOURCES = create_infs.cc do_cofactor.cc   do_exquantify.cc   \
 		      do_strength.cc other_preproc.cc do_applyinfs.cc do_depcluster.cc  \
                       do_exquantifyand.cc  do_pruning.cc init_preproc.cc \
                       preprocess.cc do_pruning_1.cc do_pruning_2.cc      \
-                      do_pruning_restrict.cc
+                      do_pruning_restrict.cc do_flow.cc
 
 subdir = src/preproc
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -140,7 +140,8 @@ am_libpreproc_a_OBJECTS = create_infs.$(OBJEXT) do_cofactor.$(OBJEXT) \
 	do_depcluster.$(OBJEXT) do_exquantifyand.$(OBJEXT) \
 	do_pruning.$(OBJEXT) init_preproc.$(OBJEXT) \
 	preprocess.$(OBJEXT) do_pruning_1.$(OBJEXT) \
-	do_pruning_2.$(OBJEXT) do_pruning_restrict.$(OBJEXT)
+	do_pruning_2.$(OBJEXT) do_pruning_restrict.$(OBJEXT) \
+	do_flow.$(OBJEXT)
 libpreproc_a_OBJECTS = $(am_libpreproc_a_OBJECTS)
 
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)/include
@@ -152,7 +153,7 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	./$(DEPDIR)/do_depcluster.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/do_exquantify.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/do_exquantifyand.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/do_pruning.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/do_flow.Po ./$(DEPDIR)/do_pruning.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/do_pruning_1.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/do_pruning_2.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/do_pruning_restrict.Po \
@@ -200,6 +201,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_depcluster.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_exquantify.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_exquantifyand.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_flow.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_pruning.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_pruning_1.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_pruning_2.Po@am__quote@

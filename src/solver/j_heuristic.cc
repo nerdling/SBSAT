@@ -242,6 +242,9 @@ J_FreeHeuristicScores()
 // CLASSIC
 #define J_WEIGHT(x) (J_ONE+x.Pos) * (J_ONE+x.Neg)
 
+// Var_Score
+//#define J_WEIGHT(x) (var_score[i] * (J_ONE+x.Pos) * (J_ONE+x.Neg))
+
 // ABSOLUTE MAXIMUM
 //#define J_WEIGHT(x) (x.Neg > x.Pos ? x.Neg : x.Pos)
 

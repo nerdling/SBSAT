@@ -161,7 +161,8 @@ InitSolver()
         arrSolution[index] = BOOL_UNKNOWN;
         arrSolver2IteVarMap[index] = x;
         arrIte2SolverVarMap[x] = index;
-     }
+		  var_score[index] = var_score[x];
+	  }
   }
   assert (nmbrFunctions > 0);
   assert (nSolutionIndep == nIndepVars+1);

@@ -52,7 +52,9 @@ infer *inferlist;
 infer *lastinfer;
 int notdone;
 int *tempint = NULL;
+float *var_score = NULL;
 store *variables;
+int *num_funcs_var_occurs = NULL;
 BDDNodeStruct **xorFunctions;
 
 int original_numout;
@@ -139,6 +141,9 @@ Init_Preprocessing()
 		  }
 	  }
 
+	
+   num_funcs_var_occurs = (int *)ite_calloc(numinp+1, sizeof(int), 9, "num_funcs_var_occurs");
+	
 	for (int x = 0; x < nmbrFunctions; x++)
 	  {
 		  for (int i = 0; i < length[x]; i++)
@@ -148,11 +153,13 @@ Init_Preprocessing()
 				 newllist->next = NULL;
 				 if (amount[variables[x].num[i]].head == NULL)
 					{
+						num_funcs_var_occurs[variables[x].num[i]] = 1;
 						amount[variables[x].num[i]].head = newllist;
 						amount[variables[x].num[i]].tail = newllist;
 					}
 				 else
 					{
+						num_funcs_var_occurs[variables[x].num[i]]++;
 						amount[variables[x].num[i]].tail->next = newllist;
 						amount[variables[x].num[i]].tail = newllist;
 					}
@@ -160,6 +167,9 @@ Init_Preprocessing()
 	  }
 	
 	DO_INFERENCES = OLD_DO_INFERENCES;
+
+	Do_Flow();
+	
 	return ret;
 }
 
@@ -185,6 +195,7 @@ Finish_Preprocessing()
 			*/
         ret = Do_Apply_Inferences();
 	  }
+//	Do_Flow();
 	
 	int *tmp = new int[numinp+2];
 	for(int x = 0; x < numinp+1; x++)
@@ -247,6 +258,8 @@ Finish_Preprocessing()
 	  }
 	free(amount);
 	amount = NULL;
+	
+	ite_free((void *)num_funcs_var_occurs);
 	
 	for (int x = 0; x < numout; x++)
 	  {
