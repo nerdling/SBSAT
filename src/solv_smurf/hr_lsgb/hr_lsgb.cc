@@ -68,8 +68,10 @@ HrLSGBInit()
    procHeurFree = HrLSGBFree;
 
    HrLSGBFnSmurfInit();
+   HrLSGBFnSmurfXorInit();
    HrLSGBFnAndInit();
    HrLSGBFnXorInit();
+   HrLSGBFnXorSmurfInit();
    HrLSGBFnMinMaxInit();
 
    for (int i = 0; i < nNumVariables; i++)

@@ -20,7 +20,7 @@ VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
 pkglibdir = $(libdir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
-top_builddir = ../..
+top_builddir = ../../..
 
 am__cd = CDPATH="$${ZSH_VERSION+.}$(PATH_SEPARATOR)" && cd
 INSTALL = @INSTALL@
@@ -134,63 +134,36 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-SUBDIRS = include fn_lemma_au fn_smurf_au hr_lsgbw hr_lemma fn_minmax fn_xor fn_and fn_lemma fn_smurf hr_null hr_lsgb hr_lsgb_lemma fn_smurf_xor fn_xor_smurf
-
-#fn_plainor fn_smurf_au 
 INCLUDES = -I$(top_srcdir)/include -I$(top_srcdir)/src/solv_smurf/include
-SOURCES = display.cc solver.cc \
-	 fn_init.cc fn_create.cc fn_stack.cc fn_update.cc \
-	 vars_inferlit.cc vars_recordsol.cc vars_verify.cc vars_map.cc vars_init.cc vars_hints.cc \
-	 br_init.cc br_afs.cc br_checks.cc br_brancher.cc br_select_bp.cc br_backtrack_nl.cc br_backtrack.cc
+SOURCES = fn_smurf_xor.cc \
+	hr_lsgb_smurfxor_init.cc hr_lsgb_smurfxor_update.cc 
 
-#	heur_i.cc heur_j.cc 
-#	heur_j_update.cc heur_l.cc heur_null.cc heur_stack.cc heur_update.cc \
-#	libsolver.cc 
-# display.cc display_sf.cc
-# backtrack_nl.cc backtrack_sbj.cc 
-#
-EXTRA_DIST = hr_choice.cc
 
-@MYLIBTOOL_TRUE@noinst_LTLIBRARIES = libsolv_smurf.la # libsolver2.la
-@MYLIBTOOL_TRUE@libsolv_smurf_la_SOURCES = $(SOURCES)
-subdir = src/solv_smurf
+
+#hr_lsgbw_smurfxor_init.cc hr_lsgbw_smurfxor_update.cc 
+@MYLIBTOOL_TRUE@noinst_LTLIBRARIES = libfnsmurfxor.la # libsolver2.la
+@MYLIBTOOL_TRUE@libfnsmurfxor_la_SOURCES = $(SOURCES)
+subdir = src/solv_smurf/fn_smurf_xor
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/include/config.h
 CONFIG_CLEAN_FILES =
 LTLIBRARIES = $(noinst_LTLIBRARIES)
 
-libsolv_smurf_la_LDFLAGS =
-libsolv_smurf_la_LIBADD =
-am__libsolv_smurf_la_SOURCES_DIST = display.cc solver.cc fn_init.cc \
-	fn_create.cc fn_stack.cc fn_update.cc vars_inferlit.cc \
-	vars_recordsol.cc vars_verify.cc vars_map.cc vars_init.cc \
-	vars_hints.cc br_init.cc br_afs.cc br_checks.cc br_brancher.cc \
-	br_select_bp.cc br_backtrack_nl.cc br_backtrack.cc
-am__objects_1 = display.lo solver.lo fn_init.lo fn_create.lo fn_stack.lo \
-	fn_update.lo vars_inferlit.lo vars_recordsol.lo vars_verify.lo \
-	vars_map.lo vars_init.lo vars_hints.lo br_init.lo br_afs.lo \
-	br_checks.lo br_brancher.lo br_select_bp.lo br_backtrack_nl.lo \
-	br_backtrack.lo
-@MYLIBTOOL_TRUE@am_libsolv_smurf_la_OBJECTS = $(am__objects_1)
-libsolv_smurf_la_OBJECTS = $(am_libsolv_smurf_la_OBJECTS)
+libfnsmurfxor_la_LDFLAGS =
+libfnsmurfxor_la_LIBADD =
+am__libfnsmurfxor_la_SOURCES_DIST = fn_smurf_xor.cc \
+	hr_lsgb_smurfxor_init.cc hr_lsgb_smurfxor_update.cc
+am__objects_1 = fn_smurf_xor.lo hr_lsgb_smurfxor_init.lo \
+	hr_lsgb_smurfxor_update.lo
+@MYLIBTOOL_TRUE@am_libfnsmurfxor_la_OBJECTS = $(am__objects_1)
+libfnsmurfxor_la_OBJECTS = $(am_libfnsmurfxor_la_OBJECTS)
 
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)/include
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
-@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/br_afs.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/br_backtrack.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/br_backtrack_nl.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/br_brancher.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/br_checks.Plo ./$(DEPDIR)/br_init.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/br_select_bp.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/display.Plo ./$(DEPDIR)/fn_create.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/fn_init.Plo ./$(DEPDIR)/fn_stack.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/fn_update.Plo ./$(DEPDIR)/solver.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/vars_hints.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/vars_inferlit.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/vars_init.Plo ./$(DEPDIR)/vars_map.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/vars_recordsol.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/vars_verify.Plo
+@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/fn_smurf_xor.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/hr_lsgb_smurfxor_init.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/hr_lsgb_smurfxor_update.Plo
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 LTCXXCOMPILE = $(LIBTOOL) --silent --mode=compile $(CXX) $(DEFS) \
@@ -199,28 +172,19 @@ LTCXXCOMPILE = $(LIBTOOL) --silent --mode=compile $(CXX) $(DEFS) \
 CXXLD = $(CXX)
 CXXLINK = $(LIBTOOL) --mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-DIST_SOURCES = $(am__libsolv_smurf_la_SOURCES_DIST)
-
-RECURSIVE_TARGETS = info-recursive dvi-recursive pdf-recursive \
-	ps-recursive install-info-recursive uninstall-info-recursive \
-	all-recursive install-data-recursive install-exec-recursive \
-	installdirs-recursive install-recursive uninstall-recursive \
-	check-recursive installcheck-recursive
-DIST_COMMON = README Makefile.am Makefile.in
-DIST_SUBDIRS = $(SUBDIRS)
-SOURCES = display.cc solver.cc \
-	 fn_init.cc fn_create.cc fn_stack.cc fn_update.cc \
-	 vars_inferlit.cc vars_recordsol.cc vars_verify.cc vars_map.cc vars_init.cc vars_hints.cc \
-	 br_init.cc br_afs.cc br_checks.cc br_brancher.cc br_select_bp.cc br_backtrack_nl.cc br_backtrack.cc
+DIST_SOURCES = $(am__libfnsmurfxor_la_SOURCES_DIST)
+DIST_COMMON = Makefile.am Makefile.in
+SOURCES = fn_smurf_xor.cc \
+	hr_lsgb_smurfxor_init.cc hr_lsgb_smurfxor_update.cc 
 
 
-all: all-recursive
+all: all-am
 
 .SUFFIXES:
 .SUFFIXES: .cc .lo .o .obj
 $(srcdir)/Makefile.in:  Makefile.am  $(top_srcdir)/configure.ac $(ACLOCAL_M4)
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu  src/solv_smurf/Makefile
+	  $(AUTOMAKE) --gnu  src/solv_smurf/fn_smurf_xor/Makefile
 Makefile:  $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe)
 
@@ -232,8 +196,8 @@ clean-noinstLTLIBRARIES:
 	  echo "rm -f \"$${dir}/so_locations\""; \
 	  rm -f "$${dir}/so_locations"; \
 	done
-libsolv_smurf.la: $(libsolv_smurf_la_OBJECTS) $(libsolv_smurf_la_DEPENDENCIES) 
-	$(CXXLINK)  $(libsolv_smurf_la_LDFLAGS) $(libsolv_smurf_la_OBJECTS) $(libsolv_smurf_la_LIBADD) $(LIBS)
+libfnsmurfxor.la: $(libfnsmurfxor_la_OBJECTS) $(libfnsmurfxor_la_DEPENDENCIES) 
+	$(CXXLINK)  $(libfnsmurfxor_la_LDFLAGS) $(libfnsmurfxor_la_OBJECTS) $(libfnsmurfxor_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT) core *.core
@@ -241,25 +205,9 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/br_afs.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/br_backtrack.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/br_backtrack_nl.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/br_brancher.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/br_checks.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/br_init.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/br_select_bp.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/display.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fn_create.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fn_init.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fn_stack.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fn_update.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/solver.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vars_hints.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vars_inferlit.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vars_init.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vars_map.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vars_recordsol.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vars_verify.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fn_smurf_xor.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hr_lsgb_smurfxor_init.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hr_lsgb_smurfxor_update.Plo@am__quote@
 
 distclean-depend:
 	-rm -rf ./$(DEPDIR)
@@ -309,65 +257,6 @@ distclean-libtool:
 	-rm -f libtool
 uninstall-info-am:
 
-# This directory's subdirectories are mostly independent; you can cd
-# into them and run `make' without going through this Makefile.
-# To change the values of `make' variables: instead of editing Makefiles,
-# (1) if the variable is set in `config.status', edit `config.status'
-#     (which will cause the Makefiles to be regenerated when you run `make');
-# (2) otherwise, pass the desired values on the `make' command line.
-$(RECURSIVE_TARGETS):
-	@set fnord $$MAKEFLAGS; amf=$$2; \
-	dot_seen=no; \
-	target=`echo $@ | sed s/-recursive//`; \
-	list='$(SUBDIRS)'; for subdir in $$list; do \
-	  echo "Making $$target in $$subdir"; \
-	  if test "$$subdir" = "."; then \
-	    dot_seen=yes; \
-	    local_target="$$target-am"; \
-	  else \
-	    local_target="$$target"; \
-	  fi; \
-	  (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) $$local_target) \
-	   || case "$$amf" in *=*) exit 1;; *k*) fail=yes;; *) exit 1;; esac; \
-	done; \
-	if test "$$dot_seen" = "no"; then \
-	  $(MAKE) $(AM_MAKEFLAGS) "$$target-am" || exit 1; \
-	fi; test -z "$$fail"
-
-mostlyclean-recursive clean-recursive distclean-recursive \
-maintainer-clean-recursive:
-	@set fnord $$MAKEFLAGS; amf=$$2; \
-	dot_seen=no; \
-	case "$@" in \
-	  distclean-* | maintainer-clean-*) list='$(DIST_SUBDIRS)' ;; \
-	  *) list='$(SUBDIRS)' ;; \
-	esac; \
-	rev=''; for subdir in $$list; do \
-	  if test "$$subdir" = "."; then :; else \
-	    rev="$$subdir $$rev"; \
-	  fi; \
-	done; \
-	rev="$$rev ."; \
-	target=`echo $@ | sed s/-recursive//`; \
-	for subdir in $$rev; do \
-	  echo "Making $$target in $$subdir"; \
-	  if test "$$subdir" = "."; then \
-	    local_target="$$target-am"; \
-	  else \
-	    local_target="$$target"; \
-	  fi; \
-	  (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) $$local_target) \
-	   || case "$$amf" in *=*) exit 1;; *k*) fail=yes;; *) exit 1;; esac; \
-	done && test -z "$$fail"
-tags-recursive:
-	list='$(SUBDIRS)'; for subdir in $$list; do \
-	  test "$$subdir" = . || (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) tags); \
-	done
-ctags-recursive:
-	list='$(SUBDIRS)'; for subdir in $$list; do \
-	  test "$$subdir" = . || (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) ctags); \
-	done
-
 ETAGS = etags
 ETAGSFLAGS =
 
@@ -385,15 +274,10 @@ ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	       END { for (i in files) print i; }'`; \
 	mkid -fID $$unique
 
-TAGS: tags-recursive $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
+TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
 		$(TAGS_FILES) $(LISP)
 	tags=; \
 	here=`pwd`; \
-	list='$(SUBDIRS)'; for subdir in $$list; do \
-	  if test "$$subdir" = .; then :; else \
-	    test -f $$subdir/TAGS && tags="$$tags -i $$here/$$subdir/TAGS"; \
-	  fi; \
-	done; \
 	list='$(SOURCES) $(HEADERS)  $(LISP) $(TAGS_FILES)'; \
 	unique=`for i in $$list; do \
 	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
@@ -405,7 +289,7 @@ TAGS: tags-recursive $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
 	     $$tags $$unique
 
 ctags: CTAGS
-CTAGS: ctags-recursive $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
+CTAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
 		$(TAGS_FILES) $(LISP)
 	tags=; \
 	here=`pwd`; \
@@ -428,7 +312,7 @@ distclean-tags:
 	-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH tags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 
-top_distdir = ../..
+top_distdir = ../../..
 distdir = $(top_distdir)/$(PACKAGE)-$(VERSION)
 
 distdir: $(DISTFILES)
@@ -458,34 +342,21 @@ distdir: $(DISTFILES)
 	    || exit 1; \
 	  fi; \
 	done
-	list='$(SUBDIRS)'; for subdir in $$list; do \
-	  if test "$$subdir" = .; then :; else \
-	    test -d $(distdir)/$$subdir \
-	    || mkdir $(distdir)/$$subdir \
-	    || exit 1; \
-	    (cd $$subdir && \
-	      $(MAKE) $(AM_MAKEFLAGS) \
-	        top_distdir="$(top_distdir)" \
-	        distdir=../$(distdir)/$$subdir \
-	        distdir) \
-	      || exit 1; \
-	  fi; \
-	done
 check-am: all-am
-check: check-recursive
+check: check-am
 all-am: Makefile $(LTLIBRARIES)
-installdirs: installdirs-recursive
-installdirs-am:
 
-install: install-recursive
-install-exec: install-exec-recursive
-install-data: install-data-recursive
-uninstall: uninstall-recursive
+installdirs:
+
+install: install-am
+install-exec: install-exec-am
+install-data: install-data-am
+uninstall: uninstall-am
 
 install-am: all-am
 	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
 
-installcheck: installcheck-recursive
+installcheck: installcheck-am
 install-strip:
 	$(MAKE) $(AM_MAKEFLAGS) INSTALL_PROGRAM="$(INSTALL_STRIP_PROGRAM)" \
 	  INSTALL_STRIP_FLAG=-s \
@@ -501,21 +372,21 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
-clean: clean-recursive
+clean: clean-am
 
 clean-am: clean-generic clean-libtool clean-noinstLTLIBRARIES \
 	mostlyclean-am
 
-distclean: distclean-recursive
+distclean: distclean-am
 
 distclean-am: clean-am distclean-compile distclean-depend \
 	distclean-generic distclean-libtool distclean-tags
 
-dvi: dvi-recursive
+dvi: dvi-am
 
 dvi-am:
 
-info: info-recursive
+info: info-am
 
 info-am:
 
@@ -523,50 +394,42 @@ install-data-am:
 
 install-exec-am:
 
-install-info: install-info-recursive
+install-info: install-info-am
 
 install-man:
 
 installcheck-am:
 
-maintainer-clean: maintainer-clean-recursive
+maintainer-clean: maintainer-clean-am
 
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
-mostlyclean: mostlyclean-recursive
+mostlyclean: mostlyclean-am
 
 mostlyclean-am: mostlyclean-compile mostlyclean-generic \
 	mostlyclean-libtool
 
-pdf: pdf-recursive
+pdf: pdf-am
 
 pdf-am:
 
-ps: ps-recursive
+ps: ps-am
 
 ps-am:
 
 uninstall-am: uninstall-info-am
 
-uninstall-info: uninstall-info-recursive
-
-.PHONY: $(RECURSIVE_TARGETS) CTAGS GTAGS all all-am check check-am clean \
-	clean-generic clean-libtool clean-noinstLTLIBRARIES \
-	clean-recursive ctags ctags-recursive distclean \
+.PHONY: CTAGS GTAGS all all-am check check-am clean clean-generic \
+	clean-libtool clean-noinstLTLIBRARIES ctags distclean \
 	distclean-compile distclean-depend distclean-generic \
-	distclean-libtool distclean-recursive distclean-tags distdir \
-	dvi dvi-am dvi-recursive info info-am info-recursive install \
-	install-am install-data install-data-am install-data-recursive \
-	install-exec install-exec-am install-exec-recursive \
-	install-info install-info-am install-info-recursive install-man \
-	install-recursive install-strip installcheck installcheck-am \
-	installdirs installdirs-am installdirs-recursive \
-	maintainer-clean maintainer-clean-generic \
-	maintainer-clean-recursive mostlyclean mostlyclean-compile \
-	mostlyclean-generic mostlyclean-libtool mostlyclean-recursive \
-	pdf pdf-am pdf-recursive ps ps-am ps-recursive tags \
-	tags-recursive uninstall uninstall-am uninstall-info-am \
-	uninstall-info-recursive uninstall-recursive
+	distclean-libtool distclean-tags distdir dvi dvi-am info \
+	info-am install install-am install-data install-data-am \
+	install-exec install-exec-am install-info install-info-am \
+	install-man install-strip installcheck installcheck-am \
+	installdirs maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-compile mostlyclean-generic \
+	mostlyclean-libtool pdf pdf-am ps ps-am tags uninstall \
+	uninstall-am uninstall-info-am
 
 #libsolver2_la_SOURCES=libsolver.cc
 #noinst_LIBRARIES = libsolver.a libsolver2.a

@@ -149,7 +149,7 @@ t_opt options[] = {
                 "The minimum # of literals to flag sp. function plainor"},
 { &PLAINXOR_LIMIT, "", "limit-xor", P_INT, V(i:0,"0"), V(i:5,"5"), VAR_NORMAL, 0,
                 "The minimum # of literals to flag sp. function plainxor"},*/
-{ &BREAK_XORS, "", "break-xors", P_INT, V(i:0,"0"), V(i:1,"1"), VAR_NORMAL, 0, 
+{ &BREAK_XORS, "", "break-xors", P_INT, V(i:0,"0"), V(i:0,"0"), VAR_NORMAL, 0, 
                 "Break XORS into linear and non-linear functions"},
 
 

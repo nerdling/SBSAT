@@ -1,6 +1,6 @@
 %name-prefix="prover_"
 %{
-#include "ite.h"
+#include "sbsat.h"
 #include "bddnode.h"
 #include "symtable.h"
 #include "functions.h"

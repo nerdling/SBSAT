@@ -48,10 +48,12 @@ struct IntegerSet_ArrayBased
 #include "solver_features.h"
 #include "fn_smurf.h"
 #include "fn_smurf_au.h"
+#include "fn_smurf_xor.h"
 #include "fn_lemma.h"
 #include "fn_and.h"
 #include "fn_minmax.h"
 #include "fn_xor.h"
+#include "fn_xor_smurf.h"
 #include "brancher.h"
 #include "heuristic.h"
 #include "hr_null.h"
@@ -67,8 +69,10 @@ struct IntegerSet_ArrayBased
       FnMinMaxInit, \
       FnXorInit, \
       FnSmurfAuInit, \
+      FnXorSmurfInit, \
+      FnSmurfXorInit, \
       NULL }
-
+/*
 enum {
    TYPE_UNKNOWN  = 0,
    TYPE_SMURF    = 1,
@@ -80,7 +84,7 @@ enum {
    TYPE_XOR_EX   = 7,
    TYPE_MINMAX   = 8 
 };
-
+*/
 typedef struct {
    int nFnId;
    int nType;
@@ -121,14 +125,14 @@ typedef struct {
    int nType;
    union {
       AFS_Smurf    fn_smurf;
-      //AFS_Smurf_Ex fn_smurf_ex;
-      AFS_SmurfAu fn_smurf_au;
+      AFS_SmurfAu  fn_smurf_au;
+      //AFS_SmurfXOR fn_smurf_xor;
       //AFS_PLAINOR  fn_plainor;
       AFS_AND      fn_and;
       AFS_XOR      fn_xor;
-      //AFS_XOR_Ex   fn_xor_ex;
       AFS_MINMAX   fn_minmax;
       //LemmaAFS     fn_lemma;
+      //AFS_XORSmurf fn_xor_smurf;
    };
 } OneAFS;
 
@@ -160,12 +164,14 @@ typedef struct _SolverFunction {
    int nFnPriority;
    _SolverFunction *pFnInfNext;;   
    union {
-      Function_AND     fn_and;
-      Function_Smurf   fn_smurf;
-      Function_SmurfAu fn_smurf_au;
+      Function_AND      fn_and;
+      Function_Smurf    fn_smurf;
+      Function_SmurfAu  fn_smurf_au;
+      //Function_SmurfXOR fn_smurf_xor;
       //Function_PlainOR fn_plainor;
-      Function_MinMax  fn_minmax;
-      Function_XOR     fn_xor;
+      Function_MinMax   fn_minmax;
+      Function_XOR      fn_xor;
+      //Function_XORSmurf fn_xor_smurf;
    };
 } SolverFunction;
 

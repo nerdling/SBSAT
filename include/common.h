@@ -103,8 +103,11 @@ enum {
   IMPOR_EQU,     /* equ_base + 16 *///x-> a v b v c
   PLAINOR_EQU,   /* equ_base + 17 *///a v b v c
   PLAINXOR_EQU,  /* equ_base + 18 *///a + b + c
-  MINMAX_EQU,    /* equ_base - 19 */
-  AUTARKY_FUNC,	  
+  MINMAX_EQU,    /* equ_base + 19 */
+  AUTARKY_FUNC,  
+  BDDXOR_BROKEN,
+  BDD_PART_BDDXOR,
+  XOR_PART_BDDXOR,
   MAX_FUNC
 };
 
@@ -217,16 +220,34 @@ struct store{
    int andor; //andor for variablelist is True/False
 };
 
+typedef struct {
+   union {
+      struct { 
+         int fn; 
+         int xor_part;
+      } bdd_part_bddxor;
+      struct { 
+         int fn; 
+         int bdd_part;
+      } xor_part_bddxor;
+      struct { 
+         int bdd_part; 
+         int xor_part; 
+      } bddxor_broken;
+   };
+} FNProps;
+
 extern   long numinp; // highest variable id occuring in any BDD
 extern   long numout;
 extern   int nmbrFunctions;
 extern   int original_numout;
 extern   struct BDDNodeStruct **functions;
 extern   struct BDDNodeStruct **original_functions;
-extern   struct BDDNodeStruct **xorFunctions;
+//extern   struct BDDNodeStruct **xorFunctions;
 extern   int *functionType;
 extern   int *equalityVble; // Variable on the LHS of an ite=, and=, or or= BDD.
 extern   int *independantVars;
+extern   FNProps *functionProps;
 extern   char **labels;
 extern   varinfo *variablelist;
 extern   float *var_score;

@@ -36,6 +36,9 @@
 *********************************************************************/
 
 #include "sbsat.h"
+#include "bddnode.h"
+
+int functions_add(BDDNode *bdd, int fn_type, int equal_var);
 
 /*
  * initializes
@@ -62,10 +65,12 @@ functions_alloc(int n_fns)
          n_fns, sizeof(int), 9, "equalityVble");
    functions = (BDDNode **)ite_recalloc((void*)functions, functions_max,
          n_fns, sizeof(BDDNode*), 9, "functions");
-   xorFunctions = (BDDNode **)ite_recalloc((void*)xorFunctions, functions_max, 
-         n_fns, sizeof(BDDNode*), 9, "functions");
+   //xorFunctions = (BDDNode **)ite_recalloc((void*)xorFunctions, functions_max, 
+   //      n_fns, sizeof(BDDNode*), 9, "functions");
    functionType = (int *)ite_recalloc((void*)functionType, functions_max,
          n_fns, sizeof(int), 9, "functionType");
+   functionProps = (FNProps*)ite_recalloc((void*)functionProps, functions_max,
+         n_fns, sizeof(FNProps), 9, "functionProps");
 
    functions_max = n_fns;
    return 0;
@@ -82,10 +87,15 @@ vars_alloc(int n_vars)
    /* n_vars -- numinp */
    independantVars = (int *)ite_recalloc((void*)independantVars, vars_max,
          n_vars, sizeof(int), 9, "independantVars");
+   variablelist = (varinfo*)ite_recalloc((void*)variablelist, vars_max, 
+         n_vars, sizeof(varinfo), 2, "variablelist");
 
    for(int x = vars_max; x < n_vars; x++) 
    {
       independantVars[x] = 1;
+      variablelist[x].equalvars = 0;
+      variablelist[x].replace = x;
+      variablelist[x].true_false = -1;
    }
    vars_max = n_vars;
    return 0;
@@ -98,7 +108,51 @@ bdd_circuit_free()
    ite_free((void**)&independantVars);
    ite_free((void**)&equalityVble);
    ite_free((void**)&functions);
-   ite_free((void**)&xorFunctions);
+   //ite_free((void**)&xorFunctions);
    ite_free((void**)&functionType);
+   ite_free((void**)&functionProps);
+}
+
+BDDNode *tmp_equ_var(BDDNode *p) 
+{
+    symrec *s_ptr = tputsym(SYM_VAR); 
+    BDDNode *ret=ite_vars(s_ptr); 
+    BDDNode *e=ite_equ(ret, p); 
+    functions_add(e, UNSURE, s_ptr->id); 
+    return ret;
+}
+
+int
+functions_add(BDDNode *bdd, int fn_type, int equal_var)
+{
+ if (nmbrFunctions >= functions_max) 
+  functions_alloc(nmbrFunctions+100);
+
+  switch (fn_type) {
+   case UNSURE: fn_type=UNSURE; break;
+   case AND_EQU: fn_type=AND; break;
+   case OR_EQU: fn_type=OR; break;
+   case ITE_EQU: fn_type=ITE; break;
+   case EQU: fn_type=EQU; break;
+   case PLAINOR: fn_type=PLAINOR; break;
+   case LIMP_EQU: fn_type=UNSURE; break;
+   case LNIMP_EQU: fn_type=UNSURE; break;
+   case RIMP_EQU: fn_type=UNSURE; break;
+   case RNIMP_EQU: fn_type=UNSURE; break;
+   case XOR_EQU: fn_type=UNSURE; break;
+   case NAND_EQU: fn_type=UNSURE; break;
+   case NOR_EQU: fn_type=UNSURE; break;
+   case EQU_EQU: fn_type=UNSURE; break;
+   case BDD_PART_BDDXOR: fn_type=BDD_PART_BDDXOR; break;
+   case XOR_PART_BDDXOR: fn_type=XOR_PART_BDDXOR; break;
+   default: fprintf(stderr, "unknown function type: %d\n", fn_type);
+            fn_type=UNSURE;
+  }
+
+  equalityVble[nmbrFunctions] = equal_var;
+  functionType[nmbrFunctions] = fn_type;
+  functions[nmbrFunctions] = bdd;
+  nmbrFunctions++;
+  return (nmbrFunctions-1);
 }
 

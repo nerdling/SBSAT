@@ -45,7 +45,7 @@ ConstructLemmasForXOR(int nFnId);
 ITE_INLINE void
 BDD2Specfn_XOR(int nFnId, BDDNode *pFunc, int nFunctionType, int _nEqualityVble)
 {
-   assert(/*nFunctionType == XOR ||*/ nFunctionType == PLAINXOR);
+   assert(/*nFunctionType == XOR ||*/ nFunctionType == PLAINXOR || nFunctionType == XOR_PART_BDDXOR);
 
    /* -------------- Left Hand Side -------------- */
 

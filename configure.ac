@@ -253,11 +253,13 @@ AC_CONFIG_FILES([Makefile
                  src/solv_smurf/Makefile
                  src/solv_smurf/include/Makefile
                  src/solv_smurf/fn_xor/Makefile
+                 src/solv_smurf/fn_xor_smurf/Makefile
                  src/solv_smurf/fn_minmax/Makefile
                  src/solv_smurf/fn_and/Makefile
                  src/solv_smurf/fn_lemma_au/Makefile
                  src/solv_smurf/fn_lemma/Makefile
                  src/solv_smurf/fn_smurf_au/Makefile
+                 src/solv_smurf/fn_smurf_xor/Makefile
                  src/solv_smurf/fn_smurf/Makefile
                  src/solv_smurf/hr_null/Makefile
                  src/solv_smurf/hr_lsgb_lemma/Makefile

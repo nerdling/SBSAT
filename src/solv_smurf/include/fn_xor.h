@@ -34,6 +34,7 @@ int XorUpdateAffectedFunction_Infer(void *oneafs, int x);
 int XorSave2Stack(int nFnId, void *one_stack);
 int XorRestoreFromStack(void *one_stack);
 void XorUpdateFunctionInfEnd(int nFnId);
+void LSGBXorInitHeuristicTables();
 void LSGBXorUpdateFunctionInfEnd(int nFnId);
 void LSGBXorGetHeurScores(int nFnId);
 void LSGBWXorUpdateFunctionInfEnd(int nFnId);

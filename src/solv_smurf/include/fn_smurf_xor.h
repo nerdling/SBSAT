@@ -16,7 +16,7 @@
  be placed on all software copies, and a complete copy of this notice
  shall be included in all copies of the associated documentation.
  No right is  granted to use in advertising, publicity or otherwise
- any trademark, service mark, or the name of University of Cincinnati.
+ any trademark,  service mark, or the name of University of Cincinnati.
 
 
  --- This software and any associated documentation is provided "as is"
@@ -35,3 +35,22 @@
  of the possibility of those damages.
 *********************************************************************/
 
+#ifndef FN_SMURF_XOR_H
+#define FN_SMURF_XOR_H
+
+extern int arrFnSmurfXorTypes[];
+int FnSmurfXorInit();
+
+void LSGBSmurfXorUpdateFunctionInfEnd(int nFnId);
+
+void LSGBSmurfXorSetHeuristicScores(int nFnId);
+void LSGBSmurfXorSetHeurScores(int nRegSmurfIndex, SmurfState *pState, int nNumXors);
+void LSGBSmurfXorGetHeurScores(int nFnId);
+
+void LSGBWSmurfXorSetHeurScores(int nRegSmurfIndex, SmurfState *pState, int nNumXors);
+void LSGBWSmurfXorGetHeurScores(int nFnId);
+
+void HrLSGBFnSmurfXorInit();
+void HrLSGBWFnSmurfXorInit();
+
+#endif // FN_SMURF_XOR_H

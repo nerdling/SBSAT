@@ -37,6 +37,9 @@
 
 #include "sbsat.h"
 
+BDDNode *tmp_equ_var(BDDNode *p);
+int functions_add(BDDNode *bdd, int fn_type, int equal_var);
+
 enum {
    BDD2XDD_FLAG_NUMBER,
    FORCE_REUSE_FLAG_NUMBER, /* if bigger than this => won't get reused */
@@ -277,7 +280,7 @@ int splitXors() {
 	int total_vars = numinp;
 	int *xor_vars = new int[numinp+1]; //This could be made better in the future.
 	int *nonxor_vars = new int[numinp+1]; //This could be made better in the future.
-	for(long x = 0; x < numout; x++) {
+	for(long x = 0; x < nmbrFunctions; x++) {
 		if(length[x] <= functionTypeLimits[PLAINXOR] || functionType[x]!=UNSURE) continue; //???
 		BDDNode *xdd = bdd2xdd(functions[x]);		
 		countSingleXors(xdd, xor_vars, nonxor_vars);
@@ -322,26 +325,36 @@ int splitXors() {
       symrec *s_ptr = tputsym(SYM_VAR);
 
 		total_vars++;
-		xorFunctions[x] = ite_xor(xor_part, ite_var(s_ptr->id));
+
 #ifndef NDEBUG
       BDDNode *savedF = functions[x];
 #endif
 
-		functions[x] = ite_equ(nonxor_part, ite_var(s_ptr->id));
+		//xorFunctions[x] = ite_xor(xor_part, ite_var(s_ptr->id));
+		//functions[x] = ite_equ(nonxor_part, ite_var(s_ptr->id));
+      //length[x] = length[x]-y; /* the linear part is y */
+      //equalityVble[x] = s_ptr->id;
       
-		//functions[x] = ite_xor(nonxor_part, ite_var(s_ptr->id));
-		//functions[x] = ite_equ(nonxor_part, false_ptr);
-
-      length[x] = length[x]-y; /* the linear part is y */
-      //assert(equalityVble[x] == 0);
-      equalityVble[x] = s_ptr->id;
+		int bdd_part_fnid = functions_add(ite_equ(nonxor_part, ite_var(s_ptr->id)), 
+            BDD_PART_BDDXOR, s_ptr->id);
+		int xor_part_fnid = functions_add(ite_xor(xor_part, ite_var(s_ptr->id)), 
+            XOR_PART_BDDXOR, s_ptr->id);
+      functionType[x] = BDDXOR_BROKEN;
+      functionProps[bdd_part_fnid].bdd_part_bddxor.fn = x;
+      functionProps[bdd_part_fnid].bdd_part_bddxor.xor_part = xor_part_fnid;
+      functionProps[xor_part_fnid].xor_part_bddxor.fn = x;
+      functionProps[xor_part_fnid].xor_part_bddxor.bdd_part = bdd_part_fnid;
+      functionProps[x].bddxor_broken.bdd_part = bdd_part_fnid;
+      functionProps[x].bddxor_broken.xor_part = xor_part_fnid;
 
 #ifndef NDEBUG
+      /*
       BDDNode *testBDD = ite_and(xorFunctions[x], functions[x]);
       testBDD = xquantify(testBDD, s_ptr->id);
       if (testBDD != savedF) {
          assert(0);
       }
+      */
 #endif
 	}
 	delete [] xor_vars;

@@ -61,7 +61,8 @@ AFSInit()
       //t_smurf_chain *arrSmurfChain;
 
       int *arr1, num1, *arr2, num2;
-      procAffectedVarList[arrSolverFunctions[nFnId].nType](nFnId, &arr1, &num1, &arr2, &num2);
+      if (procAffectedVarList[arrSolverFunctions[nFnId].nType])
+         procAffectedVarList[arrSolverFunctions[nFnId].nType](nFnId, &arr1, &num1, &arr2, &num2);
 
       nNumElementsFn += num1+num2;
       while(num1>0) {
@@ -102,7 +103,8 @@ AFSInit()
    for (int nFnId = 0; nFnId < nmbrFunctions; nFnId++)
    {
       int *arr1, num1, *arr2, num2;
-      procAffectedVarList[arrSolverFunctions[nFnId].nType](nFnId, &arr1, &num1, &arr2, &num2);
+      if (procAffectedVarList[arrSolverFunctions[nFnId].nType])
+         procAffectedVarList[arrSolverFunctions[nFnId].nType](nFnId, &arr1, &num1, &arr2, &num2);
 
       nNumElementsFn += num1+num2;
       while(num1>0) {

@@ -12,9 +12,11 @@ SBSAT_LIBS= \
 	solv_smurf/hr_lsgbw/libhrlsgbw.la  \
 	solv_smurf/hr_lsgb/libhrlsgb.la  \
 	solv_smurf/hr_lemma/libhrlemma.la  \
+	solv_smurf/fn_xor_smurf/libfnxorsmurf.la  \
 	solv_smurf/fn_xor/libfnxor.la  \
 	solv_smurf/fn_minmax/libfnminmax.la  \
 	solv_smurf/fn_and/libfnand.la  \
+	solv_smurf/fn_smurf_xor/libfnsmurfxor.la  \
 	solv_smurf/fn_smurf_au/libfnsmurfau.la  \
 	solv_smurf/fn_smurf/libfnsmurf.la  \
 	solv_smurf/fn_lemma/libfnlemma.la  \
@@ -34,9 +36,11 @@ SBSAT_LIBS= \
 	solv_smurf/hr_lsgbw/libhrlsgbw.a  \
 	solv_smurf/hr_lsgb/libhrlsgb.a  \
 	solv_smurf/hr_lemma/libhrlemma.a  \
+	solv_smurf/fn_xor_smurf/libfnxorsmurf.a  \
 	solv_smurf/fn_xor/libfnxor.a  \
 	solv_smurf/fn_minmax/libfnminmax.a  \
 	solv_smurf/fn_and/libfnand.a  \
+	solv_smurf/fn_smurf_xor/libfnsmurfxor.a  \
 	solv_smurf/fn_smurf_au/libfnsmurfau.a  \
 	solv_smurf/fn_smurf/libfnsmurf.a  \
 	solv_smurf/fn_lemma/libfnlemma.a  \

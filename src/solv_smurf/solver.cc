@@ -87,15 +87,15 @@ solve_init()
 
   d9_printf1("InitSolver\n");
 
-  HeuristicInit();
-
-  /*
+  
   if (BREAK_XORS) {
   // change splitXors to add two new functions into functions array to complement/replace the existing smurf
-     total_vars = splitXors();
+     int total_vars = splitXors();
      d9_printf3("Split(%ld) returned %d\n", numinp, total_vars);
+     numinp = total_vars;
   }
-  */
+
+  HeuristicInit();
 
   InitVarMap();
 

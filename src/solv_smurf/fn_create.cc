@@ -43,6 +43,12 @@ int gnMaxVbleIndex;
 
 ITE_INLINE char * StringFromFunctionType(int nFuncType);
 
+ITE_INLINE void
+FnCreateSkippedFunction(int nFnId, int nFnType)
+{
+   arrSolverFunctions[nFnId].nFnId = nFnId;
+   arrSolverFunctions[nFnId].nType = nFnType;
+}
 
 ITE_INLINE int
 CreateFunctions()
@@ -61,7 +67,12 @@ CreateFunctions()
       BDDNodeStruct *pFunc = functions[i];
       if (pFunc == false_ptr)  return SOLV_UNSAT;
 
-      procCreateFunction[nFunctionType](i, functions[i], nFunctionType, equalityVble[i]);
+      if (procCreateFunction[nFunctionType])
+         procCreateFunction[nFunctionType](i, functions[i], nFunctionType, equalityVble[i]);
+      else {
+         d2_printf3("Skipping function %d type %d\n", i, nFunctionType);
+         FnCreateSkippedFunction(i, nFunctionType);
+      }
    }
    
    // Display statistics.

@@ -244,6 +244,7 @@ int SmurfRestoreFromStack(void *one_stack);
 void SmurfUpdateFunctionInfEnd(int nFnId);
 
 void LSGBSmurfUpdateFunctionInfEnd(int nFnId);
+double LSGBSumInferenceWeights(Transition *pTransition);
 
 void LSGBSmurfSetHeurScores(int nRegSmurfIndex, SmurfState *pState);
 void LSGBSmurfGetHeurScores(int nFnId);

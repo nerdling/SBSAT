@@ -1,4 +1,4 @@
-SUBDIRS= include fn_lemma_au fn_smurf_au hr_lsgbw hr_lemma fn_minmax fn_xor fn_and fn_lemma fn_smurf hr_null hr_lsgb hr_lsgb_lemma 
+SUBDIRS= include fn_lemma_au fn_smurf_au hr_lsgbw hr_lemma fn_minmax fn_xor fn_and fn_lemma fn_smurf hr_null hr_lsgb hr_lsgb_lemma fn_smurf_xor fn_xor_smurf
 #fn_plainor fn_smurf_au 
 
 INCLUDES=-I$(top_srcdir)/include -I$(top_srcdir)/src/solv_smurf/include

@@ -1,6 +1,6 @@
 %name-prefix="blif_"
 %{
-#include "ite.h"
+#include "sbsat.h"
 #include "bddnode.h"
 #include "symtable.h"
 #include "functions.h"
@@ -20,8 +20,6 @@
    int blif_varindex;
 
    extern int lines;
-   extern int normal_bdds;
-   extern int spec_fn_bdds;
    extern int t_sym_max;
 
    void blif_nothing() { /*unput (0);*/ }

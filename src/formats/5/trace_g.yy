@@ -1,6 +1,6 @@
 %name-prefix="trace_"
 %{
-#include "ite.h"
+#include "sbsat.h"
 #include "bddnode.h"
 #include "symtable.h"
 #include "functions.h"
@@ -30,8 +30,6 @@
 
 
    int lines=0;
-   extern int normal_bdds;
-   extern int spec_fn_bdds;
 
 #ifndef __attribute__
 #define __attribute__(x)

@@ -38,61 +38,30 @@
 #include "sbsat.h"
 #include "sbsat_solver.h"
 #include "solver.h"
-
-void
-HrLSGBFnSmurfInit()
-{
-   for(int i=0;i<MAX_FUNC;i++)
-   {
-      procHeurUpdateFunctionInfEnd[i] = LSGBSmurfUpdateFunctionInfEnd;
-      procHeurGetScores[i] = LSGBSmurfGetHeurScores;
-   }
-}
-/*
-ITE_INLINE double
-LSGBSmurfGetHeurWeight(SmurfState *pState, int i, int nVble, int nValue)
-   // Returns the heuristic weight of a transition.
-{
-   Transition *pTransition;
-
-   if (pState == pTrueSmurfState) return 0;
-   assert(i<pState->vbles.nNumElts && pState->vbles.arrElts[i] == nVble);
-   assert(pState->arrTransitions != 0);
-   if ((pTransition=FindTransition(pState, i, nVble, nValue))==NULL) return 0;
-
-   return pTransition->fHeuristicWeight;
-}
-*/
+#include "fn_smurf.h"
+#include "fn_xor.h"
 
 ITE_INLINE void
-DisplayJHeuristicValues()
+LSGBSmurfXorSetHeurWeightsTrueState(int nNumXors);
+
+void
+HrLSGBFnSmurfXorInit()
 {
-   fprintf(stddbg, "JHeuristic values: \n");
-   for(int i=0;i<gnMaxVbleIndex;i++)
+   for(int j=0; arrFnSmurfXorTypes[j] != 0; j++)
    {
-      if (arrSolution[i]==BOOL_UNKNOWN) {
-         fprintf(stddbg, "+%d(%d): %f%c\n", i, arrSolver2IteVarMap[i], arrHeurScores[i].Pos, arrSolution[i]!=BOOL_UNKNOWN?'*':' ');
-         fprintf(stddbg, "-%d(%d): %f%c\n", i, arrSolver2IteVarMap[i], arrHeurScores[i].Neg, arrSolution[i]!=BOOL_UNKNOWN?'*':' ');
-      }
+      int i = arrFnSmurfXorTypes[j];
+      procHeurUpdateFunctionInfEnd[i] = LSGBSmurfXorUpdateFunctionInfEnd;
+      procHeurGetScores[i] = LSGBSmurfXorGetHeurScores;
    }
 }
 
 ITE_INLINE double
-LSGBSumInferenceWeights(Transition *pTransition)
-{
-  return JHEURISTIC_K_INF * (
-         pTransition->positiveInferences.nNumElts +
-         pTransition->negativeInferences.nNumElts);
-}
-
-
-ITE_INLINE double
-LSGBSetHeurScoreTransition(SmurfState *pState, int i, Transition *pTransition, int nRegSmurfIndex, int nNumXors, int polarity)
+LSGBSmurfXorSetHeurScoreTransition(SmurfState *pState, int i, Transition *pTransition, int nRegSmurfIndex, int nNumXors, int polarity)
 {
    double fTransitionWeight = LSGBSumInferenceWeights(pTransition) +
                           pTransition->pNextState->fNodeHeuristicWeight;
    pTransition->fHeuristicWeight = fTransitionWeight;
-/*
+
    if (nNumXors) {
         if (pState->vbles.arrElts[i] != arrSolverFunctions[nRegSmurfIndex].fn_smurf.nSmurfEqualityVble) {
            for (int j=3;j<nNumXors;j++) {
@@ -102,7 +71,6 @@ LSGBSetHeurScoreTransition(SmurfState *pState, int i, Transition *pTransition, i
         pState->arrHeuristicXors[polarity] = pTransition->fHeuristicWeight;
       }
    }
-   */
    return fTransitionWeight;
 }
 
@@ -155,27 +123,24 @@ J_SetHeurScoresForSmurfs_Counting(int nRegSmurfIndex, SmurfState *pState, int nN
 */
 
 ITE_INLINE void
-LSGBSmurfSetHeurScores(int nRegSmurfIndex, SmurfState *pState, int nNumXors)
+LSGBSmurfXorSetHeurScores(int nRegSmurfIndex, SmurfState *pState, int nNumXors)
 {
    if (pState == pTrueSmurfState) {
-      /*
       if (pTrueSmurfState->nNumHeuristicXors < nNumXors)
-          J_SetHeurWeightsTrueState(nNumXors);
-          */
+         LSGBSmurfXorSetHeurWeightsTrueState(nNumXors);
       return;
    }
 
    // FIND OUT IF THE HEUR ALREADY COMPUTED 
    if (pState->cFlag == 2 && pState->nNumHeuristicXors >= nNumXors) return;
    pState->cFlag = 2;
-/*
+
    if (pState->nNumHeuristicXors < nNumXors) {
       ite_free((void**)&pState->arrHeuristicXors);
       pState->arrHeuristicXors = (double*)ite_calloc(nNumXors, sizeof(double),
             9, "pState->arrHeuristicXors");
       pState->nNumHeuristicXors = nNumXors;
    }
-   */
 
    double fTotalTransitions  = 0;
    for (int i=0;i<pState->vbles.nNumElts;i++)
@@ -183,20 +148,20 @@ LSGBSmurfSetHeurScores(int nRegSmurfIndex, SmurfState *pState, int nNumXors)
       /* ----- POSITIVE TRANSITIONS ------ */
       {
          Transition *pTransition = FindTransition(pState, i, pState->vbles.arrElts[i], BOOL_TRUE);
-         LSGBSmurfSetHeurScores(nRegSmurfIndex, pTransition->pNextState, nNumXors);
-         fTotalTransitions  += LSGBSetHeurScoreTransition(pState, i, pTransition, nRegSmurfIndex, nNumXors, 1);
+         LSGBSmurfXorSetHeurScores(nRegSmurfIndex, pTransition->pNextState, nNumXors);
+         fTotalTransitions  += LSGBSmurfXorSetHeurScoreTransition(pState, i, pTransition, nRegSmurfIndex, nNumXors, 1);
       }
 
       /* ----- NEGATIVE TRANSITIONS ------ */
       {
          Transition *pTransition = FindTransition(pState, i, pState->vbles.arrElts[i], BOOL_FALSE);
-         LSGBSmurfSetHeurScores(nRegSmurfIndex, pTransition->pNextState, nNumXors);
-         fTotalTransitions  += LSGBSetHeurScoreTransition(pState, i, pTransition, nRegSmurfIndex, nNumXors, 0);
+         LSGBSmurfXorSetHeurScores(nRegSmurfIndex, pTransition->pNextState, nNumXors);
+         fTotalTransitions  += LSGBSmurfXorSetHeurScoreTransition(pState, i, pTransition, nRegSmurfIndex, nNumXors, 0);
       }
    }
 
    pState->fNodeHeuristicWeight = fTotalTransitions / (pState->vbles.nNumElts * 2 * JHEURISTIC_K);
-/*
+
    if (nNumXors) {
       // only for base case 
       pState->arrHeuristicXors[2] = pState->fNodeHeuristicWeight;
@@ -205,32 +170,30 @@ LSGBSmurfSetHeurScores(int nRegSmurfIndex, SmurfState *pState, int nNumXors)
           pState->arrHeuristicXors[j] /= (2.0 * (pState->vbles.nNumElts-1+j-1) * JHEURISTIC_K);
       }
    }
-   */
-
 }
 
-
-/*
 ITE_INLINE void
-J_SetHeuristicScoresForSmurfXor(int nFnId)
+LSGBSmurfXorSetHeuristicScores(int nFnId)
 {
    int nRHSXorVbles = 0;
-   int specfn = arrSmurfChain[i].specfn;
-   if (specfn != -1)  nRHSXorVbles = arrSpecialFuncs[specfn].rhsVbles.nNumElts+1;
-   if (sHeuristic[1] == 'C') {
+   int xor_part = functionProps[nFnId].bdd_part_bddxor.xor_part;
+   nRHSXorVbles = arrSolverFunctions[xor_part].fn_xor.rhsVbles.nNumElts+1;
+/*   if (sHeuristic[1] == 'C') {
       assert(nRHSXorVbles == 0);
       J_SetHeurScoresForSmurfs_Counting(i, arrRegSmurfInitialStates[i], nRHSXorVbles);
-   } else {
-      J_SetHeurScoresForSmurfs(i, arrRegSmurfInitialStates[i], nRHSXorVbles);
-   }
+   } else {*/
+   LSGBSmurfXorSetHeurScores(nFnId, arrSolverFunctions[nFnId].fn_smurf.pCurrentState, nRHSXorVbles);
+   //}
 }
 
 ITE_INLINE void
-J_SetHeurWeightsTrueState(int nNumXors)
+LSGBSmurfXorSetHeurWeightsTrueState(int nNumXors)
 {
    if (pTrueSmurfState->nNumHeuristicXors < nNumXors) {
       pTrueSmurfState->arrHeuristicXors 
          = (double*)realloc(pTrueSmurfState->arrHeuristicXors, nNumXors*sizeof(double));
+      if (arrXorEqWght == NULL) LSGBXorInitHeuristicTables();
+
       pTrueSmurfState->nNumHeuristicXors = nNumXors;
       pTrueSmurfState->arrHeuristicXors[0] = 0;       
       pTrueSmurfState->arrHeuristicXors[1] = 0;      
@@ -240,7 +203,3 @@ J_SetHeurWeightsTrueState(int nNumXors)
       }
    };
 }
-
-
-*/
-
