@@ -205,6 +205,8 @@ BDDNode *strengthen(int bddNmbr1, int bddNmbr2, int *&length, store *&variables)
 		 //d2_printf2("Removing %d ", bddNmbr2);
 		 bool OLD_DO_INFERENCES = DO_INFERENCES;
 		 DO_INFERENCES = 0;
+		 //I know that no inferences are gonna happen with a True bdd, but this is to stop
+		 //The garbage collector from running (since it's in the inferring code).
 		 Rebuild_BDDx(bddNmbr2);
 		 DO_INFERENCES = OLD_DO_INFERENCES;
     }
