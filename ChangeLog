@@ -1,3 +1,17 @@
+2004-02-28 23:52  mkouril
+
+	* src/utils/bdd.cc: Function to print shared nodes in a BDD -- for
+	  later
+
+2004-02-28 23:46  mkouril
+
+	* src/: formats/5/bddops.cc, utils/bddtable.cc: Faster
+	  bddtable_alloc_not_node
+
+2004-02-28 22:28  mkouril
+
+	* ChangeLog, src/utils/params.cc: Fixed Result type input parameter
+
 2004-02-28 00:03  mkouril
 
 	* include/smurffactory.h, include/solver.h, src/formats/5/p3.cc,

@@ -175,8 +175,8 @@ CreateAffectedFuncsStructures(int nMaxVbleIndex)
       //t_smurf_chain *arrSmurfChain;
 
       SpecialFunc *pSpecialFunc = NULL;
-      if (IsSpecialFunc(arrFuncType[nFuncIndex])) pSpecialFunc = arrSpecialFuncs + nSpecialFuncIndex;
-      else if (arrSmurfChain[nRegSmurfIndex].specfn != -1) pSpecialFunc = arrSpecialFuncs + arrSmurfChain[nRegSmurfIndex].specfn;
+      if (IsSpecialFunc(arrFuncType[nFuncIndex]) || arrSmurfChain[nRegSmurfIndex].specfn != -1) 
+         pSpecialFunc = arrSpecialFuncs + nSpecialFuncIndex;
 
       if (pSpecialFunc)
       {
@@ -192,9 +192,10 @@ CreateAffectedFuncsStructures(int nMaxVbleIndex)
             arrAFS[nVble].nNumSpecialFuncsAffected++;
          }
          nNumElementsSpecFn+=pSpecialFunc->rhsVbles.nNumElts;
+         nSpecialFuncIndex++;
       }
 
-      if (IsSpecialFunc(arrFuncType[nFuncIndex])) nSpecialFuncIndex++;
+      if (IsSpecialFunc(arrFuncType[nFuncIndex])) {}
       else
       {
          for(int i=0;i<arrRegSmurfInitialStates[nRegSmurfIndex]->vbles.nNumElts;i++)
@@ -243,8 +244,8 @@ CreateAffectedFuncsStructures(int nMaxVbleIndex)
    for (int nFuncIndex = 0; nFuncIndex < nmbrFunctions; nFuncIndex++)
    {
       int tmp_nSpecialFuncIndex = -1;
-      if (IsSpecialFunc(arrFuncType[nFuncIndex])) tmp_nSpecialFuncIndex = nSpecialFuncIndex;
-      else if (arrSmurfChain[nRegSmurfIndex].specfn != -1) tmp_nSpecialFuncIndex = arrSmurfChain[nRegSmurfIndex].specfn;
+      if (IsSpecialFunc(arrFuncType[nFuncIndex]) || arrSmurfChain[nRegSmurfIndex].specfn != -1) 
+         tmp_nSpecialFuncIndex = nSpecialFuncIndex;
 
       if (tmp_nSpecialFuncIndex != -1)
       {
@@ -287,9 +288,10 @@ CreateAffectedFuncsStructures(int nMaxVbleIndex)
             arrAFS[nVble].arrSpecFuncsAffected[nIndex].nRHSIndex = i;
             arrSpecialFuncIndexForVble[nVble]++;
          }
+         nSpecialFuncIndex++;
       }
 
-      if (IsSpecialFunc(arrFuncType[nFuncIndex])) nSpecialFuncIndex++;
+      if (IsSpecialFunc(arrFuncType[nFuncIndex])) {}
       else
       {
          for(int i=0;i<arrRegSmurfInitialStates[nRegSmurfIndex]->vbles.nNumElts;i++)
