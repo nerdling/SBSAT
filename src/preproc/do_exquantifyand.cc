@@ -242,23 +242,23 @@ int ExQuantifyAnd () {
 							//If variable v occurs in only this BDD.
 							if(amount[variables[j].num[v]].head->next == NULL) {
 								//d3_printf3("working on %d, %d\n", variables[j].num[v], length[j]);
-								BDDNode *Quantify = functions[j];
+								BDDNode *Quantify2 = functions[j];
 								//Quantify out every Ex variable except variable v
 								int bdd_length;
 								int *bdd_vars = NULL;
 								for(int y = 0; y < length[j]; y++) {
 									if(v!=y && amount[variables[j].num[y]].head->next == NULL) {
 										//d3_printf2("%d ", variables[j].num[y]);
-										Quantify = xquantify(Quantify, variables[j].num[y]);
+										Quantify2 = xquantify(Quantify2, variables[j].num[y]);
 									}
 								}
 								//d3_printf1("\n");
-								//printBDD(Quantify);
+								//printBDD(Quantify2);
 								//d3_printf1("\n");
 								
 								if(bdd_vars == NULL) {
 									bdd_length = 0;
-									switch (int r=Rebuild_BDD(Quantify, &bdd_length, bdd_vars)) {
+									switch (int r=Rebuild_BDD(Quantify2, &bdd_length, bdd_vars)) {
 									 case TRIV_UNSAT:
 									 case TRIV_SAT:
 									 case PREP_ERROR: return r;
@@ -308,7 +308,7 @@ int ExQuantifyAnd () {
 								}
 								
 								infer *x_infers = NULL;
-								x_infers = possible_infer_x(Quantify, variables[j].num[v]);
+								x_infers = possible_infer_x(Quantify2, variables[j].num[v]);
 								assert(x_infers!=NULL);
 								
 								if(x_infers->nums[0] != 0) {
@@ -462,6 +462,7 @@ int ExQuantifyAnd () {
 					equalityVble[j] = 0;
 					functionType[j] = UNSURE;
 					ret = PREP_CHANGED;
+					continue;
 					//goto ea_bailout; /* as much as I hate gotos */
 				} else {
 					functions[j] = Quantify;
@@ -476,6 +477,7 @@ int ExQuantifyAnd () {
 					equalityVble[j] = 0;
 					functionType[j] = UNSURE;
 					ret = PREP_CHANGED;
+					continue;
 				}
 			}
 		}

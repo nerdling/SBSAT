@@ -79,6 +79,8 @@ int Do_Rewind() {
 	
 	DO_INFERENCES = OLD_DO_INFERENCES;
 	
+	bdd_gc(1);
+	
 	switch (int r=Do_Apply_Inferences()) {
 	 case TRIV_UNSAT:
 	 case TRIV_SAT:
@@ -96,7 +98,7 @@ int Do_Rewind() {
 	else ret = PREP_NO_CHANGE;
 	fprintf(stderr, "%d/%d ", Total_inferences, numinp);
 
-	bdd_gc(1);
+	//bdd_gc(1);
 	
 	return ret;
 }
