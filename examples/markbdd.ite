@@ -33,7 +33,6 @@ ite 2            ; Function $7, no smurf created
 *and(var1, var2, var3) ; Function $9, smurf 4
 ;Returning the AND operator to normal;
 #define and(x, y) # ite(x, y, F)
-and(a, b)
 
 print_tree  $7 ; No function created, no smurf created
 pprint_tree $7 ; No function created, no smurf created
