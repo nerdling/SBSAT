@@ -340,28 +340,32 @@ int ExQuantify () {
 								}
 							}
 						}
-					
-						for(int iter = 0; iter<str_length; iter++)
-						  d3_printf1("\b");
-						d3_printf2 ("*{%d}", i);
-						str_length = 0;// strlen(p);
-						functions[j] = xquantify (functions[j], i);
-						variablelist[i].true_false = 2;
-						SetRepeats(j);
-
-						//fprintf(stderr, "\n");
-						//printBDDerr(functions[j]);
-						//fprintf(stderr, "\n");
-						ret = PREP_CHANGED;
-						switch (int r=Rebuild_BDDx(j)) {
-						 case TRIV_UNSAT:
-						 case TRIV_SAT:
-						 case PREP_ERROR: 
-							ret=r;
-							goto ex_bailout;
-						 default: break;
+					} //If ex-infer == 1
+						
+					if(amount[i].head!=NULL) {
+						if(amount[i].head->next == NULL && amount[i].head->num == j) {
+							for(int iter = 0; iter<str_length; iter++)
+							  d3_printf1("\b");
+							d3_printf2 ("*{%d}", i);
+							str_length = 0;// strlen(p);
+							functions[j] = xquantify (functions[j], i);
+							variablelist[i].true_false = 2;
+							SetRepeats(j);
+							
+							//fprintf(stderr, "\n");
+							//printBDDerr(functions[j]);
+							//fprintf(stderr, "\n");
+							ret = PREP_CHANGED;
+							switch (int r=Rebuild_BDDx(j)) {
+							 case TRIV_UNSAT:
+							 case TRIV_SAT:
+							 case PREP_ERROR: 
+								ret=r;
+								goto ex_bailout;
+							 default: break;
+							}
+							loop_again = 1;
 						}
-						loop_again = 1;
 					}
 				}
 			}
