@@ -40,6 +40,7 @@
 #include "ite.h"
 #include "solver.h"
 
+//#define ORIG_LEMMA_CACHE
 #define MAX_NUM_CACHED_LEMMAS_0 (MAX_NUM_CACHED_LEMMAS/5)
 #define MAX_NUM_CACHED_LEMMAS_2 (MAX_NUM_CACHED_LEMMAS*4/5)
 
@@ -85,6 +86,10 @@ int L0Filter(LemmaInfoStruct *p)
 
 int L1Filter(LemmaInfoStruct *p)
 {
+#ifdef ORIG_LEMMA_CACHE
+   FreeLemma(p);
+   return 0; /* did not go through */
+#endif
    if (0
           || p->pLemma->arrLits[0] < 7 
           || p->nLemmaLastUsed
@@ -124,7 +129,11 @@ AddLemmaIntoCache(LemmaInfoStruct *p)
    p->nLemmaNumber=ite_counters[NUM_LEMMA_INTO_CACHE];
 
    AddLemmaIntoWatchedLits(p);
+#ifdef ORIG_LEMMA_CACHE
+   L1PQEnqueue(p);
+#else
    L0PQEnqueue(p);
+#endif
 }
 
 ITE_INLINE void
