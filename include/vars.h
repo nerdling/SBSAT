@@ -220,4 +220,5 @@ extern int prover3_max_vars;
 extern int do_split_max_vars;
 extern int functionTypeLimits[MAX_FUNC];
 extern int enable_gc;
+extern int ex_infer;
 #endif

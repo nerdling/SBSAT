@@ -235,6 +235,8 @@ t_opt options[] = {
 		"set the time limit in seconds (0=no limit)"},
 { &do_split_max_vars, "",  "do-split-max-vars", P_INT, V(i:0,"0"),  V(i:10,"10"), VAR_NORMAL, 0,
 		"Threashold above which the Sp splits BDDs."},
+{ &ex_infer, "",  "ex-infer", P_INT, V(i:0,"0"),  V(i:0,"0"), VAR_NORMAL, 0,
+		"Enable/Disable Ex Qantification to infer variables before they are quantified away.."},
 	
 /* 
  * Brancher options
