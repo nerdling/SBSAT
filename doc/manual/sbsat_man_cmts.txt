@@ -1,0 +1,116 @@
+Introduction and Overview sections not written yet.  But why is there
+a separate overview section?
+
+The following:
+   ... for more information how to get it.
+is not proper English.  Try something like:
+   ... for information about obtaining a copy.
+
+Awkward English:
+   Considering you obtained sbsat as tar.gz archive you will need to unpack
+   it first.
+should be:
+   If your copy of sbsat is the tarball sbsat-vxxx.tar.gz you will need to
+   decompress and unpack it first.
+
+Compiling...
+
+It says tar and gzip are present on most platforms.  That may be true for
+unix platforms but not windows platforms.  Do you have a way to get the 
+distribution to windows users?  For example, using zip?  Or maybe making a
+self-extracting executable?
+
+It does not say that one should make a directory to put the distribution
+into before compiling.  Perhaps in /usr/local?  Then they may have to be
+root?
+
+Awkward English:
+   Change the current directory into newly created one.
+should be:
+   Change to the newly created directory.
+or
+   Change directory to the newly created one.
+
+   And run configure and make
+should be
+   Run configure and make
+
+Regarding make check - it should be mentioned this only works from the 
+distribution directory.
+
+Regarding make install - the user should be reminded to become root.
+Why should this be optional?  Maybe both check and install should be
+given without being "optional"?
+
+Instead of the "Advantage.." sentence, say that the user must set a path
+variable to use the software.  Say what the path variable should be.
+
+Running...
+   From now on I will assume
+should be
+   From now on it will be assumed
+
+   Usage of ..
+should be
+   Invoke sbsat using ..
+
+How can an option be required?  You might say:
+   Following the convention of the open source community, options
+   --help and --version will provide command line parameter
+   information types and package version numbers.
+
+Instead of "start" or "started" say "launch" or "launched" or "invoke" or
+"invoked"
+
+Current Section 6 should be Section 5.1 (and so on)
+
+There are so many options - many another list in alphabetical order would
+be helpful.
+
+Page 8: The ITE Interface: it says the process is as follows then lists
+   one item - maybe more will follow?
+
+Move the sentence saying the interface can be used in front of any solver
+to the beginning section (that is, 7, not a subsection like 7.1 - but
+of course the section numbering now is changed slightly).
+
+I am going to need to spice up some of the language of section 7.1 - it
+is really important that users understand the potential of this tool.
+
+Page 9: you have "p bdd #vars #equations" but the text refers to #inputvars.
+Please make these consistent.
+
+Section 7.1.2 - can keywords be placed anywhere or are there restrictions?
+Answer goes here on page 9.
+
+he should be s/he or else alternate he / she in the text or else say
+"he or she".  Same for his/her.
+
+In example for INITIALBRANCH you state what INITIALBRANCH does.  Pull that
+out and explain before the example.
+
+If VAR is obsolete why stick it in?  If there had been a previous release
+where VAR was needed I can see it for backward compatibility.  But we have
+not really released yet so forget about it, I think.
+
+What equation does $5 refer to?  That has to be in here somewhere.
+
+Continue this section with examples even though they may seem obvious.
+
+OK, I see things like GCF are not yet finished.
+
+Hmmm... I thought you said INITIALBRANCH was the only keyword taking
+arguments in parens but I think that all the others do too.  What's the
+deal?
+
+Do people know what a BDD really is?  Can they interpret the picture on
+Page 13 without an explanation?
+
+Page 14: ADD_STATE: explain why this comes in handy.
+
+Section 8 on: not yet developed.
+
+
+
+
+

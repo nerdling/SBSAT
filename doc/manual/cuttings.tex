@@ -1,0 +1,95 @@
+\subsection{Translating an expression to canonical form}\label{xlate-section}
+
+\begin{quotation}
+\textcolor{red}{Page 7: The section on converting to SAT does not
+belong here. At this point the user is trying to figure out how to
+use SBSAT. Either move it to a later section, probably on its own,
+or save it for the detailed sections (I still believe we will have
+one user manual when we are done and one documentation manual).}
+\end{quotation}
+%
+%JVF - let's consider saying something about the canonical form before
+%this.
+
+In case an expression is written in a format other than one of those
+recognized by {\tt sbsat} it is possible to translate that expression
+to the canonical form mentioned on Page~\pageref{can} and discussed in
+Section~\ref{can-section}.  Two examples demonstrate this here. The
+first is inspired by a well-known problem from the field of Artificial
+Intelligence involving a simple database query.  Consider the
+following database taken from Charles Dodgson's (aka Lewis Carroll)
+book \emph{Symbolic Logic}:
+
+{\baselineskip=0pt
+\begin{enumerate}
+\item Coloured flowers are always scented.
+\item I dislike flowers that are not grown in the open air.
+\item No flowers grown in the open air are colourless.
+\end{enumerate}}
+
+\noindent
+The query is in the form of the question: Do I dislike all flowers
+that are not scented?  Express the sentences of the database in first
+order logic as:
+
+\begin{enumerate}
+\item[] $\forall$\emph{w} ( Colored(\emph{w}) $\Rightarrow$ Scented(\emph{w})
+)
+\item[] $\forall$\emph{x} ( $\neg$OpenAir(\emph{x})$\Rightarrow$ $\neg$Like(\emph{x})
+)
+\item[] $\forall$\emph{y} ( OpenAir(\emph{y}) $\Rightarrow$ Colored(\emph{y})
+)
+\end{enumerate}
+
+\noindent
+Express the question as: $\forall$\emph{z} ( $\neg$Scented(\emph{z})
+$\Rightarrow$$\neg$Like(\emph{z}) )
+
+Figures~\ref{data-1-figure} and~\ref{data-2-figure} show translations
+to two of the formats recognized by {\tt sbsat}: namely, CNF and the
+canonical form.  Files {\tt flowers.cnf} and {\tt flowers.ite} in the
+{\tt .../examples} subdirectory contain electronic versions of those
+figures.
+
+\begin{figure}
+\begin{verbatim}
+   p bdd 4 4
+   ;Coloured flowers are always scented.
+   ;I dislike flowers that are not grown in the open air.
+   ;No flowers grown in the open air are colourless.
+   ;Do I dislike all flowers that are not scented?
+   ;Where Colored=1, Scented=2, Like=3, Grown in the Open Air=4
+   ;The question must be negated and added to the database.
+   ;If SBSAT returns 'unsat' then the answer to the question
+   ;is 'YES', otherwise the answer is 'NO'.
+   *imp(1, 2)
+   *imp(-3, -4)
+   *imp(3, 1)
+   *not(imp(-2, -4))
+\end{verbatim}
+\caption{Canonical format for solving the database query problem.}\label{data-1-figure}
+\vspace*{6mm}
+\begin{verbatim}
+   p cnf 4 5
+   c Coloured flowers are always scented.
+   c I dislike flowers that are not grown in the open air.
+   c No flowers grown in the open air are colourless.
+   c Do I dislike all flowers that are not scented?
+   c Where Colored=1, Scented=2, Like=3, Grown in the Open Air=4
+   c The question must be negated and added to the database.
+   c If SBSAT returns 'unsat' then the answer to the question
+   c is 'YES', otherwise the answer is 'NO'.
+   -1 2 0
+   3 -4 0
+   -3 1 0
+   -2 0
+   4 0
+\end{verbatim}
+\caption{CNF format for solving the database query problem.}\label{data-2-figure}
+\end{figure}
+
+%JVF - a second example goes here - why not the impulse response?
+%JVF - make sure everyone knows that {\tt sbsat} means the executable
+%      but SBSAT refers to the package
+%JVF - make sure everyone knows that in .../examples, ... means the
+%      SBSAT root directory
