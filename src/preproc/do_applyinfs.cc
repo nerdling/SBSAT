@@ -67,7 +67,7 @@ Do_Apply_Inferences ()
 	delete temp;
 
 	void bdd_gc();
-	if(rand() % 1000 < 4) bdd_gc();
+	if(rand() % 1000 < 1) bdd_gc();
 	//I know it looks strange to have this here twice, but it's necessary
 	//for preprocessing options that call this but don't have any inferences.
 	
