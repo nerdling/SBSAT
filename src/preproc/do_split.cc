@@ -155,6 +155,10 @@ int Split_Large () {
 				}
 			}
 
+			d3_printf2("\n%d: ", j);
+			printBDD(functions[j]);
+			d3_printf1("\n");
+			
 			switch (int r=Rebuild_BDDx(j)) {
 			 case TRIV_UNSAT:
 			 case TRIV_SAT:
