@@ -46,6 +46,7 @@
 #define ERR_BT_SPEC_FN_XOR 3
 #define ERR_BT_LEMMA 4
 #define ERR_BT_SOL_LEMMA 5
+#define ERR_LIMITS 6
 
 #define INF_SMURF        10
 #define INF_SPEC_FN_AND  11 
