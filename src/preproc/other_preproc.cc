@@ -131,7 +131,15 @@ int countBDDs() {
 }
 
 BDDNode *strip_x (int bdd, int x) {
-	if(length[bdd] < 3) return functions[bdd];
+	if(length[bdd] < 3) {
+		BDDNode *ret_bdd = functions[bdd];
+		functions[bdd] = true_ptr;
+		int OLD_DO_INFERENCES = DO_INFERENCES;
+		DO_INFERENCES = 0;
+		Rebuild_BDDx(bdd);
+		DO_INFERENCES = OLD_DO_INFERENCES;
+		return ret_bdd;
+	}
 	int new_x = variables[bdd].num[0]; //Really if variable 1 doesn't exist
 	                                   //in this BDD then I don't have to do
 	                                   //two replaces
