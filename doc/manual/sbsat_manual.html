@@ -151,12 +151,7 @@ Contents</A>
 </H1>
 
 <P>
-The ITE interface is a continuation of a project started by Laura
-A. Pugh, August 17 2000 for C123 under the direction of Mark Vanfleet,
-Michael Dransfield, and Kelly McGuire. This project is being continued
-by Sean Weaver, under the direction of Mark Vanfleet and Dr. John
-Franco. The ITE interface is a module which can be used as a front
-end on any Satisfiability solver (SAT solver, see page ??). 
+Introduction
 
 <P>
 
@@ -165,22 +160,7 @@ end on any Satisfiability solver (SAT solver, see page ??).
 </H1>
 
 <P>
-The ITE interface provides the user with a unique Binary Decision
-Diagram (BDD) interface (See BDDs. page ??). This interface is used
-to enter problems into any SAT solver. BDDs allow the user to express
-his/her problem data in a way that is natural to it's domain. The
-common practice of translating a problem into Conjunctive Normal Form
-(CNF) destroys naturally occurring clusters of information that can
-be taken advantage of during the search process (See CNF, page ??).
-Receiving the input in BDD form also gives traditional SAT solvers
-the ability to add and use powerful BDD preprocessing techniques before
-search. During search a SAT solver also has the ability to use any
-information contained in the BDDs to help it's search heuristic. ITE
-can provide a translation to CNF if it is being used in conjunction
-with a CNF SAT solver. ITE is currently being used in conjunction
-with a SAT solver named SBSAT. SBSAT is being developed at the University
-of Cincinnati by Mark Vanfleet, Dr. John Franco, Dr. John Schlipf,
-Sean Weaver, Michal Kouril, and George Vogel. 
+Overview
 
 <P>
 
@@ -279,7 +259,7 @@ SBSat executable is called ite and is located in the src directory
 within the directory containing the sources for sbsat (sbsat directory).
 Unless you installed it to your system in the previous step (make
 install) you will need to refer to it with the full path or add this
-path into your PATH variable. Now on I will assume that the ite was
+path into your PATH variable. From now on I will assume that ite was
 installed.
 
 <P>
@@ -686,6 +666,32 @@ the user's input file. This process is as follows:
 </H2>
 
 <P>
+The ITE interface is a continuation of a project started by Laura
+A. Pugh, August 17 2000 for C123 under the direction of Mark Vanfleet,
+Michael Dransfield, and Kelly McGuire. This project is being continued
+by Sean Weaver, under the direction of Mark Vanfleet and Dr. John
+Franco. The ITE interface is a module which can be used as a front
+end on any Satisfiability solver (SAT solver, see page ??). 
+
+<P>
+The ITE interface provides the user with a unique Binary Decision
+Diagram (BDD) interface (See BDDs. page ??). This interface is used
+to enter problems into any SAT solver. BDDs allow the user to express
+his/her problem data in a way that is natural to it's domain. The
+common practice of translating a problem into Conjunctive Normal Form
+(CNF) destroys naturally occurring clusters of information that can
+be taken advantage of during the search process (See CNF, page ??).
+Receiving the input in BDD form also gives traditional SAT solvers
+the ability to add and use powerful BDD preprocessing techniques before
+search. During search a SAT solver also has the ability to use any
+information contained in the BDDs to help it's search heuristic. ITE
+can provide a translation to CNF if it is being used in conjunction
+with a CNF SAT solver. ITE is currently being used in conjunction
+with a SAT solver named SBSat. SBSat is being developed at the University
+of Cincinnati by Mark Vanfleet, Michael Dransfield, Dr. John Franco,
+Dr. John Schlipf, Sean Weaver, Michal Kouril, and George Vogel. 
+
+<P>
 There is a header for every input file. Only comments are allowed
 to proceed the header. Thus it follows that all equations, defines,
 etc., follow directly after the header. 
@@ -714,7 +720,7 @@ conforms to the DIMACS standard which is as follows.
 
 <DL COMPACT>
 <DT>
-<DD>p&nbsp;bdd&nbsp;#InputVars&nbsp;#Equations&nbsp;
+<DD>p&nbsp;bdd&nbsp;#Vars&nbsp;#Equations&nbsp;
 </DD>
 </DL>The letter 'p' at the start of a line denotes the start of the header.
 ITE requires that 'bdd' be the next three letters; these denote that
@@ -1574,9 +1580,9 @@ Copyright &#169; 1997, 1998, 1999,
 Mathematics Department, Macquarie University, Sydney.
 <P>
 The command line arguments were: <BR>
- <STRONG>latex2html</STRONG> <TT>-no_subdir -split 0 -show_section_numbers /tmp/lyx_tmpdir144006zwQ5a/lyx_tmpbuf0/sbsat_manual.tex</TT>
+ <STRONG>latex2html</STRONG> <TT>-no_subdir -split 0 -show_section_numbers /tmp/lyx_tmpdir25856M1ofbs/lyx_tmpbuf0/sbsat_manual.tex</TT>
 <P>
-The translation was initiated by  on 2003-07-07<HR>
+The translation was initiated by  on 2003-07-08<HR>
 <!--Navigation Panel-->
 <IMG WIDTH="81" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next_inactive"
  SRC="file:/usr/share/latex2html/icons/nx_grp_g.png"> 
@@ -1588,7 +1594,7 @@ The translation was initiated by  on 2003-07-07<HR>
 <!--End of Navigation Panel-->
 <ADDRESS>
 
-2003-07-07
+2003-07-08
 </ADDRESS>
 </BODY>
 </HTML>
