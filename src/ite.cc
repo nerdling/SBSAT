@@ -228,7 +228,8 @@ ite_free(Tracer *tracer)
    variablelist = NULL;
    delete [] original_functions;
    original_functions = NULL;
-
+	ite_free((void *)var_score);
+	
    bdd_bdd_free_pools();
    bdd_circuit_free();
 }

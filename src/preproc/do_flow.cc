@@ -116,3 +116,129 @@ void Do_Flow() {
 	//ite_free((void *)var_score);
 	ite_free((void *)var_mark);
 }
+
+
+void Do_Flow_Grouping() {
+	
+	struct message {
+		int depth;
+		int *influence;
+	};
+	
+	var_score = (float *)ite_calloc(numinp+1, sizeof(float), 9, "var_score");
+	int *var_mark = (int *)ite_calloc(numinp+1, sizeof(int), 9, "var_mark");
+
+	int *equ_funcs = (int *)ite_calloc(numinp+1, sizeof(int), 9, "equ_funcs");
+	
+	int indep_count = 0;
+	int dep_count = 0;
+	for(int x = 1; x <= numinp; x++) {
+		if(independantVars[x] == 1) {
+			indep_count++;
+			var_mark[x] = 1;
+			if(num_funcs_var_occurs == 0) 
+			  {
+//				  fprintf(stderr, "\nnon-existent variable\n");
+				  continue;
+			  }
+			  var_score[x] = 1/((float)num_funcs_var_occurs[x]);
+		} else {
+			dep_count++;
+			for(int y = 0; y < nmbrFunctions; y++) {
+				if(equalityVble[y] == x) equ_funcs[x] = y;				
+			}
+		}
+	}
+//	fprintf(stderr, "\nindep_count = %d\n", indep_count);
+//	fprintf(stderr, "\ndep_count = %d\n", dep_count);
+	
+	message *influences = (message *)ite_calloc(numinp+1, sizeof(message), 9, "influences");
+	int *indep_mapping = (int *)ite_calloc(numinp+1, sizeof(int), 9, "indep_mapping");
+	int mapping_count = 1;
+	
+	for(int x = 1; x <= numinp; x++) {
+		influences[x].influence = (int *)ite_calloc(indep_count+1, sizeof(int), 9, "influences[x].influence");
+		influences[x].depth = 0; //useless cause calloc makes this equal 0
+		if(independantVars[x] == 1) { 
+			influences[x].influence[mapping_count] = 1;
+			indep_mapping[mapping_count++] = x;
+		}
+	}
+
+	int go_again = 1;
+	int times = 20;
+	while(go_again == 1 && times > 0) {
+		times--;
+		go_again = 0;
+
+		for(int x = 1; x <= numinp; x++) {
+			if (var_mark[x] == 0) {
+//				fprintf(stderr, "trying %d\n", x);
+				float score = 0;
+				int out = 0;
+				for(int y = 0; y < length[equ_funcs[x]]; y++) {
+					if(variables[equ_funcs[x]].num[y] == x) continue;
+					if(var_score[variables[equ_funcs[x]].num[y]] == 0) {
+//						fprintf(stderr, "%d has not yet been set\n", variables[equ_funcs[x]].num[y]);
+						out = 1;
+						break;
+					}
+					score+=var_score[variables[equ_funcs[x]].num[y]];
+				}
+				if(out == 1) {
+					go_again = 1;
+					continue;
+				}
+				if((num_funcs_var_occurs[x] - 1) == 0) {
+					fprintf(stddbg, "\ndivide by zero in Do_Flow\n");
+					break;
+					//exit(0);
+				}
+				var_score[x] = score/((float)(num_funcs_var_occurs[x] - 1));
+				if(var_score[x] == 0 && x != numinp+1) {
+					symrec *ptr = getsym_i(x);
+//					fprintf(stderr, "%s", ptr->name);
+//					fprintf(stderr, "PROBLEM: Zero weight variable");
+					//exit(0);
+				}
+				for(int y = 0; y < length[equ_funcs[x]]; y++) {
+					for(int z = 0; z < indep_count; z++) {
+						if(variables[equ_funcs[x]].num[y] == x) continue;
+						if(influences[variables[equ_funcs[x]].num[y]].influence[z] > 0) {
+							influences[x].influence[z]++;
+							if(influences[x].depth <= influences[variables[equ_funcs[x]].num[y]].depth)
+							  influences[x].depth = influences[variables[equ_funcs[x]].num[y]].depth+1;
+						}
+					}
+				}
+					  
+				var_mark[x] = 1;
+			}
+		}
+	}
+
+	for(int x = 1; x <= numinp; x++) {
+		symrec *ptr = getsym_i(x);
+		var_score[x] = var_score[x] + 1;
+		d3_printf5("%d{%d} (%s) = %5.3f ", x, influences[x].depth, (ptr&&ptr->name?ptr->name:"NULL"), var_score[x]);
+		if(independantVars[x] == 0) {
+			for(int y = 0; y <= indep_count; y++) {
+				if(influences[x].influence[y] > 0) {
+					ptr = getsym_i(indep_mapping[y]);
+					d3_printf3("%d (%s), ", indep_mapping[y], (ptr&&ptr->name?ptr->name:"NULL"));
+				}
+			}
+		}
+		d3_printf1("\n");
+	}
+
+	for(int x = 0; x < dep_count; x++) {
+		ite_free((void *)influences[x].influence);
+	}
+
+	ite_free((void *)indep_mapping);
+   ite_free((void *)influences);
+	ite_free((void *)equ_funcs);
+	//ite_free((void *)var_score); //This should be freed after the brancher returns a solution!
+	ite_free((void *)var_mark);
+}

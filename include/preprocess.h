@@ -91,6 +91,7 @@ int Do_ExQuantify();
 int Do_ExQuantifyAnd();
 int Do_DepCluster();
 void Do_Flow();
+void Do_Flow_Grouping();
 
 int Finish_Preprocessing();
 int Init_Preprocessing();
