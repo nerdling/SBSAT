@@ -35,8 +35,8 @@ ID           [-a-zA-Z0-9_.\[\]]+
 "%"[^\n]*         /* eat up one-line comments */
 
 [ \t\r]+            /* eat up whitespace */
-"\\""\n"	    /* eat up new-lines */ { s_line++; d2_printf3("\rLine: %d, Functions: %d", s_line, nmbrFunctions); }
-"\n"	          /* eat up new-lines */ { s_line++; d2_printf3("\rLine: %d, Functions: %d", s_line, nmbrFunctions); }
+"\\""\n"	    /* eat up new-lines */ { s_line++; if (s_line%100==0) d2_printf3("\rLine: %d, Functions: %d", s_line, nmbrFunctions); }
+"\n"	          /* eat up new-lines */ { s_line++;  if (s_line%100==0) d2_printf3("\rLine: %d, Functions: %d", s_line, nmbrFunctions); }
 
 .                 printf( "Unrecognized character: %s\n", yytext ); 
 

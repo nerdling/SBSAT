@@ -24,8 +24,8 @@
    extern int varindex;
 
    /* FIXME: make it more dynamic! */
-   extern BDDNode *explist[10][1000];
-   extern int expindex[10];
+   extern BDDNode *explist[100][1000];
+   extern int expindex[100];
    extern int explevel;
 
    extern int lines;
@@ -36,7 +36,7 @@
    int orlevel = 0;
    int symbols = 0;
    int p_level = 0;
-   int p_symbols[20];
+   int p_symbols[50];
 
    void prover_nothing() { /*unput (0);*/ }
 
@@ -80,7 +80,7 @@ exp:  ID
     { symrec *s=s_getsym($1, SYM_VAR); assert(s); set_S_vars_indep(s); $$ = ite_vars(s); symbols++; }
    |  '~' exp
      { $$ = ite_not( $2 ); }
-   |  '(' { push_symbols(); } exp ')' { if (symbols >= 10) { $3=tmp_equ_var($3); symbols=0;}; pop_symbols(); }
+   |  '(' { /*push_symbols();*/ } exp ')' { /*if (symbols >= 10) { $3=tmp_equ_var($3); symbols=0;}; pop_symbols();*/ }
      { $$ = $3; }
    | exp '&' exp 
      { $$ = ite_and($1, $3); }

@@ -729,12 +729,12 @@ YY_RULE_SETUP
 case 11:
 YY_RULE_SETUP
 #line 38 "prover_s.ll"
-/* eat up new-lines */ { s_line++; d2_printf3("\rLine: %d, Functions: %d", s_line, nmbrFunctions); }
+/* eat up new-lines */ { s_line++; if (s_line%100==0) d2_printf3("\rLine: %d, Functions: %d", s_line, nmbrFunctions); }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
 #line 39 "prover_s.ll"
-/* eat up new-lines */ { s_line++; d2_printf3("\rLine: %d, Functions: %d", s_line, nmbrFunctions); }
+/* eat up new-lines */ { s_line++; if (s_line%100==0) d2_printf3("\rLine: %d, Functions: %d", s_line, nmbrFunctions); }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
