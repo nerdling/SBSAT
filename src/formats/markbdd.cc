@@ -345,7 +345,9 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 	}
 	if (!strcasecmp (macros, "add_state")) {
 		BDDNode *v1 = putite(intnum, bdd);
+		expect_integer = 1;
       BDDNode *v2 = putite(intnum, bdd);
+		expect_integer = 0;
       if (v2 != ite_var (v2->variable)) {
 			fprintf (stderr, "\nKeyword 'add_state' needs a positive integer as a second argument (%s)...exiting:%d\n", macros, markbdd_line);
 			exit (1);
@@ -441,8 +443,12 @@ BDDNode *putite(int intnum, BDDNode * bdd)
       int *newBDD = new int[50];
       
 		//      struct BDDNodeStruct **functions = new BDDNode*[50];      
-		for (int x = 1; x <= tempint[0]; x++)
+		for (int x = 1; x <= tempint[0]; x++) {
+			expect_integer = 1;
 		  newBDD[x] = (putite (intnum, bdd))->variable;
+		}
+		expect_integer = 0;
+
       newBDD[0] = tempint[0];
       delete newBDD;
 		functionType[nmbrFunctions] = UNSURE;
