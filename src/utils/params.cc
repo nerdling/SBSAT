@@ -547,6 +547,7 @@ DO_ALL(int value/* , char *s_value*/)
 	set_param_int(strcpy(tmp_str, "Sp"), value);
 	set_param_int(strcpy(tmp_str, "Rw"), value);
 	set_param_int(strcpy(tmp_str, "Cf"), value);
+	set_param_int(strcpy(tmp_str, "Ff"), value);
 	set_param_int(strcpy(tmp_str, "P3"), value);
 }
 
