@@ -129,19 +129,12 @@ bdd_circuit_init(int n_vars, int n_fns) /* numinp, numout */
 void
 bdd_circuit_free()
 {
-   free(independantVars);
-   independantVars = NULL;
-   free(equalityVble);
-   equalityVble = NULL;
-   free(functions);
-   functions = NULL;
-   free(xorFunctions);
-   xorFunctions = NULL;
-   free(functionType);
-   functionType = NULL;
-   free(parameterizedVars);
-   parameterizedVars = NULL;
-   free(parameterGroup);
-   parameterGroup = NULL;
+   ite_free((void*)independantVars);
+   ite_free((void*)equalityVble);
+   ite_free((void*)functions);
+   ite_free((void*)xorFunctions);
+   ite_free((void*)functionType);
+   ite_free((void*)parameterizedVars);
+   ite_free((void*)parameterGroup);
 }
 

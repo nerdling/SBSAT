@@ -39,10 +39,6 @@
 
 #include "ite.h"
 
-#define BUCKET_OVERLAP        6  /*  6 initial bucket overlap  2 */
-#define NEW_BUCKET_THREASHOLD 70 /* 70 percent                15 */
-#define BUCKET_OVERLAP_INC    16 /* 16 buckets                 2 */
-
 typedef struct {
    BDDNode *memory;
    int bucket_overlap;
@@ -68,11 +64,7 @@ void bdd_bdd_alloc_pool(int pool)
       dE_printf1("Increase the number of BDD Pools\n");
       exit(1);
    }
-   //bddmemory_vsb[pool].bucket_overlap = BUCKET_OVERLAP;
-   //bddmemory_vsb[pool].numBuckets = numBuckets;
-   //bddmemory_vsb[pool].sizeBuckets = sizeBuckets;
-   //bddmemory_vsb[pool].memorySize = numBuckets + sizeBuckets;
-   bddmemory_vsb[pool].max = 1000000; //1 << bddmemory_vsb[pool].memorySize;
+   bddmemory_vsb[pool].max = _bdd_pool_size; 
    bddmemory_vsb[pool].memory = (BDDNode*)calloc(bddmemory_vsb[pool].max, sizeof(BDDNode));
    d2_printf2 ("Allocated %ld bytes for bdd pool\n", (long)((bddmemory_vsb[pool].max)*sizeof(BDDNode)));
    if (!bddmemory_vsb[pool].memory) { fprintf(stderr, "out of memory"); exit(1); }
@@ -173,7 +165,6 @@ bddvsb_find_or_add_node (int v, BDDNode * r, BDDNode * e)
 
    BDDNode **node = hash_memory+hash_pos;
    BDDNode **prev = NULL; 
-   //BDDNode **prev = hash_memory+hash_pos;
    ite_counters[BDD_NODE_STEPS]++;
 
    while (!(*node == NULL || ((*node)->variable == v && (*node)->thenCase == r && (*node)->elseCase == e)))
@@ -184,8 +175,9 @@ bddvsb_find_or_add_node (int v, BDDNode * r, BDDNode * e)
    }
 
    if (*node != NULL) {
-      if (prev && prev != node) {// != node && 0) {
-         //assert(&(*prev)->next == node);
+      /* if this node has one in front of it in the chain
+       * swap it so the next time this nodes needs less steps */
+      if (prev && prev != node) {
 
          BDDNode *tmp = *prev;
          *prev = *node;
@@ -193,16 +185,13 @@ bddvsb_find_or_add_node (int v, BDDNode * r, BDDNode * e)
 
          BDDNode *tmp_next = (*prev)->next;
 
-         //if ((*node)->next == *prev) {
-            (*prev)->next = *node;
-         //} else {
-         //   (*prev)->next = (*node)->next;
-         //}
+         (*prev)->next = *node;
          (*node)->next = tmp_next;
 
          node = prev;
       }
    } else {
+      /* count not find the node => allocate new one */
       ite_counters[BDD_NODE_NEW]++;
       if (bddmemory_vsb[numBDDPool].max == curBDDPos) {
 	  ++numBDDPool;
@@ -216,4 +205,306 @@ bddvsb_find_or_add_node (int v, BDDNode * r, BDDNode * e)
       GetInferFoAN(*node); //Get Inferences
    }
    return *node;
+}
+
+void
+bdd_fix_inferences(BDDNode *node)
+{
+  if (node->thenCase->inferences == NULL)
+    bdd_fix_inferences(node->thenCase); 
+  if (node->elseCase->inferences == NULL)
+    bdd_fix_inferences(node->elseCase); 
+  GetInferFoAN(node);
+}
+
+typedef struct {
+   void *bddtable_start;
+   int   bddtable_pos;
+   int   num_variables;
+   int   num_functions;
+} t_sbsat_env;
+
+FILE *
+ite_fopen(char *filename, char *fileflags)
+{
+   FILE *f = fopen(filename, fileflags);
+   if (!f) {
+      cerr << "Can't open " << filename << endl;
+   }
+   return f;
+}
+
+long
+ite_filesize(char *filename)
+{
+   struct stat buf;
+   if (stat(filename, &buf) != 0) {
+      /* error in errno */
+      return 0;
+   };
+   return buf.st_size;
+}
+
+void
+reload_bdd_circuit(int _numinp, int _numout,
+                   void *_bddtable, int _bddtable_len,
+                   void *_bddtable_start,
+                   void *_equalityvble, 
+                   void *_functions, 
+                   void *_functiontype, 
+                   void *_length, 
+                   void *_variablelist);
+void
+read_bdd_circuit()
+{
+   FILE *fin = NULL;
+   t_sbsat_env sbsat_env;
+   void *_bddtable = NULL;
+   void *_bddtable_start = NULL;
+   int   _bddtable_len = 0;
+   void *_equalityvble = NULL; 
+   void *_functions = NULL;
+   void *_functiontype = NULL; 
+   void *_length = NULL;
+   void *_variablelist = NULL;
+   int _numinp = 0;
+   int _numout = 0;
+
+   cerr << "Reading sbsatenv .. " << endl;
+   assert(ite_filesize("sbsatenv.bin") == sizeof(t_sbsat_env));
+   fin = fopen("sbsatenv.bin", "rb");
+   if (!fin) return;
+   fread(&sbsat_env, sizeof(t_sbsat_env), 1, fin);
+   fclose(fin);
+
+   _numinp = sbsat_env.num_variables;
+   _numout = sbsat_env.num_functions;
+   _bddtable_len = sbsat_env.bddtable_pos;
+   _bddtable_start = sbsat_env.bddtable_start;
+
+
+   cerr << "Reading bddtable .. " << endl;
+   assert(_bddtable_len == (int)(ite_filesize("bddtable.bin")/sizeof(BDDNode)));
+   fin = ite_fopen("bddtable.bin", "rb");
+   if (!fin) return;
+   _bddtable = calloc(_bddtable_len, sizeof(BDDNode));
+   fread(_bddtable, sizeof(BDDNode), _bddtable_len, fin);
+   fclose(fin);
+
+   cerr << "Reading functions .. " << endl;
+   assert(_numout == (int)(ite_filesize("functions.bin")/sizeof(BDDNode*)));
+   fin = ite_fopen("functions.bin", "rb");
+   if (!fin) return;
+   _functions = calloc(_numout, sizeof(BDDNode*));
+   fread(_functions, sizeof(BDDNode*), _numout , fin);
+   fclose(fin);
+
+   cerr << "Reading function types .. " << endl;
+   assert(_numout == (int)(ite_filesize("functiontype.bin")/sizeof(int)));
+   fin = ite_fopen("functiontype.bin", "rb");
+   if (!fin) return;
+   _functiontype = calloc(_numout, sizeof(int));
+   fread(_functiontype, sizeof(int), _numout , fin);
+   fclose(fin);
+
+   cerr << "Reading equality Vble.. " << endl;
+   assert(_numout == (int)(ite_filesize("equalityvble.bin")/sizeof(int)));
+   fin = ite_fopen("equalityvble.bin", "rb");
+   if (!fin) return;
+   _equalityvble = calloc(_numout, sizeof(int));
+   fread(_equalityvble, sizeof(int), _numout , fin);
+   fclose(fin);
+
+   cerr << "Reading length .. " << endl;
+   assert(_numout == (int)(ite_filesize("length.bin")/sizeof(int)));
+   fin = ite_fopen("length.bin", "rb");
+   if (!fin) return;
+   _length = calloc(_numout, sizeof(int));
+   fread(_length, sizeof(int), _numout , fin);
+   fclose(fin);
+
+   cerr << "Reading variablelist .. " << endl;
+   assert(_numinp+1 == (int)(ite_filesize("variablelist.bin")/sizeof(varinfo)));
+   fin = ite_fopen("variablelist.bin", "rb");
+   _variablelist = calloc(_numinp+1, sizeof(varinfo));
+   if (!fin) return;
+   fread(_variablelist, sizeof(varinfo), _numinp+1 , fin);
+   fclose(fin);
+
+   reload_bdd_circuit(_numinp, _numout, 
+                      _bddtable, _bddtable_len,
+                      _bddtable_start, 
+                      _equalityvble, _functions,
+                      _functiontype, _length,
+                      _variablelist);
+   ite_free(_bddtable);
+   ite_free(_equalityvble);
+   ite_free(_functions);
+   ite_free(_functiontype);
+   ite_free(_length);
+   ite_free(_variablelist);
+}
+
+void
+reload_bdd_circuit(int _numinp, int _numout,
+                   void *_bddtable, int _bddtable_len,
+                   void *_bddtable_start,
+                   void *_equalityvble, 
+                   void *_functions, 
+                   void *_functiontype, 
+                   void *_length, 
+                   void *_variablelist)
+{
+   cerr << "Have " << _numinp << " variables and " 
+                   << _numout << " functions .. " << endl;
+
+   cerr << "BDD and Circuit Init.. " << endl;
+   numinp = _numinp;
+   numout = _numout;
+   bdd_circuit_init(numinp+1, numout);
+   nmbrFunctions = numout;
+   curBDDPos = _bddtable_len;
+	length = new int[numout + 1];
+   variablelist = new varinfo[numinp + 1];
+
+   assert(bddmemory_vsb[0].max > curBDDPos);
+   memmove(bddmemory_vsb[0].memory, _bddtable, sizeof(BDDNode)*curBDDPos);
+   memmove(functions, _functions, sizeof(BDDNode*)*numout);
+   memmove(functionType, _functiontype, sizeof(int)*numout);
+   memmove(equalityVble, _equalityvble, sizeof(int)*numout);
+   memmove(length, _length, sizeof(int)*numout);
+   memmove(variablelist, _variablelist, sizeof(varinfo)*(numinp+1));
+
+   int shift = (char*)(bddmemory_vsb[0].memory) - (char*)(_bddtable_start);
+
+   /* fix functions */
+   cerr << "Fixing functions .. " << endl;
+   int i;
+   for (i=0;i<numout;i++) {
+      if (functions[i]) functions[i] = (BDDNode*)((char*)(functions[i])+shift);
+   }
+
+   /* fix bdd table */
+   cerr << "Fixing bdd table .. " << endl;
+   for (i=0;i<curBDDPos;i++) {
+      bddmemory_vsb[0].memory[i].thenCase = (BDDNode*)
+         ((char*)bddmemory_vsb[0].memory[i].thenCase + shift);
+      bddmemory_vsb[0].memory[i].elseCase = (BDDNode*)
+         ((char*)bddmemory_vsb[0].memory[i].elseCase + shift);
+      bddmemory_vsb[0].memory[i].next = NULL;
+
+      /* fix bdd hash table */
+      int v = bddmemory_vsb[0].memory[i].variable;
+      BDDNode * r = bddmemory_vsb[0].memory[i].thenCase;
+      BDDNode * e = bddmemory_vsb[0].memory[i].elseCase;
+      int hash_pos = (v + (*(int*)&r) + (*(int*)&e)) & hash_memory_mask;
+      BDDNode **node = hash_memory+hash_pos;
+      bddmemory_vsb[0].memory[i].next = *node;
+      bddmemory_vsb[0].memory[i].inferences = NULL;
+      *node = bddmemory_vsb[0].memory + i;
+   }
+
+   cerr << "Fixing bdd table inferences .. " << endl;
+   GetInferFoAN(bddmemory_vsb[0].memory+0);
+   GetInferFoAN(bddmemory_vsb[0].memory+1);
+   for (i=2;i<curBDDPos;i++) {
+      if (bddmemory_vsb[0].memory[i].inferences == NULL)
+         bdd_fix_inferences(bddmemory_vsb[0].memory+i);
+   }
+}        
+
+void
+get_bdd_circuit(int *_numinp, int *_numout,
+                   void **_bddtable, int *_bddtable_len, int *_bddtable_msize,
+                   void **_equalityvble, 
+                   void **_functions,  int *_functions_msize,
+                   void **_functiontype, 
+                   void **_length, 
+                   void **_variablelist, int *_variablelist_msize)
+{
+  *_numinp = numinp;
+  *_numout = numout;
+  *_bddtable = bddmemory_vsb[0].memory;
+  *_bddtable_len = curBDDPos;
+  *_bddtable_msize = sizeof(BDDNode);
+  *_equalityvble = equalityVble;
+  *_functions = functions;
+  *_functions_msize = sizeof(BDDNode*);
+  *_functiontype = functionType;
+  *_length = length;
+  *_variablelist = variablelist; 
+  *_variablelist_msize = sizeof(varinfo);
+}
+        
+void
+dump_bdd_table()
+{
+   cerr << "dump_bdd_table ---------------------------------" << endl;
+   if (numBDDPool) {
+      cerr << "Can't dump split BDD pool -- please increase bdd-pool-size" << endl;
+      return;
+   }
+   FILE *fout = NULL;
+
+   fout = ite_fopen("bddtable.bin", "wb");
+   if (!fout) return;
+   fwrite(bddmemory_vsb[0].memory, sizeof(BDDNode), curBDDPos, fout);
+   fclose(fout);
+
+   fout = ite_fopen("functions.bin", "wb");
+   if (!fout) return;
+   fwrite(functions, sizeof(BDDNode*), numout , fout);
+   fclose(fout);
+
+   fout = ite_fopen("functiontype.bin", "wb");
+   if (!fout) return;
+   fwrite(functionType, sizeof(int), numout , fout);
+   fclose(fout);
+
+   fout = ite_fopen("equalityvble.bin", "wb");
+   if (!fout) return;
+   fwrite(equalityVble, sizeof(int), numout , fout);
+   fclose(fout);
+
+   fout = ite_fopen("length.bin", "wb");
+   if (!fout) return;
+   fwrite(length, sizeof(int), numout , fout);
+   fclose(fout);
+
+   fout = ite_fopen("variablelist.bin", "wb");
+   if (!fout) return;
+   fwrite(variablelist, sizeof(varinfo), numinp+1 , fout);
+   fclose(fout);
+
+   t_sbsat_env sbsat_env;
+   sbsat_env.bddtable_start = bddmemory_vsb[0].memory;
+   sbsat_env.bddtable_pos = curBDDPos;
+   sbsat_env.num_variables = numinp;
+   sbsat_env.num_functions = numout;
+   fout = fopen("sbsatenv.bin", "wb");
+   if (!fout) return;
+   fwrite(&sbsat_env, sizeof(t_sbsat_env), 1, fout);
+   fclose(fout);
+
+
+
+   /*
+   for (char* i=bddmemory_vsb[0].memory;i<bddmemory_vsb[i].memory+curBDDPos;i++)
+   cout << "Pool is starting at " << bddmemory_vsb[0].memory << endl;
+   for (int i=0;i<curBDDPos;i++) {
+      BDDNode *bdd = (bddmemory_vsb[0].memory + i);
+
+      cout << "var: " << bdd->variable << endl;
+      cout << "then: " << bdd->thenCase << " idx: " << bdd->thenCase-bddmemory_vsb[0].memory << endl;
+      cout << "else: " << bdd->elseCase << " idx: " << bdd->elseCase-bddmemory_vsb[0].memory << endl;
+      // have to fix next anyway 
+      // cout << "next: " << next << endl;
+
+      // must be 0 (NULL)
+      //int t_var;
+      //void *var_ptr;
+      //infer *inferences;
+      //SmurfFactoryAddons *addons;
+   }
+   */
 }
