@@ -53,7 +53,8 @@ char *ite_basename(char *filename);
   cerr << "IN FILE " << __FILE__ << " AT " << __LINE__ << endl; \
   exit(1); };
 
-extern long numinp, numout;
+extern long numinp; // highest variable id occuring in any BDD
+extern long numout;
 extern BDDNode *false_ptr, *true_ptr;
 
 //Begin preprocessing globals

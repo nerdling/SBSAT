@@ -267,7 +267,7 @@ c3_top_bdds(int idx)
       functions_add(c3_bdds(idx, &vars), UNSURE, 0);
    } else {
       idx = -1*idx;
-      fprintf(stderr, "%d vars=%d functions=%d\r", idx, vars_max, functions_max);
+      d3_printf4("%d vars=%d functions=%d\r", idx, vars_max, functions_max);
       c3_top_bdds(c3[idx].arg1);
       if (c3[idx].argc==2) c3_top_bdds(c3[idx].arg2);
    }
