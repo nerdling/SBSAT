@@ -47,22 +47,27 @@ extern int Pos_replace;
 extern int Neg_replace;
 extern int Setting_Pos;
 extern int Setting_Neg;
+extern int *original_functionType;
+extern int *original_equalityVble;
 
 int Do_Rewind() {
 	d3_printf1("REWINDING - ");
 	str_length = 0;
-	MAX_EXQUANTIFY_CLAUSES -= 5;
-	MAX_EXQUANTIFY_VARLENGTH -= 5;
+	MAX_EXQUANTIFY_CLAUSES = 20;
+	MAX_EXQUANTIFY_VARLENGTH = 5;
 	
 	bool OLD_DO_INFERENCES = DO_INFERENCES;
 	DO_INFERENCES = 0;
 
 	Pos_replace = Neg_replace = Setting_Pos = Setting_Neg = 0;
 	
-	for(int x = 0; x < nmbrFunctions; x++)
-	  functions[x] = original_functions[x];
+	for(int x = 0; x < nmbrFunctions; x++) {
+		functions[x] = original_functions[x];
+		functionType[x] = original_functionType[x];
+		equalityVble[x] = original_equalityVble[x];
+	}
 	nmbrFunctions = original_numout;
-
+	
 	for (int x = 0; x < nmbrFunctions; x++) {
 		int r=Rebuild_BDDx(x);
 		switch (r) {

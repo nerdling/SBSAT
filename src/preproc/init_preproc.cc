@@ -62,6 +62,8 @@ long affected;
 BDDNodeStruct **xorFunctions;
 extern long bdd_tempint_max;
 extern int *bdd_tempint;
+int *original_functionType;
+int *original_equalityVble;
 
 int Finish_Preprocessing();
 int Init_Preprocessing();
@@ -90,6 +92,16 @@ Init_Preprocessing()
 	numinp = getNuminp ();
 
 	//BDDNodeStruct **original_functions;
+
+	ITE_NEW_CATCH(original_functionType = new int [nmbrFunctions + 1],
+					  "original functionType");
+	ITE_NEW_CATCH(original_equalityVble = new int [nmbrFunctions + 1],
+					  "original equalityVble");
+
+	for(int x = 0; x < nmbrFunctions; x++) {
+	  original_functionType[x] = functionType[x];
+	  original_equalityVble[x] = equalityVble[x];
+	}
 
 	if(original_functions == NULL) {
 		ITE_NEW_CATCH(
@@ -368,14 +380,10 @@ Finish_Preprocessing()
 	numout = nmbrFunctions;
 
 	for (long x = 0; x < nmbrFunctions; x++) {
-         if (length[x] < functionTypeLimits[functionType[x]])
-         /*
-         if ((functionType[x] == AND && length[x] < AND_EQU_LIMIT)
-          || (functionType[x] == OR && length[x] < OR_EQU_LIMIT)
-          || (functionType[x] == PLAINOR && length[x] < PLAINOR_LIMIT)
-          || (functionType[x] == PLAINXOR && length[x] < PLAINXOR_LIMIT)) 
-          */
-            functionType[x] = UNSURE;
+		//if (length[x] < functionTypeLimits[functionType[x]])
+		  //functionType[x] = UNSURE;
+		if(countFalses(functions[x]) == 1)
+		  functionType[x] = PLAINOR;
    }
 
    ite_free((void**)&bdd_tempint); bdd_tempint_max = 0;
