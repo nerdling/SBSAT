@@ -90,9 +90,6 @@ SmurfFactory()
    // Construct the Smurfs.
    for (int i = 0; i < nmbrFunctions; i++)
    {
-      d5_printf2("Function %d: ", i);
-      D_5( printBDD(functions[i]); );
-      d5_printf1("\n");
       //if (i%100 == 0)
          d2e_printf3("\rCreating Smurfs ... %d/%d", i, nmbrFunctions);
 
@@ -111,6 +108,10 @@ SmurfFactory()
             pSpecFunc = functions[i];
          }
       }
+
+      d5_printf4("Function %d(%d,%d): ", i, length[i], nFunctionType);
+      D_5( printBDD(functions[i]); );
+      d5_printf1("\n");
 
       if (IsSpecialFunc(nFunctionType) == 0)
       {
