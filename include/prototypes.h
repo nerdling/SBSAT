@@ -68,7 +68,7 @@
 #endif
 
 int walkSolve();
-int solve(Tracer * &tracer);
+int solve(Tracer * tracer);
 void write_output (char formatout, Tracer * &tracer);
 int read_input(char formatin, char formatout, Tracer * &tracer);
 

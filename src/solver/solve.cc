@@ -48,7 +48,7 @@ ITE_INLINE int InitSolver();
 ITE_INLINE void FreeSolver(Tracer *tracer);
 
 int
-solve(Tracer * &tracer)
+solve(Tracer * tracer)
 {
   int ret = SOLV_UNKNOWN;
 
