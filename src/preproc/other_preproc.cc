@@ -430,8 +430,8 @@ infer *Ex_GetInfer(BDDNode * func)
 
 	//If either branch(thenCase or elseCase) carries true (is NULL)
 	//Push up the inferences.
-//	if (r == NULL) return e;
-//	if (e == NULL) return r;
+	//if (r == NULL) return e;
+	//if (e == NULL) return r;
    if(r == NULL || e == NULL) return NULL;
 	//If both are NULL, NULL is returned
 	
@@ -604,9 +604,19 @@ infer *possible_infer_x(BDDNode *f, int x)
 			inference->next = NULL;
 			return inference;
 		} else {
+			BDDNode *r_BDD = ite_and(f->thenCase, ite_not(f->elseCase));
+			                 //Ex_GetInfer(f->thenCase);
+			if(r_BDD == false_ptr) {				  
+				infer *inference = new infer;
+				inference->nums[0] = -x;
+				inference->nums[1] = 0;
+				inference->next = NULL;
+				return inference;
+			}
+
 			infer *head = NULL;
 			infer *temp = NULL;
-			infer *r = Ex_GetInfer(f->thenCase);
+			infer *r = r_BDD->inferences;
 			if(r == NULL) {
 				head = new infer;
 				head->nums[0] = 0;
@@ -615,9 +625,19 @@ infer *possible_infer_x(BDDNode *f, int x)
 				return head;
 			}
 				  
-			infer *e = Ex_GetInfer(f->elseCase);
+			BDDNode *e_BDD = ite_and(f->elseCase, ite_not(f->thenCase));
+			                 //Ex_GetInfer(f->elseCase);
+			if(e_BDD == false_ptr) {				  
+				infer *inference = new infer;
+				inference->nums[0] = x;
+				inference->nums[1] = 0;
+				inference->next = NULL;
+				return inference;
+			}
+			
+			infer *e = e_BDD->inferences;
 			if(e == NULL) {
-				while (r!=NULL) { temp = r; r = r->next; delete temp;	}
+				//while (r!=NULL) { temp = r; r = r->next; delete temp;	}
 				head = new infer;
 				head->nums[0] = 0;
 				head->nums[1] = 0;
@@ -626,26 +646,35 @@ infer *possible_infer_x(BDDNode *f, int x)
 			}
 			
 			for(infer *r_iter=r; r_iter!=NULL; r_iter=r_iter->next) {
-				for(infer *e_iter=e; e_iter!=NULL; e_iter=e_iter->next) {
-					if(r_iter->nums[0] == -e_iter->nums[0]) {
-						temp = head;
-						head = new infer;
-						head->nums[0] = x;
-						head->nums[1] = r_iter->nums[0];
-						head->next = temp;
+				if(r_iter->nums[1] == 0) {
+					for(infer *e_iter=e; e_iter!=NULL; e_iter=e_iter->next) {
+						if(e_iter->nums[1] == 0) {
+							if(r_iter->nums[0] == -e_iter->nums[0]) {
+								temp = head;
+								head = new infer;
+								head->nums[0] = x;
+								head->nums[1] = r_iter->nums[0];
+								head->next = temp;
+								//fprintf(stderr, "[%d, %d]", x, r_iter->nums[0]);
+							}
+						}
 					}
 				}
 			}
 
-			while (r!=NULL) { temp = r; r = r->next; delete temp;	}
-			while (e!=NULL) { temp = e; e = e->next; delete temp;	}
+			//while (r!=NULL) { temp = r; r = r->next; delete temp;	}
+			//while (e!=NULL) { temp = e; e = e->next; delete temp;	}
 			
 			if(head == NULL) {
 				head = new infer;
 				head->nums[0] = 0;
 				head->nums[1] = 0;
 				head->next = NULL;
+//			} else {
+//				int w = 0;
+//				printBDDTree(f, &w);
 			}
+			
 			return head;
 		}
 	} else {
@@ -698,17 +727,6 @@ infer *possible_infer_x(BDDNode *f, int x)
 					head->nums[1] = r_iter->nums[1];
 					head->next = temp;
 					break;
-				} else if(r_iter->nums[0] == e_iter->nums[0] && r_iter->nums[1] == -e_iter->nums[1]) {
-					//delete head, r and e, return 0;
-					infer *temp;
-					while (head!=NULL) {	temp = head; head = head->next; delete temp; }
-					while (r!=NULL) { temp = r; r = r->next; delete temp;	}
-					while (e!=NULL) { temp = e; e = e->next; delete temp; }
-					temp = new infer;
-					temp->nums[0] = 0;
-					temp->nums[1] = 0;
-					temp->next = NULL;
-					return temp;
 				}
 			}
 		}

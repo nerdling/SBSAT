@@ -199,6 +199,36 @@ ExQuantifyAnd ()
 
 							infer *x_infers = possible_infer_x(functions[j], i);
 
+/*							
+							BDDNode *quant = xquantify(functions[j], i);
+							if(set_variable(functions[j], i, 1) == quant)
+							  fprintf(stderr, "***[%d=T]***\n", i);
+							if(set_variable(functions[j], i, 0) == quant)
+							  fprintf(stderr, "***[%d=F]***\n", i);
+							for(int a = 0; a < length[j]; a++) {
+								if(i == variables[j].num[a]) continue;
+								if(i > variables[j].num[a]) {
+								  if(num_replace(functions[j], i, variables[j].num[a]) == quant)
+									 fprintf(stderr, "***[%d=%d]***\n", i, variables[j].num[a]);
+								} else {
+								  if(num_replace(functions[j], variables[j].num[a], i) == quant)
+									 fprintf(stderr, "***[%d=%d]***\n", i, variables[j].num[a]);
+								}
+							}
+							for(int a = 0; a < length[j]; a++) {
+								if(i == variables[j].num[a]) continue;
+								if(i > variables[j].num[a]) {
+								  if(num_replace(functions[j], i, -variables[j].num[a]) == quant)
+									 fprintf(stderr, "***[%d=%d]***\n", i, -variables[j].num[a]);
+								} else {
+								  if(num_replace(functions[j], variables[j].num[a], -i) == quant)
+									 fprintf(stderr, "***[%d=%d]***\n", i, -variables[j].num[a]);
+								}
+							}
+*/							
+								  
+							
+							
 							if(x_infers == NULL) {
 								//do nothing. //Variable dropped out or was inferred during ANDing.
 							} else if(x_infers->nums[0] == 0) {
@@ -235,6 +265,7 @@ ExQuantifyAnd ()
 								bdd_vars = NULL;
 							}
 						}
+						
 						switch (int r=Rebuild_BDDx(j)) {
 						 case TRIV_UNSAT:
 						 case TRIV_SAT: 

@@ -142,6 +142,37 @@ int ExQuantify () {
 					infer *x_infers = possible_infer_x(functions[j], i);
 					//infer *x_infers = new infer;
 					//x_infers->nums[0] = 0;
+
+					
+/*					
+					BDDNode *quant = xquantify(functions[j], i);
+					if(set_variable(functions[j], i, 1) == quant)
+					  fprintf(stderr, "***[%d=T]***\n", i);
+					if(set_variable(functions[j], i, 0) == quant)
+					  fprintf(stderr, "***[%d=F]***\n", i);
+					for(int a = 0; a < length[j]; a++) {
+						if(i == variables[j].num[a]) continue;
+						if(i > variables[j].num[a]) {
+							if(num_replace(functions[j], i, variables[j].num[a]) == quant)
+							  fprintf(stderr, "***[%d=%d]***\n", i, variables[j].num[a]);
+						} else {
+							if(num_replace(functions[j], variables[j].num[a], i) == quant)
+							  fprintf(stderr, "***[%d=%d]***\n", i, variables[j].num[a]);
+						}
+					}
+					for(int a = 0; a < length[j]; a++) {
+						if(i == variables[j].num[a]) continue;
+						if(i > variables[j].num[a]) {
+							if(num_replace(functions[j], i, -variables[j].num[a]) == quant)
+							  fprintf(stderr, "***[%d=%d]***\n", i, -variables[j].num[a]);
+						} else {								 
+							if(num_replace(functions[j], variables[j].num[a], -i) == quant)
+							  fprintf(stderr, "***[%d=%d]***\n", i, -variables[j].num[a]);
+						}
+					}
+*/					
+					
+					
 					if(x_infers == NULL) {
 						//continue, variable was inferenced away earlier.
 						//It will get picked up next loop around
