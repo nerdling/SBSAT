@@ -41,14 +41,6 @@
 #include "ite.h"
 #include "preprocess.h"
 
-//!These two flags should not be changed until ExQuantify is redone!
-
-int MAX_EXQUANTIFY_CLAUSES = 3;	//Number of BDDs a variable appears in
-				     //to quantify that variable away.
-int MAX_EXQUANTIFY_VARLENGTH = 18;	//Limits size of number of vars in 
-				     //constraints created by ExQuantify
-//!
-
 int ExQuantify();
 
 int Do_ExQuantify() {

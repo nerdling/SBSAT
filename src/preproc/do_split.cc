@@ -150,6 +150,7 @@ int Split_Large () {
 		}
 		
 		if (functionType[j] == UNSURE && length[j] > k_size) {
+			/*			
 			//d3_printf2("\n%d: ", j);
 			//printBDD(functions[j]);
 			//d3_printf1("\n");
@@ -211,9 +212,11 @@ int Split_Large () {
 					goto sp_bailout;
 				 default: break;
 				}
-			}
-			if (functionType[j] == UNSURE && length[j] > k_size) {
-/*				
+			 }
+		*/
+		}
+		if (functionType[j] == UNSURE && length[j] > k_size) {
+			/*				
 				int whereat = 0;
 				//Here is another idea for how to break BDDS:
 				//Look at a BDD, traverse it down to a level where the inferences != NULL
@@ -265,69 +268,66 @@ int Split_Large () {
 				 default: break;
 				}
 				
+			 */				
+		}
+		if (functionType[j] == UNSURE && length[j] > k_size) { 
+			//Function is still too large, must use alternative method (CNF).
+			//Count the clauses
+			int num = countFalses (functions[j]);
+			if(num == 1) functionType[j] = PLAINOR;
+			else if(num > 1) {
+				affected++;
+				ret = PREP_CHANGED;
+				intlist *list = new intlist[num];
+				int listx = 0;
+				long tempint_max = 0;
+				int *tempint = NULL;
+				findPathsToFalse (functions[j], &tempint_max, &tempint, list, &listx);
+				ite_free((void**)&tempint); tempint_max = 0;
+				if(listx >= max_bdds) {
+					BDDFuncs = (BDDNode **)ite_recalloc(BDDFuncs, max_bdds, listx+1, sizeof(BDDNode *), 9, "BDDFuncs");
+					max_bdds = listx+1;
+					num_bdds = listx;
+				}
+				for (int i = 0; i < listx; i++) {
+					BDDFuncs[i] = false_ptr;
+					for(int x = 0; x < list[i].length; x++)
+					  BDDFuncs[i] = ite_or(BDDFuncs[i], ite_var(-list[i].num[x])); //Need to negate all literals to get CNF!
+					delete [] list[i].num;
+				}
+				delete [] list;
 				
+				switch (int r=add_newFunctions(BDDFuncs, listx)) {
+				 case TRIV_UNSAT:
+				 case TRIV_SAT:
+				 case PREP_ERROR: 
+					ret=r;
+					goto sp_bailout;
+				 default: break;
+				}
+				for(int i = nmbrFunctions-listx; i < nmbrFunctions; i++)
+				  functionType[i] = PLAINOR;
 				
-*/				
-			}
-			if (functionType[j] == UNSURE && length[j] > k_size) { 
-				//Function is still too large, must use alternative method (CNF).
-				//Count the clauses
-				int num = countFalses (functions[j]);
-				if(num == 1) functionType[j] = PLAINOR;
-				else if(num > 1) {
-					affected++;
-					ret = PREP_CHANGED;
-					intlist *list = new intlist[num];
-					int listx = 0;
-                                        long tempint_max = 0;
-                                        int *tempint = NULL;
-					findPathsToFalse (functions[j], &tempint_max, &tempint, list, &listx);
-                                        ite_free((void**)&tempint); tempint_max = 0;
-					if(listx >= max_bdds) {
-						BDDFuncs = (BDDNode **)ite_recalloc(BDDFuncs, max_bdds, listx+1, sizeof(BDDNode *), 9, "BDDFuncs");
-						max_bdds = listx+1;
-						num_bdds = listx;
-					}
-					for (int i = 0; i < listx; i++) {
-						BDDFuncs[i] = false_ptr;
-						for(int x = 0; x < list[i].length; x++)
-						  BDDFuncs[i] = ite_or(BDDFuncs[i], ite_var(-list[i].num[x])); //Need to negate all literals to get CNF!
-						delete [] list[i].num;
-					}
-					delete [] list;
-					
-					switch (int r=add_newFunctions(BDDFuncs, listx)) {
-					 case TRIV_UNSAT:
-					 case TRIV_SAT:
-					 case PREP_ERROR: 
-						ret=r;
-						goto sp_bailout;
-					 default: break;
-					}
-					for(int i = nmbrFunctions-listx; i < nmbrFunctions; i++)
-					  functionType[i] = PLAINOR;
-
-					equalityVble[j] = 0;
-					functionType[j] = UNSURE;
-					functions[j] = true_ptr;
-					switch (int r=Rebuild_BDDx(j)) {
-					 case TRIV_UNSAT:
-					 case TRIV_SAT:
-					 case PREP_ERROR: 
-						ret=r;
-						goto sp_bailout;
-					 default: break;
-					}
+				equalityVble[j] = 0;
+				functionType[j] = UNSURE;
+				functions[j] = true_ptr;
+				switch (int r=Rebuild_BDDx(j)) {
+				 case TRIV_UNSAT:
+				 case TRIV_SAT:
+				 case PREP_ERROR: 
+					ret=r;
+					goto sp_bailout;
+				 default: break;
 				}
 			}
-			
-			//d3_printf2("\n%d: ", j);
-			//printBDD(functions[j]);
-			//d3_printf1("\n");
 		}
+		
+		//d3_printf2("\n%d: ", j);
+		//printBDD(functions[j]);
+		//d3_printf1("\n");
 	}
-	sp_bailout:
-
+	sp_bailout:;
+	
 	ite_free((void **)&BDDFuncs);
 	return ret;
 }

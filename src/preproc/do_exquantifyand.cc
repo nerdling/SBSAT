@@ -43,10 +43,10 @@
 
 //!These two flags should not be changed until ExQuantify is redone!
 
-extern int MAX_EXQUANTIFY_CLAUSES; /* = 20;*/	//Number of BDDs a variable appears in
-				     //to quantify that variable away.
-extern int MAX_EXQUANTIFY_VARLENGTH; /* = 18; */	//Limits size of number of vars in 
-				     //constraints created by ExQuantify
+int MAX_EXQUANTIFY_CLAUSES = 10;	  //Number of BDDs a variable appears in
+                                   //to quantify that variable away.
+int MAX_EXQUANTIFY_VARLENGTH = 8; //Limits size of number of vars in 
+                                   //constraints created by ExQuantify
 //!
 
 int ExQuantifyAnd();
@@ -54,8 +54,8 @@ int ExQuantifyAnd();
 int
 Do_ExQuantifyAnd()
 {
-	MAX_EXQUANTIFY_CLAUSES = 200;
-	MAX_EXQUANTIFY_VARLENGTH = 18;
+	MAX_EXQUANTIFY_CLAUSES += 10;
+	MAX_EXQUANTIFY_VARLENGTH +=2;
 	d3_printf1 ("ANDING AND EXISTENTIALLY QUANTIFYING -  ");
 	int cofs = PREP_CHANGED;
 	int ret = PREP_NO_CHANGE;
@@ -84,16 +84,16 @@ Do_ExQuantifyAnd()
 int 
 ExQuantifyAnd ()
 {
-  int ret = PREP_NO_CHANGE;
-
-  store *examount = new store[numinp + 1];
-  int *tempmem = new int[numinp + 1];
-  BDDNode *Quantify;
-  //int exquant = 0;   
-  for (int x = 0; x < numinp + 1; x++)
-    tempmem[x] = 0;
+	int ret = PREP_NO_CHANGE;
 	
-  for (int x = 0; x < nmbrFunctions; x++)
+	store *examount = new store[numinp + 1];
+	int *tempmem = new int[numinp + 1];
+	BDDNode *Quantify;
+	//int exquant = 0;   
+	for (int x = 0; x < numinp + 1; x++)
+	  tempmem[x] = 0;
+	
+	for (int x = 0; x < nmbrFunctions; x++)
 	  {
 		  for (int i = 0; i < length[x]; i++)
 			 {
@@ -112,11 +112,12 @@ ExQuantifyAnd ()
 	  {
 		  for (int i = 0; i < length[x]; i++)
 			 {
-				 examount[variables[x].num[i]].num[examount[variables[x].num[i]].
-															  length] = x;
+				 examount[variables[x].num[i]].num[examount[variables[x].num[i]].length] = x;
 				 examount[variables[x].num[i]].length++;
 			 }
 	  }
+	void bdd_gc();
+	bdd_gc();
 	for (int x = 1; x <= MAX_EXQUANTIFY_CLAUSES; x++)
 	  {
 		  for (int i = 1; i < numinp + 1; i++)
@@ -149,7 +150,7 @@ ExQuantifyAnd ()
 						Quantify = functions[j];
 						int out = 0;
 						if(x==1) ret = PREP_CHANGED;
-						if(length[j]>MAX_EXQUANTIFY_VARLENGTH) continue;
+						if(length[j]>MAX_EXQUANTIFY_VARLENGTH && ret!=PREP_CHANGED) continue;
 						for(int z = 1; z < examount[i].length; z++) {
 							if (nCtrlC) {
 								out = 1;
@@ -160,6 +161,7 @@ ExQuantifyAnd ()
 								break;
 							}
 							Quantify = ite_and(Quantify, functions[examount[i].num[z]]);
+							affected++;
 							functions[examount[i].num[z]] = true_ptr;
 							UnSetRepeats(examount[i].num[z]);
 							equalityVble[examount[i].num[z]] = 0;
@@ -174,7 +176,10 @@ ExQuantifyAnd ()
 						if(out) {
 							functions[j] = Quantify;
 						} else {
+							for(int iter = 0; iter<str_length; iter++)
+							  d3_printf1("\b");
 							d3_printf2 ("*{%d}", i);
+							str_length = 0;// strlen(p);
 							functions[j] = xquantify (Quantify, i);
 						}
 						switch (int r=Rebuild_BDDx(j)) {
