@@ -134,3 +134,5 @@ int _bdd_pool_size=1000000;
 varinfo *variablelist = NULL;
 
 int nNumAutarkies = 0;
+
+t_arrVarScores *arrVarScores = NULL;
