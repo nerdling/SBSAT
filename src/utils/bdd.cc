@@ -1457,6 +1457,10 @@ void unravelBDD (long *y, int tempint[5000], BDDNode * func) {
          tempint[v] = tempint[i];
       }
       (*y) = v + 1;
+      if (*y >= 4999) {
+         fprintf(stderr, "Tooo big\n");
+         exit(1);
+      }
 		
       //End sorting and duplicates
    } else (*y)++;
