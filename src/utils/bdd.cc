@@ -759,8 +759,60 @@ BDDNode *ite_x_F_T(BDDNode *x)
    return x_not;
 }
 
+inline BDDNode *_ite_x_y_F(BDDNode *x, BDDNode *y);
+
 inline
 BDDNode *ite_x_y_F(BDDNode *x, BDDNode *y)
+{
+   if (y == true_ptr) return x;
+   if (y == false_ptr) return false_ptr;
+   return _ite_x_y_F(x, y);
+}
+
+inline
+BDDNode *_ite_x_y_F(BDDNode *x, BDDNode *y)
+{
+   if (x == true_ptr) return y;
+   if (x == false_ptr) return false_ptr;
+
+   //if (y == true_ptr) return x;
+   //if (y == false_ptr) return false_ptr;
+  
+   int v;
+   BDDNode * r;
+   BDDNode * e;
+
+   if (x->variable > y->variable) {
+      v = x->variable;
+      r = _ite_x_y_F(x->thenCase, y);
+      e = _ite_x_y_F(x->elseCase, y);
+   } else if (x->variable == y->variable) {
+      if (x == y) return x;
+      else if (x->notCase == y) return false_ptr;
+      else {
+         v = x->variable;
+         if (y->thenCase == true_ptr) r=x->thenCase;
+         else if (y->thenCase == false_ptr) r=false_ptr;
+         else r = _ite_x_y_F(x->thenCase, y->thenCase);
+         if (y->elseCase == true_ptr) e=x->elseCase;
+         else if (y->elseCase == false_ptr) e=false_ptr;
+         else e = _ite_x_y_F(x->elseCase, y->elseCase);
+      }
+   } else {
+      v = y->variable;
+      r = _ite_x_y_F(y->thenCase, x);  //mk switch
+      e = _ite_x_y_F(y->elseCase, x);
+   } 
+
+   if (r == e) return (r);
+   // this happens but not often enough to bring a speedup
+   //if (r == x->thenCase && e == x->elseCase && v==x->variable) return x; 
+   //if (r == y->thenCase && e == y->elseCase && v==y->variable) return y;
+   return find_or_add_node(v, r, e);
+}
+
+inline
+BDDNode *OLD_ite_x_y_F(BDDNode *x, BDDNode *y)
 {
    if (x == true_ptr) return y;
    if (x == false_ptr) return false_ptr;
@@ -791,6 +843,9 @@ BDDNode *ite_x_y_F(BDDNode *x, BDDNode *y)
    } 
 
    if (r == e) return (r);
+   // this happens but not often enough to bring a speedup
+   //if (r == x->thenCase && e == x->elseCase && v==x->variable) return x; 
+   //if (r == y->thenCase && e == y->elseCase && v==y->variable) return y;
    return find_or_add_node(v, r, e);
 }
 
