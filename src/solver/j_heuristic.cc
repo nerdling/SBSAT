@@ -227,7 +227,25 @@ J_ResetHeuristicScores()
 
 #define HEUR_FUNCTION J_OptimizedHeuristic_l
 #include "heur_choice.cc"
+/*
+int order[] = {89,90,88,91,87,92,86,93,85,94,84,95,83,96,82,97,81,98,80,99,79,100,78,101,77,102,76,103,75,104,74,105,73,106,72,107,71,108,70,109,69,110,68,111,67,112,66,113,65,114,64,115,63,116,62,117,61,118,60,119,59,120,58,121,57,122,56,123,55,124,54,125,53,126,52,127,51,128,50,129,49,130,48,131,47,132,46,133,45,134,44,135,43,136,42,137,41,138,40,139,39,140,38,141,37,142,36,143,35,144,34,145,33,146,32,147,31,148,30,149,29,150,28,151,27,152,26,153,25,154,24,155,23,156,22,157,21,158,20,159,19,160,18,161,17,162,16,163,15,164,14,165,13,166,12,167,11,168,10,169,9,170,8,171,7,172,6,173,5,174,4,175,3,176,2,177,1,178};
 
+void
+J_OptimizedHeuristic(int *pnBranchAtom, int *pnBranchValue)
+{
+   
+   int i=1;
+   for(i=1;i<177;i++) {
+      int var = order[i];
+      if (var < nNumVariables && arrSolution[var] == BOOL_UNKNOWN) {
+         *pnBranchAtom = var;
+         *pnBranchValue = BOOL_TRUE;
+      }
+   }
+   
+   return J_OptimizedHeuristic_(pnBranchAtom, pnBranchValue);
+}
+  */ 
 ITE_INLINE void 
 J_Heuristic_Lemma(LemmaInfoStruct **ppUnitLemmaList, int *nInferredAtom, int *nInferredValue)
 {

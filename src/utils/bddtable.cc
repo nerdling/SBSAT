@@ -242,6 +242,7 @@ bdd_flag_nodes(BDDNode *node)
    bdd_flag_nodes(node->thenCase);
    bdd_flag_nodes(node->elseCase);
 	if(node->notCase!=NULL) bdd_flag_nodes(node->notCase); //SEAN
+	if(node->or_bdd!=NULL) bdd_flag_nodes(node->or_bdd); //mk
 }
 
 
@@ -315,7 +316,8 @@ bdd_gc()
             DeallocateInferences_var(node->inferences, node->variable);
 
             node->notCase = NULL; //SEAN
-				
+            node->or_bdd = NULL; //mk
+
 				memset(node, 0, sizeof(BDDNode));
             node->next = bddtable_free;
             bddtable_free = node;

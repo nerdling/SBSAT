@@ -69,34 +69,33 @@ I_OptimizedHeuristic(int *pnBranchAtom, int *pnBranchValue)
   int lit=0;
 
   D_3(fprintVars(stdout, nNumVariables);)
-
   do
   {
-  fprintf(stdout, "Please enter the next variable to branch on: ");
-  if (scanf("%d", &lit)!=1) {
-    char c;
-    scanf("%c", &c);  
-    lit=0;
-  }
-  if (lit != 0) {
-    if (abs(lit) >= nNumVariables) {
-	fprintf(stdout, "This variable does not exist\n");
-	lit=0;
-    } else
-    if (arrSolution[abs(lit)] != BOOL_UNKNOWN) {
-	fprintf(stdout, "This variable is already set to %c\n",
-		arrSolution[abs(lit)]==BOOL_TRUE?'T':'F');
-	lit=0;
-    } else {
-      if (lit > 0) {
-	*pnBranchValue = BOOL_TRUE;
-        *pnBranchAtom = lit;
-      } else {
-	*pnBranchValue = BOOL_FALSE;
-        *pnBranchAtom = -lit;
-      }
-    }
-  } 
+     fprintf(stdout, "Please enter the next variable to branch on: ");
+     if (scanf("%d", &lit)!=1) {
+        char c;
+        scanf("%c", &c);  
+        lit=0;
+     }
+     if (lit != 0) {
+        if (abs(lit) >= nNumVariables) {
+           fprintf(stdout, "This variable does not exist\n");
+           lit=0;
+        } else
+           if (arrSolution[abs(lit)] != BOOL_UNKNOWN) {
+              fprintf(stdout, "This variable is already set to %c\n",
+                    arrSolution[abs(lit)]==BOOL_TRUE?'T':'F');
+              lit=0;
+           } else {
+              if (lit > 0) {
+                 *pnBranchValue = BOOL_TRUE;
+                 *pnBranchAtom = lit;
+              } else {
+                 *pnBranchValue = BOOL_FALSE;
+                 *pnBranchAtom = -lit;
+              }
+           }
+     } 
   }
   while (lit==0);
   fprintf(stdout, "Branching on %d\n", lit);
