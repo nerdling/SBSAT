@@ -56,11 +56,14 @@ CreateInferences () {
 			lastiter->next = AllocateInference(-x, 0, NULL);
 			lastiter = lastiter->next;
 		} else if(variablelist[x].equalvars != 0) {
-			if(variablelist[x].equalvars>0) {
+         lastiter->next = AllocateInference(x, variablelist[x].equalvars, NULL);
+         /*
+         if(variablelist[x].equalvars>0) {
             lastiter->next = AllocateInference(x, variablelist[x].equalvars, NULL);
 			} else {
             lastiter->next = AllocateInference(-x, -variablelist[x].equalvars, NULL);
 			}
+         */
 			lastiter = lastiter->next;
 		}
 	}

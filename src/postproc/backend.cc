@@ -365,11 +365,8 @@ Verify_NoSolver()
 	solution_info = NULL;
    delete [] original_variables;
 	original_variables = NULL;
-	delete [] variablelist;
-	variablelist = NULL;
-	delete [] original_functions;
-	original_functions = NULL;
-
+	ite_free((void**)&variablelist);
+   ite_free((void**)&original_functions);
 	ite_free((void **)&length);
 	//delete [] length;
 	length = NULL;
