@@ -982,8 +982,8 @@ void bddloop () {
 		independantVars[x] = 0;
 	}
 	
-	//  p = fgetc(finputfile);
-	// 
+	p = fgetc(finputfile);
+	 
 	d3_printf1("\n");
 	
 	while (1) {		//(p = fgetc(finputfile))!=EOF) 
@@ -1026,7 +1026,7 @@ void bddloop () {
 			d3_printf1("\r");
 			continue;
 		}
-      if (p == '*') {
+		if (p == '*') {
 			keep[nmbrFunctions] = 1;
 			keepnum++;
 			functions[nmbrFunctions] = putite (intnum, bdd);
