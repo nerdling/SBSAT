@@ -72,7 +72,7 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 			max_macros=intnum+2;
 		}
 		sprintf(macros, "%d", intnum);
-//		intnum = i_getsym(macros);
+//		intnum = i_getsym(macros, SYM_VAR);
 //		Here I need to return an integer if it is actually an integer...
 //		for the defines, and InititalBranch, and others that use integers.
 //		Though I could fix those to use integers correctly......maybe.....
@@ -121,7 +121,6 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 	}
 	if (!strcasecmp (macros, "initialbranch")) {
 
-		int looping = 0;
 		char p = ' ';
 		while (p != ')') {
          p = fgetc(finputfile);
@@ -210,7 +209,7 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 				exit (1);
 			}
 			v++;
-			intnum = i_getsym(macros);
+			intnum = i_getsym(macros, SYM_VAR);
 			for(int iter = 1; iter < v; iter++)
 			  if(defines[whereat].vlist[iter] == intnum) {
 				  fprintf(stderr, "\nCannot use the same variable (%s) twice in argument list in #define %s...exiting:%d\n", getsym_i(intnum)->name, defines[whereat].string, markbdd_line);
@@ -637,7 +636,8 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 		functionType[nmbrFunctions] = UNSURE;
       return v1;
 	}
-	int v = i_getsym(macros);
+
+	int v = i_getsym(macros, SYM_VAR);
 
 	if(v > numinp) {
 		numinp+=10;

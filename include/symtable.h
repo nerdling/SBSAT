@@ -9,27 +9,33 @@ struct symrec
   int id;
   int flag;
   int indep;
+  int sym_type;
   BDDNode true_false;
   BDDNode false_true;
 };
 
 typedef struct symrec symrec;
 
+#define SYM_ANY   0
+#define SYM_VAR   1
+#define SYM_FN    2
+#define SYM_OTHER 3
+
 /* The symbol table: a chain of `struct symrec'.     */
 //extern symrec **sym_table;
 
 void    sym_init();
-symrec *putsym(char *);
+symrec *putsym(char *, int);
 symrec *getsym(char *);
-int     i_getsym(char *);
-int     i_putsym(char *);
-symrec *s_getsym(char *);
+int     i_getsym(char *, int);
+int     i_putsym(char *, int);
+symrec *s_getsym(char *, int);
 void    s_set_indep(symrec *, int);
 char   *s_name(int);
-symrec *tputsym();
+symrec *tputsym(int);
 symrec *getsym_i(int id);
 void    print_symtable();
-int get_or_putsym_check(char *sym_name, int id);
+int get_or_putsym_check(char *sym_name, int sym_type, int id);
 
 /* reg expressions */
 typedef struct {

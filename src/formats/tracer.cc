@@ -159,7 +159,7 @@ void Tracer::explore (Node *node, int ns, Hashtable *sym) {
    //** this one.  Previous value should be null.  If not null and 
    //** different then there is an error.
    // if (!sym.get(node.getId().equals(new Integer(ns)))) then error...
-   if (ns>0) get_or_putsym_check(node->getId(), ns);
+   if (ns>0) get_or_putsym_check(node->getId(), SYM_VAR, ns);
    sym->put(node->getId(), new Integer(ns, node->getId()));
    node->setMark();
 }
@@ -269,7 +269,7 @@ Tracer::parseInput () {
                 while (t->hasMoreTokens()) {
                    sym = trim->get(t->nextToken());
                    if (symbols->get(sym) == NULL) {
-                      get_or_putsym_check(sym, nsymbols);
+                      get_or_putsym_check(sym, SYM_VAR, nsymbols);
                       symbols->put(sym, new Integer(nsymbols++, sym));
                    }
                    if (inputs->get(sym) == NULL)
@@ -481,7 +481,7 @@ we1:
                    sym = trim->get(t->nextToken());
                    if (!strcmp(sym,"STRUCTURE")) break;
                    if (symbols->get(sym) == NULL) {
-                      get_or_putsym_check(sym, nsymbols);
+                      get_or_putsym_check(sym, SYM_VAR, nsymbols);
                       symbols->put(sym, new Integer(nsymbols++, sym));
                    }
                    if (outputs->get(sym) == NULL)
@@ -519,7 +519,7 @@ we1:
                 while (t->hasMoreTokens()) {
                    v = trim->get(t->nextToken());
                    if (symbols->get(v) == NULL) {
-                      get_or_putsym_check(v, nsymbols);
+                      get_or_putsym_check(v, SYM_VAR, nsymbols);
                       symbols->put(v, new Integer(nsymbols++, v));
                    }
                 }
@@ -547,7 +547,7 @@ we1:
                    while (t->hasMoreTokens()) {
                       v = trim->get(t->nextToken());
                       if (symbols->get(v) == NULL) {
-                         get_or_putsym_check(v, nsymbols);
+                         get_or_putsym_check(v, SYM_VAR, nsymbols);
                          symbols->put(v, new Integer(nsymbols++, v));
                       }
                    }
@@ -569,7 +569,7 @@ we1:
                    // "new_int_leaf", record new literals and increase the  
                    // number of smurfs.                                     
                    if (symbols->get(first) == NULL) {
-                      get_or_putsym_check(first, nsymbols);
+                      get_or_putsym_check(first, SYM_VAR, nsymbols);
                       symbols->put(first, new Integer(nsymbols++, first));
                    }
                    // Operator "new_int_leaf" is expected to hold a constant 
@@ -591,7 +591,7 @@ we1:
                          if (special_op) 
                             special_op = false;
                          else if (symbols->get(v) == NULL) {
-                            get_or_putsym_check(first, nsymbols);
+                            get_or_putsym_check(first, SYM_VAR, nsymbols);
                             symbols->put(v, new Integer(nsymbols++, v));
                          }
                       }

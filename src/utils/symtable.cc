@@ -22,8 +22,8 @@ sym_init()
   sym_hash_table = (symrec*)ite_calloc(SYM_HASH_SIZE, sizeof(symrec), 9, "sym_hash_table");
   symtmp_table = (symrec*)ite_calloc(SYMTMP_TABLE_SIZE, sizeof(symrec), 9, "symtmp_table");
   sym_table = (symrec**)ite_calloc(SYM_TABLE_SIZE, sizeof(symrec*), 9, "sym_table");
-  true_ptr->var_ptr=tputsym();
-  false_ptr->var_ptr=tputsym();
+  true_ptr->var_ptr=tputsym(SYM_VAR);
+  false_ptr->var_ptr=tputsym(SYM_VAR);
   ((symrec*)(true_ptr->var_ptr))->id=0;
   ((symrec*)(false_ptr->var_ptr))->id=0;
   sym_table_idx = 0;
@@ -43,36 +43,32 @@ sym_hash(char *name)
 }
 
 int
-i_putsym(char *sym_name) 
+i_putsym(char *sym_name, int sym_type) 
 {
-  int i = i_getsym(sym_name);
-  if (i) return i;
-  putsym(sym_name);
-  return i_getsym(sym_name);
+  int i = i_getsym(sym_name, sym_type);
+  if (i!=0) return i;
+  putsym(sym_name, sym_type);
+  return i_getsym(sym_name, sym_type);
 }
 
 int
-get_or_putsym_check(char *sym_name, int id) 
+get_or_putsym_check(char *sym_name, int sym_type, int id) 
 {
-  int i = i_getsym(sym_name);
-  if (i) {
-     assert(i==id);
-     return i;
-  }
-  putsym(sym_name);
-  i = i_getsym(sym_name);
-  assert(i==id);
-  return i;
+   int i = i_putsym(sym_name, sym_type);
+   assert(i==id);
+   return i;
 }
 
 void
-fill_symrec(symrec *ptr)
+fill_symrec(symrec *ptr, int sym_type)
 {
   if (sym_table_idx >= vars_max) 
       vars_alloc(sym_table_idx+100);
    
   ptr->id   = ++sym_table_idx;
+  ptr->sym_type   = sym_type;
   //ptr->indep = 1;
+  /* this is not necessary -- part of testing*/
   ptr->true_false.var_ptr = ptr;
   ptr->true_false.variable = ptr->id;
   ptr->true_false.thenCase = true_ptr;
@@ -81,6 +77,8 @@ fill_symrec(symrec *ptr)
   ptr->false_true.variable = ptr->id;
   ptr->false_true.thenCase = false_ptr;
   ptr->false_true.elseCase = true_ptr;
+  /* end of this... */
+
   if (sym_table_idx >= sym_table_max) {
      sym_table = (symrec**)ite_recalloc((void*)sym_table, sym_table_max, 
            sym_table_max+SYM_TABLE_SIZE, sizeof(symrec*), 9, "sym_table_idx");
@@ -90,7 +88,7 @@ fill_symrec(symrec *ptr)
 }
 
 symrec *
-putsym (char *sym_name)
+putsym(char *sym_name, int sym_type)
 {
   symrec *ptr;
   symrec *tmp_sym_table = sym_hash(sym_name);
@@ -99,18 +97,19 @@ putsym (char *sym_name)
   strcpy (ptr->name,sym_name);
   ptr->next = (struct symrec *)tmp_sym_table->next;
   tmp_sym_table->next = ptr;
-  fill_symrec(ptr);
+  fill_symrec(ptr, sym_type);
   return ptr;
 }
 
 symrec *
-getsym (char *sym_name)
+getsym(char *sym_name)
 {
   symrec *ptr;
   for (ptr = sym_hash(sym_name)->next; ptr != (symrec *) 0;
        ptr = (symrec *)ptr->next)
-    if (strcasecmp (ptr->name,sym_name) == 0)
+    if (strcasecmp (ptr->name,sym_name) == 0) {
       return ptr;
+    }
   return 0;
 }
 
@@ -134,19 +133,31 @@ s_name(int id)
 
 
 int
-i_getsym (char *sym_name)
+i_getsym (char *sym_name, int sym_type)
 {
   symrec *ptr = getsym(sym_name);
-  if (ptr) return ptr->id;
-  return putsym(sym_name)->id;
+  if (ptr) {
+     if (ptr->sym_type != sym_type && sym_type != 0)
+        return -ptr->id;
+     else
+        return ptr->id;
+  }
+  ptr = putsym(sym_name, sym_type);
+  return ptr->id;
 }
 
 symrec *
-s_getsym (char *sym_name)
+s_getsym(char *sym_name, int sym_type)
 {
   symrec *ptr = getsym(sym_name);
-  if (ptr) return ptr;
-  return putsym(sym_name);
+  if (ptr) {
+     if (ptr->sym_type != sym_type && sym_type != 0) 
+        return NULL;
+     else
+        return ptr;
+  } 
+  ptr = putsym(sym_name, sym_type);
+  return ptr;
 }
 
 void   
@@ -165,7 +176,7 @@ s_is_indep(symrec *ptr)
 
 
 symrec *
-tputsym ()
+tputsym(int sym_type)
 {
   if (symtmp_table_idx >= symtmp_table_max) {
      /* cannot reallocate  -- pointers exist to this pool */
@@ -179,7 +190,7 @@ tputsym ()
      */
   }
   symrec *ptr = &(symtmp_table[symtmp_table_idx]);
-  fill_symrec(ptr);
+  fill_symrec(ptr, sym_type);
   s_set_indep(ptr, 2);
   symtmp_table_idx++;
   return ptr;

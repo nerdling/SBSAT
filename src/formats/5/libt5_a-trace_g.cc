@@ -1148,12 +1148,12 @@ yyreduce:
 
   case 21:
 #line 101 "trace_g.yy"
-    { varindex=0; varlist[varindex++] = s_getsym(yyvsp[0].id); }
+    { varindex=0; varlist[varindex++] = s_getsym(yyvsp[0].id, SYM_VAR); assert(varlist[varindex-1]); }
     break;
 
   case 22:
 #line 103 "trace_g.yy"
-    { varlist[varindex++] = s_getsym(yyvsp[0].id); }
+    { varlist[varindex++] = s_getsym(yyvsp[0].id, SYM_VAR);  assert(varlist[varindex-1]);}
     break;
 
   case 23:
@@ -1173,7 +1173,7 @@ yyreduce:
 
   case 26:
 #line 116 "trace_g.yy"
-    { symrec *s=s_getsym(yyvsp[0].id); yyval.bdd = ite_vars(s); }
+    { symrec *s=s_getsym(yyvsp[0].id, SYM_VAR); assert(s); yyval.bdd = ite_vars(s); }
     break;
 
   case 27:
@@ -1188,7 +1188,7 @@ yyreduce:
 
   case 29:
 #line 122 "trace_g.yy"
-    { yyval.bdd = ite_not_s(ite_vars(s_getsym(yyvsp[-1].id))); }
+    { symrec *s=s_getsym(yyvsp[-1].id, SYM_VAR); assert(s); yyval.bdd = ite_not_s(ite_vars(s)); }
     break;
 
   case 30:
@@ -1415,7 +1415,8 @@ yyreturn:
 void
 ite_op_id_equ(char *var, BDDNode *bdd)
 {
-   symrec  *s_ptr = s_getsym(var);
+   symrec  *s_ptr = s_getsym(var, SYM_VAR);
+   assert(s_ptr);
    s_set_indep(s_ptr, 0);
    //independantVars[s_ptr->id] = 0;
    BDDNode *ptr = ite_equ(ite_vars(s_ptr), bdd);
@@ -1428,7 +1429,8 @@ void
 ite_op_equ(char *var, t_op2fn fn, BDDNode **explist)
 {
    fn.fn_type = MAKE_EQU(fn.fn_type);
-   symrec  *s_ptr = s_getsym(var);
+   symrec  *s_ptr = s_getsym(var, SYM_VAR);
+   assert(s_ptr);
    s_set_indep(s_ptr, 0);
    //independantVars[s_ptr->id] = 0;
    BDDNode *ptr = ite_op_exp(fn, explist);
@@ -1501,7 +1503,7 @@ BDDNode *ite_op_exp(t_op2fn fn, BDDNode **explist)
             int total_vars=0;
             ite_op_check(&new_vars, &total_vars, explist[i]);
             if (total_vars > 1) {
-               symrec *s_ptr = tputsym();
+               symrec *s_ptr = tputsym(SYM_VAR);
                /* save explist[i] into another function */
                BDDNode *new_ptr = ite_equ(ite_vars(s_ptr), explist[i]);
                functions_add(new_ptr, UNSURE, s_ptr->id);
@@ -1527,7 +1529,7 @@ BDDNode *ite_op_exp(t_op2fn fn, BDDNode **explist)
    /* into a different function               */
    /* _EQU functions are handled using the grammar */
    if (spec_fn && !IS_EQU(fn.fn_type)) {
-      symrec *s_ptr = tputsym();
+      symrec *s_ptr = tputsym(SYM_VAR);
       ptr = ite_equ(ite_vars(s_ptr),ptr);
       functions_add(ptr, MAKE_EQU(fn.fn_type), s_ptr->id);
 
@@ -1554,7 +1556,8 @@ ite_op_are_equal(BDDNode **explist)
 void
 ite_new_int_leaf(char *id, char *zero_one)
 {
-   symrec *s_ptr = s_getsym(id);
+   symrec *s_ptr = s_getsym(id, SYM_VAR);
+   assert(s_ptr);
    s_set_indep(s_ptr, 0);
    //independantVars[s_ptr->id] = 0;
    BDDNode *ptr = ite_vars(s_ptr);
