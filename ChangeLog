@@ -1,3 +1,78 @@
+2004-04-14 16:28  mkouril
+
+	* src/utils/utils.cc: More temp files (1000000)
+
+2004-04-11 23:25  mkouril
+
+	* src/solver/: Makefile.in, display.cc: Dump lemmas everytime the
+	statistics are displayed if lemma_out_file is specified
+
+2004-04-09 14:24  fett
+
+	* src/preproc/: do_possibleanding.cc, other_preproc.cc: Writing
+	possibleanding.
+	
+	  ~Sean
+
+2004-04-09 09:45  fett
+
+	* src/preproc/do_possibleanding.cc: new preprocessing function
+	based on making possible inferences.
+	
+	  ~Sean
+
+2004-04-09 09:45  fett
+
+	* src/utils/: bdd.cc, params.cc, vars.cc: Added in another
+	preprocessing option, Pa (Possible Anding) Also added in
+	possible_BDD_x that will be used in possible_anding once it's done.
+	
+	  ~Sean
+
+2004-04-09 09:44  fett
+
+	* include/globals.h, include/preprocess.h, include/vars.h,
+	src/preproc/Makefile.am, src/preproc/Makefile.in,
+	src/preproc/do_exquantifyand.cc, src/preproc/other_preproc.cc,
+	src/preproc/preprocess.cc: Added in another preprocessing option,
+	Pa (Possible Anding)
+	
+	  ~Sean
+
+2004-04-08 15:48  fett
+
+	* include/preprocess.h, src/preproc/do_applyinfs.cc,
+	src/preproc/do_depcluster.cc, src/preproc/do_exquantifyand.cc,
+	src/preproc/other_preproc.cc, src/utils/bdd.cc: added in ability to
+	strip a variable away from a BDD
+	
+	  ~Sean
+
+2004-04-05 21:49  mkouril
+
+	* tests/longer_tests/: queue.8.prove, queue.8.prove.Hjl.params,
+	queue.8.prove.Hjq.params, queue.8.prove.Hl.params,
+	queue.8.prove.params: Forgotten benchmarks
+
+2004-04-05 13:56  fett
+
+	* src/utils/bdd_print.cc: added in printing string variable names
+	when using printBDDTree and --debug 3 or below. otherwise it prints
+	variable name and number.
+
+2004-04-05 13:54  fett
+
+	* src/: preproc/do_applyinfs.cc, preproc/do_exquantify.cc,
+	preproc/do_exquantifyand.cc, utils/bdd_print.cc: Added printing of
+	string variable names to inferences and existential quantification
+	when using --debug 4 and above.
+	
+	  ~Sean
+
+2004-04-05 13:53  fett
+
+	* ChangeLog: nothing
+
 2004-03-31 15:02  fett
 
 	* src/preproc/do_simpleand.cc: added a new preprocessing function,
