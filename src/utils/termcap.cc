@@ -46,7 +46,7 @@ char term_buffer[2048];
 
 char *CM, *SO, *SE, *CL;
 char *tv_stype;
-char *ptr;
+char *ptr=NULL;
 
 /*
  * Get a required termcap string or exit with a message.
@@ -109,7 +109,9 @@ init_terminal_out()
 void
 free_terminal_out()
 {
+#ifdef HAVE_TERMCAP_H
    ite_free((void**)&ptr);
+#endif
 }
 
 /*
