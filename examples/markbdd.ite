@@ -3,7 +3,7 @@ Initial_Branch(var*, a, b, t*e) ; These variables will be branched on first.
                                ; '*' is a wildcard
 
 ite(var1, T, F) ; Function $1, no smurf created
-;var1            ; Function $2, no smurf created
+var1            ; Function $2, no smurf created
                 ; The two preceeding lines created identical functions
                 ; T is built in for True, F is built in for False
 
