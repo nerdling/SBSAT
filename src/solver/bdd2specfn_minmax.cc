@@ -70,16 +70,6 @@ BDD2Specfn_MINMAX(BDDNodeStruct *pFunc,
    pSpecialFunc->rhsVbles.nNumElts = y;
    pSpecialFunc->rhsVbles.arrElts = (int*)realloc(pSpecialFunc->rhsVbles.arrElts, pSpecialFunc->rhsVbles.nNumElts*sizeof(int));
 
-
-   if (pSpecialFunc->rhsVbles.nNumElts <= 0)
-   {
-      cout << "Special function found with zero variables "
-         << "in right hand side." << endl;
-      printBDD(pFunc);
-      assert(0);
-      exit(1);
-   }
-
    // Determine the polarities of the literals on the RHS of the equation:
    pSpecialFunc->arrRHSPolarities
       = (int *)ite_calloc(pSpecialFunc->rhsVbles.nNumElts, sizeof(int),
@@ -95,14 +85,12 @@ BDD2Specfn_MINMAX(BDDNodeStruct *pFunc,
 
    /* 1. Create BDD representing RHS. */
    BDDNodeStruct *pRHSFunc = pFunc;
-   assert(pFunc != true_ptr && pFunc != false_ptr); // FIXME:
 
    /* 2. Traverse the BDD, storing the variable index and polarity  for each literal. */
    BDDNodeStruct *pCurrentNode = pRHSFunc;
    int i = 0; // Index into the array of variables mentioned in the func.
    while (pCurrentNode != true_ptr && pCurrentNode != false_ptr)
    {
-      assert(pCurrentNode->variable >= 0);
       if (pSpecialFunc->rhsVbles.arrElts[i] != arrIte2SolverVarMap[pCurrentNode->variable]) {
          printBDD(pRHSFunc);
          assert(0);

@@ -323,7 +323,7 @@ CheckBtHooks()
       if (CheckLimits(fStartTime)) { 
          d2_printf1("Interrupting brancher. Solution Unknown.\n");
          ite_counters[ERR_LIMITS] = 1;
-         return 1; /* FIXME: ERR_limits!! */
+         return 1; /* LOOK: ERR_limits */
       }
       if (fd_csv_trace_file) {
          dump_counters(fd_csv_trace_file);
@@ -489,7 +489,7 @@ Brancher()
    // Main inferencing loop.
    fPrevEndTime = fStartTime = get_runtime();
 
-   ret = CheckInitHooks(); /* FIXME: check for result */
+   ret = CheckInitHooks(); 
 
    if (ret == SOLV_UNKNOWN)
    while (1)

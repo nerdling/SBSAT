@@ -65,23 +65,13 @@ BDD2Specfn_XOR(BDDNodeStruct *pFunc,
    // the RHS of the equality.
    //
   
-   // FIXME: can do it even better -- if it really is special func
+   // LOOK: can do it even better -- if it really is special func
    long tempint_max = 0;
    long y=0;
    unravelBDD(&y, &tempint_max, &pSpecialFunc->rhsVbles.arrElts, pFunc);
    qsort(pSpecialFunc->rhsVbles.arrElts, y, sizeof(int), revcompfunc);
    pSpecialFunc->rhsVbles.nNumElts = y;
    pSpecialFunc->rhsVbles.arrElts = (int*)realloc(pSpecialFunc->rhsVbles.arrElts, pSpecialFunc->rhsVbles.nNumElts*sizeof(int));
-
-
-   if (pSpecialFunc->rhsVbles.nNumElts <= 0)
-   {
-      cout << "Special function found with zero variables "
-         << "in right hand side." << endl;
-      printBDD(pFunc);
-      assert(0);
-      exit(1);
-   }
 
    // Determine the polarities of the literals on the RHS of the equation:
    pSpecialFunc->arrRHSPolarities
@@ -104,7 +94,6 @@ BDD2Specfn_XOR(BDDNodeStruct *pFunc,
    int i = 0; // Index into the array of variables mentioned in the func.
    while (pCurrentNode != true_ptr && pCurrentNode != false_ptr)
    {
-      assert(pCurrentNode->variable >= 0);
       if (pSpecialFunc->rhsVbles.arrElts[i] != arrIte2SolverVarMap[pCurrentNode->variable]) {
          printBDD(pRHSFunc);
          assert(0);

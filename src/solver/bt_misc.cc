@@ -132,9 +132,7 @@ InferLiteral(int nInferredAtom,
             pFnInferenceQueueNextElt++;
       }
       arrChangedSmurfs[arrRegSmurfsAffected[i]]=3;
-      // FIXME: if there are no inferences -> transition rightaway and don't flag it
-      // FIXME: NEW: add to inferenced function stack (SMURF, i)
-      //Save_arrCurrentStates(arrRegSmurfsAffected[i]);
+      // LOOK: if there are no inferences -> transition rightaway and don't flag it
    }
 
    /* Flag all specfns */
@@ -166,16 +164,11 @@ InferLiteral(int nInferredAtom,
          }
          arrChangedSpecialFn[nSpecFuncIndex]=3;
       }
-      // FIXME: if there are no inferences -> transition rightaway and don't flag it
+      // LOOK: if there are no inferences -> transition rightaway and don't flag it
       //
-      // arrSpecialFuncs[nSpecFuncIndex].nFunctionType
-      //Save_arrNumRHSUnknowns(nSpecFuncIndex);
       if (pIRS->nRHSIndex >= 0) {
          arrNumRHSUnknownsNew[nSpecFuncIndex]--;
-         // FIXME: Add xor/minmax counter
       } else arrNumLHSUnknownsNew[nSpecFuncIndex]--;
-
-      // FIXME: NEW: add to inferenced function stack (SPFN, i)
    }
    /*
     * End of flagging

@@ -129,15 +129,6 @@ BDD2Specfn_AND(BDDNodeStruct *pFunc,
       pSpecialFunc->rhsVbles.arrElts[i] = arrIte2SolverVarMap[pSpecialFunc->rhsVbles.arrElts[i]];
    }
 
-   if (pSpecialFunc->rhsVbles.nNumElts <= 0)
-   {
-      cout << "Special function found with zero variables "
-         << "in right hand side." << endl;
-      printBDD(pFunc);
-      assert(0);
-      exit(1);
-   }
-
    // Determine the polarities of the literals on the RHS of the equation:
    pSpecialFunc->arrRHSPolarities
       = (int *)ite_calloc(pSpecialFunc->rhsVbles.nNumElts, sizeof(int),

@@ -99,6 +99,7 @@ SmurfFactory()
 
       if (IsSpecialFunc(nFunctionType) == 0)
       {
+         assert(pFunc != true_ptr && pFunc != false_ptr);
          //if (i%100 == 0)
            d2e_printf3("\rCreating Smurfs ... %d/%d", i, nmbrFunctions);
 
@@ -125,6 +126,8 @@ SmurfFactory()
 
       if (pSpecFunc != NULL)
       {
+         assert(pSpecFunc != true_ptr && pSpecFunc != false_ptr);
+         
          //if (i%100 == 0)
            d2e_printf3("\rCreating Special Function ... %d/%d", i, nmbrFunctions);
          if (IsSpecialFunc(nFunctionType) == 0) {
