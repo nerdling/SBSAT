@@ -1,0 +1,14 @@
+p cnf 4 5
+c Coloured flowers are always scented.
+c I dislike flowers that are not grown in the open air.
+c No flowers grown in the open air are colourless.
+c Do I dislike all flowers that are not scented?
+c Where Colored=1, Scented=2, Like=3, Grown in the Open Air=4
+c The question must be negated and added to the database.
+c If SBSAT returns 'unsat' then the answer to the question
+c is 'YES', otherwise the answer is 'NO'.
+-1 2 0
+3 -4 0
+-3 1 0
+-2 0
+4 0

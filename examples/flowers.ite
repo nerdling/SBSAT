@@ -1,0 +1,13 @@
+p bdd 4 4
+;Coloured flowers are always scented.
+;I dislike flowers that are not grown in the open air.
+;No flowers grown in the open air are colourless.
+;Do I dislike all flowers that are not scented?
+;Where Colored=1, Scented=2, Like=3, Grown in the Open Air=4
+;The question must be negated and added to the database.
+;If SBSAT returns 'unsat' then the answer to the question
+;is 'YES', otherwise the answer is 'NO'.
+*imp(1, 2)
+*imp(-3, -4)
+*imp(3, 1)
+*not(imp(-2, -4))
