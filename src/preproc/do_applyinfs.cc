@@ -63,34 +63,32 @@ Do_Apply_Inferences ()
 	inferlist = inferlist->next;	//NEW Must increment past the empty start node
 	delete temp;
 	
-	for (infer * iterator = inferlist; iterator != NULL;
-		  iterator = iterator->next) {
-		//d3_printf2("|%d ", iterator->nums[0]);
-		//d3_printf2("%d ", iterator->nums[1]);
-		
-		if(iterator->nums[1] != 0) {
-			iterator->nums[0] = l->get_equiv(iterator->nums[0]);
-			if (iterator->nums[0] == T) {
-				iterator->nums[0] = iterator->nums[1];
-				iterator->nums[1] = 0;
-			} else if (iterator->nums[0] == F) {
-				iterator->nums[0] = -iterator->nums[1];
-				iterator->nums[1] = 0;
-			}
-			if (iterator->nums[0] < 0) {
-				iterator->nums[0] = -iterator->nums[0];
-				iterator->nums[1] = -iterator->nums[1];					
-			}
-			
-			//d3_printf2("%d ", iterator->nums[0]);
-			//d3_printf2("%d|", iterator->nums[1]);
-		}
-	}
-	
 	while (inferlist != NULL) {
+		startover:;
 		if (inferlist->nums[1] != 0) {
 			if (inferlist->nums[1] > 0) {
 				Pos_replace++;
+				
+				//d3_printf2("|%d ", inferlist->nums[0]);
+				//d3_printf2("%d ", inferlist->nums[1]);
+				inferlist->nums[0] = l->get_equiv(inferlist->nums[0]);
+				if (inferlist->nums[0] == T) {
+					inferlist->nums[0] = inferlist->nums[1];
+					inferlist->nums[1] = 0;
+					goto startover;
+				} else if (inferlist->nums[0] == F) {
+					goto startover;
+					inferlist->nums[0] = -inferlist->nums[1];
+					inferlist->nums[1] = 0;
+				} else if (inferlist->nums[0] < 0) {
+					inferlist->nums[0] = -inferlist->nums[0];
+					inferlist->nums[1] = -inferlist->nums[1];					
+				}
+				
+				//d3_printf2("%d ", inferlist->nums[0]);
+				//d3_printf2("%d|", inferlist->nums[1]);
+
+				
 				//            D_3(print_nonroller();)
 				for(int iter = 0; iter<str_length; iter++)
 				  d3_printf1("\b");

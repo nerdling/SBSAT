@@ -1376,9 +1376,9 @@ void unravelBDD (long *y, int tempint[5000], BDDNode * func) {
 }
 
 BDDNode * num_replace (BDDNode * f, int var, int replace) {
-   if (var > f->variable)
+	if (var > f->variable)
 	  return f;
-   if (var == f->variable) {
+   else if (var == f->variable) {
 		if (replace > 0)
 		  return find_or_add_node(replace, f->thenCase, f->elseCase);
       else if (replace < 0)
@@ -1390,7 +1390,7 @@ BDDNode * num_replace (BDDNode * f, int var, int replace) {
 	  return r;
 	return ite (ite_var (f->variable), r, e);
 
-   //return find_or_add_node(f->variable, r, e);
+	//return find_or_add_node(f->variable, r, e);
 }
 
 void cheat_replace (BDDNode * f, int var, int replace) {
