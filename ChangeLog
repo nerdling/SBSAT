@@ -1,3 +1,43 @@
+2004-03-31 15:02  fett
+
+	* src/preproc/do_simpleand.cc: added a new preprocessing function,
+	"Sa"
+
+2004-03-31 14:53  fett
+
+	* src/utils/: bdd.cc, params.cc, vars.cc: fixed a bug in
+	nmbrVarsincommon and added a new preprocessing option "Sa"
+	
+	   ~Sean
+
+2004-03-31 14:52  fett
+
+	* include/globals.h, include/preprocess.h, src/preproc/Makefile.am,
+	src/preproc/Makefile.in, src/preproc/other_preproc.cc,
+	src/preproc/preprocess.cc: added a new preprocessing option "Sa"
+	
+	   ~Sean
+
+2004-03-30 12:44  mkouril
+
+	* ChangeLog, src/Makefile.in, src/formats/Makefile.in,
+	src/formats/5/Makefile.in, src/generator/Makefile.in,
+	src/postproc/Makefile.in, src/preproc/Makefile.in,
+	src/solver/Makefile.in, src/solver/crtwin.cc,
+	src/utils/Makefile.in, src/utils/termcap.cc,
+	tests/longer_tests/Makefile.am, tests/longer_tests/Makefile.in:
+	Cleanups for realease
+
+2004-03-29 21:20  mkouril
+
+	* tests/longer_tests/: barrel.6.prove, barrel.6.prove.params: Added
+	barrel6.prove
+
+2004-03-29 21:16  mkouril
+
+	* tests/longer_tests/: 4.trace.gz, 4.trace.gz.params: Added 4.trace
+	test
+
 2004-03-29 14:55  fett
 
 	* src/preproc/: do_exquantifyand.cc, do_rewind.cc: minor changes
@@ -21,14 +61,14 @@
 2004-03-25 22:39  fett
 
 	* src/utils/bdd.cc: fixed countNodes() to return the number of
-	  nodes in a BDD, instead of 0
-
-	    ~Sean
+	nodes in a BDD, instead of 0
+	
+	  ~Sean
 
 2004-03-25 18:34  fett
 
 	* src/preproc/: do_exquantifyand.cc, do_rewind.cc: minor
-	  modifications.
+	modifications.
 
 2004-03-25 18:34  fett
 
@@ -37,61 +77,61 @@
 2004-03-24 11:36  mkouril
 
 	* configure.ac, doc/Makefile.in, src/Makefile.in,
-	  src/formats/Makefile.in, src/formats/5/Makefile.in,
-	  src/generator/Makefile.in, src/postproc/Makefile.in,
-	  src/preproc/Makefile.in, src/solver/Makefile.in,
-	  src/solver/libsolver.cc, src/utils/Makefile.in: Fixed inline and
-	  configure
+	src/formats/Makefile.in, src/formats/5/Makefile.in,
+	src/generator/Makefile.in, src/postproc/Makefile.in,
+	src/preproc/Makefile.in, src/solver/Makefile.in,
+	src/solver/libsolver.cc, src/utils/Makefile.in: Fixed inline and
+	configure
 
 2004-03-24 10:22  mkouril
 
 	* configure, configure.ac, src/Makefile.in,
-	  src/formats/Makefile.in, src/formats/5/Makefile.in,
-	  src/generator/Makefile.in, src/postproc/Makefile.in,
-	  src/preproc/Makefile.in, src/utils/Makefile.in: Added
-	  --enable-coverage. Use gcov to view it.
+	src/formats/Makefile.in, src/formats/5/Makefile.in,
+	src/generator/Makefile.in, src/postproc/Makefile.in,
+	src/preproc/Makefile.in, src/utils/Makefile.in: Added
+	--enable-coverage. Use gcov to view it.
 
 2004-03-24 10:04  mkouril
 
 	* src/: postproc/backend.cc, preproc/create_infs.cc: Fixed
-	  create_infs
+	create_infs
 
 2004-03-24 09:28  mkouril
 
 	* include/log.h, include/preprocess.h, include/prototypes.h,
-	  src/sbsat.cc, src/preproc/do_applyinfs.cc,
-	  src/preproc/do_depcluster.cc, src/preproc/do_prover3.cc,
-	  src/preproc/equivclass.cc, src/preproc/init_preproc.cc,
-	  src/preproc/other_preproc.cc, src/utils/Makefile.am,
-	  src/utils/Makefile.in, src/utils/bddtable.cc, src/utils/llist.cc:
-	  Added llist pools plus cleanups and optimizations
+	src/sbsat.cc, src/preproc/do_applyinfs.cc,
+	src/preproc/do_depcluster.cc, src/preproc/do_prover3.cc,
+	src/preproc/equivclass.cc, src/preproc/init_preproc.cc,
+	src/preproc/other_preproc.cc, src/utils/Makefile.am,
+	src/utils/Makefile.in, src/utils/bddtable.cc, src/utils/llist.cc:
+	Added llist pools plus cleanups and optimizations
 
 2004-03-24 08:36  mkouril
 
 	* include/equivclass.h, src/preproc/Makefile.am,
-	  src/preproc/Makefile.in, src/preproc/equivclass.cc: Equivclass
-	  body moved from h to cc file
+	src/preproc/Makefile.in, src/preproc/equivclass.cc: Equivclass body
+	moved from h to cc file
 
 2004-03-23 21:55  fett
 
 	* include/preprocess.h: rewind now does not ignore the inital
-	  inference made.
-
-	    ~Sean
+	inference made.
+	
+	  ~Sean
 
 2004-03-23 21:55  fett
 
 	* src/preproc/: do_exquantifyand.cc, do_rewind.cc, init_preproc.cc,
-	  preprocess.cc: rewind now does not ignore the initial inferences
-	  made.
-
-	    ~Sean
+	preprocess.cc: rewind now does not ignore the initial inferences
+	made.
+	
+	  ~Sean
 
 2004-03-23 20:46  mkouril
 
 	* include/prototypes.h, src/preproc/create_infs.cc,
-	  src/preproc/do_applyinfs.cc, src/preproc/init_preproc.cc,
-	  src/utils/infer.cc: Inferences in the preprocessing use infer.cc
+	src/preproc/do_applyinfs.cc, src/preproc/init_preproc.cc,
+	src/utils/infer.cc: Inferences in the preprocessing use infer.cc
 
 2004-03-23 20:41  mkouril
 
@@ -100,60 +140,58 @@
 2004-03-23 19:51  fett
 
 	* src/preproc/: do_applyinfs.cc, do_exquantifyand.cc: added in a
-	  limit to exquantify
+	limit to exquantify
 
 2004-03-23 16:33  mkouril
 
 	* src/: solver/solve.cc, utils/bddtable.cc: Deleting unused BDD
-	  Pools
+	Pools
 
 2004-03-23 16:03  mkouril
 
 	* src/solver/: brancher.cc, j_specfn_and.cc: Fixed j heuristic spec
-	  fn AND
+	fn AND
 
 2004-03-23 14:48  mkouril
 
 	* src/: formats/5/bdd_s.cc, formats/5/bdd_s.ll,
-	  formats/5/blif_s.cc, formats/5/blif_s.ll, formats/5/cnf_s.cc,
-	  formats/5/cnf_s.ll, formats/5/iscas_s.cc, formats/5/iscas_s.ll,
-	  formats/5/libt5_la-trace_g.cc, formats/5/prover3_s.cc,
-	  formats/5/prover3_s.ll, formats/5/prover_s.cc,
-	  formats/5/prover_s.ll, formats/5/trace_g.yy,
-	  formats/5/trace_s.cc, formats/5/trace_s.ll, utils/termcap.cc:
-	  Fixed more memory leaks
+	formats/5/blif_s.cc, formats/5/blif_s.ll, formats/5/cnf_s.cc,
+	formats/5/cnf_s.ll, formats/5/iscas_s.cc, formats/5/iscas_s.ll,
+	formats/5/libt5_la-trace_g.cc, formats/5/prover3_s.cc,
+	formats/5/prover3_s.ll, formats/5/prover_s.cc,
+	formats/5/prover_s.ll, formats/5/trace_g.yy, formats/5/trace_s.cc,
+	formats/5/trace_s.ll, utils/termcap.cc: Fixed more memory leaks
 
 2004-03-23 13:39  mkouril
 
 	* ChangeLog, include/globals.h, src/sbsat.cc,
-	  src/formats/bddbinary.cc, src/formats/5/p3.cc,
-	  src/solver/l_lemma.cc, src/solver/lemmas_and.cc,
-	  src/solver/lemmas_minmax.cc, src/solver/lemmas_xor.cc,
-	  src/solver/lemmaspace.cc, src/solver/solve.cc, src/utils/bdd.cc,
-	  src/utils/bdd_circuit_init.cc, src/utils/symtable.cc,
-	  src/utils/termcap.cc, src/utils/utils.cc: Fixed a few memory
-	  leaks
+	src/formats/bddbinary.cc, src/formats/5/p3.cc,
+	src/solver/l_lemma.cc, src/solver/lemmas_and.cc,
+	src/solver/lemmas_minmax.cc, src/solver/lemmas_xor.cc,
+	src/solver/lemmaspace.cc, src/solver/solve.cc, src/utils/bdd.cc,
+	src/utils/bdd_circuit_init.cc, src/utils/symtable.cc,
+	src/utils/termcap.cc, src/utils/utils.cc: Fixed a few memory leaks
 
 2004-03-23 10:35  mkouril
 
 	* src/: preproc/do_exquantify.cc, preproc/do_exquantifyand.cc,
-	  utils/bdd.cc: possible_infer uses inference infer.cc
+	utils/bdd.cc: possible_infer uses inference infer.cc
 
 2004-03-23 09:29  mkouril
 
 	* src/solver/: bdd2specfn_and.cc, bdd2specfn_minmax.cc,
-	  bdd2specfn_xor.cc, brancher.cc, bt_misc.cc, smurffactory.cc:
-	  Cleanup, fixing FIXMEs
+	bdd2specfn_xor.cc, brancher.cc, bt_misc.cc, smurffactory.cc:
+	Cleanup, fixing FIXMEs
 
 2004-03-23 08:55  mkouril
 
 	* src/utils/: bddtable.cc, itetable.cc: bddmemory pool management -
-	  unlimited number of pools
+	unlimited number of pools
 
 2004-03-23 08:31  mkouril
 
 	* include/solver.h: FindTransition should be a function rather than
-	  macro which seems to be faster.
+	macro which seems to be faster.
 
 2004-03-22 17:32  mkouril
 
@@ -162,22 +200,22 @@
 2004-03-22 17:04  mkouril
 
 	* compile.patch, include/common.h, include/solver.h,
-	  src/Makefile.in, src/formats/Makefile.in,
-	  src/formats/5/Makefile.in, src/generator/Makefile.in,
-	  src/postproc/Makefile.in, src/preproc/Makefile.in,
-	  src/preproc/do_applyinfs.cc, src/preproc/do_depcluster.cc,
-	  src/solver/Makefile.am, src/solver/Makefile.in,
-	  src/solver/bdd2smurf.cc, src/solver/bdd2specfn_and.cc,
-	  src/solver/bdd2specfn_minmax.cc, src/solver/bdd2specfn_xor.cc,
-	  src/solver/libsolver.cc, src/solver/sf_addons.cc,
-	  src/solver/smurfaddons.cc, src/solver/smurffactory.cc,
-	  src/utils/Makefile.in, src/utils/bddtable.cc: SF addons removed,
-	  cleanups
+	src/Makefile.in, src/formats/Makefile.in,
+	src/formats/5/Makefile.in, src/generator/Makefile.in,
+	src/postproc/Makefile.in, src/preproc/Makefile.in,
+	src/preproc/do_applyinfs.cc, src/preproc/do_depcluster.cc,
+	src/solver/Makefile.am, src/solver/Makefile.in,
+	src/solver/bdd2smurf.cc, src/solver/bdd2specfn_and.cc,
+	src/solver/bdd2specfn_minmax.cc, src/solver/bdd2specfn_xor.cc,
+	src/solver/libsolver.cc, src/solver/sf_addons.cc,
+	src/solver/smurfaddons.cc, src/solver/smurffactory.cc,
+	src/utils/Makefile.in, src/utils/bddtable.cc: SF addons removed,
+	cleanups
 
 2004-03-22 14:21  mkouril
 
 	* src/generator/: Makefile.am, Makefile.in, gentest.cc, slider2.cc:
-	  Slider2 generator
+	Slider2 generator
 
 2004-03-21 20:21  mkouril
 
@@ -190,31 +228,30 @@
 2004-03-21 11:57  mkouril
 
 	* src/utils/: Makefile.am, Makefile.in, bdd.cc, bdd_print.cc:
-	  bdd.cc split into bdd_print.cc
+	bdd.cc split into bdd_print.cc
 
 2004-03-21 11:45  mkouril
 
 	* include/common.h, include/defines.h, include/formats.h,
-	  include/globals.h, include/heuristic.h, include/i_heuristic.h,
-	  include/interface.h, include/j_heuristic.h,
-	  include/l_heuristic.h, include/lemmainfo.h, include/log.h,
-	  include/params.h, include/pools.h, include/postproc.h,
-	  include/preprocess.h, include/prototypes.h,
-	  include/smurffactory.h, include/vars.h, src/utils/Makefile.am,
-	  src/utils/Makefile.in, src/utils/bdd.cc, src/utils/bdd_ite.cc:
-	  Split bdd.cc into bdd_ite.cc
+	include/globals.h, include/heuristic.h, include/i_heuristic.h,
+	include/interface.h, include/j_heuristic.h, include/l_heuristic.h,
+	include/lemmainfo.h, include/log.h, include/params.h,
+	include/pools.h, include/postproc.h, include/preprocess.h,
+	include/prototypes.h, include/smurffactory.h, include/vars.h,
+	src/utils/Makefile.am, src/utils/Makefile.in, src/utils/bdd.cc,
+	src/utils/bdd_ite.cc: Split bdd.cc into bdd_ite.cc
 
 2004-03-21 11:25  mkouril
 
 	* include/common.h, src/formats/bdd2cnf.cc, src/utils/Makefile.am,
-	  src/utils/Makefile.in, src/utils/bdd.cc, src/utils/bddtable.cc,
-	  src/utils/infer.cc, src/utils/malloc.cc: Cleanups
+	src/utils/Makefile.in, src/utils/bdd.cc, src/utils/bddtable.cc,
+	src/utils/infer.cc, src/utils/malloc.cc: Cleanups
 
 2004-03-20 23:04  mkouril
 
 	* include/common.h, src/sbsat.cc, src/preproc/do_applyinfs.cc,
-	  src/preproc/do_depcluster.cc, src/solver/bdd2specfn_and.cc,
-	  src/utils/bddtable.cc: Better GC && started ref counts
+	src/preproc/do_depcluster.cc, src/solver/bdd2specfn_and.cc,
+	src/utils/bddtable.cc: Better GC && started ref counts
 
 2004-03-20 19:38  mkouril
 
@@ -223,55 +260,54 @@
 2004-03-20 19:34  mkouril
 
 	* include/config.h, include/preprocess.h, include/solver.h,
-	  include/vars.h, src/sbsat.cc, src/formats/autochk.cc,
-	  src/formats/bdd2cnf.cc, src/formats/bddbinary.cc,
-	  src/formats/cnf.cc, src/formats/markbdd.cc,
-	  src/formats/read_input.cc, src/formats/read_result.cc,
-	  src/formats/sat.cc, src/formats/smurf.cc,
-	  src/formats/write_output.cc, src/formats/xorbdd.cc,
-	  src/postproc/backend.cc, src/preproc/do_applyinfs.cc,
-	  src/preproc/do_clearft.cc, src/preproc/do_cofactor.cc,
-	  src/preproc/do_depcluster.cc, src/preproc/do_exquantify.cc,
-	  src/preproc/do_exquantifyand.cc, src/preproc/do_flow.cc,
-	  src/preproc/do_prover3.cc, src/preproc/do_pruning.cc,
-	  src/preproc/do_pruning_1.cc, src/preproc/do_pruning_2.cc,
-	  src/preproc/do_pruning_pr.cc, src/preproc/do_pruning_restrict.cc,
-	  src/preproc/do_rewind.cc, src/preproc/do_split.cc,
-	  src/preproc/do_steal.cc, src/preproc/do_strength.cc,
-	  src/preproc/init_preproc.cc, src/preproc/other_preproc.cc,
-	  src/preproc/preprocess.cc, src/solver/autarky.cc,
-	  src/solver/backtrack.cc, src/solver/backtrack_nl.cc,
-	  src/solver/backtrack_sbj.cc, src/solver/bdd2smurf.cc,
-	  src/solver/bdd2specfn_xor.cc, src/solver/bddwalk.cc,
-	  src/solver/brancher.cc, src/solver/bt_lemmas.cc,
-	  src/solver/bt_misc.cc, src/solver/bt_smurfs.cc,
-	  src/solver/bt_specfn.cc, src/solver/bt_specfn_and.cc,
-	  src/solver/bt_specfn_minmax.cc, src/solver/bt_specfn_xor.cc,
-	  src/solver/crtwin.cc, src/solver/display.cc,
-	  src/solver/display_sf.cc, src/solver/heur_choice.cc,
-	  src/solver/heur_stack.cc, src/solver/heuristic.cc,
-	  src/solver/i_heuristic.cc, src/solver/init_solver.cc,
-	  src/solver/j_heuristic.cc, src/solver/j_smurf.cc,
-	  src/solver/j_specfn.cc, src/solver/j_specfn_and.cc,
-	  src/solver/j_specfn_minmax.cc, src/solver/j_specfn_xor.cc,
-	  src/solver/ksolve.cc, src/formats/5/p3.cc,
-	  src/solver/l_heuristic.cc, src/solver/l_lemma.cc,
-	  src/solver/lemmacache.cc, src/solver/lemmainfo.cc,
-	  src/solver/lemmamisc.cc, src/solver/lemmas.cc,
-	  src/solver/lemmas_and.cc, src/solver/lemmas_minmax.cc,
-	  src/solver/lemmas_xor.cc, src/solver/lemmaspace.cc,
-	  src/solver/lemmawlits.cc, src/solver/libsolver.cc,
-	  src/solver/load_lemmas.cc, src/solver/recordsol.cc,
-	  src/solver/select_bp.cc, src/solver/sf_addons.cc,
-	  src/solver/smurffactory.cc, src/solver/smurfstates.cc,
-	  src/solver/solve.cc, src/solver/state_stacks.cc,
-	  src/solver/transitions.cc, src/solver/update_heu.cc,
-	  src/solver/verify.cc, src/solver/wvf.cc, src/utils/bdd.cc,
-	  src/utils/bdd_circuit_init.cc, src/utils/bddtable.cc,
-	  src/utils/custprint.cc, src/utils/infer.cc,
-	  src/utils/itetable.cc, src/utils/params.cc,
-	  src/utils/params_fn.cc, src/utils/termcap.cc, src/utils/utils.cc,
-	  src/utils/vars.cc, src/utils/zread.cc: Cleanups
+	include/vars.h, src/sbsat.cc, src/formats/autochk.cc,
+	src/formats/bdd2cnf.cc, src/formats/bddbinary.cc,
+	src/formats/cnf.cc, src/formats/markbdd.cc,
+	src/formats/read_input.cc, src/formats/read_result.cc,
+	src/formats/sat.cc, src/formats/smurf.cc,
+	src/formats/write_output.cc, src/formats/xorbdd.cc,
+	src/postproc/backend.cc, src/preproc/do_applyinfs.cc,
+	src/preproc/do_clearft.cc, src/preproc/do_cofactor.cc,
+	src/preproc/do_depcluster.cc, src/preproc/do_exquantify.cc,
+	src/preproc/do_exquantifyand.cc, src/preproc/do_flow.cc,
+	src/preproc/do_prover3.cc, src/preproc/do_pruning.cc,
+	src/preproc/do_pruning_1.cc, src/preproc/do_pruning_2.cc,
+	src/preproc/do_pruning_pr.cc, src/preproc/do_pruning_restrict.cc,
+	src/preproc/do_rewind.cc, src/preproc/do_split.cc,
+	src/preproc/do_steal.cc, src/preproc/do_strength.cc,
+	src/preproc/init_preproc.cc, src/preproc/other_preproc.cc,
+	src/preproc/preprocess.cc, src/solver/autarky.cc,
+	src/solver/backtrack.cc, src/solver/backtrack_nl.cc,
+	src/solver/backtrack_sbj.cc, src/solver/bdd2smurf.cc,
+	src/solver/bdd2specfn_xor.cc, src/solver/bddwalk.cc,
+	src/solver/brancher.cc, src/solver/bt_lemmas.cc,
+	src/solver/bt_misc.cc, src/solver/bt_smurfs.cc,
+	src/solver/bt_specfn.cc, src/solver/bt_specfn_and.cc,
+	src/solver/bt_specfn_minmax.cc, src/solver/bt_specfn_xor.cc,
+	src/solver/crtwin.cc, src/solver/display.cc,
+	src/solver/display_sf.cc, src/solver/heur_choice.cc,
+	src/solver/heur_stack.cc, src/solver/heuristic.cc,
+	src/solver/i_heuristic.cc, src/solver/init_solver.cc,
+	src/solver/j_heuristic.cc, src/solver/j_smurf.cc,
+	src/solver/j_specfn.cc, src/solver/j_specfn_and.cc,
+	src/solver/j_specfn_minmax.cc, src/solver/j_specfn_xor.cc,
+	src/solver/ksolve.cc, src/formats/5/p3.cc,
+	src/solver/l_heuristic.cc, src/solver/l_lemma.cc,
+	src/solver/lemmacache.cc, src/solver/lemmainfo.cc,
+	src/solver/lemmamisc.cc, src/solver/lemmas.cc,
+	src/solver/lemmas_and.cc, src/solver/lemmas_minmax.cc,
+	src/solver/lemmas_xor.cc, src/solver/lemmaspace.cc,
+	src/solver/lemmawlits.cc, src/solver/libsolver.cc,
+	src/solver/load_lemmas.cc, src/solver/recordsol.cc,
+	src/solver/select_bp.cc, src/solver/sf_addons.cc,
+	src/solver/smurffactory.cc, src/solver/smurfstates.cc,
+	src/solver/solve.cc, src/solver/state_stacks.cc,
+	src/solver/transitions.cc, src/solver/update_heu.cc,
+	src/solver/verify.cc, src/solver/wvf.cc, src/utils/bdd.cc,
+	src/utils/bdd_circuit_init.cc, src/utils/bddtable.cc,
+	src/utils/custprint.cc, src/utils/infer.cc, src/utils/itetable.cc,
+	src/utils/params.cc, src/utils/params_fn.cc, src/utils/termcap.cc,
+	src/utils/utils.cc, src/utils/vars.cc, src/utils/zread.cc: Cleanups
 
 2004-03-20 12:37  fett
 
@@ -284,13 +320,13 @@
 2004-03-20 08:43  mkouril
 
 	* examples/example_tests.sh.in: Added testing in the examples
-	  directory
+	directory
 
 2004-03-20 08:35  mkouril
 
 	* Makefile.in, configure, configure.ac, examples/Makefile.am,
-	  examples/Makefile.in, src/solver/bdd2specfn_minmax.cc,
-	  src/solver/j_specfn_minmax.cc, src/utils/bdd.cc: MinMax fixes
+	examples/Makefile.in, src/solver/bdd2specfn_minmax.cc,
+	src/solver/j_specfn_minmax.cc, src/utils/bdd.cc: MinMax fixes
 
 2004-03-20 07:34  mkouril
 
@@ -299,51 +335,50 @@
 2004-03-19 22:22  mkouril
 
 	* AUTHORS, ChangeLog, README, configure, configure.ac,
-	  doc/Makefile.in, include/prototypes.h,
-	  src/preproc/do_applyinfs.cc, src/preproc/do_rewind.cc,
-	  src/utils/bddtable.cc, src/utils/infer.cc: Cleanups
+	doc/Makefile.in, include/prototypes.h, src/preproc/do_applyinfs.cc,
+	src/preproc/do_rewind.cc, src/utils/bddtable.cc,
+	src/utils/infer.cc: Cleanups
 
 2004-03-19 17:05  fett
 
 	* src/utils/bddtable.cc: changed: //if(node->or_bdd!=NULL)
-	  bdd_flag_nodes(node->or_bdd); node->or_bdd = NULL;
-	  //if(node->t_and_not_e_bdd!=NULL)
-	  bdd_flag_nodes(node->t_and_not_e_bdd); node->t_and_not_e_bdd =
-	  NULL; //if(node->not_t_and_e_bdd!=NULL)
-	  bdd_flag_nodes(node->not_t_and_e_bdd) node->not_t_and_e_bdd =
-	  NULL;
-
-	  to hopefully free up more space...
-
-	     ~Sean
+	bdd_flag_nodes(node->or_bdd); node->or_bdd = NULL;
+	//if(node->t_and_not_e_bdd!=NULL)
+	bdd_flag_nodes(node->t_and_not_e_bdd); node->t_and_not_e_bdd =
+	NULL; //if(node->not_t_and_e_bdd!=NULL)
+	bdd_flag_nodes(node->not_t_and_e_bdd) node->not_t_and_e_bdd = NULL;
+	
+	to hopefully free up more space...
+	
+	   ~Sean
 
 2004-03-19 17:04  fett
 
 	* src/preproc/do_exquantifyand.cc: fixed a few bugs...
-
-	     ~Sean
+	
+	   ~Sean
 
 2004-03-19 13:56  fett
 
 	* src/utils/: bdd.cc, bddtable.cc, params.cc: added in new
-	  functions to control "and_dot" which is used in possible_infers_x
-
-	    ~Sean
+	functions to control "and_dot" which is used in possible_infers_x
+	
+	  ~Sean
 
 2004-03-19 13:55  fett
 
 	* src/preproc/: do_exquantify.cc, do_exquantifyand.cc: These are
-	  more complete and faster.
-
-	    ~Sean
+	more complete and faster.
+	
+	  ~Sean
 
 2004-03-19 13:55  fett
 
 	* include/: common.h, prototypes.h: added in another bdd pointer
-	  and added in functions for the new anding operation "and_dot"
-	  used in possible infers.
-
-	    ~Sean
+	and added in functions for the new anding operation "and_dot" used
+	in possible infers.
+	
+	  ~Sean
 
 2004-03-19 13:54  fett
 
@@ -352,72 +387,71 @@
 2004-03-19 13:12  mkouril
 
 	* doc/Makefile.am, doc/arch.txt, doc/sbsat.1, doc/man1/sbsat.1,
-	  include/brancher.h, include/common.h, include/defines.h,
-	  include/equivclass.h, include/formats.h, include/globals.h,
-	  include/heuristic.h, include/i_heuristic.h, include/interface.h,
-	  include/ite.h, include/itefeatures.h, include/iteheaders.h,
-	  include/j_heuristic.h, include/l_heuristic.h,
-	  include/lemmainfo.h, include/log.h, include/params.h,
-	  include/pools.h, include/postproc.h, include/preprocess.h,
-	  include/prototypes.h, include/smurffactory.h, include/solver.h,
-	  include/symtable.h, include/vars.h, src/sbsat.cc,
-	  src/formats/autochk.cc, src/formats/bdd2cnf.cc,
-	  src/formats/bddbinary.cc, src/formats/cnf.cc,
-	  src/formats/markbdd.cc, src/formats/read_input.cc,
-	  src/formats/read_result.cc, src/formats/sat.cc,
-	  src/formats/smurf.cc, src/formats/write_output.cc,
-	  src/formats/xorbdd.cc, src/formats/5/bddnode.cc,
-	  src/formats/5/bddops.cc, src/formats/5/functions.cc,
-	  src/formats/5/p3.cc, src/formats/5/parser.cc,
-	  src/formats/5/tracetest.cc, src/generator/gentest.cc,
-	  src/generator/rn.cc, src/generator/vanDerWaerden.cc,
-	  src/generator/xorgen.cc, src/postproc/backend.cc,
-	  src/preproc/create_infs.cc, src/preproc/do_applyinfs.cc,
-	  src/preproc/do_clearft.cc, src/preproc/do_cofactor.cc,
-	  src/preproc/do_depcluster.cc, src/preproc/do_exquantify.cc,
-	  src/preproc/do_exquantifyand.cc, src/preproc/do_flow.cc,
-	  src/preproc/do_prover3.cc, src/preproc/do_pruning.cc,
-	  src/preproc/do_pruning_1.cc, src/preproc/do_pruning_2.cc,
-	  src/preproc/do_pruning_pr.cc, src/preproc/do_pruning_restrict.cc,
-	  src/preproc/do_rewind.cc, src/preproc/do_split.cc,
-	  src/preproc/do_steal.cc, src/preproc/do_strength.cc,
-	  src/preproc/init_preproc.cc, src/preproc/other_preproc.cc,
-	  src/preproc/preprocess.cc, src/solver/autarky.cc,
-	  src/solver/backtrack.cc, src/solver/backtrack_nl.cc,
-	  src/solver/backtrack_sbj.cc, src/solver/bdd2smurf.cc,
-	  src/solver/bdd2specfn_and.cc, src/solver/bdd2specfn_minmax.cc,
-	  src/solver/bdd2specfn_xor.cc, src/solver/bddwalk.cc,
-	  src/solver/brancher.cc, src/solver/bt_lemmas.cc,
-	  src/solver/bt_misc.cc, src/solver/bt_smurfs.cc,
-	  src/solver/bt_specfn.cc, src/solver/bt_specfn_and.cc,
-	  src/solver/bt_specfn_minmax.cc, src/solver/bt_specfn_xor.cc,
-	  src/solver/crtwin.cc, src/solver/display.cc,
-	  src/solver/display_sf.cc, src/solver/heur_choice.cc,
-	  src/solver/heur_stack.cc, src/solver/heuristic.cc,
-	  src/solver/i_heuristic.cc, src/solver/init_solver.cc,
-	  src/solver/interface.cc, src/solver/j_heuristic.cc,
-	  src/solver/j_smurf.cc, src/solver/j_specfn.cc,
-	  src/solver/j_specfn_and.cc, src/solver/j_specfn_minmax.cc,
-	  src/solver/j_specfn_xor.cc, src/solver/j_update_heu.cc,
-	  src/solver/ksolve.cc, src/solver/l_heuristic.cc,
-	  src/solver/l_lemma.cc, src/solver/lemmacache.cc,
-	  src/solver/lemmainfo.cc, src/solver/lemmamisc.cc,
-	  src/solver/lemmas.cc, src/solver/lemmas_and.cc,
-	  src/solver/lemmas_minmax.cc, src/solver/lemmas_xor.cc,
-	  src/solver/lemmaspace.cc, src/solver/lemmawlits.cc,
-	  src/solver/libsolver.cc, src/solver/load_lemmas.cc,
-	  src/solver/recordsol.cc, src/solver/select_bp.cc,
-	  src/solver/sf_addons.cc, src/solver/smurfaddons.cc,
-	  src/solver/smurffactory.cc, src/solver/smurfstates.cc,
-	  src/solver/solve.cc, src/solver/state_stacks.cc,
-	  src/solver/transitions.cc, src/solver/update_heu.cc,
-	  src/solver/verify.cc, src/solver/wvf.cc, src/utils/bdd.cc,
-	  src/utils/bdd_circuit_init.cc, src/utils/bddtable.cc,
-	  src/utils/custprint.cc, src/utils/infer.cc,
-	  src/utils/itetable.cc, src/utils/java_wrapper.cc,
-	  src/utils/log.cc, src/utils/params.cc, src/utils/params_fn.cc,
-	  src/utils/symtable.cc, src/utils/termcap.cc, src/utils/utils.cc,
-	  src/utils/vars.cc, src/utils/zread.cc: Updated copyright dates
+	include/brancher.h, include/common.h, include/defines.h,
+	include/equivclass.h, include/formats.h, include/globals.h,
+	include/heuristic.h, include/i_heuristic.h, include/interface.h,
+	include/ite.h, include/itefeatures.h, include/iteheaders.h,
+	include/j_heuristic.h, include/l_heuristic.h, include/lemmainfo.h,
+	include/log.h, include/params.h, include/pools.h,
+	include/postproc.h, include/preprocess.h, include/prototypes.h,
+	include/smurffactory.h, include/solver.h, include/symtable.h,
+	include/vars.h, src/sbsat.cc, src/formats/autochk.cc,
+	src/formats/bdd2cnf.cc, src/formats/bddbinary.cc,
+	src/formats/cnf.cc, src/formats/markbdd.cc,
+	src/formats/read_input.cc, src/formats/read_result.cc,
+	src/formats/sat.cc, src/formats/smurf.cc,
+	src/formats/write_output.cc, src/formats/xorbdd.cc,
+	src/formats/5/bddnode.cc, src/formats/5/bddops.cc,
+	src/formats/5/functions.cc, src/formats/5/p3.cc,
+	src/formats/5/parser.cc, src/formats/5/tracetest.cc,
+	src/generator/gentest.cc, src/generator/rn.cc,
+	src/generator/vanDerWaerden.cc, src/generator/xorgen.cc,
+	src/postproc/backend.cc, src/preproc/create_infs.cc,
+	src/preproc/do_applyinfs.cc, src/preproc/do_clearft.cc,
+	src/preproc/do_cofactor.cc, src/preproc/do_depcluster.cc,
+	src/preproc/do_exquantify.cc, src/preproc/do_exquantifyand.cc,
+	src/preproc/do_flow.cc, src/preproc/do_prover3.cc,
+	src/preproc/do_pruning.cc, src/preproc/do_pruning_1.cc,
+	src/preproc/do_pruning_2.cc, src/preproc/do_pruning_pr.cc,
+	src/preproc/do_pruning_restrict.cc, src/preproc/do_rewind.cc,
+	src/preproc/do_split.cc, src/preproc/do_steal.cc,
+	src/preproc/do_strength.cc, src/preproc/init_preproc.cc,
+	src/preproc/other_preproc.cc, src/preproc/preprocess.cc,
+	src/solver/autarky.cc, src/solver/backtrack.cc,
+	src/solver/backtrack_nl.cc, src/solver/backtrack_sbj.cc,
+	src/solver/bdd2smurf.cc, src/solver/bdd2specfn_and.cc,
+	src/solver/bdd2specfn_minmax.cc, src/solver/bdd2specfn_xor.cc,
+	src/solver/bddwalk.cc, src/solver/brancher.cc,
+	src/solver/bt_lemmas.cc, src/solver/bt_misc.cc,
+	src/solver/bt_smurfs.cc, src/solver/bt_specfn.cc,
+	src/solver/bt_specfn_and.cc, src/solver/bt_specfn_minmax.cc,
+	src/solver/bt_specfn_xor.cc, src/solver/crtwin.cc,
+	src/solver/display.cc, src/solver/display_sf.cc,
+	src/solver/heur_choice.cc, src/solver/heur_stack.cc,
+	src/solver/heuristic.cc, src/solver/i_heuristic.cc,
+	src/solver/init_solver.cc, src/solver/interface.cc,
+	src/solver/j_heuristic.cc, src/solver/j_smurf.cc,
+	src/solver/j_specfn.cc, src/solver/j_specfn_and.cc,
+	src/solver/j_specfn_minmax.cc, src/solver/j_specfn_xor.cc,
+	src/solver/j_update_heu.cc, src/solver/ksolve.cc,
+	src/solver/l_heuristic.cc, src/solver/l_lemma.cc,
+	src/solver/lemmacache.cc, src/solver/lemmainfo.cc,
+	src/solver/lemmamisc.cc, src/solver/lemmas.cc,
+	src/solver/lemmas_and.cc, src/solver/lemmas_minmax.cc,
+	src/solver/lemmas_xor.cc, src/solver/lemmaspace.cc,
+	src/solver/lemmawlits.cc, src/solver/libsolver.cc,
+	src/solver/load_lemmas.cc, src/solver/recordsol.cc,
+	src/solver/select_bp.cc, src/solver/sf_addons.cc,
+	src/solver/smurfaddons.cc, src/solver/smurffactory.cc,
+	src/solver/smurfstates.cc, src/solver/solve.cc,
+	src/solver/state_stacks.cc, src/solver/transitions.cc,
+	src/solver/update_heu.cc, src/solver/verify.cc, src/solver/wvf.cc,
+	src/utils/bdd.cc, src/utils/bdd_circuit_init.cc,
+	src/utils/bddtable.cc, src/utils/custprint.cc, src/utils/infer.cc,
+	src/utils/itetable.cc, src/utils/java_wrapper.cc, src/utils/log.cc,
+	src/utils/params.cc, src/utils/params_fn.cc, src/utils/symtable.cc,
+	src/utils/termcap.cc, src/utils/utils.cc, src/utils/vars.cc,
+	src/utils/zread.cc: Updated copyright dates
 
 2004-03-19 12:29  mkouril
 
@@ -426,23 +460,23 @@
 2004-03-18 22:21  mkouril
 
 	* Makefile.am, Makefile.in, src/formats/5/Makefile.am,
-	  src/formats/5/Makefile.in, src/utils/bddtable.cc,
-	  src/utils/itetable.cc: Distribution fixes
+	src/formats/5/Makefile.in, src/utils/bddtable.cc,
+	src/utils/itetable.cc: Distribution fixes
 
 2004-03-18 20:57  mkouril
 
 	* src/: formats/Makefile.am, formats/Makefile.in,
-	  formats/5/Makefile.am, formats/5/Makefile.in,
-	  postproc/Makefile.am, postproc/Makefile.in, preproc/Makefile.am,
-	  preproc/Makefile.in, solver/Makefile.am, solver/Makefile.in,
-	  utils/Makefile.am, utils/Makefile.in: Libtool enabled
+	formats/5/Makefile.am, formats/5/Makefile.in, postproc/Makefile.am,
+	postproc/Makefile.in, preproc/Makefile.am, preproc/Makefile.in,
+	solver/Makefile.am, solver/Makefile.in, utils/Makefile.am,
+	utils/Makefile.in: Libtool enabled
 
 2004-03-18 20:44  mkouril
 
 	* confdefs.h, configure, configure.ac, libtool, include/config.h,
-	  src/Makefile.in, src/generator/Makefile.in,
-	  src/postproc/Makefile.in, src/preproc/Makefile.in,
-	  src/utils/Makefile.in: Release Candidate 2.2r-1
+	src/Makefile.in, src/generator/Makefile.in,
+	src/postproc/Makefile.in, src/preproc/Makefile.in,
+	src/utils/Makefile.in: Release Candidate 2.2r-1
 
 2004-03-18 20:44  mkouril
 
@@ -455,77 +489,75 @@
 2004-03-18 15:03  mkouril
 
 	* src/solver/: brancher.cc, ksolve.cc: Fixed kSolver -- no real
-	  inferences yet though
+	inferences yet though
 
 2004-03-18 08:32  mkouril
 
 	* ChangeLog, include/vars.h, src/solver/Makefile.am,
-	  src/solver/Makefile.in, src/solver/init_solver.cc,
-	  src/solver/ksolve.cc, src/solver/libsolver.cc,
-	  src/solver/smurffactory.cc, src/solver/solve.cc,
-	  src/utils/params.cc, src/utils/vars.cc: Added K-top-variables
-	  solver
+	src/solver/Makefile.in, src/solver/init_solver.cc,
+	src/solver/ksolve.cc, src/solver/libsolver.cc,
+	src/solver/smurffactory.cc, src/solver/solve.cc,
+	src/utils/params.cc, src/utils/vars.cc: Added K-top-variables
+	solver
 
 2004-03-18 05:21  mkouril
 
 	* include/Makefile.am, include/Makefile.in,
-	  src/formats/5/Makefile.am, src/formats/5/Makefile.in,
-	  src/formats/5/libt5_la-trace_g.cc, src/solver/Makefile.am,
-	  src/solver/Makefile.in, src/utils/params.cc: Fixes for
-	  distribution
+	src/formats/5/Makefile.am, src/formats/5/Makefile.in,
+	src/formats/5/libt5_la-trace_g.cc, src/solver/Makefile.am,
+	src/solver/Makefile.in, src/utils/params.cc: Fixes for distribution
 
 2004-03-09 22:26  fett
 
 	* src/preproc/do_exquantify.cc: now do _exquantify will quantify
-	  out it's variable if it can't infer it.
-
-	     ~Sean
+	out it's variable if it can't infer it.
+	
+	   ~Sean
 
 2004-03-09 21:35  fett
 
 	* src/preproc/: do_exquantify.cc, do_exquantifyand.cc: Added in
-	  code to intensely identify possible inferences.
-
-	     ~Sean
+	code to intensely identify possible inferences.
+	
+	   ~Sean
 
 2004-03-09 11:21  fett
 
 	* src/preproc/do_exquantify.cc: fixed a small problem where
-	  variables could be quantified away incorrectly.
-
-	    ~Sean
+	variables could be quantified away incorrectly.
+	
+	  ~Sean
 
 2004-03-08 16:02  fett
 
 	* src/preproc/: do_exquantify.cc, do_exquantifyand.cc,
-	  do_prover3.cc, do_rewind.cc, other_preproc.cc: adding in new
-	  ex_and ideas, and added a check for unsat after each
-	  Do_Apply_Inferences() call.
-
-	    ~Sean
+	do_prover3.cc, do_rewind.cc, other_preproc.cc: adding in new ex_and
+	ideas, and added a check for unsat after each Do_Apply_Inferences()
+	call.
+	
+	  ~Sean
 
 2004-03-08 16:01  fett
 
 	* include/preprocess.h, src/utils/Makefile.in: ?
-
-	    ~Sean
+	
+	  ~Sean
 
 2004-03-08 16:01  fett
 
 	* examples/markbdd.ite: Maybe fixed a syntax error.
-
-	    ~Sean
+	
+	  ~Sean
 
 2004-03-08 10:02  mkouril
 
 	* src/utils/bddtable.cc, src/utils/symtable.cc, include/common.h:
-	  Added mirrored node to BDD (disabled by default)
+	Added mirrored node to BDD (disabled by default)
 
 2004-03-02 15:40  mkouril
 
 	* src/solver/: display.cc, recordsol.cc, verify.cc: Show number of
-	  solutions for dbg levels < 5 instead of each solution in
-	  statistics
+	solutions for dbg levels < 5 instead of each solution in statistics
 
 2004-03-02 15:30  mkouril
 
@@ -534,17 +566,17 @@
 2004-03-01 13:58  mkouril
 
 	* ChangeLog, src/solver/init_solver.cc: Fixed AFS for XOR after
-	  2/22/04
+	2/22/04
 
 2004-02-28 23:52  mkouril
 
 	* src/utils/bdd.cc: Function to print shared nodes in a BDD -- for
-	  later
+	later
 
 2004-02-28 23:46  mkouril
 
 	* src/: formats/5/bddops.cc, utils/bddtable.cc: Faster
-	  bddtable_alloc_not_node
+	bddtable_alloc_not_node
 
 2004-02-28 22:28  mkouril
 
@@ -553,27 +585,27 @@
 2004-02-28 00:03  mkouril
 
 	* include/smurffactory.h, include/solver.h, src/formats/5/p3.cc,
-	  src/solver/bdd2smurf.cc, src/solver/bt_smurfs.cc,
-	  src/solver/j_smurf.cc, src/solver/smurffactory.cc,
-	  src/solver/solve.cc, src/utils/bdd.cc: Smurf node coverage
-	  statistic
+	src/solver/bdd2smurf.cc, src/solver/bt_smurfs.cc,
+	src/solver/j_smurf.cc, src/solver/smurffactory.cc,
+	src/solver/solve.cc, src/utils/bdd.cc: Smurf node coverage
+	statistic
 
 2004-02-27 13:56  mkouril
 
 	* include/j_heuristic.h, include/smurffactory.h, include/solver.h,
-	  src/solver/brancher.cc, src/solver/bt_misc.cc,
-	  src/solver/bt_specfn.cc, src/solver/bt_specfn_minmax.cc,
-	  src/solver/init_solver.cc, src/solver/j_heuristic.cc,
-	  src/solver/j_specfn.cc, src/solver/j_specfn_and.cc,
-	  src/solver/j_specfn_minmax.cc, src/solver/j_specfn_xor.cc,
-	  src/solver/lemmas_minmax.cc, src/solver/smurffactory.cc,
-	  src/solver/state_stacks.cc, src/solver/update_heu.cc: MinMax
-	  (Cardinality contrains) -- Johnson heuristic & lemmas
+	src/solver/brancher.cc, src/solver/bt_misc.cc,
+	src/solver/bt_specfn.cc, src/solver/bt_specfn_minmax.cc,
+	src/solver/init_solver.cc, src/solver/j_heuristic.cc,
+	src/solver/j_specfn.cc, src/solver/j_specfn_and.cc,
+	src/solver/j_specfn_minmax.cc, src/solver/j_specfn_xor.cc,
+	src/solver/lemmas_minmax.cc, src/solver/smurffactory.cc,
+	src/solver/state_stacks.cc, src/solver/update_heu.cc: MinMax
+	(Cardinality contrains) -- Johnson heuristic & lemmas
 
 2004-02-25 18:31  mkouril
 
 	* src/solver/: bdd2specfn_minmax.cc, bt_specfn_minmax.cc,
-	  display.cc: Added lemmas for MinMax
+	display.cc: Added lemmas for MinMax
 
 2004-02-24 17:05  mkouril
 
@@ -586,72 +618,72 @@
 2004-02-24 16:37  mkouril
 
 	* include/Makefile.am, include/Makefile.in, include/flatten.h,
-	  include/formats.h, include/interface.h, include/parse.h,
-	  include/postproc.h, include/tracer.h, include/vars.h,
-	  src/sbsat.cc, src/formats/Makefile.am, src/formats/Makefile.in,
-	  src/formats/flatten.cc, src/formats/parse.cc,
-	  src/formats/read_input.cc, src/formats/read_result.cc,
-	  src/formats/tracer.cc, src/formats/write_output.cc,
-	  src/formats/5/bddnode.h, src/formats/5/bddops.cc,
-	  src/formats/5/functions.cc, src/formats/5/trace_g.yy,
-	  src/formats/5/trace_s.cc, src/formats/5/trace_s.ll,
-	  src/postproc/backend.cc, src/utils/params.cc, src/utils/vars.cc,
-	  tests/longer_tests/12.trace.gz.params: Tracer removed (replaced
-	  with tracer5)
+	include/formats.h, include/interface.h, include/parse.h,
+	include/postproc.h, include/tracer.h, include/vars.h, src/sbsat.cc,
+	src/formats/Makefile.am, src/formats/Makefile.in,
+	src/formats/flatten.cc, src/formats/parse.cc,
+	src/formats/read_input.cc, src/formats/read_result.cc,
+	src/formats/tracer.cc, src/formats/write_output.cc,
+	src/formats/5/bddnode.h, src/formats/5/bddops.cc,
+	src/formats/5/functions.cc, src/formats/5/trace_g.yy,
+	src/formats/5/trace_s.cc, src/formats/5/trace_s.ll,
+	src/postproc/backend.cc, src/utils/params.cc, src/utils/vars.cc,
+	tests/longer_tests/12.trace.gz.params: Tracer removed (replaced
+	with tracer5)
 
 2004-02-24 10:55  mkouril
 
 	* include/smurffactory.h, src/solver/bt_smurfs.cc,
-	  src/solver/j_heuristic.cc, src/solver/transitions.cc: Removed
-	  pState from pTransition -- redundant
+	src/solver/j_heuristic.cc, src/solver/transitions.cc: Removed
+	pState from pTransition -- redundant
 
 2004-02-24 10:45  mkouril
 
 	* include/smurffactory.h, src/solver/bt_smurfs.cc,
-	  src/solver/display_sf.cc, src/solver/smurfstates.cc: More solver
-	  cleanups -- removed precomputed lemmas we weren't using
+	src/solver/display_sf.cc, src/solver/smurfstates.cc: More solver
+	cleanups -- removed precomputed lemmas we weren't using
 
 2004-02-24 00:03  mkouril
 
 	* src/: generator/vanDerWaerden.cc, solver/j_heuristic.cc,
-	  solver/smurffactory.cc: Cleanups
+	solver/smurffactory.cc: Cleanups
 
 2004-02-23 23:29  mkouril
 
 	* Makefile.in, compile.patch, configure, configure.ac,
-	  doc/Makefile.in, doc/man1/Makefile.in, doc/manual/Makefile.in,
-	  examples/Makefile.in, include/Makefile.in, src/Makefile.am,
-	  src/Makefile.in, src/formats/Makefile.am,
-	  src/formats/Makefile.in, src/formats/5/Makefile.am,
-	  src/formats/5/Makefile.in, src/generator/Makefile.in,
-	  src/postproc/Makefile.am, src/postproc/Makefile.in,
-	  src/preproc/Makefile.am, src/preproc/Makefile.in,
-	  src/solver/Makefile.am, src/solver/Makefile.in,
-	  src/solver/bdd2smurf.cc, src/utils/Makefile.am,
-	  src/utils/Makefile.in, tests/Makefile.in, tests/cnf/Makefile.in,
-	  tests/longer_tests/Makefile.in, tests/trace_tests/Makefile.in:
-	  Updated libtool added --enable-alllibtool for configure
+	doc/Makefile.in, doc/man1/Makefile.in, doc/manual/Makefile.in,
+	examples/Makefile.in, include/Makefile.in, src/Makefile.am,
+	src/Makefile.in, src/formats/Makefile.am, src/formats/Makefile.in,
+	src/formats/5/Makefile.am, src/formats/5/Makefile.in,
+	src/generator/Makefile.in, src/postproc/Makefile.am,
+	src/postproc/Makefile.in, src/preproc/Makefile.am,
+	src/preproc/Makefile.in, src/solver/Makefile.am,
+	src/solver/Makefile.in, src/solver/bdd2smurf.cc,
+	src/utils/Makefile.am, src/utils/Makefile.in, tests/Makefile.in,
+	tests/cnf/Makefile.in, tests/longer_tests/Makefile.in,
+	tests/trace_tests/Makefile.in: Updated libtool added
+	--enable-alllibtool for configure
 
 2004-02-23 22:45  mkouril
 
 	* include/integerset.h, include/lemmainfo.h, include/literalset.h,
-	  include/pools.h, include/prototypes.h, include/smurffactory.h,
-	  include/solver.h, src/solver/bdd2smurf.cc,
-	  src/solver/bdd2specfn_and.cc, src/solver/bdd2specfn_minmax.cc,
-	  src/solver/bdd2specfn_xor.cc, src/solver/brancher.cc,
-	  src/solver/display.cc, src/solver/display_sf.cc,
-	  src/solver/init_solver.cc, src/solver/interface.cc,
-	  src/solver/sf_addons.cc, src/solver/smurfaddons.cc,
-	  src/solver/smurffactory.cc, src/solver/solve.cc,
-	  src/solver/transitions.cc, src/utils/Makefile.am,
-	  src/utils/Makefile.in, src/utils/bdd.cc, src/utils/integerset.cc,
-	  src/utils/intnode.cc, src/utils/literalset.cc: More cleanups in
-	  the solver
+	include/pools.h, include/prototypes.h, include/smurffactory.h,
+	include/solver.h, src/solver/bdd2smurf.cc,
+	src/solver/bdd2specfn_and.cc, src/solver/bdd2specfn_minmax.cc,
+	src/solver/bdd2specfn_xor.cc, src/solver/brancher.cc,
+	src/solver/display.cc, src/solver/display_sf.cc,
+	src/solver/init_solver.cc, src/solver/interface.cc,
+	src/solver/sf_addons.cc, src/solver/smurfaddons.cc,
+	src/solver/smurffactory.cc, src/solver/solve.cc,
+	src/solver/transitions.cc, src/utils/Makefile.am,
+	src/utils/Makefile.in, src/utils/bdd.cc, src/utils/integerset.cc,
+	src/utils/intnode.cc, src/utils/literalset.cc: More cleanups in the
+	solver
 
 2004-02-23 13:53  fett
 
 	* src/formats/cnf.cc: fixed minmax special function not being
-	  flagged
+	flagged
 
 2004-02-23 13:21  fett
 
@@ -660,45 +692,45 @@
 2004-02-23 13:21  fett
 
 	* src/formats/markbdd.cc: fixed a bug with parsing the file.
-
-	    ~Sean
+	
+	  ~Sean
 
 2004-02-23 11:09  mkouril
 
 	* include/defines.h, include/j_heuristic.h, include/lemmainfo.h,
-	  include/smurffactory.h, include/solver.h, include/vars.h,
-	  src/generator/vanDerWaerden.cc, src/solver/Makefile.am,
-	  src/solver/Makefile.in, src/solver/bdd2specfn_and.cc,
-	  src/solver/bdd2specfn_minmax.cc, src/solver/bdd2specfn_xor.cc,
-	  src/solver/bt_specfn.cc, src/solver/bt_specfn_minmax.cc,
-	  src/solver/j_heuristic.cc, src/solver/j_specfn_minmax.cc,
-	  src/solver/lemmas_and.cc, src/solver/lemmas_minmax.cc,
-	  src/solver/lemmas_xor.cc, src/solver/libsolver.cc,
-	  src/solver/smurffactory.cc, src/solver/update_heu.cc,
-	  src/utils/params.cc: Added more MinMax special function
-	  functionality. Not done yet though
+	include/smurffactory.h, include/solver.h, include/vars.h,
+	src/generator/vanDerWaerden.cc, src/solver/Makefile.am,
+	src/solver/Makefile.in, src/solver/bdd2specfn_and.cc,
+	src/solver/bdd2specfn_minmax.cc, src/solver/bdd2specfn_xor.cc,
+	src/solver/bt_specfn.cc, src/solver/bt_specfn_minmax.cc,
+	src/solver/j_heuristic.cc, src/solver/j_specfn_minmax.cc,
+	src/solver/lemmas_and.cc, src/solver/lemmas_minmax.cc,
+	src/solver/lemmas_xor.cc, src/solver/libsolver.cc,
+	src/solver/smurffactory.cc, src/solver/update_heu.cc,
+	src/utils/params.cc: Added more MinMax special function
+	functionality. Not done yet though
 
 2004-02-22 22:45  fett
 
 	* src/: solver/Makefile.in, utils/Makefile.in, utils/bdd.cc: [no
-	  log message]
+	log message]
 
 2004-02-22 18:07  mkouril
 
 	* include/prototypes.h, include/smurffactory.h,
-	  src/preproc/do_applyinfs.cc, src/preproc/do_exquantifyand.cc,
-	  src/preproc/preprocess.cc, src/solver/sf_addons.cc,
-	  src/solver/smurfaddons.cc, src/solver/smurffactory.cc,
-	  src/utils/bdd.cc, src/utils/bddtable.cc: More Solver Cleanups
+	src/preproc/do_applyinfs.cc, src/preproc/do_exquantifyand.cc,
+	src/preproc/preprocess.cc, src/solver/sf_addons.cc,
+	src/solver/smurfaddons.cc, src/solver/smurffactory.cc,
+	src/utils/bdd.cc, src/utils/bddtable.cc: More Solver Cleanups
 
 2004-02-22 17:58  mkouril
 
 	* include/smurffactory.h, src/solver/Makefile.am,
-	  src/solver/Makefile.in, src/solver/bdd2smurf.cc,
-	  src/solver/bdd2specfn_and.cc, src/solver/bdd2specfn_xor.cc,
-	  src/solver/bt_smurfs.cc, src/solver/init_solver.cc,
-	  src/solver/lemmas_smurf.cc, src/solver/libsolver.cc,
-	  src/solver/smurffactory.cc, src/utils/params.cc: Solver cleanups
+	src/solver/Makefile.in, src/solver/bdd2smurf.cc,
+	src/solver/bdd2specfn_and.cc, src/solver/bdd2specfn_xor.cc,
+	src/solver/bt_smurfs.cc, src/solver/init_solver.cc,
+	src/solver/lemmas_smurf.cc, src/solver/libsolver.cc,
+	src/solver/smurffactory.cc, src/utils/params.cc: Solver cleanups
 
 2004-02-21 18:05  mkouril
 
@@ -707,22 +739,22 @@
 2004-02-21 00:54  fett
 
 	* src/utils/bdd.cc: fixed it right this time...
-
-	      ~Sean
+	
+	    ~Sean
 
 2004-02-21 00:50  fett
 
 	* src/utils/bdd.cc: fixed a warning about shadow declarations of
-	  'temp'
-
-	    ~Sean
+	'temp'
+	
+	  ~Sean
 
 2004-02-20 18:12  fett
 
 	* src/preproc/do_exquantifyand.cc: made exquant and kick out for
-	  good when ctrl-c is hit.
-
-	    ~Sean
+	good when ctrl-c is hit.
+	
+	  ~Sean
 
 2004-02-20 18:05  fett
 
@@ -731,22 +763,22 @@
 2004-02-20 17:59  fett
 
 	* src/preproc/: do_exquantify.cc, do_exquantifyand.cc: fixed some
-	  exquant and exquant_and bugs
-
-	    ~Sean
+	exquant and exquant_and bugs
+	
+	  ~Sean
 
 2004-02-20 17:17  fett
 
 	* src/utils/bdd.cc: re-added cache to x_T_z
-
-	     ~Sean
+	
+	   ~Sean
 
 2004-02-20 17:10  fett
 
 	* src/: preproc/do_exquantifyand.cc, utils/Makefile.in,
-	  utils/bdd.cc: fixed leaks in possible_infers_x
-
-	     ~Sean
+	utils/bdd.cc: fixed leaks in possible_infers_x
+	
+	   ~Sean
 
 2004-02-20 16:33  fett
 
@@ -755,15 +787,15 @@
 2004-02-20 15:19  fett
 
 	* include/common.h, src/preproc/other_preproc.cc, src/utils/bdd.cc:
-	  added tmp_infer for possible_infers to work.
-
-	     ~Sean
+	added tmp_infer for possible_infers to work.
+	
+	   ~Sean
 
 2004-02-20 14:50  fett
 
 	* src/: preproc/do_depcluster.cc, preproc/do_exquantify.cc,
-	  preproc/do_exquantifyand.cc, utils/bddtable.cc: fixed --ex-infer
-	  command line flag
+	preproc/do_exquantifyand.cc, utils/bddtable.cc: fixed --ex-infer
+	command line flag
 
 2004-02-20 13:53  mkouril
 
@@ -784,21 +816,21 @@
 2004-02-19 22:14  mkouril
 
 	* src/utils/bdd.cc, src/utils/itetable.cc, include/prototypes.h:
-	  Added itetable_add_node; Added start_bdd_flag_number;
+	Added itetable_add_node; Added start_bdd_flag_number;
 
 2004-02-19 16:01  fett
 
 	* src/utils/bdd.cc: num_replace has been fixed...
-
-	     ~Sean
+	
+	   ~Sean
 
 2004-02-19 15:45  fett
 
 	* src/preproc/: do_applyinfs.cc, do_exquantify.cc,
-	  do_exquantifyand.cc: making variablelist[].true_false more
-	  consistent.
-
-	     ~Sean
+	do_exquantifyand.cc: making variablelist[].true_false more
+	consistent.
+	
+	   ~Sean
 
 2004-02-19 15:42  mkouril
 
@@ -811,7 +843,7 @@
 2004-02-19 15:03  mkouril
 
 	* include/common.h, src/utils/bdd.cc: xquantify improvements;
-	  countX improvements
+	countX improvements
 
 2004-02-19 14:46  mkouril
 
@@ -820,9 +852,9 @@
 2004-02-19 12:57  fett
 
 	* include/prototypes.h, src/preproc/do_applyinfs.cc,
-	  src/preproc/do_split.cc, src/preproc/init_preproc.cc,
-	  src/utils/Makefile.in, src/utils/bdd.cc: Added in ability to
-	  detect if a BDD is a PLAINOR isOR();
+	src/preproc/do_split.cc, src/preproc/init_preproc.cc,
+	src/utils/Makefile.in, src/utils/bdd.cc: Added in ability to detect
+	if a BDD is a PLAINOR isOR();
 
 2004-02-19 12:56  fett
 
@@ -835,19 +867,19 @@
 2004-02-19 10:04  mkouril
 
 	* include/prototypes.h, src/sbsat.cc, src/utils/Makefile.am,
-	  src/utils/Makefile.in, src/utils/bdd.cc, src/utils/bddtable.cc:
-	  itecache
+	src/utils/Makefile.in, src/utils/bdd.cc, src/utils/bddtable.cc:
+	itecache
 
 2004-02-19 08:52  mkouril
 
 	* include/prototypes.h, src/sbsat.cc, src/utils/bddtable.cc: Fanced
-	  up bddtable
+	up bddtable
 
 2004-02-19 08:38  mkouril
 
 	* ChangeLog, src/utils/Makefile.am, src/utils/Makefile.in,
-	  src/utils/bddidx.cc, src/utils/bddidx_orig.cc,
-	  src/utils/bddidx_vsb.cc: Removed all bdd table files
+	src/utils/bddidx.cc, src/utils/bddidx_orig.cc,
+	src/utils/bddidx_vsb.cc: Removed all bdd table files
 
 2004-02-18 14:04  mkouril
 
@@ -856,7 +888,7 @@
 2004-02-18 13:41  mkouril
 
 	* ChangeLog, include/prototypes.h, src/preproc/do_applyinfs.cc,
-	  src/utils/bdd.cc: Added set_variable_all and num_replace_all
+	src/utils/bdd.cc: Added set_variable_all and num_replace_all
 
 2004-02-18 12:07  fett
 
@@ -869,17 +901,17 @@
 2004-02-17 23:43  mkouril
 
 	* src/utils/: bdd.cc, bddtable.cc: Reverse the last one -- makes no
-	  speed difference -- easier debugging the way it was
+	speed difference -- easier debugging the way it was
 
 2004-02-17 23:34  mkouril
 
 	* src/utils/: bdd.cc, bddtable.cc: hash function as macro, notCase
-	  for true and false
+	for true and false
 
 2004-02-17 22:33  mkouril
 
 	* include/common.h, src/utils/bdd.cc, src/utils/bddtable.cc: More
-	  ite() related optimizations
+	ite() related optimizations
 
 2004-02-17 21:42  mkouril
 
@@ -896,12 +928,12 @@
 2004-02-17 14:34  mkouril
 
 	* src/: solver/i_heuristic.cc, solver/j_heuristic.cc,
-	  utils/bddtable.cc: Fixed bdd_gcc with or_bdd
+	utils/bddtable.cc: Fixed bdd_gcc with or_bdd
 
 2004-02-17 14:05  mkouril
 
 	* include/common.h, include/prototypes.h, src/utils/bdd.cc: Added
-	  ite_or_te (ite_or(then, else))
+	ite_or_te (ite_or(then, else))
 
 2004-02-17 13:14  mkouril
 
@@ -914,7 +946,7 @@
 2004-02-17 11:44  mkouril
 
 	* include/symtable.h, src/utils/bdd.cc, src/utils/symtable.cc:
-	  Optimization for NEW_unravelBDD
+	Optimization for NEW_unravelBDD
 
 2004-02-16 15:04  mkouril
 
@@ -931,17 +963,17 @@
 2004-02-16 13:42  fett
 
 	* include/equivclass.h, include/globals.h,
-	  src/preproc/do_applyinfs.cc, src/preproc/do_exquantifyand.cc,
-	  src/preproc/do_prover3.cc, src/preproc/init_preproc.cc,
-	  src/utils/bdd.cc: fixed a bug that didn't exist.
-
-	    ~Sean
+	src/preproc/do_applyinfs.cc, src/preproc/do_exquantifyand.cc,
+	src/preproc/do_prover3.cc, src/preproc/init_preproc.cc,
+	src/utils/bdd.cc: fixed a bug that didn't exist.
+	
+	  ~Sean
 
 2004-02-13 12:59  mkouril
 
 	* src/: formats/read_input.cc, formats/5/functions.cc,
-	  formats/5/p3.cc, preproc/do_prover3.cc, utils/bdd.cc: Tuning P3
-	  preprocessing
+	formats/5/p3.cc, preproc/do_prover3.cc, utils/bdd.cc: Tuning P3
+	preprocessing
 
 2004-02-13 12:11  fett
 
@@ -950,8 +982,8 @@
 2004-02-13 12:07  fett
 
 	* src/preproc/do_prover3.cc: fixed printing
-
-	    ~Sean
+	
+	  ~Sean
 
 2004-02-13 12:06  fett
 
@@ -960,28 +992,27 @@
 2004-02-13 12:00  fett
 
 	* src/preproc/do_prover3.cc: added prover3 preprocessing option.
-
-	    ~Sean
+	
+	  ~Sean
 
 2004-02-13 11:58  mkouril
 
 	* include/prototypes.h, src/formats/bddbinary.cc,
-	  src/formats/smurf.cc, src/preproc/Makefile.in, src/utils/bdd.cc,
-	  src/utils/bddtable.cc, src/utils/vars.cc: My changes
+	src/formats/smurf.cc, src/preproc/Makefile.in, src/utils/bdd.cc,
+	src/utils/bddtable.cc, src/utils/vars.cc: My changes
 
 2004-02-13 11:57  fett
 
 	* include/config.h, include/globals.h, include/preprocess.h,
-	  include/vars.h, src/Makefile.in, src/formats/Makefile.in,
-	  src/formats/5/Makefile.in, src/generator/Makefile.in,
-	  src/postproc/Makefile.in, src/preproc/Makefile.am,
-	  src/preproc/Makefile.in, src/preproc/do_rewind.cc,
-	  src/preproc/init_preproc.cc, src/preproc/preprocess.cc,
-	  src/solver/Makefile.in, src/utils/Makefile.in,
-	  src/utils/params.cc, src/utils/vars.cc: Added in P3 preprocessing
-	  option.
-
-	    ~Sean
+	include/vars.h, src/Makefile.in, src/formats/Makefile.in,
+	src/formats/5/Makefile.in, src/generator/Makefile.in,
+	src/postproc/Makefile.in, src/preproc/Makefile.am,
+	src/preproc/Makefile.in, src/preproc/do_rewind.cc,
+	src/preproc/init_preproc.cc, src/preproc/preprocess.cc,
+	src/solver/Makefile.in, src/utils/Makefile.in, src/utils/params.cc,
+	src/utils/vars.cc: Added in P3 preprocessing option.
+	
+	  ~Sean
 
 2004-02-13 11:57  fett
 
@@ -990,86 +1021,86 @@
 2004-02-13 11:57  mkouril
 
 	* src/formats/5/: Makefile.am, Makefile.in, functions.cc,
-	  functions.h, iscas_g.yy, libt5_la-iscas_g.cc, libt5_la-iscas_g.h,
-	  libt5_la-prover3_g.cc, libt5_la-prover3_g.h,
-	  libt5_la-prover_g.cc, libt5_la-prover_g.h, p3.cc, p3.h,
-	  prover3_g.yy, prover_g.yy, tracetest.cc: Reorganization
+	functions.h, iscas_g.yy, libt5_la-iscas_g.cc, libt5_la-iscas_g.h,
+	libt5_la-prover3_g.cc, libt5_la-prover3_g.h, libt5_la-prover_g.cc,
+	libt5_la-prover_g.h, p3.cc, p3.h, prover3_g.yy, prover_g.yy,
+	tracetest.cc: Reorganization
 
 2004-02-11 14:41  mkouril
 
 	* confdefs.h, configure, configure.ac, include/common.h,
-	  include/config.h, include/equivclass.h, include/prototypes.h,
-	  include/vars.h, src/Makefile.in, src/sbsat.cc,
-	  src/formats/Makefile.in, src/formats/5/Makefile.in,
-	  src/formats/5/libt5_la-trace_g.cc, src/formats/5/trace_g.yy,
-	  src/formats/5/tracetest.cc, src/generator/Makefile.in,
-	  src/postproc/Makefile.in, src/postproc/backend.cc,
-	  src/preproc/Makefile.in, src/preproc/do_clearft.cc,
-	  src/preproc/do_cofactor.cc, src/preproc/do_pruning.cc,
-	  src/preproc/do_strength.cc, src/preproc/init_preproc.cc,
-	  src/preproc/other_preproc.cc, src/preproc/preprocess.cc,
-	  src/solver/Makefile.in, src/utils/Makefile.in, src/utils/bdd.cc,
-	  src/utils/params.cc, src/utils/params_fn.cc,
-	  src/utils/symtable.cc, src/utils/termcap.cc, src/utils/utils.cc,
-	  src/utils/vars.cc: Fixed a few silly warnings from extrawarnings
+	include/config.h, include/equivclass.h, include/prototypes.h,
+	include/vars.h, src/Makefile.in, src/sbsat.cc,
+	src/formats/Makefile.in, src/formats/5/Makefile.in,
+	src/formats/5/libt5_la-trace_g.cc, src/formats/5/trace_g.yy,
+	src/formats/5/tracetest.cc, src/generator/Makefile.in,
+	src/postproc/Makefile.in, src/postproc/backend.cc,
+	src/preproc/Makefile.in, src/preproc/do_clearft.cc,
+	src/preproc/do_cofactor.cc, src/preproc/do_pruning.cc,
+	src/preproc/do_strength.cc, src/preproc/init_preproc.cc,
+	src/preproc/other_preproc.cc, src/preproc/preprocess.cc,
+	src/solver/Makefile.in, src/utils/Makefile.in, src/utils/bdd.cc,
+	src/utils/params.cc, src/utils/params_fn.cc, src/utils/symtable.cc,
+	src/utils/termcap.cc, src/utils/utils.cc, src/utils/vars.cc: Fixed
+	a few silly warnings from extrawarnings
 
 2004-02-10 16:18  mkouril
 
 	* src/formats/tracer.cc: Fixed sync between tracer symtable and
-	  global symtable
+	global symtable
 
 2004-02-10 15:41  fett
 
 	* include/globals.h, include/preprocess.h, include/vars.h,
-	  src/Makefile.in, src/formats/Makefile.in,
-	  src/generator/Makefile.in, src/postproc/Makefile.in,
-	  src/preproc/Makefile.am, src/preproc/Makefile.in,
-	  src/preproc/do_exquantifyand.cc, src/preproc/preprocess.cc,
-	  src/utils/Makefile.in, src/utils/params.cc, src/utils/vars.cc:
-	  added in 'Cf' preprocessing option to clear the functionType
-	  array.  This changes the function type of all BDDs to UNSURE.
-
-	    ~Sean
+	src/Makefile.in, src/formats/Makefile.in,
+	src/generator/Makefile.in, src/postproc/Makefile.in,
+	src/preproc/Makefile.am, src/preproc/Makefile.in,
+	src/preproc/do_exquantifyand.cc, src/preproc/preprocess.cc,
+	src/utils/Makefile.in, src/utils/params.cc, src/utils/vars.cc:
+	added in 'Cf' preprocessing option to clear the functionType array.
+	 This changes the function type of all BDDs to UNSURE.
+	
+	  ~Sean
 
 2004-02-10 15:06  fett
 
 	* src/preproc/do_exquantifyand.cc: fixed a bug by throwing out the
-	  examount code and using the amount array that's used in
-	  do_applyinfs()
-
-	     ~Sean
+	examount code and using the amount array that's used in
+	do_applyinfs()
+	
+	   ~Sean
 
 2004-02-10 14:07  fett
 
 	* src/preproc/: do_split.cc, init_preproc.cc: fixed a bug where the
-	  splitter would segfault because it was holding BDDs that were
-	  removed by garbage collection.
-
-	     ~Sean
+	splitter would segfault because it was holding BDDs that were
+	removed by garbage collection.
+	
+	   ~Sean
 
 2004-02-09 16:35  fett
 
 	* src/preproc/: do_rewind.cc, init_preproc.cc: added in support for
-	  functionType and equalityVble
-
-	    ~Sean
+	functionType and equalityVble
+	
+	  ~Sean
 
 2004-02-09 15:48  mkouril
 
 	* src/solver/smurffactory.cc: Added function type debug print for
-	  debug 5 in smurffactory
+	debug 5 in smurffactory
 
 2004-02-09 15:33  mkouril
 
 	* src/solver/smurffactory.cc: Added extra output for debug 5 when
-	  creating smurfs
+	creating smurfs
 
 2004-02-09 15:27  fett
 
 	* src/preproc/: do_rewind.cc, init_preproc.cc: here, checking in
-	  more modifications
-
-	    ~Sean
+	more modifications
+	
+	  ~Sean
 
 2004-02-09 15:23  mkouril
 
@@ -1086,8 +1117,8 @@
 2004-02-09 14:40  fett
 
 	* include/: preprocess.h, vars.h: header files for do_Rewind
-
-	    ~Sean
+	
+	  ~Sean
 
 2004-02-09 14:40  fett
 
@@ -1096,25 +1127,25 @@
 2004-02-09 14:37  fett
 
 	* src/: Makefile.in, formats/Makefile.in, formats/5/Makefile.in,
-	  generator/Makefile.in, postproc/Makefile.in, preproc/Makefile.am,
-	  preproc/Makefile.in, preproc/create_infs.cc,
-	  preproc/do_exquantify.cc, preproc/do_exquantifyand.cc,
-	  preproc/init_preproc.cc, preproc/preprocess.cc,
-	  solver/Makefile.in, utils/Makefile.in, utils/params.cc,
-	  utils/vars.cc: added in Rewind ability.
-
-	     ~Sean
+	generator/Makefile.in, postproc/Makefile.in, preproc/Makefile.am,
+	preproc/Makefile.in, preproc/create_infs.cc,
+	preproc/do_exquantify.cc, preproc/do_exquantifyand.cc,
+	preproc/init_preproc.cc, preproc/preprocess.cc, solver/Makefile.in,
+	utils/Makefile.in, utils/params.cc, utils/vars.cc: added in Rewind
+	ability.
+	
+	   ~Sean
 
 2004-02-09 10:20  fett
 
 	* src/: formats/write_output.cc, utils/params_fn.cc: changed
-	  reference to 'ite' to 'sbsat' for --help
+	reference to 'ite' to 'sbsat' for --help
 
 2004-02-06 13:54  fett
 
 	* src/preproc/do_split.cc: added comments.
-
-	    ~Sean
+	
+	  ~Sean
 
 2004-02-06 13:54  fett
 
@@ -1123,20 +1154,20 @@
 2004-02-04 10:07  mkouril
 
 	* confdefs.h, configure, configure.ac, libtool, include/config.h,
-	  include/globals.h, src/utils/params.cc, src/utils/params_fn.cc,
-	  src/utils/utils.cc: Fixed strncpy for --help
+	include/globals.h, src/utils/params.cc, src/utils/params_fn.cc,
+	src/utils/utils.cc: Fixed strncpy for --help
 
 2004-02-03 12:46  fett
 
 	* src/solver/bddwalk.cc: Updating
-
-	     ~Sean
+	
+	   ~Sean
 
 2004-02-03 12:46  fett
 
 	* src/preproc/do_split.cc: re added in nCk splitting code
-
-	     ~Sean
+	
+	   ~Sean
 
 2004-01-29 09:07  mkouril
 
@@ -1145,12 +1176,12 @@
 2004-01-27 22:33  mkouril
 
 	* src/solver/recordsol.cc: Fixed out of bounds index on xor temp
-	  variables being saved into solutions array
+	variables being saved into solutions array
 
 2004-01-27 22:29  mkouril
 
 	* src/utils/params_fn.cc: Fixed help on params accepting single
-	  char
+	char
 
 2004-01-27 17:44  fett
 
@@ -1159,12 +1190,12 @@
 2004-01-21 14:05  fett
 
 	* src/: Makefile.in, formats/Makefile.in, formats/5/Makefile.in,
-	  generator/Makefile.in, postproc/Makefile.in, preproc/Makefile.in,
-	  preproc/do_cofactor.cc, preproc/do_exquantifyand.cc,
-	  solver/Makefile.in, utils/Makefile.in: I changed themakefiles? oh
-	  man...
-
-	    ~Sean
+	generator/Makefile.in, postproc/Makefile.in, preproc/Makefile.in,
+	preproc/do_cofactor.cc, preproc/do_exquantifyand.cc,
+	solver/Makefile.in, utils/Makefile.in: I changed themakefiles? oh
+	man...
+	
+	  ~Sean
 
 2004-01-21 14:05  fett
 
@@ -1173,12 +1204,12 @@
 2004-01-21 08:43  mkouril
 
 	* confdefs.h, configure, configure.ac, libtool, include/config.h:
-	  version update 2.1r-1
+	version update 2.1r-1
 
 2004-01-19 11:43  mkouril
 
 	* src/: sbsat.cc, formats/tracer.cc, formats/5/prover3_s.cc: Fixed
-	  competition output for UNSAT and trace instances
+	competition output for UNSAT and trace instances
 
 2004-01-15 22:50  mkouril
 
@@ -1187,27 +1218,27 @@
 2004-01-15 22:33  mkouril
 
 	* Makefile.am, Makefile.in, README, include/log.h,
-	  include/params.h, include/vars.h, src/sbsat.cc,
-	  src/postproc/backend.cc, src/solver/display.cc,
-	  src/utils/params.cc, src/utils/params_fn.cc, src/utils/vars.cc:
-	  Added competition-compatible output (see --competition flag)
+	include/params.h, include/vars.h, src/sbsat.cc,
+	src/postproc/backend.cc, src/solver/display.cc,
+	src/utils/params.cc, src/utils/params_fn.cc, src/utils/vars.cc:
+	Added competition-compatible output (see --competition flag)
 
 2004-01-14 15:44  mkouril
 
 	* src/solver/state_stacks.cc: Memory Allocation problem for stacks
-	  fixed
+	fixed
 
 2004-01-14 12:10  fett
 
 	* src/preproc/do_applyinfs.cc: added in more independant/dependant
-	  intelligence.
-
-	     ~Sean
+	intelligence.
+	
+	   ~Sean
 
 2004-01-13 22:46  mkouril
 
 	* src/formats/bddbinary.cc: Preinitialize all variables in the
-	  symtable during binary load
+	symtable during binary load
 
 2004-01-13 22:45  mkouril
 
@@ -1216,7 +1247,7 @@
 2004-01-13 22:44  mkouril
 
 	* src/utils/symtable.cc: Don't set max until the array is actually
-	  allocated
+	allocated
 
 2004-01-13 16:57  fett
 
@@ -1237,9 +1268,9 @@
 2004-01-13 15:49  fett
 
 	* src/preproc/do_applyinfs.cc: Fixed independant vars to work with
-	  equivalences.
-
-	    ~Sean
+	equivalences.
+	
+	  ~Sean
 
 2004-01-13 15:43  fett
 
@@ -1252,9 +1283,9 @@
 2004-01-13 15:13  fett
 
 	* src/: preproc/do_cofactor.cc, utils/bdd.cc: modified
-	  vars_in_common to work correctly.
-
-	     ~Sean
+	vars_in_common to work correctly.
+	
+	   ~Sean
 
 2004-01-13 15:13  fett
 
@@ -1267,7 +1298,7 @@
 2004-01-13 12:06  fett
 
 	* src/: preproc/do_exquantify.cc, solver/heur_choice.cc: just
-	  looking
+	looking
 
 2004-01-13 11:52  mkouril
 
@@ -1280,14 +1311,14 @@
 2004-01-13 10:34  mkouril
 
 	* src/formats/read_input.cc, src/formats/write_output.cc,
-	  src/formats/bddbinary.cc, include/formats.h,
-	  include/prototypes.h, include/symtable.h, src/utils/bddtable.cc,
-	  src/utils/params.cc, src/utils/symtable.cc: Added [B]inary format
+	src/formats/bddbinary.cc, include/formats.h, include/prototypes.h,
+	include/symtable.h, src/utils/bddtable.cc, src/utils/params.cc,
+	src/utils/symtable.cc: Added [B]inary format
 
 2004-01-13 07:48  mkouril
 
 	* src/utils/termcap.cc: Fixed free non-NULL uninitialized pointer
-	  when termcap is not present.
+	when termcap is not present.
 
 2004-01-13 07:35  mkouril
 
@@ -1296,30 +1327,30 @@
 2004-01-12 16:49  mkouril
 
 	* src/solver/: bdd2smurf.cc, bt_smurfs.cc, transitions.cc: Extra
-	  asserts so we don't end up in the same node after transitions.
+	asserts so we don't end up in the same node after transitions.
 
 2004-01-12 14:47  mkouril
 
 	* src/utils/symtable.cc: Fixed segfault during sym_free without
-	  sym_init.
+	sym_init.
 
 2004-01-12 12:49  fett
 
 	* src/: preproc/do_exquantify.cc, utils/params.cc: added
-	  functionality to work with --ex-infer   ~Sean
+	functionality to work with --ex-infer	~Sean
 
 2004-01-12 12:38  mkouril
 
 	* include/vars.h, src/utils/params.cc, src/utils/vars.cc: Added
-	  --ex-infer
+	--ex-infer
 
 2004-01-12 12:00  fett
 
 	* src/preproc/: do_exquantify.cc, other_preproc.cc: fixed a small
-	  bug in existential quantification dealing with the new inferences
-	  that ex can make.
-
-	     ~Sean
+	bug in existential quantification dealing with the new inferences
+	that ex can make.
+	
+	   ~Sean
 
 2004-01-07 13:11  fett
 
@@ -1336,36 +1367,36 @@
 2004-01-07 13:10  mkouril
 
 	* include/prototypes.h, src/sbsat.cc, src/utils/termcap.cc: Fixed
-	  terminal input.
+	terminal input.
 
 2004-01-07 12:32  fett
 
 	* src/: preproc/do_depcluster.cc, preproc/do_exquantifyand.cc,
-	  utils/bdd.cc: I don't know. Probably nothing much
-
-	    ~Sean
+	utils/bdd.cc: I don't know. Probably nothing much
+	
+	  ~Sean
 
 2004-01-02 14:41  fett
 
 	* src/preproc/: do_exquantify.cc, do_exquantifyand.cc,
-	  other_preproc.cc: Fixed the exquantify stuff. It should work
-	  great now.
-
-	     ~Sean
+	other_preproc.cc: Fixed the exquantify stuff. It should work great
+	now.
+	
+	   ~Sean
 
 2003-12-29 13:05  fett
 
 	* src/utils/: bdd.cc, bddtable.cc: added in bdd->notCase and if y
-	  == false_ptr and z == true_ptr case in ite() also added in
-	  support for bdd_gc and noteCase.
-
-	     ~Sean
+	== false_ptr and z == true_ptr case in ite() also added in support
+	for bdd_gc and noteCase.
+	
+	   ~Sean
 
 2003-12-29 13:04  fett
 
 	* include/common.h: added in bdd->notCase
-
-	     ~Sean
+	
+	   ~Sean
 
 2003-12-20 13:33  mkouril
 
@@ -1374,7 +1405,7 @@
 2003-12-20 13:32  mkouril
 
 	* src/solver/init_solver.cc: Better reporting when unexpected
-	  inferences found
+	inferences found
 
 2003-12-20 13:32  mkouril
 
@@ -1383,43 +1414,42 @@
 2003-12-20 10:11  fett
 
 	* src/preproc/: do_exquantify.cc, do_exquantifyand.cc,
-	  other_preproc.cc: changed it back a little. I think it's the
-	  equivalence thing that needs to be fixed before it's working
-	  right.
-
-	     ~Sean
+	other_preproc.cc: changed it back a little. I think it's the
+	equivalence thing that needs to be fixed before it's working right.
+	
+	   ~Sean
 
 2003-12-20 01:38  fett
 
 	* src/preproc/do_exquantify.cc: fiddling...need to add in a command
-	  line option to be able to use new and old exquantification.
-
-	     ~Sean
+	line option to be able to use new and old exquantification.
+	
+	   ~Sean
 
 2003-12-20 00:17  fett
 
 	* include/preprocess.h, src/preproc/do_applyinfs.cc,
-	  src/preproc/do_cofactor.cc, src/preproc/do_exquantify.cc,
-	  src/preproc/do_exquantifyand.cc, src/preproc/do_pruning.cc,
-	  src/preproc/do_split.cc, src/preproc/other_preproc.cc,
-	  src/utils/bdd.cc: added in exquantify change. now can make
-	  inferences
-
-	     ~Sean
+	src/preproc/do_cofactor.cc, src/preproc/do_exquantify.cc,
+	src/preproc/do_exquantifyand.cc, src/preproc/do_pruning.cc,
+	src/preproc/do_split.cc, src/preproc/other_preproc.cc,
+	src/utils/bdd.cc: added in exquantify change. now can make
+	inferences
+	
+	   ~Sean
 
 2003-12-17 16:41  fett
 
 	* include/prototypes.h, src/preproc/do_depcluster.cc,
-	  src/utils/bdd.cc: added in are_oppos() function to replace
-	  ite_not in some places
-
-	     ~Sean
+	src/utils/bdd.cc: added in are_oppos() function to replace ite_not
+	in some places
+	
+	   ~Sean
 
 2003-12-17 15:12  fett
 
 	* src/utils/bdd.cc: fixed up ite()
-
-	     ~Sean
+	
+	   ~Sean
 
 2003-12-17 15:11  fett
 
@@ -1432,19 +1462,19 @@
 2003-12-17 12:58  mkouril
 
 	* include/symtable.h, src/formats/cnf.cc, src/utils/bdd.cc,
-	  src/utils/symtable.cc: Tuning bdd ops
+	src/utils/symtable.cc: Tuning bdd ops
 
 2003-12-16 14:42  fett
 
 	* src/utils/bddtable.cc: nothing
-
-	     ~Sean
+	
+	   ~Sean
 
 2003-12-16 14:42  fett
 
 	* src/formats/cnf.cc: added print statements to dnf
-
-	     ~Sean
+	
+	   ~Sean
 
 2003-12-15 09:56  mkouril
 
@@ -1453,15 +1483,14 @@
 2003-12-12 14:41  mkouril
 
 	* include/formats.h, src/formats/bdd2cnf.cc, src/formats/cnf.cc,
-	  src/formats/read_input.cc: Added DNF input format
+	src/formats/read_input.cc: Added DNF input format
 
 2003-12-12 13:24  fett
 
 	* src/: formats/bdd2cnf.cc, formats/smurf.cc,
-	  preproc/other_preproc.cc, utils/symtable.cc: fixed up symbol
-	  table.
-
-	     ~Sean
+	preproc/other_preproc.cc, utils/symtable.cc: fixed up symbol table.
+	
+	   ~Sean
 
 2003-12-12 12:48  fett
 
@@ -1486,60 +1515,60 @@
 2003-12-12 10:39  mkouril
 
 	* include/symtable.h, src/Makefile.in, src/formats/Makefile.in,
-	  src/formats/5/Makefile.in, src/generator/Makefile.in,
-	  src/postproc/Makefile.in, src/preproc/Makefile.in,
-	  src/solver/Makefile.in, src/utils/Makefile.in,
-	  src/utils/symtable.cc: Added sym_all_int()
+	src/formats/5/Makefile.in, src/generator/Makefile.in,
+	src/postproc/Makefile.in, src/preproc/Makefile.in,
+	src/solver/Makefile.in, src/utils/Makefile.in,
+	src/utils/symtable.cc: Added sym_all_int()
 
 2003-12-11 14:23  fett
 
 	* src/preproc/do_applyinfs.cc: working more...
-
-	     ~Sean
+	
+	   ~Sean
 
 2003-12-11 13:44  fett
 
 	* src/preproc/do_applyinfs.cc: oh it seems right...
-
-	     ~Sean
+	
+	   ~Sean
 
 2003-12-11 13:17  fett
 
 	* src/preproc/: do_strength.cc, preprocess.cc: added in gc command
-	  line things
-
-	     ~Sean
+	line things
+	
+	   ~Sean
 
 2003-12-11 13:10  fett
 
 	* src/preproc/: do_applyinfs.cc, do_exquantify.cc,
-	  do_exquantifyand.cc: fixing printing and updating gc with command
-	  line
-
-	    ~Sean
+	do_exquantifyand.cc: fixing printing and updating gc with command
+	line
+	
+	  ~Sean
 
 2003-12-11 13:05  mkouril
 
 	* include/vars.h, src/utils/params.cc, src/utils/vars.cc: Added GC
-	  switch
+	switch
 
 2003-12-11 13:02  fett
 
 	* src/preproc/do_strength.cc: added a comment
-
-	     ~Sean
+	
+	   ~Sean
 
 2003-12-11 12:56  fett
 
 	* src/utils/bddtable.cc: nothing!
-
-	     ~Sean
+	
+	   ~Sean
 
 2003-12-11 12:56  fett
 
 	* src/preproc/do_applyinfs.cc: changed prob of gc
-
-	     ~Sean
+	
+	   ~Sean
 
 2003-12-11 12:53  mkouril
 
@@ -1548,14 +1577,14 @@
 2003-12-11 12:35  fett
 
 	* src/preproc/do_applyinfs.cc: added it again
-
-	     ~Sean
+	
+	   ~Sean
 
 2003-12-11 12:33  fett
 
 	* src/preproc/do_applyinfs.cc: bdd gc in right place?!?! ithink so
-
-	     ~Sean
+	
+	   ~Sean
 
 2003-12-11 12:19  fett
 
@@ -1564,16 +1593,16 @@
 2003-12-11 12:13  mkouril
 
 	* src/: formats/autochk.cc, preproc/do_applyinfs.cc,
-	  preproc/preprocess.cc, utils/bdd.cc, utils/bddtable.cc: Prover3
-	  autochk, bdd_gc moved
+	preproc/preprocess.cc, utils/bdd.cc, utils/bddtable.cc: Prover3
+	autochk, bdd_gc moved
 
 2003-12-10 23:34  fett
 
 	* src/: Makefile.in, formats/Makefile.in, formats/5/Makefile.in,
-	  generator/Makefile.in, postproc/Makefile.in, preproc/Makefile.in,
-	  preproc/do_exquantify.cc, preproc/do_exquantifyand.cc,
-	  preproc/do_split.cc, solver/Makefile.in, utils/Makefile.in: don't
-	  know
+	generator/Makefile.in, postproc/Makefile.in, preproc/Makefile.in,
+	preproc/do_exquantify.cc, preproc/do_exquantifyand.cc,
+	preproc/do_split.cc, solver/Makefile.in, utils/Makefile.in: don't
+	know
 
 2003-12-10 23:33  mkouril
 
@@ -1582,22 +1611,22 @@
 2003-12-10 23:13  mkouril
 
 	* include/common.h, src/preproc/do_applyinfs.cc,
-	  src/preproc/other_preproc.cc: Added num_alloc to variables.
+	src/preproc/other_preproc.cc: Added num_alloc to variables.
 
 2003-12-10 21:35  mkouril
 
 	* include/symtable.h, src/sbsat.cc, src/formats/read_input.cc,
-	  src/formats/5/libt5_la-prover3_g.cc, src/formats/5/prover3_g.yy,
-	  src/preproc/do_applyinfs.cc, src/preproc/init_preproc.cc,
-	  src/utils/bdd_circuit_init.cc, src/utils/bddtable.cc,
-	  src/utils/symtable.cc, src/utils/termcap.cc: Memory allocation
-	  improvements
+	src/formats/5/libt5_la-prover3_g.cc, src/formats/5/prover3_g.yy,
+	src/preproc/do_applyinfs.cc, src/preproc/init_preproc.cc,
+	src/utils/bdd_circuit_init.cc, src/utils/bddtable.cc,
+	src/utils/symtable.cc, src/utils/termcap.cc: Memory allocation
+	improvements
 
 2003-12-10 13:21  mkouril
 
 	* configure, configure.ac, libtool, include/config.h,
-	  src/Makefile.in, src/formats/5/Makefile.in,
-	  src/preproc/Makefile.in: Version update
+	src/Makefile.in, src/formats/5/Makefile.in,
+	src/preproc/Makefile.in: Version update
 
 2003-12-10 12:36  mkouril
 
@@ -1606,20 +1635,20 @@
 2003-12-10 12:24  mkouril
 
 	* include/prototypes.h, src/utils/bddtable.cc, src/utils/infer.cc,
-	  src/utils/termcap.cc: Added single inference dereference
+	src/utils/termcap.cc: Added single inference dereference
 
 2003-12-10 12:19  fett
 
 	* include/preprocess.h: void printBDDInfs(BDDNode *bdd)
-
-	     ~Sean
+	
+	   ~Sean
 
 2003-12-10 12:19  fett
 
 	* src/preproc/do_applyinfs.cc: added void printBDDInfs(BDDNode
-	  *bdd)
-
-	     ~Sean
+	*bdd)
+	
+	   ~Sean
 
 2003-12-10 12:09  fett
 
@@ -1632,7 +1661,7 @@
 2003-12-10 11:32  mkouril
 
 	* src/: preproc/do_applyinfs.cc, utils/bddtable.cc,
-	  utils/symtable.cc: Bug fixes and sym table extras
+	utils/symtable.cc: Bug fixes and sym table extras
 
 2003-12-10 11:31  fett
 
@@ -1645,9 +1674,9 @@
 2003-12-10 09:59  fett
 
 	* src/formats/smurf.cc: fixed...partially, need to add in symtable
-	  support still
-
-	     ~Sean
+	support still
+	
+	   ~Sean
 
 2003-12-10 08:14  mkouril
 
@@ -1656,13 +1685,13 @@
 2003-12-09 14:41  mkouril
 
 	* include/prototypes.h, src/preproc/do_applyinfs.cc,
-	  src/utils/bddtable.cc, src/utils/infer.cc: Fixed bdd_gc for
-	  inferences
+	src/utils/bddtable.cc, src/utils/infer.cc: Fixed bdd_gc for
+	inferences
 
 2003-12-09 12:14  mkouril
 
 	* include/common.h, src/preproc/init_preproc.cc,
-	  src/utils/bddtable.cc, src/utils/vars.cc: More fixes for bdd_gc()
+	src/utils/bddtable.cc, src/utils/vars.cc: More fixes for bdd_gc()
 
 2003-12-09 11:53  mkouril
 
@@ -1671,7 +1700,7 @@
 2003-12-09 10:55  mkouril
 
 	* src/preproc/preprocess.cc, src/utils/bddtable.cc,
-	  include/common.h: Added bdd_gc
+	include/common.h: Added bdd_gc
 
 2003-12-06 22:11  mkouril
 
@@ -1680,7 +1709,7 @@
 2003-12-06 21:58  mkouril
 
 	* src/formats/5/libt5_la-trace_g.cc, src/formats/5/trace_g.yy,
-	  include/symtable.h, src/utils/symtable.cc: Fixed sym_table flags.
+	include/symtable.h, src/utils/symtable.cc: Fixed sym_table flags.
 
 2003-12-06 18:47  fett
 
@@ -1697,11 +1726,10 @@
 2003-12-05 14:10  mkouril
 
 	* src/formats/5/: blif_g.yy, iscas_g.yy, libt5_la-blif_g.cc,
-	  libt5_la-blif_g.h, libt5_la-iscas_g.cc, libt5_la-prover3_g.cc,
-	  libt5_la-prover3_g.h, libt5_la-prover_g.cc, libt5_la-prover_g.h,
-	  libt5_la-trace_g.cc, libt5_la-trace_g.h, prover3_g.yy,
-	  prover_g.yy, trace_g.yy: Removed static arrays from grammar
-	  files.
+	libt5_la-blif_g.h, libt5_la-iscas_g.cc, libt5_la-prover3_g.cc,
+	libt5_la-prover3_g.h, libt5_la-prover_g.cc, libt5_la-prover_g.h,
+	libt5_la-trace_g.cc, libt5_la-trace_g.h, prover3_g.yy, prover_g.yy,
+	trace_g.yy: Removed static arrays from grammar files.
 
 2003-12-05 13:39  mkouril
 
@@ -1710,23 +1738,23 @@
 2003-12-05 11:50  mkouril
 
 	* src/utils/bdd.cc, src/formats/bdd2cnf.cc, src/formats/cnf.cc,
-	  src/formats/markbdd.cc, src/formats/smurf.cc,
-	  include/preprocess.h, include/prototypes.h,
-	  src/preproc/do_applyinfs.cc, src/preproc/do_pruning.cc,
-	  src/preproc/do_split.cc, src/preproc/init_preproc.cc,
-	  src/preproc/other_preproc.cc, src/solver/bddwalk.cc: Removed
-	  static array tempint in unravelBDD, findPaths... and so on
+	src/formats/markbdd.cc, src/formats/smurf.cc, include/preprocess.h,
+	include/prototypes.h, src/preproc/do_applyinfs.cc,
+	src/preproc/do_pruning.cc, src/preproc/do_split.cc,
+	src/preproc/init_preproc.cc, src/preproc/other_preproc.cc,
+	src/solver/bddwalk.cc: Removed static array tempint in unravelBDD,
+	findPaths... and so on
 
 2003-12-05 11:48  mkouril
 
 	* include/symtable.h, src/utils/symtable.cc: Added check, re/set
-	  flag functions.
+	flag functions.
 
 2003-12-04 14:07  fett
 
 	* src/utils/bddtable.cc: nothing...
-
-	     ~Sean
+	
+	   ~Sean
 
 2003-11-25 16:01  mkouril
 
@@ -1739,22 +1767,22 @@
 2003-11-25 15:30  fett
 
 	* src/preproc/do_exquantify.cc: fixed it so faster now!
-
-	    ~Sean
+	
+	  ~Sean
 
 2003-11-25 13:26  mkouril
 
 	* include/vars.h, src/Makefile.in, src/formats/Makefile.in,
-	  src/formats/5/Makefile.in, src/formats/5/libt5_la-prover3_g.cc,
-	  src/formats/5/prover3_g.yy, src/formats/5/tracetest.cc,
-	  src/generator/Makefile.in, src/generator/vdwtest.sh,
-	  src/postproc/Makefile.in, src/preproc/Makefile.in,
-	  src/preproc/do_exquantify.cc, src/preproc/do_pruning.cc,
-	  src/preproc/do_strength.cc, src/preproc/init_preproc.cc,
-	  src/preproc/other_preproc.cc, src/solver/Makefile.in,
-	  src/solver/j_heuristic.cc, src/solver/smurffactory.cc,
-	  src/utils/Makefile.in, src/utils/bdd.cc, src/utils/params.cc,
-	  src/utils/vars.cc: Added functionTypeLimits array
+	src/formats/5/Makefile.in, src/formats/5/libt5_la-prover3_g.cc,
+	src/formats/5/prover3_g.yy, src/formats/5/tracetest.cc,
+	src/generator/Makefile.in, src/generator/vdwtest.sh,
+	src/postproc/Makefile.in, src/preproc/Makefile.in,
+	src/preproc/do_exquantify.cc, src/preproc/do_pruning.cc,
+	src/preproc/do_strength.cc, src/preproc/init_preproc.cc,
+	src/preproc/other_preproc.cc, src/solver/Makefile.in,
+	src/solver/j_heuristic.cc, src/solver/smurffactory.cc,
+	src/utils/Makefile.in, src/utils/bdd.cc, src/utils/params.cc,
+	src/utils/vars.cc: Added functionTypeLimits array
 
 2003-11-25 10:38  mkouril
 
@@ -1763,74 +1791,74 @@
 2003-11-22 20:41  fett
 
 	* src/solver/bddwalk.cc: back to 100000 flips per run now.
-
-	      ~Sean
+	
+	    ~Sean
 
 2003-11-22 18:00  fett
 
 	* src/utils/bdd.cc: don't remember
-
-	    ~Sean
+	
+	  ~Sean
 
 2003-11-22 18:00  fett
 
 	* src/solver/bddwalk.cc: Fixing up bddwalksat
-
-	    ~Sean
+	
+	  ~Sean
 
 2003-11-22 18:00  fett
 
 	* src/preproc/do_depcluster.cc: fixed a silly
-	  inconsistency...dependEnt vs. dependAnt
-
-	    ~Sean
+	inconsistency...dependEnt vs. dependAnt
+	
+	  ~Sean
 
 2003-11-22 18:00  fett
 
 	* src/formats/bdd2cnf.cc: looking at pathstofalse
-
-	    ~Sean
+	
+	  ~Sean
 
 2003-11-22 17:59  fett
 
 	* include/: common.h, prototypes.h: adding in things for bddwalksat
-
-	    ~Sean
+	
+	  ~Sean
 
 2003-11-20 21:03  fett
 
 	* src/utils/bdd.cc: something
-
-	    ~Sean
+	
+	  ~Sean
 
 2003-11-20 21:03  fett
 
 	* src/solver/bddwalk.cc: added in true paths heuristic.
-
-	    ~Sean
+	
+	  ~Sean
 
 2003-11-20 21:03  fett
 
 	* src/: formats/bdd2cnf.cc, preproc/do_split.cc,
-	  preproc/other_preproc.cc: looking at findpathstofalse...modified
-	  slightly to give all paths to any BDD, not just true and false
-
-	    ~Sean
+	preproc/other_preproc.cc: looking at findpathstofalse...modified
+	slightly to give all paths to any BDD, not just true and false
+	
+	  ~Sean
 
 2003-11-20 21:02  fett
 
 	* include/: common.h, prototypes.h: adding in more bdd functions to
-	  help with walksat
-
-	    ~Sean
+	help with walksat
+	
+	  ~Sean
 
 2003-11-19 17:41  fett
 
 	* src/solver/bddwalk.cc: Modifying bddwalk some more. Added in the
-	  ability to only think about BDDs as either true or false, and not
-	  "how false" or "how true".  just turn off USE_SIMPLE_PATH_RES
-
-	     ~Sean
+	ability to only think about BDDs as either true or false, and not
+	"how false" or "how true".  just turn off USE_SIMPLE_PATH_RES
+	
+	   ~Sean
 
 2003-11-18 21:56  fett
 
@@ -1839,79 +1867,79 @@
 2003-11-18 21:56  fett
 
 	* include/: common.h, preprocess.h, prototypes.h: i don't
-	  remember...
+	remember...
 
 2003-11-18 18:32  fett
 
 	* src/: solver/bddwalk.cc, utils/bdd.cc: making bdd walksat better,
-	  it now has brittleness as a factor
-
-	    ~Sean
+	it now has brittleness as a factor
+	
+	  ~Sean
 
 2003-11-18 18:32  fett
 
 	* src/preproc/: do_exquantifyand.cc, do_pruning.cc, do_strength.cc:
-	  fixed up ctrl-c support
-
-	    ~Sean
+	fixed up ctrl-c support
+	
+	  ~Sean
 
 2003-11-17 15:13  fett
 
 	* src/: preproc/do_applyinfs.cc, preproc/do_depcluster.cc,
-	  preproc/do_exquantify.cc, preproc/do_pruning.cc,
-	  preproc/do_split.cc, preproc/do_strength.cc, utils/bdd.cc: Added
-	  in the ability for preprocessing methods to add variables to BDDs
-
-	    ~Sean
+	preproc/do_exquantify.cc, preproc/do_pruning.cc,
+	preproc/do_split.cc, preproc/do_strength.cc, utils/bdd.cc: Added in
+	the ability for preprocessing methods to add variables to BDDs
+	
+	  ~Sean
 
 2003-11-11 08:12  fett
 
 	* src/preproc/do_steal.cc: blank steal file.
-
-	     ~Sean
+	
+	   ~Sean
 
 2003-11-10 21:35  fett
 
 	* src/utils/bdd.cc: Added in new preprocessing option, Sl for Steal
-
-	     ~Sean
+	
+	   ~Sean
 
 2003-11-10 21:34  fett
 
 	* src/solver/bddwalk.cc: I don't think i did anything
-
-	     ~Sean
+	
+	   ~Sean
 
 2003-11-10 21:34  fett
 
 	* include/globals.h, include/preprocess.h, include/prototypes.h,
-	  include/vars.h, src/preproc/Makefile.am, src/preproc/Makefile.in,
-	  src/preproc/do_pruning.cc, src/preproc/init_preproc.cc,
-	  src/preproc/other_preproc.cc, src/preproc/preprocess.cc: added in
-	  new preprocessing option Sl for Steal
-
-	     ~Sean
+	include/vars.h, src/preproc/Makefile.am, src/preproc/Makefile.in,
+	src/preproc/do_pruning.cc, src/preproc/init_preproc.cc,
+	src/preproc/other_preproc.cc, src/preproc/preprocess.cc: added in
+	new preprocessing option Sl for Steal
+	
+	   ~Sean
 
 2003-10-26 00:55  mkouril
 
 	* src/generator/: Makefile.am, Makefile.in, gentest.cc, rn.cc,
-	  vdwtest.sh: Added Ramsey number problem generator.
+	vdwtest.sh: Added Ramsey number problem generator.
 
 2003-10-25 01:04  mkouril
 
 	* src/: postproc/backend.cc, utils/params.cc: Added mk test output
-	  format.
+	format.
 
 2003-10-25 01:04  mkouril
 
 	* src/formats/cnf.cc: Added define to choose between SYMTABLE and
-	  non SYMTABLE.
+	non SYMTABLE.
 
 2003-10-24 14:11  fett
 
 	* src/preproc/do_exquantify.cc: fixed it, faster now!
-
-	     ~Sean
+	
+	   ~Sean
 
 2003-10-24 12:08  fett
 
@@ -1920,7 +1948,7 @@
 2003-10-24 12:07  fett
 
 	* src/preproc/init_preproc.cc: added in ability to do preset
-	  variables   ~Sean
+	variables   ~Sean
 
 2003-10-24 10:21  mkouril
 
@@ -1933,7 +1961,7 @@
 2003-10-24 09:19  mkouril
 
 	* src/generator/vanDerWaerden.cc: Added meaningful variable names
-	  for ite format.
+	for ite format.
 
 2003-10-23 21:55  fett
 
@@ -1942,9 +1970,9 @@
 2003-10-23 13:59  fett
 
 	* src/formats/markbdd.cc: well...allowing '(' and ')' as well as '
-	  ' as whitespace
-
-	     ~Sean
+	' as whitespace
+	
+	   ~Sean
 
 2003-10-23 12:35  mkouril
 
@@ -1957,9 +1985,9 @@
 2003-10-23 12:29  fett
 
 	* src/preproc/: do_applyinfs.cc, do_exquantifyand.cc,
-	  other_preproc.cc: ifxing things
-
-	     ~Sean
+	other_preproc.cc: ifxing things
+	
+	   ~Sean
 
 2003-10-23 12:29  mkouril
 
@@ -1980,7 +2008,7 @@
 2003-10-22 19:01  mkouril
 
 	* src/generator/vanDerWaerden.cc: Added cnf style cardinality
-	  constrains.
+	constrains.
 
 2003-10-22 16:50  mkouril
 
@@ -2001,7 +2029,7 @@
 2003-10-22 14:14  mkouril
 
 	* src/solver/: display.cc, lemmacache.cc, state_stacks.cc: Fixed
-	  lemma cache.
+	lemma cache.
 
 2003-10-22 14:14  mkouril
 
@@ -2010,8 +2038,8 @@
 2003-10-22 10:37  fett
 
 	* src/formats/autochk.cc: added iscas format -i
-
-	     ~Sean
+	
+	   ~Sean
 
 2003-10-21 21:57  mkouril
 
@@ -2036,8 +2064,8 @@
 2003-10-20 22:58  mkouril
 
 	* src/formats/: read_input.cc, 5/Makefile.am, 5/Makefile.in,
-	  5/iscas_g.yy, 5/iscas_s.cc, 5/iscas_s.ll, 5/libt5_la-iscas_g.cc,
-	  5/parser.cc, 5/tracetest.cc: Added iscas format.
+	5/iscas_g.yy, 5/iscas_s.cc, 5/iscas_s.ll, 5/libt5_la-iscas_g.cc,
+	5/parser.cc, 5/tracetest.cc: Added iscas format.
 
 2003-10-20 20:03  mkouril
 
@@ -2050,19 +2078,19 @@
 2003-10-20 17:16  mkouril
 
 	* .cvsignore: Removed cvs ignore list. Converted to global
-	  cvsignore.
+	cvsignore.
 
 2003-10-20 17:03  mkouril
 
 	* tests/longer_tests/: 12.trace.gz.params, barrel.7.prove,
-	  barrel.7.prove.params, queue.14.prove, queue.14.prove.Hjl.params,
-	  queue.14.prove.Hjq.params, queue.14.prove.Hl.params,
-	  queue.14.prove.params: Added more benchmarks.
+	barrel.7.prove.params, queue.14.prove, queue.14.prove.Hjl.params,
+	queue.14.prove.Hjq.params, queue.14.prove.Hl.params,
+	queue.14.prove.params: Added more benchmarks.
 
 2003-10-20 17:03  mkouril
 
 	* src/formats/5/: libt5_la-trace_g.cc, trace_g.yy: Fixed display of
-	  line counter during debug less than 2.
+	line counter during debug less than 2.
 
 2003-10-20 17:02  mkouril
 
@@ -2075,7 +2103,7 @@
 2003-10-17 23:26  mkouril
 
 	* src/: empty.cc, emptylib.cc: Empty files just to make sure we are
-	  using cxx compiler.
+	using cxx compiler.
 
 2003-10-17 23:21  mkouril
 
@@ -2084,33 +2112,31 @@
 2003-10-17 23:18  mkouril
 
 	* Makefile.am, Makefile.in, config.guess, config.sub, configure,
-	  configure.ac, doc/Makefile.in, doc/man1/Makefile.in,
-	  doc/manual/Makefile.in, examples/Makefile.in,
-	  include/Makefile.in, include/config.h, include/config.h.in,
-	  include/iteheaders.h, src/Makefile.am, src/Makefile.in,
-	  src/formats/Makefile.am, src/formats/Makefile.in,
-	  src/formats/5/Makefile.am, src/formats/5/Makefile.in,
-	  src/formats/5/bdd_s.cc, src/formats/5/bdd_s.ll,
-	  src/formats/5/blif_s.cc, src/formats/5/blif_s.ll,
-	  src/formats/5/cnf_s.cc, src/formats/5/cnf_s.ll,
-	  src/formats/5/libt5_a-bdd_g.cc, src/formats/5/libt5_a-bdd_g.h,
-	  src/formats/5/libt5_a-blif_g.cc, src/formats/5/libt5_a-blif_g.h,
-	  src/formats/5/libt5_a-cnf_g.cc, src/formats/5/libt5_a-cnf_g.h,
-	  src/formats/5/libt5_a-prover3_g.cc,
-	  src/formats/5/libt5_a-prover3_g.h,
-	  src/formats/5/libt5_a-prover_g.cc,
-	  src/formats/5/libt5_a-prover_g.h,
-	  src/formats/5/libt5_a-trace_g.cc,
-	  src/formats/5/libt5_a-trace_g.h, src/formats/5/prover3_s.ll,
-	  src/formats/5/prover_s.cc, src/formats/5/prover_s.ll,
-	  src/formats/5/trace_s.cc, src/formats/5/trace_s.ll,
-	  src/generator/Makefile.in, src/postproc/Makefile.am,
-	  src/postproc/Makefile.in, src/preproc/Makefile.am,
-	  src/preproc/Makefile.in, src/solver/Makefile.am,
-	  src/solver/Makefile.in, src/utils/Makefile.am,
-	  src/utils/Makefile.in, tests/Makefile.in, tests/cnf/Makefile.in,
-	  tests/longer_tests/Makefile.in, tests/trace_tests/Makefile.in:
-	  Converted to libtool
+	configure.ac, doc/Makefile.in, doc/man1/Makefile.in,
+	doc/manual/Makefile.in, examples/Makefile.in, include/Makefile.in,
+	include/config.h, include/config.h.in, include/iteheaders.h,
+	src/Makefile.am, src/Makefile.in, src/formats/Makefile.am,
+	src/formats/Makefile.in, src/formats/5/Makefile.am,
+	src/formats/5/Makefile.in, src/formats/5/bdd_s.cc,
+	src/formats/5/bdd_s.ll, src/formats/5/blif_s.cc,
+	src/formats/5/blif_s.ll, src/formats/5/cnf_s.cc,
+	src/formats/5/cnf_s.ll, src/formats/5/libt5_a-bdd_g.cc,
+	src/formats/5/libt5_a-bdd_g.h, src/formats/5/libt5_a-blif_g.cc,
+	src/formats/5/libt5_a-blif_g.h, src/formats/5/libt5_a-cnf_g.cc,
+	src/formats/5/libt5_a-cnf_g.h, src/formats/5/libt5_a-prover3_g.cc,
+	src/formats/5/libt5_a-prover3_g.h,
+	src/formats/5/libt5_a-prover_g.cc,
+	src/formats/5/libt5_a-prover_g.h, src/formats/5/libt5_a-trace_g.cc,
+	src/formats/5/libt5_a-trace_g.h, src/formats/5/prover3_s.ll,
+	src/formats/5/prover_s.cc, src/formats/5/prover_s.ll,
+	src/formats/5/trace_s.cc, src/formats/5/trace_s.ll,
+	src/generator/Makefile.in, src/postproc/Makefile.am,
+	src/postproc/Makefile.in, src/preproc/Makefile.am,
+	src/preproc/Makefile.in, src/solver/Makefile.am,
+	src/solver/Makefile.in, src/utils/Makefile.am,
+	src/utils/Makefile.in, tests/Makefile.in, tests/cnf/Makefile.in,
+	tests/longer_tests/Makefile.in, tests/trace_tests/Makefile.in:
+	Converted to libtool
 
 2003-10-17 23:17  mkouril
 
@@ -2119,10 +2145,10 @@
 2003-10-17 23:15  mkouril
 
 	* src/formats/5/: libt5_la-bdd_g.cc, libt5_la-bdd_g.h,
-	  libt5_la-blif_g.cc, libt5_la-blif_g.h, libt5_la-cnf_g.cc,
-	  libt5_la-cnf_g.h, libt5_la-prover3_g.cc, libt5_la-prover3_g.h,
-	  libt5_la-prover_g.cc, libt5_la-prover_g.h, libt5_la-trace_g.cc,
-	  libt5_la-trace_g.h: Renamed libt5_a to libt5_la.
+	libt5_la-blif_g.cc, libt5_la-blif_g.h, libt5_la-cnf_g.cc,
+	libt5_la-cnf_g.h, libt5_la-prover3_g.cc, libt5_la-prover3_g.h,
+	libt5_la-prover_g.cc, libt5_la-prover_g.h, libt5_la-trace_g.cc,
+	libt5_la-trace_g.h: Renamed libt5_a to libt5_la.
 
 2003-10-17 14:36  mkouril
 
@@ -2135,39 +2161,39 @@
 2003-10-17 12:30  mkouril
 
 	* src/utils/java_wrapper.cc, include/sat_server_ServerImpl.h:
-	  Kedar's interface.
+	Kedar's interface.
 
 2003-10-17 11:20  fett
 
 	* src/preproc/do_applyinfs.cc: oops...I forgot one little thing
-	  with dependent clustering It's fixed now
-
-	     ~Sean
+	with dependent clustering It's fixed now
+	
+	   ~Sean
 
 2003-10-16 11:39  fett
 
 	* include/equivclass.h, src/preproc/do_applyinfs.cc,
-	  src/utils/bdd.cc: i don't know what i changed.
-
-	     ~Sean
+	src/utils/bdd.cc: i don't know what i changed.
+	
+	   ~Sean
 
 2003-10-15 10:56  fett
 
 	* src/preproc/do_applyinfs.cc: fixed a silly bug.
-
-	    ~Sean
+	
+	  ~Sean
 
 2003-10-15 10:27  fett
 
 	* src/: preproc/do_applyinfs.cc, utils/bdd.cc: i don't
-	  know...something last night
-
-	    ~Sean
+	know...something last night
+	
+	  ~Sean
 
 2003-10-15 09:44  mkouril
 
 	* include/globals.h, src/formats/5/libt5_a-prover3_g.cc,
-	  src/formats/5/prover3_g.yy: d3 print instead of fprintf
+	src/formats/5/prover3_g.yy: d3 print instead of fprintf
 
 2003-10-14 20:40  fett
 
@@ -2184,7 +2210,7 @@
 2003-10-14 18:48  mkouril
 
 	* src/utils/params.cc: If you insist on ctrl-c it will do it after
-	  10 attempts.
+	10 attempts.
 
 2003-10-14 16:59  mkouril
 
@@ -2201,34 +2227,34 @@
 2003-10-13 22:15  mkouril
 
 	* Makefile.in, configure, doc/manual/Makefile.in,
-	  examples/Makefile.in, include/Makefile.in, include/common.h,
-	  src/formats/5/libt5_a-trace_g.cc, src/preproc/do_applyinfs.cc,
-	  src/preproc/do_pruning.cc, src/preproc/do_strength.cc,
-	  src/preproc/other_preproc.cc, tests/Makefile.in,
-	  tests/cnf/Makefile.in, tests/longer_tests/Makefile.in,
-	  tests/trace_tests/Makefile.in: Added min/max for variables[]
+	examples/Makefile.in, include/Makefile.in, include/common.h,
+	src/formats/5/libt5_a-trace_g.cc, src/preproc/do_applyinfs.cc,
+	src/preproc/do_pruning.cc, src/preproc/do_strength.cc,
+	src/preproc/other_preproc.cc, tests/Makefile.in,
+	tests/cnf/Makefile.in, tests/longer_tests/Makefile.in,
+	tests/trace_tests/Makefile.in: Added min/max for variables[]
 
 2003-10-13 16:40  mkouril
 
 	* src/: formats/cnf.cc, formats/5/libt5_a-prover3_g.cc,
-	  formats/5/prover3_g.yy, preproc/do_pruning.cc,
-	  preproc/do_strength.cc, utils/bdd.cc: nmbrVarsInCommon fine
-	  tuning...
+	formats/5/prover3_g.yy, preproc/do_pruning.cc,
+	preproc/do_strength.cc, utils/bdd.cc: nmbrVarsInCommon fine
+	tuning...
 
 2003-10-13 12:39  mkouril
 
 	* src/formats/5/: libt5_a-prover3_g.cc, libt5_a-prover3_g.h:
-	  Forgotten generated files.
+	Forgotten generated files.
 
 2003-10-13 12:39  mkouril
 
 	* src/formats/5/: libt5_a-prover_g.cc, prover_g.yy: Added equality
-	  variable for bdd equal to temp variables.
+	variable for bdd equal to temp variables.
 
 2003-10-13 12:36  mkouril
 
 	* src/utils/bdd.cc: Use symbol table to create broken xor temp
-	  variable.
+	variable.
 
 2003-10-13 11:04  fett
 
@@ -2237,27 +2263,27 @@
 2003-10-12 23:25  mkouril
 
 	* src/formats/5/prover3_g.yy, src/preproc/do_split.cc,
-	  src/utils/params.cc, src/utils/vars.cc, include/vars.h: max vars
-	  parameters added for prover3 and do_split
+	src/utils/params.cc, src/utils/vars.cc, include/vars.h: max vars
+	parameters added for prover3 and do_split
 
 2003-10-12 18:45  fett
 
 	* src/utils/params.cc: made split happen at the end of
-	  preprocessing so st and pr do well
-
-	    ~Sean
+	preprocessing so st and pr do well
+	
+	  ~Sean
 
 2003-10-12 18:45  fett
 
 	* src/preproc/do_split.cc: raised to 10, instead of 8
-
-	    ~Sean
+	
+	  ~Sean
 
 2003-10-12 12:53  mkouril
 
 	* src/formats/5/: libt5_a-prover_g.cc, libt5_a-prover_g.h,
-	  prover3_s.ll, prover_g.yy, prover_s.cc, prover_s.ll: Show only
-	  every 100th line.
+	prover3_s.ll, prover_g.yy, prover_s.cc, prover_s.ll: Show only
+	every 100th line.
 
 2003-10-12 11:54  mkouril
 
@@ -2266,95 +2292,94 @@
 2003-10-12 11:52  mkouril
 
 	* src/formats/5/: Makefile.am, Makefile.in, libt5_a-bdd_g.cc,
-	  libt5_a-blif_g.cc, libt5_a-cnf_g.cc, libt5_a-prover_g.cc,
-	  libt5_a-prover_g.h, libt5_a-trace_g.cc, libt5_a-trace_g.h,
-	  parser.cc, prover3_g.yy, prover3_s.ll, trace_g.yy, tracetest.cc:
-	  Added prover3.
+	libt5_a-blif_g.cc, libt5_a-cnf_g.cc, libt5_a-prover_g.cc,
+	libt5_a-prover_g.h, libt5_a-trace_g.cc, libt5_a-trace_g.h,
+	parser.cc, prover3_g.yy, prover3_s.ll, trace_g.yy, tracetest.cc:
+	Added prover3.
 
 2003-10-10 13:15  fett
 
 	* src/preproc/do_split.cc: faster, and fixed a bug.
-
-	     ~Sean
+	
+	   ~Sean
 
 2003-10-10 12:48  fett
 
 	* src/preproc/do_split.cc: making it faster still!
-
-	     ~Sean
+	
+	   ~Sean
 
 2003-10-10 01:09  fett
 
 	* src/: preproc/do_depcluster.cc, preproc/do_split.cc,
-	  preproc/do_strength.cc, preproc/init_preproc.cc,
-	  preproc/other_preproc.cc, utils/bdd.cc,
-	  utils/bdd_circuit_init.cc, utils/params.cc: added in support for
-	  splitting big BDDs...
-
-	     ~Sean
+	preproc/do_strength.cc, preproc/init_preproc.cc,
+	preproc/other_preproc.cc, utils/bdd.cc, utils/bdd_circuit_init.cc,
+	utils/params.cc: added in support for splitting big BDDs...
+	
+	   ~Sean
 
 2003-10-10 01:09  fett
 
 	* src/postproc/backend.cc: fixed a few minor things, deleting
-	  length and variablelist.
-
-	     ~Sean
+	length and variablelist.
+	
+	   ~Sean
 
 2003-10-10 01:09  fett
 
 	* src/formats/: bdd2cnf.cc, markbdd.cc: added in support for
-	  splitting big BDDs...  and fixed a few minor things
-
-	     ~Sean
+	splitting big BDDs...  and fixed a few minor things
+	
+	   ~Sean
 
 2003-10-10 01:08  fett
 
 	* include/preprocess.h: added in support for splitting big BDDs
-
-	     ~Sean
+	
+	   ~Sean
 
 2003-10-09 15:06  fett
 
 	* src/preproc/: do_split.cc, init_preproc.cc: making good headway.
-
-	    ~Sean
+	
+	  ~Sean
 
 2003-10-09 15:06  fett
 
 	* src/postproc/backend.cc: added in ite_free for length[]
-
-	    ~Sean
+	
+	  ~Sean
 
 2003-10-09 15:06  fett
 
 	* src/formats/markbdd.cc: i dont' remember
-
-	    ~Sean
+	
+	  ~Sean
 
 2003-10-09 11:29  fett
 
 	* src/preproc/do_split.cc: oh more!
-
-	    ~Sean
+	
+	  ~Sean
 
 2003-10-09 10:55  fett
 
 	* src/preproc/do_split.cc: getting closer!
-
-	     ~Sean
+	
+	   ~Sean
 
 2003-10-08 12:27  fett
 
 	* src/preproc/do_split.cc: fixing it up more...almost done with the
-	  concept.
-
-	     ~Sean
+	concept.
+	
+	   ~Sean
 
 2003-10-07 16:24  fett
 
 	* src/preproc/do_split.cc: more...
-
-	     ~Sean
+	
+	   ~Sean
 
 2003-10-07 14:14  fett
 
@@ -2367,34 +2392,34 @@
 2003-10-07 13:49  fett
 
 	* include/preprocess.h, include/vars.h,
-	  src/preproc/do_exquantify.cc, src/preproc/do_exquantifyand.cc,
-	  src/preproc/do_split.cc, src/preproc/preprocess.cc,
-	  src/utils/params.cc, src/utils/vars.cc: Adding in support for the
-	  splitting function.
-
-	    ~Sean
+	src/preproc/do_exquantify.cc, src/preproc/do_exquantifyand.cc,
+	src/preproc/do_split.cc, src/preproc/preprocess.cc,
+	src/utils/params.cc, src/utils/vars.cc: Adding in support for the
+	splitting function.
+	
+	  ~Sean
 
 2003-10-07 13:23  fett
 
 	* src/preproc/: Makefile.am, Makefile.in, do_split.cc: added in
-	  do_split.cc maybe michal should check this?
-
-	     ~Sean
+	do_split.cc maybe michal should check this?
+	
+	   ~Sean
 
 2003-10-07 13:02  fett
 
 	* src/preproc/: do_exquantify.cc, do_exquantifyand.cc, do_split.cc,
-	  init_preproc.cc: fixing little things
-
-	     ~Sean
+	init_preproc.cc: fixing little things
+	
+	   ~Sean
 
 2003-10-07 12:22  fett
 
 	* src/preproc/do_exquantify.cc: Added in the ability for ExQuant to
-	  handle UNSURE functions...I'm pretty sure this should of been in
-	  there the whole time, but maybe not..
-
-	     ~Sean
+	handle UNSURE functions...I'm pretty sure this should of been in
+	there the whole time, but maybe not..
+	
+	   ~Sean
 
 2003-10-03 10:19  mkouril
 
@@ -2403,8 +2428,8 @@
 2003-10-03 10:18  mkouril
 
 	* src/formats/5/: libt5_a-prover_g.cc, prover_g.yy, tracetest.cc:
-	  Fixed prover_g.yy (top level nots).  Added debug BDD print into
-	  tracetest.cc
+	Fixed prover_g.yy (top level nots).  Added debug BDD print into
+	tracetest.cc
 
 2003-10-02 16:58  fett
 
@@ -2413,41 +2438,41 @@
 2003-10-02 16:46  fett
 
 	* src/formats/markbdd.cc: fixed up initial branch to work the way
-	  specified in the manual (except it does not HAVE to be the first
-	  line in the inputfile, just somewhere, and it will get every
-	  variable in the file cause it's saved and run at the end.
-
-	    ~Sean
+	specified in the manual (except it does not HAVE to be the first
+	line in the inputfile, just somewhere, and it will get every
+	variable in the file cause it's saved and run at the end.
+	
+	  ~Sean
 
 2003-10-02 16:05  fett
 
 	* src/utils/bdd.cc: playing with print_tree and debug levels
-
-	     ~Sean
+	
+	   ~Sean
 
 2003-10-02 12:29  fett
 
 	* Makefile.in, configure, doc/manual/Makefile.in,
-	  examples/Makefile.in, include/Makefile.in, include/config.h,
-	  src/formats/markbdd.cc, tests/Makefile.in, tests/cnf/Makefile.in,
-	  tests/longer_tests/Makefile.in, tests/trace_tests/Makefile.in:
-	  For markbdd.cc I added in strengthen as a keyword.
-
-	     ~Sean
+	examples/Makefile.in, include/Makefile.in, include/config.h,
+	src/formats/markbdd.cc, tests/Makefile.in, tests/cnf/Makefile.in,
+	tests/longer_tests/Makefile.in, tests/trace_tests/Makefile.in: For
+	markbdd.cc I added in strengthen as a keyword.
+	
+	   ~Sean
 
 2003-09-30 17:00  mkouril
 
 	* include/prototypes.h, src/formats/markbdd.cc,
-	  src/formats/5/libt5_a-prover_g.cc, src/preproc/Makefile.am,
-	  src/preproc/Makefile.in, src/preproc/do_pruning.cc,
-	  src/utils/bdd.cc, src/preproc/do_pruning_pr.cc: Fixed pruning
+	src/formats/5/libt5_a-prover_g.cc, src/preproc/Makefile.am,
+	src/preproc/Makefile.in, src/preproc/do_pruning.cc,
+	src/utils/bdd.cc, src/preproc/do_pruning_pr.cc: Fixed pruning
 
 2003-09-30 16:33  fett
 
 	* include/prototypes.h, src/preproc/do_pruning.cc,
-	  src/utils/bdd.cc: playing...
-
-	     ~Sean
+	src/utils/bdd.cc: playing...
+	
+	   ~Sean
 
 2003-09-25 14:11  mkouril
 
@@ -2456,8 +2481,8 @@
 2003-09-25 12:29  fett
 
 	* src/formats/smurf.cc: fixing it again
-
-	     ~Sean
+	
+	   ~Sean
 
 2003-09-25 12:29  fett
 
@@ -2466,82 +2491,81 @@
 2003-09-25 11:49  fett
 
 	* src/formats/smurf.cc: Added in checking for # of input variables.
-
-	     ~Sean
+	
+	   ~Sean
 
 2003-09-24 12:03  mkouril
 
 	* configure, configure.ac, doc/Makefile.in, src/Makefile.in,
-	  src/formats/Makefile.in, src/formats/5/Makefile.in,
-	  src/formats/5/libt5_a-prover_g.cc,
-	  src/formats/5/libt5_a-prover_g.h, src/formats/5/prover_g.yy,
-	  src/generator/Makefile.in, src/postproc/Makefile.in,
-	  src/preproc/Makefile.in, src/solver/Makefile.in,
-	  src/solver/smurffactory.cc, src/utils/Makefile.in,
-	  src/utils/params.cc: Renamed ite.ini to sbsat.ini, fixes in
-	  prover
+	src/formats/Makefile.in, src/formats/5/Makefile.in,
+	src/formats/5/libt5_a-prover_g.cc,
+	src/formats/5/libt5_a-prover_g.h, src/formats/5/prover_g.yy,
+	src/generator/Makefile.in, src/postproc/Makefile.in,
+	src/preproc/Makefile.in, src/solver/Makefile.in,
+	src/solver/smurffactory.cc, src/utils/Makefile.in,
+	src/utils/params.cc: Renamed ite.ini to sbsat.ini, fixes in prover
 
 2003-09-24 11:51  mkouril
 
 	* doc/: Makefile.am, man1/Makefile.am, man1/sbsat.1: Moved sbsat.1
-	  into man1
+	into man1
 
 2003-09-24 11:48  mkouril
 
 	* doc/: Makefile.am, Makefile.in, ite.1, sbsat.1: rename ite.1 to
-	  sbsat.1
+	sbsat.1
 
 2003-09-23 13:04  fett
 
 	* examples/: markbdd.ite, xortest.xor: for manual
-
-	    ~Sean
+	
+	  ~Sean
 
 2003-09-23 13:03  fett
 
 	* examples/markbdd.ite, src/formats/markbdd.cc: nothing!
-
-	     ~Sean
+	
+	   ~Sean
 
 2003-09-19 08:51  mkouril
 
 	* src/formats/5/prover_s.ll: Show progress in debug3 for prove
-	  format
+	format
 
 2003-09-18 23:38  mkouril
 
 	* src/formats/5/: libt5_a-prover_g.cc, prover_g.yy, prover_s.ll:
-	  Adjusted prover symbol limits.
+	Adjusted prover symbol limits.
 
 2003-09-18 23:26  mkouril
 
 	* src/: formats/read_input.cc, formats/5/libt5_a-prover_g.cc,
-	  formats/5/libt5_a-prover_g.h, formats/5/prover_g.yy,
-	  utils/params.cc: Prover format in
+	formats/5/libt5_a-prover_g.h, formats/5/prover_g.yy,
+	utils/params.cc: Prover format in
 
 2003-09-18 22:02  mkouril
 
 	* src/: formats/5/libt5_a-prover_g.cc,
-	  formats/5/libt5_a-prover_g.h, formats/5/prover_g.yy,
-	  formats/5/prover_s.ll, formats/5/tracetest.cc, utils/vars.cc:
-	  Improved prover format
+	formats/5/libt5_a-prover_g.h, formats/5/prover_g.yy,
+	formats/5/prover_s.ll, formats/5/tracetest.cc, utils/vars.cc:
+	Improved prover format
 
 2003-09-18 16:20  mkouril
 
 	* src/formats/5/: libt5_a-prover_g.cc, prover_g.yy: Fixed operator
-	  precedence.
+	precedence.
 
 2003-09-18 16:11  mkouril
 
 	* src/formats/5/: libt5_a-prover_g.cc, prover_g.yy: Fixed prover
-	  format.
+	format.
 
 2003-09-16 16:26  fett
 
 	* src/: formats/cnf.cc, formats/smurf.cc, formats/xorbdd.cc,
-	  utils/bdd.cc: adding in symbol table support
-
-	    ~Sean
+	utils/bdd.cc: adding in symbol table support
+	
+	  ~Sean
 
 2003-09-16 15:42  mkouril
 
@@ -2550,44 +2574,44 @@
 2003-09-16 15:23  mkouril
 
 	* include/vars.h, src/formats/5/libt5_a-prover_g.cc,
-	  src/formats/5/libt5_a-prover_g.h, src/utils/params.cc,
-	  src/utils/vars.cc: Added --preset-variables
+	src/formats/5/libt5_a-prover_g.h, src/utils/params.cc,
+	src/utils/vars.cc: Added --preset-variables
 
 2003-09-12 16:54  fett
 
 	* src/utils/bdd.cc: playing with pprint_tree again.  Now it prints
-	  variable names, print_tree is next to work on.
-
-	      ~Sean
+	variable names, print_tree is next to work on.
+	
+	    ~Sean
 
 2003-09-12 16:54  fett
 
 	* src/formats/markbdd.cc: playing with pprint_tree again.  Now it
-	  prints variable names, print_tree is next to work on.  changed
-	  initialbranch to initial_branch.  make truth_table work correctly
-	  with symbol table.
-
-	      ~Sean
+	prints variable names, print_tree is next to work on.  changed
+	initialbranch to initial_branch.  make truth_table work correctly
+	with symbol table.
+	
+	    ~Sean
 
 2003-09-12 13:25  fett
 
 	* examples/markbdd.ite, src/formats/markbdd.cc: Now you can tell
-	  where you are in the recursion.  now *print_tree does not create
-	  a smurf and other directives like print_tree.
-
-	    ~Sean
+	where you are in the recursion.  now *print_tree does not create a
+	smurf and other directives like print_tree.
+	
+	  ~Sean
 
 2003-09-12 12:49  fett
 
 	* src/formats/markbdd.cc: fixing up some things. print_tree and
-	  pprint_tree now return the BDD they print, but will not create a
-	  new function if they begin a new function like this:
-
-	  print_tree(and(2, 3)) ; no function, no smurf but,
-	  or(print_tree(and(2, 3)), 4) ; function $1, no smurf that will
-	  make BDD or(and(2, 3), 4) and print and(2, 3)
-
-	     ~Sean
+	pprint_tree now return the BDD they print, but will not create a
+	new function if they begin a new function like this:
+	
+	print_tree(and(2, 3)) ; no function, no smurf but,
+	or(print_tree(and(2, 3)), 4) ; function $1, no smurf that will make
+	BDD or(and(2, 3), 4) and print and(2, 3)
+	
+	   ~Sean
 
 2003-09-12 12:27  fett
 
@@ -2596,75 +2620,74 @@
 2003-09-12 10:36  mkouril
 
 	* configure, configure.ac, include/config.h, src/Makefile.in,
-	  src/formats/Makefile.in, src/formats/5/Makefile.in,
-	  src/generator/Makefile.in, src/postproc/Makefile.in,
-	  src/preproc/Makefile.in, src/solver/Makefile.in,
-	  src/utils/Makefile.in, src/utils/symtable.cc: Version update to
-	  2.1b-1
+	src/formats/Makefile.in, src/formats/5/Makefile.in,
+	src/generator/Makefile.in, src/postproc/Makefile.in,
+	src/preproc/Makefile.in, src/solver/Makefile.in,
+	src/utils/Makefile.in, src/utils/symtable.cc: Version update to
+	2.1b-1
 
 2003-09-12 10:19  mkouril
 
 	* Makefile.am, Makefile.in, configure, configure.ac,
-	  doc/Makefile.in, doc/manual/Makefile.in,
-	  doc/manual/sbsat_getting.html, doc/manual/sbsat_getting.pdf,
-	  doc/manual/sbsat_getting.ps, doc/manual/sbsat_getting.tex,
-	  doc/manual/sbsat_manual.html, doc/manual/sbsat_manual.pdf,
-	  doc/manual/sbsat_manual.ps, doc/manual/sbsat_manual.tex,
-	  examples/Makefile.in, include/Makefile.in, src/Makefile.in,
-	  src/formats/Makefile.in, src/formats/5/Makefile.in,
-	  src/generator/Makefile.in, src/postproc/Makefile.in,
-	  src/preproc/Makefile.in, src/solver/Makefile.in,
-	  src/utils/Makefile.in, tests/Makefile.in, tests/cnf/Makefile.in,
-	  tests/longer_tests/Makefile.in, tests/trace_tests/Makefile.in:
-	  Added --enable-cvsbuild for nightly snapshots
+	doc/Makefile.in, doc/manual/Makefile.in,
+	doc/manual/sbsat_getting.html, doc/manual/sbsat_getting.pdf,
+	doc/manual/sbsat_getting.ps, doc/manual/sbsat_getting.tex,
+	doc/manual/sbsat_manual.html, doc/manual/sbsat_manual.pdf,
+	doc/manual/sbsat_manual.ps, doc/manual/sbsat_manual.tex,
+	examples/Makefile.in, include/Makefile.in, src/Makefile.in,
+	src/formats/Makefile.in, src/formats/5/Makefile.in,
+	src/generator/Makefile.in, src/postproc/Makefile.in,
+	src/preproc/Makefile.in, src/solver/Makefile.in,
+	src/utils/Makefile.in, tests/Makefile.in, tests/cnf/Makefile.in,
+	tests/longer_tests/Makefile.in, tests/trace_tests/Makefile.in:
+	Added --enable-cvsbuild for nightly snapshots
 
 2003-09-11 15:29  fett
 
 	* src/formats/markbdd.cc: playing with mitosis...
-
-	     Sean
+	
+	   Sean
 
 2003-09-11 13:16  fett
 
 	* src/formats/markbdd.cc: Working with minmax.
-
-	     ~Sean
+	
+	   ~Sean
 
 2003-09-09 13:06  fett
 
 	* src/formats/cnf.cc: Tried to speed it up, but the new lines don't
-	  seem to make any speed difference.
-
-	     ~Sean
+	seem to make any speed difference.
+	
+	   ~Sean
 
 2003-09-08 18:41  fett
 
 	* src/formats/markbdd.cc: negate clashed with something, so i
-	  changed it to negate_it
-
-	     ~Sean
+	changed it to negate_it
+	
+	   ~Sean
 
 2003-09-08 13:19  mkouril
 
 	* src/utils/: Makefile.in, zread.cc: Removed unused parameter in
-	  fprintf.
+	fprintf.
 
 2003-09-08 13:18  mkouril
 
 	* src/solver/: Makefile.in, recordsol.cc: Fixed range in
-	  recordsol.cc
+	recordsol.cc
 
 2003-09-08 13:18  mkouril
 
 	* include/config.h, src/Makefile.in, src/formats/Makefile.in,
-	  src/formats/5/Makefile.in, src/generator/Makefile.in,
-	  src/postproc/Makefile.in, src/preproc/Makefile.in: [no log
-	  message]
+	src/formats/5/Makefile.in, src/generator/Makefile.in,
+	src/postproc/Makefile.in, src/preproc/Makefile.in: [no log message]
 
 2003-09-08 13:18  mkouril
 
 	* doc/manual/: sbsat_getting.lyx, sbsat_getting.pdf: Fixed the
-	  license.
+	license.
 
 2003-09-08 13:18  mkouril
 
@@ -2673,23 +2696,23 @@
 2003-09-05 13:06  fett
 
 	* src/: formats/markbdd.cc, utils/bdd.cc: playing with the format
-	  of pprint_tree and print_tree more.
-
-	     ~Sean
+	of pprint_tree and print_tree more.
+	
+	   ~Sean
 
 2003-09-05 12:39  fett
 
 	* src/formats/bdd2cnf.cc: just a minor change the last line of an
-	  output cnf file was c now it is c end
-
-	      ~Sean
+	output cnf file was c now it is c end
+	
+	    ~Sean
 
 2003-09-03 15:44  mkouril
 
 	* include/symtable.h, src/formats/markbdd.cc,
-	  src/formats/tracer.cc, src/formats/5/libt5_a-trace_g.cc,
-	  src/formats/5/trace_g.yy, src/utils/symtable.cc: Added symbol
-	  table types
+	src/formats/tracer.cc, src/formats/5/libt5_a-trace_g.cc,
+	src/formats/5/trace_g.yy, src/utils/symtable.cc: Added symbol table
+	types
 
 2003-09-03 15:39  fett
 
@@ -2702,47 +2725,47 @@
 2003-09-03 14:31  fett
 
 	* tests/longer_tests/: slider_80_sat.ite, slider_80_unsat.ite:
-	  fixed them to work with the new markbdd format
-
-	    ~Sean
+	fixed them to work with the new markbdd format
+	
+	  ~Sean
 
 2003-09-03 14:31  fett
 
 	* examples/add_state.ite: oh yeah..
-
-	    ~Sean
+	
+	  ~Sean
 
 2003-09-03 14:31  fett
 
 	* src/utils/bdd.cc: fixed print_tree again
-
-	    ~Sean
+	
+	  ~Sean
 
 2003-09-03 14:30  fett
 
 	* src/formats/markbdd.cc: fixing add_state and others
-
-	    ~Sean
+	
+	  ~Sean
 
 2003-09-03 13:54  mkouril
 
 	* src/formats/5/: Makefile.am, Makefile.in, parser.cc, prover_g.yy,
-	  prover_s.ll, tracetest.cc: Added prover format.
+	prover_s.ll, tracetest.cc: Added prover format.
 
 2003-09-03 11:47  mkouril
 
 	* src/: formats/read_input.cc, utils/symtable.cc: testing
-	  sym_regex.
+	sym_regex.
 
 2003-09-03 11:46  mkouril
 
 	* tests/: cnf_tests.sh.in, longer_tests.sh.in, trace_tests.sh.in,
-	  xor_tests.sh.in: ite renamed to sbsat.
+	xor_tests.sh.in: ite renamed to sbsat.
 
 2003-09-03 11:46  mkouril
 
 	* src/: Makefile.am, Makefile.in, ite.cc, sbsat.cc: ite renamed to
-	  sbsat
+	sbsat
 
 2003-08-28 17:10  fett
 
@@ -2759,145 +2782,144 @@
 2003-08-27 17:48  fett
 
 	* src/formats/markbdd.cc: don't expect add_state to work...sliders
-	  are dead til tomorrow
-
-	     ~Sean
+	are dead til tomorrow
+	
+	   ~Sean
 
 2003-08-27 17:40  fett
 
 	* src/formats/markbdd.cc: fixed a bug...hope there are no more!
-
-	     ~Sean
+	
+	   ~Sean
 
 2003-08-27 16:55  fett
 
 	* src/utils/: Makefile.in, bdd.cc: Added in a function f_mitosis
-	  which is a cross between f_apply and mitosis.  It is used for the
-	  define statements in markbdd.cc and is needed to fit with the
-	  symbol table
-
-	     ~Sean
+	which is a cross between f_apply and mitosis.  It is used for the
+	define statements in markbdd.cc and is needed to fit with the
+	symbol table
+	
+	   ~Sean
 
 2003-08-27 16:54  fett
 
 	* src/: formats/5/Makefile.in, generator/Makefile.in,
-	  postproc/Makefile.in, preproc/Makefile.in, solver/Makefile.in:
-	  Who knows!
-
-	     ~Sean
+	postproc/Makefile.in, preproc/Makefile.in, solver/Makefile.in: Who
+	knows!
+	
+	   ~Sean
 
 2003-08-27 16:54  fett
 
 	* src/formats/: Makefile.in, markbdd.cc: Been messing with the
-	  format, soon enough it will be completely compatible with the
-	  symbol table...just left is add_state and initialbranch then it's
-	  fixed (i think that's all)
-
-	     ~Sean
+	format, soon enough it will be completely compatible with the
+	symbol table...just left is add_state and initialbranch then it's
+	fixed (i think that's all)
+	
+	   ~Sean
 
 2003-08-27 16:54  fett
 
 	* src/Makefile.in: who knows!
-
-	     ~Sean
+	
+	   ~Sean
 
 2003-08-27 16:54  fett
 
 	* include/prototypes.h: Added in f_mitosis for use with markbdd.cc
-
-	     ~Sean
+	
+	   ~Sean
 
 2003-08-27 12:55  mkouril
 
 	* include/symtable.h, src/Makefile.in, src/formats/Makefile.in,
-	  src/formats/read_input.cc, src/formats/5/Makefile.in,
-	  src/generator/Makefile.in, src/postproc/Makefile.in,
-	  src/preproc/Makefile.in, src/solver/Makefile.in,
-	  src/utils/Makefile.in, src/utils/symtable.cc: Adjusted symtable
-	  regex.
+	src/formats/read_input.cc, src/formats/5/Makefile.in,
+	src/generator/Makefile.in, src/postproc/Makefile.in,
+	src/preproc/Makefile.in, src/solver/Makefile.in,
+	src/utils/Makefile.in, src/utils/symtable.cc: Adjusted symtable
+	regex.
 
 2003-08-27 12:45  mkouril
 
 	* Makefile.in, configure, configure.ac, doc/manual/Makefile.in,
-	  examples/Makefile.in, include/Makefile.in, include/config.h,
-	  include/config.h.in, include/iteheaders.h, include/symtable.h,
-	  src/Makefile.in, src/formats/Makefile.in,
-	  src/formats/read_input.cc, src/formats/5/Makefile.in,
-	  src/generator/Makefile.in, src/postproc/Makefile.in,
-	  src/preproc/Makefile.in, src/solver/Makefile.in,
-	  src/utils/Makefile.in, src/utils/symtable.cc, tests/Makefile.in,
-	  tests/cnf/Makefile.in, tests/longer_tests/Makefile.in,
-	  tests/trace_tests/Makefile.in: Added regex.h and regex for
-	  symtable
+	examples/Makefile.in, include/Makefile.in, include/config.h,
+	include/config.h.in, include/iteheaders.h, include/symtable.h,
+	src/Makefile.in, src/formats/Makefile.in,
+	src/formats/read_input.cc, src/formats/5/Makefile.in,
+	src/generator/Makefile.in, src/postproc/Makefile.in,
+	src/preproc/Makefile.in, src/solver/Makefile.in,
+	src/utils/Makefile.in, src/utils/symtable.cc, tests/Makefile.in,
+	tests/cnf/Makefile.in, tests/longer_tests/Makefile.in,
+	tests/trace_tests/Makefile.in: Added regex.h and regex for symtable
 
 2003-08-23 02:12  fett
 
 	* src/solver/: j_heuristic.cc, l_heuristic.cc: added in support for
-	  var_score for each heuristic.
-
-	     ~Sean
+	var_score for each heuristic.
+	
+	   ~Sean
 
 2003-08-23 02:12  fett
 
 	* src/preproc/do_flow.cc: messed with it some...
-
-	     ~Sean
+	
+	   ~Sean
 
 2003-08-21 16:05  fett
 
 	* src/preproc/: do_flow.cc, init_preproc.cc: playing with the flow
-	  some more...	added in a function to get the Cut of a circuit at
-	  some depth
-
-	     ~Sean
+	some more...  added in a function to get the Cut of a circuit at
+	some depth
+	
+	   ~Sean
 
 2003-08-21 14:10  fett
 
 	* src/formats/cnf.cc: modified all EOF (%s) lines to just EOF and
-	  no display
-
-	    ~Sean
+	no display
+	
+	  ~Sean
 
 2003-08-20 13:44  fett
 
 	* src/: formats/markbdd.cc, preproc/do_pruning.cc, utils/bdd.cc:
-	  Changed the print_tree and pprint_tree to print things nicer
-
-	    ~Sean
+	Changed the print_tree and pprint_tree to print things nicer
+	
+	  ~Sean
 
 2003-08-20 13:43  fett
 
 	* include/config.h: what?!?!?!?
-
-	    ~Sean
+	
+	  ~Sean
 
 2003-08-19 16:15  fett
 
 	* doc/manual/sbsat_manual.lyx: Added preliminary CNF section
-
-	    ~Sean
+	
+	  ~Sean
 
 2003-08-19 13:07  fett
 
 	* Makefile.in, configure, examples/Makefile.in,
-	  include/Makefile.in, include/config.h, tests/Makefile.in,
-	  tests/cnf/Makefile.in, tests/longer_tests/Makefile.in,
-	  tests/trace_tests/Makefile.in: What needs to be checked in about
-	  these?
-
-	     ~Sean
+	include/Makefile.in, include/config.h, tests/Makefile.in,
+	tests/cnf/Makefile.in, tests/longer_tests/Makefile.in,
+	tests/trace_tests/Makefile.in: What needs to be checked in about
+	these?
+	
+	   ~Sean
 
 2003-08-19 13:05  fett
 
 	* doc/manual/sbsat_getting.lyx: oh not much
-
-	     ~Sean
+	
+	   ~Sean
 
 2003-08-18 11:21  mkouril
 
 	* doc/manual/: Makefile.am, Makefile.in, sbsat_getting.html,
-	  sbsat_getting.ps, sbsat_getting.tex: Additional formats for
-	  sbsat_getting.
+	sbsat_getting.ps, sbsat_getting.tex: Additional formats for
+	sbsat_getting.
 
 2003-08-18 10:43  mkouril
 
@@ -2910,8 +2932,8 @@
 2003-08-15 15:57  mkouril
 
 	* src/: Makefile.in, formats/Makefile.in, formats/5/Makefile.in,
-	  generator/Makefile.in, postproc/Makefile.in, preproc/Makefile.in,
-	  solver/Makefile.in, utils/Makefile.in: Less noisy compilation.
+	generator/Makefile.in, postproc/Makefile.in, preproc/Makefile.in,
+	solver/Makefile.in, utils/Makefile.in: Less noisy compilation.
 
 2003-08-15 15:13  mkouril
 
@@ -2924,38 +2946,38 @@
 2003-08-15 10:39  mkouril
 
 	* include/solver.h, src/solver/Makefile.am, src/solver/Makefile.in,
-	  src/solver/bdd2specfn_and.cc, src/solver/bdd2specfn_xor.cc,
-	  src/solver/libsolver.cc, src/solver/smurffactory.cc: Split
-	  specfn2smurf.cc into bdd2specfn_and.cc and bdd2specfn_xor.cc.
+	src/solver/bdd2specfn_and.cc, src/solver/bdd2specfn_xor.cc,
+	src/solver/libsolver.cc, src/solver/smurffactory.cc: Split
+	specfn2smurf.cc into bdd2specfn_and.cc and bdd2specfn_xor.cc.
 
 2003-08-14 14:22  mkouril
 
 	* src/solver/: Makefile.am, Makefile.in, j_specfn.cc,
-	  j_specfn_and.cc, j_specfn_xor.cc, libsolver.cc: j_specfn.cc split
-	  into _and part and _xor part.
+	j_specfn_and.cc, j_specfn_xor.cc, libsolver.cc: j_specfn.cc split
+	into _and part and _xor part.
 
 2003-08-14 14:11  mkouril
 
 	* src/solver/: Makefile.am, Makefile.in, init_solver.cc,
-	  lemmamisc.cc, lemmas_and.cc, lemmas_smurf.cc, lemmas_xor.cc,
-	  libsolver.cc: lemmamisc.cc split into lemmamisc.cc,
-	  lemmas_smurf.cc, lemmas_and.cc and lemmas_xor.cc
+	lemmamisc.cc, lemmas_and.cc, lemmas_smurf.cc, lemmas_xor.cc,
+	libsolver.cc: lemmamisc.cc split into lemmamisc.cc,
+	lemmas_smurf.cc, lemmas_and.cc and lemmas_xor.cc
 
 2003-08-14 13:59  mkouril
 
 	* include/solver.h, src/solver/bt_specfn.cc,
-	  src/solver/j_heuristic.cc, src/solver/smurffactory.cc,
-	  src/solver/specfn2smurf.cc, src/solver/update_heu.cc: Created
-	  SFN_AND, SFN_XOR -- so the special fn types are not confused with
-	  BDD function types.
+	src/solver/j_heuristic.cc, src/solver/smurffactory.cc,
+	src/solver/specfn2smurf.cc, src/solver/update_heu.cc: Created
+	SFN_AND, SFN_XOR -- so the special fn types are not confused with
+	BDD function types.
 
 2003-08-14 10:58  mkouril
 
 	* include/params.h, src/formats/cnf.cc,
-	  src/preproc/init_preproc.cc, src/utils/params.cc,
-	  src/utils/params_fn.cc: Fixed cmd line option order.	Display
-	  message only if using the ini file (unless debug is >3) Extra
-	  messages from cnf.cc
+	src/preproc/init_preproc.cc, src/utils/params.cc,
+	src/utils/params_fn.cc: Fixed cmd line option order.  Display
+	message only if using the ini file (unless debug is >3) Extra
+	messages from cnf.cc
 
 2003-08-13 17:22  mkouril
 
@@ -2964,13 +2986,13 @@
 2003-08-13 17:21  mkouril
 
 	* include/globals.h, src/utils/utils.cc: Changed parameters for
-	  ite_calloc to unsigned int.
+	ite_calloc to unsigned int.
 
 2003-08-13 15:29  fett
 
 	* src/solver/lemmacache.cc: fixed L2 thing
-
-	     ~Sean
+	
+	   ~Sean
 
 2003-08-13 14:42  mkouril
 
@@ -2979,38 +3001,38 @@
 2003-08-13 14:41  mkouril
 
 	* src/solver/: lemmacache.cc, lemmamisc.cc, lemmas.cc: 3leve lemma
-	  cache.
+	cache.
 
 2003-08-13 14:40  mkouril
 
 	* include/lemmainfo.h, include/smurffactory.h, include/vars.h,
-	  src/solver/Makefile.am, src/solver/Makefile.in,
-	  src/solver/backtrack.cc, src/solver/backtrack_sbj.cc,
-	  src/solver/bt_lemmas.cc, src/solver/bt_misc.cc,
-	  src/solver/interface.cc, src/solver/lemmainfo.cc,
-	  src/solver/lemmaspace.cc, src/solver/libsolver.cc: 3level lemma
-	  cache.
+	src/solver/Makefile.am, src/solver/Makefile.in,
+	src/solver/backtrack.cc, src/solver/backtrack_sbj.cc,
+	src/solver/bt_lemmas.cc, src/solver/bt_misc.cc,
+	src/solver/interface.cc, src/solver/lemmainfo.cc,
+	src/solver/lemmaspace.cc, src/solver/libsolver.cc: 3level lemma
+	cache.
 
 2003-08-13 14:22  fett
 
 	* src/formats/smurf.cc: added in support for PLAINOR looks like #
-	  10 2 3 4 5 6 plainor 10010 #11 ...
-
-	      ~Sean
+	10 2 3 4 5 6 plainor 10010 #11 ...
+	
+	    ~Sean
 
 2003-08-12 12:25  fett
 
 	* src/: formats/markbdd.cc, utils/bdd.cc: playing with symbol
-	  table.
-
-	    ~Sean
+	table.
+	
+	  ~Sean
 
 2003-08-12 01:09  fett
 
 	* src/preproc/: do_flow.cc, init_preproc.cc: oh nothing much...just
-	  looking at a few things with andy
-
-	    ~Sean
+	looking at a few things with andy
+	
+	  ~Sean
 
 2003-08-11 20:48  mkouril
 
@@ -3031,7 +3053,7 @@
 2003-08-11 17:08  vogelga
 
 	* doc/manual/sbsat_getting.lyx: Andy changed based on Franco's
-	  comments.  Pages 4 and 6
+	comments.  Pages 4 and 6
 
 2003-08-11 11:41  mkouril
 
@@ -3040,12 +3062,12 @@
 2003-08-11 11:41  mkouril
 
 	* src/solver/recordsol.cc: Fixed bug (numinp instead of
-	  nNumVariables).
+	nNumVariables).
 
 2003-08-11 11:40  mkouril
 
 	* src/postproc/backend.cc: Used symbol table for all formats except
-	  old tracer (which has negative ids).
+	old tracer (which has negative ids).
 
 2003-08-11 11:40  mkouril
 
@@ -3054,27 +3076,27 @@
 2003-08-11 11:39  mkouril
 
 	* include/: postproc.h, symtable.h: Changed Backend_CNF -> Backend
-	  Added char *s_name(id)
+	Added char *s_name(id)
 
 2003-08-07 14:55  fett
 
 	* src/postproc/backend.cc: made it so that if something is solved
-	  in preprocessing, it's not gonna verify by running the
-	  preprocessing again...that just seems silly
-
-		    ~Sean
+	in preprocessing, it's not gonna verify by running the
+	preprocessing again...that just seems silly
+	
+		  ~Sean
 
 2003-08-07 14:54  fett
 
 	* src/formats/: cnf.cc, markbdd.cc, xorbdd.cc: fixing static arrays
-
-		    ~Sean
+	
+		  ~Sean
 
 2003-08-07 14:49  fett
 
 	* src/ite.cc:	 i don't remember changing this one...
-
-		    ~Sean
+	
+		  ~Sean
 
 2003-08-07 13:03  mkouril
 
@@ -3083,81 +3105,81 @@
 2003-08-07 12:44  mkouril
 
 	* src/formats/: read_input.cc, tracer.cc: Old tracer uses new
-	  symtable.
+	symtable.
 
 2003-08-07 12:44  mkouril
 
 	* include/symtable.h, src/utils/bdd_circuit_init.cc,
-	  src/utils/symtable.cc: Expanded symtable.
+	src/utils/symtable.cc: Expanded symtable.
 
 2003-08-07 11:18  mkouril
 
 	* src/utils/: bdd_circuit_init.cc, bddtable.cc, symtable.cc,
-	  utils.cc, vars.cc, zread.cc: Removed parameterGlobal,
-	  parameterizedVars.  Global symbol table.
+	utils.cc, vars.cc, zread.cc: Removed parameterGlobal,
+	parameterizedVars.  Global symbol table.
 
 2003-08-07 11:18  mkouril
 
 	* src/preproc/: init_preproc.cc, other_preproc.cc: Removed
-	  parameterGlobal, parameterizedVars.
+	parameterGlobal, parameterizedVars.
 
 2003-08-07 11:17  mkouril
 
 	* src/formats/: cnf.cc, markbdd.cc, read_input.cc, smurf.cc,
-	  tracer.cc, xorbdd.cc: Removed parameterGlobal, parameterizedVars.
-	  Global symtable.
+	tracer.cc, xorbdd.cc: Removed parameterGlobal, parameterizedVars. 
+	Global symtable.
 
 2003-08-07 11:17  mkouril
 
 	* include/common.h, include/globals.h, include/prototypes.h,
-	  include/symtable.h, src/formats/5/bddnode.h,
-	  src/formats/5/functions.cc, src/formats/5/libt5_a-trace_g.cc,
-	  src/formats/5/libt5_a-trace_g.h, src/formats/5/trace_g.yy,
-	  src/formats/5/tracetest.cc: Global symtable.
+	include/symtable.h, src/formats/5/bddnode.h,
+	src/formats/5/functions.cc, src/formats/5/libt5_a-trace_g.cc,
+	src/formats/5/libt5_a-trace_g.h, src/formats/5/trace_g.yy,
+	src/formats/5/tracetest.cc: Global symtable.
 
 2003-08-06 17:07  fett
 
 	* include/preprocess.h: Added Ctrl-C support...
-
-	     ~Sean
+	
+	   ~Sean
 
 2003-08-06 17:06  fett
 
 	* src/solver/smurffactory.cc: changed the display of Creating
-	  Smurfs and so forth to output only every 100 times instead of
-	  every time
-
-	     ~Sean
+	Smurfs and so forth to output only every 100 times instead of every
+	time
+	
+	   ~Sean
 
 2003-08-06 17:06  fett
 
 	* src/preproc/: do_cofactor.cc, do_depcluster.cc, do_exquantify.cc,
-	  do_exquantifyand.cc, do_pruning.cc, do_strength.cc: Playing with
-	  the output display things, and adding in Ctrl-C support! fun fun
-	  fun!
-
-	     ~Sean
+	do_exquantifyand.cc, do_pruning.cc, do_strength.cc: Playing with
+	the output display things, and adding in Ctrl-C support! fun fun
+	fun!
+	
+	   ~Sean
 
 2003-08-06 15:23  fett
 
 	* include/preprocess.h: chagned formatting for preprocessing...
-
-	     ~Sean
+	
+	   ~Sean
 
 2003-08-06 15:23  fett
 
 	* src/: formats/cnf.cc, preproc/do_applyinfs.cc,
-	  preproc/do_cofactor.cc, preproc/do_depcluster.cc,
-	  preproc/do_exquantify.cc, preproc/do_pruning.cc,
-	  preproc/do_strength.cc, preproc/init_preproc.cc, utils/bdd.cc:
-	  Played with the formatting (printing)
-
-	    ~Sean
+	preproc/do_cofactor.cc, preproc/do_depcluster.cc,
+	preproc/do_exquantify.cc, preproc/do_pruning.cc,
+	preproc/do_strength.cc, preproc/init_preproc.cc, utils/bdd.cc:
+	Played with the formatting (printing)
+	
+	  ~Sean
 
 2003-08-06 14:54  mkouril
 
 	* tests/longer_tests/: 12.trace.gz, 12.trace.gz.params: Forgotten
-	  tests
+	tests
 
 2003-08-06 13:59  mkouril
 
@@ -3174,7 +3196,7 @@
 2003-08-06 10:21  mkouril
 
 	* src/formats/: cnf.cc, markbdd.cc, sat.cc, xorbdd.cc: Better fix
-	  for EOF.
+	for EOF.
 
 2003-08-06 10:21  mkouril
 
@@ -3203,29 +3225,29 @@
 2003-08-06 00:39  mkouril
 
 	* tests/trace_tests/: Makefile.am, Makefile.in,
-	  and1=_example.trace, and1=_example.trace.params,
-	  and1_equ_example.trace, and1_equ_example.trace.params,
-	  and=_example.trace, and=_example.trace.params,
-	  and_equ_example.trace, and_equ_example.trace.params,
-	  limp=_example.trace, limp=_example.trace.params,
-	  limp_equ_example.trace, limp_equ_example.trace.params,
-	  lnimp=_example.trace, lnimp=_example.trace.params,
-	  lnimp_equ_example.trace, lnimp_equ_example.trace.params,
-	  nand=_example.trace, nand=_example.trace.params,
-	  nand_equ_example.trace, nand_equ_example.trace.params,
-	  nor=_example.trace, nor=_example.trace.params,
-	  nor_equ_example.trace, nor_equ_example.trace.params,
-	  or=_example.trace, or=_example.trace.params,
-	  or_equ_example.trace, or_equ_example.trace.params,
-	  rimp=_example.trace, rimp=_example.trace.params,
-	  rimp_equ_example.trace, rimp_equ_example.trace.params,
-	  rnimp=_example.trace, rnimp=_example.trace.params,
-	  rnimp_equ_example.trace, rnimp_equ_example.trace.params,
-	  xnor=_example.trace, xnor=_example.trace.params,
-	  xnor_equ_example.trace, xnor_equ_example.trace.params,
-	  xor=_example.trace, xor=_example.trace.params,
-	  xor_equ_example.trace, xor_equ_example.trace.params: Removed
-	  equal sign from the filenames.
+	and1=_example.trace, and1=_example.trace.params,
+	and1_equ_example.trace, and1_equ_example.trace.params,
+	and=_example.trace, and=_example.trace.params,
+	and_equ_example.trace, and_equ_example.trace.params,
+	limp=_example.trace, limp=_example.trace.params,
+	limp_equ_example.trace, limp_equ_example.trace.params,
+	lnimp=_example.trace, lnimp=_example.trace.params,
+	lnimp_equ_example.trace, lnimp_equ_example.trace.params,
+	nand=_example.trace, nand=_example.trace.params,
+	nand_equ_example.trace, nand_equ_example.trace.params,
+	nor=_example.trace, nor=_example.trace.params,
+	nor_equ_example.trace, nor_equ_example.trace.params,
+	or=_example.trace, or=_example.trace.params, or_equ_example.trace,
+	or_equ_example.trace.params, rimp=_example.trace,
+	rimp=_example.trace.params, rimp_equ_example.trace,
+	rimp_equ_example.trace.params, rnimp=_example.trace,
+	rnimp=_example.trace.params, rnimp_equ_example.trace,
+	rnimp_equ_example.trace.params, xnor=_example.trace,
+	xnor=_example.trace.params, xnor_equ_example.trace,
+	xnor_equ_example.trace.params, xor=_example.trace,
+	xor=_example.trace.params, xor_equ_example.trace,
+	xor_equ_example.trace.params: Removed equal sign from the
+	filenames.
 
 2003-08-06 00:12  mkouril
 
@@ -3234,29 +3256,29 @@
 2003-08-05 23:39  mkouril
 
 	* Makefile.in, configure, configure.ac, doc/Makefile.in,
-	  doc/manual/Makefile.in, doc/manual/sbsat_manual.html,
-	  doc/manual/sbsat_manual.pdf, doc/manual/sbsat_manual.ps,
-	  doc/manual/sbsat_manual.tex, examples/Makefile,
-	  examples/Makefile.in, include/Makefile.in, include/config.h,
-	  include/config.h.in, src/Makefile.in, src/formats/Makefile.in,
-	  src/formats/5/Makefile.in, src/formats/5/bddops.cc,
-	  src/formats/5/libt5_a-trace_g.cc,
-	  src/formats/5/libt5_a-trace_g.h, src/formats/5/trace_g.yy,
-	  src/formats/5/tracetest.cc, src/generator/Makefile.in,
-	  src/postproc/Makefile.in, src/postproc/backend.cc,
-	  src/preproc/Makefile.in, src/preproc/init_preproc.cc,
-	  src/solver/Makefile.in, src/utils/Makefile.in, tests/Makefile.in,
-	  tests/cnf_tests.sh.in, tests/trace_tests.sh.in,
-	  tests/xor_tests.sh.in, tests/cnf/Makefile.in,
-	  tests/longer_tests/Makefile.am, tests/longer_tests/Makefile.in,
-	  tests/trace_tests/Makefile.in: [no log message]
+	doc/manual/Makefile.in, doc/manual/sbsat_manual.html,
+	doc/manual/sbsat_manual.pdf, doc/manual/sbsat_manual.ps,
+	doc/manual/sbsat_manual.tex, examples/Makefile,
+	examples/Makefile.in, include/Makefile.in, include/config.h,
+	include/config.h.in, src/Makefile.in, src/formats/Makefile.in,
+	src/formats/5/Makefile.in, src/formats/5/bddops.cc,
+	src/formats/5/libt5_a-trace_g.cc, src/formats/5/libt5_a-trace_g.h,
+	src/formats/5/trace_g.yy, src/formats/5/tracetest.cc,
+	src/generator/Makefile.in, src/postproc/Makefile.in,
+	src/postproc/backend.cc, src/preproc/Makefile.in,
+	src/preproc/init_preproc.cc, src/solver/Makefile.in,
+	src/utils/Makefile.in, tests/Makefile.in, tests/cnf_tests.sh.in,
+	tests/trace_tests.sh.in, tests/xor_tests.sh.in,
+	tests/cnf/Makefile.in, tests/longer_tests/Makefile.am,
+	tests/longer_tests/Makefile.in, tests/trace_tests/Makefile.in: [no
+	log message]
 
 2003-08-05 16:55  fett
 
 	* examples/Makefile, src/Makefile.in, src/formats/Makefile.in,
-	  src/formats/5/Makefile.in, src/generator/Makefile.in,
-	  src/postproc/Makefile.in, src/preproc/Makefile.in,
-	  src/solver/Makefile.in, src/utils/Makefile.in: who konws!
+	src/formats/5/Makefile.in, src/generator/Makefile.in,
+	src/postproc/Makefile.in, src/preproc/Makefile.in,
+	src/solver/Makefile.in, src/utils/Makefile.in: who konws!
 
 2003-08-05 16:25  mkouril
 
@@ -3265,47 +3287,47 @@
 2003-08-05 16:24  mkouril
 
 	* doc/Makefile.in, doc/manual/Makefile.in,
-	  doc/manual/sbsat_getting.pdf, examples/Makefile,
-	  examples/Makefile.in, include/Makefile.in, include/config.h,
-	  include/config.h.in, src/Makefile.in, src/formats/Makefile.in,
-	  src/formats/5/Makefile.in, src/generator/Makefile.in,
-	  src/postproc/Makefile.in, src/preproc/Makefile.in,
-	  src/utils/Makefile.in, tests/Makefile.in, tests/cnf/Makefile.in,
-	  tests/longer_tests/Makefile.in, tests/trace_tests/Makefile.in:
-	  [no log message]
+	doc/manual/sbsat_getting.pdf, examples/Makefile,
+	examples/Makefile.in, include/Makefile.in, include/config.h,
+	include/config.h.in, src/Makefile.in, src/formats/Makefile.in,
+	src/formats/5/Makefile.in, src/generator/Makefile.in,
+	src/postproc/Makefile.in, src/preproc/Makefile.in,
+	src/utils/Makefile.in, tests/Makefile.in, tests/cnf/Makefile.in,
+	tests/longer_tests/Makefile.in, tests/trace_tests/Makefile.in: [no
+	log message]
 
 2003-08-05 16:24  mkouril
 
 	* Makefile.in, configure, configure.ac: Added LIBM.  Removed
-	  MALLOC. (DEC problems)
+	MALLOC. (DEC problems)
 
 2003-08-05 16:23  fett
 
 	* examples/: minmax.cnf, minmax.ite: added in more example
-	  files...showing the cardinality constraint or commonly called
-	  MinMax.
-
-	    ~Sean
+	files...showing the cardinality constraint or commonly called
+	MinMax.
+	
+	  ~Sean
 
 2003-08-05 16:05  fett
 
 	* examples/markbdd.ite: took out branch prune and made it restrict.
-
-	    ~Sean
+	
+	  ~Sean
 
 2003-08-05 16:05  fett
 
 	* doc/manual/sbsat_manual.lyx: added in minmax command into the BDD
-	  format part.	took out branch prune and made it restrict.
-
-	    ~Sean
+	format part.  took out branch prune and made it restrict.
+	
+	  ~Sean
 
 2003-08-05 16:03  fett
 
 	* src/utils/bdd.cc: Messed with ite_var adding in that if someone
-	  says ite_var(0) they will get false_ptr
-
-	     ~Sean
+	says ite_var(0) they will get false_ptr
+	
+	   ~Sean
 
 2003-08-05 15:58  fett
 
@@ -3314,16 +3336,16 @@
 2003-08-05 15:58  fett
 
 	* src/formats/markbdd.cc: Messing with minmax now. When someone
-	  uses a 0 in the format it is treated like False. F. 0. all the
-	  same thing.
-
-	     ~Sean
+	uses a 0 in the format it is treated like False. F. 0. all the same
+	thing.
+	
+	   ~Sean
 
 2003-08-05 15:01  fett
 
 	* src/formats/markbdd.cc: Added in minmax BDDs in this ite format.
-
-	     ~Sean
+	
+	   ~Sean
 
 2003-08-05 14:29  mkouril
 
@@ -3332,7 +3354,7 @@
 2003-08-05 14:26  mkouril
 
 	* include/: Makefile.am, Makefile.in: Added header files for
-	  distribution.
+	distribution.
 
 2003-07-31 15:18  fett
 
@@ -3349,21 +3371,21 @@
 2003-07-31 15:04  fett
 
 	* examples/: Makefile, flowers.cnf, flowers.ite: adding example
-	  files for user manual
-
-	    ~Sean
+	files for user manual
+	
+	  ~Sean
 
 2003-07-31 15:04  fett
 
 	* doc/manual/sbsat_getting.lyx: making more user manual.
-
-	     ~Sean
+	
+	   ~Sean
 
 2003-07-31 14:55  fett
 
 	* doc/manual/sbsat_getting.lyx, src/formats/cnf.cc: did it again
-
-	     ~Sean
+	
+	   ~Sean
 
 2003-07-31 14:53  mkouril
 
@@ -3372,8 +3394,8 @@
 2003-07-31 14:52  fett
 
 	* src/formats/cnf.cc: added minmax
-
-	    ~Sean
+	
+	  ~Sean
 
 2003-07-31 14:29  mkouril
 
@@ -3394,9 +3416,9 @@
 2003-07-30 22:26  fett
 
 	* doc/manual/: sbsat_getting.lyx, sbsat_getting.pdf: andy and I
-	  working on the manual some more
-
-	     ~Sean
+	working on the manual some more
+	
+	   ~Sean
 
 2003-07-30 14:44  mkouril
 
@@ -3405,88 +3427,87 @@
 2003-07-30 13:50  fett
 
 	* doc/manual/sbsat_getting.lyx: Andy and I are working on the
-	  manual! w00t
-
-	     ~Sean
+	manual! w00t
+	
+	   ~Sean
 
 2003-07-30 13:03  mkouril
 
 	* include/brancher.h, include/common.h, include/globals.h,
-	  include/lemmainfo.h, include/postproc.h, include/prototypes.h,
-	  include/tracer.h, src/formats/cnf.cc, src/preproc/do_cofactor.cc,
-	  src/preproc/do_flow.cc, src/solver/backtrack_sbj.cc,
-	  src/utils/params_fn.cc: Fixed warnings..
+	include/lemmainfo.h, include/postproc.h, include/prototypes.h,
+	include/tracer.h, src/formats/cnf.cc, src/preproc/do_cofactor.cc,
+	src/preproc/do_flow.cc, src/solver/backtrack_sbj.cc,
+	src/utils/params_fn.cc: Fixed warnings..
 
 2003-07-30 12:42  mkouril
 
 	* src/: solver/smurfaddons.cc, utils/smurfaddons.cc: Moved
-	  smurfaddons to the solver.
+	smurfaddons to the solver.
 
 2003-07-30 12:41  mkouril
 
 	* Makefile.in, configure, configure.ac, include/Makefile.in,
-	  include/brancher.h, include/common.h, include/defines.h,
-	  include/equivclass.h, include/formats.h, include/globals.h,
-	  include/heuristic.h, include/ite.h, include/itefeatures.h,
-	  include/iteheaders.h, include/lemmainfo.h, include/postproc.h,
-	  include/preprocess.h, include/prototypes.h,
-	  include/smurffactory.h, include/solver.h, include/vars.h,
-	  src/Makefile.in, src/ite.cc, src/formats/Makefile.in,
-	  src/formats/autochk.cc, src/formats/bdd2cnf.cc,
-	  src/formats/cnf.cc, src/formats/flatten.cc,
-	  src/formats/markbdd.cc, src/formats/parse.cc,
-	  src/formats/read_input.cc, src/formats/read_result.cc,
-	  src/formats/sat.cc, src/formats/smurf.cc, src/formats/tracer.cc,
-	  src/formats/write_output.cc, src/formats/xorbdd.cc,
-	  src/formats/5/Makefile.in, src/formats/5/tracetest.cc,
-	  src/generator/Makefile.in, src/postproc/Makefile.in,
-	  src/postproc/backend.cc, src/preproc/Makefile.in,
-	  src/preproc/create_infs.cc, src/preproc/do_applyinfs.cc,
-	  src/preproc/do_cofactor.cc, src/preproc/do_depcluster.cc,
-	  src/preproc/do_exquantify.cc, src/preproc/do_exquantifyand.cc,
-	  src/preproc/do_flow.cc, src/preproc/do_pruning.cc,
-	  src/preproc/do_strength.cc, src/preproc/init_preproc.cc,
-	  src/preproc/preprocess.cc, src/solver/Makefile.am,
-	  src/solver/Makefile.in, src/solver/bdd2smurf.cc,
-	  src/solver/init_solver.cc, src/solver/interface.cc,
-	  src/solver/l_lemma.cc, src/solver/lemmaspace.cc,
-	  src/solver/libsolver.cc, src/solver/sf_addons.cc,
-	  src/solver/smurffactory.cc, src/solver/smurfstates.cc,
-	  src/solver/solve.cc, src/solver/specfn2smurf.cc,
-	  src/solver/transitions.cc, src/solver/wvf.cc,
-	  src/utils/Makefile.am, src/utils/Makefile.in,
-	  src/utils/bdd_circuit_init.cc, src/utils/intnode.cc,
-	  src/utils/params.cc, src/utils/vars.cc: Split headers for faster
-	  compilation.
+	include/brancher.h, include/common.h, include/defines.h,
+	include/equivclass.h, include/formats.h, include/globals.h,
+	include/heuristic.h, include/ite.h, include/itefeatures.h,
+	include/iteheaders.h, include/lemmainfo.h, include/postproc.h,
+	include/preprocess.h, include/prototypes.h, include/smurffactory.h,
+	include/solver.h, include/vars.h, src/Makefile.in, src/ite.cc,
+	src/formats/Makefile.in, src/formats/autochk.cc,
+	src/formats/bdd2cnf.cc, src/formats/cnf.cc, src/formats/flatten.cc,
+	src/formats/markbdd.cc, src/formats/parse.cc,
+	src/formats/read_input.cc, src/formats/read_result.cc,
+	src/formats/sat.cc, src/formats/smurf.cc, src/formats/tracer.cc,
+	src/formats/write_output.cc, src/formats/xorbdd.cc,
+	src/formats/5/Makefile.in, src/formats/5/tracetest.cc,
+	src/generator/Makefile.in, src/postproc/Makefile.in,
+	src/postproc/backend.cc, src/preproc/Makefile.in,
+	src/preproc/create_infs.cc, src/preproc/do_applyinfs.cc,
+	src/preproc/do_cofactor.cc, src/preproc/do_depcluster.cc,
+	src/preproc/do_exquantify.cc, src/preproc/do_exquantifyand.cc,
+	src/preproc/do_flow.cc, src/preproc/do_pruning.cc,
+	src/preproc/do_strength.cc, src/preproc/init_preproc.cc,
+	src/preproc/preprocess.cc, src/solver/Makefile.am,
+	src/solver/Makefile.in, src/solver/bdd2smurf.cc,
+	src/solver/init_solver.cc, src/solver/interface.cc,
+	src/solver/l_lemma.cc, src/solver/lemmaspace.cc,
+	src/solver/libsolver.cc, src/solver/sf_addons.cc,
+	src/solver/smurffactory.cc, src/solver/smurfstates.cc,
+	src/solver/solve.cc, src/solver/specfn2smurf.cc,
+	src/solver/transitions.cc, src/solver/wvf.cc,
+	src/utils/Makefile.am, src/utils/Makefile.in,
+	src/utils/bdd_circuit_init.cc, src/utils/intnode.cc,
+	src/utils/params.cc, src/utils/vars.cc: Split headers for faster
+	compilation.
 
 2003-07-30 10:49  mkouril
 
 	* tests/longer_tests/: dlx2_cc.trace.Hjl.params,
-	  dlx2_cc_bug11.trace.Hjl.params: Added combined heuristic tests.
+	dlx2_cc_bug11.trace.Hjl.params: Added combined heuristic tests.
 
 2003-07-29 15:52  fett
 
 	* doc/manual/sbsat_getting.pdf: 'made' the getting started manual
-
-	     ~Sean
+	
+	   ~Sean
 
 2003-07-29 14:28  fett
 
 	* src/preproc/do_exquantifyand.cc: playing with exquantifyand
-
-	    ~Sean
+	
+	  ~Sean
 
 2003-07-29 12:05  mkouril
 
 	* src/utils/: Makefile.in, utils.cc: Fixed ite_calloc for const
-	  char *.
+	char *.
 
 2003-07-29 12:04  mkouril
 
 	* include/config.h, src/Makefile.in, src/formats/Makefile.in,
-	  src/formats/5/Makefile.in, src/generator/Makefile.in,
-	  src/postproc/Makefile.in, src/preproc/Makefile.in,
-	  src/solver/Makefile.in: [no log message]
+	src/formats/5/Makefile.in, src/generator/Makefile.in,
+	src/postproc/Makefile.in, src/preproc/Makefile.in,
+	src/solver/Makefile.in: [no log message]
 
 2003-07-29 12:04  mkouril
 
@@ -3495,74 +3516,73 @@
 2003-07-29 12:02  mkouril
 
 	* Makefile.in, configure, include/Makefile.in, include/config.h,
-	  include/defines.h, include/globals.h, src/solver/display_sf.cc:
-	  Removed const char -> char warnings when compiled on Solaris CC.
+	include/defines.h, include/globals.h, src/solver/display_sf.cc:
+	Removed const char -> char warnings when compiled on Solaris CC.
 
 2003-07-29 11:21  mkouril
 
 	* include/config.h, include/globals.h, src/ite.cc,
-	  src/formats/bdd2cnf.cc, src/formats/cnf.cc,
-	  src/formats/read_input.cc, src/formats/smurf.cc,
-	  src/formats/tracer.cc, src/postproc/backend.cc,
-	  src/preproc/do_cofactor.cc, src/preproc/do_depcluster.cc,
-	  src/preproc/do_exquantify.cc, src/preproc/do_exquantifyand.cc,
-	  src/preproc/do_flow.cc, src/preproc/init_preproc.cc,
-	  src/preproc/preprocess.cc, src/solver/backtrack_sbj.cc,
-	  src/solver/bdd2smurf.cc, src/solver/bddwalk.cc,
-	  src/solver/brancher.cc, src/solver/bt_smurfs.cc,
-	  src/solver/display.cc, src/solver/heur_stack.cc,
-	  src/solver/init_solver.cc, src/solver/j_heuristic.cc,
-	  src/solver/j_specfn.cc, src/solver/l_heuristic.cc,
-	  src/solver/lemmainfo.cc, src/solver/lemmaspace.cc,
-	  src/solver/sf_addons.cc, src/solver/smurffactory.cc,
-	  src/solver/solve.cc, src/solver/state_stacks.cc,
-	  src/solver/wvf.cc, src/utils/bdd.cc,
-	  src/utils/bdd_circuit_init.cc, src/utils/bddidx_orig.cc,
-	  src/utils/bddtable.cc, src/utils/integerset.cc,
-	  src/utils/params_fn.cc, src/utils/termcap.cc, src/utils/utils.cc:
-	  Fixed SBSAT for pgCC.  Removed unreachable code.  Removed
-	  unreferenced local variables.
+	src/formats/bdd2cnf.cc, src/formats/cnf.cc,
+	src/formats/read_input.cc, src/formats/smurf.cc,
+	src/formats/tracer.cc, src/postproc/backend.cc,
+	src/preproc/do_cofactor.cc, src/preproc/do_depcluster.cc,
+	src/preproc/do_exquantify.cc, src/preproc/do_exquantifyand.cc,
+	src/preproc/do_flow.cc, src/preproc/init_preproc.cc,
+	src/preproc/preprocess.cc, src/solver/backtrack_sbj.cc,
+	src/solver/bdd2smurf.cc, src/solver/bddwalk.cc,
+	src/solver/brancher.cc, src/solver/bt_smurfs.cc,
+	src/solver/display.cc, src/solver/heur_stack.cc,
+	src/solver/init_solver.cc, src/solver/j_heuristic.cc,
+	src/solver/j_specfn.cc, src/solver/l_heuristic.cc,
+	src/solver/lemmainfo.cc, src/solver/lemmaspace.cc,
+	src/solver/sf_addons.cc, src/solver/smurffactory.cc,
+	src/solver/solve.cc, src/solver/state_stacks.cc, src/solver/wvf.cc,
+	src/utils/bdd.cc, src/utils/bdd_circuit_init.cc,
+	src/utils/bddidx_orig.cc, src/utils/bddtable.cc,
+	src/utils/integerset.cc, src/utils/params_fn.cc,
+	src/utils/termcap.cc, src/utils/utils.cc: Fixed SBSAT for pgCC. 
+	Removed unreachable code.  Removed unreferenced local variables.
 
 2003-07-29 09:34  fett
 
 	* src/formats/cnf.cc: wrote a note in cnf.cc
-
-	     ~Sean
+	
+	   ~Sean
 
 2003-07-28 21:22  mkouril
 
 	* include/log.h, include/preprocess.h, include/prototypes.h,
-	  src/formats/cnf.cc, src/preproc/do_applyinfs.cc,
-	  src/preproc/do_cofactor.cc, src/preproc/do_depcluster.cc,
-	  src/preproc/do_exquantify.cc, src/preproc/do_exquantifyand.cc,
-	  src/preproc/do_flow.cc, src/preproc/do_pruning.cc,
-	  src/preproc/do_strength.cc, src/preproc/init_preproc.cc,
-	  src/preproc/preprocess.cc, src/solver/smurffactory.cc,
-	  src/utils/utils.cc: Streighten up the debug levels.
+	src/formats/cnf.cc, src/preproc/do_applyinfs.cc,
+	src/preproc/do_cofactor.cc, src/preproc/do_depcluster.cc,
+	src/preproc/do_exquantify.cc, src/preproc/do_exquantifyand.cc,
+	src/preproc/do_flow.cc, src/preproc/do_pruning.cc,
+	src/preproc/do_strength.cc, src/preproc/init_preproc.cc,
+	src/preproc/preprocess.cc, src/solver/smurffactory.cc,
+	src/utils/utils.cc: Streighten up the debug levels.
 
 2003-07-28 16:45  mkouril
 
 	* src/: formats/cnf.cc, formats/flatten.cc, formats/markbdd.cc,
-	  formats/tracer.cc, formats/xorbdd.cc, preproc/do_applyinfs.cc,
-	  preproc/do_cofactor.cc, preproc/do_depcluster.cc,
-	  preproc/do_exquantify.cc, preproc/do_exquantifyand.cc,
-	  preproc/do_pruning.cc, preproc/do_strength.cc,
-	  preproc/init_preproc.cc, solver/display.cc,
-	  solver/init_solver.cc, solver/j_heuristic.cc,
-	  solver/smurffactory.cc, solver/smurfstates.cc, solver/solve.cc:
-	  Reduced the amount of input on default --debug 2.
+	formats/tracer.cc, formats/xorbdd.cc, preproc/do_applyinfs.cc,
+	preproc/do_cofactor.cc, preproc/do_depcluster.cc,
+	preproc/do_exquantify.cc, preproc/do_exquantifyand.cc,
+	preproc/do_pruning.cc, preproc/do_strength.cc,
+	preproc/init_preproc.cc, solver/display.cc, solver/init_solver.cc,
+	solver/j_heuristic.cc, solver/smurffactory.cc,
+	solver/smurfstates.cc, solver/solve.cc: Reduced the amount of input
+	on default --debug 2.
 
 2003-07-28 15:57  fett
 
 	* examples/small.cnf: manual example
-
-	     ~Sean
+	
+	   ~Sean
 
 2003-07-28 15:56  fett
 
 	* examples/: add_state.ite, xortest.ite: manual example
-
-	    ~Sean
+	
+	  ~Sean
 
 2003-07-28 15:08  mkouril
 
@@ -3571,67 +3591,66 @@
 2003-07-28 15:05  mkouril
 
 	* doc/manual/Makefile.am, doc/manual/Makefile.in, include/config.h,
-	  src/Makefile.in, src/formats/Makefile.in,
-	  src/formats/5/Makefile.in, src/generator/Makefile.in,
-	  src/postproc/Makefile.in, src/preproc/Makefile.in,
-	  src/solver/Makefile.in, src/utils/Makefile.in,
-	  src/utils/params.cc, src/utils/termcap.cc: Removed default
-	  filename for lemma-out-file.	Do not compile in termcap if not
-	  found.
+	src/Makefile.in, src/formats/Makefile.in,
+	src/formats/5/Makefile.in, src/generator/Makefile.in,
+	src/postproc/Makefile.in, src/preproc/Makefile.in,
+	src/solver/Makefile.in, src/utils/Makefile.in, src/utils/params.cc,
+	src/utils/termcap.cc: Removed default filename for lemma-out-file. 
+	Do not compile in termcap if not found.
 
 2003-07-28 14:56  fett
 
 	* doc/manual/: sbsat_manual.html, sbsat_manual.pdf,
-	  sbsat_manual.ps, sbsat_manual.tex: nothing!
+	sbsat_manual.ps, sbsat_manual.tex: nothing!
 
 2003-07-28 14:53  fett
 
 	* src/preproc/do_applyinfs.cc: fixed so BDDs can have more than 32
-	  variables
-
-	     ~Sean
+	variables
+	
+	   ~Sean
 
 2003-07-28 14:52  fett
 
 	* doc/manual/sbsat_getting.lyx, doc/manual/sbsat_manual.lyx,
-	  src/formats/smurf.cc: fixing manual again
-
-	     ~Sean
+	src/formats/smurf.cc: fixing manual again
+	
+	   ~Sean
 
 2003-07-28 14:31  mkouril
 
 	* Makefile.in, configure, configure.ac, tests/Makefile.in: Fixed
-	  tests.
+	tests.
 
 2003-07-28 14:18  mkouril
 
 	* Makefile.in, configure, configure.ac, configure.in,
-	  doc/Makefile.in, doc/manual/Makefile.in, examples/Makefile.in,
-	  include/Makefile.in, include/config.h, include/config.h.in,
-	  src/Makefile.in, src/formats/Makefile.in,
-	  src/formats/5/Makefile.in, src/generator/Makefile.in,
-	  src/postproc/Makefile.in, src/preproc/Makefile.in,
-	  src/solver/Makefile.in, src/utils/Makefile.in, tests/Makefile.in,
-	  tests/cnf/Makefile.in, tests/longer_tests/Makefile.in,
-	  tests/trace_tests/Makefile.in: Moved configure management to
-	  autoscan/autoreconf/...
+	doc/Makefile.in, doc/manual/Makefile.in, examples/Makefile.in,
+	include/Makefile.in, include/config.h, include/config.h.in,
+	src/Makefile.in, src/formats/Makefile.in,
+	src/formats/5/Makefile.in, src/generator/Makefile.in,
+	src/postproc/Makefile.in, src/preproc/Makefile.in,
+	src/solver/Makefile.in, src/utils/Makefile.in, tests/Makefile.in,
+	tests/cnf/Makefile.in, tests/longer_tests/Makefile.in,
+	tests/trace_tests/Makefile.in: Moved configure management to
+	autoscan/autoreconf/...
 
 2003-07-28 12:26  fett
 
 	* src/utils/params_fn.cc: Fixed wording on "SBSat is A SAT Solver"
-
-	    ~Sean
+	
+	  ~Sean
 
 2003-07-28 12:26  fett
 
 	* doc/manual/sbsat_getting.lyx: Fixing up user manual with Andy!
-
-	    ~Sean
+	
+	  ~Sean
 
 2003-07-25 18:54  mkouril
 
 	* doc/manual/sbsat_getting.pdf: Getting started manual (pdf
-	  version)
+	version)
 
 2003-07-25 18:53  mkouril
 
@@ -3640,39 +3659,39 @@
 2003-07-25 15:19  mkouril
 
 	* include/log.h, include/prototypes.h, src/ite.cc,
-	  src/formats/read_input.cc, src/solver/crtwin.cc,
-	  src/solver/display.cc, src/solver/init_solver.cc,
-	  src/solver/lemmaspace.cc, src/solver/smurffactory.cc,
-	  src/solver/solve.cc, src/utils/Makefile.am,
-	  src/utils/Makefile.in, src/utils/bddidx_vsb.cc,
-	  src/utils/bddtable.cc, src/utils/params.cc,
-	  src/utils/params_fn.cc, src/utils/termcap.cc, src/utils/utils.cc:
-	  Fixed --help to copy the screen size.  Extended debug (debug&16 -
-	  memory alloc debug info, ...) Termcap inits moved into utils.
+	src/formats/read_input.cc, src/solver/crtwin.cc,
+	src/solver/display.cc, src/solver/init_solver.cc,
+	src/solver/lemmaspace.cc, src/solver/smurffactory.cc,
+	src/solver/solve.cc, src/utils/Makefile.am, src/utils/Makefile.in,
+	src/utils/bddidx_vsb.cc, src/utils/bddtable.cc,
+	src/utils/params.cc, src/utils/params_fn.cc, src/utils/termcap.cc,
+	src/utils/utils.cc: Fixed --help to copy the screen size.  Extended
+	debug (debug&16 - memory alloc debug info, ...) Termcap inits moved
+	into utils.
 
 2003-07-25 14:15  fett
 
 	* src/solver/bddwalk.cc: fixed up bddwalk.cc a little
-
-	    ~Sean
+	
+	  ~Sean
 
 2003-07-25 13:35  fett
 
 	* src/: Makefile.in, formats/Makefile.in, formats/5/Makefile.in,
-	  generator/Makefile.in, postproc/Makefile.in, preproc/Makefile.in,
-	  solver/Makefile.in, utils/Makefile.in, utils/params_fn.cc: fixed
-	  the wording for the version info in ./ite --version
+	generator/Makefile.in, postproc/Makefile.in, preproc/Makefile.in,
+	solver/Makefile.in, utils/Makefile.in, utils/params_fn.cc: fixed
+	the wording for the version info in ./ite --version
 
 2003-07-25 11:00  mkouril
 
 	* src/solver/j_heuristic.cc: Bugfix deallocating already
-	  deallocated memory (pTrueSmurfState->arrHeuristicXors)
+	deallocated memory (pTrueSmurfState->arrHeuristicXors)
 
 2003-07-25 10:41  mkouril
 
 	* include/interface.h, include/prototypes.h, src/ite.cc,
-	  src/solver/brancher.cc, src/solver/interface.cc,
-	  src/solver/solve.cc, src/utils/bddtable.cc: [no log message]
+	src/solver/brancher.cc, src/solver/interface.cc,
+	src/solver/solve.cc, src/utils/bddtable.cc: [no log message]
 
 2003-07-24 16:05  mkouril
 
@@ -3681,7 +3700,7 @@
 2003-07-24 13:58  mkouril
 
 	* include/preprocess.h, src/ite.cc, src/solver/solve.cc,
-	  src/utils/bddtable.cc: [no log message]
+	src/utils/bddtable.cc: [no log message]
 
 2003-07-23 17:08  mkouril
 
@@ -3690,102 +3709,102 @@
 2003-07-23 16:08  mkouril
 
 	* include/interface.h, include/prototypes.h, src/ite.cc,
-	  src/solver/interface.cc: Updated interfaces added ite_final.
+	src/solver/interface.cc: Updated interfaces added ite_final.
 
 2003-07-23 09:09  mkouril
 
 	* include/heuristic.h, include/j_heuristic.h, include/solver.h,
-	  src/Makefile.in, src/formats/Makefile.in,
-	  src/formats/5/Makefile.in, src/generator/Makefile.in,
-	  src/postproc/Makefile.in, src/preproc/Makefile.in,
-	  src/solver/Makefile.am, src/solver/Makefile.in,
-	  src/solver/backtrack.cc, src/solver/backtrack_nl.cc,
-	  src/solver/backtrack_sbj.cc, src/solver/heur_choice.cc,
-	  src/solver/heur_stack.cc, src/solver/heuristic.cc,
-	  src/solver/init_solver.cc, src/solver/j_heuristic.cc,
-	  src/solver/l_heuristic.cc, src/solver/libsolver.cc,
-	  src/solver/select_bp.cc, src/solver/solve.cc,
-	  src/utils/Makefile.in: Reorganized heuristic.
+	src/Makefile.in, src/formats/Makefile.in,
+	src/formats/5/Makefile.in, src/generator/Makefile.in,
+	src/postproc/Makefile.in, src/preproc/Makefile.in,
+	src/solver/Makefile.am, src/solver/Makefile.in,
+	src/solver/backtrack.cc, src/solver/backtrack_nl.cc,
+	src/solver/backtrack_sbj.cc, src/solver/heur_choice.cc,
+	src/solver/heur_stack.cc, src/solver/heuristic.cc,
+	src/solver/init_solver.cc, src/solver/j_heuristic.cc,
+	src/solver/l_heuristic.cc, src/solver/libsolver.cc,
+	src/solver/select_bp.cc, src/solver/solve.cc,
+	src/utils/Makefile.in: Reorganized heuristic.
 
 2003-07-22 23:56  mkouril
 
 	* configure, configure.in, include/j_heuristic.h, src/Makefile.in,
-	  src/formats/Makefile.in, src/formats/5/Makefile.in,
-	  src/generator/Makefile.in, src/postproc/Makefile.in,
-	  src/preproc/Makefile.in, src/solver/Makefile.am,
-	  src/solver/Makefile.in, src/solver/heur_choice.cc,
-	  src/solver/init_solver.cc, src/solver/j_heuristic.cc,
-	  src/solver/l_lemma.cc, src/utils/Makefile.in: Added combined
-	  heuristic -H jl
+	src/formats/Makefile.in, src/formats/5/Makefile.in,
+	src/generator/Makefile.in, src/postproc/Makefile.in,
+	src/preproc/Makefile.in, src/solver/Makefile.am,
+	src/solver/Makefile.in, src/solver/heur_choice.cc,
+	src/solver/init_solver.cc, src/solver/j_heuristic.cc,
+	src/solver/l_lemma.cc, src/utils/Makefile.in: Added combined
+	heuristic -H jl
 
 2003-07-22 13:21  mkouril
 
 	* configure, configure.in, include/brancher.h, include/config.h,
-	  include/config.h.in, src/Makefile.in, src/formats/Makefile.in,
-	  src/formats/5/Makefile.in, src/generator/Makefile.in,
-	  src/postproc/Makefile.in, src/solver/Makefile.am,
-	  src/solver/Makefile.in, src/solver/brancher.cc,
-	  src/solver/display.cc, src/solver/graphs.cc,
-	  src/solver/libsolver.cc, src/utils/Makefile.in,
-	  src/utils/params.cc: Graphing removed.
+	include/config.h.in, src/Makefile.in, src/formats/Makefile.in,
+	src/formats/5/Makefile.in, src/generator/Makefile.in,
+	src/postproc/Makefile.in, src/solver/Makefile.am,
+	src/solver/Makefile.in, src/solver/brancher.cc,
+	src/solver/display.cc, src/solver/graphs.cc,
+	src/solver/libsolver.cc, src/utils/Makefile.in,
+	src/utils/params.cc: Graphing removed.
 
 2003-07-22 13:12  mkouril
 
 	* tests/longer_tests/: slider_80_sat.ite.Hjq.params,
-	  slider_80_unsat.ite.Hjq.params: More tests. (this time -H jq)
+	slider_80_unsat.ite.Hjq.params: More tests. (this time -H jq)
 
 2003-07-21 18:29  fett
 
 	* include/config.h, include/log.h, include/preprocess.h,
-	  src/ite.cc, src/preproc/do_flow.cc, src/preproc/init_preproc.cc:
-	  added clustering intelligence into do_flow added d3_printf5
-
-	    ~Sean
+	src/ite.cc, src/preproc/do_flow.cc, src/preproc/init_preproc.cc:
+	added clustering intelligence into do_flow added d3_printf5
+	
+	  ~Sean
 
 2003-07-21 11:24  mkouril
 
 	* include/config.h, include/globals.h, include/solver.h,
-	  include/vars.h, src/ite.cc, src/solver/backtrack.cc,
-	  src/solver/brancher.cc, src/solver/crtwin.cc,
-	  src/solver/init_solver.cc, src/solver/select_bp.cc,
-	  src/solver/solve.cc, src/utils/params.cc, src/utils/utils.cc,
-	  src/utils/vars.cc, tests/longer_tests.sh.in,
-	  tests/longer_tests/dlx2_cc.trace.Hl.params,
-	  tests/longer_tests/dlx2_cc.trace.params,
-	  tests/longer_tests/dlx2_cc_bug11.trace.Hl.params,
-	  tests/longer_tests/dlx2_cc_bug11.trace.params,
-	  tests/longer_tests/slider_80_sat.ite.params,
-	  tests/longer_tests/slider_80_unsat.ite.params: Added
-	  ite_basename.  Added var stats.  Added --var-stat-file to export
-	  var_stats.  Added lemma heuristic tests.  Added --comment.
-	  Changed longer tests script.
+	include/vars.h, src/ite.cc, src/solver/backtrack.cc,
+	src/solver/brancher.cc, src/solver/crtwin.cc,
+	src/solver/init_solver.cc, src/solver/select_bp.cc,
+	src/solver/solve.cc, src/utils/params.cc, src/utils/utils.cc,
+	src/utils/vars.cc, tests/longer_tests.sh.in,
+	tests/longer_tests/dlx2_cc.trace.Hl.params,
+	tests/longer_tests/dlx2_cc.trace.params,
+	tests/longer_tests/dlx2_cc_bug11.trace.Hl.params,
+	tests/longer_tests/dlx2_cc_bug11.trace.params,
+	tests/longer_tests/slider_80_sat.ite.params,
+	tests/longer_tests/slider_80_unsat.ite.params: Added ite_basename. 
+	Added var stats.  Added --var-stat-file to export var_stats.  Added
+	lemma heuristic tests.	Added --comment.  Changed longer tests
+	script.
 
 2003-07-18 15:39  mkouril
 
 	* scripts/: sbsatlemmas.php, sbsatplot.php: Added web php scripts
-	  to generate graphs from lemma and execution traces.
+	to generate graphs from lemma and execution traces.
 
 2003-07-17 20:15  fett
 
 	* src/postproc/backend.cc: Changed the -R r (raw) format to look
-	  nicer...all on one line in backend.cc
-
-	     ~Sean
+	nicer...all on one line in backend.cc
+	
+	   ~Sean
 
 2003-07-17 18:11  mkouril
 
 	* src/solver/: crtwin.cc, recordsol.cc: Bugfix for recording
-	  solution.
+	solution.
 
 2003-07-17 17:31  mkouril
 
 	* src/solver/backtrack.cc: Don't push up the lemmas not in the
-	  current contradiction.
+	current contradiction.
 
 2003-07-17 15:31  mkouril
 
 	* include/lemmainfo.h, src/solver/bt_lemmas.cc,
-	  src/solver/lemmainfo.cc: Added more lemma counters.
+	src/solver/lemmainfo.cc: Added more lemma counters.
 
 2003-07-17 11:20  mkouril
 
@@ -3794,39 +3813,39 @@
 2003-07-17 10:02  mkouril
 
 	* src/solver/: backtrack.cc, backtrack_nl.cc, backtrack_sbj.cc,
-	  brancher.cc, bt_misc.cc, display.cc: ITE_Split function improved.
+	brancher.cc, bt_misc.cc, display.cc: ITE_Split function improved.
 
 2003-07-17 09:09  mkouril
 
 	* src/solver/: backtrack.cc, backtrack_nl.cc, backtrack_sbj.cc,
-	  brancher.cc, bt_lemmas.cc, display.cc, init_solver.cc,
-	  lemmainfo.cc: Added ITE_Split function.  Added more lemma
-	  statistics.
+	brancher.cc, bt_lemmas.cc, display.cc, init_solver.cc,
+	lemmainfo.cc: Added ITE_Split function.  Added more lemma
+	statistics.
 
 2003-07-16 21:08  mkouril
 
 	* tests/longer_tests/longmult20.cnf: BMC benchmark generated from
-	  bmc suite by setting -k 20.
+	bmc suite by setting -k 20.
 
 2003-07-16 20:48  mkouril
 
 	* src/utils/: Makefile.in, params.cc, vars.cc: Added preset
-	  variable string.
+	variable string.
 
 2003-07-16 20:48  mkouril
 
 	* src/solver/: Makefile.in, bt_lemmas.cc, crtwin.cc, lemmainfo.cc:
-	  Added lemma counters.
+	Added lemma counters.
 
 2003-07-16 20:47  mkouril
 
 	* src/: Makefile.in, generator/Makefile.in, postproc/Makefile.in,
-	  preproc/Makefile.in: [no log message]
+	preproc/Makefile.in: [no log message]
 
 2003-07-16 20:47  mkouril
 
 	* include/: lemmainfo.h, vars.h: Added lemma counters.	Added
-	  preset var string.
+	preset var string.
 
 2003-07-16 20:47  mkouril
 
@@ -3835,20 +3854,19 @@
 2003-07-16 10:51  mkouril
 
 	* src/utils/utils.cc: Changed the index from 0 to 1 from which the
-	  new files are numbered.
+	new files are numbered.
 
 2003-07-14 16:30  mkouril
 
 	* src/: solver/backtrack.cc, solver/brancher.cc, solver/display.cc,
-	  solver/init_solver.cc, solver/j_heuristic.cc,
-	  solver/l_heuristic.cc, solver/select_bp.cc,
-	  solver/smurffactory.cc, utils/params.cc, utils/vars.cc: Added csv
-	  trace.
+	solver/init_solver.cc, solver/j_heuristic.cc,
+	solver/l_heuristic.cc, solver/select_bp.cc, solver/smurffactory.cc,
+	utils/params.cc, utils/vars.cc: Added csv trace.
 
 2003-07-14 16:30  mkouril
 
 	* src/ite.cc: Better error message when the result is not as
-	  expected.
+	expected.
 
 2003-07-14 16:30  mkouril
 
@@ -3857,28 +3875,28 @@
 2003-07-14 09:32  mkouril
 
 	* src/solver/: init_solver.cc, lemmainfo.cc, smurfstates.cc,
-	  solve.cc: Fixed memory leaks.
+	solve.cc: Fixed memory leaks.
 
 2003-07-14 08:33  mkouril
 
 	* src/solver/backtrack.cc, src/solver/backtrack_sbj.cc,
-	  src/solver/brancher.cc, src/solver/init_solver.cc,
-	  src/solver/j_heuristic.cc, include/solver.h: Removed global
-	  pUnitLemmaList.
+	src/solver/brancher.cc, src/solver/init_solver.cc,
+	src/solver/j_heuristic.cc, include/solver.h: Removed global
+	pUnitLemmaList.
 
 2003-07-13 23:38  fett
 
 	* src/formats/: Makefile.in, cnf.cc, 5/Makefile.in: messing with
-	  cnf.cc...Hoping to speed itup
-
-	    ~Sean
+	cnf.cc...Hoping to speed itup
+	
+	  ~Sean
 
 2003-07-13 09:48  mkouril
 
 	* src/solver/: backtrack.cc, backtrack_sbj.cc, bt_smurfs.cc,
-	  j_heuristic.cc, lemmainfo.cc, load_lemmas.cc: Cleanup AddLemma,
-	  Backtrack.  Added the option to branch on recently added lemmas
-	  (does not work -- no unknown literals!?)
+	j_heuristic.cc, lemmainfo.cc, load_lemmas.cc: Cleanup AddLemma,
+	Backtrack.  Added the option to branch on recently added lemmas
+	(does not work -- no unknown literals!?)
 
 2003-07-13 09:47  mkouril
 
@@ -3887,24 +3905,24 @@
 2003-07-12 15:21  fett
 
 	* doc/manual/sbsat_manual.html, doc/manual/sbsat_manual.lyx,
-	  doc/manual/sbsat_manual.pdf, doc/manual/sbsat_manual.ps,
-	  doc/manual/sbsat_manual.tex, examples/markbdd.ite: fixed up the
-	  user manual a little more.
-
-	    ~Sean
+	doc/manual/sbsat_manual.pdf, doc/manual/sbsat_manual.ps,
+	doc/manual/sbsat_manual.tex, examples/markbdd.ite: fixed up the
+	user manual a little more.
+	
+	  ~Sean
 
 2003-07-12 11:07  fett
 
 	* src/: formats/markbdd.cc, preproc/do_flow.cc: Fixed chris's
-	  problem #1, and modified Do_Flow() to not exit on non-circuit
-	  problems.
-
-	    ~Sean
+	problem #1, and modified Do_Flow() to not exit on non-circuit
+	problems.
+	
+	  ~Sean
 
 2003-07-11 16:59  mkouril
 
 	* src/utils/vars.cc: Added arrVarScores (Chaff like discounting
-	  test).
+	test).
 
 2003-07-11 16:58  mkouril
 
@@ -3913,20 +3931,20 @@
 2003-07-11 16:58  mkouril
 
 	* include/log.h, include/solver.h, include/vars.h,
-	  src/solver/backtrack.cc, src/solver/backtrack_nl.cc,
-	  src/solver/backtrack_sbj.cc, src/solver/brancher.cc,
-	  src/solver/bt_lemmas.cc, src/solver/bt_misc.cc,
-	  src/solver/bt_smurfs.cc, src/solver/bt_specfn.cc,
-	  src/solver/bt_specfn_and.cc, src/solver/bt_specfn_xor.cc,
-	  src/solver/display.cc, src/solver/init_solver.cc,
-	  src/solver/j_heuristic.cc, src/solver/j_smurf.cc,
-	  src/solver/j_specfn.cc, src/solver/l_lemma.cc,
-	  src/solver/lemmainfo.cc, src/solver/lemmaspace.cc,
-	  src/solver/select_bp.cc, src/solver/sf_addons.cc,
-	  src/solver/smurffactory.cc, src/solver/solve.cc,
-	  src/solver/state_stacks.cc: Brancher function made reentrant.
-	  nNumBackjumps, nNumBacktracks moved into ite_counters.  Removed
-	  -0 inference (??).  No FreeLemmas call for 0 lemmas.
+	src/solver/backtrack.cc, src/solver/backtrack_nl.cc,
+	src/solver/backtrack_sbj.cc, src/solver/brancher.cc,
+	src/solver/bt_lemmas.cc, src/solver/bt_misc.cc,
+	src/solver/bt_smurfs.cc, src/solver/bt_specfn.cc,
+	src/solver/bt_specfn_and.cc, src/solver/bt_specfn_xor.cc,
+	src/solver/display.cc, src/solver/init_solver.cc,
+	src/solver/j_heuristic.cc, src/solver/j_smurf.cc,
+	src/solver/j_specfn.cc, src/solver/l_lemma.cc,
+	src/solver/lemmainfo.cc, src/solver/lemmaspace.cc,
+	src/solver/select_bp.cc, src/solver/sf_addons.cc,
+	src/solver/smurffactory.cc, src/solver/solve.cc,
+	src/solver/state_stacks.cc: Brancher function made reentrant. 
+	nNumBackjumps, nNumBacktracks moved into ite_counters.	Removed -0
+	inference (??).  No FreeLemmas call for 0 lemmas.
 
 2003-07-11 16:53  mkouril
 
@@ -3935,21 +3953,21 @@
 2003-07-10 20:02  fett
 
 	* src/: Makefile.in, formats/Makefile.in, formats/5/Makefile.in,
-	  generator/Makefile.in, postproc/Makefile.in, preproc/Makefile.am,
-	  preproc/Makefile.in, preproc/do_flow.cc, preproc/init_preproc.cc,
-	  solver/Makefile.in, solver/j_heuristic.cc, solver/solve.cc,
-	  utils/Makefile.in: Added in do_flow function and file also in
-	  j_heuristic.cc there is a line to uncomment to make it work and
-	  in solve.cc there is a line about var_score[index] = var_score[x]
-	  that would need to be commented out if do_flow isn't run.
-
-	     ~Sean
+	generator/Makefile.in, postproc/Makefile.in, preproc/Makefile.am,
+	preproc/Makefile.in, preproc/do_flow.cc, preproc/init_preproc.cc,
+	solver/Makefile.in, solver/j_heuristic.cc, solver/solve.cc,
+	utils/Makefile.in: Added in do_flow function and file also in
+	j_heuristic.cc there is a line to uncomment to make it work and in
+	solve.cc there is a line about var_score[index] = var_score[x] that
+	would need to be commented out if do_flow isn't run.
+	
+	   ~Sean
 
 2003-07-08 22:24  mkouril
 
 	* src/solver/: Makefile.am, Makefile.in, bt_smurfs.cc, crtwin.cc,
-	  j_heuristic.cc, j_smurf.cc, libsolver.cc, select_bp.cc: Moving
-	  j_heu for smurfs to j_smurfs.cc.
+	j_heuristic.cc, j_smurf.cc, libsolver.cc, select_bp.cc: Moving
+	j_heu for smurfs to j_smurfs.cc.
 
 2003-07-08 22:21  mkouril
 
@@ -3958,33 +3976,33 @@
 2003-07-08 12:58  fett
 
 	* doc/manual/: sbsat_manual.html, sbsat_manual.pdf,
-	  sbsat_manual.ps, sbsat_manual.tex: here
+	sbsat_manual.ps, sbsat_manual.tex: here
 
 2003-07-08 12:38  fett
 
 	* doc/manual/sbsat_manual.lyx: I fixed up the usermanual some
-	  more..sending it to Dr. Schlipf now.
-
-	    ~Sean
+	more..sending it to Dr. Schlipf now.
+	
+	  ~Sean
 
 2003-07-07 22:32  mkouril
 
 	* include/j_heuristic.h, src/solver/bt_smurfs.cc,
-	  src/solver/j_heuristic.cc: Improved heuristic flexibility.
+	src/solver/j_heuristic.cc: Improved heuristic flexibility.
 
 2003-07-07 21:34  mkouril
 
 	* src/solver/: Makefile.in, backtrack_nl.cc, bt_smurfs.cc,
-	  display.cc, interface.cc, j_heuristic.cc, smurffactory.cc: Added
-	  counting heuristic.  Modified reporting.
+	display.cc, interface.cc, j_heuristic.cc, smurffactory.cc: Added
+	counting heuristic.  Modified reporting.
 
 2003-07-07 21:32  mkouril
 
 	* include/config.h, include/vars.h, src/Makefile.in,
-	  src/formats/Makefile.in, src/formats/5/Makefile.in,
-	  src/generator/Makefile.in, src/postproc/Makefile.in,
-	  src/preproc/Makefile.in, src/utils/Makefile.in,
-	  src/utils/vars.cc: [no log message]
+	src/formats/Makefile.in, src/formats/5/Makefile.in,
+	src/generator/Makefile.in, src/postproc/Makefile.in,
+	src/preproc/Makefile.in, src/utils/Makefile.in, src/utils/vars.cc:
+	[no log message]
 
 2003-07-07 21:32  mkouril
 
@@ -3997,38 +4015,38 @@
 2003-07-03 14:32  mkouril
 
 	* include/Makefile.am, include/Makefile.in, include/interface.h,
-	  include/ite.h, include/solver.h, src/solver/Makefile.am,
-	  src/solver/Makefile.in, src/solver/brancher.cc,
-	  src/solver/bt_misc.cc, src/solver/init_solver.cc,
-	  src/solver/interface.cc, src/solver/libsolver.cc,
-	  src/utils/Makefile.in: Added solver external interface.
+	include/ite.h, include/solver.h, src/solver/Makefile.am,
+	src/solver/Makefile.in, src/solver/brancher.cc,
+	src/solver/bt_misc.cc, src/solver/init_solver.cc,
+	src/solver/interface.cc, src/solver/libsolver.cc,
+	src/utils/Makefile.in: Added solver external interface.
 
 2003-07-01 13:55  fett
 
 	* doc/manual/: sbsat_manual.lyx, sbsat_manual.pdf, sbsat_manual.ps,
-	  sbsat_manual.tex: I fixed the user manual a little...hope you
-	  like it
-
-	    ~Sean
+	sbsat_manual.tex: I fixed the user manual a little...hope you like
+	it
+	
+	  ~Sean
 
 2003-07-01 13:24  mkouril
 
 	* include/brancher.h, include/j_heuristic.h, include/solver.h,
-	  src/Makefile.in, src/formats/Makefile.in,
-	  src/formats/5/Makefile.in, src/generator/Makefile.in,
-	  src/postproc/Makefile.in, src/preproc/Makefile.in,
-	  src/solver/Makefile.am, src/solver/Makefile.in,
-	  src/solver/backtrack.cc, src/solver/brancher.cc,
-	  src/solver/bt_misc.cc, src/solver/init_solver.cc,
-	  src/solver/j_heuristic.cc, src/solver/libsolver.cc,
-	  src/solver/select_bp.cc, src/solver/smurffactory.cc,
-	  src/solver/solve.cc, src/utils/Makefile.in: Code maintenance.
+	src/Makefile.in, src/formats/Makefile.in,
+	src/formats/5/Makefile.in, src/generator/Makefile.in,
+	src/postproc/Makefile.in, src/preproc/Makefile.in,
+	src/solver/Makefile.am, src/solver/Makefile.in,
+	src/solver/backtrack.cc, src/solver/brancher.cc,
+	src/solver/bt_misc.cc, src/solver/init_solver.cc,
+	src/solver/j_heuristic.cc, src/solver/libsolver.cc,
+	src/solver/select_bp.cc, src/solver/smurffactory.cc,
+	src/solver/solve.cc, src/utils/Makefile.in: Code maintenance.
 
 2003-07-01 13:02  fett
 
 	* doc/manual/: sbsat_manual.html, sbsat_manual.lyx,
-	  sbsat_manual.pdf, sbsat_manual.ps, sbsat_manual.tex: wow...xjed
-	  works...  i am commiting my files now...just cause i can   ~Sean
+	sbsat_manual.pdf, sbsat_manual.ps, sbsat_manual.tex: wow...xjed
+	works...  i am commiting my files now...just cause i can   ~Sean
 
 2003-06-30 11:27  mkouril
 
@@ -4037,31 +4055,31 @@
 2003-06-30 11:27  mkouril
 
 	* src/formats/5/: bdd_s.cc, bdd_s.ll, blif_g.yy, blif_s.cc,
-	  blif_s.ll, cnf_g.yy, cnf_s.cc, cnf_s.ll, libt5_a-bdd_g.cc,
-	  libt5_a-bdd_g.h, libt5_a-blif_g.cc, libt5_a-blif_g.h,
-	  libt5_a-cnf_g.cc, libt5_a-cnf_g.h, libt5_a-trace_g.cc,
-	  trace_s.cc, trace_s.ll: Warning free lex/yy.
+	blif_s.ll, cnf_g.yy, cnf_s.cc, cnf_s.ll, libt5_a-bdd_g.cc,
+	libt5_a-bdd_g.h, libt5_a-blif_g.cc, libt5_a-blif_g.h,
+	libt5_a-cnf_g.cc, libt5_a-cnf_g.h, libt5_a-trace_g.cc, trace_s.cc,
+	trace_s.ll: Warning free lex/yy.
 
 2003-06-30 11:24  mkouril
 
 	* src/solver/: backtrack.cc, backtrack_nl.cc, backtrack_sbj.cc,
-	  brancher.cc, recordsol.cc: Simplified brancher function.
+	brancher.cc, recordsol.cc: Simplified brancher function.
 
 2003-06-30 09:22  mkouril
 
 	* src/: preproc/init_preproc.cc, solver/bdd2smurf.cc,
-	  solver/j_heuristic.cc: [no log message]
+	solver/j_heuristic.cc: [no log message]
 
 2003-06-30 09:21  mkouril
 
 	* src/utils/: bdd_circuit_init.cc, bddtable.cc: Added
-	  _bdd_pool_size, bdd_fix_inferences, ite_open, ite_filesize.
-	  Added reload_bdd_circuit, get_bdd_circuit, dump_bdd_table.
+	_bdd_pool_size, bdd_fix_inferences, ite_open, ite_filesize.  Added
+	reload_bdd_circuit, get_bdd_circuit, dump_bdd_table.
 
 2003-06-30 09:18  mkouril
 
 	* include/vars.h, src/utils/params.cc, src/utils/vars.cc: Added
-	  _bdd_pool_size
+	_bdd_pool_size
 
 2003-06-30 09:17  mkouril
 
@@ -4070,25 +4088,25 @@
 2003-06-19 15:39  fett
 
 	* src/: Makefile.in, formats/Makefile.in, formats/5/Makefile.in,
-	  generator/Makefile.in, postproc/Makefile.in, preproc/Makefile.in,
-	  solver/Makefile.in, solver/bddwalk.cc, utils/Makefile.in: I
-	  changed one thing in solver/bddwalk.cc just to try cvs...
-
-	     ~Sean
+	generator/Makefile.in, postproc/Makefile.in, preproc/Makefile.in,
+	solver/Makefile.in, solver/bddwalk.cc, utils/Makefile.in: I changed
+	one thing in solver/bddwalk.cc just to try cvs...
+	
+	   ~Sean
 
 2003-06-18 11:56  mkouril
 
 	* include/common.h, include/config.h, include/prototypes.h,
-	  src/preproc/Makefile.in, src/preproc/do_applyinfs.cc,
-	  src/preproc/do_depcluster.cc, src/preproc/do_strength.cc,
-	  src/preproc/preprocess.cc, src/solver/bddwalk.cc,
-	  src/utils/Makefile.in, src/utils/bdd.cc: Merge with Sean.
+	src/preproc/Makefile.in, src/preproc/do_applyinfs.cc,
+	src/preproc/do_depcluster.cc, src/preproc/do_strength.cc,
+	src/preproc/preprocess.cc, src/solver/bddwalk.cc,
+	src/utils/Makefile.in, src/utils/bdd.cc: Merge with Sean.
 
 2003-06-18 11:56  mkouril
 
 	* doc/manual/Makefile.in, src/Makefile.in, src/formats/Makefile.in,
-	  src/formats/5/Makefile.in, src/generator/Makefile.in,
-	  src/postproc/Makefile.in: [no log message]
+	src/formats/5/Makefile.in, src/generator/Makefile.in,
+	src/postproc/Makefile.in: [no log message]
 
 2003-06-18 11:55  mkouril
 
@@ -4097,8 +4115,8 @@
 2003-06-10 16:30  mkouril
 
 	* src/: formats/cnf.cc, formats/xorbdd.cc, solver/bddwalk.cc,
-	  solver/bt_lemmas.cc, solver/bt_smurfs.cc, solver/j_specfn.cc,
-	  solver/specfn2smurf.cc: Cleanup.
+	solver/bt_lemmas.cc, solver/bt_smurfs.cc, solver/j_specfn.cc,
+	solver/specfn2smurf.cc: Cleanup.
 
 2003-06-10 15:53  mkouril
 
@@ -4107,7 +4125,7 @@
 2003-06-10 15:35  mkouril
 
 	* tests/: Makefile.am, Makefile.in: Fixed extra_include so they
-	  don't include .sh files.
+	don't include .sh files.
 
 2003-06-10 15:29  mkouril
 
@@ -4116,12 +4134,12 @@
 2003-06-09 15:40  mkouril
 
 	* include/prototypes.h, src/solver/solve.cc: Pass tracer ptr as a
-	  value instead of reference.
+	value instead of reference.
 
 2003-06-09 09:21  mkouril
 
 	* src/utils/: params.cc, params_fn.cc: Need to fix the order of
-	  params (cmd line, ini file).
+	params (cmd line, ini file).
 
 2003-06-09 09:20  mkouril
 
@@ -4134,27 +4152,27 @@
 2003-06-02 11:31  mkouril
 
 	* reports/restart_test/: cnf5.ps, dlx2_ca.ps, dlx2_cc.ps,
-	  dlx2_cl.ps, dlx2_cs.ps, restart_test.lyx, restart_test.pdf: Added
-	  restart test report.
+	dlx2_cl.ps, dlx2_cs.ps, restart_test.lyx, restart_test.pdf: Added
+	restart test report.
 
 2003-06-02 11:28  mkouril
 
 	* scripts/restart_lemmas.sh: Added script used to generate the
-	  report about restarts.
+	report about restarts.
 
 2003-05-31 15:39  mkouril
 
 	* include/prototypes.h, include/solver.h, include/vars.h,
-	  src/Makefile.in, src/formats/Makefile.in, src/formats/bdd2cnf.cc,
-	  src/formats/read_input.cc, src/formats/5/Makefile.in,
-	  src/generator/Makefile.in, src/postproc/Makefile.in,
-	  src/preproc/Makefile.in, src/solver/Makefile.am,
-	  src/solver/Makefile.in, src/solver/crtwin.cc,
-	  src/solver/init_solver.cc, src/solver/j_heuristic.cc,
-	  src/solver/lemmainfo.cc, src/solver/libsolver.cc,
-	  src/solver/solve.cc, src/utils/Makefile.in, src/utils/params.cc,
-	  src/utils/utils.cc, src/utils/vars.cc: Added lemma load support
-	  (--lemma-in-file).
+	src/Makefile.in, src/formats/Makefile.in, src/formats/bdd2cnf.cc,
+	src/formats/read_input.cc, src/formats/5/Makefile.in,
+	src/generator/Makefile.in, src/postproc/Makefile.in,
+	src/preproc/Makefile.in, src/solver/Makefile.am,
+	src/solver/Makefile.in, src/solver/crtwin.cc,
+	src/solver/init_solver.cc, src/solver/j_heuristic.cc,
+	src/solver/lemmainfo.cc, src/solver/libsolver.cc,
+	src/solver/solve.cc, src/utils/Makefile.in, src/utils/params.cc,
+	src/utils/utils.cc, src/utils/vars.cc: Added lemma load support
+	(--lemma-in-file).
 
 2003-05-30 15:53  mkouril
 
@@ -4163,13 +4181,13 @@
 2003-05-30 15:37  mkouril
 
 	* doc/manual/: Makefile.am, Makefile.in, sbsat_manual.css,
-	  sbsat_manual.html: Added css.
+	sbsat_manual.html: Added css.
 
 2003-05-30 13:02  mkouril
 
 	* doc/manual/: Makefile.am, Makefile.in, sbsat_manual.html,
-	  sbsat_manual.pdf, sbsat_manual.ps: Added generated documentation
-	  files.
+	sbsat_manual.pdf, sbsat_manual.ps: Added generated documentation
+	files.
 
 2003-05-30 12:44  mkouril
 
@@ -4182,289 +4200,281 @@
 2003-05-29 21:37  mkouril
 
 	* .cvsignore, AUTHORS, BUGS, COPYING, ChangeLog, INSTALL,
-	  Makefile.am, Makefile.in, NEWS, README, THANKS, compile.patch,
-	  compile.patch.all.sh, compile.patch.sh, config.guess, config.sub,
-	  configure, configure.in, depcomp, install-sh, missing,
-	  mkinstalldirs, ylwrap, doc/Doxyfile, doc/Makefile.am,
-	  doc/Makefile.in, doc/arch.txt, doc/ftest.c, doc/ite.1,
-	  doc/manual/Makefile.am, doc/manual/Makefile.in,
-	  doc/manual/README, examples/Makefile.am, examples/Makefile.in,
-	  examples/markbdd.ite, include/Makefile.am, include/Makefile.in,
-	  include/brancher.h, include/common.h, include/config.h,
-	  include/config.h.in, include/defines.h, include/equivclass.h,
-	  include/flatten.h, include/globals.h, include/heuristic.h,
-	  include/i_heuristic.h, include/integerset.h, include/ite.h,
-	  include/j_heuristic.h, include/l_heuristic.h,
-	  include/lemmainfo.h, include/literalset.h, include/log.h,
-	  include/params.h, include/parse.h, include/pools.h,
-	  include/preprocess.h, include/prototypes.h,
-	  include/smurffactory.h, include/solver.h, include/stamp-h,
-	  include/stamp-h.in, include/symtable.h, include/tracer.h,
-	  include/vars.h, src/Makefile.am, src/Makefile.in, src/ite.cc,
-	  src/formats/Makefile.am, src/formats/Makefile.in,
-	  src/formats/autochk.cc, src/formats/bdd2cnf.cc,
-	  src/formats/cnf.cc, src/formats/flatten.cc,
-	  src/formats/markbdd.cc, src/formats/parse.cc,
-	  src/formats/read_input.cc, src/formats/read_result.cc,
-	  src/formats/sat.cc, src/formats/smurf.cc, src/formats/tracer.cc,
-	  src/formats/write_output.cc, src/formats/xorbdd.cc,
-	  src/formats/5/Makefile.am, src/formats/5/Makefile.in,
-	  src/formats/5/bdd_g.yy, src/formats/5/bdd_s.cc,
-	  src/formats/5/bdd_s.ll, src/formats/5/bddnode.cc,
-	  src/formats/5/bddnode.h, src/formats/5/bddops.cc,
-	  src/formats/5/blif_g.yy, src/formats/5/blif_s.cc,
-	  src/formats/5/blif_s.ll, src/formats/5/cnf_g.yy,
-	  src/formats/5/cnf_s.cc, src/formats/5/cnf_s.ll,
-	  src/formats/5/functions.cc, src/formats/5/functions.h,
-	  src/formats/5/libt5_a-bdd_g.cc, src/formats/5/libt5_a-bdd_g.h,
-	  src/formats/5/libt5_a-blif_g.cc, src/formats/5/libt5_a-blif_g.h,
-	  src/formats/5/libt5_a-cnf_g.cc, src/formats/5/libt5_a-cnf_g.h,
-	  src/formats/5/libt5_a-trace_g.cc,
-	  src/formats/5/libt5_a-trace_g.h, src/formats/5/parser.cc,
-	  src/formats/5/trace_g.yy, src/formats/5/trace_s.cc,
-	  src/formats/5/trace_s.ll, src/formats/5/tracetest.cc,
-	  src/generator/Makefile.am, src/generator/Makefile.in,
-	  src/generator/gentest.cc, src/generator/testite.sh,
-	  src/generator/vanDerWaerden.cc, src/generator/xorgen.cc,
-	  src/postproc/Makefile.am, src/postproc/Makefile.in,
-	  src/postproc/backend.cc, src/preproc/Makefile.am,
-	  src/preproc/Makefile.in, src/preproc/create_infs.cc,
-	  src/preproc/do_applyinfs.cc, src/preproc/do_cofactor.cc,
-	  src/preproc/do_depcluster.cc, src/preproc/do_exquantify.cc,
-	  src/preproc/do_exquantifyand.cc, src/preproc/do_pruning.cc,
-	  src/preproc/do_pruning_1.cc, src/preproc/do_pruning_2.cc,
-	  src/preproc/do_pruning_restrict.cc, src/preproc/do_strength.cc,
-	  src/preproc/init_preproc.cc, src/preproc/other_preproc.cc,
-	  src/preproc/preprocess.cc, src/solver/Makefile.am,
-	  src/solver/Makefile.in, src/solver/autarky.cc,
-	  src/solver/backtrack.cc, src/solver/backtrack_nl.cc,
-	  src/solver/backtrack_sbj.cc, src/solver/bdd2smurf.cc,
-	  src/solver/bddwalk.cc, src/solver/brancher.cc,
-	  src/solver/bt_lemmas.cc, src/solver/bt_smurfs.cc,
-	  src/solver/bt_specfn.cc, src/solver/bt_specfn_and.cc,
-	  src/solver/bt_specfn_xor.cc, src/solver/crtwin.cc,
-	  src/solver/display.cc, src/solver/display_sf.cc,
-	  src/solver/graphs.cc, src/solver/heuristic.cc,
-	  src/solver/i_heuristic.cc, src/solver/init_solver.cc,
-	  src/solver/j_heuristic.cc, src/solver/j_specfn.cc,
-	  src/solver/j_update_heu.cc, src/solver/l_heuristic.cc,
-	  src/solver/l_lemma.cc, src/solver/lemmainfo.cc,
-	  src/solver/lemmaspace.cc, src/solver/libsolver.cc,
-	  src/solver/recordsol.cc, src/solver/select_bp.cc,
-	  src/solver/sf_addons.cc, src/solver/smurffactory.cc,
-	  src/solver/smurfstates.cc, src/solver/solve.cc,
-	  src/solver/specfn2smurf.cc, src/solver/state_stacks.cc,
-	  src/solver/transitions.cc, src/solver/update_heu.cc,
-	  src/solver/verify.cc, src/solver/wvf.cc, src/utils/Makefile.am,
-	  src/utils/Makefile.in, src/utils/bdd.cc,
-	  src/utils/bdd_circuit_init.cc, src/utils/bddidx.cc,
-	  src/utils/bddidx_orig.cc, src/utils/bddidx_vsb.cc,
-	  src/utils/bddtable.cc, src/utils/custprint.cc,
-	  src/utils/infer.cc, src/utils/integerset.cc,
-	  src/utils/intnode.cc, src/utils/literalset.cc, src/utils/log.cc,
-	  src/utils/malloc.cc, src/utils/params.cc, src/utils/params_fn.cc,
-	  src/utils/smurfaddons.cc, src/utils/symtable.cc,
-	  src/utils/utils.cc, src/utils/vars.cc, src/utils/zread.cc,
-	  tests/Makefile.am, tests/Makefile.in, tests/cnf_tests.sh.in,
-	  tests/crazyxor18.xor, tests/emptyite.ini,
-	  tests/longer_tests.sh.in, tests/trace_tests.sh.in,
-	  tests/xor_tests.sh.in, tests/xortest.ite,
-	  tests/xortest.ite.params, tests/xortest.xor,
-	  tests/xortest.xor.params, tests/cnf/5-wid_300-var_r3.cnf,
-	  tests/cnf/5-wid_300-var_r3.cnf.params,
-	  tests/cnf/5-wid_400-var_Slide_r3.cnf,
-	  tests/cnf/5-wid_400-var_Slide_r3.cnf.params,
-	  tests/cnf/Makefile.am, tests/cnf/Makefile.in,
-	  tests/cnf/c5-wid.cnf, tests/cnf/c5-wid.cnf.params,
-	  tests/longer_tests/Makefile.am, tests/longer_tests/Makefile.in,
-	  tests/longer_tests/dlx2_cc.trace,
-	  tests/longer_tests/dlx2_cc.trace.params,
-	  tests/longer_tests/dlx2_cc_bug11.trace,
-	  tests/longer_tests/dlx2_cc_bug11.trace.params,
-	  tests/longer_tests/slider_80_sat.ite,
-	  tests/longer_tests/slider_80_sat.ite.params,
-	  tests/longer_tests/slider_80_unsat.ite,
-	  tests/longer_tests/slider_80_unsat.ite.params,
-	  tests/trace_tests/Makefile.am, tests/trace_tests/Makefile.in,
-	  tests/trace_tests/and+_example.trace,
-	  tests/trace_tests/and+_example.trace.params,
-	  tests/trace_tests/and-_example.trace,
-	  tests/trace_tests/and-_example.trace.params,
-	  tests/trace_tests/and1=_example.trace,
-	  tests/trace_tests/and1=_example.trace.params,
-	  tests/trace_tests/and=_example.trace,
-	  tests/trace_tests/and=_example.trace.params,
-	  tests/trace_tests/are_equal_example.trace,
-	  tests/trace_tests/are_equal_example.trace.params,
-	  tests/trace_tests/ite_example.trace,
-	  tests/trace_tests/ite_example.trace.params,
-	  tests/trace_tests/limp=_example.trace,
-	  tests/trace_tests/limp=_example.trace.params,
-	  tests/trace_tests/lnimp=_example.trace,
-	  tests/trace_tests/lnimp=_example.trace.params,
-	  tests/trace_tests/nand=_example.trace,
-	  tests/trace_tests/nand=_example.trace.params,
-	  tests/trace_tests/new_int_leaf.trace,
-	  tests/trace_tests/new_int_leaf.trace.params,
-	  tests/trace_tests/nor=_example.trace,
-	  tests/trace_tests/nor=_example.trace.params,
-	  tests/trace_tests/or+_example.trace,
-	  tests/trace_tests/or+_example.trace.params,
-	  tests/trace_tests/or-_example.trace,
-	  tests/trace_tests/or-_example.trace.params,
-	  tests/trace_tests/or=_example.trace,
-	  tests/trace_tests/or=_example.trace.params,
-	  tests/trace_tests/rimp=_example.trace,
-	  tests/trace_tests/rimp=_example.trace.params,
-	  tests/trace_tests/rnimp=_example.trace,
-	  tests/trace_tests/rnimp=_example.trace.params,
-	  tests/trace_tests/xnor=_example.trace,
-	  tests/trace_tests/xnor=_example.trace.params,
-	  tests/trace_tests/xor=_example.trace,
-	  tests/trace_tests/xor=_example.trace.params: Import of SBSAT v.
-	  2.0b (17)
+	Makefile.am, Makefile.in, NEWS, README, THANKS, compile.patch,
+	compile.patch.all.sh, compile.patch.sh, config.guess, config.sub,
+	configure, configure.in, depcomp, install-sh, missing,
+	mkinstalldirs, ylwrap, doc/Doxyfile, doc/Makefile.am,
+	doc/Makefile.in, doc/arch.txt, doc/ftest.c, doc/ite.1,
+	doc/manual/Makefile.am, doc/manual/Makefile.in, doc/manual/README,
+	examples/Makefile.am, examples/Makefile.in, examples/markbdd.ite,
+	include/Makefile.am, include/Makefile.in, include/brancher.h,
+	include/common.h, include/config.h, include/config.h.in,
+	include/defines.h, include/equivclass.h, include/flatten.h,
+	include/globals.h, include/heuristic.h, include/i_heuristic.h,
+	include/integerset.h, include/ite.h, include/j_heuristic.h,
+	include/l_heuristic.h, include/lemmainfo.h, include/literalset.h,
+	include/log.h, include/params.h, include/parse.h, include/pools.h,
+	include/preprocess.h, include/prototypes.h, include/smurffactory.h,
+	include/solver.h, include/stamp-h, include/stamp-h.in,
+	include/symtable.h, include/tracer.h, include/vars.h,
+	src/Makefile.am, src/Makefile.in, src/ite.cc,
+	src/formats/Makefile.am, src/formats/Makefile.in,
+	src/formats/autochk.cc, src/formats/bdd2cnf.cc, src/formats/cnf.cc,
+	src/formats/flatten.cc, src/formats/markbdd.cc,
+	src/formats/parse.cc, src/formats/read_input.cc,
+	src/formats/read_result.cc, src/formats/sat.cc,
+	src/formats/smurf.cc, src/formats/tracer.cc,
+	src/formats/write_output.cc, src/formats/xorbdd.cc,
+	src/formats/5/Makefile.am, src/formats/5/Makefile.in,
+	src/formats/5/bdd_g.yy, src/formats/5/bdd_s.cc,
+	src/formats/5/bdd_s.ll, src/formats/5/bddnode.cc,
+	src/formats/5/bddnode.h, src/formats/5/bddops.cc,
+	src/formats/5/blif_g.yy, src/formats/5/blif_s.cc,
+	src/formats/5/blif_s.ll, src/formats/5/cnf_g.yy,
+	src/formats/5/cnf_s.cc, src/formats/5/cnf_s.ll,
+	src/formats/5/functions.cc, src/formats/5/functions.h,
+	src/formats/5/libt5_a-bdd_g.cc, src/formats/5/libt5_a-bdd_g.h,
+	src/formats/5/libt5_a-blif_g.cc, src/formats/5/libt5_a-blif_g.h,
+	src/formats/5/libt5_a-cnf_g.cc, src/formats/5/libt5_a-cnf_g.h,
+	src/formats/5/libt5_a-trace_g.cc, src/formats/5/libt5_a-trace_g.h,
+	src/formats/5/parser.cc, src/formats/5/trace_g.yy,
+	src/formats/5/trace_s.cc, src/formats/5/trace_s.ll,
+	src/formats/5/tracetest.cc, src/generator/Makefile.am,
+	src/generator/Makefile.in, src/generator/gentest.cc,
+	src/generator/testite.sh, src/generator/vanDerWaerden.cc,
+	src/generator/xorgen.cc, src/postproc/Makefile.am,
+	src/postproc/Makefile.in, src/postproc/backend.cc,
+	src/preproc/Makefile.am, src/preproc/Makefile.in,
+	src/preproc/create_infs.cc, src/preproc/do_applyinfs.cc,
+	src/preproc/do_cofactor.cc, src/preproc/do_depcluster.cc,
+	src/preproc/do_exquantify.cc, src/preproc/do_exquantifyand.cc,
+	src/preproc/do_pruning.cc, src/preproc/do_pruning_1.cc,
+	src/preproc/do_pruning_2.cc, src/preproc/do_pruning_restrict.cc,
+	src/preproc/do_strength.cc, src/preproc/init_preproc.cc,
+	src/preproc/other_preproc.cc, src/preproc/preprocess.cc,
+	src/solver/Makefile.am, src/solver/Makefile.in,
+	src/solver/autarky.cc, src/solver/backtrack.cc,
+	src/solver/backtrack_nl.cc, src/solver/backtrack_sbj.cc,
+	src/solver/bdd2smurf.cc, src/solver/bddwalk.cc,
+	src/solver/brancher.cc, src/solver/bt_lemmas.cc,
+	src/solver/bt_smurfs.cc, src/solver/bt_specfn.cc,
+	src/solver/bt_specfn_and.cc, src/solver/bt_specfn_xor.cc,
+	src/solver/crtwin.cc, src/solver/display.cc,
+	src/solver/display_sf.cc, src/solver/graphs.cc,
+	src/solver/heuristic.cc, src/solver/i_heuristic.cc,
+	src/solver/init_solver.cc, src/solver/j_heuristic.cc,
+	src/solver/j_specfn.cc, src/solver/j_update_heu.cc,
+	src/solver/l_heuristic.cc, src/solver/l_lemma.cc,
+	src/solver/lemmainfo.cc, src/solver/lemmaspace.cc,
+	src/solver/libsolver.cc, src/solver/recordsol.cc,
+	src/solver/select_bp.cc, src/solver/sf_addons.cc,
+	src/solver/smurffactory.cc, src/solver/smurfstates.cc,
+	src/solver/solve.cc, src/solver/specfn2smurf.cc,
+	src/solver/state_stacks.cc, src/solver/transitions.cc,
+	src/solver/update_heu.cc, src/solver/verify.cc, src/solver/wvf.cc,
+	src/utils/Makefile.am, src/utils/Makefile.in, src/utils/bdd.cc,
+	src/utils/bdd_circuit_init.cc, src/utils/bddidx.cc,
+	src/utils/bddidx_orig.cc, src/utils/bddidx_vsb.cc,
+	src/utils/bddtable.cc, src/utils/custprint.cc, src/utils/infer.cc,
+	src/utils/integerset.cc, src/utils/intnode.cc,
+	src/utils/literalset.cc, src/utils/log.cc, src/utils/malloc.cc,
+	src/utils/params.cc, src/utils/params_fn.cc,
+	src/utils/smurfaddons.cc, src/utils/symtable.cc,
+	src/utils/utils.cc, src/utils/vars.cc, src/utils/zread.cc,
+	tests/Makefile.am, tests/Makefile.in, tests/cnf_tests.sh.in,
+	tests/crazyxor18.xor, tests/emptyite.ini, tests/longer_tests.sh.in,
+	tests/trace_tests.sh.in, tests/xor_tests.sh.in, tests/xortest.ite,
+	tests/xortest.ite.params, tests/xortest.xor,
+	tests/xortest.xor.params, tests/cnf/5-wid_300-var_r3.cnf,
+	tests/cnf/5-wid_300-var_r3.cnf.params,
+	tests/cnf/5-wid_400-var_Slide_r3.cnf,
+	tests/cnf/5-wid_400-var_Slide_r3.cnf.params, tests/cnf/Makefile.am,
+	tests/cnf/Makefile.in, tests/cnf/c5-wid.cnf,
+	tests/cnf/c5-wid.cnf.params, tests/longer_tests/Makefile.am,
+	tests/longer_tests/Makefile.in, tests/longer_tests/dlx2_cc.trace,
+	tests/longer_tests/dlx2_cc.trace.params,
+	tests/longer_tests/dlx2_cc_bug11.trace,
+	tests/longer_tests/dlx2_cc_bug11.trace.params,
+	tests/longer_tests/slider_80_sat.ite,
+	tests/longer_tests/slider_80_sat.ite.params,
+	tests/longer_tests/slider_80_unsat.ite,
+	tests/longer_tests/slider_80_unsat.ite.params,
+	tests/trace_tests/Makefile.am, tests/trace_tests/Makefile.in,
+	tests/trace_tests/and+_example.trace,
+	tests/trace_tests/and+_example.trace.params,
+	tests/trace_tests/and-_example.trace,
+	tests/trace_tests/and-_example.trace.params,
+	tests/trace_tests/and1=_example.trace,
+	tests/trace_tests/and1=_example.trace.params,
+	tests/trace_tests/and=_example.trace,
+	tests/trace_tests/and=_example.trace.params,
+	tests/trace_tests/are_equal_example.trace,
+	tests/trace_tests/are_equal_example.trace.params,
+	tests/trace_tests/ite_example.trace,
+	tests/trace_tests/ite_example.trace.params,
+	tests/trace_tests/limp=_example.trace,
+	tests/trace_tests/limp=_example.trace.params,
+	tests/trace_tests/lnimp=_example.trace,
+	tests/trace_tests/lnimp=_example.trace.params,
+	tests/trace_tests/nand=_example.trace,
+	tests/trace_tests/nand=_example.trace.params,
+	tests/trace_tests/new_int_leaf.trace,
+	tests/trace_tests/new_int_leaf.trace.params,
+	tests/trace_tests/nor=_example.trace,
+	tests/trace_tests/nor=_example.trace.params,
+	tests/trace_tests/or+_example.trace,
+	tests/trace_tests/or+_example.trace.params,
+	tests/trace_tests/or-_example.trace,
+	tests/trace_tests/or-_example.trace.params,
+	tests/trace_tests/or=_example.trace,
+	tests/trace_tests/or=_example.trace.params,
+	tests/trace_tests/rimp=_example.trace,
+	tests/trace_tests/rimp=_example.trace.params,
+	tests/trace_tests/rnimp=_example.trace,
+	tests/trace_tests/rnimp=_example.trace.params,
+	tests/trace_tests/xnor=_example.trace,
+	tests/trace_tests/xnor=_example.trace.params,
+	tests/trace_tests/xor=_example.trace,
+	tests/trace_tests/xor=_example.trace.params: Import of SBSAT v.
+	2.0b (17)
 
 2003-05-29 21:37  mkouril
 
 	* .cvsignore, AUTHORS, BUGS, COPYING, ChangeLog, INSTALL,
-	  Makefile.am, Makefile.in, NEWS, README, THANKS, compile.patch,
-	  compile.patch.all.sh, compile.patch.sh, config.guess, config.sub,
-	  configure, configure.in, depcomp, install-sh, missing,
-	  mkinstalldirs, ylwrap, doc/Doxyfile, doc/Makefile.am,
-	  doc/Makefile.in, doc/arch.txt, doc/ftest.c, doc/ite.1,
-	  doc/manual/Makefile.am, doc/manual/Makefile.in,
-	  doc/manual/README, examples/Makefile.am, examples/Makefile.in,
-	  examples/markbdd.ite, include/Makefile.am, include/Makefile.in,
-	  include/brancher.h, include/common.h, include/config.h,
-	  include/config.h.in, include/defines.h, include/equivclass.h,
-	  include/flatten.h, include/globals.h, include/heuristic.h,
-	  include/i_heuristic.h, include/integerset.h, include/ite.h,
-	  include/j_heuristic.h, include/l_heuristic.h,
-	  include/lemmainfo.h, include/literalset.h, include/log.h,
-	  include/params.h, include/parse.h, include/pools.h,
-	  include/preprocess.h, include/prototypes.h,
-	  include/smurffactory.h, include/solver.h, include/stamp-h,
-	  include/stamp-h.in, include/symtable.h, include/tracer.h,
-	  include/vars.h, src/Makefile.am, src/Makefile.in, src/ite.cc,
-	  src/formats/Makefile.am, src/formats/Makefile.in,
-	  src/formats/autochk.cc, src/formats/bdd2cnf.cc,
-	  src/formats/cnf.cc, src/formats/flatten.cc,
-	  src/formats/markbdd.cc, src/formats/parse.cc,
-	  src/formats/read_input.cc, src/formats/read_result.cc,
-	  src/formats/sat.cc, src/formats/smurf.cc, src/formats/tracer.cc,
-	  src/formats/write_output.cc, src/formats/xorbdd.cc,
-	  src/formats/5/Makefile.am, src/formats/5/Makefile.in,
-	  src/formats/5/bdd_g.yy, src/formats/5/bdd_s.cc,
-	  src/formats/5/bdd_s.ll, src/formats/5/bddnode.cc,
-	  src/formats/5/bddnode.h, src/formats/5/bddops.cc,
-	  src/formats/5/blif_g.yy, src/formats/5/blif_s.cc,
-	  src/formats/5/blif_s.ll, src/formats/5/cnf_g.yy,
-	  src/formats/5/cnf_s.cc, src/formats/5/cnf_s.ll,
-	  src/formats/5/functions.cc, src/formats/5/functions.h,
-	  src/formats/5/libt5_a-bdd_g.cc, src/formats/5/libt5_a-bdd_g.h,
-	  src/formats/5/libt5_a-blif_g.cc, src/formats/5/libt5_a-blif_g.h,
-	  src/formats/5/libt5_a-cnf_g.cc, src/formats/5/libt5_a-cnf_g.h,
-	  src/formats/5/libt5_a-trace_g.cc,
-	  src/formats/5/libt5_a-trace_g.h, src/formats/5/parser.cc,
-	  src/formats/5/trace_g.yy, src/formats/5/trace_s.cc,
-	  src/formats/5/trace_s.ll, src/formats/5/tracetest.cc,
-	  src/generator/Makefile.am, src/generator/Makefile.in,
-	  src/generator/gentest.cc, src/generator/testite.sh,
-	  src/generator/vanDerWaerden.cc, src/generator/xorgen.cc,
-	  src/postproc/Makefile.am, src/postproc/Makefile.in,
-	  src/postproc/backend.cc, src/preproc/Makefile.am,
-	  src/preproc/Makefile.in, src/preproc/create_infs.cc,
-	  src/preproc/do_applyinfs.cc, src/preproc/do_cofactor.cc,
-	  src/preproc/do_depcluster.cc, src/preproc/do_exquantify.cc,
-	  src/preproc/do_exquantifyand.cc, src/preproc/do_pruning.cc,
-	  src/preproc/do_pruning_1.cc, src/preproc/do_pruning_2.cc,
-	  src/preproc/do_pruning_restrict.cc, src/preproc/do_strength.cc,
-	  src/preproc/init_preproc.cc, src/preproc/other_preproc.cc,
-	  src/preproc/preprocess.cc, src/solver/Makefile.am,
-	  src/solver/Makefile.in, src/solver/autarky.cc,
-	  src/solver/backtrack.cc, src/solver/backtrack_nl.cc,
-	  src/solver/backtrack_sbj.cc, src/solver/bdd2smurf.cc,
-	  src/solver/bddwalk.cc, src/solver/brancher.cc,
-	  src/solver/bt_lemmas.cc, src/solver/bt_smurfs.cc,
-	  src/solver/bt_specfn.cc, src/solver/bt_specfn_and.cc,
-	  src/solver/bt_specfn_xor.cc, src/solver/crtwin.cc,
-	  src/solver/display.cc, src/solver/display_sf.cc,
-	  src/solver/graphs.cc, src/solver/heuristic.cc,
-	  src/solver/i_heuristic.cc, src/solver/init_solver.cc,
-	  src/solver/j_heuristic.cc, src/solver/j_specfn.cc,
-	  src/solver/j_update_heu.cc, src/solver/l_heuristic.cc,
-	  src/solver/l_lemma.cc, src/solver/lemmainfo.cc,
-	  src/solver/lemmaspace.cc, src/solver/libsolver.cc,
-	  src/solver/recordsol.cc, src/solver/select_bp.cc,
-	  src/solver/sf_addons.cc, src/solver/smurffactory.cc,
-	  src/solver/smurfstates.cc, src/solver/solve.cc,
-	  src/solver/specfn2smurf.cc, src/solver/state_stacks.cc,
-	  src/solver/transitions.cc, src/solver/update_heu.cc,
-	  src/solver/verify.cc, src/solver/wvf.cc, src/utils/Makefile.am,
-	  src/utils/Makefile.in, src/utils/bdd.cc,
-	  src/utils/bdd_circuit_init.cc, src/utils/bddidx.cc,
-	  src/utils/bddidx_orig.cc, src/utils/bddidx_vsb.cc,
-	  src/utils/bddtable.cc, src/utils/custprint.cc,
-	  src/utils/infer.cc, src/utils/integerset.cc,
-	  src/utils/intnode.cc, src/utils/literalset.cc, src/utils/log.cc,
-	  src/utils/malloc.cc, src/utils/params.cc, src/utils/params_fn.cc,
-	  src/utils/smurfaddons.cc, src/utils/symtable.cc,
-	  src/utils/utils.cc, src/utils/vars.cc, src/utils/zread.cc,
-	  tests/Makefile.am, tests/Makefile.in, tests/cnf_tests.sh.in,
-	  tests/crazyxor18.xor, tests/emptyite.ini,
-	  tests/longer_tests.sh.in, tests/trace_tests.sh.in,
-	  tests/xor_tests.sh.in, tests/xortest.ite,
-	  tests/xortest.ite.params, tests/xortest.xor,
-	  tests/xortest.xor.params, tests/cnf/5-wid_300-var_r3.cnf,
-	  tests/cnf/5-wid_300-var_r3.cnf.params,
-	  tests/cnf/5-wid_400-var_Slide_r3.cnf,
-	  tests/cnf/5-wid_400-var_Slide_r3.cnf.params,
-	  tests/cnf/Makefile.am, tests/cnf/Makefile.in,
-	  tests/cnf/c5-wid.cnf, tests/cnf/c5-wid.cnf.params,
-	  tests/longer_tests/Makefile.am, tests/longer_tests/Makefile.in,
-	  tests/longer_tests/dlx2_cc.trace,
-	  tests/longer_tests/dlx2_cc.trace.params,
-	  tests/longer_tests/dlx2_cc_bug11.trace,
-	  tests/longer_tests/dlx2_cc_bug11.trace.params,
-	  tests/longer_tests/slider_80_sat.ite,
-	  tests/longer_tests/slider_80_sat.ite.params,
-	  tests/longer_tests/slider_80_unsat.ite,
-	  tests/longer_tests/slider_80_unsat.ite.params,
-	  tests/trace_tests/Makefile.am, tests/trace_tests/Makefile.in,
-	  tests/trace_tests/and+_example.trace,
-	  tests/trace_tests/and+_example.trace.params,
-	  tests/trace_tests/and-_example.trace,
-	  tests/trace_tests/and-_example.trace.params,
-	  tests/trace_tests/and1=_example.trace,
-	  tests/trace_tests/and1=_example.trace.params,
-	  tests/trace_tests/and=_example.trace,
-	  tests/trace_tests/and=_example.trace.params,
-	  tests/trace_tests/are_equal_example.trace,
-	  tests/trace_tests/are_equal_example.trace.params,
-	  tests/trace_tests/ite_example.trace,
-	  tests/trace_tests/ite_example.trace.params,
-	  tests/trace_tests/limp=_example.trace,
-	  tests/trace_tests/limp=_example.trace.params,
-	  tests/trace_tests/lnimp=_example.trace,
-	  tests/trace_tests/lnimp=_example.trace.params,
-	  tests/trace_tests/nand=_example.trace,
-	  tests/trace_tests/nand=_example.trace.params,
-	  tests/trace_tests/new_int_leaf.trace,
-	  tests/trace_tests/new_int_leaf.trace.params,
-	  tests/trace_tests/nor=_example.trace,
-	  tests/trace_tests/nor=_example.trace.params,
-	  tests/trace_tests/or+_example.trace,
-	  tests/trace_tests/or+_example.trace.params,
-	  tests/trace_tests/or-_example.trace,
-	  tests/trace_tests/or-_example.trace.params,
-	  tests/trace_tests/or=_example.trace,
-	  tests/trace_tests/or=_example.trace.params,
-	  tests/trace_tests/rimp=_example.trace,
-	  tests/trace_tests/rimp=_example.trace.params,
-	  tests/trace_tests/rnimp=_example.trace,
-	  tests/trace_tests/rnimp=_example.trace.params,
-	  tests/trace_tests/xnor=_example.trace,
-	  tests/trace_tests/xnor=_example.trace.params,
-	  tests/trace_tests/xor=_example.trace,
-	  tests/trace_tests/xor=_example.trace.params: Initial revision
+	Makefile.am, Makefile.in, NEWS, README, THANKS, compile.patch,
+	compile.patch.all.sh, compile.patch.sh, config.guess, config.sub,
+	configure, configure.in, depcomp, install-sh, missing,
+	mkinstalldirs, ylwrap, doc/Doxyfile, doc/Makefile.am,
+	doc/Makefile.in, doc/arch.txt, doc/ftest.c, doc/ite.1,
+	doc/manual/Makefile.am, doc/manual/Makefile.in, doc/manual/README,
+	examples/Makefile.am, examples/Makefile.in, examples/markbdd.ite,
+	include/Makefile.am, include/Makefile.in, include/brancher.h,
+	include/common.h, include/config.h, include/config.h.in,
+	include/defines.h, include/equivclass.h, include/flatten.h,
+	include/globals.h, include/heuristic.h, include/i_heuristic.h,
+	include/integerset.h, include/ite.h, include/j_heuristic.h,
+	include/l_heuristic.h, include/lemmainfo.h, include/literalset.h,
+	include/log.h, include/params.h, include/parse.h, include/pools.h,
+	include/preprocess.h, include/prototypes.h, include/smurffactory.h,
+	include/solver.h, include/stamp-h, include/stamp-h.in,
+	include/symtable.h, include/tracer.h, include/vars.h,
+	src/Makefile.am, src/Makefile.in, src/ite.cc,
+	src/formats/Makefile.am, src/formats/Makefile.in,
+	src/formats/autochk.cc, src/formats/bdd2cnf.cc, src/formats/cnf.cc,
+	src/formats/flatten.cc, src/formats/markbdd.cc,
+	src/formats/parse.cc, src/formats/read_input.cc,
+	src/formats/read_result.cc, src/formats/sat.cc,
+	src/formats/smurf.cc, src/formats/tracer.cc,
+	src/formats/write_output.cc, src/formats/xorbdd.cc,
+	src/formats/5/Makefile.am, src/formats/5/Makefile.in,
+	src/formats/5/bdd_g.yy, src/formats/5/bdd_s.cc,
+	src/formats/5/bdd_s.ll, src/formats/5/bddnode.cc,
+	src/formats/5/bddnode.h, src/formats/5/bddops.cc,
+	src/formats/5/blif_g.yy, src/formats/5/blif_s.cc,
+	src/formats/5/blif_s.ll, src/formats/5/cnf_g.yy,
+	src/formats/5/cnf_s.cc, src/formats/5/cnf_s.ll,
+	src/formats/5/functions.cc, src/formats/5/functions.h,
+	src/formats/5/libt5_a-bdd_g.cc, src/formats/5/libt5_a-bdd_g.h,
+	src/formats/5/libt5_a-blif_g.cc, src/formats/5/libt5_a-blif_g.h,
+	src/formats/5/libt5_a-cnf_g.cc, src/formats/5/libt5_a-cnf_g.h,
+	src/formats/5/libt5_a-trace_g.cc, src/formats/5/libt5_a-trace_g.h,
+	src/formats/5/parser.cc, src/formats/5/trace_g.yy,
+	src/formats/5/trace_s.cc, src/formats/5/trace_s.ll,
+	src/formats/5/tracetest.cc, src/generator/Makefile.am,
+	src/generator/Makefile.in, src/generator/gentest.cc,
+	src/generator/testite.sh, src/generator/vanDerWaerden.cc,
+	src/generator/xorgen.cc, src/postproc/Makefile.am,
+	src/postproc/Makefile.in, src/postproc/backend.cc,
+	src/preproc/Makefile.am, src/preproc/Makefile.in,
+	src/preproc/create_infs.cc, src/preproc/do_applyinfs.cc,
+	src/preproc/do_cofactor.cc, src/preproc/do_depcluster.cc,
+	src/preproc/do_exquantify.cc, src/preproc/do_exquantifyand.cc,
+	src/preproc/do_pruning.cc, src/preproc/do_pruning_1.cc,
+	src/preproc/do_pruning_2.cc, src/preproc/do_pruning_restrict.cc,
+	src/preproc/do_strength.cc, src/preproc/init_preproc.cc,
+	src/preproc/other_preproc.cc, src/preproc/preprocess.cc,
+	src/solver/Makefile.am, src/solver/Makefile.in,
+	src/solver/autarky.cc, src/solver/backtrack.cc,
+	src/solver/backtrack_nl.cc, src/solver/backtrack_sbj.cc,
+	src/solver/bdd2smurf.cc, src/solver/bddwalk.cc,
+	src/solver/brancher.cc, src/solver/bt_lemmas.cc,
+	src/solver/bt_smurfs.cc, src/solver/bt_specfn.cc,
+	src/solver/bt_specfn_and.cc, src/solver/bt_specfn_xor.cc,
+	src/solver/crtwin.cc, src/solver/display.cc,
+	src/solver/display_sf.cc, src/solver/graphs.cc,
+	src/solver/heuristic.cc, src/solver/i_heuristic.cc,
+	src/solver/init_solver.cc, src/solver/j_heuristic.cc,
+	src/solver/j_specfn.cc, src/solver/j_update_heu.cc,
+	src/solver/l_heuristic.cc, src/solver/l_lemma.cc,
+	src/solver/lemmainfo.cc, src/solver/lemmaspace.cc,
+	src/solver/libsolver.cc, src/solver/recordsol.cc,
+	src/solver/select_bp.cc, src/solver/sf_addons.cc,
+	src/solver/smurffactory.cc, src/solver/smurfstates.cc,
+	src/solver/solve.cc, src/solver/specfn2smurf.cc,
+	src/solver/state_stacks.cc, src/solver/transitions.cc,
+	src/solver/update_heu.cc, src/solver/verify.cc, src/solver/wvf.cc,
+	src/utils/Makefile.am, src/utils/Makefile.in, src/utils/bdd.cc,
+	src/utils/bdd_circuit_init.cc, src/utils/bddidx.cc,
+	src/utils/bddidx_orig.cc, src/utils/bddidx_vsb.cc,
+	src/utils/bddtable.cc, src/utils/custprint.cc, src/utils/infer.cc,
+	src/utils/integerset.cc, src/utils/intnode.cc,
+	src/utils/literalset.cc, src/utils/log.cc, src/utils/malloc.cc,
+	src/utils/params.cc, src/utils/params_fn.cc,
+	src/utils/smurfaddons.cc, src/utils/symtable.cc,
+	src/utils/utils.cc, src/utils/vars.cc, src/utils/zread.cc,
+	tests/Makefile.am, tests/Makefile.in, tests/cnf_tests.sh.in,
+	tests/crazyxor18.xor, tests/emptyite.ini, tests/longer_tests.sh.in,
+	tests/trace_tests.sh.in, tests/xor_tests.sh.in, tests/xortest.ite,
+	tests/xortest.ite.params, tests/xortest.xor,
+	tests/xortest.xor.params, tests/cnf/5-wid_300-var_r3.cnf,
+	tests/cnf/5-wid_300-var_r3.cnf.params,
+	tests/cnf/5-wid_400-var_Slide_r3.cnf,
+	tests/cnf/5-wid_400-var_Slide_r3.cnf.params, tests/cnf/Makefile.am,
+	tests/cnf/Makefile.in, tests/cnf/c5-wid.cnf,
+	tests/cnf/c5-wid.cnf.params, tests/longer_tests/Makefile.am,
+	tests/longer_tests/Makefile.in, tests/longer_tests/dlx2_cc.trace,
+	tests/longer_tests/dlx2_cc.trace.params,
+	tests/longer_tests/dlx2_cc_bug11.trace,
+	tests/longer_tests/dlx2_cc_bug11.trace.params,
+	tests/longer_tests/slider_80_sat.ite,
+	tests/longer_tests/slider_80_sat.ite.params,
+	tests/longer_tests/slider_80_unsat.ite,
+	tests/longer_tests/slider_80_unsat.ite.params,
+	tests/trace_tests/Makefile.am, tests/trace_tests/Makefile.in,
+	tests/trace_tests/and+_example.trace,
+	tests/trace_tests/and+_example.trace.params,
+	tests/trace_tests/and-_example.trace,
+	tests/trace_tests/and-_example.trace.params,
+	tests/trace_tests/and1=_example.trace,
+	tests/trace_tests/and1=_example.trace.params,
+	tests/trace_tests/and=_example.trace,
+	tests/trace_tests/and=_example.trace.params,
+	tests/trace_tests/are_equal_example.trace,
+	tests/trace_tests/are_equal_example.trace.params,
+	tests/trace_tests/ite_example.trace,
+	tests/trace_tests/ite_example.trace.params,
+	tests/trace_tests/limp=_example.trace,
+	tests/trace_tests/limp=_example.trace.params,
+	tests/trace_tests/lnimp=_example.trace,
+	tests/trace_tests/lnimp=_example.trace.params,
+	tests/trace_tests/nand=_example.trace,
+	tests/trace_tests/nand=_example.trace.params,
+	tests/trace_tests/new_int_leaf.trace,
+	tests/trace_tests/new_int_leaf.trace.params,
+	tests/trace_tests/nor=_example.trace,
+	tests/trace_tests/nor=_example.trace.params,
+	tests/trace_tests/or+_example.trace,
+	tests/trace_tests/or+_example.trace.params,
+	tests/trace_tests/or-_example.trace,
+	tests/trace_tests/or-_example.trace.params,
+	tests/trace_tests/or=_example.trace,
+	tests/trace_tests/or=_example.trace.params,
+	tests/trace_tests/rimp=_example.trace,
+	tests/trace_tests/rimp=_example.trace.params,
+	tests/trace_tests/rnimp=_example.trace,
+	tests/trace_tests/rnimp=_example.trace.params,
+	tests/trace_tests/xnor=_example.trace,
+	tests/trace_tests/xnor=_example.trace.params,
+	tests/trace_tests/xor=_example.trace,
+	tests/trace_tests/xor=_example.trace.params: Initial revision
 
