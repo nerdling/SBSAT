@@ -67,8 +67,8 @@ Do_Apply_Inferences ()
 		startover:;
 		if (inferlist->nums[1] != 0) {
 			if (inferlist->nums[1] > 0) {
-				Pos_replace++;
-				
+
+/*				
 				//d3_printf2("|%d ", inferlist->nums[0]);
 				//d3_printf2("%d ", inferlist->nums[1]);
 				inferlist->nums[0] = l->get_equiv(inferlist->nums[0]);
@@ -87,9 +87,10 @@ Do_Apply_Inferences ()
 				
 				//d3_printf2("%d ", inferlist->nums[0]);
 				//d3_printf2("%d|", inferlist->nums[1]);
-
+*/
 				
 				//            D_3(print_nonroller();)
+				Pos_replace++;
 				for(int iter = 0; iter<str_length; iter++)
 				  d3_printf1("\b");
 				d3_printf3 ("{%d=%d}", inferlist->nums[0], inferlist->nums[1]);
@@ -102,6 +103,7 @@ Do_Apply_Inferences ()
 					if (functions[j] == false_ptr)
 					  return TRIV_UNSAT;
 					if (before != functions[j]) {
+
 						int changeFT = 0;
 						if (functionType[j] == AND || functionType[j] == OR) {
 							if (abs (equalityVble[j]) == inferlist->nums[0]) {
@@ -134,6 +136,7 @@ Do_Apply_Inferences ()
 								} else equalityVble[j] = -inferlist->nums[0];
 							}
 						}
+
 						if (Rebuild_BDDx(j)==TRIV_UNSAT)
 						  return TRIV_UNSAT;
 					}
@@ -387,6 +390,9 @@ int Rebuild_BDDx (int x) {
 	
 	if (functions[x] == false_ptr)
 	  return TRIV_UNSAT;
+
+//	countFalses(functions[x]);
+//	countFalses(functions[x]);
 	
 	//Get Inferences
 	
@@ -478,20 +484,20 @@ int Rebuild_BDDx (int x) {
 					iterator->nums[0] = -result->left;
 					iterator->nums[1] = 0;
 				} else if (abs (result->left) < abs (result->rght)) {
-					if (result->rght < 0) {
-						iterator->nums[0] = -result->rght;
-						iterator->nums[1] = -result->left;
-					} else {
-						iterator->nums[0] = result->rght;
-						iterator->nums[1] = result->left;
-					}
-				} else {
 					if (result->left < 0) {
 						iterator->nums[0] = -result->left;
 						iterator->nums[1] = -result->rght;
 					} else {
 						iterator->nums[0] = result->left;
 						iterator->nums[1] = result->rght;
+					}
+				} else {
+					if (result->rght < 0) {
+						iterator->nums[0] = -result->rght;
+						iterator->nums[1] = -result->left;
+					} else {
+						iterator->nums[0] = result->rght;
+						iterator->nums[1] = result->left;
 					}
 				}
 			} else {
@@ -519,20 +525,20 @@ int Rebuild_BDDx (int x) {
 					iterator->nums[0] = result->left;
 					iterator->nums[1] = 0;
 				} else if (abs (result->left) < abs (result->rght)) {
-					if (result->rght < 0) {
-						iterator->nums[0] = -result->rght;
-						iterator->nums[1] = result->left;
-					} else {
-						iterator->nums[0] = result->rght;
-						iterator->nums[1] = -result->left;
-					}
-				} else {
 					if (result->left < 0) {
 						iterator->nums[0] = -result->left;
 						iterator->nums[1] = result->rght;
 					} else {
 						iterator->nums[0] = result->left;
 						iterator->nums[1] = -result->rght;
+					}
+				} else {
+					if (result->rght < 0) {
+						iterator->nums[0] = -result->rght;
+						iterator->nums[1] = result->left;
+					} else {
+						iterator->nums[0] = result->rght;
+						iterator->nums[1] = -result->left;
 					}
 				}
 			}

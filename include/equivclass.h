@@ -379,10 +379,10 @@ class Linear {
 				// side of equiv class tree structure has a min smaller than a's
 				if (equiv_fwd[a] <= -2 && lft < no_inp_vars) {
 					if (equiv_lft[-equiv_fwd[a]] == a) {
-						if ((tmp = equiv_min[equiv_rgt[-equiv_fwd[a]]]) > lft)
+						if ((tmp = equiv_min[equiv_rgt[-equiv_fwd[a]]]) < lft)
 						  lft = -tmp;
 					} else {
-						if ((tmp = equiv_min[equiv_lft[-equiv_fwd[a]]]) > lft) 
+						if ((tmp = equiv_min[equiv_lft[-equiv_fwd[a]]]) < lft) 
 						  lft = -tmp;
 					}
 				}
@@ -390,10 +390,10 @@ class Linear {
 				// side of equiv class tree structure has a min smaller than b's
 				if (equiv_fwd[b] <= -2 && rgt < no_inp_vars) {
 					if (equiv_lft[-equiv_fwd[b]] == b) {
-						if ((tmp = equiv_min[equiv_rgt[-equiv_fwd[b]]]) > rgt) 
+						if ((tmp = equiv_min[equiv_rgt[-equiv_fwd[b]]]) < rgt) 
 						  rgt = -tmp;
 					} else {
-						if ((tmp = equiv_min[equiv_lft[-equiv_fwd[b]]]) > rgt) 
+						if ((tmp = equiv_min[equiv_lft[-equiv_fwd[b]]]) < rgt) 
 						  rgt = -tmp;
 					}
 				}
@@ -406,8 +406,8 @@ class Linear {
             result.left = lft;
 				result.rght = rgt;
 				
-				int root = (equiv_cnt[a] > equiv_cnt[b]) ? b : a;
-				int auxx = (equiv_cnt[a] > equiv_cnt[b]) ? a : b;
+				int root = (equiv_cnt[a] < equiv_cnt[b]) ? b : a;
+				int auxx = (equiv_cnt[a] < equiv_cnt[b]) ? a : b;
 				if (equiv_bck[root] == null) {
 					equiv_bck[root] = auxx;
 				} else {
@@ -416,7 +416,7 @@ class Linear {
 				equiv_end[root] = equiv_end[auxx];    // due to self loop on "end" 
 				equiv_cnt[root] += equiv_cnt[auxx];
 				if ((equiv_min[root] < no_inp_vars && 
-					  equiv_min[auxx] > equiv_min[root]) || 
+					  equiv_min[auxx] < equiv_min[root]) || 
 					 equiv_min[auxx] >= no_inp_vars) 
 				  equiv_min[root] = equiv_min[auxx];
 				int auxx_super = -equiv_fwd[auxx]; // Should be a pos number 
@@ -441,7 +441,7 @@ class Linear {
 						int root_opp = (equiv_lft[root_super] == root) ?
 						  equiv_rgt[root_super] : equiv_lft[root_super];
 						// Join opp trees and attach to opposite of new equiv class 
-						if (equiv_cnt[auxx_opp] > equiv_cnt[root_opp]) {
+						if (equiv_cnt[auxx_opp] < equiv_cnt[root_opp]) {
 							equiv_fwd[auxx_opp] = root_opp;
 							if (equiv_bck[root_opp] == -1) {
 								equiv_bck[root_opp] = auxx_opp;
@@ -451,7 +451,7 @@ class Linear {
 							equiv_end[root_opp] = equiv_end[auxx_opp];
 							equiv_cnt[root_opp] += equiv_cnt[auxx_opp];
 							if ((equiv_min[root_opp] < no_inp_vars && 
-								  equiv_min[auxx_opp] > equiv_min[root_opp]) ||
+								  equiv_min[auxx_opp] < equiv_min[root_opp]) ||
 								 equiv_min[auxx_opp] >= no_inp_vars) 
 							  equiv_min[root_opp] = equiv_min[auxx_opp];
 							equiv_fwd[root_opp] = -root_super;
@@ -465,7 +465,7 @@ class Linear {
 							equiv_end[auxx_opp] = equiv_end[root_opp];
 							equiv_cnt[auxx_opp] += equiv_cnt[root_opp];
 							if ((equiv_min[auxx_opp] < no_inp_vars && 
-								  equiv_min[root_opp] > equiv_min[auxx_opp]) ||
+								  equiv_min[root_opp] < equiv_min[auxx_opp]) ||
 								 equiv_min[root_opp] >= no_inp_vars)
 							  equiv_min[auxx_opp] = equiv_min[root_opp]; 
 							equiv_fwd[auxx_opp] = -root_super;
@@ -510,9 +510,9 @@ class Linear {
       // side of equiv class tree structure has a min smaller than a's
       if (equiv_fwd[a] <= -2 && -lft < no_inp_vars) {
 			if (equiv_lft[-equiv_fwd[a]] == a) {
-				if ((tmp = equiv_min[equiv_rgt[-equiv_fwd[a]]]) > -lft) lft = tmp;
+				if ((tmp = equiv_min[equiv_rgt[-equiv_fwd[a]]]) < -lft) lft = tmp;
 			} else {
-				if ((tmp = equiv_min[equiv_lft[-equiv_fwd[a]]]) > -lft) lft = tmp;
+				if ((tmp = equiv_min[equiv_lft[-equiv_fwd[a]]]) < -lft) lft = tmp;
 			}
       } else if (-lft >= no_inp_vars) {
 			if (-lft == Fa) lft = Tr;
@@ -521,9 +521,9 @@ class Linear {
       // side of equiv class tree structure has a min smaller than b's
 		if (equiv_fwd[b] <= -2 && -rgt < no_inp_vars) {
 			if (equiv_lft[-equiv_fwd[b]] == b) {
-				if ((tmp = equiv_min[equiv_rgt[-equiv_fwd[b]]]) > -rgt) rgt = tmp;
+				if ((tmp = equiv_min[equiv_rgt[-equiv_fwd[b]]]) < -rgt) rgt = tmp;
 			} else {
-				if ((tmp = equiv_min[equiv_lft[-equiv_fwd[b]]]) > -rgt) rgt = tmp;
+				if ((tmp = equiv_min[equiv_lft[-equiv_fwd[b]]]) < -rgt) rgt = tmp;
 			}
 		} else if (-rgt >= no_inp_vars) {
 			if (-rgt == Tr) rgt = Fa;  //Iffy Here Sean!
@@ -554,8 +554,8 @@ class Linear {
 			// If b has no super but a does - merge b with a's opposite 
 			int r = (equiv_rgt[a_super] == a) ?
 			  equiv_lft[a_super] : equiv_rgt[a_super];
-			int root = (equiv_cnt[r] > equiv_cnt[b]) ? b : r;
-			int auxx = (equiv_cnt[r] > equiv_cnt[b]) ? r : b;
+			int root = (equiv_cnt[r] < equiv_cnt[b]) ? b : r;
+			int auxx = (equiv_cnt[r] < equiv_cnt[b]) ? r : b;
 			if (equiv_bck[root] == -1) {
 				equiv_bck[root] = auxx;
 			} else {
@@ -564,7 +564,7 @@ class Linear {
 			equiv_end[root] = equiv_end[auxx]; // because of self loop on "end" 
 			equiv_cnt[root] += equiv_cnt[auxx];
 			if ((equiv_min[root] < no_inp_vars && 
-				  equiv_min[auxx] > equiv_min[root]) ||
+				  equiv_min[auxx] < equiv_min[root]) ||
 				 equiv_min[auxx] >= no_inp_vars) 
 			  equiv_min[root] = equiv_min[auxx];
 			equiv_fwd[auxx] = root;
@@ -577,8 +577,8 @@ class Linear {
 			// If b has a super but a does not - merge a with b's opposite 
 			int r = (equiv_rgt[b_super] == b) ?
 			  equiv_lft[b_super] : equiv_rgt[b_super];
-			int root = (equiv_cnt[r] > equiv_cnt[a]) ? a : r;
-			int auxx = (equiv_cnt[r] > equiv_cnt[a]) ? r : a;
+			int root = (equiv_cnt[r] < equiv_cnt[a]) ? a : r;
+			int auxx = (equiv_cnt[r] < equiv_cnt[a]) ? r : a;
 			if (equiv_bck[root] == -1) {
 				equiv_bck[root] = auxx;
 			} else {
@@ -587,7 +587,7 @@ class Linear {
 			equiv_end[root] = equiv_end[auxx]; // because of self loop on "end" 
 			equiv_cnt[root] += equiv_cnt[auxx];
 			if ((equiv_min[root] < no_inp_vars && 
-				  equiv_min[auxx] > equiv_min[root]) ||
+				  equiv_min[auxx] < equiv_min[root]) ||
 				 equiv_min[auxx] >= no_inp_vars) 
 			  equiv_min[root] = equiv_min[auxx];
 			equiv_fwd[auxx] = root;
@@ -603,8 +603,8 @@ class Linear {
 			int ra = (equiv_rgt[a_super] == a) ?
 			  equiv_lft[a_super] : equiv_rgt[a_super];  // ra, rb are opposites
 			
-			int root1 = (equiv_cnt[rb] > equiv_cnt[a]) ? a : rb;
-			int auxx1 = (equiv_cnt[rb] > equiv_cnt[a]) ? rb : a;
+			int root1 = (equiv_cnt[rb] < equiv_cnt[a]) ? a : rb;
+			int auxx1 = (equiv_cnt[rb] < equiv_cnt[a]) ? rb : a;
 			if (equiv_bck[root1] == -1) {
 				equiv_bck[root1] = auxx1;
 			} else {
@@ -613,13 +613,13 @@ class Linear {
 			equiv_end[root1] = equiv_end[auxx1]; // because of self loop on "end"
 			equiv_cnt[root1] += equiv_cnt[auxx1];
 			if ((equiv_min[root1] < no_inp_vars && 
-				  equiv_min[auxx1] > equiv_min[root1]) ||
+				  equiv_min[auxx1] < equiv_min[root1]) ||
 				 equiv_min[auxx1] >= no_inp_vars) 
 			  equiv_min[root1] = equiv_min[auxx1];
 			equiv_fwd[auxx1] = root1;
 			
-			int root2 = (equiv_cnt[ra] > equiv_cnt[b]) ? b : ra;
-			int auxx2 = (equiv_cnt[ra] > equiv_cnt[b]) ? ra : b;
+			int root2 = (equiv_cnt[ra] < equiv_cnt[b]) ? b : ra;
+			int auxx2 = (equiv_cnt[ra] < equiv_cnt[b]) ? ra : b;
 			if (equiv_bck[root2] == -1) {
 				equiv_bck[root2] = auxx2;
 			} else {
@@ -628,7 +628,7 @@ class Linear {
 			equiv_end[root2] = equiv_end[auxx2]; // because of self loop on "end" 
 			equiv_cnt[root2] += equiv_cnt[auxx2];
 			if ((equiv_min[root2] < no_inp_vars && 
-				  equiv_min[auxx2] > equiv_min[root2]) || 
+				  equiv_min[auxx2] < equiv_min[root2]) || 
 				 equiv_min[auxx2] >= no_inp_vars) 
 			  equiv_min[root2] = equiv_min[auxx2];
 			equiv_fwd[auxx2] = root2;
