@@ -323,8 +323,10 @@ Backend(int nMaxVbleIndex, int oldnuminp, int *original_variables)
 	for(solution_info = solution_info_head; solution_info!=NULL; solution_info = solution_info->next) {
 		if (result_display_type && ite_counters[NUM_SOLUTIONS] > 1) 
 		  fprintf(foutputfile, "\n// Solution #%d\n", num_sol++);
-		for (int x = 0; x < original_numout; x++)
-		  functions[x] = original_functions[x];
+		for (int x = 0; x < original_numout; x++) {
+			functions[x] = original_functions[x];
+			functionType[x] = UNSURE;
+		}
 		nmbrFunctions = original_numout;
 		
 		for (int x = 0; x <= oldnuminp; x++) {
@@ -416,8 +418,10 @@ Verify_NoSolver()
   for (int x = 0; x <= numinp; x++)
      original_variables[x] = -1;
 
-  for (int x = 0; x < original_numout; x++)
-    functions[x] = original_functions[x];
+  for (int x = 0; x < original_numout; x++) {
+	  functions[x] = original_functions[x];
+	  functionType[x] = UNSURE;
+  }
   nmbrFunctions = original_numout;
 
   if (result_display_type) {

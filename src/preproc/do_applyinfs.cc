@@ -104,6 +104,10 @@ Do_Apply_Inferences ()
                if (functions[j] == false_ptr)
                   return TRIV_UNSAT;
                int changeFT = 0;
+					if (functionType[j] == AUTARKY_FUNC && equalityVble[j]==inferlist->nums[1])
+					  functions[j] = true_ptr;
+					  //equalityVble[j] = inferlist->nums[0];
+						  
                if (functionType[j] == AND || functionType[j] == OR) {
                   if (abs (equalityVble[j]) == inferlist->nums[0]) {
                      for (int iter = 0; iter < length[j]; iter++) {
@@ -175,6 +179,10 @@ Do_Apply_Inferences ()
 					if (functions[j] == false_ptr)
 					  return TRIV_UNSAT;
                int changeFT = 0;
+					if (functionType[j] == AUTARKY_FUNC && equalityVble[j]==-inferlist->nums[1])
+					  functions[j] = true_ptr;
+					  //equalityVble[j] = inferlist->nums[0];
+
                if (functionType[j] == AND || functionType[j] == OR) {
                   if (abs (equalityVble[j]) == inferlist->nums[0]) {
                      for (int iter = 0; iter < length[j]; iter++) {
@@ -246,6 +254,8 @@ Do_Apply_Inferences ()
 					k = k->next; //This must be done here because k could be deleted in Rebuild_BDDx()
 					if (functions[j] == false_ptr)
 					  return TRIV_UNSAT;
+					if (functionType[j] == AUTARKY_FUNC && equalityVble[j]==inferlist->nums[0])
+					  functions[j] = true_ptr;
                if ((functionType[j] == AND && equalityVble[j] < 0)
                      ||(functionType[j] == OR  && equalityVble[j] > 0)) {
                   if (abs (equalityVble[j]) == inferlist->nums[0]) {
@@ -263,8 +273,8 @@ Do_Apply_Inferences ()
 				for(int iter = 0; iter<str_length; iter++)
 					d3_printf1("\b");
 				str_length = 0;  
-				d3e_printf2 ("{%d=F}", abs (inferlist->nums[0]));
-				d4_printf3 ("{%s(%d)=F}", s_name(abs(inferlist->nums[0])), abs(inferlist->nums[0]));
+				d3e_printf2 ("{%d=F}", -inferlist->nums[0]);
+				d4_printf3 ("{%s(%d)=F}", s_name(-inferlist->nums[0]), -inferlist->nums[0]);
 				variablelist[-inferlist->nums[0]].true_false = 0;
 				set_variable_all(amount[-inferlist->nums[0]].head, -inferlist->nums[0], 0);
 				for (llist * k = amount[-inferlist->nums[0]].head; k != NULL;) {
@@ -272,9 +282,11 @@ Do_Apply_Inferences ()
 					k = k->next; //This must be done here because k could be deleted in Rebuild_BDDx()
 					if (functions[j] == false_ptr)
 					  return TRIV_UNSAT;
+					if (functionType[j] == AUTARKY_FUNC && equalityVble[j]==-inferlist->nums[0])
+					  functions[j] = true_ptr;
                if ((functionType[j] == AND && equalityVble[j] > 0)
                      ||(functionType[j] == OR  && equalityVble[j] < 0)) {
-                  if (abs (equalityVble[j]) == abs(inferlist->nums[0])) {
+                  if (abs (equalityVble[j]) == -inferlist->nums[0]) {
                      functionType[j] = PLAINOR;	//a v b v c
                      equalityVble[j] = 0;
                   }
@@ -416,7 +428,7 @@ int Rebuild_BDDx (int x) {
 	//Get Inferences	
 	infer *lastiter = NULL;
 	infer *startiter = NULL;
-	
+
 	if(functionType[x] == AUTARKY_FUNC) {
 		//fprintf(stderr, "|%d %d|", l->equivCount(equalityVble[x]), l->opposCount(equalityVble[x]));
 		//l->printEquivalence(equalityVble[x]);
@@ -425,14 +437,8 @@ int Rebuild_BDDx (int x) {
 		//l->printOpposVarCount();
 		//l->printWhetherEquiv();
 		//str_length=0;
-		if(l->equivCount(equalityVble[x])==0 && l->opposCount(equalityVble[x])==0) {
-//		if(1) {
-			
-		/*
-		   Is this really what I want to do?
-		   Maybe detecting if a variable has been previously set is wrong.
-		 */
-		
+		//if(l->equivCount(equalityVble[x])==0 && l->opposCount(equalityVble[x])==0) {
+		if(1) {
 			//BDDNode *autarkBDD = possible_BDD(functions[x], equalityVble[x]);
 			BDDNode *autarkBDD = functions[x];
 			if(autarkBDD == false_ptr) {
@@ -448,22 +454,24 @@ int Rebuild_BDDx (int x) {
 				functions[x] = true_ptr;		
 				functionType[x] = UNSURE;
 				equalityVble[x] = 0;
+			} else if(autarkBDD == true_ptr) {
+				//Autark variable was probably infered by some other function.
+				autark_BDD[equalityVble[x]] = -1;
+				//d3_printf3("\n%d|%d gone|\n", x, equalityVble[x]);
+				functionType[x] = UNSURE;
+				equalityVble[x] = 0;
 			} else {
 				for(infer *iterator = autarkBDD->inferences; iterator != NULL; iterator = iterator->next) {
 					if(abs(iterator->nums[0]) == equalityVble[x] || abs(iterator->nums[1]) == equalityVble[x]) {
 						startiter = AllocateInference(iterator->nums[0], iterator->nums[1], NULL);
 						startiter->next = lastinfer->next;
 						lastinfer->next = startiter;
-						//lastiter->nums[0] = iterator->nums[0];
-						//lastiter->nums[1] = iterator->nums[1];
-
 						autark_BDD[equalityVble[x]] = -1;
 						//d3_printf4("\n%d|%d, %d|\n", x, iterator->nums[0], iterator->nums[1]);
 						//printBDD(functions[x]);
 						//d3_printf1("\n");
 						//d3_printf1("*");
 						//str_length = 0;
-
 						functions[x] = true_ptr;		
 						functionType[x] = UNSURE;
 						equalityVble[x] = 0;
@@ -471,7 +479,7 @@ int Rebuild_BDDx (int x) {
 					}
 				}
 			}
-		} else {			  
+		} else {
 			//Autark variable was infered by some other function.
 			autark_BDD[equalityVble[x]] = -1;
 			//d3_printf3("\n%d|%d gone|\n", x, equalityVble[x]);
@@ -485,29 +493,14 @@ int Rebuild_BDDx (int x) {
 		for(infer *iterator = functions[x]->inferences; iterator != NULL; iterator = iterator->next) {
 			lastiter->next = AllocateInference(iterator->nums[0], iterator->nums[1], NULL);
 			lastiter = lastiter->next;
-			//lastiter->nums[0] = iterator->nums[0];
-			//lastiter->nums[1] = iterator->nums[1];
-			//if(functionType[x] == AUTARKY_FUNC) {
-			// fprintf(stderr, "\n%d|%d, %d|", x, iterator->nums[0], iterator->nums[1]);
-			//	printBDDerr(functions[x]);
-			//	d3_printf1("\n");
-			//	str_length = 0;
-		   //}
 		}
 		lastiter->next = NULL;
+		if(startiter!=NULL) {
+			lastinfer->next = startiter->next;
+			DeallocateOneInference(startiter); 
+		} else lastinfer->next = NULL;
 	}
-	if(startiter!=NULL) {
-		lastinfer->next = startiter->next;
-		DeallocateOneInference(startiter); 
-	} else lastinfer->next = NULL;
 
-/*	if(length[x] > 1 && functionType[x] == AUTARKY_FUNC) {
-		functions[x] = true_ptr;
-		functionType[x] = UNSURE;		  
-		equalityVble[x] = 0;
-	}
-*/
-	
 	infer *previous = lastinfer;
 	
 	//Remove duplicate inferences

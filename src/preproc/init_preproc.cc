@@ -543,6 +543,8 @@ int *add_newFunctions(BDDNode **new_bdds, int new_size) {
 
 	for(int x = 0; x < free_funcs; x++) {
 		functions[free_spots[x]] = new_bdds[x];
+		functionType[free_spots[x]] = UNSURE;
+		equalityVble[free_spots[x]] = 0;
 	}
 	
 	return free_spots;
