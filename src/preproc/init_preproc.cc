@@ -92,7 +92,7 @@ Init_Preprocessing()
 	numinp = getNuminp ();
 	F = numinp+3;
 	T = numinp+2;
-	
+
 	//BDDNodeStruct **original_functions;
 
 	original_functionType = (int *)ite_calloc(nmbrFunctions + 1, sizeof(int), 2, "original functionType");
