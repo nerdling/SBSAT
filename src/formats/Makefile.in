@@ -135,7 +135,7 @@ target_alias = @target_alias@
 INCLUDES = -I$(top_srcdir)/include
 SUBDIRS = 5
 SOURCES = autochk.cc  \
-	smurf.cc  bdd2cnf.cc  \
+	smurf.cc  bdd2cnf.cc  bddbinary.cc \
 	cnf.cc      flatten.cc  markbdd.cc xorbdd.cc \
 	parse.cc    sat.cc      tracer.cc   \
         read_result.cc read_input.cc write_output.cc
@@ -153,9 +153,9 @@ LTLIBRARIES = $(noinst_LTLIBRARIES)
 
 libformats_la_LDFLAGS =
 libformats_la_DEPENDENCIES = 5/libt5.la
-am__objects_1 = autochk.lo smurf.lo bdd2cnf.lo cnf.lo flatten.lo \
-	markbdd.lo xorbdd.lo parse.lo sat.lo tracer.lo read_result.lo \
-	read_input.lo write_output.lo
+am__objects_1 = autochk.lo smurf.lo bdd2cnf.lo bddbinary.lo cnf.lo \
+	flatten.lo markbdd.lo xorbdd.lo parse.lo sat.lo tracer.lo \
+	read_result.lo read_input.lo write_output.lo
 am_libformats_la_OBJECTS = $(am__objects_1)
 libformats_la_OBJECTS = $(am_libformats_la_OBJECTS)
 
@@ -163,9 +163,9 @@ DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)/include
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 @AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/autochk.Plo ./$(DEPDIR)/bdd2cnf.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/cnf.Plo ./$(DEPDIR)/flatten.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/markbdd.Plo ./$(DEPDIR)/parse.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/read_input.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/bddbinary.Plo ./$(DEPDIR)/cnf.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/flatten.Plo ./$(DEPDIR)/markbdd.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/parse.Plo ./$(DEPDIR)/read_input.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/read_result.Plo ./$(DEPDIR)/sat.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/smurf.Plo ./$(DEPDIR)/tracer.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/write_output.Plo ./$(DEPDIR)/xorbdd.Plo
@@ -187,7 +187,7 @@ RECURSIVE_TARGETS = info-recursive dvi-recursive pdf-recursive \
 DIST_COMMON = Makefile.am Makefile.in
 DIST_SUBDIRS = $(SUBDIRS)
 SOURCES = autochk.cc  \
-	smurf.cc  bdd2cnf.cc  \
+	smurf.cc  bdd2cnf.cc  bddbinary.cc \
 	cnf.cc      flatten.cc  markbdd.cc xorbdd.cc \
 	parse.cc    sat.cc      tracer.cc   \
         read_result.cc read_input.cc write_output.cc
@@ -222,6 +222,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/autochk.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bdd2cnf.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bddbinary.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cnf.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/flatten.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/markbdd.Plo@am__quote@
