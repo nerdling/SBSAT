@@ -253,7 +253,7 @@ bdd_gc()
    // don't do it if there are free nodes
    if (bddtable_free != NULL) return;
 
-   d3_printf1("BDD_GC START\n");
+   d4_printf1("BDD_GC START\n");
 #ifndef NDEBUG
    int totalin=0, totalout=0;
    // count free nodes -- statistics -- can be removed
@@ -350,7 +350,7 @@ bdd_gc()
       totalout++;
       p = p->next;
    }
-   d3_printf4("BDD_GC %d -> %d (%.02f%%)\n", 
+   d4_printf4("BDD_GC %d -> %d (%.02f%%)\n", 
          totalin, totalout, totalin==0?0:1.0*(totalout-totalin)/totalin);
 #endif
    
