@@ -82,7 +82,8 @@
 #define CNF2 3
 #define MINXCNF 4
 #define ITE2  5
-#define CNF2MK 6
+#define XCNF2 6
+#define CNF2MK 7
 
 char name[128];
 int formula_type = XCNF;
@@ -99,6 +100,7 @@ char *var(int n, int x, int k) {
 void vanDerWaerden(char *vdw_type, int n, int k, int p) {
    if (!strcmp(vdw_type, "cnf")) formula_type = CNF; else 
    if (!strcmp(vdw_type, "xcnf")) formula_type = XCNF; else 
+   if (!strcmp(vdw_type, "xcnf2")) formula_type = XCNF2; else 
    if (!strcmp(vdw_type, "cnf2")) formula_type = CNF2; else 
    if (!strcmp(vdw_type, "cnf2mk")) formula_type = CNF2MK; else 
    if (!strcmp(vdw_type, "ite")) formula_type = ITE; else 
@@ -137,11 +139,22 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
       //   fprintf(stdout, "%s ", var(n, x, 0));
       //fprintf(stdout, ")\n");
       break;
+    case XCNF2:
+      if (k != 2) {
+         fprintf(stderr, "Can't use XCNF2 for any other k but 2\n");
+         exit(1);
+      }
+      clauses -= n;
+      clauses /= 2; 
+      fprintf(stdout, "p cnf %d %d\n", n, clauses);
+      break;
     case CNF2MK:
+      /*
       sym = n/(p-1); //mk version
       if (sym*(p-1) != n) { fprintf(stderr, "Can't do it properly\n"); exit(1); }
       sym_clauses = (sym)*(p-2)*2;
       sym_clauses += - 2*(p-2) - ((sym-1)/11)*2*(p-2);
+      */
     case CNF2:
       if (k != 2) {
          fprintf(stderr, "Can't use CNF2 for any other k but 2\n");
@@ -328,7 +341,16 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
          fprintf(stderr, "======================== Problem\n");
       }
       if (formula_type == CNF2MK) {
+         // add  min sat
+         for(int i=1;i<=n;i++) {
+            if ((i-1)%6 == 0) {
+               if (i!=1) fprintf(stdout, " ] 3\n");
+               fprintf(stdout, "#1 [ ");
+            }
+            fprintf(stdout, "%s ", var(n, i, 0));
+         }
          // add symetry
+         /*
          for(int i=1;i<=sym;i++) {
             if ((i-1)%11 == 0) continue;
             for(int j=1;j<(p-1);j++) {
@@ -339,6 +361,25 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
                fprintf(stdout, "-%s 0\n", var(n, eq_var, 0)); 
             }
          }
+         */
+      }
+   } else if (formula_type == XCNF2) {
+      fprintf(stdout, "c prevent any arithmetic progression of length %d for every bucket %d\n", p, k);
+      for(int num = 1; num <= n; num++) {
+         for(int step = 1; 1; step++) {
+            if (step * (p-1) + num > n) break;
+            fprintf(stdout, "#1 [ ");
+            int base = num;
+            for(int z = 0; z < p; z++) {
+               fprintf(stdout, "%s ", var(n, base, 0));
+               base+=step;
+            }
+            fprintf(stdout, " ] %d\n", p-1);
+            clause_count++;
+         }
+      }
+      if (clause_count != clauses) {
+         fprintf(stderr, "======================== Problem\n");
       }
    } else if (formula_type == MINXCNF) {
       fprintf(stdout, "c prevent any arithmetic progression of length %d for every bucket %d\n", p, k);
