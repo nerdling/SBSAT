@@ -190,7 +190,7 @@ ITE_INLINE void AllocateSmurfAuStatesStack(int newsize);
 ITE_INLINE void AllocateSpecialFnStack(int newsize);
 
 ITE_INLINE TransitionAu *
-CreateTransitionAu(SmurfAuState *pState, int i, int nSolverVble, int value, int nAutarkyVble);
+CreateTransitionAu(SmurfAuState *pState, int i, int nSolverVble, int nAutarkyVble, int value);
 ITE_INLINE TransitionAu *
 FindTransitionAuDebug (SmurfAuState * pState, int i, int nVble, int nVbleValue, int nAutarkyVble);
 #define FindTransitionAu FindTransitionAuDebug

@@ -43,7 +43,7 @@
 long gnTotalBytesForTransitionAus = 0;
 
 ITE_INLINE TransitionAu *
-CreateTransitionAu(SmurfAuState *pSmurfAuState, int i, int nSolverVble, int nAutarkyVble, int value)
+CreateTransitionAu(SmurfAuState *pSmurfAuState, int i, int nSolverVble, int value, int nAutarkyVble)
 {
    int nVble = arrSolver2IteVarMap[nSolverVble];
 
@@ -96,7 +96,9 @@ ComputeSmurfAuOfNormalized(BDDNodeStruct *pFunc, int nAutarkyVble)
    pSmurfAuState->vbles.arrElts = (int*)realloc(pSmurfAuState->vbles.arrElts, pSmurfAuState->vbles.nNumElts*sizeof(int));
 
    /* mapping ite->solver variables */
-   for (int i=0;i<pSmurfAuState->vbles.nNumElts;i++) {
+	pSmurfAuState->vbles.arrElts[0] = nAutarkyVble;
+	int iter = 1;
+	for (int i=0;i<pSmurfAuState->vbles.nNumElts;i++) {
       if (pSmurfAuState->vbles.arrElts[i]==0 || 
 			 arrIte2SolverVarMap[pSmurfAuState->vbles.arrElts[i]]==0) {
          dE_printf1("\nassigned variable in an Autarky BDD in the solver");
@@ -105,10 +107,14 @@ ComputeSmurfAuOfNormalized(BDDNodeStruct *pFunc, int nAutarkyVble)
 						  variablelist[pSmurfAuState->vbles.arrElts[i]].true_false);
          //exit(1);
       }
-      pSmurfAuState->vbles.arrElts[i] = arrIte2SolverVarMap[pSmurfAuState->vbles.arrElts[i]];
+		
+      if(arrIte2SolverVarMap[pSmurfAuState->vbles.arrElts[i]] != nAutarkyVble)
+		  pSmurfAuState->vbles.arrElts[iter++] = arrIte2SolverVarMap[pSmurfAuState->vbles.arrElts[i]];
    }
-   //Sort the variables.
-   qsort(pSmurfAuState->vbles.arrElts, pSmurfAuState->vbles.nNumElts, sizeof(int), revcompfunc);
+	
+   
+	//Sort the variables.
+   //qsort(pSmurfAuState->vbles.arrElts, pSmurfAuState->vbles.nNumElts, sizeof(int), revcompfunc);
 
    /* allocate transitions */
    int nBytesForTransitionAus = pSmurfAuState->vbles.nNumElts * 2 * sizeof (TransitionAu);
@@ -117,6 +123,7 @@ ComputeSmurfAuOfNormalized(BDDNodeStruct *pFunc, int nAutarkyVble)
 
    gnTotalBytesForTransitionAus += nBytesForTransitionAus;
 
+	/*
 	for(int i=0;i<pSmurfAuState->vbles.nNumElts;i++)
 	  {
 		  int nSolverVble = pSmurfAuState->vbles.arrElts[i];
@@ -126,7 +133,7 @@ ComputeSmurfAuOfNormalized(BDDNodeStruct *pFunc, int nAutarkyVble)
 		  // Compute transition that occurs when vble is set to false.
 		  CreateTransitionAu(pSmurfAuState, i, nSolverVble, nAutarkyVble,  BOOL_FALSE);
 	  }
-	
+	*/
    return pSmurfAuState;
 }
 
@@ -153,7 +160,7 @@ int SmurfAuCreateFunction(int nFnId, BDDNode *bdd, int nFnType, int eqVble)
    arrSolverFunctions[nFnId].nFnId = nFnId;
    arrSolverFunctions[nFnId].nType = nFnType;
    arrSolverFunctions[nFnId].fn_smurf_au.nSmurfAuEqualityVble = arrIte2SolverVarMap[abs(eqVble)];
-   arrSolverFunctions[nFnId].fn_smurf_au.pInitialState = BDD2SmurfAu(bdd, eqVble);
+   arrSolverFunctions[nFnId].fn_smurf_au.pInitialState = BDD2SmurfAu(bdd, arrIte2SolverVarMap[abs(eqVble)]);
    arrSolverFunctions[nFnId].fn_smurf_au.pPrevState = arrSolverFunctions[nFnId].fn_smurf_au.pCurrentState = arrSolverFunctions[nFnId].fn_smurf_au.pInitialState;
    arrSolverFunctions[nFnId].fn_smurf_au.arrSmurfAuPath.literals = (int*)ite_calloc(arrSolverFunctions[nFnId].fn_smurf_au.pInitialState->vbles.nNumElts+1, sizeof(int),
                9, "arrSmurfAuPath[].literals");
