@@ -48,7 +48,7 @@ Do_Cofactor()
 {
   int ret=PREP_NO_CHANGE;
   BDDNode *cof = NULL;
-  d3_printf1("\nCOFACTORING - ");
+  d3_printf1("COFACTORING - ");
 	affected = 0;
 	char p[100];
 	D_3(

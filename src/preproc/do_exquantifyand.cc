@@ -41,19 +41,27 @@
 #include "ite.h"
 #include "preprocess.h"
 
-int MAX_EXQUANTIFY_CLAUSES = 10;	  //Number of BDDs a variable appears in
+int MAX_EXQUANTIFY_CLAUSES = 3000;	  //Number of BDDs a variable appears in
                                    //to quantify that variable away.
-int MAX_EXQUANTIFY_VARLENGTH = 10; //Limits size of number of vars in 
+int MAX_EXQUANTIFY_VARLENGTH = 5; //Limits size of number of vars in 
                                    //constraints created by ExQuantify
 //!
 
 int ExQuantifyAnd();
 
+int countBDDs() 
+{
+	int count = 0;
+	for(int x = 0; x < nmbrFunctions; x++)
+	  if(functions[x]!=true_ptr) count++;
+	return count;
+}
+
 int
 Do_ExQuantifyAnd()
 {
-	MAX_EXQUANTIFY_CLAUSES += 10;
-	MAX_EXQUANTIFY_VARLENGTH +=10;
+	MAX_EXQUANTIFY_CLAUSES += 5;
+	MAX_EXQUANTIFY_VARLENGTH +=5;
 	d3_printf1 ("ANDING AND EXISTENTIALLY QUANTIFYING - ");
 	int cofs = PREP_CHANGED;
 	int ret = PREP_NO_CHANGE;
@@ -152,10 +160,33 @@ ExQuantifyAnd ()
 					   bool OLD_DO_INFERENCES = DO_INFERENCES;
 						DO_INFERENCES = 0;
 						for(int z = 1; z < examount[i].length; z++) {
+							D_3(
+							  for(int iter = 0; iter<str_length; iter++)
+								 d3_printf1("\b");
+							  sprintf(p, "(%d:%d/%ld[%d])",i, z, examount[i].length, countBDDs());
+							  str_length = strlen(p);
+							  d3_printf1(p);
+							);
 							if (nCtrlC) {
 								out = 1;
 								break;
 							}
+
+							int bdd_length = 0;
+							int *bdd_vars = NULL;
+							switch (int r=Rebuild_BDD(Quantify, &bdd_length, bdd_vars)) {
+							 case TRIV_UNSAT:
+							 case TRIV_SAT:
+							 case PREP_ERROR: return r;
+							 default: break;
+							}
+							delete [] bdd_vars;
+							bdd_vars = NULL;
+							if(bdd_length>MAX_EXQUANTIFY_VARLENGTH) {
+								out = 1;
+								break;
+							}
+
 							if(length[examount[i].num[z]] > MAX_EXQUANTIFY_VARLENGTH){
 								out = 1;
 								break;
@@ -178,6 +209,7 @@ ExQuantifyAnd ()
 							//if(variables[examount[i].num[z]].num!=NULL)
 							//  delete variables[examount[i].num[z]].num;
 							//variables[examount[i].num[z]].num = NULL;
+
 							ret = PREP_CHANGED;
 						}
 						DO_INFERENCES = OLD_DO_INFERENCES;
