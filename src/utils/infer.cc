@@ -155,23 +155,6 @@ void
 GetInferFoAN(BDDNode *func) {
 	infer *r = func->thenCase->inferences;
 	infer *e = func->elseCase->inferences;
-	//If this node is a leaf node, put either func->variable 
-	//  or -(func->variable) as the first element in inferarray
-	//  and return inferarray.
-/* leaf node is covered under thenCase=false_ptr or elseCase=false_ptr 
-	if (IS_TRUE_FALSE(func->thenCase) && IS_TRUE_FALSE(func->elseCase))
-	  {
-//		  fprintf(stderr, "Found a leaf, making an inference\n");
-//		  printBDDerr(func);
-//		  fprintf(stderr, "\n");
-		  if (func->thenCase == false_ptr)
-		      func->inferences = AllocateInference(-(func->variable), 0, NULL);
-		  else
-		      func->inferences = AllocateInference((func->variable), 0, NULL);
-		  return;
-		  
-	  }
-     */
 	//If the elseCase is false then add -(func->variable) to the front
 	//  of the list r and return it.
 	if (func->elseCase == false_ptr)
@@ -210,6 +193,8 @@ GetInferFoAN(BDDNode *func) {
 	infer *ehead = e;
 	//Pass 1...Search for simple complements
 	//       fprintf(stderr, "Doing simple complement search\n");
+   //SEAN!!! it may not be necessary to have two loops (passes) here.
+	
 	while ((r != NULL) && (e != NULL))
 	  {
 		  if ((r->nums[0] == -(e->nums[0])) && (r->nums[1] == 0)
@@ -312,6 +297,106 @@ GetInferFoAN(BDDNode *func) {
 		  r = r->next;
 	  }
 
+	r = rhead;
+	e = ehead;
+
+	//Pass 3...Search for equals on double variable inferences.
+	//  ex1. 3, 4 and 3=4 ... ex2. -4,7 and 4=-7
+	//       fprintf(stderr, "doing pass 2, searching for single and double variables\n");
+	while ((r != NULL) && (e != NULL))
+	  {
+		  //fprintf(stderr, "\nr:%d=%d e:%d=%d", r->nums[0], r->nums[1], e->nums[0], e->nums[1]);
+		  //If first nums of r and e are different, increment one of them
+		  if (abs (r->nums[0]) < abs (e->nums[0]))
+			 {
+				 e = e->next;
+				 continue;
+			 }
+		  
+		  if (abs (e->nums[0]) < abs (r->nums[0]))
+			 {
+				 r = r->next;
+				 continue;
+			 }
+
+		  if (abs (e->nums[0]) == abs (r->nums[0]))
+			 {
+				 if ((r->nums[1] != 0) && (e->nums[1] == 0)) {
+					 infer *e_iter = e->next;
+					 //r0 r1  : e0  e1
+					 //r0 -r1 : -e0 e1
+					 //r0 r1  : -e0 -e1 ***
+					 //r0 -r1 : e0  -e1 ***
+					 int pos = 1;
+					 //r->nums[0] is always positive in an equivalence
+					 assert(r->nums[0] > 0);
+					 if(r->nums[1] > 0 && e->nums[0] < 0) pos = -1;
+					 if(r->nums[1] < 0 && e->nums[0] > 0) pos = -1;
+					 while(e_iter!=NULL) {
+						 if(abs(e_iter->nums[0]) < abs(r->nums[1])) break;
+						 if((pos * e_iter->nums[0]) == abs(r->nums[1]) && e_iter->nums[1] == 0) {
+							 *infs = AllocateInference(r->nums[0], r->nums[1], NULL);
+							 infs = &((*infs) -> next);
+							 //fprintf(stderr, "\nadding %d=%d because of:", r->nums[0], r->nums[1]);
+							 //printBDDerr(func);
+							 //fprintf(stderr, "\n");
+							 break;
+						 }
+						 e_iter = e_iter->next;
+					 }
+					 e = e->next;
+					 continue;
+				 }
+			 
+				 if ((e->nums[1] != 0) && (r->nums[1] == 0)) {
+					 infer *r_iter = r->next;
+					 //e0 e1  : r0  r1
+					 //e0 -e1 : -r0 r1
+					 //e0 e1  : -r0 -r1 ***
+					 //e0 -e1 : r0  -r1 ***
+					 int pos = 1;
+					 assert(e->nums[0] > 0);
+					 //e->nums[0] is always positive in an equivalence
+					 if(e->nums[1] > 0 && r->nums[0] < 0) pos = -1;
+					 if(e->nums[1] < 0 && r->nums[0] > 0) pos = -1;
+					 while(r_iter!=NULL) {
+						 if(abs(r_iter->nums[0]) < abs(e->nums[1])) break;
+						 if((pos * r_iter->nums[0]) == abs(e->nums[1]) && r_iter->nums[1] == 0) {
+							 *infs = AllocateInference(e->nums[0], e->nums[1], NULL);
+							 infs = &((*infs) -> next);
+							 //fprintf(stderr, "\nadding %d=%d because of:", e->nums[0], e->nums[1]);
+							 //printBDDerr(func);
+							 //fprintf(stderr, "\n");
+							 break;
+						 }
+						 r_iter = r_iter->next;
+					 }
+					 r = r->next;
+					 continue;
+				 }
+
+				 //if second nums of r and e are different, increment one of them
+				 if (abs (r->nums[1]) < abs (e->nums[1]))
+					{
+						e = e->next;
+						continue;
+					}
+				 if (abs (e->nums[1]) < abs (r->nums[1]))
+					{
+						r = r->next;
+						continue;
+					}
+				 
+				 if (abs (e->nums[1]) == abs (r->nums[1])) 
+					{
+						e=e->next;
+						r=r->next;
+						continue;
+					}
+			 }
+		  
+	  }
+	
 	return;
 }
 
