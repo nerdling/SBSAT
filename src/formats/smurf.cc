@@ -334,7 +334,7 @@ void Smurfs_to_BDD () {
 		  for (i = 1; i <= y + 1; i++)
 			 {
 				 vars[x].integers[i] = tempint[i - 1];
-				 if (vars[x].integers[i] >= numinp) {
+				 if (vars[x].integers[i] > numinp) {
 					 fprintf(stderr, "Variable number %d is larger than the allowed %ld\n", vars[x].integers[i], numinp);
 					 exit(1);
 				 }
