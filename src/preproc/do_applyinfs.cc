@@ -103,9 +103,9 @@ Do_Apply_Inferences ()
 				d3_printf3 ("{%d=%d}", inferlist->nums[0], inferlist->nums[1]);
 				str_length = 0;
 				variablelist[inferlist->nums[1]].equalvars = inferlist->nums[0];
-				if(independantVars[inferlist->nums[1]] == 2)
-				  independantVars[inferlist->nums[0]] = 2;
+				int count1 = 0;
 				for (llist * k = amount[inferlist->nums[1]].head; k != NULL;) {
+					count1++;
 					int j = k->num;
 					k = k->next; //This must be done here because k could be deleted in Rebuild_BDDx()
 					BDDNode *before = functions[j];
@@ -147,6 +147,18 @@ Do_Apply_Inferences ()
 						  return TRIV_UNSAT;
 					}
 				}
+
+				int count0 = 0;
+				for (llist *k = amount[inferlist->nums[0]].head; k != NULL; k=k->next)
+				  count0++;
+				
+				if(independantVars[inferlist->nums[1]] == 2 && count1 >= count0)
+				  independantVars[inferlist->nums[0]] = 2;
+				else if(independantVars[inferlist->nums[0]] == 2 && count1 > count0)
+				  independantVars[inferlist->nums[0]] = independantVars[inferlist->nums[1]];
+				else if(independantVars[inferlist->nums[1]] == reverse_independant_dependant)
+				  independantVars[inferlist->nums[0]] = reverse_independant_dependant;
+				
 //				amount[inferlist->nums[0]].tail->next = amount[inferlist->nums[1]].head;
 //				amount[inferlist->nums[0]].tail = amount[inferlist->nums[1]].tail;
 //				amount[inferlist->nums[1]].head = NULL;
@@ -161,9 +173,9 @@ Do_Apply_Inferences ()
 				d3_printf3 ("{%d=%d}", inferlist->nums[0], inferlist->nums[1]);
 				variablelist[-inferlist->nums[1]].equalvars = -inferlist->nums[0];
 				//Gotta keep that (-inferlist->nums[0]) negative...trust me
-				if(independantVars[-inferlist->nums[1]] == 2)
-				  independantVars[inferlist->nums[0]] = 2;
+				int count1 = 0;
 				for (llist * k = amount[-inferlist->nums[1]].head; k != NULL;) {
+					count1++;
 					int j = k->num;
 					k = k->next; //This must be done here because k could be deleted in Rebuild_BDDx()
 					BDDNode *before = functions[j];
@@ -212,6 +224,18 @@ Do_Apply_Inferences ()
 						  return TRIV_UNSAT;
 					}
 				}
+
+				int count0 = 0;
+				for (llist *k = amount[inferlist->nums[0]].head; k != NULL; k=k->next)
+				  count0++;
+				
+				if(independantVars[-inferlist->nums[1]] == 2 && count1 >= count0)
+				  independantVars[inferlist->nums[0]] = 2;
+				else if(independantVars[inferlist->nums[0]] == 2 && count1 > count0)
+				  independantVars[inferlist->nums[0]] = independantVars[-inferlist->nums[1]];
+				else if(independantVars[-inferlist->nums[1]] == reverse_independant_dependant)
+				  independantVars[inferlist->nums[0]] = reverse_independant_dependant;
+
 //				amount[inferlist->nums[0]].tail->next = amount[-inferlist->nums[1]].head;
 //				amount[inferlist->nums[0]].tail = amount[-inferlist->nums[1]].tail;
 //				amount[-inferlist->nums[1]].head = NULL;
