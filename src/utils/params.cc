@@ -128,14 +128,22 @@ t_opt options[] = {
  */
 { NULL, "", "", P_NONE, {"0"}, {"0"}, VAR_NORMAL, 0, 
 	        "\nInput options:"},
-{ &AND_EQU_LIMIT, "", "limit-and-equ", P_INT, V(i:0,"0"), V(i:2,"2"), VAR_NORMAL, 0, 
+{ functionTypeLimits+AND, "", "limit-and-equ", P_INT, V(i:0,"0"), V(i:2,"2"), VAR_NORMAL, 0, 
+                "The minimum # of literals to flag sp. function and_equ"},
+{ functionTypeLimits+OR, "", "limit-or-equ", P_INT, V(i:0,"0"), V(i:2,"2"), VAR_NORMAL, 0, 
+                "The minimum # of literals to flag sp. function or_equ"},
+{ functionTypeLimits+PLAINOR, "", "limit-or", P_INT, V(i:0,"0"), V(i:8,"8"), VAR_NORMAL, 0, 
+                "The minimum # of literals to flag sp. function plainor"},
+{ functionTypeLimits+PLAINXOR, "", "limit-xor", P_INT, V(i:0,"0"), V(i:5,"5"), VAR_NORMAL, 0,
+                "The minimum # of literals to flag sp. function plainxor"},
+/*{ &AND_EQU_LIMIT, "", "limit-and-equ", P_INT, V(i:0,"0"), V(i:2,"2"), VAR_NORMAL, 0, 
                 "The minimum # of literals to flag sp. function and_equ"},
 { &OR_EQU_LIMIT, "", "limit-or-equ", P_INT, V(i:0,"0"), V(i:2,"2"), VAR_NORMAL, 0, 
                 "The minimum # of literals to flag sp. function or_equ"},
 { &PLAINOR_LIMIT, "", "limit-or", P_INT, V(i:0,"0"), V(i:8,"8"), VAR_NORMAL, 0, 
                 "The minimum # of literals to flag sp. function plainor"},
 { &PLAINXOR_LIMIT, "", "limit-xor", P_INT, V(i:0,"0"), V(i:5,"5"), VAR_NORMAL, 0,
-                "The minimum # of literals to flag sp. function plainxor"},
+                "The minimum # of literals to flag sp. function plainxor"},*/
 { &BREAK_XORS, "", "break-xors", P_INT, V(i:0,"0"), V(i:1,"1"), VAR_NORMAL, 0, 
                 "Break XORS into linear and non-linear functions"},
 
@@ -329,6 +337,13 @@ t_opt options[] = {
 //
 
 void
+init_params()
+{
+   for(int i=0;i<MAX_FUNC;i++)
+      functionTypeLimits[i] = 1000000000; /* huge number max_int? */
+}
+
+void
 finish_params()
 {
    /* special files */
@@ -448,6 +463,7 @@ finish_params()
 int
 params_parse_cmd_line(int argc, char *argv[])
 {
+   init_params();
    init_options();
    read_cmd(argc, argv);
    fix_ini_filename();

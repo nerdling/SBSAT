@@ -143,10 +143,10 @@ extern double ite_counters_f[MAX_COUNTER_F];
 //extern char png_filename[128];
 extern char jpg_filename[128];
 
-extern int AND_EQU_LIMIT;
-extern int OR_EQU_LIMIT;
-extern int PLAINXOR_LIMIT;
-extern int PLAINOR_LIMIT;
+//extern int AND_EQU_LIMIT;
+//extern int OR_EQU_LIMIT;
+//extern int PLAINXOR_LIMIT;
+//extern int PLAINOR_LIMIT;
 
 extern int verify_solution;
 
@@ -218,4 +218,5 @@ extern float JHEURISTIC_K_INF;
 extern char preset_variables_string[2048];
 extern int prover3_max_vars;
 extern int do_split_max_vars;
+extern int functionTypeLimits[MAX_FUNC];
 #endif

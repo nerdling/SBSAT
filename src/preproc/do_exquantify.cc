@@ -135,11 +135,18 @@ int ExQuantify () {
 			//Only quantify away variables from unknown functions, or functions
 			//who have the quantified variable as the 'head' or LHS variable of 
 			//their function...a LHS variable is a 'Left Hand Side' variable.
-			if ((functionType[j] == OR && length[j] < OR_EQU_LIMIT)
+         if ((length[j] < functionTypeLimits[functionType[j]]) ||
+               (i == abs(equalityVble[j])) ||
+				   (functionType[j] == PLAINOR)
+               )
+         /*
+         if ((functionType[j] == OR && length[j] < OR_EQU_LIMIT)
 				 || (functionType[j] == AND && length[j] < AND_EQU_LIMIT)
 				 || (functionType[j] == PLAINOR)
 				 || (i == abs (equalityVble[j]))
-				 || (functionType[j] == UNSURE)) {
+				 || (functionType[j] == UNSURE)) 
+         */
+         {
 
 				Quantify = functions[j];
 				affected++;

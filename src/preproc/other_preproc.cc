@@ -754,7 +754,7 @@ Stats (int length[], store variables[])
 			 fprintf (stdout, "is a PLAINOR function and ");
 		  else if (functionType[x] == ITE)
 			 fprintf (stdout, "is an ITE= function and ");
-		  else if (length[x] > PLAINOR_LIMIT) fprintf(stdout, "has more than PLAINOR_LIMIT (error) variables and ");
+		  else if (length[x] > functionTypeLimits[PLAINOR]) fprintf(stdout, "has more than PLAINOR_LIMIT (error) variables and ");
 		  fprintf (stdout, "has %ld nodes and %d variables.\n", y, length[x]);
 		  //if (parameterizedVars[x] != NULL)
 		//	 {

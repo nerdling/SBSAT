@@ -610,7 +610,7 @@ int splitXors() {
 	int *xor_vars = new int[numinp+1]; //This could be made better in the future.
 	int *nonxor_vars = new int[numinp+1]; //This could be made better in the future.
 	for(long x = 0; x < numout; x++) {
-		if(length[x] <= PLAINXOR_LIMIT || functionType[x]!=UNSURE) continue; //???
+		if(length[x] <= functionTypeLimits[PLAINXOR] || functionType[x]!=UNSURE) continue; //???
 		BDDNode *xdd = bdd2xdd(functions[x]);		
 		countSingleXors(xdd, xor_vars, nonxor_vars);
 		d4_printf2("\n%ld: ", x);

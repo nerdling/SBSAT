@@ -127,14 +127,18 @@ int DO_PRUNING_FN() {
                 continue;
              if (variables[j].min >= variables[x].max) 
                 continue;
-				 if (nmbrVarsInCommon (x, j, length, variables, STRENGTH) == 0)
-					continue;
-				 
+             if (nmbrVarsInCommon (x, j, length, variables, STRENGTH) == 0)
+                continue;
+
+             if (length[x] < functionTypeLimits[functionType[x]])
+             /*
 				 if ((functionType[x] != AND || length[x] < AND_EQU_LIMIT)
 					  && (functionType[x] != OR || length[x] < OR_EQU_LIMIT)
 					  && (functionType[x] != PLAINOR || length[x] < PLAINOR_LIMIT)
 					  && (functionType[x] != PLAINXOR || length[x] < PLAINXOR_LIMIT))
+              */
 					{
+
 						//fprintf(stderr, "\n\n%d: ", x);
 						//printBDDerr(functions[x]);
 						//fprintf(stderr, "\n");
@@ -179,10 +183,13 @@ int DO_PRUNING_FN() {
 						  }
 					}
 				 
+             if (length[j] < functionTypeLimits[functionType[j]])
+             /*
 				 if ((functionType[j] != AND || length[j] < AND_EQU_LIMIT)
 					  && (functionType[j] != OR || length[j] < OR_EQU_LIMIT)
 					  && (functionType[j] != PLAINOR || length[j] < PLAINOR_LIMIT)
 					  && (functionType[j] != PLAINXOR || length[j] < PLAINXOR_LIMIT))
+             */
 					{
 						//fprintf(stderr, "\n\n%d: ", j);
 						//printBDDerr(functions[j]);

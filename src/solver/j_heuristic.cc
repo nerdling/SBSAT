@@ -204,6 +204,7 @@ J_ResetHeuristicScores()
 
 #define HEUR_SIGN(nBestVble) \
    (arrHeurScores[nBestVble].Pos >= arrHeurScores[nBestVble].Neg?BOOL_TRUE:BOOL_FALSE)
+//#define HEUR_SIGN(nBestVble) (BOOL_TRUE)
 
 #include "heur_choice.cc"
 

@@ -374,10 +374,13 @@ Finish_Preprocessing()
 	numout = nmbrFunctions;
 
 	for (long x = 0; x < nmbrFunctions; x++) {
+         if (length[x] < functionTypeLimits[functionType[x]])
+         /*
          if ((functionType[x] == AND && length[x] < AND_EQU_LIMIT)
           || (functionType[x] == OR && length[x] < OR_EQU_LIMIT)
           || (functionType[x] == PLAINOR && length[x] < PLAINOR_LIMIT)
           || (functionType[x] == PLAINXOR && length[x] < PLAINXOR_LIMIT)) 
+          */
             functionType[x] = UNSURE;
    }
 

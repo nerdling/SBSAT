@@ -244,10 +244,11 @@ c3_bdds(int idx, int *vars)
        case NOT_Tag: bdd = ite_not(bdd1); break;
        default: assert(0); exit(1); break;
       }
+      
       if (vars1+vars2 > prover3_max_vars) {
-         
          bdd = tmp_equ_var(bdd);
       }
+      
       *vars = vars1 + vars2;
       c3[idx].bdd = bdd;
       c3[idx].vars = *vars;
