@@ -88,7 +88,8 @@ Do_Apply_Inferences ()
 				Pos_replace++;
 				for(int iter = 0; iter<str_length; iter++)
 				  d3_printf1("\b");
-				d3_printf3 ("{%d=%d}", inferlist->nums[0], inferlist->nums[1]);
+				d3e_printf3 ("{%d=%d}", inferlist->nums[0], inferlist->nums[1]);
+				d4_printf5("{%s(%d)=%s(%d)}", s_name(inferlist->nums[0]), inferlist->nums[0], s_name(inferlist->nums[1]), inferlist->nums[1]);
 				str_length = 0;
 				variablelist[inferlist->nums[1]].true_false = -1;
 				variablelist[inferlist->nums[1]].equalvars = inferlist->nums[0];
@@ -156,7 +157,8 @@ Do_Apply_Inferences ()
 				for(int iter = 0; iter<str_length; iter++)
 				  d3_printf1("\b");
 				str_length = 0;  
-				d3_printf3 ("{%d=%d}", inferlist->nums[0], inferlist->nums[1]);
+				d3e_printf3 ("{%d=%d}", inferlist->nums[0], inferlist->nums[1]);
+				d4_printf5 ("{%s(%d)!=%s(%d)}", s_name(inferlist->nums[0]), inferlist->nums[0], s_name(-inferlist->nums[1]), -inferlist->nums[1]);
 				variablelist[-inferlist->nums[1]].true_false = -1;
 				variablelist[-inferlist->nums[1]].equalvars = -inferlist->nums[0];
 				//Gotta keep that (-inferlist->nums[0]) negative...trust me
@@ -231,7 +233,8 @@ Do_Apply_Inferences ()
 				for(int iter = 0; iter<str_length; iter++)
 					d3_printf1("\b");
 				str_length = 0;  
-				d3_printf2 ("{%d=T}", abs (inferlist->nums[0]));
+				d3e_printf2 ("{%d=T}", abs (inferlist->nums[0]));
+				d4_printf3 ("{%s(%d)=T}", s_name(abs(inferlist->nums[0])), abs (inferlist->nums[0]));
 				variablelist[inferlist->nums[0]].true_false = 1;
 				set_variable_all(amount[inferlist->nums[0]].head, inferlist->nums[0], 1);
 				for (llist * k = amount[inferlist->nums[0]].head; k != NULL;) {
@@ -256,7 +259,8 @@ Do_Apply_Inferences ()
 				for(int iter = 0; iter<str_length; iter++)
 					d3_printf1("\b");
 				str_length = 0;  
-				d3_printf2 ("{%d=F}", abs (inferlist->nums[0]));
+				d3e_printf2 ("{%d=F}", abs (inferlist->nums[0]));
+				d4_printf3 ("{%s(%d)=F}", s_name(abs(inferlist->nums[0])), abs(inferlist->nums[0]));
 				variablelist[-inferlist->nums[0]].true_false = 0;
 				set_variable_all(amount[-inferlist->nums[0]].head, -inferlist->nums[0], 0);
 				for (llist * k = amount[-inferlist->nums[0]].head; k != NULL;) {

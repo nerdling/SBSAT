@@ -253,7 +253,8 @@ int ExQuantify () {
 						if(amount[i].head->next == NULL && amount[i].head->num == j) {
 							for(int iter = 0; iter<str_length; iter++)
 							  d3_printf1("\b");
-							d3_printf2 ("*{%d}", i);
+							d3e_printf2 ("*{%d}", i);
+							d4_printf3("*{%s(%d)}", s_name(i), i);
 							str_length = 0;// strlen(p);
 							functions[j] = xquantify (functions[j], i);
 							variablelist[i].true_false = 2;

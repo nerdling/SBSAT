@@ -311,7 +311,10 @@ printBDDTree(BDDNode * bdd, int *which_zoom)
 				sprintf(aa, "*%d", (*which_zoom)++);
             zoomarr[reference++] = y;
          } else {
-				sprintf(aa, "%d", tempint[y]);
+				sprintf(aa, "%s", s_name(tempint[y]));
+				D_3(sprintf(aa, "%d", tempint[y]););
+				D_4(sprintf(aa, "%s(%d)", s_name(tempint[y]), tempint[y]););
+
 			}
 			int l = strlen(aa);
 //			fprintf(stdout, "(%d)", l);

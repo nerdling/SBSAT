@@ -363,7 +363,8 @@ int ExQuantifyAnd () {
 								independantVars[variables[j].num[v]] == 2) {
 								for(int iter = 0; iter<str_length; iter++)
 								  d3_printf1("\b");
-								d3_printf2 ("*{%d}", variables[j].num[v]);
+								d3e_printf2 ("*{%d}", variables[j].num[v]);
+								d4_printf3 ("*{%s(%d)}", s_name(variables[j].num[v]), variables[j].num[v]);
 								str_length = 0;// strlen(p);
 								functions[j] = xquantify (functions[j], variables[j].num[v]);
 								variablelist[variables[j].num[v]].true_false = 2;
@@ -393,7 +394,8 @@ int ExQuantifyAnd () {
 							if(quant_var != 0) {
 								for(int iter = 0; iter<str_length; iter++)
 								  d3_printf1("\b");
-								d3_printf2 ("*{%d}", quant_var);
+								d3e_printf2 ("*{%d}", quant_var);
+								d4_printf3 ("*{%s(%d)}", s_name(quant_var), quant_var);
 								str_length = 0;// strlen(p);
 								functions[j] = xquantify (functions[j], quant_var);
 								variablelist[quant_var].true_false = 2;
@@ -445,7 +447,8 @@ int ExQuantifyAnd () {
 					functions[j] = Quantify;
 					for(int iter = 0; iter<str_length; iter++)
 					  d3_printf1("\b");
-					d3_printf2 ("*{%d}", i);
+					d3e_printf2 ("*{%d}", i);
+					d4_printf3 ("*{%s(%d)}", s_name(i), i);
 					str_length = 0;// strlen(p);
 					functions[j] = xquantify (functions[j], i);
 					variablelist[i].true_false = 2;
