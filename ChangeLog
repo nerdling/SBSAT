@@ -1,3 +1,13 @@
+2004-07-07 11:23  fett
+
+	* src/utils/bdd_ite.cc: fixed a minor bug introduced yesterday.
+	
+	  ~Sean
+
+2004-07-07 11:23  fett
+
+	* ChangeLog: updated
+
 2004-07-06 13:40  fett
 
 	* src/utils/bdd_ite.cc: added in hashtables on all ite_x_?? calls
