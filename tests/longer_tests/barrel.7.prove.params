@@ -1,0 +1,1 @@
+barrel.7.prove --formatin 3 --expected-result TRIV_UNSAT 
