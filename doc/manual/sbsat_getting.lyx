@@ -782,6 +782,39 @@ Options:
 \layout Subsection
 
 Converting your problem into a SAT problem
+\layout Standard
+
+Any NP-Complete problem can be translated into a SAT problem.
+ Two such problems are demonstrated here.
+ The first is a problem from AI where we have a database of information
+ and we'd like to ask a question about the database.
+ Here is a sample database taken from Charles Dodgson's (aka Lewis Carroll)
+ book 
+\emph on 
+Symbolic Logic
+\emph default 
+:
+\layout Enumerate
+
+Coloured flowers are always scented.
+\layout Enumerate
+
+I dislike flowers that are not grown in the open air.
+\layout Enumerate
+
+No flowers grown in the open air are colourless.
+\layout Standard
+
+We would like to ask this question - Do I dislike all flowers that are not
+ scented? Now we must translate these statements into first order predicate
+ logic.
+ This gives:
+\layout Enumerate
+
+nope(y)
+\layout Enumerate
+
+yep(x)
 \layout Subsection
 
 Choosing a different solver
