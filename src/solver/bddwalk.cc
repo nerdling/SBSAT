@@ -127,8 +127,8 @@ int *varstoflip;
 double *true_var_weights;
 
 float true_weight_mult = 1.6;
-float taboo_max = 0;//5;
-float taboo_length = 0;//2;
+float taboo_max = 5;
+float taboo_length = 2;
 float true_weight_taboo = 0.5;
 float true_weight_max = 0.5;
 
@@ -1059,7 +1059,15 @@ void getRandomTruePath(int x, intlist *path) {
 	path->length = 0;
 	for(int i = 0; i < len; i++) {
 		int wvar = wvariables[x].num[len-i-1];
-		if(true_var_weights[wvar] < true_weight_taboo) {
+		if(bdd->variable == wvar && bdd->thenCase == false_ptr) { //These force a True Path
+			path->num[i] = -wvar;
+			bdd = bdd->elseCase;
+			path->length++;
+		} else if(bdd->variable == wvar && bdd->elseCase == false_ptr) { //These force a True Path
+			path->num[i] = wvar;
+			bdd = bdd->thenCase;
+			path->length++;			
+		} else if(true_var_weights[wvar] < true_weight_taboo) {
 			path->num[i] = -wvar;
 			if(wvar == bdd->variable)
 			  bdd = bdd->elseCase;
@@ -1070,10 +1078,10 @@ void getRandomTruePath(int x, intlist *path) {
 			  bdd = bdd->thenCase;
 			path->length++;
 		} else if(wvar != bdd->variable) {
-//			if((random()%100) < (true_var_weights[wvar]*100))
-			if(atom[wvar] == 1)
+			if((random()%100) < (true_var_weights[wvar]*100))
 //			if((random()%2) > 0)
-			path->num[i] = wvar;
+//			if(atom[wvar] == 1)
+			  path->num[i] = wvar;
 			else
 			  path->num[i] = -wvar;
 			path->length++;
@@ -1088,7 +1096,12 @@ void getRandomTruePath(int x, intlist *path) {
 			path->length++;
 		}
 	}
-
+	if(bdd!=true_ptr) {
+		fprintf(stderr, "HEY!!!");
+		printBDDerr(bdd);
+		exit(0);		  
+	}
+	
 	//for(int i = 0; i < path->length; i++) {
 	//	fprintf(stderr, "%d ", path->num[i]);
 	//}
@@ -1150,9 +1163,11 @@ int picknoveltyplus(void)
 	/* hh: inserted modified loop breaker: */
 	//fprintf(stderr, "\ntofix: %d\n", tofix);
 	if ((random()%wp_denominator < wp_numerator)) {
+		//#1
 		getRandomTruePath(tofix, &BDDTruePaths[tofix].paths[0]);
-		flippath = 2;
+		flippath = 0;
 		
+		//#2
 		//y = 0;
 		//for(int x = 0; x < wlength[tofix]; x++) {
 		//	if((random()%2) > 0)
@@ -1161,11 +1176,13 @@ int picknoveltyplus(void)
 		//varstoflip[y] = 0;
 		//flippath = -1;
 		
+		//#3
 		//varstoflip[0] = random()%numvars+1;
 		//varstoflip[1] = wvariables[tofix].num[random()%BDDsize];
 		//y = 1;
 		//flippath = -1;
 
+		//#4
 		//varstoflip[0] = wvariables[tofix].num[random()%BDDsize];
 		//varstoflip[1] = 0;
 		//y = 1;
@@ -1194,21 +1211,23 @@ int picknoveltyplus(void)
 		for(int i = 0; i < BDDTruePaths[tofix].numpaths - pathminus; i++) {
 # ifdef USE_RANDOM_TRUE_PATHS
 			getRandomTruePath(tofix, &BDDTruePaths[tofix].paths[i]);
-			int same_path = 0;
-			for(int x = 0; x < i; x++) {
-				same_path = 1;
-				for(int y = 0; y < BDDTruePaths[tofix].paths[i].length; y++) {
-					if(BDDTruePaths[tofix].paths[i].num[y] != BDDTruePaths[tofix].paths[x].num[y]) {
-						same_path = 0;
-						break;
+			if(i!=0) {
+				int same_path = 0;
+				for(int x = 0; x < i; x++) {
+					same_path = 1;
+					for(int y = 0; y < BDDTruePaths[tofix].paths[i].length; y++) {
+						if(BDDTruePaths[tofix].paths[i].num[y] != BDDTruePaths[tofix].paths[x].num[y]) {
+							same_path = 0;
+							break;
+						}
 					}
+					if(same_path==1) break;
 				}
-				if(same_path==1) break;
-			}
-			if(same_path==1) { 
-				i=i-1;
-				pathminus++;
-				continue;
+				if(same_path==1) { 
+					i=i-1;
+					pathminus++;
+					continue;
+				}
 			}
 # endif
 			numlook++;
@@ -1246,6 +1265,7 @@ int picknoveltyplus(void)
 			if(second_best_diff < -(numfalse/2) && flippath == second_best) goto again;
 		}
 	}
+	
 
 	if(flippath != -1) {
 		y = 0;
