@@ -243,6 +243,12 @@ bddtable_find_or_add_node (int v, BDDNode * r, BDDNode * e)
 }
 
 #ifdef USE_BDD_REF_COUNT
+void
+bddtable_ref_node(BDDNode *n)
+{
+   n->ref_count++;
+}
+
 inline void
 bddtable_deref_node_node(BDDNode *n)
 {
@@ -276,6 +282,10 @@ bddtable_deref_node(BDDNode *n)
 inline void
 bddtable_alloc_node(BDDNode **node, int v, BDDNode *r, BDDNode *e)
 {
+#ifdef USE_BDD_REF_COUNT
+   bddtable_ref_node(r);
+   bddtable_ref_node(e);
+#endif
    if (bddtable_free != NULL) {
       (*node) = bddtable_free;
       bddtable_free = bddtable_free->next;
@@ -296,10 +306,6 @@ bddtable_alloc_node(BDDNode **node, int v, BDDNode *r, BDDNode *e)
    (*node)->variable = v;
    (*node)->thenCase = r; 
    (*node)->elseCase = e; 
-#ifdef USE_BDD_REF_COUNT
-   r->ref_count++;
-   e->ref_count++;
-#endif
    GetInferFoAN(*node); //Get Inferences
 }
 

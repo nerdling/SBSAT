@@ -219,10 +219,6 @@ int HammingDistance (BDDNode *f, BDDNode *c) {
 	if(c == false_ptr) return -1;
 	//Could (should) store hamming distance on nodes.
 	//if(c->hamming > -2)
-	
-	
-	
-	
 }
 */
 
@@ -292,6 +288,7 @@ print_bdd1 (BDDNode * f, int print_counter)
       return;
    }
 }
+
 void
 printBDDfile(BDDNode * bdd, FILE * fout)
 {
@@ -416,6 +413,7 @@ printBDDerr (BDDNode * bdd)
       exit (1);
    }
 }
+
 void
 writeBDD (BDDNode * bdd, FILE * fout)
 {
@@ -622,6 +620,7 @@ printITEBDD (BDDNode * bdd)
       fprintf (stdout, ")");
    }
 }
+
 void
 printSchlipfCircuit ()
 {
@@ -633,6 +632,7 @@ printSchlipfCircuit ()
    }
    fprintf (stdout, "T];\n");
 }
+
 void
 printCircuitTree ()
 {
@@ -669,6 +669,7 @@ printCircuit ()
       fprintf(stddbg, "\n");
    }
 }
+
 void
 writeCircuit ()
 {
@@ -690,6 +691,7 @@ writeCircuit ()
    }
    fclose (fout);
 }
+
 void
 readCircuit ()
 {
@@ -981,19 +983,6 @@ BDDNode *_and_dot(BDDNode *x, BDDNode *y)
    return itetable_add_node(12, x, y, find_or_add_node(v, r, e));
    return find_or_add_node(v, r, e);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 inline BDDNode *_ite_x_y_F(BDDNode *x, BDDNode *y);
 
@@ -1879,49 +1868,6 @@ int isOR(BDDNode *bdd) {
 }
 
 int
-OLD_nmbrVarsInCommon (int bddNmbr1, int bddNmbr2, int stopat)
-{
-   int bdd1pos = 0;
-   int bdd2pos = 0;
-   int varsSoFar = 0;
-   int bdd1max = length[bddNmbr1] - stopat + 1;
-   int bdd2max = length[bddNmbr2] - stopat + 1;
-
-   if (bdd1max <= 0 || bdd2max <= 0) return 0;
-
-   while (1)
-   {
-      int bdd1Var = variables[bddNmbr1].num[bdd1pos];
-      int bdd2Var = variables[bddNmbr2].num[bdd2pos];
-      if (bdd1Var < bdd2Var) {
-         bdd1pos++;
-         if (bdd1pos == bdd1max) return varsSoFar;
-      }
-      else 
-         if (bdd1Var > bdd2Var) {
-            bdd2pos++;
-            if (bdd2pos == bdd2max) return varsSoFar;
-         }
-         else 
-         {
-            // assert(bdd1Var == bdd2Var);
-            varsSoFar++;
-            stopat--;
-            if (stopat == 0) return varsSoFar;
-
-            bdd1max++;
-            bdd1pos++;
-            if (bdd1pos == bdd1max) return varsSoFar;
-
-            bdd2max++;
-            bdd2pos++;
-            if (bdd2pos == bdd2max) return varsSoFar;
-         }
-   }
-   //return varsSoFar;
-}
-
-int
 nmbrVarsInCommon(int bddNmbr1, int bddNmbr2, int STOPAT)
 {
    static int bdd1pos;
@@ -2040,40 +1986,6 @@ BDDNode * uquantify (BDDNode * f, int v)
 
 ////////////////////
 
-/*
- CircuitStruct * split (CircuitStruct * Split_ircuit, int num, int torf)
- {
- CircuitStruct * NewCircuit = new CircuitStruct;
- NewCircuit->functions = new BDDNode *[SplitCircuit->nmbrFunctions + 1];
- NewCircuit->nmbrFunctions = SplitCircuit->nmbrFunctions;
- for (int i = 0; i < SplitCircuit->nmbrFunctions; i++)
- {
- NewCircuit->functions[i] =
- set_variable (SplitCircuit->functions[i], num, torf);
- }
-
-//Need to remove any constraint that was set to True during the making of the BDDs
-int count = -1;
-int nmbrfuncts = NewCircuit->nmbrFunctions;
-for (long x = 0; x < nmbrfuncts; x++)
-{
-count++;
-NewCircuit->functions[count] = NewCircuit->functions[x];
-if (NewCircuit->functions[x] == true_ptr)
-count--;
-if (NewCircuit->functions[x] == false_ptr)
-{
-fprintf (stderr, "\nFormula is UNSATISFIABLE\n");
-NewCircuit->nmbrFunctions = 0;
-NewCircuit->functions[0] = false_ptr;
-return NewCircuit;
-}
-}
-NewCircuit->nmbrFunctions = count + 1;
-return NewCircuit;
-}
-*/
-
 int is_in_set(int var, int *set, int max) {
    for (int i = 0; i<max; i++) {
       if (set[i] == var) return i;
@@ -2115,46 +2027,20 @@ void countSingleXors(BDDNode *x, int *xor_vars, int *nonxor_vars) {
 	nonxor_vars[nonxor_vars_idx] = 0;
 }
 
-void OLD_unravelBDD (long *y, int tempint[5000], BDDNode * func) {
-   if ((func == true_ptr) || (func == false_ptr))
-	  return;
-   tempint[*y] = func->variable;
-   if ((*y) >= 4999) {
-      //Sort and remove duplicates
-      qsort (tempint, *y, sizeof (int), compfunc);
-      int v = 0;
-      for (int i = 1; i < (*y) + 1; i++) {
-         v++;
-         if (tempint[i] == tempint[i - 1])
-			  v--;
-         tempint[v] = tempint[i];
-      }
-      (*y) = v + 1;
-      if (*y >= 4999) {
-         fprintf(stderr, "Tooo big\n");
-         exit(1);
-      }
-		
-      //End sorting and duplicates
-   } else (*y)++;
-   OLD_unravelBDD (y, tempint, func->thenCase);
-   OLD_unravelBDD (y, tempint, func->elseCase);
-}
-
-void NEW_unravelBDD(long *y, long *max, int **tempint, BDDNode * func);
+void _unravelBDD(long *y, long *max, int **tempint, BDDNode * func);
 
 void unravelBDD(long *y, long *max, int **tempint, BDDNode * func) {
   *y=0;
   // assert (no flag is set );
   start_bdd_flag_number(UNRAVELBDD_FLAG_NUMBER);
-  NEW_unravelBDD(y, max, tempint, func);
+  _unravelBDD(y, max, tempint, func);
   for (int i = 0;i<*y;i++) {
      // clear the flag
     sym_reset_flag((*tempint)[i]);
   }
 }
 
-void NEW_unravelBDD(long *y, long *max, int **tempint, BDDNode * func) {
+void _unravelBDD(long *y, long *max, int **tempint, BDDNode * func) {
    if (func->flag == bdd_flag_number) return;
    func->flag = bdd_flag_number;
 
@@ -2170,8 +2056,8 @@ void NEW_unravelBDD(long *y, long *max, int **tempint, BDDNode * func) {
 		sym_set_flag(func->variable);
 		(*y)++;
 	}
-	NEW_unravelBDD (y, max, tempint, func->thenCase);
-	NEW_unravelBDD (y, max, tempint, func->elseCase);
+	_unravelBDD (y, max, tempint, func->thenCase);
+	_unravelBDD (y, max, tempint, func->elseCase);
 }
 
 BDDNode * _set_variable (BDDNode * f, int num, int torf);
@@ -2293,20 +2179,30 @@ infer *possible_infer_x(BDDNode *f, int x) {
 }
 
 infer *copy_infer(infer *inference) {
-	infer *result = new infer;
-	infer *tmp_infer = result;
-	for(infer *infer_iter=inference; infer_iter!=NULL; infer_iter=infer_iter->next) {
-		tmp_infer->next = new infer;
-		tmp_infer = tmp_infer->next;
-		tmp_infer->nums[0] = infer_iter->nums[0];
-		tmp_infer->nums[1] = infer_iter->nums[1];
-	}
-	tmp_infer->next = NULL;
-	tmp_infer = result;
-	result = result->next;
-	delete tmp_infer;
-	
-	return result;
+   infer *result = new infer;
+   infer *tmp_infer = result;   
+   for(infer *infer_iter=inference; infer_iter!=NULL; infer_iter=infer_iter->next) { 
+      tmp_infer->next = new infer;
+      tmp_infer = tmp_infer->next;
+      tmp_infer->nums[0] = infer_iter->nums[0];
+      tmp_infer->nums[1] = infer_iter->nums[1];
+   }     
+   tmp_infer->next = NULL;
+   tmp_infer = result;
+   result = result->next;
+   delete tmp_infer;
+
+   return result;
+/* better: ?
+   infer *head = NULL;
+   infer **infs = &(head);
+	for(infer *infer_iter=inference; infer_iter!=NULL; infer_iter=infer_iter->next)
+   {
+      *infs = AllocateInference(infer_iter->nums[0], infer_iter->nums[1], NULL);
+      infs = &((*infs) -> next);
+   }
+	return head;
+   */
 }
 
 infer *_possible_infer_x(BDDNode *f, int x) {

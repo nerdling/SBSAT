@@ -56,7 +56,7 @@ void getMaxNo (BDDNode * bdd, int *no) {
       return;
    if (*no < bdd->variable)
       *no = bdd->variable;
-   bdd->t_var = 0;
+   bdd->tmp_int = 0;
    getMaxNo (bdd->thenCase, no);
    getMaxNo (bdd->elseCase, no);
 }
@@ -71,10 +71,10 @@ int getMaxVarNoInBDD (BDDNode * bdd) {
 // A recursive post-order traversal of a BDD (bdd), beginning at its root, to  
 // compose CNF clauses representing each node.  Clauses are placed in a file   
 // called "bdd_tmp.cnf".  On the first visit to a BDD node, the code assigns   
-// a new (*curr) variable which is placed in the node's t_var field (assumed   
+// a new (*curr) variable which is placed in the node's tmp_int field (assumed   
 // initially to be 0) unless the node has thenCase and elseCase pointing to    
 // true,false or false,true.  If the thenCase and elseCase pointers are set    
-// to true,false, or false,true then t_var gets the number of the node's bdd   
+// to true,false, or false,true then tmp_int gets the number of the node's bdd   
 // variable (bdd->variable).  If the thenCase and elseCase pointers are set    
 // to false,true then t_sgn is set to false (it is otherwise true).  Also on   
 // the first visit, deeper visits to children are invoked.  Upon returning,    
@@ -121,10 +121,10 @@ void bdd2cnf (BDDNode * bdd, int *curr, int *cl_cnt, FILE * ft) {
    }
 
    if (bdd->thenCase == true_ptr && bdd->elseCase == false_ptr) {
-      bdd->t_var = use_symtable?atoi(getsym_i(bdd->variable)->name):bdd->variable;
+      bdd->tmp_int = use_symtable?atoi(getsym_i(bdd->variable)->name):bdd->variable;
       return;
    } else if (bdd->thenCase == false_ptr && bdd->elseCase == true_ptr) {
-      bdd->t_var = use_symtable?-atoi(getsym_i(bdd->variable)->name):-bdd->variable;
+      bdd->tmp_int = use_symtable?-atoi(getsym_i(bdd->variable)->name):-bdd->variable;
       return;
    } else {
       // Setup values for at most four variables involved at a BDD node    
@@ -132,7 +132,7 @@ void bdd2cnf (BDDNode * bdd, int *curr, int *cl_cnt, FILE * ft) {
       // e (else):   made-up variable: true iff else branch is             
       // t (then):   made-up variable: true iff then branch is             
       // i (if):     made-up variable: true iff v=T and t=T or v=F and e=T 
-      e = bdd->elseCase->t_var;
+      e = bdd->elseCase->tmp_int;
       if (e == 0) {
 			if (bdd->elseCase == true_ptr) {
 				e = T;
@@ -140,11 +140,11 @@ void bdd2cnf (BDDNode * bdd, int *curr, int *cl_cnt, FILE * ft) {
 				e = F;
 			} else {
 				bdd2cnf (bdd->elseCase, curr, cl_cnt, ft);
-				e = bdd->elseCase->t_var;
+				e = bdd->elseCase->tmp_int;
 			}
       }
 		
-      t = bdd->thenCase->t_var;
+      t = bdd->thenCase->tmp_int;
       if (t == 0) {
 			if (bdd->thenCase == true_ptr) {
 				t = T;
@@ -152,14 +152,14 @@ void bdd2cnf (BDDNode * bdd, int *curr, int *cl_cnt, FILE * ft) {
 				t = F;
 			} else {
 				bdd2cnf (bdd->thenCase, curr, cl_cnt, ft);
-				t = bdd->thenCase->t_var;
+				t = bdd->thenCase->tmp_int;
 			}
       }
 		
-      i = bdd->t_var;
+      i = bdd->tmp_int;
       if (i == 0) {
 			i = (*curr)++;
-			bdd->t_var = i;
+			bdd->tmp_int = i;
       }
 		
       v = use_symtable?atoi(getsym_i(bdd->variable)->name):bdd->variable;
@@ -366,7 +366,7 @@ void printBDDToCNF3SAT () {
    for (int i = 0; i < nmbrFunctions; i++) {
       //printBDD (functions[i]);
       bdd2cnf (functions[i], &max_var_no, &clause_cnt, ft);
-      sprintf (buffer, "%d 0\n", functions[i]->t_var);
+      sprintf (buffer, "%d 0\n", functions[i]->tmp_int);
       if (fputs (buffer, ft) < 0) {
 			fprintf(stderr, "Error writing to bdd_tmp.cnf\n");
 			unlink ("bdd_tmp.cnf");
@@ -543,7 +543,7 @@ Recd *applySubsumption (Recd *clauses, bool *change, int no_vars) {
 }
 
 // Limit of 31 on no_vars, unchecked
-Recd *resolve (int *truth_table, int sign, int no_vars, int no_out_vars) {
+Recd *resolve (int *truth_table, int sign, int no_vars, int no_outmp_ints) {
    Recd ***clauses = NULL;
 
    // For each i < no_vars, build a linked list for each set of 
@@ -712,7 +712,7 @@ void printBDDToCNFQM () {
    long tempint_max=0;
 	
    func_object **funcs;
-   int no_out_vars;
+   int no_outmp_ints;
    
    z = 0;
    for (int x = 0; x < numout; x++) {
@@ -720,7 +720,7 @@ void printBDDToCNFQM () {
       z+=numx;
    } //Count the clauses
 
-   no_out_vars = z;
+   no_outmp_ints = z;
 	
    funcs = (func_object **)calloc(1,sizeof(func_object *)*nmbrFunctions);
    for (int i=0 ; i < nmbrFunctions ; i++) funcs[i] = new func_object;
@@ -827,7 +827,7 @@ void printBDDToCNFQM () {
 			literals = NULL;
 			break;
 		 default:
-			funcs[x]->reduced0 = resolve (truth_table, 0, no_vars, no_out_vars);
+			funcs[x]->reduced0 = resolve (truth_table, 0, no_vars, no_outmp_ints);
 			break;
       }
       delete truth_table;
@@ -841,14 +841,14 @@ void printBDDToCNFQM () {
 			z++;
       }
    }
-   no_out_vars = z;
+   no_outmp_ints = z;
 
 	use_symtable = sym_all_int();
 	if(!use_symtable) {
 		print_cnf_symtable();
 	}
 
-   fprintf(foutputfile, "p cnf %ld %d\n", numinp, no_out_vars);
+   fprintf(foutputfile, "p cnf %ld %d\n", numinp, no_outmp_ints);
 	
    for(int x = 0; x < numout; x++) {
 		Recd *res = funcs[x]->reduced0;
@@ -872,7 +872,7 @@ void printBDDToCNF () {
    int *tempint = NULL, z;
    long tempint_max = 0;
 	
-   int no_out_vars;
+   int no_outmp_ints;
    
    z = 0;
    for (int x = 0; x < numout; x++) {
@@ -880,11 +880,11 @@ void printBDDToCNF () {
       z+=numx;
    } //Count the clauses
 
-   no_out_vars = z;
+   no_outmp_ints = z;
 	
    numinp = getNuminp ();
    
-   intlist *false_paths = new intlist[no_out_vars+1];
+   intlist *false_paths = new intlist[no_outmp_ints+1];
    z = 0;
    
    for (int x = 0; x < numout; x++) {
@@ -915,8 +915,8 @@ void printBDDToCNF () {
 		print_cnf_symtable();
 	}
 	
-   fprintf(foutputfile, "p cnf %ld %d\n", numinp, no_out_vars);
-	for (int x = 0; x < no_out_vars; x++) {
+   fprintf(foutputfile, "p cnf %ld %d\n", numinp, no_outmp_ints);
+	for (int x = 0; x < no_outmp_ints; x++) {
 		for (int a = false_paths[x].length-1; a >= 0; a--) {
 			int lit = false_paths[x].num[a];
 			if(lit > 0)

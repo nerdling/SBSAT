@@ -163,10 +163,6 @@ typedef struct BDDNodeStruct {
    BDDNodeStruct *next;
    void *addons;
    
-   // bdd2cnf.cc addons
-   int t_var;
-   // bdd2cnf.cc end
-
    // BDDWalksat addons
 	int hamming;
 	float density;

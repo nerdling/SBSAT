@@ -83,7 +83,7 @@ FreeInferencePool()
    infer_pool = NULL;
 }
 
-inline infer * 
+infer * 
 AllocateInference(int num0, int num1, infer *next) {
 
    infer *infs;
@@ -105,16 +105,18 @@ AllocateInference(int num0, int num1, infer *next) {
 }
 
 /* -- can't do this -- some of the inferences are chained together
+ * but for tmp_infer it might work
+ */
 void
 DeallocateInferences(infer *next)
 {
-   infer *last = next;
    if (next == NULL) return;
+   infer *last = next;
    while (last->next != NULL) last = last->next;
    last->next = infer_free;
    infer_free = next;
 }
-*/
+
 
 void
 DeallocateInferences_var(infer *next, int var)
