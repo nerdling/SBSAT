@@ -1,16 +1,17 @@
-p bdd 20 10 ; 20 vars, 10 functions
+p bdd 20 11 ; 20 vars, 11 functions
 InitialBranch(var*, a, b, t*e) ; These variables will be branched on first.
                                ; '*' is a wildcard
 
 ite(var1, T, F) ; Function $1, no smurf created
 var1            ; Function $2, no smurf created
                 ; The two preceeding lines created identical functions
+                ; T is built in for True, F is built in for False
 
-and(var1, var2)      ; Function $3, no smurf created
-and4(a, b, 1, 2)     ; Function $4, no smurf created
-*or3($1, -$2, -var1) ; Function $5, smurf 1
-*ite 4 5 6           ; Function $6, smurf 2
-                     ; Notice parathensis and commas are not required
+and(var1, var2)          ; Function $3, no smurf created
+and4(a, b, 1, 2)         ; Function $4, no smurf created
+*or3($3, not($4), -var1) ; Function $5, smurf 1
+*ite 4 5 6               ; Function $6, smurf 2
+                         ; Notice parathensis and commas are not required
 
 ite 2            ; Function $7, no smurf created
     ite 3 4 5    ; Comments are ignored, even in the middle of a function
@@ -24,16 +25,23 @@ ite 2            ; Function $7, no smurf created
 ;You can use previously defined functions to define more complex functions
 #define BBBM_MAJV(v1, v2, v3, v4)
 # BBBM(majv(v1, v2, v3), majv(v1, v3, v4), majv(v1, v2, v4), majv(v2, v3, v4))
-*bbbm_majv(tem1e, temp2e, tem3e, tem4e) ; Function $8, smurf 3
-                                        ; Notice there is no case sensitivity
+*bbbm_majv(tem1e, tem2e, tem3e, tem4e) ; Function $8, smurf 3
+                                       ; There is no case sensitivity
 
 ;Overloading the AND operator to be the OR of 3 variables.
 #define and(x, y, z) # or3(x, y, z)
 *and(var1, var2, var3) ; Function $9, smurf 4
+;Returning the AND operator to normal;
+#define and(x, y) # ite(x, y, F)
 
 print_tree  $7 ; No function created, no smurf created
 pprint_tree $7 ; No function created, no smurf created
-
-*minmax(4, 0, 1, x10, x9, x8, x7) ; eqn $10, smurf 8
+*minmax(4, 0, 1, x10, x9, x8, x7) ; eqn $10, smurf 5
 print_tree minmax(4, 0, 1, x10, x9, x8, x7)
-           ; No function created, no smurf created
+               ; No function created, no smurf created
+*or(pprint_tree(print_tree(and(2, 3))), 4) ; Function $11, smurf 6
+;This function is identical to the function created by '*or(and(2, 3), 4)'
+;The difference is that function $11 also prints 'and(2, 3)' in two
+;different printing styles
+*print_tree($11) ; No function created, no smurf created
+                 ; A '*' in front of directives is ignored
