@@ -2676,6 +2676,13 @@ Note: the lemma heuristic is not compatible with the situation when the
  lemmas are disable.
  Also the effectivness of the lemma heuristic is decreasing with descreasing
  the lemma cache.
+\newline 
+
+\layout Standard
+
+Backjumping refers to the backtracking property where the literal previously
+ chosen by heuristic and not involved in contradition is not considered
+ with the reversed sign.
 \layout Subsubsection
 
 Constraining the time on the preprocessing and brancher
@@ -2803,7 +2810,7 @@ $ ite
 Debugging your problem
 \layout Itemize
 
-try converting to another format 
+try converting to another format
 \layout Itemize
 
 debug prints (in ITE format)
@@ -2821,7 +2828,7 @@ output the BDDs before preprocessing
 match them to your original problem
 \layout Itemize
 
-if think you discovered a bug in SBSAT email us!
+if you think you discovered a bug in SBSAT email us!
 \layout Subsection
 
 Troubleshooting the compilation
