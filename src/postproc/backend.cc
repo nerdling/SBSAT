@@ -124,7 +124,7 @@ void GetSolution(int oldnuminp, int nMaxVbleIndex) {
 	for (int i = 1; i < oldnuminp+1; i++) {
 		if(variablelist[variablelist[i].replace].true_false == 2) {
 			variablelist[variablelist[i].replace].true_false = -1;
-			variablelist[variablelist[i].replace].equalvars = 0;
+			//variablelist[variablelist[i].replace].equalvars = 0;
 		}
 	}
 
@@ -137,7 +137,7 @@ void GetSolution(int oldnuminp, int nMaxVbleIndex) {
 void ProcessSolution(int oldnuminp, int *original_variables) {
 	int i;
 
-	for (i = oldnuminp; i > 0; i--) {
+	for (i = 1; i <= numinp; i++) {
 		if (variablelist[i].equalvars != 0) {
 			if ((variablelist[i].true_false==3)) {
 				variablelist[i].true_false = -1;
@@ -160,7 +160,7 @@ void ProcessSolution(int oldnuminp, int *original_variables) {
 		}
 	}
 	
-	for (i = oldnuminp; i > 0; i--)
+	for (i = 1; i <= numinp; i++)
 	  {
 		  if(original_variables[i]==-1)// && variablelist[i].true_false!=2)
 			 original_variables[i] = variablelist[i].true_false;
@@ -213,7 +213,31 @@ void getExInferences(int *original_variables, int oldnuminp) {
 		if(functions[x] == true_ptr) continue;
 		for(int y = 0; y < length[x]; y++) {
 			//fprintf(stderr, "(%d)", variables[x].num[y]);
-			functions[0] = ite_and(functions[0], ite_var(variables[x].num[y]));
+			BDDNode *inferBDD = ite_var(variables[x].num[y]);
+			int bdd_length = 0;
+			int *bdd_vars = NULL;
+			DO_INFERENCES = 1;
+			switch (Rebuild_BDD(inferBDD, &bdd_length, bdd_vars)) {
+			 case TRIV_UNSAT:
+			 case TRIV_SAT:
+			 case PREP_ERROR: fprintf(stderr, "\nError verifying solution\n");
+				               exit(0);
+			 default: break;
+			}
+			delete [] bdd_vars;
+			bdd_vars = NULL;
+			ret = PREP_CHANGED;
+			switch (Do_Apply_Inferences()) {
+			 case TRIV_UNSAT:
+			 case TRIV_SAT:
+			 case PREP_ERROR: fprintf(stderr, "\nError verifying solution\n");
+				               exit(0);
+			 default: break;
+			}
+			x = -1;
+			break;//continue;
+			
+/*			functions[0] = ite_and(functions[0], ite_var(variables[x].num[y]));
 			ret = Rebuild_BDDx(0);
 			if(ret == TRIV_UNSAT) {
 				fprintf(stderr, "\nError verifying solution\n");
@@ -226,7 +250,27 @@ void getExInferences(int *original_variables, int oldnuminp) {
 			}
 			x = -1;
 			break;
+ */
 		}
+	}
+	
+
+	//This loop sets unknown variables and takes care
+	//of subsequent equivalences
+	//Then I can remove the equivalence printing in the result.
+
+	for (int x = 0; x <= numinp; x++) {
+		if((variablelist[x].true_false == -1) || (variablelist[x].true_false == 2)) {
+			if(variablelist[x].equalvars == 0) {
+				variablelist[x].true_false = 1;
+			} else {
+				if (variablelist[x].equalvars>0)
+				  variablelist[x].true_false = variablelist[variablelist[x].equalvars].true_false;
+				else
+				  variablelist[x].true_false = 1-variablelist[-variablelist[x].equalvars].true_false;
+			}
+		}
+		if(original_variables[x] == 2) original_variables[x] = -1;
 	}
 	
 	ProcessSolution(oldnuminp, original_variables);
