@@ -45,6 +45,8 @@
 ITE_INLINE void
 ConstructLemmasForMINMAX(SpecialFunc *pSpecialFunc)
 {
+   // no precomputed lemmas
+   /*
    int nNumRHSVbles = pSpecialFunc->rhsVbles.nNumElts;
    int *arrRHSVbles = pSpecialFunc->rhsVbles.arrElts;
    LemmaBlock *pFirstBlock;
@@ -72,5 +74,6 @@ ConstructLemmasForMINMAX(SpecialFunc *pSpecialFunc)
          false, pFirstBlock, pLastBlock, nNumBlocks);
    pSpecialFunc->pLongLemma = pFirstBlock;
    delete [] arrLits;
+   */
 }
 

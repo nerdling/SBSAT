@@ -49,12 +49,12 @@ double *arrAndEqWghtCx = NULL;
 double *arrAndEqWghtCe = NULL;
 double *arrAndEqWghtCt = NULL;
 
-ITE_INLINE void InitHeuristicTablesForSpecialFuncs_AND(int nMaxRHSSize);
+ITE_INLINE void InitHeuristicTablesForSpecialFuncs_AND();
 ITE_INLINE void FreeHeuristicTablesForSpecialFuncs_AND();
 
 ITE_INLINE
 void
-InitHeuristicTablesForSpecialFuncs_AND (int nMaxRHSSize)
+InitHeuristicTablesForSpecialFuncs_AND()
    // Initialize some tables for computing heuristic values
    // for variables that are mentioned in special functions.
 {
@@ -63,8 +63,13 @@ InitHeuristicTablesForSpecialFuncs_AND (int nMaxRHSSize)
 
    // We need nMaxRHSSize to be at least one to insure that entry 1 exists
    // and we don't overrun the arrays.
-   if (nMaxRHSSize <= 0) nMaxRHSSize = 1;
-   
+   int nMaxRHSSize = 1;
+   if (arrSpecialFuncs)
+      for(int i=0; arrSpecialFuncs[i].nFunctionType != 0; i++) 
+         if (arrSpecialFuncs[i].nFunctionType == SFN_AND)
+            if (nMaxRHSSize < arrSpecialFuncs[i].rhsVbles.nNumElts)
+               nMaxRHSSize = arrSpecialFuncs[i].rhsVbles.nNumElts;
+
    arrAndEqFalseWght = (AndEqFalseWghtStruct*)ite_calloc(nMaxRHSSize + 1, sizeof(AndEqFalseWghtStruct), 
           9, "arrAndEqFalseWght");
 

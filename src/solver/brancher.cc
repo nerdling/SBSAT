@@ -121,6 +121,10 @@ double *arrSumRHSUnknowns = 0;
 double *arrSumRHSUnknownsNew = 0;
 double *arrPrevSumRHSUnknowns = 0;
 
+int *arrRHSCounter = 0;
+int *arrRHSCounterNew = 0;
+int *arrPrevRHSCounter = 0;
+
 extern long nTimeLimit;
 extern long nNumChoicePointLimit;
 extern int nCtrlC;
@@ -387,6 +391,12 @@ InitBrancherX()
       arrPrevNumLHSUnknowns[i] =
          arrNumLHSUnknownsNew[i] =
          arrNumLHSUnknowns[i] = arrSpecialFuncs[i].nLHSVble > 0? 1: 0;
+      arrPrevSumRHSUnknowns[i] =
+         arrSumRHSUnknownsNew[i] =
+         arrSumRHSUnknowns[i] = 0;
+      arrPrevRHSCounter[i] =
+         arrRHSCounterNew[i] =
+         arrRHSCounter[i] = 0;
    }
 
    /* for restart */

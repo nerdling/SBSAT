@@ -39,17 +39,22 @@
 #include "ite.h"
 #include "solver.h"
 
-ITE_INLINE void InitHeuristicTablesForSpecialFuncs_AND(int nMaxRHSSize);
-ITE_INLINE void InitHeuristicTablesForSpecialFuncs_XOR(int nMaxRHSSize);
+ITE_INLINE void InitHeuristicTablesForSpecialFuncs_AND();
 ITE_INLINE void FreeHeuristicTablesForSpecialFuncs_AND();
+
+ITE_INLINE void InitHeuristicTablesForSpecialFuncs_XOR();
 ITE_INLINE void FreeHeuristicTablesForSpecialFuncs_XOR();
+
+ITE_INLINE void InitHeuristicTablesForSpecialFuncs_MINMAX();
+ITE_INLINE void FreeHeuristicTablesForSpecialFuncs_MINMAX();
 
 ITE_INLINE
 void
-InitHeuristicTablesForSpecialFuncs (int nMaxRHSSize)
+InitHeuristicTablesForSpecialFuncs()
 {
-   InitHeuristicTablesForSpecialFuncs_AND (nMaxRHSSize);
-   InitHeuristicTablesForSpecialFuncs_XOR (nMaxRHSSize);
+   InitHeuristicTablesForSpecialFuncs_AND();
+   InitHeuristicTablesForSpecialFuncs_XOR();
+   InitHeuristicTablesForSpecialFuncs_MINMAX();
 }
 
 ITE_INLINE void
@@ -57,5 +62,6 @@ FreeHeuristicTablesForSpecialFuncs()
 {
    FreeHeuristicTablesForSpecialFuncs_AND();
    FreeHeuristicTablesForSpecialFuncs_XOR();
+   FreeHeuristicTablesForSpecialFuncs_MINMAX();
 }
 

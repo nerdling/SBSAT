@@ -81,6 +81,7 @@ InferNLits_MINMAX(SpecialFunc *pSpecialFunc, int nNumRHSUnknowns, int value)
          if (arrSolution[vble]!=BOOL_UNKNOWN)
          {
             arrLits[nLitsPos++] = vble * (arrSolution[vble]==pSpecialFunc->arrRHSPolarities[j]?-1:1);
+            assert(arrSolution[vble] == (arrLits[nLitsPos-1] > 0 ? BOOL_FALSE : BOOL_TRUE));
          }
       }
       assert(nLitsPos == nNumElts-nNumRHSUnknowns);
@@ -91,7 +92,7 @@ InferNLits_MINMAX(SpecialFunc *pSpecialFunc, int nNumRHSUnknowns, int value)
          int vble = arrElts[j];
          if (arrSolution[vble] == BOOL_UNKNOWN)
          {
-            arrLits[nLitsPos++] = vble * (arrNewPolar[pSpecialFunc->arrRHSPolarities[j]]==BOOL_TRUE?1:-1);
+            arrLits[nLitsPos] = vble * (arrNewPolar[pSpecialFunc->arrRHSPolarities[j]]==BOOL_TRUE?1:-1);
             pLemmaInfo=AddLemma(nNumElts-nNumRHSUnknowns+1, arrLits, false, NULL, NULL);
             pLemma = pLemmaInfo->pLemma;
             InferLiteral(vble, arrNewPolar[pSpecialFunc->arrRHSPolarities[j]],
@@ -158,6 +159,7 @@ UpdateSpecialFunction_MINMAX(IndexRoleStruct *pIRS)
                {
                   // reverse all polarities
                   arrLits[nLitsPos++] = vble * (arrSolution[vble]==pSpecialFunc->arrRHSPolarities[j]?-1:1);
+                  assert(arrSolution[vble] == (arrLits[nLitsPos-1] > 0 ? BOOL_FALSE : BOOL_TRUE));
                }
             }
             pConflictLemmaInfo = AddLemma(nLitsPos, arrLits, false, NULL, NULL);
@@ -191,6 +193,7 @@ UpdateSpecialFunction_MINMAX(IndexRoleStruct *pIRS)
       }
 
    arrNumRHSUnknowns[nSpecFuncIndex] = nNumRHSUnknowns;
+   arrRHSCounter[nSpecFuncIndex] = counter;
    return NO_ERROR;
 }
 

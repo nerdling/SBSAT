@@ -146,6 +146,10 @@ extern double *arrSumRHSUnknowns;
 extern double *arrSumRHSUnknownsNew;
 extern double *arrPrevSumRHSUnknowns;
 
+extern int *arrRHSCounter;
+extern int *arrRHSCounterNew;
+extern int *arrPrevRHSCounter;
+
 typedef struct {
    int chosen[2];
    int backjumped[2];

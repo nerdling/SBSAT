@@ -199,6 +199,10 @@ ITE_INLINE void FreeHeuristicTablesForSpecialFuncs();
 ITE_INLINE void
 J_UpdateHeuristic_XOR(SpecialFunc *pSpecialFunc, int nOldNumRHSUnknowns, int nNumRHSUnknowns, int counter);
 ITE_INLINE void
+J_UpdateHeuristic_MINMAX(SpecialFunc *pSpecialFunc, 
+      int nOldNumRHSUnknowns, int nNumRHSUnknowns,
+      int nOldRHSCounter, int nRHSCounter);
+ITE_INLINE void
 J_UpdateHeuristic_XOR_C(SpecialFunc *pSpecialFunc, 
       int nOldNumRHSUnknowns, int nNumRHSUnknowns, 
       double fOldSumRHSUnknowns, double fSumRHSUnknowns, 

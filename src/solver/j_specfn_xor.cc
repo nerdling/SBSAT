@@ -46,21 +46,23 @@ extern int *arrNumRHSUnknowns;
 double *arrXorEqWght = NULL;
 double *arrXorEqWghtD = NULL;
 
-ITE_INLINE void InitHeuristicTablesForSpecialFuncs_XOR(int nMaxRHSSize);
+ITE_INLINE void InitHeuristicTablesForSpecialFuncs_XOR();
 ITE_INLINE void FreeHeuristicTablesForSpecialFuncs_XOR();
 
 ITE_INLINE
 void
-InitHeuristicTablesForSpecialFuncs_XOR (int nMaxRHSSize)
+InitHeuristicTablesForSpecialFuncs_XOR()
 {
   HWEIGHT K = JHEURISTIC_K;
 
   // We need nMaxRHSSize to be at least one to insure that entry 1 exists
   // and we don't overrun the arrays.
-  if (nMaxRHSSize <= 0)
-    {
-      nMaxRHSSize = 1;
-    }
+  int nMaxRHSSize = 1;
+  if (arrSpecialFuncs)
+     for(int i=0; arrSpecialFuncs[i].nFunctionType != 0; i++) 
+        if (arrSpecialFuncs[i].nFunctionType == SFN_XOR)
+           if (nMaxRHSSize < arrSpecialFuncs[i].rhsVbles.nNumElts)
+              nMaxRHSSize = arrSpecialFuncs[i].rhsVbles.nNumElts;
 
   arrXorEqWght = (double*)ite_calloc(nMaxRHSSize+1, sizeof(double), 9, "arrXorEqWght");
   arrXorEqWghtD = (double*)ite_calloc(nMaxRHSSize+1, sizeof(double), 9, "arrXorEqWghtD");

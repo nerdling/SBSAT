@@ -117,8 +117,11 @@ InferLiteral(int nInferredAtom,
    // Update each affected regular Smurf.
    for (int i = 0; i < nNumRegSmurfsAffected; i++)
    {
+      // already true?
       if (arrCurrentStates[arrRegSmurfsAffected[i]] == pTrueSmurfState) continue;
+      // already changed on this level and not complete updated?
       if ((arrChangedSmurfs[arrRegSmurfsAffected[i]]&1) != 0) continue;
+      // already changed on this level at all?
       if (arrChangedSmurfs[arrRegSmurfsAffected[i]] == 0) {
             /* add on the heuristic update stack */
             Save_arrCurrentStates(arrRegSmurfsAffected[i]);
@@ -166,8 +169,10 @@ InferLiteral(int nInferredAtom,
       //
       // arrSpecialFuncs[nSpecFuncIndex].nFunctionType
       //Save_arrNumRHSUnknowns(nSpecFuncIndex);
-      if (pIRS->nRHSIndex >= 0) arrNumRHSUnknownsNew[nSpecFuncIndex]--;
-      else arrNumLHSUnknownsNew[nSpecFuncIndex]--;
+      if (pIRS->nRHSIndex >= 0) {
+         arrNumRHSUnknownsNew[nSpecFuncIndex]--;
+         // FIXME: Add xor/minmax counter
+      } else arrNumLHSUnknownsNew[nSpecFuncIndex]--;
 
       // FIXME: NEW: add to inferenced function stack (SPFN, i)
    }

@@ -102,6 +102,7 @@ typedef struct {
 	int prev;
    int lhsvalue;
    double rhssum;
+   int rhscounter;
 } tSpecialFnStack;
 
 typedef struct {
@@ -209,7 +210,7 @@ typedef struct {
 #define SFADDONS(x) ((SmurfFactoryAddons*)(x))
 
 ITE_INLINE void FreeSmurfFactoryAddons(SmurfFactoryAddons *f);
-ITE_INLINE void InitHeuristicTablesForSpecialFuncs(int nMaxRHSSize);
+ITE_INLINE void InitHeuristicTablesForSpecialFuncs();
 
 ITE_INLINE SmurfState *
 AllocateSmurfState();

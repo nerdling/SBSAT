@@ -128,7 +128,7 @@ J_ResetHeuristicScores()
                  //case SFN_AND: GetHeurScoresFromSpecialFunc_AND(i); break;
        case SFN_XOR: GetHeurScoresFromSpecialFunc_XOR_C(i); break;
                  //case SFN_XOR: GetHeurScoresFromSpecialFunc_XOR(i); break;
-       case SFN_MINMAX: GetHeurScoresFromSpecialFunc_MINMAX_C(i); break;
+       case SFN_MINMAX: GetHeurScoresFromSpecialFunc_MINMAX(i); break;
        default: assert(0); break;
       }
    }

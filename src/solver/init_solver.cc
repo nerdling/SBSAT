@@ -429,6 +429,12 @@ InitBrancher()
       arrPrevSumRHSUnknowns = (double *)ite_calloc(nNumSpecialFuncs, sizeof(double),
             9, "arrPrevSumRHSUnknowns");
 
+      arrRHSCounter = (int *)ite_calloc(nNumSpecialFuncs, sizeof(int),
+            9, "arrRHSCounter");
+      arrRHSCounterNew = (int *)ite_calloc(nNumSpecialFuncs, sizeof(int),
+            9, "arrRHSCounterNew");
+      arrPrevRHSCounter = (int *)ite_calloc(nNumSpecialFuncs, sizeof(int),
+            9, "arrPrevRHSCounter");
 
       if (nHeuristic == JOHNSON_HEURISTIC) {
          assert(arrJWeights);
@@ -446,6 +452,9 @@ InitBrancher()
          arrNumLHSUnknownsNew[i] =
          arrNumLHSUnknowns[i] = arrSpecialFuncs[i].nLHSVble > 0? 1: 0;
          arrSumRHSUnknowns[i] = 0;
+         arrPrevRHSCounter[i] =
+         arrRHSCounterNew[i] =
+         arrRHSCounter[i] = 0;
 
          assert(arrSolution[0]!=BOOL_UNKNOWN);
       }
@@ -526,6 +535,10 @@ FreeBrancher()
    ite_free((void**)&arrSumRHSUnknowns);
    ite_free((void**)&arrSumRHSUnknownsNew);
    ite_free((void**)&arrPrevSumRHSUnknowns);
+
+   ite_free((void**)&arrRHSCounter);
+   ite_free((void**)&arrRHSCounterNew);
+   ite_free((void**)&arrPrevRHSCounter);
 
    ite_free((void**)&arrCurrentStates);
    ite_free((void**)&arrPrevStates);

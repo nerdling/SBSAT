@@ -45,15 +45,12 @@ extern SpecialFunc *arrSpecialFuncs;
 extern int *arrChangedSpecialFn;
 
 ITE_INLINE int UpdateSpecialFunction_AND(IndexRoleStruct *pIRS);
-ITE_INLINE int J_UpdateSpecialFunction_AND(IndexRoleStruct *pIRS);
 ITE_INLINE int UpdateSpecialFunction_XOR(IndexRoleStruct *pIRS);
-ITE_INLINE int J_UpdateSpecialFunction_XOR(IndexRoleStruct *pIRS);
 ITE_INLINE int UpdateSpecialFunction_MINMAX(IndexRoleStruct *pIRS);
-ITE_INLINE int J_UpdateSpecialFunction_MINMAX(IndexRoleStruct *pIRS);
 
 ITE_INLINE
 int
-UpdateEachAffectedSpecialFunction (AffectedFuncsStruct *pAFS)
+UpdateEachAffectedSpecialFunction(AffectedFuncsStruct *pAFS)
 {
   int ret=NO_ERROR;
 
@@ -91,6 +88,7 @@ UpdateEachAffectedSpecialFunction (AffectedFuncsStruct *pAFS)
         arrPrevNumRHSUnknowns[nSpecFuncIndex] = arrNumRHSUnknowns[nSpecFuncIndex];
         arrPrevNumLHSUnknowns[nSpecFuncIndex] = arrNumLHSUnknowns[nSpecFuncIndex];
         arrPrevSumRHSUnknowns[nSpecFuncIndex] = arrSumRHSUnknowns[nSpecFuncIndex];
+        arrPrevRHSCounter[nSpecFuncIndex]     = arrRHSCounter[nSpecFuncIndex];
      }
      if (ret != NO_ERROR) break;
 

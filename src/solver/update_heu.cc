@@ -80,9 +80,9 @@ UPDATE_HEURISTIC()
                           arrPrevNumRHSUnknowns[i], arrNumRHSUnknowns[i], 
                           arrPrevSumRHSUnknowns[i], arrSumRHSUnknowns[i], -1);
                     break;
-          case SFN_MINMAX: J_UpdateHeuristic_MINMAX_C(arrSpecialFuncs+i, 
+          case SFN_MINMAX: J_UpdateHeuristic_MINMAX(arrSpecialFuncs+i, 
                           arrPrevNumRHSUnknowns[i], arrNumRHSUnknowns[i], 
-                          arrPrevSumRHSUnknowns[i], arrSumRHSUnknowns[i], -1);
+                          arrPrevRHSCounter[i], arrRHSCounter[i]);
                     break;
           default: assert(0);
                    exit(1);
@@ -92,6 +92,7 @@ UPDATE_HEURISTIC()
          arrPrevNumRHSUnknowns[i] = arrNumRHSUnknowns[i];
          arrPrevNumLHSUnknowns[i] = arrNumLHSUnknowns[i];
          arrPrevSumRHSUnknowns[i] = arrSumRHSUnknowns[i];
+         arrPrevRHSCounter[i] = arrRHSCounter[i];
          arrChangedSpecialFn[i]=0;
       }
       pFnInfQueue++;

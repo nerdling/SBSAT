@@ -155,6 +155,10 @@ pop_mark_state_information()
             arrPrevSumRHSUnknowns[fn]=
             arrSumRHSUnknowns[fn]=arrSpecialFnStack[nSpecialFnStackIdx].rhssum;
 
+            arrRHSCounterNew[fn]=
+            arrPrevRHSCounter[fn]=
+            arrRHSCounter[fn]=arrSpecialFnStack[nSpecialFnStackIdx].rhscounter;
+
             arrSpecialFnFlags[fn]=arrSpecialFnStack[nSpecialFnStackIdx].prev;
             arrChangedSpecialFn[fn]=0;
          }
@@ -257,6 +261,10 @@ pop_state_information(int n)
                arrPrevSumRHSUnknowns[fn]=
                arrSumRHSUnknowns[fn]=arrSpecialFnStack[nSpecialFnStackIdx].rhssum;
 
+               arrRHSCounterNew[fn]=
+               arrPrevRHSCounter[fn]=
+               arrRHSCounter[fn]=arrSpecialFnStack[nSpecialFnStackIdx].rhscounter;
+
                arrSpecialFnFlags[fn]=arrSpecialFnStack[nSpecialFnStackIdx].prev;
                arrChangedSpecialFn[fn]=0;
             }
@@ -348,6 +356,7 @@ Add_arrNumRHSUnknowns(int vx)
    arrSpecialFnStack[nSpecialFnStackIdx].u.value = arrNumRHSUnknowns[vx]; 
    arrSpecialFnStack[nSpecialFnStackIdx].lhsvalue = arrNumLHSUnknowns[vx]; 
    arrSpecialFnStack[nSpecialFnStackIdx].rhssum  = arrSumRHSUnknowns[vx]; 
+   arrSpecialFnStack[nSpecialFnStackIdx].rhscounter = arrRHSCounter[vx]; 
    arrSpecialFnStack[nSpecialFnStackIdx].prev    = arrSpecialFnFlags[vx]; 
    arrSpecialFnFlags[vx]                         = nCurSpecialFnVersion; 
 }

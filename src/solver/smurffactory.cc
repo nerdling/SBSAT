@@ -195,9 +195,7 @@ SmurfFactory()
    free(arrIte2SolverSpecFn);
    free(arrIte2SolverSmurf);
 
-   if (nHeuristic == JOHNSON_HEURISTIC)  {
-      InitHeuristicTablesForSpecialFuncs(gnMaxVbleIndex);
-   }
+   if (nHeuristic == JOHNSON_HEURISTIC)  InitHeuristicTablesForSpecialFuncs();
 
    // Display statistics.
    double fEndTime = get_runtime();
@@ -280,7 +278,7 @@ InitSmurfFactory()
    if (nNumSpecialFuncs > 0)
    {
       arrSpecialFuncs
-         = (SpecialFunc *)ite_calloc(nNumSpecialFuncs, sizeof(SpecialFunc),
+         = (SpecialFunc *)ite_calloc(nNumSpecialFuncs+1, sizeof(SpecialFunc),
                2, "special function array");
    }
    nSpecialFuncIndex = 0;

@@ -40,214 +40,160 @@
 #include "solver.h"
 
 extern SpecialFunc *arrSpecialFuncs;
-extern SmurfState **arrRegSmurfInitialStates;
 extern int *arrNumRHSUnknowns;
 
-//double *arrXorEqWght = NULL;
-//double *arrXorEqWghtD = NULL;
+double ***arrMinmaxWghts = NULL;
+int max_minmax_diff=0;
+int *arrMaxMinmaxTrue = NULL;
+int *arrMaxMinmaxFalse = NULL;
 
-ITE_INLINE void InitHeuristicTablesForSpecialFuncs_MINMAX(int nMaxRHSSize);
+ITE_INLINE void InitHeuristicTablesForSpecialFuncs_MINMAX();
 ITE_INLINE void FreeHeuristicTablesForSpecialFuncs_MINMAX();
 
 ITE_INLINE void
-InitHeuristicTablesForSpecialFuncs_MINMAX(int nMaxRHSSize)
+InitHeuristicTablesForSpecialFuncs_MINMAX()
 {
-  //HWEIGHT K = JHEURISTIC_K;
+   HWEIGHT K = JHEURISTIC_K;
 
-  // We need nMaxRHSSize to be at least one to insure that entry 1 exists
-  // and we don't overrun the arrays.
-  /*
-  if (nMaxRHSSize <= 0)
-    {
-      nMaxRHSSize = 1;
-    }
 
-  arrXorEqWght = (double*)ite_calloc(nMaxRHSSize+1, sizeof(double), 9, "arrXorEqWght");
-  arrXorEqWghtD = (double*)ite_calloc(nMaxRHSSize+1, sizeof(double), 9, "arrXorEqWghtD");
+   // for every difference max-min a special table is needed
+   //
+   //
+   // e.g. 2 [ 6 ] 4 difference is (4-2) = 2
+   //
+   // |   .
+   // 6   .
+   // |   3
+   // 4   2
+   // |   1  the rest is 
+   // 2   0  (down + left) / 2K
+   // |   0
+   // 0   0 0 0 1 2 3 ..
+   //   
+   //     0---2---4---6---...
+   //      <--- left potentially set to false
+   //
+   // 2 [ 6 ] 4 will start at x (left set to false) (6-2) and y (left set to true 4)
+   // 12 [ 16 ] 14 will start at x (left set to false) (16-12) and y (left set to true 14)
 
-  if (sHeuristic[1] == 'm') 
-  {
-     arrXorEqWght[0] = 0.0;
-     for (int i = 1; i <= nMaxRHSSize; i++)
-     {
-        arrXorEqWght[1] = 1.0 / i;
-     }
-  } else {
-     arrXorEqWght[0] = 0.0;
-     arrXorEqWght[1] = JHEURISTIC_K_TRUE+JHEURISTIC_K_INF; // 1.0;
-     for (int i = 2; i <= nMaxRHSSize; i++)
-     {
-        arrXorEqWght[i] = arrXorEqWght[i-1]/K;
-        arrXorEqWghtD[i] = arrXorEqWghtD[i-1]*(i-1)/i*K;
-     }
-  }
-  */
+   // arrMinmaxWghts [ diff=max-min ] [ left unset to True (start with max) ] [ left unset to False (start with n-min) ]
+
+   // Find out the length of the diff (min,max) array
+   if (arrSpecialFuncs)
+      for(int i=0; arrSpecialFuncs[i].nFunctionType != 0; i++) 
+         if (arrSpecialFuncs[i].nFunctionType == SFN_MINMAX) {
+            if (max_minmax_diff < (arrSpecialFuncs[i].max - arrSpecialFuncs[i].min)) {
+               max_minmax_diff = (arrSpecialFuncs[i].max - arrSpecialFuncs[i].min);
+            }
+         }
+
+   arrMinmaxWghts = (double***)ite_calloc(max_minmax_diff+1, sizeof(double**), 2, "arrMinmaxWghts");
+   arrMaxMinmaxTrue = (int*)ite_calloc(max_minmax_diff+1, sizeof(int), 2, "arrMaxMinmaxSet");
+   arrMaxMinmaxFalse = (int*)ite_calloc(max_minmax_diff+1, sizeof(int), 2, "arrMaxMinmaxUnset");
+
+   // Find out the max bounds for each diff (min,max) array
+   if (arrSpecialFuncs)
+      for(int i=0; arrSpecialFuncs[i].nFunctionType != 0; i++) 
+         if (arrSpecialFuncs[i].nFunctionType == SFN_MINMAX) {
+            int minmax_diff = (arrSpecialFuncs[i].max - arrSpecialFuncs[i].min);
+            if (arrMaxMinmaxTrue[minmax_diff] < arrSpecialFuncs[i].max)
+               arrMaxMinmaxTrue[minmax_diff] = arrSpecialFuncs[i].max;
+            if (arrMaxMinmaxFalse[minmax_diff] < arrSpecialFuncs[i].rhsVbles.nNumElts - arrSpecialFuncs[i].min)
+               arrMaxMinmaxFalse[minmax_diff] = arrSpecialFuncs[i].rhsVbles.nNumElts - arrSpecialFuncs[i].min;
+         }
+
+   // create arrays and compute the weights
+   for(int i=0; i<=max_minmax_diff; i++) {
+      if (arrMaxMinmaxTrue[i] == 0) continue;
+      arrMinmaxWghts[i] = (double**)ite_calloc(arrMaxMinmaxTrue[i]+1, sizeof(double*), 2, "arrMinmaxWghts[]");
+      for(int j=0; j<=arrMaxMinmaxTrue[i]; j++) {
+         arrMinmaxWghts[i][j] = (double*)ite_calloc(arrMaxMinmaxFalse[i]+1, sizeof(double), 2, "arrMinmaxWghts[][]");
+         arrMinmaxWghts[i][j][0] = (j-i < 0? 0: j-i); // diff = i, j - LeftToSetTrue, 0 - LeftToSetFalse
+         if (j==0) {
+            for(int m=1; m<=arrMaxMinmaxTrue[i]; m++) {
+               arrMinmaxWghts[i][0][m] = (m-i < 0? 0: m-i);
+            }
+         } else {
+            for(int m=1; m<=arrMaxMinmaxTrue[i]; m++) {
+               arrMinmaxWghts[i][j][m] = (arrMinmaxWghts[i][j-1][m] + arrMinmaxWghts[i][j][m-1]) / (2*K);
+            }
+         }
+      }
+   }
+
+   // print it -- debug
+   /*
+   for(int i=0; i<=max_minmax_diff; i++) {
+      if (arrMaxMinmaxTrue[i] == 0) continue;
+      fprintf(stderr, "\nMINMAX Diff = %d: \n", i);
+      for(int j=arrMaxMinmaxTrue[i]; j>=0; j--) {
+            for(int m=0; m<=arrMaxMinmaxTrue[i]; m++) {
+               fprintf(stderr, " %2.4f ", arrMinmaxWghts[i][j][m]);
+            }
+            fprintf(stderr, "\n");
+      }
+      fprintf(stderr, "\n");
+   }
+   */
 }
 
 ITE_INLINE void
 FreeHeuristicTablesForSpecialFuncs_MINMAX()
 {
-  //ite_free((void**)&arrXorEqWght);
-  //ite_free((void**)&arrXorEqWghtD);
+   for(int i=0; i<=max_minmax_diff; i++) {
+      if (arrMinmaxWghts[i] == 0) continue;
+      for(int j=0; j<=arrMaxMinmaxTrue[i]; j++) {
+         ite_free((void**)&arrMinmaxWghts[i][j]);
+      }
+      ite_free((void**)&arrMinmaxWghts[i]);
+   }
+   ite_free((void**)&arrMinmaxWghts);
+   ite_free((void**)&arrMaxMinmaxTrue);
+   ite_free((void**)&arrMaxMinmaxFalse);
 }
 
-ITE_INLINE
-void
+ITE_INLINE void
 GetHeurScoresFromSpecialFunc_MINMAX(int nSpecFuncIndex)
 {
-   /*
    SpecialFunc *pSpecialFunc = arrSpecialFuncs + nSpecFuncIndex;
-   int nNumRHSUnknowns = arrNumRHSUnknowns[nSpecFuncIndex];
+   int minmax_diff = pSpecialFunc->max - pSpecialFunc->min;
+   int left_to_set_true = pSpecialFunc->max;
+   int left_to_set_false = pSpecialFunc->rhsVbles.nNumElts - pSpecialFunc->min;
+   double fPosDelta = arrMinmaxWghts[minmax_diff][left_to_set_true-1][left_to_set_false];
+   double fNegDelta = arrMinmaxWghts[minmax_diff][left_to_set_true][left_to_set_false-1];
 
-   if (pSpecialFunc->LinkedSmurfs == -1) {
-      HWEIGHT fScore = arrXorEqWght[nNumRHSUnknowns-1];
-      J_Update_RHS_AND(pSpecialFunc, fScore, fScore);
-   } else {
-      SmurfState *pState = arrRegSmurfInitialStates[pSpecialFunc->LinkedSmurfs];
-      assert(pState->arrHeuristicXors);
-
-      if (pState == pTrueSmurfState) {
-         HWEIGHT fScore = pState->arrHeuristicXors[nNumRHSUnknowns]; 
-         J_Update_RHS_AND(pSpecialFunc, fScore, fScore);
-      } else if (nNumRHSUnknowns > 2) {
-         HWEIGHT fScore = pState->arrHeuristicXors[nNumRHSUnknowns-1]; 
-         J_Update_RHS_AND(pSpecialFunc, fScore, fScore);
-      } else {
-         int counter=0;
-         int nNumElts = pSpecialFunc->rhsVbles.nNumElts;
-         int *arrElts = pSpecialFunc->rhsVbles.arrElts;
-         for (int j = 0; j < nNumElts; j++)
-         {
-            int vble = arrElts[j];
-            if (arrSolution[vble]!=BOOL_UNKNOWN &&
-                  arrSolution[vble] == pSpecialFunc->arrRHSPolarities[j])
-               counter++;
-         }
-         int neg_idx = (pSpecialFunc->arrRHSPolarities[0]+counter) % 2;
-         HWEIGHT fScorePos = pState->arrHeuristicXors[1-neg_idx];
-         HWEIGHT fScoreNeg = pState->arrHeuristicXors[neg_idx];
-         J_Update_RHS_AND(pSpecialFunc, fScorePos, fScoreNeg);
-      }
-   }
-   */
+   J_Update_RHS_AND(pSpecialFunc, fPosDelta, fNegDelta);
 }
 
 ITE_INLINE void
 GetHeurScoresFromSpecialFunc_MINMAX_C(int nSpecFuncIndex)
 {
-   /*
-   SpecialFunc *pSpecialFunc = arrSpecialFuncs + nSpecFuncIndex;
-   int nNumRHSUnknowns = arrNumRHSUnknowns[nSpecFuncIndex];
-   double fSum = arrSumRHSUnknowns[nSpecFuncIndex];
-
-   if (pSpecialFunc->LinkedSmurfs == -1) {
-      J_Update_RHS_AND_C(pSpecialFunc, 
-            0, 0, 0, 0, 0, // fLastSum, fLastConstPos, fLastMultiPos, fLastConstNeg, fLastMultiNeg, 
-            fSum, 0, arrXorEqWghtD[nNumRHSUnknowns-1], 0, arrXorEqWghtD[nNumRHSUnknowns-1]);
-   } else {
-      SmurfState *pState = arrRegSmurfInitialStates[pSpecialFunc->LinkedSmurfs];
-      assert(pState->arrHeuristicXors);
-
-      if (pState == pTrueSmurfState) {
-         HWEIGHT fScore = pState->arrHeuristicXors[nNumRHSUnknowns]; 
-         J_Update_RHS_AND(pSpecialFunc, fScore, fScore);
-      } else if (nNumRHSUnknowns > 2) {
-         HWEIGHT fScore = pState->arrHeuristicXors[nNumRHSUnknowns-1]; 
-         J_Update_RHS_AND(pSpecialFunc, fScore, fScore);
-      } else {
-         int counter=0;
-         int nNumElts = pSpecialFunc->rhsVbles.nNumElts;
-         int *arrElts = pSpecialFunc->rhsVbles.arrElts;
-         for (int j = 0; j < nNumElts; j++)
-         {
-            int vble = arrElts[j];
-            if (arrSolution[vble]!=BOOL_UNKNOWN &&
-                  arrSolution[vble] == pSpecialFunc->arrRHSPolarities[j])
-               counter++;
-         }
-         int neg_idx = (pSpecialFunc->arrRHSPolarities[0]+counter) % 2;
-         HWEIGHT fScorePos = pState->arrHeuristicXors[1-neg_idx];
-         HWEIGHT fScoreNeg = pState->arrHeuristicXors[neg_idx];
-         J_Update_RHS_AND(pSpecialFunc, fScorePos, fScoreNeg);
-      }
-   }
-   */
+   // variable weights are not supported
 }
 
 ITE_INLINE void
-J_UpdateHeuristic_MINMAX(SpecialFunc *pSpecialFunc, int nOldNumRHSUnknowns, int nNumRHSUnknowns, int counter)
+J_UpdateHeuristic_MINMAX(SpecialFunc *pSpecialFunc, int nOldNumRHSUnknowns, int nNumRHSUnknowns, int nOldRHSCounter, int nRHSCounter)
 {
-   /*
-   if (pSpecialFunc->LinkedSmurfs == -1) {
-      HWEIGHT fDelta = arrXorEqWght[nNumRHSUnknowns-1] -
-         arrXorEqWght[nOldNumRHSUnknowns-1];
-      J_Update_RHS_AND(pSpecialFunc, fDelta, fDelta);
-   } else {
-      // update special function 
-      SmurfState *pState = arrPrevStates[pSpecialFunc->LinkedSmurfs];
-      if (pState == pTrueSmurfState) {
-         HWEIGHT fDelta = pState->arrHeuristicXors[nNumRHSUnknowns] -
-            pState->arrHeuristicXors[nOldNumRHSUnknowns];
-         J_Update_RHS_AND(pSpecialFunc, fDelta, fDelta);
-      } else {
-         if (nNumRHSUnknowns > 2) {
-            HWEIGHT fDelta = pState->arrHeuristicXors[nNumRHSUnknowns-1] -
-               pState->arrHeuristicXors[nOldNumRHSUnknowns-1];
-            J_Update_RHS_AND(pSpecialFunc, fDelta, fDelta);
-         } else {
-            if (counter == -1) {
-               counter=0;
-               int nNumElts = pSpecialFunc->rhsVbles.nNumElts;
-               int *arrElts = pSpecialFunc->rhsVbles.arrElts;
-               for (int j = 0; j < nNumElts; j++)
-               {
-                  int vble = arrElts[j];
-                  if (arrSolution[vble]!=BOOL_UNKNOWN &&
-                        arrSolution[vble] == pSpecialFunc->arrRHSPolarities[j])
-                     counter++;
-               }
-            }
-            int neg_idx = (pSpecialFunc->arrRHSPolarities[0] + counter)%2;
-            HWEIGHT fScorePos = pState->arrHeuristicXors[1-neg_idx] -
-               pState->arrHeuristicXors[nOldNumRHSUnknowns-1];
-            HWEIGHT fScoreNeg = pState->arrHeuristicXors[neg_idx] -
-               pState->arrHeuristicXors[nOldNumRHSUnknowns-1];
-            J_Update_RHS_AND(pSpecialFunc, fScorePos, fScoreNeg);
-         }
+   int minmax_diff = pSpecialFunc->max - pSpecialFunc->min;
+   int old_left_to_set_true = pSpecialFunc->max-nOldRHSCounter;
+   int old_left_to_set_false = (pSpecialFunc->rhsVbles.nNumElts - pSpecialFunc->min) -
+      ((pSpecialFunc->rhsVbles.nNumElts - nOldNumRHSUnknowns) - nOldRHSCounter);
 
-         // update smurf 
-         int n = nOldNumRHSUnknowns;
-         int m = nNumRHSUnknowns;
-         int j = 0;
-         int *arrElts = pState->vbles.arrElts;
-         if (m==0) {
-            for (int k = 0; k < pState->vbles.nNumElts; k++) {
-               int nVble = arrElts[k];
-               Save_arrHeurScores(nVble);
-               arrHeurScores[nVble].Pos +=
-                  pState->arrTransitions[j+BOOL_TRUE].fHeuristicWeight-
-                  pState->arrTransitions[j+BOOL_TRUE].pNextState->arrHeuristicXors[n];
-               arrHeurScores[nVble].Neg +=
-                  pState->arrTransitions[j+BOOL_FALSE].fHeuristicWeight-
-                  pState->arrTransitions[j+BOOL_FALSE].pNextState->arrHeuristicXors[n];
-               j+=2;
-            }
-         } else {
-            for (int k = 0; k < pState->vbles.nNumElts; k++) {
-               int nVble = arrElts[k];
-               Save_arrHeurScores(nVble);
-               arrHeurScores[nVble].Pos +=
-                  pState->arrTransitions[j+BOOL_TRUE].pNextState->arrHeuristicXors[m]-
-                  pState->arrTransitions[j+BOOL_TRUE].pNextState->arrHeuristicXors[n];
-               arrHeurScores[nVble].Neg +=
-                  pState->arrTransitions[j+BOOL_FALSE].pNextState->arrHeuristicXors[m]-
-                  pState->arrTransitions[j+BOOL_FALSE].pNextState->arrHeuristicXors[n];
-               j+=2;
-            }
-         }
-      }
+   int left_to_set_true = pSpecialFunc->max-nRHSCounter;
+   int left_to_set_false = (pSpecialFunc->rhsVbles.nNumElts - pSpecialFunc->min) -
+      ((pSpecialFunc->rhsVbles.nNumElts - nNumRHSUnknowns) - nRHSCounter);
+   double fPosDelta, fNegDelta;
+   if (nNumRHSUnknowns == 0) {
+      fPosDelta = -arrMinmaxWghts[minmax_diff][old_left_to_set_true-1][old_left_to_set_false];
+      fNegDelta = -arrMinmaxWghts[minmax_diff][old_left_to_set_true][old_left_to_set_false-1];
+   } else {
+      fPosDelta = arrMinmaxWghts[minmax_diff][left_to_set_true-1][left_to_set_false] -
+         arrMinmaxWghts[minmax_diff][old_left_to_set_true-1][old_left_to_set_false];
+      fNegDelta = arrMinmaxWghts[minmax_diff][left_to_set_true][left_to_set_false-1] -
+         arrMinmaxWghts[minmax_diff][old_left_to_set_true][old_left_to_set_false-1];
    }
-   */
+
+   J_Update_RHS_AND(pSpecialFunc, fPosDelta, fNegDelta);
 }
 
 ITE_INLINE void
@@ -256,15 +202,5 @@ J_UpdateHeuristic_MINMAX_C(SpecialFunc *pSpecialFunc,
       double fOldSumRHSUnknowns, double fSumRHSUnknowns,
       int counter)
 {
-   /*
-   if (pSpecialFunc->LinkedSmurfs == -1) {
-      J_Update_RHS_AND_C(pSpecialFunc, 
-            // fLastSum, fLastConstPos, fLastMultiPos, fLastConstNeg, fLastMultiNeg, 
-            fOldSumRHSUnknowns, 0, arrXorEqWghtD[nOldNumRHSUnknowns-1], 0, arrXorEqWghtD[nOldNumRHSUnknowns-1],
-            fSumRHSUnknowns, 0, arrXorEqWghtD[nNumRHSUnknowns-1], 0, arrXorEqWghtD[nNumRHSUnknowns-1]);
-   } else {
-      // update special function 
-      J_UpdateHeuristic_XOR(pSpecialFunc, nOldNumRHSUnknowns, nNumRHSUnknowns, counter);
-   }
-   */
+   // variable weights are not supported
 }
