@@ -936,10 +936,14 @@ BDDNode *ite (BDDNode * x, BDDNode * y, BDDNode * z) {
    if (x == true_ptr) return y;
    if (x == false_ptr) return z;
 
-	if(y == true_ptr) {
-	  if(z == false_ptr) return x;
-	} else if(y == false_ptr) {
-		if(z == true_ptr) return ite_x_F_T(x);
+   if(y == true_ptr) {
+      if(z == false_ptr) return x;
+      if(z == true_ptr) return true_ptr;
+      return ite_x_T_z(x, z);
+   } else if(y == false_ptr) {
+      if(z == true_ptr) return ite_x_F_T(x);
+      if(z == false_ptr) return false_ptr;
+      return ite_x_F_z(x, z);
 	}
 	
 	//int v = top_variable(x, y, z);
