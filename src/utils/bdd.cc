@@ -379,12 +379,12 @@ printBDDTree (BDDNode * bdd, int *which_zoom)
    //    }
    y = 0;
    int reference = 0;
-   int zoomarr[10];
+   int zoomarr[16];
 	fprintf(stdout, "\n");
-   for (x = 0; x < PRINT_TREE_WIDTH - 2; x++)
+   for (x = 0; x < PRINT_TREE_WIDTH; x++)
       fprintf (stdout, "-");
    fprintf (stdout, "\n");
-   for (x = 0; x < 10; x++)
+   for (x = 0; x < 16; x++)
       zoomarr[x] = 0;
    while ((y < z) && (y < 31))
    {
@@ -436,7 +436,7 @@ printBDDTree (BDDNode * bdd, int *which_zoom)
       fprintf (stdout, "\n\n");
    }
    int now_zoom = *which_zoom;
-   for (x = 0; (zoomarr[x] != 0) && (x < 10); x++)
+   for (x = 0; (zoomarr[x] != 0) && (x < 16); x++)
    {
       fprintf (stdout, "\n*%d ", now_zoom - reference + x);
       printBDDTree (findBranch (0, zoomarr[x], bdd), which_zoom);
