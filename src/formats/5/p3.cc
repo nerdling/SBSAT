@@ -7,14 +7,18 @@
 int p3_max = 0;
 t_ctl *p3 = NULL;
 
+void p3_clear_sharing(int idx);
+
 void
 p3_done()
 {
    p3[0].top_and = 1;
+   p3_clear_sharing(0);
    p3_traverse_ref(0, -1);
    //p3_dump();
    p3_top_bdds(0);
 }
+
 
 void
 p3_add_ref(int idx, int ref)
@@ -105,12 +109,15 @@ p3_dump()
    int i;
    for(i=0;i<p3_max;i++) {
       switch (p3[i].argc) {
-       case 2: fprintf(stderr, "%cS%d = %d %d (%d)\n", 
+       case 2: fprintf(stderr, "%cS%d = %d %d (%d)", 
                      p3[i].top_and?'*':' ', i, p3[i].arg1, p3[i].arg2, p3[i].ref); break;
-       case 1: fprintf(stderr, "%cS%d = %d (%d)\n", 
+       case 1: fprintf(stderr, "%cS%d = %d (%d)", 
                      p3[i].top_and?'*':' ', i, p3[i].arg1, p3[i].ref); break;
        default: break;
       }
+      fprintf(stderr, " %x %d %d %d %x %d %d\n",
+            p3[i].bdd==NULL?0:p3[i].bdd, p3[i].vars, p3[i].top_and, p3[i].ref, p3[i].refs==NULL?0:p3[i].refs,
+            p3[i].refs_idx, p3[i].refs_max);
    }
 }
 
@@ -162,6 +169,24 @@ p3_bdds(int idx, int *vars)
       *vars = 1;
    }
    return bdd;
+}
+
+void
+p3_clear_sharing(int idx)
+{
+   BDDNode *bdd = NULL;
+   if (idx <= 0) {
+      idx = -1*idx;
+      p3[idx].bdd = NULL;
+      p3[idx].vars = 0;
+      //p3[idx].top_and = 0;
+      p3_clear_sharing(p3[idx].arg1);
+      if (p3[idx].argc == 2) {
+         p3_clear_sharing(p3[idx].arg2);
+      }
+   } else {
+      /* variable */
+   }
 }
 
 void

@@ -222,7 +222,7 @@ print_bdd1 (BDDNode * f, int print_counter)
    }
 }
 void
-printBDDfile (BDDNode * bdd, FILE * fout)
+printBDDfile(BDDNode * bdd, FILE * fout)
 {
    if (bdd == true_ptr)
    {
@@ -235,15 +235,15 @@ printBDDfile (BDDNode * bdd, FILE * fout)
       return;
    }
    fprintf (fout, "(");
-   printBDD (bdd->thenCase);
+   printBDDfile(bdd->thenCase, fout);
    //fprintf (stdout, "[%d]", bdd->variable);
 	fprintf(fout, "[%s", s_name(bdd->variable));
 	d4_printf2("(%d)", bdd->variable);
 	fprintf(fout, "]");
-   printBDD (bdd->elseCase);
-   fprintf (fout, ")");
+   printBDDfile(bdd->elseCase, fout);
+   fprintf(fout, ")");
 }
-void printBDD (BDDNode * bdd) { 
+void printBDD(BDDNode * bdd) { 
 	printBDDfile(bdd, stddbg);
 }
 
@@ -556,8 +556,8 @@ printCircuit ()
    }
    for (int i = 0; i < nmbrFunctions; i++)
    {
-      printBDD (functions[i]);
-      fprintf (stdout, "\n");
+      printBDDfile(functions[i], stddbg);
+      fprintf(stddbg, "\n");
    }
 }
 void

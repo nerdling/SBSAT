@@ -136,7 +136,7 @@ read_input(Tracer * &tracer)
      parser_init();
      prover3_in = finputfile;
      prover3_parse();
-     prover3_free();
+     //prover3_free();
      numinp = vars_max;
      numout = functions_max;
   } break;

@@ -48,8 +48,6 @@ extern int Setting_Neg;
 extern int *original_functionType;
 extern int *original_equalityVble;
 
-void p3_top_bdds(int);
-
 int size = 10;
 
 int Do_Prover3() {
@@ -101,8 +99,10 @@ int Do_Prover3() {
 	/****** DONE DELETING ARRAYS ********/	
 
 	//Grabbing new prover3 BDDS
+   nmbrFunctions = 0;
 	prover3_max_vars = size;
-	p3_top_bdds(0);
+void p3_done();
+   p3_done();
 	
 //	for(int x = 0; x < nmbrFunctions; x++)
 //	  functions[x] = original_functions[x];
