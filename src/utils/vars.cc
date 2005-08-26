@@ -62,6 +62,7 @@ int DO_COFACTOR = 1;  //Cofactoring doesn't help for any benchmark i've tried
 int DO_PRUNING = 1;
 int DO_STRENGTH = 1;
 int DO_SIMPLEAND = 1;
+int DO_SAFE_ASSIGN = 1;
 int DO_INFERENCES = 1;
 int DO_EXIST_QUANTIFY = 1;
 int DO_EXIST_QUANTIFY_AND = 1;

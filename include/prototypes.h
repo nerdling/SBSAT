@@ -83,6 +83,7 @@ void printBDDerr(BDDNode *);
 void printBDD(BDDNode *);
 void printBDDfile(BDDNode *, FILE *);
 void printBDDTree(BDDNode *, int *);
+void printITEBDD(BDDNode *);
 BDDNode *ReadSmurf(int *, char *, int, int *, int);
 BDDNode *mitosis(BDDNode *, int *, int *);
 BDDNode *f_mitosis(BDDNode *, BDDNode **, int *);

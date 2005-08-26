@@ -109,6 +109,16 @@ int main(int argc, char **argv) {
       int v = atoi(argv[2]);
       int b = atoi(argv[3]);
 		int vpb = atoi(argv[4]);
+
+		if(v < 2 || b < 1 || vpb < 2 || vpb > v) {
+         fprintf(stderr, "usage: %s rbdd v b vpb\n", argv[0]);
+         fprintf(stderr, "       v - variables\n");
+         fprintf(stderr, "       b - bdds\n");
+         fprintf(stderr, "       vpb - variables per bdd\n");
+			fprintf(stderr, "Error! Either (v < 2), (b < 1), (vpb < 2), or (vpb > v)\n");
+			return 0;
+		}
+		  
 		rand_BDD("ite", v, b, vpb);
 		return 0;
 	}

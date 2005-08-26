@@ -55,7 +55,7 @@ typedef struct {
 
 preproc_type preproc[] = {
   { "St", 2, Do_Strength,    &DO_STRENGTH },
-  { "Sa", 2, Do_SimpleAnd,   &DO_SIMPLEAND },
+  { "Sa", 2, Do_SafeAssign,  &DO_SAFE_ASSIGN },
   { "Pr", 2, Do_Pruning,     &DO_PRUNING },
   { "P1", 2, Do_Pruning_1,   &DO_PRUNING },
   { "P2", 2, Do_Pruning_2,   &DO_PRUNING },

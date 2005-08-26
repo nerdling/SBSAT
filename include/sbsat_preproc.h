@@ -101,6 +101,7 @@ int *add_newFunctions(BDDNode **, int);
 int Do_Apply_Inferences ();
 int Do_Apply_Inferences_backend ();
 void printBDDInfs(BDDNode *);
+BDDNode *safe_assign(BDDNode *f, int v);
 infer *possible_infer_x(BDDNode *f, int x);
 BDDNode *possible_BDD_x(BDDNode *f, int x);
 int Do_Strength();
@@ -120,6 +121,7 @@ int Do_Rewind();
 int Do_Clear_FunctionType();
 int Do_Find_FunctionType();
 int Do_Prover3();
+int Do_SafeAssign();
 void Do_Flow();
 void Do_Flow_Grouping();
 

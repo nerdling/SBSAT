@@ -381,7 +381,7 @@ int
 check_expected_result(int result)
 {
    switch (result) {
-    case TRIV_SAT: 
+    case TRIV_SAT:
        if (strcasecmp(s_expected_result, "TRIV_SAT") && 
              strcasecmp(s_expected_result, "SAT")) return SOLV_ERROR;
        break;
@@ -390,12 +390,12 @@ check_expected_result(int result)
              strcasecmp(s_expected_result, "UNSAT")) return SOLV_ERROR;
        break;
     case SOLV_SAT:  
-       if (strcasecmp(s_expected_result, "SOLV_SAT") && 
-             strcasecmp(s_expected_result, "SAT")) return SOLV_ERROR;
+       if (strcasecmp(s_expected_result, "SOLV_SAT") &&
+			  strcasecmp(s_expected_result, "SAT")) return SOLV_ERROR;
        break;
     case SOLV_UNSAT: 
-       if (strcasecmp(s_expected_result, "SOLV_UNSAT") && 
-             strcasecmp(s_expected_result, "UNSAT")) return SOLV_ERROR;
+		if (strcasecmp(s_expected_result, "SOLV_UNSAT") && 
+			 strcasecmp(s_expected_result, "UNSAT")) return SOLV_ERROR;
        break;
     default: /* can't verify the result */
        dE_printf1("Can't check the result against the expected result\n");

@@ -53,12 +53,13 @@ enum {
    POSSIBLEINFER_FLAG_NUMBER,
    POSSIBLEBDD_FLAG_NUMBER,
 	POSSIBLE_BDD_FLAG_NUMBER,
+	SAFEBDD_FLAG_NUMBER,
 	CLEANPOSSIBLE_FLAG_NUMBER,
    PRINTSHAREDBDDS_FLAG_NUMBER,
    REDUCEDREPLACE_FLAG_NUMBER,
    MAX_FLAG_NUMBER
 };
-int last_bdd_flag_number[MAX_FLAG_NUMBER] = {0,0,0,0,0,0,0,0,0,0,0,0,0};
+int last_bdd_flag_number[MAX_FLAG_NUMBER] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 int bdd_flag_number = 2;
 
 inline void
@@ -411,39 +412,36 @@ BDDNode *_bdd2xdd(BDDNode *x) {
 	return (x->tmp_bdd = find_or_add_node(v, r, e));
 }
 
-inline BDDNode *constant_and(BDDNode *x, BDDNode *y) {	
-	if (x == true_ptr) return true_ptr;
+inline BDDNode *constant_and(BDDNode *x, BDDNode *y) {
    if (x == false_ptr) return false_ptr;
-
-   if (y == true_ptr) return true_ptr;
    if (y == false_ptr) return false_ptr;
 
-   BDDNode * r;
-   BDDNode * e;
+	if (x == true_ptr) return true_ptr;
+   if (y == true_ptr) return true_ptr;
 
-   if (x->variable > y->variable) {
-      r = constant_and(x->thenCase, y);
-      if(r != false_ptr) return true_ptr;
+	
+	BDDNode * r;
+	BDDNode * e;
+
+	if (x->variable > y->variable) {
+		r = constant_and(x->thenCase, y);
+		if(r!=false_ptr) return true_ptr;
 		e = constant_and(x->elseCase, y);
-		if(e != false_ptr) return true_ptr;
-   } else if (x->variable == y->variable) {
-      if (x == y) return true_ptr;
-      else if (x->notCase == y) return false_ptr;
-      else {
-         r = constant_and(x->thenCase, y->thenCase);
-			if(r != false_ptr) return true_ptr;
-         e = constant_and(x->elseCase, y->elseCase);
-			if(e != false_ptr) return true_ptr;
-      }
-   } else {
-      r = constant_and(x, y->thenCase);
-		if(r != false_ptr) return true_ptr;
-      e = constant_and(x, y->elseCase);
-		if(e != false_ptr) return true_ptr;
-   } 
-
-	if(r == e) return r;
-	return true_ptr;
+	} else if (x->variable == y->variable) {
+		if (x == y) return true_ptr;
+		else if (x->notCase == y) return false_ptr;
+		else {
+			r = constant_and(x->thenCase, y->thenCase);
+			if(r!=false_ptr) return true_ptr;
+			e = constant_and(x->elseCase, y->elseCase);
+		}
+	} else {
+		r = constant_and(x, y->thenCase);
+		if(r!=false_ptr) return true_ptr;
+		e = constant_and(x, y->elseCase);
+	}
+	if(e!=false_ptr) return true_ptr;
+	return false_ptr;
 }
 
 inline BDDNode *_and_dot(BDDNode *x, BDDNode *y);
@@ -1277,6 +1275,30 @@ void num_replace_all(llist *k, int var, int replace)
       functions[k->num] = _num_replace(functions[k->num], var, replace);
       k = k->next; 
    }
+}
+
+BDDNode *_safe_assign(BDDNode *f, int v);
+
+BDDNode *safe_assign(BDDNode *f, int v) {
+	start_bdd_flag_number(SAFEBDD_FLAG_NUMBER);
+	return _safe_assign(f, v);	
+}
+
+BDDNode *_safe_assign(BDDNode *f, int v) {
+	if(v > f->variable) return true_ptr;
+	if(IS_TRUE_FALSE(f)) return true_ptr;	
+	if(f->flag == bdd_flag_number) return f->tmp_bdd;
+	if(f->notCase->flag == bdd_flag_number) return f->notCase->tmp_bdd->notCase;
+	
+	if(v == f->variable) {
+		BDDNode *r = constant_and(f->thenCase, f->elseCase->notCase);
+		BDDNode *e = constant_and(f->thenCase->notCase, f->elseCase);
+		return (f->tmp_bdd = ite(ite_var(v), e->notCase, r->notCase));
+	}
+	
+	BDDNode *r = _safe_assign(f->thenCase, v);
+	if(r == false_ptr) return (f->tmp_bdd = false_ptr);
+	return (f->tmp_bdd = ite_and(r, _safe_assign(f->elseCase, v)));
 }
 
 BDDNode * num_replace (BDDNode * f, int var, int replace) {
