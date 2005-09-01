@@ -48,7 +48,7 @@ int main(int argc, char **argv) {
    if (argc > 1 && !strcmp(argv[1], "vdw")) { 
       if (argc < 6 || (argc > 2 && !strcmp(argv[2], "--help"))) {
          fprintf(stderr, "usage: %s vdw vdw_type n k p\n", argv[0]);
-         fprintf(stderr, " where wdw_type is one of cnf, xcnf, cnf2, ite\n");
+         fprintf(stderr, " where vdw_type is one of cnf, xcnf, cnf2, ite\n");
          fprintf(stderr, "       n is number of variables\n");
          fprintf(stderr, "       k is number of buckets\n");
          fprintf(stderr, "       p is progression size\n");
