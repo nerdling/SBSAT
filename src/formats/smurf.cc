@@ -120,7 +120,7 @@ int *getANDLiterals(int v, int *variables, int length) {
 }
 
 void BDD_to_Smurfs () {
-	char p[8192];
+	char *p = (char *)calloc(8192, sizeof(char));
 	store * integers;
 	int *tempint=NULL;
    long tempint_max = 0;
@@ -284,6 +284,8 @@ void BDD_to_Smurfs () {
 		fprintf (foutputfile, "\n");
 	}
 	fprintf (foutputfile, "@");
+	free(p);
+	free(integers);
    ite_free((void**)&tempint); tempint_max = 0;
 }
 

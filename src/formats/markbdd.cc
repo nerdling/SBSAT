@@ -171,7 +171,7 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 			macros[i++] = '^';
 			while (((p >= 'a') && (p <= 'z')) || ((p >= 'A') && (p <= 'Z'))
 					 || (p == '_') || ((p >= '0') && (p <= '9')) || (p == '[')
-					 || (p == ']') || (p == '*')) {
+					 || (p == ']') || (p == '*') || (p=='?') || (p=='.') || (p=='^')) {
 				started_words = 1;
 				found_word = 1;
 				if(p == '*') macros[i++] = '.';
@@ -581,7 +581,7 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 		strcpy (macros, "prune");
 		if (v1 == false_ptr)
 		  return false_ptr;
-		return pruning (v1, v2);
+		return pruning_p2 (v1, v2);
 	}
 	if (!strcasecmp (macros, "restrict")) { //Same as prune, above
 		BDDNode * v1, *v2;
@@ -591,7 +591,7 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 		strcpy (macros, "restrict");
 		if (v1 == false_ptr)
 		  return false_ptr;
-		return pruning (v1, v2);
+		return pruning_p2 (v1, v2);
 	}
 	if (!strcasecmp (macros, "strengthen")) {
 		BDDNode * v1, *v2;
