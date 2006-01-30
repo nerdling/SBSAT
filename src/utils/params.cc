@@ -218,6 +218,8 @@ t_opt options[] = {
 		"Enable/Disable AND-Existential Quantification (1/0)"},
 { &DO_SAFE_ASSIGN, "Sa",  "Sa",  P_INT,  V(i:0,"0"),  V(i:1,"1"), VAR_NORMAL, 0, 
 		"Enable/Disable Searching for Safe Assignments(1/0)"},
+{ &DO_SAFE_SEARCH, "Ss",  "Ss",  P_INT,  V(i:0,"0"),  V(i:1,"1"), VAR_NORMAL, 0, 
+		"Enable/Disable SafeSearch(1/0)"},
 { &DO_POSSIBLE_ANDING, "Pa",  "Pa",  P_INT,  V(i:0,"0"),  V(i:1,"1"), VAR_NORMAL, 0,
 		"Enable/Disable clustering to find possible values to variables (1/0)"},
 { &DO_DEP_CLUSTER, "Dc",  "Dc",  P_INT, V(i:0,"0"),  V(i:1,"1"), VAR_NORMAL, 0,

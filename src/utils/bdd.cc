@@ -1231,8 +1231,15 @@ BDDNode * set_variable_all_infs(BDDNode *f)
    return f;
 }
 
-void set_variable_all(llist * k, int num, int torf) 
-{
+void set_variable_all_bdds(llist * k, int num, int torf, BDDNode **bdds) {
+   start_bdd_flag_number(SETVARIABLEALL_FLAG_NUMBER);
+	while(k != NULL) {
+      bdds[k->num] = _set_variable(bdds[k->num], num, torf);
+      k = k->next;
+   }
+}
+
+void set_variable_all(llist * k, int num, int torf) {
    start_bdd_flag_number(SETVARIABLEALL_FLAG_NUMBER);
    while(k != NULL) {
       functions[k->num] = _set_variable(functions[k->num], num, torf);
@@ -1299,6 +1306,15 @@ BDDNode *_safe_assign(BDDNode *f, int v) {
 	BDDNode *r = _safe_assign(f->thenCase, v);
 	if(r == false_ptr) return (f->tmp_bdd = false_ptr);
 	return (f->tmp_bdd = ite_and(r, _safe_assign(f->elseCase, v)));
+}
+
+BDDNode *safe_assign_all(BDDNode **bdds, llistStruct *amount, int v) {
+	BDDNode *safeVal = true_ptr;
+	for (llist * k = amount[v].head; k != NULL; k = k->next) {
+		safeVal = ite_and(safe_assign(bdds[k->num], v), safeVal);
+		if(safeVal == false_ptr) break;
+	}
+	return safeVal;
 }
 
 BDDNode * num_replace (BDDNode * f, int var, int replace) {
