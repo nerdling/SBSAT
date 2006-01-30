@@ -101,12 +101,8 @@ int SafeAssign_Loop() {
 		
 		if(variablelist[i].true_false !=-1 || variablelist[i].equalvars!=0)
 		  continue;
-		
-		BDDNode *safeVal = true_ptr;
-		for (llist * k = amount[i].head; k != NULL; k = k->next) {
-			safeVal = ite_and(safe_assign(functions[k->num], i), safeVal);
-			if(safeVal == false_ptr) break;
-		}
+
+		BDDNode *safeVal = safe_assign_all(functions, amount, i);
 		
 		if(safeVal!=false_ptr) {
 			if(safeVal == true_ptr) safeVal = ite_var(i); //Either value is safe, set i=true
@@ -140,4 +136,3 @@ sa_bailout:;
 
 	return ret;
 }
-

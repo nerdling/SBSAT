@@ -89,7 +89,6 @@ int rlistfunc (const void *x, const void *y) {
 	return 1;
 }
 
-
 int ExQuantifyAnd () {
 	int ret = PREP_NO_CHANGE;
 	

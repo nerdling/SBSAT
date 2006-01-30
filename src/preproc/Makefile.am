@@ -6,7 +6,8 @@ sources= create_infs.cc do_cofactor.cc   do_exquantify.cc   \
 	do_pruning_restrict.cc do_flow.cc do_pruning_pr.cc \
 	do_split.cc do_steal.cc do_rewind.cc do_clearft.cc \
 	do_prover3.cc equivclass.cc do_simpleand.cc \
-	do_possibleanding.cc do_findft.cc do_safeassign.cc
+	do_possibleanding.cc do_findft.cc do_safeassign.cc \
+	do_safesearch.cc
 
 #if MYLIBTOOL
 noinst_LTLIBRARIES = libpreproc.la

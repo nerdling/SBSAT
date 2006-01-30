@@ -282,7 +282,7 @@ int Split_Large () {
 			 */				
 			DO_INFERENCES = OLD_DO_INFERENCES;
 		}
-		if (functionType[j] == UNSURE && length[j] > k_size) { 
+		if (functionType[j] == UNSURE && length[j] > k_size) {
 			//Function is still too large, must use alternative method (Break into CNF clauses).
 			//Count the clauses
 			bool OLD_DO_INFERENCES = DO_INFERENCES;

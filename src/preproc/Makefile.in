@@ -56,7 +56,7 @@ am__objects_1 = create_infs.lo do_cofactor.lo do_exquantify.lo \
 	do_pruning_restrict.lo do_flow.lo do_pruning_pr.lo do_split.lo \
 	do_steal.lo do_rewind.lo do_clearft.lo do_prover3.lo \
 	equivclass.lo do_simpleand.lo do_possibleanding.lo \
-	do_findft.lo do_safeassign.lo
+	do_findft.lo do_safeassign.lo do_safesearch.lo
 am_libpreproc_la_OBJECTS = $(am__objects_1)
 libpreproc_la_OBJECTS = $(am_libpreproc_la_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/include
@@ -191,7 +191,8 @@ sources = create_infs.cc do_cofactor.cc   do_exquantify.cc   \
 	do_pruning_restrict.cc do_flow.cc do_pruning_pr.cc \
 	do_split.cc do_steal.cc do_rewind.cc do_clearft.cc \
 	do_prover3.cc equivclass.cc do_simpleand.cc \
-	do_possibleanding.cc do_findft.cc do_safeassign.cc
+	do_possibleanding.cc do_findft.cc do_safeassign.cc \
+	do_safesearch.cc
 
 
 #if MYLIBTOOL
@@ -266,6 +267,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_pruning_restrict.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_rewind.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_safeassign.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_safesearch.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_simpleand.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_split.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_steal.Plo@am__quote@

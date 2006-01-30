@@ -440,7 +440,7 @@ int Rebuild_BDDx (int x) {
 		//l->printWhetherEquiv();
 		//str_length=0;
 		//if(l->equivCount(equalityVble[x])==0 && l->opposCount(equalityVble[x])==0) {
-		if(1) {
+		if(0) {
 			//BDDNode *autarkBDD = possible_BDD(functions[x], equalityVble[x]);
 			BDDNode *autarkBDD = functions[x];
 			if(autarkBDD == false_ptr) {
