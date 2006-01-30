@@ -119,7 +119,7 @@ int main(int argc, char **argv) {
 			return 0;
 		}
 		  
-		rand_BDD("ite", v, b, vpb);
+		//rand_BDD("ite", v, b, vpb);
 		return 0;
 	}
 
