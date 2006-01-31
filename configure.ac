@@ -269,6 +269,7 @@ AC_CONFIG_FILES([Makefile
                  src/solv_smurf/hr_lemma/Makefile
                  src/solv_bddwalk/Makefile
                  src/solv_wvf/Makefile
+					  src/solv_simple/Makefile
                  src/utils/Makefile
                  tests/Makefile
                  tests/cnf/Makefile
