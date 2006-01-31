@@ -96,6 +96,7 @@ char getformat (FILE *);
 void DNF_to_CNF();
 void CNF_to_BDD(int);
 //CircuitStruct *split(int, int);
+BDDNode *set_variable_noflag(BDDNode *, int, int);
 void cheat_replace(BDDNode *, int, int);
 void num_replace_all(llist *, int , int);
 BDDNode *num_replace(BDDNode *, int, int);

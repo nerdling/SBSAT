@@ -1273,6 +1273,19 @@ BDDNode * _set_variable (BDDNode * f, int num, int torf)
    return (f->tmp_bdd = find_or_add_node (f->variable, r, e));
 }
 
+BDDNode *set_variable_noflag(BDDNode * f, int num, int torf) {
+	if (f->variable < num) return f;                                                  
+	if (f->variable == num) {
+		if (torf) return f->thenCase;                                                   
+		else return f->elseCase;                                                        
+	}
+	
+	BDDNode *r = set_variable_noflag(f->thenCase, num, torf);                         
+	BDDNode *e = set_variable_noflag(f->elseCase, num, torf);                         
+	if (r == e) return r;                                                             
+	return find_or_add_node(f->variable, r, e);                                       
+}
+  
 BDDNode * _num_replace (BDDNode * f, int var, int replace);
 
 void num_replace_all(llist *k, int var, int replace) 
@@ -1769,4 +1782,3 @@ int getNuminp () {
 	}
    return temp_numinp;
 }
-

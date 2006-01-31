@@ -1,4 +1,4 @@
-SUBDIRS = solv_smurf solv_bddwalk solv_wvf utils preproc postproc formats generator
+SUBDIRS = solv_smurf solv_bddwalk solv_wvf solv_simple utils preproc postproc formats generator
 
 INCLUDES=-I$(top_srcdir)/include
 sources=sbsat.cc
@@ -22,6 +22,7 @@ SBSAT_LIBS= \
 	solv_smurf/fn_lemma/libfnlemma.la  \
 	solv_bddwalk/libsolv_bddwalk.la  \
 	solv_wvf/libsolv_wvf.la  \
+	solv_simple/libsolv_simple.la \
 	postproc/libpostproc.la \
 	preproc/libpreproc.la \
 	utils/libutils.la 
@@ -46,6 +47,7 @@ SBSAT_LIBS= \
 	#solv_smurf/fn_lemma/libfnlemma.a  \
 	#solv_bddwalk/libsolv_bddwalk.a  \
 	#solv_wvf/libsolv_wvf.a  \
+	#solv_simple/libsolv_simple.a  \
 	#postproc/libpostproc.a \
 	#preproc/libpreproc.a \
 	#utils/libutils.a 

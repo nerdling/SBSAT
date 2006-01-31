@@ -53,4 +53,58 @@ int walkSolve();
 extern t_solution_info *solution_info;
 extern t_solution_info *solution_info_head;
 
+//Structures and functions for simpleSolve
+//Used in the smurf_fpga output format.
+struct SmurfStateEntry {
+	// Static
+	int nTransitionVar;
+	int nVarIsTrueTransition;
+	int nVarIsFalseTransition;
+	double nHeurWghtofTrueTransition;
+	double nHeurWghtofFalseTransition;
+	int nVarIsAnInference;
+	//This is 1 if nTransitionVar should be inferred True,
+	//       -1 if nTransitionVar should be inferred False,
+	//        0 if nTransitionVar should not be inferred.
+	int nNextVarInThisState; //There are n SmurfStateEntries linked together,
+	                         //where n is the number of variables in this SmurfStateEntry.
+	                         //All of these SmurfStateEntries represent the same function,
+	                         //but a different variable (nTransitionVar) is
+	                         //highlighted for each link in the list.
+	                         //If this is 0, we have reached the end of the list.
+};
+
+struct SmurfStack {
+	int nNumFreeVars;
+	int *arrSmurfStates;             //Pointer to array of size nNumSmurfs
+};
+
+struct ProblemState {
+	// Static
+	int nNumSmurfs;
+	int nNumVars;
+	int nNumSmurfStateEntries;
+	SmurfStateEntry *arrSmurfStatesTable; //Pointer to the table of all smurf states.
+	                                      //Will be of size nNumSmurfStateEntries
+	int **arrVariableOccursInSmurf; //Pointer to lists of Smurfs, indexed by variable number, that contain that variable.
+	                                //Max size would be nNumSmurfs * nNumVars, but this would only happen if every
+	                                //Smurf contained every variable. Each list is terminated by a -1 element.
+	// Dynamic
+	int nCurrSearchTreeLevel;
+	double *arrPosVarHeurWghts; //Pointer to array of size nNumVars
+	double *arrNegVarHeurWghts; //Pointer to array of size nNumVars
+	int *arrInferenceQueue;  //Pointer to array of size nNumVars (dynamically indexed by arrSmurfStack[level].nNumFreeVars
+	int *arrInferenceDeclaredAtLevel; //Pointer to array of size nNumVars
+	SmurfStack *arrSmurfStack; //Pointer to array of size nNumVars
+};
+
+extern SmurfStateEntry *TrueSimpleSmurfState;
+extern ProblemState *SimpleSmurfProblemState;
+
+void PrintSmurfStateEntry(SmurfStateEntry *ssEntry);
+void PrintAllSmurfStateEntries();
+int Init_SimpleSmurfSolver();
+int simpleSolve();
+extern int smurfs_share_paths;
+
 #endif

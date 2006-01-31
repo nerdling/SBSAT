@@ -50,7 +50,7 @@ CONFIG_CLEAN_FILES =
 LTLIBRARIES = $(noinst_LTLIBRARIES)
 libformats_la_DEPENDENCIES = 5/libt5.la
 am__objects_1 = autochk.lo smurf.lo bdd2cnf.lo bddbinary.lo cnf.lo \
-	markbdd.lo xorbdd.lo sat.lo read_result.lo read_input.lo \
+	markbdd.lo xorbdd.lo sat.lo smurf_fpga.lo read_result.lo read_input.lo \
 	write_output.lo
 am_libformats_la_OBJECTS = $(am__objects_1)
 libformats_la_OBJECTS = $(am_libformats_la_OBJECTS)
@@ -190,7 +190,7 @@ SUBDIRS = 5
 sources = autochk.cc  \
 	smurf.cc  bdd2cnf.cc  bddbinary.cc \
 	cnf.cc    markbdd.cc xorbdd.cc \
-	sat.cc  \
+	sat.cc  smurf_fpga.cc \
         read_result.cc read_input.cc write_output.cc
 
 
@@ -257,6 +257,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/read_input.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/read_result.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sat.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/smurf_fpga.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/smurf.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/write_output.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xorbdd.Plo@am__quote@

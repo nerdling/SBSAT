@@ -152,6 +152,7 @@ ite_main()
     case 'b': ret = solve(); break;
     case 'w': ret = walkSolve(); break;
     case 'm': wvfSolve(); break;
+	 case 't': ret = simpleSolve(); break;
     default: write_output(formatout);   
              ret = CONV_OUTPUT;
    }

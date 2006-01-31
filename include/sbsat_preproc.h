@@ -102,6 +102,8 @@ int Do_Apply_Inferences ();
 int Do_Apply_Inferences_backend ();
 void printBDDInfs(BDDNode *);
 BDDNode *safe_assign(BDDNode *f, int v);
+BDDNode *safe_assign_all(BDDNode **bdds, llistStruct *amount, int v);
+void set_variable_all_bdds(llist *k, int num, int torf, BDDNode **bdds);
 infer *possible_infer_x(BDDNode *f, int x);
 BDDNode *possible_BDD_x(BDDNode *f, int x);
 int Do_Strength();
@@ -122,6 +124,7 @@ int Do_Clear_FunctionType();
 int Do_Find_FunctionType();
 int Do_Prover3();
 int Do_SafeAssign();
+int Do_SafeSearch();
 void Do_Flow();
 void Do_Flow_Grouping();
 

@@ -361,6 +361,29 @@ bdd_flag_nodes(BDDNode *node)
 int bddtable_node_new_last = 0;
 
 // BDD Garbage collection
+
+void clear_all_bdd_flags() {
+	for (int i=0;i<=numBDDPool;i++) {
+		int max = bddmemory[i].max;
+		if (i == numBDDPool) max = curBDDPos;
+		for (int j=0;j<max;j++) {
+			BDDNode *node = (bddmemory[i].memory+j);
+			node->flag = 0;
+		}
+	}
+}
+
+void clear_all_bdd_pState() {
+	for (int i=0;i<=numBDDPool;i++) {
+		int max = bddmemory[i].max;
+		if (i == numBDDPool) max = curBDDPos;
+		for (int j=0;j<max;j++) {
+			BDDNode *node = (bddmemory[i].memory+j);
+			node->pState = NULL;
+		}
+	}
+}
+
 void
 bdd_gc(int force)
 {

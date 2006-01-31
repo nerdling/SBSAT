@@ -54,6 +54,10 @@ write_output (char formatout)
               BDD_to_Smurfs ();
               } break;
 
+	 case 'v': {
+              Smurf_FPGA ();
+              } break;
+
     case 'p': {
               if (print_tree) printCircuitTree();
               else printCircuit();

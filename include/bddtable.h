@@ -75,6 +75,8 @@ extern   BDDNode *false_ptr, *true_ptr;
 
 void bdd_init();
 void itetable_init();
+void clear_all_bdd_flags();
+void clear_all_bdd_pState();
 BDDNode *find_or_add_node(int, BDDNode *, BDDNode *);
 BDDNode *itetable_find_or_add_node (int v, BDDNode * r, BDDNode * e, BDDNode *cached_ite);
 BDDNode *itetable_add_node(int v, BDDNode * r, BDDNode * e, BDDNode *cached_ite);

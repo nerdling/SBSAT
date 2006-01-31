@@ -43,5 +43,6 @@ int read_input();
 void DNF_to_BDD();
 void Binary_to_BDD();
 void BDD_to_Binary();
+void Smurf_FPGA();
 
 #endif

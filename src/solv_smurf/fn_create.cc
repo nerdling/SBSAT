@@ -63,6 +63,7 @@ CreateFunctions()
 
    for (int i = 0; i < nmbrFunctions; i++)
    {
+		if(!smurfs_share_paths) { clear_all_bdd_pState(); true_ptr->pState = pTrueSmurfState;}
       int nFunctionType = functionType[i];
       BDDNodeStruct *pFunc = functions[i];
       if (pFunc == false_ptr)  return SOLV_UNSAT;
