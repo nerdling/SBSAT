@@ -107,7 +107,7 @@ int ExQuantify () {
 				if(amount_count > 1) break;
 			}
 			
-			if(amount_count == 0) {
+			if(amount_count == 0 && 0) { //This is probably unsound
 				//Variable dropped out, set it to True.
 				BDDNode *inferBDD = ite_var(i);
 				int bdd_length = 0;
@@ -225,6 +225,7 @@ int ExQuantify () {
 										for(int iter = 0; iter<str_length; iter++)
 										  d3_printf1("\b");
 										d3e_printf2 ("*{%d}", quant_var);
+										d4_printf3 ("*{%s(%d)}", s_name(quant_var), quant_var);
 										str_length = 0;
 										variablelist[quant_var].true_false = 2;
 										ret = PREP_CHANGED;

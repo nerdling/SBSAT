@@ -120,7 +120,7 @@ void GetSolution(int oldnuminp, int nMaxVbleIndex) {
 				 
 			  default:
 				 if(variablelist[variablelist[i].replace].true_false == -1)
-					variablelist[variablelist[i].replace].true_false = 0;
+					variablelist[variablelist[i].replace].true_false = -1;
 				 break;
 			 }
 	  }
@@ -168,8 +168,8 @@ void ProcessSolution(int oldnuminp, int *original_variables) {
 		  if(original_variables[i]==-1)// && variablelist[i].true_false!=2)
 			 original_variables[i] = variablelist[i].true_false;
 		  if(original_variables[i] == 3 && variablelist[i].equalvars==0) {
-			  original_variables[i] = 0;
-			  variablelist[i].true_false = 0;
+			  original_variables[i] = -1;
+			  variablelist[i].true_false = -1;
 		  }
 		  //fprintf(stderr, "%d = %d/%d ", i, variablelist[i].true_false, variablelist[i].equalvars);
 		  //fprintf(stderr, "%d = %d\n ", i, original_variables[i]);
@@ -263,7 +263,12 @@ void getExInferences(int *original_variables, int oldnuminp) {
 	//Then I can remove the equivalence printing in the result.
 
 	for (int x = 0; x <= numinp; x++) {
-		if((variablelist[x].true_false == -1) || (variablelist[x].true_false == 2)) {
+		if(variablelist[x].true_false == -1) {
+			if (variablelist[x].equalvars>0)
+			  variablelist[x].true_false = variablelist[variablelist[x].equalvars].true_false;
+			else if(variablelist[x].equalvars<0)
+			  variablelist[x].true_false = 1-variablelist[-variablelist[x].equalvars].true_false;
+		} else if(variablelist[x].true_false == 2) {
 			if(variablelist[x].equalvars == 0) {
 				variablelist[x].true_false = 1;
 			} else {
@@ -352,7 +357,7 @@ Backend(int nMaxVbleIndex, int oldnuminp, int *original_variables)
 				original_variables[i] = variablelist[i].equalvars;
 				negate = 1;
 			} 
-         ShowResultLine(foutputfile, s_name(i), i, negate, original_variables[i]);
+			ShowResultLine(foutputfile, s_name(i), i, negate, original_variables[i]);
 		}
       if (result_display_type == 4) fprintf(foutputfile, " 0");
       fprintf(foutputfile, "\n");

@@ -114,12 +114,11 @@ Init_Preprocessing()
 	if(variablelist==NULL) {
 		variablelist = (varinfo*)ite_calloc(numinp+1, sizeof(varinfo), 9, "variablelist");
 		
-		for (int x = 0; x < numinp + 1; x++)
-		  {
+		for (int x = 0; x < numinp + 1; x++) {
 			  variablelist[x].equalvars = 0;
 			  variablelist[x].replace = x;
 			  variablelist[x].true_false = -1;
-		  }
+		}
 	}
 
 	if(autark_BDD == NULL) {
