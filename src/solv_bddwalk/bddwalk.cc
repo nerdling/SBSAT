@@ -451,12 +451,26 @@ void init_CountFalses() {
 	best_to_flip_length = 0;
 	second_to_flip_length = 0;
 	
-	for(i = 1;i <= numvars; i++) {
-		atom[i] = random()%2;  //This fills atom with a random truth assignment
-		true_var_weights[i] = true_weight; //Reset the taboo weights
-		//Comment out for a small type of learning
+	if(arrVarTrueInfluences) {
+		for(i = 1;i <= numvars; i++) {
+			float random_num = (float)(random()%100/100.0);
+			if((random_num*arrVarTrueInfluences[i]) >
+				(((1.0-random_num)*(1.0-arrVarTrueInfluences[i]))))
+			  atom[i] = 1;
+			else
+			  atom[i] = 0;						 
+			//fprintf(stderr, "%d = %d (%4.2f), ", i, atom[i], random_num);
+			true_var_weights[i] = true_weight; //Reset the taboo weights
+			//Comment out for a small type of learning
+		}
+	} else {
+		for(i = 1;i <= numvars; i++) {
+			atom[i] = random()%2;  //This fills atom with a random truth assignment
+			true_var_weights[i] = true_weight; //Reset the taboo weights
+			//Comment out for a small type of learning
+		}
 	}
-
+		
 	/* Initialize previousState, wherefalse and falseBDDs in the following: */
 	
 	for(i = 0;i < numBDDs;i++) {
