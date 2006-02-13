@@ -6,6 +6,26 @@ extern SmurfStateEntry *TrueSimpleSmurfState;
 extern ProblemState *SimpleSmurfProblemState;
 extern int smurfs_share_paths;
 
+// convert a heuristic value from a 'double'
+// (assumed to be in the range 0.0 thru MAX_HEURISTIC_VALUE)
+// to a binary value with NUM_BINARY_DIGITS bits,
+// and print that binary value out in big-endian ASCII notation.
+static void print_heuristic_value(FILE * foutputfile, double heuristic_weight) {
+	const double MAX_HEURISTIC_VALUE = 1000;
+	const double NUM_BINARY_DIGITS = 18;
+	fputc('\"', foutputfile);
+	for (int i = 0; i < NUM_BINARY_DIGITS; i++) {
+		heuristic_weight *= 2;
+		if (heuristic_weight > MAX_HEURISTIC_VALUE) {
+			putc('1', foutputfile);
+			heuristic_weight -= MAX_HEURISTIC_VALUE;
+		} else {
+			putc('0', foutputfile);
+		}
+	}
+	fputc('"', foutputfile);
+}
+
 int MaxStatesPerSmurf() {
 	int *arrSmurfStates = SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates;
 
@@ -55,21 +75,24 @@ void Smurf_FPGA() {
 	fprintf(foutputfile, "\n");
 	fprintf(foutputfile, "library ieee;\n");
 	fprintf(foutputfile, "use ieee.std_logic_1164.all;\n");
-	fprintf(foutputfile, "use work.SAT_problem_infrastructure.all;\n");
+	//fprintf(foutputfile, "use work.SAT_problem_infrastructure.all;\n");
 	fprintf(foutputfile, "\n");
 	
 	fprintf(foutputfile, "package SAT_problem_constants is\n");
 	fprintf(foutputfile, "  constant num_vars : natural := %d;\n", SimpleSmurfProblemState->nNumVars);
 	fprintf(foutputfile, "  constant num_SMURFS : natural := %d;\n", SimpleSmurfProblemState->nNumSmurfs);
 	fprintf(foutputfile, "  constant num_states : natural := %d;  -- maximum states per SMURF\n", MaxStatesPerSmurf());
-	fprintf(foutputfile, "end package SAT_problem_constraints;\n");
+	fprintf(foutputfile, "end package SAT_problem_constants;\n");
 	fprintf(foutputfile, "\n");
 
+	fprintf(foutputfile, "library ieee;\n");
+	fprintf(foutputfile, "use ieee.std_logic_1164.all;\n");
+	fprintf(foutputfile, "use work.SAT_problem_infrastructure.all;\n");
 	fprintf(foutputfile, "package SAT_problem_tables is\n");
 	fprintf(foutputfile, "\n");
 	fprintf(foutputfile, "  constant ST : SMURF_state_num := TrueState;\n");
 	fprintf(foutputfile, "\n");
-	fprintf(foutputfile, "  constant SMURF_input_vars : intput_var_sets :=\n");
+	fprintf(foutputfile, "  constant SMURF_input_vars : input_vars_sets :=\n");
 	fprintf(foutputfile, "   (");
 
 	for(int nSmurfIndex = 0; nSmurfIndex < SimpleSmurfProblemState->nNumSmurfs; nSmurfIndex++) {
@@ -105,7 +128,10 @@ void Smurf_FPGA() {
 	
 	int start_state = SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates[0];
 	for(int nSmurfIndex = 1; nSmurfIndex <= SimpleSmurfProblemState->nNumSmurfs; nSmurfIndex++) {
-		fprintf(foutputfile, "   (%d =>\n    (", nSmurfIndex-1);
+		if(nSmurfIndex == 1)
+		  fprintf(foutputfile, "   (%d =>\n    (", nSmurfIndex-1);
+		else
+		  fprintf(foutputfile, "   %d =>\n    (", nSmurfIndex-1);
 		int *arrSmurfStates = SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates;
 		int stop_at;
 		if(nSmurfIndex == SimpleSmurfProblemState->nNumSmurfs)
@@ -131,20 +157,24 @@ void Smurf_FPGA() {
 				fprintf(foutputfile, "'0', '0', ");
 			}
 			//Positive Heuristic
-			fprintf(foutputfile, "\"%018ld\", ", (long)(SmurfState->nHeurWghtofTrueTransition*100000000));
+			print_heuristic_value(foutputfile, SmurfState->nHeurWghtofTrueTransition);
+			fprintf(foutputfile, ", ");
 			//Negative Heuristic
-			fprintf(foutputfile, "\"%018ld\", ", (long)(SmurfState->nHeurWghtofFalseTransition*100000000));
+			print_heuristic_value(foutputfile, SmurfState->nHeurWghtofFalseTransition);
+			fprintf(foutputfile, ", ");
 			//next var state
 			if(SmurfState->nNextVarInThisState == 1)
 			  fprintf(foutputfile, "ST)");
 			else fprintf(foutputfile, "%d)", SmurfState->nNextVarInThisState-start_state);
-			if(y != stop_at-1)
-			  fprintf(foutputfile, ",\n     ");
+			//if(y != stop_at-1)
+			fprintf(foutputfile, ",\n     ");
 		}
+		fprintf(foutputfile, "others => (0, 0, 0, '0', '0', (others => '0'), (others => '0'), 0)\n");
+		fprintf(foutputfile, "    ");
 		start_state = arrSmurfStates[nSmurfIndex];
 		if(nSmurfIndex == SimpleSmurfProblemState->nNumSmurfs)
 		  fprintf(foutputfile, ")\n");
-		else fprintf(foutputfile, "),\n");
+		else fprintf(foutputfile, "),\n\n");
 	}
 	fprintf(foutputfile, "   );\n");
 	fprintf(foutputfile, "\n");
