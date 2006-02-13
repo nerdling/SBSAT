@@ -326,8 +326,8 @@ Backend(int nMaxVbleIndex, int oldnuminp, int *original_variables)
 
 	int num_sol = 1;
 	for(solution_info = solution_info_head; solution_info!=NULL; solution_info = solution_info->next) {
-		if (result_display_type && ite_counters[NUM_SOLUTIONS] > 1) 
-		  fprintf(foutputfile, "\n// Solution #%d\n", num_sol++);
+		//if (result_display_type && ite_counters[NUM_SOLUTIONS] > 1) 
+		  //fprintf(foutputfile, "\n// Solution #%d\n", num_sol++);
 		for (int x = 0; x < original_numout; x++) {
 			functions[x] = original_functions[x];
 			functionType[x] = UNSURE;
