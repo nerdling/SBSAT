@@ -9,32 +9,55 @@ sources=trace_g.yy trace_s.ll \
 	iscas_g.yy iscas_s.ll \
         parser.cc functions.cc bddops.cc p3.cc
 # _g.yy first
-EXTRA_DIST=functions.h bddnode.cc tracetest.cc p3.h \
+EXTRA_DIST=functions.h bddnode.cc tracetest.cc p3.h 
+
+#BUILT_SOURCES=\
+	#libt5_la-cnf_g.h  \
+	#libt5_la-bdd_g.h \
+	#libt5_la-blif_g.h \
+	#libt5_la-prover_g.h \
+	#libt5_la-prover3_g.h \
+	#libt5_la-iscas_g.h \
+        #libt5_la-trace_g.cc  \
+	#libt5_la-cnf_g.cc  \
+	#libt5_la-bdd_g.cc \
+	#libt5_la-blif_g.cc \
+	#libt5_la-prover_g.cc \
+	#libt5_la-prover3_g.cc \
+	#libt5_la-iscas_g.cc 
+
+CONFIG_CLEAN_FILES= \
         libt5_la-trace_g.h  \
 	libt5_la-cnf_g.h  \
 	libt5_la-bdd_g.h \
 	libt5_la-blif_g.h \
 	libt5_la-prover_g.h \
 	libt5_la-prover3_g.h \
-	libt5_la-iscas_g.h
-
-SAVE4LATER = \
-       libt5_a-trace_g.h  \
-	libt5_a-cnf_g.h  \
-	libt5_a-bdd_g.h \
-	libt5_a-blif_g.h \
-	libt5_a-prover_g.h \
-	libt5_a-prover3_g.h \
-	libt5_a-iscas_g.h 
+	libt5_la-iscas_g.h \
+	libt5_la-trace_g.cc  \
+	libt5_la-cnf_g.cc  \
+	libt5_la-bdd_g.cc \
+	libt5_la-blif_g.cc \
+	libt5_la-prover_g.cc \
+	libt5_la-prover3_g.cc \
+	libt5_la-iscas_g.cc \
+        trace_s.cc  \
+	cnf_s.cc  \
+	bdd_s.cc \
+	blif_s.cc \
+	prover_s.cc \
+	prover3_s.cc \
+	iscas_s.cc \
+        trace_s.cc  
 
 
 bin_PROGRAMS = tracetest
 tracetest_SOURCES = tracetest.cc  # bddnode.cc
 
-libt5_la_YFLAGS =  -d
 #if MYLIBTOOL
 noinst_LTLIBRARIES = libt5.la
 libt5_la_SOURCES = $(sources)
+libt5_la_YFLAGS =  -d
 tracetest_LDADD = ../../preproc/libpreproc.la libt5.la ../../utils/libutils.la
 #else
 #noinst_LIBRARIES = libt5.a

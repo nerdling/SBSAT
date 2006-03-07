@@ -53,11 +53,12 @@ SBSAT_LIBS= \
 	#utils/libutils.a 
 #endif
 
-lib_LTLIBRARIES = libsbsat2.la libsbsat.la
+lib_LTLIBRARIES = libsbsat2.la libsbsat.la 
 libsbsat2_la_SOURCES = $(sources)
 libsbsat_la_SOURCES = emptylib.cc #
 libsbsat_la_LDFLAGS = -version-info 1:0:0 -module
 libsbsat_la_LIBADD  = $(SBSAT_LIBS) $(LIBM)
+#libsbsat.so  libsbsat.so.1 libsbsat2.a  libsbsat2.so  libsbsat2.so.0
 
 bin_PROGRAMS = sbsat
 sbsat_SOURCES = empty.cc
