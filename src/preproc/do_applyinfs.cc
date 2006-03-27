@@ -137,7 +137,7 @@ Do_Apply_Inferences ()
                         equalityVble[j] = inferlist->nums[0];
                      } else equalityVble[j] = -inferlist->nums[0];
                   }
-               } else {
+               } else if (functionType[j] == MINMAX) {
 						functionType[j] = UNSURE;
 						equalityVble[j] = 0;
 					}
@@ -222,7 +222,7 @@ Do_Apply_Inferences ()
                            equalityVble[j] = inferlist->nums[0];
                      }
                   }
-					} else {
+					} else if (functionType[j] == MINMAX) {
 						functionType[j] = UNSURE;
 						equalityVble[j] = 0;
 					}
@@ -272,7 +272,7 @@ Do_Apply_Inferences ()
                      functionType[j] = PLAINOR;	//a v b v c
                      equalityVble[j] = 0;
                   }
-					} else {
+               } else if (functionType[j] == MINMAX) {
 						functionType[j] = UNSURE;
 						equalityVble[j] = 0;
 					}
@@ -304,7 +304,7 @@ Do_Apply_Inferences ()
                      functionType[j] = PLAINOR;	//a v b v c
                      equalityVble[j] = 0;
                   }
-					} else {
+               } else if (functionType[j] == MINMAX) {
 						functionType[j] = UNSURE;
 						equalityVble[j] = 0;
 					}
@@ -677,6 +677,11 @@ int Rebuild_BDDx (int x) {
 	//Checking to see if any variables were added to this BDD
 	//Dependent clustering can add variables, so can Ex_AND, so can Steal
 
+	//Would really like to incorporate existential quantification into this.
+	//Any variable which is removed from this BDD should be checked for Ex.
+	//What I really need to do is make a "functions to update" queue, and
+	//use that instead of relying on recursion.
+	
 	//Need to add BDD x into the inference list of any variable that wasn't
 	//originally in x.
 	if (variables[x].num != NULL) {
