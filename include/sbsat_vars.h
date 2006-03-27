@@ -267,6 +267,7 @@ extern int DO_STEAL;
 extern int DO_INFERENCES;
 extern int DO_EXIST_QUANTIFY;
 extern int DO_EXIST_QUANTIFY_AND;
+extern int DO_EX_SAFE_CLUSTER;
 extern int DO_POSSIBLE_ANDING;
 extern int DO_DEP_CLUSTER;
 extern int DO_SPLIT;

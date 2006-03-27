@@ -239,7 +239,7 @@ void CNF_to_BDD(int cnf)
          //exit(1);
       }
       if(order == 'e') { // error
-         fprintf(stderr, "Error while parsing CNF input:premature end of file ...exiting\n");
+         fprintf(stderr, "Error while parsing CNF input:premature end of file, only %ld functions found\n", x-1);
          exit(1);
       } else
       if(order == '#') { // special line (check for xcnf format?)

@@ -137,7 +137,11 @@ Do_Apply_Inferences ()
                         equalityVble[j] = inferlist->nums[0];
                      } else equalityVble[j] = -inferlist->nums[0];
                   }
-               }
+               } else {
+						functionType[j] = UNSURE;
+						equalityVble[j] = 0;
+					}
+					
                if (Rebuild_BDDx(j)==TRIV_UNSAT)
                   return TRIV_UNSAT;
             }
@@ -218,7 +222,11 @@ Do_Apply_Inferences ()
                            equalityVble[j] = inferlist->nums[0];
                      }
                   }
-               }
+					} else {
+						functionType[j] = UNSURE;
+						equalityVble[j] = 0;
+					}
+
                if (Rebuild_BDDx(j)==TRIV_UNSAT)
                   return TRIV_UNSAT;
             }
@@ -264,7 +272,11 @@ Do_Apply_Inferences ()
                      functionType[j] = PLAINOR;	//a v b v c
                      equalityVble[j] = 0;
                   }
-               }
+					} else {
+						functionType[j] = UNSURE;
+						equalityVble[j] = 0;
+					}
+					
                if (Rebuild_BDDx(j)==TRIV_UNSAT)
                   return TRIV_UNSAT;
             }
@@ -292,7 +304,11 @@ Do_Apply_Inferences ()
                      functionType[j] = PLAINOR;	//a v b v c
                      equalityVble[j] = 0;
                   }
-               }
+					} else {
+						functionType[j] = UNSURE;
+						equalityVble[j] = 0;
+					}
+
                if (Rebuild_BDDx(j)==TRIV_UNSAT)
                   return TRIV_UNSAT;
 				}

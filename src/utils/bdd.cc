@@ -1321,10 +1321,43 @@ BDDNode *_safe_assign(BDDNode *f, int v) {
 	return (f->tmp_bdd = ite_and(r, _safe_assign(f->elseCase, v)));
 }
 
+BDDNode *_safe_assign_eq(BDDNode *f, int v);
+
+BDDNode *safe_assign_eq(BDDNode *f, int v) {
+	start_bdd_flag_number(SAFEBDD_FLAG_NUMBER);
+	return _safe_assign_eq(f, v);	
+}
+
+
+//SEAN FIX THIS!!!
+BDDNode *_safe_assign_eq(BDDNode *f, int v) {
+	if(v > f->variable) return true_ptr;
+	if(IS_TRUE_FALSE(f)) return true_ptr;	
+	if(f->flag == bdd_flag_number) return f->tmp_bdd;
+	if(f->notCase->flag == bdd_flag_number) return f->notCase->tmp_bdd->notCase;
+	
+	if(v == f->variable) {
+		BDDNode *r = constant_and(f->thenCase, f->elseCase->notCase);
+		BDDNode *e = constant_and(f->thenCase->notCase, f->elseCase);
+		return (f->tmp_bdd = ite(ite_var(v), e->notCase, r->notCase));
+	}
+	
+	BDDNode *r = _safe_assign_eq(f->thenCase, v);
+	if(r == false_ptr) return (f->tmp_bdd = false_ptr);
+	return (f->tmp_bdd = ite_and(r, _safe_assign(f->elseCase, v)));
+}
+
 BDDNode *safe_assign_all(BDDNode **bdds, llistStruct *amount, int v) {
 	BDDNode *safeVal = true_ptr;
 	for (llist * k = amount[v].head; k != NULL; k = k->next) {
-		safeVal = ite_and(safe_assign(bdds[k->num], v), safeVal);
+		BDDNode *ex_bdd = bdds[k->num];
+		for (int x = 0; x < length[k->num]; x++) {
+			if(variables[k->num].num[x] == v) continue;
+			if(amount[variables[k->num].num[x]].head->next == NULL)
+			  ex_bdd = xquantify(ex_bdd, variables[k->num].num[x]);
+		}
+		
+		safeVal = ite_and(safe_assign(ex_bdd, v), safeVal);
 		if(safeVal == false_ptr) break;
 	}
 	return safeVal;

@@ -65,6 +65,7 @@ preproc_type preproc[] = {
   { "Co", 2, Do_Cofactor,    &DO_COFACTOR },
   { "Ex", 2, Do_ExQuantify,  &DO_EXIST_QUANTIFY },
   { "Ea", 2, Do_ExQuantifyAnd, &DO_EXIST_QUANTIFY_AND },
+  { "Es", 2, Do_ExSafeCluster, &DO_EX_SAFE_CLUSTER },
   { "Pa", 2, Do_PossibleAnding, &DO_POSSIBLE_ANDING },
   { "Dc", 2, Do_DepCluster, &DO_DEP_CLUSTER },
   { "Sp", 2, Do_Split, &DO_SPLIT },	

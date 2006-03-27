@@ -107,8 +107,9 @@ int ExQuantify () {
 				if(amount_count > 1) break;
 			}
 			
-			if(amount_count == 0 && 0) { //This is probably unsound
+			if(amount_count == 0) { //This is probably unsound
 				//Variable dropped out, set it to True.
+				continue;
 				BDDNode *inferBDD = ite_var(i);
 				int bdd_length = 0;
 				int *bdd_vars = NULL;

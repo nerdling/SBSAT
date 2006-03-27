@@ -38,18 +38,15 @@
 #include "sbsat.h"
 #include "sbsat_preproc.h"
 
-int MAX_EXQUANTIFY_CLAUSES = 5;	  //Number of BDDs a variable appears in
-                                   //to quantify that variable away.
-int MAX_EXQUANTIFY_VARLENGTH = 5; //Limits size of number of vars in 
-                                   //constraints created by ExQuantify
-//!
+extern int MAX_EXQUANTIFY_CLAUSES;
+extern int MAX_EXQUANTIFY_VARLENGTH;
 
-int ExQuantifyAnd();
+int ExSafeCluster();
 
-int Do_ExQuantifyAnd() {
+int Do_ExSafeCluster() {
 	MAX_EXQUANTIFY_CLAUSES += 5;
 	MAX_EXQUANTIFY_VARLENGTH +=5;
-	d3_printf2 ("ANDING AND EXISTENTIALLY QUANTIFYING %d - ", countBDDs());
+	d3_printf2 ("EX-SAFE CLUSTERING %d - ", countBDDs());
 	int cofs = PREP_CHANGED;
 	int ret = PREP_NO_CHANGE;
 	affected = 0;
@@ -60,7 +57,7 @@ int Do_ExQuantifyAnd() {
 		 d3_printf1(p);
 	);
 	while (cofs!=PREP_NO_CHANGE) {
-		cofs = ExQuantifyAnd ();
+		cofs = ExSafeCluster ();
 		if(cofs == PREP_CHANGED) ret = PREP_CHANGED;
 		else if(cofs == TRIV_UNSAT) {
 			return TRIV_UNSAT;
@@ -75,10 +72,10 @@ int Do_ExQuantifyAnd() {
 
 typedef struct rand_list {
 	int num;
-	int prob;	
+	int prob;
 };
 
-int rlistfunc (const void *x, const void *y) {
+int rlistfunc1 (const void *x, const void *y) {
 	rand_list pp, qq;
 	pp = *(const rand_list *) x;
 	qq = *(const rand_list *) y;
@@ -89,17 +86,21 @@ int rlistfunc (const void *x, const void *y) {
 	return 1;
 }
 
-int ExQuantifyAnd () {
+int ExSafeCluster () {
 	int ret = PREP_NO_CHANGE;
+	
+	BDDNode *Quantify;
 	
 	rand_list *rlist = (rand_list*)ite_calloc(numinp+1, sizeof(rand_list), 9, "rlist");
 	
 	for(int i = 1;i < numinp+1; i++) {
 		rlist[i].num = i;
-		rlist[i].prob = i;//random()%(numinp*numinp);
+		rlist[i].prob = random()%(numinp*numinp);
 	}
 	
-	qsort(rlist, numinp+1, sizeof(rand_list), rlistfunc);
+	qsort(rlist, numinp+1, sizeof(rand_list), rlistfunc1);
+
+	int safe_assign_count = 0;
 	
 	if (enable_gc) bdd_gc(); //Hit it!
 	for (int x = 1; x <= MAX_EXQUANTIFY_CLAUSES; x++) {
@@ -168,32 +169,62 @@ int ExQuantifyAnd () {
 				}
 				continue;
 			}
-			
+
+
 			for(int n = 1; n < numinp+1; n++) {
 				if(amount[n].head == NULL) continue;
 				if(amount[n].head->next == NULL) {
-					int j = amount[n].head->num;
-					for(int iter = 0; iter<str_length; iter++)
-					  d3_printf1("\b");
-					d3e_printf2 ("*{!%d!}", n);
-					d4_printf3 ("*{%s(%d)}", s_name(n), n);
-					str_length = 0;// strlen(p);
-					functions[j] = xquantify (functions[j], n);
-					variablelist[n].true_false = 2;
-					SetRepeats(j);
-					switch (int r=Rebuild_BDDx(j)) {
-					 case TRIV_UNSAT:
-					 case TRIV_SAT:
-					 case PREP_ERROR:
-						ret = r; goto ea_bailout; /* as much as I hate gotos */
-					 default: break;
+
+					BDDNode *safeVal = safe_assign_all(functions, amount, n);
+					
+					if(safeVal!=false_ptr) {
+						fprintf(stderr, "{%d = ", n);
+						printBDDerr(safeVal);
+						fprintf(stderr, "}");
+						if(safeVal == true_ptr) safeVal = ite_var(n); //Either value is safe, set h=true
+						BDDNode *inferBDD = safeVal;
+						int bdd_length = 0;
+						int *bdd_vars = NULL;
+						switch (int r=Rebuild_BDD(inferBDD, &bdd_length, bdd_vars)) {
+						 case TRIV_UNSAT:
+						 case TRIV_SAT:
+						 case PREP_ERROR: return r;
+						 default: break;
+						}
+						
+						switch (int r=Do_Apply_Inferences()) {
+						 case TRIV_UNSAT:
+						 case TRIV_SAT:
+						 case PREP_ERROR: return r;
+						 default: break;
+						}
+						
+						delete [] bdd_vars;
+						bdd_vars = NULL;
+					} else {
+						int j = amount[n].head->num;
+						for(int iter = 0; iter<str_length; iter++)
+						  d3_printf1("\b");
+						d3e_printf2 ("*{!%d!}", n);
+						d4_printf3 ("*{%s(%d)}", s_name(n), n);
+						str_length = 0;// strlen(p);
+						functions[j] = xquantify (functions[j], n);
+						variablelist[n].true_false = 2;
+						SetRepeats(j);
+						switch (int r=Rebuild_BDDx(j)) {
+						 case TRIV_UNSAT:
+						 case TRIV_SAT: 
+						 case PREP_ERROR: 
+							ret = r; goto ea_bailout; /* as much as I hate gotos */
+						 default: break;
+						}
+						equalityVble[j] = 0;
+						functionType[j] = UNSURE;
+						ret = PREP_CHANGED;
 					}
-					equalityVble[j] = 0;
-					functionType[j] = UNSURE;
-					ret = PREP_CHANGED;
 				}
 			}
-
+			
 			if (1 || amount_count <= x){// && independantVars[i]==0) {
 				int j = amount_num;
 				assert(functionType[j]!=AUTARKY_FUNC);
@@ -226,12 +257,7 @@ int ExQuantifyAnd () {
 				
 					functions[j] = ite_and(functions[j], functions[z]);
 					affected++;
-
-					/*if(functions[z] == true_ptr) {
-						fprintf(stderr, "z == true!!!");
-						exit(0);
-					}*/
-
+					
 					functions[z] = true_ptr;
 					
 					ret = PREP_CHANGED;
@@ -247,10 +273,10 @@ int ExQuantifyAnd () {
 					equalityVble[z] = 0;
 					functionType[z] = UNSURE;
 
-               switch (int r=Rebuild_BDDx(j)) {
-					 case TRIV_UNSAT:
-					 case TRIV_SAT:
-					 case PREP_ERROR:
+					switch (int r=Rebuild_BDDx(j)) {
+					 case TRIV_UNSAT: 
+					 case TRIV_SAT: 
+					 case PREP_ERROR: 
 						ret = r; goto ea_bailout;
 					 default: break;
 					}
@@ -258,10 +284,48 @@ int ExQuantifyAnd () {
 					equalityVble[j] = 0;
 					functionType[j] = UNSURE;
 					
+					//do safe assign stuff here.
+
+					for(int l = 0; l < length[j]; l++) {
+						int h = variables[j].num[l];
+						if(amount[h].head == NULL) continue;
+						if(amount[h].head->next == NULL) continue;
+						
+						BDDNode *safeVal = safe_assign_all(functions, amount, h);
+						  
+						if(safeVal!=false_ptr) {
+							fprintf(stderr, "{%d = ", h);
+							printBDDerr(safeVal);
+							fprintf(stderr, "}");
+							if(safeVal == true_ptr) safeVal = ite_var(h); //Either value is safe, set h=true
+							BDDNode *inferBDD = safeVal;
+							int bdd_length = 0;
+							int *bdd_vars = NULL;
+							switch (int r=Rebuild_BDD(inferBDD, &bdd_length, bdd_vars)) {
+							 case TRIV_UNSAT:
+							 case TRIV_SAT:
+							 case PREP_ERROR: return r;
+							 default: break;
+							}
+
+							switch (int r=Do_Apply_Inferences()) {
+							 case TRIV_UNSAT:
+							 case TRIV_SAT:
+							 case PREP_ERROR: return r;
+							 default: break;
+							}
+								
+							delete [] bdd_vars;
+							bdd_vars = NULL;
+							l = 0;
+						}
+					}
+
 					if(length[j]>MAX_EXQUANTIFY_VARLENGTH && count1!=amount_count) {
 						out = 1;
 						break;
 					}
+				
 				}
 				if(amount_count != 1) {
 					D_3(
@@ -275,11 +339,10 @@ int ExQuantifyAnd () {
 				if(ret != PREP_CHANGED && x!=1) {
 					continue;
 				}
+				
 				if(out == 1){
-					equalityVble[j] = 0;
-					functionType[j] = UNSURE;
 					switch (int r=Rebuild_BDDx(j)) {
-					 case TRIV_UNSAT: 
+					 case TRIV_UNSAT:
 					 case TRIV_SAT: 
 					 case PREP_ERROR: 
 						ret = r; goto ea_bailout; /* as much as I hate gotos */
