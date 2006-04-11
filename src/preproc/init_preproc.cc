@@ -395,7 +395,7 @@ Finish_Preprocessing()
 					(100 * Setting_Neg) / (Total_inferences+div_zero));
 	d3_printf2 ("Total Inferences  - %d (100%%)\n\n", Total_inferences);
 
-	fprintf(stderr, "%d ", num_safe_assigns);
+	//fprintf(stderr, "%d ", num_safe_assigns);
 	//Stats();
 	
 	//Need to release these pointers
