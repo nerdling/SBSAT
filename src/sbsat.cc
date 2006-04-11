@@ -73,7 +73,7 @@ int
 main(int argc, char *argv[])
 {
 	gettimeofday(&tv1,&tzp1);
-	seed1 = (( tv1.tv_sec & 0177 ) * 1000000) + tv1.tv_usec; //87586000; (slider_40_sat + strengthening)
+	seed1 = ((tv1.tv_sec & 0177 ) * 1000000) + tv1.tv_usec; //87586000; (slider_40_sat + strengthening)
 	//fprintf(stderr, "\n%d\n", seed1);
    srandom(seed1);
 	
@@ -86,6 +86,7 @@ main(int argc, char *argv[])
          if (ret == NO_ERROR) ret = ite_main();
       }
    }
+
    return ite_final(ret);
 }
 
@@ -94,6 +95,7 @@ ite_main_preproc()
 {
    int ret = ite_preprocessing();
    if (ret == TRIV_SAT || ret == TRIV_UNSAT) return ret;
+
    return NO_ERROR;
 }
 

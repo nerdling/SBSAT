@@ -419,28 +419,35 @@ inline BDDNode *constant_and(BDDNode *x, BDDNode *y) {
 	if (x == true_ptr) return true_ptr;
    if (y == true_ptr) return true_ptr;
 
-	
 	BDDNode * r;
 	BDDNode * e;
 
 	if (x->variable > y->variable) {
+      BDDNode *cached = itetable_find_or_add_node(13, x, y, NULL);
+      if (cached) return cached;
 		r = constant_and(x->thenCase, y);
-		if(r!=false_ptr) return true_ptr;
+		if(r!=false_ptr) return itetable_add_node(13, x, y, true_ptr);//true_ptr;
 		e = constant_and(x->elseCase, y);
 	} else if (x->variable == y->variable) {
 		if (x == y) return true_ptr;
 		else if (x->notCase == y) return false_ptr;
 		else {
+			BDDNode *cached = itetable_find_or_add_node(13, x, y, NULL);
+			if (cached) return cached;
 			r = constant_and(x->thenCase, y->thenCase);
-			if(r!=false_ptr) return true_ptr;
+			if(r!=false_ptr) return itetable_add_node(13, x, y, true_ptr);//true_ptr;
 			e = constant_and(x->elseCase, y->elseCase);
 		}
 	} else {
+      BDDNode *cached = itetable_find_or_add_node(13, x, y, NULL);
+      if (cached) return cached;
 		r = constant_and(x, y->thenCase);
-		if(r!=false_ptr) return true_ptr;
+		if(r!=false_ptr) return itetable_add_node(13, x, y, true_ptr);//true_ptr;
 		e = constant_and(x, y->elseCase);
 	}
-	if(e!=false_ptr) return true_ptr;
+
+	if(e!=false_ptr) return itetable_add_node(13, x, y, true_ptr);//true_ptr;
+	return itetable_add_node(13, x, y, false_ptr);
 	return false_ptr;
 }
 
@@ -1309,16 +1316,24 @@ BDDNode *_safe_assign(BDDNode *f, int v) {
 	if(IS_TRUE_FALSE(f)) return true_ptr;	
 	if(f->flag == bdd_flag_number) return f->tmp_bdd;
 	if(f->notCase->flag == bdd_flag_number) return f->notCase->tmp_bdd->notCase;
+   f->flag = bdd_flag_number;
 	
+	BDDNode *itevar = ite_var(v);
+	BDDNode *cached = itetable_find_or_add_node(14, itevar, f, NULL);
+	if (cached) return (f->tmp_bdd = cached);
+
 	if(v == f->variable) {
 		BDDNode *r = constant_and(f->thenCase, f->elseCase->notCase);
 		BDDNode *e = constant_and(f->thenCase->notCase, f->elseCase);
-		return (f->tmp_bdd = ite(ite_var(v), e->notCase, r->notCase));
+		//return (f->tmp_bdd = ite(ite_var(v), e->notCase, r->notCase));
+		return (f->tmp_bdd = itetable_add_node(14, itevar, f,	ite(ite_var(v), e->notCase, r->notCase)));
 	}
 	
 	BDDNode *r = _safe_assign(f->thenCase, v);
-	if(r == false_ptr) return (f->tmp_bdd = false_ptr);
-	return (f->tmp_bdd = ite_and(r, _safe_assign(f->elseCase, v)));
+	if(r == false_ptr) //return (f->tmp_bdd = false_ptr);
+	  return (f->tmp_bdd = itetable_add_node(14, itevar, f, false_ptr));
+	//return (f->tmp_bdd = ite_and(r, _safe_assign(f->elseCase, v)));
+	return (f->tmp_bdd = itetable_add_node(14, itevar, f, ite_and(r, _safe_assign(f->elseCase, v))));
 }
 
 BDDNode *_safe_assign_eq(BDDNode *f, int v);
@@ -1335,6 +1350,7 @@ BDDNode *_safe_assign_eq(BDDNode *f, int v) {
 	if(IS_TRUE_FALSE(f)) return true_ptr;	
 	if(f->flag == bdd_flag_number) return f->tmp_bdd;
 	if(f->notCase->flag == bdd_flag_number) return f->notCase->tmp_bdd->notCase;
+   f->flag = bdd_flag_number;
 	
 	if(v == f->variable) {
 		BDDNode *r = constant_and(f->thenCase, f->elseCase->notCase);

@@ -40,12 +40,13 @@
 
 extern int MAX_EXQUANTIFY_CLAUSES;
 extern int MAX_EXQUANTIFY_VARLENGTH;
+extern int num_safe_assigns;
 
 int ExSafeCluster();
 
 int Do_ExSafeCluster() {
 	MAX_EXQUANTIFY_CLAUSES += 5;
-	MAX_EXQUANTIFY_VARLENGTH +=5;
+	MAX_EXQUANTIFY_VARLENGTH += 5;
 	d3_printf2 ("EX-SAFE CLUSTERING %d - ", countBDDs());
 	int cofs = PREP_CHANGED;
 	int ret = PREP_NO_CHANGE;
@@ -66,12 +67,13 @@ int Do_ExSafeCluster() {
 	d3_printf1 ("\n");
 	d2e_printf1 ("\r                                      ");
 
-	if(ret == PREP_CHANGED && countBDDs() == 0) return TRIV_SAT;
+	if(countBDDs() == 0) return TRIV_SAT;
 	return ret;
 }
 
 typedef struct rand_list {
 	int num;
+	int size;
 	int prob;
 };
 
@@ -79,31 +81,42 @@ int rlistfunc1 (const void *x, const void *y) {
 	rand_list pp, qq;
 	pp = *(const rand_list *) x;
 	qq = *(const rand_list *) y;
-	if (pp.prob < qq.prob)
+	if (pp.size < qq.size)
 	  return -1;
-	if (pp.prob == qq.prob)
-	  return 0;
+	if (pp.size == qq.size) {
+		if(pp.prob < qq.prob)
+		  return -1;
+		if(pp.prob > qq.prob)
+		  return 1;		  
+		return 0;
+	}
 	return 1;
 }
 
 int ExSafeCluster () {
 	int ret = PREP_NO_CHANGE;
 	
-	BDDNode *Quantify;
-	
 	rand_list *rlist = (rand_list*)ite_calloc(numinp+1, sizeof(rand_list), 9, "rlist");
+	
+	int amount_count;
 	
 	for(int i = 1;i < numinp+1; i++) {
 		rlist[i].num = i;
+
+		amount_count = 0;
+		for (llist * k = amount[i].head; k != NULL; k = k->next) {
+			if(functionType[k->num] != AUTARKY_FUNC)
+			  amount_count++;
+		}
+		rlist[i].size = amount_count;
+		
 		rlist[i].prob = random()%(numinp*numinp);
 	}
 	
 	qsort(rlist, numinp+1, sizeof(rand_list), rlistfunc1);
 
-	int safe_assign_count = 0;
-	
 	if (enable_gc) bdd_gc(); //Hit it!
-	for (int x = 1; x <= MAX_EXQUANTIFY_CLAUSES; x++) {
+//	for (int x = 1; x <= MAX_EXQUANTIFY_CLAUSES; x++) {
 		for (int rnum = 1; rnum <= numinp; rnum++) {
 		//for (int i = numinp; i > 0; i--) {
 			int i = rlist[rnum].num;
@@ -134,7 +147,7 @@ int ExSafeCluster () {
 			if(variablelist[i].true_false != -1 || variablelist[i].equalvars != 0)
 			  continue;
 			//fprintf(stderr, "%d\n", i);
-         int amount_count = 0;
+			amount_count = 0;
 			int amount_num = -1;
 			
 			for (llist * k = amount[i].head; k != NULL; k = k->next) {
@@ -171,7 +184,7 @@ int ExSafeCluster () {
 			}
 
 
-			for(int n = 1; n < numinp+1; n++) {
+/*			for(int n = 1; n < numinp+1; n++) {
 				if(amount[n].head == NULL) continue;
 				if(amount[n].head->next == NULL) {
 
@@ -181,7 +194,8 @@ int ExSafeCluster () {
 						fprintf(stderr, "{%d = ", n);
 						printBDDerr(safeVal);
 						fprintf(stderr, "}");
-						if(safeVal == true_ptr) safeVal = ite_var(n); //Either value is safe, set h=true
+                  num_safe_assigns++;
+                  if(safeVal == true_ptr) safeVal = ite_var(n); //Either value is safe, set h=true
 						BDDNode *inferBDD = safeVal;
 						int bdd_length = 0;
 						int *bdd_vars = NULL;
@@ -201,11 +215,13 @@ int ExSafeCluster () {
 						
 						delete [] bdd_vars;
 						bdd_vars = NULL;
+						ret = PREP_CHANGED;
+						n = 0;
 					} else {
 						int j = amount[n].head->num;
 						for(int iter = 0; iter<str_length; iter++)
 						  d3_printf1("\b");
-						d3e_printf2 ("*{!%d!}", n);
+						d3e_printf2 ("*{%d}", n);
 						d4_printf3 ("*{%s(%d)}", s_name(n), n);
 						str_length = 0;// strlen(p);
 						functions[j] = xquantify (functions[j], n);
@@ -215,23 +231,22 @@ int ExSafeCluster () {
 						 case TRIV_UNSAT:
 						 case TRIV_SAT: 
 						 case PREP_ERROR: 
-							ret = r; goto ea_bailout; /* as much as I hate gotos */
+							ret = r; goto ea_bailout;
 						 default: break;
 						}
 						equalityVble[j] = 0;
 						functionType[j] = UNSURE;
 						ret = PREP_CHANGED;
+						n = 0;
 					}
 				}
 			}
-			
-			if (1 || amount_count <= x){// && independantVars[i]==0) {
+*/			
+			//if (amount_count <= x){// && independantVars[i]==0) {
 				int j = amount_num;
 				assert(functionType[j]!=AUTARKY_FUNC);
-				int out = 0;
-				if(length[j]>MAX_EXQUANTIFY_VARLENGTH) out = 1;
 				int count1 = 1;
-				for (llist * k = amount[i].head; k != NULL && out==0;) {
+				for (llist * k = amount[i].head; k != NULL;) {
 					int z = k->num;
 					k = k->next;
 					if(z == j) continue;
@@ -244,15 +259,10 @@ int ExSafeCluster () {
 						 d3_printf1(p);
 					);
 
-					if (nCtrlC) {
-						out = 1;
-						break;
-					}
-					if(length[z] > MAX_EXQUANTIFY_VARLENGTH){
-						out = 1;
-						break;
-					}
-
+					if (nCtrlC) break;
+					if(length[z] > MAX_EXQUANTIFY_VARLENGTH) break;
+					if(length[j] > MAX_EXQUANTIFY_VARLENGTH) break;
+					
 					count1++;
 				
 					functions[j] = ite_and(functions[j], functions[z]);
@@ -280,23 +290,42 @@ int ExSafeCluster () {
 						ret = r; goto ea_bailout;
 					 default: break;
 					}
-					UnSetRepeats(j);
-					equalityVble[j] = 0;
-					functionType[j] = UNSURE;
 					
 					//do safe assign stuff here.
 
 					for(int l = 0; l < length[j]; l++) {
 						int h = variables[j].num[l];
 						if(amount[h].head == NULL) continue;
-						if(amount[h].head->next == NULL) continue;
+						//if(amount[h].head->next == NULL) continue;
 						
 						BDDNode *safeVal = safe_assign_all(functions, amount, h);
 						  
-						if(safeVal!=false_ptr) {
-							fprintf(stderr, "{%d = ", h);
-							printBDDerr(safeVal);
-							fprintf(stderr, "}");
+						if (amount[h].head->next == NULL) {
+							int o = amount[h].head->num;
+							for(int iter = 0; iter<str_length; iter++)
+							  d3_printf1("\b");
+							d3e_printf2 ("*{%d}", h);
+							d4_printf3 ("*{%s(%d)}", s_name(h), h);
+							str_length = 0;// strlen(p);
+							functions[o] = xquantify (functions[o], h);
+							variablelist[h].true_false = 2;
+							switch (int r=Rebuild_BDDx(o)) {
+							 case TRIV_UNSAT:
+							 case TRIV_SAT: 
+							 case PREP_ERROR: 
+								ret = r; goto ea_bailout; /* as much as I hate gotos */
+							 default: break;
+							}
+							SetRepeats(o);
+							equalityVble[o] = 0;
+							functionType[o] = UNSURE;
+							ret = PREP_CHANGED;
+							l = 0;
+						} else if(safeVal!=false_ptr) {
+							//fprintf(stderr, "{%d = ", h);
+							//printBDDerr(safeVal);
+							//fprintf(stderr, "}");
+							num_safe_assigns++;
 							if(safeVal == true_ptr) safeVal = ite_var(h); //Either value is safe, set h=true
 							BDDNode *inferBDD = safeVal;
 							int bdd_length = 0;
@@ -321,11 +350,7 @@ int ExSafeCluster () {
 						}
 					}
 
-					if(length[j]>MAX_EXQUANTIFY_VARLENGTH && count1!=amount_count) {
-						out = 1;
-						break;
-					}
-				
+					k = amount[i].head;
 				}
 				if(amount_count != 1) {
 					D_3(
@@ -336,20 +361,11 @@ int ExSafeCluster () {
 						 d3_printf1(p);
 					);
 				}
-				if(ret != PREP_CHANGED && x!=1) {
-					continue;
-				}
-				
-				if(out == 1){
-					switch (int r=Rebuild_BDDx(j)) {
-					 case TRIV_UNSAT:
-					 case TRIV_SAT: 
-					 case PREP_ERROR: 
-						ret = r; goto ea_bailout; /* as much as I hate gotos */
-					 default: break;
-					}
-					continue;
-				} else {
+				if(ret == PREP_CHANGED || amount_count == 1) {
+					SetRepeats(j);
+					equalityVble[j] = 0;
+					functionType[j] = UNSURE;
+
 					amount_count = 0;
 					for (llist * k = amount[i].head; k != NULL; k = k->next) {
 						if(functionType[k->num] != AUTARKY_FUNC) {
@@ -359,44 +375,59 @@ int ExSafeCluster () {
 						}
 					}
 					if(amount_count==1 && amount_num == j && inferlist->next==NULL) {
-						//Triple Extra Protection!
-						for(int iter = 0; iter<str_length; iter++)
-						  d3_printf1("\b");
-						d3e_printf2 ("*{%d}", i);
-						d4_printf3 ("*{%s(%d)}", s_name(i), i);
-						str_length = 0;// strlen(p);
-						functions[j] = xquantify (functions[j], i);
-						variablelist[i].true_false = 2;
-						SetRepeats(j);
-						
-						switch (int r=Rebuild_BDDx(j)) {
-						 case TRIV_UNSAT:
-						 case TRIV_SAT: 
-						 case PREP_ERROR: 
-							ret = r; goto ea_bailout; /* as much as I hate gotos */
-						 default: break;
+
+						BDDNode *safeVal = safe_assign_all(functions, amount, i);
+					
+						if(safeVal!=false_ptr) {
+							//fprintf(stderr, "{%d = ", i);
+							//printBDDerr(safeVal);
+							//fprintf(stderr, "}");
+							num_safe_assigns++;
+							if(safeVal == true_ptr) safeVal = ite_var(i); //Either value is safe, set h=true
+							BDDNode *inferBDD = safeVal;
+							int bdd_length = 0;
+							int *bdd_vars = NULL;
+							switch (int r=Rebuild_BDD(inferBDD, &bdd_length, bdd_vars)) {
+							 case TRIV_UNSAT:
+							 case TRIV_SAT:
+							 case PREP_ERROR: return r;
+							 default: break;
+							}
+							
+							switch (int r=Do_Apply_Inferences()) {
+							 case TRIV_UNSAT:
+							 case TRIV_SAT:
+							 case PREP_ERROR: return r;
+							 default: break;
+							}
+							
+							delete [] bdd_vars;
+							bdd_vars = NULL;
+							ret = PREP_CHANGED;
+						} else {
+							//Triple Extra Protection!
+							for(int iter = 0; iter<str_length; iter++)
+							  d3_printf1("\b");
+							d3e_printf2 ("*{%d}", i);
+							d4_printf3 ("*{%s(%d)}", s_name(i), i);
+							str_length = 0;// strlen(p);
+							functions[j] = xquantify (functions[j], i);
+							variablelist[i].true_false = 2;
+							
+							switch (int r=Rebuild_BDDx(j)) {
+							 case TRIV_UNSAT:
+							 case TRIV_SAT: 
+							 case PREP_ERROR: 
+								ret = r; goto ea_bailout;
+							 default: break;
+							}
+							ret = PREP_CHANGED;
 						}
-						equalityVble[j] = 0;
-						functionType[j] = UNSURE;
-						ret = PREP_CHANGED;
-						continue;
-						//goto ea_bailout; /* as much as I hate gotos */
-					} else {
-						switch (int r=Rebuild_BDDx(j)) {
-						 case TRIV_UNSAT:
-						 case TRIV_SAT: 
-						 case PREP_ERROR: 
-							ret = r; goto ea_bailout; /* as much as I hate gotos */
-						 default: break;
-						}
-						equalityVble[j] = 0;
-						functionType[j] = UNSURE;
-						continue;
 					}
 				}
 			}
-		}
-	}
+//		}
+//	}
 	ea_bailout:
 
 	ite_free((void**)&rlist);

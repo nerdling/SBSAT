@@ -386,8 +386,10 @@ Verify_Solver()
 
 	nmbrFunctions = original_numout;
 
-	Backend(numinp, oldnuminp, original_variables);
-
+	if(result_display_type) {
+		Backend(numinp, oldnuminp, original_variables);
+	}
+		
 	while(solution_info_head!=NULL) {
 		solution_info = solution_info_head;
 		solution_info_head = solution_info_head->next;

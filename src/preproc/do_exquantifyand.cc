@@ -38,18 +38,15 @@
 #include "sbsat.h"
 #include "sbsat_preproc.h"
 
-int MAX_EXQUANTIFY_CLAUSES = 5;	  //Number of BDDs a variable appears in
-                                   //to quantify that variable away.
-int MAX_EXQUANTIFY_VARLENGTH = 5; //Limits size of number of vars in 
-                                   //constraints created by ExQuantify
-//!
+int MAX_EXQUANTIFY_CLAUSES = 5000;
+int MAX_EXQUANTIFY_VARLENGTH = 5;
 
 int ExQuantifyAnd();
 
 int Do_ExQuantifyAnd() {
 	MAX_EXQUANTIFY_CLAUSES += 5;
 	MAX_EXQUANTIFY_VARLENGTH +=5;
-	d3_printf2 ("ANDING AND EXISTENTIALLY QUANTIFYING %d - ", countBDDs());
+	d3_printf2 ("EXQUANTIFY AND %d - ", countBDDs());
 	int cofs = PREP_CHANGED;
 	int ret = PREP_NO_CHANGE;
 	affected = 0;
@@ -69,23 +66,29 @@ int Do_ExQuantifyAnd() {
 	d3_printf1 ("\n");
 	d2e_printf1 ("\r                                      ");
 
-	if(ret == PREP_CHANGED && countBDDs() == 0) return TRIV_SAT;
+	if(countBDDs() == 0) return TRIV_SAT;
 	return ret;
 }
 
 typedef struct rand_list {
 	int num;
-	int prob;	
+	int size;
+	int prob;
 };
 
 int rlistfunc (const void *x, const void *y) {
 	rand_list pp, qq;
 	pp = *(const rand_list *) x;
 	qq = *(const rand_list *) y;
-	if (pp.prob < qq.prob)
+	if (pp.size < qq.size)
 	  return -1;
-	if (pp.prob == qq.prob)
-	  return 0;
+	if (pp.size == qq.size) {
+		if(pp.prob < qq.prob)
+		  return -1;
+		if(pp.prob > qq.prob)
+		  return 1;		  
+		return 0;
+	}
 	return 1;
 }
 
@@ -94,20 +97,31 @@ int ExQuantifyAnd () {
 	
 	rand_list *rlist = (rand_list*)ite_calloc(numinp+1, sizeof(rand_list), 9, "rlist");
 	
+	int amount_count;
+
 	for(int i = 1;i < numinp+1; i++) {
 		rlist[i].num = i;
-		rlist[i].prob = i;//random()%(numinp*numinp);
+
+		amount_count = 0;
+		for (llist * k = amount[i].head; k != NULL; k = k->next) {
+			if(functionType[k->num] != AUTARKY_FUNC)
+			  amount_count++;
+		}
+		rlist[i].size = amount_count;
+		
+		rlist[i].prob = random()%(numinp*numinp);
 	}
 	
 	qsort(rlist, numinp+1, sizeof(rand_list), rlistfunc);
-	
+
 	if (enable_gc) bdd_gc(); //Hit it!
-	for (int x = 1; x <= MAX_EXQUANTIFY_CLAUSES; x++) {
+//	for (int x = 1; x <= MAX_EXQUANTIFY_CLAUSES; x++) {
 		for (int rnum = 1; rnum <= numinp; rnum++) {
 		//for (int i = numinp; i > 0; i--) {
 			int i = rlist[rnum].num;
 			if(i == 0) continue;
 			char p[100];
+			int j, count1, amount_num;			
 			
 			D_3(
 				 if (i % ((numinp/100)+1) == 0) {
@@ -133,8 +147,8 @@ int ExQuantifyAnd () {
 			if(variablelist[i].true_false != -1 || variablelist[i].equalvars != 0)
 			  continue;
 			//fprintf(stderr, "%d\n", i);
-         int amount_count = 0;
-			int amount_num = -1;
+			amount_count = 0;
+			amount_num = -1;
 			
 			for (llist * k = amount[i].head; k != NULL; k = k->next) {
 				if(functionType[k->num] != AUTARKY_FUNC) {
@@ -168,172 +182,129 @@ int ExQuantifyAnd () {
 				}
 				continue;
 			}
-			
-			for(int n = 1; n < numinp+1; n++) {
-				if(amount[n].head == NULL) continue;
-				if(amount[n].head->next == NULL) {
-					int j = amount[n].head->num;
-					for(int iter = 0; iter<str_length; iter++)
-					  d3_printf1("\b");
-					d3e_printf2 ("*{!%d!}", n);
-					d4_printf3 ("*{%s(%d)}", s_name(n), n);
-					str_length = 0;// strlen(p);
-					functions[j] = xquantify (functions[j], n);
-					variablelist[n].true_false = 2;
-					SetRepeats(j);
-					switch (int r=Rebuild_BDDx(j)) {
-					 case TRIV_UNSAT:
-					 case TRIV_SAT:
-					 case PREP_ERROR:
-						ret = r; goto ea_bailout; /* as much as I hate gotos */
-					 default: break;
-					}
-					equalityVble[j] = 0;
-					functionType[j] = UNSURE;
-					ret = PREP_CHANGED;
-				}
-			}
 
-			if (1 || amount_count <= x){// && independantVars[i]==0) {
-				int j = amount_num;
-				assert(functionType[j]!=AUTARKY_FUNC);
-				int out = 0;
-				if(length[j]>MAX_EXQUANTIFY_VARLENGTH) out = 1;
-				int count1 = 1;
-				for (llist * k = amount[i].head; k != NULL && out==0;) {
-					int z = k->num;
-					k = k->next;
-					if(z == j) continue;
-					if(functionType[z] == AUTARKY_FUNC) continue;
-					D_3(
-						 for(int iter = 0; iter<str_length; iter++)
-						 d3_printf1("\b");
-						 sprintf(p, "(%d:%d/%d[%d])",i, count1, amount_count, countBDDs());
-						 str_length = strlen(p);
-						 d3_printf1(p);
-					);
+			//if (amount_count <= x){// && independantVars[i]==0) {
+			j = amount_num;
+			assert(functionType[j]!=AUTARKY_FUNC);
+			count1 = 1;
+			for (llist * k = amount[i].head; k != NULL;) {
+				int z = k->num;
+				k = k->next;
+				if(z == j) continue;
+				if(functionType[z] == AUTARKY_FUNC) continue;
+				D_3(
+					 for(int iter = 0; iter<str_length; iter++)
+					 d3_printf1("\b");
+					 sprintf(p, "(%d:%d/%d[%d])",i, count1, amount_count, countBDDs());
+					 str_length = strlen(p);
+					 d3_printf1(p);
+					 );
 
-					if (nCtrlC) {
-						out = 1;
-						break;
-					}
-					if(length[z] > MAX_EXQUANTIFY_VARLENGTH){
-						out = 1;
-						break;
-					}
-
-					count1++;
+				if (nCtrlC) break;
+				if(length[z] > MAX_EXQUANTIFY_VARLENGTH) break;
+				if(length[j] > MAX_EXQUANTIFY_VARLENGTH) break;
 				
-					functions[j] = ite_and(functions[j], functions[z]);
-					affected++;
-
-					/*if(functions[z] == true_ptr) {
-						fprintf(stderr, "z == true!!!");
-						exit(0);
-					}*/
-
-					functions[z] = true_ptr;
-					
-					ret = PREP_CHANGED;
-					
-					switch (int r=Rebuild_BDDx(z)) {
-					 case TRIV_UNSAT: 
-					 case TRIV_SAT: 
-					 case PREP_ERROR: 
-						ret = r; goto ea_bailout;
-					 default: break;
-					}
-					UnSetRepeats(z);
-					equalityVble[z] = 0;
-					functionType[z] = UNSURE;
-
-               switch (int r=Rebuild_BDDx(j)) {
-					 case TRIV_UNSAT:
-					 case TRIV_SAT:
-					 case PREP_ERROR:
-						ret = r; goto ea_bailout;
-					 default: break;
-					}
-					UnSetRepeats(j);
-					equalityVble[j] = 0;
-					functionType[j] = UNSURE;
-					
-					if(length[j]>MAX_EXQUANTIFY_VARLENGTH && count1!=amount_count) {
-						out = 1;
-						break;
-					}
+				count1++;
+				
+				functions[j] = ite_and(functions[j], functions[z]);
+				affected++;
+				
+				functions[z] = true_ptr;
+				
+				ret = PREP_CHANGED;
+				
+				switch (int r=Rebuild_BDDx(z)) {
+				 case TRIV_UNSAT: 
+				 case TRIV_SAT: 
+				 case PREP_ERROR: 
+					ret = r; goto ea_bailout;
+				 default: break;
 				}
-				if(amount_count != 1) {
-					D_3(
-						 for(int iter = 0; iter<str_length; iter++)
-						   d3_printf1("\b");
-						 sprintf(p, "(%d:%d/%d[%d])",i, count1, amount_count, countBDDs());
-						 str_length = strlen(p);
-						 d3_printf1(p);
-					);
+				UnSetRepeats(z);
+				equalityVble[z] = 0;
+				functionType[z] = UNSURE;
+				
+				switch (int r=Rebuild_BDDx(j)) {
+				 case TRIV_UNSAT: 
+				 case TRIV_SAT: 
+				 case PREP_ERROR: 
+					ret = r; goto ea_bailout;
+				 default: break;
 				}
-				if(ret != PREP_CHANGED && x!=1) {
-					continue;
-				}
-				if(out == 1){
-					equalityVble[j] = 0;
-					functionType[j] = UNSURE;
-					switch (int r=Rebuild_BDDx(j)) {
-					 case TRIV_UNSAT: 
-					 case TRIV_SAT: 
-					 case PREP_ERROR: 
-						ret = r; goto ea_bailout; /* as much as I hate gotos */
-					 default: break;
-					}
-					continue;
-				} else {
-					amount_count = 0;
-					for (llist * k = amount[i].head; k != NULL; k = k->next) {
-						if(functionType[k->num] != AUTARKY_FUNC) {
-							amount_count++;
-							if(amount_count == 1) amount_num = k->num;
-							if(amount_count > 1) break;
-						}
-					}
-					if(amount_count==1 && amount_num == j && inferlist->next==NULL) {
-						//Triple Extra Protection!
+				
+				for(int l = 0; l < length[j]; l++) {
+					int h = variables[j].num[l];
+					if(amount[h].head == NULL) continue;
+					//if(amount[h].head->next == NULL) continue;
+					
+					if (amount[h].head->next == NULL) {
+						int o = amount[h].head->num;
 						for(int iter = 0; iter<str_length; iter++)
 						  d3_printf1("\b");
-						d3e_printf2 ("*{%d}", i);
-						d4_printf3 ("*{%s(%d)}", s_name(i), i);
+						d3e_printf2 ("*{%d}", h);
+						d4_printf3 ("*{%s(%d)}", s_name(h), h);
 						str_length = 0;// strlen(p);
-						functions[j] = xquantify (functions[j], i);
-						variablelist[i].true_false = 2;
-						SetRepeats(j);
-						
-						switch (int r=Rebuild_BDDx(j)) {
+						functions[o] = xquantify (functions[o], h);
+						variablelist[h].true_false = 2;
+						switch (int r=Rebuild_BDDx(o)) {
 						 case TRIV_UNSAT:
 						 case TRIV_SAT: 
 						 case PREP_ERROR: 
 							ret = r; goto ea_bailout; /* as much as I hate gotos */
 						 default: break;
 						}
-						equalityVble[j] = 0;
-						functionType[j] = UNSURE;
+						SetRepeats(o);
+						equalityVble[o] = 0;
+						functionType[o] = UNSURE;
 						ret = PREP_CHANGED;
-						continue;
-						//goto ea_bailout; /* as much as I hate gotos */
-					} else {
-						switch (int r=Rebuild_BDDx(j)) {
-						 case TRIV_UNSAT:
-						 case TRIV_SAT: 
-						 case PREP_ERROR: 
-							ret = r; goto ea_bailout; /* as much as I hate gotos */
-						 default: break;
-						}
-						equalityVble[j] = 0;
-						functionType[j] = UNSURE;
-						continue;
+						l = 0;
 					}
+				}
+				k = amount[i].head;
+			}
+			if(amount_count != 1) {
+				D_3(
+					 for(int iter = 0; iter<str_length; iter++)
+					 d3_printf1("\b");
+					 sprintf(p, "(%d:%d/%d[%d])",i, count1, amount_count, countBDDs());
+					 str_length = strlen(p);
+					 d3_printf1(p);
+					 );
+			}
+			if(ret == PREP_CHANGED || amount_count == 1) {
+				SetRepeats(j);
+				equalityVble[j] = 0;
+				functionType[j] = UNSURE;
+				
+				amount_count = 0;
+				for (llist * k = amount[i].head; k != NULL; k = k->next) {
+					if(functionType[k->num] != AUTARKY_FUNC) {
+						amount_count++;
+						if(amount_count == 1) amount_num = k->num;
+						if(amount_count > 1) break;
+					}
+				}
+				if(amount_count==1 && amount_num == j && inferlist->next==NULL) {
+					//Triple Extra Protection!
+					for(int iter = 0; iter<str_length; iter++)
+					  d3_printf1("\b");
+					d3e_printf2 ("*{%d}", i);
+					d4_printf3 ("*{%s(%d)}", s_name(i), i);
+					str_length = 0;// strlen(p);
+					functions[j] = xquantify (functions[j], i);
+					variablelist[i].true_false = 2;
+					
+					switch (int r=Rebuild_BDDx(j)) {
+					 case TRIV_UNSAT:
+					 case TRIV_SAT: 
+					 case PREP_ERROR: 
+						ret = r; goto ea_bailout;
+					 default: break;
+					}
+					ret = PREP_CHANGED;
 				}
 			}
 		}
-	}
 	ea_bailout:
 
 	ite_free((void**)&rlist);
