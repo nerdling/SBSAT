@@ -51,6 +51,7 @@ int absrevcompfunc (const void *, const void *);
 BDDNode *and_dot(BDDNode *, BDDNode *);
 BDDNode *constant_and(BDDNode *, BDDNode *);
 BDDNode *possible_BDD(BDDNode *, int);
+BDDNode *safe_assign(BDDNode *, int);
 
 BDDNode *bdd2xdd(BDDNode *);
 int splitXors();

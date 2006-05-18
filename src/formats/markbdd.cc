@@ -653,7 +653,7 @@ BDDNode *putite(int intnum, BDDNode * bdd)
       strcpy (macros, "nand#");
       return v1;
 	}
-	if (!strcasecmp (macros, "equ")) {
+	if (!strcasecmp (macros, "equ") || !strcasecmp (macros, "noxor")) {
 		BDDNode * v1, *v2;
       v1 = putite (intnum, bdd);
       v2 = putite (intnum, bdd);
@@ -661,7 +661,7 @@ BDDNode *putite(int intnum, BDDNode * bdd)
       strcpy (macros, "equ");
       return ite_equ (v1, v2);
 	}
-	if (!strncasecmp (macros, "equ", 4)) {
+	if (!strncasecmp (macros, "equ", 4) || !strncasecmp (macros, "noxor", 6)) {
 		int numarguments = 0;
       for (unsigned int x = 4; x < strlen (macros); x++) {
 			if (macros[x] < '0' || macros[x] > '9') {

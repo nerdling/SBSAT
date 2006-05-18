@@ -38,15 +38,20 @@
 #include "sbsat.h"
 #include "sbsat_preproc.h"
 
+extern int num_safe_assigns;
+int tier = 1;
+
 int Do_Rewind() {
 	d3_printf1("REWINDING - ");
 	str_length = 0;
-	MAX_EXQUANTIFY_CLAUSES = 20;
+	MAX_EXQUANTIFY_CLAUSES = 5000;
 	MAX_EXQUANTIFY_VARLENGTH = 5;
 	
 	bool OLD_DO_INFERENCES = DO_INFERENCES;
 	DO_INFERENCES = 0;
 
+	long long memory_used = get_memusage();
+	
 	Pos_replace = Neg_replace = Setting_Pos = Setting_Neg = 0;
 
 	int y = 0;
@@ -126,11 +131,19 @@ int Do_Rewind() {
 	int ret = PREP_CHANGED;
 	
 	int Total_inferences = Pos_replace + Neg_replace + Setting_Pos + Setting_Neg;
-	if (Total_inferences > num_inferences) num_inferences = Total_inferences;
-	else ret = PREP_NO_CHANGE;
-	//fprintf(stderr, "%d/%ld ", Total_inferences, numinp);
 
+	//fprintf(stderr, "%d, %d, %d, %ld, %4.2f, %ldM\n", tier, num_safe_assigns, Total_inferences, numinp, get_runtime()-start_prep, memory_used/1024);
+
+	if (Total_inferences > num_inferences) num_inferences = Total_inferences;
+	else {
+		tier++;
+		ret = PREP_NO_CHANGE;
+	}
+	
 	//bdd_gc(1);
+
+	for(int x = 0; x < nmbrFunctions; x++)
+	  original_functions[x] = functions[x];
 	
 	return ret;
 }

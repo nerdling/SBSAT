@@ -144,7 +144,7 @@ get_runtime ()
            ru.ru_stime.tv_sec * 1000 + ru.ru_stime.tv_usec / 1000) / 1000;
 }
 
-#define LINUX_GET_MEMUSAGE
+//#define LINUX_GET_MEMUSAGE
 #ifdef LINUX_GET_MEMUSAGE
 long
 get_memusage ()
@@ -152,7 +152,7 @@ get_memusage ()
    int pid = getpid();
    char stat_buf[256];
    char buffer[2001];
-   sprintf(stat_buf, "/proc/%d/stat", pid);
+   sprintf(stat_buf, "/proc/%d/status", pid);
    FILE *fin=fopen (stat_buf, "r");
    if (!fin) return 0;
 
@@ -165,12 +165,12 @@ get_memusage ()
    char *c=buffer;
 
    /* find the end of the filename */
-   while (*c!=0 && *c!=')') c++;
-   if (*c == 0) return 0;
+   //while (*c!=0 && *c!=')') c++;
+   //if (*c == 0) return 0;
 
    /* find the start of the memory info */
    int space_counter=0;
-   while (space_counter < 21) 
+   while (space_counter < 9) 
     {
       if (*c == ' ') space_counter++;
       c++;
@@ -180,8 +180,8 @@ get_memusage ()
 
    long memalloc=0;
    if (1!=sscanf(c+1, "%ld", &memalloc)) 
-	memalloc=0;
-   fprintf(stderr, "stat(%s):\n%s\nreturn: %ld", stat_buf, buffer, memalloc);
+	  memalloc=0;
+   //fprintf(stderr, "stat(%s):\n%s\nreturn: %ld", stat_buf, buffer, memalloc);
    return memalloc;
 }
 #else
@@ -190,7 +190,7 @@ get_memusage ()
 {
   struct rusage ru;
   getrusage (RUSAGE_SELF, &ru);
-  return ru.ru_maxrss+ru.ru_ixrss+ru.ru_idrss+ru.ru_isrss;
+  return ru.ru_maxrss/*+ru.ru_ixrss+ru.ru_idrss+ru.ru_isrss*/;
 }
 #endif
 
