@@ -39,41 +39,48 @@
 #include "sbsat_preproc.h"
 
 typedef int (*preproc_fn_type)();
+typedef int (*preproc_fn_param_type)(char *);
 
 typedef struct {
-  char id[3];
+  char id[5];
   int id_len;
   preproc_fn_type fn;
+  preproc_fn_param_type fn_param;
   int *enable;
 } preproc_type;
 
 /* Never start with digit */
 /* Never use the same prefix -- 'Pr' and 'Pr1' is very bad 
- *    although if the order is right it will get parsed correctly */
+ *    although if the order is right it will get parsed correctly 
+ *    so -- at least try to sort it by prefix length in the descending order */
 /* Try to start with a capital letter */
 /* Try to keep the fixed size */
+int Do_Calc();
+int Do_Calc_Param(char *param);
+int DO_CALC=1;
 
 preproc_type preproc[] = {
-  { "St", 2, Do_Strength,    &DO_STRENGTH },
-  { "Sa", 2, Do_SafeAssign,  &DO_SAFE_ASSIGN },
-  { "Ss", 2, Do_SafeSearch,  &DO_SAFE_SEARCH },
-  { "Pr", 2, Do_Pruning,     &DO_PRUNING },
-  { "P1", 2, Do_Pruning_1,   &DO_PRUNING },
-  { "P2", 2, Do_Pruning_2,   &DO_PRUNING },
-  { "Sl", 2, Do_Steal,       &DO_PRUNING },
-  { "PR", 2, Do_Pruning_Restrict, &DO_PRUNING },
-  { "Co", 2, Do_Cofactor,    &DO_COFACTOR },
-  { "Ex", 2, Do_ExQuantify,  &DO_EXIST_QUANTIFY },
-  { "Ea", 2, Do_ExQuantifyAnd, &DO_EXIST_QUANTIFY_AND },
-  { "Es", 2, Do_ExSafeCluster, &DO_EX_SAFE_CLUSTER },
-  { "Pa", 2, Do_PossibleAnding, &DO_POSSIBLE_ANDING },
-  { "Dc", 2, Do_DepCluster, &DO_DEP_CLUSTER },
-  { "Sp", 2, Do_Split, &DO_SPLIT },	
-  { "Rw", 2, Do_Rewind, &DO_REWIND },
-  { "Cf", 2, Do_Clear_FunctionType, &DO_CLEAR_FUNCTION_TYPE },
-  { "Ff", 2, Do_Find_FunctionType, &DO_FIND_FUNCTION_TYPE },
-  { "P3", 2, Do_Prover3, &DO_PROVER3},
-  { "", 0, NULL, NULL }
+  { "Calc", 4, Do_Calc, Do_Calc_Param, &DO_CALC},
+  { "St", 2, Do_Strength,    NULL, &DO_STRENGTH },
+  { "Sa", 2, Do_SafeAssign,  NULL, &DO_SAFE_ASSIGN },
+  { "Ss", 2, Do_SafeSearch,  NULL, &DO_SAFE_SEARCH },
+  { "Pr", 2, Do_Pruning,     NULL, &DO_PRUNING },
+  { "P1", 2, Do_Pruning_1,   NULL, &DO_PRUNING },
+  { "P2", 2, Do_Pruning_2,   NULL, &DO_PRUNING },
+  { "Sl", 2, Do_Steal,       NULL, &DO_PRUNING },
+  { "PR", 2, Do_Pruning_Restrict, NULL, &DO_PRUNING },
+  { "Co", 2, Do_Cofactor,    NULL, &DO_COFACTOR },
+  { "Ex", 2, Do_ExQuantify,  NULL, &DO_EXIST_QUANTIFY },
+  { "Ea", 2, Do_ExQuantifyAnd, NULL, &DO_EXIST_QUANTIFY_AND },
+  { "Es", 2, Do_ExSafeCluster, NULL, &DO_EX_SAFE_CLUSTER },
+  { "Pa", 2, Do_PossibleAnding, NULL, &DO_POSSIBLE_ANDING },
+  { "Dc", 2, Do_DepCluster, NULL, &DO_DEP_CLUSTER },
+  { "Sp", 2, Do_Split, NULL, &DO_SPLIT },	
+  { "Rw", 2, Do_Rewind, NULL, &DO_REWIND },
+  { "Cf", 2, Do_Clear_FunctionType, NULL, &DO_CLEAR_FUNCTION_TYPE },
+  { "Ff", 2, Do_Find_FunctionType, NULL, &DO_FIND_FUNCTION_TYPE },
+  { "P3", 2, Do_Prover3, NULL, &DO_PROVER3},
+  { "", 0, NULL, NULL, NULL }
 };
 
 int parse_seq(char **p, int parse_only);
@@ -102,7 +109,7 @@ parse_cycle(char **p, int parse_only)
 {
   int ret = PREP_NO_CHANGE;
   int limit=0;
-  assert(**p=='(');
+  assert(**p=='{');
   (*p)++;
   char *start_p = *p;
   int loop_counter=0;
@@ -112,8 +119,8 @@ parse_cycle(char **p, int parse_only)
 
   if (parse_only == 0) 
   {
-    if (**p!=')') {
-      dE_printf2("Preproc: Format error: 1 missing ')':%s\n", *p);
+    if (**p!='}') {
+      dE_printf2("Preproc: Format error: 1 missing '}':%s\n", *p);
       return PREP_ERROR;
     }
     (*p)++;
@@ -160,8 +167,8 @@ parse_cycle(char **p, int parse_only)
       };
   }
 
-  if (**p!=')') {
-    dE_printf2("Preproc: Format error: missing ')':%s\n", *p);
+  if (**p!='}') {
+    dE_printf2("Preproc: Format error: missing '}':%s\n", *p);
     return PREP_ERROR;
   }
   (*p)++;
@@ -205,7 +212,7 @@ parse_seq(char **p, int parse_only)
         //return PREP_ERROR;
      }
   
-     if (**p == '(')
+     if (**p == '{')
      {
         r = parse_cycle(p, parse_only);
      }
@@ -213,9 +220,13 @@ parse_seq(char **p, int parse_only)
      {
         (*p)++;
         r = parse_seq(p, parse_only);
-        if (r == PREP_CHANGED) r = PREP_NO_CHANGE;
-        if (r == PREP_NO_CHANGE) {
-           assert(**p == ']');
+        assert(**p == ']');
+        (*p)++;
+        if (isdigit(**p)) {
+           if (r == PREP_CHANGED || r == PREP_NO_CHANGE) {
+              if ((**p)-'0' == 0) r=PREP_NO_CHANGE;
+              else r=PREP_CHANGED;
+           }
            (*p)++;
         }
      }
@@ -223,7 +234,7 @@ parse_seq(char **p, int parse_only)
      {
         break;
      }
-     else if (**p == ')')
+     else if (**p == '}')
      {
         break;
      }
@@ -237,6 +248,31 @@ parse_seq(char **p, int parse_only)
         for (int i=0;preproc[i].id[0];i++) {
            if (!strncmp(preproc[i].id, *p, preproc[i].id_len)) 
            {	
+              (*p)+=preproc[i].id_len;
+              if ((**p)=='(') { // arguments to the function
+                 char *start=(*p)+1;
+                 while((**p) && (**p)!=')') {
+                    (*p)++;
+                    if ((**p)=='{' || (**p)=='}' || (**p)=='(') {
+                       dE_printf2("Preproc: Format error: illegal character :%s\n", (*p));
+                       r = PREP_ERROR;
+                       break;
+                    }
+                    (*p)++;
+                 }
+                 if ((**p)!=')') {
+                    dE_printf2("Preproc: Format error: missing ')':%s\n", start);
+                    r = PREP_ERROR;
+                    break;
+                 }
+                 if (parse_only == 0 && *(preproc[i].enable) == 1 && preproc[i].fn_param) {
+                    (**p)=0;
+                    r = preproc[i].fn_param(start);
+                    (**p)=')';
+                    if (r==PREP_ERROR) break;
+                 }
+                 (*p)++;
+              }
               if (parse_only == 0) {
                  if (*(preproc[i].enable) == 1) {
                     r = preproc[i].fn();
@@ -246,7 +282,6 @@ parse_seq(char **p, int parse_only)
                  else r=PREP_NO_CHANGE;
               }
               else r=PREP_NO_CHANGE;
-              (*p)+=preproc[i].id_len;
               break;
            }
         }
@@ -269,4 +304,15 @@ parse_seq(char **p, int parse_only)
   }
   d9_printf2("ps: returning ret with %d\n", ret);
   return ret;
+}
+
+int Do_Calc() {
+   fprintf(stderr, "Calc\n");
+   return PREP_NO_CHANGE;
+}
+
+int Do_Calc_Param(char *param) {
+   if (param == NULL) return PREP_NO_CHANGE;
+   fprintf(stderr, "Calc(%s)\n", param);
+   return PREP_NO_CHANGE;
 }
