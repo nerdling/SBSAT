@@ -297,6 +297,10 @@ void initprob(void)
 	varstoflip = new int[numvars+1];
 	best_to_flip = new int[numvars+1];
 	second_to_flip = new int[numvars+1];
+
+	for(int i = 1;i <= numvars; i++) {
+		true_var_weights[i] = true_weight; //Set the taboo weights
+	}
 	
 	for(int x = 0; x < taboo_length; x++)
 	  true_weight_taboo = true_weight_taboo / true_weight_multi;
