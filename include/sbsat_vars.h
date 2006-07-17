@@ -151,7 +151,7 @@ extern char module_root[128];
 extern int numBuckets;
 extern int sizeBuckets;
 
-extern float *arrVarTrueInfluences;
+extern double *arrVarTrueInfluences;
 extern int **arrVarChoiceLevels;
 extern int arrVarChoiceLevelsMax;
 extern int arrVarChoiceLevelsNum;
