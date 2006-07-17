@@ -50,7 +50,7 @@ struct defines_struct {
 
 struct initbranch_level {
 	char *string;
-	float true_inf_weight;
+	double true_inf_weight;
 };
 
 struct initbranch_struct {
@@ -76,7 +76,7 @@ initbranch_struct *initbranch;
 
 int max_initbranch;
 
-float *arrVarTrueInfluences;
+double *arrVarTrueInfluences;
 int **arrVarChoiceLevels;
 int arrVarChoiceLevelsMax;
 int arrVarChoiceLevelsNum;
@@ -199,14 +199,41 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 					BDDNode *v1 = putite(intnum, bdd);
 					expect_integer = 0;
 					if (v1 != ite_var (v1->variable)) {
-						fprintf (stderr, "\nKeyword 'initial_branch' needs an integer between 1 and 100 after a '%%' (%s)...exiting:%d\n", macros, markbdd_line);
+						fprintf (stderr, "\nKeyword 'initial_branch' needs a number between 0 and 100 after a '%%' (%s)...exiting:%d\n", macros, markbdd_line);
 						exit (1);
 					}
 					if (v1->variable > 100) {
-						fprintf (stderr, "\nKeyword 'initial_branch' needs an integer between 1 and 100 after a '%%' (%s)...exiting:%d\n", macros, markbdd_line);
+						fprintf (stderr, "\nKeyword 'initial_branch' needs a number between 0 and 100 after a '%%' (%s)...exiting:%d\n", macros, markbdd_line);
 						exit (1);
 					}
-					initbranch[branch_level].vars[initbranch[branch_level].num_initbranch_level].true_inf_weight = (float) v1->variable / 100.0;
+					double tweight = ((double)v1->variable)/100.0;
+					d6_printf2(" %f", tweight);
+					p = fgetc(finputfile);
+					if(p == EOF) {
+						fprintf(stderr, "\nUnexpected EOF (%s)...exiting:%d\n", macros, markbdd_line);
+						exit(1);
+					}
+					if(p == '.') {
+						d5_printf1("\b.");
+						expect_integer = 1;
+						BDDNode *v1 = putite(intnum, bdd);
+						expect_integer = 0;
+						if(v1 != ite_var(v1->variable)) {
+							fprintf(stderr, "\nKeyword 'initial_branch' needs a number between 0 and 100 after a '%%' (%s)...exiting:%d\n", macros, markbdd_line);
+							exit(1);
+						}
+						double pweight = (double)v1->variable;
+						for(int dec = 0; floor(pweight)!=0; dec++) {
+							d6_printf2(" %f ", pweight);
+							pweight=pweight/10.0;
+						}
+						pweight=pweight/100.0;
+						tweight+=pweight;
+						d6_printf2(" %f ", tweight);
+					} else {
+						ungetc(p, finputfile);
+					}
+					initbranch[branch_level].vars[initbranch[branch_level].num_initbranch_level].true_inf_weight = tweight;
 				} else {
 					initbranch[branch_level].vars[initbranch[branch_level].num_initbranch_level].true_inf_weight = 0.5;
 				}
@@ -1096,7 +1123,7 @@ void bddloop () {
 	int *initbranch_used = (int *)ite_calloc(numinp + 2, sizeof(int), 9, "initbranch_used");
 
 	arrVarChoiceLevels = (int **)ite_calloc(max_initbranch, sizeof(int *), 9, "arrVarChoiceLevels");
-	arrVarTrueInfluences = (float *)ite_calloc(numinp+1, sizeof(float), 9, "arrVarTrueInfluences");
+	arrVarTrueInfluences = (double *)ite_calloc(numinp+1, sizeof(double), 9, "arrVarTrueInfluences");
 
 	for(int i = 0; i < numinp+1; i++)
 	  arrVarTrueInfluences[i] = 0.5;
