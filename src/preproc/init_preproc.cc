@@ -299,7 +299,7 @@ Finish_Preprocessing()
 	int *influence_times = (int *)ite_calloc(numinp + 1, sizeof(int), 9, "influence_times");
 
 	if(arrVarTrueInfluences == NULL) {
-		arrVarTrueInfluences = (float *)ite_calloc(numinp+1, sizeof(float), 9, "arrVarTrueInfluences");
+		arrVarTrueInfluences = (double *)ite_calloc(numinp+1, sizeof(double), 9, "arrVarTrueInfluences");
 		for(int i = 0; i < numinp+1; i++)
 		  arrVarTrueInfluences[i] = 0.5;
 	}
@@ -344,7 +344,7 @@ Finish_Preprocessing()
 	}
 
 	for(int x = 0; x < numinp+1; x++)
-	  arrVarTrueInfluences[x] = arrVarTrueInfluences[x] / (float)(1+influence_times[x]);
+	  arrVarTrueInfluences[x] = arrVarTrueInfluences[x] / (double)(1+influence_times[x]);
 
 	ite_free((void**)&influence_times);
 
