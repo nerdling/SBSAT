@@ -154,6 +154,18 @@ void ReadSmurfStateIntoTable(SmurfState *pCurrentState) {
 			CurrState->nHeurWghtofTrueTransition
 			  = pCurrentState->arrTransitions[2*nVbleIndex+1].fHeuristicWeight;
 			//= (int)(pCurrentState->arrTransitions[2*nVbleIndex+1].fHeuristicWeight * HEUR_MULT); //???
+
+			//Determine and record if nTransitionVar is safe
+			BDDNode *pSafeBDD = false_ptr;//safe_assign(pCurrentState->pFunc, CurrState->nTransitionVar);
+			if(pSafeBDD == false_ptr)
+			  CurrState->nVarIsSafe = 0;
+			else if(pSafeBDD->thenCase == true_ptr && pSafeBDD->elseCase == false_ptr) {
+				CurrState->nVarIsSafe = 1;
+				fprintf(stderr, "{+1}");
+			} else if(pSafeBDD->thenCase == false_ptr && pSafeBDD->elseCase == true_ptr) {
+				CurrState->nVarIsSafe = -1;
+				fprintf(stderr, "{-1}");
+			}
 			
 			//Compute the SmurfState w/ nTransitionVar = False
 			//Create Inference Transitions
@@ -301,6 +313,7 @@ void ReadAllSmurfsIntoTable() {
 	TrueSimpleSmurfState->nVarIsFalseTransition = 1;
 	TrueSimpleSmurfState->nHeurWghtofTrueTransition = 0;
 	TrueSimpleSmurfState->nHeurWghtofFalseTransition = 0;
+	TrueSimpleSmurfState->nVarIsSafe = 0;
 	TrueSimpleSmurfState->nVarIsAnInference = 0;
 	TrueSimpleSmurfState->nNextVarInThisState = 0;
 	
@@ -325,7 +338,7 @@ void ReadAllSmurfsIntoTable() {
 			 }
 			 );
 		SmurfState *pInitialState = arrSolverFunctions[nSmurfIndex].fn_smurf.pInitialState;
-		if(pInitialState->pFunc->flag != 0) {
+		if(pInitialState->pFunc->flag != 0 && smurfs_share_paths) {
 			SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates[nSmurfIndex] = pInitialState->pFunc->flag;
 		} else {
 			SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates[nSmurfIndex] = SimpleSmurfProblemState->nNumSmurfStateEntries;
@@ -343,26 +356,31 @@ void ReadAllSmurfsIntoTable() {
 		 d3_printf2("%d SmurfStates Used\n", SimpleSmurfProblemState->nNumSmurfStateEntries);  
 		 );
 	
-	PrintAllSmurfStateEntries();  
+	D_9(PrintAllSmurfStateEntries(););
 	assert(SimpleSmurfProblemState->nNumSmurfStateEntries == ite_counters[SMURF_STATES]+2);
 }
 
 void Calculate_Heuristic_Values() {
-	for(int i = 0; i < SimpleSmurfProblemState->nNumVars; i++) {
-		SimpleSmurfProblemState->arrPosVarHeurWghts[i] = 0;
-		SimpleSmurfProblemState->arrNegVarHeurWghts[i] = 0;
+	for(int i = 1; i < SimpleSmurfProblemState->nNumVars; i++) {
+		SimpleSmurfProblemState->arrPosVarHeurWghts[i] = 0.0;
+		SimpleSmurfProblemState->arrNegVarHeurWghts[i] = 0.0;
 	}
 	
 	int *arrSmurfStates = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].arrSmurfStates;
 	for(int nSmurfIndex = 0; nSmurfIndex < SimpleSmurfProblemState->nNumSmurfs; nSmurfIndex++) {
+		if(arrSmurfStates[nSmurfIndex] == 1) continue;
 		SmurfStateEntry *pSmurfState = &(SimpleSmurfProblemState->arrSmurfStatesTable[arrSmurfStates[nSmurfIndex]]);
-		do {
+		SimpleSmurfProblemState->arrPosVarHeurWghts[pSmurfState->nTransitionVar] += 
+		  pSmurfState->nHeurWghtofTrueTransition;
+		SimpleSmurfProblemState->arrNegVarHeurWghts[pSmurfState->nTransitionVar] +=  
+		  pSmurfState->nHeurWghtofFalseTransition;
+		while (pSmurfState->nNextVarInThisState != 0) {
+			pSmurfState = &(SimpleSmurfProblemState->arrSmurfStatesTable[pSmurfState->nNextVarInThisState]);
 			SimpleSmurfProblemState->arrPosVarHeurWghts[pSmurfState->nTransitionVar] += 
 			  pSmurfState->nHeurWghtofTrueTransition;
 			SimpleSmurfProblemState->arrNegVarHeurWghts[pSmurfState->nTransitionVar] +=  
 			  pSmurfState->nHeurWghtofFalseTransition;
-			pSmurfState = &(SimpleSmurfProblemState->arrSmurfStatesTable[pSmurfState->nNextVarInThisState]);
-		} while (pSmurfState->nTransitionVar != 0);
+		}
 	}
 	
 	d7_printf1("JHeuristic values:\n");
@@ -422,6 +440,7 @@ int ApplyInferenceToSmurfs(int nBranchVar, bool bBVPolarity) {
 	for(int i = 0; SimpleSmurfProblemState->arrVariableOccursInSmurf[nBranchVar][i] != -1; i++) {
 		int nSmurfNumber = SimpleSmurfProblemState->arrVariableOccursInSmurf[nBranchVar][i];
 		d7_printf3("    Checking Smurf %d (State %d)\n", nSmurfNumber, arrSmurfStates[nSmurfNumber]);
+		if(arrSmurfStates[nSmurfNumber] == 1) continue;
 		SmurfStateEntry *pSmurfState = &(SimpleSmurfProblemState->arrSmurfStatesTable[arrSmurfStates[nSmurfNumber]]);
 		do {
 			if(pSmurfState->nTransitionVar == nBranchVar) {
@@ -435,7 +454,7 @@ int ApplyInferenceToSmurfs(int nBranchVar, bool bBVPolarity) {
 					//Try to insert inference into the inference Queue
 					int nInfQueueHead = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
 					int nPrevInfLevel = SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[nInfVar];
-					d7_printf5("      Inferring %d at Level %d (prior level = %d) (State %d)\n", 
+					d7_printf5("      Inferring %d at Level %d (prior level = %d) (State %d)\n",
 								  bInfPolarity?nInfVar:-nInfVar, nInfQueueHead, nPrevInfLevel, nNewSmurfState);
 					
 					if(nPrevInfLevel < nInfQueueHead) {
@@ -452,7 +471,6 @@ int ApplyInferenceToSmurfs(int nBranchVar, bool bBVPolarity) {
 						}
 					} else {
 						//Inference is not in inference queue, insert it.
-						//Then insert new inference
 						SimpleSmurfProblemState->arrInferenceQueue[nInfQueueHead] = bInfPolarity?nInfVar:-nInfVar;
 						SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[nInfVar] = nInfQueueHead;
 						SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars++;
@@ -470,7 +488,8 @@ int ApplyInferenceToSmurfs(int nBranchVar, bool bBVPolarity) {
 			}
 			pSmurfState = &(SimpleSmurfProblemState->arrSmurfStatesTable[pSmurfState->nNextVarInThisState]);
 		} while (pSmurfState->nTransitionVar != 0); //If there is an ordering to the way the variables are
-		//listed in nNextVarInThisState we can possibly exit this loop faster  
+		//listed in nNextVarInThisState we can possibly exit this loop faster
+		d7_printf3("      Smurf %d transitioned to state %d\n", nSmurfNumber, arrSmurfStates[nSmurfNumber]);
 	}
 	return 1;
 }
@@ -534,13 +553,15 @@ int SimpleBrancher() {
 		//Insert heuristic var into inference queue
 		int nInfQueueHead = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
 		//First clear out old inference
-		SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[abs(SimpleSmurfProblemState->arrInferenceQueue[nInfQueueHead])] = 
-		  SimpleSmurfProblemState->nNumVars;
+//		SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[abs(SimpleSmurfProblemState->arrInferenceQueue[nInfQueueHead])] =
+//		  SimpleSmurfProblemState->nNumVars;
 		//Then insert new inference
+		int nPrevInfLevel = SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[abs(nBranchLit)];
 		SimpleSmurfProblemState->arrInferenceQueue[nInfQueueHead] = nBranchLit;
 		SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[abs(nBranchLit)] = nInfQueueHead;
 		SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars++;
-		d7_printf3("Inferring %c%d (choice point)\n", nBranchLit>0?'+':'-', abs(nBranchLit));
+		d7_printf5("Inferring %c%d (choice point) at Level %d (prior level = %d)\n",
+					  nBranchLit>0?'+':'-', abs(nBranchLit), nInfQueueHead, nPrevInfLevel);
 		//    d7_printf3("Choice Point #%d = %d\n", , nBranchLit);
 		// 
 		//While inference queue != empty {
@@ -567,8 +588,11 @@ int SimpleBrancher() {
 				//Clear Inference Queue
 				for(int i = 1; i < SimpleSmurfProblemState->nNumVars; i++)
 				  if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i] > SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars ||
-					  abs(SimpleSmurfProblemState->arrInferenceQueue[SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i]]) != i)
-					 SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i] = SimpleSmurfProblemState->nNumVars;
+					  abs(SimpleSmurfProblemState->arrInferenceQueue[SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i]]) != i) {
+					  d7_printf3("      Resetting level of variable %d to %d\n", i, SimpleSmurfProblemState->nNumVars);
+					  SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i] = SimpleSmurfProblemState->nNumVars;
+				  }
+				
 				
 				nBranchLit = SimpleSmurfProblemState->arrInferenceQueue[SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars];
 				SimpleSmurfProblemState->arrInferenceQueue[SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars] = -nBranchLit;
@@ -586,10 +610,13 @@ int SimpleBrancher() {
 }
 
 int simpleSolve() {
+	int bxors_old = BREAK_XORS;
+	BREAK_XORS = 0;
 	int ret = Init_SimpleSmurfSolver();
 	if(ret != SOLV_UNKNOWN) return ret;
 	ret = SimpleBrancher();  
 	//Still need to do some backend stuff like record the solution and free memory.
+	BREAK_XORS = bxors_old;
 	return ret;
 }
 
