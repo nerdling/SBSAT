@@ -63,6 +63,8 @@ void MakeStatesLoop() {
 void Smurf_FPGA() {
 	int ssp_old = smurfs_share_paths;
 	smurfs_share_paths = 0;
+	int bxors_old = BREAK_XORS;
+	BREAK_XORS = 0;
 	int ret = Init_SimpleSmurfSolver();
 	if(ret != SOLV_UNKNOWN) return;
 	
@@ -182,5 +184,6 @@ void Smurf_FPGA() {
 	fprintf(foutputfile, "end SAT_problem_tables;\n");	
 
 	free(p);
+	BREAK_XORS = bxors_old;
 	smurfs_share_paths = ssp_old;
 }
