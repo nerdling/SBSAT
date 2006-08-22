@@ -103,10 +103,12 @@ void Smurf_FPGA() {
 	
 		int *arrSmurfStates = SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates;
 		int next_transition = 1;
-		for(SmurfStateEntry *SmurfState = &(SimpleSmurfProblemState->arrSmurfStatesTable[arrSmurfStates[nSmurfIndex]]); SmurfState->nNextVarInThisState > next_transition; SmurfState = &(SimpleSmurfProblemState->arrSmurfStatesTable[next_transition])) {
+		SmurfStateEntry *SmurfState;
+		for(SmurfState = &(SimpleSmurfProblemState->arrSmurfStatesTable[arrSmurfStates[nSmurfIndex]]); SmurfState->nNextVarInThisState > next_transition; SmurfState = &(SimpleSmurfProblemState->arrSmurfStatesTable[next_transition])) {
 			next_transition = SmurfState->nNextVarInThisState;
 			fprintf(foutputfile, "%d => '1', ", SmurfState->nTransitionVar);
 		}
+		fprintf(foutputfile, "%d => '1', ", SmurfState->nTransitionVar);
 		if(nSmurfIndex < SimpleSmurfProblemState->nNumSmurfs-1)
 		  fprintf(foutputfile, "others => '0'),\n");
 		else
@@ -126,17 +128,17 @@ void Smurf_FPGA() {
 	fprintf(foutputfile, "   -- next_var_state : SMURF_state_num;\n");
 	fprintf(foutputfile, "\n");
 	
-	int start_state = SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates[0];
-	for(int nSmurfIndex = 1; nSmurfIndex <= SimpleSmurfProblemState->nNumSmurfs; nSmurfIndex++) {
-		if(nSmurfIndex == 1)
-		  fprintf(foutputfile, "   (%d =>\n    (", nSmurfIndex-1);
+	for(int nSmurfIndex = 0; nSmurfIndex < SimpleSmurfProblemState->nNumSmurfs; nSmurfIndex++) {
+		if(nSmurfIndex == 0)
+		  fprintf(foutputfile, "   (%d =>\n    (", nSmurfIndex);
 		else
-		  fprintf(foutputfile, "   %d =>\n    (", nSmurfIndex-1);
+		  fprintf(foutputfile, "   %d =>\n    (", nSmurfIndex);
 		int *arrSmurfStates = SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates;
+		int start_state = arrSmurfStates[nSmurfIndex];
 		int stop_at;
-		if(nSmurfIndex == SimpleSmurfProblemState->nNumSmurfs)
+		if(nSmurfIndex+1 == SimpleSmurfProblemState->nNumSmurfs)
 		  stop_at = SimpleSmurfProblemState->nNumSmurfStateEntries;
-		else stop_at = arrSmurfStates[nSmurfIndex];
+		else stop_at = arrSmurfStates[nSmurfIndex+1];
 		for(int y = start_state; y < stop_at; y++) {
 			SmurfStateEntry *SmurfState = &(SimpleSmurfProblemState->arrSmurfStatesTable[y]);
 			//transition variable
@@ -171,8 +173,7 @@ void Smurf_FPGA() {
 		}
 		fprintf(foutputfile, "others => (0, 0, 0, '0', '0', (others => '0'), (others => '0'), 0)\n");
 		fprintf(foutputfile, "    ");
-		start_state = arrSmurfStates[nSmurfIndex];
-		if(nSmurfIndex == SimpleSmurfProblemState->nNumSmurfs)
+		if(nSmurfIndex+1 == SimpleSmurfProblemState->nNumSmurfs)
 		  fprintf(foutputfile, ")\n");
 		else fprintf(foutputfile, "),\n\n");
 	}
