@@ -96,7 +96,7 @@ int Do_Prover3() {
 	numinp = getNuminp();
 	F = numinp+3;
 	T = numinp+2;
-	l = new Linear (numinp + 1, T, F);
+	l = new Equiv (numinp + 1, nmbrFunctions, T, F);
 	numinp = old_numinp;
 	CreateInferences();
 	numinp = getNuminp();

@@ -46,7 +46,7 @@ int Setting_Neg = 0;
 int T;
 int F;
 llistStruct *amount;
-Linear *l;
+Equiv *l;
 infer *inferlist;
 infer *lastinfer;
 int notdone;
@@ -147,7 +147,7 @@ Init_Preprocessing()
 	
 	//numinp = getNuminp();
 
-	l = new Linear (numinp + 1, T, F);
+	l = new Equiv (numinp + 1, nmbrFunctions, T, F);
 	amount = (llistStruct*)calloc(numinp+1, sizeof(llistStruct));
 	
 	//Working with preset variables.

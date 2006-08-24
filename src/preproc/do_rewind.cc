@@ -91,7 +91,7 @@ int Do_Rewind() {
 	//fprintf(stderr, "%d %d\n", original_numout, nmbrFunctions); 
 	
 	delete l;
-	l = new Linear (numinp + 1, T, F);
+	l = new Equiv (numinp + 1, nmbrFunctions, T, F);
 	
 	CreateInferences();
 	for(int x = 1; x < numinp + 1; x++)
