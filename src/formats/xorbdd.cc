@@ -38,6 +38,159 @@
 #include "sbsat.h"
 #include "sbsat_formats.h"
 
+struct xor_of_ands {
+	int *vars_in_and;
+	int curr_length;
+	xor_of_ands *next_and;
+};
+
+void print_xdd(BDDNode *xdd) {
+	if(xdd == true_ptr) fprintf(foutputfile, "1");
+	if(!IS_TRUE_FALSE(xdd->thenCase)) {
+		fprintf(foutputfile, "X[%d]*(", xdd->variable);
+		print_xdd(xdd->thenCase);
+		fprintf(foutputfile, ")");
+	} else {
+		fprintf(foutputfile, "x[%d]", xdd->variable);
+	}
+	if(xdd->elseCase == true_ptr)
+	  fprintf(foutputfile, " +1");
+	else if(xdd->elseCase!=false_ptr) {
+		fprintf(foutputfile, " + ");
+		print_xdd(xdd->elseCase);
+	}
+}
+
+void print_xdd_err(BDDNode *xdd){
+	if(xdd == true_ptr) fprintf(stderr, "1");
+	if(!IS_TRUE_FALSE(xdd->thenCase)) {
+		fprintf(stderr, "X[%d]*(", xdd->variable);
+		print_xdd(xdd->thenCase);
+		fprintf(stderr, ")");
+	} else {
+		fprintf(stderr, "x[%d]", xdd->variable);
+	}
+	if(xdd->elseCase == true_ptr)
+	  fprintf(stderr, " +1");
+	else if(xdd->elseCase!=false_ptr) {
+		fprintf(foutputfile, " + ");
+		print_xdd(xdd->elseCase);
+	}
+}
+
+void print_xor_of_ands(xor_of_ands *top_xor) {	
+	for(int x = 0; x < top_xor->curr_length-1; x++) {
+		if(top_xor->vars_in_and[x] == -1) { // This should never happen
+			fprintf(stderr, "XDD is malformed...exiting\n");
+			exit(0);
+		}
+		else fprintf(foutputfile, "x[%d]*", top_xor->vars_in_and[x]);
+	}
+	if(top_xor->vars_in_and[top_xor->curr_length-1] == -1) fprintf(foutputfile, "1");
+	else fprintf(foutputfile, "x[%d]", top_xor->vars_in_and[top_xor->curr_length-1]);
+	for(xor_of_ands *tmp = top_xor->next_and; tmp!=NULL; tmp = tmp->next_and) {
+		fprintf(foutputfile, " + ");
+		
+		for(int x = 0; x < tmp->curr_length-1; x++) {
+			if(tmp->vars_in_and[x] == -1) { // This should never happen
+				fprintf(stderr, "XDD is malformed...exiting\n");
+				exit(0);
+			}
+			else fprintf(foutputfile, "x[%d]*", tmp->vars_in_and[x]);
+		}
+		if(tmp->vars_in_and[tmp->curr_length-1] == -1) fprintf(foutputfile, "1");
+		else fprintf(foutputfile, "x[%d]", tmp->vars_in_and[tmp->curr_length-1]);
+	}
+}
+
+xor_of_ands *invert_xor_of_ands(xor_of_ands *top_xor) {
+	for(xor_of_ands *tmp = top_xor; ; tmp = tmp->next_and) {
+		if(tmp->next_and == NULL) {
+			tmp->next_and = (xor_of_ands*)ite_calloc(1, sizeof(xor_of_ands), 9, "tmp->next_and");
+			tmp->next_and->vars_in_and = (int *)ite_calloc(1, sizeof(int), 9, "tmp->next_and->vars_in_and");
+			tmp->next_and->curr_length = 1;
+			tmp->next_and->vars_in_and[0] = -1;
+			break;
+		}
+		if(tmp->next_and->next_and == NULL && tmp->next_and->vars_in_and[tmp->next_and->curr_length-1] == -1) {
+			ite_free((void **)tmp->next_and);
+			tmp->next_and = NULL;
+			break;
+		}
+	}
+	return top_xor;
+}
+
+void free_xor_of_ands(xor_of_ands *top_xor) {
+	for(xor_of_ands *tmp = top_xor; tmp!=NULL; ) {
+		xor_of_ands *free_me = tmp;
+		tmp = tmp->next_and;
+		ite_free((void **)free_me);
+	}
+}
+
+xor_of_ands *get_flat_xdd(BDDNode *xdd, int size) {
+	//base case
+	xor_of_ands *top_xor;
+	if(xdd == true_ptr) {
+		top_xor = (xor_of_ands*)ite_calloc(1, sizeof(xor_of_ands), 9, "top_xor");
+		top_xor->next_and->vars_in_and = (int *)ite_calloc(1, sizeof(int), 9, "tmp->next_and->vars_in_and");
+		top_xor->next_and->curr_length = 1;
+		top_xor->next_and->vars_in_and[0] = -1;
+	} else if(xdd == false_ptr) return NULL;
+	else {
+		top_xor = get_flat_xdd(xdd->thenCase, size);
+		
+		if(top_xor == NULL) { //This shouldn't happen with properly formed xdds
+			fprintf(stderr, "XDD is malformed...exiting\n");
+			exit(0);
+		}
+		for(xor_of_ands *tmp = top_xor; ; tmp = tmp->next_and) {
+			//Multiply the top variable into all equations in top_xor
+			if(tmp->curr_length == 1 && tmp->vars_in_and[0] == -1)
+			  tmp->vars_in_and[0] = xdd->variable;
+			else tmp->vars_in_and[tmp->curr_length++] = xdd->variable;
+			if(tmp->next_and == NULL) {
+				if(xdd->elseCase != false_ptr) {
+					//XOR the two lists together
+					tmp->next_and = get_flat_xdd(xdd->elseCase, size);
+				}
+				break;
+			}
+		}
+	}
+	return top_xor;
+}
+
+void print_flat_xdd(BDDNode *xdd, int size) {
+	xor_of_ands *top_xor = get_flat_xdd(xdd, size);
+	if(top_xor == NULL) return;
+	//print_xor_of_ands(top_xor);
+	top_xor = invert_xor_of_ands(top_xor);
+	print_xor_of_ands(top_xor);
+	free_xor_of_ands(top_xor);	
+}
+
+void printLinearFormat() {
+	fprintf(foutputfile, "%d\n", numinp);
+	fprintf(foutputfile, "[\n");
+	BDDNode *xdd = bdd2xdd(functions[0]);
+	print_flat_xdd(xdd, length[0]);
+	fprintf(foutputfile, "\n");
+	for(int x=1; x < nmbrFunctions; x++) {
+		xdd = bdd2xdd(functions[x]);
+		fprintf(foutputfile, "\n");
+		print_flat_xdd(xdd, length[x]);
+		fprintf(foutputfile, "\n");
+	}
+
+	for(int x=1; x < numinp; x++) {
+		fprintf(foutputfile, ",\n");
+		fprintf(foutputfile, "x[%d]^2 + x[%d]\n", x, x);
+	}
+	fprintf(foutputfile, "];\n");
+}
+
 char getNextSymbol (char *&, int &intnum, BDDNode * &);
 
 int xorbdd_line;
