@@ -1345,7 +1345,7 @@ d1:;
 				int hgh = sizeof(VecType)*8-1;
 				while (hgh > 0) { // Maybe 5 of these loops - binary search for leading 1
 					int mid = hgh/2;
-					if ((unsigned)tmp >= (1 << mid+1)) {
+					if (tmp >= (unsigned int)(1 << mid+1)) {
 						tmp >>= mid+1;
 						save_first_column += mid+1;
 					}
