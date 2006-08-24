@@ -44,10 +44,11 @@
  * trees and path compression when joining.  Equivalences can only be set,
  * not removed.  Assumes variables are numbered (that is, of type int).
  * 
- * class Linear API:
- *    Linear (int inp, int True, int False): Constructor, inp is the maximum
- *    numbered input variable, True is the number of the variable representing
- *    value true, False is the number of the variable representing value false.
+ * class Equiv API:
+ *    Equiv (int inp, int out, int True, int False): Constructor, inp is the
+ *    maximum numbered input variable, True is the number of the variable
+ *    representing value true, False is the number of the variable representing
+ *    value false.
  *
  *    Result *insertEquiv (int x, int y): Make variable x equivalent to 
  *    variable y.  Return a pair of int values: the left value is the 
@@ -101,142 +102,70 @@
 **/
 
 #define null -1
+#define VecType unsigned long
 
-typedef struct linear_rec {
-    int no_inp_vars; // The number of input variables                   
-    int index;       // Number of vectors we have                       
-    int equiv_idx;   // how many such nodes are in use.                 
-    int Tr,Fa;       // Symbols for true and false                      
-} Vars;
+typedef struct xorrecord {
+	VecType *vector; // 0-1 vector showing vars in xor func and which type of xor func it is
+	int vector_size; // Number of bytes in vector
+	int *varlist;    // List of vars that are 1 in vector
+	int nvars;        // Number of vars in the function
+	int type;
+	struct xorrecord *next;
+} XORd;
+
+typedef struct equiv_rec {
+	int no_inp_vars; // The number of input variables                   
+	int index;       // Number of vectors we have                       
+	int vec_size;    // Number of bytes comprising each VecType vector
+	int equiv_idx;   // how many such nodes are in use.                 
+	int Tr,Fa;       // Symbols for true and false
+} EquivVars;
 
 typedef struct /*result*/ {
    int left, rght;
 } Result;
 
-//   frame - block of memory containing the number of input variables, number 
-//           of output variables, the number of words in each 0-1 row (also   
-//           called vector), the number of rows (index), the identities of    
-//           T (true) and F (false), and "index" number of "row records".     
-//           Each "row record" contains a consecutive "vec_size" number of    
-//           words containing the 0-1 patterns, the "vec_size" value, the     
-//           type of function (even/odd parity), in what column the bit of a  
-//           row occupies in the diagonal component, and equivalence class    
-//           variables.  Access to these values in the frame variable is      
-//           accomplished as follows:                                         
-//                                                                            
-//           Equivalence Class variables (also see Figure 2):                 
-//               equiv_fwd: ( int *)&frame[equiv_fwd_ref]                
-//               equiv_cnt: ( int *)&frame[equiv_cnt_ref]                
-//               equiv_bck: ( int *)&frame[equiv_bck_ref]                
-//               equiv_end: ( int *)&frame[equiv_end_ref]                
-//               equiv_rgt: ( int *)&frame[equiv_rgt_ref]                
-//               equiv_lft: ( int *)&frame[equiv_lft_ref]                
-//               equiv_res: ( int *)&frame[equiv_res_ref]                
-//                                                                            
-
-// Figure 1. 
-// Equivalence classes are maintained using inverted trees.  These are        
-// adjusted when truth values are assigned to variables.  The following       
-// diagram illustrates the structure of the data.  An explanation follows.    
-// Please note that not all links are shown in this example.                  
-//                                                                            
-// equiv_lft[4]=3 |=======| equiv_rgt[4]=8                                    
-//      +---------*   4   *---------+                                         
-//      |    +--->|=======|<---+    |                       +--> -1           
-//      |    |  equiv_cnt[3]   |    |                       |                 
-//      +->|=*=|    =6       |=*=|<-+  equiv_fwd[2]=8     |=*=|               
-//         * 3 |             * 8 |<-----------+     +-----* 6 |<-------+      
-//      +->|=*=|<-+          |=*=|<-+         |     |     |=*=|<-+     |      
-//      |         |                 |         |     |       |    |     |      
-//      |         |                 |         |     |   +---|----|-----|----+ 
-//      |         |                 |         |     |   |   |    |     |    | 
-//    |=*=|     |=*=|             |=*=|     |=*=|   | +-|---|->|=*=| |=*=|  | 
-//    * 4 |     * 1 |<--------+   * 9 |     * 2 |   | | +---|--* 10| * 12|<-+ 
-//    |=*=|<-+  |=*=|<-+      |   |=*=|<-+  |=*=|   | |   +-|->|=*=| |=*=|<-+ 
-//           |         |      |          |          | |   |  \              | 
-//           |         |      |          |          | |   |   \-------------+ 
-//         |=*=|     |=*=|  |=*=|      |=*=|        | | |=*=|                 
-//         * 13|     * 5 |  * 11|      * 0 |        | +-* 7 |                 
-//         |=*=|     |=*=|  |=*=|      |=*=|        +-->|=*=|                 
-//                                           equiv_bck[6]=7                   
-//                                                                            
-//  For this example: variables 8 and 3 have opposite value, variables 1 and  
-//    4 have the same value, it is not known whether variables 10 and 13      
-//    must have the same or opposite values, there are no known variables     
-//    which must have value opposite to that of variable 7.                   
-//                                                                            
-//  LEGEND                                                                    
-//                                                                            
-//  *---->    These are data links.  The "*" is the point of origin (an index 
-//            into some array) and the ">" is the target (the value of the    
-//            array element.  Names are given to some of the links in the     
-//            diagram for illustration purposes.  Explanations are given      
-//            below.                                                          
-//                                                                            
-// |=======|  These are "super" nodes which connect two equivalence classes   
-// * 1   2 *  with the interpretation that variables of one class have value  
-// |=======|  opposite to the variables of the other class.  There are two    
-//            pointers denoted by "*".  For super node "x":                   
-//              1. equiv_lft[x] points to the root of one equivalence class   
-//              2. equiv_rgt[x] points to the root of the other.              
-//            There is no particular significance to the value of x since     
-//            super nodes are taken from an available pool of super nodes,    
-//            as needed.                                                      
-//     1                                                                      
-//   |=*=|    These are the variables arranged in inverted trees to identify  
-// 2 *   |    sets or equivalence classes of variables that must have the     
-//   |=*=|    same value.  There are three pointers denoted by "*".  Each is  
-//     3      explained for variable "x":                                     
-//              1. equiv_fwd[x] has a value which is that of another variable 
-//                 in the equivalence class, or is a negative number.  If it  
-//                 is a negative number then x is the root of the equivalence 
-//                 class.  If it is a negative number less than -1 then it is 
-//                 also pointing to a "super" node and there exists a class   
-//                 variables of opposite value to x and its equivalence class.
-//              2. equiv_bck[x] points to another variable in the class       
-//                 containing x.  Such pointers form a linked list linking    
-//                 all variables of an equivalence class starting at the root.
-//                 This enables a quick response to a query such as "what     
-//                 variables are equivalent to x?".                           
-//              3. equiv_end[x] points to a variable in the equivalence class 
-//                 which is at the end of the linked list formed by equiv_bck.
-//                 This is used to merge two classes quickly when variables   
-//                 of different classes have been discovered to be equivalent.
-//             In addition to the pointers, there is a value equiv_cnt[x]     
-//             which associates with variable x: this is valid only if x is a 
-//             root of an equivalence class and is then the number of         
-//             variables in the equivalence class.  This is used to perform   
-//             path compression when merging and to answer queries about the  
-//             size of an equivalence class.                                  
-//                                                                            
-// NOTE: Not all links are shown in the diagram                               
-
-class Linear {
-   Vars *rec;
+class Equiv {
+   EquivVars *rec;
    char *frame;
-   Result result;
+   Result *result;
+	Result tmp_result;
+	VecType **order;
 	
-    int no_inp_vars; // The number of input variables 
-    int index;       // Number of vectors we have 
-    int equiv_idx;   // How many such nodes are in use.     
-    int Tr,Fa;       // Symbols for true and false 
+	int no_inp_vars; // The number of input variables 
+	int no_funcs;    // The max number of functions (rows in matrix)
+	int index;       // Number of vectors we have 
+	int vec_size;    // Number of bytes comprising each VecType vector
+	int equiv_idx;   // How many such nodes are in use.     
+	int Tr,Fa;       // Symbols for true and false 
 
-    int *equiv_fwd; // Structure for maintaining and finding equivalences 
-    int *equiv_cnt; // Number of variables in an equiv tree - path comp. 
-    int *equiv_min; // 
-    int *equiv_bck; // Linked list downward from root of inverted tree    
-    int *equiv_end; // Pointer to end of the bck linked list              
-    int *equiv_rgt; // These three maintain nodes that point to trees of  
-    int *equiv_lft; //   opposite equivalence.  The idx variable tells    
-    int *equiv_res; // For returning the result of a query                
-    int *xlist;     // Temporary space for equivalence operations         
-    int *ylist;     // Temporary space for equivalence operations
-   int frame_size;
+	int vecs_vlst_start;
+	int vecs_vsze_start;
+	int vecs_nvar_start;
+	int vecs_type_start;
+	int vecs_colm_start;
+	int vecs_rec_bytes;
+	
+	int *equiv_fwd; // Structure for maintaining and finding equivalences 
+	int *equiv_cnt; // Number of variables in an equiv tree - path comp. 
+	int *equiv_min; // 
+	int *equiv_bck; // Linked list downward from root of inverted tree    
+	int *equiv_end; // Pointer to end of the bck linked list              
+	int *equiv_rgt; // These three maintain nodes that point to trees of  
+	int *equiv_lft; //   opposite equivalence.  The idx variable tells    
+	int *equiv_res; // For returning the result of a query                
+	int *xlist;     // Temporary space for equivalence operations         
+	int *ylist;     // Temporary space for equivalence operations
+	VecType *mask;  // 0 bits are columns of the diagonalized submatrix or assigned variables
+   int *first_bit; // first_bit[i]: pointer to vector on diagonal with first 1 bit at column i
+	
+	int frame_size;
+	int vecs_v_start;
    unsigned long frame_start;
 
  public:
-   Linear (int inp, int True, int False);
-   ~Linear ();
+   Equiv (int inp, int out, int True, int False);
+   ~Equiv ();
 
    // Make variable x equivalent to variable y.                            
    // 
@@ -318,5 +247,26 @@ class Linear {
    void printOpposVarCount ();
    
    void printWhetherEquiv ();
+
+	int makeAssign (int var, int value);
+	
+	Result *findAndSaveEquivalences ();
+	
+	char *copyFrame (char *next_frame);
+	
+	int addRow (XORd *xord);
+	
+	void printFrameSize ();
+	
+	char *pw (VecType word);
+	
+	void printMask();
+	
+	void printLinearN ();
+	
+	void printLinear ();
+	
+	XORd *printXORd (XORd *xord, int no_vars);
+	
 };
 #endif

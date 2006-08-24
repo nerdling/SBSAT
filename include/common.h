@@ -147,22 +147,12 @@ typedef struct hashrecord {
 	struct hashrecord *next;
 } Recd;
 
-typedef struct xorrecord {
-	Recd *clauses;
-	char *vars;
-	char *save;
-	int   save_size;
-	struct xorrecord *next;
-} XORd;
-
 typedef struct /*func*/ {
 	int  no_vars;
 	char *truth_table;
 	int  *var_list;
 	Recd *reduced0;
 	Recd *reduced1;
-	XORd *xor0;
-	XORd *xor1;
 } func_object;
 
 struct infer{
