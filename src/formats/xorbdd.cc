@@ -179,7 +179,7 @@ void printLinearFormat() {
 	fprintf(foutputfile, "\n");
 	for(int x=1; x < nmbrFunctions; x++) {
 		xdd = bdd2xdd(functions[x]);
-		fprintf(foutputfile, "\n");
+		fprintf(foutputfile, ",\n");
 		print_flat_xdd(xdd, length[x]);
 		fprintf(foutputfile, "\n");
 	}
