@@ -134,7 +134,7 @@ xor_of_ands *get_flat_xdd(BDDNode *xdd, int size) {
 	xor_of_ands *top_xor;
 	if(xdd == true_ptr) {
 		top_xor = (xor_of_ands*)ite_calloc(1, sizeof(xor_of_ands), 9, "top_xor");
-		top_xor->vars_in_and = (int *)ite_calloc(1, sizeof(int), 9, "tmp->next_and->vars_in_and");
+		top_xor->vars_in_and = (int *)ite_calloc(size, sizeof(int), 9, "tmp->next_and->vars_in_and");
 		top_xor->curr_length = 1;
 		top_xor->vars_in_and[0] = -1;
 	} else if(xdd == false_ptr) return NULL;
