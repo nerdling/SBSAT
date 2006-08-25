@@ -1,7 +1,8 @@
 #!/bin/sh 
 
 RET=0
-PARAMS=" --debug 1  -L 0 --debug-dev stdout --backjumping 0 -All 0 -In 1 --backtracks-per-report 10000 "
+PARAMS=" --debug 1 -Gauss 0 -L 0 --debug-dev stdout --backjumping 0 -All 0 -In 1 --backtracks-per-report 10000 "
+#PARAMS=" --debug 1  -L 0 --debug-dev stdout --backjumping 0 -All 0 -In 1 --backtracks-per-report 10000 "
 #PARAMS=" --debug 1  -L 0 --backjumping 0 -All 1 -In 1 --smurfs-share-paths 0 --backtracks-per-report 10000 file.xor"
 
 #GENTEST="4 4 4 2"
@@ -9,7 +10,8 @@ PARAMS=" --debug 1  -L 0 --debug-dev stdout --backjumping 0 -All 0 -In 1 --backt
 #GENTEST="xor 50 60 10 4"
 #GENTEST="xor 28 40 18 4"
 #GENTEST="xor 48 40 18 4"
-GENTEST="xor 14 25 10 3"
+#GENTEST="xor 14 25 10 3"
+GENTEST="xor 100 300 7 2"
 #GENTEST="40 20 20 20"
 c=0
 while test $RET -eq 0
@@ -26,21 +28,21 @@ do
   if test $RET -ne 0 ; then 
     break
   fi
-  ../sbsat $PARAMS --break-xors 0 $FILENAME > result.txt
-  cat result.txt 
-  NAU=`cat result.txt | awk -F\  '{ print $3 }' `
-  RET=$?
-  if test $RET -ne 0 ; then 
-    break
-  fi
-  if test $AU = $NAU ; then
-    echo "good - $AU - $NAU"
+#  ../sbsat $PARAMS --break-xors 0 $FILENAME > result.txt
+#  cat result.txt 
+#  NAU=`cat result.txt | awk -F\  '{ print $3 }' `
+#  RET=$?
+#  if test $RET -ne 0 ; then 
+#    break
+#  fi
+#  if test $AU = $NAU ; then
+#    echo "good - $AU - $NAU"
     rm $FILENAME
-  else
-    echo "bad - $AU - $NAU $FILENAME"
-    cp $FILENAME bad
+#  else
+#    echo "bad - $AU - $NAU $FILENAME"
+#    cp $FILENAME bad
     #RET=1
-  fi
+#  fi
 done
 
 echo Failed with error $RET

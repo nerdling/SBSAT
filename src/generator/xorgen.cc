@@ -54,18 +54,29 @@ void makeXor(int variables, int functions, int length, int width) {
 		}
       /* linear part */
       int lin_max = 6*length/7;
+		if(width == 1) lin_max = length;
       for(y = 0; y < lin_max; y++) {
-				var = pick[(rand() % (length+(length/7)))];
-				fprintf(stdout, "x%d ", var);
+			//var = pick[(rand() % (length+(length/7)))];
+			var = pick[y];
+			fprintf(stdout, "x%d ", var);
       }
       /* non-linear part */
-		for(/*cont*/; y < length; y++) {
-			int rand_width = (rand() % width) + 1;
-			for(int z = 0; z < rand_width; z++) {
-				var = pick[(rand() % (length+(length/7)))];
-				fprintf(stdout, "x%d", var);
+		if(width > 1) {
+			for(/*cont*/; y < length; y++) {
+				int rand_width = (rand() % width) + 1;
+				if(rand_width == 1) {
+					for(int z = lin_max; z < length; z++) {
+						var = pick[z];
+						fprintf(stdout, "x%d", var);
+					}
+				} else {
+					for(int z = 0; z < rand_width; z++) {
+						var = pick[(rand() % (length+(length/7)))];
+						fprintf(stdout, "x%d", var);
+					}
+				}
+				fprintf(stdout, " ");
 			}
-			fprintf(stdout, " ");
 		}
 		int equalvar = rand() % 2;
 		fprintf(stdout, "= %d\n", equalvar);
