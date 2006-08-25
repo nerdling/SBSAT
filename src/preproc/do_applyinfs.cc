@@ -38,7 +38,8 @@
 #include "sbsat.h"
 #include "sbsat_preproc.h"
 
-int Rebuild_BDDx (int x);
+int Rebuild_BDDx(int x);
+int checkGaussianElimTableforInfs();
 
 int
 Do_Apply_Inferences ()
@@ -102,46 +103,6 @@ Do_Apply_Inferences ()
 					count1++;
 					int j = k->num;
 					k = k->next; //This must be done here because k could be deleted in Rebuild_BDDx()
-               if (functions[j] == false_ptr)
-                  return TRIV_UNSAT;
-               int changeFT = 0;
-					if (functionType[j] == AUTARKY_FUNC && equalityVble[j]==inferlist->nums[1])
-					  //functions[j] = true_ptr;
-					  equalityVble[j] = inferlist->nums[0];
-						  
-               if (functionType[j] == AND || functionType[j] == OR) {
-                  if (abs (equalityVble[j]) == inferlist->nums[0]) {
-                     for (int iter = 0; iter < length[j]; iter++) {
-                        if (variables[j].num[iter] >= inferlist->nums[1]) {
-                           if (variables[j].num[iter] == inferlist->nums[1])
-                              changeFT = 1;
-                           break;
-                        }
-                     }
-                     if (changeFT == 1) {
-                        functionType[j] = UNSURE; //x v (a & b & c)
-                        equalityVble[j] = 0;
-                     }
-                  } else if (abs (equalityVble[j]) == inferlist->nums[1]) {
-                     for (int iter = 0; iter < length[j]; iter++) {
-                        if (variables[j].num[iter] >= inferlist->nums[0]) {
-                           if (variables[j].num[iter] == inferlist->nums[0])
-                              changeFT = 1;
-                           break;
-                        }
-                     }
-                     if (changeFT == 1) {
-                        functionType[j] = UNSURE; //x v (a & b & c)
-                        equalityVble[j] = 0;
-                     } else if (equalityVble[j] > 0) {
-                        equalityVble[j] = inferlist->nums[0];
-                     } else equalityVble[j] = -inferlist->nums[0];
-                  }
-               } else if (functionType[j] == MINMAX) {
-						functionType[j] = UNSURE;
-						equalityVble[j] = 0;
-					}
-					
                if (Rebuild_BDDx(j)==TRIV_UNSAT)
                   return TRIV_UNSAT;
             }
@@ -157,11 +118,9 @@ Do_Apply_Inferences ()
 				else if(independantVars[inferlist->nums[1]] == reverse_independant_dependant)
 				  independantVars[inferlist->nums[0]] = reverse_independant_dependant;
 				
-//				amount[inferlist->nums[0]].tail->next = amount[inferlist->nums[1]].head;
-//				amount[inferlist->nums[0]].tail = amount[inferlist->nums[1]].tail;
-//				amount[inferlist->nums[1]].head = NULL;
-//				amount[inferlist->nums[1]].tail = NULL;
 				//verifyCircuit(inferlist->nums[1]);
+				
+				//SEAN!!! Need some functionality for entering equivalence into GE table
 			} else {
 				Neg_replace++;
 //            D_3(print_nonroller(););
@@ -184,53 +143,9 @@ Do_Apply_Inferences ()
 					k = k->next; //This must be done here because k could be deleted in Rebuild_BDDx()
 					if (functions[j] == false_ptr)
 					  return TRIV_UNSAT;
-               int changeFT = 0;
-					if (functionType[j] == AUTARKY_FUNC && equalityVble[j]==-inferlist->nums[1])
-					  //functions[j] = true_ptr;
-					  equalityVble[j] = inferlist->nums[0];
-
-               if (functionType[j] == AND || functionType[j] == OR) {
-                  if (abs (equalityVble[j]) == inferlist->nums[0]) {
-                     for (int iter = 0; iter < length[j]; iter++) {
-                        if (variables[j].num[iter] >= -inferlist->nums[1]) {
-                           if (variables[j].num[iter] == -inferlist->nums[1])
-                              changeFT = 1;
-                           break;
-                        }
-                     }
-                     if (changeFT == 1) {
-                        //functionType[j] = ?????;	//-x -> (-a & -b & -c)
-                        functionType[j] = UNSURE;
-                        equalityVble[j] = 0;
-                     }
-                  } else if (abs (equalityVble[j]) == -inferlist->nums[1]) {
-                     for (int iter = 0; iter < length[j]; iter++) {
-                        if (variables[j].num[iter] >= inferlist->nums[0]) {
-                           if (variables[j].num[iter] == inferlist->nums[0])
-                              changeFT = 1;
-                           break;
-                        }
-                     }
-                     if (changeFT == 1) {
-                        //functionType[j] = ?????;	//-x -> (-a & -b & -c)
-                        functionType[j] = UNSURE;
-                        equalityVble[j] = 0;
-                     } else {
-                        if (equalityVble[j] > 0)
-                           equalityVble[j] =  -inferlist->nums[0];
-                        else
-                           equalityVble[j] = inferlist->nums[0];
-                     }
-                  }
-					} else if (functionType[j] == MINMAX) {
-						functionType[j] = UNSURE;
-						equalityVble[j] = 0;
-					}
-
                if (Rebuild_BDDx(j)==TRIV_UNSAT)
                   return TRIV_UNSAT;
             }
-
             int count0 = 0;
             for (llist *k = amount[inferlist->nums[0]].head; k != NULL; k=k->next)
 				  count0++;
@@ -242,11 +157,9 @@ Do_Apply_Inferences ()
 				else if(independantVars[-inferlist->nums[1]] == reverse_independant_dependant)
 				  independantVars[inferlist->nums[0]] = reverse_independant_dependant;
 
-//				amount[inferlist->nums[0]].tail->next = amount[-inferlist->nums[1]].head;
-//				amount[inferlist->nums[0]].tail = amount[-inferlist->nums[1]].tail;
-//				amount[-inferlist->nums[1]].head = NULL;
-//				amount[-inferlist->nums[1]].tail = NULL;
 				//verifyCircuit(-inferlist->nums[1]);
+				
+				//SEAN!!! Need some functionality for entering equivalence into GE table
 			}
 		} else {
 			if (inferlist->nums[0] > 0) {
@@ -262,25 +175,21 @@ Do_Apply_Inferences ()
 				for (llist * k = amount[inferlist->nums[0]].head; k != NULL;) {
 					int j = k->num;
 					k = k->next; //This must be done here because k could be deleted in Rebuild_BDDx()
-					if (functions[j] == false_ptr)
-					  return TRIV_UNSAT;
-					if (functionType[j] == AUTARKY_FUNC && equalityVble[j]==inferlist->nums[0])
-					  functions[j] = true_ptr;
-               if ((functionType[j] == AND && equalityVble[j] < 0)
-                     ||(functionType[j] == OR  && equalityVble[j] > 0)) {
-                  if (abs (equalityVble[j]) == inferlist->nums[0]) {
-                     functionType[j] = PLAINOR;	//a v b v c
-                     equalityVble[j] = 0;
-                  }
-               } else if (functionType[j] == MINMAX) {
-						functionType[j] = UNSURE;
-						equalityVble[j] = 0;
-					}
-					
                if (Rebuild_BDDx(j)==TRIV_UNSAT)
                   return TRIV_UNSAT;
             }
 				//verifyCircuit(inferlist->nums[0]);
+				if(ge_preproc == '1') {
+					int r = l->makeAssign(inferlist->nums[0], 1); //Apply the inference to the Gaussian Elimination Table
+					if(r == 1) {
+						switch (int r1 = checkGaussianElimTableforInfs()) {
+						 case TRIV_UNSAT:
+						 case TRIV_SAT:
+						 case PREP_ERROR: return r1;
+						 default:break;
+						}
+					} else if(r == -1) return TRIV_UNSAT;
+				}						  
 			} else {
 				Setting_Neg++;
 //            D_3(print_nonroller(););
@@ -294,25 +203,21 @@ Do_Apply_Inferences ()
 				for (llist * k = amount[-inferlist->nums[0]].head; k != NULL;) {
 					int j = k->num;
 					k = k->next; //This must be done here because k could be deleted in Rebuild_BDDx()
-					if (functions[j] == false_ptr)
-					  return TRIV_UNSAT;
-					if (functionType[j] == AUTARKY_FUNC && equalityVble[j]==-inferlist->nums[0])
-					  functions[j] = true_ptr;
-               if ((functionType[j] == AND && equalityVble[j] > 0)
-                     ||(functionType[j] == OR  && equalityVble[j] < 0)) {
-                  if (abs (equalityVble[j]) == -inferlist->nums[0]) {
-                     functionType[j] = PLAINOR;	//a v b v c
-                     equalityVble[j] = 0;
-                  }
-               } else if (functionType[j] == MINMAX) {
-						functionType[j] = UNSURE;
-						equalityVble[j] = 0;
-					}
-
                if (Rebuild_BDDx(j)==TRIV_UNSAT)
                   return TRIV_UNSAT;
 				}
 				//verifyCircuit(-inferlist->nums[0]);
+				if(ge_preproc == '1') {
+					int r = l->makeAssign(-inferlist->nums[0], 0); //Apply the inference to the Gaussian Elimination Table
+					if(r == 1) {
+						switch (int r1 = checkGaussianElimTableforInfs()) {
+						 case TRIV_UNSAT:
+						 case TRIV_SAT:
+						 case PREP_ERROR: return r1;
+						 default:break;
+						}
+					} else if(r == -1) return TRIV_UNSAT;
+				}						  
 			}
 		}
 		temp = inferlist;
@@ -436,91 +341,90 @@ void printBDDInfs(BDDNode *bdd) {
 	}
 }
 
-int Rebuild_BDDx (int x) {
-	SetRepeats(x);
-	Result *result;
+VecType *addXORVector (int x) {
+	VecType *vector = (VecType *)ite_calloc(1, sizeof(VecType)*(1+numinp/sizeof(VecType)*8), 9, "xor vector");
+	for(int j=0; j < length[x]; j++) {
+		vector[variables[x].num[j]/(sizeof(VecType)*8)] |= (1 << (variables[x].num[j] % (sizeof(VecType)*8)));
+	}
 	
-	if (functions[x] == false_ptr && functionType[x]!=AUTARKY_FUNC)
-	  return TRIV_UNSAT;
-	
-	//Get Inferences	
-	infer *lastiter = NULL;
-	infer *startiter = NULL;
+	BDDNode *ptr;
+	for(ptr = functions[x]; !IS_TRUE_FALSE(ptr); ptr = ptr->thenCase);
+	if((length[x]%2) == 0) { //If xor has an even number of variables
+		if(ptr == false_ptr) //and True most leaf node is false, xor function equals True
+		  vector[numinp/(sizeof(VecType)*8)] |= (VecType)(1 << ((sizeof(VecType)*8)-1));
+	} else { //If xor has an odd number of variables
+		if(ptr == true_ptr) //and True most leaf is true, xor function equals True
+		  vector[numinp/(sizeof(VecType)*8)] |= (VecType)(1 << ((sizeof(VecType)*8)-1));
+	} //xor function equals False otherwise
+	return vector;
+}
 
-	if(functionType[x] == AUTARKY_FUNC) {
-		//fprintf(stderr, "\n|%d %d|\n", l->equivCount(equalityVble[x]), l->opposCount(equalityVble[x]));
-		//l->printEquivalence(equalityVble[x]);
-		//l->printOpposite(equalityVble[x]);
-		//l->printEquivVarCount();
-		//l->printOpposVarCount();
-		//l->printWhetherEquiv();
-		//str_length=0;
-		//if(l->equivCount(equalityVble[x])==0 && l->opposCount(equalityVble[x])==0) {
-		if(0) {
-			//BDDNode *autarkBDD = possible_BDD(functions[x], equalityVble[x]);
-			BDDNode *autarkBDD = functions[x];
-			if(autarkBDD == false_ptr) {
-				startiter = AllocateInference(equalityVble[x], 0, NULL);
-				startiter->next = lastinfer->next;
-				lastinfer->next = startiter;
-				autark_BDD[equalityVble[x]] = -1;
-				//d3_printf3("\n%d|%d=True|\n", x, equalityVble[x]);
-				//d3_printf1("*T");
-				//printBDD(autarkBDD);
-				//d3_printf1("\n");
-				//str_length = 0;
-				functions[x] = true_ptr;		
-				functionType[x] = UNSURE;
-				equalityVble[x] = 0;
-			} else if(autarkBDD == true_ptr) {
-				//Autark variable was probably infered by some other function.
-				autark_BDD[equalityVble[x]] = -1;
-				//d3_printf3("\n%d|%d gone|\n", x, equalityVble[x]);
-				//str_length = 0;
-				functionType[x] = UNSURE;
-				equalityVble[x] = 0;
+int *getVarList (VecType *vector, int size, int *nvars) {
+	int count = 0;
+	for(int i=0; i<size; i++) {
+		VecType w = vector[i];
+		for(int j=0; j<(int)sizeof(VecType)*8; j++) {
+			if(!(i == size-1 && j == sizeof(VecType)*8-1))
+			  if(w % 2) count++;
+			w/=2;
+		}
+	}
+	*nvars = count;
+	int *varlist = (int *)ite_calloc(1, sizeof(int)*(count+1),9, "xor varlist");
+	count = 0;
+	for(int i=size-1; i>=0; i--) {
+		VecType w=vector[i];
+		for(int j=sizeof(VecType)*8-1; j>=0; j--) {
+			if(i == size-1 && j == sizeof(VecType)*8-1) continue;
+			if(w & (1 << j)) varlist[count++] = i*sizeof(VecType)*8 + j;
+		}
+	}
+	varlist[count] = -1;
+	return varlist;
+}
+
+int checkGaussianElimTableforInfs() {
+	Result *result = l->findAndSaveEquivalences();
+	if(result != NULL) {
+		for(int x = 0; result[x].left != F || result[x].rght != F; x++) {
+			if(result[x].left == T || result[x].left == -F) {
+				if(result[x].rght == F) return TRIV_UNSAT;
+				lastinfer->next = AllocateInference(result[x].rght, 0, NULL);
+				lastinfer = lastinfer->next;
+			} else if(result[x].rght == T || result[x].rght == -F) {
+				lastinfer->next = AllocateInference(result[x].left, 0, NULL);
+				lastinfer = lastinfer->next;
+			} else if(result[x].left == F || result[x].left == -T) {
+				lastinfer->next = AllocateInference(-result[x].rght, 0, NULL);
+				lastinfer = lastinfer->next;
+			} else if(result[x].rght == F || result[x].rght == -T) {			
+				lastinfer->next = AllocateInference(-result[x].left, 0, NULL);
+				lastinfer = lastinfer->next;
+			} else if(abs(result[x].left) < abs(result[x].rght)) {
+				if(result[x].left < 0) {
+					lastinfer->next = AllocateInference(-result[x].left, -result[x].rght, NULL);
+					lastinfer = lastinfer->next;
+				} else {
+					lastinfer->next = AllocateInference(result[x].left, result[x].rght, NULL);
+					lastinfer = lastinfer->next;
+				}
 			} else {
-				for(infer *iterator = autarkBDD->inferences; iterator != NULL; iterator = iterator->next) {
-					if(abs(iterator->nums[0]) == equalityVble[x] || abs(iterator->nums[1]) == equalityVble[x]) {
-						startiter = AllocateInference(iterator->nums[0], iterator->nums[1], NULL);
-						startiter->next = lastinfer->next;
-						lastinfer->next = startiter;
-						autark_BDD[equalityVble[x]] = -1;
-						//d3_printf4("\n%d|%d, %d|\n", x, iterator->nums[0], iterator->nums[1]);
-						//printBDD(functions[x]);
-						//d3_printf1("\n");
-						//d3_printf1("*");
-						//str_length = 0;
-						functions[x] = true_ptr;		
-						functionType[x] = UNSURE;
-						equalityVble[x] = 0;
-						break;
-					}
+				if(result[x].rght < 0) {
+					lastinfer->next = AllocateInference(-result[x].rght, -result[x].left, NULL);
+					lastinfer = lastinfer->next;
+				} else {
+					lastinfer->next = AllocateInference(result[x].rght, result[x].left, NULL);
+					lastinfer = lastinfer->next;
 				}
 			}
-		} else {
-			//Autark variable was infered by some other function.
-			autark_BDD[equalityVble[x]] = -1;
-			//d3_printf3("\n%d|%d gone|\n", x, equalityVble[x]);
-			//str_length = 0;
-			functions[x] = true_ptr;		
-			functionType[x] = UNSURE;
-			equalityVble[x] = 0;
+			lastinfer->next = NULL;
 		}
-	} else if(functions[x]->inferences != NULL) {
-		lastiter = AllocateInference(0, 0, NULL);
-		startiter = lastiter;
-		for(infer *iterator = functions[x]->inferences; iterator != NULL; iterator = iterator->next) {
-			lastiter->next = AllocateInference(iterator->nums[0], iterator->nums[1], NULL);
-			lastiter = lastiter->next;
-		}
-		lastiter->next = NULL;
-		if(startiter!=NULL) {
-			lastinfer->next = startiter->next;
-			DeallocateOneInference(startiter); 
-		} else lastinfer->next = NULL;
 	}
+	return PREP_NO_CHANGE;	
+}
 
+int ReduceInferences() {
+	Result *result;
 	infer *previous = lastinfer;
 	
 	//Remove duplicate inferences
@@ -656,9 +560,103 @@ int Rebuild_BDDx (int x) {
 		assert (iterator->nums[0] != 0);
 		previous = iterator;
 	}
-
+	
 	lastinfer = previous;
 	lastinfer->next = NULL;
+	return PREP_NO_CHANGE;
+}
+
+int Rebuild_BDDx (int x) {
+	SetRepeats(x);
+	Result *result;
+	
+	if (functions[x] == false_ptr && functionType[x]!=AUTARKY_FUNC)
+	  return TRIV_UNSAT;
+	
+	//Get Inferences	
+	infer *lastiter = NULL;
+	infer *startiter = NULL;
+
+	if(functionType[x] == AUTARKY_FUNC) {
+		//fprintf(stderr, "\n|%d %d|\n", l->equivCount(equalityVble[x]), l->opposCount(equalityVble[x]));
+		//l->printEquivalence(equalityVble[x]);
+		//l->printOpposite(equalityVble[x]);
+		//l->printEquivVarCount();
+		//l->printOpposVarCount();
+		//l->printWhetherEquiv();
+		//str_length=0;
+		//if(l->equivCount(equalityVble[x])==0 && l->opposCount(equalityVble[x])==0) {
+		if(0) {
+			//BDDNode *autarkBDD = possible_BDD(functions[x], equalityVble[x]);
+			BDDNode *autarkBDD = functions[x];
+			if(autarkBDD == false_ptr) {
+				startiter = AllocateInference(equalityVble[x], 0, NULL);
+				startiter->next = lastinfer->next;
+				lastinfer->next = startiter;
+				autark_BDD[equalityVble[x]] = -1;
+				//d3_printf3("\n%d|%d=True|\n", x, equalityVble[x]);
+				//d3_printf1("*T");
+				//printBDD(autarkBDD);
+				//d3_printf1("\n");
+				//str_length = 0;
+				functions[x] = true_ptr;		
+				functionType[x] = UNSURE;
+				equalityVble[x] = 0;
+			} else if(autarkBDD == true_ptr) {
+				//Autark variable was probably infered by some other function.
+				autark_BDD[equalityVble[x]] = -1;
+				//d3_printf3("\n%d|%d gone|\n", x, equalityVble[x]);
+				//str_length = 0;
+				functionType[x] = UNSURE;
+				equalityVble[x] = 0;
+			} else {
+				for(infer *iterator = autarkBDD->inferences; iterator != NULL; iterator = iterator->next) {
+					if(abs(iterator->nums[0]) == equalityVble[x] || abs(iterator->nums[1]) == equalityVble[x]) {
+						startiter = AllocateInference(iterator->nums[0], iterator->nums[1], NULL);
+						startiter->next = lastinfer->next;
+						lastinfer->next = startiter;
+						autark_BDD[equalityVble[x]] = -1;
+						//d3_printf4("\n%d|%d, %d|\n", x, iterator->nums[0], iterator->nums[1]);
+						//printBDD(functions[x]);
+						//d3_printf1("\n");
+						//d3_printf1("*");
+						//str_length = 0;
+						functions[x] = true_ptr;		
+						functionType[x] = UNSURE;
+						equalityVble[x] = 0;
+						break;
+					}
+				}
+			}
+		} else {
+			//Autark variable was infered by some other function.
+			autark_BDD[equalityVble[x]] = -1;
+			//d3_printf3("\n%d|%d gone|\n", x, equalityVble[x]);
+			//str_length = 0;
+			functions[x] = true_ptr;		
+			functionType[x] = UNSURE;
+			equalityVble[x] = 0;
+		}
+	} else if(functions[x]->inferences != NULL) {
+		lastiter = AllocateInference(0, 0, NULL);
+		startiter = lastiter;
+		for(infer *iterator = functions[x]->inferences; iterator != NULL; iterator = iterator->next) {
+			lastiter->next = AllocateInference(iterator->nums[0], iterator->nums[1], NULL);
+			lastiter = lastiter->next;
+		}
+		lastiter->next = NULL;
+		if(startiter!=NULL) {
+			lastinfer->next = startiter->next;
+			DeallocateOneInference(startiter); 
+		} else lastinfer->next = NULL;
+	}
+
+	switch(int r1 = ReduceInferences()) {
+	  case TRIV_UNSAT:
+ 	  case TRIV_SAT:
+	  case PREP_ERROR: return r1;
+	  default: break;
+	}
 
 	assert(x<nmbrFunctions+1);
 	long y = 0;
@@ -815,8 +813,40 @@ int Rebuild_BDDx (int x) {
    //A line like this would be better placed in smurffactory
 	//where the smurfs are made...maybe...we like to be able to preprocess
 	//things that have been made small...
-	//if (length[x] < 3)
-	//  functionType[x] = UNSURE;
+	functionType[x] = UNSURE;
+	equalityVble[x] = 0;
+	findandset_fnType(x);
+	
+	if(ge_preproc == '1' && DO_INFERENCES) {
+		//Handle the XOR functions by using gaussian Elimination
+		//Can make this better by splitting the xor parts out of each BDD
+		if(functionType[x] == PLAINXOR && l->rec->index <= l->no_funcs) { 
+			XORd *xor_func = new XORd;
+			// 0-1 vector showing vars in xor func and which type of xor func it is
+			xor_func->vector = addXORVector(x);
+			// Number of bytes in xor_vector
+			xor_func->vector_size = 1 + numinp/(sizeof(VecType)*8);
+			// List of vars athat are 1 in vector
+			int nvars = length[x];
+			xor_func->varlist = getVarList(xor_func->vector, xor_func->vector_size, &nvars);
+			// Number of vars in the function
+			xor_func->nvars = nvars;
+			xor_func->type = (xor_func->vector[xor_func->vector_size-1] & (1 << (sizeof(VecType)*8-1))) ? 1 : 0;
+			xor_func->next = NULL;
+			int r=l->addRow(xor_func);
+			ite_free((void **)&xor_func->varlist);
+			ite_free((void **)&xor_func->vector);
+			if(r == 1) {
+				switch(int r1=checkGaussianElimTableforInfs()) {
+ 				  case TRIV_UNSAT:
+				  case TRIV_SAT:
+				  case PREP_ERROR: return r1;
+				  default: break;
+				}
+			} else if(r == -1) return TRIV_UNSAT;
+			//r == 0, no change
+		}
+	}
 
 	if (DO_INFERENCES) {
 		return Do_Apply_Inferences();
@@ -856,133 +886,13 @@ Rebuild_BDD (BDDNode *bdd, int *bdd_length, int *&bdd_vars)
 		lastinfer->next = startiter->next;
       DeallocateOneInference(startiter); 
    }
-	
-	infer *previous = lastinfer;
-	
-	//Remove duplicate inferences
-	for (infer * iterator = lastinfer->next; iterator != NULL;
-		  iterator = iterator->next) {
-		if (iterator->nums[1] == 0) {
-			if (iterator->nums[0] > 0)	{
-				result = l->insertEquiv (iterator->nums[0], T);
-				if (result == NULL) {
-					infer *temp = iterator;
-					previous->next = iterator->next;	//Skip over inference already applied
-					iterator = previous;
-               DeallocateOneInference(temp); //Delete the inference
-					continue;	//Must continue to skip over 'previous = iterator;'
-				} else if (result->left == T && result->rght == F)
-					  return TRIV_UNSAT;
-				else if (result->left < T) {		//Probably unnecessary...
-					iterator->nums[0] = result->left;	//i don't think result->left will ever be T or F
-				} else {
-					iterator->nums[0] = result->rght;
-				}
-			} else {
-				result = l->insertEquiv (-iterator->nums[0], F);
-				if (result == NULL) {
-					infer *temp = iterator;
-					previous->next = iterator->next;	//Skip over inference already applied
-					iterator = previous;
-               DeallocateOneInference(temp); //Delete the inference
-					continue;	//Must continue to skip over 'previous = iterator;'
-				} else if (result->left == T && result->rght == F)
-					  return TRIV_UNSAT;
-				else if (result->left < T) {		//Probably unnecessary...
-					iterator->nums[0] = -result->left;	//i don't think result->left will ever be T or F
-				} else {
-					iterator->nums[0] = -result->rght;
-				}
-			}
-		} else {
-			if (iterator->nums[1] > 0) {
-				result = l->insertEquiv (iterator->nums[0], iterator->nums[1]);
-				if (result == NULL) {
-					infer *temp = iterator;
-					previous->next = iterator->next;	//Skip over inference already applied
-					iterator = previous;
-               DeallocateOneInference(temp); //Delete the inference
-					continue;	//Must continue to skip over 'previous = iterator;'
-				} else if (result->left == T && result->rght == F)
-					  return TRIV_UNSAT;
-				else if (result->left == T) {
-					iterator->nums[0] = result->rght;
-					iterator->nums[1] = 0;
-				} else if (result->rght == T) {
-					iterator->nums[0] = result->left;
-					iterator->nums[1] = 0;
-				} else if (result->left == F) {
-					iterator->nums[0] = -result->rght;
-					iterator->nums[1] = 0;
-				} else if (result->rght == F) {
-					iterator->nums[0] = -result->left;
-					iterator->nums[1] = 0;
-				} else if (abs (result->left) < abs (result->rght)) {
-					if (result->left < 0) {
-						iterator->nums[0] = -result->left;
-						iterator->nums[1] = -result->rght;
-					} else {
-						iterator->nums[0] = result->left;
-						iterator->nums[1] = result->rght;
-					}
-				} else {
-					if (result->rght < 0) {
-						iterator->nums[0] = -result->rght;
-						iterator->nums[1] = -result->left;
-					} else {
-						iterator->nums[0] = result->rght;
-						iterator->nums[1] = result->left;
-					}
-				}
-			} else {
-				result = l->insertOppos (iterator->nums[0], -iterator->nums[1]);
-				if (result == NULL) {
-					infer *temp = iterator;
-					previous->next = iterator->next;	//Skip over inference already applied
-					iterator = previous;
-               DeallocateOneInference(temp); //Delete the inference
-					continue;	//Must continue to skip over 'previous = iterator;'
-				} else if (result->left == T && result->rght == F)
-					  return TRIV_UNSAT;
-				else if (result->left == T) {
-					iterator->nums[0] = -result->rght;
-					iterator->nums[1] = 0;
-				} else if (result->rght == T) {
-					iterator->nums[0] = -result->left;
-					iterator->nums[1] = 0;
-				} else if (result->left == F) {
-					iterator->nums[0] = result->rght;
-					iterator->nums[1] = 0;
-				} else if (result->rght == F) {
-					iterator->nums[0] = result->left;
-					iterator->nums[1] = 0;
-				} else if (abs (result->left) < abs (result->rght)) {
-					if (result->left < 0) {
-						iterator->nums[0] = -result->left;
-						iterator->nums[1] = result->rght;
-					} else {
-						iterator->nums[0] = result->left;
-						iterator->nums[1] = -result->rght;
-					}
-				} else {
-					if (result->rght < 0) {
-						iterator->nums[0] = -result->rght;
-						iterator->nums[1] = result->left;
-					} else {
-						iterator->nums[0] = result->rght;
-						iterator->nums[1] = -result->left;
-					}
-            }
-         }
-		}
-		if (iterator->nums[1] != 0)
-		  assert (iterator->nums[0] > 0);
-		assert (iterator->nums[0] != 0);
-		previous = iterator;
+
+	switch(int r1 = ReduceInferences()) {
+	  case TRIV_UNSAT:
+ 	  case TRIV_SAT:
+	  case PREP_ERROR: return r1;
+	  default: break;
 	}
-	
-	lastinfer = previous;
-	lastinfer->next = NULL;
         
 	unravelBDD(&y, &bdd_tempint_max, &bdd_tempint, bdd);
    int *tempint = bdd_tempint;

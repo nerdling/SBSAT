@@ -432,7 +432,7 @@ class Equiv {
 
 		int first_bit_sze;
 		int mask_sze;
-		if(0){//ge_preproc[0] == 'L') {
+		if(ge_preproc == '1') {
 			first_bit_sze = sizeof(int)*inp;
 			mask_sze      = sizeof(VecType)*(1+inp/(sizeof(VecType)*8));
 		} else {
@@ -459,7 +459,7 @@ class Equiv {
       int vecs_v_ref    = ylist_ref     + ylist_sze;
 		vecs_v_start      = vecs_v_ref;
 		
-		if(0){//ge_preproc[0] == 'L') {
+		if(ge_preproc == '1') {
 			frame_size = vecs_v_ref + vecs_rec_bytes*no_funcs;
 			order = (VecType **)ite_calloc(1, sizeof(VecType *)*no_funcs, 9, "gaussian elimination order");
 			result = (Result *)ite_calloc(1, sizeof(Result)*inp, 9, "gaussian elimination results");
@@ -481,7 +481,7 @@ class Equiv {
       Tr = rec->Tr = True;
       Fa = rec->Fa = False;
 		
-		if(0){//ge_preproc[0] == 'L') {
+		if(ge_preproc == '1') {
 			vec_size = rec->vec_size = 1+no_inp_vars/(sizeof(VecType)*8);
 			
 			mask = (VecType *)(frame_start+mask_ref);
@@ -526,7 +526,7 @@ class Equiv {
 
    Equiv::~Equiv () { 
 		ite_free((void **) &frame);
-		if(0){//ge_preproc[0] == 'L') {
+		if(ge_preproc == '1') {
 			ite_free((void **) &order);
 			ite_free((void **) &result);
 		}

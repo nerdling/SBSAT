@@ -126,7 +126,9 @@ typedef struct /*result*/ {
 } Result;
 
 class Equiv {
-   EquivVars *rec;
+ public:
+   
+	EquivVars *rec;
    char *frame;
    Result *result;
 	Result tmp_result;

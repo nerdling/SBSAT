@@ -187,6 +187,8 @@ extern int NO_AU_LEMMAS;
 
 extern int sbj;
 
+extern char ge_preproc;
+
 extern int USE_AUTARKY_SMURFS;
 
 extern int reports;

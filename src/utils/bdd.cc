@@ -977,8 +977,12 @@ int isMIN_MAX(BDDNode *bdd, int *bdd_vars, int bdd_len) {
 
 	//Now have the min and max
 	
-	//Will finish later
-	
+	//A slow way to do it!
+	//fprintf(stderr, "min=%d, max=%d, len=%d, min, max, bdd_len);
+
+	int set_true = 0;
+	if(bdd == MinMaxBDD(bdd_vars, min, max, bdd_len, set_true))
+	  return 1;	
 	return 0;
 }
 
@@ -986,39 +990,41 @@ int isMIN_MAX(BDDNode *bdd, int *bdd_vars, int bdd_len) {
 int findandset_fnType(int x) {
 	if(functionType[x] != UNSURE) return 1;
 	
-	if(isOR(functions[x])) {
+	if (length[x] >= functionTypeLimits[PLAINOR] &&
+		 isOR(functions[x])) {
 		functionType[x] = PLAINOR;
-		if (length[x] < functionTypeLimits[functionType[x]])
-		  functionType[x] = UNSURE;
 		return 1;
 	}
 	
-	if(isXOR(functions[x])) {
+	if (length[x] >= functionTypeLimits[PLAINXOR] &&
+		 isXOR(functions[x])) {
 		functionType[x] = PLAINXOR;
-		if (length[x] < functionTypeLimits[functionType[x]])
-		  functionType[x] = UNSURE;
 		return 1;
 	}
 	
-	int equ_var = isAND_EQU(functions[x], variables[x].num, length[x]);
-	if(equ_var != 0) {
-		if(equ_var > 0) {
-			functionType[x] = AND;
-			equalityVble[x] = equ_var;
-			independantVars[equ_var] = reverse_independant_dependant;
-			if (length[x] < functionTypeLimits[functionType[x]])
-			  functionType[x] = UNSURE;
-		} else { //equ_var < 0 for sure
-			functionType[x] = OR;
-			equalityVble[x] = -equ_var;
-			independantVars[-equ_var] = reverse_independant_dependant;
-			if (length[x] < functionTypeLimits[functionType[x]])
-			  functionType[x] = UNSURE;
+	if (length[x] >= functionTypeLimits[AND]) {
+		int equ_var = isAND_EQU(functions[x], variables[x].num, length[x]);
+		if(equ_var != 0) {
+			if(equ_var > 0) {
+				functionType[x] = AND;
+				equalityVble[x] = equ_var;
+				//independantVars[equ_var] = reverse_independant_dependant;
+			} else { //equ_var < 0 for sure
+				functionType[x] = OR;
+				equalityVble[x] = -equ_var;
+				//independantVars[-equ_var] = reverse_independant_dependant;
+			}
+			return 1;
 		}
-		return 1;
 	}
 
-	//if(isMIN_MAX(functions[x], variables[x].num, length[x])){}
+	if (length[x] >= functionTypeLimits[MINMAX] &&
+		 isMIN_MAX(functions[x], variables[x].num, length[x])) {
+		functionType[x] = MINMAX;
+		return 1;
+	}
+	
+	
 	return 0;
 }
 

@@ -45,6 +45,7 @@ void ctrl_c_proc(int x);
 
 char sHeuristic[10]="j";
 char cnfformat[128]="noqm";
+char dependence='c';
 int  n_cnfformat=CNF_NOQM;
 char sResult[4]="n";
 int  ctrl_c=0;
@@ -138,7 +139,7 @@ t_opt options[] = {
                 "The minimum # of literals to flag sp. function or_equ"},
 { functionTypeLimits+PLAINOR, "", "limit-or", P_INT, V(i:0,"0"), V(i:8,"8"), VAR_NORMAL, 0, 
                 "The minimum # of literals to flag sp. function plainor"},
-{ functionTypeLimits+PLAINXOR, "", "limit-xor", P_INT, V(i:0,"0"), V(i:5,"5"), VAR_NORMAL, 0,
+{ functionTypeLimits+PLAINXOR, "", "limit-xor", P_INT, V(i:0,"0"), V(i:3,"3"), VAR_NORMAL, 0,
                 "The minimum # of literals to flag sp. function plainxor"},
 { functionTypeLimits+MINMAX, "", "limit-minmax", P_INT, V(i:0,"0"), V(i:2,"2"), VAR_NORMAL, 0,
                 "The minimum # of literals to flag sp. function minmax"},
@@ -246,21 +247,17 @@ t_opt options[] = {
 		"Threashold above which the Sp splits BDDs."},
 { &ex_infer, "",  "ex-infer", P_INT, V(i:0,"0"),  V(i:0,"1"), VAR_NORMAL, 0,
 		"Enable/Disable Ex Quantification to try to infer variables before they are quantified away."},
-	
-/* 
+{ &ge_preproc, "Gauss", "Gaussian-Elimination", P_CHAR, V(i:0, "0"),  V(c:'0', "0"), VAR_NORMAL, 0,
+	   "Enable Gaussian Elimination in the preprocessor (1/0)"},
+/*
  * General Solver options
  */
 { NULL, "", "", P_NONE, {"0"}, {"0"}, VAR_NORMAL, 0, 
-	        "\nGeneral Solver options:"},
-{ brancher_presets, "", "brancher-presets", P_STRING, 
-		V(i:4095,"4095"), {""}, VAR_NORMAL, 0, 
-                "Variables that are preset before the brancher is called. Options are ([[=|!|#|+var|-var] ]*)"},
-{ &reverse_independant_dependant, "r", "reverse-depend", P_PRE_INT, 
-	     	V(i:1,"1"), V(i:0,"0"), VAR_NORMAL, 0, 
-		"Reverse dependency info on in/dependent variables"},
-{ &clear_dependance, "e",  "clear-depend", P_PRE_INT, 
-		V(i:1,"1"), V(i:0,"0"), VAR_NORMAL, 0, 
-		"Clear dependency information on variables"},
+	   "\nGeneral Solver options:"},
+{ brancher_presets, "", "brancher-presets", P_STRING,	V(i:4095,"4095"), {""}, VAR_NORMAL, 0, 
+	   "Variables that are preset before the brancher is called. Options are ([[=|!|#|+var|-var] ]*)"},
+{ &dependence,  "", "dependence", P_CHAR, V(i:0,"0"), V(c:'c',"c"), VAR_NORMAL, 0,
+	   "Modify Independent/Dependent Variables (n=no change, r=reverse, c=clear)"},
 { &max_solutions, "", "max-solutions", P_INT, V(i:0,"0"), V(i:1,"1"), VAR_NORMAL, 0,
 		"Set the maximum number of solutions to search for. 0 will cause the solver to search for as many solutions as it can find. The algorithm does not guarantee that it reports all possible solutions."},
 { &autarky, "", "autarky", P_INT, V(i:0,"0"), V(i:0,"0"), VAR_CHECK+VAR_DUMP, 0,
@@ -391,8 +388,6 @@ finish_params()
 {
    if (competition_enable) {
       char tmp_str[32];
-      t_opt *p_opt_r = lookup_keyword(strcpy(tmp_str, "reverse-depend"));
-      if (p_opt_r->p_src == 0) clear_dependance = 1;
       if (DEBUG_LVL <= 2) DEBUG_LVL = 0;
       if (sResult[0] == 'n') sResult[0] = 'c';
       if (sat_timeout == 0) sat_timeout = getSATlimit("SATTIMEOUT");
@@ -400,6 +395,9 @@ finish_params()
 
       if (sat_timeout > 0) max_preproc_time = sat_timeout / 2;
    }
+
+	if(dependence == 'r') reverse_independant_dependant = 1;
+	if(dependence == 'c') clear_dependance = 1;
 
    if (MAX_NUM_CACHED_LEMMAS == 0) {
       backjumping = 0;

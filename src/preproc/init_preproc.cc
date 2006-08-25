@@ -245,6 +245,20 @@ Init_Preprocessing()
 
 	DO_INFERENCES = OLD_DO_INFERENCES;
 
+	for (int x = 0; x < nmbrFunctions; x++) {
+		D_3(
+			 if ((x % 1000) == 0)
+			 d3_printf3("Rebuild %d/%d\r", x, nmbrFunctions);
+          )
+		int r=Rebuild_BDDx(x);
+		switch (r) {
+		  case TRIV_UNSAT:
+		  case TRIV_SAT:
+		  case PREP_ERROR: return r; 
+		  default: break;
+		}
+	}
+	
    //Do_Flow();
    //Do_Flow_Grouping();
 
