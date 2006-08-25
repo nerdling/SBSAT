@@ -257,6 +257,11 @@ Threashold above which the Sp splits BDDs.
 Enable/Disable Ex Quantification to try to infer
 variables before they are quantified away.
 [default=1]
+.TP
+\fB\-\-Gaussian\-Elimination\fR <char>, \fB\-Gauss\fR <char>
+Enable Gaussian Elimination in the preprocessor
+(1/0)
+[default='0']
 .SS "General Solver options:"
 .TP
 \fB\-\-brancher\-presets\fR <string>
@@ -264,11 +269,10 @@ Variables that are preset before the brancher is
 called. Options are ([[=|!|#|+var|\-var] ]*)
 [default=""]
 .TP
-\fB\-\-reverse\-depend\fR, \fB\-r\fR
-Reverse dependency info on in/dependent variables
-.TP
-\fB\-\-clear\-depend\fR, \fB\-e\fR
-Clear dependency information on variables
+\fB\-\-dependence\fR <char>
+Modify Independent/Dependent Variables (n=no
+change, r=reverse, c=clear)
+[default='c']
 .TP
 \fB\-\-max\-solutions\fR <number>
 Set the maximum number of solutions to search for.
