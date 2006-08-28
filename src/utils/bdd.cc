@@ -375,19 +375,90 @@ BDDNode *xdd_reduce_f(int v, BDDNode *x) {
   return x;
 }
 
+int are_xdd_comp(BDDNode *x, BDDNode *y) {
+	while(!IS_TRUE_FALSE(x) && !IS_TRUE_FALSE(y)) {
+		if(x->variable != y->variable) return 0;
+		if(x->thenCase != y->thenCase) return 0;
+		x = x->elseCase;
+		y = y->thenCase;		
+	}
+	if(x == true_ptr) {
+		if(y == false_ptr)
+		  return 1;
+		else return 0;
+	} else if(x == false_ptr)
+		  if(y == true_ptr)
+			 return 1;
+	return 0;
+}
+
+BDDNode *xddnot(BDDNode *x) {
+	if(x == true_ptr) return false_ptr;
+	if(x == false_ptr) return true_ptr;
+	return find_or_add_node(x->variable, x->thenCase, xddnot(x->elseCase));
+}
+
 BDDNode *xddxor(BDDNode *x, BDDNode *y) {
    BDDNode *cached = itetable_find_or_add_node(9, x, y, NULL);
    if (cached) return cached;
 
 	if(x == false_ptr) return y;
 	if(y == false_ptr) return x;
-	if(x == true_ptr && y == true_ptr) return false_ptr;
+	if(x == true_ptr) return xddnot(y);
+	if(y == true_ptr) return xddnot(x);
 	int v = (x->variable > y->variable) ? x->variable : y->variable;
 	BDDNode *r = xddxor(xdd_reduce_t(v, x), xdd_reduce_t(v, y));
 	BDDNode *e = xddxor(xdd_reduce_f(v, x), xdd_reduce_f(v, y));
 	if(r == false_ptr) return itetable_add_node(9, x, y, e);
 	//return find_or_add_node(v, r, e);
 	return itetable_add_node(9, x, y, find_or_add_node(v, r, e));
+}
+
+BDDNode *xddand(BDDNode *x, BDDNode *y) {
+	BDDNode *cached = itetable_find_or_add_node(15, x, y, NULL);
+   if (cached) return cached;
+	if(x == false_ptr) return false_ptr;
+	if(y == false_ptr) return false_ptr;
+	if(x == true_ptr) return y;
+	if(y == true_ptr) return x;
+	if(x == y) return x;
+	if(are_xdd_comp(x,y)) return false_ptr;
+	
+	int v;
+	BDDNode *r, *e;
+	
+	if(x->variable > y->variable) {
+		v = x->variable;
+		r = xddand(x->thenCase, y);
+		e = xddand(x->elseCase, y);
+	} else if(x->variable < y->variable) {
+		v = y->variable;
+		r = xddand(y->thenCase, x);
+		e = xddand(y->elseCase, x);
+	} else { //x->variable == y->variable
+		v = x->variable;
+		e = xddand(x->elseCase, y->elseCase);
+		if(x->thenCase == true_ptr) {
+			r = xddxor(
+						  xddxor(y->thenCase, y->elseCase),
+						  xddand(y->thenCase, x->elseCase));
+		} else if(y->thenCase == true_ptr) {
+			r = xddxor(
+						  xddxor(x->thenCase, x->elseCase),
+						  xddand(x->thenCase, y->elseCase));
+		} else {
+			r = xddxor(
+						  xddand(
+									xddxor(x->thenCase, x->elseCase),
+									xddxor(y->thenCase, y->elseCase)
+									),
+						  e
+						  );
+		}
+	}
+
+	if(r == false_ptr) return itetable_add_node(15, x, y, e);
+	return itetable_add_node(15, x, y, find_or_add_node(v, r, e));
 }
 
 BDDNode *_bdd2xdd(BDDNode *x);
@@ -1181,7 +1252,16 @@ void countSingleXors(BDDNode *x, int *xor_vars, int *nonxor_vars) {
 		} else {
          if (!IS_TRUE_FALSE(x->thenCase))
             collect_nonxors(x->thenCase, xor_vars, &xor_vars_idx, nonxor_vars, &nonxor_vars_idx);
-      }
+			int idx;
+			if((idx=is_in_set(x->variable, xor_vars, xor_vars_idx))!=-1) {
+				xor_vars_idx--;
+				xor_vars[idx] = xor_vars[xor_vars_idx];
+				nonxor_vars[nonxor_vars_idx++] = x->variable;
+			} else 
+			  if(is_in_set(x->variable, nonxor_vars, nonxor_vars_idx)==-1) {
+				  nonxor_vars[nonxor_vars_idx++] = x->variable;
+			  }
+		}
 	}
 	xor_vars[xor_vars_idx] = 0;
 	nonxor_vars[nonxor_vars_idx] = 0;
