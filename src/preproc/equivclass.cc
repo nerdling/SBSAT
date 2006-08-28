@@ -1170,6 +1170,15 @@ class Equiv {
 		return 1; // Normal ending
 	}
 
+   char *Equiv::pw (VecType word) {
+		char *out = (char *)calloc(1,sizeof(char)*128);
+		for (int i=0 ; i < sizeof(VecType)*8 ; i++) {
+			if (word & (1 << i)) out[i] = '1'; else out[i] = '0';
+		}
+		out[sizeof(VecType)*8] = 0;
+		return out;
+	}
+
    // Go through matrix to find and record equivalences.  Additional data
    // structures are needed to prevent attempting to add the same equiv.
    // to the data base more than once.
@@ -1189,6 +1198,7 @@ class Equiv {
    //    Add equivalences and opposites to internal data base and "result"
    //    Return "result"
    Result *Equiv::findAndSaveEquivalences () {
+		printLinear ();
 		int idx = 0; // index into return array
 		unsigned long vec_add, vec_f_add;
 		if (rec->index < 1) return NULL; // Return NULL if no vectors in matrix
@@ -1227,7 +1237,7 @@ class Equiv {
 				if(fase_result == NULL) continue; //No change - already in the database
 				result[idx].left = fase_result->left; // Attempt to make v = Tr
 				result[idx].rght = fase_result->rght; // Attempt to make v = Tr
-				//fprintf(stdout, "|%d, %d|", result[idx].left, result[idx].rght);
+				fprintf(stdout, "|%d, %d|", result[idx].left, result[idx].rght);
 				if(fase_result->left == Tr && fase_result->rght == Fa) return result; // Inconsistency
 				idx++; // Equivalence is valid
 			} else {
@@ -1235,7 +1245,7 @@ class Equiv {
 				if(fase_result == NULL) continue; // No change - already in database
 				result[idx].left = fase_result->left; // Attempt to make v = Tr
 				result[idx].rght = fase_result->rght; // Attempt to make v = Tr
-				//fprintf(stdout, "|%d, %d|", result[idx].left, result[idx].rght);
+				fprintf(stdout, "|%d, %d|", result[idx].left, result[idx].rght);
 				if(fase_result->left == Tr && fase_result->rght == Fa) return result; // Inconsistency
 				idx++; // Equivalence is valid
 			}
@@ -1244,8 +1254,15 @@ class Equiv {
 dd:;
 		while(p < rec->index) {
 			VecType *vec = order[p];
+
+			char *vec_char = pw(*vec);
+			for (int j=0 ; j < no_inp_vars ; j++) {
+				fprintf(stderr, "%c", vec_char[j]);
+			}
+			fprintf(stderr, "\n");
+
 			vec_add = (unsigned long)vec+vecs_colm_start;
-			int vpc = *((int *)vec_add);
+			int vpc = *((short int *)vec_add);
 
 			// Find block of vectors from p to h with same masked value
 			// and either make those variables equivalent or opposite
@@ -1253,6 +1270,14 @@ dd:;
 			int h;
 			for(h = p+1; h < rec->index; h++) {
 				VecType *vef = order[h];
+
+				vec_char = pw(*vef);
+				for (int j=0 ; j < no_inp_vars ; j++) {
+					fprintf(stderr, "%c", vec_char[j]);
+				}
+				fprintf(stderr, "\n");
+
+				
 				for(int j=0; j < vec_size; j++)
 				  if((mask[j] & vec[j]) != (mask[j] & vef[j])) goto d1;
 				vec_f_add = (unsigned long)vef+vecs_colm_start;
@@ -1265,7 +1290,7 @@ dd:;
 					if(fase_result == NULL) continue; // No change - already in database
 					result[idx].left = fase_result->left;
 					result[idx].rght = fase_result->rght;
-					//fprintf(stdout, "|%d, %d|", result[idx].left, result[idx].rght);
+					fprintf(stdout, "|%d, %d|", result[idx].left, result[idx].rght);
 					if(fase_result->left == Tr && fase_result->rght == Fa) return result; // Inconsistency
 					idx++; // Equivalence is valid
 				} else {
@@ -1275,7 +1300,7 @@ dd:;
 					if(fase_result == NULL) continue; // No change - already in database
 					result[idx].left = fase_result->left;
 					result[idx].rght = -fase_result->rght;
-					//fprintf(stdout, "|%d, %d|", result[idx].left, result[idx].rght);
+					fprintf(stdout, "|%d, %d|", result[idx].left, result[idx].rght);
 					if(fase_result->left == Tr && fase_result->rght == Fa) return result; // Inconsistency
 					idx++; // Equivalence is valid
 				}
@@ -1385,15 +1410,6 @@ d1:;
 	
    void Equiv::printFrameSize () {
 		cout << "Frame: " << frame_size << "\n";
-	}
-
-   char *Equiv::pw (VecType word) {
-		char *out = (char *)calloc(1,sizeof(char)*128);
-		for (int i=0 ; i < sizeof(VecType)*8 ; i++) {
-			if (word & (1 << i)) out[i] = '1'; else out[i] = '0';
-		}
-		out[sizeof(VecType)*8] = 0;
-		return out;
 	}
 
    void Equiv::printMask () {
