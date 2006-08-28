@@ -90,6 +90,8 @@ FnSmurfInit()
 
    // Initialize info regarding the 'true' function.
    pTrueSmurfState = AllocateSmurfState();
+	pTrueSmurfState->pFunc = true_ptr;
+	pTrueSmurfState->fNodeHeuristicWeight = JHEURISTIC_K_TRUE;
 /*
    if (nNumRegSmurfs > 0)
    {
