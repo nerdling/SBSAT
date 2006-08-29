@@ -115,6 +115,16 @@ int Do_Rewind() {
 	}
 	
 	DO_INFERENCES = OLD_DO_INFERENCES;
+
+	for (int x = 0; x < nmbrFunctions; x++) { //Need to do this twice
+		int r=Rebuild_BDDx(x);                 //For the GaussE Table
+		switch (r) {
+		 case TRIV_UNSAT:
+		 case TRIV_SAT:
+		 case PREP_ERROR: return r; 
+		 default: break;
+		}
+	}
 	
 	bdd_gc(1);
 	
@@ -132,7 +142,7 @@ int Do_Rewind() {
 	
 	int Total_inferences = Pos_replace + Neg_replace + Setting_Pos + Setting_Neg;
 
-	//fprintf(stderr, "%d, %d, %d, %ld, %4.2f, %ldM\n", tier, num_safe_assigns, Total_inferences, numinp, get_runtime()-start_prep, memory_used/1024);
+	fprintf(stderr, "%d, %d, %d, %ld, %4.2f, %ldM\n", tier, num_safe_assigns, Total_inferences, numinp, get_runtime()-start_prep, memory_used/1024);
 
 	if (Total_inferences > num_inferences) num_inferences = Total_inferences;
 	else {

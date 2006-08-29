@@ -1171,7 +1171,7 @@ class Equiv {
 	}
 
    char *Equiv::pw (VecType word) {
-		char *out = (char *)calloc(1,sizeof(char)*128);
+		char *out = (char *)calloc(1,sizeof(char)*sizeof(VecType)*8);
 		for (int i=0 ; i < sizeof(VecType)*8 ; i++) {
 			if (word & (1 << i)) out[i] = '1'; else out[i] = '0';
 		}
@@ -1255,12 +1255,6 @@ dd:;
 		while(p < rec->index) {
 			VecType *vec = order[p];
 
-			char *vec_char = pw(*vec);
-			for (int j=0 ; j < no_inp_vars ; j++) {
-				fprintf(stderr, "%c", vec_char[j]);
-			}
-			fprintf(stderr, "\n");
-
 			vec_add = (unsigned long)vec+vecs_colm_start;
 			int vpc = *((short int *)vec_add);
 
@@ -1271,13 +1265,6 @@ dd:;
 			for(h = p+1; h < rec->index; h++) {
 				VecType *vef = order[h];
 
-				vec_char = pw(*vef);
-				for (int j=0 ; j < no_inp_vars ; j++) {
-					fprintf(stderr, "%c", vec_char[j]);
-				}
-				fprintf(stderr, "\n");
-
-				
 				for(int j=0; j < vec_size; j++)
 				  if((mask[j] & vec[j]) != (mask[j] & vef[j])) goto d1;
 				vec_f_add = (unsigned long)vef+vecs_colm_start;
@@ -1308,6 +1295,15 @@ dd:;
 d1:;
 			p=h;
 		}
+
+		
+		
+		//vec_char = pw(*vef);
+		//for (int j=0 ; j < no_inp_vars ; j++) {
+		//	fprintf(stderr, "%c", vec_char[j]);
+		//}
+		//fprintf(stderr, "\n");
+		//free(vec_char);
 		
 		result[idx].left = Fa; result[idx].rght = Fa; // End of result
 		return result;
