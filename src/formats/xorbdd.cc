@@ -44,6 +44,28 @@ struct xor_of_ands {
 	xor_of_ands *next_and;
 };
 
+void print_xdd_d(BDDNode *xdd) {
+	if(xdd == true_ptr) d2_printf1("1");
+	if(!IS_TRUE_FALSE(xdd->thenCase)) {
+		d2e_printf2("X[%s]*(", s_name(xdd->variable));
+		d3e_printf2("X[%d]*(", xdd->variable);
+		d4_printf3("X[%s(%d)]*(", s_name(xdd->variable), xdd->variable);
+		
+		print_xdd_d(xdd->thenCase);
+		d2_printf1(")");
+	} else {
+		d2e_printf2("x[%s]", s_name(xdd->variable));
+		d3e_printf2("x[%d]", xdd->variable);
+		d4_printf3("x[%s(%d)]", s_name(xdd->variable), xdd->variable);
+	}	
+	if(xdd->elseCase == true_ptr) {
+		d2_printf1(" + 1");
+	} else if(xdd->elseCase!=false_ptr) {
+		d2e_printf1(" + ");
+		print_xdd_d(xdd->elseCase);
+	}
+}
+
 void print_xdd(BDDNode *xdd) {
 	if(xdd == true_ptr) fprintf(foutputfile, "1");
 	if(!IS_TRUE_FALSE(xdd->thenCase)) {
@@ -65,7 +87,7 @@ void print_xdd_err(BDDNode *xdd){
 	if(xdd == true_ptr) fprintf(stderr, "1");
 	if(!IS_TRUE_FALSE(xdd->thenCase)) {
 		fprintf(stderr, "X[%d]*(", xdd->variable);
-		print_xdd(xdd->thenCase);
+		print_xdd_err(xdd->thenCase);
 		fprintf(stderr, ")");
 	} else {
 		fprintf(stderr, "x[%d]", xdd->variable);
@@ -73,8 +95,8 @@ void print_xdd_err(BDDNode *xdd){
 	if(xdd->elseCase == true_ptr)
 	  fprintf(stderr, " +1");
 	else if(xdd->elseCase!=false_ptr) {
-		fprintf(foutputfile, " + ");
-		print_xdd(xdd->elseCase);
+		fprintf(stderr, " + ");
+		print_xdd_err(xdd->elseCase);
 	}
 }
 
