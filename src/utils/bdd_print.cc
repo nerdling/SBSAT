@@ -58,7 +58,7 @@ print_bdd1 (BDDNode * f, int print_counter)
       //      if ((BDD[BDD_num].v < 2) || (BDD[BDD_num].v >= next_var_list))
       //printf ("ite %d\n", f->variable);
 		d2e_printf2("ite %s\n", s_name(f->variable));
-		d3e_printf2("ite %s\n", s_name(f->variable));
+		d3e_printf2("ite %d\n", f->variable);
 		d4_printf3("ite %s (%d)\n", s_name(f->variable), f->variable);
       print_bdd1 (f->thenCase, print_counter + 1);
       print_bdd1 (f->elseCase, print_counter + 1);
@@ -66,7 +66,7 @@ print_bdd1 (BDDNode * f, int print_counter)
    } else {
       //printf ("ite %d ", f->variable);
 		d2e_printf2("ite %s ", s_name(f->variable));
-		d3e_printf2("ite %s ", s_name(f->variable));
+		d3e_printf2("ite %d ", f->variable);
 		d4_printf3("ite %s (%d) ", s_name(f->variable), f->variable);
       if (f->thenCase == true_ptr) {
          d2_printf1 ("T F\n");
