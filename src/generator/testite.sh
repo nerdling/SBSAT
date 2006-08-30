@@ -1,7 +1,7 @@
 #!/bin/sh 
 
 RET=0
-PARAMS=" --debug 1 -Gauss 0 -L 0 --debug-dev stdout --backjumping 0 -All 0 -In 1 --backtracks-per-report 10000 "
+PARAMS=" --debug 1 -Gauss 1 -L 0 --debug-dev stdout --backjumping 0 -All 0 -In 1 --backtracks-per-report 10000 "
 #PARAMS=" --debug 1  -L 0 --debug-dev stdout --backjumping 0 -All 0 -In 1 --backtracks-per-report 10000 "
 #PARAMS=" --debug 1  -L 0 --backjumping 0 -All 1 -In 1 --smurfs-share-paths 0 --backtracks-per-report 10000 file.xor"
 

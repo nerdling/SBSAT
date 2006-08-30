@@ -360,13 +360,37 @@ set the value of the inference multiplier
 BDDWalkSAT number of flips per random restart
 [default=100000]
 .TP
+\fB\-\-random\-option\fR <number>
+BDDWalkSAT option for random walk (1=Pick a random
+path to true in current BDD, 2=Randomly flip every
+variable in current BDD, 3=Randomly flip one
+variable, 4=Randomly flip one variable in current
+BDD)
+[default=1]
+.TP
+\fB\-\-bddwalk\-heur\fR <char>
+BDDWalkSAT Heuristic (n=novelty+, r=random)
+[default='n']
+.TP
 \fB\-\-taboo\-max\fR <number>
-BDDWalkSAT length of taboo list [default=6]
+BDDWalkSAT length of taboo list (used in
+conjunction with novelty+ heuristic)
+[default=6]
 .TP
 \fB\-\-taboo\-multi\fR <number>
 BDDWalkSAT multiplier for the probablity of picking
-variables with taboo
+variables with taboo (used in conjunction with
+novelty+ heuristic)
 [default=1.500000]
+.TP
+\fB\-\-bddwalk\-wp\-prob\fR <number>
+BDDWalkSAT probablity of making a random walk (used
+in conjunction with novelty+ heuristic)
+[default=0.100000]
+.TP
+\fB\-\-bddwalk\-prob\fR <number> BDDWalkSAT probablity of picking second best path
+(used in conjunction with novelty+ heuristic)
+[default=0.100000]
 .SH AUTHOR
 Written by a research team lead by John Franco.
 .SH "REPORTING BUGS"
