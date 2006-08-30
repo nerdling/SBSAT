@@ -1252,51 +1252,62 @@ class Equiv {
 		}
 		// Check the remaining rows for equivalence
 dd:;
-		while(p < rec->index) {
+
+		// Look for all rows with 2 1s not on the diagonal
+		for (p=0 ; p < rec->index ; p++) {
 			VecType *vec = order[p];
-
 			vec_add = (unsigned long)vec+vecs_colm_start;
-			int vpc = *((short int *)vec_add);
+			int v = *((short int *)vec_add); // Diagonal, if it exists
+			int cnt = 0;
+			int vart[2];
 
-			// Find block of vectors from p to h with same masked value
-			// and either make those variables equivalent or opposite
-			// depending on the value of the "last column".
-			int h;
-			for(h = p+1; h < rec->index; h++) {
-				VecType *vef = order[h];
-
-				for(int j=0; j < vec_size; j++)
-				  if((mask[j] & vec[j]) != (mask[j] & vef[j])) goto d1;
-				vec_f_add = (unsigned long)vef+vecs_colm_start;
-				int vph = *((int *)vec_f_add);
-				if ((vec[vec_size-1] & (1 << (sizeof(VecType)*8-1))) == 
-					 (vef[vec_size-1] & (1 << (sizeof(VecType)*8-1)))) {
-					Result *fase_result;
-					if(vpc > vph) fase_result = insertEquiv(vph, vpc);
-					else fase_result = insertEquiv(vpc, vph);
-					if(fase_result == NULL) continue; // No change - already in database
-					result[idx].left = fase_result->left;
-					result[idx].rght = fase_result->rght;
-					fprintf(stdout, "|%d, %d|", result[idx].left, result[idx].rght);
-					if(fase_result->left == Tr && fase_result->rght == Fa) return result; // Inconsistency
-					idx++; // Equivalence is valid
-				} else {
-					Result *fase_result;
-					if(vph > vpc) fase_result = insertOppos(vph, vpc);
-					else fase_result = insertOppos(vpc, vph);
-					if(fase_result == NULL) continue; // No change - already in database
-					result[idx].left = fase_result->left;
-					result[idx].rght = -fase_result->rght;
-					fprintf(stdout, "|%d, %d|", result[idx].left, result[idx].rght);
-					if(fase_result->left == Tr && fase_result->rght == Fa) return result; // Inconsistency
-					idx++; // Equivalence is valid
-				}
+			//char *vec_char = pw(*vec);
+			//for (int j=0 ; j < no_inp_vars ; j++) {
+			//	fprintf(stderr, "%c", vec_char[j]);
+			//}
+			//fprintf(stderr, "\n");
+			//free(vec_char);
+			
+			for (int j=0 ; j < vec_size ; j++) {
+				if(cnt > 2) break;
+				//This word better either be zero, or have only one 1.
+				if(mask[j] & vec[j] == 0) continue;
+				for(int bit = 0; bit < sizeof(VecType)*8; bit++)
+				  if(mask[j] & vec[j] & (1 << bit)) {
+					  if(cnt==1) {cnt++; break;}
+					  vart[cnt++] = bit+j*sizeof(VecType)*8;
+				  }
 			}
-d1:;
-			p=h;
+			if (cnt == 1) {
+				if (v != null) vart[cnt++] = v; else continue;
+			} else continue;
+			
+			if (vec[vec_size-1] & (1 << (sizeof(VecType)*8-1))) {
+				// The value of the row is 1 -
+				//cout << "Attempt " << vart[0] << " oppos " << vart[1] << "\n";
+				Result *fase_result;
+				if(vart[0] > vart[1]) fase_result = insertOppos(vart[0], vart[1]);
+				else fase_result = insertOppos(vart[1], vart[0]);
+				if(fase_result == NULL) continue; // No change - already in database
+				result[idx].left = fase_result->left;
+				result[idx].rght = -fase_result->rght;
+				//fprintf(stdout, "|%d, %d|", result[idx].left, result[idx].rght);
+				if(fase_result->left == Tr && fase_result->rght == Fa) return result; // Inconsistency
+				idx++; // Equivalence is valid
+			} else {
+				// The value of the row is 0
+				//cout << "Attempt " << vart[0] << " equiv " << vart[1] << "\n";
+				Result *fase_result;
+				if(vart[0] > vart[1]) fase_result = insertEquiv(vart[0], vart[1]);
+				else fase_result = insertEquiv(vart[1], vart[0]);
+				if(fase_result == NULL) continue; // No change - already in database
+				result[idx].left = fase_result->left;
+				result[idx].rght = fase_result->rght;
+				//fprintf(stdout, "|%d, %d|", result[idx].left, result[idx].rght);
+				if(fase_result->left == Tr && fase_result->rght == Fa) return result; // Inconsistency
+				idx++; // Equivalence is valid
+			}
 		}
-
-		
 		
 		//vec_char = pw(*vef);
 		//for (int j=0 ; j < no_inp_vars ; j++) {

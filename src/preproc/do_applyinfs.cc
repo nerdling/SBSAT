@@ -430,7 +430,7 @@ int ReduceInferences() {
 	//Remove duplicate inferences
 	for (infer * iterator = lastinfer->next; iterator != NULL;
 		  iterator = iterator->next) {
-		//fprintf(stderr, "%d(%d, %d)", x, iterator->nums[0], iterator->nums[1]);
+		//fprintf(stderr, "(%d, %d)", iterator->nums[0], iterator->nums[1]);
 		if (iterator->nums[1] == 0) {
 			if (iterator->nums[0] > 0) {
 				result = l->insertEquiv (iterator->nums[0], T);
