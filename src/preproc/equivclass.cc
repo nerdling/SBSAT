@@ -1269,7 +1269,7 @@ dd:;
 			//free(vec_char);
 			
 			for (int j=0 ; j < vec_size ; j++) {
-				if(cnt > 2) break;
+				if(cnt >= 2) break;
 				//This word better either be zero, or have only one 1.
 				if(mask[j] & vec[j] == 0) continue;
 				for(int bit = 0; bit < sizeof(VecType)*8; bit++)
