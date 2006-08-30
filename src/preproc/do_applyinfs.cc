@@ -568,7 +568,6 @@ int ReduceInferences() {
 
 int Rebuild_BDDx (int x) {
 	SetRepeats(x);
-	Result *result;
 	
 	if (functions[x] == false_ptr && functionType[x]!=AUTARKY_FUNC)
 	  return TRIV_UNSAT;
@@ -859,7 +858,6 @@ int
 Rebuild_BDD (BDDNode *bdd, int *bdd_length, int *&bdd_vars)
 {
 	long y = 0;
-	Result *result;
 	
 	if (bdd == false_ptr)
 	  return TRIV_UNSAT;

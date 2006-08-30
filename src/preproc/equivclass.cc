@@ -1179,6 +1179,21 @@ class Equiv {
 		return out;
 	}
 
+   void applyEquivOrOpp (int var1, int var2) {
+
+		//Franco's functions will probably work fine, i just need a rediagonalize
+		//function?
+		if(var2 < 0) { //They are opposite
+//			addRow(var1+var2=0);??
+//			removeRow();??
+		} else { //They are the same
+//			addRow(var1+var2=1);??
+//			removeRow();??
+		}
+	}
+
+
+
    // Go through matrix to find and record equivalences.  Additional data
    // structures are needed to prevent attempting to add the same equiv.
    // to the data base more than once.
@@ -1198,7 +1213,7 @@ class Equiv {
    //    Add equivalences and opposites to internal data base and "result"
    //    Return "result"
    Result *Equiv::findAndSaveEquivalences () {
-		printLinear ();
+		//printLinear ();
 		int idx = 0; // index into return array
 		unsigned long vec_add, vec_f_add;
 		if (rec->index < 1) return NULL; // Return NULL if no vectors in matrix
@@ -1237,7 +1252,7 @@ class Equiv {
 				if(fase_result == NULL) continue; //No change - already in the database
 				result[idx].left = fase_result->left; // Attempt to make v = Tr
 				result[idx].rght = fase_result->rght; // Attempt to make v = Tr
-				fprintf(stdout, "|%d, %d|", result[idx].left, result[idx].rght);
+				//fprintf(stdout, "|%d, %d|", result[idx].left, result[idx].rght);
 				if(fase_result->left == Tr && fase_result->rght == Fa) return result; // Inconsistency
 				idx++; // Equivalence is valid
 			} else {
@@ -1245,7 +1260,7 @@ class Equiv {
 				if(fase_result == NULL) continue; // No change - already in database
 				result[idx].left = fase_result->left; // Attempt to make v = Tr
 				result[idx].rght = fase_result->rght; // Attempt to make v = Tr
-				fprintf(stdout, "|%d, %d|", result[idx].left, result[idx].rght);
+				//fprintf(stdout, "|%d, %d|", result[idx].left, result[idx].rght);
 				if(fase_result->left == Tr && fase_result->rght == Fa) return result; // Inconsistency
 				idx++; // Equivalence is valid
 			}
@@ -1269,9 +1284,9 @@ dd:;
 			//free(vec_char);
 			
 			for (int j=0 ; j < vec_size ; j++) {
-				if(cnt >= 2) break;
 				//This word better either be zero, or have only one 1.
 				if(mask[j] & vec[j] == 0) continue;
+				if(cnt==1) {cnt++; break;}
 				for(int bit = 0; bit < sizeof(VecType)*8; bit++)
 				  if(mask[j] & vec[j] & (1 << bit)) {
 					  if(cnt==1) {cnt++; break;}
