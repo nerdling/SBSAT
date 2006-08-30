@@ -337,11 +337,20 @@ t_opt options[] = {
 	        "\nBDDWalkSAT Solver options:"},
 { &BDDWalkCutoff, "", "cutoff", P_INT, V(i:0,"0"), V(i:100000,"100000"), VAR_NORMAL, 0,
 		"BDDWalkSAT number of flips per random restart"},
+{ &BDDWalkRandomOption, "", "random-option", P_INT, V(i:0,"0"), V(i:1,"1"), VAR_NORMAL, 0,
+		"BDDWalkSAT option for random walk (1=Pick a random path to true in current BDD, 2=Randomly flip every variable in current BDD, 3=Randomly flip one variable, 4=Randomly flip one variable in current BDD)"},
+{ &BDDWalkHeur,  "", "bddwalk-heur", P_CHAR, V(i:0,"0"), V(c:'n',"n"), VAR_NORMAL, 0,
+	   "BDDWalkSAT Heuristic (n=novelty+, r=random)"},
 { &BDDWalktaboo_max, "", "taboo-max", P_INT, V(i:0,"0"), V(i:6,"6"), VAR_NORMAL, 0,
-		"BDDWalkSAT length of taboo list"},
+		"BDDWalkSAT length of taboo list (used in conjunction with novelty+ heuristic)"},
 { &BDDWalktaboo_multi, "", "taboo-multi", P_FLOAT, V(i:0,"0"), V(f:1.5,"1.5"), VAR_NORMAL, 0,
-		"BDDWalkSAT multiplier for the probablity of picking variables with taboo"},
+		"BDDWalkSAT multiplier for the probablity of picking variables with taboo (used in conjunction with novelty+ heuristic)"},
+{ &BDDWalk_wp_prob, "", "bddwalk-wp-prob", P_FLOAT, V(i:0,"0"), V(f:0.1,"0.1"), VAR_NORMAL, 0,
+		"BDDWalkSAT probablity of making a random walk (used in conjunction with novelty+ heuristic)"},
+{ &BDDWalk_prob, "", "bddwalk-prob", P_FLOAT, V(i:0,"0"), V(f:0.1,"0.1"), VAR_NORMAL, 0,
+		"BDDWalkSAT probablity of picking second best path (used in conjunction with novelty+ heuristic)"},
 
+	
 /* 
  * the end
  */

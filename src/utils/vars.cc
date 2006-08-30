@@ -115,6 +115,10 @@ int TRACE_START=0;
 int BDDWalkCutoff=100000;
 int BDDWalktaboo_max=6;
 float BDDWalktaboo_multi=1.5;
+char BDDWalkHeur;
+int BDDWalkRandomOption;
+float BDDWalk_wp_prob;
+float BDDWalk_prob;
 
 //char png_filename[128]="";
 char jpg_filename[128]="";

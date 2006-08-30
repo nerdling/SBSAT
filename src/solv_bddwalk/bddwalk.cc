@@ -114,11 +114,11 @@ float path_factor; /* Number of random paths choosen = total number of variables
 /* Global flags and parameters      */
 /************************************/
 
-int numerator = 10;//NOVALUE;	/* choose second_to_flip with numerator/denominator frequency */
-int denominator = 100;
+int numerator = NOVALUE; /* choose second_to_flip with numerator/denominator frequency */
+int denominator = 10000;
 
-int wp_numerator = 10;//NOVALUE;	/* choose a random path to true with numerator/denominator frequency */
-int wp_denominator = 1000;
+int wp_numerator = NOVALUE; /* choose a random path to true with numerator/denominator frequency */
+int wp_denominator = 10000;
 
 long int numflip; /* number of single variable flips so far */
 long int numlook; /* used to make sure we don't traverse BDDs we've already */
@@ -196,8 +196,9 @@ double nonsuc_ratio_mean_avgfalse;
 /* Noise level */
 int samplefreq = 1;
 
+int pickrandom(void);
 int picknoveltyplus(void);
-
+  
 int countunsat(void);
 void init_CountFalses();
 void initprob(void); /* Initialize data structures for the problem */
@@ -227,10 +228,14 @@ int walkSolve() {
 	true_weight_multi = (float)BDDWalktaboo_multi;
 	taboo_max = (float)BDDWalktaboo_max;
 	taboo_length = taboo_max-1.0;
-
+	int (*heurpick)() = BDDWalkHeur=='r'?&pickrandom:&picknoveltyplus; //pointer to function
+	
+	wp_numerator = (int)(BDDWalk_wp_prob*(float)wp_denominator);
+	numerator = (int)(BDDWalk_prob*(float)denominator);
+	
 	gettimeofday(&tv,&tzp);
 	seed = (( tv.tv_sec & 0177 ) * 1000000) + tv.tv_usec;
-	if (numsol==NOVALUE || numsol>numrun) numsol = numrun;
+	if (numsol==0 || numsol>numrun) numsol = numrun;
 	srandom(seed);
 	initprob(); /* initialized the BDD structures */
 	print_statistics_header();
@@ -243,7 +248,7 @@ int walkSolve() {
 		numlook = 0;
 
 		while((numfalse > target) && (numflip < cutoff)) {
-			numflip+=picknoveltyplus();
+			numflip+=heurpick();
 			flipatoms();
 			update_statistics_end_flip();
 			if (nCtrlC) {
@@ -622,6 +627,44 @@ void getmbcountTruePath() {
 	}
 }
 
+int pickrandom(void)
+{
+	int tofix, BDDsize;
+	int flippath = 0;
+	
+	tofix = falseBDDs[random()%numfalse]; //Maybe in the future not so random...
+	                                      //Could be based on size of BDD (how many paths to true?)
+	BDDsize = wlength[tofix];  
+
+//	fprintf(stderr, "\ntofix=%d\n", tofix);
+
+	int path_length = 0;
+	
+	flippath = 0;
+	
+	if(BDDWalkRandomOption == 1) //#1 Pick a random path to true in this BDD
+	  path_length = getRandomTruePath(tofix);
+	else if(BDDWalkRandomOption == 2) { //#2 Randomly flip every variable in this BDD
+		for(path_length = 0; path_length < wlength[tofix]; path_length++) {
+			if((random()%2) > 0)
+			  varstoflip[path_length++] = wvariables[tofix].num[path_length];
+		}
+		varstoflip[path_length] = 0;
+	} else if(BDDWalkRandomOption == 3) {	//#3 Randomly flip one variable in the problem
+		varstoflip[0] = random()%numvars+1;
+		varstoflip[1] = 0;
+		path_length = 1;
+	} else if(BDDWalkRandomOption == 4) {	//#4 Randomly flip one variable in this BDD
+		varstoflip[0] = wvariables[tofix].num[random()%BDDsize];
+		varstoflip[1] = 0;
+		path_length = 1;
+	} else {
+		fprintf(stderr, "pick-random given incorrect value - needs 1-4, given %d...exiting\n", BDDWalkRandomOption);
+		exit(0);
+	}
+	return path_length;
+}
+
 int picknoveltyplus(void)
 {
 	int best_make = 0, second_best_make = 0;
@@ -647,27 +690,26 @@ int picknoveltyplus(void)
 
 	/* hh: inserted modified loop breaker: */
 	if ((random()%wp_denominator < wp_numerator)) {
-		flippath = 0;
-		
-		//#1 Pick a random path to true in this BDD
-		path_length = getRandomTruePath(tofix);
-		
-		//#2 Randomly flip every variable in this BDD
-		//for(path_length = 0; x < wlength[tofix]; path_length++) {
-		//	if((random()%2) > 0)
-		//	  varstoflip[path_length++] = wvariables[tofix].num[path_length];
-		//}
-		//varstoflip[path_length] = 0;
-		
-		//#3 Randomly flip one variable in the problem
-		//varstoflip[0] = random()%numvars+1;
-		//varstoflip[1] = 0;
-		//path_length = 1;
-
-		//#4 Randomly flip one variable in this BDD
-		//varstoflip[0] = wvariables[tofix].num[random()%BDDsize];
-		//varstoflip[1] = 0;
-		//path_length = 1;
+		if(BDDWalkRandomOption == 1) //#1 Pick a random path to true in this BDD
+		  path_length = getRandomTruePath(tofix);
+		else if(BDDWalkRandomOption == 2) { //#2 Randomly flip every variable in this BDD
+			for(path_length = 0; path_length < wlength[tofix]; path_length++) {
+				if((random()%2) > 0)
+				  varstoflip[path_length++] = wvariables[tofix].num[path_length];
+			}
+			varstoflip[path_length] = 0;
+		} else if(BDDWalkRandomOption == 3) {	//#3 Randomly flip one variable in the problem
+			varstoflip[0] = random()%numvars+1;
+			varstoflip[1] = 0;
+			path_length = 1;
+		} else if(BDDWalkRandomOption == 4) {	//#4 Randomly flip one variable in this BDD
+			varstoflip[0] = wvariables[tofix].num[random()%BDDsize];
+			varstoflip[1] = 0;
+			path_length = 1;
+		} else {
+			fprintf(stderr, "random-option given incorrect value - needs 1-4, given %d...exiting\n", BDDWalkRandomOption);
+			exit(0);
+		}
 	} else {
 		youngest_birthdate = -1;
 		best_diff = -1000000.0;

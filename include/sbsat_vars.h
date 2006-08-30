@@ -253,6 +253,10 @@ extern char preproc_string[256];
 extern int BDDWalkCutoff;
 extern int BDDWalktaboo_max;
 extern float BDDWalktaboo_multi;
+extern char BDDWalkHeur;
+extern int BDDWalkRandomOption;
+extern float BDDWalk_wp_prob;
+extern float BDDWalk_prob;
 
 //Begin preprocessing globals
 
