@@ -245,6 +245,8 @@ Init_Preprocessing()
 
 	DO_INFERENCES = OLD_DO_INFERENCES;
 
+	//Do_Apply_Inferences();
+	
 	for (int x = 0; x < nmbrFunctions; x++) {
 		D_3(
 			 if ((x % 1000) == 0)

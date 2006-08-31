@@ -54,9 +54,9 @@ void print_xdd_d(BDDNode *xdd) {
 		print_xdd_d(xdd->thenCase);
 		d2_printf1(")");
 	} else {
-		d2e_printf2("x[%s]", s_name(xdd->variable));
-		d3e_printf2("x[%d]", xdd->variable);
-		d4_printf3("x[%s(%d)]", s_name(xdd->variable), xdd->variable);
+		d2e_printf2("X[%s]", s_name(xdd->variable));
+		d3e_printf2("X[%d]", xdd->variable);
+		d4_printf3("X[%s(%d)]", s_name(xdd->variable), xdd->variable);
 	}	
 	if(xdd->elseCase == true_ptr) {
 		d2_printf1(" + 1");
@@ -73,7 +73,7 @@ void print_xdd(BDDNode *xdd) {
 		print_xdd(xdd->thenCase);
 		fprintf(foutputfile, ")");
 	} else {
-		fprintf(foutputfile, "x[%d]", xdd->variable);
+		fprintf(foutputfile, "X[%d]", xdd->variable);
 	}
 	if(xdd->elseCase == true_ptr)
 	  fprintf(foutputfile, " +1");

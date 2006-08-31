@@ -602,6 +602,23 @@ BDDNode *putite(int intnum, BDDNode * bdd)
       strcpy (macros, "print_xdd");
       return v1;
 	}
+	if (!strcasecmp (macros, "print_flat_xdd")) {
+      BDDNode * v1;
+      v1 = putite (intnum, bdd);
+		d2_printf1("\n");
+		for (int i = 0; i < PRINT_TREE_WIDTH; i++)
+		  d2_printf1("-");
+		d2_printf1("\n");
+		long y = 0;
+		long tempint_max = 0;
+		int *tempint=NULL;
+		unravelBDD(&y, &tempint_max, &tempint, v1);
+		if(tempint!=NULL) ite_free((void **)&tempint);
+		print_flat_xdd(bdd2xdd(v1), y);
+		d2_printf1(" = 0\n");
+      strcpy (macros, "print_flat_xdd");
+      return v1;
+	}
 	if (!strcasecmp (macros, "gcf")) {
       BDDNode * v1, *v2;
       v1 = putite (intnum, bdd);
@@ -1065,6 +1082,7 @@ void bddloop () {
 			if ((strcasecmp (macros, "pprint_tree"))
 				 && (strcasecmp (macros, "print_tree"))
 				 && (strcasecmp (macros, "print_xdd"))
+				 && (strcasecmp (macros, "print_flat_xdd"))
 				 && (strcasecmp (macros, "define"))
 				 && (strcasecmp (macros, "initial_branch"))) {
 				keep[nmbrFunctions] = 1;
@@ -1085,6 +1103,7 @@ void bddloop () {
 			if ((strcasecmp (macros, "pprint_tree"))
 				 && (strcasecmp (macros, "print_tree"))
 				 && (strcasecmp (macros, "print_xdd"))
+				 && (strcasecmp (macros, "print_flat_xdd"))
 				 && (strcasecmp (macros, "define"))
 				 && (strcasecmp (macros, "initial_branch"))) {
 				functions[nmbrFunctions] = temp;
@@ -1099,6 +1118,7 @@ void bddloop () {
       if ((strcasecmp (macros, "pprint_tree"))
 			 && (strcasecmp (macros, "print_tree"))
 			 && (strcasecmp (macros, "print_xdd"))
+			 && (strcasecmp (macros, "print_flat_xdd"))
 			 && (strcasecmp (macros, "define"))
 			 && (strcasecmp (macros, "initial_branch"))) {
 			fprintf (stddbg, "BDD $%d: ", nmbrFunctions);
