@@ -1286,7 +1286,7 @@ dd:;
 			for (int j=0 ; j < vec_size ; j++) {
 				//This word better either be zero, or have only one 1.
 				if(mask[j] & vec[j] == 0) continue;
-				if(cnt==1) {cnt++; break;}
+				if(cnt>=1) {cnt++; break;}
 				for(int bit = 0; bit < sizeof(VecType)*8; bit++)
 				  if(mask[j] & vec[j] & (1 << bit)) {
 					  if(cnt==1) {cnt++; break;}
