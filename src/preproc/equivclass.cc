@@ -1213,7 +1213,7 @@ class Equiv {
    //    Add equivalences and opposites to internal data base and "result"
    //    Return "result"
    Result *Equiv::findAndSaveEquivalences () {
-		//printLinear ();
+		printLinear ();
 		int idx = 0; // index into return array
 		unsigned long vec_add, vec_f_add;
 		if (rec->index < 1) return NULL; // Return NULL if no vectors in matrix

@@ -40,6 +40,7 @@
 
 int Rebuild_BDDx(int x);
 int checkGaussianElimTableforInfs();
+int addEquivalencetoGETable(int v1, int v2);
 
 int
 Do_Apply_Inferences ()
@@ -121,6 +122,14 @@ Do_Apply_Inferences ()
 				//verifyCircuit(inferlist->nums[1]);
 				
 				//SEAN!!! Need some functionality for entering equivalence into GE table
+				if(ge_preproc == '1') {
+					switch (int r1 = addEquivalencetoGETable(inferlist->nums[0], inferlist->nums[1])) { //Test
+					 case TRIV_UNSAT:
+					 case TRIV_SAT:
+					 case PREP_ERROR: return r1;
+					 default:break;
+					}
+				}
 			} else {
 				Neg_replace++;
 //            D_3(print_nonroller(););
@@ -160,13 +169,22 @@ Do_Apply_Inferences ()
 				//verifyCircuit(-inferlist->nums[1]);
 				
 				//SEAN!!! Need some functionality for entering equivalence into GE table
+
+				if(ge_preproc == '1') {
+					switch (int r1 = addEquivalencetoGETable(inferlist->nums[0], inferlist->nums[1])) { //Test
+					 case TRIV_UNSAT:
+					 case TRIV_SAT:
+					 case PREP_ERROR: return r1;
+					 default:break;
+					}
+				}
 			}
 		} else {
 			if (inferlist->nums[0] > 0) {
 				Setting_Pos++;
 //            D_3(print_nonroller(););
 				for(int iter = 0; iter<str_length; iter++)
-					d3_printf1("\b");
+				  d3_printf1("\b");
 				str_length = 0;  
 				d3e_printf2 ("{%d=T}", abs (inferlist->nums[0]));
 				d4_printf3 ("{%s(%d)=T}", s_name(abs(inferlist->nums[0])), abs (inferlist->nums[0]));
@@ -381,6 +399,49 @@ int *getVarList (VecType *vector, int size, int *nvars) {
 	}
 	varlist[count] = -1;
 	return varlist;
+}
+
+int addEquivalencetoGETable(int v1, int v2) {
+	XORd *xor_func = new XORd;
+	// 0-1 vector showing vars in xor func and which type of xor func it is
+
+	// List of vars that are 1 in vector
+	xor_func->varlist = (int *)ite_calloc(1, sizeof(int)*3,9, "xor varlist");
+	xor_func->varlist[0] = v1;
+	xor_func->varlist[2] = -1;
+	
+	VecType *vector = (VecType *)ite_calloc(1, sizeof(VecType)*(1+numinp/sizeof(VecType)*8), 9, "xor vector");
+	vector[v1/(sizeof(VecType)*8)] |= (1 << (v1 % (sizeof(VecType)*8)));
+	if(v2 > 0) {
+		vector[v2/(sizeof(VecType)*8)] |= (1 << (v2 % (sizeof(VecType)*8)));
+		vector[numinp/(sizeof(VecType)*8)] |= (VecType)(1 << ((sizeof(VecType)*8)-1));
+		xor_func->varlist[1] = v2;
+	} else {
+		vector[-v2/(sizeof(VecType)*8)] |= (1 << (-v2 % (sizeof(VecType)*8)));
+		xor_func->varlist[1] = -v2;
+	}
+
+	xor_func->vector = vector;
+	
+	// Number of bytes in xor_vector
+	xor_func->vector_size = 1 + numinp/(sizeof(VecType)*8);
+	// Number of vars in the function
+	xor_func->nvars = 2;
+	xor_func->type = (xor_func->vector[xor_func->vector_size-1] & (1 << (sizeof(VecType)*8-1))) ? 1 : 0;
+	xor_func->next = NULL;
+	int r=l->addRow(xor_func);
+	ite_free((void **)&xor_func->varlist);
+	ite_free((void **)&xor_func->vector);
+	if(r == 1) {
+		switch(int r1=checkGaussianElimTableforInfs()) {
+		 case TRIV_UNSAT:
+		 case TRIV_SAT:
+		 case PREP_ERROR: return r1;
+		 default: break;
+		}
+	} else if(r == -1) return TRIV_UNSAT;
+	//r == 0, no change
+	return PREP_NO_CHANGE;
 }
 
 int checkGaussianElimTableforInfs() {
@@ -825,7 +886,7 @@ int Rebuild_BDDx (int x) {
 			xor_func->vector = addXORVector(x);
 			// Number of bytes in xor_vector
 			xor_func->vector_size = 1 + numinp/(sizeof(VecType)*8);
-			// List of vars athat are 1 in vector
+			// List of vars that are 1 in vector
 			int nvars = length[x];
 			xor_func->varlist = getVarList(xor_func->vector, xor_func->vector_size, &nvars);
 			// Number of vars in the function
