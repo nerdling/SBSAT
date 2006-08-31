@@ -281,7 +281,9 @@ int splitXors() {
 	int total_vars = numinp;
 	int *xor_vars = new int[numinp+1]; //This could be made better in the future.
 	int *nonxor_vars = new int[numinp+1]; //This could be made better in the future.
-	for(long x = 0; x < nmbrFunctions; x++) {
+	int old_nmbrFunctions = nmbrFunctions; //Must do this because nmbrFunctions
+	                                       //grows as we add in extra xor constraints.
+	for(long x = 0; x < old_nmbrFunctions; x++) {
 		if(length[x] <= functionTypeLimits[PLAINXOR] || functionType[x]!=UNSURE) continue; //???
 		BDDNode *xdd = bdd2xdd(functions[x]);		
 		countSingleXors(xdd, xor_vars, nonxor_vars);
@@ -340,6 +342,8 @@ int splitXors() {
             BDD_PART_BDDXOR, s_ptr->id);
 		int xor_part_fnid = functions_add(ite_xor(xor_part, ite_var(s_ptr->id)), 
             XOR_PART_BDDXOR, s_ptr->id);
+		vars_alloc(s_ptr->id);
+		variablelist[s_ptr->id].true_false = -1; //Crazy thing that must be done.
       functionType[x] = BDDXOR_BROKEN;
       functionProps[bdd_part_fnid].bdd_part_bddxor.fn = x;
       functionProps[bdd_part_fnid].bdd_part_bddxor.xor_part = xor_part_fnid;
@@ -347,7 +351,6 @@ int splitXors() {
       functionProps[xor_part_fnid].xor_part_bddxor.bdd_part = bdd_part_fnid;
       functionProps[x].bddxor_broken.bdd_part = bdd_part_fnid;
       functionProps[x].bddxor_broken.xor_part = xor_part_fnid;
-
 #ifndef NDEBUG
       /*
       BDDNode *testBDD = ite_and(xorFunctions[x], functions[x]);

@@ -133,7 +133,7 @@ Init_Preprocessing()
 	
 	numout = nmbrFunctions;
 
-	if(length != NULL) ite_free((void **)&variables);
+	if(length != NULL) ite_free((void **)&length);
 	length = (int *)ite_recalloc(NULL, 0, nmbrFunctions, sizeof(int), 9, "length");
    /*
 	inferlist = new infer;
@@ -141,6 +141,7 @@ Init_Preprocessing()
    */
    inferlist = AllocateInference(0, 0, NULL);
 	lastinfer = inferlist;
+	if(variables != NULL) ite_free((void **)&variables);
 	variables = (store *)ite_recalloc(NULL, 0, nmbrFunctions, sizeof(store), 9, "variables");
 	
 	Init_Repeats();

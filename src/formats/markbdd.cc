@@ -331,6 +331,12 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 			}
 			v++;
 			intnum = i_getsym(macros, SYM_VAR);
+
+			if(intnum >= numinp-2) {
+				fprintf (stderr, "\nToo many symbols used (%s). Need to increase to greater than %d...exiting:%d\n", macros, numinp-3, markbdd_line);
+				exit (1);
+			}
+
 			for(int iter = 1; iter < v; iter++)
 			  if(defines[whereat].vlist[iter] == intnum) {
 				  fprintf(stderr, "\nCannot use the same variable (%s) twice in argument list in #define %s...exiting:%d\n", getsym_i(intnum)->name, defines[whereat].string, markbdd_line);
@@ -340,7 +346,6 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 				defines[whereat].vlist = (int *)ite_recalloc(defines[whereat].vlist, max_vlist, max_vlist+10, sizeof(int), 9, "defines[whereat].vlist");
 				max_vlist+=10;
 			}
-
 			defines[whereat].vlist[v] = intnum;
 			order = getNextSymbol (intnum, bdd);
 		}
@@ -832,9 +837,9 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 
 	int v = i_getsym(macros, SYM_VAR);
 
-	if(v > numinp) {
-		numinp+=10;
-		vars_alloc(numinp+2); //should recalloc
+	if(v >= numinp-2) {
+		fprintf (stderr, "\nToo many symbols used (%s). Need to increase to greater than %d...exiting:%d\n", macros, numinp-3, markbdd_line);
+		exit (1);
 	}
 
 	if(negate_it == 1) {
@@ -1005,7 +1010,7 @@ char getNextSymbol (int &intnum, BDDNode *&bdd) {
 
 void bddloop () {
 	fscanf (finputfile, "%ld %ld", &numinp, &numout);
-	numinp += 2;
+	numinp += 3;
 	markbdd_line = 1;
 	int intnum = 0, keepnum = 0;
 	BDDNode *bdd = NULL;

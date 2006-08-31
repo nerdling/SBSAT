@@ -1,4 +1,4 @@
-p bdd 20 11 ; 20 vars, 11 functions
+p bdd 30 11 ; 20 vars, 11 functions
 Initial_Branch(#1, var*%25.1111, a%10, b, t*e) ; These variables will be branched on first.
                                ; '*' is a wildcard
 Initial_Branch(#2, x, var*, b%10.3948, 5, v2) ; These variables will be branched on second.

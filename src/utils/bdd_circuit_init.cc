@@ -63,6 +63,8 @@ functions_alloc(int n_fns)
    /* n_fns -- numout */
    equalityVble = (int *)ite_recalloc((void*)equalityVble, functions_max,
          n_fns, sizeof(int), 9, "equalityVble");
+   //length = (int *)ite_recalloc((void*)length, functions_max,
+   //      n_fns, sizeof(int), 9, "length");
    functions = (BDDNode **)ite_recalloc((void*)functions, functions_max,
          n_fns, sizeof(BDDNode*), 9, "functions");
    //xorFunctions = (BDDNode **)ite_recalloc((void*)xorFunctions, functions_max, 

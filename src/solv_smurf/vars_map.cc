@@ -48,7 +48,7 @@ int *arrIte2SolverVarMap=NULL;
 ITE_INLINE void 
 InitVarMap()
 {
-   int total_vars = numinp;
+   int total_vars = numinp = getNuminp();
 
    /*
     * reversing dependency if requested

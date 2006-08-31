@@ -918,8 +918,6 @@ int Rebuild_BDDx (int x) {
 int
 Rebuild_BDD (BDDNode *bdd, int *bdd_length, int *&bdd_vars)
 {
-	long y = 0;
-	
 	if (bdd == false_ptr)
 	  return TRIV_UNSAT;
 	
@@ -952,7 +950,8 @@ Rebuild_BDD (BDDNode *bdd, int *bdd_length, int *&bdd_vars)
 	  case PREP_ERROR: return r1;
 	  default: break;
 	}
-        
+
+	long y = 0;	
 	unravelBDD(&y, &bdd_tempint_max, &bdd_tempint, bdd);
    int *tempint = bdd_tempint;
 	if (y != 0) qsort (tempint, y, sizeof (int), compfunc);

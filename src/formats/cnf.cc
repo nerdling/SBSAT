@@ -988,15 +988,15 @@ void DNF_to_CNF () {
 		int num[50];
    } node1;
 	node1 *integers;
-	int lines = 0, length;
+	int lines = 0, len;
 	int y = 0;
 	if (fscanf(finputfile, "%ld %ld\n", &numinp, &numout) != 2) {
          fprintf(stderr, "Error while parsing DNF input: bad header\n");
          exit(1);
    };
-	length = numout;
+	len = numout;
 	integers = new node1[numout+1];
-	for(int x = 0; x < length; x++) {
+	for(int x = 0; x < len; x++) {
       y = 0;
       
       do {
@@ -1011,9 +1011,9 @@ void DNF_to_CNF () {
 	}
 	char string1[1024];
 	lines = lines + 1;
-	sprintf(string1, "p cnf %ld %d\n", numinp + length, lines);
+	sprintf(string1, "p cnf %ld %d\n", numinp + len, lines);
 	fprintf(foutputfile, "%s", string1);
-	for(int y = 0; y < length; y++) {
+	for(int y = 0; y < len; y++) {
       sprintf(string1, "%ld ", y + numinp + 1);
       fprintf(foutputfile, "%s", string1);
 	}
@@ -1172,12 +1172,12 @@ void DNF_to_CNF () {
 		int num[50];
    } node1;
 	node1 *integers;
-	int lines = 0, length;
+	int lines = 0, len;
 	int y = 0;
 	fscanf(finputfile, "%ld %ld\n", &numinp, &numout);
-	length = numout;
+	len = numout;
 	integers = new node1[numout+1];
-	for(int x = 0; x < length; x++) {
+	for(int x = 0; x < len; x++) {
       y = 0;
       
       do {
@@ -1189,9 +1189,9 @@ void DNF_to_CNF () {
 	}
 	char string1[1024];
 	lines = lines + 1;
-	sprintf(string1, "p cnf %ld %d\n", numinp + length, lines);
+	sprintf(string1, "p cnf %ld %d\n", numinp + len, lines);
 	fprintf(foutputfile, "%s", string1);
-	for(int y = 0; y < length; y++) {
+	for(int y = 0; y < len; y++) {
       sprintf(string1, "%ld ", y + numinp + 1);
       fprintf(foutputfile, "%s", string1);
 	}
