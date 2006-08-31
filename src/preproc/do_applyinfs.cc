@@ -414,10 +414,10 @@ int addEquivalencetoGETable(int v1, int v2) {
 	vector[v1/(sizeof(VecType)*8)] |= (1 << (v1 % (sizeof(VecType)*8)));
 	if(v2 > 0) {
 		vector[v2/(sizeof(VecType)*8)] |= (1 << (v2 % (sizeof(VecType)*8)));
-		vector[numinp/(sizeof(VecType)*8)] |= (VecType)(1 << ((sizeof(VecType)*8)-1));
 		xor_func->varlist[1] = v2;
 	} else {
 		vector[-v2/(sizeof(VecType)*8)] |= (1 << (-v2 % (sizeof(VecType)*8)));
+		vector[numinp/(sizeof(VecType)*8)] |= (VecType)(1 << ((sizeof(VecType)*8)-1));
 		xor_func->varlist[1] = -v2;
 	}
 

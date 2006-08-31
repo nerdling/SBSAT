@@ -397,7 +397,9 @@ class Equiv {
       int sze = (True > False) ? True : False; 
       sze++;
 
-      no_funcs = out;
+      no_funcs = out+inp; //The inp is room for equivalences.
+		                    //SEAN!!! This is a temp fix and
+		                    //should be fixed in the future
 		//if(no_funcs > 500) no_funcs = 500;
 		//This is the MAX number of rows allowed in the xor table
 		
@@ -1213,7 +1215,7 @@ class Equiv {
    //    Add equivalences and opposites to internal data base and "result"
    //    Return "result"
    Result *Equiv::findAndSaveEquivalences () {
-		printLinear ();
+		//printLinear ();
 		int idx = 0; // index into return array
 		unsigned long vec_add, vec_f_add;
 		if (rec->index < 1) return NULL; // Return NULL if no vectors in matrix
