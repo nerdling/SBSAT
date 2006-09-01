@@ -1270,6 +1270,58 @@ class Equiv {
 		// Check the remaining rows for equivalence
 dd:;
 
+		while (p < index) {
+			VecType *vec = order[p];
+			vec_add = (unsigned long)vec+vecs_colm_start;
+			int vpc = *((short int *)vec_add);
+			
+			// Find block of vectors from p to h with same masked value
+			// and either make those variables equivalent or opposite
+			// depending on the value of the "last column".
+			int h;
+			for (h=p+1 ; h < index ; h++) {
+				VecType *vef = order[h];
+				for (int j=0 ; j < vec_size ; j++)
+				  if ((mask[j] & vec[j]) != (mask[j] & vef[j])) goto d1;
+				vec_f_add = (unsigned long)vef+vecs_colm_start;
+				int vph = *((short int *)vec_f_add);
+				if ((vec[vec_size-1] & (1 << (sizeof(VecType)*8-1))) ==
+					 (vef[vec_size-1] & (1 << (sizeof(VecType)*8-1)))) {
+					// The value of the row is 0
+					//cout << "Attempt " << vart[0] << " equiv " << vart[1] << "\n";
+					Result *fase_result;
+					if(vph > vpc) fase_result = insertEquiv(vph, vpc);
+					else fase_result = insertEquiv(vpc, vph);
+					if(fase_result == NULL) continue; // No change - already in database
+					result[idx].left = fase_result->left;
+					result[idx].rght = fase_result->rght;
+					//fprintf(stdout, "|%d, %d|", result[idx].left, result[idx].rght);
+					if(fase_result->left == Tr && fase_result->rght == Fa) return result; // Inconsistency
+					idx++; // Equivalence is valid
+				} else {
+					// The value of the row is 1 -
+					//cout << "Attempt " << vph << " oppos " << vpc << "\n";
+					Result *fase_result;
+					if(vph > vpc) fase_result = insertOppos(vph, vpc);
+					else fase_result = insertOppos(vpc, vph);
+					if(fase_result == NULL) continue; // No change - already in database
+					result[idx].left = fase_result->left;
+					result[idx].rght = -fase_result->rght;
+					//fprintf(stdout, "|%d, %d|", result[idx].left, result[idx].rght);
+					if(fase_result->left == Tr && fase_result->rght == Fa) {
+						result[idx].rght = -result[idx].rght;
+						return result; // Inconsistency
+					}
+					idx++; // Equivalence is valid
+				}
+			}
+d1:;
+			p = h;
+		}
+		
+		
+			
+		
 		// Look for all rows with 2 1s not on the diagonal
 		for (p=0 ; p < rec->index ; p++) {
 			VecType *vec = order[p];
@@ -1309,7 +1361,10 @@ dd:;
 				result[idx].left = fase_result->left;
 				result[idx].rght = -fase_result->rght;
 				//fprintf(stdout, "|%d, %d|", result[idx].left, result[idx].rght);
-				if(fase_result->left == Tr && fase_result->rght == Fa) return result; // Inconsistency
+				if(fase_result->left == Tr && fase_result->rght == Fa) {
+					result[idx].rght = -result[idx].rght;
+					return result; // Inconsistency
+				}
 				idx++; // Equivalence is valid
 			} else {
 				// The value of the row is 0
