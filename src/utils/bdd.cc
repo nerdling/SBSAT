@@ -1038,13 +1038,13 @@ int isXOR(BDDNode *bdd) {
 
 int isMIN_MAX(BDDNode *bdd, int *bdd_vars, int bdd_len) {
 	if(IS_TRUE_FALSE(bdd)) return 0;
-	int max = 0;
+	int max = -1;
 	BDDNode *tmp_bdd;
 	for(tmp_bdd = bdd; !IS_TRUE_FALSE(tmp_bdd); tmp_bdd = tmp_bdd->thenCase) 
 	  max++;
 	if(tmp_bdd != false_ptr) return 0;
 
-	int min = 0;
+	int min = -1;
 	for(tmp_bdd = bdd; !IS_TRUE_FALSE(tmp_bdd); tmp_bdd = tmp_bdd->elseCase)
 	  min++;
 	if(tmp_bdd != false_ptr) return 0;
