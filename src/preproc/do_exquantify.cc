@@ -136,7 +136,7 @@ int ExQuantify () {
 				//Only quantify away variables from unknown functions, or functions
 				//who have the quantified variable as the 'head' or LHS variable of 
 				//their function...a LHS variable is a 'Left Hand Side' variable.
-				if ((length[j] < functionTypeLimits[functionType[j]]) || (i == abs(equalityVble[j])) || (functionType[j] == PLAINOR)) {
+				if ((length[j] < functionTypeLimits[functionType[j]]) || (i == abs(equalityVble[j])) || (functionType[j] == PLAINOR) || (functionType[j] == PLAINXOR)) {
 					affected++;
 					if(ex_infer == 1) {
 						//Check for direct inferences.

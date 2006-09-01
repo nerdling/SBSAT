@@ -211,11 +211,17 @@ Init_Preprocessing()
 
 	num_funcs_var_occurs = (int *)ite_calloc(numinp+1, sizeof(int), 9, "num_funcs_var_occurs");
 
+	char p[100];
 	for (int x = 0; x < nmbrFunctions; x++)
 	  {
         D_3(
-              if ((x % 1000) == 0)
-                d3_printf3("Rebuild %d/%d\r", x, nmbrFunctions);
+              if ((x % 1000) == 0) {
+					  for(int iter = 0; iter<str_length; iter++)
+						 d3_printf1("\b");
+					  sprintf(p, "Rebuild %d/%d", x, nmbrFunctions);
+					  str_length = strlen(p);
+					  d3_printf1(p);
+				  }
           )
 		  variables[x].num = NULL;
 		  int r=Rebuild_BDDx(x);
@@ -250,9 +256,14 @@ Init_Preprocessing()
 	
 	for (int x = 0; x < nmbrFunctions; x++) {
 		D_3(
-			 if ((x % 1000) == 0)
-			 d3_printf3("Rebuild %d/%d\r", x, nmbrFunctions);
-          )
+			 if ((x % 1000) == 0) {
+				 for(int iter = 0; iter<str_length; iter++)
+					d3_printf1("\b");
+				 sprintf(p, "Rebuild %d/%d", x, nmbrFunctions);
+				 str_length = strlen(p);
+				 d3_printf1(p);
+			 }
+			 )
 		int r=Rebuild_BDDx(x);
 		switch (r) {
 		  case TRIV_UNSAT:
