@@ -1,7 +1,7 @@
-#! /usr/local/bin/bash
+#! /bin/sh
 
 # libtoolT - Provide generalized library-building support services.
-# Generated automatically by  (GNU sbsat 2.5b-2)
+# Generated automatically by  (GNU sbsat 2.5b-4)
 # NOTE: Changes made to this file will be lost: look at ltmain.sh.
 #
 # Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001
@@ -47,7 +47,7 @@ available_tags=" CXX F77"
 # Libtool was configured on host boole.ececs.uc.edu:
 
 # Shell to use when invoking shell scripts.
-SHELL="/usr/local/bin/bash"
+SHELL="/bin/sh"
 
 # Whether or not to build shared libraries.
 build_libtool_libs=yes
@@ -7271,7 +7271,7 @@ disable_libs=static
 # Libtool was configured on host boole.ececs.uc.edu:
 
 # Shell to use when invoking shell scripts.
-SHELL="/usr/local/bin/bash"
+SHELL="/bin/sh"
 
 # Whether or not to build shared libraries.
 build_libtool_libs=yes
@@ -7576,7 +7576,7 @@ include_expsyms=""
 # Libtool was configured on host boole.ececs.uc.edu:
 
 # Shell to use when invoking shell scripts.
-SHELL="/usr/local/bin/bash"
+SHELL="/bin/sh"
 
 # Whether or not to build shared libraries.
 build_libtool_libs=yes

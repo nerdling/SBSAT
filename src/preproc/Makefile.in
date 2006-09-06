@@ -54,7 +54,8 @@ am__objects_1 = create_infs.lo do_cofactor.lo do_exquantify.lo \
 	do_pruning_restrict.lo do_flow.lo do_pruning_pr.lo do_split.lo \
 	do_steal.lo do_rewind.lo do_clearft.lo do_prover3.lo \
 	equivclass.lo do_simpleand.lo do_possibleanding.lo \
-	do_findft.lo do_safeassign.lo do_safesearch.lo do_ex_safe_cluster.lo
+	do_findft.lo do_safeassign.lo do_safesearch.lo \
+	do_ex_safe_cluster.lo
 am_libpreproc_la_OBJECTS = $(am__objects_1)
 libpreproc_la_OBJECTS = $(am_libpreproc_la_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/include
@@ -252,9 +253,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_clearft.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_cofactor.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_depcluster.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_ex_safe_cluster.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_exquantify.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_exquantifyand.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_ex_safe_cluster.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_findft.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_flow.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_possibleanding.Plo@am__quote@
