@@ -644,12 +644,13 @@ int pickrandom(void)
 	
 	if(BDDWalkRandomOption == 1) //#1 Pick a random path to true in this BDD
 	  path_length = getRandomTruePath(tofix);
-	else if(BDDWalkRandomOption == 2) { //#2 Randomly flip every variable in this BDD
+	else if(BDDWalkRandomOption == 2) { //#2 Randomly flip variables in this BDD
+		int i = 0;
 		for(path_length = 0; path_length < wlength[tofix]; path_length++) {
 			if((random()%2) > 0)
-			  varstoflip[path_length] = wvariables[tofix].num[path_length];
+			  varstoflip[i++] = wvariables[tofix].num[path_length];
 		}
-		varstoflip[path_length] = 0;
+		varstoflip[i] = 0;
 	} else if(BDDWalkRandomOption == 3) {	//#3 Randomly flip one variable in the problem
 		varstoflip[0] = random()%numvars+1;
 		varstoflip[1] = 0;
@@ -693,11 +694,12 @@ int picknoveltyplus(void)
 		if(BDDWalkRandomOption == 1) //#1 Pick a random path to true in this BDD
 		  path_length = getRandomTruePath(tofix);
 		else if(BDDWalkRandomOption == 2) { //#2 Randomly flip every variable in this BDD
+			int i = 0;
 			for(path_length = 0; path_length < wlength[tofix]; path_length++) {
 				if((random()%2) > 0)
-				  varstoflip[path_length] = wvariables[tofix].num[path_length];
+				  varstoflip[i++] = wvariables[tofix].num[path_length];
 			}
-			varstoflip[path_length] = 0;
+			varstoflip[i] = 0;
 		} else if(BDDWalkRandomOption == 3) {	//#3 Randomly flip one variable in the problem
 			varstoflip[0] = random()%numvars+1;
 			varstoflip[1] = 0;
