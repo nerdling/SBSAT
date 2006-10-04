@@ -121,7 +121,7 @@ t_opt options[] = {
 	        "\nBDD options:"},
 { &numBuckets, "", "num-buckets", P_INT, V(i:0,"0"), V(i:16,"16"), VAR_NORMAL, 0, 
                 "Set the number of buckets in power of 2"},
-{ &sizeBuckets, "", "size-buckets", P_INT, V(i:0,"0"), V(i:5,"5"), VAR_NORMAL, 0, 
+{ &sizeBuckets, "", "size-buckets", P_INT, V(i:0,"0"), V(i:5,"5"), VAR_NORMAL, 0,
                 "Set the size of a bucket in power of 2"},
 { &_bdd_pool_size, "", "bdd-pool-size", P_INT, V(i:0,"0"), V(i:1000000,"1000000"), VAR_NORMAL, 0, 
                 "The size of the bdd pool increment"},
@@ -189,7 +189,7 @@ t_opt options[] = {
                 "Input format"},
 { &print_tree, "", "tree", P_PRE_INT, V(i:1,"1"), V(i:0,"0"), VAR_CMD, 0, 
                 "Output BDDs in tree representation (used in conjunction with -p)"},
-{ &PRINT_TREE_WIDTH, "W", "tree-width", P_INT, V(i:0,"0"), V(i:64,"64"), VAR_NORMAL, 0, 
+{ &PRINT_TREE_WIDTH, "", "tree-width", P_INT, V(i:0,"0"), V(i:64,"64"), VAR_NORMAL, 0,
                 "Set BDD tree printing width"},
 { &prover3_max_vars, "", "prover3-max-vars", P_INT, V(i:0,"0"), V(i:10,"10"), VAR_NORMAL, 0, 
                 "Max vars per BDD when reading 3 address code (intput format 3)"},
@@ -247,7 +247,7 @@ t_opt options[] = {
 		"Threashold above which the Sp splits BDDs."},
 { &ex_infer, "",  "ex-infer", P_INT, V(i:0,"0"),  V(i:0,"1"), VAR_NORMAL, 0,
 		"Enable/Disable Ex Quantification to try to infer variables before they are quantified away."},
-{ &ge_preproc, "Gauss", "Gaussian-Elimination", P_CHAR, V(i:0, "0"),  V(c:'0', "0"), VAR_NORMAL, 0,
+{ &ge_preproc, "gauss", "gaussian-elimination", P_CHAR, V(i:0, "0"),  V(c:'0', "0"), VAR_NORMAL, 0,
 	   "Enable Gaussian Elimination in the preprocessor (1/0)"},
 /*
  * General Solver options
