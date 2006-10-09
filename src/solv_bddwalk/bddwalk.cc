@@ -110,12 +110,21 @@ float path_factor; /* Number of random paths choosen = total number of variables
                    /* path_factor is dynamically modified during the search */
                    /* more paths will be choosen when there are less unsatisfied BDDS to choose from */
 
+/**********************************************************/
+/* ANOV & ANOV+ parameters                                */
+/**********************************************************/
+
+int invPhi = 5;
+int invTheta = 6;
+
+int lastAdaptFlip = 0;
+int lastAdaptNumFalse = 0;
+
 /************************************/
 /* Global flags and parameters      */
 /************************************/
 
-int numerator = NOVALUE; /* choose second_to_flip with numerator/denominator frequency */
-int denominator = 10000;
+float noise; /* choose second_to_flip with noise frequency */
 
 int wp_numerator = NOVALUE; /* choose a random path to true with numerator/denominator frequency */
 int wp_denominator = 10000;
@@ -198,7 +207,9 @@ int samplefreq = 1;
 
 int pickrandom(void);
 int picknoveltyplus(void);
-  
+
+void adaptNoveltyNoise(void);
+
 int countunsat(void);
 void init_CountFalses();
 void initprob(void); /* Initialize data structures for the problem */
@@ -228,10 +239,13 @@ int walkSolve() {
 	true_weight_multi = (float)BDDWalktaboo_multi;
 	taboo_max = (float)BDDWalktaboo_max;
 	taboo_length = taboo_max-1.0;
-	int (*heurpick)() = BDDWalkHeur=='r'?&pickrandom:&picknoveltyplus; //pointer to function
+	int (*heurpick)(); //pointer to function
+	if(BDDWalkHeur=='a') heurpick = &picknoveltyplus;
+	else if(BDDWalkHeur == 'n') heurpick = &picknoveltyplus;
+	else if(BDDWalkHeur == 'r')  heurpick = &pickrandom;
 	
 	wp_numerator = (int)(BDDWalk_wp_prob*(float)wp_denominator);
-	numerator = (int)(BDDWalk_prob*(float)denominator);
+	noise = BDDWalk_prob;
 	
 	gettimeofday(&tv,&tzp);
 	seed = (( tv.tv_sec & 0177 ) * 1000000) + tv.tv_usec;
@@ -250,6 +264,7 @@ int walkSolve() {
 		while((numfalse > target) && (numflip < cutoff)) {
 			numflip+=heurpick();
 			flipatoms();
+			if(BDDWalkHeur=='a') adaptNoveltyNoise();
 			update_statistics_end_flip();
 			if (nCtrlC) {
 				d2_printf1("Breaking out of BDD WalkSAT\n");
@@ -666,8 +681,20 @@ int pickrandom(void)
 	return path_length;
 }
 
-int picknoveltyplus(void)
-{
+//Adapted from "An Adaptive Noise Mechanism for WalkSAT" by Holger H. Hoos
+void adaptNoveltyNoise() {
+	if ((numflip - lastAdaptFlip) > (numBDDs / invTheta)) {
+		noise += (int) ((100 - noise) / invPhi);
+		lastAdaptFlip = numflip;
+		lastAdaptNumFalse = numfalse;
+	} else if (numfalse < lastAdaptNumFalse) {
+		noise -= (int) (noise / invPhi / 2);
+		lastAdaptFlip = numflip;
+		lastAdaptNumFalse = numfalse;
+	}	
+}
+
+int picknoveltyplus(void) {
 	int best_make = 0, second_best_make = 0;
 	double best_diff, second_best_diff;
 	int youngest_birthdate, best=0, second_best=0;
@@ -756,7 +783,7 @@ int picknoveltyplus(void)
 
 		if(!second_best) flippath = 1;
 		else if(best_diff == second_best_diff) flippath = 1;
-		else if ((random()%denominator < numerator)) flippath = 2;
+		else if (random()%100 < noise) flippath = 2;
 		else flippath = 1;
 	}
 	
