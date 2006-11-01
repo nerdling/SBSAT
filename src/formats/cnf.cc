@@ -239,13 +239,13 @@ void CNF_to_BDD(int cnf)
          //exit(1);
       }
       if(order == 'e') { // error
-         fprintf(stderr, "Error while parsing CNF input:premature end of file, only %ld functions found\n", x-1);
+         fprintf(stderr, "Error while parsing CNF input: premature end of file, only %ld functions found\n", x-1);
          exit(1);
       } else
       if(order == '#') { // special line (check for xcnf format?)
          store *temp = getMinMax(&tempint_max, &tempint);
          if(temp == NULL) {
-            fprintf(stderr, "Error while parsing CNF input:%ld...exiting\n", x);
+            fprintf(stderr, "Error while parsing CNF input: %ld...exiting\n", x);
             exit(1);
          }
          integers[x].num = temp->num;
