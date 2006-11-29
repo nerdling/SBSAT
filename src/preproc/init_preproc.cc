@@ -528,7 +528,7 @@ Finish_Preprocessing()
 		d3_printf2("Total number of BDDs  - %d\n", nmbrFunctions);
 		d3_printf2("Number of Variables   - %ld\n", numinp);
 	} else {
-		d3_printf2("Number of BDDs - %d\n", countBDDs());
+		d3_printf2("Number of BDDs      - %d\n", countBDDs());
 		d3_printf2("Number of Variables - %ld\n", numinp);
 	}
 	
