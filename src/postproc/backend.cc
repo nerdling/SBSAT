@@ -64,7 +64,7 @@ ShowResultLine(FILE *fout, char *var, int var_idx, int negative, int value)
 	  var = var_str;
 	  sprintf(var, "%d", var_idx);
   }
-  
+
 	switch (result_display_type) {
 	 case 4:
 	 case 1:
@@ -124,14 +124,14 @@ void GetSolution(int oldnuminp, int nMaxVbleIndex) {
 				 break;
 			 }
 	  }
-	for (int i = 1; i < oldnuminp+1; i++) {
+	for (int i = 1; i <= oldnuminp; i++) {
 		if(variablelist[variablelist[i].replace].true_false == 2) {
 			variablelist[variablelist[i].replace].true_false = -1;
 			//variablelist[variablelist[i].replace].equalvars = 0;
 		}
 	}
 
-	//for (int i = 1; i <= oldnuminp+1; i++) {
+	//for (int i = 1; i <= oldnuminp; i++) {
 	//	fprintf(stderr, "%d = %d/%d\n", i, variablelist[i].true_false, variablelist[i].equalvars);
    //}
 	
@@ -370,16 +370,19 @@ Backend(int nMaxVbleIndex, int oldnuminp, int *original_variables)
 void
 Verify_Solver()
 {
-  int oldnuminp = numinp;
-  int *original_variables;
 
-  /* 
-   * original_variables
-   */
+	for (int x = 0; x < original_numout; x++) {
+		functions[x] = original_functions[x];
+		functionType[x] = UNSURE;
+	}
+	nmbrFunctions = original_numout;
+	
+	int oldnuminp = getNuminp();//numinp;
+	int *original_variables;
 	
 	ITE_NEW_CATCH(
-	original_variables = new int[numinp + 1],
-	"input variables");
+	  original_variables = new int[numinp + 1],
+	  "input variables");
 	
 	for (int x = 0; x <= numinp; x++)
      original_variables[x] = -1;
@@ -411,30 +414,27 @@ Verify_Solver()
 void
 Verify_NoSolver()
 {
-  int oldnuminp = numinp;
-  int *original_variables;
 
-  /* 
-   * original_variables
-   */
+	for (int x = 0; x < original_numout; x++) {
+		functions[x] = original_functions[x];
+		functionType[x] = UNSURE;
+	}
+	nmbrFunctions = original_numout;
 	
-  ITE_NEW_CATCH(
-  original_variables = new int[numinp + 1],
-  "input variables");
-
-  for (int x = 0; x <= numinp; x++)
+	int oldnuminp = getNuminp();//numinp;
+	int *original_variables;
+	
+	ITE_NEW_CATCH(
+		original_variables = new int[numinp + 1],
+		"input variables");
+	
+	for (int x = 0; x <= numinp; x++)
      original_variables[x] = -1;
-
-  for (int x = 0; x < original_numout; x++) {
-	  functions[x] = original_functions[x];
-	  functionType[x] = UNSURE;
-  }
-  nmbrFunctions = original_numout;
-
-  if (result_display_type) {
+	
+	if (result_display_type) {
      Backend_NoSolver(oldnuminp, original_variables);
-  }
-
+	}
+	
 	while(solution_info_head!=NULL) {
 		solution_info = solution_info_head;
 		solution_info_head = solution_info_head->next;
