@@ -56,4 +56,4 @@
 #include "sbsat_interface.h"
 
 
-#endif // ITE_H
+#endif // SBSAT_H
