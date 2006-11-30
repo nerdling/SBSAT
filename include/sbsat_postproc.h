@@ -38,8 +38,10 @@
 #ifndef SBSAT_POSTPROC_H
 #define SBSAT_POSTPROC_H
 
+extern int result_display_tempvars;
+
 void finalCheck(int *);
-void Backend(int, int, int *);
+void Backend(int, int *);
 void Backend_NoSolver(int, int *);
 
 #endif
