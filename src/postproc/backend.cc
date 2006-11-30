@@ -426,13 +426,14 @@ Verify_NoSolver()
 	
 	int oldnuminp = numinp;
 	numinp = getNuminp();
+	oldnuminp = oldnuminp<numinp?oldnuminp:numinp;
 	int *original_variables;
 	
 	ITE_NEW_CATCH(
-	  original_variables = new int[oldnuminp>numinp?oldnuminp:numinp + 1],
+	  original_variables = new int[numinp + 1],
 	  "input variables");
 	
-	for (int x = 0; x <= oldnuminp>numinp?oldnuminp:numinp; x++)
+	for (int x = 0; x <= numinp; x++)
      original_variables[x] = -1;
 
 	if (result_display_type) {
