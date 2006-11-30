@@ -48,7 +48,6 @@ char cnfformat[128]="noqm";
 char dependence='c';
 int  n_cnfformat=CNF_NOQM;
 char sResult[4]="n";
-int result_display_tempvars;
 int  ctrl_c=0;
 int  nCtrlC=0; /* ctrl c pressed */
 LONG64 ite_counters[MAX_COUNTER];
@@ -91,8 +90,6 @@ t_opt options[] = {
                 "directory for temporary files"},
 { sResult,   "R",   "show-result",   P_STRING,  V(i:2,"2"), {"n"}, VAR_NORMAL, 0,
                "Show result (n=no result, r=raw, f=fancy, b=binary)"},
-{ &result_display_tempvars, "", "result-display-tempvars", P_INT, V(i:0, "0"), V(i:1, "1"), VAR_NORMAL, 0,
-	  "When displaying results, also display values for temporary variables created in the solver"},
 { &verify_solution,   "",  "verify-solution",   P_INT,  V(i:0,"0"), V(i:1,"1"), VAR_NORMAL, 0,
                "Verify solution"},
 { s_expected_result, "",  "expected-result", P_STRING, V(i:127,"127"), {""}, VAR_NORMAL, 0,
