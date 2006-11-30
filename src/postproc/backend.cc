@@ -381,10 +381,10 @@ Verify_Solver()
 	int *original_variables;
 	
 	ITE_NEW_CATCH(
-	  original_variables = new int[numinp + 1],
+	  original_variables = new int[oldnuminp + 1],
 	  "input variables");
 	
-	for (int x = 0; x <= numinp; x++)
+	for (int x = 0; x <= oldnuminp; x++)
      original_variables[x] = -1;
 
 	nmbrFunctions = original_numout;
@@ -425,10 +425,10 @@ Verify_NoSolver()
 	int *original_variables;
 	
 	ITE_NEW_CATCH(
-		original_variables = new int[numinp + 1],
+		original_variables = new int[oldnuminp + 1],
 		"input variables");
 	
-	for (int x = 0; x <= numinp; x++)
+	for (int x = 0; x <= oldnuminp; x++)
      original_variables[x] = -1;
 	
 	if (result_display_type) {
