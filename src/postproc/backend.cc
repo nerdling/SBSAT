@@ -100,8 +100,8 @@ ShowResultLine(FILE *fout, char *var, int var_idx, int negative, int value)
 	}
 }
 
-void GetSolution(int oldnuminp, int nMaxVbleIndex) {
-	for (int i = 1; i <= nMaxVbleIndex; i++)
+void GetSolution(int oldnuminp) {
+	for (int i = 1; i <= oldnuminp; i++)
 	  {
 		  //if(variablelist[variablelist[i].replace].true_false == 2
 		  //  || variablelist[variablelist[i].replace].true_false == 3)
@@ -124,7 +124,7 @@ void GetSolution(int oldnuminp, int nMaxVbleIndex) {
 				 break;
 			 }
 	  }
-	for (int i = 1; i <= oldnuminp; i++) {
+	for (int i = 1; i <= numinp; i++) {
 		if(variablelist[variablelist[i].replace].true_false == 2) {
 			variablelist[variablelist[i].replace].true_false = -1;
 			//variablelist[variablelist[i].replace].equalvars = 0;
@@ -295,35 +295,36 @@ Backend_NoSolver (int oldnuminp, int *original_variables)
 	getExInferences(original_variables, oldnuminp);
 	
    if (result_display_type == 4) fprintf(foutputfile, "v ");
-   for (int i = 1; i <= oldnuminp; i++)
-	  {
-        if (result_display_type == 4 && (i%20) == 0) fprintf(foutputfile, "\nv ");
-		  int negate = 0;
-		  if(original_variables[i] == 2) original_variables[i] = -1;
-		  if(original_variables[i] == -1 && variablelist[i].equalvars>0) {
-			  original_variables[i] = variablelist[i].equalvars;
-		  } else if(original_variables[i] == -1 && variablelist[i].equalvars<0) {
-			  original_variables[i] = variablelist[i].equalvars;
-			  negate = 1;
-		  } 
-		  ShowResultLine(foutputfile, s_name(i), i, negate, original_variables[i]);
-	  }
+
+	for (int i = 1; i <= numinp; i++) {
+		if (result_display_type == 4 && (i%20) == 0) fprintf(foutputfile, "\nv ");
+		int negate = 0;
+		if(original_variables[i] == 2) original_variables[i] = -1;
+		if(original_variables[i] == -1 && variablelist[i].equalvars>0) {
+			original_variables[i] = variablelist[i].equalvars;
+		} else if(original_variables[i] == -1 && variablelist[i].equalvars<0) {
+			original_variables[i] = variablelist[i].equalvars;
+			negate = 1;
+		}
+		ShowResultLine(foutputfile, s_name(i), i, negate, original_variables[i]);
+	}
    if (result_display_type == 4) fprintf(foutputfile, " 0");
 	fprintf(foutputfile, "\n");
 	//1 = True  0 = False  -1 = Don't Care
 }
 
+
 void 
-Backend(int nMaxVbleIndex, int oldnuminp, int *original_variables) 
+Backend(int oldnuminp, int *original_variables)
 {
-	int *old_orig_vars = (int *)calloc(oldnuminp+1, sizeof(int));
-	varinfo *old_variablelist = (varinfo *)calloc(oldnuminp+1, sizeof(varinfo));
-	for(int x = 0; x <= oldnuminp; x++) {
+	int *old_orig_vars = (int *)calloc(numinp+1, sizeof(int));
+	varinfo *old_variablelist = (varinfo *)calloc(numinp+1, sizeof(varinfo));
+	for(int x = 0; x <= numinp; x++) {
 		old_orig_vars[x] = original_variables[x];
 		old_variablelist[x].true_false = variablelist[x].true_false;
 		old_variablelist[x].equalvars = variablelist[x].equalvars;
 	}
-
+	
 	int num_sol = 1;
 	for(solution_info = solution_info_head; solution_info!=NULL; solution_info = solution_info->next) {
 		//if (result_display_type && ite_counters[NUM_SOLUTIONS] > 1) 
@@ -334,20 +335,20 @@ Backend(int nMaxVbleIndex, int oldnuminp, int *original_variables)
 		}
 		nmbrFunctions = original_numout;
 		
-		for (int x = 0; x <= oldnuminp; x++) {
+		for (int x = 0; x <= numinp; x++) {
 			original_variables[x] = old_orig_vars[x];
 			variablelist[x].true_false = old_variablelist[x].true_false;
 			variablelist[x].equalvars = old_variablelist[x].equalvars;
 		}
 		
-		GetSolution(oldnuminp, nMaxVbleIndex);
+		GetSolution(oldnuminp);
 	
 		ProcessSolution(oldnuminp, original_variables);
 		
 		getExInferences(original_variables, oldnuminp);
 		
       if (result_display_type == 4) fprintf(foutputfile, "v ");
-      for (int i = 1; i <= oldnuminp; i++) {
+      for (int i = 1; i <= numinp; i++) {
          if (result_display_type == 4 && (i%20) == 0) fprintf(foutputfile, "\nv ");
 			int negate = 0;
 			if(original_variables[i] == 2) original_variables[i] = -1;
@@ -377,22 +378,24 @@ Verify_Solver()
 	}
 	nmbrFunctions = original_numout;
 	
-	int oldnuminp = getNuminp();//numinp;
+	int oldnuminp = numinp;
+	numinp = getNuminp();
+	oldnuminp = oldnuminp<numinp?oldnuminp:numinp;
 	int *original_variables;
 	
 	ITE_NEW_CATCH(
-	  original_variables = new int[oldnuminp + 1],
+	  original_variables = new int[numinp + 1],
 	  "input variables");
 	
-	for (int x = 0; x <= oldnuminp; x++)
+	for (int x = 0; x <= numinp; x++)
      original_variables[x] = -1;
 
 	nmbrFunctions = original_numout;
 
 	if(result_display_type) {
-		Backend(numinp, oldnuminp, original_variables);
+		Backend(oldnuminp, original_variables);
 	}
-		
+
 	while(solution_info_head!=NULL) {
 		solution_info = solution_info_head;
 		solution_info_head = solution_info_head->next;
@@ -421,16 +424,17 @@ Verify_NoSolver()
 	}
 	nmbrFunctions = original_numout;
 	
-	int oldnuminp = getNuminp();//numinp;
+	int oldnuminp = numinp;
+	numinp = getNuminp();
 	int *original_variables;
 	
 	ITE_NEW_CATCH(
-		original_variables = new int[oldnuminp + 1],
-		"input variables");
+	  original_variables = new int[oldnuminp>numinp?oldnuminp:numinp + 1],
+	  "input variables");
 	
-	for (int x = 0; x <= oldnuminp; x++)
+	for (int x = 0; x <= oldnuminp>numinp?oldnuminp:numinp; x++)
      original_variables[x] = -1;
-	
+
 	if (result_display_type) {
      Backend_NoSolver(oldnuminp, original_variables);
 	}
