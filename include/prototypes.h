@@ -152,7 +152,7 @@ ITE_INLINE void DisplaySolution(int, int []);
 void DisplayTraceInferenceQueue();
 
 int check_gzip (char *filename);
-FILE * zread(char *filename);
+FILE * zread(char *filename, int zip);
 
 void xorloop ();
 

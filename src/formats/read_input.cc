@@ -136,9 +136,10 @@ read_input_open()
    else { d2_printf3("Reading File %s %s ....\n", inputfile, comment); }
 
 
-   if (check_gzip(inputfile)) {
+   int zip=check_gzip(inputfile);
+   if (zip) {
       d2_printf1("gzip file -- using zread\n");
-      finputfile = zread(inputfile);
+      finputfile = zread(inputfile, zip);
    }
    else
       if (!strcmp(inputfile, "-")) {

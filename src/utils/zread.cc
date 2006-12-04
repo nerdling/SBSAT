@@ -49,8 +49,14 @@ check_gzip (char *filename)
     {
       unsigned char x1 = (unsigned char)fgetc (fin);
       unsigned char x2 = (unsigned char)fgetc (fin);
+      unsigned char x3 = (unsigned char)fgetc (fin);
       if (x1 == (unsigned char)'\037' && 
           x2 == (unsigned char)'\213') is_gzip=1;
+      else if (x1 == (unsigned char)'B' && 
+               x2 == (unsigned char)'Z' &&
+               x3 == (unsigned char)'h'
+              ) is_gzip=2;
+      ungetc(x3, fin);
       ungetc(x2, fin);
       ungetc(x1, fin);
       if (fin != stdin) fclose (fin);
@@ -59,19 +65,27 @@ check_gzip (char *filename)
 }
 
 FILE*
-zread(char *filename)
+zread(char *filename, int zip)
 {
     FILE *infile;
     char cmd[256];
 
+    switch(zip) {
+     case 1: strcpy(cmd, "gzip -dc ");  
+             break;
+     case 2: strcpy(cmd, "bzip2 -dc ");  
+             break;
+     default: fprintf(stderr, "Unknown compression method\n");
+              break;
+    }
+
     if (!strcmp(filename, "-")) {
-       fprintf(stderr, "Can not accept gzipped data on the standard input\n");
-       fprintf(stderr, "Please use the filename.gz as a parameter or gzip -dc for the stdin instead\n");
-       fprintf(stderr, "Example: cat filename.gz | gzip -dc | ite\n");
+       fprintf(stderr, "Can not accept zipped data on the standard input\n");
+       fprintf(stderr, "Please use the filename.gz as a parameter or %s for the stdin instead\n", cmd);
+       fprintf(stderr, "Example: cat filename.gz | %s | sbsat\n", cmd);
        exit(1);
     }
 
-    strcpy(cmd, "gzip -dc ");  /* use "gzip -c" for zwrite */
     strncat(cmd, filename, sizeof(cmd)-strlen(cmd));
     infile = popen(cmd, "r");  /* use "w" for zwrite */
     if (infile == NULL) {
@@ -80,10 +94,11 @@ zread(char *filename)
     }
     int c = fgetc(infile);
     if (c == EOF) {
-       fprintf(stderr, "Can't use gzip\n");
+       fprintf(stderr, "Can't use %s\n", cmd);
        exit(1);
     }
     ungetc(c, infile);
 
     return infile;
 }
+
