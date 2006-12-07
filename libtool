@@ -30,10 +30,10 @@
 # the same distribution terms that you use for the rest of that program.
 
 # A sed program that does not truncate output.
-SED="/usr/bin/sed"
+SED="/sw/bin/sed"
 
 # Sed that helps us avoid accidentally triggering echo(1) options like -n.
-Xsed="/usr/bin/sed -e 1s/^X//"
+Xsed="/sw/bin/sed -e 1s/^X//"
 
 # The HP-UX ksh and POSIX shell print the target directory to stdout
 # if CDPATH is set.
@@ -44,7 +44,7 @@ available_tags=" CXX"
 
 # ### BEGIN LIBTOOL CONFIG
 
-# Libtool was configured on host Slave2.local:
+# Libtool was configured on host slave2.local:
 
 # Shell to use when invoking shell scripts.
 SHELL="/bin/sh"
@@ -94,7 +94,7 @@ CC="gcc"
 with_gcc=yes
 
 # An ERE matcher.
-EGREP="grep -E"
+EGREP="/usr/bin/grep -E"
 
 # The linker used to build libraries.
 LD="/usr/bin/ld"
@@ -7268,7 +7268,7 @@ disable_libs=static
 # End:
 # ### BEGIN LIBTOOL TAG CONFIG: CXX
 
-# Libtool was configured on host Slave2.local:
+# Libtool was configured on host slave2.local:
 
 # Shell to use when invoking shell scripts.
 SHELL="/bin/sh"
@@ -7318,7 +7318,7 @@ CC="g++"
 with_gcc=yes
 
 # An ERE matcher.
-EGREP="grep -E"
+EGREP="/usr/bin/grep -E"
 
 # The linker used to build libraries.
 LD="/usr/bin/ld"
