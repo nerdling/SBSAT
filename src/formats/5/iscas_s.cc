@@ -419,7 +419,7 @@ char *yytext;
 #line 2 "iscas_s.ll"
 #include "sbsat.h"
 #include "bddnode.h"
-#include "libt5_la-iscas_g.h"
+#include "libt5_a-iscas_g.h"
 
 /* remove warning about unput not used */
 #define YY_NO_UNPUT

@@ -412,7 +412,7 @@ char *yytext;
 #line 2 "prover3_s.ll"
 #include "sbsat.h"
 #include "bddnode.h"
-#include "libt5_la-prover3_g.h"
+#include "libt5_a-prover3_g.h"
 
 /* remove warning about unput not used */
 #define YY_NO_UNPUT

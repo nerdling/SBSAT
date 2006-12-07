@@ -216,20 +216,20 @@ EXTRA_DIST = functions.h bddnode.cc tracetest.cc p3.h
 #	#libt5_la-prover3_g.cc \
 #	#libt5_la-iscas_g.cc 
 CONFIG_CLEAN_FILES = \
-        libt5_la-trace_g.h  \
-	libt5_la-cnf_g.h  \
-	libt5_la-bdd_g.h \
-	libt5_la-blif_g.h \
-	libt5_la-prover_g.h \
-	libt5_la-prover3_g.h \
-	libt5_la-iscas_g.h \
-	libt5_la-trace_g.cc  \
-	libt5_la-cnf_g.cc  \
-	libt5_la-bdd_g.cc \
-	libt5_la-blif_g.cc \
-	libt5_la-prover_g.cc \
-	libt5_la-prover3_g.cc \
-	libt5_la-iscas_g.cc \
+        libt5_a-trace_g.h  \
+	libt5_a-cnf_g.h  \
+	libt5_a-bdd_g.h \
+	libt5_a-blif_g.h \
+	libt5_a-prover_g.h \
+	libt5_a-prover3_g.h \
+	libt5_a-iscas_g.h \
+	libt5_a-trace_g.cc  \
+	libt5_a-cnf_g.cc  \
+	libt5_a-bdd_g.cc \
+	libt5_a-blif_g.cc \
+	libt5_a-prover_g.cc \
+	libt5_a-prover3_g.cc \
+	libt5_a-iscas_g.cc \
         trace_s.cc  \
 	cnf_s.cc  \
 	bdd_s.cc \
