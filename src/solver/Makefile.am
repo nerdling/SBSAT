@@ -24,11 +24,11 @@ sources= solve.cc ksolve.cc \
 EXTRA_DIST=heur_choice.cc
 
 #if MYLIBTOOL
-noinst_LTLIBRARIES = libsolver.la libsolver2.la
-libsolver_la_SOURCES= $(sources)
-libsolver2_la_SOURCES=libsolver.cc
+#noinst_LTLIBRARIES = libsolver.la libsolver2.la
+#libsolver_la_SOURCES= $(sources)
+#libsolver2_la_SOURCES=libsolver.cc
 #else
-#noinst_LIBRARIES = libsolver.a libsolver2.a
-#libsolver_a_SOURCES= $(sources)
-#libsolver2_a_SOURCES=libsolver.cc
+noinst_LIBRARIES = libsolver.a libsolver2.a
+libsolver_a_SOURCES= $(sources)
+libsolver2_a_SOURCES=libsolver.cc
 #endif

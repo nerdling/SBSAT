@@ -3,10 +3,12 @@ sources= hr_stack.cc hr_lsgb.cc
 EXTRA_DIST=hr_choice.cc
 
 #if MYLIBTOOL
-noinst_LTLIBRARIES = libhrlsgb.la # libsolver2.la
-libhrlsgb_la_SOURCES= $(sources)
+#noinst_LTLIBRARIES = libhrlsgb.la # libsolver2.la
+#libhrlsgb_la_SOURCES= $(sources)
 #libsolver2_la_SOURCES=libsolver.cc
 #else
+noinst_LIBRARIES = libhrlsgb.a # libsolver2.la
+libhrlsgb_a_SOURCES= $(sources)
 #noinst_LIBRARIES = libsolver.a libsolver2.a
 #libsolver_a_SOURCES= $(sources)
 #libsolver2_a_SOURCES=libsolver.cc

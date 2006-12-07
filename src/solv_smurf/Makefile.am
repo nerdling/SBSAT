@@ -15,10 +15,12 @@ sources= display.cc solver.cc \
 EXTRA_DIST=hr_choice.cc
 
 #if MYLIBTOOL
-noinst_LTLIBRARIES = libsolv_smurf.la # libsolver2.la
-libsolv_smurf_la_SOURCES= $(sources)
+#noinst_LTLIBRARIES = libsolv_smurf.la # libsolver2.la
+#libsolv_smurf_la_SOURCES= $(sources)
 #libsolver2_la_SOURCES=libsolver.cc
 #else
+noinst_LIBRARIES = libsolv_smurf.a # libsolver2.la
+libsolv_smurf_a_SOURCES= $(sources)
 #noinst_LIBRARIES = libsolver.a libsolver2.a
 #libsolver_a_SOURCES= $(sources)
 #libsolver2_a_SOURCES=libsolver.cc

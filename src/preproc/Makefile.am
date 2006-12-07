@@ -10,9 +10,9 @@ sources= create_infs.cc do_cofactor.cc   do_exquantify.cc   \
 	do_safesearch.cc do_ex_safe_cluster.cc
 
 #if MYLIBTOOL
-noinst_LTLIBRARIES = libpreproc.la
-libpreproc_la_SOURCES=$(sources)
+#noinst_LTLIBRARIES = libpreproc.la
+#libpreproc_la_SOURCES=$(sources)
 #else
-#noinst_LIBRARIES = libpreproc.a
-#libpreproc_a_SOURCES=$(sources)
+noinst_LIBRARIES = libpreproc.a
+libpreproc_a_SOURCES=$(sources)
 #endif

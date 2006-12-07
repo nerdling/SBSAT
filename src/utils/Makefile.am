@@ -8,9 +8,9 @@ sources= \
 #EXTRA_DIST = # bddtable.cc
 
 #if MYLIBTOOL
-noinst_LTLIBRARIES = libutils.la
-libutils_la_SOURCES= $(sources)
+#noinst_LTLIBRARIES = libutils.la
+#libutils_la_SOURCES= $(sources)
 #else
-#noinst_LIBRARIES = libutils.a
-#libutils_a_SOURCES= $(sources)
+noinst_LIBRARIES = libutils.a
+libutils_a_SOURCES= $(sources)
 #endif

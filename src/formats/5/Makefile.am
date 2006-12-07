@@ -55,15 +55,15 @@ bin_PROGRAMS = tracetest
 tracetest_SOURCES = tracetest.cc  # bddnode.cc
 
 #if MYLIBTOOL
-noinst_LTLIBRARIES = libt5.la
-libt5_la_SOURCES = $(sources)
-libt5_la_YFLAGS =  -d
-tracetest_LDADD = ../../preproc/libpreproc.la libt5.la ../../utils/libutils.la
+#noinst_LTLIBRARIES = libt5.la
+#libt5_la_SOURCES = $(sources)
+#libt5_la_YFLAGS =  -d
+#tracetest_LDADD = ../../preproc/libpreproc.la libt5.la ../../utils/libutils.la
 #else
-#noinst_LIBRARIES = libt5.a
-#libt5_a_SOURCES = $(sources)
-#libt5_a_YFLAGS =  -d
-#tracetest_LDADD = ../../preproc/libpreproc.a libt5.a ../../utils/libutils.a
+noinst_LIBRARIES = libt5.a
+libt5_a_SOURCES = $(sources)
+libt5_a_YFLAGS =  -d
+tracetest_LDADD = ../../preproc/libpreproc.a libt5.a ../../utils/libutils.a
 #endif
 
 #libt5_a_CXXFLAGS =  -pg

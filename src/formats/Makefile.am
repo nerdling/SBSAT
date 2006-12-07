@@ -7,10 +7,10 @@ sources=autochk.cc  \
         read_result.cc read_input.cc write_output.cc
 
 #if MYLIBTOOL
-noinst_LTLIBRARIES = libformats.la
-libformats_la_SOURCES=$(sources)
-libformats_la_LIBADD=5/libt5.la
+#noinst_LTLIBRARIES = libformats.la
+#libformats_la_SOURCES=$(sources)
+#libformats_la_LIBADD=5/libt5.la
 #else
-#noinst_LIBRARIES = libformats.a
-#libformats_a_SOURCES=$(sources)
+noinst_LIBRARIES = libformats.a
+libformats_a_SOURCES=$(sources)
 #endif
