@@ -44,6 +44,7 @@ extern int num_safe_assigns;
 
 int ExSafeCluster();
 int check_bdd_for_safe(int x, int ret);
+int check_bdd_for_safe_eq(int x, int ret);
 
 int Do_ExSafeCluster() {
 	MAX_EXQUANTIFY_CLAUSES += 5;
@@ -166,7 +167,8 @@ int ExSafeCluster () {
 
 			
 			//do safe assign stuff here.
-			switch (int r=check_bdd_for_safe(j, ret)) {
+			//switch (int r=check_bdd_for_safe(j, ret)) {
+			switch (int r=check_bdd_for_safe_eq(j, ret)) {
 			 case TRIV_UNSAT:
 			 case TRIV_SAT:
 			 case PREP_ERROR:
@@ -229,7 +231,8 @@ int ExSafeCluster () {
 				functionType[j] = UNSURE;
 				
 				//do safe assign stuff here.
-				switch (int r=check_bdd_for_safe(j, ret)) {
+				//switch (int r=check_bdd_for_safe(j, ret)) {
+				switch (int r=check_bdd_for_safe_eq(j, ret)) {
 				 case TRIV_UNSAT: 
 				 case TRIV_SAT: 
 				 case PREP_ERROR: 
@@ -254,6 +257,66 @@ int ExSafeCluster () {
 	for(int x = 0; x < nmbrFunctions; x++)
 	  Es_repeat[x] = 1;
 
+	return ret;
+}
+
+int check_bdd_for_safe_eq(int x, int ret) {
+	for(int l = 0; l < length[x]; l++) {
+		int h = variables[x].num[l];
+		if(amount[h].head == NULL) continue;
+
+		BDDNode *safeVal = safe_assign_eq_all(functions, amount, h);
+		
+		if(safeVal!=true_ptr) {
+			//fprintf(stderr, "{%d = ", h);
+			//printBDDerr(safeVal);
+			//fprintf(stderr, "}");
+			num_safe_assigns++;
+			if(safeVal == false_ptr)
+			  safeVal = random()%2?ite_var(h):ite_var(-h); //Either value is safe, set h=true
+			BDDNode *inferBDD = safeVal;
+			int bdd_length = 0;
+			int *bdd_vars = NULL;
+			switch (int r=Rebuild_BDD(inferBDD, &bdd_length, bdd_vars)) {
+			 case TRIV_UNSAT:
+			 case TRIV_SAT:
+			 case PREP_ERROR: return r;
+			 default: break;
+			}
+			
+			switch (int r=Do_Apply_Inferences()) {
+			 case TRIV_UNSAT:
+			 case TRIV_SAT:
+			 case PREP_ERROR: return r;
+			 default: break;
+			}
+			
+			delete [] bdd_vars;
+			bdd_vars = NULL;
+			l = 0;
+		} else if (amount[h].head->next == NULL) {
+			int o = amount[h].head->num;
+			for(int iter = 0; iter<str_length; iter++)
+			  d3_printf1("\b");
+			d3e_printf2 ("*{%d}", h);
+			d4_printf3 ("*{%s(%d)}", s_name(h), h);
+			str_length = 0;// strlen(p);
+			functions[o] = xquantify (functions[o], h);
+			variablelist[h].true_false = 2;
+			switch (int r=Rebuild_BDDx(o)) {
+			 case TRIV_UNSAT:
+			 case TRIV_SAT: 
+			 case PREP_ERROR: 
+				ret = r; return ret; /* as much as I hate gotos */
+			 default: break;
+			}
+			SetRepeats(o);
+			equalityVble[o] = 0;
+			functionType[o] = UNSURE;
+			ret = PREP_CHANGED;
+			l = 0;
+		}
+	}	
 	return ret;
 }
 

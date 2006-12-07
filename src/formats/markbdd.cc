@@ -531,7 +531,7 @@ BDDNode *putite(int intnum, BDDNode * bdd)
       if (v1 == false_ptr)
 		  return false_ptr;
       if (v2 != ite_var (v2->variable)) {
-			fprintf (stderr, "\nKeyword 'exist' needs a positive integer as a second argument (%s)...exiting:%d\n", macros, markbdd_line);
+			fprintf (stderr, "\nKeyword 'exist' needs a positive variable as a second argument (%s)...exiting:%d\n", macros, markbdd_line);
 			exit (1);
 		}
       strcpy (macros, "exist");
@@ -544,11 +544,57 @@ BDDNode *putite(int intnum, BDDNode * bdd)
       if (v1 == false_ptr)
 		  return false_ptr;
       if (v2 != ite_var (v2->variable)) {
-			fprintf (stderr, "\nKeyword 'universe' needs a positive integer as a second argument (%s)...exiting:%d\n", macros, markbdd_line);
+			fprintf (stderr, "\nKeyword 'universe' needs a positive variable as a second argument (%s)...exiting:%d\n", macros, markbdd_line);
 			exit (1);
 		}
 		strcpy (macros, "universe");
       return uquantify (v1, v2->variable);
+	}
+	if (!strcasecmp (macros, "safe")) {
+		BDDNode * v1 = putite (intnum, bdd);
+      BDDNode * v2 = putite (intnum, bdd);
+		functionType[nmbrFunctions] = UNSURE;
+      if (v1 == false_ptr)
+		  return false_ptr;
+      if (v2 != ite_var (v2->variable)) {
+			fprintf (stderr, "\nKeyword 'safe' needs a positive variable as a second argument (%s)...exiting:%d\n", macros, markbdd_line);
+			exit (1);
+		}
+      strcpy (macros, "safe");
+      return safe_assign (v1, v2->variable);
+	}
+	if (!strcasecmp (macros, "safe_eq")) {
+		BDDNode * v1 = putite (intnum, bdd);
+      BDDNode * v2 = putite (intnum, bdd);
+		functionType[nmbrFunctions] = UNSURE;
+      if (v1 == false_ptr)
+		  return false_ptr;
+      if (v2 != ite_var (v2->variable)) {
+			fprintf (stderr, "\nKeyword 'safe_eq' needs a positive variable as a second argument (%s)...exiting:%d\n", macros, markbdd_line);
+			exit (1);
+		}
+      strcpy (macros, "safe_eq");
+      return safe_assign_eq (v1, v2->variable);
+	}
+	if (!strcasecmp (macros, "safe_func")) {
+		BDDNode * v1 = putite (intnum, bdd);
+      BDDNode * v2 = putite (intnum, bdd);
+		functionType[nmbrFunctions] = UNSURE;
+      if (v1 == false_ptr)
+		  return false_ptr;
+      if (v2 != ite_var (v2->variable)) {
+			fprintf (stderr, "\nKeyword 'safe_func' needs a positive variable as a second argument (%s)...exiting:%d\n", macros, markbdd_line);
+			exit (1);
+		}
+      strcpy (macros, "safe_func");
+      return safe_assign_func (v1, v2->variable);
+	}
+	if (!strcasecmp (macros, "remove_fps")) {
+		BDDNode * v1 = putite (intnum, bdd);
+      BDDNode * v2 = putite (intnum, bdd);
+		functionType[nmbrFunctions] = UNSURE;
+      strcpy (macros, "safe_func");
+      return remove_fps (v1, v2);
 	}
 	if (!strcasecmp (macros, "nor")) {
       BDDNode * v1, *v2;

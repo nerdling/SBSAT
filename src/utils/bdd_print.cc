@@ -300,50 +300,62 @@ printBDDTree(BDDNode * bdd, int *which_zoom)
    d2_printf1("\n");
    for (x = 0; x < 16; x++)
       zoomarr[x] = 0;
-   while ((y < z) && (y < 31)) {
-      for (i = 0; i < NUM / 2; i++)
+
+   if(z == 0 && y == 0) {
+		for (i = 0; i < NUM / 2; i++)
 		  d2_printf1(" ");
-      for (x = 0; x < (1 << level); x++) {
-         if (tempint[y] == -1) {
-				sprintf(aa, "T");
-			}
-         else if (tempint[y] == -2) {
-				sprintf(aa, "F");
-			} else if (tempint[y] == 0) {
-				sprintf(aa, " ");
-			} else if (y > 14) {
-				sprintf(aa, "*%d", (*which_zoom)++);
-            zoomarr[reference++] = y;
-         } else {
-				sprintf(aa, "%s", s_name(tempint[y]));
-				D_3(sprintf(aa, "%d", tempint[y]););
-				D_4(sprintf(aa, "%s(%d)", s_name(tempint[y]), tempint[y]););
-				
-			}
-			int l = strlen(aa);
-			if(l%2 == 0) {
-				for(i = 0; i < l/2-1; i++)
-				  d2_printf1("\b");
-				d2_printf1(aa);
-				if ((x + 1) < (1 << level))
-				  for(i = l/2+1;i < NUM; i++)
-					 d2_printf1(" ");
-			} else {
-				for(i = 0; i < l/2; i++)
-				  d2_printf1("\b");
-				d2_printf1(aa);
-				if ((x + 1) < (1 << level))
-				  for(i = l/2+1;i < NUM; i++)
-					 d2_printf1(" ");
-			}
-			y++;
+		if (tempint[y] == -1) {
+			d2_printf1("T\n\n");
 		}
-      level++;
-      NUM /= 2;
-      d2_printf1("\n\n");
-   }
-   int now_zoom = *which_zoom;
-   for (x = 0; (zoomarr[x] != 0) && (x < 16); x++) {
+		else if (tempint[y] == -2) {
+			d2_printf1("F\n\n");
+		}
+	} else {
+		while ((y < z) && (y < 31)) {
+			for (i = 0; i < NUM / 2; i++)
+			  d2_printf1(" ");
+			for (x = 0; x < (1 << level); x++) {
+				if (tempint[y] == -1) {
+					sprintf(aa, "T");
+				}
+				else if (tempint[y] == -2) {
+					sprintf(aa, "F");
+				} else if (tempint[y] == 0) {
+					sprintf(aa, " ");
+				} else if (y > 14) {
+					sprintf(aa, "*%d", (*which_zoom)++);
+					zoomarr[reference++] = y;
+				} else {
+					sprintf(aa, "%s", s_name(tempint[y]));
+					D_3(sprintf(aa, "%d", tempint[y]););
+					D_4(sprintf(aa, "%s(%d)", s_name(tempint[y]), tempint[y]););
+				}
+				int l = strlen(aa);
+				if(l%2 == 0) {
+					for(i = 0; i < l/2-1; i++)
+					  d2_printf1("\b");
+					d2_printf1(aa);
+					if ((x + 1) < (1 << level))
+					  for(i = l/2+1;i < NUM; i++)
+						 d2_printf1(" ");
+				} else {
+					for(i = 0; i < l/2; i++)
+					  d2_printf1("\b");
+					d2_printf1(aa);
+					if ((x + 1) < (1 << level))
+					  for(i = l/2+1;i < NUM; i++)
+						 d2_printf1(" ");
+				}
+				y++;
+			}
+			level++;
+			NUM /= 2;
+			d2_printf1("\n\n");
+		}
+	}
+	
+	int now_zoom = *which_zoom;
+	for (x = 0; (zoomarr[x] != 0) && (x < 16); x++) {
 		d2_printf2("\n*%d ", now_zoom - reference + x);
 		printBDDTree (findBranch (0, zoomarr[x], bdd), which_zoom);
       d2_printf1("\n");

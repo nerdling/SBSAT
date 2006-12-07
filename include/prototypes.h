@@ -51,7 +51,6 @@ int absrevcompfunc (const void *, const void *);
 BDDNode *and_dot(BDDNode *, BDDNode *);
 BDDNode *constant_and(BDDNode *, BDDNode *);
 BDDNode *possible_BDD(BDDNode *, int);
-BDDNode *safe_assign(BDDNode *, int);
 
 BDDNode *bdd2xdd(BDDNode *);
 int splitXors();
@@ -74,6 +73,9 @@ BDDNode *strengthen(int, int);
 BDDNode *strengthen_fun(BDDNode *, BDDNode *);
 BDDNode *xquantify(BDDNode *, int);
 BDDNode *uquantify(BDDNode *, int);
+BDDNode *safe_assign(BDDNode *, int);
+BDDNode *safe_assign_eq(BDDNode *, int);
+BDDNode *safe_assign_func(BDDNode *, int);
 int countnodes(BDDNode *);
 
 #define print_bdd(f) print_bdd1(f, 0)

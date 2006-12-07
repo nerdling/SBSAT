@@ -424,9 +424,8 @@ Verify_NoSolver()
 	}
 	nmbrFunctions = original_numout;
 	
-	int oldnuminp = numinp;
 	numinp = getNuminp();
-	oldnuminp = oldnuminp<numinp?oldnuminp:numinp;
+	
 	int *original_variables;
 	
 	ITE_NEW_CATCH(
@@ -437,7 +436,7 @@ Verify_NoSolver()
      original_variables[x] = -1;
 
 	if (result_display_type) {
-     Backend_NoSolver(oldnuminp, original_variables);
+     Backend_NoSolver(numinp, original_variables);
 	}
 	
 	while(solution_info_head!=NULL) {

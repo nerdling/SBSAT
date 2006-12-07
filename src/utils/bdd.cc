@@ -1425,32 +1425,60 @@ BDDNode *_safe_assign(BDDNode *f, int v) {
 	return (f->tmp_bdd = itetable_add_node(14, itevar, f, ite_and(r, _safe_assign(f->elseCase, v))));
 }
 
-BDDNode *_safe_assign_eq(BDDNode *f, int v);
-
 BDDNode *safe_assign_eq(BDDNode *f, int v) {
-	start_bdd_flag_number(SAFEBDD_FLAG_NUMBER);
-	return _safe_assign_eq(f, v);	
-}
-
-
-//SEAN FIX THIS!!!
-BDDNode *_safe_assign_eq(BDDNode *f, int v) {
-	if(v > f->variable) return true_ptr;
-	if(IS_TRUE_FALSE(f)) return true_ptr;	
-	if(f->flag == bdd_flag_number) return f->tmp_bdd;
-	if(f->notCase->flag == bdd_flag_number) return f->notCase->tmp_bdd->notCase;
-   f->flag = bdd_flag_number;
-	
-	if(v == f->variable) {
-		BDDNode *r = constant_and(f->thenCase, f->elseCase->notCase);
-		BDDNode *e = constant_and(f->thenCase->notCase, f->elseCase);
-		return (f->tmp_bdd = ite(ite_var(v), e->notCase, r->notCase));
+   BDDNode *safe_infs = ite(ite_var(v), ite_and(set_variable_noflag(f, v, 1), 
+										         ite_not(set_variable_noflag(f, v, 0))),
+									    ite_and(ite_not(set_variable_noflag(f, v, 1)),
+													set_variable_noflag(f, v, 0)));
+	if(safe_infs == false_ptr) return false_ptr;
+	infer *inferlist = safe_infs->inferences;
+	if(inferlist == NULL) return true_ptr;
+	while(inferlist!=NULL) {
+		if(abs(inferlist->nums[0]) == v && inferlist->nums[1] == 0) {
+			safe_infs = ite_and(safe_infs, ite_var(inferlist->nums[0]));
+		} else if(abs(inferlist->nums[0]) == v && inferlist->nums[1] != 0) {
+			safe_infs = ite_and(safe_infs, ite_equ(ite_var(inferlist->nums[0]), ite_var(inferlist->nums[1])));
+		} else if(abs(inferlist->nums[1]) == v) {
+			safe_infs = ite_and(safe_infs, ite_equ(ite_var(inferlist->nums[0]), ite_var(inferlist->nums[1])));
+		}
+		inferlist = inferlist->next;
 	}
 	
-	BDDNode *r = _safe_assign_eq(f->thenCase, v);
-	if(r == false_ptr) return (f->tmp_bdd = false_ptr);
-	return (f->tmp_bdd = ite_and(r, _safe_assign(f->elseCase, v)));
+	return safe_infs;
 }
+
+//SEAN FIX THIS!!!
+BDDNode *_safe_assign_func(BDDNode *, BDDNode *);
+
+BDDNode *safe_assign_func(BDDNode *f, int x) {
+	BDDNode *x_true = set_variable(f, x, 1);
+	BDDNode *x_false = set_variable(f, x, 0);
+	BDDNode *factor = _safe_assign_func(x_true, x_false);
+	if(factor == NULL) return true_ptr;
+	return ite(ite_var(x), factor, ite_not(factor));
+}
+
+BDDNode *_safe_assign_func(BDDNode *x_true, BDDNode *x_false) {
+	if(x_true == ite_not(x_false)) return x_true;
+	if(x_true == false_ptr) return ite_not(x_false);//false_ptr;
+	if(x_false == false_ptr) return x_true; //true_ptr;
+	if(x_true == x_false) return NULL; //Somehow break early, returning null or something
+	BDDNode *r;
+	BDDNode *e;
+	if(x_true->variable > x_false->variable) {
+		return _safe_assign_func(xquantify(x_true, x_true->variable), x_false);
+	} else if(x_true->variable < x_false->variable) {
+		return _safe_assign_func(x_true, xquantify(x_false, x_false->variable));
+	} else { //x_true->variable == x_false->variable
+		r = _safe_assign_func(x_true->thenCase, x_false->thenCase);
+		if(r == NULL) return NULL;
+		e = _safe_assign_func(x_true->elseCase, x_false->elseCase);
+		if(e == NULL) return NULL;		  
+	}
+	if(r == e) return r;
+	return find_or_add_node(x_true->variable, r, e);
+} 
+
 
 BDDNode *safe_assign_all(BDDNode **bdds, llistStruct *amount, int v) {
 	BDDNode *safeVal = true_ptr;
@@ -1466,6 +1494,101 @@ BDDNode *safe_assign_all(BDDNode **bdds, llistStruct *amount, int v) {
 		if(safeVal == false_ptr) break;
 	}
 	return safeVal;
+}
+
+BDDNode *safe_assign_eq_all(BDDNode **bdds, llistStruct *amount, int v) {
+	BDDNode *safe_infs = true_ptr;
+	infer *inferlist = NULL;
+	for (llist * k = amount[v].head; k != NULL; k = k->next) {
+		BDDNode *ex_bdd = bdds[k->num];
+		for (int x = 0; x < length[k->num]; x++) {
+			if(variables[k->num].num[x] == v) continue;
+			if(amount[variables[k->num].num[x]].head->next == NULL)
+			  ex_bdd = xquantify(ex_bdd, variables[k->num].num[x]);
+		}
+		
+		safe_infs = safe_assign_eq(ex_bdd, v);
+		if(safe_infs == true_ptr) {
+			//delete inferences;
+			for(;inferlist!=NULL;) {
+				infer *tmp = inferlist;
+				inferlist = inferlist->next;
+				delete tmp;
+			}
+			return true_ptr;
+		}
+		if(safe_infs == false_ptr) continue;
+		//else, parse the inferences
+		
+		infer *newinfs = safe_infs->inferences;
+		assert(newinfs!=NULL);
+		if(inferlist==NULL) {
+			inferlist = (infer *)calloc(1, sizeof(infer));
+			inferlist->nums[0] = newinfs->nums[0];
+			inferlist->nums[1] = newinfs->nums[1];
+			infer *step = inferlist;
+			newinfs = newinfs->next;
+			while(newinfs != NULL) {
+				step->next = (infer *)calloc(1, sizeof(infer));
+				step = step->next;
+				step->nums[0] = newinfs->nums[0];
+				step->nums[1] = newinfs->nums[1];
+				newinfs = newinfs->next;
+			}
+			step->next = NULL;
+		} else {
+			infer *previous = NULL;
+			for(infer *step = inferlist; step != NULL;) {
+				int foundit = 0;
+				for(infer *newstep = newinfs; newstep != NULL; newstep = newstep->next) {
+					if(step->nums[0] == newstep->nums[0] && step->nums[1] == newstep->nums[1]) {
+						foundit = 1;
+						break;
+					}
+				}
+				if(foundit == 0) {
+					//this inference is not in the list...remove the inference from step
+					infer *tmp = step;
+					if(previous == NULL) {
+						inferlist = inferlist->next;
+						step = step->next;
+						delete tmp;
+					} else {
+						step = step->next;
+						previous->next = step;
+						delete tmp;
+					}
+				} else {
+					previous = step;
+					step = step->next;
+				}
+			}
+		}
+	}
+
+	if(safe_infs == false_ptr && inferlist == NULL) return false_ptr;
+	if(inferlist == NULL) return true_ptr;
+	BDDNode *inf = true_ptr;
+	while(inferlist!=NULL) {
+		if(abs(inferlist->nums[0]) == v && inferlist->nums[1] == 0) {
+			//delete inferences
+			for(;inferlist!=NULL;) {
+				infer *tmp = inferlist;
+				inferlist = inferlist->next;
+				delete tmp;
+			}
+			return ite_var(inferlist->nums[0]);
+		} else if(abs(inferlist->nums[0]) == v && inferlist->nums[1] != 0) {
+			safe_infs = ite_and(safe_infs, ite_equ(ite_var(inferlist->nums[0]), ite_var(inferlist->nums[1])));
+		} else if(abs(inferlist->nums[1]) == v) {
+			safe_infs = ite_and(safe_infs, ite_equ(ite_var(inferlist->nums[0]), ite_var(inferlist->nums[1])));
+		}
+		infer *tmp = inferlist;
+		inferlist = inferlist->next;
+		delete tmp;
+	}
+
+	return safe_infs;
 }
 
 BDDNode * num_replace (BDDNode * f, int var, int replace) {
@@ -1510,6 +1633,20 @@ BDDNode * _num_replace (BDDNode * f, int var, int replace) {
 	return (f->tmp_bdd = itetable_add_node(11, ite_var(f->variable), f, ite_xvar_y_z(ite_var (f->variable), r, e)));
 
 	//return (f->tmp_bdd = find_or_add_node(f->variable, r, e));
+}
+
+
+//SEAN FIX THIS!!!
+BDDNode *_func_replace(BDDNode *f, BDDNode *replace);
+
+BDDNode *func_replace(BDDNode *f, BDDNode *replace) {
+
+	return _func_replace(f, replace);
+}
+
+BDDNode *_func_replace(BDDNode *f, BDDNode *replace) {
+	
+	return f;
 }
 
 BDDNode *_possible_BDD_x(BDDNode *f, int x);
