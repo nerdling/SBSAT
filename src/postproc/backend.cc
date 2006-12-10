@@ -324,7 +324,7 @@ Backend(int oldnuminp, int *original_variables)
 		old_variablelist[x].true_false = variablelist[x].true_false;
 		old_variablelist[x].equalvars = variablelist[x].equalvars;
 	}
-	
+
 	int num_sol = 1;
 	for(solution_info = solution_info_head; solution_info!=NULL; solution_info = solution_info->next) {
 		//if (result_display_type && ite_counters[NUM_SOLUTIONS] > 1) 

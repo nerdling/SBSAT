@@ -72,7 +72,7 @@ typedef struct rand_list {
 
 int SafeAssign_Loop() {
 	int ret = PREP_NO_CHANGE;
-	
+
 	BDDNode *Quantify;
 	int count1 = 0;
 	
@@ -98,7 +98,7 @@ int SafeAssign_Loop() {
 			 str_length = strlen(p);
 			 d3_printf1(p);
 		);
-		
+
 		if(variablelist[i].true_false !=-1 || variablelist[i].equalvars!=0)
 		  continue;
 

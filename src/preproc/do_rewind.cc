@@ -139,7 +139,7 @@ int Do_Rewind() {
    d2e_printf1("\rPreprocessing Rw                         ");
 	
 	int ret = PREP_CHANGED;
-	
+
 	int Total_inferences = Pos_replace + Neg_replace + Setting_Pos + Setting_Neg;
 
 	fprintf(stderr, "%d, %d, %d, %ld, %4.2f, %ldM\n", tier, num_safe_assigns, Total_inferences, numinp, get_runtime()-start_prep, memory_used/1024);
