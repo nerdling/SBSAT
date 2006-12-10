@@ -56,6 +56,7 @@ sbsat_LDADD =  $(SBSAT_LIBS) $(LIBM)
 if SBSAT_STATIC
 sbsat_LDFLAGS =  -all-static
 else
-sbsat_LDFLAGS =  -static
+#sbsat_LDFLAGS =  -static
+sbsat_LDFLAGS = 
 endif
 

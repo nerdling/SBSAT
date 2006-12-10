@@ -1430,6 +1430,8 @@ BDDNode *safe_assign_eq(BDDNode *f, int v) {
 										         ite_not(set_variable_noflag(f, v, 0))),
 									    ite_and(ite_not(set_variable_noflag(f, v, 1)),
 													set_variable_noflag(f, v, 0)));
+	return safe_infs;
+	
 	if(safe_infs == false_ptr) return false_ptr;
 	infer *inferlist = safe_infs->inferences;
 	if(inferlist == NULL) return true_ptr;
@@ -1497,8 +1499,7 @@ BDDNode *safe_assign_all(BDDNode **bdds, llistStruct *amount, int v) {
 }
 
 BDDNode *safe_assign_eq_all(BDDNode **bdds, llistStruct *amount, int v) {
-	BDDNode *safe_infs = true_ptr;
-	infer *inferlist = NULL;
+	BDDNode *safe_infs = false_ptr;
 	for (llist * k = amount[v].head; k != NULL; k = k->next) {
 		BDDNode *ex_bdd = bdds[k->num];
 		for (int x = 0; x < length[k->num]; x++) {
@@ -1506,89 +1507,40 @@ BDDNode *safe_assign_eq_all(BDDNode **bdds, llistStruct *amount, int v) {
 			if(amount[variables[k->num].num[x]].head->next == NULL)
 			  ex_bdd = xquantify(ex_bdd, variables[k->num].num[x]);
 		}
-		
-		safe_infs = safe_assign_eq(ex_bdd, v);
-		if(safe_infs == true_ptr) {
-			//delete inferences;
-			for(;inferlist!=NULL;) {
-				infer *tmp = inferlist;
-				inferlist = inferlist->next;
-				delete tmp;
-			}
-			return true_ptr;
-		}
-		if(safe_infs == false_ptr) continue;
-		//else, parse the inferences
-		
-		infer *newinfs = safe_infs->inferences;
-		assert(newinfs!=NULL);
-		if(inferlist==NULL) {
-			inferlist = (infer *)calloc(1, sizeof(infer));
-			inferlist->nums[0] = newinfs->nums[0];
-			inferlist->nums[1] = newinfs->nums[1];
-			infer *step = inferlist;
-			newinfs = newinfs->next;
-			while(newinfs != NULL) {
-				step->next = (infer *)calloc(1, sizeof(infer));
-				step = step->next;
-				step->nums[0] = newinfs->nums[0];
-				step->nums[1] = newinfs->nums[1];
-				newinfs = newinfs->next;
-			}
-			step->next = NULL;
-		} else {
-			infer *previous = NULL;
-			for(infer *step = inferlist; step != NULL;) {
-				int foundit = 0;
-				for(infer *newstep = newinfs; newstep != NULL; newstep = newstep->next) {
-					if(step->nums[0] == newstep->nums[0] && step->nums[1] == newstep->nums[1]) {
-						foundit = 1;
-						break;
-					}
-				}
-				if(foundit == 0) {
-					//this inference is not in the list...remove the inference from step
-					infer *tmp = step;
-					if(previous == NULL) {
-						inferlist = inferlist->next;
-						step = step->next;
-						delete tmp;
-					} else {
-						step = step->next;
-						previous->next = step;
-						delete tmp;
-					}
-				} else {
-					previous = step;
-					step = step->next;
-				}
-			}
-		}
-	}
 
-	if(safe_infs == false_ptr && inferlist == NULL) return false_ptr;
-	if(inferlist == NULL) return true_ptr;
-	BDDNode *inf = true_ptr;
-	while(inferlist!=NULL) {
+		//safe_infs = ite_or(safe_infs, safe_assign_eq(ex_bdd, v)); //This OR is super slow, it would be better to only OR the inferences, as before.
+		
+		BDDNode *temp_safe = safe_assign_eq(ex_bdd, v);
+		if(temp_safe == false_ptr) continue;
+		
+		BDDNode *tempBDD = true_ptr;
+		for(infer *iterator = temp_safe->inferences; iterator != NULL; iterator = iterator->next) {
+			if (abs(iterator->nums[0]) == v && iterator->nums[1] == 0) {
+				tempBDD = ite_and(tempBDD, ite_var(iterator->nums[0]));
+			} else if(abs(iterator->nums[0]) == v || abs(iterator->nums[1]) == v) {
+				tempBDD = ite_and(tempBDD, ite_equ(ite_var(iterator->nums[0]), ite_var(iterator->nums[1])));
+			}
+			//fprintf(stderr, "%d|%d, %d|", x, iterator->nums[0], iterator->nums[1]);
+		}
+		safe_infs = ite_or(safe_infs, tempBDD);		
+		
+		if(safe_infs->inferences == NULL) return true_ptr;
+	}
+	
+	if(safe_infs == false_ptr) return false_ptr;
+	BDDNode *equiv = true_ptr;
+	for(infer *inferlist = safe_infs->inferences; inferlist!=NULL; inferlist = inferlist->next) {
 		if(abs(inferlist->nums[0]) == v && inferlist->nums[1] == 0) {
-			//delete inferences
-			for(;inferlist!=NULL;) {
-				infer *tmp = inferlist;
-				inferlist = inferlist->next;
-				delete tmp;
-			}
 			return ite_var(inferlist->nums[0]);
-		} else if(abs(inferlist->nums[0]) == v && inferlist->nums[1] != 0) {
-			safe_infs = ite_and(safe_infs, ite_equ(ite_var(inferlist->nums[0]), ite_var(inferlist->nums[1])));
-		} else if(abs(inferlist->nums[1]) == v) {
-			safe_infs = ite_and(safe_infs, ite_equ(ite_var(inferlist->nums[0]), ite_var(inferlist->nums[1])));
+		} else if(equiv == true_ptr) {
+			if(equiv == true_ptr && abs(inferlist->nums[0]) == v && inferlist->nums[1] != 0)
+			  equiv = ite_equ(ite_var(inferlist->nums[0]), ite_var(inferlist->nums[1]));
+			else if(abs(inferlist->nums[1]) == v)
+			  equiv = ite_equ(ite_var(inferlist->nums[0]), ite_var(inferlist->nums[1]));
 		}
-		infer *tmp = inferlist;
-		inferlist = inferlist->next;
-		delete tmp;
 	}
-
-	return safe_infs;
+	
+	return equiv;
 }
 
 BDDNode * num_replace (BDDNode * f, int var, int replace) {

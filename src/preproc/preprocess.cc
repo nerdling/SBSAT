@@ -220,15 +220,15 @@ parse_seq(char **p, int parse_only)
      {
         (*p)++;
         r = parse_seq(p, parse_only);
-        assert(**p == ']');
-        (*p)++;
-        if (isdigit(**p)) {
-           if (r == PREP_CHANGED || r == PREP_NO_CHANGE) {
-              if ((**p)-'0' == 0) r=PREP_NO_CHANGE;
-              else r=PREP_CHANGED;
-           }
-           (*p)++;
-        }
+		  if(r == PREP_CHANGED || r == PREP_NO_CHANGE) {
+			  assert(**p == ']');
+			  (*p)++;
+			  if (isdigit(**p)) {
+				  if ((**p)-'0' == 0) r=PREP_NO_CHANGE;
+				  else r=PREP_CHANGED;
+				  (*p)++;
+			  }
+		  }
      }
      else if (**p == ']')
      {
