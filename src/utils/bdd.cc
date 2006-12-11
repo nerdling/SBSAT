@@ -1426,12 +1426,15 @@ BDDNode *_safe_assign(BDDNode *f, int v) {
 }
 
 BDDNode *safe_assign_eq(BDDNode *f, int v) {
-   BDDNode *safe_infs = ite(ite_var(v), ite_and(set_variable_noflag(f, v, 1), 
-										         ite_not(set_variable_noflag(f, v, 0))),
-									    ite_and(ite_not(set_variable_noflag(f, v, 1)),
-													set_variable_noflag(f, v, 0)));
+	BDDNode *cached = itetable_find_or_add_node(16, ite_var(v), f, NULL);
+	if(cached) return cached;
+   BDDNode *safe_infs = itetable_add_node(16, ite_var(v), f,
+														ite(ite_var(v), ite_and(set_variable(f, v, 1),
+																						ite_not(set_variable(f, v, 0))),
+															             ite_and(ite_not(set_variable(f, v, 1)),
+																						set_variable(f, v, 0))));
 	return safe_infs;
-	
+
 	if(safe_infs == false_ptr) return false_ptr;
 	infer *inferlist = safe_infs->inferences;
 	if(inferlist == NULL) return true_ptr;
@@ -1508,8 +1511,6 @@ BDDNode *safe_assign_eq_all(BDDNode **bdds, llistStruct *amount, int v) {
 			  ex_bdd = xquantify(ex_bdd, variables[k->num].num[x]);
 		}
 
-		//safe_infs = ite_or(safe_infs, safe_assign_eq(ex_bdd, v)); //This OR is super slow, it would be better to only OR the inferences, as before.
-		
 		BDDNode *temp_safe = safe_assign_eq(ex_bdd, v);
 		if(temp_safe == false_ptr) continue;
 		
