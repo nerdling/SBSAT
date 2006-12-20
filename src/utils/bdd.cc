@@ -1467,7 +1467,7 @@ BDDNode *_safe_assign_func(BDDNode *x_true, BDDNode *x_false) {
 	if(x_true == ite_not(x_false)) return x_true;
 	if(x_true == false_ptr) return ite_not(x_false);//false_ptr;
 	if(x_false == false_ptr) return x_true; //true_ptr;
-	if(x_true == x_false) return NULL; //Somehow break early, returning null or something
+	if(x_true == x_false) return NULL; //Break early, returning null
 	BDDNode *r;
 	BDDNode *e;
 	if(x_true->variable > x_false->variable) {
