@@ -47,7 +47,7 @@
 #include "sbsat_formats.h"
 
 void print_cnf_symtable() {
-	for(int x = 1; x < numinp; x++)
+	for(int x = 1; x <= numinp; x++)
 	  fprintf(foutputfile, "c %d = %s\n", x, getsym_i(x)->name);
 }
 
