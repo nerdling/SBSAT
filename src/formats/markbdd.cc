@@ -1235,7 +1235,7 @@ void bddloop () {
 					arrVarTrueInfluences[id] = initbranch[i].vars[x].true_inf_weight;
 					arrVarChoiceLevels[i][nVarChoiceIter++] = id;
 					//d5_printf5("%d indep=%d %s %s\n", looper, id, getsym_i(id)->name, initbranch[i].vars[x].string);
-					d5_printf7("%d %d %s %s priority=%d true_inf=%4.2f\n", looper, id, getsym_i(id)->name, initbranch[i].vars[x].string, initbranch[i].branch_level, initbranch[i].vars[x].true_inf_weight);
+					d5_printf7("%d %d %s %s priority=%d true_inf=%4.6f\n", looper, id, getsym_i(id)->name, initbranch[i].vars[x].string, initbranch[i].branch_level, initbranch[i].vars[x].true_inf_weight);
 					if(nVarChoiceIter >= max_CLevels) {
 						arrVarChoiceLevels[i] = (int *)ite_recalloc(arrVarChoiceLevels[i], max_CLevels, max_CLevels+10, sizeof(int), 9, "arrVarChoiceLevels[i]");
 						max_CLevels += 10;
