@@ -1,4 +1,4 @@
-This is pdfeTeX, Version 3.141592-1.21a-2.2 (Web2C 7.5.4) (format=latex 2006.11.28)  4 JAN 2007 23:04
+This is pdfeTeX, Version 3.141592-1.21a-2.2 (Web2C 7.5.4) (format=latex 2006.11.28)  4 JAN 2007 23:30
 entering extended mode
 **sbsat_getting
 (./sbsat_getting.tex
@@ -264,33 +264,39 @@ h statement above.[]
  []
 
 
-Overfull \hbox (21.79932pt too wide) in paragraph at lines 1099--1099
+Overfull \hbox (27.0393pt too wide) in paragraph at lines 1099--1099
 []                \T1/aett/m/n/10 ; The two preceeding lines created identical 
-functions[] 
+functions.[] 
  []
 
 
-Overfull \hbox (37.51929pt too wide) in paragraph at lines 1099--1099
+Overfull \hbox (0.83936pt too wide) in paragraph at lines 1099--1099
+[]                \T1/aett/m/n/10 ; T is built in for True, F is built in for F
+alse.[] 
+ []
+
+
+Overfull \hbox (42.75928pt too wide) in paragraph at lines 1099--1099
 []                         \T1/aett/m/n/10 ; Notice parathensis and commas are 
-not required[] 
+not required.[] 
  []
 
 
-Overfull \hbox (37.51929pt too wide) in paragraph at lines 1099--1099
+Overfull \hbox (42.75928pt too wide) in paragraph at lines 1099--1099
 []    \T1/aett/m/n/10 ite 3 4 5    ; Comments are ignored, even in the middle o
-f a function[] 
+f a function.[] 
  []
 
 
-Overfull \hbox (47.99927pt too wide) in paragraph at lines 1099--1099
+Overfull \hbox (53.23926pt too wide) in paragraph at lines 1099--1099
 []    \T1/aett/m/n/10 and or 6 7 8 ; Lines can be hard to read without parathen
-sis and commas[] 
+sis and commas.[] 
  []
 
 
-Overfull \hbox (58.47925pt too wide) in paragraph at lines 1099--1099
+Overfull \hbox (63.71924pt too wide) in paragraph at lines 1099--1099
 []  \T1/aett/m/n/10 ; Previously defined functions can be used to define more c
-omplex functions[] 
+omplex functions.[] 
  []
 
 
@@ -300,21 +306,21 @@ Overfull \hbox (74.19922pt too wide) in paragraph at lines 1099--1099
  []
 
 
-Overfull \hbox (27.0393pt too wide) in paragraph at lines 1099--1099
+Overfull \hbox (32.2793pt too wide) in paragraph at lines 1099--1099
 []                                         \T1/aett/m/n/10 ; There is no case s
-ensitivity[] 
+ensitivity.[] 
  []
 
 
-Overfull \hbox (6.07935pt too wide) in paragraph at lines 1099--1099
+Overfull \hbox (11.31934pt too wide) in paragraph at lines 1099--1099
 []\T1/aett/m/n/10 pprint_tree $7 ; pretty print - No function created, no BDD c
-reated[] 
+reated.[] 
  []
 
 
-Overfull \hbox (79.43921pt too wide) in paragraph at lines 1099--1099
+Overfull \hbox (84.6792pt too wide) in paragraph at lines 1099--1099
 []\T1/aett/m/n/10 print_tree minmax(4, 0, 1, x10, x9, x8, x7) ; No function cre
-ated, no BDD created[] 
+ated, no BDD created.[] 
  []
 
 
@@ -663,4 +669,4 @@ Here is how much of TeX's memory you used:
  580 hyphenation exceptions out of 1000
  32i,13n,21p,1553b,271s stack positions out of 1500i,500n,5000p,200000b,5000s
 
-Output written on sbsat_getting.dvi (111 pages, 333296 bytes).
+Output written on sbsat_getting.dvi (111 pages, 333320 bytes).
