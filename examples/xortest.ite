@@ -1,4 +1,4 @@
-p bdd 7 3
-*equ(xor( xor(1, 2), 3), F)
-*equ(xor(3, and3(5, 4, 6)), T)
-*equ(xor(and3(1, 2, 3), and3(4, 5, 7)), F)
+p bdd 12 3
+*equ(xor3(123, 125, 156), F)
+*equ(xor(134, and3(155, 127, 167)), T)
+*equ(xor(and3(1, 2, 3), and3(45, 145, 167)), F)

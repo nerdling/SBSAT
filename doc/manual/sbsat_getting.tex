@@ -969,14 +969,14 @@ up to two levels of function nesting.  However, the grammar of this
 format is very different.  The following is the
 example {\tt .../examples/xortest.xor}:\\
 \vspace*{-3mm}\\
-\indent{\tt p xor 3 12}\\
+\indent{\tt p xor 12 3}\\
 \indent{\tt x123 x125 x156 = 0}\\
 \indent{\tt x134 x155x127x167 = 1}\\
 \indent{\tt x1x2x3 x45x145x167 = 0}\\
 \vspace*{-3mm}\\
 which is equivalent to the following canonical form\\
 \vspace*{-3mm}\\
-\indent{\tt p bdd 3 12}\\
+\indent{\tt p bdd 12 3}\\
 \indent{\tt *equ(xor3(123, 125, 156), F)}\\
 \indent{\tt *equ(xor(134, and3(155, 127, 167)), T)}\\
 \indent{\tt *equ(xor(and3(1, 2, 3), and3(45, 145, 167)), F)}\\
