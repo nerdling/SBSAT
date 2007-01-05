@@ -54,7 +54,7 @@ int params_current_src = 0;
 #endif
 
 #ifndef DESCRIPTION
-#define DESCRIPTION "SBSat is a SAT solver."
+#define DESCRIPTION "SBSAT is a SAT solver."
 #endif
 
 void
