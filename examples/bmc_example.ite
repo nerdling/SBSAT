@@ -1,0 +1,14 @@
+p bdd 8 11
+not(and(v10, v20)) ; Force a property to hold
+not(and(v11, v21))
+not(and(v12, v22))
+and(v13, v23)
+
+and(not(v10), not(v20)) ; Express a starting state
+
+equ(v11, not(v10)) ; Force legal transitions
+equ(v21, xor(v10, v20))
+equ(v12, not(v11))
+equ(v22, xor(v11, v21))
+equ(v13, not(v12))
+equ(v23, xor(v12, v22))
