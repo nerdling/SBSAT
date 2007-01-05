@@ -535,11 +535,11 @@ Finish_Preprocessing()
 	D_3(fflush (stddbg);)
 	  //printCircuitTree();
 	  //printCircuit();
-	  // 
-	  if (countBDDs() <=1 && max_solutions == 1) {
-			 ret = TRIV_SAT;
-			 //d1_printf1 ("Formula was trivially satisfiable.\n");
-	  }
+
+	if (countBDDs() == 0 || (countBDDs() <=1 && max_solutions == 1)) {
+		ret = TRIV_SAT;
+		//d1_printf1 ("Formula was trivially satisfiable.\n");
+	}
 	
    if(ite_counters_f[PREPROC_TIME] == 0) {
 		ite_counters_f[PREPROC_TIME] = get_runtime() - start_prep;
