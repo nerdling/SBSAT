@@ -491,17 +491,6 @@ finish_params()
 	if(USE_AUTARKY_LEMMAS == 1) NO_AU_LEMMAS = 0;
 	else if(USE_AUTARKY_LEMMAS == 0) NO_AU_LEMMAS = 1;
 	
-   /* check validity of disabling backjumping AND forcing lemmas to be 0 */
-   if (backjumping == 0) {
-      if (MAX_NUM_CACHED_LEMMAS == 0) NO_LEMMAS=1;
-      else 
-      {
-         dE_printf1("error: Can not disable backjumping and have lemmas\n"); 
-         dE_printf1("       Please set -L 0\n"); 
-         exit(1);
-      }
-   }
-
    /* check validity of the cnf output format */
    if (!strcmp(cnfformat, "noqm")) n_cnfformat = CNF_NOQM; else
       if (!strcmp(cnfformat, "qm"))   n_cnfformat = CNF_QM; else
