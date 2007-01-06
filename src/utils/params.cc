@@ -112,7 +112,7 @@ t_opt options[] = {
 { &sat_ram,  "",   "satram",   P_INT,  V(i:1,"1"), V(i:0,"0"), VAR_NORMAL, 0,
                "For SAT Competition SATRAM"},
 { (void*)fn_parse_filename, "",  "parse-filename", P_FN_STRING, V(i:0,"0"), V(i:0,"0"), VAR_CMDLINE+VAR_DUMP, 0, 
-	       ""},
+	       "For testing purposes"},
 
 /* 
  * BDD options
@@ -126,7 +126,7 @@ t_opt options[] = {
 { &_bdd_pool_size, "", "bdd-pool-size", P_INT, V(i:0,"0"), V(i:1000000,"1000000"), VAR_NORMAL, 0, 
                 "The size of the bdd pool increment"},
 { &enable_gc, "", "gc", P_INT, V(i:1,"1"), V(i:1,"1"), VAR_NORMAL, 0, 
-                "Use Garbage collection"},
+                "Use garbage collection"},
 
 /* 
  * Input options
@@ -152,7 +152,7 @@ t_opt options[] = {
 { &PLAINXOR_LIMIT, "", "limit-xor", P_INT, V(i:0,"0"), V(i:5,"5"), VAR_NORMAL, 0,
                 "The minimum # of literals to flag sp. function plainxor"},*/
 { &BREAK_XORS, "", "break-xors", P_INT, V(i:0,"0"), V(i:1,"1"), VAR_NORMAL, 0, 
-                "Break XORS into linear and non-linear functions"},
+                "Break XORS into linear and non-linear functions during search"},
 
 
 /* 
@@ -161,13 +161,13 @@ t_opt options[] = {
 { NULL, "", "", P_NONE, {"0"}, {"0"}, VAR_NORMAL, 0, 
 	        "\nOutput options:"},
 { &formatout, "b", "", P_PRE_CHAR, V(c:'b',"b"), V(c:'b',"b"), VAR_NORMAL, 0, 
-                "Start SMURF Solver"},
+                "Start SMURF solver"},
 { &formatout, "w", "", P_PRE_CHAR, V(c:'w',"w"), V(c:'b',"b"), VAR_NORMAL, 0, 
-                "Start BDDWalkSAT Solver"},
+                "Start BDD WalkSAT solver"},
 { &formatout, "m", "", P_PRE_CHAR, V(c:'m',"m"), V(c:'b',"b"), VAR_NORMAL, 0, 
-                "Start WVF Solver"},
+                "Start WVF solver"},
 { &formatout, "t", "", P_PRE_CHAR, V(c:'t',"t"), V(c:'b',"b"), VAR_NORMAL, 0,       
-	             "Start a stripped down version of the SMURF Solver"},
+	             "Start a stripped down version of the SMURF solver"},
 { &formatout, "n", "", P_PRE_CHAR, V(c:'n',"n"), V(c:'b',"b"), VAR_NORMAL, 0, 
                 "Don't start any brancher or conversion"},
 { &formatout, "s", "", P_PRE_CHAR, V(c:'s',"s"), V(c:'b',"b"), VAR_NORMAL, 0, 
@@ -201,9 +201,9 @@ t_opt options[] = {
 	        "\nPreprocessing options:"},
 { preset_variables_string, "", "preset-variables", P_STRING, 
 		V(i:2048,"2048"), {""}, VAR_NORMAL, 0, 
-                "Variables forced during preprocessing."},
+                "Variables forced during preprocessing"},
 { preproc_string, "P", "preprocess-sequence", P_STRING, 
-		V(i:255,"255"), {"{ExDc}*{ExSt}*{ExPr}*{ExSp}*{Ff}"}, VAR_NORMAL, 0,
+		V(i:255,"255"), {"{ExDc}{ExSt}{ExPr}{ExSp}{Ff}"}, VAR_NORMAL, 0,
                 "The preprocessing sequence"},
 { (void*)DO_ALL, "All",  "All", P_FN_INT, V(i:0,"0"), V(i:2,"2"), VAR_CMDLINE+VAR_DUMP, 0, 
 	       "Enable/Disable All Preprocessing Options (1/0)"},
@@ -224,9 +224,9 @@ t_opt options[] = {
 { &DO_EX_SAFE_CLUSTER, "Es",  "Es",  P_INT,  V(i:0,"0"),  V(i:1,"1"), VAR_NORMAL, 0, 
 		"Enable/Disable AND-Safe Assign + Existential Quantification (1/0)"},
 { &DO_SAFE_ASSIGN, "Sa",  "Sa",  P_INT,  V(i:0,"0"),  V(i:1,"1"), VAR_NORMAL, 0, 
-		"Enable/Disable Searching for Safe Assignments(1/0)"},
+		"Enable/Disable Searching for Safe Assignments (1/0)"},
 { &DO_SAFE_SEARCH, "Ss",  "Ss",  P_INT,  V(i:0,"0"),  V(i:1,"1"), VAR_NORMAL, 0, 
-		"Enable/Disable SafeSearch(1/0)"},
+		"Enable/Disable SafeSearch (1/0)"},
 { &DO_POSSIBLE_ANDING, "Pa",  "Pa",  P_INT,  V(i:0,"0"),  V(i:1,"1"), VAR_NORMAL, 0,
 		"Enable/Disable clustering to find possible values to variables (1/0)"},
 { &DO_DEP_CLUSTER, "Dc",  "Dc",  P_INT, V(i:0,"0"),  V(i:1,"1"), VAR_NORMAL, 0,
@@ -244,16 +244,16 @@ t_opt options[] = {
 { &max_preproc_time, "",  "max-preproc-time", P_INT, V(i:0,"0"),  V(i:0,"0"), VAR_NORMAL, 0,
 		"set the time limit in seconds (0=no limit)"},
 { &do_split_max_vars, "",  "do-split-max-vars", P_INT, V(i:0,"0"),  V(i:10,"10"), VAR_NORMAL, 0,
-		"Threashold above which the Sp splits BDDs."},
-{ &ex_infer, "",  "ex-infer", P_INT, V(i:0,"0"),  V(i:0,"1"), VAR_NORMAL, 0,
-		"Enable/Disable Ex Quantification to try to infer variables before they are quantified away."},
+		"Threashold above which the Sp splits BDDs"},
+{ &ex_infer, "",  "ex-infer", P_INT, V(i:0,"0"),  V(i:1,"1"), VAR_NORMAL, 0,
+		"Enable/Disable Ex Quantification trying to safely assign variables before they are quantified away (1/0)"},
 { &ge_preproc, "gauss", "gaussian-elimination", P_CHAR, V(i:0, "0"),  V(c:'0', "0"), VAR_NORMAL, 0,
-	   "Enable Gaussian Elimination in the preprocessor (1/0)"},
+	   "Enable/Disable Gaussian Elimination in the preprocessor (1/0)"},
 /*
  * General Solver options
  */
 { NULL, "", "", P_NONE, {"0"}, {"0"}, VAR_NORMAL, 0, 
-	   "\nGeneral Solver options:"},
+	   "\nGeneral solver options:"},
 { brancher_presets, "", "brancher-presets", P_STRING,	V(i:4095,"4095"), {""}, VAR_NORMAL, 0, 
 	   "Variables that are preset before the brancher is called. Options are ([[=|!|#|+var|-var] ]*)"},
 { &dependence,  "", "dependence", P_CHAR, V(i:0,"0"), V(c:'c',"c"), VAR_NORMAL, 0,
@@ -292,13 +292,13 @@ t_opt options[] = {
 		V(i:0,"0"), V(i:5000, "5000"), VAR_NORMAL, 0,
                 "set the maximum # of lemmas"}, 
 { &USE_AUTARKY_SMURFS, "", "autarky-smurfs", P_INT, V(i:0,"0"), V(i:0,"0"), VAR_NORMAL, 0,
-		"Use Autarky Smurfs in the Solver (1/0)"},
+		"Use Autarky Smurfs in the solver (1/0)"},
 { &USE_AUTARKY_LEMMAS, "", "autarky-lemmas", P_INT, V(i:0,"0"), V(i:0,"0"), VAR_NORMAL, 0,
-		"Use Autarky Lemmas in the Solver (Currently Unavailiable)"},
+		"Use Autarky Lemmas in the solver (Currently Unavailiable)"},
 { &K_TOP_VARIABLES, "", "K-top-variables", P_INT, V(i:0,"0"), V(i:0,"0"), VAR_NORMAL, 0,
-		"Try to set top K variables and collect common inferences."},
+		"Try to set top K variables and collect common inferences"},
 { &sbj, "", "sbj", P_INT, V(i:0,"0"), V(i:0,"0"), VAR_NORMAL, 0,
-		"Super backjumping."},
+		"Super backjumping"},
 /*
 { NULL, "", "lemma-space-size", P_LONG, 
 		V(i:0,"0"), V(l:LEMMA_SPACE_SIZE,"0"), VAR_DUMP, 0,
@@ -334,21 +334,21 @@ t_opt options[] = {
  * BDDWalkSAT Solver options
  */
 { NULL, "", "", P_NONE, {"0"}, {"0"}, VAR_NORMAL, 0, 
-	        "\nBDDWalkSAT Solver options:"},
+	        "\nBDD WalkSAT solver options:"},
 { &BDDWalkCutoff, "", "cutoff", P_INT, V(i:0,"0"), V(i:100000,"100000"), VAR_NORMAL, 0,
-		"BDDWalkSAT number of flips per random restart"},
+		"BDD WalkSAT number of flips per random restart"},
 { &BDDWalkRandomOption, "", "random-option", P_INT, V(i:0,"0"), V(i:1,"1"), VAR_NORMAL, 0,
-		"BDDWalkSAT option for random walk (1=Pick a random path to true in current BDD, 2=Randomly flip every variable in current BDD, 3=Randomly flip one variable, 4=Randomly flip one variable in current BDD)"},
+		"BDD WalkSAT option for random walk (1=Pick a random path to true in current BDD, 2=Randomly flip every variable in current BDD, 3=Randomly flip one variable, 4=Randomly flip one variable in current BDD)"},
 { &BDDWalkHeur,  "", "bddwalk-heur", P_CHAR, V(i:0,"0"), V(c:'a',"a"), VAR_NORMAL, 0,
-	   "BDDWalkSAT Heuristic (a=adaptive novelty+, n=novelty+, r=random)"},
+	   "BDD WalkSAT Heuristic (a=adaptive novelty+, n=novelty+, r=random)"},
 { &BDDWalktaboo_max, "", "taboo-max", P_INT, V(i:0,"0"), V(i:6,"6"), VAR_NORMAL, 0,
-		"BDDWalkSAT length of taboo list (used in conjunction with novelty+ heuristic)"},
+		"BDD WalkSAT length of taboo list (used in conjunction with novelty+ heuristic)"},
 { &BDDWalktaboo_multi, "", "taboo-multi", P_FLOAT, V(i:0,"0"), V(f:1.5,"1.5"), VAR_NORMAL, 0,
-		"BDDWalkSAT multiplier for the probablity of picking variables with taboo (used in conjunction with novelty+ heuristic)"},
+		"BDD WalkSAT multiplier for the probablity of picking variables with taboo (used in conjunction with novelty+ heuristic)"},
 { &BDDWalk_wp_prob, "", "bddwalk-wp-prob", P_FLOAT, V(i:0,"0"), V(f:0.1,"0.1"), VAR_NORMAL, 0,
-		"BDDWalkSAT probablity of making a random walk (used in conjunction with novelty+ heuristic)"},
+		"BDD WalkSAT probablity of making a random walk (used in conjunction with novelty+ heuristic)"},
 { &BDDWalk_prob, "", "bddwalk-prob", P_FLOAT, V(i:0,"0"), V(f:0.1,"0.1"), VAR_NORMAL, 0,
-		"BDDWalkSAT probablity of picking second best path (used in conjunction with novelty+ heuristic)"},
+		"BDD WalkSAT probablity of picking second best path (used in conjunction with novelty+ heuristic)"},
 
 	
 /* 
@@ -404,11 +404,12 @@ finish_params()
 
       if (sat_timeout > 0) max_preproc_time = sat_timeout / 2;
    }
-
+	
 	if(dependence == 'r') reverse_independant_dependant = 1;
 	if(dependence == 'c') clear_dependance = 1;
-
-   if (MAX_NUM_CACHED_LEMMAS == 0) {
+	
+   if (MAX_NUM_CACHED_LEMMAS <= 0) {
+		MAX_NUM_CACHED_LEMMAS = 0;
       backjumping = 0;
    }
 
