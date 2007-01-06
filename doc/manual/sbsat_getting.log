@@ -1,4 +1,4 @@
-This is pdfeTeX, Version 3.141592-1.21a-2.2 (Web2C 7.5.4) (format=latex 2006.11.28)  4 JAN 2007 23:30
+This is pdfeTeX, Version 3.141592-1.21a-2.2 (Web2C 7.5.4) (format=latex 2006.11.28)  5 JAN 2007 22:39
 entering extended mode
 **sbsat_getting
 (./sbsat_getting.tex
@@ -157,24 +157,24 @@ LaTeX Warning: Reference `ref-prover-section' on page i undefined on input line
 [1]
 
 LaTeX Warning: Reference `simple-section' on page ii undefined on input line 14
-3.
+2.
 
 
 LaTeX Warning: Reference `simple-section' on page ii undefined on input line 14
-7.
+6.
 
 
 LaTeX Warning: Reference `ws-adaptive-section' on page ii undefined on input li
-ne 165.
+ne 164.
 
 
 LaTeX Warning: Reference `ws-novelty-section' on page ii undefined on input lin
-e 166.
+e 165.
 
 [2]
 
 LaTeX Warning: Reference `ws-random-section' on page iii undefined on input lin
-e 167.
+e 166.
 
 File: Fig/layout.eps Graphic file (type eps)
 <Fig/layout.eps> [3] (./sbsat_getting.toc
@@ -187,41 +187,47 @@ File: t1aett.fd 1997/11/16 Font definitions for T1/aett.
 \openout3 = `sbsat_getting.toc'.
 
  [7] [1] [2]
-LaTeX Font Info:    Try loading font information for OMS+aer on input line 313.
+LaTeX Font Info:    Try loading font information for OMS+aer on input line 312.
 
 
 (/sw/share/texmf-dist/tex/latex/ae/omsaer.fd
 File: omsaer.fd 1999/12/27
 )
 LaTeX Font Info:    Font shape `OMS/aer/m/n' in size <10> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 313.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 312.
  [3] [4] [5] [6]
-Overfull \hbox (7.63094pt too wide) in paragraph at lines 495--516
+Overfull \hbox (7.63094pt too wide) in paragraph at lines 494--515
 \T1/aer/m/n/10 comes in two forms: a sin-gle CDROM and a tar-ball named \T1/aet
 t/m/n/10 sbsat-latest.tar.gz\T1/aer/m/n/10 .
  []
 
 [7] [8]
-Overfull \hbox (34.40909pt too wide) in paragraph at lines 587--623
+Overfull \hbox (34.40909pt too wide) in paragraph at lines 586--622
 \T1/aer/m/n/10 This com-mand places \T1/aett/m/n/10 sb-sat \T1/aer/m/n/10 in \T
 1/aett/m/n/10 /usr/local/bin\T1/aer/m/n/10 . To do this by hand, if \T1/aett/m/
 n/10 /usr/local/bin
  []
 
 [9]
-Overfull \hbox (31.09302pt too wide) in paragraph at lines 647--666
+Overfull \hbox (31.09302pt too wide) in paragraph at lines 646--665
 \T1/aer/m/n/10 this di-rec-tory check that the fol-low-ing files are there: \T1
 /aett/m/n/10 cnf_tests.sh\T1/aer/m/n/10 , \T1/aett/m/n/10 longer_tests.sh\T1/ae
 r/m/n/10 ,
  []
 
 [10] [11] [12]
-Overfull \hbox (6.07935pt too wide) in paragraph at lines 756--756
+Overfull \hbox (6.07935pt too wide) in paragraph at lines 755--755
 []   \T1/aett/m/n/10 c This is a demonstration of the CNF format for the SBSAT 
 solver[] 
  []
 
-[13] [14] [15]
+[13] [14]
+Overfull \hbox (7.57649pt too wide) in paragraph at lines 871--871
+[]                          \T1/aett/m/n/8 Show result (n=no result, r=raw, f=f
+ancy) [default=``n''][] 
+ []
+
+[15]
 Overfull \hbox (9.0231pt too wide) in paragraph at lines 908--911
 $[]$\T1/aer/m/n/10 :  Since no ex-ten-sion of a bi-nary func-tion can take 1 ar
 -gu-ment, \T1/aett/m/n/10 xor1(-x1)
@@ -350,187 +356,200 @@ lean vec-tor $\OML/cmm/m/it/10 V \OT1/cmr/m/n/10 = \OMS/cmsy/m/n/10 f\OML/cmm/m
 /10 impulse\T1/aer/m/n/10 ($\OML/cmm/m/it/10 i$\T1/aer/m/n/10 )
  []
 
-[23] [24] [25]
+[23]
+
+LaTeX Warning: Float too large for page by 6.04993pt on input line 1333.
+
+[24] [25]
 File: Fig/state.eps Graphic file (type eps)
  <Fig/state.eps> [26] [27]
-Overfull \hbox (6.5461pt too wide) in paragraph at lines 1486--1519
- [] 
+Overfull \hbox (21.40643pt too wide) in paragraph at lines 1458--1467
+\T1/aer/m/n/10 This as-sign-ment can be found by run-ning \T1/aett/m/n/10 sbsat
+ \T1/aer/m/n/10 on the ex-am-ple file \T1/aett/m/n/10 bmc_example.ite
  []
 
 [28]
-Underfull \hbox (badness 10000) in paragraph at lines 1538--1543
+Underfull \hbox (badness 10000) in paragraph at lines 1553--1558
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1544--1562
+Underfull \hbox (badness 10000) in paragraph at lines 1559--1579
 
  []
 
 [29] [30]
-Underfull \hbox (badness 10000) in paragraph at lines 1598--1603
+Underfull \hbox (badness 10000) in paragraph at lines 1615--1619
 
  []
 
 
-Overfull \hbox (6.90945pt too wide) in paragraph at lines 1604--1626
+LaTeX Warning: Reference `existential-safe-section' on page 31 undefined on inp
+ut line 1637.
+
+
+Overfull \hbox (6.39972pt too wide) in paragraph at lines 1620--1646
 []| [] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1604--1626
+Underfull \hbox (badness 10000) in paragraph at lines 1620--1646
 
  []
 
 [31] [32]
-Underfull \hbox (badness 10000) in paragraph at lines 1725--1727
+Underfull \hbox (badness 10000) in paragraph at lines 1715--1747
+
+ []
+
+[33]
+Underfull \hbox (badness 10000) in paragraph at lines 1788--1790
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1746--1758
+Underfull \hbox (badness 10000) in paragraph at lines 1809--1821
 
  []
 
-[33] [34] [35] [36] [37] [38]
-Overfull \hbox (32.59525pt too wide) in paragraph at lines 2035--2061
-[] 
- []
-
-[39]
-Overfull \hbox (38.5661pt too wide) in paragraph at lines 2064--2070
-[] 
- []
-
-
-Overfull \hbox (76.31543pt too wide) in paragraph at lines 2073--2090
-[] 
- []
-
-
-Overfull \hbox (62.21576pt too wide) in paragraph at lines 2093--2110
+[34] [35] [36] [37] [38] [39]
+Overfull \hbox (48.15575pt too wide) in paragraph at lines 2054--2085
 [] 
  []
 
 [40]
-Overfull \hbox (29.0653pt too wide) in paragraph at lines 2113--2116
+Overfull \hbox (42.11609pt too wide) in paragraph at lines 2088--2096
 [] 
  []
 
 
-Overfull \hbox (23.25609pt too wide) in paragraph at lines 2119--2128
-[] 
- []
-
-
-Overfull \hbox (22.23552pt too wide) in paragraph at lines 2131--2161
+Overfull \hbox (61.04517pt too wide) in paragraph at lines 2099--2115
 [] 
  []
 
 [41]
-Overfull \hbox (32.26581pt too wide) in paragraph at lines 2164--2211
+Overfull \hbox (54.51588pt too wide) in paragraph at lines 2118--2137
 [] 
  []
 
-[42] [43]
-Overfull \hbox (27.0393pt too wide) in paragraph at lines 2265--2265
+
+Overfull \hbox (118.52464pt too wide) in paragraph at lines 2140--2178
+[] 
+ []
+
+[42]
+Overfull \vbox (10.77776pt too high) has occurred while \output is active []
+
+
+[43]
+Overfull \hbox (105.6453pt too wide) in paragraph at lines 2180--2192
+[] 
+ []
+
+
+Overfull \hbox (43.96587pt too wide) in paragraph at lines 2195--2238
+[] 
+ []
+
+[44] [45]
+Overfull \hbox (27.0393pt too wide) in paragraph at lines 2292--2292
 []  \T1/aett/m/n/10 preset-variables="-1 -2 +3 -4 +5 -6 -7 -8 +9 -10 -11 +12 -1
 3 +14 -15"[] 
  []
 
-[44] [45] [46] [47]
-Underfull \hbox (badness 10000) in paragraph at lines 2404--2414
+[46] [47] [48] [49]
+Underfull \hbox (badness 10000) in paragraph at lines 2431--2441
 
  []
 
-[48] [49] [50]
-Underfull \hbox (badness 10000) in paragraph at lines 2560--2565
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 2566--2571
+[50] [51] [52]
+Underfull \hbox (badness 10000) in paragraph at lines 2587--2592
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2572--2579
+Underfull \hbox (badness 10000) in paragraph at lines 2593--2598
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2580--2587
+Underfull \hbox (badness 10000) in paragraph at lines 2599--2606
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2590--2605
-
- []
-
-[51]
-Underfull \hbox (badness 10000) in paragraph at lines 2606--2620
+Underfull \hbox (badness 10000) in paragraph at lines 2607--2614
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2621--2637
+Underfull \hbox (badness 10000) in paragraph at lines 2617--2632
 
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 2638--2655
-
- []
-
-[52]
-Underfull \hbox (badness 10000) in paragraph at lines 2656--2672
-
- []
-
-
-Overfull \hbox (24.8794pt too wide) in paragraph at lines 2691--2720
-[][][]\T1/aett/m/n/10 minmax (<#args>, <min_#>, <max_#>, <comma_separated_var_l
-ist>) 
  []
 
 [53]
-Underfull \hbox (badness 10000) in paragraph at lines 2733--2761
+Underfull \hbox (badness 10000) in paragraph at lines 2633--2647
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2648--2664
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2665--2682
 
  []
 
 [54]
-Underfull \hbox (badness 10000) in paragraph at lines 2762--2765
+Underfull \hbox (badness 10000) in paragraph at lines 2683--2699
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2814--2814
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 2766--2815
-
+Overfull \hbox (24.8794pt too wide) in paragraph at lines 2718--2747
+[][][]\T1/aett/m/n/10 minmax (<#args>, <min_#>, <max_#>, <comma_separated_var_l
+ist>) 
  []
 
 [55]
-Underfull \hbox (badness 10000) in paragraph at lines 2816--2841
+Underfull \hbox (badness 10000) in paragraph at lines 2760--2788
+
+ []
+
+[56]
+Underfull \hbox (badness 10000) in paragraph at lines 2789--2792
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2842--2897
+Underfull \hbox (badness 10000) in paragraph at lines 2841--2841
 
  []
 
-[56] [57] [58] [59]
-Underfull \hbox (badness 10000) in paragraph at lines 3027--3050
+
+Underfull \hbox (badness 10000) in paragraph at lines 2793--2842
 
  []
 
-[60] [61] [62] [63] [64] [65] [66]
-Overfull \hbox (2.14514pt too wide) in paragraph at lines 3327--3329
+[57]
+Underfull \hbox (badness 10000) in paragraph at lines 2843--2868
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2869--2924
+
+ []
+
+[58] [59] [60] [61]
+Underfull \hbox (badness 10000) in paragraph at lines 3054--3077
+
+ []
+
+[62] [63] [64] [65] [66] [67] [68]
+Overfull \hbox (2.14514pt too wide) in paragraph at lines 3354--3356
 []\T1/aer/m/n/10 Otherwise, if \T1/aer/m/it/10 v \T1/aer/m/n/10 is la-beled \T1
 /aer/m/it/10 x\T1/aer/m/n/10 , then $\OML/cmm/m/it/10 f\OT1/cmr/m/n/10 (\OML/cm
 m/m/it/10 v\OT1/cmr/m/n/10 ) = (\OML/cmm/m/it/10 x \OMS/cmsy/m/n/10 ^ \OML/cmm/
@@ -542,15 +561,15 @@ n/10 .
  []
 
 File: Fig/bdd.eps Graphic file (type eps)
-<Fig/bdd.eps> [67] [68]
+<Fig/bdd.eps> [69] [70]
 File: Fig/exquant_bdd.eps Graphic file (type eps)
- <Fig/exquant_bdd.eps> [69] [70]
+ <Fig/exquant_bdd.eps> [71] [72]
 File: Fig/exquantex.eps Graphic file (type eps)
  <Fig/exquantex.eps>
 File: Fig/exquantex1.eps Graphic file (type eps)
 
-<Fig/exquantex1.eps> [71] [72]
-Overfull \hbox (3.26793pt too wide) in paragraph at lines 3524--3554
+<Fig/exquantex1.eps> [73] [74]
+Overfull \hbox (3.26793pt too wide) in paragraph at lines 3551--3581
 [][]\T1/aett/m/n/8 if (Reduce$[]$($\OML/cmm/m/it/8 x[]$\T1/aett/m/n/8 , c) == \
 T1/aett/m/it/8 F\T1/aett/m/n/8 ) return Restrict(Reduce$[]$($\OML/cmm/m/it/8 x[
 ]$\T1/aett/m/n/8 , \T1/aett/m/it/8 f\T1/aett/m/n/8 ), Reduce$[]$($\OML/cmm/m/it
@@ -558,7 +577,7 @@ T1/aett/m/it/8 F\T1/aett/m/n/8 ) return Restrict(Reduce$[]$($\OML/cmm/m/it/8 x[
  []
 
 
-Overfull \hbox (3.53114pt too wide) in paragraph at lines 3524--3554
+Overfull \hbox (3.53114pt too wide) in paragraph at lines 3551--3581
 [][]\T1/aett/m/n/8 if (Reduce$[]$($\OML/cmm/m/it/8 x[]$\T1/aett/m/n/8 , c) == \
 T1/aett/m/it/8 F\T1/aett/m/n/8 ) return Restrict(Reduce$[]$($\OML/cmm/m/it/8 x[
 ]$\T1/aett/m/n/8 , \T1/aett/m/it/8 f\T1/aett/m/n/8 ), Reduce$[]$($\OML/cmm/m/it
@@ -571,29 +590,29 @@ File: Fig/branch_prune_example_1.eps Graphic file (type eps)
  <Fig/branch_prune_example_1.eps>
 File: Fig/branch_prune_example_2.eps Graphic file (type eps)
 
-<Fig/branch_prune_example_2.eps> [73] [74]
+<Fig/branch_prune_example_2.eps> [75] [76]
 File: Fig/restrict.eps Graphic file (type eps)
  <Fig/restrict.eps>
-Underfull \hbox (badness 10000) in paragraph at lines 3615--3631
-
- []
-
-[75]
-File: Fig/strengthening_1.eps Graphic file (type eps)
- <Fig/strengthening_1.eps>
-File: Fig/strengthening_2.eps Graphic file (type eps)
- <Fig/strengthening_2.eps> [76]
-Underfull \hbox (badness 10000) in paragraph at lines 3667--3675
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 3676--3683
+Underfull \hbox (badness 10000) in paragraph at lines 3642--3658
 
  []
 
 [77]
-Underfull \hbox (badness 10000) in paragraph at lines 3720--3740
+File: Fig/strengthening_1.eps Graphic file (type eps)
+ <Fig/strengthening_1.eps>
+File: Fig/strengthening_2.eps Graphic file (type eps)
+ <Fig/strengthening_2.eps> [78]
+Underfull \hbox (badness 10000) in paragraph at lines 3694--3702
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 3703--3710
+
+ []
+
+[79]
+Underfull \hbox (badness 10000) in paragraph at lines 3747--3767
 
  []
 
@@ -603,70 +622,70 @@ File: Fig/cofactoring1a.eps Graphic file (type eps)
  <Fig/cofactoring1a.eps>
 File: Fig/cofactoring3a.eps Graphic file (type eps)
  <Fig/cofactoring3a.eps>
-[78] [79]
+[80] [81]
 File: Fig/gcf2.eps Graphic file (type eps)
  <Fig/gcf2.eps>
 File: Fig/gcf1.eps Graphic file (type eps)
  <Fig/gcf1.eps>
 File: Fig/gcf3.eps Graphic file (type eps)
  <Fig/gcf3.eps>
-Overfull \hbox (1.4123pt too wide) in paragraph at lines 3765--3773
+Overfull \hbox (1.4123pt too wide) in paragraph at lines 3792--3800
 | []
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3779--3797
+Underfull \hbox (badness 10000) in paragraph at lines 3806--3824
 
  []
 
-[80] [81] [82] [83]
-Overfull \hbox (6.9324pt too wide) in paragraph at lines 3927--3927
+[82] [83] [84] [85]
+Overfull \hbox (6.9324pt too wide) in paragraph at lines 3954--3954
 []\T1/aer/bx/n/12 State Ma-chines Used to Rep-re-sent Func-tions (\T1/aer/m/sc/
 12 Smurf\T1/aer/bx/n/12 s) 
  []
 
 File: Fig/smurf.eps Graphic file (type eps)
 <Fig/smurf.eps>
-Underfull \hbox (badness 10000) in paragraph at lines 3975--3975
+Underfull \hbox (badness 10000) in paragraph at lines 4002--4002
 
  []
 
-[84] [85] [86] [87] [88]
-Overfull \hbox (42.75928pt too wide) in paragraph at lines 4082--4082
+[86] [87] [88] [89] [90]
+Overfull \hbox (42.75928pt too wide) in paragraph at lines 4109--4109
 []\T1/aett/m/n/10 -arg1 -arg2 -arg3 -arg4 x3 x2 x1 1 2 3 -5 -bob 4 -1000 22 300
  -40 -400 -50[] 
  []
 
-[89] [90] [91]
-Overfull \hbox (3.21709pt too wide) in paragraph at lines 4128--4137
+[91] [92] [93]
+Overfull \hbox (3.21709pt too wide) in paragraph at lines 4155--4164
 \T1/aer/m/n/10 Among the ex-per-i-ments we have run, those in-puts re-lat-ing s
 pecif-i-cally to bounded
  []
 
-[92] [93] [94]
-Underfull \hbox (badness 10000) in paragraph at lines 4230--4238
+[94] [95] [96]
+Underfull \hbox (badness 10000) in paragraph at lines 4257--4265
 
  []
 
 
-Underfull \hbox (badness 1308) in paragraph at lines 4252--4252
+Underfull \hbox (badness 1308) in paragraph at lines 4279--4279
 \T1/aer/m/n/10 func-tions. Choose con-straint func-tions $\OML/cmm/m/it/10 f\OT
 1/cmr/m/n/10 (\OML/cmm/m/it/10 x[]; x[]; :::; x[]; x[]\OT1/cmr/m/n/10 )$ \T1/ae
 r/m/n/10 and
  []
 
-[95] [96] [97] [98] [99] [100] [101] [102] [103] (./sbsat_getting.aux)
+[97] [98] [99] [100] [101] [102] [103] [104] [105] (./sbsat_getting.aux)
 
 LaTeX Warning: There were undefined references.
 
  ) 
 Here is how much of TeX's memory you used:
- 1638 strings out of 94501
- 20806 string characters out of 1176136
+ 1639 strings out of 94501
+ 20832 string characters out of 1176136
  116430 words of memory out of 1000000
- 4762 multiletter control sequences out of 10000+50000
+ 4763 multiletter control sequences out of 10000+50000
  38393 words of font info for 56 fonts, out of 500000 for 2000
  580 hyphenation exceptions out of 1000
  32i,13n,21p,1553b,271s stack positions out of 1500i,500n,5000p,200000b,5000s
 
-Output written on sbsat_getting.dvi (111 pages, 333320 bytes).
+Output written on sbsat_getting.dvi (113 pages, 340164 bytes).
