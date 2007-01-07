@@ -47,16 +47,16 @@ struct xor_of_ands {
 void print_xdd_d(BDDNode *xdd) {
 	if(xdd == true_ptr) d2_printf1("1");
 	if(!IS_TRUE_FALSE(xdd->thenCase)) {
-		d2e_printf2("X[%s]*(", s_name(xdd->variable));
-		d3e_printf2("X[%d]*(", xdd->variable);
-		d4_printf3("X[%s(%d)]*(", s_name(xdd->variable), xdd->variable);
+ 		d2e_printf2("x[%s]*(", s_name(xdd->variable));
+		d3e_printf2("x[%d]*(", xdd->variable);
+		d4_printf3("x[%s(%d)]*(", s_name(xdd->variable), xdd->variable);
 		
 		print_xdd_d(xdd->thenCase);
 		d2_printf1(")");
 	} else {
-		d2e_printf2("X[%s]", s_name(xdd->variable));
-		d3e_printf2("X[%d]", xdd->variable);
-		d4_printf3("X[%s(%d)]", s_name(xdd->variable), xdd->variable);
+		d2e_printf2("x[%s]", s_name(xdd->variable));
+		d3e_printf2("x[%d]", xdd->variable);
+		d4_printf3("x[%s(%d)]", s_name(xdd->variable), xdd->variable);
 	}	
 	if(xdd->elseCase == true_ptr) {
 		d2_printf1(" + 1");
@@ -69,11 +69,11 @@ void print_xdd_d(BDDNode *xdd) {
 void print_xdd(BDDNode *xdd) {
 	if(xdd == true_ptr) fprintf(foutputfile, "1");
 	if(!IS_TRUE_FALSE(xdd->thenCase)) {
-		fprintf(foutputfile, "X[%d]*(", xdd->variable);
+		fprintf(foutputfile, "x[%d]*(", xdd->variable);
 		print_xdd(xdd->thenCase);
 		fprintf(foutputfile, ")");
 	} else {
-		fprintf(foutputfile, "X[%d]", xdd->variable);
+		fprintf(foutputfile, "x[%d]", xdd->variable);
 	}
 	if(xdd->elseCase == true_ptr)
 	  fprintf(foutputfile, " +1");
@@ -86,7 +86,7 @@ void print_xdd(BDDNode *xdd) {
 void print_xdd_err(BDDNode *xdd){
 	if(xdd == true_ptr) fprintf(stderr, "1");
 	if(!IS_TRUE_FALSE(xdd->thenCase)) {
-		fprintf(stderr, "X[%d]*(", xdd->variable);
+		fprintf(stderr, "x[%d]*(", xdd->variable);
 		print_xdd_err(xdd->thenCase);
 		fprintf(stderr, ")");
 	} else {
@@ -100,7 +100,47 @@ void print_xdd_err(BDDNode *xdd){
 	}
 }
 
-void print_xor_of_ands(xor_of_ands *top_xor) {	
+void print_xor_of_ands(xor_of_ands *top_xor) {
+	for(int x = 0; x < top_xor->curr_length-1; x++) {
+		if(top_xor->vars_in_and[x] == -1) { // This should never happen
+			fprintf(stderr, "XDD is malformed...exiting\n");
+			exit(0);
+		} else {
+			d2e_printf2("x[%s]*", s_name(top_xor->vars_in_and[x]));
+			d3e_printf2("x[%d]*", top_xor->vars_in_and[x]);
+			d4_printf3("x[%s(%d)]*", s_name(top_xor->vars_in_and[x]), top_xor->vars_in_and[x]);
+		}
+	}
+	if(top_xor->vars_in_and[top_xor->curr_length-1] == -1) fprintf(foutputfile, "1");
+	else {
+		d2e_printf2("x[%s]", s_name(top_xor->vars_in_and[top_xor->curr_length-1]));
+		d3e_printf2("x[%d]", top_xor->vars_in_and[top_xor->curr_length-1]);
+		d4_printf3("x[%s(%d)]", s_name(top_xor->vars_in_and[top_xor->curr_length-1]), top_xor->vars_in_and[top_xor->curr_length-1]);
+	}
+	for(xor_of_ands *tmp = top_xor->next_and; tmp!=NULL; tmp = tmp->next_and) {
+		d2_printf1(" + ");
+		
+		for(int x = 0; x < tmp->curr_length-1; x++) {
+			if(tmp->vars_in_and[x] == -1) { // This should never happen
+				fprintf(stderr, "XDD is malformed...exiting\n");
+				exit(0);
+			} else {
+				d2e_printf2("x[%s]*", s_name(tmp->vars_in_and[x]));
+				d3e_printf2("x[%d]*", tmp->vars_in_and[x]);
+				d4_printf3("x[%s(%d)]*", s_name(tmp->vars_in_and[x]), tmp->vars_in_and[x]);
+			}
+		}
+		if(tmp->vars_in_and[tmp->curr_length-1] == -1) { 
+			d2_printf1("1");
+		} else {
+			d2e_printf2("x[%s]*", s_name(tmp->vars_in_and[tmp->curr_length-1]));
+			d3e_printf2("x[%d]*", tmp->vars_in_and[tmp->curr_length-1]);
+			d4_printf3("x[%s(%d)]*", s_name(tmp->vars_in_and[tmp->curr_length-1]), tmp->vars_in_and[tmp->curr_length-1]);
+		}
+	}
+}
+
+void print_xor_of_ands_file(xor_of_ands *top_xor) {
 	for(int x = 0; x < top_xor->curr_length-1; x++) {
 		if(top_xor->vars_in_and[x] == -1) { // This should never happen
 			fprintf(stderr, "XDD is malformed...exiting\n");
@@ -193,6 +233,15 @@ void print_flat_xdd(BDDNode *xdd, int size) {
 	free_xor_of_ands(top_xor);	
 }
 
+void print_flat_xdd_file(BDDNode *xdd, int size) {
+	xor_of_ands *top_xor = get_flat_xdd(xdd, size);
+	if(top_xor == NULL) return;
+	//print_xor_of_ands_file(top_xor);
+	top_xor = invert_xor_of_ands(top_xor);
+	print_xor_of_ands_file(top_xor);
+	free_xor_of_ands(top_xor);	
+}
+
 void printLinearFormat() {
 	fprintf(foutputfile, "%d\n", numinp);
 	fprintf(foutputfile, "[\n");
@@ -202,7 +251,7 @@ void printLinearFormat() {
 	for(int x=1; x < nmbrFunctions; x++) {
 		xdd = bdd2xdd(functions[x]);
 		fprintf(foutputfile, ",\n");
-		print_flat_xdd(xdd, length[x]);
+		print_flat_xdd_file(xdd, length[x]);
 		fprintf(foutputfile, "\n");
 	}
 

@@ -1,4 +1,4 @@
-This is pdfeTeX, Version 3.141592-1.21a-2.2 (Web2C 7.5.4) (format=latex 2006.11.28)  5 JAN 2007 22:39
+This is pdfeTeX, Version 3.141592-1.21a-2.2 (Web2C 7.5.4) (format=latex 2006.11.28)  7 JAN 2007 00:09
 entering extended mode
 **sbsat_getting
 (./sbsat_getting.tex
@@ -196,147 +196,147 @@ File: omsaer.fd 1999/12/27
 LaTeX Font Info:    Font shape `OMS/aer/m/n' in size <10> not available
 (Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 312.
  [3] [4] [5] [6]
-Overfull \hbox (7.63094pt too wide) in paragraph at lines 494--515
+Overfull \hbox (7.63094pt too wide) in paragraph at lines 491--512
 \T1/aer/m/n/10 comes in two forms: a sin-gle CDROM and a tar-ball named \T1/aet
 t/m/n/10 sbsat-latest.tar.gz\T1/aer/m/n/10 .
  []
 
 [7] [8]
-Overfull \hbox (34.40909pt too wide) in paragraph at lines 586--622
+Overfull \hbox (34.40909pt too wide) in paragraph at lines 583--619
 \T1/aer/m/n/10 This com-mand places \T1/aett/m/n/10 sb-sat \T1/aer/m/n/10 in \T
 1/aett/m/n/10 /usr/local/bin\T1/aer/m/n/10 . To do this by hand, if \T1/aett/m/
 n/10 /usr/local/bin
  []
 
 [9]
-Overfull \hbox (31.09302pt too wide) in paragraph at lines 646--665
+Overfull \hbox (31.09302pt too wide) in paragraph at lines 643--662
 \T1/aer/m/n/10 this di-rec-tory check that the fol-low-ing files are there: \T1
 /aett/m/n/10 cnf_tests.sh\T1/aer/m/n/10 , \T1/aett/m/n/10 longer_tests.sh\T1/ae
 r/m/n/10 ,
  []
 
 [10] [11] [12]
-Overfull \hbox (6.07935pt too wide) in paragraph at lines 755--755
+Overfull \hbox (6.07935pt too wide) in paragraph at lines 752--752
 []   \T1/aett/m/n/10 c This is a demonstration of the CNF format for the SBSAT 
 solver[] 
  []
 
 [13] [14]
-Overfull \hbox (7.57649pt too wide) in paragraph at lines 871--871
+Overfull \hbox (7.57649pt too wide) in paragraph at lines 868--868
 []                          \T1/aett/m/n/8 Show result (n=no result, r=raw, f=f
 ancy) [default=``n''][] 
  []
 
 [15]
-Overfull \hbox (9.0231pt too wide) in paragraph at lines 908--911
+Overfull \hbox (9.0231pt too wide) in paragraph at lines 905--908
 $[]$\T1/aer/m/n/10 :  Since no ex-ten-sion of a bi-nary func-tion can take 1 ar
 -gu-ment, \T1/aett/m/n/10 xor1(-x1)
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 912--924
+Underfull \hbox (badness 10000) in paragraph at lines 909--921
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 932--932
+Underfull \hbox (badness 10000) in paragraph at lines 929--929
 
  []
 
 
-Overfull \hbox (31.34999pt too wide) in paragraph at lines 925--933
+Overfull \hbox (31.34999pt too wide) in paragraph at lines 922--930
 []$[]$ 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 941--946
+Underfull \hbox (badness 10000) in paragraph at lines 938--943
 
  []
 
 [16]
-Underfull \hbox (badness 10000) in paragraph at lines 955--955
+Underfull \hbox (badness 10000) in paragraph at lines 952--952
 
  []
 
 
-Overfull \hbox (31.34999pt too wide) in paragraph at lines 947--956
+Overfull \hbox (31.34999pt too wide) in paragraph at lines 944--953
 []$[]$ 
  []
 
 [17]
-Overfull \hbox (68.95923pt too wide) in paragraph at lines 1099--1099
+Overfull \hbox (68.95923pt too wide) in paragraph at lines 1096--1096
 []  \T1/aett/m/n/10 ; b is ignored here because it appeares in an Initial_Branc
 h statement above.[] 
  []
 
 
-Overfull \hbox (27.0393pt too wide) in paragraph at lines 1099--1099
+Overfull \hbox (27.0393pt too wide) in paragraph at lines 1096--1096
 []                \T1/aett/m/n/10 ; The two preceeding lines created identical 
 functions.[] 
  []
 
 
-Overfull \hbox (0.83936pt too wide) in paragraph at lines 1099--1099
+Overfull \hbox (0.83936pt too wide) in paragraph at lines 1096--1096
 []                \T1/aett/m/n/10 ; T is built in for True, F is built in for F
 alse.[] 
  []
 
 
-Overfull \hbox (42.75928pt too wide) in paragraph at lines 1099--1099
+Overfull \hbox (42.75928pt too wide) in paragraph at lines 1096--1096
 []                         \T1/aett/m/n/10 ; Notice parathensis and commas are 
 not required.[] 
  []
 
 
-Overfull \hbox (42.75928pt too wide) in paragraph at lines 1099--1099
+Overfull \hbox (42.75928pt too wide) in paragraph at lines 1096--1096
 []    \T1/aett/m/n/10 ite 3 4 5    ; Comments are ignored, even in the middle o
 f a function.[] 
  []
 
 
-Overfull \hbox (53.23926pt too wide) in paragraph at lines 1099--1099
+Overfull \hbox (53.23926pt too wide) in paragraph at lines 1096--1096
 []    \T1/aett/m/n/10 and or 6 7 8 ; Lines can be hard to read without parathen
 sis and commas.[] 
  []
 
 
-Overfull \hbox (63.71924pt too wide) in paragraph at lines 1099--1099
+Overfull \hbox (63.71924pt too wide) in paragraph at lines 1096--1096
 []  \T1/aett/m/n/10 ; Previously defined functions can be used to define more c
 omplex functions.[] 
  []
 
 
-Overfull \hbox (74.19922pt too wide) in paragraph at lines 1099--1099
+Overfull \hbox (74.19922pt too wide) in paragraph at lines 1096--1096
 []\T1/aett/m/n/10 # AndOr4(majv(v1, v2, v3), majv(v1, v3, v4), majv(v1, v2, v4)
 , majv(v2, v3, v4))[] 
  []
 
 
-Overfull \hbox (32.2793pt too wide) in paragraph at lines 1099--1099
+Overfull \hbox (32.2793pt too wide) in paragraph at lines 1096--1096
 []                                         \T1/aett/m/n/10 ; There is no case s
 ensitivity.[] 
  []
 
 
-Overfull \hbox (11.31934pt too wide) in paragraph at lines 1099--1099
+Overfull \hbox (11.31934pt too wide) in paragraph at lines 1096--1096
 []\T1/aett/m/n/10 pprint_tree $7 ; pretty print - No function created, no BDD c
 reated.[] 
  []
 
 
-Overfull \hbox (84.6792pt too wide) in paragraph at lines 1099--1099
+Overfull \hbox (84.6792pt too wide) in paragraph at lines 1096--1096
 []\T1/aett/m/n/10 print_tree minmax(4, 0, 1, x10, x9, x8, x7) ; No function cre
 ated, no BDD created.[] 
  []
 
 
-Overfull \hbox (58.47925pt too wide) in paragraph at lines 1099--1099
+Overfull \hbox (58.47925pt too wide) in paragraph at lines 1096--1096
 []  \T1/aett/m/n/10 ; This function is identical to the function created by `*o
 r(and(2, 3), 4)'[] 
  []
 
 
-Overfull \hbox (21.79932pt too wide) in paragraph at lines 1099--1099
+Overfull \hbox (21.79932pt too wide) in paragraph at lines 1096--1096
 []  \T1/aett/m/n/10 ; The difference is that function $11 also prints `and(2, 3
 )' in two[] 
  []
@@ -349,7 +349,7 @@ File: Fig/PIN.eps Graphic file (type eps)
 File: Fig/Network.eps Graphic file (type eps)
  <Fig/Network.eps>
 [21] [22]
-Overfull \hbox (1.1787pt too wide) in paragraph at lines 1220--1230
+Overfull \hbox (1.1787pt too wide) in paragraph at lines 1217--1227
 []\T1/aer/m/n/10 Given an $\OML/cmm/m/it/10 n$ \T1/aer/m/n/10 di-men-sional Boo
 lean vec-tor $\OML/cmm/m/it/10 V \OT1/cmr/m/n/10 = \OMS/cmsy/m/n/10 f\OML/cmm/m
 /it/10 x[]; x[]; [] x[]\OMS/cmsy/m/n/10 g$\T1/aer/m/n/10 , de-fine \T1/aer/m/it
@@ -358,82 +358,82 @@ lean vec-tor $\OML/cmm/m/it/10 V \OT1/cmr/m/n/10 = \OMS/cmsy/m/n/10 f\OML/cmm/m
 
 [23]
 
-LaTeX Warning: Float too large for page by 6.04993pt on input line 1333.
+LaTeX Warning: Float too large for page by 6.04993pt on input line 1330.
 
 [24] [25]
 File: Fig/state.eps Graphic file (type eps)
  <Fig/state.eps> [26] [27]
-Overfull \hbox (21.40643pt too wide) in paragraph at lines 1458--1467
+Overfull \hbox (21.40643pt too wide) in paragraph at lines 1455--1464
 \T1/aer/m/n/10 This as-sign-ment can be found by run-ning \T1/aett/m/n/10 sbsat
  \T1/aer/m/n/10 on the ex-am-ple file \T1/aett/m/n/10 bmc_example.ite
  []
 
 [28]
-Underfull \hbox (badness 10000) in paragraph at lines 1553--1558
+Underfull \hbox (badness 10000) in paragraph at lines 1550--1555
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1559--1579
+Underfull \hbox (badness 10000) in paragraph at lines 1556--1576
 
  []
 
 [29] [30]
-Underfull \hbox (badness 10000) in paragraph at lines 1615--1619
+Underfull \hbox (badness 10000) in paragraph at lines 1612--1616
 
  []
 
 
 LaTeX Warning: Reference `existential-safe-section' on page 31 undefined on inp
-ut line 1637.
+ut line 1634.
 
 
-Overfull \hbox (6.39972pt too wide) in paragraph at lines 1620--1646
+Overfull \hbox (6.39972pt too wide) in paragraph at lines 1617--1643
 []| [] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1620--1646
+Underfull \hbox (badness 10000) in paragraph at lines 1617--1643
 
  []
 
 [31] [32]
-Underfull \hbox (badness 10000) in paragraph at lines 1715--1747
+Underfull \hbox (badness 10000) in paragraph at lines 1712--1744
 
  []
 
 [33]
-Underfull \hbox (badness 10000) in paragraph at lines 1788--1790
+Underfull \hbox (badness 10000) in paragraph at lines 1785--1787
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1809--1821
+Underfull \hbox (badness 10000) in paragraph at lines 1806--1818
 
  []
 
 [34] [35] [36] [37] [38] [39]
-Overfull \hbox (48.15575pt too wide) in paragraph at lines 2054--2085
+Overfull \hbox (48.15575pt too wide) in paragraph at lines 2051--2082
 [] 
  []
 
 [40]
-Overfull \hbox (42.11609pt too wide) in paragraph at lines 2088--2096
+Overfull \hbox (42.11609pt too wide) in paragraph at lines 2085--2093
 [] 
  []
 
 
-Overfull \hbox (61.04517pt too wide) in paragraph at lines 2099--2115
+Overfull \hbox (61.04517pt too wide) in paragraph at lines 2096--2112
 [] 
  []
 
 [41]
-Overfull \hbox (54.51588pt too wide) in paragraph at lines 2118--2137
+Overfull \hbox (54.51588pt too wide) in paragraph at lines 2115--2134
 [] 
  []
 
 
-Overfull \hbox (118.52464pt too wide) in paragraph at lines 2140--2178
+Overfull \hbox (118.52464pt too wide) in paragraph at lines 2137--2175
 [] 
  []
 
@@ -442,28 +442,33 @@ Overfull \vbox (10.77776pt too high) has occurred while \output is active []
 
 
 [43]
-Overfull \hbox (105.6453pt too wide) in paragraph at lines 2180--2192
+Overfull \hbox (105.6453pt too wide) in paragraph at lines 2177--2189
 [] 
  []
 
 
-Overfull \hbox (43.96587pt too wide) in paragraph at lines 2195--2238
+Overfull \hbox (131.72484pt too wide) in paragraph at lines 2192--2231
 [] 
  []
 
-[44] [45]
-Overfull \hbox (27.0393pt too wide) in paragraph at lines 2292--2292
+[44]
+Overfull \hbox (81.98538pt too wide) in paragraph at lines 2234--2256
+[] 
+ []
+
+[45] [46]
+Overfull \hbox (27.0393pt too wide) in paragraph at lines 2308--2308
 []  \T1/aett/m/n/10 preset-variables="-1 -2 +3 -4 +5 -6 -7 -8 +9 -10 -11 +12 -1
 3 +14 -15"[] 
  []
 
-[46] [47] [48] [49]
-Underfull \hbox (badness 10000) in paragraph at lines 2431--2441
+[47] [48] [49] [50]
+Underfull \hbox (badness 10000) in paragraph at lines 2450--2461
 
  []
 
-[50] [51] [52]
-Underfull \hbox (badness 10000) in paragraph at lines 2587--2592
+[51] [52]
+Underfull \hbox (badness 10000) in paragraph at lines 2586--2592
 
  []
 
@@ -473,83 +478,102 @@ Underfull \hbox (badness 10000) in paragraph at lines 2593--2598
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2599--2606
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 2607--2614
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 2617--2632
+Underfull \hbox (badness 10000) in paragraph at lines 2599--2604
 
  []
 
 [53]
-Underfull \hbox (badness 10000) in paragraph at lines 2633--2647
+Underfull \hbox (badness 10000) in paragraph at lines 2605--2610
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2648--2664
+Underfull \hbox (badness 10000) in paragraph at lines 2611--2616
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2665--2682
+Underfull \hbox (badness 10000) in paragraph at lines 2619--2632
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2633--2646
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2647--2662
 
  []
 
 [54]
-Underfull \hbox (badness 10000) in paragraph at lines 2683--2699
+Underfull \hbox (badness 10000) in paragraph at lines 2663--2679
 
  []
 
 
-Overfull \hbox (24.8794pt too wide) in paragraph at lines 2718--2747
-[][][]\T1/aett/m/n/10 minmax (<#args>, <min_#>, <max_#>, <comma_separated_var_l
-ist>) 
+Underfull \hbox (badness 10000) in paragraph at lines 2680--2696
+
  []
 
 [55]
-Underfull \hbox (badness 10000) in paragraph at lines 2760--2788
+Underfull \hbox (badness 10000) in paragraph at lines 2714--2738
+
+ []
+
+
+LaTeX Warning: Reference `safe-section' on page 56 undefined on input line 2752
+.
+
+
+Underfull \hbox (badness 1590) in paragraph at lines 2752--2752
+[]\T1/aer/m/n/10 This func-tion re-turns ei-ther a safe as-sig-ment for <vari-a
+ble> in
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2739--2753
 
  []
 
 [56]
-Underfull \hbox (badness 10000) in paragraph at lines 2789--2792
+Underfull \hbox (badness 10000) in paragraph at lines 2764--2801
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2841--2841
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 2793--2842
+Underfull \hbox (badness 10000) in paragraph at lines 2802--2818
 
  []
 
 [57]
-Underfull \hbox (badness 10000) in paragraph at lines 2843--2868
+Underfull \hbox (badness 10000) in paragraph at lines 2819--2874
+
+ []
+
+[58]
+Underfull \hbox (badness 10000) in paragraph at lines 2936--2936
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2869--2924
+Underfull \hbox (badness 10000) in paragraph at lines 2875--2937
 
  []
 
-[58] [59] [60] [61]
-Underfull \hbox (badness 10000) in paragraph at lines 3054--3077
+[59]
+Underfull \hbox (badness 10000) in paragraph at lines 2938--2963
 
  []
 
-[62] [63] [64] [65] [66] [67] [68]
-Overfull \hbox (2.14514pt too wide) in paragraph at lines 3354--3356
+[60] [61] [62]
+Underfull \hbox (badness 10000) in paragraph at lines 3098--3121
+
+ []
+
+[63] [64] [65] [66] [67] [68] [69]
+Overfull \hbox (2.14514pt too wide) in paragraph at lines 3401--3403
 []\T1/aer/m/n/10 Otherwise, if \T1/aer/m/it/10 v \T1/aer/m/n/10 is la-beled \T1
 /aer/m/it/10 x\T1/aer/m/n/10 , then $\OML/cmm/m/it/10 f\OT1/cmr/m/n/10 (\OML/cm
 m/m/it/10 v\OT1/cmr/m/n/10 ) = (\OML/cmm/m/it/10 x \OMS/cmsy/m/n/10 ^ \OML/cmm/
@@ -561,15 +585,15 @@ n/10 .
  []
 
 File: Fig/bdd.eps Graphic file (type eps)
-<Fig/bdd.eps> [69] [70]
+<Fig/bdd.eps> [70] [71]
 File: Fig/exquant_bdd.eps Graphic file (type eps)
- <Fig/exquant_bdd.eps> [71] [72]
+ <Fig/exquant_bdd.eps> [72] [73]
 File: Fig/exquantex.eps Graphic file (type eps)
  <Fig/exquantex.eps>
 File: Fig/exquantex1.eps Graphic file (type eps)
 
-<Fig/exquantex1.eps> [73] [74]
-Overfull \hbox (3.26793pt too wide) in paragraph at lines 3551--3581
+<Fig/exquantex1.eps> [74] [75]
+Overfull \hbox (3.26793pt too wide) in paragraph at lines 3598--3628
 [][]\T1/aett/m/n/8 if (Reduce$[]$($\OML/cmm/m/it/8 x[]$\T1/aett/m/n/8 , c) == \
 T1/aett/m/it/8 F\T1/aett/m/n/8 ) return Restrict(Reduce$[]$($\OML/cmm/m/it/8 x[
 ]$\T1/aett/m/n/8 , \T1/aett/m/it/8 f\T1/aett/m/n/8 ), Reduce$[]$($\OML/cmm/m/it
@@ -577,7 +601,7 @@ T1/aett/m/it/8 F\T1/aett/m/n/8 ) return Restrict(Reduce$[]$($\OML/cmm/m/it/8 x[
  []
 
 
-Overfull \hbox (3.53114pt too wide) in paragraph at lines 3551--3581
+Overfull \hbox (3.53114pt too wide) in paragraph at lines 3598--3628
 [][]\T1/aett/m/n/8 if (Reduce$[]$($\OML/cmm/m/it/8 x[]$\T1/aett/m/n/8 , c) == \
 T1/aett/m/it/8 F\T1/aett/m/n/8 ) return Restrict(Reduce$[]$($\OML/cmm/m/it/8 x[
 ]$\T1/aett/m/n/8 , \T1/aett/m/it/8 f\T1/aett/m/n/8 ), Reduce$[]$($\OML/cmm/m/it
@@ -590,29 +614,29 @@ File: Fig/branch_prune_example_1.eps Graphic file (type eps)
  <Fig/branch_prune_example_1.eps>
 File: Fig/branch_prune_example_2.eps Graphic file (type eps)
 
-<Fig/branch_prune_example_2.eps> [75] [76]
+<Fig/branch_prune_example_2.eps> [76] [77]
 File: Fig/restrict.eps Graphic file (type eps)
  <Fig/restrict.eps>
-Underfull \hbox (badness 10000) in paragraph at lines 3642--3658
+Underfull \hbox (badness 10000) in paragraph at lines 3689--3705
 
  []
 
-[77]
+[78]
 File: Fig/strengthening_1.eps Graphic file (type eps)
  <Fig/strengthening_1.eps>
 File: Fig/strengthening_2.eps Graphic file (type eps)
- <Fig/strengthening_2.eps> [78]
-Underfull \hbox (badness 10000) in paragraph at lines 3694--3702
+ <Fig/strengthening_2.eps> [79]
+Underfull \hbox (badness 10000) in paragraph at lines 3741--3749
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3703--3710
+Underfull \hbox (badness 10000) in paragraph at lines 3750--3757
 
  []
 
-[79]
-Underfull \hbox (badness 10000) in paragraph at lines 3747--3767
+[80]
+Underfull \hbox (badness 10000) in paragraph at lines 3794--3814
 
  []
 
@@ -622,70 +646,70 @@ File: Fig/cofactoring1a.eps Graphic file (type eps)
  <Fig/cofactoring1a.eps>
 File: Fig/cofactoring3a.eps Graphic file (type eps)
  <Fig/cofactoring3a.eps>
-[80] [81]
+[81] [82]
 File: Fig/gcf2.eps Graphic file (type eps)
  <Fig/gcf2.eps>
 File: Fig/gcf1.eps Graphic file (type eps)
  <Fig/gcf1.eps>
 File: Fig/gcf3.eps Graphic file (type eps)
  <Fig/gcf3.eps>
-Overfull \hbox (1.4123pt too wide) in paragraph at lines 3792--3800
+Overfull \hbox (1.4123pt too wide) in paragraph at lines 3839--3847
 | []
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3806--3824
+Underfull \hbox (badness 10000) in paragraph at lines 3853--3871
 
  []
 
-[82] [83] [84] [85]
-Overfull \hbox (6.9324pt too wide) in paragraph at lines 3954--3954
+[83] [84] [85] [86]
+Overfull \hbox (6.9324pt too wide) in paragraph at lines 4001--4001
 []\T1/aer/bx/n/12 State Ma-chines Used to Rep-re-sent Func-tions (\T1/aer/m/sc/
 12 Smurf\T1/aer/bx/n/12 s) 
  []
 
 File: Fig/smurf.eps Graphic file (type eps)
 <Fig/smurf.eps>
-Underfull \hbox (badness 10000) in paragraph at lines 4002--4002
+Underfull \hbox (badness 10000) in paragraph at lines 4049--4049
 
  []
 
-[86] [87] [88] [89] [90]
-Overfull \hbox (42.75928pt too wide) in paragraph at lines 4109--4109
+[87] [88] [89] [90] [91]
+Overfull \hbox (42.75928pt too wide) in paragraph at lines 4156--4156
 []\T1/aett/m/n/10 -arg1 -arg2 -arg3 -arg4 x3 x2 x1 1 2 3 -5 -bob 4 -1000 22 300
  -40 -400 -50[] 
  []
 
-[91] [92] [93]
-Overfull \hbox (3.21709pt too wide) in paragraph at lines 4155--4164
+[92] [93] [94]
+Overfull \hbox (3.21709pt too wide) in paragraph at lines 4202--4211
 \T1/aer/m/n/10 Among the ex-per-i-ments we have run, those in-puts re-lat-ing s
 pecif-i-cally to bounded
  []
 
-[94] [95] [96]
-Underfull \hbox (badness 10000) in paragraph at lines 4257--4265
+[95] [96] [97]
+Underfull \hbox (badness 10000) in paragraph at lines 4304--4312
 
  []
 
 
-Underfull \hbox (badness 1308) in paragraph at lines 4279--4279
+Underfull \hbox (badness 1308) in paragraph at lines 4326--4326
 \T1/aer/m/n/10 func-tions. Choose con-straint func-tions $\OML/cmm/m/it/10 f\OT
 1/cmr/m/n/10 (\OML/cmm/m/it/10 x[]; x[]; :::; x[]; x[]\OT1/cmr/m/n/10 )$ \T1/ae
 r/m/n/10 and
  []
 
-[97] [98] [99] [100] [101] [102] [103] [104] [105] (./sbsat_getting.aux)
+[98] [99] [100] [101] [102] [103] [104] [105] [106] (./sbsat_getting.aux)
 
 LaTeX Warning: There were undefined references.
 
  ) 
 Here is how much of TeX's memory you used:
- 1639 strings out of 94501
- 20832 string characters out of 1176136
+ 1641 strings out of 94501
+ 20865 string characters out of 1176136
  116430 words of memory out of 1000000
- 4763 multiletter control sequences out of 10000+50000
+ 4765 multiletter control sequences out of 10000+50000
  38393 words of font info for 56 fonts, out of 500000 for 2000
  580 hyphenation exceptions out of 1000
  32i,13n,21p,1553b,271s stack positions out of 1500i,500n,5000p,200000b,5000s
 
-Output written on sbsat_getting.dvi (113 pages, 340164 bytes).
+Output written on sbsat_getting.dvi (114 pages, 345168 bytes).

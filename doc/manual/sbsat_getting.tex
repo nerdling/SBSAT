@@ -424,32 +424,29 @@ function is a listing of all possible assignments of values to the
 variables of the function; and next to each assignment is the value
 the function takes under that assignment.
 
-\item {\bf Unary, Binary, and Ternary Boolean Functions} ({\tt or},
-{\tt nor}, %{\tt limp}, 
-{\tt imp}, {\tt nimp}, {\tt xor}, {\tt and},
-{\tt nand}, {\tt equ}, {\tt ite}, {\tt not}) - A Boolean function of
-two variables.  There are $2^{2^2}=16$ different binary Boolean
-functions and 2 unary functions.  Names associated with a subset of
-these that include only non-trivial functions are given in the
-following table where, for binary functions, the bits of the 1-0
-strings correspond to function values given input values of {\tt 00},
-{\tt 01}, {\tt 10}, and {\tt 11}, respectively, from left to right,
-and for the unary function the two bit strings correspond to input
+\item {\bf Unary, Binary, and Ternary Boolean Functions} ({\tt not}, {\tt and},
+{\tt nand}, {\tt or}, {\tt nor}, {\tt equ}, {\tt xor}, {\tt imp}, {\tt
+nimp}, {\tt ite} ) - A Boolean function of two variables. There are
+$2^{2^2}=16$ different binary Boolean functions and 2 unary functions.
+Names associated with a subset of these that include only non-trivial
+functions are given in the following table where, for binary functions, the
+bits of the 1-0 strings correspond to function values given input values of
+{\tt 00}, {\tt 01}, {\tt 10}, and {\tt 11}, respectively, from left to
+right, and for the unary function the two bit strings correspond to input
 values of {\tt 0} and {\tt 1}, respectively, from left to right.  An
-important ternary function is {\tt if-then-else} which we call {\tt
-ite}.  Its functionality is also expressed in the table with the
-obvious correspondence between input values and function values.
+important ternary function is {\tt if-then-else} which we call {\tt ite}.
+Its functionality is also expressed in the table with the obvious
+correspondence between input values and function values.
 \begin{center}
 \begin{tabular}{rlcrlcrl}
 \multicolumn{5}{c}{\underline{\bf ~~~~~~~~~~~~~Binary~~~~~~~~~~~~~}} &
 \multicolumn{1}{c}{} &
-\multicolumn{2}{c}{\underline{\bf ~~~Unary~~~}}\\
-{\tt or}  &{\tt 0111}&~~~~~&{\tt imp}  &{\tt 1101}&~~~~~&{\tt not}&{\tt 10}\\
-{\tt nor} &{\tt 1000}&     &{\tt nimp} &{\tt 0010}&     &         &        \\
-{\tt and} &{\tt 0001}&     &{\tt equ}  &{\tt 1001}&     & 
+\multicolumn{2}{c}{\underline{\bf ~~~~Unary~~~~}}\\
+{\tt and} &{\tt 0001}&~~~~~&{\tt nand} &{\tt 1110}&~~~~&{\tt not}&{\tt 10}\\
+{\tt or}  &{\tt 0111}&     &{\tt nor}  &{\tt 1000}&     &         &        \\
+{\tt equ} &{\tt 1001}&     &{\tt xor}  &{\tt 0110}&     &
 \multicolumn{2}{c}{\underline{\bf ~~~Ternary~~~}} \\
-{\tt nand}&{\tt 1110}&     &{\tt xor}  &{\tt 0110}&     &
-{\tt ite}&{\tt 01010011}\\
+{\tt imp} &{\tt 1101}&     &{\tt nimp} &{\tt 0010}&     &{\tt ite}&{\tt 01010011}\\
 \end{tabular}
 \end{center}
 
@@ -2206,34 +2203,55 @@ sp. function plainxor
 \emph{-{}-max-cached-lemmas <number>,} &-&
 Set the maximum \# of lemmas\\
 \emph{~~~~~~~-L <number>} & & {[}default=5000{]}\\
-
-
-
-\emph{-{}-heuristic <string>,}  &-&
-Choose heuristic j=LSGB, l=Chaff-like\\
-\emph{~~~~~~~-H <string>} & & lemma, i=Interactive {[}default=\char`\"{}j\char`\"{}{]}\\
-\emph{-{}-jheuristic-k <number>,} &-& Set the value of K
-{[}default=3.000000{]}\\
-\emph{~~~~~~-K <number>} & & \\
-\emph{-{}-jheuristic-k-true <number>} &-& Set the value of True state {[}default=0.000000{]}\\
-\emph{-{}-jheuristic-k-inf <number>} &-& Set the value of the inference
-multiplier\\
-& & {[}default=1.000000{]}\\
+\emph{-{}-autarky-smurfs <number>} &-& Use Autarky Smurfs in the solver (1/0)\\
+& & {[}default=0{]}\\
+\emph{-{}-autarky-lemmas <number>} &-& Use Autarky Lemmas in the solver (Currently Unavailiable) (1/0)\\
+& & {[}default=0{]}\\
 \emph{-{}-sbj <number>} &-& Super backjumping {[}default=0{]}\\
-\emph{-{}-max-vbles-per-smurf <number>,} &-&
-Set the maximum number variables per\\
+\emph{-{}-max-vbles-per-smurf <number>,} &-& set the maximum number variables per\\
 \emph{~~~~~~~-S <number>} & & smurf {[}default=8{]}\\
-\emph{-{}-backtracks-per-report <number>} &-& Set the number of backtracks
+\emph{-{}-backtracks-per-report <number>} &-& set the number of backtracks
 per report\\
 & & {[}default=10000{]}\\
-\emph{-{}-max-brancher-cp <number>} &-& Set the choice point limit (0=no
+\emph{-{}-max-brancher-cp <number>} &-& set the choice point limit (0=no
 limit)\\
 & & {[}default=0{]}\\
-\emph{-{}-brancher-trace-start <number>} &-&
-Number of backtracks to start the trace\\
+\emph{-{}-brancher-trace-start <number>} &-& number of backtracks to start the trace\\
 & & (when debug=9) {[}default=0{]}\\
-\emph{-{}-compress-smurfs <number>} &-& Share states among smurfs {[}default=1{]}\\
-\emph{-{}-smurfs-share-paths <number>} &-& Share paths among smurfs {[}default=0{]}\\
+\emph{-{}-heuristic <string>,}  &-&
+Choose heuristic j=LSGB, l=Chaff-like\\
+\emph{~~~~~~~-H <string>} & & lemma based, i=Interactive {[}default=\char`\"{}j\char`\"{}{]}\\
+\emph{-{}-jheuristic-k <number>,} &-& set the value of K
+{[}default=3.000000{]}\\
+\emph{~~~~~~-K <number>} & & \\
+\emph{-{}-jheuristic-k-true <number>} &-& set the value of True state {[}default=0.000000{]}\\
+\emph{-{}-jheuristic-k-inf <number>} &-& set the value of the inference multiplier\\
+& & {[}default=1.000000{]}\\
+\end{tabular}
+
+\subsection {BDD WalkSAT solver options}
+
+\begin{tabular}{lcl}
+\emph{-{}-cutoff <number>} &-& BDD WalkSAT number of flips per random\\
+& & restart {[}default=100000{]}\\
+\emph{-{}-random-option <number>} &-& BDD WalkSAT option for random walk\\
+& & (1=Pick a random path to true in current BDD,\\
+& &  2=Randomly flip every variable in current BDD,\\
+& &  3=Randomly flip one variable,\\
+& &  4=Randomly flip one variable in current BDD) {[}default=1{]}\\
+\emph{-{}-bddwalk-heur <char>} &-& BDD WalkSAT Heuristic (a=adaptive\\
+& & novelty+, n=novelty+, r=random) {[}default='a'{]}\\
+\emph{-{}-taboo-max <number>} &-& BDD WalkSAT length of taboo list\\
+& & (used in conjunction with novelty+ heuristic) {[}default=6{]}\\
+\emph{-{}-taboo-multi <number>} &-& BDD WalkSAT multiplier for the probablity\\
+& & of picking variables with taboo (used in conjunction with\\
+& & novelty+ heuristic) {[}default=1.500000{]}\\
+\emph{-{}-bddwalk-wp-prob <number>} &-& BDD WalkSAT probablity of making a\\
+& & random walk (used in conjunction with novelty+ heuristic)\\
+& & {[}default=0.100000{]}\\
+\emph{-{}-bddwalk-prob <number>} &-& BDD WalkSAT probablity of picking second\\
+& & best path (used in conjunction with novelty+ heuristic)\\
+& & {[}default=0.100000{]}\\
 \end{tabular}
 
 \newpage
@@ -2247,11 +2265,11 @@ can exist to allow the user to define different settings for different
 problem types by creating initialization files for each type. 
 An initialization file may be loaded during launch using the following:\\
 \vspace*{-3mm}\\
-\indent{\tt \$ sbsat -{}-ini <path-to-initialization-file>}
+\indent{\tt \$ sbsat {\it -{}-ini} <path-to-initialization-file>}
 
 \noindent
 If only a filename is specified instead of a path, SBSAT looks in the
-current directory for the file.  If the {\tt -{}-ini} switch is not
+current directory for the file.  If the {\it -{}-ini} switch is not
 used, then SBSAT looks in the user's home directory for {\tt
 sbsat.ini} and loads that file if it is found.  If the file is not
 found, the default internal settings are used.  If the file exists and
@@ -2263,19 +2281,18 @@ edited using a standard text editor or created by using the following
 command which dumps the default settings, in the initialization file
 format, to a file whose name the user specifies:\\
 \vspace*{-3mm}\\
-\indent{\tt \$ sbsat -{}-create-ini > <user-specified-filename>}
+\indent{\tt \$ sbsat {\it -{}-create-ini} > <user-specified-filename>}
 
-Each line of the initialization file is either whitespace or a command
-which sets an internal parameter to a value.  A command consists of a
-parameter name on the left, followed by an `{\tt =}' followed by a value
-on the right.  A comment is any text on any line following and
-including the first occurrence of the `{\tt \#}' character on that line.
-The sample initialization file shown in Figure~\ref{init-figure}
-presets variables 1-15 at the start of preprocessing, sets the debug
-output level to 3, changes the default preprocessing sequence to {\tt
-(ExDc)*(ExSt)*(ExPr)*((ExEa)1)*}, and turns on Existentially Quantify
-And.  An initialization file only needs to contain the settings the
-user wants modified from the default settings.
+Each line of the initialization file is either whitespace or a command which
+sets an internal parameter to a value.  A command consists of a parameter
+name on the left, followed by an `{\tt =}' followed by a value on the right.
+A comment is any text on any line following and including the first
+occurrence of the `{\tt \#}' character on that line. The sample
+initialization file shown in Figure~\ref{init-figure} presets variables 1-15
+at the start of preprocessing, sets the debug output level to 3, and changes
+the default preprocessing sequence to {\tt
+\{ExDc\}\{ExSt\}\{ExPr\}\{\{ExEs\}1\}}.  An initialization file only needs
+to contain the settings the user wants modified from the default settings.
 
 \begin{figure}
 \begin{verbatim}
@@ -2287,8 +2304,7 @@ user wants modified from the default settings.
   debug=3
 
   # The preprocessing sequence
-  preprocess-sequence="(ExDc)*(ExSt)*(ExPr)*((ExEa)1)*"
-  Ea=1
+  preprocess-sequence="{ExDc}{ExSt}{ExPr}{{ExEs}1}"
 \end{verbatim}
 \caption{Example initialization file.}\label{init-figure}
 \end{figure}
@@ -2296,7 +2312,7 @@ user wants modified from the default settings.
 \newpage
 \section{Reference - Input formats}\label{format-section}
 
-Problems to be solved typically are presented to {\tt sbsat} as a file
+Problems to be solved are typically presented to {\tt sbsat} as a file
 formatted in a particular way (input is also allowed from standard
 input).  This section describes the various input formats accepted by
 {\tt sbsat}.  The canonical format is the most general and is
@@ -2306,13 +2322,13 @@ in
 {\footnotesize\tt ftp://dimacs.rutgers.edu/pub/challenge/satisfiability/doc/satformat.dvi}
 
 \noindent
-and a description is given here.  Other useful formats include XOR,
-for handling a rather specific type of problem where each conjunct is
-an {\tt xor} of conjuncts, DNF, Tracer (a subset of a language used in
-CMU benchmarks), and {\sc Smurf} (a special form directly tied to data
-structures).
+and a description is given here.  Other useful formats include XOR, for
+handling a rather specific type of problem where each conjunct is an {\tt
+xor} of conjuncts, DNF, Trace (a language used in CMU benchmarks), Prove
+(automatically generated by the CMU tool named BMC), and {\sc
+Smurf} (a special form directly tied to SBSAT data structures).
 
-All inputs formats support up to five different types of statements
+The inputs formats support up to five different types of statements
 and each applicable type is described separately in a subsection of
 the format's description section.  The types are as follows:
 \begin{enumerate}
@@ -2374,16 +2390,18 @@ first character of the first line specifying such a function.  A
 solution to the problem defined in a file is an assignment satisfying
 those functions (including manipulators) which are preceeded by '{\tt
 *}' (values of all non-starred functions and non-starred manipulators
-do not matter).
+do not matter). If no function is preceeded by a `*', all functions are
+considered top level functions.
 
-Lines that get a {\tt \$} number start with {\tt var}, {\tt not}, 
-{\tt truth\_table}, {\tt minmax}, {\tt exist}, {\tt universe}, {\tt nor},
-{\tt gcf}, {\tt prune}, {\tt restrict}, {\tt nimp}, {\tt nand}, 
-{\tt equ}, {\tt imp}, {\tt and}, {\tt xor}, {\tt or}, a single
-positive or negative variable, a function previously defined
-in a {\tt \#define} statement, or a single number with a {\tt \$} 
-in front of it.  Lines that do not get a {\tt \$} number start with
-{\tt initialbranch}, {\tt \#define}, {\tt print\_tree}, or {\tt pprint\_tree}.
+Lines that get a {\tt \$} number start with {\tt var}, {\tt not}, {\tt and},
+{\tt nand}, {\tt or}, {\tt nor}, {\tt equ}, {\tt xor}, {\tt imp}, {\tt
+nimp}, {\tt ite}, {\tt gcf}, {\tt strengthen}, {\tt prune}, {\tt exist},
+{\tt universe}, {\tt truth\_table}, {\tt minmax}, {\tt safe}, a single
+positive or negative variable, a function previously defined in a {\tt
+\#define} statement, or a single number with a {\tt \$} in front of it.
+Lines that do not get a {\tt \$} number start with {\tt initialbranch}, {\tt
+print\_tree}, or {\tt pprint\_tree}, {\tt \#define}, {\tt print\_xdd}, or
+{\tt print\_flat\_xdd}.
 
 \subsubsection{Comments}
 
@@ -2408,66 +2426,56 @@ distinct variables.\\
 \subsubsection{Boolean functions}
 
 \noindent
-A Boolean function may be expressed four ways:\\
+A Boolean function may be expressed two ways:\\
 \vspace*{-3mm}\\
-\indent{\tt VAR <integer>}\\
 \indent{\tt <variable>}\\
 \indent{\tt <function-identifier> arg1 arg2 ...}\\
-\indent{\tt <function-identifier> ( arg1, arg2, ... )}\\
 \vspace*{-3mm}\\ 
-where {\tt <function-identifier>} is one of {\tt not}, {\tt ite}, {\tt
-and}, {\tt nand}, {\tt or}, {\tt nor}, {\tt imp}, {\tt nimp}, {\tt
-equ}, {\tt xor}, {\tt and\#}, {\tt or\#}, {\tt nand\#}, {\tt nor\#}
-({\tt \#} is a positive integer), and {\tt arg\#} is either a variable
-or a Boolean function or a reference to a Boolean function.  The token
-{\tt <variable>} is a character string and its use in an input file
-creates a simple Boolean function which is identified by that name,
-the value of which is the value of the variable named {\tt
-<variable>}.  Every Boolean function is implemented as a BDD (see
-Section~\ref{bdd-section}) and may have value {\em T}, or {\em F}, or
-have no value, depending on its arguments: values of Boolean functions
-are given as follows for {\tt VAR} and each {\tt <function-identifier>}.
+where {\tt <function-identifier>} is one of the following predefined
+function identifiers, and {\tt arg\#} is either a variable, a Boolean
+function or a reference to a Boolean function.  The token {\tt <variable>}
+is a character string and its use in an input file creates a simple Boolean
+function which is identified by that name, the value of which is the value
+of the variable named {\tt <variable>}.  Every Boolean function is
+implemented as a BDD (see Section~\ref{bdd-section}) and may have value {\em
+T}, or {\em F}, or have no value, depending on its arguments: values of
+Boolean functions are given as follows for each {\tt <function-identifier>}.
+
+\noindent
+\textbf{\underbar{Remark}}: ~Each function takes a fixed number of
+arguments, hence, commas and parenthesis are considered whitespace and
+are ignored, however, their use is recommended to enhance the human
+readability of input files.
 
 \indent\textbf{VAR}\\
 \vspace*{-3mm}\\
 \indent\indent\parbox{110mm}{
-Variables may be defined as Boolean functions using {\tt VAR} followed
-by a single integer argument, which identifies the created variable.
-The use of {\tt VAR} is now deprecated and its use is discouraged but
-it remains supported (for now) for the benefit of early users.  It is
-now assumed that all integers are {\em variable names} unless preceded
-by a '\$'. All integers preceded by a '\$' refer to functions or
+Variables may be defined as Boolean functions using {\tt VAR} followed by a
+single integer argument, which identifies the created variable. The use of
+{\tt VAR} is now deprecated and its use is discouraged but it remains
+supported (for now) for the benefit of early users.  It is now assumed that
+all unknown valid character strings, not previously defined, and unless
+preceded by a `\$', be defined as single variable Boolean functions.. All
+integers preceded by a '\$' refer to previously defined functions or
 manipulators instead of variables.}\\
 
 \indent\textbf{NOT}\\
 \vspace*{-3mm}\\
 \indent\indent\parbox{110mm}{ 
 The unary Boolean function {\tt NOT} has a value equal to that of the
-complement of its single argument, if it has a value.  Otherwise this
-function has no value.  A variable may also be complemented by
-using '{\tt -}' in place of {\tt NOT}.  Examples are:}\\
+complement of its single argument. A variable may also be complemented by
+using '{\tt -}' in place of {\tt NOT} (functions cannot be complemented in
+this way).  Examples are:}\\
 \vspace*{0mm}\\
 \indent\indent\indent{\tt not(x32)}\\
 \indent\indent\indent{\tt -x32}
-
-\indent\textbf{ITE}\\
-\vspace*{-3mm}\\
-\indent\indent\parbox{110mm}{
-The ternary Boolean function {\tt ITE} has the value of its second
-argument if that argument has a value and its first argument has value
-{\em T}, has the value of its third argument if that argument has
-a value and its first argument has value {\em F}, and has no
-value otherwise.  Examples of this function are the following:}\\
-\vspace*{0mm}\\
-\indent\indent\indent{\tt ite(ite( x3, \$5, -x5), x4, x7)}\\
-\indent\indent\indent{\tt ite ite x3 \$5 -x5 x4 x7}
 
 \indent\textbf{AND}\\
 \vspace*{-3mm}\\
 \indent\indent\parbox{110mm}{
 The binary Boolean function {\tt AND} has value {\em T} if both its
-arguments have value {\em T}, has value {\em F} if at least one of its
-arguments has value {\em F}, and has no value otherwise.
+arguments have value {\em T} and has value {\em F} if at least one of its
+arguments has value {\em F}.
 Examples are the following:}\\
 \vspace*{0mm}\\
 \indent\indent\indent {\tt and(x3, x4)}\\
@@ -2477,85 +2485,88 @@ Examples are the following:}\\
 \vspace*{-3mm}\\
 \indent\indent\parbox{110mm}{
 The binary Boolean function {\tt NAND} has value {\em F} if both its
-arguments have value {\em T}, has value {\em T} if at least one of its
-arguments has value {\em F}, and has no value otherwise.
-Examples are the following:}\\
+arguments have value {\em T} and has value {\em T} if at least one of its
+arguments has value {\em F}.
+An example is:}\\
 \vspace*{0mm}\\
-\indent\indent\indent {\tt nand(x3, x4)}\\
-\indent\indent\indent {\tt nand x3 x4}
+\indent\indent\indent {\tt nand(x3, x4)}
 
 \indent\textbf{OR}\\
 \vspace*{-3mm}\\
 \indent\indent\parbox{110mm}{
 This binary Boolean function has value {\em T} if one of its arguments
-has value {\em T}, has value {\em F} if both its arguments have value
-{\em F}, and has no value otherwise. Examples are:}\\
+has value {\em T} and has value {\em F} if both its arguments have value
+{\em F}. An example is:}\\
 \vspace*{0mm}\\
-\indent\indent\indent {\tt or(x3, x4)}\\
-\indent\indent\indent {\tt or x3 x4}
+\indent\indent\indent {\tt or(and(x3, x4), x5)}
 
 \indent\textbf{NOR}\\
 \vspace*{-3mm}\\
 \indent\indent\parbox{110mm}{
 This binary Boolean function has value {\em F} if at least one of its
-arguments has value {\em T}, has value {\em T} if both arguments have
-value {\em F}, and has no value otherwise.  Examples are:}\\
+arguments has value {\em T} and has value {\em T} if both arguments have
+value {\em F}.  An example is:}\\
 \vspace*{0mm}\\
-\indent\indent\indent {\tt nor(x3, x4)}\\
-\indent\indent\indent {\tt nor x3 x4}
+\indent\indent\indent {\tt nor(x3, ite(a, b, -c))}
 
 \indent\textbf{EQU}\\
 \vspace*{-3mm}\\
 \indent\indent\parbox{110mm}{
-This binary Boolean function has value {\em T} if both its arguments
-have been assigned the same value, has value {\em F} if both its
-arguments have been assigned different values, and has no
-value if at least one of its arguments has not been assigned a
-value.  In the following examples {\tt equ} has value {\em T}
-if and only if variable {\tt x4} is assigned value {\em T}.}\\
+This binary Boolean function has value {\em T} if both its arguments have
+been assigned the same value and has value {\em F} if both its arguments
+have been assigned different values. In the following example {\tt equ} acts
+as a way to assign the value {\em T} to variable {\tt x4}.}\\
 \vspace*{0mm}\\
-\indent\indent\indent {\tt equ(T, x4)}\\
-\indent\indent\indent {\tt equ T x4}
-
+\indent\indent\indent {\tt equ(T, x4)}
 
 \indent\textbf{XOR}\\
 \vspace*{-3mm}\\
 \indent\indent\parbox{110mm}{
 This binary Boolean function has value {\em T} if its two arguments have
-been assigned opposite values, has value {\em F} if its two arguments
-have been assigned the same value, and has no value otherwise.}\\
+been assigned opposite values and has value {\em F} if its two arguments
+have been assigned the same value. An example is:}\\
 \vspace*{0mm}\\
 \indent\indent\indent {\tt xor(x3, x4)}\\
-\indent\indent\indent {\tt xor x3 x4}
+\indent\indent This is functionally equivalent to:\\
+\indent\indent\indent {\tt equ(x3, not(x4))}
 
 \indent\textbf{IMP}\\
 \vspace*{-3mm}\\ 
 \indent\indent\parbox{110mm}{ 
-This binary Boolean function has value {\em T} if its first argument has
-value {\em T} or has value {\em F} and its second argument has value
-{\em F}, has value {\em F} if its first argument has value {\em F}
-and second value {\em T}, and has no value otherwise. Examples are:}\\
+This binary Boolean function has value {\em T} if either both its arguments
+have value {\em T} or if its second argument has value {\em F} and has value
+{\em F} if its first argument has value {\em F} and second value {\em T}.
+An example is:}\\
 \vspace*{0mm}\\
-\indent\indent\indent {\tt imp(x3, x4)}\\
-\indent\indent\indent {\tt imp x3 x4}
+\indent\indent\indent {\tt imp(x3, x4)}
 
 \indent\textbf{NIMP}\\
 \vspace*{-3mm}\\
 \indent\indent\parbox{110mm}{
-This binary Boolean function has value {\em F} if its first argument has
-value {\em T} or has value {\em F} and its second argument has value
-{\em F}, has value {\em T} if its first argument has value {\em F}
-and second value {\em T}, and has no value otherwise.  Examples are:}\\
+This binary Boolean function has value {\em F} if either both its arguments
+have value {\em T} or if its second argument has value {\em F} and has value
+{\em T} if its first argument has value {\em F} and second value {\em T}.
+An example is:}\\
 \vspace*{0mm}\\
-\indent\indent\indent {\tt xor(x3, x4)}\\
-\indent\indent\indent {\tt xor x3 x4}
+\indent\indent\indent {\tt nimp(x3, x4)}
+
+\indent\textbf{ITE}\\
+\vspace*{-3mm}\\
+\indent\indent\parbox{110mm}{
+The ternary Boolean function {\tt ITE} has the value of its second argument
+if its first argument has value {\em T}, and has the value of its third
+argument if its first argument has value {\em F}.
+Examples of this function are the following:}\\
+\vspace*{0mm}\\
+\indent\indent\indent{\tt ite(ite( x3, \$5, -x5), x4, x7)}\\
+\indent\indent\indent{\tt ite ite x3 \$5 -x5 x4 x7}
 
 \subsubsection{Boolean function extensions}
 
-The functions of this section are extensions to some of the binary
+The functions of this section are extensions to the binary
 functions of the previous section in that they admit more than two
-arguments.  The syntax is the same except that the {\tt <function-identifier>}
-is immediately followed by a number indicating the number of arguments
+arguments. The syntax is the same except that the {\tt <function-identifier>}
+is immediately followed by a number ($\geq$ 2) indicating the number of arguments
 the function has.  Below, the character {\tt \#} is used to indicate
 the position of this number when defining function names.
 
@@ -2563,26 +2574,21 @@ the position of this number when defining function names.
 \vspace*{-3mm}\\ 
 \indent\indent\parbox{110mm}{ 
 This Boolean function has value {\em T} if all its arguments have value
-{\em T}, has value {\em F} if at least one argument has value {\em F},
-and has no value otherwise.  Examples of its use are as
+{\em T} and has value {\em F} if at least one argument has value {\em F}. 
+Examples of its use are as
 follows:}\\
 \vspace*{-0mm}\\
 \indent\indent\indent{\tt and4(x1, x2, x3, x4)}\\
 \indent\indent\indent{\tt and5(-x1,}\\
-\indent\indent\indent\indent{\tt and3(x2, x3, \$4),}\\
-\indent\indent\indent\indent{\tt x5, \$6, x7)}
+\indent\indent\indent\indent~~~{\tt and3(x2, x3, \$4),}\\
+\indent\indent\indent\indent~~~{\tt x5, \$6, x7)}
 
 \indent\textbf{NAND\#}\\
 \vspace*{-3mm}\\
 \indent\indent\parbox{110mm}{
 This Boolean function has value {\em F} if all its arguments have value 
-{\em T}, has value {\em T} if at least one argument has value {\em F}, 
-and has no value otherwise.  Examples of its use are as follows:}\\
-\vspace*{0mm}\\
-\indent\indent\indent{\tt nand4(x1, x2, x3, x4)}\\
-\indent\indent\indent{\tt nand5(-x1,}\\
-\indent\indent\indent\indent{\tt nand3(x2, x3, \$4),}\\
-\indent\indent\indent\indent{\tt x5, \$6, x7)}
+{\em T} and has value {\em T} if at least one argument has value {\em F}.
+}\\
 
 \indent\textbf{OR\#}\\
 \vspace*{-3mm}\\
@@ -2599,18 +2605,14 @@ NAND\#} of {\tt NAND}.}\\
 \indent\textbf{EQU\#}\\
 \vspace*{-3mm}\\
 \indent\indent\parbox{110mm}{
-This Boolean function has value {\em T} if all its arguments have
-values and those values are all the same, has value {\em F} if 
-at least one pair of arguments has different values, and otherwise 
-has no value.}\\
+This Boolean function has value {\em T} if an even number of its arguments
+have value {\em F} and has the value {\em F} otherwise.}\\
 
 \indent\textbf{XOR\#}\\
 \vspace*{-3mm}\\
 \indent\indent\parbox{110mm}{
-This Boolean function has value {\em T} if all its arguments have
-values and an odd number of those values are {\em T}, has value
-{\em F} if all its arguments have values and an even number 
-of those values are {\em T}, and has no value otherwise.}\\
+This Boolean function has value {\em F} if an even number of its arguments
+have value {\em T} and has the value {\em T} otherwise.}\\
 
 \subsubsection{Manipulators}
 
@@ -2620,15 +2622,13 @@ of those values are {\em T}, and has no value otherwise.}\\
 The syntax for this manipulator is}\\
 \vspace*{-3mm}\\
 \indent\indent\indent{\tt gcf <function> <cofactor>}\\
-\indent\indent\indent{\tt gcf( <function>, <cofactor>)}\\
 \vspace*{-2mm}\\ 
 \indent\indent\parbox{110mm}{ 
-where {\tt <cofactor>} and {\tt <function>} are both Boolean functions
-or variables, and {\tt <cofactor>} is the complement of the ``don't
-care set'' of {\tt <function>}.  The Boolean function returned by {\tt
-gcf} is the Generalized Co-factor of {\tt <function>} with respect to
-{\tt <cofactor>}.  See Section~\ref{gcf-section} for a description of
-generalized cofactor and when it might be useful.}\\
+where {\tt <cofactor>} and {\tt <function>} are both Boolean functions or
+variables. The Boolean function returned by {\tt gcf} is the Generalized
+Co-factor of {\tt <function>} with respect to {\tt <cofactor>}.  See
+Section~\ref{gcf-section} for a description of generalized cofactor and when
+it might be useful.}\\
 
 \indent\textbf{STRENGTHEN}\\
 \vspace*{-3mm}\\
@@ -2636,7 +2636,6 @@ generalized cofactor and when it might be useful.}\\
 The syntax for this manipulator is}\\
 \vspace*{-3mm}\\
 \indent\indent\indent{\tt strengthen <function>\_1 <function>\_2}\\
-\indent\indent\indent{\tt strengthen( <function>\_1, <function>\_2)}\\
 \vspace*{-2mm}\\
 \indent\indent\parbox{110mm}{
 where {\tt <function>\_1} and {\tt <function>\_2} are both Boolean
@@ -2645,13 +2644,12 @@ manipulator is {\tt <function>\_1} strengthened by {\tt
 <function>\_2}.  To find out more about strengthening see
 Section~\ref{strengthening-section}.}\\
 
-\indent\textbf{RESTRICT}\\
+\indent\textbf{PRUNE}\\
 \vspace*{-3mm}\\
 \indent\indent\parbox{110mm}{
 The syntax for this manipulator is}\\
 \vspace*{-3mm}\\
-\indent\indent\indent{\tt restrict <function>\_1 <function>\_2}\\
-\indent\indent\indent{\tt restrict( <function>\_1, <function>\_2)}\\
+\indent\indent\indent{\tt prune <function>\_1 <function>\_2}\\
 \vspace*{-2mm}\\
 \indent\indent\parbox{110mm}{
 where {\tt <function>\_1} and {\tt <function>\_2} are both Boolean
@@ -2668,15 +2666,14 @@ about restrict see Section~\ref{branch-prune-section}.}\\
 The syntax for this manipulator is}\\
 \vspace*{-3mm}\\
 \indent\indent\indent{\tt exist <function> <variable>}\\
-\indent\indent\indent{\tt exist( <function>, <variable>)}\\
 \vspace*{-2mm}\\
 \indent\indent\parbox{110mm}{
-where {\tt <function} is a Boolean function and {\tt <variable>} is a
+where {\tt <function>} is a Boolean function and {\tt <variable>} is a
 Boolean variable that {\tt <function>} depends on.  This manipulator
 existentially quantifies {\tt <variable>} out of {\tt <function>}.
-That is, let $f_{T}$ be {\tt <function>} with {\tt <variable>} set to
-{\em T} and let $f_{F}$ be {\tt <function>} with {\tt <variable>} set
-to {\em F}; then the Boolean function returned is $f_{T}\vee f_{F}$.
+That is, let $f|_{T}$ be {\tt <function>} with {\tt <variable>} set to
+{\em T} and let $f|_{F}$ be {\tt <function>} with {\tt <variable>} set
+to {\em F}; then the Boolean function returned is $f|_{T}\vee f|_{F}$.
 For more information about existentially quantifying away variables
 see Section~\ref{existential-section}.}\\
 
@@ -2686,16 +2683,16 @@ see Section~\ref{existential-section}.}\\
 The syntax for this manipulator is}\\
 \vspace*{-3mm}\\
 \indent\indent\indent{\tt universe <function> <variable>}\\
-\indent\indent\indent{\tt universe( <function>, <variable>)}\\
 \vspace*{-2mm}\\
 \indent\indent\parbox{110mm}{
-where {\tt <function} is a Boolean function and {\tt <variable>} is a
+where {\tt <function>} is a Boolean function and {\tt <variable>} is a
 Boolean variable that {\tt <function>} depends on.  This manipulator
-resolves away occurrences of {\tt <variable>} in {\tt <function>}.
-That is, consider {\tt <function>} to be expressed as a BDD, search
-for all occurrences of {\tt <variable>} in the BDD, and replace those
-nodes with the logical ``and'' of their substructures.  For more
-information about universe see Section~\ref{universe-section}.}\\
+universally quantifies {\tt <variable>} out of {\tt <function>}.
+That is, let $f|_{T}$ be {\tt <function>} with {\tt <variable>} set to
+{\em T} and let $f|_{F}$ be {\tt <function>} with {\tt <variable>} set
+to {\em F}; then the Boolean function returned is $f|_{T}\wedge f|_{F}$.
+For more information about universally quantifying away variables
+see Section~\ref{universe-section}.}\\
 
 \indent\textbf{TRUTH\_TABLE}\\
 \vspace*{-3mm}\\
@@ -2704,7 +2701,6 @@ Functions can be defined by their truth table using {\tt
 TRUTH\_TABLE}.  Syntax for this manipulator is}\\
 \vspace*{0mm}\\
 \indent\indent\indent{\tt truth\_table <\#vars> <var> ... <var> <TF-string>}\\
-\indent\indent\indent{\tt truth\_table(<\#vars>, <var>, ..., <var>, <TF-string>)}\\
 \vspace*{0mm}\\
 \indent\indent\parbox{110mm}{
 where {\tt <var>} are variables, {\tt <\#vars>} is the number of
@@ -2722,36 +2718,44 @@ The syntax of this function is as follows:}\\
 \vspace*{-3mm}\\
 \indent\indent\indent
 {\tt minmax <\#args> <min\_\#> <max\_\#> <blank\_separated\_var\_list>}\\
-\indent\indent\indent
-{\tt minmax (<\#args>, <min\_\#>, <max\_\#>, <comma\_separated\_var\_list>)}\\
 \vspace*{0mm}\\
 \indent\indent\parbox{110mm}{
 where the first three arguments are positive integers.  This function
-returns {\em T} if at least {\tt <min\_\#>} and at most {\tt
-<max\_\#>} of the variables in the {\tt <...\_var\_list>} have value
-{\em T}, returns {\em F} if more than {\tt <max\_\#>} or less than
-{\tt <min\_\#>} of the variables in the {\tt <...\_var\_list>} have 
-value {\em T}, returns no value otherwise.  The number {\tt <\#args>}
-is the number of variables in the {\tt <...\_var\_list>}.  The
+returns {\em T} if at least {\tt <min\_\#>} and at most {\tt <max\_\#>} of
+the variables in the {\tt <...\_var\_list>} have value {\em T} and returns
+{\em F} if more than {\tt <max\_\#>} or less than {\tt <min\_\#>} of the
+variables in the {\tt <...\_var\_list>} have value {\em T}.  The number {\tt
+<\#args>} is the number of variables in the {\tt <...\_var\_list>}.  The
 following is an example,}\\
 \vspace*{0mm}\\
-%\indent\indent\indent {\tt pprint\_tree( minmax(4, 1, 3, 13, 12, 11,
-%10))}\\
 \indent\indent\indent {\tt minmax(4, 1, 3, x13, x12, x11, x10)}\\
 \vspace*{-1mm}\\
 \indent\indent\parbox{110mm}{
 which has value {\em T} if at least 1 and no more than 3 of the
 variables {\tt x10}, {\tt x11}, {\tt x12}, {\tt x13} have value {\em T}.
 See the {\tt PRINT\_TREE} directive below to view the truth table for
-this function.}
+this function.}\\
+
+\indent\textbf{SAFE}\\
+\vspace*{-3mm}\\
+\indent\indent\parbox{110mm}{
+The syntax of this function is as follows:}\\
+\vspace*{-3mm}\\
+\indent\indent\indent{\tt safe <function> <variable>}\\
+\vspace*{0mm}\\
+\indent\indent\parbox{110mm}{
+This function returns either a safe assigment for <variable> in <function>
+if one exists. The Boolean function returned is either {\tt equ}(<variable>,
+{\em T}), {\tt equ}(<variable>, {\em F}), {\em T} (if no safe assignment
+exists), or {\em F} (if <variable> is safe for both truth values {\em T} and
+{\em F}). For more information about safe assignments see
+Section~\ref{safe-section}.}\\
 
 \subsubsection{Directives}\label{ref-directives-section}
 
 The syntax of a directive is\\
 \vspace*{-3mm}\\
 \indent{\tt <command> <arg>, ...}\\
-or\\
-\indent{\tt <command> (<arg>, ...)}\\
 \vspace*{-3mm}\\
 where {\tt <arg>} are Boolean functions or manipulators or variables.
 The following are commands and a description of how they apply their
@@ -2760,111 +2764,57 @@ arguments.
 \indent\textbf{INITIAL\_BRANCH}\\
 \vspace*{-3mm}\\ 
 \indent\indent\parbox{110mm}{ 
-The directive {\tt INITIAL\_BRANCH} may be invoked to request that
-certain variables be assigned values before any others when searching.
-The directive takes as argument a comma separated list of variables,
-wrapped between parentheses.  The list may be of any length and may be
-continued over many lines.  This directive is intended to be used when
-some key domain-specific information suggesting a particular search
-order has been revealed.  An example of this directive is the
-following:}\\
+The directive {\tt INITIAL\_BRANCH} may be invoked to request that certain
+variables be assigned values before any others during search. This directive
+is also capable of influencing which branch (the {\em True} branch or the
+{\em False} branch) will be tested first, for specified variables, during
+search.  This directive takes as argument a list of variables, wrapped
+between parentheses. The list may be of any length and may be continued over
+many lines. Variables in this list may optionally be postpended with a
+percent sign followed immediately by any real number between 0 and 100. The
+value following a percent sign will be factored into all the search
+heursitics embedded into {\tt sbsat} such that a value close to 0 influences
+the heursitic to more often assign {\em False} to the prepended variable,
+likewise for values close to 100; a value of exactly 50 has no effect on the
+heuristic. This directive can also take an optional first argument, a pound
+sign ({\tt \#} followed by a positive number. This argument determines the
+tier used to determine the order in which whole set of variables will be
+assigned values during search; smaller numbers are given precedence. This
+directive is intended to be used when some key domain-specific information
+suggesting a particular search order has been revealed.  An example of this
+directive is the following:}\\
 \vspace*{0mm}\\
 \indent {\tt ~~~initial\_branch (x1, x39, x5, x4, x24, x3)}\\
 \vspace*{0mm}\\
-\indent\indent\parbox{110mm}{ 
-This marks variables $x_1$, $x_{39}$, $x_5$, $x_4$, $x_{24}$, $x_3$ to
-be assigned values first.  The order in which these variables are
-selected for search completely depends on the search heuristic
-employed: all that {\tt initial\_branch} does is prevent variables
-which are not listed from being selected for assignment during search
-until all the listed variables have values.  It is possible that a
-non-listed variable is inference, however.  This directive is the only
-one which requires parenthesis around its argument list.  Wildcards
-are allowed: '{\tt *}' matches any combination of alphabetic, numeric,
-and underscore characters.  Thus, {\tt initial\_branch(x3*3)} means
-branch on all variables beginning with {\tt x3} and ending with {\tt
-3}.  The order in which wild card variables are searched is
-determined}\\ 
+\indent\indent\parbox{110mm}{
+This marks variables $x_1$, $x_{39}$, $x_5$, $x_4$, $x_{24}$, $x_3$ to be
+assigned values first.  The order in which these variables are selected for
+search completely depends on the search heuristic employed: all that {\tt
+initial\_branch} does here is prevent variables which are not listed from
+being selected for assignment during search until all the listed variables
+have values.  It is possible for a non-listed variable to be inferred,
+however.  This directive is the only one which requires parenthesis around
+its argument list.  Wildcards (standard regular expressions) are allowed:
+'{\tt *}' matches any combination of alphabetic, numeric, and underscore
+characters.  Thus, {\tt initial\_branch(x3*3)} means branch on all variables
+beginning with {\tt x3} and ending with {\tt 3}.}\\
 
 \indent\indent\parbox{110mm}{
-by the search heuristic.  There can be only one {\tt initial\_branch}
-directive in a file and it must be placed right after the header.}\\
-
-\indent\textbf{PRINT\_TREE}\\
-\vspace*{-3mm}\\
-\indent\indent\parbox{110mm}{\label{print-tree-page}
-The PRINT\_TREE function takes one Boolean function, extension or 
-manipulator as argument and prints an unfolded BDD representation 
-(tree form) of that function, top down, to standard output.  All 
-function prints are displayed before the solution.  In the printed
-tree, the left branch is the $T$ branch and the right branch is the 
-$F$ branch. For example,}\\
+The order in which wild card variables are searched is determined by the
+search heuristic. There can be multiple {\tt initial\_branch} directives in
+one. An example of this is the following:}\\
 \vspace*{0mm}\\
-\indent\indent\indent{\tt print\_tree(or3 (4, 5, -6) )}\\
-\vspace*{-1mm}\\
-\indent\indent\parbox{110mm}{
-prints the following to standard output:
-
--{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~6
-
-~~~~~~~~~~~~~~~~5~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~T
-
-~~~~~~~~T~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-~~~~~~~~~~~~~~~~~~T~~~~~~~F
-
--{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-
-}\\
-\vspace*{0mm}\\
-\indent\indent\parbox{110mm}{The line}\\
-\vspace*{-2mm}\\
-\indent\indent\indent{\tt print\_tree(minmax(4, 1, 3, x13, x12, x11, x10))}\\
+\indent {\tt ~~~initial\_branch (\#1, x1, x39\%20.5, x5)}\\
+\indent {\tt ~~~initial\_branch (\#2, x4, x24, x3\%80.25)}\\
 \vspace*{0mm}\\
 \indent\indent\parbox{110mm}{
-prints the following to standard output:\\
-
--{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~x13
-
-~~~~~~~~~~~~~~~~x12~~~~~~~~~~~~~~~~~~~~~~~~~~~~x12
-
-~~~~~~~~x11~~~~~~~~~~~~~~~T~~~~~~~~~~~~T~~~~~~~~~~~~x11
-
-~~~~x10~~~~~~~T~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~T~~~~~~x10
-
-~~F~~~~T~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~T~~~~F
-
--{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-
-}\\
-
-\indent\textbf{PPRINT\_TREE}\\
-\vspace*{-3mm}\\
-\indent\indent\parbox{110mm}{
-Does the same thing as {\tt PRINT\_TREE} except the output is in text
-form instead of graphical form with {\tt ite} used to indicate $T$ and
-$F$ branches.  For example,}\\
-\vspace*{0mm}\\
-\indent\indent\indent {\tt pprint\_tree(or3 (4, 5, -6) )}\\
-\vspace*{0mm}\\
-\indent\indent\parbox{110mm}{
-prints to standard output:
-
--{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-
-
-ite~6
-
-~~~~ite~5
-
-~~~~~~~~T
-
-~~~~~~~~ite~4~T~F
-
-~~~~T
-
--{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-~}\\
+This marks variables $x_1$, $x_{39}$, and $x_5$, to be assigned values first
+and variables $x_4$, $x_{24}$, $x_3$ to be assigned values second; all
+variables not listed will be considered by the heuristic after those
+appearing in {\tt initial\_branch} have been assigned values. Also, the
+heuristic value of variable $x_{39}$ will be influenced such that it is more
+likely be assigned the value {\em False}, likewise $x_3$ is more likely be
+assigned the value {\em True}.}\\
 
 \indent\textbf{\#DEFINE}\\
 \vspace*{-3mm}\\
@@ -2921,6 +2871,100 @@ example, after the following:}\\
 \indent\indent\parbox{110mm}{
 The function {\tt and(x, y, z, w)} is defined but {\tt and(x, y, z)}
 is not.}\\
+
+\indent\textbf{PRINT\_TREE}\\
+\vspace*{-3mm}\\
+\indent\indent\parbox{110mm}{\label{print-tree-page}
+The PRINT\_TREE function takes one Boolean function, extension or 
+manipulator as argument and prints an unfolded BDD representation 
+(tree form) of that function, top down, to standard output.  All 
+function prints are displayed before the solution.  In the printed
+tree, the left branch is the $T$ branch and the right branch is the 
+$F$ branch. For example,}\\
+\vspace*{0mm}\\
+\indent\indent\indent{\tt print\_tree(or3 (4, 5, -6))}\\
+\vspace*{-1mm}\\
+\indent\indent\parbox{110mm}{
+prints the following to standard output:
+
+-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~6
+
+~~~~~~~~~~~~~~~~5~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~T
+
+~~~~~~~~T~~~~~~~~~~~~~4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~T~~~~~~~F
+
+-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-
+}\\
+\vspace*{0mm}\\
+\indent\indent\parbox{110mm}{
+It is possible to control the variable ordering of the printed trees.
+Variables are ordered based on their where they first occur in the input
+file. The ordering can be controlled by creating a dummy define statement,
+for example:}\\
+\vspace*{-2mm}\\
+\indent\indent\indent{\tt \#define ordering(a, b, c, d) \# or4(a, b, c, d)}\\
+\vspace*{0mm}\\
+\indent\indent\parbox{110mm}{
+This forces variable $a$ to occur as or near the leaves of printed trees,
+and $d$ to occur as or near the root.
+For example, the lines}\\
+\vspace*{-2mm}\\
+\indent\indent\indent{\tt \#define ordering(b, a, d, c) \# or4(b, a, d, c)}\\
+\indent\indent\indent{\tt print\_tree(minmax(4, 1, 3, a, b, c, d))}\\
+\vspace*{0mm}\\
+\indent\indent\parbox{110mm}{
+prints the following to standard output (assuming $a$, $b$, $c$, and $d$ have not
+been previously defined):\\
+
+-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~c
+
+~~~~~~~~~~~~~~~~~d~~~~~~~~~~~~~~~~~~~~~~~~~~d
+
+~~~~~~~~~~a~~~~~~~~~~~~~~T~~~~~~~~~~T~~~~~~~~~~~~~a
+
+~~~~~~b~~~~~~T~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~T~~~~~~b
+
+~~F~~~~T~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~T~~~~F
+
+-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-
+}\\
+
+\indent\textbf{PPRINT\_TREE}\\
+\vspace*{-3mm}\\
+\indent\indent\parbox{110mm}{
+Does the same thing as {\tt PRINT\_TREE} except the output is in text
+form instead of graphical form with {\tt ite} used to indicate $T$ and
+$F$ branches.  For example,}\\
+\vspace*{0mm}\\
+\indent\indent\indent {\tt pprint\_tree(or3 (4, 5, -6))}\\
+\vspace*{0mm}\\
+\indent\indent\parbox{110mm}{
+prints to standard output:
+
+-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-
+
+ite~6
+
+~~~~ite~5
+
+~~~~~~~~T
+
+~~~~~~~~ite~4~T~F
+
+~~~~T
+
+-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-~}\\
+
+
+{\tt print\_xdd}
+
+{\tt print\_flat\_xdd}
 
 \subsection{CNF format}\label{ref-cnf-section}
 
@@ -3162,6 +3206,9 @@ permissable to reference a variable that appears for the first time
 further ahead in the file.  A solution is an assignment to input
 variables which causes all functions (statements) to have value {\em
 T}.
+
+\subsection{Prove format}\label{ref-prove-section}
+% here describe the prove format, or at least how to get from BMC to prove
 
 \subsection{{\sc Smurf} format}\label{ref-smurf-section}
 
