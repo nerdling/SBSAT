@@ -333,7 +333,7 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 			intnum = i_getsym(macros, SYM_VAR);
 
 			if(intnum >= numinp-2) {
-				fprintf (stderr, "\nToo many symbols used (%s). Need to increase to greater than %d...exiting:%d\n", macros, numinp-3, markbdd_line);
+				fprintf (stderr, "\nToo many symbols used (%s). Need to increase to greater than %ld...exiting:%d\n", macros, numinp-3, markbdd_line);
 				exit (1);
 			}
 
@@ -884,7 +884,7 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 	int v = i_getsym(macros, SYM_VAR);
 
 	if(v >= numinp-2) {
-		fprintf (stderr, "\nToo many symbols used (%s). Need to increase to greater than %d...exiting:%d\n", macros, numinp-3, markbdd_line);
+		fprintf (stderr, "\nToo many symbols used (%s). Need to increase to greater than %ld...exiting:%d\n", macros, numinp-3, markbdd_line);
 		exit (1);
 	}
 
