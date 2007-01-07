@@ -288,7 +288,7 @@ t_opt options[] = {
                 "Save depth/breadth statistic"},
 { &backjumping, "", "backjumping", P_INT, V(i:0,"0"), V(i:1,"1"), VAR_NORMAL, 0,
 		"Enable/Disable backjumping (1/0)"},
-{ &MAX_NUM_CACHED_LEMMAS, "L", "max-cached-lemmas", P_INT, 
+{ &MAX_NUM_CACHED_LEMMAS, "L", "max-cached-lemmas", P_INT,
 		V(i:0,"0"), V(i:5000, "5000"), VAR_NORMAL, 0,
                 "set the maximum # of lemmas"}, 
 { &USE_AUTARKY_SMURFS, "", "autarky-smurfs", P_INT, V(i:0,"0"), V(i:0,"0"), VAR_NORMAL, 0,
@@ -409,6 +409,7 @@ finish_params()
 	if(dependence == 'c') clear_dependance = 1;
 	
    if (MAX_NUM_CACHED_LEMMAS <= 0) {
+		NO_LEMMAS=1;
 		MAX_NUM_CACHED_LEMMAS = 0;
       backjumping = 0;
    }
