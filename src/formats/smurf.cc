@@ -154,7 +154,7 @@ void BDD_to_Smurfs () {
 		  integers[x].num[i] = tempint[i];
 		integers[x].num[y] = 0;
 	}
-	fprintf (foutputfile, "%ld # Number of Input Variables\n", numinp + 1);
+	fprintf (foutputfile, "%ld # Number of Input Variables\n", numinp);
 	fprintf (foutputfile, "%d # Number of Output Variables\n", nmbrFunctions);
 	for (x = 0; x < nmbrFunctions; x++)
 	  fprintf (foutputfile, "1");
@@ -351,14 +351,13 @@ void Smurfs_to_BDD () {
 		for (i = 1; i <= y + 1; i++) {
 			//vars[x].integers[i] = tempint[i - 1];
 			vars[x].integers[i] = tempint[i-1]==0?0:i_getsym_int(tempint[i-1], SYM_VAR);
+			if (vars[x].integers[i] == 0) {
+				fprintf(stderr, "Variable numbers must be positive integers greater than zero.\n");
+				exit(1);
+			}
 			if (vars[x].integers[i] > numinp) {
 				fprintf(stderr, "Variable number %d is larger than the allowed %ld\n", vars[x].integers[i], numinp);
 				exit(1);
-			}
-			if (vars[x].integers[i] == 0) {
-				//BDD's can't have the # 0 in them
-				flag = true;
-				vars[x].integers[i] = numinp+1;
 			}
 			//      fprintf(stderr, "%d|", vars[x].integers[i]);
 		}

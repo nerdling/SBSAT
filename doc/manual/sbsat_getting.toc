@@ -52,59 +52,61 @@
 \contentsline {subsubsection}{\numberline {9.1.4}Boolean function extensions}{53}
 \contentsline {subsubsection}{\numberline {9.1.5}Manipulators}{54}
 \contentsline {subsubsection}{\numberline {9.1.6}Directives}{56}
-\contentsline {subsection}{\numberline {9.2}CNF format}{60}
+\contentsline {subsection}{\numberline {9.2}CNF format}{61}
 \contentsline {subsubsection}{\numberline {9.2.1}Comments}{61}
 \contentsline {subsubsection}{\numberline {9.2.2}File Header}{61}
-\contentsline {subsubsection}{\numberline {9.2.3}Boolean functions}{61}
+\contentsline {subsubsection}{\numberline {9.2.3}Boolean functions}{62}
 \contentsline {subsection}{\numberline {9.3}DNF format}{62}
 \contentsline {subsubsection}{\numberline {9.3.1}Comments}{62}
 \contentsline {subsubsection}{\numberline {9.3.2}File Header}{62}
-\contentsline {subsubsection}{\numberline {9.3.3}Boolean functions}{62}
+\contentsline {subsubsection}{\numberline {9.3.3}Boolean functions}{63}
 \contentsline {subsection}{\numberline {9.4}XOR format}{63}
 \contentsline {subsubsection}{\numberline {9.4.1}Comments}{63}
 \contentsline {subsubsection}{\numberline {9.4.2}File Header}{63}
-\contentsline {subsubsection}{\numberline {9.4.3}Boolean functions}{63}
-\contentsline {subsection}{\numberline {9.5}Trace format}{64}
-\contentsline {subsubsection}{\numberline {9.5.1}Comments}{64}
+\contentsline {subsubsection}{\numberline {9.4.3}Boolean functions}{64}
+\contentsline {subsection}{\numberline {9.5}Trace format}{65}
+\contentsline {subsubsection}{\numberline {9.5.1}Comments}{65}
 \contentsline {subsubsection}{\numberline {9.5.2}File Header}{65}
-\contentsline {subsubsection}{\numberline {9.5.3}Boolean functions}{65}
+\contentsline {subsubsection}{\numberline {9.5.3}Boolean functions}{66}
 \contentsline {subsection}{\numberline {9.6}Prove format}{66}
 \contentsline {subsection}{\numberline {9.7}{\sc Smurf} format}{66}
-\contentsline {subsubsection}{\numberline {9.7.1}File Header}{66}
+\contentsline {subsubsection}{\numberline {9.7.1}File Header}{67}
 \contentsline {subsubsection}{\numberline {9.7.2}Boolean functions}{67}
-\contentsline {section}{\numberline {10}Reference - Preprocessing}{69}
-\contentsline {subsection}{\numberline {10.1}Binary Decision Diagrams (BDDs)}{69}
-\contentsline {subsection}{\numberline {10.2}Existential quantification}{72}
-\contentsline {subsection}{\numberline {10.3}Existentially quantify and}{76}
-\contentsline {subsection}{\numberline {10.4}Restrict}{76}
+\contentsline {section}{\numberline {10}Reference - Preprocessing}{70}
+\contentsline {subsection}{\numberline {10.1}Binary Decision Diagrams (BDDs)}{70}
+\contentsline {subsection}{\numberline {10.2}Pattern Matching: CNF}{72}
+\contentsline {subsection}{\numberline {10.3}Generalized Cofactor (GCF)}{73}
+\contentsline {subsection}{\numberline {10.4}Branch Pruning}{76}
 \contentsline {subsection}{\numberline {10.5}Strengthening}{79}
-\contentsline {subsection}{\numberline {10.6}Generalized Cofactor (GCF)}{80}
-\contentsline {subsection}{\numberline {10.7}Universe}{83}
-\contentsline {subsection}{\numberline {10.8}Clustering: CNF}{84}
-\contentsline {subsection}{\numberline {10.9}Inference}{85}
+\contentsline {subsection}{\numberline {10.6}Inferences}{80}
+\contentsline {subsection}{\numberline {10.7}Existential quantification}{81}
+\contentsline {subsection}{\numberline {10.8}Clustering + Existential Quantification}{83}
+\contentsline {subsection}{\numberline {10.9}Clustering + Existential Quantification + Safe}{85}
 \contentsline {subsection}{\numberline {10.10}Dependent variable clustering}{85}
-\contentsline {subsection}{\numberline {10.11}Splitter}{86}
-\contentsline {section}{\numberline {11}Reference - Search heuristics}{87}
-\contentsline {subsection}{\numberline {11.1}State Machines Used to Represent Functions ({\sc Smurf}s)}{87}
-\contentsline {subsection}{\numberline {11.2}Locally Skewed, Globally Balanced}{89}
-\contentsline {subsection}{\numberline {11.3}Chaff-like}{90}
-\contentsline {subsection}{\numberline {11.4}User defined search heuristic}{90}
-\contentsline {section}{\numberline {12}Reference - Search methods}{91}
-\contentsline {subsection}{\numberline {12.1}Backtracking and Lemmas}{91}
-\contentsline {subsubsection}{\numberline {12.1.1}Lemma cache}{91}
-\contentsline {subsubsection}{\numberline {12.1.2}Lemma effectiveness}{91}
-\contentsline {subsection}{\numberline {12.2}BDD WalkSAT}{91}
-\contentsline {subsection}{\numberline {12.3}WMV}{91}
-\contentsline {section}{\numberline {13}Reference - Output, results}{92}
-\contentsline {subsection}{\numberline {13.1}Raw}{92}
-\contentsline {subsection}{\numberline {13.2}Fancy}{92}
-\contentsline {section}{\numberline {14}Reference - Data structures}{94}
-\contentsline {subsection}{\numberline {14.1}BDD database}{94}
-\contentsline {subsection}{\numberline {14.2}{\sc Smurf}}{94}
-\contentsline {subsection}{\numberline {14.3}Lemma database}{94}
-\contentsline {section}{\numberline {15}Reference - Results: making BDDs from {\tt bmc}}{95}
-\contentsline {section}{\numberline {16}Reference - Results: Experiments}{98}
-\contentsline {section}{\numberline {17}Reference - Debugging}{105}
-\contentsline {subsection}{\numberline {17.1}Converting to another format}{105}
-\contentsline {subsection}{\numberline {17.2}Printing internal forms}{105}
-\contentsline {section}{\numberline {18}Reference - Writing Exploitable Input}{106}
+\contentsline {subsection}{\numberline {10.11}Rewind}{85}
+\contentsline {subsection}{\numberline {10.12}Splitter}{86}
+\contentsline {subsection}{\numberline {10.13}Universe}{87}
+\contentsline {section}{\numberline {11}Reference - Search heuristics}{88}
+\contentsline {subsection}{\numberline {11.1}State Machines Used to Represent Functions ({\sc Smurf}s)}{88}
+\contentsline {subsection}{\numberline {11.2}Locally Skewed, Globally Balanced}{90}
+\contentsline {subsection}{\numberline {11.3}Chaff-like}{91}
+\contentsline {subsection}{\numberline {11.4}User defined search heuristic}{91}
+\contentsline {section}{\numberline {12}Reference - Search methods}{92}
+\contentsline {subsection}{\numberline {12.1}Backtracking and Lemmas}{92}
+\contentsline {subsubsection}{\numberline {12.1.1}Lemma cache}{92}
+\contentsline {subsubsection}{\numberline {12.1.2}Lemma effectiveness}{92}
+\contentsline {subsection}{\numberline {12.2}BDD WalkSAT}{92}
+\contentsline {subsection}{\numberline {12.3}WVF}{92}
+\contentsline {section}{\numberline {13}Reference - Output, results}{93}
+\contentsline {subsection}{\numberline {13.1}Raw}{93}
+\contentsline {subsection}{\numberline {13.2}Fancy}{93}
+\contentsline {section}{\numberline {14}Reference - Data structures}{95}
+\contentsline {subsection}{\numberline {14.1}BDD database}{95}
+\contentsline {subsection}{\numberline {14.2}{\sc Smurf}}{95}
+\contentsline {subsection}{\numberline {14.3}Lemma database}{95}
+\contentsline {section}{\numberline {15}Reference - Results: making BDDs from {\tt bmc}}{96}
+\contentsline {section}{\numberline {16}Reference - Results: Experiments}{99}
+\contentsline {section}{\numberline {17}Reference - Debugging}{106}
+\contentsline {subsection}{\numberline {17.1}Converting to another format}{106}
+\contentsline {subsection}{\numberline {17.2}Printing internal forms}{106}
+\contentsline {section}{\numberline {18}Reference - Writing Exploitable Input}{107}

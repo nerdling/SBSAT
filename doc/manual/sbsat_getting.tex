@@ -1635,7 +1635,7 @@ Cluster + ExQuant + Safe&yes&Es&All&see Section~\ref{existential-safe-section}
 \tabularnewline\hline
 Dependent Var.\ Clustering&yes&Dc&All&see Section~\ref{dep-var-clus-section}
 \tabularnewline\hline
-Rewind&yes&Rw&All&see Section~\ref{dep-var-clus-section}
+Rewind&yes&Rw&All&see Section~\ref{rewind-section}
 \tabularnewline\hline
 Splitter&yes&Sp&All&see Section~\ref{splitter-section}
 \tabularnewline\hline
@@ -2657,8 +2657,8 @@ functions or variables.  The Boolean function returned by this
 manipulator is {\tt <function>\_1} with branches overlapping {\tt
 <function>\_2} pruned.  That is, if $t$ is an assignment satisfying
 {\tt <function>\_2} but not {\tt <function>\_1}, then $t$ also
-satisfies the function returned by {\tt restrict}.  To find out more
-about restrict see Section~\ref{branch-prune-section}.}\\
+satisfies the function returned by {\tt prune}.  To find out more
+about branch pruning see Section~\ref{branch-prune-section}.}\\
 
 \indent\textbf{EXIST}\\
 \vspace*{-3mm}\\
@@ -2962,9 +2962,41 @@ ite~6
 -{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-~}\\
 
 
-{\tt print\_xdd}
+\indent\textbf{PPRINT\_XDD}\\
+\vspace*{-3mm}\\
+\indent\indent\parbox{110mm}{
+Does a similar thing to {\tt PRINT\_TREE} except the output is shown in terms
+of nested ANDs and XORs. For example,}\\
+\vspace*{0mm}\\
+\indent\indent\indent {\tt print\_xdd(or3 (4, 5, -6))}\\
+\vspace*{0mm}\\
+\indent\indent\parbox{110mm}{
+prints to standard output:
 
-{\tt print\_flat\_xdd}
+-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-
+
+x[6]$*$(x[5]$*$(x[4] + 1) + x[4] + 1) + 1 = 1
+
+-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-~}\\
+
+
+\indent\textbf{PPRINT\_FLAT\_XDD}\\
+\vspace*{-3mm}\\
+\indent\indent\parbox{110mm}{
+Does the same thing as {\tt PRINT\_XDD} except the function is displayed in
+its unnested form. For example,}\\
+\vspace*{0mm}\\
+\indent\indent\indent {\tt print\_flat\_xdd(or3 (4, 5, -6))}\\
+\vspace*{0mm}\\
+\indent\indent\parbox{110mm}{
+prints to standard output:
+
+-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-
+
+x[4]$*$x[5]$*$x[6] + x[5]$*$x[6] + x[4]$*$x[6] + x[6] = 0
+
+-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-~}\\
+
 
 \subsection{CNF format}\label{ref-cnf-section}
 
@@ -3168,7 +3200,7 @@ departure from the use of '{\tt ;}' in the actual CMU trace format.
 
 The file header consists of the input and output sections.  Both
 sections list variables which appear in functions specified in the
-structure section.  Secification of these sections is shown in
+structure section.  Specification of these sections is shown in
 Figure~\ref{trace-format-figure}.  The field {\tt <var>} is the name
 of a variable and uses any combination of alphabetic and numeric
 characters and underscore.  A variable list may be continued over
@@ -3193,27 +3225,27 @@ argument of {\tt new\_int\_leaf} is {\em 0} or {\em 1}, respectively, or\\
 \vspace*{-3mm}\\
 \indent{\tt <var> = <function-identifier>(<var>, ..., <var>)}\\
 \vspace*{-3mm}\\ 
-where {\tt <function-identifier>} is one of {\tt and}, {\tt or}, {\tt
-nand}, {\tt nor}, {\tt xor}, {\tt xnor}, {\tt not}, and {\tt ite}.
-The variable lists of all but {\tt ite} and {\tt not} can be
-arbitrarily long.  The argument lists for {\tt ite} and {\tt not} must
-have exactly three and exactly one argument(s), respectively.  Observe
-there is no nesting of functions as in the case of the canonical form.
-Instead, an equality is defined and the leftside (temporary) variable,
-not appearing in either input or output section, is used as argument
-in other functions.  Unlike the case for the canonical form, it is
-permissable to reference a variable that appears for the first time
-further ahead in the file.  A solution is an assignment to input
-variables which causes all functions (statements) to have value {\em
-T}.
+where {\tt <function-identifier>} is one of {\tt not}, {\tt and}, {\tt
+nand}, {\tt or}, {\tt nor}, {\tt equ}, {\tt xor}, {\tt imp}, {\tt limp},
+{\tt lnimp}, {\tt rimp}, {\tt rnimp}, {\tt ite}. The variable lists of all
+but {\tt ite} and {\tt not} can be arbitrarily long.  The argument lists for
+{\tt ite} and {\tt not} must have exactly three and exactly one argument(s),
+respectively.  Observe there is no nesting of functions as in the case of
+the canonical form. Instead, an equality is defined and the leftside
+(temporary) variable, not appearing in either input or output section, is
+used as argument in other functions.  It is permissable to reference a
+variable that appears for the first time further ahead in the file.  A
+solution is an assignment to input variables which causes all functions
+(statements) to have value {\em T}.
 
 \subsection{Prove format}\label{ref-prove-section}
-% here describe the prove format, or at least how to get from BMC to prove
+See Section~\ref{the-reduction} for details.
+
 
 \subsection{{\sc Smurf} format}\label{ref-smurf-section}
 
 This input format is intended for low-level truth table input.
-Variables are represented as non-negative integers.  Any set of
+Variables are represented as positive integers.  Any set of
 Boolean functions can be accomodated.  Each function is specified in a
 section of three lines: the first line numbers the function, the
 second line specifies the variables that the function depends on, the
@@ -3224,8 +3256,8 @@ separate line.  A list of functions is terminated with the character
 '{\tt @}' on a line by itself at the end of the file.  The header
 contains a line indicating a goal value for each function. A solution
 to the problem defined in a file is an assignment causing all Boolean
-functions to attain their goal value.  There are no comments
-manipulators or directives in this format.
+functions to attain their goal value.  There are no comments,
+manipulators, or directives in this format.
 
 \subsubsection{File Header}
 
@@ -3241,6 +3273,7 @@ example is the following:\\
 \indent{\tt 110101 \# Output values}\\
 \vspace*{-3mm}\\
 for a file with variables numbered 0-4 and 6 output functions.
+
 
 \subsubsection{Boolean functions}
 
@@ -3331,20 +3364,20 @@ variables is a solution.
 
 \begin{figure}
 \begin{verbatim}
-   3 # number of variables
+   4 # number of variables
    4 # number of functions
    1101 # output vector
    #
    0
-   0 1 3 -1
+   1 2 3 -1
    00110110
    #
    1
-   0 2 3 -1
+   1 2 4 -1
    and= 130
    #
    2
-   0 1 3 -1
+   2 3 4 -1
    or= 311
    #
    3
@@ -3380,7 +3413,7 @@ non-terminal has exactly two outgoing edges, labeled {\em T} and/or
 {\em F}, and the vertices incident to edges outgoing from vertex {\em
 v} are called $true(v)$ and $false(v)$, respectively.  Associated with
 any non-terminal vertex {\em v} is an attribute called $index(v)$
-which satisfies the properties $index(v) < \min\{index(true(v)),
+which satisfies the properties $index(v) > \max\{index(true(v)),
 index(false(v))\}$ and $index(v) = index(w)$ if and only if vertices
 {\em v} and {\em w} have the same labeling (that is, correspond to the
 same variable).  Thus, the {\em index} attribute imposes a linear
@@ -3479,6 +3512,321 @@ given in pseudo C++ style:\\
 {\tt Reduce$_T$($x$,$f$)} returns $f$ constrained by the assignment of
 {\em T} to variable $x$ and {\tt Reduce$_F$($x$,$f$)} returns $f$
 constrained by the assignment of {\em F} to the variable $x$.
+
+\subsection{Pattern Matching: CNF}\label{clustering-section}
+
+The current version of {\tt sbsat} supports clustering only when CNF
+input is given.  Our clustering algorithm is influenced solely by
+observing patterns in CNF formulas due to the {\tt dlx} benchmarks
+from CMU.  Those benchmarks, before translation to CNF, consist of
+numerous lines almost all of which have a form similar to one of the 
+following:
+\begin{eqnarray*}
+&&x = and(v_1, v_2, ..., v_k)\\
+&&x = or(v_1, v_2, ..., v_k)\\
+&&x = ite(v_1, v_2, v_3)
+\end{eqnarray*}
+A pass is made through all clauses of a given CNF formula looking for 
+patterns similar to the following:
+\begin{eqnarray*}
+&&(v_1\vee \bar v_2\vee \bar v_3\vee ... \vee \bar v_k)\\
+&&(\bar v_1\vee v_2)~~~~
+(\bar v_1\vee v_3)~~~~
+...~~~~
+(\bar v_1\vee v_k)
+\end{eqnarray*}
+which in this case represents the first of the three expressions
+above.  Clauses equivalent to the second expression are similar (one
+large clause and several binary clauses) differing only in which
+literals are negated.  If a set of clauses matching the form above is
+found, then those clauses are replaced by a single BDD representing
+the corresponding $x=and(...)$ or $x=or(...)$ expression.  In the case
+of the $ite(...)$ expression a pattern of six clauses of the following
+form:
+\begin{eqnarray*}
+&&(v_1\vee v_2\vee \bar v_4)~~~
+(v_1\vee \bar v_2\vee \bar v_3)~~~
+(\bar v_1\vee \bar v_2\vee v_3)~~~
+(\bar v_1\vee v_2\vee v_4)
+\end{eqnarray*}
+is replaced by a BDD representing the third expression above.  In
+addition, if such a pattern is found the following two clauses may
+also be removed from the original CNF formula during the clustering 
+operation without consequence:
+\[(v_1\vee \bar v_3\vee \bar v_4)~~~(\bar v_1\vee v_3\vee v_4)~~~\]
+Any BDD constructed in this way is marked with a special function
+identifier so that the corresponding {\sc Smurf} will be 
+smaller than otherwise.
+
+
+\subsection{Generalized Cofactor (GCF)}\label{gcf-section}
+
+The {\tt generalized cofactor} operation, denoted by {\tt gcf} here
+and also known as {\tt constrain} in the literature, uses {\em sibling
+substitution} to reduce BDD size.  However, unlike {\tt Prune},
+it can produce BDDs far larger than the original.  Given
+two functions, $f$ and $c$, the function $g={\tt gcf}(f,c)$ is such that
+$f\wedge c$ is the same as $g\wedge c$.  In the process, $g$ may be
+somehow reduced compared to $f$ as is the case for {\tt Prune}.
+Unlike {\tt Prune}, the following is true as well:\\
+
+\indent\parbox{4.5in}{ Given Boolean functions $f_1,...,f_k$, for
+any $1\leq i\leq k$, 
+$f_1\wedge f_2\wedge ... \wedge f_k$ is satisfiable if and only if
+${\tt gcf}(f_1,f_i)\wedge ... \wedge {\tt gcf}(f_{i-1},f_i)\wedge 
+{\tt gcf}(f_{i+1},f_i)\wedge ... \wedge {\tt gcf}(f_k,f_i)$
+is satisfiable.  Moreover, any assignment satisfying the latter can be
+extended to satisfy $f_1\wedge ...\wedge f_k$.}\\
+
+\noindent
+This means that, for the purposes of a solver, {\tt generalized
+cofactoring} can be used to eliminate one of the BDDs among a given
+conjoined set of BDDs: the solver finds an assignment satisfying
+${\tt gcf}(f_1,f_i)\wedge ...\wedge {\tt gcf}(f_k,f_i)$ and then extends the
+assignment to satisfy $f_i$, otherwise the solver reports that the
+instance has no solution.  However, unlike {\tt Prune}, generalized
+cofactoring cannot by itself reduce the number of variables in a given
+collection of BDDs.  Other properties of the {\tt gcf} operation are:
+\begin{enumerate}
+\item
+$f=c\wedge${\tt gcf}$(f,c)\vee \neg c\wedge${\tt gcf}$(f,\neg c)$.
+\item
+{\tt gcf}$(${\tt gcf}$(f,g),c) =$ {\tt gcf}$(f, g\wedge c)$.
+\item
+{\tt gcf}$(f\wedge g, c)=$ {\tt gcf}$(f,c)\wedge$ {\tt gcf}$(g,c)$.
+\item
+{\tt gcf}$(f\wedge c, c)=$ {\tt gcf}$(f,c)$.
+\item
+{\tt gcf}$(f\wedge g, c)=$ {\tt gcf}$(f,c)\wedge$ {\tt gcf}$(g,c)$.
+\item
+{\tt gcf}$(f\vee g, c)=$ {\tt gcf}$(f,c)\vee$ {\tt gcf}$(g,c)$.
+\item
+{\tt gcf}$(f\vee \neg c, c)=$ {\tt gcf}$(f,c)$.
+\item
+{\tt gcf}$(\neg f,c)= \neg$ {\tt gcf}$(f,c)$.
+\item
+If $c$ and $f$ have no variables in common and $c$ is satisfiable then
+${\tt gcf}(f,c) = f$.
+\end{enumerate}
+
+Care must be taken when cofactoring in ``both'' directions (exchanging
+$f$ for $c$).  For example, $f\wedge g\wedge h$ cannot be replaced
+by ${\tt gcf}(g,f)\wedge {\tt gcf}(f,g)\wedge h$ since the former may
+be unsatisfiable when the latter is satisfiable.
+
+\noindent
+The pseudo C++ description of {\tt gcf} is as follows:\\
+\vspace*{-3mm}\\
+{\footnotesize
+\indent{\tt BDD gcf (BDD {\em f}, BDD {\em c}) \{}\\
+\indent\indent{\tt if ({\em f} == {\em F} || {\em c} == {\em F}) return {\em F};}\\
+\indent\indent{\tt if ({\em c} == {\em T} || {\em f} == {\em T}) return {\em f};}\\
+\indent\indent{\tt let $x_m = index^{-1}(\min\{index(root(c)), index(root(f))\})$;}\\
+\indent\indent{\tt // $x_m$ is the top variable of {\em f} and {\em c}}\\
+\indent\indent{\tt if (Reduce$_F$($x_m$, {\em c}) == {\em F}) return
+gcf(Reduce$_T$($x_m$, {\em f}), Reduce$_T$($x_m$, {\em c}));}\\
+\indent\indent{\tt if (Reduce$_T$($x_m$, {\em c}) == {\em F}) return
+gcf(Reduce$_F$($x_c$, {\em f}), Reduce$_F$($x_c$, {\em c}));}\\
+\indent\indent{\tt let $h_T$ = gcf(Reduce$_T$($x_m$, {\em f}),
+Reduce$_T$($x_m$, {\em c}));}\\
+\indent\indent{\tt let $h_F$ = gcf(Reduce$_F$($x_m$, {\em f}),
+Reduce$_F$($x_m$, {\em c}));}\\
+\indent\indent{\tt if ($h_T$ == $h_F$) return $h_T$;}\\
+\indent\indent{\tt return find\_or\_add\_node($x_m$, $h_T$, $h_F$);}\\
+\indent{\tt \}}\\}
+
+\begin{figure}
+\hspace*{1mm}\epsfig{figure=Fig/cofactoring2a.eps, width=2.25in}
+\vspace*{-38mm}\\
+\hspace*{70mm}\epsfig{figure=Fig/cofactoring1a.eps, width=1.5in}
+\vspace*{10mm}\\
+\hspace*{30mm}\epsfig{figure=Fig/cofactoring3a.eps, width=2.5in}
+\caption{Generalized cofactor operation on $f$ and $c$ as shown.
+In this case the result is more complicated than $f$.  The variable
+ordering is $x_1$, $x_2$, $x_3$, $x_4$.}
+\label{gcf-example-figure}
+\end{figure}
+
+\noindent
+Figure~\ref{gcf-example-figure} presents an example of its use
+illustrating the possibility of increasing BDD size.
+Figure~\ref{gcf-example-1-figure} presents the same example after
+swapping $x_1$ and $x_4$ under the same variable ordering and shows
+that result produced by {\tt gcf} is sensitive to variable ordering.
+Observe that the functions produced by {\tt gcf} in both Figures have
+different values under the assignment $x_1 = T$, $x_3 = T$, and $x_4 =
+F$.  Thus, the function returned by {\tt gcf} depends on the variable
+ordering as well.
+
+\begin{figure}
+\hspace*{1mm}\epsfig{figure=Fig/gcf2.eps, width=3.5in}
+\vspace*{-43mm}\\
+\hspace*{90mm}\epsfig{figure=Fig/gcf1.eps, width=1.25in}
+\vspace*{10mm}\\
+\hspace*{30mm}\epsfig{figure=Fig/gcf3.eps, width=2.25in}
+\caption{Generalized cofactor operation on the same $f$ and $c$ of
+Figure~\ref{gcf-example-figure} and with the same variable ordering
+but with $x_1$ and $x_4$ swapped.  In this case the result is less 
+complicated than $f$.}
+\label{gcf-example-1-figure}
+\end{figure}
+
+
+\subsection{Branch Pruning}\label{branch-prune-section}
+
+Branch pruning is an operation on two BDDs.  The intention is
+to remove paths from one BDD which are made irrelevant by the
+other BDD.  The following specifies how this is done in pseudo-C++ style:\\
+\vspace*{-3mm}\\
+{\footnotesize
+\indent{\tt BDD Prune (BDD {\em f}, BDD {\em c}) \{}\\
+\indent\indent{\tt if ({\em c} == {\em T} || {\em f} == {\em F} ||
+{\em f} == {\em T}) return {\em f};}\\
+\indent\indent{\tt if ({\em c} == $\neg${\em f}) return {\em F};}\\
+\indent\indent{\tt if ({\em c} == {\em f}) return {\em T};}\\
+\indent\indent{\tt // {\em f} and {\em c} have a non-trivial relationship}\\
+\indent\indent{\tt let $x_f$ = root({\em f});  // $x_f$ is a variable}\\
+\indent\indent{\tt let $x_c$ = root({\em c});  // $x_c$ is a variable}\\
+\indent\indent{\tt if ({\em index}($x_f$) > {\em index}($x_c$) return
+Prune({\em f}, ExQuant({\em c}, $x_c$));}\\
+\indent\indent{\tt if (Reduce$_F$($x_f$, c) == {\em F}) return
+Prune(Reduce$_T$($x_f$, {\em f}), Reduce$_T$($x_f$, {\em c}));}\\
+\indent\indent{\tt if (Reduce$_T$($x_f$, c) == {\em F}) return
+Prune(Reduce$_F$($x_f$, {\em f}), Reduce$_F$($x_f$, {\em c}));}\\
+\indent\indent{\tt let $h_{f_T}$ = Prune(Reduce$_T$($x_f$, f),
+  Reduce$_T$($x_f$, c));  // $h_{f_T}$ is a BDD}\\
+\indent\indent{\tt let $h_{f_F}$ = Prune(Reduce$_F$($x_f$, f),
+  Reduce$_F$($x_f$, c));  // $h_{f_F}$ is a BDD}\\
+\indent\indent{\tt if ($h_{f_T}$ == $h_{f_F}$) return $h_{f_T}$;}\\
+\indent\indent{\tt return find\_or\_add\_node($x_f$, $h_{f_T}$, $h_{f_F}$);}\\
+\indent{\tt \}}\\
+\vspace*{-3mm}\\}
+The procedure {\em Prune} takes two BDDs which are top-level functions
+as input and returns a BDD which can replace the BDD of argument {\em
+f} at the top-level.  Figure~\ref{prune-1-figure} shows an example.
+
+\begin{figure}
+\hspace*{6mm}\epsfig{figure=Fig/branch_prune_bdd.eps, width=4.5in}
+\caption{Example of {\bf prune}.  Procedure {\tt Prune} is applied to
+the left two BDDs and returns the right BDD.}
+\label{prune-1-figure} 
+\vspace*{6mm}
+\hspace*{24mm}\epsfig{figure=Fig/branch_prune_example_1.eps, width=3.3in}
+\caption{Prune on one variable ordering produces no result.}
+\label{prune-2-figure}
+\vspace*{6mm}
+\hspace*{24mm}\epsfig{figure=Fig/branch_prune_example_2.eps, width=3.3in}
+\caption{But changing the variable order results in an inference from
+pruning the two functions in Figure~\ref{prune-2-figure}.}
+\label{prune-3-figure}
+\end{figure}
+
+Branch pruning can reveal inferences but this depends on the variable
+ordering.  Figure~\ref{prune-2-figure} shows {\tt Prune} applied to two
+BDDs with no result.  BDDs representing the same two functions but
+under a different variable ordering are pruned in
+Figure~\ref{prune-3-figure} revealing the inference $x_3=F$.
+
+Branch pruning is similar to a procedure called generalized cofactor
+or constrain (see Section~\ref{gcf-section} for a description).  Both
+{\tt Prune}$(f,c)$ and {\tt gcf}$(f,c)$ agree with $f$ {\em on interpretations
+where $c$ is satisfied,} but are generally somehow simpler than $f$.
+Both are highly dependent upon variable ordering, so both might be
+considered ``non-logical.''  Branch pruning is implemented in SBSAT because the
+BDDs produced from it tend to be smaller.  In any case, unlike for
+gcf, BDDs can never gain in size using branch pruning.
+
+There appear to be two gains to using branch pruning.  First, it can make
+{\sc Smurf}s smaller (see Section~\ref{smurf-section} for information
+about {\sc Smurf}s).  Second, it often {\em appears}, by avoiding
+duplicated information, to make the LSGB search heuristic's evidence
+combination rule work better.  
+
+On the negative side, it can, in odd cases, lose local information.
+Although it may reveal some of the inferences that strengthening would
+(see below), branch pruning can still cause the number of choicepoints to
+increase.  Both these issues are related: branch pruning can spread an
+inference that is evident in one BDD over multiple BDDs (see
+Figure~\ref{prune-4-figure} for an example).
+
+\begin{figure}
+\hspace*{6mm}\epsfig{figure=Fig/restrict.eps, width=4.5in}
+\caption{Example of {\bf branch pruning} spreading an inference from one BDD
+to another.  If $x_2$ is assigned 0 in $f$ then $x_4=0$ and $x_3=0$
+are inferred.  After applying {\tt Prune} to $f$ and $c$ and
+replacing $f$ with $f^\prime$, to get the inference $x_3=0$ from
+the choice $x_2=0$ visit $c$ to get $x_4=0$ and then $f^\prime$ to
+get $x_3=0$.  Thus, branch pruning can increase work if not used properly.
+In this case, pruning in the reverse direction leads to a better
+result.}
+\label{prune-4-figure} 
+\end{figure}
+
+
+\subsection{Strengthening}\label{strengthening-section}
+
+This binary operation on BDDs helps reveal inferences that are missed
+by branch pruning due to its sensitivity to variable ordering.
+Given two BDDs, $b_1$ and $b_2$, strengthening conjoins $b_1$ with 
+the {\em projection} of $b_2$ onto the variables of $b_1$:
+that is, $b_1\wedge\exists{\vec x}b_2$, where $\vec x$ is the set of 
+variables appearing in $b_2$ but not in $b_1$.  Strengthening each
+$b_i$ against all other $b_j$s sometimes reveals additional inferences
+or equivalences as above.  Figure~\ref{strengthen-figure} shows an example.
+The following is pseudo C++ code implementing strengthening:\\
+\vspace*{-3mm}\\
+{\footnotesize
+\indent{\tt BDD Strengthen (BDD $b_1$, BDD $b_2$) \{}\\
+\indent\indent{\tt let ${\vec x}=\{x : x\in b_2, x\notin b_1\}$;}\\
+\indent\indent{\tt for all ($x\in {\vec x}$) $b_2$ = ExQuant($b_2$, $x$);}\\
+\indent\indent{\tt return $b_1\wedge b_2$;}\\
+\indent{\tt \}}\\}
+
+\begin{figure}
+\hspace*{24mm}\epsfig{figure=Fig/strengthening_1.eps, width=2.6in}
+\vspace*{.1in}\\
+\centerline{{\bf Strengthening example}: Existentially quantify away $x_1$...}
+\vspace*{6mm}\\
+\hspace*{10mm}\epsfig{figure=Fig/strengthening_2.eps, width=3.8in}
+\caption{...then conjoin the two BDDs.  Inference revealed is $x_3=F$.}
+\label{strengthen-figure}
+\end{figure}
+
+Strengthening is a way to pass important information from one BDD to
+another without causing a size explosion.  No explosion can occur
+because before $b_1$ is conjoined with $b_2$, all variables in $b_2$
+that don't occur in $b_1$ are existentially quantified away.  If an
+inference (of the form $x=T$, $x=F$, $x=+y$, or $x=-y$) exists due to
+just two BDDs, then strengthening those BDDs against each other
+(pairwise) can ``move'' those inferences, even if originally spread
+across both BDDs, to one of the BDDs.  Because strengthening shares
+information between BDDs it can be thought of as sharing intelligence
+and ``strengthening'' the relationships between functions; the added
+intelligence in these strengthened functions can be exploited by a
+smart search heuristic.  We have found that, in general, strengthening
+decreases the number of choicepoints when used in conjunction with the
+LSGB heuristic, though in strange cases it can also increase the
+number of choicepoints.  We believe this is due to the delicate nature
+of some problems where duplicating information in the BDDs leads the
+heuristic astray.  Strengthening may be applied to CNF formulas 
+and in this case it is the same as applying Davis-Putnam resolution
+selectively on some of the clauses.  When used on more complex
+functions it is clearer how to use it effectively as the clauses being
+resolved are grouped with some meaning.  Evidence for this comes from
+from examples from Bounded Model Checking (see Section~\ref{results-section}).
+
+
+\subsection{Inferences}\label{inference-section}
+
+At BDD build time, meaning every time a BDD is modified by any
+preprocessing function, inferences are collected and attached to every
+pertinent node of the BDDs. This makes it a very simple process to
+check a BDD for inferences: just look at the list attached to the top
+node of any BDD and you'll see it's inferences. There are 4 types of
+inferences in the form of $x=T$, $x=F$, $x=y$, $x=-y$.  As soon as any
+BDD has inferences to give, it's inferences are applied to every
+applicable BDD.
+
 
 \subsection{Existential quantification}\label{existential-section}
 
@@ -3580,7 +3928,7 @@ continues until no variables are included in a single BDD.  Thus,
 after existential quantification, all variables are in at least two
 BDDs.
 
-\subsection{Existentially quantify and}\label{existential-all-section}
+\subsection{Clustering + Existential Quantification}\label{existential-all-section}
 
 This preprocessing function conjoins BDDs so that at least one
 variable can be existentially quantified away from the entire
@@ -3593,337 +3941,12 @@ lowest number of BDDs a variable occurs in is greater than some
 hard-wired constant (right now called MAX\_EXQUANTIFY\_CLAUSES in the
 source code).
 
-\subsection{Restrict}\label{branch-prune-section}
+\subsection{Clustering + Existential Quantification + Safe}\label{existential-safe-section}
 
-Restrict is an operation on two BDDs.  The intention of restrict
-is to remove paths from one BDD which are made irrelevant by the
-other BDD.  The following specifies how this is done in pseudo-C++ style:\\
-\vspace*{-3mm}\\
-{\footnotesize
-\indent{\tt BDD Restrict (BDD {\em f}, BDD {\em c}) \{}\\
-\indent\indent{\tt if ({\em c} == {\em T} || {\em f} == {\em F} ||
-{\em f} == {\em T}) return {\em f};}\\
-\indent\indent{\tt if ({\em c} == $\neg${\em f}) return {\em F};}\\
-\indent\indent{\tt if ({\em c} == {\em f}) return {\em T};}\\
-\indent\indent{\tt // {\em f} and {\em c} have a non-trivial relationship}\\
-\indent\indent{\tt let $x_f$ = root({\em f});  // $x_f$ is a variable}\\
-\indent\indent{\tt let $x_c$ = root({\em c});  // $x_c$ is a variable}\\
-\indent\indent{\tt if ({\em index}($x_f$) > {\em index}($x_c$) return
-Restrict({\em f}, ExQuant({\em c}, $x_c$));}\\
-\indent\indent{\tt if (Reduce$_F$($x_f$, c) == {\em F}) return
-Restrict(Reduce$_T$($x_f$, {\em f}), Reduce$_T$($x_f$, {\em c}));}\\
-\indent\indent{\tt if (Reduce$_T$($x_f$, c) == {\em F}) return
-Restrict(Reduce$_F$($x_f$, {\em f}), Reduce$_F$($x_f$, {\em c}));}\\
-\indent\indent{\tt let $h_{f_T}$ = Restrict(Reduce$_T$($x_f$, f),
-  Reduce$_T$($x_f$, c));  // $h_{f_T}$ is a BDD}\\
-\indent\indent{\tt let $h_{f_F}$ = Restrict(Reduce$_F$($x_f$, f),
-  Reduce$_F$($x_f$, c));  // $h_{f_F}$ is a BDD}\\
-\indent\indent{\tt if ($h_{f_T}$ == $h_{f_F}$) return $h_{f_T}$;}\\
-\indent\indent{\tt return find\_or\_add\_node($x_f$, $h_{f_T}$, $h_{f_F}$);}\\
-\indent{\tt \}}\\
-\vspace*{-3mm}\\}
-The procedure {\em Restrict} takes two BDDs which are top-level functions
-as input and returns a BDD which can replace the BDD of argument {\em
-f} at the top-level.  Figure~\ref{prune-1-figure} shows an example.
+This process functions like `Clustering + Existential Quantification' but
+before a variable is quantified it is checked for a safe assignment. If a
+safe assignment exists, it is recorded and applied.
 
-\begin{figure}
-\hspace*{6mm}\epsfig{figure=Fig/branch_prune_bdd.eps, width=4.5in}
-\caption{Example of {\bf restrict}.  Procedure Restrict is applied to
-the left two BDDs and returns the right BDD.}
-\label{prune-1-figure} 
-\vspace*{6mm}
-\hspace*{24mm}\epsfig{figure=Fig/branch_prune_example_1.eps, width=3.3in}
-\caption{Restrict on one variable ordering produces no result.}
-\label{prune-2-figure}
-\vspace*{6mm}
-\hspace*{24mm}\epsfig{figure=Fig/branch_prune_example_2.eps, width=3.3in}
-\caption{But changing the variable order results in an inference from
-restricting the two functions in Figure~\ref{prune-2-figure}.}
-\label{prune-3-figure}
-\end{figure}
-
-Restrict can reveal inferences but this depends on the variable
-ordering.  Figure~\ref{prune-2-figure} shows Restrict applied to two
-BDDs with no result.  BDDs representing the same two functions but
-under a different variable ordering are Restricted in
-Figure~\ref{prune-3-figure} revealing the inference $x_3=F$.
-
-Restrict is similar to a procedure called generalized cofactor
-or constrain (see Section~\ref{gcf-section} for a description).  Both
-Restrict$(f,c)$ and gcf$(f,c)$ agree with $f$ {\em on interpretations
-where $c$ is satisfied,} but are generally somehow simpler than $f$.
-Both are highly dependent upon variable ordering, so both might be
-considered ``non-logical.''  Restrict is implemented in SBSAT because the
-BDDs produced from it tend to be smaller.  In any case, unlike for
-gcf, BDDs can never gain in size using Restrict.
-
-There appear to be two gains to using Restrict.  First, it can make
-{\sc Smurf}s smaller (see Section~\ref{smurf-section} for information
-about {\sc Smurf}s).  Second, it often {\em appears}, by avoiding
-duplicated information, to make the LSGB search heuristic's evidence
-combination rule work better.  
-
-On the negative side, it can, in odd cases, lose local information.
-Although it may reveal some of the inferences that strengthening would
-(see below), restrict can still cause the number of choicepoints to
-increase.  Both these issues are related: restrict can spread an
-inference that is evident in one BDD over multiple BDDs (see
-Figure~\ref{restrict-1-figure} for an example).
-
-\begin{figure}
-\hspace*{6mm}\epsfig{figure=Fig/restrict.eps, width=4.5in}
-\caption{Example of {\bf restrict} spreading an inference from one BDD
-to another.  If $x_2$ is assigned 0 in $f$ then $x_4=0$ and $x_3=0$
-are inferred.  After applying {\tt restrict} to $f$ and $c$ and
-replacing $f$ with $f^\prime$, to get the inference $x_3=0$ from
-the choice $x_2=0$ visit $c$ to get $x_4=0$ and then $f^\prime$ to
-get $x_3=0$.  Thus, restrict can increase work if not used properly.
-In this case, restricting in the reverse direction leads to a better
-result.}
-\label{restrict-1-figure} 
-\end{figure}
-
-
-\subsection{Strengthening}\label{strengthening-section}
-
-This binary operation on BDDs helps reveal inferences that are missed
-by Restrict due to its sensitivity to variable ordering.
-Given two BDDs, $b_1$ and $b_2$, strengthening conjoins $b_1$ with 
-the {\em projection} of $b_2$ onto the variables of $b_1$:
-that is, $b_1\wedge\exists{\vec x}b_2$, where $\vec x$ is the set of 
-variables appearing in $b_2$ but not in $b_1$.  Strengthening each
-$b_i$ against all other $b_j$s sometimes reveals additional inferences
-or equivalences as above.  Figure~\ref{strengthen-figure} shows an example.
-The following is pseudo C++ code implementing strengthening:\\
-\vspace*{-3mm}\\
-{\footnotesize
-\indent{\tt BDD Strengthen (BDD $b_1$, BDD $b_2$) \{}\\
-\indent\indent{\tt let ${\vec x}=\{x : x\in b_2, x\notin b_1\}$;}\\
-\indent\indent{\tt for all ($x\in {\vec x}$) $b_2$ = ExQuant($b_2$, $x$);}\\
-\indent\indent{\tt return $b_1\wedge b_2$;}\\
-\indent{\tt \}}\\}
-
-\begin{figure}
-\hspace*{24mm}\epsfig{figure=Fig/strengthening_1.eps, width=2.6in}
-\vspace*{.1in}\\
-\centerline{{\bf Strengthening example}: Existentially quantify away $x_1$...}
-\vspace*{6mm}\\
-\hspace*{10mm}\epsfig{figure=Fig/strengthening_2.eps, width=3.8in}
-\caption{...then conjoin the two BDDs.  Inference revealed is $x_3=F$.}
-\label{strengthen-figure}
-\end{figure}
-
-Strengthening is a way to pass important information from one BDD to
-another without causing a size explosion.  No explosion can occur
-because before $b_1$ is conjoined with $b_2$, all variables in $b_2$
-that don't occur in $b_1$ are existentially quantified away.  If an
-inference (of the form $x=T$, $x=F$, $x=+y$, or $x=-y$) exists due to
-just two BDDs, then strengthening those BDDs against each other
-(pairwise) can ``move'' those inferences, even if originally spread
-across both BDDs, to one of the BDDs.  Because strengthening shares
-information between BDDs it can be thought of as sharing intelligence
-and ``strengthening'' the relationships between functions; the added
-intelligence in these strengthened functions can be exploited by a
-smart search heuristic.  We have found that, in general, strengthening
-decreases the number of choicepoints when used in conjunction with the
-LSGB heuristic, though in strange cases it can also increase the
-number of choicepoints.  We believe this is due to the delicate nature
-of some problems where duplicating information in the BDDs leads the
-heuristic astray.  Strengthening may be applied to CNF formulas 
-and in this case it is the same as applying Davis-Putnam resolution
-selectively on some of the clauses.  When used on more complex
-functions it is clearer how to use it effectively as the clauses being
-resolved are grouped with some meaning.  Evidence for this comes from
-from examples from Bounded Model Checking (see Section~\ref{results-section}).
-
-\subsection{Generalized Cofactor (GCF)}\label{gcf-section}
-
-The {\tt generalized cofactor} operation, denoted by {\tt gcf} here
-and also known as {\tt constrain} in the literature, uses {\em sibling
-substitution} to reduce BDD size.  However, unlike {\tt restrict},
-it can produce BDDs far larger than the original.  Given
-two functions, $f$ and $c$, the function $g={\tt gcf}(f,c)$ is such that
-$f\wedge c$ is the same as $g\wedge c$.  In the process, $g$ may be
-somehow reduced compared to $f$ as is the case for {\tt restrict}.
-Unlike {\tt restrict}, the following is true as well:\\
-
-\indent\parbox{4.5in}{ Given Boolean functions $f_1,...,f_k$, for
-any $1\leq i\leq k$, 
-$f_1\wedge f_2\wedge ... \wedge f_k$ is satisfiable if and only if
-${\tt gcf}(f_1,f_i)\wedge ... \wedge {\tt gcf}(f_{i-1},f_i)\wedge 
-{\tt gcf}(f_{i+1},f_i)\wedge ... \wedge {\tt gcf}(f_k,f_i)$
-is satisfiable.  Moreover, any assignment satisfying the latter can be
-extended to satisfy $f_1\wedge ...\wedge f_k$.}\\
-
-\noindent
-This means that, for the purposes of a solver, {\tt generalized
-cofactoring} can be used to eliminate one of the BDDs among a given
-conjoined set of BDDs: the solver finds an assignment satisfying
-${\tt gcf}(f_1,f_i)\wedge ...\wedge {\tt gcf}(f_k,f_i)$ and then extends the
-assignment to satisfy $f_i$, otherwise the solver reports that the
-instance has no solution.  However, unlike {\tt restrict}, generalized
-cofactoring cannot by itself reduce the number of variables in a given
-collection of BDDs.  Other properties of the {\tt gcf} operation are:
-\begin{enumerate}
-\item
-$f=c\wedge${\tt gcf}$(f,c)\vee \neg c\wedge${\tt gcf}$(f,\neg c)$.
-\item
-{\tt gcf}$(${\tt gcf}$(f,g),c) =$ {\tt gcf}$(f, g\wedge c)$.
-\item
-{\tt gcf}$(f\wedge g, c)=$ {\tt gcf}$(f,c)\wedge$ {\tt gcf}$(g,c)$.
-\item
-{\tt gcf}$(f\wedge c, c)=$ {\tt gcf}$(f,c)$.
-\item
-{\tt gcf}$(f\wedge g, c)=$ {\tt gcf}$(f,c)\wedge$ {\tt gcf}$(g,c)$.
-\item
-{\tt gcf}$(f\vee g, c)=$ {\tt gcf}$(f,c)\vee$ {\tt gcf}$(g,c)$.
-\item
-{\tt gcf}$(f\vee \neg c, c)=$ {\tt gcf}$(f,c)$.
-\item
-{\tt gcf}$(\neg f,c)= \neg$ {\tt gcf}$(f,c)$.
-\item
-If $c$ and $f$ have no variables in common and $c$ is satisfiable then
-${\tt gcf}(f,c) = f$.
-\end{enumerate}
-
-Care must be taken when cofactoring in ``both'' directions (exchanging
-$f$ for $c$).  For example, $f\wedge g\wedge h$ cannot be replaced
-by ${\tt gcf}(g,f)\wedge {\tt gcf}(f,g)\wedge h$ since the former may
-be unsatisfiable when the latter is satisfiable.
-
-\noindent
-The pseudo C++ description of {\tt gcf} is as follows:\\
-\vspace*{-3mm}\\
-{\footnotesize
-\indent{\tt BDD gcf (BDD {\em f}, BDD {\em c}) \{}\\
-\indent\indent{\tt if ({\em f} == {\em F} || {\em c} == {\em F}) return {\em F};}\\
-\indent\indent{\tt if ({\em c} == {\em T} || {\em f} == {\em T}) return {\em f};}\\
-\indent\indent{\tt let $x_m = index^{-1}(\min\{index(root(c)), index(root(f))\})$;}\\
-\indent\indent{\tt // $x_m$ is the top variable of {\em f} and {\em c}}\\
-\indent\indent{\tt if (Reduce$_F$($x_m$, {\em c}) == {\em F}) return
-gcf(Reduce$_T$($x_m$, {\em f}), Reduce$_T$($x_m$, {\em c}));}\\
-\indent\indent{\tt if (Reduce$_T$($x_m$, {\em c}) == {\em F}) return
-gcf(Reduce$_F$($x_c$, {\em f}), Reduce$_F$($x_c$, {\em c}));}\\
-\indent\indent{\tt let $h_T$ = gcf(Reduce$_T$($x_m$, {\em f}),
-Reduce$_T$($x_m$, {\em c}));}\\
-\indent\indent{\tt let $h_F$ = gcf(Reduce$_F$($x_m$, {\em f}),
-Reduce$_F$($x_m$, {\em c}));}\\
-\indent\indent{\tt if ($h_T$ == $h_F$) return $h_T$;}\\
-\indent\indent{\tt return find\_or\_add\_node($x_m$, $h_T$, $h_F$);}\\
-\indent{\tt \}}\\}
-
-\begin{figure}
-\hspace*{1mm}\epsfig{figure=Fig/cofactoring2a.eps, width=2.25in}
-\vspace*{-38mm}\\
-\hspace*{70mm}\epsfig{figure=Fig/cofactoring1a.eps, width=1.5in}
-\vspace*{10mm}\\
-\hspace*{30mm}\epsfig{figure=Fig/cofactoring3a.eps, width=2.5in}
-\caption{Generalized cofactor operation on $f$ and $c$ as shown.
-In this case the result is more complicated than $f$.  The variable
-ordering is $x_1$, $x_2$, $x_3$, $x_4$.}
-\label{gcf-example-figure}
-\end{figure}
-
-\noindent
-Figure~\ref{gcf-example-figure} presents an example of its use
-illustrating the possibility of increasing BDD size.
-Figure~\ref{gcf-example-1-figure} presents the same example after
-swapping $x_1$ and $x_4$ under the same variable ordering and shows
-that result produced by {\tt gcf} is sensitive to variable ordering.
-Observe that the functions produced by {\tt gcf} in both Figures have
-different values under the assignment $x_1 = T$, $x_3 = T$, and $x_4 =
-F$.  Thus, the function returned by {\tt gcf} depends on the variable
-ordering as well.
-
-\begin{figure}
-\hspace*{1mm}\epsfig{figure=Fig/gcf2.eps, width=3.5in}
-\vspace*{-43mm}\\
-\hspace*{90mm}\epsfig{figure=Fig/gcf1.eps, width=1.25in}
-\vspace*{10mm}\\
-\hspace*{30mm}\epsfig{figure=Fig/gcf3.eps, width=2.25in}
-\caption{Generalized cofactor operation on the same $f$ and $c$ of
-Figure~\ref{gcf-example-figure} and with the same variable ordering
-but with $x_1$ and $x_4$ swapped.  In this case the result is less 
-complicated than $f$.}
-\label{gcf-example-1-figure}
-\end{figure}
-
-\subsection{Universe}\label{universe-section}
-
-Universally quantify a variable away from a BDD.  This operation
-exists only in canonical form.  The pseudo C++ description of this
-operation is as follows:\\
-\vspace*{-3mm}\\
-{\footnotesize
-\indent{\tt BDD Universe (BDD {\em f}, variable {\em x}) \{}\\
-\indent\indent{\tt if (root({\em f}) == {\em x}) return {\em
-true}(root({\em f}))$\wedge${\em false}(root({\em f}));}\\
-\indent\indent{\tt if ({\em index}({\em x}) > {\em index}(root({\em
-f}))) return {\em f};  // If {\em x} is not in {\em f} do nothing}\\
-\indent\indent{\tt $h_{f_T}$ = Universe ({\em true}(root({\em f})),
-{\em x});}\\
-\indent\indent{\tt $h_{f_F}$ = Universe ({\em false}(root({\em f})),
-{\em x});}\\
-\indent\indent{\tt if ($h_{f_T}$ == $h_{f_F}$) return $h_{f_T}$;}\\
-\indent\indent{\tt return find\_or\_add\_node (root({\em f}),
-$h_{f_T}$, $h_{f_F}$);}\\
-\indent{\tt \}}\\}
-
-\subsection{Clustering: CNF}\label{clustering-section}
-
-The current version of {\tt sbsat} supports clustering only when CNF
-input is given.  Our clustering algorithm is influenced solely by
-observing patterns in CNF formulas due to the {\tt dlx} benchmarks
-from CMU.  Those benchmarks, before translation to CNF, consist of
-numerous lines almost all of which have a form similar to one of the 
-following:
-\begin{eqnarray*}
-&&x = and(v_1, v_2, ..., v_k)\\
-&&x = or(v_1, v_2, ..., v_k)\\
-&&x = ite(v_1, v_2, v_3)
-\end{eqnarray*}
-A pass is made through all clauses of a given CNF formula looking for 
-patterns similar to the following:
-\begin{eqnarray*}
-&&(v_1\vee \bar v_2\vee \bar v_3\vee ... \vee \bar v_k)\\
-&&(\bar v_1\vee v_2)~~~~
-(\bar v_1\vee v_3)~~~~
-...~~~~
-(\bar v_1\vee v_k)
-\end{eqnarray*}
-which in this case represents the first of the three expressions
-above.  Clauses equivalent to the second expression are similar (one
-large clause and several binary clauses) differing only in which
-literals are negated.  If a set of clauses matching the form above is
-found, then those clauses are replaced by a single BDD representing
-the corresponding $x=and(...)$ or $x=or(...)$ expression.  In the case
-of the $ite(...)$ expression a pattern of six clauses of the following
-form:
-\begin{eqnarray*}
-&&(v_1\vee v_2\vee \bar v_4)~~~
-(v_1\vee \bar v_2\vee \bar v_3)~~~
-(\bar v_1\vee \bar v_2\vee v_3)~~~
-(\bar v_1\vee v_2\vee v_4)
-\end{eqnarray*}
-is replaced by a BDD representing the third expression above.  In
-addition, if such a pattern is found the following two clauses may
-also be removed from the original CNF formula during the clustering 
-operation without consequence:
-\[(v_1\vee \bar v_3\vee \bar v_4)~~~(\bar v_1\vee v_3\vee v_4)~~~\]
-Any BDD constructed in this way is marked with a special function
-identifier so that the corresponding {\sc Smurf} will be 
-smaller than otherwise.
-
-\subsection{Inference}\label{inference-section}
-
-At BDD build time, meaning every time a BDD is modified by any
-preprocessing function, inferences are collected and attached to every
-pertinent node of the BDDs. This makes it a very simple process to
-check a BDD for inferences: just look at the list attached to the top
-node of any BDD and you'll see it's inferences. There are 4 types of
-inferences in the form of $x=T$, $x=F$, $x=y$, $x=-y$.  As soon as any
-BDD has inferences to give, it's inferences are applied to every
-applicable BDD.
 
 \subsection{Dependent variable clustering}\label{dep-var-clus-section}
 
@@ -3956,6 +3979,23 @@ where the BDDs involved all depend on 8 or fewer variables unless the
 BDDs are special functions and can be conjoined to a {\sc Smurf} which
 is reasonably small in size.
 
+
+\subsection{Rewind}\label{rewind-section}
+
+This function causes the current set of BDDs to be replaced with the initial
+set of BDDs. SBSAT currently saves all of the inferences detected over the
+course of preprocessing. After a rewind, those saved inferences are
+immediately applied to the rewound set of BDDs, reducing them. This
+technique has been found to be useful when working with preprocessing
+techniques which cause BDDs to be built that are too big to be built into
+SMURFs. We first apply those techniques, then rewind, and then solve. This
+allows inferences found by the preprocessing techniques (such as clustering)
+to be saved and applied to the original set of BDDs, thus allowing the
+solver to operate on the original (manageable) functions with some
+reductions applied, instead of on a set of unmanageable clustered BDDs with
+those same reductions.
+
+
 \subsection{Splitter}\label{splitter-section}
 
 The splitter is intended to replace large BDDs with sets of small
@@ -3981,7 +4021,7 @@ The splitter will first try to break up all big BDDs by selecting a
 big BDD $f$ and projecting $f$ onto all 10-variable subsets of it's
 variable set.  We could think of each projection $f_i$ as a weak
 approximation to $f$.  We collect these projections together and use
-constrain (branch-prune) to simplify the collection.  To ``project''
+branch pruning to simplify the collection.  To ``project''
 an $f$ onto a set of variables means to quantify out all variables
 {\em not} in that set (see Section~\ref{strengthening-section} for details).
 
@@ -3991,6 +4031,27 @@ $and(f, not(f^\prime))$.
 If some BDDs still exist with more than 10 variables then the splitter will
 break all remaining big BDDs into clauses.
 
+
+\subsection{Universe}\label{universe-section}
+
+Universally quantify a variable away from a BDD.  This operation
+exists only in canonical form.  The pseudo C++ description of this
+operation is as follows:\\
+\vspace*{-3mm}\\
+{\footnotesize
+\indent{\tt BDD Universe (BDD {\em f}, variable {\em x}) \{}\\
+\indent\indent{\tt if (root({\em f}) == {\em x}) return {\em
+true}(root({\em f}))$\wedge${\em false}(root({\em f}));}\\
+\indent\indent{\tt if ({\em index}({\em x}) > {\em index}(root({\em
+f}))) return {\em f};  // If {\em x} is not in {\em f} do nothing}\\
+\indent\indent{\tt $h_{f_T}$ = Universe ({\em true}(root({\em f})),
+{\em x});}\\
+\indent\indent{\tt $h_{f_F}$ = Universe ({\em false}(root({\em f})),
+{\em x});}\\
+\indent\indent{\tt if ($h_{f_T}$ == $h_{f_F}$) return $h_{f_T}$;}\\
+\indent\indent{\tt return find\_or\_add\_node (root({\em f}),
+$h_{f_T}$, $h_{f_F}$);}\\
+\indent{\tt \}}\\}
 
 %\subsection{Implicit format-specific preprocessing}
 %\label{for-spe-preproc-section}
@@ -4141,7 +4202,7 @@ SBSAT with LSGB to other solvers such as zChaff.
 
 \subsection{BDD WalkSAT}\label{walksat-section}
 
-\subsection{WMV}\label{wmv-section}
+\subsection{WVF}\label{wmv-section}
 
 \newpage
 \section{Reference - Output, results}

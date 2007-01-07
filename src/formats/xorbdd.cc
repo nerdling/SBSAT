@@ -133,9 +133,9 @@ void print_xor_of_ands(xor_of_ands *top_xor) {
 		if(tmp->vars_in_and[tmp->curr_length-1] == -1) { 
 			d2_printf1("1");
 		} else {
-			d2e_printf2("x[%s]*", s_name(tmp->vars_in_and[tmp->curr_length-1]));
-			d3e_printf2("x[%d]*", tmp->vars_in_and[tmp->curr_length-1]);
-			d4_printf3("x[%s(%d)]*", s_name(tmp->vars_in_and[tmp->curr_length-1]), tmp->vars_in_and[tmp->curr_length-1]);
+			d2e_printf2("x[%s]", s_name(tmp->vars_in_and[tmp->curr_length-1]));
+			d3e_printf2("x[%d]", tmp->vars_in_and[tmp->curr_length-1]);
+			d4_printf3("x[%s(%d)]", s_name(tmp->vars_in_and[tmp->curr_length-1]), tmp->vars_in_and[tmp->curr_length-1]);
 		}
 	}
 }
