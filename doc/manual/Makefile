@@ -1,22 +1,22 @@
-all: sbsat_getting
+all: sbsat_user_manual
 
-edit: sbsat_getting.tex
-	ue sbsat_getting.tex
+edit: sbsat_user_manual.tex
+	ue sbsat_user_manual.tex
 
-sbsat_getting.dvi: sbsat_getting
+sbsat_user_manual.dvi: sbsat_user_manual
 
-sbsat_getting: sbsat_getting.tex
-	latex sbsat_getting
-	latex sbsat_getting
+sbsat_user_manual: sbsat_user_manual.tex
+	latex sbsat_user_manual
+	latex sbsat_user_manual
 
-ps: sbsat_getting
-	/usr/bin/dvips sbsat_getting.dvi -o sbsat_getting.ps
+ps: sbsat_user_manual
+	/usr/bin/dvips sbsat_user_manual.dvi -o sbsat_user_manual.ps
 
 pdf: ps
-	ps2pdf sbsat_getting.ps
+	ps2pdf sbsat_user_manual.ps
 
-show: sbsat_getting
-	p sbsat_getting
+show: sbsat_user_manual
+	p sbsat_user_manual
 
 clean:
-	rm -f *.aux *.log *.dvi *.ps
+	rm -f *.aux *.log *.dvi *.ps *.toc *.pdf
