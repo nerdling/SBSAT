@@ -91,6 +91,21 @@ char *macros;
 int negate_it;
 int expect_integer = 0;
 
+//This function prints a BDD using all available terms {ite, and, or, xor, minmax, etc.}
+//This differs from printBDD(BDDNode *f), which only uses ite.
+void print_BDD_allterms(BDDNode *f) {
+
+	int *bdd_vars;
+	int bdd_length;
+	
+	if(isOR(f)) fprintf(foutputfile, "or(blah)");
+	else if(isXOR(f)) fprintf(foutputfile, "xor(blah)");
+	else if(isAND(f)) fprintf(foutputfile, "and(blah)");
+	else if(f->thenCase == f->elseCase->notCase) fprintf(foutputfile, "equ(%d, ", f->variable);
+	else if(isMIN_MAX(f, bdd_vars, bdd_length)) fprintf(foutputfile, "minmax(blah)");
+
+}
+
 BDDNode *putite(int intnum, BDDNode * bdd)
 {
 	char order = getNextSymbol (intnum, bdd);

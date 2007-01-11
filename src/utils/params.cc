@@ -174,6 +174,8 @@ t_opt options[] = {
                 "Output in SMURF format"},
 { &formatout, "c", "", P_PRE_CHAR, V(c:'c',"c"), V(c:'b',"b"), VAR_NORMAL, 0, 
                 "Output in CNF format"},
+{ &formatout, "x", "", P_PRE_CHAR, V(c:'x',"x"), V(c:'b',"b"), VAR_NORMAL, 0, 
+                "Output in XOR format"},
 { &formatout, "v", "", P_PRE_CHAR, V(c:'v',"v"), V(c:'b',"b"), VAR_NORMAL, 0,
                 "Output in VHDL/FPGA format"},
 { &formatout, "p", "", P_PRE_CHAR, V(c:'p',"p"), V(c:'b',"b"), VAR_NORMAL, 0, 

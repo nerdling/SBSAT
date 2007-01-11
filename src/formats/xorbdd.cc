@@ -140,6 +140,33 @@ void print_xor_of_ands(xor_of_ands *top_xor) {
 	}
 }
 
+int print_xor_of_ands_file_ver2(xor_of_ands *top_xor, int use_symtable) {
+	int ret = 0;;
+	for(int x = 0; x < top_xor->curr_length-1; x++) {
+		if(top_xor->vars_in_and[x] == -1) { // This should never happen
+			fprintf(stderr, "XDD is malformed...exiting\n");
+			return -1;
+		}
+		else fprintf(foutputfile, "x%d", use_symtable?atoi(getsym_i(top_xor->vars_in_and[x])->name):top_xor->vars_in_and[x]);
+	}
+	if(top_xor->vars_in_and[top_xor->curr_length-1] == -1) ret = 1;
+	else fprintf(foutputfile, "x%d", use_symtable?atoi(getsym_i(top_xor->vars_in_and[top_xor->curr_length-1])->name):top_xor->vars_in_and[top_xor->curr_length-1]);
+	for(xor_of_ands *tmp = top_xor->next_and; tmp!=NULL; tmp = tmp->next_and) {
+		fprintf(foutputfile, " ");
+		
+		for(int x = 0; x < tmp->curr_length-1; x++) {
+			if(tmp->vars_in_and[x] == -1) { // This should never happen
+				fprintf(stderr, "XDD is malformed...exiting\n");
+				exit(0);
+			}
+			else fprintf(foutputfile, "x%d", use_symtable?atoi(getsym_i(tmp->vars_in_and[x])->name):tmp->vars_in_and[x]);
+		}
+		if(tmp->vars_in_and[tmp->curr_length-1] == -1) ret = 1;
+		else fprintf(foutputfile, "x%d", use_symtable?atoi(getsym_i(tmp->vars_in_and[tmp->curr_length-1])->name):tmp->vars_in_and[tmp->curr_length-1]);
+	}
+	return ret;
+}
+
 void print_xor_of_ands_file(xor_of_ands *top_xor) {
 	for(int x = 0; x < top_xor->curr_length-1; x++) {
 		if(top_xor->vars_in_and[x] == -1) { // This should never happen
@@ -242,11 +269,29 @@ void print_flat_xdd_file(BDDNode *xdd, int size) {
 	free_xor_of_ands(top_xor);	
 }
 
+void print_flat_xor_file(BDDNode *xdd, int size, int use_symtable) {
+	xor_of_ands *top_xor = get_flat_xdd(xdd, size);
+	if(top_xor == NULL) return;
+	//print_xor_of_ands_file(top_xor);
+	top_xor = invert_xor_of_ands(top_xor);
+	int ret = print_xor_of_ands_file_ver2(top_xor, use_symtable);
+	if(ret == 0) fprintf(foutputfile, " = 0");
+	else if(ret == 1) fprintf(foutputfile, "= 1");
+	else if(ret == -1) {
+		fprintf(stderr, "Error: True function found while parsing XDDs, this should not happen...exiting\n");
+		exit(0);
+	}
+				 
+	//if(top_xor->vars_in_and[top_xor->curr_length-1] == -1) fprintf(foutputfile, " = 1");
+	//else fprintf(foutputfile, " = 0");
+	free_xor_of_ands(top_xor);	
+}
+
 void printLinearFormat() {
 	fprintf(foutputfile, "%d\n", numinp);
 	fprintf(foutputfile, "[\n");
 	BDDNode *xdd = bdd2xdd(functions[0]);
-	print_flat_xdd(xdd, length[0]);
+	print_flat_xdd_file(xdd, length[0]);
 	fprintf(foutputfile, "\n");
 	for(int x=1; x < nmbrFunctions; x++) {
 		xdd = bdd2xdd(functions[x]);
@@ -260,6 +305,18 @@ void printLinearFormat() {
 		fprintf(foutputfile, "x[%d]^2 + x[%d]\n", x, x);
 	}
 	fprintf(foutputfile, "];\n");
+}
+
+void printXORFormat() {
+	fprintf(foutputfile, "p xor %d %d\n", numinp, nmbrFunctions);
+	int use_symtable = sym_all_int();
+	fprintf(stderr, "!!!USE %d!!!", use_symtable);
+	for(int x=0; x < nmbrFunctions; x++) {
+		if(functions[x] == true_ptr) continue;
+		BDDNode *xdd = bdd2xdd(functions[x]);
+		print_flat_xor_file(xdd, length[x], use_symtable);
+		fprintf(foutputfile, "\n");
+	}
 }
 
 char getNextSymbol (char *&, int &intnum, BDDNode * &);
@@ -342,9 +399,9 @@ char getNextSymbol () {
 				fprintf (stderr, "\nUnexpected (unsigned int)EOF...exiting:%d\n", xorbdd_line);
 				exit (0);
 			}
-			integers[0] = 'x';
+			//integers[0] = 'x';
 			if ((p >= '1') && (p <= '9')) {
-				i = 1;
+				i = 0;
 				while ((p >= '0') && (p <= '9')) {
 					integers[i] = p;
 					i++;

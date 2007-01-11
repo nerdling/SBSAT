@@ -76,6 +76,8 @@ write_output (char formatout)
     case 'i': printSchlipfCircuit (); break;
 
     case 'l': printLinearFormat(); break;
+
+	 case 'x': printXORFormat(); break;
 		 
     case 'B': 
               BDD_to_Binary();
