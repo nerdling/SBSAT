@@ -288,7 +288,7 @@ void print_flat_xor_file(BDDNode *xdd, int size, int use_symtable) {
 }
 
 void printLinearFormat() {
-	fprintf(foutputfile, "%d\n", numinp);
+	fprintf(foutputfile, "%ld\n", numinp);
 	fprintf(foutputfile, "[\n");
 	BDDNode *xdd = bdd2xdd(functions[0]);
 	print_flat_xdd_file(xdd, length[0]);
@@ -308,9 +308,8 @@ void printLinearFormat() {
 }
 
 void printXORFormat() {
-	fprintf(foutputfile, "p xor %d %d\n", numinp, nmbrFunctions);
+	fprintf(foutputfile, "p xor %ld %d\n", numinp, nmbrFunctions);
 	int use_symtable = sym_all_int();
-	fprintf(stderr, "!!!USE %d!!!", use_symtable);
 	for(int x=0; x < nmbrFunctions; x++) {
 		if(functions[x] == true_ptr) continue;
 		BDDNode *xdd = bdd2xdd(functions[x]);
@@ -556,7 +555,8 @@ void xorloop () {
 	int temp_vars = 1;
 	
 	//int *keep = new int[numout + 2];
-	BDDNode **bdds = new BDDNode*[1000];
+	BDDNode **bdds = (BDDNode **)ite_calloc(100, sizeof(BDDNode *), 9, "bdds - xorformat");
+	int bdds_size = 100;
 	int p = 0;
 
 	for (int x = 0; x < numinp + 1; x++) {
@@ -634,6 +634,11 @@ void xorloop () {
 				exit(0);
 			}
 			nmbrxors++;
+			if(nmbrxors >= bdds_size) {
+				bdds = (BDDNode **)ite_recalloc(bdds, bdds_size, bdds_size+100, sizeof(BDDNode *), 9, "bdds - xorformat");
+				bdds_size+=100;
+			}
+						 
 			p = getNextSymbol();
 			if(p == 'x') {
 				fprintf (stderr, "\nUnexpected (unsigned int)EOF, '=' expected...exiting:%d\n", xorbdd_line);
@@ -684,5 +689,5 @@ void xorloop () {
 	numinp = numinp+temp_vars;
 	
    d2_printf1("\rReading XOR ... Done\n");
-	delete [] bdds;
+	ite_free((void **)&bdds); bdds_size = 0;
 }
