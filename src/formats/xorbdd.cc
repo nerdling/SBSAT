@@ -307,9 +307,18 @@ void printLinearFormat() {
 	fprintf(foutputfile, "];\n");
 }
 
+void print_xor_symtable() {
+	for(int x = 1; x <=numinp; x++) {
+		fprintf(foutputfile, "; %d = %s\n", x, getsym_i(x)->name);
+	}
+}
+
 void printXORFormat() {
 	fprintf(foutputfile, "p xor %ld %d\n", numinp, nmbrFunctions);
 	int use_symtable = sym_all_int();
+	if(use_symtable == 0)
+	  print_xor_symtable();		
+	
 	for(int x=0; x < nmbrFunctions; x++) {
 		if(functions[x] == true_ptr) continue;
 		BDDNode *xdd = bdd2xdd(functions[x]);
@@ -555,8 +564,8 @@ void xorloop () {
 	int temp_vars = 1;
 	
 	//int *keep = new int[numout + 2];
-	BDDNode **bdds = (BDDNode **)ite_calloc(100, sizeof(BDDNode *), 9, "bdds - xorformat");
-	int bdds_size = 100;
+	BDDNode **bdds = (BDDNode **)ite_calloc(1000, sizeof(BDDNode *), 9, "bdds - xorformat");
+	int bdds_size = 1000;
 	int p = 0;
 
 	for (int x = 0; x < numinp + 1; x++) {
@@ -635,8 +644,9 @@ void xorloop () {
 			}
 			nmbrxors++;
 			if(nmbrxors >= bdds_size) {
-				bdds = (BDDNode **)ite_recalloc(bdds, bdds_size, bdds_size+100, sizeof(BDDNode *), 9, "bdds - xorformat");
-				bdds_size+=100;
+				bdds = (BDDNode **)ite_recalloc(bdds, bdds_size, bdds_size+1000, sizeof(BDDNode *), 9, "bdds - xorformat");
+				bdds_size+=1000;
+				fprintf(stderr, "Warning: Large equation found, increasing storage...\n");
 			}
 						 
 			p = getNextSymbol();
