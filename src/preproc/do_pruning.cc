@@ -113,7 +113,6 @@ int DO_PRUNING_FN() {
         PRUNE_REPEATS[x] = 0;
 		  if (functions[x] == true_ptr)
 			 continue;
-        if(functionType[x] == AUTARKY_FUNC) continue;
 		  for (int j = x + 1; j < nmbrFunctions; j++)
 			 {
 				 if (functions[j] == true_ptr)
@@ -126,7 +125,6 @@ int DO_PRUNING_FN() {
                 continue;
              if (nmbrVarsInCommon (x, j, STRENGTH) == 0)
                 continue;
-				 if (functionType[j] == AUTARKY_FUNC) continue;
              if (length[x] < functionTypeLimits[functionType[x]])
              /*
 				 if ((functionType[x] != AND || length[x] < AND_EQU_LIMIT)

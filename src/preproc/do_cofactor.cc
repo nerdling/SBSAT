@@ -76,13 +76,10 @@ Do_Cofactor()
 		}
       
 		if (length[x] <= COF_MAX && length[x] > 0) {
-			if(functionType[x] == AUTARKY_FUNC) continue;
 			//d3_printf1("*"); 
 			cof = functions[x];
 			for (int j = 0; j < numout; j++) {
 				if(j == x) continue;
-				//Cannot discriminate...must do EVERY function...except the autarky functions
-				if(functionType[j] == AUTARKY_FUNC) continue;
 				if (nmbrVarsInCommon (x, j, 1) == 0) continue;
 				BDDNode *before = gcf(functions[j], cof);
 				if(before != functions[j]) {

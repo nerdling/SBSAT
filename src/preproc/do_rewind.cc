@@ -56,25 +56,10 @@ int Do_Rewind() {
 
 	int y = 0;
 	for(int x = 0; x < nmbrFunctions; x++) {
-		if(functionType[x] == AUTARKY_FUNC) {
-			functions[y] = functions[x];
-			functionType[y] = AUTARKY_FUNC;
-			equalityVble[y] = equalityVble[x];
-			//fprintf(stderr, "keeping autark %d at %d\n", x, y);
-			Rebuild_BDDx(y);
-			if(x!=y) {
-				functions[x] = true_ptr;
-				functionType[x] = UNSURE;
-				equalityVble[x] = 0;
-				Rebuild_BDDx(x);
-			}
-			y++;
-		} else {
-			functions[x] = true_ptr;
-			functionType[x] = UNSURE;
-			equalityVble[x] = 0;
-			Rebuild_BDDx(x);
-		}
+		functions[x] = true_ptr;
+		functionType[x] = UNSURE;
+		equalityVble[x] = 0;
+		Rebuild_BDDx(x);
 	}
 
 	int *new_funcs = add_newFunctions(original_functions, original_numout);
@@ -101,9 +86,6 @@ int Do_Rewind() {
 		  variablelist[x].true_false = -1;
 	  }
 
-	//Very important that this comes after CreateInferences()
-	//Because the inferences that come from the autarky BDDs
-	//may not be valid.
 	for (int x = 0; x < nmbrFunctions; x++) {
 		int r=Rebuild_BDDx(x);
 		switch (r) {

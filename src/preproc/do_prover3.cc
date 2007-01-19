@@ -73,7 +73,6 @@ int Do_Prover3() {
 	variables_size = 0;
 	ite_free((void **)&length);
 	length_size = 0;
-	ite_free((void **)&autark_BDD);
 	
 	Delete_Repeats();
 	for(int x = 1; x < numinp + 1; x++)
@@ -126,7 +125,6 @@ int Do_Prover3() {
 	variables_size = nmbrFunctions;
    num_funcs_var_occurs = (int *)ite_calloc(numinp+1, sizeof(int), 9, "num_funcs_var_occurs");
 	amount = (llistStruct*)calloc(numinp+1, sizeof(llistStruct));
-	autark_BDD = (int *)ite_calloc(numinp+1, sizeof(int), 2, "autark_BDD");
 	
 	/****** DONE REALLOCATING ARRAYS ******/
 	
@@ -143,25 +141,6 @@ int Do_Prover3() {
 		 default: break;
 		}
 	}
-
-	for(int x = 0; x < numinp+1; x++)
-	  autark_BDD[x] = -1;
-
-	/*
-	for (int x = 0; x < nmbrFunctions; x++) {
-		for (int i = 0; i < length[x]; i++) {
-			if (amount[variables[x].num[i]].head == NULL) {
-				num_funcs_var_occurs[variables[x].num[i]] = 1;
-				amount[variables[x].num[i]].head = newllist;
-				amount[variables[x].num[i]].tail = newllist;
-			} else {
-				num_funcs_var_occurs[variables[x].num[i]]++;
-				amount[variables[x].num[i]].tail->next = newllist;
-				amount[variables[x].num[i]].tail = newllist;
-			}
-		}
-	}
-   */
 
 	/****** DONE INITIALIZING ARRAYS ******/
 	

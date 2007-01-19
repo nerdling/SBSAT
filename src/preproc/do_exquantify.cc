@@ -96,18 +96,7 @@ int ExQuantify () {
 				continue;
 			}
 			
-			int amount_count = 0;
-			int amount_num = -1;
-			
-			for (llist * k = amount[i].head; k != NULL; k = k->next) {
-				if(functionType[k->num] != AUTARKY_FUNC) {
-					amount_count++;
-					amount_num = k->num;
-				}
-				if(amount_count > 1) break;
-			}
-			
-			if(amount_count == 0) { //This is probably unsound
+			if(num_funcs_var_occurs[i] == 0) { //This is possibly unsound
 				//Variable dropped out, set it to True.
 				continue;
 				BDDNode *inferBDD = ite_var(i);
@@ -129,134 +118,24 @@ int ExQuantify () {
 				 default: break;
 				}
 				continue;
-			}
-			
-			if(amount_count == 1){
-				int j = amount_num;//amount[i].head->num;
+			} else if(num_funcs_var_occurs[i] == 1) {
 				//Only quantify away variables from unknown functions, or functions
 				//who have the quantified variable as the 'head' or LHS variable of 
 				//their function...a LHS variable is a 'Left Hand Side' variable.
+				assert(amount[i].head != NULL);
+				int j = amount[i].head->num;
 				if ((length[j] < functionTypeLimits[functionType[j]]) || (i == abs(equalityVble[j])) || (functionType[j] == PLAINOR) || (functionType[j] == PLAINXOR)) {
 					affected++;
 					if(ex_infer == 1) {
-						//Check for direct inferences.
-						switch (int r=Do_Apply_Inferences()) {
+						switch (int r=check_bdd_for_safe(j, ret)) {
+						//switch (int r=check_bdd_for_safe_eq(j, ret)) {
 						 case TRIV_UNSAT:
 						 case TRIV_SAT:
-						 case PREP_ERROR: return r;
+						 case PREP_ERROR:
+							ret = r; goto ex_bailout;
 						 default: break;
 						}
-						int changed = 1;
-//						d3_printf1("Starting...");
-						while(changed == 1) {
-//							d3_printf2("[%d]", j);
-//							str_length = 0;
-							changed = 0;
-//							d3_printf1("going...");
-                     for(int v = 0; v < length[j]; v++) {
-								//If variable v occurs in only this BDD.
-								amount_count = 0;
-								for (llist * k = amount[variables[j].num[v]].head; k != NULL; k = k->next) {
-									if(functionType[k->num] != AUTARKY_FUNC) {
-										amount_count++;
-										if(amount_count > 1) break;
-									}
-								}
-								if(amount_count == 1) {
-									//d3_printf3("working on %d, %d\n", variables[j].num[v], length[j]);
-									BDDNode *Quantify = functions[j];
-									//Quantify out every Ex variable except variable v
-									for(int y = 0; y < length[j]; y++) {
-										if(v == y) continue;
-										amount_count = 0;
-										for (llist * k = amount[variables[j].num[y]].head; k != NULL; k = k->next) {
-											if(functionType[k->num] != AUTARKY_FUNC) {
-												amount_count++;
-												if(amount_count > 1) break;
-											}
-										}
-										
-										if(amount_count == 1) {//amount[variables[j].num[y]].head->next == NULL) {
-											//d3_printf2("%d ", variables[j].num[y]);
-											Quantify = xquantify(Quantify, variables[j].num[y]);
-										}
-									}
-									
-									//d3_printf1("\n");
-									int quant_var = variables[j].num[v];
-									//If the autarky function gives var[j].num[v] as an inference
-									//Then var[j].num[v] will be pointing to a different variable
-									//so quant_var is necessary.
-									BDDNode **BDDFuncs;
-									BDDFuncs = (BDDNode **)ite_recalloc(NULL, 0, 1, sizeof(BDDNode *), 9, "BDDFuncs");
-									//BDDFuncs[0] = strip_x_BDD(Quantify, quant_var);
-									BDDFuncs[0] = Quantify;
-									/*if(Quantify == possible_BDD(Quantify, quant_var)) {
-										//fprintf(stderr, "\nHERE\n");
-									} else*/ {
-										autark_BDD[quant_var] = 1;
-										int *new_bdd=add_newFunctions(BDDFuncs, 1);
-										ite_free((void **)&BDDFuncs);
-
-										functionType[new_bdd[0]] = AUTARKY_FUNC;
-										equalityVble[new_bdd[0]] = quant_var;
-										functions[new_bdd[0]] = possible_BDD(functions[new_bdd[0]], quant_var);
-										switch (int r=Rebuild_BDDx(new_bdd[0])) {
-										 case TRIV_UNSAT:
-										 case TRIV_SAT:
-										 case PREP_ERROR: return r;
-										 default: break;
-										}
-										ite_free((void**)&new_bdd);
-									}
-									
-									
-									//Check whether quant_var was applied as an inference.
-									amount_count = 0;
-									amount_num = -1;
-									for (llist * k = amount[quant_var].head; k != NULL; k = k->next) {
-										if(functionType[k->num] != AUTARKY_FUNC) {
-											amount_count++;
-											amount_num = k->num;
-										}
-										if(amount_count > 1) break;
-									}
-									if(amount_count == 1 && amount_num == j) {
-										functions[j] = xquantify (functions[j], quant_var);
-										for(int iter = 0; iter<str_length; iter++)
-										  d3_printf1("\b");
-										d3e_printf2 ("*{%d}", quant_var);
-										d4_printf3 ("*{%s(%d)}", s_name(quant_var), quant_var);
-										str_length = 0;
-										variablelist[quant_var].true_false = 2;
-										ret = PREP_CHANGED;
-									}
-									switch (int r=Rebuild_BDDx(j)) {
-									 case TRIV_UNSAT:
-									 case TRIV_SAT:
-									 case PREP_ERROR: return r;
-									 default: break;
-									}
-									changed = 1;
-									break;
-								}
-							}
-							if(changed == 1) ret = PREP_CHANGED;
-						}
-					}
-					//else   If ex-infer != 1
-					amount_count = 0;
-					amount_num = -1;
-					
-					for (llist * k = amount[i].head; k != NULL; k = k->next) {
-						if(functionType[k->num] != AUTARKY_FUNC) {
-							amount_count++;
-							amount_num = k->num;
-						}
-						if(amount_count > 1) break;
-					}
-					
-					if(amount_count == 1 && amount_num == j) {
+					} else {
 						for(int iter = 0; iter<str_length; iter++)
 						  d3_printf1("\b");
 						d3e_printf2 ("*{%d}", i);
@@ -265,6 +144,7 @@ int ExQuantify () {
 						functions[j] = xquantify (functions[j], i);
 						variablelist[i].true_false = 2;
 						SetRepeats(j);
+						equalityVble[j] = 0;
 						
 						//fprintf(stderr, "\n");
 						//printBDDerr(functions[j]);

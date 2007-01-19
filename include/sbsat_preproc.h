@@ -67,7 +67,6 @@ extern int Setting_Neg;
 
 extern int length_size;
 extern int variables_size;
-extern int *autark_BDD;
 
 extern int *original_functionType;
 extern int *original_equalityVble;
@@ -110,6 +109,8 @@ BDDNode *safe_assign_eq_all(BDDNode **bdds, llistStruct *amount, int v);
 void set_variable_all_bdds(llist *k, int num, int torf, BDDNode **bdds);
 infer *possible_infer_x(BDDNode *f, int x);
 BDDNode *possible_BDD_x(BDDNode *f, int x);
+int check_bdd_for_safe(int x, int ret);
+int check_bdd_for_safe_eq(int x, int ret);
 int Do_Strength();
 int Do_SimpleAnd();
 int Do_Pruning();

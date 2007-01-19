@@ -344,26 +344,6 @@ ite_preprocessing()
     */
    prep_ret = Init_Preprocessing();
 
-   /*
-    * read partial/full assignment file
-    */ 
-   /*
-    extern varinfo * variablelist;
-    extern char input_result_filename[128];
-    int read_input_result(FILE *, varinfo*);
-    FILE *fresultfile=NULL;
-
-    if (input_result_filename[0]) {
-    if (read_input_result(fresultfile, variablelist)) goto ExitNormal;
-    else {
-    d9_printf1("Finished reading input result\n");
-   //ret = MakeInfs(variablelist);
-   //ret = DoInfs();
-   }
-   }
-   else d9_printf1("Result input file not specified\n");
-    */
-
    if (prep_ret == PREP_NO_CHANGE || prep_ret == PREP_CHANGED) {
       prep_ret = Preprocessor();
    }

@@ -87,7 +87,6 @@ int Do_Strength() {
 		  St_repeat[x] = 0;
 		  if (functions[x] == true_ptr)
 			 continue;
-        //if(functionType[x] == AUTARKY_FUNC) continue;
 		  for (int j = x + 1; j < nmbrFunctions; j++)
 			 {
 				 if (functions[j] == true_ptr)
@@ -99,9 +98,7 @@ int Do_Strength() {
              if (variables[j].min >= variables[x].max) 
                 continue;
 				 int did_vars_incommon = 0;
-				 //if(functionType[j] == AUTARKY_FUNC) continue;
-             if (length[x] < functionTypeLimits[functionType[x]] &&
-					 (functionType[j] != AUTARKY_FUNC)) {
+             if (length[x] < functionTypeLimits[functionType[x]]) {
 					 if (nmbrVarsInCommon (x, j, STRENGTH) == 0) // < STRENGTH)
 						continue;
 					 did_vars_incommon = 1;
@@ -109,10 +106,7 @@ int Do_Strength() {
 					 if (currentBDD != functions[x]) {
 						 affected++; 
 						 ret = PREP_CHANGED;
-						 SetRepeats(x);
 						 functions[x] = currentBDD;
-						 if(functionType[x]!=AUTARKY_FUNC)
-							functionType[x] = UNSURE;
 						 switch (int r=Rebuild_BDDx(x)) {
 						  case TRIV_SAT: 
 						  case TRIV_UNSAT: 
@@ -121,8 +115,7 @@ int Do_Strength() {
 						 }
 					 }
 				 }
-             if (length[j] < functionTypeLimits[functionType[j]] &&
-					 (functionType[x] != AUTARKY_FUNC)) {
+             if (length[j] < functionTypeLimits[functionType[j]]) {
 					 if(did_vars_incommon == 0) {
 						 if (nmbrVarsInCommon (x, j, STRENGTH) == 0) // < STRENGTH)
 							continue;
@@ -131,10 +124,7 @@ int Do_Strength() {
 					 if (currentBDD != functions[j])	{
 						 affected++;
 						 ret = PREP_CHANGED;
-						 SetRepeats(j);
 						 functions[j] = currentBDD;
-						 if(functionType[j]!=AUTARKY_FUNC)
-							functionType[j] = UNSURE;
 						 switch (int r=Rebuild_BDDx(j)) {
 						  case TRIV_SAT: 
 						  case TRIV_UNSAT: 
@@ -178,7 +168,7 @@ BDDNode *strengthen(int bddNmbr1, int bddNmbr2)
     for (; bdd2pos < length[bddNmbr2]; bdd2pos++)
       quantifiedBDD2 = xquantify(quantifiedBDD2, variables[bddNmbr2].num[bdd2pos]);
 
-    if(quantifiedBDD2 == functions[bddNmbr2] && functionType[bddNmbr1]!=AUTARKY_FUNC) {
+    if(quantifiedBDD2 == functions[bddNmbr2]) {
 		 functions[bddNmbr2] = true_ptr;
 		 //d2_printf2("Removing %d ", bddNmbr2);
 		 bool OLD_DO_INFERENCES = DO_INFERENCES;

@@ -65,7 +65,6 @@ long bdd_tempint_max=0;
 int *bdd_tempint=NULL;
 int *original_functionType;
 int *original_equalityVble;
-int *autark_BDD=NULL;
 int Finish_Preprocessing();
 int Init_Preprocessing();
 
@@ -120,12 +119,6 @@ Init_Preprocessing()
 			  variablelist[x].replace = x;
 			  variablelist[x].true_false = -1;
 		}
-	}
-
-	if(autark_BDD == NULL) {
-      autark_BDD = (int *)ite_calloc(numinp+1, sizeof(int), 9, "autark_BDD");
-		for(int x = 0; x < numinp+1; x++)
-		  autark_BDD[x] = -1;
 	}
 
 	length_size = nmbrFunctions;
@@ -446,8 +439,6 @@ Finish_Preprocessing()
 	
 	ite_free((void**)&num_funcs_var_occurs);
 
-	ite_free((void **)&autark_BDD);
-
    DeallocateInferences(inferlist);
 	inferlist = NULL;
 	
@@ -463,8 +454,6 @@ Finish_Preprocessing()
 
 	int var_nmbrFunctions = nmbrFunctions;
 	
-	//This is to ensure that autarkyBDDs don't get sent to the solver when we know the formula is SAT.
-	//Probably wouldn't happen anyway.
 	if(countBDDs() == 0) nmbrFunctions = 0;
 
 	//Need to remove any function that was set to True during the preprocessing of the BDDs
@@ -476,35 +465,15 @@ Finish_Preprocessing()
 		equalityVble[count] = equalityVble[x];
 		//parameterizedVars[count] = parameterizedVars[x];
 		length[count] = length[x];
-		if (functions[x] == true_ptr || (functionType[x]==AUTARKY_FUNC && !USE_AUTARKY_SMURFS)) {
+		if (functions[x] == true_ptr) {
 			count--; //Don't send function to the solver
-		} else if (functionType[x] == AUTARKY_FUNC && USE_AUTARKY_SMURFS){
-			if (l->equivCount(equalityVble[x])==0 && l->opposCount(equalityVble[x])==0) {
-				for(int z = 0; z < length[x]; z++) {
-					if(variablelist[variables[x].num[z]].true_false!=-1) {
-						count--;
-						break;
-					}
-				}
-				//functions[x] = possible_BDD(functions[x], equalityVble[x]);
-			} else {
-				count--; //Don't send function to the solver
-			}
 		} else if (functions[x] == false_ptr) {
 			/* this might happen but I already know about unsatisfiedness */
-			// ret = TRIV_UNSAT;
+			ret = TRIV_UNSAT;
 		}
 	}
 	nmbrFunctions = count + 1;
 	numout = nmbrFunctions;
-
-/*
-	for (long x = 0; x < nmbrFunctions; x++) {
-		if(functionType[x] == AUTARKY_FUNC) continue;
-		//If we want to find function types, do this:
-		findandset_fnType(x);
-   }
-*/
 
 	delete l; //Delete the equiv_class
 	l = NULL;
@@ -524,7 +493,6 @@ Finish_Preprocessing()
 
 	if(countBDDs()!=nmbrFunctions){
 		d3_printf2("Number of normal BDDs - %d\n", countBDDs());
-		d3_printf2("Number of autark BDDs - %d\n", nmbrFunctions-countBDDs());
 		d3_printf2("Total number of BDDs  - %d\n", nmbrFunctions);
 		d3_printf2("Number of Variables   - %ld\n", numinp);
 	} else {

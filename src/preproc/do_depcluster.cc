@@ -145,7 +145,6 @@ int DepCluster () {
 			}
 			if(j==-1) continue;
 //			if(print == 1) d2_printf2 ("*(%d)", i);
-			if(functionType[j] == AUTARKY_FUNC) continue;
 			int depj = Dep_repeat[j];
 			Dep_repeat[j] = 0;
 			for(llBDD *iter = tempmem[i]->next; iter!=NULL; iter = iter->next) {
@@ -153,7 +152,6 @@ int DepCluster () {
 				if(Dep_repeat[k] == 0 && depj == 0) continue;
 				Dep_repeat[k] = 0;
 				if(k == j) continue; //Skip over the function we are using to combine
-				if(functionType[k] == AUTARKY_FUNC) continue;
 				//if(length[j] > MAX_VBLES_PER_SMURF) continue;
 				//if(length[k] > MAX_VBLES_PER_SMURF) continue;
 				int bdd_length = 0;

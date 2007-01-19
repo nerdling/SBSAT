@@ -186,47 +186,29 @@ int SafeSearchPreCluster_Loop() {
 			}
 			
 			
-			//if(autark_BDD[i] != -1) continue;
 			if(variablelist[i].true_false != -1 || variablelist[i].equalvars != 0)
 			  continue;
 			//fprintf(stderr, "%d\n", i);
-			int amount_count = 0;
-			int amount_num = -1;
 			
-			for (llist * k = amount[i].head; k != NULL; k = k->next) {
-				if(functionType[k->num] != AUTARKY_FUNC) {
-					amount_count++;
-					if(amount_count == 1) amount_num = k->num;
-				}
-			}
-			
-			if (amount_count == x) {
-				int j = amount_num;
-				BDDNode *Quantify = functions[j];
-				assert(functionType[j]!=AUTARKY_FUNC);
-				int out = 0;
-				if(length[j]>VARS_PER_BDD_LIMIT) out = 1;
-				DO_INFERENCES = 0;
+			if (num_funcs_var_occurs[i] == x) {
+				assert(amount[i].head != NULL);
+				int j = amount[i].head->num;
 				int count1 = 1;
-				for (llist * k = amount[i].head; k != NULL && out==0;) {
+				for (llist * k = amount[i].head; k != NULL;) {
 					int z = k->num;
 					k = k->next;
 					if(z == j) continue;
-					if(functionType[z] == AUTARKY_FUNC) continue;
 					D_3(
 						 for(int iter = 0; iter<str_length; iter++)
 						 d3_printf1("\b");
-						 sprintf(p, "(%d:%d/%d[%d])",i, count1, amount_count, countBDDs());
+						 sprintf(p, "(%d:%d/%d[%d])",i, count1, num_funcs_var_occurs[i], countBDDs());
 						 str_length = strlen(p);
 						 d3_printf1(p);
 					);
 					
-					if (nCtrlC) {
-						out = 1;
-						break;
-					}
-					if(length[z] > VARS_PER_BDD_LIMIT) {
-						out = 1;
+					if (nCtrlC)	break;
+
+					if(length[z] > VARS_PER_BDD_LIMIT || length[j] > VARS_PER_BDD_LIMIT) {
 						break;
 					} else {
 						int q;
@@ -238,13 +220,9 @@ int SafeSearchPreCluster_Loop() {
 					
 					count1++;
 					
-					Quantify = ite_and(Quantify, functions[z]);
-					affected++;
-					
+					functions[j] = ite_and(functions[j], functions[z]);
 					functions[z] = true_ptr;
-					
-					ret = PREP_CHANGED;
-					
+
 					switch (int r=Rebuild_BDDx(z)) {
 					 case TRIV_UNSAT:
 					 case TRIV_SAT:
@@ -254,48 +232,31 @@ int SafeSearchPreCluster_Loop() {
 					}
 					
 					UnSetRepeats(z);
-					equalityVble[z] = 0;
-					functionType[z] = UNSURE;
 					
-					int bdd_length = 0;
-					int *bdd_vars = NULL;
-					switch (int r=Rebuild_BDD(Quantify, &bdd_length, bdd_vars)) {
+					switch (int r=Rebuild_BDDx(j)) {
 					 case TRIV_UNSAT:
 					 case TRIV_SAT:
-					 case PREP_ERROR: return r;
+					 case PREP_ERROR:
+						ret = r; goto ss_bailout; /* as much as I hate gotos */
 					 default: break;
 					}
+										
+					affected++;
 					
-					delete [] bdd_vars;
-					bdd_vars = NULL;
-					if(bdd_length>VARS_PER_BDD_LIMIT && count1!=amount_count) {
-						out = 1;
-						break;
-					}
+					ret = PREP_CHANGED;
+					
+					k = amount[i].head; //Must do this because Rebuild_BDDx can modify amount
 				}
 				
-				if(amount_count != 1) {
+				if(num_funcs_var_occurs[i] != 1) {
 					D_3(
 						 for(int iter = 0; iter<str_length; iter++)
 						 d3_printf1("\b");
-						 sprintf(p, "(%d:%d/%d[%d])",i, count1, amount_count, countBDDs());
+						 sprintf(p, "(%d:%d/%d[%d])",i, count1, num_funcs_var_occurs[i], countBDDs());
 						 str_length = strlen(p);
 						 d3_printf1(p);
 				   );
 				}
-				
-				functions[j] = Quantify;
-				DO_INFERENCES = 1;
-				switch (int r=Rebuild_BDDx(j)) {
-				 case TRIV_UNSAT:
-				 case TRIV_SAT:
-				 case PREP_ERROR:
-					ret = r; goto ss_bailout; /* as much as I hate gotos */
-				 default: break;
-				}
-				equalityVble[j] = 0;
-				functionType[j] = UNSURE;
-				continue;
 			}
 		}
 	}
@@ -387,22 +348,14 @@ int SafeSearch(int *V, int length_V) {
 	
 	phi[max_level-1] = (BDDNode **)ite_calloc(nmbrFunctions, sizeof(BDDNode *), 9, "phi[x]**");
 	for(int x = 0; x < nmbrFunctions; x++) {
-		if(functionType[x] == AUTARKY_FUNC) { 
-			phi[max_level-1][x] = true_ptr;
-		} else {
-			phi[max_level-1][x] = functions[x];			  
-		}
+		phi[max_level-1][x] = functions[x];			  
 	}
 
 	//This could be made quicker if I used the 'amount' variable
 	for(int i = max_level-1; i > 0; i--) {
 		phi[i-1] = (BDDNode **)ite_calloc(nmbrFunctions, sizeof(BDDNode *), 9, "phi[x]**");
 		for(int x = 0; x < nmbrFunctions; x++) {
-			if(functionType[x] == AUTARKY_FUNC) {
-				phi[i-1][x] = true_ptr;
-			} else {
-				phi[i-1][x] = xquantify(phi[i][x], V[i]);
-			}
+			phi[i-1][x] = xquantify(phi[i][x], V[i]);
 		}
 		//			fprintf(stderr, "\nLevel %d: ", i);
 		//			for(int x=0; x < nmbrFunctions; x++) {

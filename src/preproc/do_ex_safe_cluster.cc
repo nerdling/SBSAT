@@ -102,15 +102,9 @@ int ExSafeCluster () {
 	
 	rand_list *rlist = (rand_list*)ite_calloc(numinp+1, sizeof(rand_list), 9, "rlist");
 	
-	int amount_count;
 	for(int i = 1;i < numinp+1; i++) {
 		rlist[i].num = i;
-		amount_count = 0;
-		for (llist * k = amount[i].head; k != NULL; k = k->next) {
-			if(functionType[k->num] != AUTARKY_FUNC)
-			  amount_count++;
-		}
-		rlist[i].size = amount_count;
+		rlist[i].size = num_funcs_var_occurs[i];
 		rlist[i].prob = random()%(numinp*numinp);
 	}
 	
@@ -123,7 +117,7 @@ int ExSafeCluster () {
 			int i = rlist[rnum].num;
 			if(i == 0) continue;
 			char p[100];
-			int j, count1, amount_num;			
+			int j, count1;			
 			
 			D_3(
 				 if (i % ((numinp/100)+1) == 0) {
@@ -145,26 +139,14 @@ int ExSafeCluster () {
 				d2e_printf3("\rPreprocessing Ea %d/%ld ", i, numinp);
 			}
 			
-			//if(autark_BDD[i] != -1) continue;
 			if(variablelist[i].true_false != -1 || variablelist[i].equalvars != 0)
 			  continue;
 
 			//fprintf(stderr, "%d\n", i);
-			amount_count = 0;
-			amount_num = -1;
-			
-			for (llist * k = amount[i].head; k != NULL; k = k->next) {
-				if(functionType[k->num] != AUTARKY_FUNC) {
-					amount_count++;
-					if(amount_count == 1) amount_num = k->num;
-				}
-			}
 
-			if(amount_count == 0) continue;
-			//if (amount_count <= x){// && independantVars[i]==0) {
-			j = amount_num;
-			assert(functionType[j]!=AUTARKY_FUNC);
-
+			if(num_funcs_var_occurs[i] == 0) continue;
+			assert(amount[i].head != NULL);
+			j = amount[i].head->num;
 			
 			//do safe assign stuff here.
 			switch (int r=check_bdd_for_safe(j, ret)) {
@@ -181,11 +163,10 @@ int ExSafeCluster () {
 				int z = k->num;
 				k = k->next;
 				if(z == j) continue;
-				if(functionType[z] == AUTARKY_FUNC) continue;
 				D_3(
 					 for(int iter = 0; iter<str_length; iter++)
 					 d3_printf1("\b");
-					 sprintf(p, "(%d:%d/%d[%d])",i, count1, amount_count, countBDDs());
+					 sprintf(p, "(%d:%d/%d[%d])",i, count1, num_funcs_var_occurs[i], countBDDs());
 					 str_length = strlen(p);
 					 d3_printf1(p);
 					 );
@@ -199,11 +180,6 @@ int ExSafeCluster () {
 				functions[j] = ite_and(functions[j], functions[z]);
 				affected++;
 
-				if(get_memusage()/1024 > 1750) {
-					fprintf(stderr, "ERROR: Memory Limit 1750M\n");
-					exit(0);
-				}				
-				
 				functions[z] = true_ptr;
 				
 				ret = PREP_CHANGED;
@@ -216,8 +192,6 @@ int ExSafeCluster () {
 				 default: break;
 				}
 				UnSetRepeats(z);
-				equalityVble[z] = 0;
-				functionType[z] = UNSURE;
 				
 				switch (int r=Rebuild_BDDx(j)) {
 				 case TRIV_UNSAT: 
@@ -226,9 +200,6 @@ int ExSafeCluster () {
 					ret = r; goto es_bailout;
 				 default: break;
 				}
-				SetRepeats(j);
-				equalityVble[j] = 0;
-				functionType[j] = UNSURE;
 				
 				//do safe assign stuff here.
 				switch (int r=check_bdd_for_safe(j, ret)) {
@@ -240,11 +211,11 @@ int ExSafeCluster () {
 				 default: break;
 				}
 			}
-			if(amount_count != 1) {
+			if(num_funcs_var_occurs[i] != 1) {
 				D_3(
 					 for(int iter = 0; iter<str_length; iter++)
 					 d3_printf1("\b");
-					 sprintf(p, "(%d:%d/%d[%d])",i, count1, amount_count, countBDDs());
+					 sprintf(p, "(%d:%d/%d[%d])",i, count1, num_funcs_var_occurs[i], countBDDs());
 					 str_length = strlen(p);
 					 d3_printf1(p);
 					 );
