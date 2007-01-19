@@ -612,6 +612,9 @@ int SimpleBrancher() {
 int simpleSolve() {
 	int bxors_old = BREAK_XORS;
 	BREAK_XORS = 0;
+	//Clear function type:
+	for(int x = 0; x < nmbrFunctions; x++)
+	  functionType[x] = UNSURE;
 	int ret = Init_SimpleSmurfSolver();
 	if(ret != SOLV_UNKNOWN) return ret;
 	ret = SimpleBrancher();  
