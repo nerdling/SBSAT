@@ -135,7 +135,7 @@ int DetermineNumOfSmurfStates() {
 
 //This state, pCurrentState, cannot have any inferences, and has not been visited
 void ReadSmurfStateIntoTable(SmurfState *pCurrentState) {
-	if(pCurrentState != pTrueSmurfState) {
+	if(pCurrentState != pTrueSmurfState && pCurrentState->pFunc->flag==0) {
 		//If this is the first transition in a SmurfState, mark this SmurfState as Visited      
 		pCurrentState->pFunc->flag = SimpleSmurfProblemState->nNumSmurfStateEntries;
 		for(int nVbleIndex = 0; nVbleIndex < pCurrentState->vbles.nNumElts; nVbleIndex++) {
@@ -170,45 +170,46 @@ void ReadSmurfStateIntoTable(SmurfState *pCurrentState) {
 			//Compute the SmurfState w/ nTransitionVar = False
 			//Create Inference Transitions
 			BDDNode *infBDD = pCurrentState->pFunc;
-			infBDD = set_variable_noflag(infBDD, arrSolver2IteVarMap[CurrState->nTransitionVar], 0);
+			int nTransition_polarity = 0;
+			infBDD = set_variable_noflag(infBDD, arrSolver2IteVarMap[CurrState->nTransitionVar], nTransition_polarity);
 			Transition *pTransition = &(pCurrentState->arrTransitions[2*nVbleIndex]);
 			SmurfStateEntry *NextState = CurrState;
 			//Follow Positive inferences
 			for(int infIdx = 0; infIdx < pTransition->positiveInferences.nNumElts && infBDD->flag == 0; infIdx++) {
 				//Add a SmurfStateEntry into the table
+				if(infBDD->flag != 0) break;
 				infBDD->flag = SimpleSmurfProblemState->nNumSmurfStateEntries;
-				if(infIdx == 0) NextState->nVarIsFalseTransition = infBDD->flag; //The TransitionVar is False
-				else NextState->nVarIsTrueTransition = infBDD->flag; //The inferences are True
+				if(nTransition_polarity) NextState->nVarIsTrueTransition = infBDD->flag; //The transition is True
+				else NextState->nVarIsFalseTransition = infBDD->flag; //The transition is False
 				NextState = &(SimpleSmurfProblemState->arrSmurfStatesTable[SimpleSmurfProblemState->nNumSmurfStateEntries]);
 				SimpleSmurfProblemState->nNumSmurfStateEntries++;
 				NextState->nTransitionVar = pTransition->positiveInferences.arrElts[infIdx];
 				NextState->nVarIsAnInference = 1;
-				infBDD = set_variable_noflag(infBDD, arrSolver2IteVarMap[NextState->nTransitionVar], 1);
+				nTransition_polarity = 1;
+				infBDD = set_variable_noflag(infBDD, arrSolver2IteVarMap[NextState->nTransitionVar], nTransition_polarity);
 			}
 			//Follow Negative inferences
 			for(int infIdx = 0; infIdx < pTransition->negativeInferences.nNumElts && infBDD->flag == 0; infIdx++) {
 				//Add a SmurfStateEntry into the table
+				if(infBDD->flag != 0) break;
 				infBDD->flag = SimpleSmurfProblemState->nNumSmurfStateEntries;
-				NextState->nVarIsFalseTransition = infBDD->flag; //The TransitionVar is False and the inferences are False
+				if(nTransition_polarity) NextState->nVarIsTrueTransition = infBDD->flag; //The transition is True
+				else NextState->nVarIsFalseTransition = infBDD->flag; //The transition is False
 				NextState = &(SimpleSmurfProblemState->arrSmurfStatesTable[SimpleSmurfProblemState->nNumSmurfStateEntries]);
 				SimpleSmurfProblemState->nNumSmurfStateEntries++;
 				NextState->nTransitionVar = pTransition->negativeInferences.arrElts[infIdx];
 				NextState->nVarIsAnInference = -1;
-				infBDD = set_variable_noflag(infBDD, arrSolver2IteVarMap[NextState->nTransitionVar], 0);
+				nTransition_polarity = 0;
+				infBDD = set_variable_noflag(infBDD, arrSolver2IteVarMap[NextState->nTransitionVar], nTransition_polarity);
 			}
 			if(infBDD->flag != 0) {
-				if(NextState->nVarIsAnInference == 1) {
-					NextState->nVarIsTrueTransition = infBDD->flag;
-				} else {
-					NextState->nVarIsFalseTransition = infBDD->flag;
-				}
+				if(nTransition_polarity) NextState->nVarIsTrueTransition = infBDD->flag; //The transition is True
+				else NextState->nVarIsFalseTransition = infBDD->flag; //The transition is False
 			} else {
 				assert(pTransition->pNextState->pFunc == infBDD);
-				if(NextState->nVarIsAnInference == 1) {
-					NextState->nVarIsTrueTransition = SimpleSmurfProblemState->nNumSmurfStateEntries;
-				} else {
-					NextState->nVarIsFalseTransition = SimpleSmurfProblemState->nNumSmurfStateEntries;
-				}
+				if(nTransition_polarity) NextState->nVarIsTrueTransition = SimpleSmurfProblemState->nNumSmurfStateEntries; //The transition is True
+				else NextState->nVarIsFalseTransition = SimpleSmurfProblemState->nNumSmurfStateEntries; //The transition is False
+
 				//Recurse on nTransitionVar == False transition
 				ReadSmurfStateIntoTable(pTransition->pNextState);
 			}
@@ -216,45 +217,46 @@ void ReadSmurfStateIntoTable(SmurfState *pCurrentState) {
 			//Compute the SmurfState w/ nTransitionVar = True
 			//Create Inference Transitions
 			infBDD = pCurrentState->pFunc;
-			infBDD = set_variable_noflag(infBDD, arrSolver2IteVarMap[CurrState->nTransitionVar], 1);
+			nTransition_polarity = 1;
+			infBDD = set_variable_noflag(infBDD, arrSolver2IteVarMap[CurrState->nTransitionVar], nTransition_polarity);
 			pTransition = &(pCurrentState->arrTransitions[2*nVbleIndex+1]);
 			NextState = CurrState;
 			//Follow Negative inferences
 			for(int infIdx = 0; infIdx < pTransition->negativeInferences.nNumElts && infBDD->flag == 0; infIdx++) {
 				//Add a SmurfStateEntry into the table
+				if(infBDD->flag != 0) break;
 				infBDD->flag = SimpleSmurfProblemState->nNumSmurfStateEntries;
-				if(infIdx == 0) NextState->nVarIsTrueTransition = infBDD->flag; //The TransitionVar is True
-				else NextState->nVarIsFalseTransition = infBDD->flag; //The inferences are False
+				if(nTransition_polarity) NextState->nVarIsTrueTransition = infBDD->flag; //The transition is True
+				else NextState->nVarIsFalseTransition = infBDD->flag; //The transition is False
 				NextState = &(SimpleSmurfProblemState->arrSmurfStatesTable[SimpleSmurfProblemState->nNumSmurfStateEntries]);
 				SimpleSmurfProblemState->nNumSmurfStateEntries++;
 				NextState->nTransitionVar = pTransition->negativeInferences.arrElts[infIdx];
 				NextState->nVarIsAnInference = -1;
-				infBDD = set_variable_noflag(infBDD, arrSolver2IteVarMap[NextState->nTransitionVar], 0);
+				nTransition_polarity = 0;
+				infBDD = set_variable_noflag(infBDD, arrSolver2IteVarMap[NextState->nTransitionVar], nTransition_polarity);
 			}
 			//Follow Positive inferences
 			for(int infIdx = 0; infIdx < pTransition->positiveInferences.nNumElts && infBDD->flag == 0; infIdx++) {
 				//Add a SmurfStateEntry into the table
+				if(infBDD->flag != 0) break;
 				infBDD->flag = SimpleSmurfProblemState->nNumSmurfStateEntries;
-				NextState->nVarIsTrueTransition = infBDD->flag; //The TransitionVar is True and the inferences are True
+				if(nTransition_polarity) NextState->nVarIsTrueTransition = infBDD->flag; //The transition is True
+				else NextState->nVarIsFalseTransition = infBDD->flag; //The transition is False
 				NextState = &(SimpleSmurfProblemState->arrSmurfStatesTable[SimpleSmurfProblemState->nNumSmurfStateEntries]);
 				SimpleSmurfProblemState->nNumSmurfStateEntries++;
 				NextState->nTransitionVar = pTransition->positiveInferences.arrElts[infIdx];
 				NextState->nVarIsAnInference = 1;
-				infBDD = set_variable_noflag(infBDD, arrSolver2IteVarMap[NextState->nTransitionVar], 1);
+				nTransition_polarity = 1;
+				infBDD = set_variable_noflag(infBDD, arrSolver2IteVarMap[NextState->nTransitionVar], nTransition_polarity);
 			}
 			if(infBDD->flag != 0) {
-				if(NextState->nVarIsAnInference == -1) {
-					NextState->nVarIsFalseTransition = infBDD->flag;
-				} else {
-					NextState->nVarIsTrueTransition = infBDD->flag;
-				}
+				if(nTransition_polarity) NextState->nVarIsTrueTransition = infBDD->flag; //The transition is True
+				else NextState->nVarIsFalseTransition = infBDD->flag; //The transition is False
 			} else {
 				assert(pTransition->pNextState->pFunc == infBDD);
-				if(NextState->nVarIsAnInference == -1) {
-					NextState->nVarIsFalseTransition = SimpleSmurfProblemState->nNumSmurfStateEntries;
-				} else {
-					NextState->nVarIsTrueTransition = SimpleSmurfProblemState->nNumSmurfStateEntries;
-				}
+				if(nTransition_polarity) NextState->nVarIsTrueTransition = SimpleSmurfProblemState->nNumSmurfStateEntries; //The transition is True
+				else NextState->nVarIsFalseTransition = SimpleSmurfProblemState->nNumSmurfStateEntries; //The transition is False
+
 				//Recurse on nTransitionVar == False transition
 				ReadSmurfStateIntoTable(pTransition->pNextState);
 			}
