@@ -122,7 +122,7 @@ void DisplaySimpleSolverBacktrackInfo(double &fSimpleSolverPrevEndTime, double &
 	char number[10];
 	char back[10] = "\b\b\b\b\b\b\b\b\b";
 	//sprintf(number, "% 3.2f%%", progress);
-	sprintf(number, "% ?", progress);
+	sprintf(number, " ?");
 	back[strlen(number)]=0;
 	if ((DEBUG_LVL&15) == 1) {
 		fprintf(stderr, "%s%s", number, back);
@@ -669,7 +669,7 @@ int SimpleBrancher() {
 			//Update heuristic values
 			
 			//Call Heuristic to get variable and polarity
-			d7_printf2("Calling heuristic to choose choice point #%d\n", ite_counters[NUM_CHOICE_POINTS]);
+			d7_printf2("Calling heuristic to choose choice point #%lld\n", ite_counters[NUM_CHOICE_POINTS]);
 			nBranchLit = Simple_LSGB_Heuristic();
 
 			ite_counters[NUM_CHOICE_POINTS]++;
