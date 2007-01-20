@@ -663,12 +663,14 @@ int SimpleBrancher() {
 
 	while(ite_counters[NUM_SOLUTIONS] != max_solutions) {
 		bool bBVPolarity; 
+		int nBranchLit, nInfQueueHead, nPrevInfLevel, nBranchVar;
+		  
 		while(SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars < SimpleSmurfProblemState->nNumVars-1) {
 			//Update heuristic values
 			
 			//Call Heuristic to get variable and polarity
 			d7_printf2("Calling heuristic to choose choice point #%d\n", ite_counters[NUM_CHOICE_POINTS]);
-			int nBranchLit = Simple_LSGB_Heuristic();
+			nBranchLit = Simple_LSGB_Heuristic();
 
 			ite_counters[NUM_CHOICE_POINTS]++;
 			
@@ -676,12 +678,12 @@ int SimpleBrancher() {
 			SmurfStates_Push();
 			
 			//Insert heuristic var into inference queue
-			int nInfQueueHead = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
+			nInfQueueHead = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
 			//First clear out old inference
 			//SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[abs(SimpleSmurfProblemState->arrInferenceQueue[nInfQueueHead])] =
 			//SimpleSmurfProblemState->nNumVars;
 			//Then insert new inference
-			int nPrevInfLevel = SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[abs(nBranchLit)];
+			nPrevInfLevel = SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[abs(nBranchLit)];
 			SimpleSmurfProblemState->arrInferenceQueue[nInfQueueHead] = nBranchLit;
 			SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[abs(nBranchLit)] = nInfQueueHead;
 			SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars++;
@@ -696,7 +698,7 @@ int SimpleBrancher() {
 				nInfQueueHead++;
 				bBVPolarity = 1;
 				if(nBranchLit < 0) bBVPolarity = 0;
-				int nBranchVar = bBVPolarity?nBranchLit:-nBranchLit;
+				nBranchVar = bBVPolarity?nBranchLit:-nBranchLit;
 				
 				//apply inference to all involved smurfs
 				if(ApplyInferenceToSmurfs(nBranchVar, bBVPolarity) == 0) {
