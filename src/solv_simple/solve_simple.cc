@@ -53,6 +53,10 @@ SmurfStateEntry *TrueSimpleSmurfState;
 
 ProblemState *SimpleSmurfProblemState;
 
+double fSimpleSolverStartTime;
+double fSimpleSolverEndTime;
+double fSimpleSolverPrevEndTime;
+
 int smurfs_share_paths=1;
 
 void PrintSmurfStateEntry(SmurfStateEntry *ssEntry) {
@@ -64,6 +68,111 @@ void PrintAllSmurfStateEntries() {
 		d9_printf2("State %d, ", x);
 		PrintSmurfStateEntry(&(SimpleSmurfProblemState->arrSmurfStatesTable[x]));
 	}
+}
+
+ITE_INLINE
+void CalculateSimpleSolverProgress(int *_whereAmI, int *_total) {
+	int whereAmI=0;
+	int total=0;
+	int soft_count=14;
+	int hard_count=28;
+	int count=0;
+/*	
+	while (pBacktrack < pBacktrackTop && (count<soft_count || (count < hard_count && whereAmI==0))) {
+		if (pBacktrack->bWasChoicePoint == true) {
+			whereAmI *= 2;
+			whereAmI += 1;
+			total *= 2;
+			total += 1;
+			count++;
+		} else if (pBacktrack->nBranchVble == pChoicePoint->nBranchVble) {
+			whereAmI *= 2;
+			total *= 2;
+			total += 1;
+			pChoicePoint++;
+			count++;
+		}
+		pBacktrack++;
+	}
+*/
+	*_whereAmI = whereAmI;
+	*_total    = total;
+}
+
+ITE_INLINE
+void DisplaySimpleSolverBacktrackInfo(double &fSimpleSolverPrevEndTime, double &fSimpleSolverStartTime) {
+	double fSimpleSolverEndTime = ite_counters_f[CURRENT_TIME] = get_runtime();
+	double fTotalDurationInSecs = fSimpleSolverEndTime - fSimpleSolverStartTime;
+	double fDurationInSecs = fSimpleSolverEndTime - fSimpleSolverPrevEndTime;
+	double fBacktracksPerSec = BACKTRACKS_PER_STAT_REPORT / (fDurationInSecs>0?fDurationInSecs:0.001);
+	fSimpleSolverPrevEndTime = fSimpleSolverEndTime;
+	
+	d2_printf2("Time: %4.3fs. ", fTotalDurationInSecs);
+	d2_printf3("Backtracks: %ld (%4.3f per sec) ",
+				  (long)ite_counters[NUM_BACKTRACKS], fBacktracksPerSec);
+	
+	int whereAmI = 0;
+	int total = 0;
+	double progress = 0.0;
+	CalculateSimpleSolverProgress(&whereAmI, &total);
+	if (total == 0) total=1;
+	progress = ite_counters_f[PROGRESS] = (float)whereAmI*100/total;
+	//d2_printf3("Progress: %x/%x        ", whereAmI, total);
+	d2_printf1("Progress: ");
+	char number[10];
+	char back[10] = "\b\b\b\b\b\b\b\b\b";
+	//sprintf(number, "% 3.2f%%", progress);
+	sprintf(number, "% ?", progress);
+	back[strlen(number)]=0;
+	if ((DEBUG_LVL&15) == 1) {
+		fprintf(stderr, "%s%s", number, back);
+	} else {
+		D_1(
+			 d0_printf3("%s%s", number, back);
+			 fflush(stddbg);
+		)
+	}
+	
+	d2_printf1("\n Choices (total, dependent" );
+	dC_printf4("c %4.3fs. Progress %s Choices: %lld\n", fTotalDurationInSecs, number, ite_counters[NO_ERROR]);
+	if (backjumping) d2_printf1(", backjumped");
+	d2_printf3("): (%lld, %lld", ite_counters[NUM_CHOICE_POINTS], ite_counters[HEU_DEP_VAR]);
+	if (backjumping) d2_printf2(", %lld", ite_counters[NUM_TOTAL_BACKJUMPS]);
+	d2_printf1(")");
+	
+	if (NO_LEMMAS == 0)
+	  d2_printf6("\n Lemmas (0, 1, 2, non-cached, added): (%d, %d, %d, %d, %d)",
+					 nNumCachedLemmas[0], nNumCachedLemmas[1], nNumCachedLemmas[2],
+					 gnNumLemmas - (nNumCachedLemmas[0]+nNumCachedLemmas[1]+nNumCachedLemmas[2]),
+					 nCallsToAddLemma
+	  );
+	
+	d2_printf1("\n");
+	d2_printf1(" Inferences by ");
+	d2_printf2("smurfs: %lld; ", ite_counters[INF_SMURF]);
+	d2_printf2("ANDs: %lld; ", ite_counters[INF_SPEC_FN_AND]);
+	d2_printf2("XORs: %lld; ", ite_counters[INF_SPEC_FN_XOR]);
+	d2_printf2("MINMAXs: %lld; ", ite_counters[INF_SPEC_FN_MINMAX]);
+	if (NO_LEMMAS == 0) d2_printf2("lemmas: %lld; ", ite_counters[INF_LEMMA]);
+	d2_printf1("\n");
+	
+	d2_printf1(" Backtracks by ");
+	d2_printf2("smurfs: %lld; ", ite_counters[ERR_BT_SMURF]);
+	d2_printf2("ANDs: %lld; ", ite_counters[ERR_BT_SPEC_FN_AND]);
+	d2_printf2("XORs: %lld; ", ite_counters[ERR_BT_SPEC_FN_XOR]);
+	d2_printf2("MINMAXs: %lld; ", ite_counters[ERR_BT_SPEC_FN_MINMAX]);
+	if (NO_LEMMAS == 0) d2_printf2("lemmas: %lld; ", ite_counters[ERR_BT_LEMMA]);
+	d2_printf1("\n");
+	if (backjumping) d2_printf3(" Backjumps: %ld (avg bj len: %.1f)\n",
+										 (long)ite_counters[NUM_TOTAL_BACKJUMPS],
+										 (float)ite_counters[NUM_TOTAL_BACKJUMPS]/(1+ite_counters[NUM_BACKJUMPS]));
+	if (autarky) d2_printf3(" Autarkies: %ld (avg au len: %.1f)\n",
+									(long)ite_counters[NUM_TOTAL_AUTARKIES],
+									(float)ite_counters[NUM_TOTAL_AUTARKIES]/(1+ite_counters[NUM_AUTARKIES]));
+	if (max_solutions != 1) d2_printf3(" Solutions found: %ld/%ld\n",
+												  (long)ite_counters[NUM_SOLUTIONS], (long)max_solutions);
+	
+	d2_printf1("\n");
 }
 
 int NumOfSmurfStatesInSmurf(SmurfState *pCurrentState) {
@@ -476,6 +585,7 @@ int ApplyInferenceToSmurfs(int nBranchVar, bool bBVPolarity) {
 						SimpleSmurfProblemState->arrInferenceQueue[nInfQueueHead] = bInfPolarity?nInfVar:-nInfVar;
 						SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[nInfVar] = nInfQueueHead;
 						SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars++;
+						ite_counters[INF_SMURF]++;
 					}
 					
 					//Follow the transtion to the next SmurfState
@@ -530,6 +640,12 @@ void SmurfStates_Push() {
 
 int SmurfStates_Pop() {
 	d7_printf1("  Conflict - Backtracking\n");
+
+	ite_counters[NUM_BACKTRACKS]++;
+	d9_printf2("\nStarting backtrack # %ld\n", (long)ite_counters[NUM_BACKTRACKS]);
+	if (ite_counters[NUM_BACKTRACKS] % BACKTRACKS_PER_STAT_REPORT == 0)
+		DisplaySimpleSolverBacktrackInfo(fSimpleSolverPrevEndTime, fSimpleSolverStartTime);
+		
 	SimpleSmurfProblemState->nCurrSearchTreeLevel--;
 	
 	if(SimpleSmurfProblemState->nCurrSearchTreeLevel < 0)
@@ -538,77 +654,93 @@ int SmurfStates_Pop() {
 }
 
 int SimpleBrancher() {
-	int nNumChoicePoints = 0;
+
+	int ret = SOLV_UNKNOWN;
 	
 	SimpleSmurfProblemState->nCurrSearchTreeLevel = 0;
-	while(SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars < SimpleSmurfProblemState->nNumVars-1) {
-		//Update heuristic values
-		
-		//Call Heuristic to get variable and polarity
-		d7_printf2("Calling heuristic to choose choice point #%d\n", nNumChoicePoints);
-		int nBranchLit = Simple_LSGB_Heuristic();
-		nNumChoicePoints++;
-		
-		//Push stack
-		SmurfStates_Push();
-		
-		//Insert heuristic var into inference queue
-		int nInfQueueHead = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
-		//First clear out old inference
-//		SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[abs(SimpleSmurfProblemState->arrInferenceQueue[nInfQueueHead])] =
-//		  SimpleSmurfProblemState->nNumVars;
-		//Then insert new inference
-		int nPrevInfLevel = SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[abs(nBranchLit)];
-		SimpleSmurfProblemState->arrInferenceQueue[nInfQueueHead] = nBranchLit;
-		SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[abs(nBranchLit)] = nInfQueueHead;
-		SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars++;
-		d7_printf5("Inferring %c%d (choice point) at Level %d (prior level = %d)\n",
-					  nBranchLit>0?'+':'-', abs(nBranchLit), nInfQueueHead, nPrevInfLevel);
-		//    d7_printf3("Choice Point #%d = %d\n", , nBranchLit);
-		// 
-		//While inference queue != empty {
-		while(nInfQueueHead != SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars) {
-			//Get inference
-			nBranchLit = SimpleSmurfProblemState->arrInferenceQueue[nInfQueueHead];
-			nInfQueueHead++;
-			bool bBVPolarity = 1;
-			if(nBranchLit < 0) bBVPolarity = 0;
-			int nBranchVar = bBVPolarity?nBranchLit:-nBranchLit;
+
+	fSimpleSolverStartTime = get_runtime();
+
+	while(ite_counters[NUM_SOLUTIONS] != max_solutions) {
+		bool bBVPolarity; 
+		while(SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars < SimpleSmurfProblemState->nNumVars-1) {
+			//Update heuristic values
 			
-			//apply inference to all involved smurfs
-			if(ApplyInferenceToSmurfs(nBranchVar, bBVPolarity) == 0) {
-				//A conflict occured
-				//Pop stack
-				if(SmurfStates_Pop() == 0) {
-					//We are at the top of the stack
-					//return Unsatisifable
-					d2_printf2("Number of Choice Points: %d\n", nNumChoicePoints);
-					return SOLV_UNSAT;
+			//Call Heuristic to get variable and polarity
+			d7_printf2("Calling heuristic to choose choice point #%d\n", ite_counters[NUM_CHOICE_POINTS]);
+			int nBranchLit = Simple_LSGB_Heuristic();
+
+			ite_counters[NUM_CHOICE_POINTS]++;
+			
+			//Push stack
+			SmurfStates_Push();
+			
+			//Insert heuristic var into inference queue
+			int nInfQueueHead = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
+			//First clear out old inference
+			//SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[abs(SimpleSmurfProblemState->arrInferenceQueue[nInfQueueHead])] =
+			//SimpleSmurfProblemState->nNumVars;
+			//Then insert new inference
+			int nPrevInfLevel = SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[abs(nBranchLit)];
+			SimpleSmurfProblemState->arrInferenceQueue[nInfQueueHead] = nBranchLit;
+			SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[abs(nBranchLit)] = nInfQueueHead;
+			SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars++;
+			d7_printf5("Inferring %c%d (choice point) at Level %d (prior level = %d)\n",
+						  nBranchLit>0?'+':'-', abs(nBranchLit), nInfQueueHead, nPrevInfLevel);
+			//    d7_printf3("Choice Point #%d = %d\n", , nBranchLit);
+
+			//While inference queue != empty {
+			while(nInfQueueHead != SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars) {
+				//Get inference
+				nBranchLit = SimpleSmurfProblemState->arrInferenceQueue[nInfQueueHead];
+				nInfQueueHead++;
+				bBVPolarity = 1;
+				if(nBranchLit < 0) bBVPolarity = 0;
+				int nBranchVar = bBVPolarity?nBranchLit:-nBranchLit;
+				
+				//apply inference to all involved smurfs
+				if(ApplyInferenceToSmurfs(nBranchVar, bBVPolarity) == 0) {
+					//A conflict occured
+					//Pop stack
+					ite_counters[ERR_BT_SMURF]++;
+find_more_solutions: ;
+					if(SmurfStates_Pop() == 0) {
+						//We are at the top of the stack
+						if(ite_counters[NUM_SOLUTIONS] == 0) return SOLV_UNSAT; //return Unsatisifable
+						else return SOLV_SAT;
+					}
+					
+					//Empty the inference queue & reverse polarity of cp var
+					//Clear Inference Queue
+					for(int i = 1; i < SimpleSmurfProblemState->nNumVars; i++)
+					  if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i] > SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars ||
+						  abs(SimpleSmurfProblemState->arrInferenceQueue[SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i]]) != i) {
+						  d7_printf3("      Resetting level of variable %d to %d\n", i, SimpleSmurfProblemState->nNumVars);
+						  SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i] = SimpleSmurfProblemState->nNumVars;
+					  }
+					
+					nBranchLit = SimpleSmurfProblemState->arrInferenceQueue[SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars];
+					SimpleSmurfProblemState->arrInferenceQueue[SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars] = -nBranchLit;
+					nInfQueueHead = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
+					SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars++;
+					d7_printf3("Flipping Value of Choicepoint at level %d to %d\n", nInfQueueHead, -nBranchLit);
+					//continue the loop
 				}
-				
-				//Empty the inference queue & reverse polarity of cp var
-				//Clear Inference Queue
-				for(int i = 1; i < SimpleSmurfProblemState->nNumVars; i++)
-				  if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i] > SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars ||
-					  abs(SimpleSmurfProblemState->arrInferenceQueue[SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i]]) != i) {
-					  d7_printf3("      Resetting level of variable %d to %d\n", i, SimpleSmurfProblemState->nNumVars);
-					  SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i] = SimpleSmurfProblemState->nNumVars;
-				  }
-				
-				
-				nBranchLit = SimpleSmurfProblemState->arrInferenceQueue[SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars];
-				SimpleSmurfProblemState->arrInferenceQueue[SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars] = -nBranchLit;
-				nInfQueueHead = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
-				SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars++;
-				d7_printf3("Flipping Value of Choicepoint at level %d to %d\n", nInfQueueHead, -nBranchLit);
-				//continue the loop
 			}
+			d7_printf1("\n");
 		}
-		d7_printf1("\n");
+
+		//Record solution
+		
+		ite_counters[NUM_SOLUTIONS]++;
+		ret = SOLV_SAT;
+		
+		if(ite_counters[NUM_SOLUTIONS] != max_solutions) {
+			goto find_more_solutions;
+		}
 	}
-	
-	d2_printf2("Number of Choice Points: %d\n", nNumChoicePoints);
-	return SOLV_SAT;
+
+	return ret;
 }
 
 int simpleSolve() {
@@ -620,6 +752,7 @@ int simpleSolve() {
 	int ret = Init_SimpleSmurfSolver();
 	if(ret != SOLV_UNKNOWN) return ret;
 	ret = SimpleBrancher();  
+	DisplayStatistics(ite_counters[NUM_CHOICE_POINTS], ite_counters[NUM_BACKTRACKS], ite_counters[NUM_BACKJUMPS]);
 	//Still need to do some backend stuff like record the solution and free memory.
 	BREAK_XORS = bxors_old;
 	return ret;

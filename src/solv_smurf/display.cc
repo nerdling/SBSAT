@@ -310,7 +310,7 @@ void DisplayBacktrackInfo(double &fPrevEndTime, double &fStartTime)
       d2_printf1("\n Choices (total, dependent" );
       dC_printf4("c %4.3fs. Progress %s Choices: %lld\n", fTotalDurationInSecs, number, ite_counters[NO_ERROR]);
       if (backjumping) d2_printf1(", backjumped");
-      d2_printf3("): (%lld, %lld", ite_counters[NO_ERROR], ite_counters[HEU_DEP_VAR]);
+      d2_printf3("): (%lld, %lld", ite_counters[NUM_CHOICE_POINTS], ite_counters[HEU_DEP_VAR]);
       if (backjumping) d2_printf2(", %lld", ite_counters[NUM_TOTAL_BACKJUMPS]);
       d2_printf1(")");
       
