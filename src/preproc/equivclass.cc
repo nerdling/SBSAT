@@ -1174,7 +1174,7 @@ class Equiv {
 
    char *Equiv::pw (VecType word) {
 		char *out = (char *)calloc(1,sizeof(char)*sizeof(VecType)*8);
-		for (int i=0 ; i < sizeof(VecType)*8 ; i++) {
+		for (unsigned int i=0 ; i < sizeof(VecType)*8 ; i++) {
 			if (word & (1 << i)) out[i] = '1'; else out[i] = '0';
 		}
 		out[sizeof(VecType)*8] = 0;
@@ -1215,7 +1215,7 @@ class Equiv {
    //    Add equivalences and opposites to internal data base and "result"
    //    Return "result"
    Result *Equiv::findAndSaveEquivalences () {
-		//printLinear ();
+		//fflush(stdout);		printLinear ();		fflush(stdout);
 		int idx = 0; // index into return array
 		unsigned long vec_add, vec_f_add;
 		if (rec->index < 1) return NULL; // Return NULL if no vectors in matrix
@@ -1250,6 +1250,7 @@ class Equiv {
 					continue;
 				}
 			} else if(vec[vec_size-1] & (1 << (sizeof(VecType)*8-1))) {
+				fflush(stdout);fprintf(stdout, "|%d=T|", v);fflush(stdout);
 				Result *fase_result = insertEquiv(v, Tr);
 				if(fase_result == NULL) continue; //No change - already in the database
 				result[idx].left = fase_result->left; // Attempt to make v = Tr
@@ -1258,6 +1259,7 @@ class Equiv {
 				if(fase_result->left == Tr && fase_result->rght == Fa) return result; // Inconsistency
 				idx++; // Equivalence is valid
 			} else {
+				fflush(stdout);fprintf(stdout, "|%d=F|", v);fflush(stdout);
 				Result *fase_result = insertEquiv(v, Fa);
 				if(fase_result == NULL) continue; // No change - already in database
 				result[idx].left = fase_result->left; // Attempt to make v = Tr
@@ -1290,6 +1292,7 @@ dd:;
 					// The value of the row is 0
 					//cout << "Attempt " << vart[0] << " equiv " << vart[1] << "\n";
 					Result *fase_result;
+					fflush(stdout);fprintf(stdout, "|%d=%d|", vph, vpc);fflush(stdout);
 					if(vph > vpc) fase_result = insertEquiv(vph, vpc);
 					else fase_result = insertEquiv(vpc, vph);
 					if(fase_result == NULL) continue; // No change - already in database
@@ -1302,6 +1305,7 @@ dd:;
 					// The value of the row is 1 -
 					//cout << "Attempt " << vph << " oppos " << vpc << "\n";
 					Result *fase_result;
+					fflush(stdout);fprintf(stdout, "|%d=-%d|", vph, vpc);fflush(stdout);
 					if(vph > vpc) fase_result = insertOppos(vph, vpc);
 					else fase_result = insertOppos(vpc, vph);
 					if(fase_result == NULL) continue; // No change - already in database
@@ -1341,7 +1345,7 @@ d1:;
 				//This word better either be zero, or have only one 1.
 				if(mask[j] & vec[j] == 0) continue;
 				if(cnt>=1) {cnt++; break;}
-				for(int bit = 0; bit < sizeof(VecType)*8; bit++)
+				for(unsigned int bit = 0; bit < sizeof(VecType)*8; bit++)
 				  if(mask[j] & vec[j] & (1 << bit)) {
 					  if(cnt==1) {cnt++; break;}
 					  vart[cnt++] = bit+j*sizeof(VecType)*8;
@@ -1355,6 +1359,7 @@ d1:;
 				// The value of the row is 1 -
 				//cout << "Attempt " << vart[0] << " oppos " << vart[1] << "\n";
 				Result *fase_result;
+				fflush(stdout);fprintf(stdout, "|%d=-%d|", vart[0], vart[1]);fflush(stdout);
 				if(vart[0] > vart[1]) fase_result = insertOppos(vart[0], vart[1]);
 				else fase_result = insertOppos(vart[1], vart[0]);
 				if(fase_result == NULL) continue; // No change - already in database
@@ -1370,6 +1375,7 @@ d1:;
 				// The value of the row is 0
 				//cout << "Attempt " << vart[0] << " equiv " << vart[1] << "\n";
 				Result *fase_result;
+				fflush(stdout);fprintf(stdout, "|%d=%d|", vart[0], vart[1]);fflush(stdout);
 				if(vart[0] > vart[1]) fase_result = insertEquiv(vart[0], vart[1]);
 				else fase_result = insertEquiv(vart[1], vart[0]);
 				if(fase_result == NULL) continue; // No change - already in database
@@ -1495,7 +1501,7 @@ d1:;
 		cout << "Mask (" << vec_size*sizeof(VecType)*8 << " bits):\n     ";
 		for (int i=0 ; i < vec_size ; i++) {
 			VecType tmp = mask[i];
-			for (int j=0 ; j < sizeof(VecType)*8 ; j++) {
+			for (unsigned int j=0 ; j < sizeof(VecType)*8 ; j++) {
 				if (tmp % 2) cout << "1"; else cout << "0";
 				tmp /= 2;
 			}
@@ -1511,7 +1517,7 @@ d1:;
 			VecType *vn = (VecType *)(frame_start+vecs_v_start+i*vecs_rec_bytes);
 			for (int j=0 ; j < vec_size ; j++) {
 				VecType tmp = vn[j];
-				for (int k=0 ; k < sizeof(VecType)*8 ; k++) {
+				for (unsigned int k=0 ; k < sizeof(VecType)*8 ; k++) {
 					if (tmp % 2) cout << "1"; else cout << "0";
 					tmp /= 2;
 				}
@@ -1519,7 +1525,7 @@ d1:;
 			cout << "     ";
 			for (int j=0 ; j < vec_size ; j++) {
 				VecType tmp = vn[j] & mask[j];
-				for (int k=0 ; k < sizeof(VecType)*8 ; k++) {
+				for (unsigned int k=0 ; k < sizeof(VecType)*8 ; k++) {
 					if (tmp % 2) cout << "1"; else cout << "0";
 					tmp /= 2;
 				}

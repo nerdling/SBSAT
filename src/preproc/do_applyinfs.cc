@@ -93,10 +93,24 @@ Do_Apply_Inferences ()
 				d3e_printf3 ("{%d=%d}", inferlist->nums[0], inferlist->nums[1]);
 				d4_printf5("{%s(%d)=%s(%d)}", s_name(inferlist->nums[0]), inferlist->nums[0], s_name(inferlist->nums[1]), inferlist->nums[1]);
 				str_length = 0;
-				if(variablelist[inferlist->nums[1]].true_false != 2)
-				  if(variablelist[inferlist->nums[0]].true_false == 2)
-					 variablelist[inferlist->nums[0]].true_false = -1;
-				variablelist[inferlist->nums[1]].true_false = -1;
+
+				if(variablelist[inferlist->nums[0]].true_false == 2) {
+						fprintf(stderr, "Inferring a quantified variable...\n");
+				} else if(variablelist[inferlist->nums[0]].true_false != -1 || variablelist[inferlist->nums[0]].equalvars != 0) {
+					fprintf(stderr, "Inferring a variable twice, exiting...\n");
+					assert(0);
+					exit(1);
+				}
+
+				if(variablelist[inferlist->nums[1]].true_false == 2) {
+					fprintf(stderr, "Inferring a quantified variable...\n");
+				} else if(variablelist[inferlist->nums[1]].true_false != -1 || variablelist[inferlist->nums[1]].equalvars != 0) {
+					fprintf(stderr, "Inferring a variable twice, exiting...\n");
+					assert(0);
+					exit(1);
+				}
+					 
+				//assert(variablelist[inferlist->nums[1]].true_false == -1);
 				variablelist[inferlist->nums[1]].equalvars = inferlist->nums[0];
 				int count1 = 0;
 				num_replace_all(amount[inferlist->nums[1]].head, inferlist->nums[1], inferlist->nums[0]);
@@ -138,10 +152,24 @@ Do_Apply_Inferences ()
 				str_length = 0;  
 				d3e_printf3 ("{%d=%d}", inferlist->nums[0], inferlist->nums[1]);
 				d4_printf5 ("{%s(%d)!=%s(%d)}", s_name(inferlist->nums[0]), inferlist->nums[0], s_name(-inferlist->nums[1]), -inferlist->nums[1]);
-				if(variablelist[-inferlist->nums[1]].true_false != 2)
-				  if(variablelist[inferlist->nums[0]].true_false == 2)
-					 variablelist[inferlist->nums[0]].true_false = -1;
-				variablelist[-inferlist->nums[1]].true_false = -1;
+
+				if(variablelist[inferlist->nums[0]].true_false == 2) {
+					fprintf(stderr, "Inferring a quantified variable...\n");
+				} else if(variablelist[inferlist->nums[0]].true_false != -1 || variablelist[inferlist->nums[0]].equalvars != 0) {
+					fprintf(stderr, "Inferring a variable twice, exiting...\n");
+					assert(0);
+					exit(1);
+				}
+				
+				if(variablelist[-inferlist->nums[1]].true_false == 2) {
+					fprintf(stderr, "Inferring a quantified variable...\n");
+				} else if(variablelist[-inferlist->nums[1]].true_false != -1 || variablelist[-inferlist->nums[1]].equalvars != 0) {
+					fprintf(stderr, "Inferring a variable twice, exiting...\n");
+					assert(0);
+					exit(1);
+				}
+				
+				//assert(variablelist[-inferlist->nums[1]].true_false = -1);
 				variablelist[-inferlist->nums[1]].equalvars = -inferlist->nums[0];
 				//Gotta keep that (-inferlist->nums[0]) negative...trust me
 				int count1 = 0;
@@ -188,6 +216,15 @@ Do_Apply_Inferences ()
 				str_length = 0;  
 				d3e_printf2 ("{%d=T}", abs (inferlist->nums[0]));
 				d4_printf3 ("{%s(%d)=T}", s_name(abs(inferlist->nums[0])), abs (inferlist->nums[0]));
+
+				if(variablelist[inferlist->nums[0]].true_false == 2) {
+					fprintf(stderr, "Inferring a quantified variable...\n");
+				} else if(variablelist[inferlist->nums[0]].true_false != -1 || variablelist[inferlist->nums[0]].equalvars != 0) {
+					fprintf(stderr, "Inferring a variable twice, exiting...\n");
+					assert(0);
+					exit(1);
+				}
+				
 				variablelist[inferlist->nums[0]].true_false = 1;
 				set_variable_all(amount[inferlist->nums[0]].head, inferlist->nums[0], 1);
 				for (llist * k = amount[inferlist->nums[0]].head; k != NULL;) {
@@ -216,6 +253,15 @@ Do_Apply_Inferences ()
 				str_length = 0;  
 				d3e_printf2 ("{%d=F}", -inferlist->nums[0]);
 				d4_printf3 ("{%s(%d)=F}", s_name(-inferlist->nums[0]), -inferlist->nums[0]);
+
+				if(variablelist[-inferlist->nums[0]].true_false == 2) {
+					fprintf(stderr, "Inferring a quantified variable...\n");
+				} else if(variablelist[-inferlist->nums[0]].true_false != -1 || variablelist[-inferlist->nums[0]].equalvars != 0) {
+					fprintf(stderr, "Inferring a variable twice, exiting...\n");
+					assert(0);
+					exit(1);
+				}
+				
 				variablelist[-inferlist->nums[0]].true_false = 0;
 				set_variable_all(amount[-inferlist->nums[0]].head, -inferlist->nums[0], 0);
 				for (llist * k = amount[-inferlist->nums[0]].head; k != NULL;) {
