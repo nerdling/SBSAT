@@ -136,7 +136,7 @@ int ExSafeCluster () {
 			}
 			
 			if (i % ((numinp/100)+1) == 0) {
-				d2e_printf3("\rPreprocessing Ea %d/%ld ", i, numinp);
+				d2e_printf3("\rPreprocessing Es %d/%ld ", i, numinp);
 			}
 			
 			if(variablelist[i].true_false != -1 || variablelist[i].equalvars != 0)
