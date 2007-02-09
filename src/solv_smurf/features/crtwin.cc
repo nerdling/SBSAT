@@ -92,16 +92,16 @@ DumpAllVarsToFile(char *filename)
 void
 dump_lemmas(char *_filename)
 {
-   char filename[128];
-   get_freefile(_filename, NULL, filename, 128);
+   char filename[256];
+   get_freefile(_filename, NULL, filename, 256);
    DisplayAllBrancherLemmasToFile(filename, 1);
 }
 
 void
 dump_vars(char *_filename)
 {
-   char filename[128];
-   get_freefile(_filename, NULL, filename, 128);
+   char filename[256];
+   get_freefile(_filename, NULL, filename, 256);
    DumpAllVarsToFile(filename);
 }
 

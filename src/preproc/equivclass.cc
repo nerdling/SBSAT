@@ -1054,26 +1054,104 @@ class Equiv {
       }
    }
 
+   //var was the diagonal element of vector first_bit[var].
+   //var has been removed from the vector.
+   //This function will find a new diagonal element for vector first_bit[var]
+   //and update all related data structures accordingly.
+   int Equiv::rediagonalize(int var) {	
+		unsigned long vec_add;
+	   int v = first_bit[var];
+		assert(v!=null);
+		VecType *vec = (VecType *)(frame_start + vecs_v_start+v*vecs_rec_bytes);
+		int word = var/(sizeof(VecType)*8);
+		int bit = var%(sizeof(VecType)*8);
+		
+		// Find first 1 for new diagonal element
+		int save_first_column = -1;
+		int k;
+		for(k = vec_size-1; k >= 0; k--) { // Maybe 10 of these loops
+			VecType tmp;
+			if((tmp = (mask[k] & vec[k])) != 0) {
+				int hgh = sizeof(VecType)*8-1;
+				save_first_column = 0;
+				while (hgh > 0) { // Maybe 5 of these loops - binary search for leading 1
+					int mid = hgh/2;
+					if (tmp >= (unsigned long)(1 << mid+1)) {
+						tmp >>=mid+1;
+						save_first_column += mid+1;
+					}
+					hgh/=2;
+				}
+				save_first_column += k*(sizeof(VecType)*8);
+				break;
+			}
+		}
+		// If k == -1 then no 1's were found in modified vector called vec
+		if(k == -1) {
+			if(vec[vec_size-1]) return TRIV_UNSAT; // Inconsistency discovered
+			else {
+				vec_add = vecs_v_start+v*vecs_rec_bytes+vecs_colm_start;
+				*((int *)(frame_start+vec_add)) = null;
+				first_bit[var] = null; // Remove row from the matrix
+				// mask[word] |= (1 << bit); // Leave this bit 0 so mask bits apply only to unassigned variables
+				// But currently the row is still really in the matrix
+				//fflush(stdout);		printLinear ();		fflush(stdout);
+				return PREP_NO_CHANGE; // Return this fact
+				// This row has been emptied
+				// This is a fine thing to have happen
+			}
+		}
+		// Open up a new diagonal column
+		vec_add = vecs_v_start+v*vecs_rec_bytes+vecs_colm_start;
+		*((int *)(frame_start+vec_add)) = save_first_column;
+		first_bit[save_first_column] = v; //first_bit[var]
+		first_bit[var] = null;
+		
+		// mask[word] |= (1 << bit); // Leave this bit 0 so mask bits apply only to unassigned variables
+			
+		word = save_first_column/(sizeof(VecType)*8);
+		bit = save_first_column%(sizeof(VecType)*8);
+		mask[word] &= (-1 ^ (1 << bit));
+		
+		// Cancel all 1's in the new column. Currently looks at *all* vectors!
+		int vec_address = vecs_v_start;
+		for(int i=0; i < v; i++) {
+			VecType *vn = (VecType *)(frame_start+vec_address);
+			if (vn[word] & (1 << bit)) {
+				for(int j=0; j<vec_size; j++) vn[j] ^= vec[j];
+			}
+			vec_address += vecs_rec_bytes;
+		}
+		vec_address += vecs_rec_bytes; //Skip the vector holding the diagonal element
+		for(int i=v+1; i< rec->index; i++) {
+			VecType *vn = (VecType *)(frame_start+vec_address);
+			if(vn[word] & (1 << bit)) {
+				for(int j=0; j<vec_size; j++) vn[j] ^= vec[j];
+			}
+			vec_address += vecs_rec_bytes;
+		}
+		return PREP_CHANGED;
+	}
+
    // When a variable is given an assignment, 0 out that column of all rows.
 	// Check for inconsistency - if 0 row = 1 last column
-	// Update equivalences - go through rows with 0 in column and check
-	// whether the row is now identical to a row just having changed.
 	// One hitch - if column is in the diagonal submatrix, then look for 1st
 	// column of that row intersecting the diagonal which is a 1. Rediagonal-
 	// ize as though a new row has just been added.
    int Equiv::makeAssign (int var, int value) {
+		int ret = PREP_NO_CHANGE;
+		//fflush(stdout);		printLinear ();		fflush(stdout);
 		int v;
-		unsigned long vec_add;
 		
 		//Grab word and bit positions of mask and vector
 		int word = var/(sizeof(VecType)*8);
 		int bit = var%(sizeof(VecType)*8);
 		// If we hit a 0 column, formerly on the diagonal, error?
 		// I really don't think this should happen.
-		if(!(mask[word] & (1 << bit)) && first_bit[var] == null) return 0;
+		if(!(mask[word] & (1 << bit)) && first_bit[var] == null) return ret;
 		
 		// Check whether column is in diagonal submatrix
-		if((v = first_bit[var]) != null) {
+		if((v=first_bit[var]) != null) {
 			// If so,
 			// Zero out the diagonal and if the value of the variable of the
 			// column is 1, reverse the value of the last column
@@ -1085,69 +1163,12 @@ class Equiv {
 				  vec[vec_size-1]|=(1 << sizeof(VecType)*8-1); //Make it 1
 			}
 			vec[word] ^= (1 << bit); //Remove var from the vector
-			// Find first 1 for new diagonal element
-		   int save_first_column = -1;
-			int k;
-			for(k = vec_size-1; k >= 0; k--) { // Maybe 10 of these loops
-				VecType tmp;
-				if((tmp = (mask[k] & vec[k])) != 0) {
-					int hgh = sizeof(VecType)*8-1;
-					save_first_column = 0;
-					while (hgh > 0) { // Maybe 5 of these loops - binary search for leading 1
-						int mid = hgh/2;
-						if (tmp >= (unsigned long)(1 << mid+1)) {
-							tmp >>=mid+1;
-							save_first_column += mid+1;
-						}
-						hgh/=2;
-					}
-					save_first_column += k*(sizeof(VecType)*8);
-					break;
-				}
-			}
-			// If k == -1 then no 1's were found in modified vector called vec
-			if(k == -1) {
-				if(vec[vec_size-1]) return -1; // Inconsistency discovered
-				else {
-					vec_add = vecs_v_start+first_bit[var]*vecs_rec_bytes+vecs_colm_start;
-					*((int *)(frame_start+vec_add)) = null;
-					first_bit[var] = null; // Remove row from the matrix
-					// mask[word] |= (1 << bit); // Leave this bit 0 so mask bits apply only to unassigned variables
-					// But currently the row is still really in the matrix
-					return 0; // Return this fact
-					          // This row has been emptied
-								 // This is a fine thing to have happen
-				}
-			}
-			// Open up a new diagonal column
-			vec_add = vecs_v_start+first_bit[var]*vecs_rec_bytes+vecs_colm_start;
-			*((int *)(frame_start+vec_add)) = null;
-			vec_add = vecs_v_start+v*vecs_rec_bytes+vecs_colm_start;
-			*((int *)(frame_start+vec_add)) = save_first_column;
-			first_bit[save_first_column] = v;
-			
-			// mask[word] |= (1 << bit); // Leave this bit 0 so mask bits apply only to unassigned variables
-			
-			word = save_first_column/(sizeof(VecType)*8);
-			bit = save_first_column%(sizeof(VecType)*8);
-			mask[word] &= (-1 ^ (1 << bit));
-			
-			// Cancel all 1's in the new column. Currently looks at *all* vectors!
-			int vec_address = vecs_v_start;
-			for(int i=0; i < v; i++) {
-				VecType *vn = (VecType *)(frame_start+vec_address);
-				if (vn[word] & (1 << bit)) {
-					for(int j=0; j<vec_size; j++) vn[j] ^= vec[j];
-				}
-				vec_address += vecs_rec_bytes;
-			}
-			vec_address += vecs_rec_bytes;
-			for(int i=v+1; i< rec->index; i++) {
-				VecType *vn = (VecType *)(frame_start+vec_address);
-				if(vn[word] & (1 << bit)) {
-					for(int j=0; j < vec_size; j++) vn[j] ^= vec[j];
-				}
-				vec_address += vecs_rec_bytes;
+
+			switch(ret = rediagonalize(var)) {
+			 case TRIV_UNSAT:
+			 case TRIV_SAT:
+			 case PREP_ERROR: return ret;
+			 default:break;
 			}
 		} else {
 			// If the column is not in the diagonal submatrix
@@ -1158,21 +1179,162 @@ class Equiv {
 				// If the row has a 1 in the zeroed column and the value of the
 				// variable in the column is 1 then reverse the value of the last
 				// column
-				if((vn[word] & (1 << bit)) && value) {
-					if(vn[vec_size-1] & (1 << sizeof(VecType)*8-1))
-					  vn[vec_size-1] &= (-1 ^ (1 << sizeof(VecType)*8-1));
-					else
-					  vn[vec_size-1] |= (1 << sizeof(VecType)*8-1);
+				if(vn[word] & (1 << bit)) {
+					if(value) {
+						if(vn[vec_size-1] & (1 << sizeof(VecType)*8-1))
+						  vn[vec_size-1] &= (-1 ^ (1 << sizeof(VecType)*8-1));
+						else
+						  vn[vec_size-1] |= (1 << sizeof(VecType)*8-1);
+					}
+					vn[word] &= (-1 ^ (1 << bit));
 				}
-				vn[word] &= (-1 ^ (1 << bit));
 				vec_address += vecs_rec_bytes;
 			}
 			mask[word] &= (-1 ^ (1 << bit));				  
+			ret = PREP_CHANGED;
 		}		
-		return 1; // Normal ending
+		//fflush(stdout);		printLinear ();		fflush(stdout);
+		return ret; // Normal ending
 	}
 
-   char *Equiv::pw (VecType word) {
+   int Equiv::applyEquiv (int var1, int var2) {
+		int ret = PREP_NO_CHANGE;
+		//fflush(stdout);		printLinear ();		fflush(stdout);
+		int v1,v2;
+		assert(var1>0 && var1<abs(var2));
+		int value = var2>0;
+		var2 = abs(var2);
+		
+		//Grab word and bit positions of mask and vector
+		int word1 = var1/(sizeof(VecType)*8);
+		int bit1 = var1%(sizeof(VecType)*8);
+		int word2 = var2/(sizeof(VecType)*8);
+		int bit2 = var2%(sizeof(VecType)*8);
+		
+		// Check whether both columns are in diagonal submatrix
+		if((v1=first_bit[var1]) != null && (v2=first_bit[var2]) != null) {
+			// If so,
+			// replace var2 by var1 in var2's vector (handle 'value' correctly)
+			// XOR var1's vector and var2's vector
+			// choose new diagonal element for var2's vector
+			VecType *vec1 = (VecType *)(frame_start + vecs_v_start+v1*vecs_rec_bytes);
+			VecType *vec2 = (VecType *)(frame_start + vecs_v_start+v2*vecs_rec_bytes);
+
+			if(!value) { //flip when opposite, e.g. 1+0=1, 0+1=1
+				if(vec2[vec_size-1]&(1<<sizeof(VecType)*8-1)) //Last bit is 1,
+				  vec2[vec_size-1] &= (-1 ^ (1 << sizeof(VecType)*8-1)); //Make it 0
+				else //Last bit is 0,
+				  vec2[vec_size-1]|=(1 << sizeof(VecType)*8-1); //Make it 1
+			}
+
+			vec2[word2]^=(1 << bit2); //Remove var2 from the vector
+			vec2[word1]^=(1 << bit1); //Add var1 into the vector
+			for(int j=0; j<vec_size; j++) vec2[j] ^= vec1[j]; //XOR the vectors together
+
+			switch(ret = rediagonalize(var2)) {
+			 case TRIV_UNSAT:
+			 case TRIV_SAT:
+			 case PREP_ERROR: return ret;
+			 default:break;
+			}
+		} else if((v2=first_bit[var2]) != null) {
+			// If only var2 is a diagonal element,
+			VecType *vec2 = (VecType *)(frame_start + vecs_v_start+v2*vecs_rec_bytes);
+			// remove var2 (and var1 if it occurs) from var2's vector (handle 'value' correctly)
+			// choose new diagonal element for var2's vector
+			if(!value) { //flip when opposite, e.g. 1+0=1, 0+1=1
+				if(vec2[vec_size-1]&(1<<sizeof(VecType)*8-1)) //Last bit is 1,
+				  vec2[vec_size-1] &= (-1 ^ (1 << sizeof(VecType)*8-1)); //Make it 0
+				else //Last bit is 0,
+				  vec2[vec_size-1]|=(1 << sizeof(VecType)*8-1); //Make it 1
+			}
+			
+			vec2[word2]^=(1 << bit2); //Remove var2 from the vector
+			// Check if var1 is also in the vector
+			if(vec2[word1] & (1 << bit1))
+			  vec2[word1]^=(1 << bit1); //Remove var1 from the vector
+			
+			switch(ret = rediagonalize(var2)) {
+			 case TRIV_UNSAT:
+			 case TRIV_SAT:
+			 case PREP_ERROR: return ret;
+			 default:break;
+			}
+		} else if((v1=first_bit[var1]) != null){
+			// If only var1 is a diagonal element,
+			VecType *vec1 = (VecType *)(frame_start + vecs_v_start+v1*vecs_rec_bytes);
+			// If var2 is also in the vector,
+			if(vec1[word2] & (1 << bit2)) {
+				// remove var1 and var2 from var1's vector (handle 'value' correctly)
+				// choose new diagonal element for var1's vector
+				if(!value) { //flip when opposite, e.g. 1+0=1, 0+1=1
+					if(vec1[vec_size-1]&(1<<sizeof(VecType)*8-1)) //Last bit is 1,
+					  vec1[vec_size-1] &= (-1 ^ (1 << sizeof(VecType)*8-1)); //Make it 0
+					else //Last bit is 0,
+					  vec1[vec_size-1]|=(1 << sizeof(VecType)*8-1); //Make it 1
+				}
+				
+				vec1[word1]^=(1 << bit1); //Remove var1 from the vector
+				vec1[word2]^=(1 << bit2); //Remove var2 from the vector
+				
+				switch(ret = rediagonalize(var1)) {
+				 case TRIV_UNSAT:
+				 case TRIV_SAT:
+				 case PREP_ERROR: return ret;
+				 default:break;
+				}
+				mask[word1] |= (1 << bit1); // Set the mask bit to 1
+				                            // var1 is no longer in the diagonal
+				
+				// Go through the whole table, replacing v2's with v1's
+				// correctly handling 'value'
+				int vec_address = vecs_v_start;
+				for(int i=0; i < rec->index; i++) {
+					VecType *vn = (VecType *)(frame_start+vec_address);
+					if(vn[word2] & (1 << bit2)) {
+						if(!value) { //flip when opposite, e.g. 1+0=1, 0+1=1
+							if(vn[vec_size-1]&(1<<sizeof(VecType)*8-1)) //Last bit is 1,
+							  vn[vec_size-1] &= (-1 ^ (1 << sizeof(VecType)*8-1)); //Make it 0
+							else //Last bit is 0,
+							  vn[vec_size-1]|=(1 << sizeof(VecType)*8-1); //Make it 1
+						}
+						vn[word2]^=(1 << bit2); //Remove var2 from the vector
+						vn[word1]^=(1 << bit1); //Add var1 into the vector
+						
+					}
+					vec_address += vecs_rec_bytes;
+				}
+				mask[word2] &= (-1 ^ (1 << bit2));
+				ret = PREP_CHANGED;
+			}
+		} else {
+			// Neither var1 or var2 are an element in the diagonal
+
+			// Go through the whole table, replacing v2's with v1's
+			// correctly handling 'value'
+			int vec_address = vecs_v_start;
+			for(int i=0; i < rec->index; i++) {
+				VecType *vn = (VecType *)(frame_start+vec_address);
+				if(vn[word2] & (1 << bit2)) {
+					if(!value) { //flip when opposite, e.g. 1+0=1, 0+1=1
+						if(vn[vec_size-1]&(1<<sizeof(VecType)*8-1)) //Last bit is 1,
+						  vn[vec_size-1] &= (-1 ^ (1 << sizeof(VecType)*8-1)); //Make it 0
+						else //Last bit is 0,
+						  vn[vec_size-1]|=(1 << sizeof(VecType)*8-1); //Make it 1
+					}
+					vn[word2]^=(1 << bit2); //Remove var2 from the vector
+					vn[word1]^=(1 << bit1); //Add/Remove var1 into/from the vector (doesn't matter)
+				}
+				vec_address += vecs_rec_bytes;
+			}
+			mask[word2] &= (-1 ^ (1 << bit2));
+			ret = PREP_CHANGED;
+		}
+		//fflush(stdout);		printLinear ();		fflush(stdout);
+		return ret; // Normal ending
+	}
+
+	char *Equiv::pw (VecType word) {
 		char *out = (char *)calloc(1,sizeof(char)*sizeof(VecType)*8);
 		for (unsigned int i=0 ; i < sizeof(VecType)*8 ; i++) {
 			if (word & (1 << i)) out[i] = '1'; else out[i] = '0';
@@ -1180,22 +1342,7 @@ class Equiv {
 		out[sizeof(VecType)*8] = 0;
 		return out;
 	}
-
-   void applyEquivOrOpp (int var1, int var2) {
-
-		//Franco's functions will probably work fine, i just need a rediagonalize
-		//function?
-		if(var2 < 0) { //They are opposite
-//			addRow(var1+var2=0);??
-//			removeRow();??
-		} else { //They are the same
-//			addRow(var1+var2=1);??
-//			removeRow();??
-		}
-	}
-
-
-
+		
    // Go through matrix to find and record equivalences.  Additional data
    // structures are needed to prevent attempting to add the same equiv.
    // to the data base more than once.
@@ -1250,7 +1397,7 @@ class Equiv {
 					continue;
 				}
 			} else if(vec[vec_size-1] & (1 << (sizeof(VecType)*8-1))) {
-				fflush(stdout);fprintf(stdout, "|%d=T|", v);fflush(stdout);
+				//fflush(stdout);fprintf(stdout, "|%d=T|", v);fflush(stdout);
 				Result *fase_result = insertEquiv(v, Tr);
 				if(fase_result == NULL) continue; //No change - already in the database
 				result[idx].left = fase_result->left; // Attempt to make v = Tr
@@ -1259,7 +1406,7 @@ class Equiv {
 				if(fase_result->left == Tr && fase_result->rght == Fa) return result; // Inconsistency
 				idx++; // Equivalence is valid
 			} else {
-				fflush(stdout);fprintf(stdout, "|%d=F|", v);fflush(stdout);
+				//fflush(stdout);fprintf(stdout, "|%d=F|", v);fflush(stdout);
 				Result *fase_result = insertEquiv(v, Fa);
 				if(fase_result == NULL) continue; // No change - already in database
 				result[idx].left = fase_result->left; // Attempt to make v = Tr
@@ -1292,7 +1439,7 @@ dd:;
 					// The value of the row is 0
 					//cout << "Attempt " << vart[0] << " equiv " << vart[1] << "\n";
 					Result *fase_result;
-					fflush(stdout);fprintf(stdout, "|%d=%d|", vph, vpc);fflush(stdout);
+					//fflush(stdout);fprintf(stdout, "|%d=%d|", vph, vpc);fflush(stdout);
 					if(vph > vpc) fase_result = insertEquiv(vph, vpc);
 					else fase_result = insertEquiv(vpc, vph);
 					if(fase_result == NULL) continue; // No change - already in database
@@ -1305,7 +1452,7 @@ dd:;
 					// The value of the row is 1 -
 					//cout << "Attempt " << vph << " oppos " << vpc << "\n";
 					Result *fase_result;
-					fflush(stdout);fprintf(stdout, "|%d=-%d|", vph, vpc);fflush(stdout);
+					//fflush(stdout);fprintf(stdout, "|%d=-%d|", vph, vpc);fflush(stdout);
 					if(vph > vpc) fase_result = insertOppos(vph, vpc);
 					else fase_result = insertOppos(vpc, vph);
 					if(fase_result == NULL) continue; // No change - already in database
@@ -1323,10 +1470,7 @@ d1:;
 			p = h;
 		}
 		
-		
-			
-		
-		// Look for all rows with 2 1s not on the diagonal
+		// Look for all rows with 2 1s, one is on the diagonal
 		for (p=0 ; p < rec->index ; p++) {
 			VecType *vec = order[p];
 			vec_add = (unsigned long)vec+vecs_colm_start;
@@ -1341,7 +1485,7 @@ d1:;
 			//fprintf(stderr, "\n");
 			//free(vec_char);
 			
-			for (int j=0 ; j < vec_size ; j++) {
+			for (int j=0 ; j < vec_size ; j++) { //Can speed this up using binary search.
 				//This word better either be zero, or have only one 1.
 				if(mask[j] & vec[j] == 0) continue;
 				if(cnt>=1) {cnt++; break;}
@@ -1359,7 +1503,7 @@ d1:;
 				// The value of the row is 1 -
 				//cout << "Attempt " << vart[0] << " oppos " << vart[1] << "\n";
 				Result *fase_result;
-				fflush(stdout);fprintf(stdout, "|%d=-%d|", vart[0], vart[1]);fflush(stdout);
+				//fflush(stdout);fprintf(stdout, "|%d=-%d|", vart[0], vart[1]);fflush(stdout);
 				if(vart[0] > vart[1]) fase_result = insertOppos(vart[0], vart[1]);
 				else fase_result = insertOppos(vart[1], vart[0]);
 				if(fase_result == NULL) continue; // No change - already in database
@@ -1375,7 +1519,7 @@ d1:;
 				// The value of the row is 0
 				//cout << "Attempt " << vart[0] << " equiv " << vart[1] << "\n";
 				Result *fase_result;
-				fflush(stdout);fprintf(stdout, "|%d=%d|", vart[0], vart[1]);fflush(stdout);
+				//fflush(stdout);fprintf(stdout, "|%d=%d|", vart[0], vart[1]);fflush(stdout);
 				if(vart[0] > vart[1]) fase_result = insertEquiv(vart[0], vart[1]);
 				else fase_result = insertEquiv(vart[1], vart[0]);
 				if(fase_result == NULL) continue; // No change - already in database

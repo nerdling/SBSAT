@@ -250,17 +250,21 @@ class Equiv {
    
    void printWhetherEquiv ();
 
+	int rediagonalize(int var);
+	
 	int makeAssign (int var, int value);
+
+	int applyEquiv (int var1, int var2);
+	
+	char *pw (VecType word);
 	
 	Result *findAndSaveEquivalences ();
 	
 	char *copyFrame (char *next_frame);
 	
 	int addRow (XORd *xord);
-	
+
 	void printFrameSize ();
-	
-	char *pw (VecType word);
 	
 	void printMask();
 	

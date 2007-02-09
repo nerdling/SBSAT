@@ -119,8 +119,8 @@ extern char formatout;
 extern int n_cnfformat;
 extern int print_tree;
 
-extern char inputfile[128];
-extern char outputfile[128];
+extern char inputfile[256];
+extern char outputfile[256];
 extern FILE * finputfile;
 extern FILE * foutputfile;
 
@@ -147,7 +147,7 @@ extern int PARAMS_DUMP;
 
 extern int nHeuristic;
 extern int result_display_type;
-extern char module_root[128];
+extern char module_root[256];
 extern int numBuckets;
 extern int sizeBuckets;
 
@@ -161,8 +161,8 @@ extern int TRACE_START;
 extern LONG64 ite_counters[MAX_COUNTER];
 extern double ite_counters_f[MAX_COUNTER_F];
 
-//extern char png_filename[128];
-extern char jpg_filename[128];
+//extern char png_filename[256];
+extern char jpg_filename[256];
 
 //extern int AND_EQU_LIMIT;
 //extern int OR_EQU_LIMIT;
@@ -171,7 +171,7 @@ extern char jpg_filename[128];
 
 extern int verify_solution;
 
-extern char s_expected_result[128];
+extern char s_expected_result[256];
 
 extern int  max_solutions;
 
@@ -193,15 +193,15 @@ extern int USE_AUTARKY_SMURFS;
 
 extern int reports;
 
-extern char temp_dir[128];
+extern char temp_dir[256];
 
-extern char lemma_out_file[128];
-extern char lemma_in_file[128];
-extern char csv_trace_file[128];
+extern char lemma_out_file[256];
+extern char lemma_in_file[256];
+extern char csv_trace_file[256];
 extern FILE *fd_csv_trace_file;
 
-extern char var_stat_file[128];
-extern char csv_depth_breadth_file[128];
+extern char var_stat_file[256];
+extern char csv_depth_breadth_file[256];
 
 extern int _bdd_pool_size;
 extern int autarky;
@@ -245,9 +245,9 @@ extern int K_TOP_VARIABLES;
 
 extern long nTimeLimit;
 extern long nNumChoicePointLimit;
-extern char temp_dir[128];
-extern char ini_filename[128];
-extern char input_result_filename[128];
+extern char temp_dir[256];
+extern char ini_filename[256];
+extern char input_result_filename[256];
 extern char preproc_string[256];
 
 extern int BDDWalkCutoff;

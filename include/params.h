@@ -94,7 +94,7 @@ typedef void(*p_fn_string)(char *);
 
 typedef
 union {
-  char s[128]; /* has to be the first */
+  char s[256]; /* has to be the first */
   char c;
   int i;
   long l;
@@ -121,7 +121,7 @@ typedef
 struct {
   void *p_target;
   char l_opt[32];
-  char w_opt[128];
+  char w_opt[256];
   short p_type;
   t_value p_value;
   t_value p_defa;

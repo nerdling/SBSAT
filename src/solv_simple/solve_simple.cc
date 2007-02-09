@@ -431,7 +431,7 @@ void ReadAllSmurfsIntoTable() {
 	clear_all_bdd_flags();
 	true_ptr->flag = 1;
 	//Create the rest of the SmurfState entries
-	char p[128]; int str_length;
+	char p[256]; int str_length;
 	D_3(
 		 d3_printf1("Building Smurfs: ");
 		 sprintf(p, "{0/%d}",  SimpleSmurfProblemState->nNumSmurfs);

@@ -43,7 +43,7 @@ long numinp, numout;
 
 BDDNode *false_ptr = NULL;
 BDDNode *true_ptr = NULL;
-extern char temp_dir[128];
+extern char temp_dir[256];
 
 void *_ite_calloc(unsigned int x, unsigned int y, int dbg_lvl, const char *for_what) {
    //fprintf(stderr, "ite_calloc(x=%d, y=%d, dbg_lvl=%d, for_what=%s)\n", x, y, dbg_lvl, for_what);

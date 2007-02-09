@@ -95,17 +95,17 @@ Do_Apply_Inferences ()
 				str_length = 0;
 
 				if(variablelist[inferlist->nums[0]].true_false == 2) {
-						fprintf(stderr, "Inferring a quantified variable...\n");
+					d7_printf1("Inferring a quantified variable...\n");
 				} else if(variablelist[inferlist->nums[0]].true_false != -1 || variablelist[inferlist->nums[0]].equalvars != 0) {
-					fprintf(stderr, "Inferring a variable twice, exiting...\n");
+					fprintf(stderr, "Error: Inferring a variable twice, exiting...\n");
 					assert(0);
 					exit(1);
 				}
 
 				if(variablelist[inferlist->nums[1]].true_false == 2) {
-					fprintf(stderr, "Inferring a quantified variable...\n");
+					d7_printf1("Inferring a quantified variable...\n");
 				} else if(variablelist[inferlist->nums[1]].true_false != -1 || variablelist[inferlist->nums[1]].equalvars != 0) {
-					fprintf(stderr, "Inferring a variable twice, exiting...\n");
+					fprintf(stderr, "Error: Inferring a variable twice, exiting...\n");
 					assert(0);
 					exit(1);
 				}
@@ -135,14 +135,24 @@ Do_Apply_Inferences ()
 				
 				//verifyCircuit(inferlist->nums[1]);
 				
-				//SEAN!!! Need some functionality for entering equivalence into GE table
 				if(ge_preproc == '1') {
-					switch (int r1 = addEquivalencetoGETable(inferlist->nums[0], inferlist->nums[1])) { //Test
+					int r1; //Apply the equivalence to the Gaussian Elimination Table
+					//switch (int r1 = addEquivalencetoGETable(inferlist->nums[0], inferlist->nums[1])) { //Test
+					switch (r1 = l->applyEquiv(inferlist->nums[0], inferlist->nums[1])) {
 					 case TRIV_UNSAT:
 					 case TRIV_SAT:
 					 case PREP_ERROR: return r1;
 					 default:break;
 					}
+					if(r1 == PREP_CHANGED) {
+						switch(r1=checkGaussianElimTableforInfs()) {
+						 case TRIV_UNSAT:
+						 case TRIV_SAT:
+						 case PREP_ERROR: return r1;
+						 default: break;
+						}
+					}
+					//r1 == 0, no change
 				}
 			} else {
 				Neg_replace++;
@@ -154,17 +164,17 @@ Do_Apply_Inferences ()
 				d4_printf5 ("{%s(%d)!=%s(%d)}", s_name(inferlist->nums[0]), inferlist->nums[0], s_name(-inferlist->nums[1]), -inferlist->nums[1]);
 
 				if(variablelist[inferlist->nums[0]].true_false == 2) {
-					fprintf(stderr, "Inferring a quantified variable...\n");
+					d7_printf1("Inferring a quantified variable...\n");
 				} else if(variablelist[inferlist->nums[0]].true_false != -1 || variablelist[inferlist->nums[0]].equalvars != 0) {
-					fprintf(stderr, "Inferring a variable twice, exiting...\n");
+					fprintf(stderr, "Error: Inferring a variable twice, exiting...\n");
 					assert(0);
 					exit(1);
 				}
 				
 				if(variablelist[-inferlist->nums[1]].true_false == 2) {
-					fprintf(stderr, "Inferring a quantified variable...\n");
+					d7_printf1("Inferring a quantified variable...\n");
 				} else if(variablelist[-inferlist->nums[1]].true_false != -1 || variablelist[-inferlist->nums[1]].equalvars != 0) {
-					fprintf(stderr, "Inferring a variable twice, exiting...\n");
+					fprintf(stderr, "Error: Inferring a variable twice, exiting...\n");
 					assert(0);
 					exit(1);
 				}
@@ -196,15 +206,24 @@ Do_Apply_Inferences ()
 
 				//verifyCircuit(-inferlist->nums[1]);
 				
-				//SEAN!!! Need some functionality for entering equivalence into GE table
-
 				if(ge_preproc == '1') {
-					switch (int r1 = addEquivalencetoGETable(inferlist->nums[0], inferlist->nums[1])) { //Test
+					//switch (int r1 = addEquivalencetoGETable(inferlist->nums[0], inferlist->nums[1])) { //Test
+					int r1; //Apply the equivalence to the Gaussian Elimination Table
+					switch (r1 = l->applyEquiv(inferlist->nums[0], inferlist->nums[1])) {
 					 case TRIV_UNSAT:
 					 case TRIV_SAT:
 					 case PREP_ERROR: return r1;
 					 default:break;
 					}
+					if(r1 == PREP_CHANGED) {
+						switch(r1=checkGaussianElimTableforInfs()) {
+						 case TRIV_UNSAT:
+						 case TRIV_SAT:
+						 case PREP_ERROR: return r1;
+						 default: break;
+						}
+					}
+					//r1 == 0, no change
 				}
 			}
 		} else {
@@ -218,7 +237,7 @@ Do_Apply_Inferences ()
 				d4_printf3 ("{%s(%d)=T}", s_name(abs(inferlist->nums[0])), abs (inferlist->nums[0]));
 
 				if(variablelist[inferlist->nums[0]].true_false == 2) {
-					fprintf(stderr, "Inferring a quantified variable...\n");
+					d7_printf1("Inferring a quantified variable...\n");
 				} else if(variablelist[inferlist->nums[0]].true_false != -1 || variablelist[inferlist->nums[0]].equalvars != 0) {
 					fprintf(stderr, "Inferring a variable twice, exiting...\n");
 					assert(0);
@@ -235,16 +254,23 @@ Do_Apply_Inferences ()
             }
 				//verifyCircuit(inferlist->nums[0]);
 				if(ge_preproc == '1') {
-					int r = l->makeAssign(inferlist->nums[0], 1); //Apply the inference to the Gaussian Elimination Table
-					if(r == 1) {
-						switch (int r1 = checkGaussianElimTableforInfs()) {
+					int r1; //Apply the inference to the Gaussian Elimination Table
+					switch (r1 = l->makeAssign(inferlist->nums[0], 1)) {
+					 case TRIV_UNSAT:
+					 case TRIV_SAT:
+					 case PREP_ERROR: return r1;
+					 default:break;
+					}
+					if(r1 == PREP_CHANGED) {
+						switch(r1=checkGaussianElimTableforInfs()) {
 						 case TRIV_UNSAT:
 						 case TRIV_SAT:
 						 case PREP_ERROR: return r1;
-						 default:break;
+						 default: break;
 						}
-					} else if(r == -1) return TRIV_UNSAT;
-				}						  
+					}
+					//r1 == 0, no change
+				}
 			} else {
 				Setting_Neg++;
 //            D_3(print_nonroller(););
@@ -255,7 +281,7 @@ Do_Apply_Inferences ()
 				d4_printf3 ("{%s(%d)=F}", s_name(-inferlist->nums[0]), -inferlist->nums[0]);
 
 				if(variablelist[-inferlist->nums[0]].true_false == 2) {
-					fprintf(stderr, "Inferring a quantified variable...\n");
+					d7_printf1("Inferring a quantified variable...\n");
 				} else if(variablelist[-inferlist->nums[0]].true_false != -1 || variablelist[-inferlist->nums[0]].equalvars != 0) {
 					fprintf(stderr, "Inferring a variable twice, exiting...\n");
 					assert(0);
@@ -272,16 +298,23 @@ Do_Apply_Inferences ()
 				}
 				//verifyCircuit(-inferlist->nums[0]);
 				if(ge_preproc == '1') {
-					int r = l->makeAssign(-inferlist->nums[0], 0); //Apply the inference to the Gaussian Elimination Table
-					if(r == 1) {
-						switch (int r1 = checkGaussianElimTableforInfs()) {
+					int r1; //Apply the inference to the Gaussian Elimination Table
+					switch (r1 = l->makeAssign(-inferlist->nums[0], 0)) {
+					 case TRIV_UNSAT:
+					 case TRIV_SAT:
+					 case PREP_ERROR: return r1;
+					 default:break;
+					}
+					if(r1 == PREP_CHANGED) {
+						switch(r1=checkGaussianElimTableforInfs()) {
 						 case TRIV_UNSAT:
 						 case TRIV_SAT:
 						 case PREP_ERROR: return r1;
-						 default:break;
+						 default: break;
 						}
-					} else if(r == -1) return TRIV_UNSAT;
-				}						  
+					}
+					//r1 == 0, no change
+				}
 			}
 		}
 		temp = inferlist;
@@ -864,6 +897,7 @@ int Rebuild_BDDx (int x) {
 	findandset_fnType(x);
 	
 	if(ge_preproc == '1' && DO_INFERENCES) {
+//	if(ge_preproc == '1') {
 		//Handle the XOR functions by using gaussian Elimination
 		//Can make this better by splitting the xor parts out of each BDD
 		if(functionType[x] == PLAINXOR && l->rec->index <= l->no_funcs) { 

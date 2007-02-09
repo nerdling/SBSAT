@@ -44,7 +44,7 @@ extern int params_current_src;
 void ctrl_c_proc(int x);
 
 char sHeuristic[10]="j";
-char cnfformat[128]="noqm";
+char cnfformat[256]="noqm";
 char dependence='c';
 int  n_cnfformat=CNF_NOQM;
 char sResult[4]="n";
@@ -53,7 +53,7 @@ int  nCtrlC=0; /* ctrl c pressed */
 LONG64 ite_counters[MAX_COUNTER];
 double ite_counters_f[MAX_COUNTER_F];
 int  autarky=0; /* autarkies enabled */
-char debug_dev[128]="stderr";
+char debug_dev[256]="stderr";
 int USE_AUTARKY_LEMMAS;
 
 void DO_ALL(int);
@@ -73,32 +73,32 @@ t_opt options[] = {
 { (void*)show_ini, "", "create-ini", P_FN, V(i:0,"0"), V(i:0,"0"), VAR_CMD, 0,
               "Create ini file"},
 { &ini_filename, "", "ini", P_STRING, 
-	       V(i:127,"127"), {"~/sbsat.ini"}, VAR_CMD+VAR_DUMP, 0,
+	       V(i:255,"255"), {"~/sbsat.ini"}, VAR_CMD+VAR_DUMP, 0,
               "Set the ini file"},
 { &DEBUG_LVL, "",   "debug", P_INT, V(i:0,"0"), V(i:2,"2"), VAR_NORMAL, 0,
               "debugging level (0-none, 9-max)"},
-{ &debug_dev, "",   "debug-dev", P_STRING, V(i:127,"127"), {"stderr"}, VAR_NORMAL, 0,
+{ &debug_dev, "",   "debug-dev", P_STRING, V(i:255,"255"), {"stderr"}, VAR_NORMAL, 0,
               "debugging device"},
 { &PARAMS_DUMP, "D",   "params-dump",   P_PRE_INT,  V(i:1,"1"), V(i:0,"0"), VAR_CMD, 0,
                "dump all internal parameters before processing"},
-{ inputfile, "", "input-file", P_STRING, V(i:127,"127"), {"-"}, VAR_NORMAL, 0, 
+{ inputfile, "", "input-file", P_STRING, V(i:255,"255"), {"-"}, VAR_NORMAL, 0, 
                 "input filename"},
-{ outputfile, "", "output-file", P_STRING, V(i:127,"127"), {"-"}, VAR_NORMAL, 0, 
+{ outputfile, "", "output-file", P_STRING, V(i:255,"255"), {"-"}, VAR_NORMAL, 0, 
                 "output filename"},
 { temp_dir, "", "temp-dir", P_STRING, 
-		V(i:127,"127"), {"$TEMP"}, VAR_NORMAL, 0, 
+		V(i:255,"255"), {"$TEMP"}, VAR_NORMAL, 0, 
                 "directory for temporary files"},
 { sResult,   "R",   "show-result",   P_STRING,  V(i:2,"2"), {"n"}, VAR_NORMAL, 0,
                "Show result (n=no result, r=raw, f=fancy, b=binary)"},
 { &verify_solution,   "",  "verify-solution",   P_INT,  V(i:0,"0"), V(i:1,"1"), VAR_NORMAL, 0,
                "Verify solution"},
-{ s_expected_result, "",  "expected-result", P_STRING, V(i:127,"127"), {""}, VAR_NORMAL, 0,
+{ s_expected_result, "",  "expected-result", P_STRING, V(i:255,"255"), {""}, VAR_NORMAL, 0,
                "Report error if the result is not as specified. Options are SAT, UNSAT, TRIV_SAT, TRIV_UNSAT, SOLV_SAT and SOLV_UNSAT"},
 { comment, "",  "comment", P_STRING, V(i:1023,"1023"), {""}, VAR_NORMAL, 0,
                "Comment to appear next to the filename"},
 /*
 { &input_result_filename, "", "read-result-filename", P_STRING, 
-	       V(i:127,"127"), {""}, VAR_NORMAL, 0,
+	       V(i:255,"255"), {""}, VAR_NORMAL, 0,
               "Filename with the partial assignment"},
 */
 { &ctrl_c,  "",   "ctrl-c",   P_INT,  V(i:1,"1"), V(i:0,"0"), VAR_NORMAL, 0,
@@ -182,7 +182,7 @@ t_opt options[] = {
                 "Output in tree like format"},
 { &formatout,  "", "formatout", P_CHAR, V(i:0,"0"), V(c:'b',"b"), VAR_NORMAL, 0, 
                 "Output format"},
-{ cnfformat,  "", "cnf", P_STRING, V(i:127,"127"), {"noqm"}, VAR_NORMAL, 0, 
+{ cnfformat,  "", "cnf", P_STRING, V(i:255,"255"), {"noqm"}, VAR_NORMAL, 0, 
                 "Format of CNF output (3sat, qm, noqm)"},
 
 /* b s c w   - left ldxpi  */
@@ -274,19 +274,19 @@ t_opt options[] = {
 { NULL, "", "", P_NONE, {"0"}, {"0"}, VAR_NORMAL, 0, 
 	        "\nSMURF Solver options:"},
 { lemma_out_file, "", "lemma-out-file", P_STRING, 
-		V(i:127,"127"), {""}, VAR_NORMAL, 0, 
+		V(i:255,"255"), {""}, VAR_NORMAL, 0, 
                 "File to dump lemmas to"},
 { lemma_in_file, "", "lemma-in-file", P_STRING, 
-		V(i:127,"127"), {""}, VAR_NORMAL, 0, 
+		V(i:255,"255"), {""}, VAR_NORMAL, 0, 
                 "File to read lemmas from"},
 { csv_trace_file, "", "csv-trace-file", P_STRING, 
-		V(i:127,"127"), {""}, VAR_NORMAL, 0, 
+		V(i:255,"255"), {""}, VAR_NORMAL, 0, 
                 "File to save execution trace in CSV format"},
 { var_stat_file, "", "var-stat-file", P_STRING, 
-		V(i:127,"127"), {""}, VAR_NORMAL, 0, 
+		V(i:255,"255"), {""}, VAR_NORMAL, 0, 
                 "File to save var stats"},
 { csv_depth_breadth_file, "", "csv-depth-breadth-file", P_STRING, 
-		V(i:127,"127"), {""}, VAR_NORMAL, 0, 
+		V(i:255,"255"), {""}, VAR_NORMAL, 0, 
                 "Save depth/breadth statistic"},
 { &backjumping, "", "backjumping", P_INT, V(i:0,"0"), V(i:1,"1"), VAR_NORMAL, 0,
 		"Enable/Disable backjumping (1/0)"},

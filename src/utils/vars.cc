@@ -46,16 +46,16 @@ int backjumping = 1;
 char ge_preproc;
 char formatin = 'f', formatout = 'b'; //Solving the problem is the Default
 int print_tree = 0;
-char inputfile[128] = "-";
-char outputfile[128] = "-";
+char inputfile[256] = "-";
+char outputfile[256] = "-";
 //char progname[65] = "ite";
 FILE * finputfile = NULL;
 FILE * foutputfile = NULL;
-char temp_dir[128] = "";
-char ini_filename[128] = "";
+char temp_dir[256] = "";
+char ini_filename[256] = "";
 int  result_display_type = 0;
-char module_root[128] = "./Modules";
-char input_result_filename[128] = "";
+char module_root[256] = "./Modules";
+char input_result_filename[256] = "";
 
 int DO_CLUSTER = 1;   //CNF clustering
 int DO_COFACTOR = 1;  //Cofactoring doesn't help for any benchmark i've tried
@@ -120,8 +120,8 @@ int BDDWalkRandomOption;
 float BDDWalk_wp_prob;
 float BDDWalk_prob;
 
-//char png_filename[128]="";
-char jpg_filename[128]="";
+//char png_filename[256]="";
+char jpg_filename[256]="";
 
 int AND_EQU_LIMIT=0;
 int OR_EQU_LIMIT=0;
@@ -130,7 +130,7 @@ int PLAINOR_LIMIT=0;
 
 int verify_solution=1;
 
-char s_expected_result[128]="";
+char s_expected_result[256]="";
 
 int  max_solutions=0;
 
@@ -145,13 +145,13 @@ int sbj = 0;
 
 int reports = 0;
 
-char lemma_out_file[128] = "";
-char lemma_in_file[128] = "";
-char csv_trace_file[128] = "";
+char lemma_out_file[256] = "";
+char lemma_in_file[256] = "";
+char csv_trace_file[256] = "";
 FILE *fd_csv_trace_file = NULL;
 
-char var_stat_file[128] = "";
-char csv_depth_breadth_file[128]="";
+char var_stat_file[256] = "";
+char csv_depth_breadth_file[256]="";
 
 int _bdd_pool_size=1000000;
 
