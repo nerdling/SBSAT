@@ -149,8 +149,8 @@ int ExSafeCluster () {
 			j = amount[i].head->num;
 			
 			//do safe assign stuff here.
-			switch (int r=check_bdd_for_safe(j, ret)) {
-			//switch (int r=check_bdd_for_safe_eq(j, ret)) {
+			//switch (int r=check_bdd_for_safe(j, ret)) {
+			switch (int r=check_bdd_for_safe_eq(j, ret)) {
 			 case TRIV_UNSAT:
 			 case TRIV_SAT:
 			 case PREP_ERROR:
@@ -202,8 +202,8 @@ int ExSafeCluster () {
 				}
 				
 				//do safe assign stuff here.
-				switch (int r=check_bdd_for_safe(j, ret)) {
-				//switch (int r=check_bdd_for_safe_eq(j, ret)) {
+				//switch (int r=check_bdd_for_safe(j, ret)) {
+				switch (int r=check_bdd_for_safe_eq(j, ret)) {
 				 case TRIV_UNSAT: 
 				 case TRIV_SAT: 
 				 case PREP_ERROR: 

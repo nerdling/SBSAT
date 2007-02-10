@@ -151,7 +151,8 @@ int seed;			/* seed for random */
 struct timeval tv;
 struct timezone tzp;
 
-double expertime;
+extern double fStartTime;
+extern double fEndTime;
 long int lowbad;		/* lowest number of bad clauses during try */
 long int totalflip = 0;		/* total number of flips in all tries so far */
 long int totalsuccessflip = 0;	/* total number of flips in all tries which succeeded so far */
@@ -232,6 +233,19 @@ void print_statistics_final(void);
 /* Main                             */
 /************************************/
 
+int test_for_break() {
+	if (nTimeLimit && (get_runtime() - fStartTime) > nTimeLimit) {
+		d2_printf2("Bailling out because the Time limit of %lds ", nTimeLimit);
+		d2_printf2("is smaller than elapsed time %.0fs\n", (get_runtime() - fStartTime));
+		return 1;
+	}
+	if (nCtrlC) {
+		d2_printf1("Breaking out of BDD WalkSAT\n");
+		return 1;
+	}
+	return 0;
+}
+
 int walkSolve() {
 	/* Get values from the command line */
 	numsol = max_solutions;
@@ -243,7 +257,7 @@ int walkSolve() {
 	if(BDDWalkHeur=='a') heurpick = &picknoveltyplus;
 	else if(BDDWalkHeur == 'n') heurpick = &picknoveltyplus;
 	else if(BDDWalkHeur == 'r')  heurpick = &pickrandom;
-	
+
 	wp_numerator = (int)(BDDWalk_wp_prob*(float)wp_denominator);
 	noise = BDDWalk_prob;
 	
@@ -253,7 +267,7 @@ int walkSolve() {
 	srandom(seed);
 	initprob(); /* initialized the BDD structures */
 	print_statistics_header();
-	expertime = get_runtime();
+	fStartTime = get_runtime();
 	while ((numsuccesstry < numsol) && (numtry < numrun)) {
 		numtry++;
 		init_CountFalses();
@@ -266,10 +280,9 @@ int walkSolve() {
 			flipatoms();
 			if(BDDWalkHeur=='a') adaptNoveltyNoise();
 			update_statistics_end_flip();
-			if (nCtrlC) {
-				d2_printf1("Breaking out of BDD WalkSAT\n");
-				break;
-			}
+			
+			if(test_for_break()) break;
+
 			char term_char = term_getchar();
 			if (term_char==' ') { //Display status
 				d2_printf1("\b");
@@ -284,12 +297,10 @@ int walkSolve() {
 			}
 		}
 		update_and_print_statistics_end_try();
-		if (nCtrlC) {
-			nCtrlC = 0;
-			break;
-		}
+
+		if(test_for_break()) break;
 	}
-	expertime = get_runtime() - expertime;
+	fEndTime = get_runtime() - fStartTime;
 	print_statistics_final();
 	freemem();
 	if (numsuccesstry!=0) return SOLV_SAT;
@@ -1020,9 +1031,9 @@ void update_and_print_statistics_end_try(void) {
 }
 
 void print_statistics_final(void) {
-	seconds_per_flip = expertime / totalflip;
-	d2_printf2("\ntotal elapsed seconds = %f\n", expertime);
-	d2_printf2("average flips per second = %ld\n", (long)(totalflip/expertime));
+	seconds_per_flip = fEndTime / totalflip;
+	d2_printf2("\ntotal elapsed seconds = %f\n", fEndTime);
+	d2_printf2("average flips per second = %ld\n", (long)(totalflip/fEndTime));
 	d2_printf2("number solutions found = %d\n", numsuccesstry);
 	d2_printf2("final success rate = %f\n", ((double)numsuccesstry * 100.0)/numtry);
 	d2_printf2("average length successful tries = %li\n", numsuccesstry ? (totalsuccessflip/numsuccesstry) : 0);
