@@ -69,8 +69,8 @@ CheckLimits(double fStartTime)
    }
 
    if (nTimeLimit && (fEndTime - fStartTime) > nTimeLimit) {
-      d2_printf2("Bailling out because the Time limit %ld ", nTimeLimit);
-      d2_printf2("is smaller than elapsed time %.0f\n", (fEndTime - fStartTime));
+      d2_printf2("Bailling out because the Time limit of %lds ", nTimeLimit);
+      d2_printf2("is smaller than elapsed time %.0fs\n", (fEndTime - fStartTime));
       return 1;
    }
 

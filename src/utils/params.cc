@@ -264,7 +264,7 @@ t_opt options[] = {
 		"Set the maximum number of solutions to search for. 0 will cause the solver to search for as many solutions as it can find. The algorithm does not guarantee that it reports all possible solutions."},
 { &autarky, "", "autarky", P_INT, V(i:0,"0"), V(i:0,"0"), VAR_CHECK+VAR_DUMP, 0,
 		"Enable/Disable autarkies (1/0)"},
-{ &nTimeLimit, "", "max-brancher-time", P_INT, 
+{ &nTimeLimit, "", "max-solver-time", P_INT,
 		V(i:0,"0"), V(i:0,"0"), VAR_NORMAL, 0,
 		"set the time limit in seconds (0=no limit)"},
 
@@ -398,7 +398,6 @@ void
 finish_params()
 {
    if (competition_enable) {
-      char tmp_str[32];
       if (DEBUG_LVL <= 2) DEBUG_LVL = 0;
       if (sResult[0] == 'n') sResult[0] = 'c';
       if (sat_timeout == 0) sat_timeout = getSATlimit("SATTIMEOUT");
