@@ -42,6 +42,7 @@
 ITE_INLINE int
 FnLemmaAuInit() {
    // not used
+	return 1;
 }
 
 #if 0
