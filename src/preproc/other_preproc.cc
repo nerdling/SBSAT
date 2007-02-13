@@ -131,7 +131,7 @@ amount_compfunc (const void *x, const void *y)
 int countBDDs() {
 	int count = 0;
 	for(int x = 0; x < nmbrFunctions; x++)
-	  if(functions[x]!=true_ptr && functionType[x]!=AUTARKY_FUNC) count++;
+	  if(functions[x]!=true_ptr) count++;
 	return count;
 }
 
