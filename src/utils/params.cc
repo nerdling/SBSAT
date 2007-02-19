@@ -41,6 +41,8 @@
 
 extern int params_current_src;
 
+extern int print_independent_vars;
+
 void ctrl_c_proc(int x);
 
 char sHeuristic[10]="j";
@@ -184,7 +186,10 @@ t_opt options[] = {
                 "Output format"},
 { cnfformat,  "", "cnf", P_STRING, V(i:255,"255"), {"noqm"}, VAR_NORMAL, 0, 
                 "Format of CNF output (3sat, qm, noqm)"},
+{ &print_independent_vars, "",  "print-indep", P_INT, V(i:1,"1"), V(i:0,"0"), VAR_NORMAL, 0, 
+	       "Print independent variables (1/0)"},
 
+	
 /* b s c w   - left ldxpi  */
 
 { &formatin,  "", "formatin", P_CHAR, V(i:0,"0"), V(c:' '," "), VAR_NORMAL, 0, 

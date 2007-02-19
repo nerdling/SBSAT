@@ -46,6 +46,20 @@
 #include "sbsat.h"
 #include "sbsat_formats.h"
 
+#define F (numinp+3)
+#define T (numinp+2)
+
+int use_symtable = 0;
+
+void cnf_print_independent_vars() {
+	fprintf(foutputfile, "c Independent Variables: ");
+	for(int x = 1; x <= numinp; x++) {
+		if(independantVars[x] == 1) 
+		  fprintf (foutputfile, "%d ", use_symtable?-atoi(getsym_i(x)->name):x);
+	}
+	fprintf(foutputfile, "\n");
+}
+
 void print_cnf_symtable() {
 	for(int x = 1; x <= numinp; x++)
 	  fprintf(foutputfile, "c %d = %s\n", x, getsym_i(x)->name);
@@ -105,10 +119,6 @@ int getMaxVarNoInBDD (BDDNode * bdd) {
 //   curr:   first available number for naming a made-up variable              
 //   cl_cnt: will contain a count of clauses formed                            
 //   ft:     file "bdd_tmp.cnf"                                                
-#define F (numinp+3)
-#define T (numinp+2)
-
-int use_symtable = 0;
 
 void bdd2cnf (BDDNode * bdd, int *curr, int *cl_cnt, FILE * ft) {
    int i, t, e,			// made-up vars: i=if, t=then, e=else
@@ -386,6 +396,10 @@ void printBDDToCNF3SAT () {
 		print_cnf_symtable();
 	}
    
+	if(print_independent_vars) {
+		cnf_print_independent_vars();
+	}
+	
 	fprintf (foutputfile, "p cnf %d %d\n", max_var_no - 1, clause_cnt);
    while (fgets (buffer, 1023, ft) != NULL)
       fprintf (foutputfile, "%s", buffer);
@@ -848,6 +862,10 @@ void printBDDToCNFQM () {
 		print_cnf_symtable();
 	}
 
+	if(print_independent_vars) {
+		cnf_print_independent_vars();
+	}
+	
    numinp = getNuminp ();
    fprintf(foutputfile, "p cnf %ld %d\n", numinp, no_outmp_ints);
 	
@@ -914,6 +932,10 @@ void printBDDToCNF () {
 	use_symtable = sym_all_int();
 	if(!use_symtable) {
 		print_cnf_symtable();
+	}
+
+	if(print_independent_vars) {
+		cnf_print_independent_vars();
 	}
 	
    fprintf(foutputfile, "p cnf %ld %d\n", numinp, no_outmp_ints);

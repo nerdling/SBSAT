@@ -112,6 +112,7 @@ extern float STATE_TIME;
 extern int PRINT_TREE_WIDTH;
 
 extern int reverse_independant_dependant;
+extern int print_independent_vars;
 extern int clear_dependance;
 extern int backjumping;
 extern char formatin;
