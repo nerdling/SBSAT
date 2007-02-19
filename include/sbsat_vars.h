@@ -143,6 +143,7 @@ extern int DO_REWIND;
 extern int DO_CLEAR_FUNCTION_TYPE;
 extern int DO_FIND_FUNCTION_TYPE;
 extern int DO_PROVER3;
+extern int DO_IDENTIFY_SAME_STRUCTURE;
 
 extern int PARAMS_DUMP;
 
@@ -151,6 +152,9 @@ extern int result_display_type;
 extern char module_root[256];
 extern int numBuckets;
 extern int sizeBuckets;
+
+extern int *arrFunctionStructure;
+extern int **arrSolverVarsInFunction;
 
 extern double *arrVarTrueInfluences;
 extern int **arrVarChoiceLevels;

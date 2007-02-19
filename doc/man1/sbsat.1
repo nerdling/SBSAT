@@ -156,6 +156,10 @@ Output format [default='b']
 Format of CNF output (3sat, qm, noqm)
 [default="noqm"]
 .TP
+\fB\-\-print\-indep\fR <number>
+Print independent variables, CNF format only (1/0)
+[default=0]
+.TP
 \fB\-\-formatin\fR <char>
 Input format [default=' ']
 .TP
@@ -248,6 +252,11 @@ BDDs (1/0)
 \fB\-\-P3\fR <number>, \fB\-P3\fR <number>
 Enable/Disable Recreating a new set of prover3 BDDs
 (1/0)
+[default=1]
+.TP
+\fB\-\-Is\fR <number>, \fB\-Is\fR <number>
+Enable/Disable Identifying BDDs with the same
+structure/function type (1/0)
 [default=1]
 .TP
 \fB\-\-max\-preproc\-time\fR <number>

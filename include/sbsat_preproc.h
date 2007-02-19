@@ -129,6 +129,7 @@ int Do_Rewind();
 int Do_Clear_FunctionType();
 int Do_Find_FunctionType();
 int Do_Prover3();
+int Do_Identify_Same_Structure();
 int Do_SafeAssign();
 int Do_SafeSearch();
 void Do_Flow();
