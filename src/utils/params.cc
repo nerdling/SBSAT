@@ -248,6 +248,8 @@ t_opt options[] = {
 	  "Enable/Disable Searching for the Function Type of BDDs (1/0)"},
 { &DO_PROVER3, "P3",  "P3",  P_INT, V(i:0,"0"),  V(i:1,"1"), VAR_NORMAL, 0,
 	  "Enable/Disable Recreating a new set of prover3 BDDs (1/0)"},
+{ &DO_IDENTIFY_SAME_STRUCTURE, "Is",  "Is",  P_INT, V(i:0,"0"),  V(i:1,"1"), VAR_NORMAL, 0,
+	  "Enable/Disable Identifying BDDs with the same structure/function type (1/0)"},
 { &max_preproc_time, "",  "max-preproc-time", P_INT, V(i:0,"0"),  V(i:0,"0"), VAR_NORMAL, 0,
 		"set the time limit in seconds (0=no limit)"},
 { &do_split_max_vars, "",  "do-split-max-vars", P_INT, V(i:0,"0"),  V(i:10,"10"), VAR_NORMAL, 0,
@@ -574,6 +576,7 @@ DO_ALL(int value)
 	set_param_int(strcpy(tmp_str, "Cf"), value);
 	set_param_int(strcpy(tmp_str, "Ff"), value);
 	set_param_int(strcpy(tmp_str, "P3"), value);
+	set_param_int(strcpy(tmp_str, "Is"), value);
    // also add a line to the following function
 }
 
@@ -595,6 +598,7 @@ DO_ALL_default(int value)
    change_defa_param_int(strcpy(tmp_str, "Cf"), value);
    change_defa_param_int(strcpy(tmp_str, "Ff"), value);
    change_defa_param_int(strcpy(tmp_str, "P3"), value);
+	change_defa_param_int(strcpy(tmp_str, "Is"), value);
 }
 
 void

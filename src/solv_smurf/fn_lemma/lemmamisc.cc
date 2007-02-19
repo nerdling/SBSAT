@@ -100,6 +100,17 @@ DisplayLemmaToFile(FILE *pFile, LemmaBlock *pLemma)
 }
 
 ITE_INLINE int
+SlideLemma(LemmaBlock *pLemma)
+{
+	
+
+  //At some point, Add a new lemma
+  //AddLemma(lemma);
+	
+  return 1;
+}
+
+ITE_INLINE int
 LemmaIsSAT(LemmaBlock *pLemma)
 {
    LemmaBlock *pLemmaBlock = pLemma;

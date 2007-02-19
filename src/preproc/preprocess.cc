@@ -80,6 +80,7 @@ preproc_type preproc[] = {
   { "Cf", 2, Do_Clear_FunctionType, NULL, &DO_CLEAR_FUNCTION_TYPE },
   { "Ff", 2, Do_Find_FunctionType, NULL, &DO_FIND_FUNCTION_TYPE },
   { "P3", 2, Do_Prover3, NULL, &DO_PROVER3},
+  { "Is", 2, Do_Identify_Same_Structure, NULL, &DO_IDENTIFY_SAME_STRUCTURE},
   { "", 0, NULL, NULL, NULL }
 };
 

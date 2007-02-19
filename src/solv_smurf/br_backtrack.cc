@@ -210,6 +210,7 @@ BackTrack()
                      &pUnitLemmaList, /*m lemma is added in here */
                      &pUnitLemmaListTail /*m and here */
                      )->pLemma;
+					//Call Anne's function here w/ pLemma, or arrTempLemma.
 
             }
 

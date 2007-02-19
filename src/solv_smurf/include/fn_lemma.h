@@ -136,6 +136,10 @@ typedef struct _LemmaInfoStruct {
   // when was this lemma used the last time
   int nLemmaLastUsed;
 
+  LemmaBlock *pSmurfsReferenced;
+  LemmaBlock *pSmurfsReferencedLastBlock;
+  int nNumSRBlocks;
+
 } LemmaInfoStruct;
 
 

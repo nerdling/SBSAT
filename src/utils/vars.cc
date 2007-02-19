@@ -77,6 +77,7 @@ int DO_REWIND = 1;
 int DO_CLEAR_FUNCTION_TYPE = 1;
 int DO_FIND_FUNCTION_TYPE = 1;
 int DO_PROVER3 = 1;
+int DO_IDENTIFY_SAME_STRUCTURE = 1;
 
 int NO_LEMMAS = 0;
 int NO_AU_LEMMAS = 0;
@@ -95,8 +96,6 @@ float JHEURISTIC_K_INF=1;
 long nTimeLimit = 0;
 long nNumChoicePointLimit = 0;
 
-
-
 /* former CircuitStruct */
 int nmbrFunctions=0;
 struct BDDNodeStruct **functions=NULL;
@@ -107,10 +106,12 @@ int *equalityVble=NULL; ///< Variable on the LHS of an ite=, and=, or or= BDD.
 int *independantVars=NULL;
 char **labels=NULL;
 FNProps *functionProps = NULL;
+int *arrFunctionStructure = NULL;
+int **arrSolverVarsInFunction = NULL;
 
 int numBuckets=16;
 int sizeBuckets=5;
-char preproc_string[256]="((ExSt)Ex(PrSt))";
+char preproc_string[256]="";
 
 int TRACE_START=0;
 int BDDWalkCutoff=100000;
