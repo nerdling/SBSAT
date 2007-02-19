@@ -187,7 +187,7 @@ t_opt options[] = {
 { cnfformat,  "", "cnf", P_STRING, V(i:255,"255"), {"noqm"}, VAR_NORMAL, 0, 
                 "Format of CNF output (3sat, qm, noqm)"},
 { &print_independent_vars, "",  "print-indep", P_INT, V(i:1,"1"), V(i:0,"0"), VAR_NORMAL, 0, 
-	       "Print independent variables (1/0)"},
+	       "Print independent variables, CNF format only (1/0)"},
 
 	
 /* b s c w   - left ldxpi  */
