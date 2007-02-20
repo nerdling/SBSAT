@@ -54,10 +54,10 @@ int use_symtable = 0;
 void cnf_print_independent_vars() {
 	fprintf(foutputfile, "c Independent Variables: ");
 	for(int x = 1; x <= numinp; x++) {
-		if(independantVars[x] == 1) 
+		if(independantVars[x] == 1-reverse_independant_dependant) 
 		  fprintf (foutputfile, "%d ", use_symtable?-atoi(getsym_i(x)->name):x);
 	}
-	fprintf(foutputfile, "\n");
+	fprintf(foutputfile, "0\n");
 }
 
 void print_cnf_symtable() {
