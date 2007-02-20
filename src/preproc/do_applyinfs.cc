@@ -130,8 +130,11 @@ Do_Apply_Inferences ()
 				  independantVars[inferlist->nums[0]] = 2;
 				else if(independantVars[inferlist->nums[0]] == 2 && count1 > count0)
 				  independantVars[inferlist->nums[0]] = independantVars[inferlist->nums[1]];
-				else if(independantVars[inferlist->nums[1]] == reverse_independant_dependant)
-				  independantVars[inferlist->nums[0]] = reverse_independant_dependant;
+				else if(independantVars[inferlist->nums[1]] == 1 || independantVars[inferlist->nums[0]] == 1) {
+					independantVars[inferlist->nums[1]] = 1;
+					independantVars[inferlist->nums[0]] = 1;
+				}
+				
 				
 				//verifyCircuit(inferlist->nums[1]);
 				
@@ -201,9 +204,10 @@ Do_Apply_Inferences ()
 				  independantVars[inferlist->nums[0]] = 2;
 				else if(independantVars[inferlist->nums[0]] == 2 && count1 > count0)
 				  independantVars[inferlist->nums[0]] = independantVars[-inferlist->nums[1]];
-				else if(independantVars[-inferlist->nums[1]] == reverse_independant_dependant)
-				  independantVars[inferlist->nums[0]] = reverse_independant_dependant;
-
+				else if(independantVars[-inferlist->nums[1]] == 1 || independantVars[inferlist->nums[0]] == 1) {
+					independantVars[-inferlist->nums[1]] = 1;
+					independantVars[inferlist->nums[0]] = 1;
+				}
 				//verifyCircuit(-inferlist->nums[1]);
 				
 				if(ge_preproc == '1') {
