@@ -41,4 +41,5 @@
    ite_free((void**)&arrTempLemma);
    ite_free((void**)&arrBacktrackStackIndex);
    ite_free((void**)&arrLemmaFlag);
-
+   ite_free((void**)&arrSmurfsRefFlag);
+   ite_free((void**)&arrTempSmurfsRef);

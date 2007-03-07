@@ -57,6 +57,7 @@ double ite_counters_f[MAX_COUNTER_F];
 int  autarky=0; /* autarkies enabled */
 char debug_dev[256]="stderr";
 int USE_AUTARKY_LEMMAS;
+int slide_lemmas;
 
 void DO_ALL(int);
 void DO_ALL_default(int value);
@@ -300,6 +301,8 @@ t_opt options[] = {
 { &MAX_NUM_CACHED_LEMMAS, "L", "max-cached-lemmas", P_INT,
 		V(i:0,"0"), V(i:5000, "5000"), VAR_NORMAL, 0,
                 "set the maximum # of lemmas"}, 
+{ &slide_lemmas, "slide-lemmas", "slide-lemmas", P_INT, V(i:0,"0"),  V(i:0,"0"), VAR_NORMAL, 0,
+			      "Enable/Disable attempting to slide lemmas during search (1/0)"},
 { &USE_AUTARKY_SMURFS, "", "autarky-smurfs", P_INT, V(i:0,"0"), V(i:0,"0"), VAR_NORMAL, 0,
 		"Use Autarky Smurfs in the solver (1/0)"},
 { &USE_AUTARKY_LEMMAS, "", "autarky-lemmas", P_INT, V(i:0,"0"), V(i:0,"0"), VAR_NORMAL, 0,

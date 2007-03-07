@@ -52,8 +52,6 @@ CheckSmurfInferences(int nSmurfIndex, int *arrInferences, int nNumInferences, in
       LemmaBlock *pLemma = NULL;
       LemmaInfoStruct *pLemmaInfo = NULL;
       if (NO_LEMMAS == 0) {
-        // fprintf(stderr, "FIXME: here\n"); exit(1);
-         
          // create lemma 
          arrSolverFunctions[nSmurfIndex].fn_smurf.arrSmurfPath.literals[arrSolverFunctions[nSmurfIndex].fn_smurf.arrSmurfPath.idx] 
             = nNewInferredAtom * (value==BOOL_FALSE?-1:1);
@@ -64,15 +62,30 @@ CheckSmurfInferences(int nSmurfIndex, int *arrInferences, int nNumInferences, in
          for (int i=0; i<arrSolverFunctions[nSmurfIndex].fn_smurf.arrSmurfPath.idx+1;i++)
             arrLits[arrSolverFunctions[nSmurfIndex].fn_smurf.arrSmurfPath.idx+1-i-1] = arrSolverFunctions[nSmurfIndex].fn_smurf.arrSmurfPath.literals[i];
 
-         pLemmaInfo=AddLemma(arrSolverFunctions[nSmurfIndex].fn_smurf.arrSmurfPath.idx+1,
-               arrLits//arrSolverFunctions[nSmurfIndex].fn_smurf.arrSmurfPath.literals
-               , false, NULL, NULL);
-         pLemma = pLemmaInfo->pLemma;
-         free(arrLits);
+			if(slide_lemmas) {
+				//Add stuff here.
+				pLemmaInfo=AddLemma_SmurfsReferenced(arrSolverFunctions[nSmurfIndex].fn_smurf.arrSmurfPath.idx+1,
+										  arrLits//arrSolverFunctions[nSmurfIndex].fn_smurf.arrSmurfPath.literals
+										  1, &nSmurfIndex,
+										  false, NULL, NULL);
+			} else {
+				pLemmaInfo=AddLemma(arrSolverFunctions[nSmurfIndex].fn_smurf.arrSmurfPath.idx+1,
+										  arrLits//arrSolverFunctions[nSmurfIndex].fn_smurf.arrSmurfPath.literals
+										  , false, NULL, NULL);
+			}
+			pLemma = pLemmaInfo->pLemma;
+			ite_free((void **)&arrLits);
 #else
-         pLemmaInfo=AddLemma(arrSolverFunctions[nSmurfIndex].fn_smurf.arrSmurfPath.idx+1,
-               arrSolverFunctions[nSmurfIndex].fn_smurf.arrSmurfPath.literals, false, NULL, NULL);
-         pLemma = pLemmaInfo->pLemma;
+			if(slide_lemmas) {
+				pLemmaInfo=AddLemma_SmurfsReferenced(arrSolverFunctions[nSmurfIndex].fn_smurf.arrSmurfPath.idx+1,
+										  arrSolverFunctions[nSmurfIndex].fn_smurf.arrSmurfPath.literals,
+										  1, &nSmurfIndex,
+										  false, NULL, NULL);
+			} else {
+				pLemmaInfo=AddLemma(arrSolverFunctions[nSmurfIndex].fn_smurf.arrSmurfPath.idx+1,
+										  arrSolverFunctions[nSmurfIndex].fn_smurf.arrSmurfPath.literals, false, NULL, NULL);
+			}
+			pLemma = pLemmaInfo->pLemma;
 #endif
          //DisplayLemmaStatus(pLemma, arrSolution);
       } else {

@@ -50,6 +50,9 @@ bool *arrLemmaFlag=NULL;
 int  *arrTempLemma=NULL;
 extern long long *arrInfsDepthBreadth;
 
+bool *arrSmurfsRefFlag=NULL;
+int *arrTempSmurfsRef=NULL;
+
 ITE_INLINE
 void
 InferLiteral(int nInferredAtom,

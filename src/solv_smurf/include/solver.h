@@ -269,9 +269,11 @@ extern int *arrChangedFn;
 
 
 // preallocated structures for BackTrack 
-extern int *arrUnsetLemmaFlagVars;
+extern int  *arrUnsetLemmaFlagVars;
 extern bool *arrLemmaFlag;
 extern int  *arrTempLemma;
+extern bool *arrSmurfsRefFlag;
+extern int  *arrTempSmurfsRef;
 
 //extern SpecialFunc *arrSpecialFuncs;
 extern int nNumFuncs;
@@ -340,6 +342,7 @@ ITE_INLINE void AFSFree();
 ITE_INLINE int  AFSInit();
 
 ITE_INLINE int ConstructTempLemma();
+ITE_INLINE int ConstructTempSmurfsRef();
 ITE_INLINE void AddLemmaIntoCache(LemmaInfoStruct *p);
 ITE_INLINE void InferLiteral(int nInferredAtom, int nInferredValue,
              bool bWasChoicePoint,

@@ -52,6 +52,11 @@ FnLemmaInit() {
    arrLemmaFlag = (bool*)ite_calloc(gnMaxVbleIndex+1, sizeof(bool),
          9, "arrLemmaFlag");
 
+	arrTempSmurfsRef = (int*)ite_calloc(nNumFuncs, sizeof(int),
+         9, "arrTempSmurfsRef");
+   arrSmurfsRefFlag = (bool*)ite_calloc(nNumFuncs, sizeof(bool),
+         9, "arrSmurfsRefFlag");
+
    return NO_ERROR;
 }
 
@@ -113,4 +118,32 @@ ConstructTempLemma()
       pConflictLemmaInfo = NULL;
    }
    return nTempLemmaIndex;
+}
+
+
+ITE_INLINE int
+ConstructTempSmurfsRef()
+{
+	assert(pConflictLemmaInfo->pSmurfsReferenced!=NULL);
+   int nTempSmurfsRefIndex=0;
+   LemmaBlock *pConflictSRBlock = pConflictLemmaInfo->pSmurfsReferenced;
+   int *arrConflictSRLits = pConflictSRBlock->arrLits;
+   int nConflictSRLength = arrConflictSRLits[0];
+
+   for (int nLitIndex = 1, nLitIndexInBlock = 1;
+         nLitIndex <= nConflictSRLength;
+         nLitIndex++, nLitIndexInBlock++)
+   {
+      if (nLitIndexInBlock == LITS_PER_LEMMA_BLOCK)
+      {
+         nLitIndexInBlock = 0;
+         pConflictSRBlock = pConflictSRBlock->pNext;
+         arrConflictSRLits = pConflictSRBlock->arrLits;
+      }
+      int nSmurfRef = arrConflictSRLits[nLitIndexInBlock];
+      assert(!arrSmurfsRefFlag[nSmurfRef]);
+      arrTempSmurfsRef[nTempSmurfsRefIndex++] = nSmurfRef;
+      arrSmurfsRefFlag[nSmurfRef] = true;
+   }
+   return nTempSmurfsRefIndex;
 }

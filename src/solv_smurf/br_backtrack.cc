@@ -52,6 +52,7 @@ BackTrack()
    int nUnsetLemmaFlagIndex = 0; /* literals that we need to unset after bt */
    LemmaBlock *pNewLemma=NULL; /* last lemma added */
    int nTempLemmaIndex = 0; /* the length of the new/temporary lemma */
+	int nTempSmurfsRefIndex = 0;
    int nNumForcedInfsBelowCurrentCP = 0;
    int nInferredAtom = 0; /* the choice point */
    int nInferredValue = 0; /* the choice point value */
@@ -60,6 +61,8 @@ BackTrack()
 	pUnitLemmaList.pNextLemma[0] = NULL;
 	pUnitLemmaListTail = NULL;
 	
+	if(slide_lemmas) nTempSmurfsRefIndex = ConstructTempSmurfsRef(); //This must be before ConstructTempLemma() because
+	                                                                 //pConflictLemmaInfo is nulled in ConstructTempLemma()
    // Copy the conflict lemma into arrTempLemma.
    nTempLemmaIndex = ConstructTempLemma();
 
@@ -169,7 +172,7 @@ BackTrack()
 				
             if (arrLemmaFlag[nBacktrackAtom]) 
 				{
-               // Resolve out lemma literals which are not needed.
+               // Resolve out lemma literals which are not needed. (Cleaning up the lemma)
                // Do this by checking the level at which each literal
                // was inferred.
                int nTempLemmaLiteral;
@@ -204,13 +207,21 @@ BackTrack()
                assert(IsInLemmaList(pUnitLemmaListTail,
                         &pUnitLemmaList));	  
 
-               pNewLemma=AddLemma(nTempLemmaIndex,
-                     arrTempLemma,
-                     bFlag,
-                     &pUnitLemmaList, /*m lemma is added in here */
-                     &pUnitLemmaListTail /*m and here */
-                     )->pLemma;
-					//Call Anne's function here w/ pLemma, or arrTempLemma.
+					LemmaInfoStruct *pNewLemmaInfo;
+					if(slide_lemmas) {
+						pNewLemmaInfo = AddLemma_SmurfsReferenced(nTempLemmaIndex, arrTempLemma,
+																				nTempSmurfsRefIndex, arrTempSmurfsRef,
+																				bFlag, &pUnitLemmaList, /*m lemma is added in here */
+																				&pUnitLemmaListTail /*m and here */
+																				);
+					} else {
+						pNewLemmaInfo = AddLemma(nTempLemmaIndex, arrTempLemma,
+														 bFlag, &pUnitLemmaList, /*m lemma is added in here */
+														 &pUnitLemmaListTail /*m and here */
+														 );
+					}
+					pNewLemma = pNewLemmaInfo->pLemma;
+					//Call Anne's function here w/ pNewLemmaInfo.
 
             }
 
@@ -271,13 +282,38 @@ BackTrack()
                         == (nLemmaLiteral > 0 ? BOOL_FALSE : BOOL_TRUE));
                }
             }
-         }
+				
+				if(slide_lemmas) {
+					// copy all smurf references not present in arrTempSmurfsRef into arrTempSmurfsRef
+					// (not marked in arrSmurfsRefFlag)
+
+					LemmaBlock *pSRBlock = pBacktrackTop->pLemmaInfo->pSmurfsReferenced;
+					int *arrSRLits = pSRBlock->arrLits;
+					int nSRLength = arrLits[0];
+					
+					for (int nLitIndex = 1, nLitIndexInBlock = 1;
+						  nLitIndex <= nSRLength;
+						  nLitIndex++, nLitIndexInBlock++)
+					  {
+						  if (nLitIndexInBlock == LITS_PER_LEMMA_BLOCK) {
+								 nLitIndexInBlock = 0;
+								 pSRBlock = pSRBlock->pNext;
+								 arrSRLits = pSRBlock->arrLits;
+						  }
+						  int nSmurfRef = arrLits[nLitIndexInBlock];
+						  if (arrSmurfsRefFlag[nSmurfRef] == false) {
+							  arrSmurfsRefFlag[nSmurfRef] = true;
+							  arrTempSmurfsRef[nTempSmurfsRefIndex++] = nSmurfRef;
+						  }
+					  }
+				}
+			}
 #ifdef DISPLAY_TRACE
          else 
             TB_9(
                   cout << "Lemma irrelevant to contradiction." << endl;
                 );
-         cout << "Star_Count = " << nNumForcedInfsBelowCurrentCP << endl;
+         cout << "#ForcedInfsBelowCurrentCP = " << nNumForcedInfsBelowCurrentCP << endl;
 
          TB_9(
             cout << "Backtracking from forced assignment of X"
@@ -312,9 +348,11 @@ BackTrack()
 
    /*m clean up */
    for(int i = 0; i < nUnsetLemmaFlagIndex; i++)
-      arrLemmaFlag[arrUnsetLemmaFlagVars[i]] = false;
+	  arrLemmaFlag[arrUnsetLemmaFlagVars[i]] = false;
    for(int i = 0; i < nTempLemmaIndex; i++) 
-      arrLemmaFlag[abs(arrTempLemma[i])] = false;
+	  arrLemmaFlag[abs(arrTempLemma[i])] = false;
+	for(int i = 0; i < nTempSmurfsRefIndex; i++)
+	  arrSmurfsRefFlag[arrTempSmurfsRef[i]] = false;
 
    // Flush the inference queue.
    pInferenceQueueNextElt = pInferenceQueueNextEmpty = arrInferenceQueue;

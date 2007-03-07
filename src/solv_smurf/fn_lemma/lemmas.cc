@@ -137,3 +137,62 @@ AddLemma(int nNumLiterals, int arrLiterals[], bool bPutInCache,
    return pLemmaInfo;
 }
 
+//This version of AddLemma allocates and configures the pSmurfsReferenced array
+//that keeps track of the smurfs that contributed to this particular lemma.
+ITE_INLINE LemmaInfoStruct *
+AddLemma_SmurfsReferenced(int nNumLiterals, int arrLiterals[], int nNumSmurfsRef,
+	   int arrSmurfsRef[], bool bPutInCache, LemmaInfoStruct *pUnitLemmaList,
+		LemmaInfoStruct **pUnitLemmaListTail)
+{
+   gnNumLemmas++; 
+
+   nCallsToAddLemma++;
+
+   // Initialize lemma info struct.
+   LemmaInfoStruct *pLemmaInfo = AllocateLemmaInfoStruct();
+   //LPQEnqueue(pLemmaInfo); -- it might not be the cached lemma yet
+
+   //Sort the lemma in the order of the branch process
+   //  if(bPutInCache) qsort(arrLiterals, nNumLiterals, sizeof(int), lemma_compfunc);
+
+   // Allocate the lemma blocks and store the literals there.
+   EnterIntoLemmaSpace(nNumLiterals, arrLiterals, true,
+         pLemmaInfo->pLemma, pLemmaInfo->pLemmaLastBlock,
+         pLemmaInfo->nNumBlocks);
+
+   // Allocate the SmurfsReferenced blocks and store the Smurf #'s there.
+   EnterIntoLemmaSpace(nNumSmurfsRef, arrSmurfsRef, true,
+         pLemmaInfo->pSmurfsReferenced, pLemmaInfo->pSmurfsReferencedLastBlock,
+         pLemmaInfo->nNumSRBlocks);
+
+   pLemmaInfo->bPutInCache = bPutInCache;
+   pLemmaInfo->nBacktrackStackReferences = 0;
+
+   if (procHeurAddLemma/*[LEMMA - pLemmaInfo->lemma_type]*/) 
+      procHeurAddLemma(pLemmaInfo);
+
+   LemmaSetWatchedLits(pLemmaInfo, arrLiterals, nNumLiterals);
+
+   if (pUnitLemmaList) {
+      /* new lemma is put in the beginning of pUnitLemmaList */
+      pLemmaInfo->pNextLemma[0] = pUnitLemmaList->pNextLemma[0];
+      pUnitLemmaList->pNextLemma[0] = pLemmaInfo;
+
+      if(*pUnitLemmaListTail == NULL)
+         *pUnitLemmaListTail = pLemmaInfo;
+
+      assert(IsInLemmaList(*pUnitLemmaListTail, pUnitLemmaList));
+   }
+
+   //Done updating brancher information for this variable in this lemma.
+
+   TB_9(
+      d9_printf1("Adding lemma: ");
+      DisplayLemma(pLemmaInfo->pLemma);
+      DisplayLemmaStatus(pLemmaInfo->pLemma);
+      DisplayLemmaInfo(pLemmaInfo);
+      d9_printf1("\n");
+   )
+
+   return pLemmaInfo;
+}

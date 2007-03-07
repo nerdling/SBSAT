@@ -136,6 +136,8 @@ typedef struct _LemmaInfoStruct {
   // when was this lemma used the last time
   int nLemmaLastUsed;
 
+  //pSmurfsReferenced is an array where each element is the number
+  //of a Smurf that contributed to this particular lemma.
   LemmaBlock *pSmurfsReferenced;
   LemmaBlock *pSmurfsReferencedLastBlock;
   int nNumSRBlocks;
@@ -166,6 +168,16 @@ ITE_INLINE bool IsInLemmaList(LemmaInfoStruct *pLemmaInfo, LemmaInfoStruct *pLis
 ITE_INLINE LemmaInfoStruct *
 AddLemma(int nNumLiterals,   //Can be used in the brancher
 	 int *arrLiterals, 
+	 bool bFlag,
+	 LemmaInfoStruct *pUnitLemmaList,
+	 LemmaInfoStruct **pUnitLemmaListTail
+	 );	 
+
+ITE_INLINE LemmaInfoStruct *
+AddLemma_SmurfsReferenced(int nNumLiterals,   //Can be used in the brancher
+	 int *arrLiterals, 
+	 int nNumSmurfsRef,
+	 int arrSmurfsRef[],
 	 bool bFlag,
 	 LemmaInfoStruct *pUnitLemmaList,
 	 LemmaInfoStruct **pUnitLemmaListTail
