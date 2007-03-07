@@ -190,6 +190,8 @@ extern int max_preproc_time;
 extern int NO_LEMMAS;
 extern int NO_AU_LEMMAS;
 
+extern int slide_lemmas;
+
 extern int sbj;
 
 extern char ge_preproc;
