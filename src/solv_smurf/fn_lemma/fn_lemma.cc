@@ -52,11 +52,13 @@ FnLemmaInit() {
    arrLemmaFlag = (bool*)ite_calloc(gnMaxVbleIndex+1, sizeof(bool),
          9, "arrLemmaFlag");
 
-	arrTempSmurfsRef = (int*)ite_calloc(nNumFuncs, sizeof(int),
-         9, "arrTempSmurfsRef");
-   arrSmurfsRefFlag = (bool*)ite_calloc(nNumFuncs, sizeof(bool),
-         9, "arrSmurfsRefFlag");
-
+	if(slide_lemmas) {
+		arrTempSmurfsRef = (int*)ite_calloc(nmbrFunctions, sizeof(int),
+			9, "arrTempSmurfsRef");
+		arrSmurfsRefFlag = (bool*)ite_calloc(nmbrFunctions, sizeof(bool),
+		   9, "arrSmurfsRefFlag");
+	}
+	
    return NO_ERROR;
 }
 

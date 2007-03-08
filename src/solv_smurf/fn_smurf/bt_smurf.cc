@@ -68,6 +68,7 @@ CheckSmurfInferences(int nSmurfIndex, int *arrInferences, int nNumInferences, in
 										  arrLits//arrSolverFunctions[nSmurfIndex].fn_smurf.arrSmurfPath.literals
 										  1, &nSmurfIndex,
 										  false, NULL, NULL);
+				pLemmaInfo->nLemmaCameFromSmurf = 1;
 			} else {
 				pLemmaInfo=AddLemma(arrSolverFunctions[nSmurfIndex].fn_smurf.arrSmurfPath.idx+1,
 										  arrLits//arrSolverFunctions[nSmurfIndex].fn_smurf.arrSmurfPath.literals
@@ -81,6 +82,7 @@ CheckSmurfInferences(int nSmurfIndex, int *arrInferences, int nNumInferences, in
 										  arrSolverFunctions[nSmurfIndex].fn_smurf.arrSmurfPath.literals,
 										  1, &nSmurfIndex,
 										  false, NULL, NULL);
+				pLemmaInfo->nLemmaCameFromSmurf = 1;
 			} else {
 				pLemmaInfo=AddLemma(arrSolverFunctions[nSmurfIndex].fn_smurf.arrSmurfPath.idx+1,
 										  arrSolverFunctions[nSmurfIndex].fn_smurf.arrSmurfPath.literals, false, NULL, NULL);

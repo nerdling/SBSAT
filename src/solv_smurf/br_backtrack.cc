@@ -50,6 +50,7 @@ BackTrack()
    LemmaInfoStruct *pUnitLemmaListTail;
    LemmaInfoStruct pUnitLemmaList;
    int nUnsetLemmaFlagIndex = 0; /* literals that we need to unset after bt */
+	LemmaInfoStruct *pNewLemmaInfo=NULL; /* last lemmainfo added */
    LemmaBlock *pNewLemma=NULL; /* last lemma added */
    int nTempLemmaIndex = 0; /* the length of the new/temporary lemma */
 	int nTempSmurfsRefIndex = 0;
@@ -207,7 +208,6 @@ BackTrack()
                assert(IsInLemmaList(pUnitLemmaListTail,
                         &pUnitLemmaList));	  
 
-					LemmaInfoStruct *pNewLemmaInfo;
 					if(slide_lemmas) {
 						pNewLemmaInfo = AddLemma_SmurfsReferenced(nTempLemmaIndex, arrTempLemma,
 																				nTempSmurfsRefIndex, arrTempSmurfsRef,
@@ -289,7 +289,7 @@ BackTrack()
 
 					LemmaBlock *pSRBlock = pBacktrackTop->pLemmaInfo->pSmurfsReferenced;
 					int *arrSRLits = pSRBlock->arrLits;
-					int nSRLength = arrLits[0];
+					int nSRLength = arrSRLits[0];
 					
 					for (int nLitIndex = 1, nLitIndexInBlock = 1;
 						  nLitIndex <= nSRLength;
@@ -323,7 +323,8 @@ BackTrack()
          )
 #endif
 
-         if (pBacktrackTop->pLemmaInfo) FreeLemma(pBacktrackTop->pLemmaInfo);
+         if (pBacktrackTop->pLemmaInfo && pBacktrackTop->pLemmaInfo->nLemmaCameFromSmurf)
+				 FreeLemma(pBacktrackTop->pLemmaInfo);
 
          arrSolution[nBacktrackAtom] = BOOL_UNKNOWN;
 
@@ -369,7 +370,7 @@ BackTrack()
    // the value of the choice point 
    // flip it
    nInferredValue = (nInferredValue == BOOL_TRUE ? BOOL_FALSE : BOOL_TRUE);
-   InferLiteral(nInferredAtom, nInferredValue, true, pNewLemma, NULL, 1);
+   InferLiteral(nInferredAtom, nInferredValue, true, pNewLemma, pNewLemmaInfo, 1);
 
 	assert(IsInLemmaList(pUnitLemmaListTail,
 								&pUnitLemmaList));	  
@@ -417,7 +418,7 @@ BackTrack()
          assert(arrSolution[p->nWatchedVble[0]] == BOOL_UNKNOWN);
 
          InferLiteral(p->nWatchedVble[0], p->nWatchedVblePolarity[0],
-               false, p->pLemma, NULL, 1);
+               false, p->pLemma, p, 1);
 
 			previous = previous->pNextLemma[0];
       }

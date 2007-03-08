@@ -142,6 +142,7 @@ typedef struct _LemmaInfoStruct {
   LemmaBlock *pSmurfsReferencedLastBlock;
   int nNumSRBlocks;
 
+  int nLemmaCameFromSmurf;
 } LemmaInfoStruct;
 
 

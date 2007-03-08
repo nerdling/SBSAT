@@ -395,9 +395,9 @@ UpdateEachAffectedLemma(AffectedFuncsStruct *pAFS, int nInferredValue)
             pLemmaListDisagreed->nLemmaFirstUseful = ite_counters[NUM_LEMMA_INTO_CACHE];
          ite_counters[INF_LEMMA]++;
          InferLiteral(nWatchedVble, nWatchedVblePolarity, false,
-               pLemmaListDisagreed->pLemma,
-               pLemmaListDisagreed, 1);
+               pLemmaListDisagreed->pLemma, pLemmaListDisagreed, 1);
 
+			
          /* keep it in the memory until you backtrack */
          (pLemmaListDisagreed->nBacktrackStackReferences)++; 
 

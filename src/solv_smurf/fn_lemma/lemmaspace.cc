@@ -233,4 +233,12 @@ FreeLemmaBlocks(LemmaInfoStruct *pLemmaInfo)
    pLemmaInfo->pLemmaLastBlock->pNext = pLemmaSpaceNextAvail;
    pLemmaSpaceNextAvail = pLemmaInfo->pLemma;
    nLemmaSpaceBlocksAvail += pLemmaInfo->nNumBlocks;
+	//pLemmaInfo->pLemma = NULL;
+
+	if(pLemmaInfo->pSmurfsReferenced) {
+		pLemmaInfo->pSmurfsReferencedLastBlock->pNext = pLemmaSpaceNextAvail;
+		pLemmaSpaceNextAvail = pLemmaInfo->pSmurfsReferenced;
+		nLemmaSpaceBlocksAvail += pLemmaInfo->nNumSRBlocks;
+		//pLemmaInfo->pSmurfsReferenced = NULL;
+	}
 }
