@@ -241,4 +241,5 @@ FreeLemmaBlocks(LemmaInfoStruct *pLemmaInfo)
 		nLemmaSpaceBlocksAvail += pLemmaInfo->nNumSRBlocks;
 		//pLemmaInfo->pSmurfsReferenced = NULL;
 	}
+	assert(pLemmaSpaceNextAvail!=NULL);
 }

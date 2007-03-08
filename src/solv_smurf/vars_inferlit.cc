@@ -63,7 +63,9 @@ InferLiteral(int nInferredAtom,
       int infer)
 {
    assert(nInferredValue == BOOL_TRUE || nInferredValue == BOOL_FALSE);
-   
+
+   //if(pLemma!=NULL) assert(pCachedLemma!=NULL); SEAN!!! Someday all functions should infer correct LemmaInfoStructs
+	
    D_9(
          d9_printf3("Inferring %c%d ", (nInferredValue==BOOL_TRUE?'+':'-'),
             nInferredAtom);

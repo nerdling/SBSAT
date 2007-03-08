@@ -115,8 +115,8 @@ ConstructTempLemma()
       arrTempLemma[nTempLemmaIndex++] = nConflictLiteral;
       arrLemmaFlag[nConflictVble] = true;
    }
-   if (pConflictLemmaInfo) {
-      FreeLemma(pConflictLemmaInfo);
+   if (pConflictLemmaInfo && pConflictLemmaInfo->nLemmaCameFromSmurf) {
+      FreeLemma(pConflictLemmaInfo); //Need to free this LemmaInfoStruct if it came from a normal smurf
       pConflictLemmaInfo = NULL;
    }
    return nTempLemmaIndex;

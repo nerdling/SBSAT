@@ -413,6 +413,7 @@ UpdateEachAffectedLemma(AffectedFuncsStruct *pAFS, int nInferredValue)
       if (pLemmaListDisagreed->nLemmaFirstUseful == 0) 
          pLemmaListDisagreed->nLemmaFirstUseful = ite_counters[NUM_LEMMA_INTO_CACHE];
       pConflictLemma = pLemmaListDisagreed->pLemma;
+		pConflictLemmaInfo = pLemmaListDisagreed;
       // goto_Backtrack;
       return ERR_BT_LEMMA;
    }
@@ -676,6 +677,7 @@ UpdateEachAffectedLemma(AffectedFuncsStruct *pAFS, int nInferredValue)
       if (pLemmaListDisagreed->nLemmaFirstUseful == 0) 
          pLemmaListDisagreed->nLemmaFirstUseful = ite_counters[NUM_LEMMA_INTO_CACHE];
       pConflictLemma = pLemmaListDisagreed->pLemma;
+		pConflictLemmaInfo = pLemmaListDisagreed;
       // goto_Backtrack;
       return ERR_BT_LEMMA;
    }

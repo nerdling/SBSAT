@@ -68,12 +68,12 @@ CheckSmurfInferences(int nSmurfIndex, int *arrInferences, int nNumInferences, in
 										  arrLits//arrSolverFunctions[nSmurfIndex].fn_smurf.arrSmurfPath.literals
 										  1, &nSmurfIndex,
 										  false, NULL, NULL);
-				pLemmaInfo->nLemmaCameFromSmurf = 1;
 			} else {
 				pLemmaInfo=AddLemma(arrSolverFunctions[nSmurfIndex].fn_smurf.arrSmurfPath.idx+1,
 										  arrLits//arrSolverFunctions[nSmurfIndex].fn_smurf.arrSmurfPath.literals
 										  , false, NULL, NULL);
 			}
+			pLemmaInfo->nLemmaCameFromSmurf = 1; //Mark this lemma to be deleted after backtracking over it
 			pLemma = pLemmaInfo->pLemma;
 			ite_free((void **)&arrLits);
 #else
@@ -82,11 +82,11 @@ CheckSmurfInferences(int nSmurfIndex, int *arrInferences, int nNumInferences, in
 										  arrSolverFunctions[nSmurfIndex].fn_smurf.arrSmurfPath.literals,
 										  1, &nSmurfIndex,
 										  false, NULL, NULL);
-				pLemmaInfo->nLemmaCameFromSmurf = 1;
 			} else {
 				pLemmaInfo=AddLemma(arrSolverFunctions[nSmurfIndex].fn_smurf.arrSmurfPath.idx+1,
 										  arrSolverFunctions[nSmurfIndex].fn_smurf.arrSmurfPath.literals, false, NULL, NULL);
 			}
+			pLemmaInfo->nLemmaCameFromSmurf = 1; //Mark this lemma to be deleted after backtracking over it
 			pLemma = pLemmaInfo->pLemma;
 #endif
          //DisplayLemmaStatus(pLemma, arrSolution);

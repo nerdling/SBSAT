@@ -108,6 +108,11 @@ AddLemma(int nNumLiterals, int arrLiterals[], bool bPutInCache,
    pLemmaInfo->bPutInCache = bPutInCache;
    pLemmaInfo->nBacktrackStackReferences = 0;
 
+	pLemmaInfo->pSmurfsReferenced = NULL;
+	pLemmaInfo->pSmurfsReferencedLastBlock = NULL;
+	pLemmaInfo->nNumSRBlocks = 0;
+	pLemmaInfo->nLemmaCameFromSmurf = 0;
+	
    if (procHeurAddLemma/*[LEMMA - pLemmaInfo->lemma_type]*/) 
       procHeurAddLemma(pLemmaInfo);
 
@@ -160,14 +165,16 @@ AddLemma_SmurfsReferenced(int nNumLiterals, int arrLiterals[], int nNumSmurfsRef
          pLemmaInfo->pLemma, pLemmaInfo->pLemmaLastBlock,
          pLemmaInfo->nNumBlocks);
 
+	pLemmaInfo->bPutInCache = bPutInCache;
+   pLemmaInfo->nBacktrackStackReferences = 0;
+	
    // Allocate the SmurfsReferenced blocks and store the Smurf #'s there.
    EnterIntoLemmaSpace(nNumSmurfsRef, arrSmurfsRef, true,
          pLemmaInfo->pSmurfsReferenced, pLemmaInfo->pSmurfsReferencedLastBlock,
          pLemmaInfo->nNumSRBlocks);
 
-   pLemmaInfo->bPutInCache = bPutInCache;
-   pLemmaInfo->nBacktrackStackReferences = 0;
-
+	pLemmaInfo->nLemmaCameFromSmurf = 0;
+	
    if (procHeurAddLemma/*[LEMMA - pLemmaInfo->lemma_type]*/) 
       procHeurAddLemma(pLemmaInfo);
 
@@ -192,6 +199,10 @@ AddLemma_SmurfsReferenced(int nNumLiterals, int arrLiterals[], int nNumSmurfsRef
       DisplayLemmaStatus(pLemmaInfo->pLemma);
       DisplayLemmaInfo(pLemmaInfo);
       d9_printf1("\n");
+		d9_printf1("SR#s = ");
+		for(int i = 0; i < 5; i++)
+		  d9_printf2("%d ", pLemmaInfo->pSmurfsReferenced->arrLits[i]);
+		d9_printf1("\n");
    )
 
    return pLemmaInfo;

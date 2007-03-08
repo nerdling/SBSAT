@@ -154,8 +154,6 @@ BackTrack()
             if(arrLemmaFlag[nBacktrackAtom]) 
 #endif
                MoveToFrontOfLPQ(pBacktrackTop->pLemmaInfo);
-
-            pBacktrackTop->pLemmaInfo = NULL;
          }
 
          //Handle old choicepoints
@@ -300,7 +298,11 @@ BackTrack()
 								 pSRBlock = pSRBlock->pNext;
 								 arrSRLits = pSRBlock->arrLits;
 						  }
-						  int nSmurfRef = arrLits[nLitIndexInBlock];
+						  int nSmurfRef = arrSRLits[nLitIndexInBlock];
+						  d9_printf2("nSmurfRef = %d\n", nSmurfRef);
+						  
+						  
+						  
 						  if (arrSmurfsRefFlag[nSmurfRef] == false) {
 							  arrSmurfsRefFlag[nSmurfRef] = true;
 							  arrTempSmurfsRef[nTempSmurfsRefIndex++] = nSmurfRef;
@@ -324,7 +326,7 @@ BackTrack()
 #endif
 
          if (pBacktrackTop->pLemmaInfo && pBacktrackTop->pLemmaInfo->nLemmaCameFromSmurf)
-				 FreeLemma(pBacktrackTop->pLemmaInfo);
+				 FreeLemma(pBacktrackTop->pLemmaInfo);  // Need to free LemmaInfoStruct that comes from a normal smurf
 
          arrSolution[nBacktrackAtom] = BOOL_UNKNOWN;
 
