@@ -117,7 +117,7 @@ BDDNode * mitosis (BDDNode * bdd, int *structureBDD, int *newBDD)
       }
    if (num == 0)
    {
-      //    fprintf(stderr, "\nVariable %d not found in translation array...quantifying it away\n", v);
+      //fprintf(stderr, "\nVariable %d not found in translation array...quantifying it away\n", v);
       return mitosis (xquantify (bdd, v), structureBDD, newBDD);
    }
    v = newBDD[num];

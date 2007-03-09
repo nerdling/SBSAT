@@ -301,7 +301,7 @@ t_opt options[] = {
 { &MAX_NUM_CACHED_LEMMAS, "L", "max-cached-lemmas", P_INT,
 		V(i:0,"0"), V(i:5000, "5000"), VAR_NORMAL, 0,
                 "set the maximum # of lemmas"}, 
-{ &slide_lemmas, "slide-lemmas", "slide-lemmas", P_INT, V(i:0,"0"),  V(i:0,"0"), VAR_NORMAL, 0,
+{ &slide_lemmas, "", "slide-lemmas", P_INT, V(i:0,"0"),  V(i:0,"0"), VAR_NORMAL, 0,
 			      "Enable/Disable attempting to slide lemmas during search (1/0)"},
 { &USE_AUTARKY_SMURFS, "", "autarky-smurfs", P_INT, V(i:0,"0"), V(i:0,"0"), VAR_NORMAL, 0,
 		"Use Autarky Smurfs in the solver (1/0)"},
