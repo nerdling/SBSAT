@@ -86,12 +86,10 @@ InitVarMap()
   d3_printf4("Solver vars: %d/%d (not used: %d)\n", nNumVariables-1, total_vars, total_vars-nNumVariables+1);
   d3_printf4("Indep/Dep vars: %d/%d (other vars: %d)\n", nIndepVars, nDepVars, nNumVariables-1-nIndepVars-nDepVars);
 
-
-   /* init mapping arrays */
-   arrSolver2IteVarMap = (int *)ite_calloc(nNumVariables, sizeof(int), 2, "solver mapping(s2i)");
-   arrIte2SolverVarMap = (int *)ite_calloc(total_vars+1, sizeof(int), 2, "solver mapping(i2s)");
-
-
+  /* init mapping arrays */
+  arrSolver2IteVarMap = (int *)ite_calloc(nNumVariables, sizeof(int), 2, "solver mapping(s2i)");
+  arrIte2SolverVarMap = (int *)ite_calloc(total_vars+1, sizeof(int), 2, "solver mapping(i2s)");
+	
   int nSolutionIndep = 1;
   int nSolutionDep = nIndepVars+1;
   int nSolutionOther = nIndepVars+nDepVars+1;

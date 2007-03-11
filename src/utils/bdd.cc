@@ -126,6 +126,30 @@ BDDNode * mitosis (BDDNode * bdd, int *structureBDD, int *newBDD)
    return ite_xvar_y_z (ite_var (v), r, e);
 }
 
+BDDNode *shared_structure (BDDNode *bdd1, int bdd1num, int bdd2num) {
+	if (IS_TRUE_FALSE(bdd1)) //Takes care of True and False
+	  return bdd1;
+	int v, num = -1;
+	v = bdd1->variable;
+	
+	//fprintf(stderr, "v %d|", v);
+	for (int x = 0; x < length[bdd1num]; x++)
+	  if (variables[bdd1num].num[x] == v) {
+		  num = x;
+		  break;
+	  }
+	
+	if (num == -1) {
+		fprintf(stderr, "\nVariable %d not found in translation array...quantifying it away\n", v);
+		return shared_structure (xquantify (bdd1, v), bdd1num, bdd2num);
+	}
+	
+	v = variables[bdd2num].num[num];
+	BDDNode * r = shared_structure (bdd1->thenCase, bdd1num, bdd2num);
+	BDDNode * e = shared_structure (bdd1->elseCase, bdd1num, bdd2num);
+	return ite_xvar_y_z (ite_var (v), r, e);
+}
+
 inline BDDNode *
 MinMaxBDD_within(int set_vars, int min, int max) 
 {

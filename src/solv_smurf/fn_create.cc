@@ -61,6 +61,9 @@ CreateFunctions()
    nNumUnresolvedFunctions = nNumFuncs; 
    arrSolverFunctions = (SolverFunction*)ite_calloc(nmbrFunctions, sizeof(SolverFunction), 2, "SolverFunctions");
 
+	if(arrSolverVarsInFunction == NULL && slide_lemmas)
+		arrSolverVarsInFunction = (int **)ite_calloc(nmbrFunctions, sizeof(int *), 9, "arrSolverVarsInFunction *");
+	
    for (int i = 0; i < nmbrFunctions; i++)
    {
 		if(!smurfs_share_paths) { clear_all_bdd_pState(); true_ptr->pState = pTrueSmurfState;}
@@ -68,16 +71,25 @@ CreateFunctions()
       BDDNodeStruct *pFunc = functions[i];
       if (pFunc == false_ptr)  return SOLV_UNSAT;
 
-      if (procCreateFunction[nFunctionType])
+      if (procCreateFunction[nFunctionType]) {
          procCreateFunction[nFunctionType](i, functions[i], nFunctionType, equalityVble[i]);
-      else {
-         d4_printf3("Skipping function %d type %d\n", i, nFunctionType);
-         FnCreateSkippedFunction(i, nFunctionType);
-         nNumUnresolvedFunctions--;
-      }
+			if(slide_lemmas && nFunctionType == UNSURE) {
+				int length = arrSolverFunctions[i].fn_smurf.pInitialState->vbles.nNumElts;
+				int *vars = arrSolverFunctions[i].fn_smurf.pInitialState->vbles.arrElts;
+				arrSolverVarsInFunction[i] = (int *)ite_calloc(length+1, sizeof(int), 9, "arrSolverVarsInFunction");
+				arrSolverVarsInFunction[i][0] = length;
+				for(int x = 0; x < length; x++) {
+					arrSolverVarsInFunction[i][x+1] = arrIte2SolverVarMap[vars[x]];
+				}
+			} else {
+				d4_printf3("Skipping function %d type %d\n", i, nFunctionType);
+				FnCreateSkippedFunction(i, nFunctionType);
+				nNumUnresolvedFunctions--;
+			}
+		}
    }
-   
-   // Display statistics.
+		
+	// Display statistics.
    double fEndTime = get_runtime();
    ite_counters_f[BUILD_SMURFS] = fEndTime - fStartTime;
    
