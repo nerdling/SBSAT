@@ -90,6 +90,7 @@ void printITEBDD(BDDNode *);
 BDDNode *ReadSmurf(int *, char *, int, int *, int);
 BDDNode *mitosis(BDDNode *, int *, int *);
 BDDNode *f_mitosis(BDDNode *, BDDNode **, int *);
+BDDNode *shared_structure(BDDNode *, int, int);
 BDDNode *f_apply(BDDNode *, BDDNode**);
 BDDNode *MinMaxBDD(int *, int, int, int, int);
 void unmark(BDDNode *);
