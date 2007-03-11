@@ -81,11 +81,11 @@ CreateFunctions()
 				for(int x = 0; x < length; x++) {
 					arrSolverVarsInFunction[i][x+1] = arrIte2SolverVarMap[vars[x]];
 				}
-			} else {
-				d4_printf3("Skipping function %d type %d\n", i, nFunctionType);
-				FnCreateSkippedFunction(i, nFunctionType);
-				nNumUnresolvedFunctions--;
 			}
+		} else {
+			d4_printf3("Skipping function %d type %d\n", i, nFunctionType);
+			FnCreateSkippedFunction(i, nFunctionType);
+			nNumUnresolvedFunctions--;
 		}
    }
 		
