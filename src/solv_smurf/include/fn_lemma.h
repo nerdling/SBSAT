@@ -184,6 +184,9 @@ AddLemma_SmurfsReferenced(int nNumLiterals,   //Can be used in the brancher
 	 LemmaInfoStruct **pUnitLemmaListTail
 	 );	 
 
+ITE_INLINE int
+SlideLemma(LemmaInfoStruct *pLemmaInfo);
+
 ITE_INLINE void FreeLemma(LemmaInfoStruct *pLemmaInfo);
 ITE_INLINE void FreeLemmas(int n);
 ITE_INLINE void LPQEnqueue(LemmaInfoStruct *pLemmaInfo);

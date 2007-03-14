@@ -212,6 +212,7 @@ BackTrack()
 																				bFlag, &pUnitLemmaList, /*m lemma is added in here */
 																				&pUnitLemmaListTail /*m and here */
 																				);
+						SlideLemma(pNewLemmaInfo);
 					} else {
 						pNewLemmaInfo = AddLemma(nTempLemmaIndex, arrTempLemma,
 														 bFlag, &pUnitLemmaList, /*m lemma is added in here */
@@ -219,7 +220,6 @@ BackTrack()
 														 );
 					}
 					pNewLemma = pNewLemmaInfo->pLemma;
-					//Call Anne's function here w/ pNewLemmaInfo.
 
             }
 
