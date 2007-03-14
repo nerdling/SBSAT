@@ -100,13 +100,149 @@ DisplayLemmaToFile(FILE *pFile, LemmaBlock *pLemma)
 }
 
 ITE_INLINE int
-SlideLemma(LemmaBlock *pLemma)
-{
-	
-
-  //At some point, Add a new lemma
-  //AddLemma(lemma);
-	
+SlideLemma(LemmaInfoStruct *pLemmaInfo)
+{	
+	bool bVarsMatch = false; //variables match in all locations up to current point?
+	bool bComplete = false; //indicates whether all function sets have been checked
+	int nOffset = 0; //offset is initially 0 so it can be set appropriately later
+	bool bIncrement = true; //start off by incrementing the offset, then decrement later when false
+	int nLowestFunc = pLemmaInfo->pSmurfsReferenced->arrLits[1]; 
+	int nHighestFunc = pLemmaInfo->pSmurfsReferencedLastBlock->arrLits[(pLemmaInfo->pSmurfsReferenced->arrLits[0] % LITS_PER_LEMMA_BLOCK)];
+	LemmaInfoStruct *pTempLemmaInfo = pLemmaInfo;
+	//first create the lemma pattern
+	int nCurVar;
+	int *arrPattern[2];
+	//for each variable in the lemma
+	for(int nLemmaVar = 0; nLemmaVar < pLemmaInfo->pLemma->arrLits[0]; nLemmaVar++)
+	{
+		nCurVar = arrSolverVarsInFunction[pTempLemmaInfo->pSmurfsReferenced->arrLits[0]][0];
+		int nVarIndex = 1, nFuncIndex = 1;
+		int nSmurfBlock = 1;
+		while(nCurVar != pTempLemmaInfo->pLemma->arrLits[(nLemmaVar % LITS_PER_LEMMA_BLOCK)])
+		{
+			if(nVarIndex == arrSolverFunctions[nFuncIndex].fn_smurf.pInitialState->vbles.nNumElts) //if nVarIndex= num of vars in function
+			{
+				nVarIndex = 0;
+				nFuncIndex++;
+			}
+			else
+				nVarIndex++;
+				
+			if(nFuncIndex == LITS_PER_LEMMA_BLOCK)
+			{
+				nFuncIndex = 0;
+				nSmurfBlock++;
+				pTempLemmaInfo->pSmurfsReferenced = pTempLemmaInfo->pSmurfsReferenced->pNext;
+			}
+			nCurVar = arrSolverVarsInFunction[pTempLemmaInfo->pSmurfsReferenced->arrLits[nFuncIndex]][nVarIndex];
+		}
+		arrPattern[nLemmaVar][0] = (nFuncIndex + LITS_PER_LEMMA_BLOCK) % nSmurfBlock;
+		arrPattern[nLemmaVar][1] = nVarIndex;
+	}
+	pTempLemmaInfo = pLemmaInfo; //reset pTempLemmaInfo
+	//while not all sets of functions have been checked
+	while(!bComplete)
+	{
+		if(bIncrement) //if trying to increment
+		{
+			//first increment to the highest point possible
+			if(nHighestFunc < nNumFuncs) //if the highest numbered function is not the last function in the slider
+			{
+				nOffset++;
+				nHighestFunc++; 
+			}
+			else
+			{
+				nOffset = 0; //reset nOffset
+				bIncrement = false; //stop incrementing and start decrementing
+				continue; //don't loop thru and compare the lemma to its own functions; start decrementing instead
+			}
+		}
+		else
+		{
+			//next decrement down to the first function possible (which would be function #1)
+			if(nLowestFunc > 1)
+			{
+				nOffset--;
+				nLowestFunc--;
+			}
+			else
+				return 1; //all functions have been checked so stop looping 
+		}
+		
+		//check that the function types match
+		bool bTypeMatches = false;
+		for(int nFuncCount = 0; nFuncCount < pLemmaInfo->pSmurfsReferenced->arrLits[0]; nFuncCount++)
+		{
+			//account for smurfs occupying multiple blocks
+			if(nFuncCount % LITS_PER_LEMMA_BLOCK == 0 && nFuncCount != 0)
+				pTempLemmaInfo->pSmurfsReferenced = pTempLemmaInfo->pSmurfsReferenced->pNext;
+			int nFunctionNumber = pTempLemmaInfo->pSmurfsReferenced->arrLits[(nFuncCount % LITS_PER_LEMMA_BLOCK)];
+			if(arrFunctionStructure[nFunctionNumber] == arrFunctionStructure[(nFunctionNumber + nOffset)])
+				bTypeMatches = true;
+			else
+			{
+				bTypeMatches = false;
+				break;
+			}
+		}
+		pTempLemmaInfo = pLemmaInfo; //reset pTempLemmaInfo again
+		if(bTypeMatches) //if the types match, check variables
+		{
+			for(int nFuncCount = 0; nFuncCount < pLemmaInfo->pSmurfsReferenced->arrLits[0]; nFuncCount++)  //for each function in the set, compare to the corresponding function in the lemma
+			{
+				//for each variable in the lemma 
+				for(int nVarCount = 0; nVarCount < pLemmaInfo->pLemma->arrLits[0]; nVarCount++)
+				{
+					if(nVarCount % LITS_PER_LEMMA_BLOCK == 0)
+					{
+						pTempLemmaInfo->pLemma = pTempLemmaInfo->pLemma->pNext;
+					}
+					//i think this makes sense....
+					if(arrSolverVarsInFunction[pTempLemmaInfo->pSmurfsReferenced->arrLits[arrPattern[nVarCount][0]]][arrPattern[nVarCount][1]] 
+						== (arrSolverVarsInFunction[(pTempLemmaInfo->pSmurfsReferenced->arrLits[arrPattern[nVarCount][0]] + nOffset)][arrPattern[nVarCount][1]] + nOffset))
+					{
+						bVarsMatch = true;
+					}
+					else
+					{
+						bVarsMatch = false;
+						break;
+					}
+				}
+				
+				if(bVarsMatch)
+				{	//this whole section needs fixed
+					pTempLemmaInfo = pLemmaInfo; //reset pTempLemmaInfo again
+					LemmaInfoStruct *pTempNewLemma;
+					LemmaInfoStruct *pNewLemma;
+					pNewLemma->pLemma->arrLits[0] = pLemmaInfo->pLemma->arrLits[0];
+					pTempNewLemma = pNewLemma;
+					//copy arrVars to pTempNewLemma
+					int nCount = 1;
+					for(int nLitCount = 0; nLitCount < pLemmaInfo->pLemma->arrLits[0]; nLitCount++)
+					{
+						while(nCount < LITS_PER_LEMMA_BLOCK)
+						{
+							pTempNewLemma->pLemma->arrLits[nCount] = pTempLemmaInfo->pLemma->arrLits[nCount] + nOffset;
+							nCount++;
+						}
+						nCount = 0;
+						pTempNewLemma->pLemma = pTempNewLemma->pLemma->pNext;
+						pTempLemmaInfo->pLemma = pTempLemmaInfo->pLemma->pNext;
+					}
+						
+					//AddLemma(int nNumLiterals,   //Can be used in the brancher
+					//			int *arrLiterals, 
+					//			bool bFlag,
+					//			LemmaInfoStruct *pUnitLemmaList,
+					//			LemmaInfoStruct **pUnitLemmaListTail)	 
+				}
+				else
+					break;
+			}//end for
+		}
+	}//end while
   return 1;
 }
 
