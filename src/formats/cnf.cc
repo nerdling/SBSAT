@@ -373,49 +373,40 @@ cnf_process(store *integers, int num_minmax, minmax * min_max_store)
 	long y, z, i, j;
 	d3_printf2("numinp: %ld\n", numinp);
 
-	//Sort variables in each clause
-	for(int x = 1; x < numout + 1; x++)
-		qsort(integers[x].num, integers[x].length, sizeof(int), abscompfunc);
+	if(DO_CLUSTER) {
 	
-	//Sort Clauses
-	qsort(integers, numout+1, sizeof(store), clscompfunc);
-	
-	int dups = 0;
-   for(int x = 1; x < numout-dups; x++) { //Remove duplicates
-		fprintf(stderr, "%d ", x);
-		int isdup = 0;
-		if(integers[x].length == integers[x+dups+1].length) {
-			isdup = 1;
-			for(int y = 0; y < integers[x].length; y++) {
-				//   fprintf(stderr, "%d ", integers[x].num[y]);
-				if(integers[x].num[y] != integers[x+dups+1].num[y]) {
-					isdup = 0;
-					break;
+		//Sort variables in each clause
+		for(int x = 1; x < numout + 1; x++)
+		  qsort(integers[x].num, integers[x].length, sizeof(int), abscompfunc);
+		
+		//Sort Clauses
+		qsort(integers, numout+1, sizeof(store), clscompfunc);
+		
+		int dups = 0;
+		for(int x = 1; x < numout-dups; x++) { //Remove duplicates
+			int isdup = 0;
+			if(integers[x].length == integers[x+dups+1].length) {
+				isdup = 1;
+				for(int y = 0; y < integers[x].length; y++) {
+					//   fprintf(stderr, "%d ", integers[x].num[y]);
+					if(integers[x].num[y] != integers[x+dups+1].num[y]) {
+						isdup = 0;
+						break;
+					}
 				}
 			}
+			if(isdup == 1) {
+				integers[x+dups+1].length = 0;
+				dups++;x--;
+			} else {
+				integers[x+1] = integers[x+dups+1];
+			}
+			//fprintf(stderr, "\n");								
 		}
-		if(isdup == 1) {
-			fprintf(stderr, "| %d %d\n", x, x+dups+1);
-			delete integers[x+dups+1].num;
-			integers[x+dups+1].num = NULL;
-			integers[x+dups+1].length = 0;
-			dups++;x--;
-		} else {
-			integers[x+1] = integers[x+dups+1];
-			fprintf(stderr, ": %d %d\n", x+1, x+dups+1);
-		}
-		//fprintf(stderr, "\n");								
-	}
-	numout = numout-dups;
-
-	for(int x = 1; x < numout; x++) {
-		for(int y = 0; y < integers[x].length; y++) {
-			fprintf(stderr, "%d ", integers[x].num[y]);
-		}
-		fprintf(stderr, "\n");
-	}
-	
-	if(DO_CLUSTER) {
+		numout = numout-dups;
+		
+		d2_printf2("Removed %d duplicate clauses\n", dups);
+		
       int *twopos_temp = (int *)calloc(numinp+1, sizeof(int));
       int *twoneg_temp = (int *)calloc(numinp+1, sizeof(int));
       int *greaterpos_temp = (int *)calloc(numinp+1, sizeof(int));
@@ -951,9 +942,6 @@ cnf_process(store *integers, int num_minmax, minmax * min_max_store)
          equalityVble[x] = ites[x].vars[3];
       }
       free(ites);
-      
-      //Idea? Sort the clauses by size ???
-      //qsort(integers, numout, sizeof(store), compfunc);
       
       //This or's all the variables in each individual clause
       d3_printf2("Building unclustered BDDs - %ld\n", numout);
