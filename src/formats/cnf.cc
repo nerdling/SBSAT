@@ -50,6 +50,42 @@ int *zecc_arr;
 
 void cnf_process(store *integers, int num_minmax, minmax * min_max_store);
 
+int clscompfunc(const void *x, const void *y) {
+	store pp, qq;
+	
+	pp = *(const store *)x;
+	qq = *(const store *)y;
+	
+	//Compare the lengths of the clauses.
+	if(pp.length != qq.length )
+	  return (pp.length < qq.length ? -1 : 1);
+	
+	//The lengths of pp and qq are the same.
+	//Now take a look at the variables in the clauses.
+	for(int i = 0; i < pp.length; i++)
+	  if(abs(pp.num[i]) != abs(qq.num[i]))
+		 return (abs(pp.num[i]) < abs(qq.num[i]) ? -1 : 1);
+	
+	//If the two clauses contain the same variables, then consider the
+	//literals and compare again. ( So, no abs() is used here ). This is done to make
+	//removal of duplets easy.
+	for(int i = 0; i < pp.length; i++)
+	  if(pp.num[i] != qq.num[i])
+		 return (pp.num[i] < qq.num[i] ? -1 : 1);
+	
+	//Default value if all is equal. ( Thus a duplet... )
+#ifndef FORCE_STABLE_QSORT
+	return 0;
+#else
+	  {
+		  if (x < y) return -1;
+		  else if (x > y) return 1;
+		  else return 0;
+	  }
+#endif
+	return 1;
+}
+
 //If you want character support for strings and things, look in markbdd.c and copy that...
 //returns m - ?, # - for xcnf, i - for integer, e - end/error
 char getNextSymbol_CNF (char macros[20], int *intnum) {
@@ -216,6 +252,7 @@ void CNF_to_BDD(int cnf)
    };
 	numinp+=2;
 	store *integers = new store[numout+2];
+	integers[0].length = 0;
 	store *old_integers = new store[numout+2];
 
 	d3_printf1("Storing CNF Inputs");
@@ -318,7 +355,8 @@ void CNF_to_BDD(int cnf)
 
    cnf_process(integers, num_minmax, min_max_store);
    for(long x = 1; x < old_numout + 1; x++) {
-		delete [] old_integers[x].num;
+		if(old_integers[x].num!=NULL)
+		  delete [] old_integers[x].num;
 	}
 	delete [] integers;
 	delete [] old_integers;
@@ -334,6 +372,49 @@ cnf_process(store *integers, int num_minmax, minmax * min_max_store)
 	long out, count, num;
 	long y, z, i, j;
 	d3_printf2("numinp: %ld\n", numinp);
+
+	//Sort variables in each clause
+	for(int x = 1; x < numout + 1; x++)
+		qsort(integers[x].num, integers[x].length, sizeof(int), abscompfunc);
+	
+	//Sort Clauses
+	qsort(integers, numout+1, sizeof(store), clscompfunc);
+	
+	int dups = 0;
+   for(int x = 1; x < numout-dups; x++) { //Remove duplicates
+		fprintf(stderr, "%d ", x);
+		int isdup = 0;
+		if(integers[x].length == integers[x+dups+1].length) {
+			isdup = 1;
+			for(int y = 0; y < integers[x].length; y++) {
+				//   fprintf(stderr, "%d ", integers[x].num[y]);
+				if(integers[x].num[y] != integers[x+dups+1].num[y]) {
+					isdup = 0;
+					break;
+				}
+			}
+		}
+		if(isdup == 1) {
+			fprintf(stderr, "| %d %d\n", x, x+dups+1);
+			delete integers[x+dups+1].num;
+			integers[x+dups+1].num = NULL;
+			integers[x+dups+1].length = 0;
+			dups++;x--;
+		} else {
+			integers[x+1] = integers[x+dups+1];
+			fprintf(stderr, ": %d %d\n", x+1, x+dups+1);
+		}
+		//fprintf(stderr, "\n");								
+	}
+	numout = numout-dups;
+
+	for(int x = 1; x < numout; x++) {
+		for(int y = 0; y < integers[x].length; y++) {
+			fprintf(stderr, "%d ", integers[x].num[y]);
+		}
+		fprintf(stderr, "\n");
+	}
+	
 	if(DO_CLUSTER) {
       int *twopos_temp = (int *)calloc(numinp+1, sizeof(int));
       int *twoneg_temp = (int *)calloc(numinp+1, sizeof(int));
@@ -400,6 +481,7 @@ cnf_process(store *integers, int num_minmax, minmax * min_max_store)
 		//This is where two_pos, two_neg, greater_pos, and greater_neg are
 		//filled with clauses
 		//SEAN! This could be sped up! Needs to be sped up!
+		//Take into account that clauses are now sorted.
 		
 		for(long x = 1; x < numout+1; x++) {
          if (x%1000 == 1)
@@ -878,7 +960,7 @@ cnf_process(store *integers, int num_minmax, minmax * min_max_store)
       for(long x = 0; x < numout; x++) {
          if (x%1000 == 0)
             d2_printf3("\rBuilding unclustered BDDs %ld/%ld ... ", x, numout);
-         qsort(integers[x].num, integers[x].length, sizeof(int), abscompfunc);
+         //qsort(integers[x].num, integers[x].length, sizeof(int), abscompfunc); //This is done above
          //qsort(integers[x].num, integers[x].length, sizeof(int), absrevcompfunc);
          functions[x+num_ite] = false_ptr;
          //	fprintf(stderr, "%d: %d ", x, integers[x].num[0]);
@@ -896,7 +978,7 @@ cnf_process(store *integers, int num_minmax, minmax * min_max_store)
       for(long x = 0; x < recurselen; x++) {
          if (x%1000 == 0)
             d2_printf3("\rBuilding and= & or= BDDs %ld/%d ... ", x, recurselen);
-         qsort(recurse[x].num, recurse[x].length, sizeof(int), abscompfunc);
+         //qsort(recurse[x].num, recurse[x].length, sizeof(int), abscompfunc); //This is done above
          //qsort(recurse[x].num, recurse[x].length, sizeof(int), absrevcompfunc);
          if(recurse[x].dag > 0) {
             functions[x + numout] = false_ptr;
@@ -942,7 +1024,7 @@ cnf_process(store *integers, int num_minmax, minmax * min_max_store)
       for(long x = 1; x < numout + 1; x++) {
          if (x % 1000 == 1)
 			  d2_printf3("\rBuilding unclustered BDDs %ld/%ld ...       ", x, numout);
-         qsort(integers[x].num, integers[x].length, sizeof(int), abscompfunc);
+         //qsort(integers[x].num, integers[x].length, sizeof(int), abscompfunc); //This is done above
          //qsort(integers[x].num, integers[x].length, sizeof(int), absrevcompfunc);
 			functions[x-1] = false_ptr;
 			//fprintf(stderr, "\n%d ", integers[x].num[0]);
