@@ -412,7 +412,7 @@ cnf_process(store *integers, int num_minmax, minmax * min_max_store)
 		int xors_found = 0;
 		for(int x = 1; x < numout+1; x++) {
 			if(integers[x].length>1) {
-				int domain = pow(2, integers[x].length-1);
+				int domain = 1<<(integers[x].length-1);
 				if(domain<1) break;
 				if(domain+x > numout+1) break;
 				
