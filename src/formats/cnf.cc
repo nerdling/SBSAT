@@ -205,9 +205,9 @@ store *getMinMax(long *tempint_max, int **tempint) {
 		fprintf(stderr, "Max:%d must be greater than or equal to Min:%d...exiting\n", max, min);
 		exit(1);
 	}
-	store *min_max = new store;
+	store *min_max = (store *)ite_calloc(1, sizeof(store), 9, "min_max");
 	min_max->length = num_vars;
-	min_max->num = new int[num_vars];
+	min_max->num = (int *)ite_calloc(num_vars, sizeof(int), 9, "minmax->num");
 	for(x = 0; x < num_vars; x++) {
 #ifdef CNF_USES_SYMTABLE
 		min_max->num[x] = (*tempint)[x]==0?0:i_getsym_int((*tempint)[x], SYM_VAR);
@@ -251,9 +251,9 @@ void CNF_to_BDD(int cnf)
          exit(1);
    };
 	numinp+=2;
-	store *integers = new store[numout+2];
+	store *integers = (store *)ite_calloc(numout+2, sizeof(store), 9, "integers");
 	integers[0].length = 0;
-	store *old_integers = new store[numout+2];
+	store *old_integers = (store *)ite_calloc(numout+2, sizeof(store), 9, "old_integers");
 
 	d3_printf1("Storing CNF Inputs");
 
@@ -289,7 +289,7 @@ void CNF_to_BDD(int cnf)
          integers[x].length = temp->length;
          integers[x].dag = temp->dag;
          integers[x].andor = temp->andor;
-         delete temp;
+         ite_free((void**)&temp);
          old_integers[x] = integers[x];
          num_minmax++;
       } else
@@ -312,7 +312,7 @@ void CNF_to_BDD(int cnf)
          };
          integers[x].dag = -1;
          if(y==0) {x--; numout--; old_numout--; continue; }
-         integers[x].num = new int[y + 1];
+         integers[x].num = (int *)ite_calloc(y + 1, sizeof(int), 9, "integers[x].num");
          for(i = 0; i < y + 1; i++) {
 #ifdef CNF_USES_SYMTABLE
             integers[x].num[i] = tempint[i]==0?0:i_getsym_int(tempint[i], SYM_VAR);
@@ -334,7 +334,7 @@ void CNF_to_BDD(int cnf)
          exit(1);
       }
    }
-   minmax *min_max_store = new minmax[num_minmax+1];
+   minmax *min_max_store = (minmax *)ite_calloc(num_minmax+1, sizeof(minmax), 9, "min_max_store");
 	if(num_minmax > 0) {
 		int y = 1;
 		num_minmax = 0;
@@ -356,10 +356,10 @@ void CNF_to_BDD(int cnf)
    cnf_process(integers, num_minmax, min_max_store);
    for(long x = 1; x < old_numout + 1; x++) {
 		if(old_integers[x].num!=NULL)
-		  delete [] old_integers[x].num;
+		  ite_free((void**)&old_integers[x].num);
 	}
-	delete [] integers;
-	delete [] old_integers;
+	ite_free((void**)&integers);
+	ite_free((void**)&old_integers);
    ite_free((void**)&tempint); tempint_max = 0;
 	
 	d3_printf2("Number of BDDs - %ld\n", numout);
@@ -382,8 +382,9 @@ cnf_process(store *integers, int num_minmax, minmax * min_max_store)
 		//Sort Clauses
 		qsort(integers, numout+1, sizeof(store), clscompfunc);
 		
+		//Remove duplicates
 		int dups = 0;
-		for(int x = 1; x < numout-dups; x++) { //Remove duplicates
+		for(int x = 1; x < numout-dups; x++) {
 			int isdup = 0;
 			if(integers[x].length == integers[x+dups+1].length) {
 				isdup = 1;
@@ -406,6 +407,53 @@ cnf_process(store *integers, int num_minmax, minmax * min_max_store)
 		numout = numout-dups;
 		
 		d2_printf2("Removed %d duplicate clauses\n", dups);
+		
+		//Search for XORs - This code designed after a snippet of march_dl by M. Heule
+		int xors_found = 0;
+		for(int x = 1; x < numout+1; x++) {
+			if(integers[x].length>1) {
+				int domain = pow(2, integers[x].length-1);
+				if(domain<1) break;
+				if(domain+x > numout+1) break;
+				
+				int cont = 0;
+				for(int y = 1; y < domain; y++) 
+				  if(integers[x+y].length != integers[x].length) {
+					  x += (y-1);
+					  cont = 1;
+					  break;
+				  }
+				if(cont == 1) continue;
+
+				for(int y = 0; y < integers[x].length; y++)
+				  if(abs(integers[x].num[y]) != abs(integers[x+domain-1].num[y])) {
+					  cont = 1;
+					  break;
+				  }
+				if(cont == 1) continue;
+
+				int sign = 1;
+				for(int y = 0; y < integers[x].length; y++)
+				  sign *= integers[x].num[y] < 0 ? -1 : 1;
+				
+				for(int y = 1; y < domain; y++) {
+					int tmp = 1;
+					for(int z = 0; z < integers[x+y].length; z++) //integers[x+y].length == integers[x].length
+					  tmp *= integers[x+y].num[z] < 0 ? -1 : 1;
+					if(tmp != sign) {
+						cont = 1;
+						break;
+					}
+				}
+				if(cont == 1) continue;
+				integers[x].isXor = 1;
+				xors_found++;
+				for(int y = 1; y < domain; y++)
+				  integers[x+y].isXor = -1;
+			}
+		}
+
+		d2_printf2("Found %d XOR functions\n", xors_found);
 		
       int *twopos_temp = (int *)calloc(numinp+1, sizeof(int));
       int *twoneg_temp = (int *)calloc(numinp+1, sizeof(int));
@@ -927,7 +975,7 @@ cnf_process(store *integers, int num_minmax, minmax * min_max_store)
       d3_printf2("Building ITE BDDs - %d\n", num_ite);
 
       vars_alloc(numinp);
-      functions_alloc(numout+num_ite+recurselen+5+num_minmax);
+      functions_alloc(numout+num_ite+recurselen+5+num_minmax+xors_found);
 
 		//Creates BDD's for the ite_equal clauses
       for(long x = 0; x < num_ite; x++) {
@@ -945,53 +993,82 @@ cnf_process(store *integers, int num_minmax, minmax * min_max_store)
       
       //This or's all the variables in each individual clause
       d3_printf2("Building unclustered BDDs - %ld\n", numout);
+		int num_uncluster_xor = 0;
       for(long x = 0; x < numout; x++) {
          if (x%1000 == 0)
-            d2_printf3("\rBuilding unclustered BDDs %ld/%ld ... ", x, numout);
+            d2_printf3("\rBuilding unclustered and XOR BDDs %ld/%ld ... ", x, numout);
          //qsort(integers[x].num, integers[x].length, sizeof(int), abscompfunc); //This is done above
          //qsort(integers[x].num, integers[x].length, sizeof(int), absrevcompfunc);
-         functions[x+num_ite] = false_ptr;
-         //	fprintf(stderr, "%d: %d ", x, integers[x].num[0]);
-         for(y = 0; y < integers[x].length; y++) {
-            functions[x+num_ite] = ite_or(functions[x+num_ite], ite_var(integers[x].num[y]));
-            //	  fprintf(stderr, "%d ", integers[x].num[y]);
-         }
-         //	fprintf(stderr, "0\n");
-         functionType[x+num_ite] = PLAINOR;
+         if(integers[x].isXor == 0) {			
+				functions[num_uncluster_xor+num_ite] = false_ptr;
+				//	fprintf(stderr, "%d: %d ", x, integers[x].num[0]);
+				for(y = 0; y < integers[x].length; y++) {
+					functions[num_uncluster_xor+num_ite] = ite_or(functions[num_uncluster_xor+num_ite], ite_var(integers[x].num[y]));
+					//	  fprintf(stderr, "%d ", integers[x].num[y]);
+				}
+				//	fprintf(stderr, "0\n");
+				functionType[num_uncluster_xor+num_ite] = PLAINOR;
+				num_uncluster_xor++;
+			} else if(integers[x].isXor == 1) {
+				functions[num_uncluster_xor+num_ite] = false_ptr;
+				//	fprintf(stderr, "%d: %d ", x, integers[x].num[0]);
+				for(y = 0; y < integers[x].length; y++) {
+					functions[num_uncluster_xor+num_ite] = ite_xor(functions[num_uncluster_xor+num_ite], ite_var(integers[x].num[y]));
+					//	  fprintf(stderr, "%d ", integers[x].num[y]);
+				}
+            functionType[x+numout] = PLAINXOR;
+				num_uncluster_xor++;
+			} else {
+				//do nothing
+			}
       }
-      numout = numout+num_ite;
+      numout = num_uncluster_xor+num_ite;
       
       //Creates BDD's for the and_equal and or_equal clauses
       d3_printf2("Building and= & or= BDDs - %d\n", recurselen);
+		int num_and_xor = 0;
       for(long x = 0; x < recurselen; x++) {
          if (x%1000 == 0)
             d2_printf3("\rBuilding and= & or= BDDs %ld/%d ... ", x, recurselen);
          //qsort(recurse[x].num, recurse[x].length, sizeof(int), abscompfunc); //This is done above
          //qsort(recurse[x].num, recurse[x].length, sizeof(int), absrevcompfunc);
-         if(recurse[x].dag > 0) {
-            functions[x + numout] = false_ptr;
+			if(integers[x].isXor == 1) {
+				functions[num_and_xor+numout] = false_ptr;
+				//	fprintf(stderr, "%d: %d ", x, integers[x].num[0]);
+				for(y = 0; y < integers[x].length; y++) {
+					functions[num_and_xor+numout] = ite_xor(functions[num_and_xor+numout], ite_var(integers[x].num[y]));
+					//	  fprintf(stderr, "%d ", integers[x].num[y]);
+				}
+				num_and_xor++;
+				functionType[num_and_xor+numout] = PLAINXOR;
+			}
+         
+			if(recurse[x].dag > 0) {
+            functions[num_and_xor+numout] = false_ptr;
             for(y = 0; y < recurse[x].length; y++) {
                if(recurse[x].num[y] != recurse[x].andor)
-                  functions[x+numout] = ite_or(functions[x+numout], ite_var(recurse[x].num[y]));
+                  functions[num_and_xor+numout] = ite_or(functions[num_and_xor+numout], ite_var(recurse[x].num[y]));
             }
-            functionType[x+numout] = OR;
-            equalityVble[x + numout] = -recurse[x].andor;
-            independantVars[equalityVble[x+numout]] = 0;
-            functions[x+numout] = ite_equ(ite_var(-recurse[x].andor), functions[x+numout]);
+            functionType[num_and_xor+numout] = OR;
+            equalityVble[num_and_xor+numout] = -recurse[x].andor;
+            independantVars[equalityVble[num_and_xor+numout]] = 0;
+            functions[num_and_xor+numout] = ite_equ(ite_var(-recurse[x].andor), functions[num_and_xor+numout]);
+				num_and_xor++;
          } else {
-            functions[x+numout] = true_ptr;
+            functions[num_and_xor+numout] = true_ptr;
             for(y = 0; y < recurse[x].length; y++) {
                if(recurse[x].num[y] != recurse[x].andor)
-                  functions[x + numout] = ite_and(functions[x+numout], ite_var(-recurse[x].num[y]));
+                  functions[num_and_xor+numout] = ite_and(functions[num_and_xor+numout], ite_var(-recurse[x].num[y]));
             }
-            functionType[x+numout] = AND;
-            equalityVble[x+numout] = recurse[x].andor;
-            independantVars[equalityVble[x+numout]] = 0;
-            functions[x+numout] = ite_equ(ite_var(recurse[x].andor), functions[x + numout]);
+            functionType[num_and_xor+numout] = AND;
+            equalityVble[num_and_xor+numout] = recurse[x].andor;
+            independantVars[equalityVble[num_and_xor+numout]] = 0;
+            functions[num_and_xor+numout] = ite_equ(ite_var(recurse[x].andor), functions[num_and_xor+numout]);
+				num_and_xor++;
          }
       }
       free(recurse);
-      numout = numout+recurselen;
+      numout = numout+num_and_xor;
       d3_printf2("Building MinMax BDDs - %d\n", num_minmax);
       for(int x = 0; x < num_minmax; x++) {
          if (x % 1000 == 0) 
@@ -1001,7 +1078,7 @@ cnf_process(store *integers, int num_minmax, minmax * min_max_store)
          functions[x+numout] = MinMaxBDD(min_max_store[x].num, min_max_store[x].min, min_max_store[x].max, min_max_store[x].length, set_true);
 			functionType[x+numout] = MINMAX;
       }
-      delete [] min_max_store;
+      ite_free((void**)&min_max_store);
       numout = numout+num_minmax;
    } else {
       vars_alloc(numinp);
@@ -1031,7 +1108,7 @@ cnf_process(store *integers, int num_minmax, minmax * min_max_store)
          functions[x+numout] = MinMaxBDD(min_max_store[x].num, min_max_store[x].min, min_max_store[x].max, min_max_store[x].length, set_true);
 			functionType[x+numout] = MINMAX;
 		}
-		delete [] min_max_store;
+		ite_free((void**)&min_max_store);
 		numout = numout+num_minmax;
    }
 	count = -1;
@@ -1109,6 +1186,7 @@ void DNF_to_CNF () {
 	}
 	sprintf(string1, "c\n");
 	fprintf(foutputfile, "%s", string1);
+	//ite_free((void**)&integers);
 }
 
 
