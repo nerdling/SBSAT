@@ -976,7 +976,7 @@ cnf_process(store *integers, int num_minmax, minmax * min_max_store)
 
       vars_alloc(numinp);
       functions_alloc(numout+num_ite+recurselen+5+num_minmax+xors_found);
-
+		
 		//Creates BDD's for the ite_equal clauses
       for(long x = 0; x < num_ite; x++) {
          if (x%1000 == 0)
@@ -1016,7 +1016,7 @@ cnf_process(store *integers, int num_minmax, minmax * min_max_store)
 					functions[num_uncluster_xor+num_ite] = ite_xor(functions[num_uncluster_xor+num_ite], ite_var(integers[x].num[y]));
 					//	  fprintf(stderr, "%d ", integers[x].num[y]);
 				}
-            functionType[x+numout] = PLAINXOR;
+            functionType[num_uncluster_xor+numout] = PLAINXOR;
 				num_uncluster_xor++;
 			} else {
 				//do nothing
