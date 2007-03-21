@@ -72,7 +72,7 @@ int nNumCachedLemmas[3] = {0, 0, 0};
 int L0Filter(LemmaInfoStruct *p)
 {
    if (0
-          || p->pLemma->arrLits[0] < 7
+		    || p->pLemma->arrLits[0] < 7
           || p->nLemmaLastUsed 
       ) {
       p->nLemmaLastUsed = 0;
@@ -90,7 +90,7 @@ int L1Filter(LemmaInfoStruct *p)
    return 0; /* did not go through */
 #endif
    if (0
-          || p->pLemma->arrLits[0] < 7 
+		    || p->pLemma->arrLits[0] < 7
           || p->nLemmaLastUsed
       ) {
       p->nLemmaLastUsed = 0;

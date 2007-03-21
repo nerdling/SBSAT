@@ -84,10 +84,12 @@ CreateFunctions()
 				int length = arrSolverFunctions[i].fn_smurf.pInitialState->vbles.nNumElts;
 				int *vars = arrSolverFunctions[i].fn_smurf.pInitialState->vbles.arrElts;
 				arrSolverVarsInFunction[i] = (int *)ite_calloc(length+1, sizeof(int), 9, "arrSolverVarsInFunction");
-				arrSolverVarsInFunction[i][0] = length;
+				arrSolverVarsInFunction[i][0] = 0; 
 				for(int x = 0; x < length; x++) {
 					arrSolverVarsInFunction[i][x+1] = arrIte2SolverVarMap[vars[x]];
 				}
+				qsort(arrSolverVarsInFunction[i], length+1, sizeof(int), compfunc);
+				arrSolverVarsInFunction[i][0] = length; 						
 			}
 		} else {
 			d4_printf3("Skipping function %d type %d\n", i, nFunctionType);

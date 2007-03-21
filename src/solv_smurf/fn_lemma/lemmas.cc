@@ -220,6 +220,7 @@ AddLemma_SmurfsReferenced(int nNumLiterals, int arrLiterals[], int nNumSmurfsRef
 			  AddLemmaIntoCache(pLemmaInfo);
 			else {
 				FreeLemma(pLemmaInfo);
+				assert(0);
 				return NULL;
 			}
 		}

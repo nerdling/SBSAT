@@ -112,19 +112,6 @@ SlideLemma(LemmaInfoStruct *pLemmaInfo, LemmaInfoStruct *pUnitLemmaList, LemmaIn
 
 	int nLowestFunc = nmbrFunctions;
 	int nHighestFunc = 0;
-	LemmaBlock *pSmurfs = pLemmaInfo->pSmurfsReferenced;
-	for(int nSmurfVar = 0, nSmurfIndex = 1;
-		 nSmurfVar < pLemmaInfo->pSmurfsReferenced->arrLits[0];
-		 nSmurfVar++, nSmurfIndex++) {
-		if(nSmurfIndex == LITS_PER_LEMMA_BLOCK) {
-			nSmurfIndex = 0;
-			pSmurfs = pSmurfs->pNext;
-		}
-		if(pSmurfs->arrLits[nSmurfIndex] > nHighestFunc)
-		  nHighestFunc = pSmurfs->arrLits[nSmurfIndex];
-		if(pSmurfs->arrLits[nSmurfIndex] < nLowestFunc)
-		  nLowestFunc = pSmurfs->arrLits[nSmurfIndex];			 
-	}
 
 	d9_printf1("Sliding Lemma: [ ");
 	
@@ -157,16 +144,23 @@ SlideLemma(LemmaInfoStruct *pLemmaInfo, LemmaInfoStruct *pUnitLemmaList, LemmaIn
 			}
 			
 			int nCurSmurf = pSmurfs->arrLits[nSmurfIndex];
-			
+
 			for(int x = 1; x <= arrSolverVarsInFunction[nCurSmurf][0]; x++) {
+				if(arrSolverVarsInFunction[nCurSmurf][x] > nCurVar) break; //Only works because arrSolverVars are sorted
 				if(arrSolverVarsInFunction[nCurSmurf][x] == nCurVar) {
 					foundit = 1;
 					arrPattern[nLemmaVar][0] = nCurSmurf;
 					arrPattern[nLemmaVar][1] = x;
 					arrPattern[nLemmaVar][2] = arrFunctionStructure[nCurSmurf];
 					arrPattern[nLemmaVar][3] = pLemma->arrLits[nLemmaIndex]>0?1:-1;
+
+					if(pSmurfs->arrLits[nSmurfIndex] > nHighestFunc)
+					  nHighestFunc = pSmurfs->arrLits[nSmurfIndex];
+					if(pSmurfs->arrLits[nSmurfIndex] < nLowestFunc)
+					  nLowestFunc = pSmurfs->arrLits[nSmurfIndex];			 
+					
 					break;
-				}					 
+				}
 			}
 			if(foundit == 1) break;
 		}
@@ -243,7 +237,7 @@ SlideLemma(LemmaInfoStruct *pLemmaInfo, LemmaInfoStruct *pUnitLemmaList, LemmaIn
 			
 			AddLemma_SmurfsReferenced(pLemmaInfo->pLemma->arrLits[0], arrTempSlideLemma,
 											  pLemmaInfo->pSmurfsReferenced->arrLits[0], arrTempSlideSmurf,
-											  (MAX_NUM_CACHED_LEMMAS > 0), pUnitLemmaList,
+											  true, pUnitLemmaList,
 											  pUnitLemmaListTail
 											  );
 		}
