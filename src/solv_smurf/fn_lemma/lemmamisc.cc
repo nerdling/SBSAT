@@ -39,6 +39,10 @@
 #include "sbsat_solver.h"
 #include "solver.h"
 
+int **arrPattern;
+int *arrTempSlideLemma;
+int *arrTempSlideSmurf;
+
 ITE_INLINE void
 DisplayLemma(int *pnLemma)
 {
@@ -106,11 +110,25 @@ SlideLemma(LemmaInfoStruct *pLemmaInfo)
 	bool bComplete = false; //indicates whether all function sets have been checked
 	int nOffset = 0; //offset is initially 0 so it can be set appropriately later
 	bool bIncrement = true; //start off by incrementing the offset, then decrement later when false
-	int nLowestFunc = abs(pLemmaInfo->pSmurfsReferenced->arrLits[1]);
-	int nHighestFunc = pLemmaInfo->pSmurfsReferencedLastBlock->arrLits[(pLemmaInfo->pSmurfsReferenced->arrLits[0] % LITS_PER_LEMMA_BLOCK)];
+
+	int nLowestFunc = nmbrFunctions;
+	int nHighestFunc = 0;
+	LemmaBlock *pSmurfs = pLemmaInfo->pSmurfsReferenced;
+	for(int nSmurfVar = 0, nSmurfIndex = 1;
+		 nSmurfVar < pLemmaInfo->pSmurfsReferenced->arrLits[0];
+		 nSmurfVar++, nSmurfIndex++) {
+		if(nSmurfIndex == LITS_PER_LEMMA_BLOCK) {
+			nSmurfIndex = 0;
+			pSmurfs = pSmurfs->pNext;
+		}
+		if(pSmurfs->arrLits[nSmurfIndex] > nHighestFunc)
+		  nHighestFunc = pSmurfs->arrLits[nSmurfIndex];
+		if(pSmurfs->arrLits[nSmurfIndex] < nLowestFunc)
+		  nLowestFunc = pSmurfs->arrLits[nSmurfIndex];			 
+	}
+
 	//first create the lemma pattern
 	int nCurVar;
-	int **arrPattern = (int **)ite_calloc(pLemmaInfo->pLemma->arrLits[0], sizeof(int *), 9, "arrPattern");
 	//for each variable in the lemma
 	LemmaBlock *pLemma = pLemmaInfo->pLemma;
 	int nNumSmurfsUsedInLemmaCreation = pLemmaInfo->pSmurfsReferenced->arrLits[0];
@@ -122,8 +140,6 @@ SlideLemma(LemmaInfoStruct *pLemmaInfo)
 			nLemmaIndex = 0;
 			pLemma = pLemma->pNext;			
 		}
-
-		arrPattern[nLemmaVar] = (int *)ite_calloc(3, sizeof(int), 9, "arrPattern[nLemmaVar]");
 
 		int nCurVar = abs(pLemma->arrLits[nLemmaIndex]);
 		
@@ -211,27 +227,15 @@ SlideLemma(LemmaInfoStruct *pLemmaInfo)
 		}
 		if(bTypeMatches) //if the types match, get variables
 		{
-			for(int nFuncCount = 0; nFuncCount < pLemmaInfo->pSmurfsReferenced->arrLits[0]; nFuncCount++)  //for each function in the set, compare to the corresponding function in the lemma
-			{
-				LemmaInfoStruct *pNewLemma;
-				LemmaBlock *pTempNewLemma = pNewLemma->pLemma;
-				LemmaBlock *pNewSmurfs = pNewLemma->pSmurfsReferenced;
-				pTempNewLemma->arrLits[0] = pLemmaInfo->pLemma->arrLits[0];
-				pNewSmurfs->arrLits[0] = pLemmaInfo->pSmurfsReferenced->arrLits[0];
-				//get the variables for the new lemma
-				for(int nLemmaVar = 1, nCount = 1; nLemmaVar <= pLemmaInfo->pLemma->arrLits[0]; nLemmaVar++, nCount++)
-				{
-					if(nLemmaVar == LITS_PER_LEMMA_BLOCK)
-					{
-						pNewSmurfs = pNewSmurfs->pNext;
-						pTempNewLemma = pTempNewLemma->pNext;
-						nCount = 0;
-					}
-					pTempNewLemma->arrLits[nCount] = arrSolverVarsInFunction[(arrPattern[nLemmaVar][0] + nOffset)][arrPattern[nLemmaVar][1]];
-					pNewSmurfs->arrLits[nCount] = arrPattern[nLemmaVar][0] + nOffset;
-				}
-				//AddLemma(pNewLemma) 
-			}//end for
+			//get the variables for the new lemma
+			for(int nLemmaVar = 0; nLemmaVar < pLemmaInfo->pLemma->arrLits[0]; nLemmaVar++)
+			  {
+				  arrTempSlideLemma[nLemmaVar] = arrSolverVarsInFunction[(arrPattern[nLemmaVar][0] + nOffset)][arrPattern[nLemmaVar][1]];
+				  arrTempSlideSmurf[nLemmaVar] = arrPattern[nLemmaVar][0] + nOffset;
+			  }
+			arrTempSlideLemma[pLemmaInfo->pLemma->arrLits[0]+1] = 0;
+			arrTempSlideSmurf[pLemmaInfo->pLemma->arrLits[0]+1] = 0;
+			//AddLemma(pNewLemma) 
 		}
 	}//end while
   return 1;

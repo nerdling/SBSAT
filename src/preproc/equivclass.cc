@@ -1634,6 +1634,10 @@ d1:;
 		// Insert the new row
 		index++;
       rec->index++;
+		
+		//SEAN!!! TO DO!!!
+		//Mark the new column owner as a dependent variable.
+		
 		return 1;
 	}
 	

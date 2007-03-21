@@ -61,8 +61,15 @@ CreateFunctions()
    nNumUnresolvedFunctions = nNumFuncs; 
    arrSolverFunctions = (SolverFunction*)ite_calloc(nmbrFunctions, sizeof(SolverFunction), 2, "SolverFunctions");
 
-	if(arrSolverVarsInFunction == NULL && slide_lemmas)
-		arrSolverVarsInFunction = (int **)ite_calloc(nmbrFunctions, sizeof(int *), 9, "arrSolverVarsInFunction *");
+	if(slide_lemmas) {
+		if(arrSolverVarsInFunction == NULL)
+		  arrSolverVarsInFunction = (int **)ite_calloc(nmbrFunctions, sizeof(int *), 9, "arrSolverVarsInFunction *");
+		arrPattern = (int **)ite_calloc(nNumVariables, sizeof(int *), 9, "arrPattern");
+		for(int x = 0; x < nNumVariables; x++)
+		  arrPattern[x] = (int *)ite_calloc(3, sizeof(int), 9, "arrPattern[x]");
+		arrTempSlideLemma = (int *)ite_calloc(nNumVariables, sizeof(int), 9, "arrTempSlideLemma");
+		arrTempSlideSmurf = (int *)ite_calloc(nmbrFunctions, sizeof(int), 9, "arrTempSlideSmurf");		
+	}
 	
    for (int i = 0; i < nmbrFunctions; i++)
    {

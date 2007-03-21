@@ -241,6 +241,10 @@ extern HeurUpdateLemmaSpace    procHeurAddLemmaSpace;
 
 extern int nCurFnVersion;
 
+extern int **arrPattern;
+extern int *arrTempSlideLemma;
+extern int *arrTempSlideSmurf;
+
 extern int nIndepVars;
 extern int nDepVars;
 extern int nNumVariables;
