@@ -87,7 +87,9 @@ CreateFunctions()
 				arrSolverVarsInFunction[i][0] = 0; 
 				for(int x = 0; x < length; x++) {
 					arrSolverVarsInFunction[i][x+1] = arrIte2SolverVarMap[vars[x]];
+					//fprintf(stderr, "%d ", arrSolverVarsInFunction[i][x+1]);
 				}
+				//fprintf(stderr, "\n");
 				qsort(arrSolverVarsInFunction[i], length+1, sizeof(int), compfunc);
 				arrSolverVarsInFunction[i][0] = length; 						
 			}
