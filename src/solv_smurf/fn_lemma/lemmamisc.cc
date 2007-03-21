@@ -127,7 +127,6 @@ SlideLemma(LemmaInfoStruct *pLemmaInfo)
 
 		int nCurVar = abs(pLemma->arrLits[nLemmaIndex]);
 		
-		int nVarIndex = 1, nFuncIndex = 1;
 		int nSmurfBlock = 1;
 
 		int foundit = 0;
@@ -210,58 +209,28 @@ SlideLemma(LemmaInfoStruct *pLemmaInfo)
 				break;
 			}
 		}
-		if(bTypeMatches) //if the types match, check variables
+		if(bTypeMatches) //if the types match, get variables
 		{
 			for(int nFuncCount = 0; nFuncCount < pLemmaInfo->pSmurfsReferenced->arrLits[0]; nFuncCount++)  //for each function in the set, compare to the corresponding function in the lemma
 			{
-				//for each variable in the lemma 
-				for(int nVarCount = 0; nVarCount < pLemmaInfo->pLemma->arrLits[0]; nVarCount++)
+				LemmaInfoStruct *pNewLemma;
+				LemmaBlock *pTempNewLemma = pNewLemma->pLemma;
+				LemmaBlock *pNewSmurfs = pNewLemma->pSmurfsReferenced;
+				pTempNewLemma->arrLits[0] = pLemmaInfo->pLemma->arrLits[0];
+				pNewSmurfs->arrLits[0] = pLemmaInfo->pSmurfsReferenced->arrLits[0];
+				//get the variables for the new lemma
+				for(int nLemmaVar = 1, nCount = 1; nLemmaVar <= pLemmaInfo->pLemma->arrLits[0]; nLemmaVar++, nCount++)
 				{
-					if(nVarCount % LITS_PER_LEMMA_BLOCK == 0)
+					if(nLemmaVar == LITS_PER_LEMMA_BLOCK)
 					{
-						pLemmaInfo->pLemma = pLemmaInfo->pLemma->pNext;
-					}
-					//i think this makes sense....
-					if(arrSolverVarsInFunction[pLemmaInfo->pSmurfsReferenced->arrLits[arrPattern[nVarCount][0]]][arrPattern[nVarCount][1]] 
-						== (arrSolverVarsInFunction[(pLemmaInfo->pSmurfsReferenced->arrLits[arrPattern[nVarCount][0]] + nOffset)][arrPattern[nVarCount][1]] + nOffset))
-					{
-						bVarsMatch = true;
-					}
-					else
-					{
-						bVarsMatch = false;
-						break;
-					}
-				}
-				
-				if(bVarsMatch)
-				{	//this whole section needs fixed
-					LemmaInfoStruct *pTempNewLemma;
-					LemmaInfoStruct *pNewLemma;
-					pNewLemma->pLemma->arrLits[0] = pLemmaInfo->pLemma->arrLits[0];
-					pTempNewLemma = pNewLemma;
-					//copy arrVars to pTempNewLemma
-					int nCount = 1;
-					for(int nLitCount = 0; nLitCount < pLemmaInfo->pLemma->arrLits[0]; nLitCount++)
-					{
-						while(nCount < LITS_PER_LEMMA_BLOCK)
-						{
-							pTempNewLemma->pLemma->arrLits[nCount] = pLemmaInfo->pLemma->arrLits[nCount] + nOffset;
-							nCount++;
-						}
+						pNewSmurfs = pNewSmurfs->pNext;
+						pTempNewLemma = pTempNewLemma->pNext;
 						nCount = 0;
-						pTempNewLemma->pLemma = pTempNewLemma->pLemma->pNext;
-						pLemmaInfo->pLemma = pLemmaInfo->pLemma->pNext;
 					}
-						
-					//AddLemma(int nNumLiterals,   //Can be used in the brancher
-					//			int *arrLiterals, 
-					//			bool bFlag,
-					//			LemmaInfoStruct *pUnitLemmaList,
-					//			LemmaInfoStruct **pUnitLemmaListTail)	 
+					pTempNewLemma->arrLits[nCount] = arrSolverVarsInFunction[(arrPattern[nLemmaVar][0] + nOffset)][arrPattern[nLemmaVar][1]];
+					pNewSmurfs->arrLits[nCount] = arrPattern[nLemmaVar][0] + nOffset;
 				}
-				else
-					break;
+				//AddLemma(pNewLemma) 
 			}//end for
 		}
 	}//end while
