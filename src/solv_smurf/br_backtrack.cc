@@ -212,7 +212,7 @@ BackTrack()
 																				bFlag, &pUnitLemmaList, /*m lemma is added in here */
 																				&pUnitLemmaListTail /*m and here */
 																				);
-						SlideLemma(pNewLemmaInfo);
+						if(nTempSmurfsRefIndex>0) SlideLemma(pNewLemmaInfo, &pUnitLemmaList, &pUnitLemmaListTail);
 					} else {
 						pNewLemmaInfo = AddLemma(nTempLemmaIndex, arrTempLemma,
 														 bFlag, &pUnitLemmaList, /*m lemma is added in here */
@@ -385,7 +385,9 @@ BackTrack()
    // the branch atom automatically.
    // A lemma here will witnesses that we have to reverse polarity.
    LemmaInfoStruct *previous = pUnitLemmaList.pNextLemma[0];
-   assert(previous->nWatchedVble[0] == nInferredAtom);
+
+   if(slide_lemmas==0) assert(previous->nWatchedVble[0] == nInferredAtom);
+	
 	for (LemmaInfoStruct *p = previous->pNextLemma[0]; p; p = p->pNextLemma[0])
    {
       //m WatchedVble 1 and 2 have the highest BSI in the whole clause
@@ -417,11 +419,10 @@ BackTrack()
 
          //Apply the inference to nWatchedVble[0]
 
-         assert(arrSolution[p->nWatchedVble[0]] == BOOL_UNKNOWN);
-
-         InferLiteral(p->nWatchedVble[0], p->nWatchedVblePolarity[0],
-               false, p->pLemma, p, 1);
-
+         if(arrSolution[p->nWatchedVble[0]] == BOOL_UNKNOWN)
+			  InferLiteral(p->nWatchedVble[0], p->nWatchedVblePolarity[0],
+								false, p->pLemma, p, 1);
+		
 			previous = previous->pNextLemma[0];
       }
    } // for (LemmaInfoStruct *p = pUnitLemmaList->pNextLemma[0]; ; p = p->pNextLemma[0])

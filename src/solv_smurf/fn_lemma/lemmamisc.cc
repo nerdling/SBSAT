@@ -104,9 +104,8 @@ DisplayLemmaToFile(FILE *pFile, LemmaBlock *pLemma)
 }
 
 ITE_INLINE int
-SlideLemma(LemmaInfoStruct *pLemmaInfo)
-{	
-	bool bVarsMatch = false; //variables match in all locations up to current point?
+SlideLemma(LemmaInfoStruct *pLemmaInfo, LemmaInfoStruct *pUnitLemmaList, LemmaInfoStruct **pUnitLemmaListTail)
+{
 	bool bComplete = false; //indicates whether all function sets have been checked
 	int nOffset = 0; //offset is initially 0 so it can be set appropriately later
 	bool bIncrement = true; //start off by incrementing the offset, then decrement later when false
@@ -127,11 +126,10 @@ SlideLemma(LemmaInfoStruct *pLemmaInfo)
 		  nLowestFunc = pSmurfs->arrLits[nSmurfIndex];			 
 	}
 
-	//first create the lemma pattern
-	int nCurVar;
-	//for each variable in the lemma
+	d9_printf1("Sliding Lemma: [ ");
+	
+	//first create the lemma pattern for each variable in the lemma
 	LemmaBlock *pLemma = pLemmaInfo->pLemma;
-	int nNumSmurfsUsedInLemmaCreation = pLemmaInfo->pSmurfsReferenced->arrLits[0];
 	for(int nLemmaVar = 0, nLemmaIndex = 1;
 		 nLemmaVar < pLemmaInfo->pLemma->arrLits[0];
 		 nLemmaVar++, nLemmaIndex++)
@@ -143,7 +141,8 @@ SlideLemma(LemmaInfoStruct *pLemmaInfo)
 
 		int nCurVar = abs(pLemma->arrLits[nLemmaIndex]);
 		
-		int nSmurfBlock = 1;
+		d9_printf2("%d ", pLemma->arrLits[nLemmaIndex]);
+		//d9_printf2("(%d)", arrSolver2IteVarMap[nCurVar]);
 
 		int foundit = 0;
 		
@@ -164,16 +163,20 @@ SlideLemma(LemmaInfoStruct *pLemmaInfo)
 					foundit = 1;
 					arrPattern[nLemmaVar][0] = nCurSmurf;
 					arrPattern[nLemmaVar][1] = x;
-					arrPattern[nLemmaVar][2] = arrFunctionStructure[nCurSmurf];					
+					arrPattern[nLemmaVar][2] = arrFunctionStructure[nCurSmurf];
+					arrPattern[nLemmaVar][3] = pLemma->arrLits[nLemmaIndex]>0?1:-1;
+					break;
 				}					 
 			}
+			if(foundit == 1) break;
 		}
 		if(foundit==0) {
 			fprintf(stderr, "Major problem...exiting\n");
 			exit(0);			
 		}
-
 	}
+	d9_printf1("]\n");
+	
 	//while not all sets of functions have been checked
 	while(!bComplete)
 	{
@@ -205,7 +208,7 @@ SlideLemma(LemmaInfoStruct *pLemmaInfo)
 		}
 		
 		//check that the function types match
-		bool bTypeMatches = false;
+		bool bTypeMatches = true;
 		LemmaBlock *pSmurfs = pLemmaInfo->pSmurfsReferenced;
 		for(int nSmurfVar = 0, nSmurfIndex = 1;
 			 nSmurfVar < pLemmaInfo->pSmurfsReferenced->arrLits[0];
@@ -216,26 +219,33 @@ SlideLemma(LemmaInfoStruct *pLemmaInfo)
 			}
 			
 			int nFunctionNumber = pSmurfs->arrLits[nSmurfIndex];
+			arrTempSlideSmurf[nSmurfVar] = nFunctionNumber + nOffset;
 			
 			//account for smurfs occupying multiple blocks
-			if(arrFunctionStructure[nFunctionNumber] == arrFunctionStructure[(nFunctionNumber + nOffset)])
-				bTypeMatches = true;
-			else {
+			if(arrFunctionStructure[nFunctionNumber] != arrFunctionStructure[(nFunctionNumber + nOffset)]) {
 				bTypeMatches = false;
 				break;
 			}
 		}
+		arrTempSlideSmurf[pLemmaInfo->pSmurfsReferenced->arrLits[0]] = 0;
 		if(bTypeMatches) //if the types match, get variables
 		{
 			//get the variables for the new lemma
-			for(int nLemmaVar = 0; nLemmaVar < pLemmaInfo->pLemma->arrLits[0]; nLemmaVar++)
-			  {
-				  arrTempSlideLemma[nLemmaVar] = arrSolverVarsInFunction[(arrPattern[nLemmaVar][0] + nOffset)][arrPattern[nLemmaVar][1]];
-				  arrTempSlideSmurf[nLemmaVar] = arrPattern[nLemmaVar][0] + nOffset;
-			  }
-			arrTempSlideLemma[pLemmaInfo->pLemma->arrLits[0]+1] = 0;
-			arrTempSlideSmurf[pLemmaInfo->pLemma->arrLits[0]+1] = 0;
-			//AddLemma(pNewLemma) 
+			d9_printf1("  [ ");
+			for(int nLemmaVar = 0; nLemmaVar < pLemmaInfo->pLemma->arrLits[0]; nLemmaVar++) {
+				arrTempSlideLemma[nLemmaVar] = arrSolverVarsInFunction[(arrPattern[nLemmaVar][0] + nOffset)][arrPattern[nLemmaVar][1]]*arrPattern[nLemmaVar][3];
+				//If var not already in arrTempSlideSmurf,
+				d9_printf2("%d ", arrTempSlideLemma[nLemmaVar]);
+				//d9_printf2("(%d)", arrSolver2IteVarMap[abs(arrTempSlideLemma[nLemmaVar])]);
+			}
+			d9_printf1("]\n");
+			arrTempSlideLemma[pLemmaInfo->pLemma->arrLits[0]] = 0;
+			
+			AddLemma_SmurfsReferenced(pLemmaInfo->pLemma->arrLits[0], arrTempSlideLemma,
+											  pLemmaInfo->pSmurfsReferenced->arrLits[0], arrTempSlideSmurf,
+											  (MAX_NUM_CACHED_LEMMAS > 0), pUnitLemmaList,
+											  pUnitLemmaListTail
+											  );
 		}
 	}//end while
   return 1;

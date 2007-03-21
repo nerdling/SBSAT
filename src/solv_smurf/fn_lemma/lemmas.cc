@@ -180,16 +180,50 @@ AddLemma_SmurfsReferenced(int nNumLiterals, int arrLiterals[], int nNumSmurfsRef
 
    LemmaSetWatchedLits(pLemmaInfo, arrLiterals, nNumLiterals);
 
-   if (pUnitLemmaList) {
-      /* new lemma is put in the beginning of pUnitLemmaList */
-      pLemmaInfo->pNextLemma[0] = pUnitLemmaList->pNextLemma[0];
-      pUnitLemmaList->pNextLemma[0] = pLemmaInfo;
-
-      if(*pUnitLemmaListTail == NULL)
-         *pUnitLemmaListTail = pLemmaInfo;
-
-      assert(IsInLemmaList(*pUnitLemmaListTail, pUnitLemmaList));
-   }
+	if (pUnitLemmaList) {
+		
+		int nInsertLemma = 1;
+		int nUnknownCount = 0;
+		LemmaBlock *pLemma = pLemmaInfo->pLemma;
+		for(int nLemmaVar = 0, nLemmaIndex = 1;
+			 nLemmaVar < pLemmaInfo->pLemma->arrLits[0];
+			 nLemmaVar++, nLemmaIndex++) {
+			if(nLemmaIndex == LITS_PER_LEMMA_BLOCK) {
+				nLemmaIndex = 0;
+				pLemma = pLemma->pNext;
+			}
+			
+			int nCurVar = abs(pLemma->arrLits[nLemmaIndex]);
+			if(arrSolution[nCurVar] == BOOL_UNKNOWN) {
+				if(++nUnknownCount>1) {
+					nInsertLemma=0;
+					break;
+				}
+			} else if((arrSolution[nCurVar] == BOOL_TRUE && pLemma->arrLits[nLemmaIndex]>0) ||
+						 (arrSolution[nCurVar] == BOOL_FALSE && pLemma->arrLits[nLemmaIndex]<0)) {
+				nInsertLemma=0;
+				break;			
+			}
+		}		  
+		
+		if(nInsertLemma) {
+			/* new lemma is put in the beginning of pUnitLemmaList */
+			pLemmaInfo->pNextLemma[0] = pUnitLemmaList->pNextLemma[0];
+			pUnitLemmaList->pNextLemma[0] = pLemmaInfo;
+			
+			if(*pUnitLemmaListTail == NULL)
+			  *pUnitLemmaListTail = pLemmaInfo;
+			
+			assert(IsInLemmaList(*pUnitLemmaListTail, pUnitLemmaList));
+		} else {
+			if(bPutInCache)
+			  AddLemmaIntoCache(pLemmaInfo);
+			else {
+				FreeLemma(pLemmaInfo);
+				return NULL;
+			}
+		}
+	}
 
    //Done updating brancher information for this variable in this lemma.
 

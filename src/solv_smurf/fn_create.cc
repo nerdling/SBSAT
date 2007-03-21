@@ -66,7 +66,7 @@ CreateFunctions()
 		  arrSolverVarsInFunction = (int **)ite_calloc(nmbrFunctions, sizeof(int *), 9, "arrSolverVarsInFunction *");
 		arrPattern = (int **)ite_calloc(nNumVariables, sizeof(int *), 9, "arrPattern");
 		for(int x = 0; x < nNumVariables; x++)
-		  arrPattern[x] = (int *)ite_calloc(3, sizeof(int), 9, "arrPattern[x]");
+		  arrPattern[x] = (int *)ite_calloc(4, sizeof(int), 9, "arrPattern[x]");
 		arrTempSlideLemma = (int *)ite_calloc(nNumVariables, sizeof(int), 9, "arrTempSlideLemma");
 		arrTempSlideSmurf = (int *)ite_calloc(nmbrFunctions, sizeof(int), 9, "arrTempSlideSmurf");		
 	}
