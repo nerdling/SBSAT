@@ -275,7 +275,7 @@ BackTrack()
                {
                   arrLemmaFlag[nLemmaVble] = true;
                   arrTempLemma[nTempLemmaIndex++] = nLemmaLiteral;
-                  if(arrBacktrackStackIndex[nLemmaVble] > arrBacktrackStackIndex[nInferredAtom]) 
+                  if(arrBacktrackStackIndex[nLemmaVble] >= arrBacktrackStackIndex[nInferredAtom])
                      nNumForcedInfsBelowCurrentCP++;
                   assert(arrSolution[nLemmaVble] 
                         == (nLemmaLiteral > 0 ? BOOL_FALSE : BOOL_TRUE));
