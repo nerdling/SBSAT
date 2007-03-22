@@ -113,7 +113,7 @@ BackTrack()
          int nConflictVble = abs(arrTempLemma[i]);
          /* for all lower than current cp */
          /* bigger than cpX .... */
-         if(arrBacktrackStackIndex[nConflictVble] >
+         if(arrBacktrackStackIndex[nConflictVble] >=
                arrBacktrackStackIndex[nInferredAtom] && (
                   /* and just those that I'm going to hit for sure on this level */
                   /* lower than last cp  =>  ... cp(X-1) */
@@ -212,6 +212,7 @@ BackTrack()
 																				bFlag, &pUnitLemmaList, /*m lemma is added in here */
 																				&pUnitLemmaListTail /*m and here */
 																				);
+						assert(nTempSmurfsRefIndex>1);
 						if(nTempSmurfsRefIndex>0) SlideLemma(pNewLemmaInfo, &pUnitLemmaList, &pUnitLemmaListTail);
 					} else {
 						pNewLemmaInfo = AddLemma(nTempLemmaIndex, arrTempLemma,
