@@ -113,6 +113,23 @@ SlideLemma(LemmaInfoStruct *pLemmaInfo, LemmaInfoStruct *pUnitLemmaList, LemmaIn
 	int nLowestFunc = nmbrFunctions;
 	int nHighestFunc = 0;
 
+	LemmaBlock *pSmurfs = pLemmaInfo->pSmurfsReferenced;
+	for(int nSmurfVar = 0, nSmurfIndex = 1;
+		 nSmurfVar < pLemmaInfo->pSmurfsReferenced->arrLits[0];
+		 nSmurfVar++, nSmurfIndex++) {
+		if(nSmurfIndex == LITS_PER_LEMMA_BLOCK) {
+			nSmurfIndex = 0;
+			pSmurfs = pSmurfs->pNext;
+		}
+		
+		int nCurSmurf = pSmurfs->arrLits[nSmurfIndex];
+		
+		if(nCurSmurf > nHighestFunc)
+		  nHighestFunc = nCurSmurf;
+		if(nCurSmurf < nLowestFunc)
+		  nLowestFunc = nCurSmurf;
+	}
+	
 	d9_printf1("Sliding Lemma: [ ");
 	
 	//first create the lemma pattern for each variable in the lemma
@@ -134,7 +151,7 @@ SlideLemma(LemmaInfoStruct *pLemmaInfo, LemmaInfoStruct *pUnitLemmaList, LemmaIn
 
 		int foundit = 0;
 		
-		LemmaBlock *pSmurfs = pLemmaInfo->pSmurfsReferenced;
+		pSmurfs = pLemmaInfo->pSmurfsReferenced;
 
 		for(int nSmurfVar = 0, nSmurfIndex = 1;
 			 nSmurfVar < pLemmaInfo->pSmurfsReferenced->arrLits[0];
@@ -155,11 +172,6 @@ SlideLemma(LemmaInfoStruct *pLemmaInfo, LemmaInfoStruct *pUnitLemmaList, LemmaIn
 					arrPattern[nLemmaVar][2] = arrFunctionStructure[nCurSmurf];
 					arrPattern[nLemmaVar][3] = pLemma->arrLits[nLemmaIndex]>0?1:-1;
 
-					if(pSmurfs->arrLits[nSmurfIndex] > nHighestFunc)
-					  nHighestFunc = pSmurfs->arrLits[nSmurfIndex];
-					if(pSmurfs->arrLits[nSmurfIndex] < nLowestFunc)
-					  nLowestFunc = pSmurfs->arrLits[nSmurfIndex];			 
-					
 					break;
 				}
 			}
