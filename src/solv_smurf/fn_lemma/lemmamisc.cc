@@ -146,9 +146,7 @@ SlideLemma(LemmaInfoStruct *pLemmaInfo, LemmaInfoStruct *pUnitLemmaList, LemmaIn
 			
 			int nCurSmurf = pSmurfs->arrLits[nSmurfIndex];
 
-			fprintf(stderr, "%d: ", nCurVar);
 			for(int x = 1; x <= arrSolverVarsInFunction[nCurSmurf][0]; x++) {
-				fprintf(stderr, "%d ", arrSolverVarsInFunction[nCurSmurf][x]);
 				if(arrSolverVarsInFunction[nCurSmurf][x] > nCurVar) break; //Only works because arrSolverVars are sorted
 				if(arrSolverVarsInFunction[nCurSmurf][x] == nCurVar) {
 					foundit = 1;
@@ -164,7 +162,7 @@ SlideLemma(LemmaInfoStruct *pLemmaInfo, LemmaInfoStruct *pUnitLemmaList, LemmaIn
 					
 					break;
 				}
-			} fprintf(stderr, "\n");
+			}
 			if(foundit == 1) break;
 		}
 		if(foundit==0) {

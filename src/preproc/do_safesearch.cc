@@ -48,7 +48,7 @@ int VARS_PER_BDD_LIMIT = 0;
 int BDDS_PER_VAR_LIMIT = 5;
 
 int Do_SafeSearch() {
-	d3_printf2 ("SAFE ASSIGN %d - ", countBDDs());
+	d3_printf2 ("SAFE SEARCH CLUSTERING %d - ", countBDDs());
 	int cofs = PREP_CHANGED;
 	int ret = PREP_NO_CHANGE;
 	affected = 0;
@@ -299,6 +299,7 @@ int SafeSearchPreCluster_Loop() {
 				}
 			}
 			//fprintf(stderr, "\n");
+			if(length_V == 0) break;
 			int r;
 			switch (r=SafeSearch(V, length_V)) {
 			 case TRIV_UNSAT:
