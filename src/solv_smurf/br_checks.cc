@@ -49,6 +49,14 @@ int (* proc_backtrack)() = NULL;
 ITE_INLINE void DisplayBacktrackInfo(double &fPrevEndTime, double &fStartTime);
 
 ITE_INLINE void
+dump_lemmas(char *_filename)
+{
+	char filename[256];
+	get_freefile(_filename, NULL, filename, 256);
+	DisplayAllBrancherLemmasToFile(filename, 1);
+}
+
+ITE_INLINE void
 dump_counters(FILE *fd)
 {
    for(int i=0;i<MAX_COUNTER;i++)
@@ -92,8 +100,10 @@ CheckBtHooks()
    d9_printf2("\nStarting backtrack # %ld\n", (long)ite_counters[NUM_BACKTRACKS]);
    if (ite_counters[NUM_BACKTRACKS] % BACKTRACKS_PER_STAT_REPORT == 0) {
 
-      if (reports == 0) 
+      if (reports == 0) {
          DisplayBacktrackInfo(fPrevEndTime, fStartTime);
+			if (*lemma_out_file) dump_lemmas(lemma_out_file);
+		}
       //else 
       //   crtwin();
       if (CheckLimits(fStartTime)) { 
@@ -158,7 +168,8 @@ CheckFinalHooks()
          DisplayBacktrackInfo(fPrevEndTime, fStartTime);
          DisplayStatistics(ite_counters[NUM_CHOICE_POINTS], ite_counters[NUM_BACKTRACKS], ite_counters[NUM_TOTAL_BACKJUMPS]);
       );
-      
+	if (*lemma_out_file) dump_lemmas(lemma_out_file);
+   
    return 0;
 }
 
