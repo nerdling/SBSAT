@@ -107,11 +107,12 @@ AddLemma(int nNumLiterals, int arrLiterals[], bool bPutInCache,
 
    pLemmaInfo->bPutInCache = bPutInCache;
    pLemmaInfo->nBacktrackStackReferences = 0;
-
+	
 	pLemmaInfo->pSmurfsReferenced = NULL;
 	pLemmaInfo->pSmurfsReferencedLastBlock = NULL;
 	pLemmaInfo->nNumSRBlocks = 0;
 	pLemmaInfo->nLemmaCameFromSmurf = 0;
+	pLemmaInfo->nLemmaIsASlide = 0;
 	
    if (procHeurAddLemma/*[LEMMA - pLemmaInfo->lemma_type]*/) 
       procHeurAddLemma(pLemmaInfo);

@@ -385,7 +385,7 @@ void printBDDToCNF3SAT () {
       clause_cnt++;
    }
 
-   fputs ("c end\n", ft);
+//   fputs ("c end\n", ft);
    fclose (ft);
    if ((ft = fopen (tmp_bdd_filename, "rb")) == NULL) {
       fprintf(stderr, "Cannot open bdd_tmp.cnf for reading\n");
@@ -950,6 +950,6 @@ void printBDDToCNF () {
 		fprintf (foutputfile, "0\n");
 		delete false_paths[x].num;
 	}
-	fprintf(foutputfile, "c end");
+//	fprintf(foutputfile, "c end\n");
 	delete false_paths;
 }

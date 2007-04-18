@@ -248,11 +248,13 @@ SlideLemma(LemmaInfoStruct *pLemmaInfo, LemmaInfoStruct *pUnitLemmaList, LemmaIn
 			d9_printf1("]\n");
 			arrTempSlideLemma[pLemmaInfo->pLemma->arrLits[0]] = 0;
 			
-			AddLemma_SmurfsReferenced(pLemmaInfo->pLemma->arrLits[0], arrTempSlideLemma,
+			LemmaInfoStruct *slid_lemma = AddLemma_SmurfsReferenced(pLemmaInfo->pLemma->arrLits[0], arrTempSlideLemma,
 											  pLemmaInfo->pSmurfsReferenced->arrLits[0], arrTempSlideSmurf,
 											  true, pUnitLemmaList,
 											  pUnitLemmaListTail
 											  );
+			assert(slid_lemma!=NULL);
+			slid_lemma->nLemmaIsASlide = 1;
 		}
 	}//end while
   return 1;

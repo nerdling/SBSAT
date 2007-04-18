@@ -143,6 +143,8 @@ typedef struct _LemmaInfoStruct {
   int nNumSRBlocks;
 
   int nLemmaCameFromSmurf;
+	
+  int nLemmaIsASlide;
 } LemmaInfoStruct;
 
 

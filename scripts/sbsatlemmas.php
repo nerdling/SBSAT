@@ -2,20 +2,26 @@
 $SYScolors = 1;
 $SYSappname = "sbsatlemmas";
 $appdir = "/home/mkouril/public_html/sbsat/";
-$dir = "/home/mkouril/public_html/sbsat/lemmas/";
+$dir = "/home/weaversa/public_html/SBSAT_files/lemma_files/";
 //$gnuplot = "/opt/gnu/bin/gnuplot";
 //$gnuplot = "/usr/bin/gnuplot";
-$gnuplot = $appdir."gnuplot";
+//$gnuplot = $appdir."gnuplot";
+$gnuplot = "/home/mkouril/bin/gnuplot-4.2.0/bin/gnuplot";
 $choose_file = "Please choose a file";
-// $1 = c
-// $2 = length
-// $3 = moved up lpq
-// $4 = conflicts
-// $5 = age
-// $6 = inferences
-// $7 = referenced (0|1)
-// $8 = age when first useful
-// $9 = age when last useful
+// $1  = c
+// $2  = length
+// $3  = moved up lpq
+// $4  = conflicts
+// $5  = age
+// $6  = inferences
+// $7  = referenced (0|1)
+// $8  = age when first useful
+// $9  = age when last useful
+// $10 = lemma number
+// $11 = lemma currently SAT (0|1)
+// $12 = slid lemma
+// $13 = lemma came from smurf
+// $14 = num smurfs referenced
 //---------------------
 // histogram -- number of times the line occurs
 $histogram = " | sort -g | uniq -c | awk 'BEGIN { N=0 } { N=N+1; while (N<$2) { print N,0; N=N+1; } print $2,$1 }' \" using 1:2 ";
@@ -52,7 +58,16 @@ array_push($desc, array("Contradiction>0 Lemma length", "Lemma length",
         "awk '$0 ~ /^c/ && $4 > 0 { print $2 }'  "));
 array_push($desc, array("Inferences>0 Lemma length", "Lemma length",
         "awk '$0 ~ /^c/ && $6 > 0 { print $2 }'  "));
-
+array_push($desc, array("Slid Lemma length", "Slid Lemma length",
+        "awk '$0 ~ /^c/ && $12 > 0 { print $2 }'  "));
+array_push($desc, array("Num Slid Lemma inferences", "Num Slid Lemma inferences",
+        "awk '$0 ~ /^c/ && $12 > 0 && $6 > 0 { print int($6/1); }'  "));
+array_push($desc, array("Num Smurfs used to create lemma", "Num Smurfs used to create lemma",
+        "awk '$0 ~ /^c/ && $14 > 0 { print int($14/1); }'  "));
+array_push($desc, array("Num Smurfs used to create slid lemma", "Num Smurfs used to create slid lemma",
+        "awk '$0 ~ /^c/ && $14 > 0 && $12 > 0 { print int($14/1); }'  "));
+array_push($desc, array("Useful Slid Lemma length", "Lemma length",
+        "awk '$0 ~ /^c/ && $12 > 0 && ( $3 !~ /^0$/ || $4 !~ /^0$/ || $6 !~ /^0$/ || $7 !~ /^0$/ )  { print $2 }' "));
 
 // averages
 array_push($desc, array("--v-v-v-v-- Averages --v-v-v-v--", "", ""));
@@ -79,6 +94,8 @@ array_push($desc, array("Custom Lemma length histogram 2", "Lemma length",
         "awk ' $0 ~ /^c/ && $8 > 5000 { print $2 }'  "));
 array_push($desc, array("Custom Lemma length histogram 3", "Lemma length",
         "awk ' $0 ~ /^c/ && $8 > 7000 { print $2 }'  "));
+array_push($desc, array("Inferences by lemma length", "Lemma length",
+		  "awk '$0 ~ /^c/ { if ($6 != 0) {N=0; while(N<$6) { print $2; N=N+1; } } }'"));
 
 $gtypes = array();
 $gtypes[0] = array("Histogram", $histogram);
