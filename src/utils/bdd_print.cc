@@ -422,9 +422,63 @@ printCircuitTree ()
    }
 }
 
+void _printBDDdot_file(BDDNode *bdd, FILE *fout);
+	
+void printBDDdot_file(BDDNode **bdds, int num) {
+	FILE *fout;
+	
+	char filename[256];
+	char filename_dot[256];
+	strcpy(filename_dot, inputfile);
+	strcat(filename_dot, ".dot");
+	
+	if(strcpy(inputfile, "-")) get_freefile(filename_dot, NULL, filename, 256);
+	else filename[0] = 0;
+	
+	if ((fout = fopen((filename[0]==0)?"output.dot":filename, "wb+")) == NULL) {
+		fprintf(stderr, "Can't open '%s' for writting", filename);
+		exit (1);
+	}
+	
+	fprintf(fout, "digraph BDD {\n");
 
-//Use this function like this -
-//printCircuit();
+	clear_all_bdd_flags();
+	
+	for(int x = 0; x < num; x++)
+	  _printBDDdot_file(bdds[x], fout);
+
+	fprintf(fout, "T [shape=box]\nF [shape=box]\n");
+	
+	fprintf(fout, "}");
+
+	fclose(fout);
+}
+
+void _printBDDdot_file(BDDNode *bdd, FILE *fout) {
+	if(bdd->flag) return;
+	bdd->flag = 1;
+	
+	if(bdd->thenCase == true_ptr)
+	  fprintf(fout, "%d->T\n", bdd);
+	else if(bdd->thenCase == false_ptr)
+	  fprintf(fout, "%d->T\n", bdd);
+	else {
+		fprintf(fout, "%d->%d\n", bdd, bdd->thenCase);
+		_printBDDdot_file(bdd->thenCase, fout);
+	}
+
+	if(bdd->elseCase == true_ptr)
+	  fprintf(fout, "%d->F [style=dotted]\n", bdd);
+	else if(bdd->elseCase == false_ptr)
+	  fprintf(fout, "%d->F [style=dotted]\n", bdd);
+	else {
+		fprintf(fout, "%d->%d [style=dotted]\n", bdd, bdd->elseCase);
+		_printBDDdot_file(bdd->elseCase, fout);
+	}
+	
+	fprintf(fout, "%d [label=""%s""]\n", bdd, s_name(bdd->variable));
+}
+
 void
 printCircuit ()
 {

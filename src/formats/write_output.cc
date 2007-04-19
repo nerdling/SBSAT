@@ -58,7 +58,11 @@ write_output (char formatout)
               Smurf_FPGA ();
               } break;
 
-    case 'p': {
+    case 'd': {
+		        printBDDdot_file(functions, nmbrFunctions);
+	           } break;
+
+	 case 'p': {
               if (print_tree) printCircuitTree();
               else printCircuit();
               } break;

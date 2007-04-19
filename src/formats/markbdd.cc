@@ -685,6 +685,31 @@ BDDNode *putite(int intnum, BDDNode * bdd)
       strcpy (macros, "print_flat_xdd");
       return v1;
 	}
+	if (!strcasecmp (macros, "print_dot")) {
+		BDDNode **put_dot_bdds = (BDDNode **)ite_calloc(1, sizeof(BDDNode *), 9, "put_dot_bdds");
+		put_dot_bdds[0] = putite (intnum, bdd);
+      strcpy (macros, "print_dot");
+		printBDDdot_file(put_dot_bdds, 1);
+		ite_free((void**)&put_dot_bdds);
+      return true_ptr;
+	}
+	if (!strncasecmp (macros, "print_dot", 9)) {
+		int numarguments = 0;
+      for (unsigned int x = 9; x < strlen (macros); x++) {
+			if (macros[x] < '0' || macros[x] > '9') {
+				fprintf (stderr, "\nNon integer value found following keyword 'print_dot' (%s)...exiting:%d\n", macros, markbdd_line);
+				exit (1);
+			}
+			numarguments = 10*numarguments + macros[x] - '0';
+		}
+		BDDNode **put_dot_bdds = (BDDNode **)ite_calloc(numarguments, sizeof(BDDNode *), 9, "put_dot_bdds");
+      for (int x = 0; x < numarguments; x++)
+		  put_dot_bdds[x] = putite (intnum, bdd);
+      strcpy (macros, "print_dot#");
+		printBDDdot_file(put_dot_bdds, numarguments);
+		ite_free((void**)&put_dot_bdds);
+      return true_ptr;
+	}
 	if (!strcasecmp (macros, "gcf")) {
       BDDNode * v1, *v2;
       v1 = putite (intnum, bdd);
@@ -1146,9 +1171,7 @@ void bddloop () {
 		if (p == '*') {
 			BDDNode *temp = putite(intnum, bdd);
 			if ((strcasecmp (macros, "pprint_tree"))
-				 && (strcasecmp (macros, "print_tree"))
-				 && (strcasecmp (macros, "print_xdd"))
-				 && (strcasecmp (macros, "print_flat_xdd"))
+				 && (strncasecmp (macros, "print_", 6))
 				 && (strcasecmp (macros, "define"))
 				 && (strcasecmp (macros, "initial_branch"))) {
 				keep[nmbrFunctions] = 1;
@@ -1167,9 +1190,7 @@ void bddloop () {
 			  continue;
 			BDDNode * temp = putite (intnum, bdd);
 			if ((strcasecmp (macros, "pprint_tree"))
-				 && (strcasecmp (macros, "print_tree"))
-				 && (strcasecmp (macros, "print_xdd"))
-				 && (strcasecmp (macros, "print_flat_xdd"))
+				 && (strncasecmp (macros, "print_", 6))
 				 && (strcasecmp (macros, "define"))
 				 && (strcasecmp (macros, "initial_branch"))) {
 				functions[nmbrFunctions] = temp;
@@ -1182,9 +1203,7 @@ void bddloop () {
 		}
       D_4(
       if ((strcasecmp (macros, "pprint_tree"))
-			 && (strcasecmp (macros, "print_tree"))
-			 && (strcasecmp (macros, "print_xdd"))
-			 && (strcasecmp (macros, "print_flat_xdd"))
+			 && (strncasecmp (macros, "print_", 6))
 			 && (strcasecmp (macros, "define"))
 			 && (strcasecmp (macros, "initial_branch"))) {
 			fprintf (stddbg, "BDD $%d: ", nmbrFunctions);

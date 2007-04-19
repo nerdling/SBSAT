@@ -287,7 +287,7 @@ DisplayAllBrancherLemmasToFile(char *filename, int flag)
    {
       cout << "Can't open 'output' for writting" << endl;
       exit (1);
-   };
+   }
    for (int i=0;i<3;i++)
    {
       for (LemmaInfoStruct *pLemmaInfo = pLPQFirst[i];
@@ -320,6 +320,7 @@ DisplayAllBrancherLemmasToFile(char *filename, int flag)
 			}
 		}
    }
+	fclose(pFile);
 }
 
 
