@@ -61,6 +61,9 @@ struct IntegerSet_ArrayBased
 #include "hr_lsgb_lemma.h"
 #include "hr_lsgb.h"
 #include "hr_lemma.h"
+#include "hr_vsids.h"
+#include "hr_berkmin.h"
+#include "hr_anne.h"
 
 #define FN_INIT_LIST { \
       FnSmurfInit, \

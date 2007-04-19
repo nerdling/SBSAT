@@ -46,6 +46,11 @@ FnInit   procFnInit[] = FN_INIT_LIST ;
 
 int nNumFns=0;
 
+int *arrLemmaVbleCountsPos;
+int *arrLemmaVbleCountsNeg;
+int *arrLastLemmaVbleCountsPos;
+int *arrLastLemmaVbleCountsNeg;
+
 /* functions specific hooks */
 fnCreateFunction              *procCreateFunction=NULL;
 
@@ -181,6 +186,9 @@ HeuristicInit()
               }
               break;
     case 'l': procHeurInit = HrLemmaInit; break;
+    case 'v': procHeurInit = HrVSIDSInit; break;
+    case 'b': procHeurInit = HrBerkMinInit; break;
+	 case 'a': procHeurInit = HrAnneInit; break;
     //case 'i': nHeuristic = INTERACTIVE_HEURISTIC; break;
     //case 'm': nHeuristic = STATE_HEURISTIC; break;
     default: 

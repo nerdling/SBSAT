@@ -39,31 +39,31 @@
 #include "sbsat_solver.h"
 #include "solver.h"
 
-t_arrVarScores *arrLemmaVarScores = NULL;
+t_arrVarScores *arrVSIDSVarScores = NULL;
 
 ITE_INLINE int
-HrLemmaInit()
+HrVSIDSInit()
 {
-   InitLemmaHeurArrays(gnMaxVbleIndex);
+   InitVSIDSHeurArrays(gnMaxVbleIndex);
 
-   //procHeurUpdate = HrLemmaUpdate;
-   procHeurFree = HrLemmaFree;
-   procHeurSelect = L_OptimizedHeuristic;
-   procHeurAddLemma = AddLemmasHeuristicInfluence;
-   //procHeurAddLemmaSpace = AddLemmasSpaceHeuristicInfluence;
-   procHeurRemoveLemma = RemoveLemmasHeuristicInfluence;
+   //procHeurUpdate = HrVSIDSUpdate;
+   procHeurFree = HrVSIDSFree;
+   procHeurSelect = VSIDS_OptimizedHeuristic;
+   procHeurAddLemma = AddVSIDSHeuristicInfluence;
+   //procHeurAddLemmaSpace = AddVSIDSSpaceHeuristicInfluence;
+   procHeurRemoveLemma = RemoveVSIDSHeuristicInfluence;
 
-   arrLemmaVarScores = (t_arrVarScores*)ite_calloc(gnMaxVbleIndex, 
-         sizeof(t_arrVarScores), 9, "arrLemmaVarScores");
+   arrVSIDSVarScores = (t_arrVarScores*)ite_calloc(gnMaxVbleIndex, 
+         sizeof(t_arrVarScores), 9, "arrVSIDSVarScores");
 
    for(int i=0;i<nNumFuncs;i++)
    {
       for(int j=0;arrFnAndTypes[j];j++) {
          if (arrSolverFunctions[i].nType == arrFnAndTypes[j]) {
-            AddLemmasBlockHeuristicInfluence(arrSolverFunctions[i].fn_and.pLongLemma);
+            AddVSIDSBlockHeuristicInfluence(arrSolverFunctions[i].fn_and.pLongLemma);
 
             for(int k=0;k<arrSolverFunctions[i].fn_and.rhsVbles.nNumElts;k++)
-               AddLemmasBlockHeuristicInfluence(arrSolverFunctions[i].fn_and.arrShortLemmas[k]);
+               AddVSIDSBlockHeuristicInfluence(arrSolverFunctions[i].fn_and.arrShortLemmas[k]);
 
             break;
          }
@@ -77,32 +77,32 @@ HrLemmaInit()
    }
 */
 
-   //return HrLemmaUpdate();
+   //return HrVSIDSUpdate();
    return NO_ERROR;
 }
 
 ITE_INLINE int
-HrLemmaFree()
+HrVSIDSFree()
 {
-   ite_free((void**)&arrLemmaVarScores);
-   DeleteLemmaHeurArrays();
+   ite_free((void**)&arrVSIDSVarScores);
+   DeleteVSIDSHeurArrays();
    return NO_ERROR;
 }
 
 ITE_INLINE int
-HrLemmaUpdate()
+HrVSIDSUpdate()
 {
    if (ite_counters[NUM_BACKTRACKS] % 255 == 0)
    {
       for (int i = 1; i<gnMaxVbleIndex; i++)
       {
          d9_printf4("%d: (pos count = %d, neg count = %d)\n", i, arrLemmaVbleCountsPos[i], arrLemmaVbleCountsNeg[i]);
-         arrLemmaVarScores[i].pos = arrLemmaVarScores[i].pos/2 + 
-            arrLemmaVbleCountsPos[i] - arrLemmaVarScores[i].last_count_pos;
-         arrLemmaVarScores[i].neg = arrLemmaVarScores[i].neg/2 + 
-            arrLemmaVbleCountsNeg[i] - arrLemmaVarScores[i].last_count_neg;
-         arrLemmaVarScores[i].last_count_pos = arrLemmaVbleCountsPos[i];
-         arrLemmaVarScores[i].last_count_neg = arrLemmaVbleCountsNeg[i];
+         arrVSIDSVarScores[i].pos = arrVSIDSVarScores[i].pos/2 + 
+            arrLemmaVbleCountsPos[i] - arrVSIDSVarScores[i].last_count_pos;
+         arrVSIDSVarScores[i].neg = arrVSIDSVarScores[i].neg/2 + 
+            arrLemmaVbleCountsNeg[i] - arrVSIDSVarScores[i].last_count_neg;
+         arrVSIDSVarScores[i].last_count_pos = arrLemmaVbleCountsPos[i];
+         arrVSIDSVarScores[i].last_count_neg = arrLemmaVbleCountsNeg[i];
       }
    }
    return NO_ERROR;
@@ -116,7 +116,7 @@ HrLemmaUpdate()
 //#define HEUR_WEIGHT(x,i) (var_score[i] * (J_ONE+arrLemmaVbleCountsNeg[i]>arrLemmaVbleCountsPos[i]?arrLemmaVbleCountsNeg[i]:arrLemmaVbleCountsPos[i]))
 
 //#define HEUR_EXTRA_OUT()  { fprintf(stderr, "%c%d (pos: %d, neg %d)\n", (*pnBranchValue==BOOL_TRUE?'+':'-'), *pnBranchAtom, arrLemmaVbleCountsPos[*pnBranchAtom], arrLemmaVbleCountsNeg[*pnBranchAtom]);}
-#define HEUR_FUNCTION L_OptimizedHeuristic
+#define HEUR_FUNCTION VSIDS_OptimizedHeuristic
 #define HEUR_SIGN(nBestVble, multPos, multNeg) \
   (arrLemmaVbleCountsPos[nBestVble]*multPos > arrLemmaVbleCountsNeg[nBestVble]*multNeg?\
    BOOL_TRUE:BOOL_FALSE)

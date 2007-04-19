@@ -39,8 +39,8 @@
 #include "sbsat_solver.h"
 #include "solver.h"
 
-double *arrLemmaHeurScoresPos;
-double *arrLemmaHeurScoresNeg;
+double *arrVSIDSHeurScoresPos;
+double *arrVSIDSHeurScoresNeg;
 extern int *arrLemmaVbleCountsPos;
 extern int *arrLemmaVbleCountsNeg;
 extern int *arrLastLemmaVbleCountsPos;
@@ -48,10 +48,10 @@ extern int *arrLastLemmaVbleCountsNeg;
 
 ITE_INLINE
 void
-InitLemmaHeurArrays (int nMaxVbleIndex)
+InitVSIDSHeurArrays (int nMaxVbleIndex)
 {
-   arrLemmaHeurScoresPos = (double*)ite_calloc(nMaxVbleIndex+1, sizeof(double), 9, "arrLemmaHeurScoresPos");
-   arrLemmaHeurScoresNeg = (double*)ite_calloc(nMaxVbleIndex+1, sizeof(double), 9, "arrLemmaHeurScoresNeg");
+   arrVSIDSHeurScoresPos = (double*)ite_calloc(nMaxVbleIndex+1, sizeof(double), 9, "arrVSIDSHeurScoresPos");
+   arrVSIDSHeurScoresNeg = (double*)ite_calloc(nMaxVbleIndex+1, sizeof(double), 9, "arrVSIDSHeurScoresNeg");
    arrLemmaVbleCountsPos = (int*)ite_calloc(nMaxVbleIndex+1, sizeof(int), 9, "arrLemmaVbleCountsPos");
    arrLemmaVbleCountsNeg = (int*)ite_calloc(nMaxVbleIndex+1, sizeof(int), 9, "arrLemmaVbleCountsNeg");
    arrLastLemmaVbleCountsPos = (int*)ite_calloc(nMaxVbleIndex+1, sizeof(int), 9, "arrLastLemmaVbleCountsPos");
@@ -59,8 +59,8 @@ InitLemmaHeurArrays (int nMaxVbleIndex)
 
    for (int i = 0; i <= nMaxVbleIndex; i++)
    {
-      arrLemmaHeurScoresPos[i] = 0.0;
-      arrLemmaHeurScoresNeg[i] = 0.0;
+      arrVSIDSHeurScoresPos[i] = 0.0;
+      arrVSIDSHeurScoresNeg[i] = 0.0;
       arrLemmaVbleCountsPos[i] = 1; // to satisfy the heuristic
       arrLemmaVbleCountsNeg[i] = 1; // to satisfy the heuristic
       arrLastLemmaVbleCountsPos[i] = 0;
@@ -71,10 +71,10 @@ InitLemmaHeurArrays (int nMaxVbleIndex)
 
 ITE_INLINE
 void
-DeleteLemmaHeurArrays ()
+DeleteVSIDSHeurArrays ()
 {
-   ite_free((void**)&arrLemmaHeurScoresPos);
-   ite_free((void**)&arrLemmaHeurScoresNeg);
+   ite_free((void**)&arrVSIDSHeurScoresPos);
+   ite_free((void**)&arrVSIDSHeurScoresNeg);
    ite_free((void**)&arrLemmaVbleCountsPos);
    ite_free((void**)&arrLemmaVbleCountsNeg);
    ite_free((void**)&arrLastLemmaVbleCountsPos);
@@ -84,7 +84,7 @@ DeleteLemmaHeurArrays ()
 //#define fWght 1000;
 //
 ITE_INLINE void
-AddLemmasSpaceHeuristicInfluence(int *arr, int num)
+AddVSIDSSpaceHeuristicInfluence(int *arr, int num)
 {
  //  fprintf(stderr, "num=%d\n", num);
    for(int i=0; i<num; i++)
@@ -93,19 +93,19 @@ AddLemmasSpaceHeuristicInfluence(int *arr, int num)
 //      fprintf(stderr, "lit=%d, ", nLiteral);
       if (nLiteral >= 0)
       {
-         //arrLemmaHeurScoresPos[nLiteral] += fWght;
+         //arrVSIDSHeurScoresPos[nLiteral] += fWght;
          arrLemmaVbleCountsPos[nLiteral]++;
       }
       else
       {
-         //arrLemmaHeurScoresNeg[-nLiteral] += fWght;
+         //arrVSIDSHeurScoresNeg[-nLiteral] += fWght;
          arrLemmaVbleCountsNeg[-nLiteral]++;
       }
    }
 }
 
 ITE_INLINE void
-AddLemmasBlockHeuristicInfluence(LemmaBlock *pLemmaBlock)
+AddVSIDSBlockHeuristicInfluence(LemmaBlock *pLemmaBlock)
 {
    int *arrLits = pLemmaBlock->arrLits;
    int nLemmaLength = arrLits[0];
@@ -127,28 +127,28 @@ AddLemmasBlockHeuristicInfluence(LemmaBlock *pLemmaBlock)
       nLiteral = arrLits[nLitIndexInBlock];
       if (nLiteral >= 0)
       {
-         //arrLemmaHeurScoresPos[nLiteral] += fWght;
+         //arrVSIDSHeurScoresPos[nLiteral] += fWght;
          arrLemmaVbleCountsPos[nLiteral]++;
       }
       else
       {
-         //arrLemmaHeurScoresNeg[-nLiteral] += fWght;
+         //arrVSIDSHeurScoresNeg[-nLiteral] += fWght;
          arrLemmaVbleCountsNeg[-nLiteral]++;
       }
    }
 }
 
 ITE_INLINE void
-AddLemmasHeuristicInfluence(LemmaInfoStruct * pLemmaInfo)
+AddVSIDSHeuristicInfluence(LemmaInfoStruct * pLemmaInfo)
 {
    LemmaBlock *pLemmaBlock = pLemmaInfo->pLemma;
-   AddLemmasBlockHeuristicInfluence(pLemmaBlock);
+   AddVSIDSBlockHeuristicInfluence(pLemmaBlock);
 }
 
 
 ITE_INLINE void
-RemoveLemmasHeuristicInfluence (LemmaInfoStruct * pLemmaInfo)
-   // Updates : arrLemmaHeurScoresPos[], arrLemmaHeurScoresNeg[].
+RemoveVSIDSHeuristicInfluence (LemmaInfoStruct * pLemmaInfo)
+   // Updates : arrVSIDSHeurScoresPos[], arrVSIDSHeurScoresNeg[].
    // Remove the lemma's influence on the search heuristic.
 {
    LemmaBlock *pLemmaBlock = pLemmaInfo->pLemma;
@@ -172,12 +172,12 @@ RemoveLemmasHeuristicInfluence (LemmaInfoStruct * pLemmaInfo)
       nLiteral = arrLits[nLitIndexInBlock];
       if (nLiteral >= 0)
       {
-         //arrLemmaHeurScoresPos[nLiteral] -= fWght;
+         //arrVSIDSHeurScoresPos[nLiteral] -= fWght;
          arrLemmaVbleCountsPos[nLiteral]--;
       }
       else
       {
-         //arrLemmaHeurScoresNeg[-nLiteral] -= fWght;
+         //arrVSIDSHeurScoresNeg[-nLiteral] -= fWght;
          arrLemmaVbleCountsNeg[-nLiteral]--;
       }
    }

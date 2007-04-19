@@ -38,14 +38,7 @@
 #ifndef HR_LEMMA_H
 #define HR_LEMMA_H
 
-typedef struct {
-   int pos;
-   int last_count_pos;
-   int neg;
-   int last_count_neg;
-} t_arrVarScores;
-
-extern t_arrVarScores *arrVarScores;
+extern t_arrVarScores *arrLemmaVarScores;
 
 //#include "lemmainfo.h"
 

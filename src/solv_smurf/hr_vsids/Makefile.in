@@ -36,7 +36,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-subdir = src/solv_smurf/fn_minmax
+subdir = src/solv_smurf/hr_vsids
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -48,12 +48,11 @@ CONFIG_CLEAN_FILES =
 LIBRARIES = $(noinst_LIBRARIES)
 AR = ar
 ARFLAGS = cru
-libfnminmax_a_AR = $(AR) $(ARFLAGS)
-libfnminmax_a_LIBADD =
-am__objects_1 = bdd2specfn_minmax.$(OBJEXT) bt_specfn_minmax.$(OBJEXT) \
-	fn_minmax.$(OBJEXT) hr_lsgb_minmax.$(OBJEXT)
-am_libfnminmax_a_OBJECTS = $(am__objects_1)
-libfnminmax_a_OBJECTS = $(am_libfnminmax_a_OBJECTS)
+libhrvsids_a_AR = $(AR) $(ARFLAGS)
+libhrvsids_a_LIBADD =
+am__objects_1 = hr_vsids.$(OBJEXT) hr_vsids_update.$(OBJEXT)
+am_libhrvsids_a_OBJECTS = $(am__objects_1)
+libhrvsids_a_OBJECTS = $(am_libhrvsids_a_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/include
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -62,8 +61,8 @@ CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 CXXLD = $(CXX)
 CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
-SOURCES = $(libfnminmax_a_SOURCES)
-DIST_SOURCES = $(libfnminmax_a_SOURCES)
+SOURCES = $(libhrvsids_a_SOURCES)
+DIST_SOURCES = $(libhrvsids_a_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -168,17 +167,16 @@ sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 INCLUDES = -I$(top_srcdir)/include -I$(top_srcdir)/src/solv_smurf/include
-sources = bdd2specfn_minmax.cc bt_specfn_minmax.cc fn_minmax.cc \
-	 hr_lsgb_minmax.cc 
-
+sources = hr_vsids.cc hr_vsids_update.cc
+EXTRA_DIST = hr_choice.cc
 
 #if MYLIBTOOL
-#noinst_LTLIBRARIES = libfnminmax.la # libsolver2.la
-#libfnminmax_la_SOURCES= $(sources)
+#noinst_LTLIBRARIES = libhrvsids.la # libsolver2.la
+#libhrvsids_la_SOURCES= $(sources)
 #libsolver2_la_SOURCES=libsolver.cc
 #else
-noinst_LIBRARIES = libfnminmax.a # libsolver2.la
-libfnminmax_a_SOURCES = $(sources)
+noinst_LIBRARIES = libhrvsids.a # libsolver2.la
+libhrvsids_a_SOURCES = $(sources)
 all: all-am
 
 .SUFFIXES:
@@ -192,9 +190,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu  src/solv_smurf/fn_minmax/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu  src/solv_smurf/hr_vsids/Makefile'; \
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu  src/solv_smurf/fn_minmax/Makefile
+	  $(AUTOMAKE) --gnu  src/solv_smurf/hr_vsids/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -215,10 +213,10 @@ $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 
 clean-noinstLIBRARIES:
 	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
-libfnminmax.a: $(libfnminmax_a_OBJECTS) $(libfnminmax_a_DEPENDENCIES) 
-	-rm -f libfnminmax.a
-	$(libfnminmax_a_AR) libfnminmax.a $(libfnminmax_a_OBJECTS) $(libfnminmax_a_LIBADD)
-	$(RANLIB) libfnminmax.a
+libhrvsids.a: $(libhrvsids_a_OBJECTS) $(libhrvsids_a_DEPENDENCIES) 
+	-rm -f libhrvsids.a
+	$(libhrvsids_a_AR) libhrvsids.a $(libhrvsids_a_OBJECTS) $(libhrvsids_a_LIBADD)
+	$(RANLIB) libhrvsids.a
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -226,10 +224,8 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bdd2specfn_minmax.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bt_specfn_minmax.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fn_minmax.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hr_lsgb_minmax.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hr_vsids.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hr_vsids_update.Po@am__quote@
 
 .cc.o:
 @am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \

@@ -38,6 +38,13 @@
 #ifndef HEURISTIC_H
 #define HEURISTIC_H
 
+typedef struct {	
+	int pos;
+	int last_count_pos;
+	int neg;
+	int last_count_neg;
+} t_arrVarScores;
+
 void Heuristic(int *pnBranchAtom, int *pnBranchValue);
 ITE_INLINE void InitHeurScoresStack();
 ITE_INLINE void FreeHeurScoresStack();

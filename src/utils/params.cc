@@ -329,7 +329,7 @@ t_opt options[] = {
 		V(i:0,"0"), V(i:0,"0"), VAR_NORMAL, 0,
 		"number of backtracks to start the trace (when debug=9)"},
 { sHeuristic, "H", "heuristic", P_STRING, V(i:8,"8"), {"j"}, VAR_NORMAL, 0,
-		"Choose heuristic j=LSGB, l=Chaff-like lemma baswed, i=Interactive"},
+		"Choose heuristic j=LSGB, l=lemma baswed, v=VSIDS, b=BerkMin, a=Anne"},
 { &JHEURISTIC_K, "K", "jheuristic-k", P_FLOAT, 
 		V(i:0,"0"), V(f:3.0, "3.0"), VAR_NORMAL, 0,
 		"set the value of K"},
