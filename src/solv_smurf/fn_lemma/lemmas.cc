@@ -107,6 +107,8 @@ AddLemma(int nNumLiterals, int arrLiterals[], bool bPutInCache,
 
    pLemmaInfo->bPutInCache = bPutInCache;
    pLemmaInfo->nBacktrackStackReferences = 0;
+
+	pLemmaInfo->nLemmaNumber = nCallsToAddLemma;
 	
 	pLemmaInfo->pSmurfsReferenced = NULL;
 	pLemmaInfo->pSmurfsReferencedLastBlock = NULL;

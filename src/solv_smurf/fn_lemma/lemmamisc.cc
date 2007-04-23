@@ -103,6 +103,40 @@ DisplayLemmaToFile(FILE *pFile, LemmaBlock *pLemma)
    fprintf(pFile, "0");
 }
 
+ITE_INLINE void
+DisplayLemmaArrayToFile(FILE *pFile, int *arrLemma, int nLemmaIndex) {
+	for(int x = 0; x < nLemmaIndex; x++) {
+		if(arrLemma[x] < 0)
+		  fprintf(pFile, "%d", abs(arrLemma[x]));
+		fprintf(pFile, "%d", abs(arrLemma[x]));
+	}
+}
+
+ITE_INLINE void
+DisplayLemmaIdentifierToFile(FILE *pFile, LemmaBlock *pLemma)
+{
+   LemmaBlock *pLemmaBlock = pLemma;
+   int *arrLits = pLemmaBlock->arrLits;
+   int nLemmaLength = arrLits[0];
+   int nLitIndex;
+   int nLitIndexInBlock;
+   for (nLitIndex = 1, nLitIndexInBlock = 1;
+         nLitIndex <= nLemmaLength;
+         nLitIndex++, nLitIndexInBlock++)
+   {
+      if (nLitIndexInBlock == LITS_PER_LEMMA_BLOCK)
+      {
+         nLitIndexInBlock = 0;
+         pLemmaBlock = pLemmaBlock->pNext;
+         arrLits = pLemmaBlock->arrLits;
+      }
+      //cout << arrLits[nLitIndexInBlock] << " ";
+		if(arrLits[nLitIndexInBlock] < 0)
+		  fprintf(pFile, "%d", abs(arrLits[nLitIndexInBlock]));
+		fprintf(pFile, "%d", abs(arrLits[nLitIndexInBlock]));
+   }
+}
+
 ITE_INLINE int
 SlideLemma(LemmaInfoStruct *pLemmaInfo, LemmaInfoStruct *pUnitLemmaList, LemmaInfoStruct **pUnitLemmaListTail)
 {

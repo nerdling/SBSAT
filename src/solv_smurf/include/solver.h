@@ -279,6 +279,7 @@ extern int *arrChangedFn;
 extern int  *arrUnsetLemmaFlagVars;
 extern bool *arrLemmaFlag;
 extern int  *arrTempLemma;
+extern int  *arrPrevTempLemma;
 extern bool *arrSmurfsRefFlag;
 extern int  *arrTempSmurfsRef;
 

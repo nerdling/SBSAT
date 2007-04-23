@@ -125,7 +125,7 @@ AddLemmaIntoCache(LemmaInfoStruct *p)
    p->nNumLemmaInfs=0;
    p->nLemmaFirstUseful=0;
    p->nLemmaLastUsed = 0;
-   p->nLemmaNumber=ite_counters[NUM_LEMMA_INTO_CACHE];
+   //p->nLemmaNumber=ite_counters[NUM_LEMMA_INTO_CACHE];
 
    AddLemmaIntoWatchedLits(p);
 #ifdef ORIG_LEMMA_CACHE

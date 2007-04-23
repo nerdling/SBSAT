@@ -48,6 +48,7 @@ LemmaBlock * pConflictLemma=NULL;
 LemmaInfoStruct * pConflictLemmaInfo=NULL;
 bool *arrLemmaFlag=NULL;
 int  *arrTempLemma=NULL;
+int  *arrPrevTempLemma=NULL;
 extern long long *arrInfsDepthBreadth;
 
 bool *arrSmurfsRefFlag=NULL;

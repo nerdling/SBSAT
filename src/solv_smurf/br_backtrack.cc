@@ -39,7 +39,7 @@
 #include "sbsat_solver.h"
 #include "solver.h"
 
-//#define DISPLAY_TRACE
+int nPrevTempLemma;
 
 ITE_INLINE int
 BackTrack()
@@ -53,6 +53,7 @@ BackTrack()
 	LemmaInfoStruct *pNewLemmaInfo=NULL; /* last lemmainfo added */
    LemmaBlock *pNewLemma=NULL; /* last lemma added */
    int nTempLemmaIndex = 0; /* the length of the new/temporary lemma */
+	int nPrevTempLemmaIndex = 0; /* the length of the previous new/temporary lemma */
 	int nTempSmurfsRefIndex = 0;
    int nNumForcedInfsBelowCurrentCP = 0;
    int nInferredAtom = 0; /* the choice point */
@@ -64,6 +65,17 @@ BackTrack()
 	
 	if(slide_lemmas) nTempSmurfsRefIndex = ConstructTempSmurfsRef(); //This must be before ConstructTempLemma() because
 	                                                                 //pConflictLemmaInfo is nulled in ConstructTempLemma()
+	
+	if(1 && pConflictLemmaInfo) { //SEAN!!!
+		if(pConflictLemmaInfo->nLemmaCameFromSmurf)
+		  arrPrevTempLemma[nPrevTempLemmaIndex++] = pConflictLemmaInfo->nLemmaNumber;
+		else 
+		  arrPrevTempLemma[nPrevTempLemmaIndex++] = -pConflictLemmaInfo->nLemmaNumber;
+		fprintf(stdout, "%d [label=\"", pConflictLemmaInfo->nLemmaNumber);
+		DisplayLemmaToFile(stdout, pConflictLemmaInfo->pLemma);
+		fprintf(stdout, "\"]\n");
+	}
+
    // Copy the conflict lemma into arrTempLemma.
    nTempLemmaIndex = ConstructTempLemma();
 
@@ -79,8 +91,8 @@ BackTrack()
       }
 #endif
       if (nInferredAtom != 0) 
-         var_stat[nInferredAtom].backjumped[nInferredValue]++;
-
+		  var_stat[nInferredAtom].backjumped[nInferredValue]++;
+		
 		if(pChoicePointTop->pUnitLemmaList != NULL) {
 			if(pUnitLemmaList.pNextLemma[0] == NULL) {
 				pUnitLemmaList.pNextLemma[0] = pChoicePointTop->pUnitLemmaList;
@@ -96,14 +108,16 @@ BackTrack()
 		
       // Pop the choice point stack.
       pChoicePointTop--;
-
-      if (pChoicePointTop < pStartChoicePointStack)
-      {
-         // return ERR_
-         return 1;
-      }
+		
+		if (pChoicePointTop < pStartChoicePointStack)
+		  {
+			  // return ERR_
+			  //fprintf(stderr, "\nHERE %d\n", pChoicePointTop->nBranchVble);
+			  break; //return 1;
+		  }
+ 
       nInferredAtom = pChoicePointTop->nBranchVble;
-
+		
       /*
        * reconstruct nNumForcedInfsBelowCurrentCP
        */
@@ -114,239 +128,275 @@ BackTrack()
          /* for all lower than current cp */
          /* bigger than cpX .... */
          if(arrBacktrackStackIndex[nConflictVble] >=
-               arrBacktrackStackIndex[nInferredAtom] && (
-                  /* and just those that I'm going to hit for sure on this level */
-                  /* lower than last cp  =>  ... cp(X-1) */
-                  nOldBacktrackStackIndex == 0 ||
-                  arrBacktrackStackIndex[nConflictVble] < nOldBacktrackStackIndex))
-            nNumForcedInfsBelowCurrentCP++;
+				arrBacktrackStackIndex[nInferredAtom] && (
+																		/* and just those that I'm going to hit for sure on this level */
+																		/* lower than last cp  =>  ... cp(X-1) */
+																		nOldBacktrackStackIndex == 0 ||
+																		arrBacktrackStackIndex[nConflictVble] < nOldBacktrackStackIndex))
+			  nNumForcedInfsBelowCurrentCP++;
       }
       nOldBacktrackStackIndex = arrBacktrackStackIndex[nInferredAtom];
-
+		
       // Pop the num unresolved functions 
       nNumUnresolvedFunctions = pChoicePointTop->nNumUnresolved;
-
+		
       pop_state_information(1);
-
+		
       // Pop the backtrack stack until we pop the branch atom.
       // backtracking loop
       do {
-         pBacktrackTop--;
+			pBacktrackTop--;
          nBacktrackStackIndex--;
          assert(nBacktrackStackIndex >= 0);
-
+			
          /*m invalidating arrBacktrackStackIndex but keep the prev value */
          int nBacktrackAtom = pBacktrackTop->nBranchVble;
          int nBacktrackAtomStackIndex = arrBacktrackStackIndex[nBacktrackAtom];
          arrBacktrackStackIndex[nBacktrackAtom] = gnMaxVbleIndex + 1;
-
+			
          if (pBacktrackTop->pLemmaInfo && 
-               pBacktrackTop->pLemmaInfo->nBacktrackStackReferences > 0)
-         {
-            // The lemma for this backtrack stack entry was a cached lemma.
-            // Decrement the reference count for it.
-            // (When the count reaches zero, the lemma can be recycled.)
-            (pBacktrackTop->pLemmaInfo->nBacktrackStackReferences)--;
-
-               // Move lemma to front of lemma priority queue.
+				 pBacktrackTop->pLemmaInfo->nBacktrackStackReferences > 0)
+			  {
+				  // The lemma for this backtrack stack entry was a cached lemma.
+				  // Decrement the reference count for it.
+				  // (When the count reaches zero, the lemma can be recycled.)
+				  (pBacktrackTop->pLemmaInfo->nBacktrackStackReferences)--;
+				  
+				  // Move lemma to front of lemma priority queue.
 #define MK_UP_RELEVANT_LEMMAS
 #ifdef MK_UP_RELEVANT_LEMMAS
-            if(arrLemmaFlag[nBacktrackAtom]) 
+				  if(arrLemmaFlag[nBacktrackAtom]) 
 #endif
-               MoveToFrontOfLPQ(pBacktrackTop->pLemmaInfo);
-         }
-
+					 MoveToFrontOfLPQ(pBacktrackTop->pLemmaInfo);
+			  }
+			
          //Handle old choicepoints
          /*m is atom relevant */
          if(arrLemmaFlag[nBacktrackAtom]) {
             nNumForcedInfsBelowCurrentCP--;
          }
-
-         if (pBacktrackTop->bWasChoicePoint == true || 
-               nNumForcedInfsBelowCurrentCP == 0 ||
-               nBacktrackAtom == nInferredAtom) 
-         {
-            //nBacktrackAtom is a UIP-unique implication point
-				pBacktrackTop->bWasChoicePoint = false;
-				
-            if (arrLemmaFlag[nBacktrackAtom]) 
-				{
-               // Resolve out lemma literals which are not needed. (Cleaning up the lemma)
-               // Do this by checking the level at which each literal
-               // was inferred.
-               int nTempLemmaLiteral;
-               int nTempLemmaVble;
-					
-               int nCopytoIndex = 0;
-               for (int i = 0; i < nTempLemmaIndex; i++)
-               {
-                  nTempLemmaLiteral = arrTempLemma[i];
-                  nTempLemmaVble = abs(nTempLemmaLiteral);
-                  if ((arrBacktrackStackIndex[nTempLemmaVble] 
-                           <= nBacktrackAtomStackIndex) || 
-                        (nTempLemmaVble == nBacktrackAtom))
-                  {
-                     arrTempLemma[nCopytoIndex++] = nTempLemmaLiteral;
-                  }
-                  else
-                     arrUnsetLemmaFlagVars[nUnsetLemmaFlagIndex++] 
-                        = nTempLemmaVble;
-               }
-               nTempLemmaIndex = nCopytoIndex;
-
-               if (nTempLemmaIndex <= 0)
-               {
-                  // Lemma of length zero. The problem is unsat.
-                  cout << "1: Lemma of length zero." << endl;
-                  return 1; // goto_NoSolution;
-               }
-
-               bool bFlag = (MAX_NUM_CACHED_LEMMAS > 0);
-
-               assert(IsInLemmaList(pUnitLemmaListTail,
-                        &pUnitLemmaList));	  
-
-					if(slide_lemmas) {
-						pNewLemmaInfo = AddLemma_SmurfsReferenced(nTempLemmaIndex, arrTempLemma,
-																				nTempSmurfsRefIndex, arrTempSmurfsRef,
-																				bFlag, &pUnitLemmaList, /*m lemma is added in here */
-																				&pUnitLemmaListTail /*m and here */
-																				);
-						assert(nTempSmurfsRefIndex>1);
-						if(nTempSmurfsRefIndex>0) SlideLemma(pNewLemmaInfo, &pUnitLemmaList, &pUnitLemmaListTail);
-					} else {
-						pNewLemmaInfo = AddLemma(nTempLemmaIndex, arrTempLemma,
-														 bFlag, &pUnitLemmaList, /*m lemma is added in here */
-														 &pUnitLemmaListTail /*m and here */
-														 );
-					}
-					pNewLemma = pNewLemmaInfo->pLemma;
-
-            }
-
-            /*m while (1) - the end of backtrack */
-            if(nBacktrackAtom == nInferredAtom) break; 
-         } // if(pBacktrackTop->bWasChoicePoint == true || ... )
 			
-#ifdef DISPLAY_TRACE
-         TB_9(
-            cout << "Examining lemma:" << endl;
-            DisplayLemmaStatus(pBacktrackTop->pLemma);
-            cout << "which witnesses inference X"
-               << pBacktrackTop->nBranchVble << " = "
-               << arrSolution[pBacktrackTop->nBranchVble]
-               << endl;
-         )
-#endif
-
-         // Check whether the atom at the top of the backtrack stack
-         // is relevent to the resolution done so far.
-         if (arrLemmaFlag[nBacktrackAtom])
-         {
-            // The backtrack atom is relevant to the resolution done so far.
-            // Therefore, include its attached lemma in the resolution process.
-#ifdef DISPLAY_TRACE
-            TB_9(
-               cout << "Lemma relevant to contradiction." << endl;
-            )
-#endif
-
-            // copy all literals not present in arrTempLemma into arrTempLemma
-            // (not marked in arrLemmaFlag)
-            LemmaBlock *pLemmaBlock = pBacktrackTop->pLemma;
-            int *arrLits = pLemmaBlock->arrLits;
-            int nLemmaLength = arrLits[0];
-            int nLemmaLiteral;
-            int nLemmaVble;
-
-            for (int nLitIndex = 1, nLitIndexInBlock = 1;
-                  nLitIndex <= nLemmaLength;
-                  nLitIndex++, nLitIndexInBlock++)
-            {
-               if (nLitIndexInBlock == LITS_PER_LEMMA_BLOCK)
-               {
-                  nLitIndexInBlock = 0;
-                  pLemmaBlock = pLemmaBlock->pNext;
-                  arrLits = pLemmaBlock->arrLits;
-               }
-               nLemmaLiteral = arrLits[nLitIndexInBlock];
-               nLemmaVble = abs(nLemmaLiteral);
-               if (arrLemmaFlag[nLemmaVble] == false)
-               {
-                  arrLemmaFlag[nLemmaVble] = true;
-                  arrTempLemma[nTempLemmaIndex++] = nLemmaLiteral;
-                  if(arrBacktrackStackIndex[nLemmaVble] >= arrBacktrackStackIndex[nInferredAtom])
-                     nNumForcedInfsBelowCurrentCP++;
-                  assert(arrSolution[nLemmaVble] 
-                        == (nLemmaLiteral > 0 ? BOOL_FALSE : BOOL_TRUE));
-               }
-            }
-				
-				if(slide_lemmas) {
-					// copy all smurf references not present in arrTempSmurfsRef into arrTempSmurfsRef
-					// (not marked in arrSmurfsRefFlag)
-
-					LemmaBlock *pSRBlock = pBacktrackTop->pLemmaInfo->pSmurfsReferenced;
-					int *arrSRLits = pSRBlock->arrLits;
-					int nSRLength = arrSRLits[0];
-					
-					for (int nLitIndex = 1, nLitIndexInBlock = 1;
-						  nLitIndex <= nSRLength;
-						  nLitIndex++, nLitIndexInBlock++)
-					  {
-						  if (nLitIndexInBlock == LITS_PER_LEMMA_BLOCK) {
+         if (pBacktrackTop->bWasChoicePoint == true || 
+				 nNumForcedInfsBelowCurrentCP == 0 ||
+				 nBacktrackAtom == nInferredAtom) 
+			  {
+				  //nBacktrackAtom is a UIP-unique implication point
+				  
+				  if (arrLemmaFlag[nBacktrackAtom]) 
+					 {
+						 
+						 // Resolve out lemma literals which are not needed. (Cleaning up the lemma)
+						 // Do this by checking the level at which each literal
+						 // was inferred.
+						 int nTempLemmaLiteral;
+						 int nTempLemmaVble;
+						 
+						 int nCopytoIndex = 0;
+						 for (int i = 0; i < nTempLemmaIndex; i++)
+							{
+								nTempLemmaLiteral = arrTempLemma[i];
+								nTempLemmaVble = abs(nTempLemmaLiteral);
+								if ((arrBacktrackStackIndex[nTempLemmaVble] 
+									  <= nBacktrackAtomStackIndex) || 
+									 (nTempLemmaVble == nBacktrackAtom))
+								  {
+									  arrTempLemma[nCopytoIndex++] = nTempLemmaLiteral;
+								  }
+								else
+								  arrUnsetLemmaFlagVars[nUnsetLemmaFlagIndex++] 
+								  = nTempLemmaVble;
+							}
+						 nTempLemmaIndex = nCopytoIndex;
+						 
+						 if (nTempLemmaIndex <= 0)
+							{
+								// Lemma of length zero. The problem is unsat.
+								fprintf(stderr,  "1: Lemma of length zero.");
+								return 1; // goto_NoSolution;
+							}
+						 
+						 bool bFlag = (MAX_NUM_CACHED_LEMMAS > 0);
+						 
+						 assert(IsInLemmaList(pUnitLemmaListTail,
+													 &pUnitLemmaList));	  
+						 
+						 if(slide_lemmas) {
+							 pNewLemmaInfo = AddLemma_SmurfsReferenced(nTempLemmaIndex, arrTempLemma,
+																					 nTempSmurfsRefIndex, arrTempSmurfsRef,
+																					 bFlag, &pUnitLemmaList, /*m lemma is added in here */
+																					 &pUnitLemmaListTail /*m and here */
+																					 );
+							 assert(nTempSmurfsRefIndex>1);
+							 if(nTempSmurfsRefIndex>0) SlideLemma(pNewLemmaInfo, &pUnitLemmaList, &pUnitLemmaListTail);
+						 } else {
+							 pNewLemmaInfo = AddLemma(nTempLemmaIndex, arrTempLemma,
+															  bFlag, &pUnitLemmaList, /*m lemma is added in here */
+															  &pUnitLemmaListTail /*m and here */
+															  );
+						 }
+						 pNewLemma = pNewLemmaInfo->pLemma;
+						 
+					 }
+				  
+				  /*m while (1) - the end of backtrack */
+				  if(nBacktrackAtom == nInferredAtom) break; 
+			  } // if(pBacktrackTop->bWasChoicePoint == true || ... )
+			
+			// Check whether the atom at the top of the backtrack stack
+			// is relevent to the resolution done so far.
+			if (arrLemmaFlag[nBacktrackAtom])
+			  {
+				  // The backtrack atom is relevant to the resolution done so far.
+				  // Therefore, include its attached lemma in the resolution process.
+						
+				  if(1 && pBacktrackTop->pLemmaInfo) { //SEAN!!!
+					  if(pBacktrackTop->pLemmaInfo->nLemmaCameFromSmurf)
+						 arrPrevTempLemma[nPrevTempLemmaIndex++] = pBacktrackTop->pLemmaInfo->nLemmaNumber;
+					  else 
+						 arrPrevTempLemma[nPrevTempLemmaIndex++] = -pBacktrackTop->pLemmaInfo->nLemmaNumber;
+					  fprintf(stdout, "%d [label=\"", pBacktrackTop->pLemmaInfo->nLemmaNumber);
+					  DisplayLemmaToFile(stdout, pBacktrackTop->pLemma);
+					  fprintf(stdout, "\"]\n");
+				  }
+				  
+				  // copy all literals not present in arrTempLemma into arrTempLemma
+				  // (not marked in arrLemmaFlag)
+				  LemmaBlock *pLemmaBlock = pBacktrackTop->pLemma;
+				  int *arrLits = pLemmaBlock->arrLits;
+				  int nLemmaLength = arrLits[0];
+				  int nLemmaLiteral;
+				  int nLemmaVble;
+				  
+				  for (int nLitIndex = 1, nLitIndexInBlock = 1;
+						 nLitIndex <= nLemmaLength;
+						 nLitIndex++, nLitIndexInBlock++)
+					 {
+						 if (nLitIndexInBlock == LITS_PER_LEMMA_BLOCK)
+							{
+								nLitIndexInBlock = 0;
+								pLemmaBlock = pLemmaBlock->pNext;
+								arrLits = pLemmaBlock->arrLits;
+							}
+						 nLemmaLiteral = arrLits[nLitIndexInBlock];
+						 nLemmaVble = abs(nLemmaLiteral);
+						 if (arrLemmaFlag[nLemmaVble] == false)
+							{
+								arrLemmaFlag[nLemmaVble] = true;
+								arrTempLemma[nTempLemmaIndex++] = nLemmaLiteral;
+								if(arrBacktrackStackIndex[nLemmaVble] >= arrBacktrackStackIndex[nInferredAtom])
+								  nNumForcedInfsBelowCurrentCP++;
+								assert(arrSolution[nLemmaVble] 
+										 == (nLemmaLiteral > 0 ? BOOL_FALSE : BOOL_TRUE));
+							}
+					 }
+				  
+				  if(slide_lemmas) {
+					  // copy all smurf references not present in arrTempSmurfsRef into arrTempSmurfsRef
+					  // (not marked in arrSmurfsRefFlag)
+					  // 
+					  LemmaBlock *pSRBlock = pBacktrackTop->pLemmaInfo->pSmurfsReferenced;
+					  int *arrSRLits = pSRBlock->arrLits;
+					  int nSRLength = arrSRLits[0];
+					  
+					  for (int nLitIndex = 1, nLitIndexInBlock = 1;
+							 nLitIndex <= nSRLength;
+							 nLitIndex++, nLitIndexInBlock++)
+						 {
+							 if (nLitIndexInBlock == LITS_PER_LEMMA_BLOCK) {
 								 nLitIndexInBlock = 0;
 								 pSRBlock = pSRBlock->pNext;
 								 arrSRLits = pSRBlock->arrLits;
-						  }
-						  int nSmurfRef = arrSRLits[nLitIndexInBlock];
-						  d9_printf2("nSmurfRef = %d\n", nSmurfRef);
-						  
-						  
-						  
-						  if (arrSmurfsRefFlag[nSmurfRef] == false) {
-							  arrSmurfsRefFlag[nSmurfRef] = true;
-							  arrTempSmurfsRef[nTempSmurfsRefIndex++] = nSmurfRef;
-						  }
-					  }
-				}
-			}
-#ifdef DISPLAY_TRACE
-         else 
-            TB_9(
-                  cout << "Lemma irrelevant to contradiction." << endl;
-                );
-         cout << "#ForcedInfsBelowCurrentCP = " << nNumForcedInfsBelowCurrentCP << endl;
-
-         TB_9(
-            cout << "Backtracking from forced assignment of X"
-               << nBacktrackAtom << " equal to "
-               << (arrSolution[nBacktrackAtom] == BOOL_TRUE ? "true" : "false")
-               << "." << endl;
-         )
-#endif
-
+							 }
+							 int nSmurfRef = arrSRLits[nLitIndexInBlock];
+							 d9_printf2("nSmurfRef = %d\n", nSmurfRef);
+							 
+							 if (arrSmurfsRefFlag[nSmurfRef] == false) {
+								 arrSmurfsRefFlag[nSmurfRef] = true;
+								 arrTempSmurfsRef[nTempSmurfsRefIndex++] = nSmurfRef;
+							 }
+						 }
+				  }
+			  }
+			
          if (pBacktrackTop->pLemmaInfo && pBacktrackTop->pLemmaInfo->nLemmaCameFromSmurf)
-				 FreeLemma(pBacktrackTop->pLemmaInfo);  // Need to free LemmaInfoStruct that comes from a normal smurf
-
+			  FreeLemma(pBacktrackTop->pLemmaInfo);  // Need to free LemmaInfoStruct that comes from a normal smurf
+			
          arrSolution[nBacktrackAtom] = BOOL_UNKNOWN;
-
+			
       } // bactracking loop
       while (1);
-
+		
       /* remember the value so we can flip it */
       nInferredValue = arrSolution[nInferredAtom];
       arrSolution[nInferredAtom] = BOOL_UNKNOWN;
       _num_backjumps++;
-   }  // backjumping loop
+
+	}  // backjumping loop
    while (arrLemmaFlag[nInferredAtom] == false);
 
+	//SEAN!!!
+	if(1) { /////////////////////				/////////////////////				/////////////////////				/////////////////////
+/*
+		for (int i = 0; i < nPrevTempLemmaIndex; i++) {
+			fprintf(stdout, "%d -> %d [label=%d, minlen=%d", pNewLemmaInfo?pNewLemmaInfo->nLemmaNumber:0, abs(arrPrevTempLemma[i]), (pBacktrackTop+(nPrevTempLemmaIndex-i))->nBranchVble, (arrPrevTempLemma[i]<0)?nPrevTempLemmaIndex+1:nPrevTempLemmaIndex-i);//nBacktrackStackIndex+(nPrevTempLemmaIndex-i));
+			if(arrPrevTempLemma[i]<0)
+			  fprintf(stdout, ", color=red");
+			fprintf(stdout, "]\n");
+		}
+
+      if(!pNewLemma) {
+			int i = 1;
+			for(LemmaInfoStruct *p = pUnitLemmaList.pNextLemma[0]; p != NULL; p = p->pNextLemma[0]) {
+				fprintf(stdout, "%d -> %d [label=%d, minlen=%d, color=red]\n", pNewLemmaInfo?pNewLemmaInfo->nLemmaNumber:0, p->nLemmaNumber, abs(p->nWatchedVble[0]), i*10);
+				i++;
+			}
+		}
+*/		
+		
+		for (int i = 0; i < nPrevTempLemmaIndex-1; i++) {
+			//It would be really great to be able to label the edge by current lemma. (tough!?!?)
+			fprintf(stdout, "%d -> %d [label=%d, minlen=%d", abs(arrPrevTempLemma[i+1]), abs(arrPrevTempLemma[i]), (pBacktrackTop+(nPrevTempLemmaIndex-i))->nBranchVble, (arrPrevTempLemma[i]<0)?nPrevTempLemmaIndex+1:nPrevTempLemmaIndex-i);//nBacktrackStackIndex+(nPrevTempLemmaIndex-i));
+			if(arrPrevTempLemma[i]<0)
+			  fprintf(stdout, ", color=red");
+			fprintf(stdout, "]\n");
+		}
+		fprintf(stdout, "%d -> %d [label=%d, minlen=%d", pNewLemmaInfo?pNewLemmaInfo->nLemmaNumber:0, abs(arrPrevTempLemma[nPrevTempLemmaIndex-1]), (pBacktrackTop+1)->nBranchVble, (arrPrevTempLemma[nPrevTempLemmaIndex-1]<0)?nPrevTempLemmaIndex+1:1);//nBacktrackStackIndex+(nPrevTempLemmaIndex-i));
+		if(arrPrevTempLemma[nPrevTempLemmaIndex-1]<0)
+		  fprintf(stdout, ", color=red");
+		fprintf(stdout, "]\n");
+		
+		if(!pNewLemma) {
+			int i = 1;
+			LemmaInfoStruct *p;
+			for(p = pUnitLemmaList.pNextLemma[0]; p->pNextLemma[0] != NULL; p = p->pNextLemma[0]) {
+				fprintf(stdout, "%d -> %d [label=%d, minlen=%d, color=red]\n", p->nLemmaNumber, p->pNextLemma[0]->nLemmaNumber, abs(p->nWatchedVble[0]), i);
+				i++;
+			}
+			fprintf(stdout, "%d -> %d [label=%d, minlen=%d, color=red]\n", pNewLemmaInfo?pNewLemmaInfo->nLemmaNumber:0, pUnitLemmaList.pNextLemma[0]->nLemmaNumber, abs(p->nWatchedVble[0]), i);
+		}
+		
+		fprintf(stdout, "%d [label=\"", pNewLemmaInfo?pNewLemmaInfo->nLemmaNumber:0);
+		if(pNewLemma) DisplayLemmaToFile(stdout, pNewLemma);
+		else fprintf(stdout, "0");
+		fprintf(stdout, "\", shape=box]\n");
+		
+		//Need something like - if pChoicePointTop-1 == pStartChoicePointTop, make a diamond shaped node.
+		
+	} ///////////////////////////////				///////////////////////////////				///////////////////////////////
+
+	if (pChoicePointTop < pStartChoicePointStack)
+	  {
+		  // return ERR_
+		  //fprintf(stderr, "\nHERE %d\n", pChoicePointTop->nBranchVble);
+		  return 1;
+	  }
+	
    _num_backjumps--; /*m last backjump was not just backtrack */
    if (_num_backjumps) {
       ite_counters[NUM_TOTAL_BACKJUMPS]+=_num_backjumps;
       ite_counters[NUM_BACKJUMPS]++;
    }
-
+	
    // Pop heuristic scores.
    if (procHeurBacktrack) procHeurBacktrack(_num_backjumps+1);
 

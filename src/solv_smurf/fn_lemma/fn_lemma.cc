@@ -51,7 +51,9 @@ FnLemmaInit() {
          9, "arrTempLemma");
    arrLemmaFlag = (bool*)ite_calloc(gnMaxVbleIndex+1, sizeof(bool),
          9, "arrLemmaFlag");
-
+   arrPrevTempLemma = (int*)ite_calloc(gnMaxVbleIndex, sizeof(int),
+         9, "arrTempLemma");
+	
 	if(slide_lemmas) {
 		arrTempSmurfsRef = (int*)ite_calloc(nmbrFunctions, sizeof(int),
 			9, "arrTempSmurfsRef");

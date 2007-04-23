@@ -153,6 +153,8 @@ ITE_INLINE void DisplayAllBrancherLemmas();
 ITE_INLINE void DisplayAllBrancherLemmasToFile(char *filename, int flag);
 ITE_INLINE void DisplayLemma(LemmaBlock *pLemma);
 ITE_INLINE void DisplayLemmaToFile(FILE *pFile, LemmaBlock *pLemma);
+ITE_INLINE void DisplayLemmaIdentifierToFile(FILE *pFile, LemmaBlock *pLemma);
+ITE_INLINE void DisplayLemmaArrayToFile(FILE *pFile, int *arrLemma, int nLemmaIndex);
 ITE_INLINE void DisplayLemmaStatus(LemmaBlock *pLemma);
 ITE_INLINE void DisplayLemmaLevels(LemmaBlock *pLemma, int arrLevel[]);
 ITE_INLINE void DisplayLemmaInfo(LemmaInfoStruct *pLemmaInfo);
