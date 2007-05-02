@@ -42,8 +42,7 @@
 t_arrVarScores *arrVSIDSVarScores = NULL;
 
 ITE_INLINE int
-HrVSIDSInit()
-{
+HrVSIDSInit() {
    InitVSIDSHeurArrays(gnMaxVbleIndex);
 
    //procHeurUpdate = HrVSIDSUpdate;
