@@ -92,34 +92,45 @@ HrVSIDSFree()
 ITE_INLINE int
 HrVSIDSUpdate()
 {
-   if (ite_counters[NUM_BACKTRACKS] % 255 == 0)
+   if (ite_counters[NUM_BACKTRACKS] % 1000 != 0)
    {
-      for (int i = 1; i<gnMaxVbleIndex; i++)
+	  for (int i = 1; i<gnMaxVbleIndex; i++)
       {
          d9_printf4("%d: (pos count = %d, neg count = %d)\n", i, arrLemmaVbleCountsPos[i], arrLemmaVbleCountsNeg[i]);
-         arrVSIDSVarScores[i].pos = arrVSIDSVarScores[i].pos/2 + 
-            arrLemmaVbleCountsPos[i] - arrVSIDSVarScores[i].last_count_pos;
-         arrVSIDSVarScores[i].neg = arrVSIDSVarScores[i].neg/2 + 
-            arrLemmaVbleCountsNeg[i] - arrVSIDSVarScores[i].last_count_neg;
-         arrVSIDSVarScores[i].last_count_pos = arrLemmaVbleCountsPos[i];
-         arrVSIDSVarScores[i].last_count_neg = arrLemmaVbleCountsNeg[i];
+		 
+		 //if the variable is positive, increment .pos
+		 if((arrLemmaVbleCountsPos[i] % 1000) != (arrVSIDSVarScores[i].last_count_pos % 1000))
+		 {
+			arrVSIDSVarScores[i].pos += 1;
+			arrVSIDSVarScores[i].last_count_pos = arrLemmaVbleCountsPos[i];
+		 }
+		 else //else if the variable is negative, increment .neg
+		 {
+			arrVSIDSVarScores[i].neg += 1;
+			arrVSIDSVarScores[i].last_count_neg = arrLemmaVbleCountsNeg[i];
+		 }
       }
+   }
+   else //else divide all counters by 2
+   {
+		for(int i = 0; i < gnMaxVbleIndex; i++)
+		{
+			arrVSIDSVarScores[i].neg = arrVSIDSVarScores[i].neg / 2;
+			arrVSIDSVarScores[i].pos = arrVSIDSVarScores[i].pos / 2;
+		}
    }
    return NO_ERROR;
 }
 
 
-#define J_ONE 1
+
 #define HEUR_WEIGHT(x,i) (arrLemmaVbleCountsPos[i] > arrLemmaVbleCountsNeg[i] ?  arrLemmaVbleCountsPos[i] : arrLemmaVbleCountsNeg[i]);
 
-//Var Score
-//#define HEUR_WEIGHT(x,i) (var_score[i] * (J_ONE+arrLemmaVbleCountsNeg[i]>arrLemmaVbleCountsPos[i]?arrLemmaVbleCountsNeg[i]:arrLemmaVbleCountsPos[i]))
-
-//#define HEUR_EXTRA_OUT()  { fprintf(stderr, "%c%d (pos: %d, neg %d)\n", (*pnBranchValue==BOOL_TRUE?'+':'-'), *pnBranchAtom, arrLemmaVbleCountsPos[*pnBranchAtom], arrLemmaVbleCountsNeg[*pnBranchAtom]);}
 #define HEUR_FUNCTION VSIDS_OptimizedHeuristic
+
 #define HEUR_SIGN(nBestVble, multPos, multNeg) \
-  (arrLemmaVbleCountsPos[nBestVble]*multPos > arrLemmaVbleCountsNeg[nBestVble]*multNeg?\
-   BOOL_TRUE:BOOL_FALSE)
+  (arrLemmaVbleCountsPos[nBestVble] > arrLemmaVbleCountsNeg[nBestVble] ? BOOL_TRUE:BOOL_FALSE)
+   
 #include "hr_choice.cc"
 
 #undef HEUR_WEIGHT
