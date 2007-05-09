@@ -45,11 +45,11 @@ ITE_INLINE int
 HrVSIDSInit() {
    InitVSIDSHeurArrays(gnMaxVbleIndex);
 
-   //procHeurUpdate = HrVSIDSUpdate;
+   procHeurUpdate = HrVSIDSUpdate;
    procHeurFree = HrVSIDSFree;
    procHeurSelect = VSIDS_OptimizedHeuristic;
    procHeurAddLemma = AddVSIDSHeuristicInfluence;
-   //procHeurAddLemmaSpace = AddVSIDSSpaceHeuristicInfluence;
+   procHeurAddLemmaSpace = AddVSIDSSpaceHeuristicInfluence;
    procHeurRemoveLemma = RemoveVSIDSHeuristicInfluence;
 
    arrVSIDSVarScores = (t_arrVarScores*)ite_calloc(gnMaxVbleIndex, 
@@ -91,33 +91,33 @@ HrVSIDSFree()
 ITE_INLINE int
 HrVSIDSUpdate()
 {
-   if (ite_counters[NUM_BACKTRACKS] % 1000 != 0)
-   {
-	  for (int i = 1; i<gnMaxVbleIndex; i++)
-      {
-         d9_printf4("%d: (pos count = %d, neg count = %d)\n", i, arrLemmaVbleCountsPos[i], arrLemmaVbleCountsNeg[i]);
-		 
-		 //if the variable is positive, increment .pos
-		 if((arrLemmaVbleCountsPos[i] % 1000) != (arrVSIDSVarScores[i].last_count_pos % 1000))
-		 {
-			arrVSIDSVarScores[i].pos += 1;
-			arrVSIDSVarScores[i].last_count_pos = arrLemmaVbleCountsPos[i];
-		 }
-		 else //else if the variable is negative, increment .neg
-		 {
-			arrVSIDSVarScores[i].neg += 1;
-			arrVSIDSVarScores[i].last_count_neg = arrLemmaVbleCountsNeg[i];
-		 }
-      }
-   }
-   else //else divide all counters by 2
-   {
-		for(int i = 0; i < gnMaxVbleIndex; i++)
-		{
+	if (ite_counters[NUM_BACKTRACKS] % 1000 == 0)
+	{
+		for(int i = 0; i < gnMaxVbleIndex; i++)		{
 			arrVSIDSVarScores[i].neg = arrVSIDSVarScores[i].neg / 2;
 			arrVSIDSVarScores[i].pos = arrVSIDSVarScores[i].pos / 2;
+			arrLemmaVbleCountsPos[i] = arrLemmaVbleCountsPos[i] / 2;
+			arrLemmaVbleCountsNeg[i] = arrLemmaVbleCountsNeg[i] / 2;
 		}
-   }
+	}
+	
+	for (int i = 1; i<gnMaxVbleIndex; i++)
+	{
+		d9_printf4("%d: (pos count = %d, neg count = %d)\n", i, arrLemmaVbleCountsPos[i], arrLemmaVbleCountsNeg[i]);
+		 
+		//if the variable is positive, increment .pos
+		if((arrLemmaVbleCountsPos[i] % 1000) != (arrVSIDSVarScores[i].last_count_pos % 1000))
+		{
+			arrVSIDSVarScores[i].pos += 1;
+			arrVSIDSVarScores[i].last_count_pos = arrLemmaVbleCountsPos[i];
+		}
+		else //else if the variable is negative, increment .neg
+		{
+			arrVSIDSVarScores[i].neg += 1;
+			arrVSIDSVarScores[i].last_count_neg = arrLemmaVbleCountsNeg[i];
+		}
+	}
+
    return NO_ERROR;
 }
 
