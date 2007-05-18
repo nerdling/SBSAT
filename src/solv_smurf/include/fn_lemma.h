@@ -145,7 +145,7 @@ typedef struct _LemmaInfoStruct {
   int nLemmaIsASlide;
 } LemmaInfoStruct;
 
-
+extern LemmaInfoStruct *pLPQFirst[3];
 
 ITE_INLINE int LemmaIsSAT(LemmaBlock *pLemma);
 ITE_INLINE void DisplayAllBrancherLemmas();

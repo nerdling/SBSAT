@@ -150,10 +150,10 @@ BerkMin_OptimizedHeuristic(int *pnBranchAtom, int *pnBranchValue)
    //search through clauses until we find a lemma that is NOT satisifed.
    LemmaInfoStruct *pLIS = pLPQFirst[0];
    int nLPQ = 0;
-   for(int i = 0; i < MAX_NUM_CACHED_LEMMAS, nLPQ < 3; i++){
+   for(int i = 0; i < MAX_NUM_CACHED_LEMMAS && nLPQ < 3; i++){
       // all lemmas in LPQ, only search LPQ[0], or maybe only first -L MAX_NUM_CACHED_LEMMAS
      LemmaBlock *pLemma = pLIS->pLemma;
-     assert(!pLemma->nLemmaCameFromSmurf);
+	  assert(!pLIS->nLemmaCameFromSmurf);
 	  //if lemma is not satisfied then choose the variable in this lemma w/ highest weight.
 	  if(!LemmaIsSAT(pLemma)){
 	    //
@@ -161,7 +161,7 @@ BerkMin_OptimizedHeuristic(int *pnBranchAtom, int *pnBranchValue)
 	    //
 	    // Initialize to first uninstantiated variable.
 	    int nLemmaVar = 0, nLemmaIndex = 1;
-	    for (nLemmaVar, nLemmaIndex; nLemmaVar < pLIS->pLemma->arrLits[0]; nLemmaVar++, nLemmaIndex++){
+	    for (; nLemmaVar < pLIS->pLemma->arrLits[0]; nLemmaVar++, nLemmaIndex++){
 	      if(nLemmaIndex == LITS_PER_LEMMA_BLOCK) {
 		nLemmaIndex = 0;
 		pLemma = pLemma->pNext;
@@ -173,10 +173,10 @@ BerkMin_OptimizedHeuristic(int *pnBranchAtom, int *pnBranchValue)
 		break;
 	      }
 	    }
-
+		
 	    if (nBestVble >= 0){
 		// Search through the remaining uninstantiated lemma variables.
-		for (nLemmaVar, nLemmaIndex; nLemmaVar<pLIS->pLemma->arrLits[0]; nLemmaVar++, nLemmaIndex++){
+		for (; nLemmaVar<pLIS->pLemma->arrLits[0]; nLemmaVar++, nLemmaIndex++){
 		  if(nLemmaIndex == LITS_PER_LEMMA_BLOCK) {
 		    nLemmaIndex = 0;
 		    pLemma = pLemma->pNext;
@@ -199,10 +199,11 @@ BerkMin_OptimizedHeuristic(int *pnBranchAtom, int *pnBranchValue)
 	      nLPQ++;
 	      pLIS = pLPQFirst[nLPQ];
 	    }
-	    
 	  }
+	}
 		    
-	  
+
+
    //if all lemmas are satisfied then call BerkMin_AllVarChoiceHeuristic
    return BerkMin_AllVarChoiceHeuristic(pnBranchAtom, pnBranchValue);
 
@@ -221,7 +222,6 @@ ReturnHeuristicResult:
 
    return NO_ERROR;
 
-   }
 }
 
 #undef HEUR_WEIGHT
