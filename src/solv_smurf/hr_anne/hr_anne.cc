@@ -46,11 +46,11 @@ HrAnneInit()
 {
    InitAnneHeurArrays(gnMaxVbleIndex);
 
-   //procHeurUpdate = HrAnneUpdate;
+   procHeurUpdate = HrAnneUpdate;
    procHeurFree = HrAnneFree;
    procHeurSelect = Anne_OptimizedHeuristic;
    procHeurAddLemma = AddAnneHeuristicInfluence;
-   //procHeurAddLemmaSpace = AddAnneSpaceHeuristicInfluence;
+   procHeurAddLemmaSpace = AddAnneSpaceHeuristicInfluence;
    procHeurRemoveLemma = RemoveAnneHeuristicInfluence;
 
    arrAnneVarScores = (t_arrVarScores*)ite_calloc(gnMaxVbleIndex, 

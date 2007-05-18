@@ -46,11 +46,11 @@ HrBerkMinInit()
 {
    InitBerkMinHeurArrays(gnMaxVbleIndex);
 
-   //procHeurUpdate = HrBerkMinUpdate;
+   procHeurUpdate = HrBerkMinUpdate;
    procHeurFree = HrBerkMinFree;
    procHeurSelect = BerkMin_OptimizedHeuristic;
    procHeurAddLemma = AddBerkMinHeuristicInfluence;
-   //procHeurAddLemmaSpace = AddBerkMinSpaceHeuristicInfluence;
+   procHeurAddLemmaSpace = AddBerkMinSpaceHeuristicInfluence;
    procHeurRemoveLemma = RemoveBerkMinHeuristicInfluence;
 
    arrBerkMinVarScores = (t_arrVarScores*)ite_calloc(gnMaxVbleIndex, 
@@ -92,35 +92,137 @@ HrBerkMinFree()
 ITE_INLINE int
 HrBerkMinUpdate()
 {
-   if (ite_counters[NUM_BACKTRACKS] % 255 == 0)
-   {
-      for (int i = 1; i<gnMaxVbleIndex; i++)
-      {
-         d9_printf4("%d: (pos count = %d, neg count = %d)\n", i, arrLemmaVbleCountsPos[i], arrLemmaVbleCountsNeg[i]);
-         arrBerkMinVarScores[i].pos = arrBerkMinVarScores[i].pos/2 + 
-            arrLemmaVbleCountsPos[i] - arrBerkMinVarScores[i].last_count_pos;
-         arrBerkMinVarScores[i].neg = arrBerkMinVarScores[i].neg/2 + 
-            arrLemmaVbleCountsNeg[i] - arrBerkMinVarScores[i].last_count_neg;
-         arrBerkMinVarScores[i].last_count_pos = arrLemmaVbleCountsPos[i];
-         arrBerkMinVarScores[i].last_count_neg = arrLemmaVbleCountsNeg[i];
-      }
+	if (ite_counters[NUM_BACKTRACKS] % 1000 == 0)
+	{
+		//divide counters by 4
+		for(int i = 1; i < gnMaxVbleIndex; i++)
+		{
+			arrBerkMinVarScores[i].pos = arrBerkMinVarScores[i].pos / 4;
+			arrBerkMinVarScores[i].neg = arrBerkMinVarScores[i].neg / 4;
+			arrLemmaVbleCountsPos[i] = arrLemmaVbleCountsPos[i] / 4;
+			arrLemmaVbleCountsNeg[i] = arrLemmaVbleCountsNeg[i] / 4;
+		}
+	}
+	for (int i = 1; i<gnMaxVbleIndex; i++)
+	{
+		d9_printf4("%d: (pos count = %d, neg count = %d)\n", i, arrLemmaVbleCountsPos[i], arrLemmaVbleCountsNeg[i]);
+        
+		//if the variable is positive, increment .pos
+		if((arrLemmaVbleCountsPos[i] % 1000) > (arrBerkMinVarScores[i].pos % 1000))
+		{	
+			arrBerkMinVarScores[i].pos += 1;
+			arrBerkMinVarScores[i].last_count_pos = arrLemmaVbleCountsPos[i];
+		}
+		else //else the var is negative; increment .neg
+		{
+			arrBerkMinVarScores[i].neg += 1;
+			arrBerkMinVarScores[i].last_count_neg = arrLemmaVbleCountsPos[i];
+		}
    }
    return NO_ERROR;
 }
 
 
-#define J_ONE 1
-#define HEUR_WEIGHT(x,i) (arrLemmaVbleCountsPos[i] > arrLemmaVbleCountsNeg[i] ?  arrLemmaVbleCountsPos[i] : arrLemmaVbleCountsNeg[i]);
+//choose HEUR_WEIGHT from (arrLemmaVbleCountsNeg[i] + arrLemmaVbleCountsPos[i])  -- but if the last clause added was a lemma, then 
+// choose only from variables within that lemma!!  (how do i do this??)
+#define HEUR_WEIGHT(x,i) (arrLemmaVbleCountsPos[i] + arrLemmaVbleCountsNeg[i]);
 
 //Var Score
 //#define HEUR_WEIGHT(x,i) (var_score[i] * (J_ONE+arrLemmaVbleCountsNeg[i]>arrLemmaVbleCountsPos[i]?arrLemmaVbleCountsNeg[i]:arrLemmaVbleCountsPos[i]))
 
 //#define HEUR_EXTRA_OUT()  { fprintf(stderr, "%c%d (pos: %d, neg %d)\n", (*pnBranchValue==BOOL_TRUE?'+':'-'), *pnBranchAtom, arrLemmaVbleCountsPos[*pnBranchAtom], arrLemmaVbleCountsNeg[*pnBranchAtom]);}
-#define HEUR_FUNCTION BerkMin_OptimizedHeuristic
+#define HEUR_FUNCTION BerkMin_AllVarChoiceHeuristic
 #define HEUR_SIGN(nBestVble, multPos, multNeg) \
-  (arrLemmaVbleCountsPos[nBestVble]*multPos > arrLemmaVbleCountsNeg[nBestVble]*multNeg?\
+  (arrLemmaVbleCountsPos[nBestVble] > arrLemmaVbleCountsNeg[nBestVble] ? \
    BOOL_TRUE:BOOL_FALSE)
 #include "hr_choice.cc"
+
+ITE_INLINE int
+BerkMin_OptimizedHeuristic(int *pnBranchAtom, int *pnBranchValue)
+{
+   int nBestVble = -1;
+   int i,j;
+   double fMaxWeight = 0.0;
+   double fVbleWeight;
+
+   HEUR_EXTRA_IN();
+
+   //search through clauses until we find a lemma that is NOT satisifed.
+   LemmaInfoStruct *pLIS = pLPQFirst[0];
+   int nLPQ = 0;
+   for(int i = 0; i < MAX_NUM_CACHED_LEMMAS, nLPQ < 3; i++){
+      // all lemmas in LPQ, only search LPQ[0], or maybe only first -L MAX_NUM_CACHED_LEMMAS
+     LemmaBlock *pLemma = pLIS->pLemma;
+     assert(!pLemma->nLemmaCameFromSmurf);
+	  //if lemma is not satisfied then choose the variable in this lemma w/ highest weight.
+	  if(!LemmaIsSAT(pLemma)){
+	    //
+	    // SEARCH LEMMA VARIABLES
+	    //
+	    // Initialize to first uninstantiated variable.
+	    int nLemmaVar = 0, nLemmaIndex = 1;
+	    for (nLemmaVar, nLemmaIndex; nLemmaVar < pLIS->pLemma->arrLits[0]; nLemmaVar++, nLemmaIndex++){
+	      if(nLemmaIndex == LITS_PER_LEMMA_BLOCK) {
+		nLemmaIndex = 0;
+		pLemma = pLemma->pNext;
+	      }
+	      int l = abs(pLemma->arrLits[nLemmaIndex]);
+	      if (arrSolution[l] == BOOL_UNKNOWN){
+		nBestVble = l;
+		fMaxWeight = HEUR_WEIGHT(arrHeurScores[l], l);
+		break;
+	      }
+	    }
+
+	    if (nBestVble >= 0){
+		// Search through the remaining uninstantiated lemma variables.
+		for (nLemmaVar, nLemmaIndex; nLemmaVar<pLIS->pLemma->arrLits[0]; nLemmaVar++, nLemmaIndex++){
+		  if(nLemmaIndex == LITS_PER_LEMMA_BLOCK) {
+		    nLemmaIndex = 0;
+		    pLemma = pLemma->pNext;
+		  }
+		  int l = abs(pLemma->arrLits[nLemmaIndex]);
+		  if (arrSolution[l] == BOOL_UNKNOWN){
+		    fVbleWeight = HEUR_WEIGHT(arrHeurScores[l], l);
+		    if (HEUR_COMPARE(fVbleWeight, fMaxWeight)){
+		      fMaxWeight = fVbleWeight;
+		      nBestVble = l;
+		    }
+		  }
+		 }
+
+		 goto ReturnHeuristicResult;
+	      }
+	    
+	    pLIS = pLPQFirst[j]->pLPQNext;
+	    if(pLIS == NULL){
+	      nLPQ++;
+	      pLIS = pLPQFirst[nLPQ];
+	    }
+	    
+	  }
+		    
+	  
+   //if all lemmas are satisfied then call BerkMin_AllVarChoiceHeuristic
+   return BerkMin_AllVarChoiceHeuristic(pnBranchAtom, pnBranchValue);
+
+   //return values.
+
+
+ReturnHeuristicResult:
+   assert (arrSolution[nBestVble] == BOOL_UNKNOWN);
+   *pnBranchAtom = nBestVble;
+   if (arrVarTrueInfluences)
+      *pnBranchValue = HEUR_SIGN(nBestVble, arrVarTrueInfluences[nBestVble], (1-arrVarTrueInfluences[nBestVble]));
+   else
+      *pnBranchValue = HEUR_SIGN(nBestVble, 1, 1);
+
+   HEUR_EXTRA_OUT();
+
+   return NO_ERROR;
+
+   }
+}
 
 #undef HEUR_WEIGHT
 #undef HEUR_SIGN

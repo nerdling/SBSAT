@@ -34,14 +34,12 @@
  associated documentation, even if University of Cincinnati has been advised
  of the possibility of those damages.
 *********************************************************************/
-
 #ifndef FN_LEMMA_H
 #define FN_LEMMA_H
 
 extern int nCallsToAddLemma;
 extern int gnNumCachedLemmas;
 extern int nNumCachedLemmas[3];
-
 
 #define LEMMA_SPACE_SIZE 50000  // initial size -- expandable in these inc.
 // # of lemma blocks allocated to store all lemmas. This includes prime 
@@ -146,6 +144,7 @@ typedef struct _LemmaInfoStruct {
 	
   int nLemmaIsASlide;
 } LemmaInfoStruct;
+
 
 
 ITE_INLINE int LemmaIsSAT(LemmaBlock *pLemma);
