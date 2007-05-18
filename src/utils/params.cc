@@ -58,6 +58,7 @@ int  autarky=0; /* autarkies enabled */
 char debug_dev[256]="stderr";
 int USE_AUTARKY_LEMMAS;
 int slide_lemmas;
+int print_search_dot;
 
 void DO_ALL(int);
 void DO_ALL_default(int value);
@@ -251,6 +252,8 @@ t_opt options[] = {
 	  "Enable/Disable Recreating a new set of prover3 BDDs (1/0)"},
 { &DO_IDENTIFY_SAME_STRUCTURE, "Is",  "Is",  P_INT, V(i:0,"0"),  V(i:1,"1"), VAR_NORMAL, 0,
 	  "Enable/Disable Identifying BDDs with the same structure/function type (1/0)"},
+{ &DO_EXTEND_RES, "Er",  "Er",  P_INT, V(i:0,"0"),  V(i:1,"1"), VAR_NORMAL, 0,
+	  "Enable/Disable Creating Extended Resolvents for all pairs of variables (1/0)"},
 { &max_preproc_time, "",  "max-preproc-time", P_INT, V(i:0,"0"),  V(i:0,"0"), VAR_NORMAL, 0,
 		"set the time limit in seconds (0=no limit)"},
 { &do_split_max_vars, "",  "do-split-max-vars", P_INT, V(i:0,"0"),  V(i:10,"10"), VAR_NORMAL, 0,
@@ -296,11 +299,14 @@ t_opt options[] = {
 { csv_depth_breadth_file, "", "csv-depth-breadth-file", P_STRING, 
 		V(i:255,"255"), {""}, VAR_NORMAL, 0, 
                 "Save depth/breadth statistic"},
+
 { &backjumping, "", "backjumping", P_INT, V(i:0,"0"), V(i:1,"1"), VAR_NORMAL, 0,
 		"Enable/Disable backjumping (1/0)"},
 { &MAX_NUM_CACHED_LEMMAS, "L", "max-cached-lemmas", P_INT,
 		V(i:0,"0"), V(i:5000, "5000"), VAR_NORMAL, 0,
                 "set the maximum # of lemmas"}, 
+{ &print_search_dot, "", "print-search-tree", P_INT, V(i:0,"0"),  V(i:0,"0"), VAR_NORMAL, 0,
+			      "Enable/Disable printing the search tree in .dot format (1/0)"},
 { &slide_lemmas, "", "slide-lemmas", P_INT, V(i:0,"0"),  V(i:0,"0"), VAR_NORMAL, 0,
 			      "Enable/Disable attempting to slide lemmas during search (1/0)"},
 { &USE_AUTARKY_SMURFS, "", "autarky-smurfs", P_INT, V(i:0,"0"), V(i:0,"0"), VAR_NORMAL, 0,
@@ -570,6 +576,7 @@ DO_ALL(int value)
    set_param_int(strcpy(tmp_str, "Pr"), value);
    set_param_int(strcpy(tmp_str, "St"), value);
 	set_param_int(strcpy(tmp_str, "Sa"), value);
+	set_param_int(strcpy(tmp_str, "Ss"), value);
    set_param_int(strcpy(tmp_str, "Ex"), value);
    set_param_int(strcpy(tmp_str, "Ea"), value);
 	set_param_int(strcpy(tmp_str, "Pa"), value);
@@ -580,6 +587,7 @@ DO_ALL(int value)
 	set_param_int(strcpy(tmp_str, "Ff"), value);
 	set_param_int(strcpy(tmp_str, "P3"), value);
 	set_param_int(strcpy(tmp_str, "Is"), value);
+	set_param_int(strcpy(tmp_str, "Er"), value);
    // also add a line to the following function
 }
 
@@ -592,6 +600,7 @@ DO_ALL_default(int value)
    change_defa_param_int(strcpy(tmp_str, "Pr"), value);
    change_defa_param_int(strcpy(tmp_str, "St"), value);
    change_defa_param_int(strcpy(tmp_str, "Sa"), value);
+	change_defa_param_int(strcpy(tmp_str, "Ss"), value);	
    change_defa_param_int(strcpy(tmp_str, "Ex"), value);
    change_defa_param_int(strcpy(tmp_str, "Ea"), value);
    change_defa_param_int(strcpy(tmp_str, "Pa"), value);
@@ -602,6 +611,7 @@ DO_ALL_default(int value)
    change_defa_param_int(strcpy(tmp_str, "Ff"), value);
    change_defa_param_int(strcpy(tmp_str, "P3"), value);
 	change_defa_param_int(strcpy(tmp_str, "Is"), value);
+	change_defa_param_int(strcpy(tmp_str, "Er"), value);
 }
 
 void

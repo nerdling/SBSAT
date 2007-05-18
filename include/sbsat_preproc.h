@@ -132,6 +132,7 @@ int Do_Prover3();
 int Do_Identify_Same_Structure();
 int Do_SafeAssign();
 int Do_SafeSearch();
+int Do_ExtendRes();
 void Do_Flow();
 void Do_Flow_Grouping();
 

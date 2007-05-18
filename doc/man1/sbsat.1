@@ -259,6 +259,11 @@ Enable/Disable Identifying BDDs with the same
 structure/function type (1/0)
 [default=1]
 .TP
+\fB\-\-Er\fR <number>, \fB\-Er\fR <number>
+Enable/Disable Creating Extended Resolvents for all
+pairs of variables (1/0)
+[default=1]
+.TP
 \fB\-\-max\-preproc\-time\fR <number>
 set the time limit in seconds (0=no limit)
 [default=0]
@@ -322,6 +327,11 @@ Enable/Disable backjumping (1/0) [default=1]
 .TP
 \fB\-\-max\-cached\-lemmas\fR <number>, \fB\-L\fR <number>
 set the maximum # of lemmas [default=5000]
+.TP
+\fB\-\-print\-search\-tree\fR <number>
+Enable/Disable printing the search tree in .dot
+format (1/0)
+[default=0]
 .TP
 \fB\-\-slide\-lemmas\fR <number> Enable/Disable attempting to slide lemmas during
 search (1/0)

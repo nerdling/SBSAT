@@ -685,6 +685,31 @@ BDDNode *putite(int intnum, BDDNode * bdd)
       strcpy (macros, "print_flat_xdd");
       return v1;
 	}
+	if (!strcasecmp (macros, "print_dot_stdout")) {
+		BDDNode **put_dot_bdds = (BDDNode **)ite_calloc(1, sizeof(BDDNode *), 9, "put_dot_bdds");
+		put_dot_bdds[0] = putite (intnum, bdd);
+      strcpy (macros, "print_dot_stdout");
+		printBDDdot_stdout(put_dot_bdds, 1);
+		ite_free((void**)&put_dot_bdds);
+      return true_ptr;
+	}
+	if (!strncasecmp (macros, "print_dot_stdout", 16)) {
+		int numarguments = 0;
+      for (unsigned int x = 16; x < strlen (macros); x++) {
+			if (macros[x] < '0' || macros[x] > '9') {
+				fprintf (stderr, "\nNon integer value found following keyword 'print_dot' (%s)...exiting:%d\n", macros, markbdd_line);
+				exit (1);
+			}
+			numarguments = 10*numarguments + macros[x] - '0';
+		}
+		BDDNode **put_dot_bdds = (BDDNode **)ite_calloc(numarguments, sizeof(BDDNode *), 9, "put_dot_bdds");
+      for (int x = 0; x < numarguments; x++)
+		  put_dot_bdds[x] = putite (intnum, bdd);
+      strcpy (macros, "print_dot_stdout#");
+		printBDDdot_stdout(put_dot_bdds, numarguments);
+		ite_free((void**)&put_dot_bdds);
+      return true_ptr;
+	}
 	if (!strcasecmp (macros, "print_dot")) {
 		BDDNode **put_dot_bdds = (BDDNode **)ite_calloc(1, sizeof(BDDNode *), 9, "put_dot_bdds");
 		put_dot_bdds[0] = putite (intnum, bdd);
@@ -1096,6 +1121,7 @@ char getNextSymbol (int &intnum, BDDNode *&bdd) {
 
 void bddloop () {
 	fscanf (finputfile, "%ld %ld", &numinp, &numout);
+
 	numinp += 3;
 	markbdd_line = 1;
 	int intnum = 0, keepnum = 0;

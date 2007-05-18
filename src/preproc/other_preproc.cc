@@ -564,7 +564,7 @@ void cheat_replaceall() {
 		  numinp = variables[x].num[length[x] - 1];
 	}
 	
-	store *amount = new store[numinp + 2];
+	store *amount2 = new store[numinp + 2];
 	int *tempmem = new int[numinp + 2];
 	
 	for (i = 0; i < numinp + 1; i++) tempmem[i] = 0;
@@ -576,27 +576,27 @@ void cheat_replaceall() {
 	}
 	
 	for (x = 1; x < numinp + 1; x++) {
-		amount[x].num = new int[tempmem[x] + 1];
-      amount[x].length = 0;
+		amount2[x].num = new int[tempmem[x] + 1];
+      amount2[x].length = 0;
 	}
 	
   for (x = 0; x < nmbrFunctions; x++) {
 	  for (i = 0; i < length[x]; i++) {
-		  amount[variables[x].num[i]].num[amount[variables[x].num[i]].length] = x;
-		  amount[variables[x].num[i]].length++;
+		  amount2[variables[x].num[i]].num[amount2[variables[x].num[i]].length] = x;
+		  amount2[variables[x].num[i]].length++;
 	  }
   }
 	
 	int replaceat = 0;
 	for (x = 1; x < numinp + 1; x++) {
-      if (amount[x].length == 0)
+      if (amount2[x].length == 0)
 		  continue;
       replaceat++;
       variablelist[replaceat].replace = x;
       //    fprintf(stderr, "Replacing %d with %d\n", x, replaceat);
       independantVars[replaceat] = independantVars[x];
-      for (int z = 0; z < amount[x].length; z++)
-		  cheat_replace (functions[amount[x].num[z]], x, replaceat);
+      for (int z = 0; z < amount2[x].length; z++)
+		  cheat_replace (functions[amount2[x].num[z]], x, replaceat);
       for (int z = 0; z < nmbrFunctions; z++) {
 			if (equalityVble[z] == x)
 			  equalityVble[z] = replaceat;
@@ -625,7 +625,7 @@ void cheat_replaceall() {
 	 */
 	
 	for (x = 1; x < numinp + 1; x++)
-	  delete amount[x].num;
+	  delete amount2[x].num;
 	
 	numinp = replaceat;
 }

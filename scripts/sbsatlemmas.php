@@ -161,40 +161,40 @@ $logscales[1] = "x";
 $logscales[2] = "y";
 $logscales[3] = "xy";
 
-$logscale = $_POST["logscale"];
+$logscale = $_GET["logscale"];
 if (!isset($logscale)) $logscale = $_GET["logscale"];
 
-$show = $_POST["show"];
+$show = $_GET["show"];
 if (!isset($show)) $show = $_GET["show"];
 
-$gtype = $_POST["gtype"];
+$gtype = $_GET["gtype"];
 if (!isset($gtype)) $gtype = $_GET["gtype"];
 
-$files = $_POST["files"];
+$files = $_GET["files"];
 if (!isset($files)) $files = $_GET["files"];
 
-$enabled = $_POST["enabled"];
+$enabled = $_GET["enabled"];
 if (!isset($enabled)) $enabled = $_GET["enabled"];
 
-$debug = $_POST["debug"];
+$debug = $_GET["debug"];
 if (!isset($debug)) $debug = $_GET["debug"];
 
-$debug_src = $_POST["debug_src"];
+$debug_src = $_GET["debug_src"];
 if (!isset($debug_src)) $debug_src = $_GET["debug_src"];
 
-$termtype = $_POST["termtype"];
+$termtype = $_GET["termtype"];
 if (!isset($termtype)) $termtype = $_GET["termtype"];
 
-$lines = $_POST["lines"];
+$lines = $_GET["lines"];
 if (!isset($lines)) $lines = $_GET["lines"];
 
-$filedesc = $_POST["filedesc"];
+$filedesc = $_GET["filedesc"];
 if (!isset($filedesc)) $filedesc = $_GET["filedesc"];
 
-$title = $_POST["title"];
+$title = $_GET["title"];
 if (!isset($title)) $title = $_GET["title"];
 
-$colors = $_POST["colors"];
+$colors = $_GET["colors"];
 if (!isset($colors)) $colors = $_GET["colors"];
 
 if (!isset($x_axis)) $x_axis = 35;
@@ -230,14 +230,14 @@ if (isset($filedesc) && $filedesc!="" && $filedesc[0]!=".") {
    echo "</BODY></HTML>\n";
    exit;
 }
-if (!isset($_GET["button"]) && !isset($_POST["button"]) &&
-    !isset($_GET["download"]) && !isset($_POST["download"])) {
+if (!isset($_GET["button"]) && !isset($_GET["button"]) &&
+    !isset($_GET["download"]) && !isset($_GET["download"])) {
    /* draw html form */
-   if (isset($_GET["addline"]) || isset($_POST["addline"]))
+   if (isset($_GET["addline"]) || isset($_GET["addline"]))
        $lines++;
-   if (isset($_GET["removeline"]) || isset($_POST["removeline"]))
+   if (isset($_GET["removeline"]) || isset($_GET["removeline"]))
       if ($lines>1) $lines--;
-   echo "<HTML><BODY><FORM NAME=myform METHOD=POST ACTION=\"$SYSappname.php\">\n";
+   echo "<HTML><BODY><FORM NAME=myform METHOD=GET ACTION=\"$SYSappname.php\">\n";
    echo "<B>SBSAT Lemmas</B> -- Plots the lemma histogram generated <BR>\n";
    echo "<B>SBSAT Lemmas</B> -- by sbsat option --reports 1 (and key 'L')<BR>\n";
    echo "Output Format: &nbsp;";
@@ -387,10 +387,10 @@ if ($debug_src)
 else
     $errredir = " 2> /dev/null ";
 
-header("Pragma: no-cache");
-header("Pragma: public");
-header("Expires: 0"); // set expiration time
-header("Cache-Control: must-revalidate, post-check=0, pre-check=0"); 
+//header("Pragma: no-cache");
+//header("Pragma: public");
+//header("Expires: 0"); // set expiration time
+//header("Cache-Control: must-revalidate, post-check=0, pre-check=0"); 
 
 $Cmd = $gnuplot.$errredir." << END\n" .$input."\nEND\n";
 if ($debug || $error) {
@@ -398,7 +398,7 @@ if ($debug || $error) {
    echo $Cmd;
    if (!$debug_src) exit;
 } else 
-if (isset($_GET["download"]) || isset($_POST["download"])) {
+if (isset($_GET["download"]) || isset($_GET["download"])) {
   header("Content-type: application/binary");
   header("Content-Disposition: attachment; filename=".$SYSappname.".".$termtypes[$termtype][4].";");
 }

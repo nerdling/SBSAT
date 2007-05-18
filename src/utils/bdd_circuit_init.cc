@@ -91,7 +91,11 @@ vars_alloc(int n_vars)
          n_vars, sizeof(int), 9, "independantVars");
    variablelist = (varinfo*)ite_recalloc((void*)variablelist, vars_max, 
          n_vars, sizeof(varinfo), 2, "variablelist");
-
+	amount = (llistStruct*)ite_recalloc((void*)amount, vars_max,
+			n_vars, sizeof(llistStruct), 9, "amount");
+	num_funcs_var_occurs = (int *)ite_recalloc((void *)num_funcs_var_occurs, vars_max,
+			n_vars, sizeof(int), 9, "num_funcs_var_occurs");
+	
    for(int x = vars_max; x < n_vars; x++) 
    {
       independantVars[x] = 1;

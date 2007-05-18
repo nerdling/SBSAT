@@ -241,6 +241,8 @@ extern   int *independantVars;
 extern   FNProps *functionProps;
 extern   char **labels;
 extern   varinfo *variablelist;
+extern   llistStruct *amount;
+extern   int *num_funcs_var_occurs;
 extern   float *var_score;
 extern   store *variables;
 extern   int *length;

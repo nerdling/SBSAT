@@ -144,6 +144,7 @@ extern int DO_CLEAR_FUNCTION_TYPE;
 extern int DO_FIND_FUNCTION_TYPE;
 extern int DO_PROVER3;
 extern int DO_IDENTIFY_SAME_STRUCTURE;
+extern int DO_EXTEND_RES;
 
 extern int PARAMS_DUMP;
 
@@ -191,6 +192,7 @@ extern int NO_LEMMAS;
 extern int NO_AU_LEMMAS;
 
 extern int slide_lemmas;
+extern int print_search_dot;
 
 extern int sbj;
 

@@ -45,7 +45,7 @@ int Setting_Neg = 0;
 
 int T;
 int F;
-llistStruct *amount;
+//llistStruct *amount = NULL;
 Equiv *l;
 infer *inferlist;
 infer *lastinfer;
@@ -54,7 +54,7 @@ int notdone;
 int num_inferences = 0;
 int num_safe_assigns = 0;
 float *var_score = NULL;
-int *num_funcs_var_occurs = NULL;
+//int *num_funcs_var_occurs = NULL;
 int str_length;
 int preproc_did_nothing = 0;
 long affected;
@@ -142,7 +142,7 @@ Init_Preprocessing()
 	//numinp = getNuminp();
 
 	l = new Equiv (numinp + 1, nmbrFunctions, T, F);
-	amount = (llistStruct*)calloc(numinp+1, sizeof(llistStruct));
+	if(amount == NULL) amount = (llistStruct*)ite_calloc(numinp+1, sizeof(llistStruct), 9, "amount");
 	
 	//Working with preset variables.
 
@@ -202,7 +202,7 @@ Init_Preprocessing()
 
 	//Done working with preset variables.
 
-	num_funcs_var_occurs = (int *)ite_calloc(numinp+1, sizeof(int), 9, "num_funcs_var_occurs");
+	if(num_funcs_var_occurs == NULL) num_funcs_var_occurs = (int *)ite_calloc(numinp+1, sizeof(int), 9, "num_funcs_var_occurs");
 
 	char p[100];
 	for (int x = 0; x < nmbrFunctions; x++)
@@ -434,7 +434,7 @@ Finish_Preprocessing()
 		amount[x].head = NULL;
 		amount[x].tail = NULL;
 	}
-	free(amount);
+	ite_free((void**)&amount);
 	amount = NULL;
 	
 	ite_free((void**)&num_funcs_var_occurs);

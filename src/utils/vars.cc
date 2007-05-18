@@ -78,6 +78,7 @@ int DO_CLEAR_FUNCTION_TYPE = 1;
 int DO_FIND_FUNCTION_TYPE = 1;
 int DO_PROVER3 = 1;
 int DO_IDENTIFY_SAME_STRUCTURE = 1;
+int DO_EXTEND_RES = 1;
 
 int NO_LEMMAS = 0;
 int NO_AU_LEMMAS = 0;
@@ -158,6 +159,8 @@ char csv_depth_breadth_file[256]="";
 int _bdd_pool_size=1000000;
 
 varinfo *variablelist = NULL;
+llistStruct *amount = NULL;
+int *num_funcs_var_occurs = NULL;
 
 char brancher_presets[4096]="";
 char comment[1024]="";

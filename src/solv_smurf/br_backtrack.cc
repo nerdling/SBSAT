@@ -66,7 +66,7 @@ BackTrack()
 	if(slide_lemmas) nTempSmurfsRefIndex = ConstructTempSmurfsRef(); //This must be before ConstructTempLemma() because
 	                                                                 //pConflictLemmaInfo is nulled in ConstructTempLemma()
 	
-	if(1 && pConflictLemmaInfo) { //SEAN!!!
+	if(print_search_dot && pConflictLemmaInfo) { //SEAN!!!
 		if(pConflictLemmaInfo->nLemmaCameFromSmurf)
 		  arrPrevTempLemma[nPrevTempLemmaIndex++] = pConflictLemmaInfo->nLemmaNumber;
 		else 
@@ -249,7 +249,7 @@ BackTrack()
 				  // The backtrack atom is relevant to the resolution done so far.
 				  // Therefore, include its attached lemma in the resolution process.
 						
-				  if(1 && pBacktrackTop->pLemmaInfo) { //SEAN!!!
+				  if(print_search_dot && pBacktrackTop->pLemmaInfo) { //SEAN!!!
 					  if(pBacktrackTop->pLemmaInfo->nLemmaCameFromSmurf)
 						 arrPrevTempLemma[nPrevTempLemmaIndex++] = pBacktrackTop->pLemmaInfo->nLemmaNumber;
 					  else 
@@ -335,7 +335,7 @@ BackTrack()
    while (arrLemmaFlag[nInferredAtom] == false);
 
 	//SEAN!!!
-	if(1) { /////////////////////				/////////////////////				/////////////////////				/////////////////////
+	if(print_search_dot) { /////////////////////				/////////////////////				/////////////////////				/////////////////////
 /*
 		for (int i = 0; i < nPrevTempLemmaIndex; i++) {
 			fprintf(stdout, "%d -> %d [label=%d, minlen=%d", pNewLemmaInfo?pNewLemmaInfo->nLemmaNumber:0, abs(arrPrevTempLemma[i]), (pBacktrackTop+(nPrevTempLemmaIndex-i))->nBranchVble, (arrPrevTempLemma[i]<0)?nPrevTempLemmaIndex+1:nPrevTempLemmaIndex-i);//nBacktrackStackIndex+(nPrevTempLemmaIndex-i));

@@ -63,7 +63,7 @@ am__objects_1 = create_infs.$(OBJEXT) do_cofactor.$(OBJEXT) \
 	do_simpleand.$(OBJEXT) do_possibleanding.$(OBJEXT) \
 	do_findft.$(OBJEXT) do_safeassign.$(OBJEXT) \
 	do_safesearch.$(OBJEXT) do_ex_safe_cluster.$(OBJEXT) \
-	do_identify_same_structure.$(OBJEXT)
+	do_identify_same_structure.$(OBJEXT) do_extendres.$(OBJEXT)
 am_libpreproc_a_OBJECTS = $(am__objects_1)
 libpreproc_a_OBJECTS = $(am_libpreproc_a_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/include
@@ -188,7 +188,8 @@ sources = create_infs.cc do_cofactor.cc   do_exquantify.cc   \
 	do_split.cc do_steal.cc do_rewind.cc do_clearft.cc \
 	do_prover3.cc equivclass.cc do_simpleand.cc \
 	do_possibleanding.cc do_findft.cc do_safeassign.cc \
-	do_safesearch.cc do_ex_safe_cluster.cc do_identify_same_structure.cc
+	do_safesearch.cc do_ex_safe_cluster.cc do_identify_same_structure.cc \
+	do_extendres.cc
 
 
 #if MYLIBTOOL
@@ -252,6 +253,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_ex_safe_cluster.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_exquantify.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_exquantifyand.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_extendres.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_findft.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_flow.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/do_identify_same_structure.Po@am__quote@

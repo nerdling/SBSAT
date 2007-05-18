@@ -81,6 +81,7 @@ preproc_type preproc[] = {
   { "Ff", 2, Do_Find_FunctionType, NULL, &DO_FIND_FUNCTION_TYPE },
   { "P3", 2, Do_Prover3, NULL, &DO_PROVER3},
   { "Is", 2, Do_Identify_Same_Structure, NULL, &DO_IDENTIFY_SAME_STRUCTURE},
+  { "Er", 2, Do_ExtendRes, NULL, &DO_EXTEND_RES},
   { "", 0, NULL, NULL, NULL }
 };
 
