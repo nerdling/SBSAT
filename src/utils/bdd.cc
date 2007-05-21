@@ -1073,10 +1073,12 @@ int isMIN_MAX(BDDNode *bdd, int *bdd_vars, int bdd_len) {
 	  min++;
 	if(tmp_bdd != false_ptr) return 0;
 
+	min = bdd_len-min;
+	
 	//Now have the min and max
 	
 	//A slow way to do it!
-	//fprintf(stderr, "min=%d, max=%d, len=%d, min, max, bdd_len);
+	//fprintf(stderr, "min=%d, max=%d, len=%d\n", min, max, bdd_len);
 
 	int set_true = 0;
 	if(bdd == MinMaxBDD(bdd_vars, min, max, bdd_len, set_true))
