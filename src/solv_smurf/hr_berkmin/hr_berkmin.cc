@@ -76,7 +76,6 @@ HrBerkMinInit()
       arrLemmaVbleCountsNeg[i] += arrAFS[i].nNumOneAFS;
    }
 */
-
    //return HrBerkMinUpdate();
    return NO_ERROR;
 }
@@ -92,6 +91,7 @@ HrBerkMinFree()
 ITE_INLINE int
 HrBerkMinUpdate()
 {
+
 	if (ite_counters[NUM_BACKTRACKS] % 1000 == 0)
 	{
 		//divide counters by 4
@@ -119,6 +119,7 @@ HrBerkMinUpdate()
 			arrBerkMinVarScores[i].last_count_neg = arrLemmaVbleCountsPos[i];
 		}
    }
+
    return NO_ERROR;
 }
 
@@ -148,61 +149,64 @@ BerkMin_OptimizedHeuristic(int *pnBranchAtom, int *pnBranchValue)
    HEUR_EXTRA_IN();
 
    //search through clauses until we find a lemma that is NOT satisifed.
-   LemmaInfoStruct *pLIS = pLPQFirst[0];
-   int nLPQ = 0;
-   for(int i = 0; i < MAX_NUM_CACHED_LEMMAS && nLPQ < 3; i++){
-      // all lemmas in LPQ, only search LPQ[0], or maybe only first -L MAX_NUM_CACHED_LEMMAS
-     LemmaBlock *pLemma = pLIS->pLemma;
-	  assert(!pLIS->nLemmaCameFromSmurf);
-	  //if lemma is not satisfied then choose the variable in this lemma w/ highest weight.
-	  if(!LemmaIsSAT(pLemma)){
-	    //
-	    // SEARCH LEMMA VARIABLES
-	    //
-	    // Initialize to first uninstantiated variable.
-	    int nLemmaVar = 0, nLemmaIndex = 1;
-	    for (; nLemmaVar < pLIS->pLemma->arrLits[0]; nLemmaVar++, nLemmaIndex++){
-	      if(nLemmaIndex == LITS_PER_LEMMA_BLOCK) {
-		nLemmaIndex = 0;
-		pLemma = pLemma->pNext;
-	      }
-	      int l = abs(pLemma->arrLits[nLemmaIndex]);
-	      if (arrSolution[l] == BOOL_UNKNOWN){
-		nBestVble = l;
-		fMaxWeight = HEUR_WEIGHT(arrHeurScores[l], l);
-		break;
-	      }
-	    }
-		
-	    if (nBestVble >= 0){
-		// Search through the remaining uninstantiated lemma variables.
-		for (; nLemmaVar<pLIS->pLemma->arrLits[0]; nLemmaVar++, nLemmaIndex++){
-		  if(nLemmaIndex == LITS_PER_LEMMA_BLOCK) {
-		    nLemmaIndex = 0;
-		    pLemma = pLemma->pNext;
-		  }
-		  int l = abs(pLemma->arrLits[nLemmaIndex]);
-		  if (arrSolution[l] == BOOL_UNKNOWN){
-		    fVbleWeight = HEUR_WEIGHT(arrHeurScores[l], l);
-		    if (HEUR_COMPARE(fVbleWeight, fMaxWeight)){
-		      fMaxWeight = fVbleWeight;
-		      nBestVble = l;
-		    }
-		  }
-		 }
+   for(int nLPQ = 0; nLPQ < 3; nLPQ++){
+     for(LemmaInfoStruct *pLIS = pLPQFirst[0]; pLIS = NULL; pLIS = pLPQFirst[nLPQ]->pLPQNext){ 
+       // all lemmas in LPQ, only search LPQ[0], or maybe only first -L MAX_NUM_CACHED_LEMMAS
 
-		 goto ReturnHeuristicResult;
-	      }
-	    
-	    pLIS = pLPQFirst[j]->pLPQNext;
-	    if(pLIS == NULL){
-	      nLPQ++;
-	      pLIS = pLPQFirst[nLPQ];
-	    }
-	  }
-	}
-		    
-
+       LemmaBlock *pLemma = pLIS->pLemma;
+       
+       assert(!pLIS->nLemmaCameFromSmurf);
+       //if lemma is not satisfied then choose the variable in this lemma w/ highest weight.
+       if(!LemmaIsSAT(pLemma)){
+	 //
+	 // SEARCH LEMMA VARIABLES
+	 //
+	 // Initialize to first uninstantiated variable.
+	 
+	 int nLemmaVar = 0, nLemmaIndex = 1;
+	 for (; nLemmaVar < pLIS->pLemma->arrLits[0]; nLemmaVar++, nLemmaIndex++){
+	   if(nLemmaIndex == LITS_PER_LEMMA_BLOCK) {
+	     nLemmaIndex = 0;
+	     pLemma = pLemma->pNext;
+	   }
+	   
+	   int l = abs(pLemma->arrLits[nLemmaIndex]);
+	   if (arrSolution[l] == BOOL_UNKNOWN){
+	     nBestVble = l;
+	     fMaxWeight = HEUR_WEIGHT(arrHeurScores[l], l);
+	     break;
+	   }
+	 }
+	 
+	 if (nBestVble >= 0){
+	   // Search through the remaining uninstantiated lemma variables.
+	   for (; nLemmaVar<pLIS->pLemma->arrLits[0]; nLemmaVar++, nLemmaIndex++){
+	     if(nLemmaIndex == LITS_PER_LEMMA_BLOCK) {
+	       nLemmaIndex = 0;
+	       pLemma = pLemma->pNext;
+	     }
+	     int l = abs(pLemma->arrLits[nLemmaIndex]);
+	     if (arrSolution[l] == BOOL_UNKNOWN){
+	       fVbleWeight = HEUR_WEIGHT(arrHeurScores[l], l);
+	       if (HEUR_COMPARE(fVbleWeight, fMaxWeight)){
+		 fMaxWeight = fVbleWeight;
+		 nBestVble = l;
+	       }
+	     }
+	   }
+	   
+	   goto ReturnHeuristicResult;
+	 }
+       
+	 pLIS = pLPQFirst[j]->pLPQNext;
+	 if(pLIS == NULL){
+	   nLPQ++;
+	   pLIS = pLPQFirst[nLPQ];
+	 }
+       }
+     }
+   }
+   
 
    //if all lemmas are satisfied then call BerkMin_AllVarChoiceHeuristic
    return BerkMin_AllVarChoiceHeuristic(pnBranchAtom, pnBranchValue);
@@ -210,13 +214,13 @@ BerkMin_OptimizedHeuristic(int *pnBranchAtom, int *pnBranchValue)
    //return values.
 
 
-ReturnHeuristicResult:
+ ReturnHeuristicResult:
    assert (arrSolution[nBestVble] == BOOL_UNKNOWN);
    *pnBranchAtom = nBestVble;
    if (arrVarTrueInfluences)
-      *pnBranchValue = HEUR_SIGN(nBestVble, arrVarTrueInfluences[nBestVble], (1-arrVarTrueInfluences[nBestVble]));
+     *pnBranchValue = HEUR_SIGN(nBestVble, arrVarTrueInfluences[nBestVble], (1-arrVarTrueInfluences[nBestVble]));
    else
-      *pnBranchValue = HEUR_SIGN(nBestVble, 1, 1);
+     *pnBranchValue = HEUR_SIGN(nBestVble, 1, 1);
 
    HEUR_EXTRA_OUT();
 
