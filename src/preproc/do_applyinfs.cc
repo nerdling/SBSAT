@@ -243,7 +243,7 @@ Do_Apply_Inferences ()
 				if(variablelist[inferlist->nums[0]].true_false == 2) {
 					d7_printf1("Inferring a quantified variable...\n");
 				} else if(variablelist[inferlist->nums[0]].true_false != -1 || variablelist[inferlist->nums[0]].equalvars != 0) {
-					fprintf(stderr, "Inferring a variable twice, exiting...\n");
+					fprintf(stderr, "Inferring a variable (%d) twice, exiting...\n", inferlist->nums[0]);
 					assert(0);
 					exit(1);
 				}
@@ -287,7 +287,7 @@ Do_Apply_Inferences ()
 				if(variablelist[-inferlist->nums[0]].true_false == 2) {
 					d7_printf1("Inferring a quantified variable...\n");
 				} else if(variablelist[-inferlist->nums[0]].true_false != -1 || variablelist[-inferlist->nums[0]].equalvars != 0) {
-					fprintf(stderr, "Inferring a variable twice, exiting...\n");
+					fprintf(stderr, "Inferring a variable (%d) twice, exiting...\n", inferlist->nums[0]);
 					assert(0);
 					exit(1);
 				}

@@ -94,28 +94,24 @@ HrVSIDSUpdate()
 	if (ite_counters[NUM_BACKTRACKS] % 1000 == 0)
 	{
 		for(int i = 0; i < gnMaxVbleIndex; i++)		{
-			arrVSIDSVarScores[i].neg = arrVSIDSVarScores[i].neg / 2;
-			arrVSIDSVarScores[i].pos = arrVSIDSVarScores[i].pos / 2;
+			//arrVSIDSVarScores[i].neg = arrVSIDSVarScores[i].neg / 2;
+			//arrVSIDSVarScores[i].pos = arrVSIDSVarScores[i].pos / 2;
 			arrLemmaVbleCountsPos[i] = arrLemmaVbleCountsPos[i] / 2;
 			arrLemmaVbleCountsNeg[i] = arrLemmaVbleCountsNeg[i] / 2;
 		}
 	}
 	
-	for (int i = 1; i<gnMaxVbleIndex; i++)
-	{
-		d9_printf4("%d: (pos count = %d, neg count = %d)\n", i, arrLemmaVbleCountsPos[i], arrLemmaVbleCountsNeg[i]);
-		 
-		//if the variable is positive, increment .pos
-		if((arrLemmaVbleCountsPos[i] % 1000) != (arrVSIDSVarScores[i].last_count_pos % 1000))
-		{
-			arrVSIDSVarScores[i].pos += 1;
-			arrVSIDSVarScores[i].last_count_pos = arrLemmaVbleCountsPos[i];
-		}
-		else //else if the variable is negative, increment .neg
-		{
-			arrVSIDSVarScores[i].neg += 1;
-			arrVSIDSVarScores[i].last_count_neg = arrLemmaVbleCountsNeg[i];
-		}
+	if(0) {
+		for (int i = 1; i<gnMaxVbleIndex; i++)
+		  {
+			  d9_printf4("%d: (pos count = %d, neg count = %d)\n", i, arrLemmaVbleCountsPos[i], arrLemmaVbleCountsNeg[i]);
+			  
+			  //if the variable is positive, increment .pos
+			  arrVSIDSVarScores[i].pos = arrLemmaVbleCountsPos[i];
+			  //arrVSIDSVarScores[i].last_count_pos = arrLemmaVbleCountsPos[i];
+			  arrVSIDSVarScores[i].neg = arrLemmaVbleCountsNeg[i];
+			  //arrVSIDSVarScores[i].last_count_neg = arrLemmaVbleCountsNeg[i];
+		  }
 	}
 
    return NO_ERROR;

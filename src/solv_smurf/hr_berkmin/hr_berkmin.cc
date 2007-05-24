@@ -97,29 +97,25 @@ HrBerkMinUpdate()
 		//divide counters by 4
 		for(int i = 1; i < gnMaxVbleIndex; i++)
 		{
-			arrBerkMinVarScores[i].pos = arrBerkMinVarScores[i].pos / 4;
-			arrBerkMinVarScores[i].neg = arrBerkMinVarScores[i].neg / 4;
+			//arrBerkMinVarScores[i].pos = arrBerkMinVarScores[i].pos / 4;
+			//arrBerkMinVarScores[i].neg = arrBerkMinVarScores[i].neg / 4;
 			arrLemmaVbleCountsPos[i] = arrLemmaVbleCountsPos[i] / 4;
 			arrLemmaVbleCountsNeg[i] = arrLemmaVbleCountsNeg[i] / 4;
 		}
 	}
-	for (int i = 1; i<gnMaxVbleIndex; i++)
-	{
-		d9_printf4("%d: (pos count = %d, neg count = %d)\n", i, arrLemmaVbleCountsPos[i], arrLemmaVbleCountsNeg[i]);
-        
-		//if the variable is positive, increment .pos
-		if((arrLemmaVbleCountsPos[i] % 1000) > (arrBerkMinVarScores[i].pos % 1000))
-		{	
-			arrBerkMinVarScores[i].pos += 1;
-			arrBerkMinVarScores[i].last_count_pos = arrLemmaVbleCountsPos[i];
-		}
-		else //else the var is negative; increment .neg
-		{
-			arrBerkMinVarScores[i].neg += 1;
-			arrBerkMinVarScores[i].last_count_neg = arrLemmaVbleCountsPos[i];
-		}
-   }
-
+	if (0) {
+		for (int i = 1; i<gnMaxVbleIndex; i++)
+		  {
+			  d9_printf4("%d: (pos count = %d, neg count = %d)\n", i, arrLemmaVbleCountsPos[i], arrLemmaVbleCountsNeg[i]);
+			  
+			  //if the variable is positive, increment .pos
+			  arrBerkMinVarScores[i].pos = arrLemmaVbleCountsPos[i];
+			  //arrBerkMinVarScores[i].last_count_pos = arrLemmaVbleCountsPos[i];
+			  arrBerkMinVarScores[i].neg = arrLemmaVbleCountsNeg[i];
+			  //arrBerkMinVarScores[i].last_count_neg = arrLemmaVbleCountsPos[i];
+		  }
+	}
+	
    return NO_ERROR;
 }
 

@@ -79,12 +79,13 @@ int Do_Rewind() {
 	l = new Equiv (numinp + 1, nmbrFunctions, T, F);
 	
 	CreateInferences();
-	for(int x = 1; x < numinp + 1; x++)
-	  if(variablelist[x].true_false == 2) {
+	for(int x = 1; x < numinp + 1; x++) {
+	  //if(variablelist[x].true_false == 2) {
 		  variablelist[x].replace = x;
 		  variablelist[x].equalvars = 0;
 		  variablelist[x].true_false = -1;
-	  }
+	  //}
+	}
 
 	for (int x = 0; x < nmbrFunctions; x++) {
 		int r=Rebuild_BDDx(x);
@@ -124,7 +125,7 @@ int Do_Rewind() {
 
 	int Total_inferences = Pos_replace + Neg_replace + Setting_Pos + Setting_Neg;
 
-	fprintf(stderr, "%d, %d, %d, %ld, %4.2f, %ldM\n", tier, num_safe_assigns, Total_inferences, numinp, get_runtime()-start_prep, memory_used/1024);
+	fprintf(stderr, "%d, %d, %d, %ld, %4.2f, %lldM\n", tier, num_safe_assigns, Total_inferences, numinp, get_runtime()-start_prep, memory_used/1024);
 
 	if (Total_inferences > num_inferences) num_inferences = Total_inferences;
 	else {
