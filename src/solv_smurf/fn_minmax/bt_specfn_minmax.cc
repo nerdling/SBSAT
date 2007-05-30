@@ -89,6 +89,7 @@ InferNLits_MINMAX(int nFnId, int nNumRHSUnknowns, int value)
             arrLits[nLitsPos] = vble * (arrNewPolar[arrSolverFunctions[nFnId].fn_minmax.arrRHSPolarities[j]]==BOOL_TRUE?1:-1);
             pLemmaInfo=AddLemma(nNumElts-nNumRHSUnknowns+1, arrLits, false, NULL, NULL);
             pLemma = pLemmaInfo->pLemma;
+				pLemmaInfo->nLemmaCameFromSmurf = 1;
             InferLiteral(vble, arrNewPolar[arrSolverFunctions[nFnId].fn_minmax.arrRHSPolarities[j]],
                   false, pLemma, pLemmaInfo, 1);
          }
@@ -150,8 +151,10 @@ UpdateSpecialFunction_MINMAX(int nFnId)
                }
             }
             pConflictLemmaInfo = AddLemma(nLitsPos, arrLits, false, NULL, NULL);
+				pConflictLemmaInfo->nLemmaCameFromSmurf = 1;
             pConflictLemma = pConflictLemmaInfo->pLemma;
-            free(arrLits);
+				
+				free(arrLits);
          }
          // goto_Backtrack;
          return ERR_BT_SPEC_FN_MINMAX;

@@ -152,7 +152,8 @@ AddLemma_SmurfsReferenced(int nNumLiterals, int arrLiterals[], int nNumSmurfsRef
 	   int arrSmurfsRef[], bool bPutInCache, LemmaInfoStruct *pUnitLemmaList,
 		LemmaInfoStruct **pUnitLemmaListTail)
 {
-   gnNumLemmas++; 
+   
+	gnNumLemmas++; 
 
    nCallsToAddLemma++;
 
@@ -223,7 +224,6 @@ AddLemma_SmurfsReferenced(int nNumLiterals, int arrLiterals[], int nNumSmurfsRef
 			  AddLemmaIntoCache(pLemmaInfo);
 			else {
 				FreeLemma(pLemmaInfo);
-				assert(0);
 				return NULL;
 			}
 		}

@@ -148,6 +148,8 @@ InferLiteral(int nInferredAtom,
 
    arrBacktrackStackIndex[nInferredAtom] = nBacktrackStackIndex++;
 
+	//if(pBacktrackTop->nBranchVble == 1610 && ite_counters[NUM_BACKTRACKS]>60000) assert(0);
+	
    pBacktrackTop->nBranchVble = nInferredAtom;
    pBacktrackTop->bWasChoicePoint = bWasChoicePoint;
    pBacktrackTop->pLemma = pLemma;

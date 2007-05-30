@@ -86,7 +86,7 @@ UpdateEachAffectedFunction(AffectedFuncsStruct *pAFS, int max_fn_priority)
          d9_printf2("Big update function %d ", nFnId);
 
          ret = procUpdateAffectedFunction[nType](nFnId);
-         if (ret != NO_ERROR) {
+			if (ret != NO_ERROR) {
             d9_printf2("Conflict %d ", nFnId);
             goto update_conflict;
             break;

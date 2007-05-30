@@ -138,14 +138,34 @@ int Split_Large () {
 			 );
 		if (j % 100 == 0) {
 			if (nCtrlC) {
-				d3_printf1("\nBreaking out of Splitting");
+ 				d3_printf1("\nBreaking out of Splitting");
 				//for(; j < nmbrFunctions; j++) SPLIT_REPEATS[x] = 0; ??
 				nCtrlC = 0;
 				break;
 			}
 			d2e_printf3("\rPreprocessing Sp %d/%d", j, old_nmbrFunctions);
 		}
-		
+		if (functionType[j] == UNSURE && length[j] > k_size) {
+			bool OLD_DO_INFERENCES = DO_INFERENCES;
+			DO_INFERENCES = 0;
+			
+			//d3_printf2("\n%d: ", j);
+			//printBDD(functions[j]);
+			//d3_printf1("\n");
+			
+			//Maximum Split Size:
+			//int num_splits = nCk(length[j], k_size);
+			//d3_printf4("%d C %d = %d\n", length[j], k_size, num_splits);
+			
+			int whereat = 0;
+			if(findandset_fnType(j) == 1)
+			  continue;
+			
+			
+			
+			
+			
+		}
 		if (functionType[j] == UNSURE && length[j] > k_size) {
 			bool OLD_DO_INFERENCES = DO_INFERENCES;
 			DO_INFERENCES = 0;
@@ -214,71 +234,6 @@ int Split_Large () {
 				 default: break;
 				}
 			 }
-			DO_INFERENCES = OLD_DO_INFERENCES;
-		}
-		if (functionType[j] == UNSURE && length[j] > k_size) {
-			bool OLD_DO_INFERENCES = DO_INFERENCES;
-			DO_INFERENCES = 0;
-
-			/*				
-				int whereat = 0;
-				//Here is another idea for how to break BDDS:
-				//Look at a BDD, traverse it down to a level where the inferences != NULL
-				//Then build just those inferences, return that so you get a smaller BDD,
-				//Then branch prune (restrict) that BDD against the original BDD.
-				//That is a new bdd, continue.
-				//Called a level x decomposition...like level 3 decomposition, or whatever max level you use.
-				int level = 11;
-
-				fprintf(stderr, "\norig: ");
-				printBDDerr(functions[j]);
-				fprintf(stderr, "\nlev%d: ", level);
-				
-				BDDNode *level_bdd = level_x_decomp(functions[j], level);
-				printBDDerr(level_bdd);
-				fprintf(stderr, "\nnew1:");
-				
-				functions[j] = pruning(functions[j], level_bdd);
-				printBDDerr(functions[j]);
-				fprintf(stderr, "\n");
-
-				BDDFuncs[whereat] = level_bdd;
-				whereat++;
-				if(whereat >= max_bdds) {
-					BDDFuncs = (BDDNode **)ite_recalloc(BDDFuncs, max_bdds, max_bdds+25, sizeof(BDDNode *), 9, "BDDFuncs");
-					max_bdds += 25;
-				}
-				
-				if(isOR(functions[j]) == 1) {
-					functionType[j] = PLAINOR;
-					continue;				  
-				}
-				
-				int *new_bdds=add_newFunctions(BDDFuncs, whereat);
-
-				for (int  = 0; x < whereat; i++) {
-					functionType[new_bdds[i]] = PLAINOR;
-					int r=Rebuild_BDDx(new_bdds[i]);
-					switch (r) {
-					 case TRIV_UNSAT:
-					 case TRIV_SAT:
-					 case PREP_ERROR: return r;
-					 default: break;
-					}
-				}
-
-				ite_free((void**)&new_bdds);
-			 
-			   switch (int r=Rebuild_BDDx(j)) {
-				 case TRIV_UNSAT:
-				 case TRIV_SAT:
-				 case PREP_ERROR: 
-					ret=r;
-					goto sp_bailout;
-				 default: break;
-				}
-				
-			 */				
 			DO_INFERENCES = OLD_DO_INFERENCES;
 		}
 		if (functionType[j] == UNSURE && length[j] > k_size) {

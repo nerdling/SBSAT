@@ -69,7 +69,7 @@ InitLemmaInfoArray()
    tarrLemmaInfo *t = (tarrLemmaInfo*)ite_calloc(1, sizeof(tarrLemmaInfo), 9, "lemma info array ptr");
    t->memory = garrLemmaInfo;
    if (head_arrLemmaInfo == NULL) { head_arrLemmaInfo = t; t->next = NULL; }
-   else t->next = head_arrLemmaInfo;
+   else {t->next = head_arrLemmaInfo; head_arrLemmaInfo = t;}
 }
 
 ITE_INLINE void
@@ -94,9 +94,9 @@ FreeLemmaInfoStruct(LemmaInfoStruct *pLemmaInfo)
    pLemmaInfo->pNextLemma[1] = NULL;
    pLemmaInfo->pPrevLemma[0] = NULL;
    pLemmaInfo->pPrevLemma[1] = NULL;
+	//pLemmaInfo->nLemmaCameFromSmurf = 0;
    pFreeLemmaInfoStructPool = pLemmaInfo;
 }
-
 
 ITE_INLINE LemmaInfoStruct *
 AllocateLemmaInfoStruct()

@@ -119,8 +119,8 @@ ConstructTempLemma()
    }
    if (pConflictLemmaInfo && pConflictLemmaInfo->nLemmaCameFromSmurf) {
       FreeLemma(pConflictLemmaInfo); //Need to free this LemmaInfoStruct if it came from a normal smurf
-      pConflictLemmaInfo = NULL;
-   }
+	}
+	pConflictLemmaInfo = NULL;
    return nTempLemmaIndex;
 }
 

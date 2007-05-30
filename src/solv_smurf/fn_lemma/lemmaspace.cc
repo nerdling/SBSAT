@@ -55,8 +55,7 @@ t_lemmaspace_pool *lemmaspace_pool_head = NULL;
 int lemmaspace_pool_index=0;
 
 ITE_INLINE void
-InitLemmaSpacePool(int at_least)
-{
+InitLemmaSpacePool(int at_least) {
   t_lemmaspace_pool *tmp_lemmaspace_pool;
   tmp_lemmaspace_pool = (t_lemmaspace_pool*)ite_calloc(1, sizeof(t_lemmaspace_pool),
         9, "tmp_lemmaspace_pool");
@@ -80,14 +79,14 @@ InitLemmaSpacePool(int at_least)
   }
 
   dm2_printf2 ("Allocated %ld bytes for lemma space.\n",
-       (long)(LEMMA_SPACE_SIZE * sizeof(LemmaBlock)));
+       (long)(tmp_lemmaspace_pool->max * sizeof(LemmaBlock)));
 
-  for (int i = 0; i < LEMMA_SPACE_SIZE - 1; i++)
+  for (int i = 0; i < tmp_lemmaspace_pool->max - 1; i++)
     {
       arrLemmaSpace[i].pNext = arrLemmaSpace + i + 1;
     }
 
-  arrLemmaSpace[LEMMA_SPACE_SIZE - 1].pNext = pLemmaSpaceNextAvail;
+  arrLemmaSpace[tmp_lemmaspace_pool->max - 1].pNext = pLemmaSpaceNextAvail;
   nLemmaSpaceBlocksAvail += tmp_lemmaspace_pool->max;
   pLemmaSpaceNextAvail = arrLemmaSpace;
 }
@@ -181,6 +180,7 @@ EnterIntoLemmaSpace(int nNumElts,
    nNumBlocks = nNumBlocksRequired;
    nLemmaSpaceBlocksAvail -= nNumBlocksRequired;
    pLemmaSpaceNextAvail = pLastBlock->pNext;
+
    pLastBlock->pNext = 0;
 }
 
@@ -230,16 +230,17 @@ FreeLemmaBlocks(LemmaInfoStruct *pLemmaInfo)
    // LemmaBlocks are returned to the pool pointed to by
    // pLemmaSpaceNextAvail.
 {
-   pLemmaInfo->pLemmaLastBlock->pNext = pLemmaSpaceNextAvail;
+	pLemmaInfo->pLemmaLastBlock->pNext = pLemmaSpaceNextAvail;
    pLemmaSpaceNextAvail = pLemmaInfo->pLemma;
    nLemmaSpaceBlocksAvail += pLemmaInfo->nNumBlocks;
 	//pLemmaInfo->pLemma = NULL;
-
+	
 	if(pLemmaInfo->pSmurfsReferenced) {
 		pLemmaInfo->pSmurfsReferencedLastBlock->pNext = pLemmaSpaceNextAvail;
 		pLemmaSpaceNextAvail = pLemmaInfo->pSmurfsReferenced;
 		nLemmaSpaceBlocksAvail += pLemmaInfo->nNumSRBlocks;
 		//pLemmaInfo->pSmurfsReferenced = NULL;
 	}
+
 	assert(pLemmaSpaceNextAvail!=NULL);
 }

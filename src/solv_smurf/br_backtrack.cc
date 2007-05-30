@@ -62,7 +62,7 @@ BackTrack()
 
 	pUnitLemmaList.pNextLemma[0] = NULL;
 	pUnitLemmaListTail = NULL;
-	
+
 	if(slide_lemmas) nTempSmurfsRefIndex = ConstructTempSmurfsRef(); //This must be before ConstructTempLemma() because
 	                                                                 //pConflictLemmaInfo is nulled in ConstructTempLemma()
 	
@@ -154,8 +154,9 @@ BackTrack()
          int nBacktrackAtomStackIndex = arrBacktrackStackIndex[nBacktrackAtom];
          arrBacktrackStackIndex[nBacktrackAtom] = gnMaxVbleIndex + 1;
 			
-         if (pBacktrackTop->pLemmaInfo && 
-				 pBacktrackTop->pLemmaInfo->nBacktrackStackReferences > 0)
+         if (pBacktrackTop->pLemmaInfo &&
+				 pBacktrackTop->pLemmaInfo->nBacktrackStackReferences > 0 &&
+				 pBacktrackTop->pLemmaInfo->nLemmaCameFromSmurf == 0)
 			  {
 				  // The lemma for this backtrack stack entry was a cached lemma.
 				  // Decrement the reference count for it.
@@ -167,7 +168,7 @@ BackTrack()
 #ifdef MK_UP_RELEVANT_LEMMAS
 				  if(arrLemmaFlag[nBacktrackAtom]) 
 #endif
-					 MoveToFrontOfLPQ(pBacktrackTop->pLemmaInfo);
+						MoveToFrontOfLPQ(pBacktrackTop->pLemmaInfo);
 			  }
 			
          //Handle old choicepoints
@@ -318,13 +319,20 @@ BackTrack()
 				  }
 			  }
 			
-         if (pBacktrackTop->pLemmaInfo && pBacktrackTop->pLemmaInfo->nLemmaCameFromSmurf)
-			  FreeLemma(pBacktrackTop->pLemmaInfo);  // Need to free LemmaInfoStruct that comes from a normal smurf
+         if (pBacktrackTop->pLemmaInfo && pBacktrackTop->pLemmaInfo->nLemmaCameFromSmurf) {
+				FreeLemma(pBacktrackTop->pLemmaInfo);  // Need to free LemmaInfoStruct that comes from a normal smurf
+				pBacktrackTop->pLemmaInfo = NULL;
+			}
 			
          arrSolution[nBacktrackAtom] = BOOL_UNKNOWN;
 			
       } // bactracking loop
       while (1);
+		
+		if (pBacktrackTop->pLemmaInfo && pBacktrackTop->pLemmaInfo->nLemmaCameFromSmurf) {
+			FreeLemma(pBacktrackTop->pLemmaInfo);  // Need to free LemmaInfoStruct that comes from a normal smurf
+			pBacktrackTop->pLemmaInfo = NULL;
+		}
 		
       /* remember the value so we can flip it */
       nInferredValue = arrSolution[nInferredAtom];
@@ -470,7 +478,7 @@ BackTrack()
 
          //Apply the inference to nWatchedVble[0]
 
-         if(arrSolution[p->nWatchedVble[0]] == BOOL_UNKNOWN)
+         if(arrSolution[p->nWatchedVble[0]] == BOOL_UNKNOWN);
 			  InferLiteral(p->nWatchedVble[0], p->nWatchedVblePolarity[0],
 								false, p->pLemma, p, 1);
 		

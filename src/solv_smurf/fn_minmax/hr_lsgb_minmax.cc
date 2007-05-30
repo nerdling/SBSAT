@@ -204,8 +204,8 @@ LSGBMinMaxUpdateFunctionInfEnd(int nFnId)
       ((arrSolverFunctions[nFnId].fn_minmax.rhsVbles.nNumElts - nNumRHSUnknowns) - nRHSCounter);
    double fPosDelta, fNegDelta;
    if (nNumRHSUnknowns == 0) {
-      fPosDelta = -arrMinmaxWghts[minmax_diff][old_left_to_set_true-1][old_left_to_set_false];
-      fNegDelta = -arrMinmaxWghts[minmax_diff][old_left_to_set_true][old_left_to_set_false-1];
+      fPosDelta = -arrMinmaxWghts[minmax_diff][old_left_to_set_true==0?0:old_left_to_set_true-1][old_left_to_set_false];
+      fNegDelta = -arrMinmaxWghts[minmax_diff][old_left_to_set_true][old_left_to_set_false==0?0:old_left_to_set_false-1];
    } else {
       fPosDelta = arrMinmaxWghts[minmax_diff][left_to_set_true-1][left_to_set_false] -
          arrMinmaxWghts[minmax_diff][old_left_to_set_true-1][old_left_to_set_false];

@@ -1016,7 +1016,7 @@ cnf_process(store *integers, int num_minmax, minmax * min_max_store)
 					functions[num_uncluster_xor+num_ite] = ite_xor(functions[num_uncluster_xor+num_ite], ite_var(integers[x].num[y]));
 					//	  fprintf(stderr, "%d ", integers[x].num[y]);
 				}
-            functionType[num_uncluster_xor+numout] = PLAINXOR;
+            functionType[num_uncluster_xor+num_ite] = PLAINXOR;
 				num_uncluster_xor++;
 			} else {
 				//do nothing

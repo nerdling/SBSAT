@@ -104,9 +104,10 @@ LSGBXorUpdateFunctionInfEnd(int nFnId)
    int nNumRHSUnknowns = arrSolverFunctions[nFnId].fn_xor.nNumRHSUnknowns;
    //int counter = arrSolverFunctions[nFnId].fn_xor.counter;
 
-   HWEIGHT fDelta = arrXorEqWght[nNumRHSUnknowns-1] -
+	//SEAN!!!
+   HWEIGHT fDelta = (nNumRHSUnknowns==0?0:arrXorEqWght[nNumRHSUnknowns-1]) -
       arrXorEqWght[nOldNumRHSUnknowns-1];
-   J_Update_RHS_AND(arrSolverFunctions[nFnId].fn_xor.rhsVbles.nNumElts, arrSolverFunctions[nFnId].fn_xor.rhsVbles.arrElts, arrSolverFunctions[nFnId].fn_xor.arrRHSPolarities, 
+   J_Update_RHS_AND(arrSolverFunctions[nFnId].fn_xor.rhsVbles.nNumElts, arrSolverFunctions[nFnId].fn_xor.rhsVbles.arrElts, arrSolverFunctions[nFnId].fn_xor.arrRHSPolarities,
          fDelta, fDelta);
 }
 
