@@ -51,6 +51,6 @@ ITE_INLINE void AddMiniSatHeuristicInfluence(LemmaInfoStruct * pLemmaInfo);
 ITE_INLINE void AddMiniSatSpaceHeuristicInfluence(int *arr, int num);
 ITE_INLINE void AddMiniSatBlockHeuristicInfluence(LemmaBlock * pLemma);
 ITE_INLINE void RemoveMiniSatHeuristicInfluence(LemmaInfoStruct * pLemmaInfo);
-ITE_INLINE int  MiniSat_OptimizedHeuristic(int *pnBranchAtom, int *pnBranchValue);
+ITE_INLINE int MiniSat_AllVarChoiceHeuristic(int *pnBranchAtom, int *pnBranchValue);
 
 #endif // HR_MINISAT_H

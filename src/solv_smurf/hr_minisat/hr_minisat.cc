@@ -48,7 +48,7 @@ HrMiniSatInit()
 
    procHeurUpdate = HrMiniSatUpdate;
    procHeurFree = HrMiniSatFree;
-   procHeurSelect = MiniSat_OptimizedHeuristic;
+   procHeurSelect = MiniSat_AllVarChoiceHeuristic;
    procHeurAddLemma = AddMiniSatHeuristicInfluence;
    procHeurAddLemmaSpace = AddMiniSatSpaceHeuristicInfluence;
    procHeurRemoveLemma = RemoveMiniSatHeuristicInfluence;
@@ -120,6 +120,7 @@ HrMiniSatUpdate()
  : arrLemmaVbleCountsNeg[i]);
 
 #define HEUR_FUNCTION MiniSat_AllVarChoiceHeuristic
+
 #define HEUR_SIGN(nBestVble, multPos, multNeg) \
   (arrLemmaVbleCountsPos[nBestVble] > arrLemmaVbleCountsNeg[nBestVble] ? \
    BOOL_TRUE:BOOL_FALSE)

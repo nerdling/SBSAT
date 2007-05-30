@@ -11,7 +11,7 @@ SBSAT_LIBS= \
 	solv_smurf/hr_vsids/libhrvsids.a  \
 	solv_smurf/hr_berkmin/libhrberkmin.a  \
 	solv_smurf/hr_anne/libhranne.a  \
-	solv_smurf/hr_minisat/libhrminisat.a \
+	solv_smurf/hr_minisat/libhrminisat.a  \
 	solv_smurf/hr_lsgbw/libhrlsgbw.a  \
 	solv_smurf/hr_lsgb/libhrlsgb.a  \
 	solv_smurf/hr_lemma/libhrlemma.a  \
@@ -39,7 +39,7 @@ SBSAT_LIBS= \
 	#solv_smurf/hr_vsids/libhrvsids.a  \
 	#solv_smurf/hr_berkmin/libhrberkmin.a  \
 	#solv_smurf/hr_anne/libhranne.a  \
-	#solv_smurf/hr_minisat/libhrminisat.a \
+   #solv_smurf/hr_minisat/libhrminisat.a  \
    #solv_smurf/hr_lsgbw/libhrlsgbw.a  \
 	#solv_smurf/hr_lsgb/libhrlsgb.a  \
 	#solv_smurf/hr_lemma/libhrlemma.a  \

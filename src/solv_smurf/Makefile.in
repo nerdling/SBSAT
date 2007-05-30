@@ -180,7 +180,10 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-SUBDIRS = include fn_lemma_au fn_smurf_au hr_lsgbw hr_lemma hr_vsids hr_berkmin hr_anne fn_minmax fn_xor fn_and fn_lemma fn_smurf hr_null hr_lsgb hr_lsgb_lemma fn_smurf_xor fn_xor_smurf
+SUBDIRS = include fn_lemma_au fn_smurf_au hr_lsgbw hr_lemma fn_minmax fn_xor \
+fn_and fn_lemma fn_smurf hr_null hr_lsgb hr_lsgb_lemma hr_vsids hr_berkmin \
+hr_anne hr_minisat fn_smurf_xor fn_xor_smurf
+
 #fn_plainor fn_smurf_au 
 INCLUDES = -I$(top_srcdir)/include -I$(top_srcdir)/src/solv_smurf/include
 sources = display.cc solver.cc \
