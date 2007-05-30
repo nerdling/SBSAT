@@ -189,6 +189,7 @@ HeuristicInit()
     case 'v': procHeurInit = HrVSIDSInit; break;
     case 'b': procHeurInit = HrBerkMinInit; break;
 	 case 'a': procHeurInit = HrAnneInit; break;
+   case 'm': procHeurInit = HrMiniSatInit; break;
     //case 'i': nHeuristic = INTERACTIVE_HEURISTIC; break;
     //case 'm': nHeuristic = STATE_HEURISTIC; break;
     default: 

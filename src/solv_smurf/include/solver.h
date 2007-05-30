@@ -64,6 +64,7 @@ struct IntegerSet_ArrayBased
 #include "hr_vsids.h"
 #include "hr_berkmin.h"
 #include "hr_anne.h"
+#include "hr_minisat.h"
 
 #define FN_INIT_LIST { \
       FnSmurfInit, \
