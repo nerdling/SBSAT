@@ -48,7 +48,7 @@ HrMiniSatInit()
 
    procHeurUpdate = HrMiniSatUpdate;
    procHeurFree = HrMiniSatFree;
-   procHeurSelect = MiniSat_AllVarChoiceHeuristic;
+   procHeurSelect = MiniSat_OptimizedHeuristic;
    procHeurAddLemma = AddMiniSatHeuristicInfluence;
    procHeurAddLemmaSpace = AddMiniSatSpaceHeuristicInfluence;
    procHeurRemoveLemma = RemoveMiniSatHeuristicInfluence;
@@ -105,10 +105,11 @@ HrMiniSatUpdate()
     d9_printf4("%d: (pos count = %d, neg count = %d)\n", i, arrLemmaVbleCountsPos[i], arrLemmaVbleCountsNeg[i]);
     
     //if the variable is positive, increment .pos
+    arrMiniSatVarScores[i].last_count_pos = arrMiniSatVarScores[i].pos;
     arrMiniSatVarScores[i].pos = arrLemmaVbleCountsPos[i];
-    //arrMiniSatVarScores[i].last_count_pos = arrLemmaVbleCountsPos[i];
+    arrMiniSatVarScores[i].last_count_neg = arrMiniSatVarScores[i].neg;
     arrMiniSatVarScores[i].neg = arrLemmaVbleCountsNeg[i];
-    //arrMiniSatVarScores[i].last_count_neg = arrLemmaVbleCountsPos[i];
+
   }
   
   return NO_ERROR;
@@ -116,10 +117,9 @@ HrMiniSatUpdate()
 
 
 
-#define HEUR_WEIGHT(x,i) (arrLemmaVbleCountsPos[i] > arrLemmaVbleCountsNeg[i] ?  arrLemmaVbleCountsPos[i]\
- : arrLemmaVbleCountsNeg[i]);
+#define HEUR_WEIGHT(x,i) (arrLemmaVbleCountsPos[i] > arrLemmaVbleCountsNeg[i] ?  arrLemmaVbleCountsPos[i] : arrLemmaVbleCountsNeg[i]);
 
-#define HEUR_FUNCTION MiniSat_AllVarChoiceHeuristic
+#define HEUR_FUNCTION MiniSat_OptimizedHeuristic
 
 #define HEUR_SIGN(nBestVble, multPos, multNeg) \
   (arrLemmaVbleCountsPos[nBestVble] > arrLemmaVbleCountsNeg[nBestVble] ? \
