@@ -65,24 +65,22 @@ int Do_ExtendRes() {
 
 	//Added variables numinp+1 ... num_res-1
 	vars_alloc(numinp+num_res);
-	
-	int *new_funcs = add_newFunctions(resolvents, num_res);
-	  
-	for(int x = 0; x < num_res; x++) {
-		int y = new_funcs[x];
-		int r=Rebuild_BDDx(y);
-		switch (r) {
-		 case TRIV_UNSAT:
-		 case TRIV_SAT:
-		 case PREP_ERROR: return r; 
-		 default: break;
-		}
-	}
 
+	numinp = numinp+num_res;
+	
+	int *new_bdds;
+	switch (int r = add_newFunctions(resolvents, num_res, &new_bdds)) {
+	 case TRIV_UNSAT:
+	 case TRIV_SAT:
+	 case PREP_ERROR:
+		return r;
+	 default: break;
+	}
+	
+	ite_free((void**)&new_bdds);
+	
 	numinp = getNuminp();
 	
-	ite_free((void**)&new_funcs);
-
 	//fprintf(stderr, "%d %d\n", original_numout, nmbrFunctions); 
 	
 	bdd_gc(1);

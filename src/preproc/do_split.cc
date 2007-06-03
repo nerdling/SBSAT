@@ -44,7 +44,7 @@ int max_bdds;
 int num_bdds;
 BDDNode **BDDFuncs;
 char p[100];
-
+int res_var;
 
 int Do_Split() {
    d3_printf1("SPLITTING LARGE FUNCTIONS - ");
@@ -58,6 +58,157 @@ int Do_Split() {
 
 	d3_printf1("\n");
    d2e_printf1("\r                                         ");
+	return ret;
+}
+
+BDDNode *splitBDD(BDDNode *f) {
+//	fprintf(stderr, "flag = %d, ", f->flag);
+//	printBDDerr(f);
+//	fprintf(stderr, "\n");
+	
+   if(IS_TRUE_FALSE(f)) return f;
+	if(IS_TRUE_FALSE(f->thenCase) && IS_TRUE_FALSE(f->elseCase)) return f;
+	if(f->flag == 0) return f;
+	
+	if(f->flag < 0) {
+		//node has previously been split.
+//		fprintf(stderr, "Returning 0, ");
+//		printBDDerr(ite_var(-(f->flag)));
+//		fprintf(stderr, "\n");
+		return ite_var(-(f->flag));
+	} else if(f->notCase->flag < 0) {
+		//notCase has previously been split.
+//		fprintf(stderr, "Returning 1, ");
+//		printBDDerr(ite_var(f->notCase->flag));
+//		fprintf(stderr, "\n");
+		return ite_var(f->notCase->flag);
+	} else if(f->flag < 10) {
+		//Node not referenced enough to be interesting
+		BDDNode *tmp = ite(ite_var(f->variable), splitBDD(f->thenCase), splitBDD(f->elseCase));
+		tmp->flag = 0;
+//		fprintf(stderr, "Returning 2, ");
+//		printBDDerr(g);
+//		fprintf(stderr, "\n");
+		return tmp;
+	}
+
+	affected++;
+	
+	while(getsym_i(++res_var)!=NULL);
+	int new_var = i_getsym_int(res_var, SYM_VAR);
+
+	f->flag = -new_var;
+	BDDFuncs[num_bdds] = ite_equ(ite_var(new_var), f);
+	assert(BDDFuncs[num_bdds]->inferences == NULL);
+	BDDFuncs[num_bdds++]->flag = 0;
+	if(num_bdds >= max_bdds) {
+		BDDFuncs = (BDDNode **)ite_recalloc(BDDFuncs, max_bdds, max_bdds+25, sizeof(BDDNode *), 9, "BDDFuncs");
+		max_bdds += 25;
+	}
+//	fprintf(stderr, "Creating, ");
+//	printBDDerr(BDDFuncs[num_bdds-1]);
+//	fprintf(stderr, "\n");
+	BDDNode *tmp = ite_var(new_var);
+	tmp->flag = 0;
+	
+	return tmp;
+	
+}
+
+//Assumes BDDFuncs has been allocated
+int Split_ref_counts() {
+	
+	clear_all_bdd_flags();
+	for(int j = 0; j < nmbrFunctions; j++) {
+		if (functionType[j] == UNSURE && length[j] > do_split_max_vars) {
+			//d3_printf2("\n%d: ", j);			//printBDD(functions[j]);			//d3_printf1("\n");
+			
+			marknodes(functions[j]);
+			functions[j]->flag = 0;
+//			fprintf(stderr, "Marked %d\n", j);
+		}
+	}
+	//Nodes marked w/ rough reference counts
+
+	int ret = PREP_CHANGED;
+	res_var = numinp;
+	
+	while(ret == PREP_CHANGED) {
+		ret = PREP_NO_CHANGE;
+		for(int j = 0; j < nmbrFunctions; j++) {
+			D_3(
+				 if (j % 100 == 0) {
+					 for(int iter = 0; iter<str_length; iter++)
+						d3_printf1("\b");
+					 sprintf(p, "***{%ld:%d/%d}", affected, j, nmbrFunctions);
+					 str_length = strlen(p);
+					 d3_printf1(p);
+				 }
+				 );
+
+			if (functionType[j] == UNSURE && length[j] > do_split_max_vars) {
+				//Split the BDD based on the reference counts.
+//				fprintf(stderr, "Splitting %d, ", j);
+//				printBDDerr(functions[j]);
+//				fprintf(stderr, "\n");
+				
+				BDDNode *tmp = ite(ite_var(functions[j]->variable), splitBDD(functions[j]->thenCase), splitBDD(functions[j]->elseCase));
+				tmp->flag = 0;
+				
+				if(functions[j]!=tmp) {
+					functions[j] = tmp;
+					ret = PREP_CHANGED;
+				}
+				
+//				fprintf(stderr, "Finish with, ");
+//				printBDDerr(functions[j]);
+//				fprintf(stderr, "\n");
+				
+				assert(functions[j]->inferences == NULL);
+				
+				vars_alloc(numinp+num_bdds);
+			}
+		}
+	}
+
+	if(num_bdds != 0) {
+		ret = PREP_CHANGED;
+
+		bool OLD_DO_INFERENCES = DO_INFERENCES;
+		DO_INFERENCES = 0;
+		
+		for(int j = 0; j < nmbrFunctions; j++) {
+			if (functionType[j] == UNSURE && length[j] > do_split_max_vars) {
+				switch (int r=Rebuild_BDDx(j)) { //This should not be causing any inferences.
+				 case TRIV_UNSAT:
+				 case TRIV_SAT:
+				 case PREP_ERROR: 
+					ret=r;
+					return ret;
+				 default: break;
+				}
+			}
+		}
+
+		DO_INFERENCES = OLD_DO_INFERENCES;
+		
+		int *new_bdds;
+		switch (int r = add_newFunctions(BDDFuncs, num_bdds, &new_bdds)) {
+		 case TRIV_UNSAT:
+		 case TRIV_SAT:
+		 case PREP_ERROR: 
+			ret=r;
+			return ret;
+		 default: break;
+		}
+		
+		ite_free((void**)&new_bdds);
+		
+		num_bdds = 0; //BDDFuncs is not free'd here. Can continue to use the same memory in this loop
+		
+		numinp = getNuminp();
+	}
+
 	return ret;
 }
 
@@ -119,10 +270,21 @@ int Split_Large () {
 	num_bdds = 0;
 
 	int k_size = do_split_max_vars;
-	
+
 	BDDFuncs = (BDDNode **)ite_recalloc(NULL, max_bdds, max_bdds+10, sizeof(BDDNode *), 9, "BDDFuncs");
 	max_bdds += 10;
 
+	if(0) { //SEAN
+		switch (int r = Split_ref_counts()) {
+		 case TRIV_UNSAT:
+		 case TRIV_SAT:
+		 case PREP_ERROR: 
+			ret=r;
+			goto sp_bailout;
+		 default: break;
+		}
+	}
+	
 	affected = 0;
 	int old_nmbrFunctions = nmbrFunctions;
 	
@@ -161,27 +323,6 @@ int Split_Large () {
 			if(findandset_fnType(j) == 1)
 			  continue;
 			
-			
-			
-			
-			
-		}
-		if (functionType[j] == UNSURE && length[j] > k_size) {
-			bool OLD_DO_INFERENCES = DO_INFERENCES;
-			DO_INFERENCES = 0;
-			
-			//d3_printf2("\n%d: ", j);
-			//printBDD(functions[j]);
-			//d3_printf1("\n");
-			
-			//Maximum Split Size:
-			//int num_splits = nCk(length[j], k_size);
-			//d3_printf4("%d C %d = %d\n", length[j], k_size, num_splits);
-			
-			int whereat = 0;
-			if(findandset_fnType(j) == 1)
-			  continue;
-			
 			//d3_printf2("false paths:%d\n", countFalses (functions[j]));
 			int *vars_copy = new int[length[j]];
 			//This is necessary because variables[j].num is modified inside nCk_Sets
@@ -195,21 +336,9 @@ int Split_Large () {
 			if(whereat > 0) {
 				affected++;
 				ret = PREP_CHANGED;
-				int *new_bdds=add_newFunctions(BDDFuncs, whereat);
 
-				for (int i = 0; i < whereat; i++) {
-					int r=Rebuild_BDDx(new_bdds[i]);
-					switch (r) {
-					 case TRIV_UNSAT:
-					 case TRIV_SAT:
-					 case PREP_ERROR: return r;
-					 default: break;
-					}
-				}
-				
-				ite_free((void**)&new_bdds);
-				
-				switch (int r=Rebuild_BDDx(j)) {
+				int *new_bdds;
+				switch (int r = add_newFunctions(BDDFuncs, whereat, &new_bdds)) {
 				 case TRIV_UNSAT:
 				 case TRIV_SAT:
 				 case PREP_ERROR: 
@@ -217,6 +346,8 @@ int Split_Large () {
 					goto sp_bailout;
 				 default: break;
 				}
+				
+				ite_free((void**)&new_bdds);
 				
 				if(length[j] > k_size) {
 					BDDNode *Conjunction = BDDFuncs[0];
@@ -266,17 +397,14 @@ int Split_Large () {
 				}
 				delete [] list;
 				
-				int *new_bdds=add_newFunctions(BDDFuncs, listx);
-
-				for (int i = 0; i < listx; i++) {
-					functionType[new_bdds[i]] = PLAINOR;
-					int r=Rebuild_BDDx(new_bdds[i]);
-					switch (r) {
-					 case TRIV_UNSAT:
-					 case TRIV_SAT:
-					 case PREP_ERROR: return r;
-					 default: break;
-					}
+				int *new_bdds;
+				switch (int r = add_newFunctions(BDDFuncs, listx, &new_bdds)) {
+				 case TRIV_UNSAT:
+				 case TRIV_SAT:
+				 case PREP_ERROR: 
+					ret=r;
+					goto sp_bailout;
+				 default: break;
 				}
 
 				ite_free((void**)&new_bdds);

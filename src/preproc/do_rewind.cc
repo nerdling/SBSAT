@@ -62,17 +62,17 @@ int Do_Rewind() {
 		Rebuild_BDDx(x);
 	}
 
-	int *new_funcs = add_newFunctions(original_functions, original_numout);
-	  
-	for(int x = 0; x < original_numout; x++) {
-		y = new_funcs[x];
-		functionType[y] = original_functionType[x];
-		equalityVble[y] = original_equalityVble[x];
-		Rebuild_BDDx(y);
+	int *new_bdds;
+	switch (int r = add_newFunctions(original_functions, original_numout, &new_bdds)) {
+	 case TRIV_UNSAT:
+	 case TRIV_SAT:
+	 case PREP_ERROR:
+		return r;
+	 default: break;
 	}
-
-	ite_free((void**)&new_funcs);
-
+	
+	ite_free((void**)&new_bdds);
+	
 	//fprintf(stderr, "%d %d\n", original_numout, nmbrFunctions); 
 	
 	delete l;

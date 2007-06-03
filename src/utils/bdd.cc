@@ -203,6 +203,20 @@ int countnodes(BDDNode *f) {
    return (countnodes(f->thenCase) + countnodes(f->elseCase) + 1);
 }
 
+void marknodes(BDDNode *f) {
+	if(IS_TRUE_FALSE(f))
+	  return;
+
+	f->flag++;
+	//fprintf(stderr, "Flag = %d\n", f->flag);
+	if(f->flag > 1)
+	  return;
+
+	marknodes(f->thenCase);
+	marknodes(f->elseCase);
+	return;
+}
+
 float mark_trues(BDDNode *f) {
 	if (f->density > -1)
 		return f->density;

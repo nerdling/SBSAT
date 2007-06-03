@@ -519,11 +519,15 @@ Finish_Preprocessing()
    return ret;
 }
 
-int *add_newFunctions(BDDNode **new_bdds, int new_size) {
+int add_newFunctions(BDDNode **new_bdds, int new_size, int **free_spots_pass) {
 
+	if(new_size <= 0) return PREP_NO_CHANGE;
+	
 	int free_funcs = 0;
-	int *free_spots = (int *)ite_calloc(new_size+1, sizeof(int), 9, "free_spots");
+	(*free_spots_pass) = (int *)ite_calloc(new_size+1, sizeof(int), 9, "free_spots");
 
+	int *free_spots = (*free_spots_pass);
+	
 	for(int x = 0; x < nmbrFunctions; x++) {
 		if(functions[x] == true_ptr) {
 			free_spots[free_funcs] = x;
@@ -549,12 +553,38 @@ int *add_newFunctions(BDDNode **new_bdds, int new_size) {
 		for(int x = 0;free_funcs < new_size; x++)
 		  free_spots[free_funcs++] = oldnumfuncs+x;
 	}
-
-	for(int x = 0; x < free_funcs; x++) {
-		functions[free_spots[x]] = new_bdds[x];
-		functionType[free_spots[x]] = UNSURE;
-		equalityVble[free_spots[x]] = 0;
-	}
 	
-	return free_spots;
+	bool OLD_DO_INFERENCES = DO_INFERENCES;
+	DO_INFERENCES = 0;
+	
+	for(int x = 0; x < free_funcs; x++) {
+		int y = free_spots[x];
+		functions[y] = new_bdds[x];
+		functionType[y] = UNSURE;
+		equalityVble[y] = 0;
+		int r=Rebuild_BDDx(y);
+		switch (r) {
+		 case TRIV_UNSAT:
+		 case TRIV_SAT:
+		 case PREP_ERROR: return r;
+		 default: break;
+		}
+	}
+
+	DO_INFERENCES = OLD_DO_INFERENCES;
+	
+	for(int x = 0; x < free_funcs; x++) {
+		int y = free_spots[x];
+		int r=Rebuild_BDDx(y);
+		switch (r) {
+		 case TRIV_UNSAT:
+		 case TRIV_SAT:
+		 case PREP_ERROR: return r;
+		 default: break;
+		}
+	}
+
+	return PREP_CHANGED;
+	
 }
+

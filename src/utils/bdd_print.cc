@@ -496,13 +496,13 @@ void printBDDdot_stdout(BDDNode **bdds, int num) {
 			if(BDD_nodes[x]->thenCase == true_ptr)		  
 			  fprintf(stdout, "%d->T [style=solid,fontname=""Helvetica"",fontsize=""8""]\n", (int)BDD_nodes[x]);
 			else if(BDD_nodes[x]->thenCase == false_ptr)
-			  fprintf(stdout, "%d->T [style=solid,fontname=""Helvetica"",fontsize=""8""]\n", (int)BDD_nodes[x]);
+			  fprintf(stdout, "%d->F [style=solid,fontname=""Helvetica"",fontsize=""8""]\n", (int)BDD_nodes[x]);
 			else {
 				fprintf(stdout, "%d->%d [style=solid,fontname=""Helvetica"",fontsize=""8""]\n", (int)BDD_nodes[x], (int)(BDD_nodes[x]->thenCase));
 			}
 			
 			if(BDD_nodes[x]->elseCase == true_ptr)
-			  fprintf(stdout, "%d->F [style=dotted,fontname=""Helvetica"",fontsize=""8""]\n", (int)BDD_nodes[x]);
+			  fprintf(stdout, "%d->T [style=dotted,fontname=""Helvetica"",fontsize=""8""]\n", (int)BDD_nodes[x]);
 			else if(BDD_nodes[x]->elseCase == false_ptr)
 			  fprintf(stdout, "%d->F [style=dotted,fontname=""Helvetica"",fontsize=""8""]\n", (int)BDD_nodes[x]);
 			else {
@@ -581,13 +581,13 @@ void printBDDdot_file(BDDNode **bdds, int num) {
 			if(BDD_nodes[x]->thenCase == true_ptr)		  
 			  fprintf(fout, "%d->T [style=solid,fontname=""Helvetica"",fontsize=""8""]\n", (int)BDD_nodes[x]);
 			else if(BDD_nodes[x]->thenCase == false_ptr)
-			  fprintf(fout, "%d->T [style=solid,fontname=""Helvetica"",fontsize=""8""]\n", (int)BDD_nodes[x]);
+			  fprintf(fout, "%d->F [style=solid,fontname=""Helvetica"",fontsize=""8""]\n", (int)BDD_nodes[x]);
 			else {
 				fprintf(fout, "%d->%d [style=solid,fontname=""Helvetica"",fontsize=""8""]\n", (int)BDD_nodes[x], (int)(BDD_nodes[x]->thenCase));
 			}
 			
 			if(BDD_nodes[x]->elseCase == true_ptr)
-			  fprintf(fout, "%d->F [style=dotted,fontname=""Helvetica"",fontsize=""8""]\n", (int)BDD_nodes[x]);
+			  fprintf(fout, "%d->T [style=dotted,fontname=""Helvetica"",fontsize=""8""]\n", (int)BDD_nodes[x]);
 			else if(BDD_nodes[x]->elseCase == false_ptr)
 			  fprintf(fout, "%d->F [style=dotted,fontname=""Helvetica"",fontsize=""8""]\n", (int)BDD_nodes[x]);
 			else {
