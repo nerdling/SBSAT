@@ -415,6 +415,29 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 		fprintf (stderr, "\nKeyword 'add_state' has been deprecated...exiting:%d\n", markbdd_line);
 		exit (1);
 	}
+	if (!strcasecmp (macros, "order")) {
+		char p = fgetc(finputfile);
+		
+		while (p != ')') {
+			if (p == EOF)	{
+				fprintf (stderr, "\nUnexpected EOF (%s)...exiting:%d\n",	macros, markbdd_line);
+				exit (1);
+			}
+			ungetc(p, finputfile);			
+			
+			BDDNode *v1 = putite (intnum, bdd);
+			if (v1 == ite_var (v1->variable)) {
+				v1->variable;
+			} else {
+				fprintf (stderr, "\nKeyword 'order' needs a list of positive variables terminated by ')'(%s)...exiting:%d\n", macros, markbdd_line);
+				exit (1);
+			}
+         p = fgetc(finputfile);
+		}
+      //ungetc(p, finputfile);
+		strcpy (macros, "order");
+      return true_ptr;
+	}
 	if (!strcasecmp(macros, "truth_table")) {
 		expect_integer = 1;
 		BDDNode *v1 = putite(intnum, bdd);
@@ -1199,6 +1222,7 @@ void bddloop () {
 			if ((strcasecmp (macros, "pprint_tree"))
 				 && (strncasecmp (macros, "print_", 6))
 				 && (strcasecmp (macros, "define"))
+				 && (strcasecmp (macros, "order"))
 				 && (strcasecmp (macros, "initial_branch"))) {
 				keep[nmbrFunctions] = 1;
 				keepnum++;
@@ -1218,6 +1242,7 @@ void bddloop () {
 			if ((strcasecmp (macros, "pprint_tree"))
 				 && (strncasecmp (macros, "print_", 6))
 				 && (strcasecmp (macros, "define"))
+				 && (strcasecmp (macros, "order"))
 				 && (strcasecmp (macros, "initial_branch"))) {
 				functions[nmbrFunctions] = temp;
 				nmbrFunctions++;
@@ -1231,6 +1256,7 @@ void bddloop () {
       if ((strcasecmp (macros, "pprint_tree"))
 			 && (strncasecmp (macros, "print_", 6))
 			 && (strcasecmp (macros, "define"))
+			 && (strcasecmp (macros, "order"))			 
 			 && (strcasecmp (macros, "initial_branch"))) {
 			fprintf (stddbg, "BDD $%d: ", nmbrFunctions);
 			printBDDfile (functions[nmbrFunctions - 1], stddbg);
