@@ -77,6 +77,7 @@ BDDNode *safe_assign(BDDNode *, int);
 BDDNode *safe_assign_eq(BDDNode *, int);
 BDDNode *safe_assign_func(BDDNode *, int);
 int countnodes(BDDNode *);
+void marknodes(BDDNode *);
 
 #define print_bdd(f) print_bdd1(f, 0)
 void print_bdd1(BDDNode *, int);

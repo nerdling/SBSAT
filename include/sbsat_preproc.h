@@ -97,7 +97,7 @@ int findandset_fnType(int);
 BDDNode *strip_x_BDD(BDDNode *, int);
 BDDNode *strip_x(int, int);
 BDDNode *collect_x (BDDNode *, int);
-int *add_newFunctions(BDDNode **, int);
+int add_newFunctions(BDDNode **, int, int **);
 int Do_Apply_Inferences ();
 int Do_Apply_Inferences_backend ();
 void printBDDInfs(BDDNode *);
@@ -133,6 +133,7 @@ int Do_Identify_Same_Structure();
 int Do_SafeAssign();
 int Do_SafeSearch();
 int Do_ExtendRes();
+int Do_Diameter();
 void Do_Flow();
 void Do_Flow_Grouping();
 

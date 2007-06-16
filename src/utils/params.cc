@@ -254,6 +254,8 @@ t_opt options[] = {
 	  "Enable/Disable Identifying BDDs with the same structure/function type (1/0)"},
 { &DO_EXTEND_RES, "Er",  "Er",  P_INT, V(i:0,"0"),  V(i:1,"1"), VAR_NORMAL, 0,
 	  "Enable/Disable Creating Extended Resolvents for all pairs of variables (1/0)"},
+{ &DO_DIAMETER, "Di",  "Di",  P_INT, V(i:0,"0"),  V(i:1,"1"), VAR_CHECK+VAR_DUMP, 0,
+	  "Enable/Disable Computing the diameter of variable interaction graph (1/0)"},
 { &max_preproc_time, "",  "max-preproc-time", P_INT, V(i:0,"0"),  V(i:0,"0"), VAR_NORMAL, 0,
 		"set the time limit in seconds (0=no limit)"},
 { &do_split_max_vars, "",  "do-split-max-vars", P_INT, V(i:0,"0"),  V(i:10,"10"), VAR_NORMAL, 0,
@@ -578,6 +580,7 @@ DO_ALL(int value)
 	set_param_int(strcpy(tmp_str, "Ss"), value);
    set_param_int(strcpy(tmp_str, "Ex"), value);
    set_param_int(strcpy(tmp_str, "Ea"), value);
+	set_param_int(strcpy(tmp_str, "Es"), value);
 	set_param_int(strcpy(tmp_str, "Pa"), value);
    set_param_int(strcpy(tmp_str, "Dc"), value);
 	set_param_int(strcpy(tmp_str, "Sp"), value);
@@ -587,6 +590,7 @@ DO_ALL(int value)
 	set_param_int(strcpy(tmp_str, "P3"), value);
 	set_param_int(strcpy(tmp_str, "Is"), value);
 	set_param_int(strcpy(tmp_str, "Er"), value);
+	set_param_int(strcpy(tmp_str, "Di"), value);
    // also add a line to the following function
 }
 
@@ -602,6 +606,7 @@ DO_ALL_default(int value)
 	change_defa_param_int(strcpy(tmp_str, "Ss"), value);	
    change_defa_param_int(strcpy(tmp_str, "Ex"), value);
    change_defa_param_int(strcpy(tmp_str, "Ea"), value);
+	change_defa_param_int(strcpy(tmp_str, "Es"), value);
    change_defa_param_int(strcpy(tmp_str, "Pa"), value);
    change_defa_param_int(strcpy(tmp_str, "Dc"), value);
    change_defa_param_int(strcpy(tmp_str, "Sp"), value);
@@ -611,6 +616,7 @@ DO_ALL_default(int value)
    change_defa_param_int(strcpy(tmp_str, "P3"), value);
 	change_defa_param_int(strcpy(tmp_str, "Is"), value);
 	change_defa_param_int(strcpy(tmp_str, "Er"), value);
+	change_defa_param_int(strcpy(tmp_str, "Di"), value);
 }
 
 void

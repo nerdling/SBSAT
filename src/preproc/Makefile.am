@@ -8,7 +8,7 @@ sources= create_infs.cc do_cofactor.cc   do_exquantify.cc   \
 	do_prover3.cc equivclass.cc do_simpleand.cc \
 	do_possibleanding.cc do_findft.cc do_safeassign.cc \
 	do_safesearch.cc do_ex_safe_cluster.cc do_identify_same_structure.cc \
-	do_extendres.cc
+	do_extendres.cc do_diameter.cc
 
 #if MYLIBTOOL
 #noinst_LTLIBRARIES = libpreproc.la

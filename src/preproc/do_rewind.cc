@@ -62,6 +62,11 @@ int Do_Rewind() {
 		Rebuild_BDDx(x);
 	}
 
+	delete l;
+	l = new Equiv (numinp + 1, nmbrFunctions, T, F);
+	
+	//nmbrFunctions = 0;
+	
 	int *new_bdds;
 	switch (int r = add_newFunctions(original_functions, original_numout, &new_bdds)) {
 	 case TRIV_UNSAT:
@@ -70,13 +75,10 @@ int Do_Rewind() {
 		return r;
 	 default: break;
 	}
-	
+
 	ite_free((void**)&new_bdds);
 	
 	//fprintf(stderr, "%d %d\n", original_numout, nmbrFunctions); 
-	
-	delete l;
-	l = new Equiv (numinp + 1, nmbrFunctions, T, F);
 	
 	CreateInferences();
 	for(int x = 1; x < numinp + 1; x++) {
@@ -87,16 +89,6 @@ int Do_Rewind() {
 	  //}
 	}
 
-	for (int x = 0; x < nmbrFunctions; x++) {
-		int r=Rebuild_BDDx(x);
-		switch (r) {
-		 case TRIV_UNSAT:
-		 case TRIV_SAT:
-		 case PREP_ERROR: return r; 
-		 default: break;
-		}
-	}
-	
 	DO_INFERENCES = OLD_DO_INFERENCES;
 
 	for (int x = 0; x < nmbrFunctions; x++) { //Need to do this twice

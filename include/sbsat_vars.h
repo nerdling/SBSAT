@@ -145,6 +145,7 @@ extern int DO_FIND_FUNCTION_TYPE;
 extern int DO_PROVER3;
 extern int DO_IDENTIFY_SAME_STRUCTURE;
 extern int DO_EXTEND_RES;
+extern int DO_DIAMETER;
 
 extern int PARAMS_DUMP;
 
