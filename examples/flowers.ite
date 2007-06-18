@@ -6,7 +6,7 @@ p bdd 4 4
 ;The question must be negated and added to the database.
 ;If SBSAT returns 'unsat' then the answer to the question
 ;is 'YES', otherwise the answer is 'NO'.
-*imp(Coloured, Scented)
-*imp(-Like, -OpenAir)
-*imp(Like, Coloured)
-*not(imp(-Like, -Scented))
+imp(Coloured, Scented) ;
+imp(-OpenAir, -Like) ;
+imp(OpenAir, Coloured) ;
+not(imp(-Scented, -Like)) ;
