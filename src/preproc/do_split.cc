@@ -280,7 +280,7 @@ int Split_Large () {
 		 case TRIV_SAT:
 		 case PREP_ERROR: 
 			ret=r;
-			goto sp_bailout;
+			return r;
 		 default: break;
 		}
 	}
