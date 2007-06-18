@@ -1,40 +1,39 @@
 p bdd 30 11 ; 30 vars, 11 functions
-Initial_Branch(#1, var*%25.1111, a%10, b, t*e) 
+Initial_Branch(#1, var*%25.1111, a%10, b, t*e)
   ; These variables will be branched on first.
   ;*' is a wildcard. a % influences the heuristic value.
 Initial_Branch(#2, x, var*, b%10.3948, 5, v2)
   ; These variables will be branched on second.
   ; b is ignored here because it appeares in an Initial_Branch statement above.
 ite(var1, T, F) ; Function $1, no BDD created.
-var1            ; Function $2, no BDD created.
+var(var1)       ; Function $2, no BDD created.
                 ; The two preceeding lines created identical functions.
                 ; T is built in for True, F is built in for False.
 and(var1, var2)          ; Function $3, no BDD created.
-and4(a, b, 1, 2)         ; Function $4, no BDD created.
-*or3($3, not($4), -var1) ; Function $5, BDD 1.
-*ite 4 5 6               ; Function $6, BDD 2.
-                         ; Notice parathensis and commas are not required.
-ite 2            ; Function $7, no BDD created.
-    ite 3 4 5    ; Comments are ignored, even in the middle of a function.
-    and or 6 7 8 ; Lines can be hard to read without parathensis and commas.
+and(a, b, 1, 2)          ; Function $4, no BDD created.
+*or($3, not($4), -var1)  ; Function $5, BDD 1.
+*ite(4 5 6)              ; Function $6, BDD 2.
+                         ; Notice commas are not required.
+ite(2               ; Function $7, no BDD created.
+    ite(3 4 5)      ; Comments are ignored, even in the middle of a function.
+    and(or(6 7) 8)  ; Functions can span multiple lines.
+	 )
   ; Defining the ternary majority-vote operator.
 #define majv(x, y, z) # ite(x, or(y, z), and(y, z))
-  ; Defining a quintal  operator.
-#define AndOr4(a, b, c, d) # and3(OR(a, b), OR(b, c), OR(c, d))
+  ; Defining a quintal operator.
+#define AndOr4(a, b, c, d) # and(OR(a, b), OR(b, c), OR(c, d))
   ; Previously defined functions can be used to define more complex functions.
 #define AndOr4_MAJV(v1, v2, v3, v4)
 # AndOr4(majv(v1, v2, v3), majv(v1, v3, v4), majv(v1, v2, v4), majv(v2, v3, v4))
 *AndOr4_majv(tem1e, tem2e, tem3e, tem4e) ; Function $8, BDD 3.
                                          ; There is no case sensitivity.
-; Overloading the AND operator to be the OR of 3 variables.
-#define and(x, y, z) # or3(x, y, z)
+; Overloading of build in operators is not allowed.
+; #define and(x, y, z) # or(x, y, z) ; This will cause an error message.
 *and(var1, var2, var3) ; Function $9, BDD 4.
-  ; Returning the AND operator to normal.
-#define and(x, y) # ite(x, y, F)
-print_tree  $7 ; print - No function created, no BDD created.
-pprint_tree $7 ; pretty print - No function created, no BDD created.
-*minmax(4, 0, 1, x10, x9, x8, x7) ; eqn $10, BDD 5
-print_tree minmax(4, 0, 1, x10, x9, x8, x7) ; No function created, no BDD created.
+print_tree($7) ; print - No function created, no BDD created.
+pprint_tree($7) ; pretty print - No function created, no BDD created.
+*minmax(0, 1, x10, x9, x8, x7) ; eqn $10, BDD 5
+print_tree(minmax(0, 1, x10, x9, x8, x7)) ; No function created, no BDD created.
 *or(pprint_tree(print_tree(and(2, 3))), 4) ; Function $11, BDD 6.
   ; This function is identical to the function created by *or(and(2, 3), 4)'
   ; The difference is that function $11 also prints and(2, 3)' in two
