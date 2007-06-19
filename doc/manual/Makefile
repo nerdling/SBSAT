@@ -10,7 +10,7 @@ sbsat_user_manual: sbsat_user_manual.tex
 	latex sbsat_user_manual
 
 ps: sbsat_user_manual
-	/usr/bin/dvips sbsat_user_manual.dvi -o sbsat_user_manual.ps
+	 dvips sbsat_user_manual.dvi -o sbsat_user_manual.ps
 
 pdf: ps
 	ps2pdf sbsat_user_manual.ps

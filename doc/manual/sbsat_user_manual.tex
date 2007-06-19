@@ -2497,14 +2497,16 @@ This Boolean function has value {\em F} if all its arguments have value
 \indent\textbf{OR}\\
 \vspace*{-3mm}\\
 \indent\indent\parbox{110mm}{
-This is an extension to {\tt OR} analogous to the extension {\tt
-AND\#} of {\tt AND}.}\\
+This Boolean function has value {\em F} if all its arguments have value
+{\em F} and has value {\em T} if at least one argument has value {\em T}.
+}\\
 
 \indent\textbf{NOR}\\
 \vspace*{-3mm}\\
 \indent\indent\parbox{110mm}{
-This is an extension to {\tt NOR} analogous to the extension {\tt
-NAND\#} of {\tt NAND}.}\\
+This Boolean function has value {\em T} if all its arguments have value 
+{\em F} and has value {\em F} if at least one argument has value {\em T}.
+}\\
 
 \indent\textbf{EQU}\\
 \vspace*{-3mm}\\
@@ -2517,6 +2519,28 @@ have value {\em F} and has the value {\em F} otherwise.}\\
 \indent\indent\parbox{110mm}{
 This Boolean function has value {\em F} if an even number of its arguments
 have value {\em T} and has the value {\em T} otherwise.}\\
+
+\indent\textbf{IMP}\\
+\vspace*{-3mm}\\
+\indent\indent\parbox{110mm}{
+As a binary Boolean function, {\tt imp} has value {\em T} if either both its
+arguments have value {\em T} or if its second argument has value {\em F} and
+has value {\em F} if its first argument has value {\em F} and second
+argument has value {\em T}.
+When given more than two arguments, scoping is done from left to
+right. For instance, {\tt imp(x1, x2, x3)} is equivalent to {\tt imp(imp(x1,
+x2), x3)}.}\\
+
+\indent\textbf{NIMP}\\
+\vspace*{-3mm}\\
+\indent\indent\parbox{110mm}{
+As a binary Boolean function, {\tt imp} has value {\em F} if either both its
+arguments have value {\em T} or if its second argument has value {\em F} and
+has value {\em T} if its first argument has value {\em F} and second
+argument has value {\em T}.
+When given more than two arguments, scoping is done from left to right. For
+instance, {\tt nimp(x1, x2, x3)} is equivalent to {\tt nimp(nimp(x1, x2),
+x3)}.}\\
 
 \subsubsection{Manipulators}
 
@@ -2621,18 +2645,17 @@ table.  There must be exactly $2^{\tt <\#vars>}$ symbols in the {\tt
 The syntax of this function is as follows:}\\
 \vspace*{-3mm}\\
 \indent\indent\indent
-{\tt minmax ( <\#args> <min\_\#> <max\_\#> <blank\_separated\_var\_list> )}\\
+{\tt minmax ( <min\_\#> <max\_\#> <blank\_separated\_var\_list> )}\\
 \vspace*{0mm}\\
 \indent\indent\parbox{110mm}{
 where the first three arguments are positive integers.  This function
 returns {\em T} if at least {\tt <min\_\#>} and at most {\tt <max\_\#>} of
 the variables in the {\tt <...\_var\_list>} have value {\em T} and returns
 {\em F} if more than {\tt <max\_\#>} or less than {\tt <min\_\#>} of the
-variables in the {\tt <...\_var\_list>} have value {\em T}.  The number {\tt
-<\#args>} is the number of variables in the {\tt <...\_var\_list>}.  The
+variables in the {\tt <...\_var\_list>} have value {\em T}. The
 following is an example,}\\
 \vspace*{0mm}\\
-\indent\indent\indent {\tt minmax(4, 1, 3, x13, x12, x11, x10)}\\
+\indent\indent\indent {\tt minmax(1, 3, x13, x12, x11, x10)}\\
 \vspace*{-1mm}\\
 \indent\indent\parbox{110mm}{
 which has value {\em T} if at least 1 and no more than 3 of the
@@ -2749,7 +2772,7 @@ Thus,}\\
 \indent\indent\indent{\tt \#define and(x, y, z) \# or(x, y, z)}\\ 
 \vspace*{0mm}\\
 \indent\indent\parbox{110mm}{
-causes and error message to occur}\\.
+causes an error message to occur}\\.
 
 \indent\textbf{PRINT\_TREE}\\
 \vspace*{-3mm}\\
@@ -2761,7 +2784,7 @@ function prints are displayed before the solution.  In the printed
 tree, the left branch is the $T$ branch and the right branch is the 
 $F$ branch. For example,}\\
 \vspace*{0mm}\\
-\indent\indent\indent{\tt print\_tree(or3 (4, 5, -6))}\\
+\indent\indent\indent{\tt print\_tree(or(4, 5, -6))}\\
 \vspace*{-1mm}\\
 \indent\indent\parbox{110mm}{
 prints the following to standard output:
@@ -2778,26 +2801,29 @@ prints the following to standard output:
 
 -{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-
 }\\
-\vspace*{0mm}\\
-\indent\indent\parbox{110mm}{
-It is possible to control the variable ordering of the printed trees.
-Variables are ordered based on their where they first occur in the input
-file. The ordering can be controlled by creating a dummy define statement,
+
+\indent\textbf{ORDER}\\
+\vspace*{-3mm}\\
+\indent\indent\parbox{110mm}{\label{bdd-order-page}
+It is possible to control the variable ordering of the BDDs.
+Variables are ordered based on where they first occur in the input
+file. The ordering can be controlled by using the {\tt order} directive,
 for example:}\\
 \vspace*{-2mm}\\
-\indent\indent\indent{\tt \#define ordering(a, b, c, d) \# or4(a, b, c, d)}\\
+\indent\indent\indent{\tt order(a, b, c, d)}\\
 \vspace*{0mm}\\
 \indent\indent\parbox{110mm}{
-This forces variable $a$ to occur as or near the leaves of printed trees,
-and $d$ to occur as or near the root.
+assuming that $a$, $b$, $c$, and $d$ have not previously been used in the file,
+forces variable $a$ to occur as or near the leaves of printed trees, and $d$
+to occur as or near the root.
 For example, the lines}\\
 \vspace*{-2mm}\\
-\indent\indent\indent{\tt \#define ordering(b, a, d, c) \# or4(b, a, d, c)}\\
-\indent\indent\indent{\tt print\_tree(minmax(4, 1, 3, a, b, c, d))}\\
+\indent\indent\indent{\tt order(b, a, d, c)}\\
+\indent\indent\indent{\tt print\_tree(minmax(1, 3, a, b, c, d))}\\
 \vspace*{0mm}\\
 \indent\indent\parbox{110mm}{
 prints the following to standard output (assuming $a$, $b$, $c$, and $d$ have not
-been previously defined):\\
+been previously used):\\
 
 -{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-
 
@@ -2821,7 +2847,7 @@ Does the same thing as {\tt PRINT\_TREE} except the output is in text
 form instead of graphical form with {\tt ite} used to indicate $T$ and
 $F$ branches.  For example,}\\
 \vspace*{0mm}\\
-\indent\indent\indent {\tt pprint\_tree(or3 (4, 5, -6))}\\
+\indent\indent\indent {\tt pprint\_tree(or(4, 5, -6))}\\
 \vspace*{0mm}\\
 \indent\indent\parbox{110mm}{
 prints to standard output:
@@ -2847,7 +2873,7 @@ ite~6
 Does a similar thing to {\tt PRINT\_TREE} except the output is shown in terms
 of nested ANDs and XORs. For example,}\\
 \vspace*{0mm}\\
-\indent\indent\indent {\tt print\_xdd(or3 (4, 5, -6))}\\
+\indent\indent\indent {\tt print\_xdd(or(4, 5, -6))}\\
 \vspace*{0mm}\\
 \indent\indent\parbox{110mm}{
 prints to standard output:
@@ -2865,7 +2891,7 @@ x[6]$*$(x[5]$*$(x[4] + 1) + x[4] + 1) + 1 = 1
 Does the same thing as {\tt PRINT\_XDD} except the function is displayed in
 its unnested form. For example,}\\
 \vspace*{0mm}\\
-\indent\indent\indent {\tt print\_flat\_xdd(or3 (4, 5, -6))}\\
+\indent\indent\indent {\tt print\_flat\_xdd(or(4, 5, -6))}\\
 \vspace*{0mm}\\
 \indent\indent\parbox{110mm}{
 prints to standard output:
@@ -3037,10 +3063,10 @@ following table shows the above as expressions in canonical form:\\
 \multicolumn{1}{|c|}{\bf This ...} &
 \multicolumn{1}{c|}{\bf is equivalent to this}\\
 \hline
-{\tt x1 x2 x3 = 1} & {\tt equ( xor3(1, 2, 3), T)}\\
-{\tt x1x2x3 = 1} & {\tt equ( and3(1, 2, 3), T)}\\
+{\tt x1 x2 x3 = 1} & {\tt equ( xor(1, 2, 3), T)}\\
+{\tt x1x2x3 = 1} & {\tt equ( and(1, 2, 3), T)}\\
 {\tt x1x2x3 x2x3 x4x5x6 = 0} & 
-{\tt equ(xor3(and3(1, 2, 3), and(2, 3), and3(4, 5, 6)), F)}\\
+{\tt equ(xor(and(1, 2, 3), and(2, 3), and(4, 5, 6)), F)}\\
 \hline
 \end{tabular}}
 
