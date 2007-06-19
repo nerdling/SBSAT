@@ -840,11 +840,11 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 		if(v1 == NULL) { fprintf(stderr, "\nKeyword 'nimp' expects at least 2 arguments, found 0 (%s)...exiting:%d\n", macros, markbdd_line); exit (1); }
 		BDDNode *v2 = putite(intnum, bdd);
 		if(v2 == NULL) { fprintf(stderr, "\nKeyword 'nimp' expects at least 2 arguments, found 1 (%s)...exiting:%d\n", macros, markbdd_line); exit (1); }
-		v1 = ite_imp(v1, v2);
+		v1 = ite_nimp(v1, v2);
 		while ((v2 = putite (intnum, bdd))!=NULL)
-			v1 = ite_imp(v1, v2);
+			v1 = ite_nimp(v1, v2);
 		strcpy (macros, "nimp");
-		return ite_not(v1);
+		return v1;
 	}
 	if (!strcasecmp (macros, "nand")) {
 		BDDNode *v1 = putite(intnum, bdd);
