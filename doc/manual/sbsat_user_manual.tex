@@ -900,11 +900,11 @@ be in a file containing a canonical form expression:\\
 \vspace*{-3mm}\\
 \indent{\tt imp(-x3, -x4)}\\
 \indent{\tt xor(x1, -x5)}\\
-\indent{\tt xor6(x8, x3, -x2, x7, -x4, -x1)}
+\indent{\tt xor(x8, x3, -x2, x7, -x4, -x1)}
 
 \noindent
 \textbf{\underbar{Remark}}: ~Since no extension of a binary function 
-can take 1 argument, {\tt xor1(-x1)} is not admitted.
+can take 1 argument, {\tt xor(-x1)} is not admitted.
 
 A function argument may be a variable, a function, or a reference to a
 function defined elsewhere in the file.  To support the latter, every
@@ -924,14 +924,14 @@ Here is an example:\\
 {\tt or(x2, x3)}\\
 {\tt and(x3, x4)}\\
 {\tt imp(x3, \$2)}\\
-{\tt xor4(\$3, \$1, x4, x1)}\\
+{\tt xor(\$3, \$1, x4, x1)}\\
 {\tt and(x2, x3)}\\
 }
 
 \noindent
 The fourth line of this group is equivalent to\\
 \vspace*{-3mm}\\
-\indent{\tt xor4(imp(x3, and(x3, x4)), or(x2, x3), x4, x1)}\\
+\indent{\tt xor(imp(x3, and(x3, x4)), or(x2, x3), x4, x1)}\\
 \vspace*{-3mm}\\
 which is {\em also} recognized by {\tt sbsat}.
 
@@ -946,8 +946,7 @@ prepending '{\tt *}' to top-level functions only.  For example:\\
 {\tt or(x2, x3)}\\
 {\tt and(x3, x4)}\\
 {\tt imp(x3, \$2)}\\
-{\tt ; The next line is the first *ed line of the file}\\
-{\tt *xor4(\$3, \$1, x4, x1)}\\
+{\tt *xor(\$3, \$1, x4, x1)}\\
 {\tt *or(x2, x3)}\\
 }
 

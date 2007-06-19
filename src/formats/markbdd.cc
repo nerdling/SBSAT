@@ -1230,7 +1230,7 @@ void bddloop () {
 			if(p==';') continue_all = 1;
 			else if (p!=' ' && p!='(' && p!=')' && p!=',') {
 				fprintf(stderr, "Error: Extra characters following line %d...exiting\n", markbdd_line);
-				exit(0);
+				exit (1);
 				continue_all = 1;
 			}
          p = fgetc(finputfile);
@@ -1240,7 +1240,7 @@ void bddloop () {
 				if (p == ';') continue_all = 1;
 				if (continue_all == 0 && p!=' ' && p!='(' && p!=')' && p!=',') {
 					fprintf(stderr, "Error: Extra characters following line %d...exiting\n", markbdd_line);
-					exit(0);
+					exit (1);
 					continue_all = 1;
 				}
             p = fgetc(finputfile);
