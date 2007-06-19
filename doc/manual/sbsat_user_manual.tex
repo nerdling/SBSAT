@@ -891,20 +891,16 @@ number of Boolean functions present in the file.  Variables are given
 names which are strings of alphabetic and numeric characters and the
 underscore character, in any order.  A comment begins with '{\tt ;}'
 and may start anywhere on a line and applies to the end of the line.
-Each line starting with a Boolean function identifier listed in the
-{\bf Boolean Function} item of Section~\ref{defs-section}, or the
-identifier of an extension of one of those functions, or a manipulator
-(see Section~\ref{ref-can-section} for extensions and manipulators)
-represents a Boolean function.  For example, the following lines can
-be in a file containing a canonical form expression:\\
-\vspace*{-3mm}\\
-\indent{\tt imp(-x3, -x4)}\\
-\indent{\tt xor(x1, -x5)}\\
-\indent{\tt xor(x8, x3, -x2, x7, -x4, -x1)}
+Each line starting with a Boolean function identifier listed in the {\bf
+Boolean Function} item of Section~\ref{defs-section}, or a manipulator (see
+Section~\ref{ref-can-section} for manipulators) represents a Boolean
+function.  For example, the following lines can be in a file containing a
+canonical form expression:\\ \vspace*{-3mm}\\ \indent{\tt imp(-x3, -x4)}\\
+\indent{\tt xor(x1, -x5)}\\ \indent{\tt xor(x8, x3, -x2, x7, -x4, -x1)}
 
 \noindent
-\textbf{\underbar{Remark}}: ~Since no extension of a binary function 
-can take 1 argument, {\tt xor(-x1)} is not admitted.
+\textbf{\underbar{Remark}}: ~Since no binary function can take 1 argument,
+{\tt xor(-x1)} is not admitted.
 
 A function argument may be a variable, a function, or a reference to a
 function defined elsewhere in the file.  To support the latter, every
@@ -973,9 +969,9 @@ example {\tt .../examples/xortest.xor}:\\
 which is equivalent to the following canonical form\\
 \vspace*{-3mm}\\
 \indent{\tt p bdd 12 3}\\
-\indent{\tt *equ(xor3(123, 125, 156), F)}\\
-\indent{\tt *equ(xor(134, and3(155, 127, 167)), T)}\\
-\indent{\tt *equ(xor(and3(1, 2, 3), and3(45, 145, 167)), F)}\\
+\indent{\tt equ(xor(123, 125, 156), F)}\\
+\indent{\tt equ(xor(134, and(155, 127, 167)), T)}\\
+\indent{\tt equ(xor(and(1, 2, 3), and(45, 145, 167)), F)}\\
 \vspace*{-3mm}\\
 This may be solved using the following command:\\
 \vspace*{-3mm}\\
@@ -1050,48 +1046,47 @@ Page~\pageref{define-page}.
 \begin{figure}
 \begin{verbatim}
 p bdd 30 11 ; 30 vars, 11 functions
-Initial_Branch(#1, var*%25.1111, a%10, b, t*e) 
+Initial_Branch(#1, var*%25.1111, a%10, b, t*e)
   ; These variables will be branched on first.
-  ;`*' is a wildcard. a % influences the heuristic value.
+  ;*' is a wildcard. a % influences the heuristic value.
 Initial_Branch(#2, x, var*, b%10.3948, 5, v2)
   ; These variables will be branched on second.
   ; b is ignored here because it appeares in an Initial_Branch statement above.
-ite(var1, T, F) ; Function $1, no BDD created.
-var1            ; Function $2, no BDD created.
+ite(var1, T, F) ; BDD $1, no top-level function created.
+var(var1)       ; BDD $2, no top-level function created.
                 ; The two preceeding lines created identical functions.
                 ; T is built in for True, F is built in for False.
-and(var1, var2)          ; Function $3, no BDD created.
-and4(a, b, 1, 2)         ; Function $4, no BDD created.
-*or3($3, not($4), -var1) ; Function $5, BDD 1.
-*ite 4 5 6               ; Function $6, BDD 2.
-                         ; Notice parathensis and commas are not required.
-ite 2            ; Function $7, no BDD created.
-    ite 3 4 5    ; Comments are ignored, even in the middle of a function.
-    and or 6 7 8 ; Lines can be hard to read without parathensis and commas.
+and(var1, var2)          ; BDD $3, no top-level function created.
+and(a, b, 1, 2)          ; BDD $4, no top-level function created.
+*or($3, not($4), -var1)  ; BDD $5, top-level function 1.
+*ite(4 5 6)              ; BDD $6, top-level function 2.
+                         ; Notice commas are not required.
+ite(2               ; BDD $7, no top-level function created.
+    ite(3 4 5)      ; Comments are ignored, even in the middle of a function.
+    and(or(6 7) 8)  ; top-level functions can span multiple lines.
+	 )
   ; Defining the ternary majority-vote operator.
 #define majv(x, y, z) # ite(x, or(y, z), and(y, z))
-  ; Defining a quintal  operator.
-#define AndOr4(a, b, c, d) # and3(OR(a, b), OR(b, c), OR(c, d))
+  ; Defining a quintal operator.
+#define AndOr4(a, b, c, d) # and(OR(a, b), OR(b, c), OR(c, d))
   ; Previously defined functions can be used to define more complex functions.
 #define AndOr4_MAJV(v1, v2, v3, v4)
 # AndOr4(majv(v1, v2, v3), majv(v1, v3, v4), majv(v1, v2, v4), majv(v2, v3, v4))
-*AndOr4_majv(tem1e, tem2e, tem3e, tem4e) ; Function $8, BDD 3.
+*AndOr4_majv(tem1e, tem2e, tem3e, tem4e) ; BDD $8, top-level function 3.
                                          ; There is no case sensitivity.
-  ; Overloading the AND operator to be the OR of 3 variables.
-#define and(x, y, z) # or3(x, y, z)
-*and(var1, var2, var3) ; Function $9, BDD 4.
-  ; Returning the AND operator to normal.
-#define and(x, y) # ite(x, y, F)
-print_tree  $7 ; print - No function created, no BDD created.
-pprint_tree $7 ; pretty print - No function created, no BDD created.
-*minmax(4, 0, 1, x10, x9, x8, x7) ; eqn $10, BDD 5
-print_tree minmax(4, 0, 1, x10, x9, x8, x7) ; No function created, no BDD created.
-*or(pprint_tree(print_tree(and(2, 3))), 4) ; Function $11, BDD 6.
-  ; This function is identical to the function created by `*or(and(2, 3), 4)'
-  ; The difference is that function $11 also prints `and(2, 3)' in two
+  ; Overloading of build in operators is not allowed.
+  ; #define and(x, y, z) # or(x, y, z) ; This will cause an error message.
+*and(var1, var2, var3) ; BDD $9, top-level function 4.
+print_tree($7) ; print - No function created, no top-level function created.
+pprint_tree($7) ; pretty print - No function created, no top-level function created.
+*minmax(0, 1, x10, x9, x8, x7) ; eqn $10, top-level function 5
+print_tree(minmax(0, 1, x10, x9, x8, x7)) ; No function created, no top-level function created.
+*or(pprint_tree(print_tree(and(2, 3))), 4) ; BDD $11, top-level function 6.
+  ; This function is identical to the function created by *or(and(2, 3), 4)'
+  ; The difference is that function $11 also prints and(2, 3)' in two
   ; different printing styles.
-*print_tree($11) ; No function created, no BDD created.
-                 ; A `*' in front of directives is ignored.
+*print_tree($11) ; No function created, no top-level function created.
+                 ; A *' in front of directives is ignored.
 \end{verbatim}
 %comment to equalize $
 \caption{A complex canonical form input.}\label{complex-figure}
@@ -1103,7 +1098,7 @@ In canonical form files only, one may use {\tt print\_tree} or {\tt
 pprint\_tree} to print the truth table of a function as a BDD.  For
 example,\\
 \vspace*{-3mm}\\
-\indent{\tt print\_tree(or3 (x4, x5, -x6))}\\
+\indent{\tt print\_tree(or(x4, x5, -x6))}\\
 \vspace*{-3mm}\\
 prints the following to standard output\\
 \vspace*{-3mm}\\
@@ -1290,7 +1285,7 @@ the result is shown in Figure~\ref{int-syn-figure}.
   equ(o16, ite(s2, x14, x13))
   equ(x11, o11)
   ; Constraint forcing impulse(1)
-  and4(-x11, x12, x13, x14)
+  and(-x11, x12, x13, x14)
 
   ; Consistency constraints for impulse(3)
   equ(o21, ite(s1, x22, x21))
@@ -1301,7 +1296,7 @@ the result is shown in Figure~\ref{int-syn-figure}.
   equ(o26, ite(s2, x24, x23))
   equ(x21, o21)
   ; Constraint forcing impulse(2)
-  and4(x21, -x22, x23, x24)
+  and(x21, -x22, x23, x24)
 
   ; Consistency constraints for impulse(3)
   equ(o31, ite(s1, x32, x31))
@@ -1312,7 +1307,7 @@ the result is shown in Figure~\ref{int-syn-figure}.
   equ(o36, ite(s2, x34, x33))
   equ(x31, o31)
   ; Constraint forcing impulse(3)
-  and4(x31, x32, -x33, x34)
+  and(x31, x32, -x33, x34)
 
   ; Consistency constraints for impulse(4)
   equ(o41, ite(s1, x42, x41))
@@ -1323,7 +1318,7 @@ the result is shown in Figure~\ref{int-syn-figure}.
   equ(o46, ite(s2, x44, x43))
   equ(x41, o41)
   ; Constraint forcing impulse(4)
-  and4(x41, x42, x43, -x44)
+  and(x41, x42, x43, -x44)
 \end{verbatim}
 \caption{Interconnect synthesis example in canonical form.}\label{int-syn-figure}
 \end{figure}
@@ -1576,23 +1571,23 @@ converts to {\tt cnf} but not from {\tt cnf} to {\tt xor}.\\
 \noindent
 A sample command for translating a file of one format to another is:\\
 \vspace*{-3mm}\\
-\indent{\tt \$ sbsat \texttt{\emph{-c}} flowers.ite > flowers.cnf}
+\indent{\tt \$ sbsat \texttt{\emph{-c}} example.ite > example.cnf}
 
 \noindent
 which translates a file in trace format to one in cnf format.  To get
 a {\em direct} translation, preprocessing must be turned off.  Thus:\\
 \vspace*{-3mm}\\
-\indent{\tt \$ sbsat \texttt{\emph{-c}} \texttt{\emph{-All}} 0 \texttt{\emph{-In}} 0 flowers.ite > flowers.cnf}
+\indent{\tt \$ sbsat \texttt{\emph{-c}} \texttt{\emph{-All}} 0 \texttt{\emph{-In}} 0 example.ite > example.cnf}
 
 \noindent
 or\\
 \vspace*{-3mm}\\
-\indent{\tt \$ sbsat \texttt{\emph{-c}} \texttt{\emph{-All}} 0 \texttt{\emph{-In}} 0 flowers.ite flowers.cnf}
+\indent{\tt \$ sbsat \texttt{\emph{-c}} \texttt{\emph{-All}} 0 \texttt{\emph{-In}} 0 example.ite example.cnf}
 
 \noindent
 or\\
 \vspace*{-3mm}\\
-\indent{\tt \$ sbsat \texttt{\emph{-c}} \texttt{\emph{-All}} 0 \texttt{\emph{-In}} 0 flowers.ite \texttt{\emph{-{}-output-file}} flowers.cnf}
+\indent{\tt \$ sbsat \texttt{\emph{-c}} \texttt{\emph{-All}} 0 \texttt{\emph{-In}} 0 example.ite \texttt{\emph{-{}-output-file}} example.cnf}
 
 \noindent
 would be acceptable.
@@ -1700,13 +1695,13 @@ a preprocessor sequence.  For example,\\
 \vspace*{-3mm}\\
 \indent
 {\tt \$ sbsat {\it -{}-preprocess-sequence} \{ExDc\}3\{ExSt\}2\{ExPr\}10
-small.cnf}\\
+example.cnf}\\
 \vspace*{-3mm}\\
 \noindent
 The following does the same thing:\\
 \vspace*{-3mm}\\
 \indent
-{\tt \$ sbsat {\it -P} \{ExDc\}3\{ExSt\}2\{ExPr\}10 small.cnf}
+{\tt \$ sbsat {\it -P} \{ExDc\}3\{ExSt\}2\{ExPr\}10 example.cnf}
 
 \noindent
 For some problems, preprocessing might take too long or may not
@@ -1714,18 +1709,18 @@ produce a desired result.  In this case the user may enable or disable
 preprocessing options or change their sequence.  For example,\\
 \vspace*{-3mm}\\
 \indent
-{\tt \$ sbsat {\it -St} 0 small.cnf}\\
+{\tt \$ sbsat {\it -St} 0 example.cnf}\\
 \vspace*{-3mm}\\
 skips the strengthening operation in the current sequence. For example,\\
 \vspace*{-3mm}\\
 \indent
-{\tt \$ sbsat {\it -P} \{Dc\{ExSt\}\{ExPr\}St\}10 {\it -St} 0 small.cnf}\\
+{\tt \$ sbsat {\it -P} \{Dc\{ExSt\}\{ExPr\}St\}10 {\it -St} 0 example.cnf}\\
 \vspace*{-3mm}\\
 \noindent
 is the same as\\
 \vspace*{-3mm}\\
 \indent
-{\tt \$ sbsat {\it -P} \{Dc\{Ex\}\{ExPr\}\}10 small.cnf}\\
+{\tt \$ sbsat {\it -P} \{Dc\{Ex\}\{ExPr\}\}10 example.cnf}\\
 \vspace*{-3mm}\\
 \noindent
 Also, the user may want to turn off every preprocessing option except one or
@@ -1734,11 +1729,11 @@ all preprocessing options, followed by (for example) {\it -St} 1, which
 turns strengthening back on. For example,\\
 \vspace*{-3mm}\\
 \indent
-{\tt \$ sbsat {\it -P} \{Dc\{ExSt\}\{ExPr\}St\}10 {\it -All} 0 {\it -St} 1 small.cnf}\\
+{\tt \$ sbsat {\it -P} \{Dc\{ExSt\}\{ExPr\}St\}10 {\it -All} 0 {\it -St} 1 example.cnf}\\
 \vspace*{-3mm}\\
 \noindent
 is the same as\\
-{\tt \$ sbsat {\it -P} \{\{St\}St\}10 small.cnf}
+{\tt \$ sbsat {\it -P} \{\{St\}St\}10 example.cnf}
 \vspace*{-3mm}\\
 
 \noindent
@@ -1904,7 +1899,7 @@ The user can fast forward through preprocessing with the arrow key
 \noindent
 An example of item 2 is the following:\\ 
 \vspace*{-3mm}\\
-\indent {\tt \$ sbsat small.cnf} {\tt\it -{}-max-preproc-time} {\tt 180}\\
+\indent {\tt \$ sbsat example.cnf} {\tt\it -{}-max-preproc-time} {\tt 180}\\
 \vspace*{-3mm}\\
 which allows 3 minutes for preprocessing and continues to the search phase
 after that. This time constraint is checked between preprocessing options,
@@ -1913,7 +1908,7 @@ so preprocessing could potentially terminate much later than desired.
 Search time can also be controlled on the command line using a similar
 switch.  For example,\\
 \vspace*{-3mm}\\
-\indent {\tt \$ sbsat small.cnf} {\tt\it -{}-max-branching-time} {\tt 180}\\
+\indent {\tt \$ sbsat example.cnf} {\tt\it -{}-max-branching-time} {\tt 180}\\
 \vspace*{-3mm}\\
 limits search time to 3 minutes.
 
@@ -1943,7 +1938,7 @@ with many custom settings and is useful for experimentation.
 initialization files and load a desired one from the command line.
 Do this, for example, as follows:\\
 \vspace*{-3mm}\\
-\indent {\tt \$ sbsat} {\tt\it -{}-ini} {\tt myini.ini small.cnf}\\
+\indent {\tt \$ sbsat} {\tt\it -{}-ini} {\tt myini.ini example.cnf}\\
 \vspace*{-3mm}\\
 which loads the options of initialization file {\tt myini.ini}.
 
@@ -2010,12 +2005,12 @@ Some example runs are as follows:\\
 \indent {\tt \$ sbsat {\it -{}-help}}\\
 \indent\indent\indent Lists all command line options\\
 \vspace*{-3mm}\\
-\indent {\tt \$ sbsat {\it -R} r small.cnf}\\
-\indent\indent\indent Solve the problem in {\tt small.cnf}, show the
+\indent {\tt \$ sbsat {\it -R} r example.cnf}\\
+\indent\indent\indent Solve the problem in {\tt example.cnf}, show the
 result raw\\
 \vspace*{-3mm}\\
-\indent{\tt \$ sbsat {\it -P \{ExDc\}3\{ExSt\}2\{ExPr\}10} small.cnf}\\
-\indent\indent\indent Preprocess the problem in {\tt small.cnf} a
+\indent{\tt \$ sbsat {\it -P \{ExDc\}3\{ExSt\}2\{ExPr\}10} example.cnf}\\
+\indent\indent\indent Preprocess the problem in {\tt example.cnf} a
 certain way, then solve.
 
 \noindent
@@ -2023,8 +2018,8 @@ Switch-parameter pairs and file names may be placed anywhere on a
 command line after {\tt sbsat}.  Thus, the following two runs are
 identical:\\
 \vspace*{-3mm}\\
-\indent{\tt \$ sbsat {\it -R} r small.cnf}\\
-\indent{\tt \$ sbsat small.cnf {\it -R} r}
+\indent{\tt \$ sbsat {\it -R} r example.cnf}\\
+\indent{\tt \$ sbsat example.cnf {\it -R} r}
 
 \noindent
 A switch may appear more than once on a command line.  In that case
@@ -2428,7 +2423,7 @@ distinct variables.\\
 A Boolean function may be expressed two ways:\\
 \vspace*{-3mm}\\
 \indent{\tt <variable>}\\
-\indent{\tt <function-identifier> arg1 arg2 ...}\\
+\indent{\tt <function-identifier> ( arg1 arg2 ... )}\\
 \vspace*{-3mm}\\ 
 where {\tt <function-identifier>} is one of the following predefined
 function identifiers, and {\tt arg\#} is either a variable, a Boolean
@@ -2441,10 +2436,10 @@ T}, or {\em F}, or have no value, depending on its arguments: values of
 Boolean functions are given as follows for each {\tt <function-identifier>}.
 
 \noindent
-\textbf{\underbar{Remark}}: ~Each function takes a fixed number of
-arguments, hence, commas and parenthesis are considered whitespace and
-are ignored, however, their use is recommended to enhance the human
-readability of input files.
+\textbf{\underbar{Remark}}: ~Most functions take an arbitrary number of
+arguments, hence, parenthesis are necessary. Commas are considered
+whitespace and are ignored, however, their use is recommended to enhance the
+human readability of input files.
 
 \indent\textbf{VAR}\\
 \vspace*{-3mm}\\
@@ -2469,86 +2464,6 @@ this way).  Examples are:}\\
 \indent\indent\indent{\tt not(x32)}\\
 \indent\indent\indent{\tt -x32}
 
-\indent\textbf{AND}\\
-\vspace*{-3mm}\\
-\indent\indent\parbox{110mm}{
-The binary Boolean function {\tt AND} has value {\em T} if both its
-arguments have value {\em T} and has value {\em F} if at least one of its
-arguments has value {\em F}.
-Examples are the following:}\\
-\vspace*{0mm}\\
-\indent\indent\indent {\tt and(x3, x4)}\\
-\indent\indent\indent {\tt and x3 x4}
-
-\indent\textbf{NAND}\\
-\vspace*{-3mm}\\
-\indent\indent\parbox{110mm}{
-The binary Boolean function {\tt NAND} has value {\em F} if both its
-arguments have value {\em T} and has value {\em T} if at least one of its
-arguments has value {\em F}.
-An example is:}\\
-\vspace*{0mm}\\
-\indent\indent\indent {\tt nand(x3, x4)}
-
-\indent\textbf{OR}\\
-\vspace*{-3mm}\\
-\indent\indent\parbox{110mm}{
-This binary Boolean function has value {\em T} if one of its arguments
-has value {\em T} and has value {\em F} if both its arguments have value
-{\em F}. An example is:}\\
-\vspace*{0mm}\\
-\indent\indent\indent {\tt or(and(x3, x4), x5)}
-
-\indent\textbf{NOR}\\
-\vspace*{-3mm}\\
-\indent\indent\parbox{110mm}{
-This binary Boolean function has value {\em F} if at least one of its
-arguments has value {\em T} and has value {\em T} if both arguments have
-value {\em F}.  An example is:}\\
-\vspace*{0mm}\\
-\indent\indent\indent {\tt nor(x3, ite(a, b, -c))}
-
-\indent\textbf{EQU}\\
-\vspace*{-3mm}\\
-\indent\indent\parbox{110mm}{
-This binary Boolean function has value {\em T} if both its arguments have
-been assigned the same value and has value {\em F} if both its arguments
-have been assigned different values. In the following example {\tt equ} acts
-as a way to assign the value {\em T} to variable {\tt x4}.}\\
-\vspace*{0mm}\\
-\indent\indent\indent {\tt equ(T, x4)}
-
-\indent\textbf{XOR}\\
-\vspace*{-3mm}\\
-\indent\indent\parbox{110mm}{
-This binary Boolean function has value {\em T} if its two arguments have
-been assigned opposite values and has value {\em F} if its two arguments
-have been assigned the same value. An example is:}\\
-\vspace*{0mm}\\
-\indent\indent\indent {\tt xor(x3, x4)}\\
-\indent\indent This is functionally equivalent to:\\
-\indent\indent\indent {\tt equ(x3, not(x4))}
-
-\indent\textbf{IMP}\\
-\vspace*{-3mm}\\ 
-\indent\indent\parbox{110mm}{ 
-This binary Boolean function has value {\em T} if either both its arguments
-have value {\em T} or if its second argument has value {\em F} and has value
-{\em F} if its first argument has value {\em F} and second value {\em T}.
-An example is:}\\
-\vspace*{0mm}\\
-\indent\indent\indent {\tt imp(x3, x4)}
-
-\indent\textbf{NIMP}\\
-\vspace*{-3mm}\\
-\indent\indent\parbox{110mm}{
-This binary Boolean function has value {\em F} if either both its arguments
-have value {\em T} or if its second argument has value {\em F} and has value
-{\em T} if its first argument has value {\em F} and second value {\em T}.
-An example is:}\\
-\vspace*{0mm}\\
-\indent\indent\indent {\tt nimp(x3, x4)}
-
 \indent\textbf{ITE}\\
 \vspace*{-3mm}\\
 \indent\indent\parbox{110mm}{
@@ -2558,18 +2473,8 @@ argument if its first argument has value {\em F}.
 Examples of this function are the following:}\\
 \vspace*{0mm}\\
 \indent\indent\indent{\tt ite(ite( x3, \$5, -x5), x4, x7)}\\
-\indent\indent\indent{\tt ite ite x3 \$5 -x5 x4 x7}
 
-\subsubsection{Boolean function extensions}
-
-The functions of this section are extensions to the binary
-functions of the previous section in that they admit more than two
-arguments. The syntax is the same except that the {\tt <function-identifier>}
-is immediately followed by a number ($\geq$ 2) indicating the number of arguments
-the function has.  Below, the character {\tt \#} is used to indicate
-the position of this number when defining function names.
-
-\indent\textbf{AND\#}\\
+\indent\textbf{AND}\\
 \vspace*{-3mm}\\ 
 \indent\indent\parbox{110mm}{ 
 This Boolean function has value {\em T} if all its arguments have value
@@ -2577,37 +2482,37 @@ This Boolean function has value {\em T} if all its arguments have value
 Examples of its use are as
 follows:}\\
 \vspace*{-0mm}\\
-\indent\indent\indent{\tt and4(x1, x2, x3, x4)}\\
-\indent\indent\indent{\tt and5(-x1,}\\
-\indent\indent\indent\indent~~~{\tt and3(x2, x3, \$4),}\\
+\indent\indent\indent{\tt and(x1, x2, x3, x4)}\\
+\indent\indent\indent{\tt and(-x1,}\\
+\indent\indent\indent\indent~~~{\tt and(x2, x3, \$4),}\\
 \indent\indent\indent\indent~~~{\tt x5, \$6, x7)}
 
-\indent\textbf{NAND\#}\\
+\indent\textbf{NAND}\\
 \vspace*{-3mm}\\
 \indent\indent\parbox{110mm}{
 This Boolean function has value {\em F} if all its arguments have value 
 {\em T} and has value {\em T} if at least one argument has value {\em F}.
 }\\
 
-\indent\textbf{OR\#}\\
+\indent\textbf{OR}\\
 \vspace*{-3mm}\\
 \indent\indent\parbox{110mm}{
 This is an extension to {\tt OR} analogous to the extension {\tt
 AND\#} of {\tt AND}.}\\
 
-\indent\textbf{NOR\#}\\
+\indent\textbf{NOR}\\
 \vspace*{-3mm}\\
 \indent\indent\parbox{110mm}{
 This is an extension to {\tt NOR} analogous to the extension {\tt
 NAND\#} of {\tt NAND}.}\\
 
-\indent\textbf{EQU\#}\\
+\indent\textbf{EQU}\\
 \vspace*{-3mm}\\
 \indent\indent\parbox{110mm}{
 This Boolean function has value {\em T} if an even number of its arguments
 have value {\em F} and has the value {\em F} otherwise.}\\
 
-\indent\textbf{XOR\#}\\
+\indent\textbf{XOR}\\
 \vspace*{-3mm}\\
 \indent\indent\parbox{110mm}{
 This Boolean function has value {\em F} if an even number of its arguments
@@ -2620,7 +2525,7 @@ have value {\em T} and has the value {\em T} otherwise.}\\
 \indent\indent\parbox{110mm}{
 The syntax for this manipulator is}\\
 \vspace*{-3mm}\\
-\indent\indent\indent{\tt gcf <function> <cofactor>}\\
+\indent\indent\indent{\tt gcf ( <function> <cofactor> )}\\
 \vspace*{-2mm}\\ 
 \indent\indent\parbox{110mm}{ 
 where {\tt <cofactor>} and {\tt <function>} are both Boolean functions or
@@ -2634,7 +2539,7 @@ it might be useful.}\\
 \indent\indent\parbox{110mm}{
 The syntax for this manipulator is}\\
 \vspace*{-3mm}\\
-\indent\indent\indent{\tt strengthen <function>\_1 <function>\_2}\\
+\indent\indent\indent{\tt strengthen ( <function>\_1 <function>\_2 )}\\
 \vspace*{-2mm}\\
 \indent\indent\parbox{110mm}{
 where {\tt <function>\_1} and {\tt <function>\_2} are both Boolean
@@ -2648,7 +2553,7 @@ Section~\ref{strengthening-section}.}\\
 \indent\indent\parbox{110mm}{
 The syntax for this manipulator is}\\
 \vspace*{-3mm}\\
-\indent\indent\indent{\tt prune <function>\_1 <function>\_2}\\
+\indent\indent\indent{\tt prune ( <function>\_1 <function>\_2 )}\\
 \vspace*{-2mm}\\
 \indent\indent\parbox{110mm}{
 where {\tt <function>\_1} and {\tt <function>\_2} are both Boolean
@@ -2664,7 +2569,7 @@ about branch pruning see Section~\ref{branch-prune-section}.}\\
 \indent\indent\parbox{110mm}{
 The syntax for this manipulator is}\\
 \vspace*{-3mm}\\
-\indent\indent\indent{\tt exist <function> <variable>}\\
+\indent\indent\indent{\tt exist ( <function> <variable> )}\\
 \vspace*{-2mm}\\
 \indent\indent\parbox{110mm}{
 where {\tt <function>} is a Boolean function and {\tt <variable>} is a
@@ -2681,7 +2586,7 @@ see Section~\ref{existential-section}.}\\
 \indent\indent\parbox{110mm}{
 The syntax for this manipulator is}\\
 \vspace*{-3mm}\\
-\indent\indent\indent{\tt universe <function> <variable>}\\
+\indent\indent\indent{\tt universe ( <function> <variable> )}\\
 \vspace*{-2mm}\\
 \indent\indent\parbox{110mm}{
 where {\tt <function>} is a Boolean function and {\tt <variable>} is a
@@ -2699,7 +2604,7 @@ see Section~\ref{universe-section}.}\\
 Functions can be defined by their truth table using {\tt
 TRUTH\_TABLE}.  Syntax for this manipulator is}\\
 \vspace*{0mm}\\
-\indent\indent\indent{\tt truth\_table <\#vars> <var> ... <var> <TF-string>}\\
+\indent\indent\indent{\tt truth\_table ( <\#vars> <var> ... <var> <TF-string> )}\\
 \vspace*{0mm}\\
 \indent\indent\parbox{110mm}{
 where {\tt <var>} are variables, {\tt <\#vars>} is the number of
@@ -2708,7 +2613,7 @@ string of symbols '{\tt T}' and '{\tt F}' which defines the truth
 table.  There must be exactly $2^{\tt <\#vars>}$ symbols in the {\tt
 <TF-string>}.  An example is this:}\\
 \vspace*{0mm}\\
-\indent\indent\indent{\tt truth\_table 3 x1 x2 x3 TTFFTFFT}
+\indent\indent\indent{\tt truth\_table(3 x1 x2 x3 TTFFTFFT)}
 
 \indent\textbf{MINMAX}\\
 \vspace*{-3mm}\\
@@ -2716,7 +2621,7 @@ table.  There must be exactly $2^{\tt <\#vars>}$ symbols in the {\tt
 The syntax of this function is as follows:}\\
 \vspace*{-3mm}\\
 \indent\indent\indent
-{\tt minmax <\#args> <min\_\#> <max\_\#> <blank\_separated\_var\_list>}\\
+{\tt minmax ( <\#args> <min\_\#> <max\_\#> <blank\_separated\_var\_list> )}\\
 \vspace*{0mm}\\
 \indent\indent\parbox{110mm}{
 where the first three arguments are positive integers.  This function
@@ -2740,7 +2645,7 @@ this function.}\\
 \indent\indent\parbox{110mm}{
 The syntax of this function is as follows:}\\
 \vspace*{-3mm}\\
-\indent\indent\indent{\tt safe <function> <variable>}\\
+\indent\indent\indent{\tt safe ( <function> <variable> )}\\
 \vspace*{0mm}\\
 \indent\indent\parbox{110mm}{
 This function returns either a safe assigment for <variable> in <function>
@@ -2754,7 +2659,7 @@ Section~\ref{safe-section}.}\\
 
 The syntax of a directive is\\
 \vspace*{-3mm}\\
-\indent{\tt <command> <arg>, ...}\\
+\indent{\tt <command> ( <arg> ... )}\\
 \vspace*{-3mm}\\
 where {\tt <arg>} are Boolean functions or manipulators or variables.
 The following are commands and a description of how they apply their
@@ -2767,28 +2672,24 @@ The directive {\tt INITIAL\_BRANCH} may be invoked to request that certain
 variables be assigned values before any others during search. This directive
 is also capable of influencing which branch (the {\em True} branch or the
 {\em False} branch) will be tested first, for specified variables, during
-search.  This directive takes as argument a list of variables, wrapped
-between parentheses. The list may be of any length and may be continued over
-many lines. Variables in this list may optionally be postpended with a
-percent sign followed immediately by any real number between 0 and 100. The
-value following a percent sign will be factored into all the search
-heursitics embedded into {\tt sbsat} such that a value close to 0 influences
-the heursitic to more often assign {\em False} to the prepended variable,
-likewise for values close to 100; a value of exactly 50 has no effect on the
-heuristic. This directive can also take an optional first argument, a pound
-sign ({\tt \#} followed by a positive number. This argument determines the
-tier used to determine the order in which whole set of variables will be
-assigned values during search; smaller numbers are given precedence. This
-directive is intended to be used when some key domain-specific information
-suggesting a particular search order has been revealed.  An example of this
-directive is the following:}\\
-\vspace*{0mm}\\
-\indent {\tt ~~~initial\_branch (x1, x39, x5, x4, x24, x3)}\\
-\vspace*{0mm}\\
-\indent\indent\parbox{110mm}{
-This marks variables $x_1$, $x_{39}$, $x_5$, $x_4$, $x_{24}$, $x_3$ to be
-assigned values first.  The order in which these variables are selected for
-search completely depends on the search heuristic employed: all that {\tt
+search.  This directive takes as argument a list of variables. Variables in
+this list may optionally be postpended with a percent sign followed
+immediately by any real number between 0 and 100. The value following a
+percent sign will be factored into all the search heursitics embedded into
+{\tt sbsat} such that a value close to 0 influences the heursitic to more
+often assign {\em False} to the prepended variable, likewise for values
+close to 100; a value of exactly 50 has no effect on the heuristic. This
+directive can also take an optional first argument, a pound sign ({\tt \#}
+followed by a positive number. This argument determines the tier used to
+determine the order in which whole set of variables will be assigned values
+during search; smaller numbers are given precedence. This directive is
+intended to be used when some key domain-specific information suggesting a
+particular search order has been revealed.  An example of this directive is
+the following:}\\ \vspace*{0mm}\\ \indent {\tt ~~~initial\_branch (x1, x39,
+x5, x4, x24, x3)}\\ \vspace*{0mm}\\ \indent\indent\parbox{110mm}{ This marks
+variables $x_1$, $x_{39}$, $x_5$, $x_4$, $x_{24}$, $x_3$ to be assigned
+values first.  The order in which these variables are selected for search
+completely depends on the search heuristic employed: all that {\tt
 initial\_branch} does here is prevent variables which are not listed from
 being selected for assignment during search until all the listed variables
 have values.  It is possible for a non-listed variable to be inferred,
@@ -2824,11 +2725,10 @@ syntax is the following:}\\
 \indent\indent\indent{\tt \#define <pattern> \# <Boolean-function>}\\
 \vspace*{0mm}\\
 \indent\indent\parbox{110mm}{
-where {\tt <pattern>} is a {\tt <function-identifier>} and comma
-separated argument list enclosed in parentheses.  Wherever the 
-{\tt <pattern>} is matched in the input file, the 
-{\tt <function-specifier>} is substituted with arguments corresponding
-to those used in the {\tt <pattern>}.  All the {\tt <pattern>}
+where {\tt <pattern>} is a {\tt <function-identifier>} and argument list
+enclosed in parentheses.  Wherever the {\tt <pattern>} is matched in the
+input file, the {\tt <function-specifier>} is substituted with arguments
+corresponding to those used in the {\tt <pattern>}.  All the {\tt <pattern>}
 arguments must be used in the {\tt <function-specifier>} and all the
 parameters used in {\tt <function-specifier>} must be arguments in 
 {\tt <pattern>}.  For example,}\\
@@ -2841,35 +2741,15 @@ parameters used in {\tt <function-specifier>} must be arguments in
 \indent\indent\parbox{110mm}{
 substitutes the {\tt equ...} function for {\tt slide...}.  See
 Figure~\ref{add_state-2-figure}, Page~\pageref{add_state-2-figure} for
-the completion of this example.  All {\tt \#define} macros are
-effective {\em after} they are defined in the file.  All functions,
-including built-in functions, may be redefined using {\tt \#define}.  
+the completion of this example.  All {\tt \#define} macros are effective
+{\em after} they are defined in the file.  Built-in functions may not be
+redefined using {\tt \#define}.
 Thus,}\\
 \vspace*{0mm}\\
-\indent\indent\indent{\tt \#define and3(x, y, z) \# or3(x, y, z)}\\ 
+\indent\indent\indent{\tt \#define and(x, y, z) \# or(x, y, z)}\\ 
 \vspace*{0mm}\\
 \indent\indent\parbox{110mm}{
-causes three input {\tt and3} functions occurring {\em after} the above
-{\tt \#define} to behave as three input {\tt or3} functions.  A line such as}\\
-\vspace*{0mm}\\
-\indent\indent\indent{\tt \#define and3(x, y, z) \# and(and(x, y), z)}\\ 
-\vspace*{0mm}\\
-\indent\indent\parbox{110mm}{ 
-redefines {\tt and3} to what it had been initially (one cannot
-use {\tt and3} in the right argument because it has already been
-redefined) and all {\tt and3} functions {\em after} that {\tt
-\#define} behave as {\tt and3} functions.  At no point in the file can
-there exist two macros with the same {\tt <function-identifier>} but
-different arguments: a {\tt \#define} always replaces previous {\tt
-\#define}s with an identical {\tt <function-identifier>}.  For
-example, after the following:}\\
-\vspace*{0mm}\\
-\indent\indent\indent{\tt \#define and(x, y, z) \# or3(x, y, z)}\\
-\indent\indent\indent{\tt \#define and(x, y, z, w) \# or4(x, y, z, w)}\\
-\vspace*{-3mm}\\
-\indent\indent\parbox{110mm}{
-The function {\tt and(x, y, z, w)} is defined but {\tt and(x, y, z)}
-is not.}\\
+causes and error message to occur}\\.
 
 \indent\textbf{PRINT\_TREE}\\
 \vspace*{-3mm}\\
