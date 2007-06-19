@@ -853,7 +853,7 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 		if(v2 == NULL) { fprintf(stderr, "\nKeyword 'nand' expects at least 2 arguments, found 1 (%s)...exiting:%d\n", macros, markbdd_line); exit (1); }
 		v1 = ite_and(v1, v2);
 		while ((v2 = putite (intnum, bdd))!=NULL)
-			v1 = ite_imp(v1, v2);
+			v1 = ite_and(v1, v2);
 		strcpy (macros, "nand");
 		return ite_not(v1);
 	}
