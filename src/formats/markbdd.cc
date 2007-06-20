@@ -1160,8 +1160,8 @@ void bddloop () {
 			d4_printf1("\r");
 			continue;
 		}
-		if (p == ' '|| p == ')' || p == '(') {
-			while (p == ' ' || p == ')' || p == '(') {
+		if (p == '	' || p == ' ' || p == ')' || p == '(') {
+			while (p == '	' || p == ' ' || p == ')' || p == '(') {
             p = fgetc(finputfile);
 				if (p == EOF) {
 					goto Exit;
@@ -1177,7 +1177,7 @@ void bddloop () {
 		}
 		if (p == '*') {
 			BDDNode *temp = putite(intnum, bdd);
-			if(temp == NULL) continue;
+			if(temp == NULL) goto Exit;
 			if ((strcasecmp (macros, "pprint_tree"))
 				 && (strncasecmp (macros, "print_", 6))
 				 && (strcasecmp (macros, "define"))
@@ -1198,7 +1198,7 @@ void bddloop () {
 			if (p == ';')
 			  continue;
 			BDDNode * temp = putite (intnum, bdd);
-			if(temp == NULL) continue;
+			if(temp == NULL) goto Exit;
 			if ((strcasecmp (macros, "pprint_tree"))
 				 && (strncasecmp (macros, "print_", 6))
 				 && (strcasecmp (macros, "define"))
@@ -1228,7 +1228,7 @@ void bddloop () {
       if (p != '\n') {
 			int continue_all = 0;
 			if(p==';') continue_all = 1;
-			else if (p!=' ' && p!='(' && p!=')' && p!=',') {
+			else if (p!='	' && p!=' ' && p!='(' && p!=')' && p!=',') {
 				fprintf(stderr, "Error: Extra characters following line %d...exiting\n", markbdd_line);
 				exit (1);
 				continue_all = 1;
@@ -1238,7 +1238,7 @@ void bddloop () {
 				if (p == '\n')
 				  break;
 				if (p == ';') continue_all = 1;
-				if (continue_all == 0 && p!=' ' && p!='(' && p!=')' && p!=',') {
+				if (continue_all == 0 && p!='	' && p!=' ' && p!='(' && p!=')' && p!=',') {
 					fprintf(stderr, "Error: Extra characters following line %d...exiting\n", markbdd_line);
 					exit (1);
 					continue_all = 1;
