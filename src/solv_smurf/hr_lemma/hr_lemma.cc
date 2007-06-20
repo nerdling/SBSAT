@@ -55,27 +55,36 @@ HrLemmaInit()
 
    arrLemmaVarScores = (t_arrVarScores*)ite_calloc(gnMaxVbleIndex, 
          sizeof(t_arrVarScores), 9, "arrLemmaVarScores");
-
+/*
    for(int i=0;i<nNumFuncs;i++)
    {
-      for(int j=0;arrFnAndTypes[j];j++) {
-         if (arrSolverFunctions[i].nType == arrFnAndTypes[j]) {
-            AddLemmasBlockHeuristicInfluence(arrSolverFunctions[i].fn_and.pLongLemma);
-
-            for(int k=0;k<arrSolverFunctions[i].fn_and.rhsVbles.nNumElts;k++)
-               AddLemmasBlockHeuristicInfluence(arrSolverFunctions[i].fn_and.arrShortLemmas[k]);
-
-            break;
-         }
+		if (arrSolverFunctions[i].nType == 0) { //FN_SMURF
+			int length = arrSolverFunctions[i].fn_smurf.pInitialState->vbles.nNumElts;
+			  int *vars = arrSolverFunctions[i].fn_smurf.pInitialState->vbles.arrElts;
+			  for(int x = 0; x < length; x++) {
+				  arrLemmaVbleCountsPos[vars[x]]++;
+				  arrLemmaVbleCountsNeg[vars[x]]++;
+			  }
+		} else {			  
+			for(int j=0;arrFnAndTypes[j];j++) {
+				if (arrSolverFunctions[i].nType == arrFnAndTypes[j]) {
+					AddLemmasBlockHeuristicInfluence(arrSolverFunctions[i].fn_and.pLongLemma);
+					
+					for(int k=0;k<arrSolverFunctions[i].fn_and.rhsVbles.nNumElts;k++)
+					  AddLemmasBlockHeuristicInfluence(arrSolverFunctions[i].fn_and.arrShortLemmas[k]);
+					
+					break;
+				}
+			}
       }
    }
-/*
+*/ 
+
    for(int i=1;i<gnMaxVbleIndex;i++)
    {
       arrLemmaVbleCountsPos[i] += arrAFS[i].nNumOneAFS;
       arrLemmaVbleCountsNeg[i] += arrAFS[i].nNumOneAFS;
    }
-*/
 
    //return HrLemmaUpdate();
    return NO_ERROR;
@@ -110,7 +119,8 @@ HrLemmaUpdate()
 
 
 #define J_ONE 1
-#define HEUR_WEIGHT(x,i) (arrLemmaVbleCountsPos[i] > arrLemmaVbleCountsNeg[i] ?  arrLemmaVbleCountsPos[i] : arrLemmaVbleCountsNeg[i]);
+//#define HEUR_WEIGHT(x,i) (arrLemmaVbleCountsPos[i] > arrLemmaVbleCountsNeg[i] ?  arrLemmaVbleCountsPos[i] : arrLemmaVbleCountsNeg[i]);
+#define HEUR_WEIGHT(x,i) (arrLemmaVarScores[i].pos > arrLemmaVarScores[i].neg ? arrLemmaVarScores[i].pos : arrLemmaVarScores[i].neg);
 
 //Var Score
 //#define HEUR_WEIGHT(x,i) (var_score[i] * (J_ONE+arrLemmaVbleCountsNeg[i]>arrLemmaVbleCountsPos[i]?arrLemmaVbleCountsNeg[i]:arrLemmaVbleCountsPos[i]))
@@ -118,7 +128,7 @@ HrLemmaUpdate()
 //#define HEUR_EXTRA_OUT()  { fprintf(stderr, "%c%d (pos: %d, neg %d)\n", (*pnBranchValue==BOOL_TRUE?'+':'-'), *pnBranchAtom, arrLemmaVbleCountsPos[*pnBranchAtom], arrLemmaVbleCountsNeg[*pnBranchAtom]);}
 #define HEUR_FUNCTION L_OptimizedHeuristic
 #define HEUR_SIGN(nBestVble, multPos, multNeg) \
-  (arrLemmaVbleCountsPos[nBestVble]*multPos > arrLemmaVbleCountsNeg[nBestVble]*multNeg?\
+  (arrLemmaVarScores[nBestVble].pos*multPos > arrLemmaVarScores[nBestVble].neg*multNeg?\
    BOOL_TRUE:BOOL_FALSE)
 #include "hr_choice.cc"
 

@@ -55,7 +55,7 @@ HrBerkMinInit()
 
    arrBerkMinVarScores = (t_arrVarScores*)ite_calloc(gnMaxVbleIndex, 
          sizeof(t_arrVarScores), 9, "arrBerkMinVarScores");
-
+/*
    for(int i=0;i<nNumFuncs;i++)
    {
       for(int j=0;arrFnAndTypes[j];j++) {
@@ -69,13 +69,15 @@ HrBerkMinInit()
          }
       }
    }
-/*
+*/
+
+
    for(int i=1;i<gnMaxVbleIndex;i++)
    {
       arrLemmaVbleCountsPos[i] += arrAFS[i].nNumOneAFS;
       arrLemmaVbleCountsNeg[i] += arrAFS[i].nNumOneAFS;
    }
-*/
+
    //return HrBerkMinUpdate();
    return NO_ERROR;
 }

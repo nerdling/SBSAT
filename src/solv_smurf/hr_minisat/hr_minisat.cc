@@ -55,7 +55,7 @@ HrMiniSatInit()
 
    arrMiniSatVarScores = (t_arrVarScores*)ite_calloc(gnMaxVbleIndex, 
          sizeof(t_arrVarScores), 9, "arrMiniSatVarScores");
-
+/*
    for(int i=0;i<nNumFuncs;i++)
    {
       for(int j=0;arrFnAndTypes[j];j++) {
@@ -69,13 +69,14 @@ HrMiniSatInit()
          }
       }
    }
-/*
+
+*/
+ 
    for(int i=1;i<gnMaxVbleIndex;i++)
    {
       arrLemmaVbleCountsPos[i] += arrAFS[i].nNumOneAFS;
       arrLemmaVbleCountsNeg[i] += arrAFS[i].nNumOneAFS;
    }
-*/
    //return HrMiniSatUpdate();
    return NO_ERROR;
 }
@@ -100,7 +101,7 @@ HrMiniSatUpdate()
   }
 
 
-  for (int i = 1; i<gnMaxVbleIndex; i++){
+  for (int i = 1; 0 && i<gnMaxVbleIndex; i++){
   
     d9_printf4("%d: (pos count = %d, neg count = %d)\n", i, arrLemmaVbleCountsPos[i], arrLemmaVbleCountsNeg[i]);
     
