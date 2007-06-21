@@ -43,6 +43,7 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p);
 void rn(char *rn_type, int n, int k, int l);
 void slider2(char *out_type, int n, int sat);
 void rand_BDD(char *out_type, int num_vars, int num_funcs, int vars_per_func);
+void trans();
 
 int main(int argc, char **argv) {
    if (argc > 1 && !strcmp(argv[1], "vdw")) { 
@@ -98,6 +99,14 @@ int main(int argc, char **argv) {
       slider2("ite", size, sat);
 		return 0;
 	} else
+   if (argc > 1 && !strcmp(argv[1], "trans")) {
+      if (argc < 1 || (argc > 2 && !strcmp(argv[2], "--help"))) {
+         fprintf(stderr, "usage: %s\n", argv[0]);
+         return 0;
+      }
+      trans();
+		return 0;
+	} else
    if (argc > 1 && !strcmp(argv[1], "rbdd")) {
       if (argc < 5 || (argc > 2 && !strcmp(argv[2], "--help"))) {
          fprintf(stderr, "usage: %s rbdd v b vpb\n", argv[0]);
@@ -128,5 +137,6 @@ int main(int argc, char **argv) {
 	fprintf(stderr, "usage: %s rn --help\n", argv[0]);
 	fprintf(stderr, "usage: %s slider2 --help\n", argv[0]);
 	fprintf(stderr, "usage: %s rbdd --help\n", argv[0]);
+	fprintf(stderr, "usage: %s trans --help\n", argv[0]);
 	return 0;
 }
