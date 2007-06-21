@@ -5,18 +5,18 @@ Initial_Branch(#1, var*%25.1111, a%10, b, t*e)
 Initial_Branch(#2, x, var*, b%10.3948, 5, v2)
   ; These variables will be branched on second.
   ; b is ignored here because it appeares in an Initial_Branch statement above.
-ite(var1, T, F) ; Function $1, no BDD created.
-var(var1)       ; Function $2, no BDD created.
+ite(var1, T, F) ; BDD $1, no top-level function created.
+var(var1)       ; BDD $2, no top-level function created.
                 ; The two preceeding lines created identical functions.
                 ; T is built in for True, F is built in for False.
-and(var1, var2)          ; Function $3, no BDD created.
-and(a, b, 1, 2)          ; Function $4, no BDD created.
-*or($3, not($4), -var1)  ; Function $5, BDD 1.
-*ite(4 5 6)              ; Function $6, BDD 2.
+and(var1, var2)          ; BDD $3, no top-level function created.
+and(a, b, 1, 2)          ; BDD $4, no top-level function created.
+*or($3, not($4), -var1)  ; BDD $5, top-level function 1.
+*ite(4 5 6)              ; BDD $6, top-level function 2.
                          ; Notice commas are not required.
-ite(2               ; Function $7, no BDD created.
+ite(2               ; BDD $7, no top-level function created.
     ite(3 4 5)      ; Comments are ignored, even in the middle of a function.
-    and(or(6 7) 8)  ; Functions can span multiple lines.
+    and(or(6 7) 8)  ; top-level functions can span multiple lines.
 	 )
   ; Defining the ternary majority-vote operator.
 #define majv(x, y, z) # ite(x, or(y, z), and(y, z))
@@ -25,18 +25,18 @@ ite(2               ; Function $7, no BDD created.
   ; Previously defined functions can be used to define more complex functions.
 #define AndOr4_MAJV(v1, v2, v3, v4)
 # AndOr4(majv(v1, v2, v3), majv(v1, v3, v4), majv(v1, v2, v4), majv(v2, v3, v4))
-*AndOr4_majv(tem1e, tem2e, tem3e, tem4e) ; Function $8, BDD 3.
+*AndOr4_majv(tem1e, tem2e, tem3e, tem4e) ; BDD $8, top-level function 3.
                                          ; There is no case sensitivity.
-; Overloading of build in operators is not allowed.
-; #define and(x, y, z) # or(x, y, z) ; This will cause an error message.
-*and(var1, var2, var3) ; Function $9, BDD 4.
-print_tree($7) ; print - No function created, no BDD created.
-pprint_tree($7) ; pretty print - No function created, no BDD created.
-*minmax(0, 1, x10, x9, x8, x7) ; eqn $10, BDD 5
-print_tree(minmax(0, 1, x10, x9, x8, x7)) ; No function created, no BDD created.
-*or(pprint_tree(print_tree(and(2, 3))), 4) ; Function $11, BDD 6.
+  ; Overloading of build in operators is not allowed.
+  ; #define and(x, y, z) # or(x, y, z) ; This will cause an error message.
+*and(var1, var2, var3) ; BDD $9, top-level function 4.
+print_tree($7) ; print - No function created, no top-level function created.
+pprint_tree($7) ; pretty print - No function created, no top-level function created.
+*minmax(0, 1, x10, x9, x8, x7) ; eqn $10, top-level function 5
+print_tree(minmax(0, 1, x10, x9, x8, x7)) ; No function created, no top-level function created.
+*or(pprint_tree(print_tree(and(2, 3))), 4) ; BDD $11, top-level function 6.
   ; This function is identical to the function created by *or(and(2, 3), 4)'
   ; The difference is that function $11 also prints and(2, 3)' in two
   ; different printing styles.
-*print_tree($11) ; No function created, no BDD created.
+*print_tree($11) ; No function created, no top-level function created.
                  ; A *' in front of directives is ignored.

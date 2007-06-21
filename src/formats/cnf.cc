@@ -410,7 +410,7 @@ cnf_process(store *integers, int num_minmax, minmax * min_max_store)
 		
 		//Search for XORs - This code designed after a snippet of march_dl by M. Heule
 		int xors_found = 0;
-		for(int x = 1; 0 && x < numout+1; x++) {  //SEAN!!!
+		for(int x = 1; 0 && x < numout+1; x++) {
 			if(integers[x].length>1) {
 				int domain = 1<<(integers[x].length-1);
 				if(domain<1) break;
@@ -1011,10 +1011,10 @@ cnf_process(store *integers, int num_minmax, minmax * min_max_store)
 				num_uncluster_xor++;
 			} else if(integers[x].isXor == 1) {
 				functions[num_uncluster_xor+num_ite] = false_ptr;
-					fprintf(stderr, "%d: %d ", x, integers[x].num[0]);
+				//fprintf(stderr, "%d: %d ", x, integers[x].num[0]);
 				for(y = 0; y < integers[x].length; y++) {
 					functions[num_uncluster_xor+num_ite] = ite_xor(functions[num_uncluster_xor+num_ite], ite_var(integers[x].num[y]));
-						  fprintf(stderr, "%d ", integers[x].num[y]);
+					//fprintf(stderr, "%d ", integers[x].num[y]);
 				}
             functionType[num_uncluster_xor+num_ite] = PLAINXOR;
 				num_uncluster_xor++;

@@ -70,6 +70,29 @@ void PrintAllSmurfStateEntries() {
 	}
 }
 
+void save_solution_simple(void) {
+	if (result_display_type) {
+		/* create another node in solution chain */
+		
+		t_solution_info *tmp_solution_info;
+		tmp_solution_info = (t_solution_info*)calloc(1, sizeof(t_solution_info));
+		
+		if (solution_info_head == NULL) {
+			solution_info = tmp_solution_info;
+			solution_info_head = solution_info;
+		} else {
+			solution_info->next = (struct _t_solution_info*)tmp_solution_info;
+			solution_info = (t_solution_info*)(solution_info->next);
+		}
+		tmp_solution_info->nNumElts = SimpleSmurfProblemState->nNumVars+1;
+		tmp_solution_info->arrElts = new int[SimpleSmurfProblemState->nNumVars+2];
+		
+		for (int i = 0; i<SimpleSmurfProblemState->nNumVars; i++) {
+			tmp_solution_info->arrElts[abs(SimpleSmurfProblemState->arrInferenceQueue[i])] = (SimpleSmurfProblemState->arrInferenceQueue[i]>0)?BOOL_TRUE:BOOL_FALSE;
+		}
+	}
+}
+
 ITE_INLINE
 void CalculateSimpleSolverProgress(int *_whereAmI, int *_total) {
 	int whereAmI=0;
@@ -661,7 +684,9 @@ int SimpleBrancher() {
 
 	fSimpleSolverStartTime = get_runtime();
 
-	while(ite_counters[NUM_SOLUTIONS] != max_solutions) {
+	int max_solutions_simple = max_solutions>0?max_solutions:(max_solutions==0?-1:0);
+	
+	while(ite_counters[NUM_SOLUTIONS] != max_solutions_simple) {
 		bool bBVPolarity; 
 		int nBranchLit, nInfQueueHead, nPrevInfLevel, nBranchVar;
 		  
@@ -733,11 +758,13 @@ find_more_solutions: ;
 		}
 
 		//Record solution
+
+		save_solution_simple();
 		
 		ite_counters[NUM_SOLUTIONS]++;
 		ret = SOLV_SAT;
 		
-		if(ite_counters[NUM_SOLUTIONS] != max_solutions) {
+		if(ite_counters[NUM_SOLUTIONS] != max_solutions_simple) {
 			goto find_more_solutions;
 		}
 	}
