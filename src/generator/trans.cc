@@ -44,9 +44,9 @@ void gen_matrix(int **matrix, int sizex, int sizey) {
 		matrix[x] = (int *)calloc(sizey+1, sizeof(int *));
 		for(int y = 1; y <= sizey; y++) {
 			matrix[x][y] = rand()%15;
-			fprintf(stdout, "%d", matrix[x][y]>1?8:matrix[x][y]);
+			//fprintf(stdout, "%d", matrix[x][y]>1?8:matrix[x][y]);
 		}
-		fprintf(stdout, "\n");
+		//fprintf(stdout, "\n");
 	}
 }
 
