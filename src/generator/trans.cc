@@ -39,28 +39,29 @@
 #include <sys/time.h>
 #include "sbsat.h"
 
-void gen_matrix(int **matrix, int sizex, int sizey) {
+void gen_matrix(int **matrix, int sizex, int sizey, int mult) {
 	for(int x = 1; x <= sizex; x++) {
 		matrix[x] = (int *)calloc(sizey+1, sizeof(int *));
 		for(int y = 1; y <= sizey; y++) {
-			matrix[x][y] = rand()%15;
+			matrix[x][y] = rand()%mult;
+			if(x == y) matrix[x][y] = 1;
 			//fprintf(stdout, "%d", matrix[x][y]>1?8:matrix[x][y]);
 		}
 		//fprintf(stdout, "\n");
 	}
 }
 
-void trans() {
+void trans(int size, int mult) {
 	struct timeval tv;
 	gettimeofday(&tv, NULL);
 	fprintf(stderr, "seed = %d", tv.tv_usec);
 	srand(tv.tv_usec);
 
-	int sizex = 30;
-	int sizey = 30;
+	int sizex = size;
+	int sizey = size;
 	int **matrix = (int **)calloc(sizex+1, sizeof(int **));
-   gen_matrix(matrix, sizex, sizey);
-	fprintf(stdout, "p bdd %d %d\n", 100000, 100000);
+   gen_matrix(matrix, sizex, sizey, mult);
+	fprintf(stdout, "p bdd %d %d\n", 6*sizex*sizey, (5*sizex*sizey)+2*sizex+1);
 
 	fprintf(stdout, "order(");
 	for(int x = sizex; x > 0; x--)
@@ -75,13 +76,14 @@ void trans() {
 	}*/
 
 //	fprintf(stdout, "and(\n");
-	
+
 	for(int x = 1; x <= sizex; x++) {
 		for(int y = 1; y <= sizey; y++) {
 			fprintf(stdout, "equ(matrix_%d_%d_1, %c)\n", x, y, matrix[x][y]==1?'t':'f');
 			fprintf(stdout, "equ(matrix_%d_%d_m, %c)\n", x, y, matrix[x][y]==0?'t':'f');
-			fprintf(stdout, "equ(matrix_%d_%d_0, %c)\n", x, y, matrix[x][y]>1?'t':'f');
-			fprintf(stdout, "imp(matrix_%d_%d_0, not(trans_%d_%d))\n", x, y, x, y);
+			//fprintf(stdout, "equ(matrix_%d_%d_0, %c)\n", x, y, matrix[x][y]>1?'t':'f');
+			//fprintf(stdout, "imp(matrix_%d_%d_0, not(trans_%d_%d))\n", x, y, x, y);
+			if(matrix[x][y]>1) fprintf(stdout, "not(trans_%d_%d)\n", x, y);
 			fprintf(stdout, "imp(and(matrix_%d_%d_1, trans_%d_%d), p_%d)\n", x, y, x, y, x);
 			fprintf(stdout, "imp(and(matrix_%d_%d_m, trans_%d_%d), not(p_%d))\n", x, y, x, y, x);
 		}

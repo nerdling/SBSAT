@@ -43,7 +43,7 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p);
 void rn(char *rn_type, int n, int k, int l);
 void slider2(char *out_type, int n, int sat);
 void rand_BDD(char *out_type, int num_vars, int num_funcs, int vars_per_func);
-void trans();
+void trans(int size, int mult);
 
 int main(int argc, char **argv) {
    if (argc > 1 && !strcmp(argv[1], "vdw")) { 
@@ -100,11 +100,15 @@ int main(int argc, char **argv) {
 		return 0;
 	} else
    if (argc > 1 && !strcmp(argv[1], "trans")) {
-      if (argc < 1 || (argc > 2 && !strcmp(argv[2], "--help"))) {
-         fprintf(stderr, "usage: %s\n", argv[0]);
+      if (argc < 4 || (argc > 2 && !strcmp(argv[2], "--help"))) {
+         fprintf(stderr, "usage: %s trans size\n", argv[0]);
+         fprintf(stderr, "       size - row and column size of matrix\n");
+			fprintf(stderr, "       mult - a big value gives more zero entries\n");
          return 0;
       }
-      trans();
+		int size = atoi(argv[2]);
+		int mult = atoi(argv[3]);
+      trans(size, mult);
 		return 0;
 	} else
    if (argc > 1 && !strcmp(argv[1], "rbdd")) {
