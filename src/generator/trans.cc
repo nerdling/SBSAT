@@ -75,24 +75,34 @@ void trans(int size, int mult) {
 	fprintf(stdout, "p bdd %d %d\n", 6*sizex*sizey, (5*sizex*sizey)+2*sizex+1);
 
 //	fprintf(stdout, "order(");
+
+//	for(int x = 1; x <= sizex; x++) {
+//		for(int y = 1; y <= sizey; y++) {
+//			if(matrix[x][y]<=1) fprintf(stdout, "trans_%d_%d ", x, y);
+//		}
+//		fprintf(stdout, "p_%d ", x);
+//	}
+
+	
 //	for(int x = sizex; x > 0; x--)
 //	  fprintf(stdout, "p_%d ", x);
+
 //	fprintf(stdout, ")\n");
 
-	//for(int x = sizex; x > 0; x--) {
-	//	for(int y = sizey; y > 0; y--) {
-	//		if(matrix[y][x]<=1) fprintf(stdout, "exist(");
-	//	}
-	//	fprintf(stdout, "and(");
-	//}
+	for(int x = sizex; x > 0; x--) {
+		for(int y = sizey; y > 0; y--) {
+			if(matrix[y][x]<=1) fprintf(stdout, "exist(");
+		}
+		fprintf(stdout, "and(");
+	}
 	
 	fprintf(stdout, "\n");
 	
 	for(int x = 1; x <= sizex; x++) {
 		if(rows[x]==1) {
-			fprintf(stdout, "var(p_%d)\n", x);
+			//fprintf(stdout, "var(p_%d)\n", x);
 		} else if(rows[x]==0) {
-			fprintf(stdout, "not(p_%d)\n", x);
+			//fprintf(stdout, "not(p_%d)\n", x);
 		} else if(rows[x]==-1) {
 			fprintf(stderr, "Empty Row - Unsat file\n");
 			exit(0);
@@ -120,13 +130,13 @@ void trans(int size, int mult) {
 			if(matrix[y][x]<=1) fprintf(stdout, ", trans_%d_%d", y, x);
 		}
 		
-		fprintf(stdout, ")\n");
-		//fprintf(stdout, "))\n");
+		//fprintf(stdout, ")\n");
+		fprintf(stdout, "))\n");
 		
-		//for(int y = 1; y <= sizey; y++) {
-		//	if(matrix[y][x]<=1) fprintf(stdout, ", trans_%d_%d)", y, x);
-		//}
-		//fprintf(stdout, "\n");
+		for(int y = 1; y <= sizey; y++) {
+			if(matrix[y][x]<=1) fprintf(stdout, ", trans_%d_%d)", y, x);
+		}
+		fprintf(stdout, "\n");
 	}
 
 	//fprintf(stdout, "print_tree($1)\n");
