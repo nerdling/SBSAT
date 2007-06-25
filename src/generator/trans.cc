@@ -90,8 +90,9 @@ void trans(int size, int mult) {
 //	fprintf(stdout, ")\n");
 
 	for(int x = sizex; x > 0; x--) {
-		for(int y = sizey; y > 0; y--) {
-			if(matrix[y][x]<=1) fprintf(stdout, "exist(");
+		for(int y = 1; y <= x; y++) {
+			if(matrix[x][y]<=1) fprintf(stdout, "exist(");
+			if(x!=y && matrix[y][x]<=1) fprintf(stdout, "exist(");
 		}
 		fprintf(stdout, "and(");
 	}
@@ -122,20 +123,19 @@ void trans(int size, int mult) {
 			if(matrix[x][y]<=1) fprintf(stdout, ", trans_%d_%d", x, y);
 		}
 		fprintf(stdout, ")\n");
-	}
-
-	for(int x = 1; x <= sizex; x++) {
+		
 		fprintf(stdout, "minmax(1, 1");
 		for(int y = 1; y <= sizey; y++) {
 			if(matrix[y][x]<=1) fprintf(stdout, ", trans_%d_%d", y, x);
 		}
-		
 		//fprintf(stdout, ")\n");
-		fprintf(stdout, "))\n");
-		
-		for(int y = 1; y <= sizey; y++) {
-			if(matrix[y][x]<=1) fprintf(stdout, ", trans_%d_%d)", y, x);
+		fprintf(stdout, "))\n");		
+
+		for(int y = 1; y <= x; y++) {
+			if(matrix[x][y]<=1) fprintf(stdout, ", trans_%d_%d)", x, y);
+			if(x!=y && matrix[y][x]<=1) fprintf(stdout, ", trans_%d_%d)", y, x);
 		}
+
 		fprintf(stdout, "\n");
 	}
 
