@@ -114,12 +114,13 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 			macros = (char *)ite_recalloc(macros, max_macros, intnum+2, sizeof(char), 9, "macros");
 			max_macros=intnum+2;
 		}
-		sprintf(macros, "%d", intnum);
+		//sprintf(macros, "%d", intnum);
 //		intnum = i_getsym(macros, SYM_VAR);
 //		Here I need to return an integer if it is actually an integer...
 //		for the defines, and InititalBranch, and others that use integers.
 //		Though I could fix those to use integers correctly......maybe.....
-		d5_printf2("%d ", intnum);
+		d5_printf2("%s ", macros);
+		if(intnum == 0) return false_ptr;
 		return ite_var (intnum);
 	}
 	if (order == 'b')
@@ -237,16 +238,19 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 					if(v1 == NULL) { fprintf(stderr, "\nKeyword 'initial_branch' needs a number between 0 and 100 after a '%%' (%s)...exiting:%d\n", macros, markbdd_line); exit (1);}
 						  
 					expect_integer = 0;
-					if (v1 != ite_var (v1->variable)) {
-						fprintf(stderr, "\nKeyword 'initial_branch' needs a number between 0 and 100 after a '%%' (%s)...exiting:%d\n", macros, markbdd_line);
-						exit (1);
+					double tweight = 0;
+					if(v1 != false_ptr) {
+						if (v1 != ite_var (v1->variable)) {
+							fprintf(stderr, "\nKeyword 'initial_branch' needs a number between 0 and 100 after a '%%' (%s)...exiting:%d\n", macros, markbdd_line);
+							exit (1);
+						}
+						if (v1->variable > 100) {
+							fprintf(stderr, "\nKeyword 'initial_branch' needs a number between 0 and 100 after a '%%' (%s)...exiting:%d\n", macros, markbdd_line);
+							exit (1);
+						}
+						tweight = ((double)v1->variable)/100.0;
 					}
-					if (v1->variable > 100) {
-						fprintf(stderr, "\nKeyword 'initial_branch' needs a number between 0 and 100 after a '%%' (%s)...exiting:%d\n", macros, markbdd_line);
-						exit (1);
-					}
-					double tweight = ((double)v1->variable)/100.0;
-					d6_printf2(" %f", tweight);
+					d6_printf2(" %f  ", tweight);
 					p = fgetc(finputfile);
 					if(p == EOF) {
 						fprintf(stderr, "\nUnexpected EOF (%s)...exiting:%d\n", macros, markbdd_line);
@@ -256,21 +260,25 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 						d5_printf1("\b.");
 						expect_integer = 1;
 						BDDNode *v1 = putite(intnum, bdd);
-						if(v1 == NULL) { fprintf(stderr, "\nKeyword 'initial_branch' needs a number between 0 and 100 after a '%%' (%s)...exiting:%d\n", macros, markbdd_line); exit(1); }
-
 						expect_integer = 0;
-						if(v1 != ite_var(v1->variable)) {
-							fprintf(stderr, "\nKeyword 'initial_branch' needs a number between 0 and 100 after a '%%' (%s)...exiting:%d\n", macros, markbdd_line);
-							exit(1);
+						double pweight = 0;
+						if(v1!=false_ptr) {
+							if(v1 == NULL) { fprintf(stderr, "\nKeyword 'initial_branch' needs a number between 0 and 100 after a '%%' (%s)...exiting:%d\n", macros, markbdd_line); exit(1); }
+							
+							if(v1 != ite_var(v1->variable)) {
+								fprintf(stderr, "\nKeyword 'initial_branch' needs a number between 0 and 100 after a '%%' (%s)...exiting:%d\n", macros, markbdd_line);
+								exit(1);
+							}
+							pweight = (double)v1->variable;
+							
+							for(int dec = 0; dec<strlen(macros)/*floor(pweight)!=0*/; dec++) {
+								pweight=pweight/10.0;
+							}
+							pweight=pweight/100.0;                                                                                          
 						}
-						double pweight = (double)v1->variable;
-						for(int dec = 0; floor(pweight)!=0; dec++) {
-							d6_printf2(" %f ", pweight);
-							pweight=pweight/10.0;
-						}
-						pweight=pweight/100.0;
 						tweight+=pweight;
 						d6_printf2(" %f ", tweight);
+						if(tweight > 100) { fprintf(stderr, "\nKeyword 'initial_branch' needs a number between 0 and 100 after a '%%' (%s)...exiting:%d\n", macros, markbdd_line); exit(1); }
 					} else {
 						ungetc(p, finputfile);
 					}
@@ -600,6 +608,34 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 		BDDNode *tempBDD = MinMaxBDD(var_list, min, max, numarguments, set_true);
 		ite_free((void **)&var_list);
 		return tempBDD;
+	}
+	if (!strcasecmp (macros, "countT")) {
+		BDDNode *v1 = putite (intnum, bdd);
+		if(v1==NULL) { fprintf(stderr, "\nKeyword 'countT' expects at least 1 argument, found 0 (%s)...exiting:%d\n", macros, markbdd_line); exit (1); }
+		
+		int maxarguments = 10;
+		int numarguments = 0;
+		int *var_list = (int *)ite_calloc(maxarguments, sizeof(int), 9, "var_list");
+
+		BDDNode *v2;
+		while((v2 = putite (intnum, bdd))!=NULL) {
+			if(numarguments >= maxarguments) {
+				var_list = (int *)ite_recalloc(var_list, maxarguments, maxarguments+10, sizeof(int), 9, "var_list");
+				maxarguments+=10;
+			}
+			if (v2 == ite_var (v2->variable)) {
+				var_list[numarguments++] = v2->variable;
+			} else {	fprintf(stderr, "\nKeyword 'countT' needs positive variables as arguments (%s)...exiting:%d\n", macros, markbdd_line); exit (1); }
+		}
+
+		int set_true = 0;
+		qsort(var_list, numarguments, sizeof(int), abscompfunc);
+      strcpy (macros, "countT");
+		int numT = 0;
+		if(numarguments != 0) numT = count_true_paths(v1, var_list, numarguments);
+		fprintf(stdout, "\n|count = %d|\n", numT);
+		ite_free((void **)&var_list);
+		return true_ptr;
 	}
 	if (!strcasecmp (macros, "exist")) {
 		BDDNode * v1 = putite (intnum, bdd);
@@ -1012,7 +1048,6 @@ char getNextSymbol (int &intnum, BDDNode *&bdd) {
 					fprintf(stderr, "\nVariable %d is larger than allowed (%ld)...exiting:%d\n",	intnum, numinp - 2, markbdd_line);
 					exit (1);
 				}*/
-				
 				if (negate_it) intnum = -intnum;
 				return 'i';
 			} else if(is_int == 0 && expect_integer == 1) {					  
