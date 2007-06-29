@@ -101,9 +101,9 @@ void trans(int size, int mult) {
 	
 	for(int x = 1; x <= sizex; x++) {
 		if(rows[x]==1) {
-			//fprintf(stdout, "var(p_%d)\n", x);
+		  fprintf(stdout, "var(p_%d)\n", x);
 		} else if(rows[x]==0) {
-			//fprintf(stdout, "not(p_%d)\n", x);
+		  fprintf(stdout, "not(p_%d)\n", x);
 		} else if(rows[x]==-1) {
 			fprintf(stderr, "Empty Row - Unsat file\n");
 			exit(0);
@@ -140,4 +140,9 @@ void trans(int size, int mult) {
 	}
 
 	//fprintf(stdout, "print_tree($1)\n");
+	fprintf(stdout, "countT($1, ");
+	for(int x = sizex; x > 0; x--)
+		  fprintf(stdout, "p_%d ", x);
+	fprintf(stdout, ")\n");
+
 }
