@@ -361,7 +361,8 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 			 (!strcasecmp(macros, "strengthen")) || (!strcasecmp(macros, "nimp")) ||
 			 (!strcasecmp(macros, "nand")) || (!strcasecmp(macros, "nor")) ||
 			 (!strcasecmp(macros, "equ")) || (!strcasecmp(macros, "imp")) ||
-			 (!strcasecmp(macros, "and")) || (!strcasecmp(macros, "xor")) || (!strcasecmp(macros, "or"))) {
+			 (!strcasecmp(macros, "countT")) || (!strcasecmp(macros, "and")) ||
+			 (!strcasecmp(macros, "xor")) || (!strcasecmp(macros, "or"))) {
 			fprintf(stderr, "\n%s is a reserved word...exiting:%d\n", macros, markbdd_line);
 			exit (1);
 		}
@@ -1216,6 +1217,7 @@ void bddloop () {
 				 && (strncasecmp (macros, "print_", 6))
 				 && (strcasecmp (macros, "define"))
 				 && (strcasecmp (macros, "order"))
+				 && (strcasecmp (macros, "countT"))
 				 && (strcasecmp (macros, "initial_branch"))) {
 				keep[nmbrFunctions] = 1;
 				keepnum++;
@@ -1237,6 +1239,7 @@ void bddloop () {
 				 && (strncasecmp (macros, "print_", 6))
 				 && (strcasecmp (macros, "define"))
 				 && (strcasecmp (macros, "order"))
+				 && (strcasecmp (macros, "countT"))
 				 && (strcasecmp (macros, "initial_branch"))) {
 				functions[nmbrFunctions] = temp;
 				nmbrFunctions++;
@@ -1250,7 +1253,8 @@ void bddloop () {
       if ((strcasecmp (macros, "pprint_tree"))
 			 && (strncasecmp (macros, "print_", 6))
 			 && (strcasecmp (macros, "define"))
-			 && (strcasecmp (macros, "order"))			 
+			 && (strcasecmp (macros, "order"))
+			 && (strcasecmp (macros, "countT"))
 			 && (strcasecmp (macros, "initial_branch"))) {
 			fprintf(stddbg, "BDD $%d: ", nmbrFunctions);
 			printBDDfile (functions[nmbrFunctions - 1], stddbg);
