@@ -206,15 +206,17 @@ int countnodes(BDDNode *f) {
 int _count_true_paths(BDDNode *f, int *vars, int n_vars, int level) {
 	if(f == true_ptr) return 1<<(n_vars-level);
 	if(f == false_ptr) return 0;
-	if(f->flag != 0) return f->flag;
 
 	int misses = level;
 	while(f->variable != vars[level]) level++;
+
+	if(f->flag != 0) return f->flag<<(level-misses);
 	
 	int num = _count_true_paths(f->thenCase, vars, n_vars, level+1);
 	num += _count_true_paths(f->elseCase, vars, n_vars, level+1);
+	f->flag = num;
 	num = num<<(level-misses);
-	return f->flag = num;	
+	return num;	
 }
 
 int count_true_paths(BDDNode *f, int *vars, int n_vars) {
