@@ -362,7 +362,8 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 			 (!strcasecmp(macros, "nand")) || (!strcasecmp(macros, "nor")) ||
 			 (!strcasecmp(macros, "equ")) || (!strcasecmp(macros, "imp")) ||
 			 (!strcasecmp(macros, "countT")) || (!strcasecmp(macros, "and")) ||
-			 (!strcasecmp(macros, "xor")) || (!strcasecmp(macros, "or"))) {
+			 (!strcasecmp(macros, "xor")) || (!strcasecmp(macros, "or")) ||
+		    (!strcasecmp(macros, "same"))) {
 			fprintf(stderr, "\n%s is a reserved word...exiting:%d\n", macros, markbdd_line);
 			exit (1);
 		}
@@ -822,6 +823,18 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 		printBDDdot_file(put_dot_bdds, numarguments);
 		ite_free((void**)&put_dot_bdds);
       return true_ptr;
+	}
+	if (!strcasecmp (macros, "same")) {
+		BDDNode *v1 = putite(intnum, bdd);
+		if(v1 == NULL) { fprintf(stderr, "\nKeyword 'same' expects at least 2 arguments, found 0 (%s)...exiting:%d\n", macros, markbdd_line); exit (1); }
+		BDDNode *v2 = putite(intnum, bdd);
+		if(v2 == NULL) { fprintf(stderr, "\nKeyword 'same' expects at least 2 arguments, found 1 (%s)...exiting:%d\n", macros, markbdd_line); exit (1); }
+		v2 = ite_equ(v1, v2);
+		BDDNode *v3;
+		while ((v3 = putite (intnum, bdd))!=NULL)
+			v2 = ite_and(v2, ite_equ(v1, v3));
+		strcpy (macros, "same");
+		return v2;
 	}
 	if (!strcasecmp (macros, "gcf")) {
       BDDNode * v1, *v2;
