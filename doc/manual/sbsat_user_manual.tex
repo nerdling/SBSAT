@@ -425,7 +425,7 @@ variables of the function; and next to each assignment is the value
 the function takes under that assignment.
 
 \item {\bf Unary, Binary, and Ternary Boolean Functions} ({\tt not}, {\tt and},
-{\tt nand}, {\tt or}, {\tt nor}, {\tt equ}, {\tt xor}, {\tt imp}, {\tt
+{\tt nand}, {\tt or}, {\tt nor}, {\tt xor}, {\tt equ}, {\tt imp}, {\tt
 nimp}, {\tt ite} ) - A Boolean function of two variables. There are
 $2^{2^2}=16$ different binary Boolean functions and 2 unary functions.
 Names associated with a subset of these that include only non-trivial
@@ -2388,11 +2388,11 @@ do not matter). If no function is preceeded by a `*', all functions are
 considered top level functions.
 
 Lines that get a {\tt \$} number start with {\tt var}, {\tt not}, {\tt and},
-{\tt nand}, {\tt or}, {\tt nor}, {\tt equ}, {\tt xor}, {\tt imp}, {\tt
-nimp}, {\tt ite}, {\tt gcf}, {\tt strengthen}, {\tt prune}, {\tt exist},
-{\tt universe}, {\tt truth\_table}, {\tt minmax}, {\tt safe}, a single
-positive or negative variable, a function previously defined in a {\tt
-\#define} statement, or a single number with a {\tt \$} in front of it.
+{\tt nand}, {\tt or}, {\tt nor}, {\tt xor}, {\tt equ}, {\tt same}, {\tt
+imp}, {\tt nimp}, {\tt ite}, {\tt gcf}, {\tt strengthen}, {\tt prune}, {\tt
+exist}, {\tt universe}, {\tt truth\_table}, {\tt minmax}, {\tt safe}, a
+single positive or negative variable, a function previously defined in a
+{\tt \#define} statement, or a single number with a {\tt \$} in front of it.
 Lines that do not get a {\tt \$} number start with {\tt initialbranch}, {\tt
 print\_tree}, or {\tt pprint\_tree}, {\tt \#define}, {\tt print\_xdd}, or
 {\tt print\_flat\_xdd}.
@@ -2508,17 +2508,24 @@ This Boolean function has value {\em T} if all its arguments have value
 {\em F} and has value {\em F} if at least one argument has value {\em T}.
 }\\
 
-\indent\textbf{EQU}\\
-\vspace*{-3mm}\\
-\indent\indent\parbox{110mm}{
-This Boolean function has value {\em T} if an even number of its arguments
-have value {\em F} and has the value {\em F} otherwise.}\\
-
 \indent\textbf{XOR}\\
 \vspace*{-3mm}\\
 \indent\indent\parbox{110mm}{
 This Boolean function has value {\em F} if an even number of its arguments
 have value {\em T} and has the value {\em T} otherwise.}\\
+
+\indent\textbf{EQU}\\
+\vspace*{-3mm}\\
+\indent\indent\parbox{110mm}{
+This Boolean function has value {\em T} if an even number of its arguments
+have value {\em F} and has the value {\em F} otherwise. This is the negation
+of {\tt XOR}}\\
+
+\indent\textbf{SAME}\\
+\vspace*{-3mm}\\
+\indent\indent\parbox{110mm}{
+This Boolean function has value {\em T} if all of its arguments have the
+same value, either {\em T} or {\em F}, and has the value {\em F} otherwise.}\\
 
 \indent\textbf{IMP}\\
 \vspace*{-3mm}\\
