@@ -39,7 +39,8 @@ struct ProblemState{
                	                 //Smurf contained every variable. Each list is terminated by a -1 element.
 	// Dynamic
 	int nCurrSearchTreeLevel;
-	double *arrPosVarHeurWghts; //Pointer to array of size nNumVars
+   int *arrVarChoiceCurrLevel; //Pointer to array of size nNumVars
+   double *arrPosVarHeurWghts; //Pointer to array of size nNumVars
 	double *arrNegVarHeurWghts; //Pointer to array of size nNumVars
 	int *arrInferenceQueue;  //Pointer to array of size nNumVars (dynamically indexed by arrSmurfStack[level].nNumFreeVars
 	int *arrInferenceDeclaredAtLevel; //Pointer to array of size nNumVars
@@ -413,6 +414,8 @@ void ReadAllSmurfsIntoTable() {
 	SimpleSmurfProblemState->arrNegVarHeurWghts = (double *)ite_calloc(SimpleSmurfProblemState->nNumVars, sizeof(double), 9, "arrNegVarHeurWghts");
 	SimpleSmurfProblemState->arrInferenceQueue = (int *)ite_calloc(SimpleSmurfProblemState->nNumVars, sizeof(int), 9, "arrInferenceQueue");
 	SimpleSmurfProblemState->arrInferenceDeclaredAtLevel = (int *)ite_calloc(SimpleSmurfProblemState->nNumVars, sizeof(int), 9, "arrInferenceDeclaredAtLevel");
+	SimpleSmurfProblemState->arrVarChoiceCurrLevel = (int *)ite_calloc(SimpleSmurfProblemState->nNumVars, sizeof(int), 9, "arrVarChoiceCurrLevel");
+
 	
 	//Count the number of functions every variable occurs in.
 	int *temp_varcount = (int *)ite_calloc(SimpleSmurfProblemState->nNumVars, sizeof(int), 9, "temp_varcount");
@@ -538,7 +541,42 @@ int Simple_LSGB_Heuristic() {
    // 
    // Initialize to the lowest indexed variable whose value is uninstantiated.
    int i;
-   for(i = 1; i < SimpleSmurfProblemState->nNumVars; i++) {
+	
+	if (arrVarChoiceLevels) {
+		int level=SimpleSmurfProblemState->arrVarChoiceCurrLevel[SimpleSmurfProblemState->nCurrSearchTreeLevel];
+		for(;level<arrVarChoiceLevelsNum;level++) {
+			int j=0;
+			while(arrVarChoiceLevels[level][j] != 0) {
+				i=arrVarChoiceLevels[level][j];
+				if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i] >= nCurrInfLevel) {
+					nBestVble = i;
+					fMaxWeight = (1+SimpleSmurfProblemState->arrPosVarHeurWghts[i]) *
+					  (1+SimpleSmurfProblemState->arrNegVarHeurWghts[i]);
+					
+					break;
+				}
+				j++;
+			}
+			if (nBestVble >= 0) {
+				while(arrVarChoiceLevels[level][j] != 0) {
+					i=arrVarChoiceLevels[level][j];
+					if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i] >= nCurrInfLevel) {
+						fVbleWeight = (1+SimpleSmurfProblemState->arrPosVarHeurWghts[i]) *
+						  (1+SimpleSmurfProblemState->arrNegVarHeurWghts[i]);
+						if(fVbleWeight > fMaxWeight) {
+							fMaxWeight = fVbleWeight;
+							nBestVble = i;
+						}
+					}
+					j++;
+				}
+				SimpleSmurfProblemState->arrVarChoiceCurrLevel[SimpleSmurfProblemState->nCurrSearchTreeLevel] = level;
+				return (SimpleSmurfProblemState->arrPosVarHeurWghts[nBestVble] >= SimpleSmurfProblemState->arrNegVarHeurWghts[nBestVble]?nBestVble:-nBestVble);
+			}
+		}
+	}
+
+	for(i = 1; i < SimpleSmurfProblemState->nNumVars; i++) {
 		if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i] >= nCurrInfLevel) {
 			nBestVble = i;
 			fMaxWeight = (1+SimpleSmurfProblemState->arrPosVarHeurWghts[i]) *
@@ -657,7 +695,7 @@ void SmurfStates_Push() {
 	}
 	SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel+1].nNumFreeVars =
 	  SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
-	
+
 	SimpleSmurfProblemState->nCurrSearchTreeLevel++;
 }
 
@@ -785,5 +823,6 @@ int simpleSolve() {
 	//Still need to do some backend stuff like record the solution and free memory.
 	BREAK_XORS = bxors_old;
 	return ret;
+	//Hmmm I didn't free ANY of that memory. SEAN!!! FIX THIS!!!
 }
 
