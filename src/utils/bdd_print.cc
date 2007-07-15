@@ -575,7 +575,7 @@ void printBDDdot_file(BDDNode **bdds, int num) {
 			}
 			fprintf(fout, " %d\n", (int)BDD_nodes[x]);
 		}
-		if(display_t && display_f > 1) fprintf(fout, " }\n");
+		fprintf(fout, " }\n");
 		
 		for(int x = 0; x < len_BDD_nodes; x++) {
 			if(BDD_nodes[x]->thenCase == true_ptr)		  
