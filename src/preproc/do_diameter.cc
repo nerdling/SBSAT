@@ -110,13 +110,13 @@ int Do_Diameter() {
 	d2_printf8("\nc diameter():: MIN: %i (#%i, v%d) MAX: %i (#%i, v%d) AVG: %.3f\n", min_diameter, nr_min, n_min,
 			 max_diameter, nr_max, n_max, sum_diameter / count_diameter );
 
-	arrVarChoiceLevelsNum++;
-	if(arrVarChoiceLevelsMax <= arrVarChoiceLevelsNum) {
-		arrVarChoiceLevels = (int **)ite_recalloc(arrVarChoiceLevels, arrVarChoiceLevelsMax, arrVarChoiceLevelsMax+10, sizeof(int *), 9, "arrVarChoiceLevels");
-		arrVarChoiceLevelsMax += 10;
+	nVarChoiceLevelsNum++;
+	if(nVarChoiceLevelsMax <= nVarChoiceLevelsNum) {
+		arrVarChoiceLevels = (int **)ite_recalloc(arrVarChoiceLevels, nVarChoiceLevelsMax, nVarChoiceLevelsMax+10, sizeof(int *), 9, "arrVarChoiceLevels");
+		nVarChoiceLevelsMax += 10;
 	}
 	
-	for(int x = arrVarChoiceLevelsNum-1; x > 0; x++)
+	for(int x = nVarChoiceLevelsNum-1; x > 0; x++)
 	  arrVarChoiceLevels[x] = arrVarChoiceLevels[x-1];
 	arrVarChoiceLevels[0] = (int *)ite_calloc(2, sizeof(int), 9, "arrVarChoiceLevels[0]");
 	

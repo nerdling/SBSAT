@@ -79,7 +79,7 @@ HEUR_FUNCTION(int *pnBranchAtom, int *pnBranchValue)
    // 
    if (arrVarChoiceLevels) {
       int level=0;
-      for(level=0;level<arrVarChoiceLevelsNum;level++)
+      for(level=0;level<nVarChoiceLevelsNum;level++)
       {
          j=0;
          while(arrVarChoiceLevels[level][j] != 0)

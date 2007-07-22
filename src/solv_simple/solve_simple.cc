@@ -72,9 +72,10 @@ void PrintAllSmurfStateEntries() {
 }
 
 void save_solution_simple(void) {
+	d7_printf1("      Solution found\n");
 	if (result_display_type) {
 		/* create another node in solution chain */
-		
+		d7_printf1("      Recording solution\n");
 		t_solution_info *tmp_solution_info;
 		tmp_solution_info = (t_solution_info*)calloc(1, sizeof(t_solution_info));
 		
@@ -85,11 +86,11 @@ void save_solution_simple(void) {
 			solution_info->next = (struct _t_solution_info*)tmp_solution_info;
 			solution_info = (t_solution_info*)(solution_info->next);
 		}
-		tmp_solution_info->nNumElts = SimpleSmurfProblemState->nNumVars+1;
-		tmp_solution_info->arrElts = new int[SimpleSmurfProblemState->nNumVars+2];
+		tmp_solution_info->nNumElts = numinp+1;//SimpleSmurfProblemState->nNumVars+1;
+		tmp_solution_info->arrElts = new int[numinp+1];//new int[SimpleSmurfProblemState->nNumVars+2];
 		
 		for (int i = 0; i<SimpleSmurfProblemState->nNumVars; i++) {
-			tmp_solution_info->arrElts[abs(SimpleSmurfProblemState->arrInferenceQueue[i])] = (SimpleSmurfProblemState->arrInferenceQueue[i]>0)?BOOL_TRUE:BOOL_FALSE;
+			tmp_solution_info->arrElts[arrSolver2IteVarMap[abs(SimpleSmurfProblemState->arrInferenceQueue[i])]] = (SimpleSmurfProblemState->arrInferenceQueue[i]>0)?BOOL_TRUE:BOOL_FALSE;
 		}
 	}
 }
@@ -544,7 +545,7 @@ int Simple_LSGB_Heuristic() {
 	
 	if (arrVarChoiceLevels) {
 		int level=SimpleSmurfProblemState->arrVarChoiceCurrLevel[SimpleSmurfProblemState->nCurrSearchTreeLevel];
-		for(;level<arrVarChoiceLevelsNum;level++) {
+		for(;level<nVarChoiceLevelsNum;level++) {
 			int j=0;
 			while(arrVarChoiceLevels[level][j] != 0) {
 				i=arrVarChoiceLevels[level][j];
@@ -602,7 +603,8 @@ int Simple_LSGB_Heuristic() {
 		dE_printf1 ("Error in heuristic routine:  No uninstantiated variable found\n");
 		exit (1);
    }
-	
+
+	SimpleSmurfProblemState->arrVarChoiceCurrLevel[SimpleSmurfProblemState->nCurrSearchTreeLevel] = nVarChoiceLevelsNum;
    return (SimpleSmurfProblemState->arrPosVarHeurWghts[nBestVble] >= SimpleSmurfProblemState->arrNegVarHeurWghts[nBestVble]?nBestVble:-nBestVble);
 }
 
@@ -683,7 +685,8 @@ int Init_SimpleSmurfSolver() {
 	
 	FreeFunctions();
 	FreeVariables();
-	FreeVarMap();
+	//FreeVarMap(); //This is freed at the end of simpleSolve(). 
+	                //arrVarChoiceLevels and arrSolver2IteVarMap are needed during search.
 	
 	return ret;
 }
@@ -712,6 +715,27 @@ int SmurfStates_Pop() {
 	if(SimpleSmurfProblemState->nCurrSearchTreeLevel < 0)
 	  return 0;
 	return 1;  
+}
+
+int backtrack() {
+	//Pop stack
+	ite_counters[ERR_BT_SMURF]++;
+	
+	if(SmurfStates_Pop() == 0) {
+		//We are at the top of the stack
+		if(ite_counters[NUM_SOLUTIONS] == 0) return SOLV_UNSAT; //return Unsatisifable
+		else return SOLV_SAT;
+	}
+	
+	//Empty the inference queue & reverse polarity of cp var
+	//Clear Inference Queue
+	for(int i = 1; i < SimpleSmurfProblemState->nNumVars; i++)
+	  if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i] > SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars ||
+		  abs(SimpleSmurfProblemState->arrInferenceQueue[SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i]]) != i) {
+		  d7_printf3("      Resetting level of variable %d to %d\n", i, SimpleSmurfProblemState->nNumVars);
+		  SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i] = SimpleSmurfProblemState->nNumVars;
+	  }
+	return SOLV_UNKNOWN;
 }
 
 int SimpleBrancher() {
@@ -766,23 +790,14 @@ int SimpleBrancher() {
 				//apply inference to all involved smurfs
 				if(ApplyInferenceToSmurfs(nBranchVar, bBVPolarity) == 0) {
 					//A conflict occured
-					//Pop stack
-					ite_counters[ERR_BT_SMURF]++;
-find_more_solutions: ;
-					if(SmurfStates_Pop() == 0) {
-						//We are at the top of the stack
-						if(ite_counters[NUM_SOLUTIONS] == 0) return SOLV_UNSAT; //return Unsatisifable
-						else return SOLV_SAT;
+					
+					switch(backtrack()) {
+					 case SOLV_UNSAT: return SOLV_UNSAT;
+					 case SOLV_SAT: return SOLV_SAT;
+					 default: break;
 					}
 					
-					//Empty the inference queue & reverse polarity of cp var
-					//Clear Inference Queue
-					for(int i = 1; i < SimpleSmurfProblemState->nNumVars; i++)
-					  if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i] > SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars ||
-						  abs(SimpleSmurfProblemState->arrInferenceQueue[SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i]]) != i) {
-						  d7_printf3("      Resetting level of variable %d to %d\n", i, SimpleSmurfProblemState->nNumVars);
-						  SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i] = SimpleSmurfProblemState->nNumVars;
-					  }
+find_more_solutions: ;
 					
 					nBranchLit = SimpleSmurfProblemState->arrInferenceQueue[SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars];
 					SimpleSmurfProblemState->arrInferenceQueue[SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars] = -nBranchLit;
@@ -798,11 +813,20 @@ find_more_solutions: ;
 		//Record solution
 
 		save_solution_simple();
-		
+
 		ite_counters[NUM_SOLUTIONS]++;
 		ret = SOLV_SAT;
 		
 		if(ite_counters[NUM_SOLUTIONS] != max_solutions_simple) {
+			do {
+				if(nForceBackjumpLevel < SimpleSmurfProblemState->arrVarChoiceCurrLevel[SimpleSmurfProblemState->nCurrSearchTreeLevel])
+				  d7_printf2("Forcing a backjump to level %d\n", nForceBackjumpLevel);
+					switch(backtrack()) {
+					 case SOLV_UNSAT: return SOLV_UNSAT;
+					 case SOLV_SAT: return SOLV_SAT;
+					 default: break;
+					}
+			} while(nForceBackjumpLevel < SimpleSmurfProblemState->arrVarChoiceCurrLevel[SimpleSmurfProblemState->nCurrSearchTreeLevel]);
 			goto find_more_solutions;
 		}
 	}
@@ -813,6 +837,8 @@ find_more_solutions: ;
 int simpleSolve() {
 	int bxors_old = BREAK_XORS;
 	BREAK_XORS = 0;
+	int nForceBackjumpLevel_old = nForceBackjumpLevel;
+	if(nForceBackjumpLevel < 0) nForceBackjumpLevel = nVarChoiceLevelsNum+1;
 	//Clear function type:
 	for(int x = 0; x < nmbrFunctions; x++)
 	  functionType[x] = UNSURE;
@@ -821,7 +847,9 @@ int simpleSolve() {
 	ret = SimpleBrancher();  
 	DisplayStatistics(ite_counters[NUM_CHOICE_POINTS], ite_counters[NUM_BACKTRACKS], ite_counters[NUM_BACKJUMPS]);
 	//Still need to do some backend stuff like record the solution and free memory.
+	nForceBackjumpLevel = nForceBackjumpLevel_old;
 	BREAK_XORS = bxors_old;
+	FreeVarMap();
 	return ret;
 	//Hmmm I didn't free ANY of that memory. SEAN!!! FIX THIS!!!
 }

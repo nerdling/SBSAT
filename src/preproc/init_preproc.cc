@@ -352,7 +352,7 @@ Finish_Preprocessing()
 		}
 	}
 	
-	for(int x = 0; x < arrVarChoiceLevelsNum; x++) {
+	for(int x = 0; x < nVarChoiceLevelsNum; x++) {
 		for(int i = 0; arrVarChoiceLevels[x][i]!=0; i++) {
 			if(variablelist[arrVarChoiceLevels[x][i]].equalvars != 0) {
 				if(variablelist[arrVarChoiceLevels[x][i]].equalvars > 0) {
@@ -372,7 +372,7 @@ Finish_Preprocessing()
 	int *isinVCL = (int *)ite_calloc(numinp + 1, sizeof(int), 9, "isinVCL");
 	
 	int count=-1;
-	for(int x = 0; x < arrVarChoiceLevelsNum; x++) {
+	for(int x = 0; x < nVarChoiceLevelsNum; x++) {
 		count=-1;
 		for(int i = 0; arrVarChoiceLevels[x][i]!=0; i++) {
 			count++;
@@ -385,7 +385,7 @@ Finish_Preprocessing()
 	}
 	
 	count=-1;	
-	for(int x = 0; x < arrVarChoiceLevelsNum; x++) {
+	for(int x = 0; x < nVarChoiceLevelsNum; x++) {
 		count++;
 		int *tmp = arrVarChoiceLevels[count];
 		arrVarChoiceLevels[count] = arrVarChoiceLevels[x];
@@ -394,12 +394,12 @@ Finish_Preprocessing()
 		}
 		arrVarChoiceLevels[x] = tmp;
 	}
-	arrVarChoiceLevelsNum = count+1;
+	nVarChoiceLevelsNum = count+1;
 	
 	ite_free((void**)&isinVCL);
 	
 	d6_printf1("\n");
-	for(int x = 0; x < arrVarChoiceLevelsNum; x++) {
+	for(int x = 0; x < nVarChoiceLevelsNum; x++) {
 		for(int i = 0; arrVarChoiceLevels[x][i]!=0; i++)
 		 d6_printf2("%d ", arrVarChoiceLevels[x][i]);
 		d6_printf1("\n");

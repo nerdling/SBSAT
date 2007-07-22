@@ -78,8 +78,8 @@ int max_initbranch;
 
 double *arrVarTrueInfluences;
 int **arrVarChoiceLevels;
-int arrVarChoiceLevelsMax;
-int arrVarChoiceLevelsNum;
+int nVarChoiceLevelsMax;
+int nVarChoiceLevelsNum;
 
 int max_defines;
 int totaldefines;
@@ -1357,8 +1357,8 @@ void bddloop () {
 		arrVarChoiceLevels[x] = tmp;
 	}
 
-	arrVarChoiceLevelsMax = max_initbranch;
-	arrVarChoiceLevelsNum = count+1;
+	nVarChoiceLevelsMax = max_initbranch;
+	nVarChoiceLevelsNum = count+1;
 
 	//Also we must take equivalences into account in the preprocessor!
 	

@@ -115,6 +115,7 @@ extern int reverse_independant_dependant;
 extern int print_independent_vars;
 extern int clear_dependance;
 extern int backjumping;
+extern int nForceBackjumpLevel;
 extern char formatin;
 extern char formatout;
 extern int n_cnfformat;
@@ -160,8 +161,8 @@ extern int **arrSolverVarsInFunction;
 
 extern double *arrVarTrueInfluences;
 extern int **arrVarChoiceLevels;
-extern int arrVarChoiceLevelsMax;
-extern int arrVarChoiceLevelsNum;
+extern int nVarChoiceLevelsMax;
+extern int nVarChoiceLevelsNum;
 
 extern int TRACE_START;
 

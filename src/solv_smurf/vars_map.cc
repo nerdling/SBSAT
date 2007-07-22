@@ -112,6 +112,15 @@ InitVarMap()
            var_score[index] = var_score[x];
      }
   }
+
+  if(arrVarChoiceLevels) {
+	  for(int level = 0; level < nVarChoiceLevelsNum; level++) {
+		  int j=0;
+		  while(arrVarChoiceLevels[level][j]!=0)
+			 arrVarChoiceLevels[level][j] = arrIte2SolverVarMap[arrVarChoiceLevels[level][j++]];
+	  }
+  }
+	
   assert (nmbrFunctions > 0);
   assert (nSolutionIndep == nIndepVars+1);
   assert (nSolutionDep-nIndepVars-1 == nDepVars);
@@ -120,8 +129,16 @@ InitVarMap()
 }
 
 ITE_INLINE void 
-FreeVarMap() 
-{
-   ite_free((void**)&arrSolver2IteVarMap);
+FreeVarMap() {
+	
+	if(arrVarChoiceLevels) {
+		for(int level = 0; level < nVarChoiceLevelsNum; level++) {
+			int j=0;
+			while(arrVarChoiceLevels[level][j]!=0)
+			  arrVarChoiceLevels[level][j] = arrSolver2IteVarMap[arrVarChoiceLevels[level][j++]];
+		}
+	}
+
+	ite_free((void**)&arrSolver2IteVarMap);
    ite_free((void**)&arrIte2SolverVarMap);
 }

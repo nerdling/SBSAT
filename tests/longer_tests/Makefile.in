@@ -69,6 +69,7 @@ ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 EXEEXT = @EXEEXT@
+GREP = @GREP@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
@@ -102,9 +103,8 @@ SHELL = @SHELL@
 STRIP = @STRIP@
 VERSION = @VERSION@
 YACC = @YACC@
+YFLAGS = @YFLAGS@
 ac_ct_CXX = @ac_ct_CXX@
-ac_ct_RANLIB = @ac_ct_RANLIB@
-ac_ct_STRIP = @ac_ct_STRIP@
 am__fastdepCXX_FALSE = @am__fastdepCXX_FALSE@
 am__fastdepCXX_TRUE = @am__fastdepCXX_TRUE@
 am__include = @am__include@
@@ -119,47 +119,70 @@ build_cpu = @build_cpu@
 build_os = @build_os@
 build_vendor = @build_vendor@
 datadir = @datadir@
+datarootdir = @datarootdir@
+docdir = @docdir@
+dvidir = @dvidir@
 exec_prefix = @exec_prefix@
 host = @host@
 host_alias = @host_alias@
 host_cpu = @host_cpu@
 host_os = @host_os@
 host_vendor = @host_vendor@
+htmldir = @htmldir@
 includedir = @includedir@
 infodir = @infodir@
 install_sh = @install_sh@
 libdir = @libdir@
 libexecdir = @libexecdir@
+localedir = @localedir@
 localstatedir = @localstatedir@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
+pdfdir = @pdfdir@
 prefix = @prefix@
 program_transform_name = @program_transform_name@
+psdir = @psdir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-EXTRA_DIST = dlx2_cc_bug11.trace dlx2_cc.trace \
-            slider_80_sat.ite slider_80_unsat.ite \
-            dlx2_cc.trace.params \
-            slider_80_sat.ite.params \
-            slider_80_unsat.ite.params \
-	    dlx2_cc_bug11.trace.params \
-	    dlx2_cc_bug11.trace.Hjl.params \
-	    dlx2_cc.trace.Hjl.params \
-	    slider_80_sat.ite.Hjq.params \
-	    slider_80_unsat.ite.Hjq.params \
-	    dlx2_cc_bug11.trace.Hl.params \
-	    dlx2_cc.trace.Hl.params \
-	    4.trace.gz 4.trace.gz.params \
-	    queue.8.prove \
-	    queue.8.prove.Hjl.params \
-	    queue.8.prove.Hjq.params \
-	    queue.8.prove.Hl.params \
-	    queue.8.prove.params \
-	    barrel.6.prove \
-	    barrel.6.prove.params
+EXTRA_DIST = 12.trace.gz.params \
+				dlx2_cc.trace.params \
+				queue.14.prove.Hjq.params \
+				queue.8.prove.params \
+				4.trace.gz.params \
+				dlx2_cc_bug11.trace.Hb.params \
+				queue.14.prove.Hv.params \
+				slider_80_sat.ite.Hjq.params \
+				barrel.6.prove.params \
+				dlx2_cc_bug11.trace.Hjl.params \
+				queue.14.prove.params \
+				slider_80_sat.ite.params \
+				barrel.7.prove.params \
+				dlx2_cc_bug11.trace.Hv.params \
+				queue.8.prove.Hb.params \
+				slider_80_unsat.ite.Hjq.params \
+				dlx2_cc.trace.Hb.params \
+				dlx2_cc_bug11.trace.params \
+				queue.8.prove.Hjl.params \
+				slider_80_unsat.ite.params \
+				dlx2_cc.trace.Hjl.params \
+				queue.14.prove.Hb.params \
+				queue.8.prove.Hjq.params \
+				dlx2_cc.trace.Hv.params \
+				queue.14.prove.Hjl.params \
+				queue.8.prove.Hv.params \
+				12.trace.gz \
+				dlx2_cc.trace \
+				queue.14.prove \
+				queue.8.prove \
+				4.trace.gz \
+				dlx2_cc_bug11.trace \
+				slider_80_sat.ite \
+				barrel.6.prove \
+				barrel.7.prove \
+				slider_80_unsat.ite
 
 all: all-am
 

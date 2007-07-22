@@ -304,6 +304,8 @@ t_opt options[] = {
 
 { &backjumping, "", "backjumping", P_INT, V(i:0,"0"), V(i:1,"1"), VAR_NORMAL, 0,
 		"Enable/Disable backjumping (1/0)"},
+{ &nForceBackjumpLevel, "", "force-backjump-level", P_INT, V(i:0,"0"), V(i:-1, "-1"), VAR_NORMAL, 0,
+	   "Set the search tree level (given by initial_branch) to backjump to once a solution is found"},
 { &MAX_NUM_CACHED_LEMMAS, "L", "max-cached-lemmas", P_INT,
 		V(i:0,"0"), V(i:5000, "5000"), VAR_NORMAL, 0,
                 "set the maximum # of lemmas"}, 

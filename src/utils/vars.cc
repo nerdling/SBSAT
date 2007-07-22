@@ -44,6 +44,7 @@ int reverse_independant_dependant = 0;
 int clear_dependance = 0;
 int print_independent_vars;
 int backjumping = 1;
+int nForceBackjumpLevel = -1;
 char ge_preproc;
 char formatin = 'f', formatout = 'b'; //Solving the problem is the Default
 int print_tree = 0;

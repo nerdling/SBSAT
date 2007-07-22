@@ -110,8 +110,8 @@ DisplayPartialSolution(int nNumVariables)
 void
 DisplayStatistics(int nNumChoicePts, int nNumBacktracks, int nNumBackjumps)
 {
-  fprintf(stddbg, "Choice Points: %d", nNumChoicePts);
-  fprintf(stddbg, ", Backtracks: %d, Backjumps: %d \n", 
+  d2_printf2("Choice Points: %d", nNumChoicePts);
+  d2_printf3(", Backtracks: %d, Backjumps: %d \n", 
 		  nNumBacktracks, nNumBackjumps);
 }
 /*

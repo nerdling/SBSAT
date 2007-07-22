@@ -40,6 +40,7 @@
 #include "sbsat.h"
 
 int *rows;
+int *columns;
 
 void gen_matrix(int **matrix, int sizex, int sizey, int mult) {
 	for(int x = 1; x <= sizex; x++) {
@@ -49,7 +50,6 @@ void gen_matrix(int **matrix, int sizex, int sizey, int mult) {
 			matrix[x][y] = rand()%mult;
 			if(x == y) matrix[x][y] = 1;
 			//fprintf(stdout, "%d", matrix[x][y]>1?8:matrix[x][y]);
-
 			if(matrix[x][y]==1 && row==-1) row = 1;
 			else if(matrix[x][y]==1 && row==0) row = 2;
 			else if(matrix[x][y]==0 && row==-1) row = 0;
@@ -57,6 +57,16 @@ void gen_matrix(int **matrix, int sizex, int sizey, int mult) {
 		}
 		rows[x] = row;
 		//fprintf(stdout, "\n");
+	}
+	for(int y = 1; y <= sizey; y++) {
+		int column = -1;
+		for(int x = 1; x <= sizex; x++) {
+			if(matrix[x][y]==1 && column==-1) column = 1;
+			else if(matrix[x][y]==1 && column==0) column = 2;
+			else if(matrix[x][y]==0 && column==-1) column = 0;
+			else if(matrix[x][y]==0 && column==1) column = 2;
+		}
+		columns[y] = column;
 	}
 }
 
@@ -71,9 +81,11 @@ void trans(int size, int mult) {
 	int sizey = size;
 	int **matrix = (int **)calloc(sizex+1, sizeof(int **));
 	rows = (int*)calloc(sizex+1, sizeof(int*));
+	columns = (int*)calloc(sizey+1, sizeof(int*));
    gen_matrix(matrix, sizex, sizey, mult);
 	fprintf(stdout, "p bdd %d %d\n", 6*sizex*sizey, (5*sizex*sizey)+2*sizex+1);
 
+	fprintf(stdout, "initial_branch(#1 p_*)\n");
 //	fprintf(stdout, "order(");
 
 //	for(int x = 1; x <= sizex; x++) {
@@ -83,36 +95,33 @@ void trans(int size, int mult) {
 //		fprintf(stdout, "p_%d ", x);
 //	}
 
-	
 //	for(int x = sizex; x > 0; x--)
 //	  fprintf(stdout, "p_%d ", x);
 
 //	fprintf(stdout, ")\n");
 
-	for(int x = sizex; x > 0; x--) {
-		for(int y = 1; y <= x; y++) {
-			if(matrix[x][y]<=1) fprintf(stdout, "exist(");
-			if(x!=y && matrix[y][x]<=1) fprintf(stdout, "exist(");
-		}
-		fprintf(stdout, "and(");
-	}
+//	for(int x = sizex; x > 0; x--) {
+//		for(int y = 1; y <= x; y++) {
+//			if(matrix[x][y]<=1) fprintf(stdout, "exist(");
+//			if(x!=y && matrix[y][x]<=1) fprintf(stdout, "exist(");
+//		}
+//		fprintf(stdout, "and(");
+//	}
 	
-	fprintf(stdout, "\n");
+//	fprintf(stdout, "\n");
 	
-	for(int x = 1; x <= sizex; x++) {
-		if(rows[x]==1) {
-		  fprintf(stdout, "var(p_%d)\n", x);
-		} else if(rows[x]==0) {
-		  fprintf(stdout, "not(p_%d)\n", x);
-		} else if(rows[x]==-1) {
-			fprintf(stderr, "Empty Row - Unsat file\n");
+	for(int y = 1; y <= sizey; y++) {
+		if(columns[y]==1) {
+			//fprintf(stdout, "var(p_%d)\n", y);
+		} else if(columns[y]==0) {
+			//fprintf(stdout, "not(p_%d)\n", y);
+		} else if(columns[y]==-1) {
+			fprintf(stderr, "Column %d is empty - unsatisfiable\n", y);
 			exit(0);
-		} else {
-			for(int y = 1; y <= sizey; y++) {
-				//if(matrix[x][y]>1) fprintf(stdout, "not(trans_%d_%d)\n", x, y);
-				//else 
-				if(matrix[x][y]==1) fprintf(stdout, "imp(trans_%d_%d, p_%d)\n", x, y, x);
-				else if(matrix[x][y]==0) fprintf(stdout, "imp(trans_%d_%d, not(p_%d))\n", x, y, x);
+		} else { //columns[y] >= 2
+			for(int x = 1; x <= sizex; x++) {
+				if(matrix[x][y]==1) fprintf(stdout, "imp(trans_%d_%d, p_%d)\n", x, y, y);
+				else if(matrix[x][y]==0) fprintf(stdout, "imp(trans_%d_%d, not(p_%d))\n", x, y, y);
 			}
 		}
 	}
@@ -128,21 +137,21 @@ void trans(int size, int mult) {
 		for(int y = 1; y <= sizey; y++) {
 			if(matrix[y][x]<=1) fprintf(stdout, ", trans_%d_%d", y, x);
 		}
-		//fprintf(stdout, ")\n");
-		fprintf(stdout, "))\n");		
+		fprintf(stdout, ")\n");
+		//fprintf(stdout, "))\n");		
 
-		for(int y = 1; y <= x; y++) {
-			if(matrix[x][y]<=1) fprintf(stdout, ", trans_%d_%d)", x, y);
-			if(x!=y && matrix[y][x]<=1) fprintf(stdout, ", trans_%d_%d)", y, x);
-		}
+		//for(int y = 1; y <= x; y++) {
+		//	if(matrix[x][y]<=1) fprintf(stdout, ", trans_%d_%d)", x, y);
+		//	if(x!=y && matrix[y][x]<=1) fprintf(stdout, ", trans_%d_%d)", y, x);
+		//}
 
 		fprintf(stdout, "\n");
 	}
 
 	//fprintf(stdout, "print_tree($1)\n");
-	fprintf(stdout, "countT($1, ");
-	for(int x = sizex; x > 0; x--)
-		  fprintf(stdout, "p_%d ", x);
-	fprintf(stdout, ")\n");
+	//fprintf(stdout, "countT($1, ");
+	//for(int x = sizex; x > 0; x--)
+	//	  fprintf(stdout, "p_%d ", x);
+	//fprintf(stdout, ")\n");
 
 }
