@@ -71,6 +71,7 @@ void PrintAllSmurfStateEntries() {
 	}
 }
 
+ITE_INLINE
 void save_solution_simple(void) {
 	d7_printf1("      Solution found\n");
 	if (result_display_type) {
@@ -529,6 +530,7 @@ void Calculate_Heuristic_Values() {
 	d7_printf1("\n");
 }
 
+ITE_INLINE
 int Simple_LSGB_Heuristic() {
 	
    Calculate_Heuristic_Values();
@@ -608,6 +610,7 @@ int Simple_LSGB_Heuristic() {
    return (SimpleSmurfProblemState->arrPosVarHeurWghts[nBestVble] >= SimpleSmurfProblemState->arrNegVarHeurWghts[nBestVble]?nBestVble:-nBestVble);
 }
 
+ITE_INLINE
 int ApplyInferenceToSmurfs(int nBranchVar, bool bBVPolarity) {
 	int *arrSmurfStates = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].arrSmurfStates;
 	d7_printf2("  Transitioning Smurfs using %d\n", bBVPolarity?nBranchVar:-nBranchVar);
@@ -691,6 +694,7 @@ int Init_SimpleSmurfSolver() {
 	return ret;
 }
 
+ITE_INLINE
 void SmurfStates_Push() {
 	for(int i = 0; i < SimpleSmurfProblemState->nNumSmurfs; i++) {
 		SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel+1].arrSmurfStates[i] = 
@@ -702,6 +706,7 @@ void SmurfStates_Push() {
 	SimpleSmurfProblemState->nCurrSearchTreeLevel++;
 }
 
+ITE_INLINE
 int SmurfStates_Pop() {
 	d7_printf1("  Conflict - Backtracking\n");
 
@@ -717,6 +722,7 @@ int SmurfStates_Pop() {
 	return 1;  
 }
 
+ITE_INLINE
 int backtrack() {
 	//Pop stack
 	ite_counters[ERR_BT_SMURF]++;
