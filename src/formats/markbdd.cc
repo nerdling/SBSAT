@@ -602,11 +602,16 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 				var_list[numarguments++] = v3->variable;
 			} else {	fprintf(stderr, "\nKeyword 'minmax' needs positive variables as arguments (%s)...exiting:%d\n", macros, markbdd_line); exit (1); }
 		}
-		if(max > numarguments) { fprintf(stderr, "\nHere, keyword 'minmax' cannot have less than max=%d variables (%s)...exiting:%d\n", max, macros, markbdd_line); exit (1); }
+		if(max > numarguments) { fprintf(stderr, "\nKeyword 'minmax' cannot have less than the specified max=%d variables (%s)...exiting:%d\n", max, macros, markbdd_line); exit (1); }
 			
 		int set_true = 0;
 		qsort(var_list, numarguments, sizeof(int), abscompfunc);
-      strcpy (macros, "minmax");
+		for(int x = 0; x < numarguments-1; x++)
+		  if(var_list[x] == var_list[x+1]) {
+			  fprintf(stderr, "\nFound duplicate variables in the argument list for keyword 'minmax' (%s)...exiting:%d\n", macros, markbdd_line); exit(1); }
+		
+		
+		strcpy (macros, "minmax");
 		BDDNode *tempBDD = MinMaxBDD(var_list, min, max, numarguments, set_true);
 		ite_free((void **)&var_list);
 		return tempBDD;
