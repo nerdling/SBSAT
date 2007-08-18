@@ -155,5 +155,6 @@ int main(int argc, char **argv) {
 	fprintf(stderr, "usage: %s slider2 --help\n", argv[0]);
 	fprintf(stderr, "usage: %s rbdd --help\n", argv[0]);
 	fprintf(stderr, "usage: %s trans --help\n", argv[0]);
+	fprintf(stderr, "usage: %s add_tree --help\n", argv[0]);
 	return 0;
 }
