@@ -44,6 +44,7 @@ void rn(char *rn_type, int n, int k, int l);
 void slider2(char *out_type, int n, int sat);
 void rand_BDD(char *out_type, int num_vars, int num_funcs, int vars_per_func);
 void trans(int size, int mult);
+void add_tree(int level, int variable);
 
 int main(int argc, char **argv) {
    if (argc > 1 && !strcmp(argv[1], "vdw")) { 
@@ -109,6 +110,18 @@ int main(int argc, char **argv) {
 		int size = atoi(argv[2]);
 		int mult = atoi(argv[3]);
       trans(size, mult);
+		return 0;
+	} else
+   if (argc > 1 && !strcmp(argv[1], "add_tree")) {
+      if (argc < 4 || (argc > 2 && !strcmp(argv[2], "--help"))) {
+         fprintf(stderr, "usage: %s add_tree size\n", argv[0]);
+         fprintf(stderr, "       level - level at which variable occurs\n");
+			fprintf(stderr, "       variable - variable to search for at level\n");
+         return 0;
+      }
+		int level = atoi(argv[2]);
+		int variable = atoi(argv[3]);
+      add_tree(level, variable);
 		return 0;
 	} else
    if (argc > 1 && !strcmp(argv[1], "rbdd")) {

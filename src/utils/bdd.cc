@@ -1254,6 +1254,7 @@ BDDNode * OLD_xquantify (BDDNode * f, int v)
    return find_or_add_node (f->variable, r, e);
 }
 
+//SEAN HERE!!! - should update this to do everything xquantify does
 BDDNode * uquantify (BDDNode * f, int v)
 {
    if (f->variable == v)
