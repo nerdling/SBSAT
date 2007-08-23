@@ -1,7 +1,7 @@
 /* =========FOR INTERNAL USE ONLY. NO DISTRIBUTION PLEASE ========== */
 
 /*********************************************************************
- Copyright 1999-2007, University of Cincinnati.  All rights reserved.
+ Copyright 1999-2004, University of Cincinnati.  All rights reserved.
  By using this software the USER indicates that he or she has read,
  understood and will comply with the following:
 
@@ -122,9 +122,18 @@
 #define XITE2  6
 #define XCNF2 7
 #define CNF2MK 8
+#define CNF2POSONLY 9
+#define CNF2INFS 10 
+#define CNF2BYSTEP 11 
+#define CNF2PROGDETECT_BLK 12 
+#define CNF2PROGDETECT_V 13 
+#define CNF2PROGDETECT_MACROS 14
+#define CNF2PROGDETECT_INFO 15
 
 char name[128];
 int formula_type = XCNF;
+
+void print_par(char *slit, char *delim, int n) ;
 
 char *var(int n, int x, int k) { 
    int i = k*n+x;
@@ -141,6 +150,13 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
    if (!strcmp(vdw_type, "xcnf2")) formula_type = XCNF2; else 
    if (!strcmp(vdw_type, "cnf2")) formula_type = CNF2; else 
    if (!strcmp(vdw_type, "cnf2mk")) formula_type = CNF2MK; else 
+   if (!strcmp(vdw_type, "cnf2posonly")) formula_type = CNF2POSONLY; else 
+   if (!strcmp(vdw_type, "cnf2infs")) formula_type = CNF2INFS; else 
+   if (!strcmp(vdw_type, "cnf2bystep")) formula_type = CNF2BYSTEP; else 
+   if (!strcmp(vdw_type, "cnf2pdblk")) formula_type = CNF2PROGDETECT_BLK; else
+   if (!strcmp(vdw_type, "cnf2pdv")) formula_type = CNF2PROGDETECT_V; else
+   if (!strcmp(vdw_type, "cnf2pdmacros")) formula_type = CNF2PROGDETECT_MACROS; else
+   if (!strcmp(vdw_type, "cnf2pdinfo")) formula_type = CNF2PROGDETECT_INFO; else
    if (!strcmp(vdw_type, "ite")) formula_type = ITE; else 
    if (!strcmp(vdw_type, "ite2")) formula_type = ITE2; else 
    if (!strcmp(vdw_type, "xite2")) formula_type = XITE2; else 
@@ -186,6 +202,27 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
       clauses -= n;
       clauses /= 2; 
       fprintf(stdout, "p cnf %d %d\n", n, clauses);
+      break;
+    case CNF2BYSTEP:
+      break;
+    case CNF2INFS:
+      break;
+    case CNF2PROGDETECT_BLK:
+      break;
+    case CNF2PROGDETECT_V:
+      break;
+    case CNF2PROGDETECT_MACROS:
+      break;
+    case CNF2PROGDETECT_INFO:
+      break;    
+    case CNF2POSONLY:
+      if (k != 2) {
+         fprintf(stderr, "Can't use CNF2 for any other k but 2\n");
+         exit(1);
+      }
+      clauses -= n;
+      clauses /= 2;
+      // fprintf(stdout, "p cnf %d %d\n", n, clauses+sym_clauses);
       break;
     case CNF2MK:
       /*
@@ -364,6 +401,315 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
       if (clause_count != clauses) {
          fprintf(stderr, "======================== Problem\n");
       }
+   } else if (formula_type == CNF2INFS) {
+      int y_count[n+1];
+      for(int i=1;i<=n;i++) y_count[i]=0;
+      for(int step = 1; step<=(n-1)/(p-1); step++) {
+         for(int inf = 1; inf <= n; inf++) {
+            // at most inf - step*(p-1), inf + step*(p-1)
+            int count=0;
+            for(int num = inf - step*(p-1); num <= inf+step*(p-1); num+=step) {
+               if (num<1 || num==inf || num>n) continue;
+               count++;
+            }
+            if (count < (p-1)) continue;
+            fprintf(stdout, "prog_detect_%dL%d(", count, p-1);
+            for(int num = inf - step*(p-1); num <= inf+step*(p-1); num+=step) {
+               if (num<1 || num==inf || num>n) continue;
+               fprintf(stdout, "x%s, ", var(n, num, 0));
+            }
+            clause_count++;
+            y_count[inf]++;
+            fprintf(stdout, "&y_%d_%d)\n", inf, y_count[inf]);
+         }
+      }
+      for(int inf = 1; inf <= n; inf++) {
+         if (y_count[inf]) {
+            char y[10];
+            sprintf(y, "y_%d_%%d", inf);
+            fprintf(stdout, "if");
+            print_par(y, "|", y_count[inf]);
+            fprintf(stdout, " y_%d=1; else y_%d=0;\n", inf, inf);
+         }
+      }
+      for(int inf = 1; inf <= n; inf++) {
+         if (y_count[inf]) {
+            fprintf(stdout, "int8_t ");
+            for(int i=1;i<=y_count[inf];i++) {
+               if (i>1) fprintf(stdout, ", ");
+               fprintf(stdout, "y_%d_%d", inf, i);
+            }
+            fprintf(stdout, ";\n");
+         }
+      }
+   } else if (formula_type == CNF2POSONLY) {
+      for(int num = 1; num <= n; num++) {
+         for(int step = 1; 1; step++) {
+            if (step * (p-1) + num > n) break;
+            int base = num;
+            fprintf(stdout, "my_operator(");
+            for(int z = 0; z < p; z++) {
+               fprintf(stdout, "x%s, ", var(n, base, 0));
+               base+=step;
+            }
+            clause_count++;
+            fprintf(stdout, "&y%d)\n", clause_count);
+         }
+      }
+   } else if (formula_type == CNF2BYSTEP) {
+      for(int step = 1; step<=(n-1)/(p-1); step++) {
+         for(int start = 1; start <= step; start++) {
+            if (start+(p-1)*step > n) break;
+            int lit_count=0;
+            for(int num = start; num <= n; num+=step) {
+               lit_count++;
+            }
+            fprintf(stdout, "prog_detect_%dL%d(",lit_count,p);
+            for(int num = start; num <= n; num+=step) {
+               fprintf(stdout, "x%s, ", var(n, num, 0));
+            }
+            clause_count++;
+            fprintf(stdout, "&y%d)\n", clause_count);
+         }
+      }
+      fprintf(stdout, "if \n");
+      print_par("y%d", "|", clause_count);
+      fprintf(stdout, "\n");
+   } else if (formula_type == CNF2PROGDETECT_BLK) {
+      int **saveit = (int **)calloc(1000, sizeof(int *));
+      for(int x = 0; x < 1000; x++)
+	saveit[x] = (int *)calloc(100, sizeof(int));
+      	
+      for(int step = 1; step<=(n-1)/(p-1); step++) {
+         for(int start = 1; start <= step; start++) {
+            if (start+(p-1)*step > n) break;
+            int lit_count=0;
+            for(int num = start; num <= n; num+=step) {
+               lit_count++;
+            }
+	    if(lit_count >=  1000 || p >= 100) {
+	       fprintf(stderr, "Sean was lazy - increase bounds in vanDerWaerden.cc@CNF2PROGDETECT_BLK -- saveit[][]\n");
+	       exit(0);
+	    }
+	    
+	    if(saveit[lit_count][p] == 0) {
+	       saveit[lit_count][p] = 1;
+	       fprintf(stdout, "module PROG_DETECT_%dL%d(",lit_count,p);
+	       for(int x = 0; x < lit_count; x++)
+		 fprintf(stdout, "v%d, ", x);
+	       fprintf(stdout, "OUT, CLK)\n");
+	       for(int x = 0; x < lit_count; x++)
+		 fprintf(stdout, "    input [0:0] v%d;\n", x);
+	       fprintf(stdout, "    output [0:0] OUT;\n    input CLK;\n endmodule\n\n");
+//p-1
+	       fprintf(stdout, "module PROG_DETECT_%dL%d(",lit_count,p-1);
+	       for(int x = 0; x < lit_count; x++)
+		 fprintf(stdout, "v%d, ", x);
+	       fprintf(stdout, "OUT, CLK)\n");
+	       for(int x = 0; x < lit_count; x++)
+		 fprintf(stdout, "    input [0:0] v%d;\n", x);
+	       fprintf(stdout, "    output [0:0] OUT;\n    input CLK;\n endmodule\n\n");
+	    }
+	 }
+      }
+      for(int x = 0; x < 1000; x++)
+	free(saveit[x]);
+      free(saveit);
+   } else if (formula_type == CNF2PROGDETECT_V) {
+      int **saveit = (int **)calloc(1000, sizeof(int *));
+      for(int x = 0; x < 1000; x++)
+	saveit[x] = (int *)calloc(100, sizeof(int));
+      char filename[100];
+      
+      for(int step = 1; step<=(n-1)/(p-1); step++) {
+         for(int start = 1; start <= step; start++) {
+            if (start+(p-1)*step > n) break;
+            int lit_count=0;
+            for(int num = start; num <= n; num+=step) {
+               lit_count++;
+            }
+	    if(lit_count >=  1000 || p >= 100) {
+	       fprintf(stderr, "Sean was lazy - increase bounds in vanDerWaerden.cc@CNF2PROGDETECT_V -- saveit[][]\n");
+	       exit(0);
+	    }
+	    
+	    if(saveit[lit_count][p] == 0) {
+	       saveit[lit_count][p] = 1;
+	       sprintf(filename, "PROG_DETECT_%dL%d.v", lit_count, p);
+	       FILE *fout = fopen(filename, "w");
+	       fprintf(fout, "module PROG_DETECT_%dL%d(",lit_count,p);
+	       for(int x = 0; x < lit_count; x++)
+		 fprintf(fout, "v%d, ", x);
+	       fprintf(fout, "OUT, CLK);\n");
+	       for(int x = 0; x < lit_count; x++)
+		 fprintf(fout, "    input [0:0] v%d;\n", x);
+	       fprintf(fout, "    output [0:0] OUT;\n    input CLK;\n    reg[0:0] OUT;\n");
+	       fprintf(fout, "    always @ (posedge CLK) begin\n");
+	       fprintf(fout, "         OUT <= ");
+	       
+	       for(int x = 0; x < lit_count - (p-1); x++) {
+		  if(x != 0) fprintf(fout, " | ");
+		  fprintf(fout, "(v%d", x);
+		  for(int y = 1; y < p; y++)
+		    fprintf(fout, " & v%d", x+y);
+		  fprintf(fout, ")");
+	       }
+	       
+	       fprintf(fout, ";\n        end\n");
+	       fprintf(fout, "endmodule\n");
+	       fclose(fout);
+//p-1
+	       sprintf(filename, "PROG_DETECT_%dL%d.v", lit_count, p-1);
+	       fout = fopen(filename, "w");
+	       fprintf(fout, "module PROG_DETECT_%dL%d(",lit_count,p-1);
+	       for(int x = 0; x < lit_count; x++)
+		 fprintf(fout, "v%d, ", x);
+	       fprintf(fout, "OUT, CLK);\n");
+	       for(int x = 0; x < lit_count; x++)
+		 fprintf(fout, "    input [0:0] v%d;\n", x);
+	       fprintf(fout, "    output [0:0] OUT;\n    input CLK;\n    reg[0:0] OUT;\n");
+	       fprintf(fout, "    always @ (posedge CLK) begin\n");
+	       fprintf(fout, "         OUT <= ");
+	       
+	       for(int x = 0; x < lit_count - (p-2); x++) {
+		  if(x != 0) fprintf(fout, " | ");
+		  fprintf(fout, "(v%d", x);
+		  for(int y = 1; y < p-1; y++)
+		    fprintf(fout, " & v%d", x+y);
+		  fprintf(fout, ")");
+	       }
+	       
+	       fprintf(fout, ";\n        end\n");
+	       fprintf(fout, "endmodule\n");
+	       fclose(fout);
+	    }
+	 }
+      }
+      for(int x = 0; x < 1000; x++)
+	free(saveit[x]);
+      free(saveit);
+   } else if (formula_type == CNF2PROGDETECT_MACROS) {
+      int **saveit = (int **)calloc(1000, sizeof(int *));
+      for(int x = 0; x < 1000; x++)
+	saveit[x] = (int *)calloc(100, sizeof(int));
+      	
+      for(int step = 1; step<=(n-1)/(p-1); step++) {
+         for(int start = 1; start <= step; start++) {
+            if (start+(p-1)*step > n) break;
+            int lit_count=0;
+            for(int num = start; num <= n; num+=step) {
+               lit_count++;
+            }
+	    if(lit_count >=  1000 || p >= 100) {
+	       fprintf(stderr, "Sean was lazy - increase bounds in vanDerWaerden.cc@CNF2PROGDETECT_MACROS -- saveit[][]\n");
+	       exit(0);
+	    }
+	    
+	    if(saveit[lit_count][p] == 0) {
+	       saveit[lit_count][p] = 1;
+	       fprintf(stdout, " my_macro/PROG_DETECT_%dL%d.v",lit_count,p);
+//p-1
+	       fprintf(stdout, " my_macro/PROG_DETECT_%dL%d.v",lit_count,p-1);
+	    }
+	 }
+      }
+      for(int x = 0; x < 1000; x++)
+	free(saveit[x]);
+      free(saveit);
+   } else if (formula_type == CNF2PROGDETECT_INFO) {
+      int **saveit = (int **)calloc(1000, sizeof(int *));
+      for(int x = 0; x < 1000; x++)
+	saveit[x] = (int *)calloc(100, sizeof(int));
+      	
+      for(int step = 1; step<=(n-1)/(p-1); step++) {
+         for(int start = 1; start <= step; start++) {
+            if (start+(p-1)*step > n) break;
+            int lit_count=0;
+            for(int num = start; num <= n; num+=step) {
+               lit_count++;
+            }
+	    if(lit_count >=  1000 || p >= 100) {
+	       fprintf(stderr, "Sean was lazy - increase bounds in vanDerWaerden.cc@CNF2PROGDETECT_MACROS -- saveit[][]\n");
+	       exit(0);
+	    }
+	    
+	    if(saveit[lit_count][p] == 0) {
+	       saveit[lit_count][p] = 1;
+	       fprintf(stdout, "BEGIN_DEF \"prog_detect_%dL%d\"\n", lit_count, p);
+	       fprintf(stdout, "    MACRO = \"PROG_DETECT_%dL%d\";\n", lit_count, p);
+	       fprintf(stdout, "    STATEFUL = NO;\n");
+	       fprintf(stdout, "    EXTERNAL = NO;\n");
+	       fprintf(stdout, "    PIPELINED = YES;\n");
+	       fprintf(stdout, "    LATENCY = 1;\n\n");
+	       fprintf(stdout, "    INPUTS = %d:\n", lit_count);
+	       for(int x = 0; x < lit_count; x++)
+		 fprintf(stdout, "      I%d = INT 8 BITS (v%d[0:0])\n", x, x);
+	       
+	       fprintf(stdout, ";\n    OUTPUTS = 1:\n      O0 = INT 8 BITS (OUT[0:0]);\n\n");
+	       fprintf(stdout, "    IN_SIGNAL : 1 BITS \"CLK\" = \"CLOCK\";\n\n");
+	       fprintf(stdout, "    DEBUG_HEADER = #\n");
+	       fprintf(stdout, "        void prog_detect_%dL%d__dgb (", lit_count, p);
+	       for(int x = 0; x < lit_count; x++)
+		 fprintf(stdout, "int8_t v%d, ", x);
+	       fprintf(stdout, "int8_t *res);\n");
+	       fprintf(stdout, "    #;\n");
+	       fprintf(stdout, "    DEBUG_FUNC = #\n");
+	       fprintf(stdout, "        void prog_detect_%dL%d__dgb (", lit_count, p);
+	       for(int x = 0; x < lit_count; x++)
+		 fprintf(stdout, "int8_t v%d, ", x);
+	       fprintf(stdout, "int8_t *res) {\n");
+	       fprintf(stdout, "            *res = ");
+	       for(int x = 0; x < lit_count - (p-1); x++) {
+		  if(x != 0) fprintf(stdout, " | ");
+		  fprintf(stdout, "((v%d&1)", x);
+		  for(int y = 1; y < p; y++)
+		    fprintf(stdout, " & (v%d&1)", x+y);
+		  fprintf(stdout, ")");
+	       }
+
+	       fprintf(stdout, ";\n            }\n    #;\n");
+	       fprintf(stdout, "END_DEF\n\n");
+//p-1
+	       fprintf(stdout, "BEGIN_DEF \"prog_detect_%dL%d\"\n", lit_count, p-1);
+	       fprintf(stdout, "    MACRO = \"PROG_DETECT_%dL%d\";\n", lit_count, p-1);
+	       fprintf(stdout, "    STATEFUL = NO;\n");
+	       fprintf(stdout, "    EXTERNAL = NO;\n");
+	       fprintf(stdout, "    PIPELINED = YES;\n");
+	       fprintf(stdout, "    LATENCY = 1;\n\n");
+	       fprintf(stdout, "    INPUTS = %d:\n", lit_count);
+	       for(int x = 0; x < lit_count; x++)
+		 fprintf(stdout, "      I%d = INT 8 BITS (v%d[0:0])\n", x, x);
+	       
+	       fprintf(stdout, ";\n    OUTPUTS = 1:\n      O0 = INT 8 BITS (OUT[0:0]);\n\n");
+	       fprintf(stdout, "    IN_SIGNAL : 1 BITS \"CLK\" = \"CLOCK\";\n\n");
+	       fprintf(stdout, "    DEBUG_HEADER = #\n");
+	       fprintf(stdout, "        void prog_detect_%dL%d__dgb (", lit_count, p-1);
+	       for(int x = 0; x < lit_count; x++)
+		 fprintf(stdout, "int8_t v%d, ", x);
+	       fprintf(stdout, "int8_t *res);\n");
+	       fprintf(stdout, "    #;\n");
+	       fprintf(stdout, "    DEBUG_FUNC = #\n");
+	       fprintf(stdout, "        void prog_detect_%dL%d__dgb (", lit_count, p-1);
+	       for(int x = 0; x < lit_count; x++)
+		 fprintf(stdout, "int8_t v%d, ", x);
+	       fprintf(stdout, "int8_t *res) {\n");
+	       fprintf(stdout, "            *res = ");
+	       for(int x = 0; x < lit_count - (p-2); x++) {
+		  if(x != 0) fprintf(stdout, " | ");
+		  fprintf(stdout, "((v%d&1)", x);
+		  for(int y = 1; y < p-1; y++)
+		    fprintf(stdout, " & (v%d&1)", x+y);
+		  fprintf(stdout, ")");
+	       }
+
+	       fprintf(stdout, ";\n            }\n    #;\n");
+	       fprintf(stdout, "END_DEF\n\n");
+	    }
+	 }
+      }
+      for(int x = 0; x < 1000; x++)
+	free(saveit[x]);
+      free(saveit);
    } else if (formula_type == CNF2 || formula_type == CNF2MK) {
       fprintf(stdout, "c prevent any arithmetic progression of length %d for every bucket %d\n", p, k);
       for(int num = 1; num <= n; num++) {
@@ -480,3 +826,38 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
    }
 }
 
+void print_par_rec(char *slit, char *delim, int *i, int depth, int n) ;
+
+// void print_par("y%d", "|", clause_count);
+void print_par(char *slit, char *delim, int n) 
+{
+   int i=1;
+   print_par_rec(slit, delim, &i, n, n);
+}
+
+
+void print_par_rec(char *slit, char *delim, int *i, int depth, int n) 
+{
+   if (depth<2) {
+      if (*i<n) {
+         fprintf(stdout, "(");
+         fprintf(stdout, slit, *i);
+         (*i)++;
+         fprintf(stdout, "%s", delim);
+         fprintf(stdout, slit, *i);
+         (*i)++;
+         fprintf(stdout, ")");
+      } else if (*i<=n) {
+         fprintf(stdout, slit, *i);
+         (*i)++;
+      }
+      return;
+   }
+   fprintf(stdout, "(");
+   print_par_rec(slit, delim, i, depth/2, n);
+   if ((*i)<=n) {
+      fprintf(stdout, "%s", delim);
+      print_par_rec(slit, delim, i, depth/2, n);
+   }
+   fprintf(stdout, ")");
+}
