@@ -133,7 +133,7 @@
 char name[128];
 int formula_type = XCNF;
 
-void print_par(char *slit, char *delim, int n) ;
+void print_par(FILE *fout, char *slit, char *delim, int n) ;
 
 char *var(int n, int x, int k) { 
    int i = k*n+x;
@@ -403,6 +403,33 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
       }
    } else if (formula_type == CNF2INFS) {
       int y_count[n+1];
+
+      char filename[100];
+//ib.h
+      sprintf(filename, "ib.h");
+      FILE *fout = fopen(filename, "w");
+      
+      fprintf(fout, "#include <libmap.h>\n\n");
+      fprintf(fout, "void ib(");
+      for(int x = 0; x < n/64; x++)
+	fprintf(fout, "int64_t B%d, ", x);
+      fprintf(fout, ", int8_t *out);\n");
+      fclose(fout);
+//ib.c
+      sprintf(filename, "ib.c");
+      fout = fopen(filename, "w");
+      
+      fprintf(fout, "#include <libmap.h>\n\n");
+      fprintf(fout, "void ib(");
+      for(int x = 0; x < n/64; x++)
+	fprintf(fout, "int64_t B%d, ", x);
+      fprintf(fout, "int8_t *out) {\n");
+      
+      fprintf(fout, "  int8_t v0");
+      for(int x = 1; x < n; x++)
+	fprintf(fout, ", v%d", x);
+      fprintf(fout, ";\n");
+      
       for(int i=1;i<=n;i++) y_count[i]=0;
       for(int step = 1; step<=(n-1)/(p-1); step++) {
          for(int inf = 1; inf <= n; inf++) {
@@ -413,35 +440,36 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
                count++;
             }
             if (count < (p-1)) continue;
-            fprintf(stdout, "prog_detect_%dL%d(", count, p-1);
+            fprintf(fout, "  prog_detect_%dL%d(", count, p-1);
             for(int num = inf - step*(p-1); num <= inf+step*(p-1); num+=step) {
                if (num<1 || num==inf || num>n) continue;
-               fprintf(stdout, "x%s, ", var(n, num, 0));
+               fprintf(fout, "v%s, ", var(n, num-1, 0));
             }
             clause_count++;
             y_count[inf]++;
-            fprintf(stdout, "&y_%d_%d)\n", inf, y_count[inf]);
+            fprintf(fout, "&y_%d_%d);\n", inf, y_count[inf]);
          }
       }
       for(int inf = 1; inf <= n; inf++) {
          if (y_count[inf]) {
             char y[10];
             sprintf(y, "y_%d_%%d", inf);
-            fprintf(stdout, "if");
-            print_par(y, "|", y_count[inf]);
-            fprintf(stdout, " y_%d=1; else y_%d=0;\n", inf, inf);
+            fprintf(fout, "if");
+            print_par(fout, y, "|", y_count[inf]);
+            fprintf(fout, " y_%d=1; else y_%d=0;\n", inf, inf);
          }
       }
       for(int inf = 1; inf <= n; inf++) {
          if (y_count[inf]) {
-            fprintf(stdout, "int8_t ");
+            fprintf(fout, "int8_t ");
             for(int i=1;i<=y_count[inf];i++) {
-               if (i>1) fprintf(stdout, ", ");
-               fprintf(stdout, "y_%d_%d", inf, i);
+               if (i>1) fprintf(fout, ", ");
+               fprintf(fout, "y_%d_%d", inf, i);
             }
-            fprintf(stdout, ";\n");
+            fprintf(fout, ";\n");
          }
       }
+      fclose(fout);
    } else if (formula_type == CNF2POSONLY) {
       for(int num = 1; num <= n; num++) {
          for(int step = 1; 1; step++) {
@@ -449,14 +477,51 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
             int base = num;
             fprintf(stdout, "my_operator(");
             for(int z = 0; z < p; z++) {
-               fprintf(stdout, "x%s, ", var(n, base, 0));
+               fprintf(stdout, "v%s, ", var(n, base, 0));
                base+=step;
             }
             clause_count++;
-            fprintf(stdout, "&y%d)\n", clause_count);
+            fprintf(stdout, "&y%d);\n", clause_count);
          }
       }
    } else if (formula_type == CNF2BYSTEP) {
+      char filename[100];
+//cd.h
+      sprintf(filename, "cd.h");
+      FILE *fout = fopen(filename, "w");
+      
+      fprintf(fout, "void cd(");
+      for(int x = 0; x <= n/64; x++)
+	fprintf(fout, "int64_t B%d, ", x);
+      fprintf(fout, "int8_t *out);\n");
+      fclose(fout);
+//cd.c
+      sprintf(filename, "cd.c");
+      fout = fopen(filename, "w");
+      
+      fprintf(fout, "void cd(");
+      for(int x = 0; x <= n/64; x++)
+	fprintf(fout, "int64_t B%d, ", x);
+      fprintf(fout, "int8_t *out) {\n");
+      
+      fprintf(fout, "  int8_t v0");
+      for(int x = 1; x < n; x++)
+	fprintf(fout, ", v%d", x);
+      fprintf(fout, ";\n");
+
+      fprintf(fout, "  int8_t y0");
+      int y = 1;
+      for(int step = 1; step<=(n-1)/(p-1); step++)
+         for(int start = 1; start <= step; start++) {
+	    fprintf(fout, ", y%d", y++);
+	 }
+      fprintf(fout, ";\n");
+      
+//fanout
+
+      for(int x = 0; x < n; x++) 
+	 fprintf(fout, "  v%d = B%d&((int64_t) 1<<%d);\n", x, x/64, x%64);
+
       for(int step = 1; step<=(n-1)/(p-1); step++) {
          for(int start = 1; start <= step; start++) {
             if (start+(p-1)*step > n) break;
@@ -464,22 +529,29 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
             for(int num = start; num <= n; num+=step) {
                lit_count++;
             }
-            fprintf(stdout, "prog_detect_%dL%d(",lit_count,p);
-            for(int num = start; num <= n; num+=step) {
-               fprintf(stdout, "x%s, ", var(n, num, 0));
-            }
             clause_count++;
-            fprintf(stdout, "&y%d)\n", clause_count);
+            fprintf(fout, "  prog_detect_%dL%d(",lit_count,p);
+            for(int num = start; num <= n; num+=step) {
+               fprintf(fout, "v%s, ", var(n, num-1, 0));
+            }
+	    fprintf(fout, "&y%d);\n", clause_count);
          }
       }
-      fprintf(stdout, "if \n");
-      print_par("y%d", "|", clause_count);
-      fprintf(stdout, "\n");
+      fprintf(fout, "  if \n");
+      print_par(fout, "y%d", "|", clause_count);
+      fprintf(fout, "\n");
+      fprintf(fout, "    (*out) = 1;\n");
+      fprintf(fout, "  else (*out) = 0;\n");
+      fprintf(fout, "}\n");
+      fclose(fout);
    } else if (formula_type == CNF2PROGDETECT_BLK) {
       int **saveit = (int **)calloc(1000, sizeof(int *));
       for(int x = 0; x < 1000; x++)
 	saveit[x] = (int *)calloc(100, sizeof(int));
-      	
+      char filename[100];
+      sprintf(filename, "blk.v");
+      FILE *fout = fopen(filename, "w");      
+      
       for(int step = 1; step<=(n-1)/(p-1); step++) {
          for(int start = 1; start <= step; start++) {
             if (start+(p-1)*step > n) break;
@@ -494,24 +566,25 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
 	    
 	    if(saveit[lit_count][p] == 0) {
 	       saveit[lit_count][p] = 1;
-	       fprintf(stdout, "module PROG_DETECT_%dL%d(",lit_count,p);
+	       fprintf(fout, "module PROG_DETECT_%dL%d(",lit_count,p);
 	       for(int x = 0; x < lit_count; x++)
-		 fprintf(stdout, "v%d, ", x);
-	       fprintf(stdout, "OUT, CLK)\n");
+		 fprintf(fout, "v%d, ", x);
+	       fprintf(fout, "OUT, CLK)\n");
 	       for(int x = 0; x < lit_count; x++)
-		 fprintf(stdout, "    input [0:0] v%d;\n", x);
-	       fprintf(stdout, "    output [0:0] OUT;\n    input CLK;\n endmodule\n\n");
+		 fprintf(fout, "    input [0:0] v%d;\n", x);
+	       fprintf(fout, "    output [0:0] OUT;\n    input CLK;\n endmodule\n\n");
 //p-1
-	       fprintf(stdout, "module PROG_DETECT_%dL%d(",lit_count,p-1);
+	       fprintf(fout, "module PROG_DETECT_%dL%d(",lit_count,p-1);
 	       for(int x = 0; x < lit_count; x++)
-		 fprintf(stdout, "v%d, ", x);
-	       fprintf(stdout, "OUT, CLK)\n");
+		 fprintf(fout, "v%d, ", x);
+	       fprintf(fout, "OUT, CLK)\n");
 	       for(int x = 0; x < lit_count; x++)
-		 fprintf(stdout, "    input [0:0] v%d;\n", x);
-	       fprintf(stdout, "    output [0:0] OUT;\n    input CLK;\n endmodule\n\n");
+		 fprintf(fout, "    input [0:0] v%d;\n", x);
+	       fprintf(fout, "    output [0:0] OUT;\n    input CLK;\n endmodule\n\n");
 	    }
 	 }
       }
+      fclose(fout);
       for(int x = 0; x < 1000; x++)
 	free(saveit[x]);
       free(saveit);
@@ -620,7 +693,11 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
       int **saveit = (int **)calloc(1000, sizeof(int *));
       for(int x = 0; x < 1000; x++)
 	saveit[x] = (int *)calloc(100, sizeof(int));
-      	
+      char filename[100];
+      sprintf(filename, "info");
+      FILE *fout = fopen(filename, "w");
+
+      
       for(int step = 1; step<=(n-1)/(p-1); step++) {
          for(int start = 1; start <= step; start++) {
             if (start+(p-1)*step > n) break;
@@ -635,78 +712,79 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
 	    
 	    if(saveit[lit_count][p] == 0) {
 	       saveit[lit_count][p] = 1;
-	       fprintf(stdout, "BEGIN_DEF \"prog_detect_%dL%d\"\n", lit_count, p);
-	       fprintf(stdout, "    MACRO = \"PROG_DETECT_%dL%d\";\n", lit_count, p);
-	       fprintf(stdout, "    STATEFUL = NO;\n");
-	       fprintf(stdout, "    EXTERNAL = NO;\n");
-	       fprintf(stdout, "    PIPELINED = YES;\n");
-	       fprintf(stdout, "    LATENCY = 1;\n\n");
-	       fprintf(stdout, "    INPUTS = %d:\n", lit_count);
+	       fprintf(fout, "BEGIN_DEF \"prog_detect_%dL%d\"\n", lit_count, p);
+	       fprintf(fout, "    MACRO = \"PROG_DETECT_%dL%d\";\n", lit_count, p);
+	       fprintf(fout, "    STATEFUL = NO;\n");
+	       fprintf(fout, "    EXTERNAL = NO;\n");
+	       fprintf(fout, "    PIPELINED = YES;\n");
+	       fprintf(fout, "    LATENCY = 1;\n\n");
+	       fprintf(fout, "    INPUTS = %d:\n", lit_count);
 	       for(int x = 0; x < lit_count; x++)
-		 fprintf(stdout, "      I%d = INT 8 BITS (v%d[0:0])\n", x, x);
+		 fprintf(fout, "      I%d = INT 8 BITS (v%d[0:0])\n", x, x);
 	       
-	       fprintf(stdout, ";\n    OUTPUTS = 1:\n      O0 = INT 8 BITS (OUT[0:0]);\n\n");
-	       fprintf(stdout, "    IN_SIGNAL : 1 BITS \"CLK\" = \"CLOCK\";\n\n");
-	       fprintf(stdout, "    DEBUG_HEADER = #\n");
-	       fprintf(stdout, "        void prog_detect_%dL%d__dgb (", lit_count, p);
+	       fprintf(fout, ";\n    OUTPUTS = 1:\n      O0 = INT 8 BITS (OUT[0:0]);\n\n");
+	       fprintf(fout, "    IN_SIGNAL : 1 BITS \"CLK\" = \"CLOCK\";\n\n");
+	       fprintf(fout, "    DEBUG_HEADER = #\n");
+	       fprintf(fout, "        void prog_detect_%dL%d__dbg (", lit_count, p);
 	       for(int x = 0; x < lit_count; x++)
-		 fprintf(stdout, "int8_t v%d, ", x);
-	       fprintf(stdout, "int8_t *res);\n");
-	       fprintf(stdout, "    #;\n");
-	       fprintf(stdout, "    DEBUG_FUNC = #\n");
-	       fprintf(stdout, "        void prog_detect_%dL%d__dgb (", lit_count, p);
+		 fprintf(fout, "int8_t v%d, ", x);
+	       fprintf(fout, "int8_t *res);\n");
+	       fprintf(fout, "    #;\n");
+	       fprintf(fout, "    DEBUG_FUNC = #\n");
+	       fprintf(fout, "        void prog_detect_%dL%d__dbg (", lit_count, p);
 	       for(int x = 0; x < lit_count; x++)
-		 fprintf(stdout, "int8_t v%d, ", x);
-	       fprintf(stdout, "int8_t *res) {\n");
-	       fprintf(stdout, "            *res = ");
+		 fprintf(fout, "int8_t v%d, ", x);
+	       fprintf(fout, "int8_t *res) {\n");
+	       fprintf(fout, "            *res = ");
 	       for(int x = 0; x < lit_count - (p-1); x++) {
-		  if(x != 0) fprintf(stdout, " | ");
-		  fprintf(stdout, "((v%d&1)", x);
+		  if(x != 0) fprintf(fout, " | ");
+		  fprintf(fout, "((v%d&1)", x);
 		  for(int y = 1; y < p; y++)
-		    fprintf(stdout, " & (v%d&1)", x+y);
-		  fprintf(stdout, ")");
+		    fprintf(fout, " & (v%d&1)", x+y);
+		  fprintf(fout, ")");
 	       }
 
-	       fprintf(stdout, ";\n            }\n    #;\n");
-	       fprintf(stdout, "END_DEF\n\n");
+	       fprintf(fout, ";\n            }\n    #;\n");
+	       fprintf(fout, "END_DEF\n\n");
 //p-1
-	       fprintf(stdout, "BEGIN_DEF \"prog_detect_%dL%d\"\n", lit_count, p-1);
-	       fprintf(stdout, "    MACRO = \"PROG_DETECT_%dL%d\";\n", lit_count, p-1);
-	       fprintf(stdout, "    STATEFUL = NO;\n");
-	       fprintf(stdout, "    EXTERNAL = NO;\n");
-	       fprintf(stdout, "    PIPELINED = YES;\n");
-	       fprintf(stdout, "    LATENCY = 1;\n\n");
-	       fprintf(stdout, "    INPUTS = %d:\n", lit_count);
+	       fprintf(fout, "BEGIN_DEF \"prog_detect_%dL%d\"\n", lit_count, p-1);
+	       fprintf(fout, "    MACRO = \"PROG_DETECT_%dL%d\";\n", lit_count, p-1);
+	       fprintf(fout, "    STATEFUL = NO;\n");
+	       fprintf(fout, "    EXTERNAL = NO;\n");
+	       fprintf(fout, "    PIPELINED = YES;\n");
+	       fprintf(fout, "    LATENCY = 1;\n\n");
+	       fprintf(fout, "    INPUTS = %d:\n", lit_count);
 	       for(int x = 0; x < lit_count; x++)
-		 fprintf(stdout, "      I%d = INT 8 BITS (v%d[0:0])\n", x, x);
+		 fprintf(fout, "      I%d = INT 8 BITS (v%d[0:0])\n", x, x);
 	       
-	       fprintf(stdout, ";\n    OUTPUTS = 1:\n      O0 = INT 8 BITS (OUT[0:0]);\n\n");
-	       fprintf(stdout, "    IN_SIGNAL : 1 BITS \"CLK\" = \"CLOCK\";\n\n");
-	       fprintf(stdout, "    DEBUG_HEADER = #\n");
-	       fprintf(stdout, "        void prog_detect_%dL%d__dgb (", lit_count, p-1);
+	       fprintf(fout, ";\n    OUTPUTS = 1:\n      O0 = INT 8 BITS (OUT[0:0]);\n\n");
+	       fprintf(fout, "    IN_SIGNAL : 1 BITS \"CLK\" = \"CLOCK\";\n\n");
+	       fprintf(fout, "    DEBUG_HEADER = #\n");
+	       fprintf(fout, "        void prog_detect_%dL%d__dbg (", lit_count, p-1);
 	       for(int x = 0; x < lit_count; x++)
-		 fprintf(stdout, "int8_t v%d, ", x);
-	       fprintf(stdout, "int8_t *res);\n");
-	       fprintf(stdout, "    #;\n");
-	       fprintf(stdout, "    DEBUG_FUNC = #\n");
-	       fprintf(stdout, "        void prog_detect_%dL%d__dgb (", lit_count, p-1);
+		 fprintf(fout, "int8_t v%d, ", x);
+	       fprintf(fout, "int8_t *res);\n");
+	       fprintf(fout, "    #;\n");
+	       fprintf(fout, "    DEBUG_FUNC = #\n");
+	       fprintf(fout, "        void prog_detect_%dL%d__dbg (", lit_count, p-1);
 	       for(int x = 0; x < lit_count; x++)
-		 fprintf(stdout, "int8_t v%d, ", x);
-	       fprintf(stdout, "int8_t *res) {\n");
-	       fprintf(stdout, "            *res = ");
+		 fprintf(fout, "int8_t v%d, ", x);
+	       fprintf(fout, "int8_t *res) {\n");
+	       fprintf(fout, "            *res = ");
 	       for(int x = 0; x < lit_count - (p-2); x++) {
-		  if(x != 0) fprintf(stdout, " | ");
-		  fprintf(stdout, "((v%d&1)", x);
+		  if(x != 0) fprintf(fout, " | ");
+		  fprintf(fout, "((v%d&1)", x);
 		  for(int y = 1; y < p-1; y++)
-		    fprintf(stdout, " & (v%d&1)", x+y);
-		  fprintf(stdout, ")");
+		    fprintf(fout, " & (v%d&1)", x+y);
+		  fprintf(fout, ")");
 	       }
 
-	       fprintf(stdout, ";\n            }\n    #;\n");
-	       fprintf(stdout, "END_DEF\n\n");
+	       fprintf(fout, ";\n            }\n    #;\n");
+	       fprintf(fout, "END_DEF\n\n");
 	    }
 	 }
       }
+      fclose(fout);
       for(int x = 0; x < 1000; x++)
 	free(saveit[x]);
       free(saveit);
@@ -826,38 +904,38 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
    }
 }
 
-void print_par_rec(char *slit, char *delim, int *i, int depth, int n) ;
+void print_par_rec(FILE *fout, char *slit, char *delim, int *i, int depth, int n) ;
 
 // void print_par("y%d", "|", clause_count);
-void print_par(char *slit, char *delim, int n) 
+void print_par(FILE *fout, char *slit, char *delim, int n) 
 {
    int i=1;
-   print_par_rec(slit, delim, &i, n, n);
+   print_par_rec(fout, slit, delim, &i, n, n);
 }
 
 
-void print_par_rec(char *slit, char *delim, int *i, int depth, int n) 
+void print_par_rec(FILE *fout, char *slit, char *delim, int *i, int depth, int n) 
 {
    if (depth<2) {
       if (*i<n) {
-         fprintf(stdout, "(");
-         fprintf(stdout, slit, *i);
+         fprintf(fout, "(");
+         fprintf(fout, slit, *i);
          (*i)++;
-         fprintf(stdout, "%s", delim);
-         fprintf(stdout, slit, *i);
+         fprintf(fout, "%s", delim);
+         fprintf(fout, slit, *i);
          (*i)++;
-         fprintf(stdout, ")");
+         fprintf(fout, ")");
       } else if (*i<=n) {
-         fprintf(stdout, slit, *i);
+         fprintf(fout, slit, *i);
          (*i)++;
       }
       return;
    }
-   fprintf(stdout, "(");
-   print_par_rec(slit, delim, i, depth/2, n);
+   fprintf(fout, "(");
+   print_par_rec(fout, slit, delim, i, depth/2, n);
    if ((*i)<=n) {
-      fprintf(stdout, "%s", delim);
-      print_par_rec(slit, delim, i, depth/2, n);
+      fprintf(fout, "%s", delim);
+      print_par_rec(fout, slit, delim, i, depth/2, n);
    }
-   fprintf(stdout, ")");
+   fprintf(fout, ")");
 }
