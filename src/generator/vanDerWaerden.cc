@@ -129,6 +129,7 @@
 #define CNF2PROGDETECT_V 13 
 #define CNF2PROGDETECT_MACROS 14
 #define CNF2PROGDETECT_INFO 15
+#define CNF2CP 16
 
 char name[128];
 int formula_type = XCNF;
@@ -157,6 +158,7 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
    if (!strcmp(vdw_type, "cnf2pdv")) formula_type = CNF2PROGDETECT_V; else
    if (!strcmp(vdw_type, "cnf2pdmacros")) formula_type = CNF2PROGDETECT_MACROS; else
    if (!strcmp(vdw_type, "cnf2pdinfo")) formula_type = CNF2PROGDETECT_INFO; else
+   if (!strcmp(vdw_type, "cnf2cp")) formula_type = CNF2CP; else
    if (!strcmp(vdw_type, "ite")) formula_type = ITE; else 
    if (!strcmp(vdw_type, "ite2")) formula_type = ITE2; else 
    if (!strcmp(vdw_type, "xite2")) formula_type = XITE2; else 
@@ -202,6 +204,8 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
       clauses -= n;
       clauses /= 2; 
       fprintf(stdout, "p cnf %d %d\n", n, clauses);
+      break;
+    case CNF2CP:
       break;
     case CNF2BYSTEP:
       break;
@@ -401,6 +405,79 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
       if (clause_count != clauses) {
          fprintf(stderr, "======================== Problem\n");
       }
+   } else if (formula_type == CNF2CP) {
+      int y_count[n+1];
+
+      char filename[100];
+//cp.h
+      sprintf(filename, "cp.h");
+      FILE *fout = fopen(filename, "w");
+      
+      fprintf(fout, "void cp(");
+      for(int x = 0; x <= n/64; x++)
+		  fprintf(fout, "int64_t B%d, ", x);
+		fprintf(fout, "int64_t *C0");
+      for(int x = 1; x <= n/64; x++)
+         fprintf(fout, ", int64_t *C%d", x);
+      fprintf(fout, ", int8_t *cp_done);\n");
+      fclose(fout);
+//cp.c
+      sprintf(filename, "cp.c");
+      fout = fopen(filename, "w");
+      
+      fprintf(fout, "void cp(");
+      for(int x = 0; x <= n/64; x++)
+		  fprintf(fout, "int64_t B%d, ", x);
+		fprintf(fout, "int64_t *C0");
+      for(int x = 1; x <= n/64; x++)
+		  fprintf(fout, ", int64_t *C%d", x);
+      fprintf(fout, ", int8_t *cp_done) {\n");
+      
+      fprintf(fout, "  int8_t v0");
+      for(int x = 1; x < n; x++)
+		  fprintf(fout, ", v%d", x);
+      fprintf(fout, ";\n");
+
+      fprintf(fout, "  int8_t y_1");
+      for(int x = 2; x <= n; x++)
+		  fprintf(fout, ", y_%d", x);
+      fprintf(fout, ";\n");
+	
+      // create mapping  
+      int in_map[n+1];
+      int out_map[n+1];
+      int i_left=(n+1)/2;
+      int i_right=(n+1)/2+1;
+      int j=1;
+      while(j<=n)
+      {
+         in_map[i_left] = j; j++; i_left--;
+         if (j<=n) { in_map[i_right] = j; j++; i_right++; }
+      }
+
+      for(int i=1; i <= n; i++) 
+      {
+         out_map[in_map[i]] = i;
+      }
+
+//fanout
+		
+      for(int x = 0; x < n; x++) 
+		  fprintf(fout, "  v%d = B%d&((int64_t) 1<<%d);\n", in_map[x+1], x/64, x%64);
+
+	
+      for(int x = 1; x <= n;) {
+			fprintf(fout, "  *C%d = ((int64_t) y_%d&1)", x/64, in_map[x]);
+			for(int y = 1; y < 64; y++) {
+				x++;
+				if(x > n) break;
+				fprintf(fout, " | (((int64_t) y_%d&1)<<%d)", in_map[x], y);
+			}
+      x++;
+      fprintf(fout, ";\n");
+		}
+		fprintf(fout, "}\n");
+      fclose(fout);
    } else if (formula_type == CNF2INFS) {
       int y_count[n+1];
 
@@ -509,7 +586,8 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
 				if(x > n) break;
 				fprintf(fout, " | (((int64_t) y_%d&1)<<%d)", x, y);
 			}
-			fprintf(fout, ";\n");
+      x++;
+      fprintf(fout, ";\n");
 		}
 		fprintf(fout, "}\n");
       fclose(fout);
