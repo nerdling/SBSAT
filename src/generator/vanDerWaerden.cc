@@ -410,23 +410,23 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
       FILE *fout = fopen(filename, "w");
       
       fprintf(fout, "void ib(");
-      for(int x = 0; x < n/64; x++)
+      for(int x = 0; x <= n/64; x++)
 		  fprintf(fout, "int64_t B%d, ", x);
-		fprintf(fout, "int64_t C0");
-      for(int x = 1; x < n/64; x++)
-		  fprintf(fout, ", int64_t C%d", x);
-      fprintf(fout, ", int8_t *out);\n");
+		fprintf(fout, "int64_t *C0");
+      for(int x = 1; x <= n/64; x++)
+		  fprintf(fout, ", int64_t *C%d", x);
+      fprintf(fout, ", int8_t);\n");
       fclose(fout);
 //ib.c
       sprintf(filename, "ib.c");
       fout = fopen(filename, "w");
       
       fprintf(fout, "void ib(");
-      for(int x = 0; x < n/64; x++)
+      for(int x = 0; x <= n/64; x++)
 		  fprintf(fout, "int64_t B%d, ", x);
-		fprintf(fout, "int64_t C0");
-      for(int x = 1; x < n/64; x++)
-		  fprintf(fout, ", int64_t C%d", x);
+		fprintf(fout, "int64_t *C0");
+      for(int x = 1; x <= n/64; x++)
+		  fprintf(fout, ", int64_t *C%d", x);
       fprintf(fout, ") {\n");
       
       fprintf(fout, "  int8_t v0");
@@ -503,7 +503,7 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
       }
 	
       for(int x = 1; x <= n;) {
-			fprintf(fout, "  C%d = ((int64_t) y_%d&1)", x/64, x);
+			fprintf(fout, "  *C%d = ((int64_t) y_%d&1)", x/64, x);
 			for(int y = 1; y < 64; y++) {
 				x++;
 				if(x > n) break;
@@ -556,6 +556,7 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
       int y = 1;
       for(int step = 1; step<=(n-1)/(p-1); step++)
 		  for(int start = 1; start <= step; start++) {
+			  if (start+(p-1)*step > n) break;
 			  fprintf(fout, ", y%d", y++);
 		  }
       fprintf(fout, ";\n");
@@ -616,7 +617,31 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
 					for(int x = 0; x < lit_count; x++)
 					  fprintf(fout, "    input [0:0] v%d;\n", x);
 					fprintf(fout, "    output [0:0] OUT;\n    input CLK;\n endmodule\n\n");
+				}
+			}
+      }
+
 //p-1
+		int y_count[n+1];
+		for(int i=1;i<=n;i++) y_count[i]=0;
+      for(int step = 1; step<=(n-1)/(p-1); step++) {
+         for(int inf = 1; inf <= n; inf++) {
+            // at most inf - step*(p-1), inf + step*(p-1)
+            int lit_count=0;
+            for(int num = inf - step*(p-1); num <= inf+step*(p-1); num+=step) {
+               if (num<1 || num==inf || num>n) continue;
+               lit_count++;
+            }
+            if (lit_count < (p-1)) continue;
+
+				if(lit_count >=  1000 || p-1 >= 100) {
+					fprintf(stderr, "Sean was lazy - increase bounds in vanDerWaerden.cc@CNF2PROGDETECT_BLK -- saveit[][]\n");
+					exit(0);
+				}
+
+				if(saveit[lit_count][p-1] == 0) {
+					saveit[lit_count][p-1] = 1;
+					
 					fprintf(fout, "module PROG_DETECT_%dL%d(",lit_count,p-1);
 					for(int x = 0; x < lit_count; x++)
 					  fprintf(fout, "v%d, ", x);
@@ -625,9 +650,10 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
 					  fprintf(fout, "    input [0:0] v%d;\n", x);
 					fprintf(fout, "    output [0:0] OUT;\n    input CLK;\n endmodule\n\n");
 				}
-			}
+         }
       }
-      fclose(fout);
+		
+		fclose(fout);
       for(int x = 0; x < 1000; x++)
 		  free(saveit[x]);
       free(saveit);
@@ -674,9 +700,33 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
 					fprintf(fout, ";\n        end\n");
 					fprintf(fout, "endmodule\n");
 					fclose(fout);
+				}
+			}
+      }
+
 //p-1
+		int y_count[n+1];
+		for(int i=1;i<=n;i++) y_count[i]=0;
+      for(int step = 1; step<=(n-1)/(p-1); step++) {
+         for(int inf = 1; inf <= n; inf++) {
+            // at most inf - step*(p-1), inf + step*(p-1)
+            int lit_count=0;
+            for(int num = inf - step*(p-1); num <= inf+step*(p-1); num+=step) {
+               if (num<1 || num==inf || num>n) continue;
+               lit_count++;
+            }
+            if (lit_count < (p-1)) continue;
+
+				if(lit_count >=  1000 || p-1 >= 100) {
+					fprintf(stderr, "Sean was lazy - increase bounds in vanDerWaerden.cc@CNF2PROGDETECT_BLK -- saveit[][]\n");
+					exit(0);
+				}
+
+				if(saveit[lit_count][p-1] == 0) {
+					saveit[lit_count][p-1] = 1;
+					
 					sprintf(filename, "PROG_DETECT_%dL%d.v", lit_count, p-1);
-					fout = fopen(filename, "w");
+					FILE *fout = fopen(filename, "w");
 					fprintf(fout, "module PROG_DETECT_%dL%d(",lit_count,p-1);
 					for(int x = 0; x < lit_count; x++)
 					  fprintf(fout, "v%d, ", x);
@@ -700,8 +750,9 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
 					fclose(fout);
 				}
 			}
-      }
-      for(int x = 0; x < 1000; x++)
+		}
+		
+		for(int x = 0; x < 1000; x++)
 		  free(saveit[x]);
       free(saveit);
    } else if (formula_type == CNF2PROGDETECT_MACROS) {
@@ -724,12 +775,36 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
 				if(saveit[lit_count][p] == 0) {
 					saveit[lit_count][p] = 1;
 					fprintf(stdout, " my_macro/PROG_DETECT_%dL%d.v",lit_count,p);
-					//p-1
-					fprintf(stdout, " my_macro/PROG_DETECT_%dL%d.v",lit_count,p-1);
 				}
 			}
       }
-      for(int x = 0; x < 1000; x++)
+
+//p-1
+		int y_count[n+1];
+		for(int i=1;i<=n;i++) y_count[i]=0;
+      for(int step = 1; step<=(n-1)/(p-1); step++) {
+         for(int inf = 1; inf <= n; inf++) {
+            // at most inf - step*(p-1), inf + step*(p-1)
+            int lit_count=0;
+            for(int num = inf - step*(p-1); num <= inf+step*(p-1); num+=step) {
+               if (num<1 || num==inf || num>n) continue;
+               lit_count++;
+            }
+            if (lit_count < (p-1)) continue;
+
+				if(lit_count >=  1000 || p-1 >= 100) {
+					fprintf(stderr, "Sean was lazy - increase bounds in vanDerWaerden.cc@CNF2PROGDETECT_BLK -- saveit[][]\n");
+					exit(0);
+				}
+
+				if(saveit[lit_count][p-1] == 0) {
+					saveit[lit_count][p-1] = 1;
+					fprintf(stdout, " my_macro/PROG_DETECT_%dL%d.v",lit_count,p-1);
+				}
+			}
+		}
+		
+		for(int x = 0; x < 1000; x++)
 		  free(saveit[x]);
       free(saveit);
    } else if (formula_type == CNF2PROGDETECT_INFO) {
@@ -739,7 +814,7 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
       char filename[100];
       sprintf(filename, "info");
       FILE *fout = fopen(filename, "w");
-
+		
       
       for(int step = 1; step<=(n-1)/(p-1); step++) {
          for(int start = 1; start <= step; start++) {
@@ -748,85 +823,108 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
             for(int num = start; num <= n; num+=step) {
                lit_count++;
             }
-    if(lit_count >=  1000 || p >= 100) {
-       fprintf(stderr, "Sean was lazy - increase bounds in vanDerWaerden.cc@CNF2PROGDETECT_MACROS -- saveit[][]\n");
-       exit(0);
-    }
-    
-    if(saveit[lit_count][p] == 0) {
-       saveit[lit_count][p] = 1;
-       fprintf(fout, "BEGIN_DEF \"prog_detect_%dL%d\"\n", lit_count, p);
-       fprintf(fout, "    MACRO = \"PROG_DETECT_%dL%d\";\n", lit_count, p);
-       fprintf(fout, "    STATEFUL = NO;\n");
-       fprintf(fout, "    EXTERNAL = NO;\n");
-       fprintf(fout, "    PIPELINED = YES;\n");
-       fprintf(fout, "    LATENCY = 1;\n\n");
-       fprintf(fout, "    INPUTS = %d:\n", lit_count);
-       for(int x = 0; x < lit_count; x++)
-			fprintf(fout, "      I%d = INT 8 BITS (v%d[0:0])\n", x, x);
-       
-       fprintf(fout, ";\n    OUTPUTS = 1:\n      O0 = INT 8 BITS (OUT[0:0]);\n\n");
-       fprintf(fout, "    IN_SIGNAL : 1 BITS \"CLK\" = \"CLOCK\";\n\n");
-       fprintf(fout, "    DEBUG_HEADER = #\n");
-       fprintf(fout, "        void prog_detect_%dL%d__dbg (", lit_count, p);
-       for(int x = 0; x < lit_count; x++)
-			fprintf(fout, "int8_t v%d, ", x);
-       fprintf(fout, "int8_t *res);\n");
-       fprintf(fout, "    #;\n");
-       fprintf(fout, "    DEBUG_FUNC = #\n");
-       fprintf(fout, "        void prog_detect_%dL%d__dbg (", lit_count, p);
-       for(int x = 0; x < lit_count; x++)
-			fprintf(fout, "int8_t v%d, ", x);
-       fprintf(fout, "int8_t *res) {\n");
-       fprintf(fout, "            *res = ");
-       for(int x = 0; x < lit_count - (p-1); x++) {
-			 if(x != 0) fprintf(fout, " | ");
-			 fprintf(fout, "((v%d&1)", x);
-			 for(int y = 1; y < p; y++)
-				fprintf(fout, " & (v%d&1)", x+y);
-			 fprintf(fout, ")");
-       }
-
-       fprintf(fout, ";\n            }\n    #;\n");
-       fprintf(fout, "END_DEF\n\n");
-//p-1
-       fprintf(fout, "BEGIN_DEF \"prog_detect_%dL%d\"\n", lit_count, p-1);
-       fprintf(fout, "    MACRO = \"PROG_DETECT_%dL%d\";\n", lit_count, p-1);
-       fprintf(fout, "    STATEFUL = NO;\n");
-       fprintf(fout, "    EXTERNAL = NO;\n");
-       fprintf(fout, "    PIPELINED = YES;\n");
-       fprintf(fout, "    LATENCY = 1;\n\n");
-       fprintf(fout, "    INPUTS = %d:\n", lit_count);
-       for(int x = 0; x < lit_count; x++)
-			fprintf(fout, "      I%d = INT 8 BITS (v%d[0:0])\n", x, x);
-       
-       fprintf(fout, ";\n    OUTPUTS = 1:\n      O0 = INT 8 BITS (OUT[0:0]);\n\n");
-       fprintf(fout, "    IN_SIGNAL : 1 BITS \"CLK\" = \"CLOCK\";\n\n");
-       fprintf(fout, "    DEBUG_HEADER = #\n");
-       fprintf(fout, "        void prog_detect_%dL%d__dbg (", lit_count, p-1);
-       for(int x = 0; x < lit_count; x++)
-			fprintf(fout, "int8_t v%d, ", x);
-       fprintf(fout, "int8_t *res);\n");
-       fprintf(fout, "    #;\n");
-       fprintf(fout, "    DEBUG_FUNC = #\n");
-       fprintf(fout, "        void prog_detect_%dL%d__dbg (", lit_count, p-1);
-       for(int x = 0; x < lit_count; x++)
-			fprintf(fout, "int8_t v%d, ", x);
-       fprintf(fout, "int8_t *res) {\n");
-       fprintf(fout, "            *res = ");
-       for(int x = 0; x < lit_count - (p-2); x++) {
-			 if(x != 0) fprintf(fout, " | ");
-			 fprintf(fout, "((v%d&1)", x);
-			 for(int y = 1; y < p-1; y++)
-				fprintf(fout, " & (v%d&1)", x+y);
-			 fprintf(fout, ")");
-       }
-
-       fprintf(fout, ";\n            }\n    #;\n");
-       fprintf(fout, "END_DEF\n\n");
-    }
- }
+				if(lit_count >=  1000 || p >= 100) {
+					fprintf(stderr, "Sean was lazy - increase bounds in vanDerWaerden.cc@CNF2PROGDETECT_MACROS -- saveit[][]\n");
+					exit(0);
+				}
+				
+				if(saveit[lit_count][p] == 0) {
+					saveit[lit_count][p] = 1;
+					fprintf(fout, "BEGIN_DEF \"prog_detect_%dL%d\"\n", lit_count, p);
+					fprintf(fout, "    MACRO = \"PROG_DETECT_%dL%d\";\n", lit_count, p);
+					fprintf(fout, "    STATEFUL = NO;\n");
+					fprintf(fout, "    EXTERNAL = NO;\n");
+					fprintf(fout, "    PIPELINED = YES;\n");
+					fprintf(fout, "    LATENCY = 1;\n\n");
+					fprintf(fout, "    INPUTS = %d:\n", lit_count);
+					for(int x = 0; x < lit_count; x++)
+					  fprintf(fout, "      I%d = INT 8 BITS (v%d[0:0])\n", x, x);
+					
+					fprintf(fout, ";\n    OUTPUTS = 1:\n      O0 = INT 8 BITS (OUT[0:0]);\n\n");
+					fprintf(fout, "    IN_SIGNAL : 1 BITS \"CLK\" = \"CLOCK\";\n\n");
+					fprintf(fout, "    DEBUG_HEADER = #\n");
+					fprintf(fout, "        void prog_detect_%dL%d__dbg (", lit_count, p);
+					for(int x = 0; x < lit_count; x++)
+					  fprintf(fout, "int8_t v%d, ", x);
+					fprintf(fout, "int8_t *res);\n");
+					fprintf(fout, "    #;\n");
+					fprintf(fout, "    DEBUG_FUNC = #\n");
+					fprintf(fout, "        void prog_detect_%dL%d__dbg (", lit_count, p);
+					for(int x = 0; x < lit_count; x++)
+					  fprintf(fout, "int8_t v%d, ", x);
+					fprintf(fout, "int8_t *res) {\n");
+					fprintf(fout, "            *res = ");
+					for(int x = 0; x < lit_count - (p-1); x++) {
+						if(x != 0) fprintf(fout, " | ");
+						fprintf(fout, "((v%d&1)", x);
+						for(int y = 1; y < p; y++)
+						  fprintf(fout, " & (v%d&1)", x+y);
+						fprintf(fout, ")");
+					}
+					
+					fprintf(fout, ";\n            }\n    #;\n");
+					fprintf(fout, "END_DEF\n\n");
+				}
+			}
       }
+		
+//p-1
+		int y_count[n+1];
+		for(int i=1;i<=n;i++) y_count[i]=0;
+      for(int step = 1; step<=(n-1)/(p-1); step++) {
+         for(int inf = 1; inf <= n; inf++) {
+            // at most inf - step*(p-1), inf + step*(p-1)
+            int lit_count=0;
+            for(int num = inf - step*(p-1); num <= inf+step*(p-1); num+=step) {
+               if (num<1 || num==inf || num>n) continue;
+               lit_count++;
+            }
+            if (lit_count < (p-1)) continue;
+
+				if(lit_count >=  1000 || p-1 >= 100) {
+					fprintf(stderr, "Sean was lazy - increase bounds in vanDerWaerden.cc@CNF2PROGDETECT_BLK -- saveit[][]\n");
+					exit(0);
+				}
+
+				if(saveit[lit_count][p-1] == 0) {
+					saveit[lit_count][p-1] = 1;
+					fprintf(fout, "BEGIN_DEF \"prog_detect_%dL%d\"\n", lit_count, p-1);
+					fprintf(fout, "    MACRO = \"PROG_DETECT_%dL%d\";\n", lit_count, p-1);
+					fprintf(fout, "    STATEFUL = NO;\n");
+					fprintf(fout, "    EXTERNAL = NO;\n");
+					fprintf(fout, "    PIPELINED = YES;\n");
+					fprintf(fout, "    LATENCY = 1;\n\n");
+					fprintf(fout, "    INPUTS = %d:\n", lit_count);
+					for(int x = 0; x < lit_count; x++)
+					  fprintf(fout, "      I%d = INT 8 BITS (v%d[0:0])\n", x, x);
+					
+					fprintf(fout, ";\n    OUTPUTS = 1:\n      O0 = INT 8 BITS (OUT[0:0]);\n\n");
+					fprintf(fout, "    IN_SIGNAL : 1 BITS \"CLK\" = \"CLOCK\";\n\n");
+					fprintf(fout, "    DEBUG_HEADER = #\n");
+					fprintf(fout, "        void prog_detect_%dL%d__dbg (", lit_count, p-1);
+					for(int x = 0; x < lit_count; x++)
+					  fprintf(fout, "int8_t v%d, ", x);
+					fprintf(fout, "int8_t *res);\n");
+					fprintf(fout, "    #;\n");
+					fprintf(fout, "    DEBUG_FUNC = #\n");
+					fprintf(fout, "        void prog_detect_%dL%d__dbg (", lit_count, p-1);
+					for(int x = 0; x < lit_count; x++)
+					  fprintf(fout, "int8_t v%d, ", x);
+					fprintf(fout, "int8_t *res) {\n");
+					fprintf(fout, "            *res = ");
+					for(int x = 0; x < lit_count - (p-2); x++) {
+						if(x != 0) fprintf(fout, " | ");
+						fprintf(fout, "((v%d&1)", x);
+						for(int y = 1; y < p-1; y++)
+						  fprintf(fout, " & (v%d&1)", x+y);
+						fprintf(fout, ")");
+					}
+					
+					fprintf(fout, ";\n            }\n    #;\n");
+					fprintf(fout, "END_DEF\n\n");
+				}
+			}
+		}
       fclose(fout);
       for(int x = 0; x < 1000; x++)
 		  free(saveit[x]);
