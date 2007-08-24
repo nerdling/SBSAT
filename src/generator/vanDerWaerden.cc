@@ -414,8 +414,8 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
 		  fprintf(fout, "int64_t B%d, ", x);
 		fprintf(fout, "int64_t *C0");
       for(int x = 1; x <= n/64; x++)
-		  fprintf(fout, ", int64_t *C%d", x);
-      fprintf(fout, ", int8_t);\n");
+         fprintf(fout, ", int64_t *C%d", x);
+      fprintf(fout, ");\n");
       fclose(fout);
 //ib.c
       sprintf(filename, "ib.c");
@@ -509,7 +509,7 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
 				if(x > n) break;
 				fprintf(fout, " | (((int64_t) y_%d&1)<<%d)", x, y);
 			}
-			fprintf(fout, "\n");
+			fprintf(fout, ";\n");
 		}
 		fprintf(fout, "}\n");
       fclose(fout);
@@ -552,12 +552,13 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
 		  fprintf(fout, ", v%d", x);
       fprintf(fout, ";\n");
 		
-      fprintf(fout, "  int8_t y0");
+      fprintf(fout, "  int8_t ");
       int y = 1;
       for(int step = 1; step<=(n-1)/(p-1); step++)
 		  for(int start = 1; start <= step; start++) {
 			  if (start+(p-1)*step > n) break;
-			  fprintf(fout, ", y%d", y++);
+			  if (y!=1) fprintf(fout, ",");
+			  fprintf(fout, " y%d", y++);
 		  }
       fprintf(fout, ";\n");
       
