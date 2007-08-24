@@ -433,7 +433,7 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
 		  fprintf(fout, ", int64_t *C%d", x);
       fprintf(fout, ", int8_t *cp_done) {\n");
       
-      fprintf(fout, "  int8_t v0");
+      fprintf(fout, "  int8_t i_cp_done, v0");
       for(int x = 1; x < n; x++)
 		  fprintf(fout, ", v%d", x);
       fprintf(fout, ";\n");
@@ -460,12 +460,26 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
          out_map[in_map[i]] = i;
       }
 
-//fanout
-		
+//split
       for(int x = 0; x < n; x++) 
 		  fprintf(fout, "  v%d = B%d&((int64_t) 1<<%d);\n", in_map[x+1], x/64, x%64);
 
-	
+//action
+      fprintf(fout, "\n");
+      fprintf(fout, "   lowest_bit(v%d", 1);
+      for(int i=2; i <= n; i++) 
+      {
+         fprintf(fout, ", v%d", i);
+      }
+      for(int i=1; i <= n; i++) 
+      {
+         fprintf(fout, ", &y%d", i);
+      }
+      fprintf(fout, ", &i_cp_done);\n");
+      fprintf(fout, "(*cp_done) = i_cp_done;\n");
+
+
+//combine
       for(int x = 1; x <= n;) {
 			fprintf(fout, "  *C%d = ((int64_t) y_%d&1)", x/64, in_map[x]);
 			for(int y = 1; y < 64; y++) {
