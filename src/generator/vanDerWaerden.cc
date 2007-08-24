@@ -130,6 +130,7 @@
 #define CNF2PROGDETECT_MACROS 14
 #define CNF2PROGDETECT_INFO 15
 #define CNF2CP 16
+#define CNF2LB 17
 
 char name[128];
 int formula_type = XCNF;
@@ -159,6 +160,7 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
    if (!strcmp(vdw_type, "cnf2pdmacros")) formula_type = CNF2PROGDETECT_MACROS; else
    if (!strcmp(vdw_type, "cnf2pdinfo")) formula_type = CNF2PROGDETECT_INFO; else
    if (!strcmp(vdw_type, "cnf2cp")) formula_type = CNF2CP; else
+   if (!strcmp(vdw_type, "cnf2lb")) formula_type = CNF2LB; else
    if (!strcmp(vdw_type, "ite")) formula_type = ITE; else 
    if (!strcmp(vdw_type, "ite2")) formula_type = ITE2; else 
    if (!strcmp(vdw_type, "xite2")) formula_type = XITE2; else 
@@ -206,6 +208,8 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
       fprintf(stdout, "p cnf %d %d\n", n, clauses);
       break;
     case CNF2CP:
+      break;
+    case CNF2LB:
       break;
     case CNF2BYSTEP:
       break;
@@ -406,8 +410,6 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
          fprintf(stderr, "======================== Problem\n");
       }
    } else if (formula_type == CNF2CP) {
-      int y_count[n+1];
-
       char filename[100];
 //cp.h
       sprintf(filename, "cp.h");
@@ -466,7 +468,7 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
 
 //action
       fprintf(fout, "\n");
-      fprintf(fout, "   lowest_bit(v%d", 1);
+      fprintf(fout, "   lowest_bit_%d(v%d", n, 1);
       for(int i=2; i <= n; i++) 
       {
          fprintf(fout, ", v%d", i);
@@ -900,12 +902,116 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
 		for(int x = 0; x < 1000; x++)
 		  free(saveit[x]);
       free(saveit);
+   } else if (formula_type == CNF2LB) {
+      char filename[100];
+//info_lb
+      sprintf(filename, "info_lb");
+      FILE *fout = fopen(filename, "w");
+
+      fprintf(fout, "BEGIN_DEF \"lowest_bit_%d\"\n", n);
+      fprintf(fout, "    MACRO = \"LOWEST_BIT_%d\";\n", n);
+      fprintf(fout, "    STATEFUL = NO;\n");
+      fprintf(fout, "    EXTERNAL = NO;\n");
+      fprintf(fout, "    PIPELINED = YES;\n");
+      fprintf(fout, "    LATENCY = 1;\n\n");
+      fprintf(fout, "    INPUTS = %d:\n", n);
+      for(int x = 0; x < n; x++)
+	fprintf(fout, "      I%d = INT 8 BITS (v%d[0:0])\n", x, x);
+      
+      fprintf(fout, "      ;\n    OUTPUTS = %d:\n", n+1);
+      for(int x = 0; x < n; x++)
+	fprintf(fout, "      O%d = INT 8 BITS (y%d[0:0])\n", x, x);
+      fprintf(fout, "      O%d = INT 8 BITS (d[0:0]);\n\n", n);
+      fprintf(fout, "    IN_SIGNAL : 1 BITS \"CLK\" = \"CLOCK\";\n\n");
+      fprintf(fout, "    DEBUG_HEADER = #\n");
+      fprintf(fout, "        void lowest_bit_%d__dbg (", n);
+      for(int x = 0; x < n; x++)
+	fprintf(fout, "int8_t v%d, ", x);
+      for(int x = 0; x < n; x++)
+	fprintf(fout, "int8_t y%d, ", x);
+      fprintf(fout, "int8_t *d);\n");
+      fprintf(fout, "    #;\n");
+      fprintf(fout, "    DEBUG_FUNC = #\n");
+      fprintf(fout, "        void lowest_bit_%d__dbg (", n);
+      for(int x = 0; x < n; x++)
+	fprintf(fout, "int8_t v%d, ", x);
+      for(int x = 0; x < n; x++)
+	fprintf(fout, "int8_t y%d, ", x);
+      fprintf(fout, "int8_t *d) {\n");
+      fprintf(fout, "  *d=0;\n");
+      for(int x = 0; x < n; x++)
+	fprintf(fout, "          *y%d=0;\n", x);
+      for(int x = 0; x < n; x++)
+	fprintf(fout, "          if (v%d&1) { *y%d=1; return; };\n", x, x);
+      fprintf(fout, "          *d=1;\n");
+      fprintf(fout, "          }\n    #;\n");
+      fprintf(fout, "END_DEF\n\n");
+      fclose(fout);
+//LB.vhd      
+      sprintf(filename, "LB.vhd");
+      fout = fopen(filename, "w");
+
+      fprintf(fout, "library ieee;\n");
+      fprintf(fout, "use ieee.std_logic_1164.all;\n");
+      fprintf(fout, "use ieee.numeric_std.all;\n\n");
+      fprintf(fout, "-- --synopsys translate_off;\n");
+      fprintf(fout, "-- library xilinx;\n");
+      fprintf(fout, "-- use xilinx.vcomponents.MUXCY;\n");
+      fprintf(fout, "-- --synopsys translate_on;\n");
+      fprintf(fout, "-- pragma translate_off\n");
+      fprintf(fout, "library UNISIM;\n");
+      fprintf(fout, "use UNISIM.VCOMPONENTS.ALL;\n");
+      fprintf(fout, "-- pragma translate_on\n\n");
+      fprintf(fout, "Entity lowest_bit is\n");
+      fprintf(fout, "port (\n");
+      for(int x = 0; x < n; x++)
+	fprintf(fout, "       V%d  : in std_logic;\n", x);
+      for(int x = 0; x < n; x++)
+	fprintf(fout, "       Y%d  : out std_logic;\n", x);
+      fprintf(fout, "       D  : out std_logic;\n");
+      fprintf(fout, "       CLK  : in std_logic);\n");
+      fprintf(fout, "end lowest_bit;\n\n");
+      fprintf(fout, "architecture behavioral of lowest_bit is\n\n");
+      fprintf(fout, "component MUXCY\n");
+      fprintf(fout, "port (\n");
+      fprintf(fout, "      DI    : in std_logic;\n");
+      fprintf(fout, "      CI    : in std_logic;\n");
+      fprintf(fout, "      S     : in std_logic;\n");
+      fprintf(fout, "      O     : out std_logic\n");
+      fprintf(fout, "      );\n");
+      fprintf(fout, "end component;\n\n");
+      fprintf(fout, "signal muxdi : std_logic;\n");
+      fprintf(fout, "signal muxin   : std_logic_vector(n downto 0);\n");
+      fprintf(fout, "signal not_t_in   : std_logic_vector(n-1 downto 0);\n");
+      fprintf(fout, "signal A : std_logic_vector(n-1 downto 0);\n");
+      fprintf(fout, "signal Q : std_logic_vector(n-1 downto 0);\n\n");
+      fprintf(fout, "begin\n");
+      for(int x = 0; x < n; x++)
+	fprintf(fout, "    V(%d) <= V%d;\n", x, x);
+      for(int x = 0; x < n; x++)
+	fprintf(fout, "    Y%d <= Y(%d);\n", x, x);
+      fprintf(fout, "    muxdi <= '0';\n");
+      fprintf(fout, "    muxin(0) <= '1';\n\n");
+      fprintf(fout, "lbl: for i in n-1 downto 0 generate\n");
+      fprintf(fout, "    not_t_in(i) <= not(V(i)); -- V(0)=0 means 0 is set,\n\n");
+      fprintf(fout, "lowest_carry: MUXCY port map (\n");
+      fprintf(fout, "      DI => muxdi,\n");
+      fprintf(fout, "      CI => muxin(i),\n");
+      fprintf(fout, "      S  => not_t_in(i), -- if set (t_in(0)=0) take carry (previous muxin(i)) otherwise '0')\n");
+      fprintf(fout, "      O  => muxin(i+1) -- if I'm not set and all so far where not set this is '1'\n");
+      fprintf(fout, "                       -- if I'm set this is the first '0'\n");
+      fprintf(fout, "      );\n");
+      fprintf(fout, "    Y(i) <= muxin(i) and V(i);\n");
+      fprintf(fout, "    end generate;\n\n");
+      fprintf(fout, "    D <= muxin(n);\n");
+      fprintf(fout, "end behavioral;\n");
+      fclose(fout);
    } else if (formula_type == CNF2PROGDETECT_INFO) {
       int **saveit = (int **)calloc(1000, sizeof(int *));
       for(int x = 0; x < 1000; x++)
 		  saveit[x] = (int *)calloc(100, sizeof(int));
       char filename[100];
-      sprintf(filename, "info");
+      sprintf(filename, "info_cd");
       FILE *fout = fopen(filename, "w");
 		
       
