@@ -122,9 +122,9 @@
 #define XITE2  6
 #define XCNF2 7
 #define CNF2MK 8
-#define CNF2POSONLY 9
-#define CNF2INFS 10 
-#define CNF2BYSTEP 11 
+#define CNF2ALL 9
+#define CNF2IB 10 
+#define CNF2CD 11 
 #define CNF2PROGDETECT_BLK 12 
 #define CNF2PROGDETECT_V 13 
 #define CNF2PROGDETECT_MACROS 14
@@ -152,9 +152,9 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
    if (!strcmp(vdw_type, "xcnf2")) formula_type = XCNF2; else 
    if (!strcmp(vdw_type, "cnf2")) formula_type = CNF2; else 
    if (!strcmp(vdw_type, "cnf2mk")) formula_type = CNF2MK; else 
-   if (!strcmp(vdw_type, "cnf2posonly")) formula_type = CNF2POSONLY; else 
-   if (!strcmp(vdw_type, "cnf2infs")) formula_type = CNF2INFS; else 
-   if (!strcmp(vdw_type, "cnf2bystep")) formula_type = CNF2BYSTEP; else 
+   if (!strcmp(vdw_type, "cnf2all")) formula_type = CNF2ALL; else 
+   if (!strcmp(vdw_type, "cnf2ib")) formula_type = CNF2IB; else 
+   if (!strcmp(vdw_type, "cnf2cd")) formula_type = CNF2CD; else 
    if (!strcmp(vdw_type, "cnf2pdblk")) formula_type = CNF2PROGDETECT_BLK; else
    if (!strcmp(vdw_type, "cnf2pdv")) formula_type = CNF2PROGDETECT_V; else
    if (!strcmp(vdw_type, "cnf2pdmacros")) formula_type = CNF2PROGDETECT_MACROS; else
@@ -207,13 +207,31 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
       clauses /= 2; 
       fprintf(stdout, "p cnf %d %d\n", n, clauses);
       break;
+    case CNF2ALL:
+      {
+         FILE *fout=fopen("define_n.h", "w");
+         if (fout) {
+            fprintf(fout, "#define N %d\n", n);
+            fclose(fout);
+         }
+         fprintf(stderr, "Running cnf2ib..."); vanDerWaerden("cnf2ib", n, k, p); fprintf(stderr, "\n");
+         fprintf(stderr, "Running cnf2cd..."); vanDerWaerden("cnf2cd", n, k, p); fprintf(stderr, "\n");
+         fprintf(stderr, "Running cnf2cp..."); vanDerWaerden("cnf2cp", n, k, p); fprintf(stderr, "\n");
+         fprintf(stderr, "Running cnf2lb..."); vanDerWaerden("cnf2lb", n, k, p); fprintf(stderr, "\n");
+         fprintf(stderr, "Running cnf2pdblk..."); vanDerWaerden("cnf2pdblk", n, k, p); fprintf(stderr, "\n");
+         fprintf(stderr, "Running cnf2pdv..."); vanDerWaerden("cnf2pdv", n, k, p); fprintf(stderr, "\n");
+         fprintf(stderr, "Running cnf2pdmacros..."); vanDerWaerden("cnf2pdmacros", n, k, p); fprintf(stderr, "\n");
+         fprintf(stderr, "Running cnf2pdinfo..."); vanDerWaerden("cnf2pdinfo", n, k, p); fprintf(stderr, "\n");
+      }
+      
+      break;
     case CNF2CP:
       break;
     case CNF2LB:
       break;
-    case CNF2BYSTEP:
+    case CNF2CD:
       break;
-    case CNF2INFS:
+    case CNF2IB:
       break;
     case CNF2PROGDETECT_BLK:
       break;
@@ -223,15 +241,6 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
       break;
     case CNF2PROGDETECT_INFO:
       break;    
-    case CNF2POSONLY:
-      if (k != 2) {
-         fprintf(stderr, "Can't use CNF2 for any other k but 2\n");
-         exit(1);
-      }
-      clauses -= n;
-      clauses /= 2;
-      // fprintf(stdout, "p cnf %d %d\n", n, clauses+sym_clauses);
-      break;
     case CNF2MK:
       /*
       sym = n/(p-1); //mk version
@@ -435,8 +444,8 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
 		  fprintf(fout, ", int64_t *C%d", x);
       fprintf(fout, ", int8_t *cp_done) {\n");
       
-      fprintf(fout, "  int8_t i_cp_done, v0");
-      for(int x = 1; x < n; x++)
+      fprintf(fout, "  int8_t i_cp_done");
+      for(int x = 1; x <= n; x++)
 		  fprintf(fout, ", v%d", x);
       fprintf(fout, ";\n");
 
@@ -464,7 +473,7 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
 
 //split
       for(int x = 0; x < n; x++) 
-		  fprintf(fout, "  v%d = B%d&((int64_t) 1<<%d);\n", in_map[x+1], x/64, x%64);
+		  fprintf(fout, "  v%d = ((B%d&((int64_t) 1<<%d))>>%d)&1;\n", in_map[x+1], x/64, x%64, x%64);
 
 //action
       fprintf(fout, "\n");
@@ -475,7 +484,7 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
       }
       for(int i=1; i <= n; i++) 
       {
-         fprintf(fout, ", &y%d", i);
+         fprintf(fout, ", &y_%d", i);
       }
       fprintf(fout, ", &i_cp_done);\n");
       fprintf(fout, "(*cp_done) = i_cp_done;\n");
@@ -494,7 +503,7 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
 		}
 		fprintf(fout, "}\n");
       fclose(fout);
-   } else if (formula_type == CNF2INFS) {
+   } else if (formula_type == CNF2IB) {
       int y_count[n+1];
 
       char filename[100];
@@ -563,7 +572,7 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
 //fanout
 		
       for(int x = 0; x < n; x++) 
-		  fprintf(fout, "  v%d = B%d&((int64_t) 1<<%d);\n", x, x/64, x%64);
+		  fprintf(fout, "  v%d = ((B%d&((int64_t) 1<<%d))>>%d)&1;\n", x, x/64, x%64, x%64);
 
       for(int i=1;i<=n;i++) y_count[i]=0;
       for(int step = 1; step<=(n-1)/(p-1); step++) {
@@ -607,21 +616,7 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
 		}
 		fprintf(fout, "}\n");
       fclose(fout);
-   } else if (formula_type == CNF2POSONLY) {
-      for(int num = 1; num <= n; num++) {
-         for(int step = 1; 1; step++) {
-            if (step * (p-1) + num > n) break;
-            int base = num;
-            fprintf(stdout, "my_operator(");
-            for(int z = 0; z < p; z++) {
-               fprintf(stdout, "v%s, ", var(n, base, 0));
-               base+=step;
-            }
-            clause_count++;
-            fprintf(stdout, "&y%d);\n", clause_count);
-         }
-      }
-   } else if (formula_type == CNF2BYSTEP) {
+   } else if (formula_type == CNF2CD) {
       char filename[100];
 //cd.h
       sprintf(filename, "cd.h");
@@ -659,7 +654,7 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
 //fanout
 		
       for(int x = 0; x < n; x++) 
-		  fprintf(fout, "  v%d = B%d&((int64_t) 1<<%d);\n", x, x/64, x%64);
+		  fprintf(fout, "  v%d = ((B%d&((int64_t) 1<<%d))>>%d)&1;\n", x, x/64, x%64, x%64);
 		
       for(int step = 1; step<=(n-1)/(p-1); step++) {
          for(int start = 1; start <= step; start++) {
@@ -752,6 +747,7 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
       for(int x = 0; x < 1000; x++)
 		  free(saveit[x]);
       free(saveit);
+      fprintf(stderr, "in Makefile MY_BLKBOX = %s\n", filename);
    } else if (formula_type == CNF2PROGDETECT_V) {
       int **saveit = (int **)calloc(1000, sizeof(int *));
       for(int x = 0; x < 1000; x++)
@@ -875,7 +871,7 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
       }
 
 //p-1
-		int y_count[n+1];
+    int y_count[n+1];
 		for(int i=1;i<=n;i++) y_count[i]=0;
       for(int step = 1; step<=(n-1)/(p-1); step++) {
          for(int inf = 1; inf <= n; inf++) {
@@ -898,15 +894,23 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
 				}
 			}
 		}
+
+    fprintf(stderr, "\nmove PROG_DETECT* to dir my_macro and in Makefile add to MACROS = content of file macros\n");
 		
 		for(int x = 0; x < 1000; x++)
 		  free(saveit[x]);
       free(saveit);
    } else if (formula_type == CNF2LB) {
       char filename[100];
+      char filename_gccdbg[100];
+      char filename_gccdbg_h[100];
 //info_lb
       sprintf(filename, "info_lb");
+      sprintf(filename_gccdbg, "lb_gccdbg.c");
+      sprintf(filename_gccdbg_h, "lb_gccdbg.h");
       FILE *fout = fopen(filename, "w");
+      FILE *fout_gccdbg = fopen(filename_gccdbg, "w");
+      FILE *fout_gccdbg_h = fopen(filename_gccdbg_h, "w");
 
       fprintf(fout, "BEGIN_DEF \"lowest_bit_%d\"\n", n);
       fprintf(fout, "    MACRO = \"LOWEST_BIT_%d\";\n", n);
@@ -916,37 +920,61 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
       fprintf(fout, "    LATENCY = 1;\n\n");
       fprintf(fout, "    INPUTS = %d:\n", n);
       for(int x = 0; x < n; x++)
-	fprintf(fout, "      I%d = INT 8 BITS (v%d[0:0])\n", x, x);
+         fprintf(fout, "      I%d = INT 8 BITS (v%d[0:0])\n", x, x);
       
       fprintf(fout, "      ;\n    OUTPUTS = %d:\n", n+1);
       for(int x = 0; x < n; x++)
-	fprintf(fout, "      O%d = INT 8 BITS (y%d[0:0])\n", x, x);
+         fprintf(fout, "      O%d = INT 8 BITS (y%d[0:0])\n", x, x);
       fprintf(fout, "      O%d = INT 8 BITS (d[0:0]);\n\n", n);
       fprintf(fout, "    IN_SIGNAL : 1 BITS \"CLK\" = \"CLOCK\";\n\n");
       fprintf(fout, "    DEBUG_HEADER = #\n");
       fprintf(fout, "        void lowest_bit_%d__dbg (", n);
-      for(int x = 0; x < n; x++)
-	fprintf(fout, "int8_t v%d, ", x);
-      for(int x = 0; x < n; x++)
-	fprintf(fout, "int8_t y%d, ", x);
+      fprintf(fout_gccdbg_h, "        void lowest_bit_%d (", n);
+      for(int x = 0; x < n; x++) {
+         fprintf(fout, "int8_t v%d, ", x);
+         fprintf(fout_gccdbg_h, "int8_t v%d, ", x);
+      }
+      for(int x = 0; x < n; x++) {
+         fprintf(fout, "int8_t *y%d, ", x);
+         fprintf(fout_gccdbg_h, "int8_t *y%d, ", x);
+      }
       fprintf(fout, "int8_t *d);\n");
+      fprintf(fout_gccdbg_h, "int8_t *d);\n");
       fprintf(fout, "    #;\n");
       fprintf(fout, "    DEBUG_FUNC = #\n");
       fprintf(fout, "        void lowest_bit_%d__dbg (", n);
-      for(int x = 0; x < n; x++)
-	fprintf(fout, "int8_t v%d, ", x);
-      for(int x = 0; x < n; x++)
-	fprintf(fout, "int8_t y%d, ", x);
+      fprintf(fout_gccdbg, "        void lowest_bit_%d (", n);
+      for(int x = 0; x < n; x++) {
+         fprintf(fout, "int8_t v%d, ", x);
+         fprintf(fout_gccdbg, "int8_t v%d, ", x);
+      }
+      for(int x = 0; x < n; x++) {
+         fprintf(fout, "int8_t *y%d, ", x);
+         fprintf(fout_gccdbg, "int8_t *y%d, ", x);
+      }
       fprintf(fout, "int8_t *d) {\n");
+      fprintf(fout_gccdbg, "int8_t *d) {\n");
       fprintf(fout, "  *d=0;\n");
-      for(int x = 0; x < n; x++)
-	fprintf(fout, "          *y%d=0;\n", x);
-      for(int x = 0; x < n; x++)
-	fprintf(fout, "          if (v%d&1) { *y%d=1; return; };\n", x, x);
+      fprintf(fout_gccdbg, "  *d=0;\n");
+      for(int x = 0; x < n; x++) {
+         fprintf(fout, "          *y%d=0;\n", x);
+         fprintf(fout_gccdbg, "          *y%d=0;\n", x);
+      }
+      for(int x = 0; x < n; x++) {
+         fprintf(fout, "          if (v%d&1) { *y%d=1; return; };\n", x, x);
+         fprintf(fout_gccdbg, "          if (v%d&1) { *y%d=1; return; };\n", x, x);
+      }
       fprintf(fout, "          *d=1;\n");
+      fprintf(fout_gccdbg, "          *d=1;\n");
       fprintf(fout, "          }\n    #;\n");
+      fprintf(fout_gccdbg, "          }\n\n");
       fprintf(fout, "END_DEF\n\n");
       fclose(fout);
+      fclose(fout_gccdbg);
+      fclose(fout_gccdbg_h);
+
+      fprintf(stderr, "in Makefile add to MY_INFO = %s\n", filename);
+
 //LB.vhd      
       sprintf(filename, "LB.vhd");
       fout = fopen(filename, "w");
@@ -1011,8 +1039,14 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
       for(int x = 0; x < 1000; x++)
 		  saveit[x] = (int *)calloc(100, sizeof(int));
       char filename[100];
-      sprintf(filename, "info_cd");
+      char filename_gccdbg[100];
+      char filename_gccdbg_h[100];
+      sprintf(filename, "info_progs");
+      sprintf(filename_gccdbg, "prog_gccdbg.c");
+      sprintf(filename_gccdbg_h, "prog_gccdbg.h");
       FILE *fout = fopen(filename, "w");
+      FILE *fout_gccdbg = fopen(filename_gccdbg, "w");
+      FILE *fout_gccdbg_h = fopen(filename_gccdbg_h, "w");
 		
       
       for(int step = 1; step<=(n-1)/(p-1); step++) {
@@ -1043,25 +1077,40 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
 					fprintf(fout, "    IN_SIGNAL : 1 BITS \"CLK\" = \"CLOCK\";\n\n");
 					fprintf(fout, "    DEBUG_HEADER = #\n");
 					fprintf(fout, "        void prog_detect_%dL%d__dbg (", lit_count, p);
-					for(int x = 0; x < lit_count; x++)
+					fprintf(fout_gccdbg_h, "        void prog_detect_%dL%d (", lit_count, p);
+					for(int x = 0; x < lit_count; x++) {
 					  fprintf(fout, "int8_t v%d, ", x);
+					  fprintf(fout_gccdbg_h, "int8_t v%d, ", x);
+          }
 					fprintf(fout, "int8_t *res);\n");
+					fprintf(fout_gccdbg_h, "int8_t *res);\n");
 					fprintf(fout, "    #;\n");
 					fprintf(fout, "    DEBUG_FUNC = #\n");
 					fprintf(fout, "        void prog_detect_%dL%d__dbg (", lit_count, p);
-					for(int x = 0; x < lit_count; x++)
+					fprintf(fout_gccdbg, "        void prog_detect_%dL%d (", lit_count, p);
+					for(int x = 0; x < lit_count; x++) {
 					  fprintf(fout, "int8_t v%d, ", x);
+					  fprintf(fout_gccdbg, "int8_t v%d, ", x);
+          }
 					fprintf(fout, "int8_t *res) {\n");
+					fprintf(fout_gccdbg, "int8_t *res) {\n");
 					fprintf(fout, "            *res = ");
+					fprintf(fout_gccdbg, "            *res = ");
 					for(int x = 0; x < lit_count - (p-1); x++) {
 						if(x != 0) fprintf(fout, " | ");
+						if(x != 0) fprintf(fout_gccdbg, " | ");
 						fprintf(fout, "((v%d&1)", x);
-						for(int y = 1; y < p; y++)
+						fprintf(fout_gccdbg, "((v%d&1)", x);
+						for(int y = 1; y < p; y++) {
 						  fprintf(fout, " & (v%d&1)", x+y);
+						  fprintf(fout_gccdbg, " & (v%d&1)", x+y);
+            }
 						fprintf(fout, ")");
+						fprintf(fout_gccdbg, ")");
 					}
 					
 					fprintf(fout, ";\n            }\n    #;\n");
+					fprintf(fout_gccdbg, ";\n            }\n\n");
 					fprintf(fout, "END_DEF\n\n");
 				}
 			}
@@ -1101,33 +1150,52 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
 					fprintf(fout, "    IN_SIGNAL : 1 BITS \"CLK\" = \"CLOCK\";\n\n");
 					fprintf(fout, "    DEBUG_HEADER = #\n");
 					fprintf(fout, "        void prog_detect_%dL%d__dbg (", lit_count, p-1);
-					for(int x = 0; x < lit_count; x++)
+					fprintf(fout_gccdbg_h, "        void prog_detect_%dL%d (", lit_count, p-1);
+					for(int x = 0; x < lit_count; x++) {
 					  fprintf(fout, "int8_t v%d, ", x);
+					  fprintf(fout_gccdbg_h, "int8_t v%d, ", x);
+          }
 					fprintf(fout, "int8_t *res);\n");
+					fprintf(fout_gccdbg_h, "int8_t *res);\n");
 					fprintf(fout, "    #;\n");
 					fprintf(fout, "    DEBUG_FUNC = #\n");
 					fprintf(fout, "        void prog_detect_%dL%d__dbg (", lit_count, p-1);
-					for(int x = 0; x < lit_count; x++)
+					fprintf(fout_gccdbg, "        void prog_detect_%dL%d (", lit_count, p-1);
+					for(int x = 0; x < lit_count; x++) {
 					  fprintf(fout, "int8_t v%d, ", x);
+					  fprintf(fout_gccdbg, "int8_t v%d, ", x);
+          }
 					fprintf(fout, "int8_t *res) {\n");
+					fprintf(fout_gccdbg, "int8_t *res) {\n");
 					fprintf(fout, "            *res = ");
+					fprintf(fout_gccdbg, "            *res = ");
 					for(int x = 0; x < lit_count - (p-2); x++) {
 						if(x != 0) fprintf(fout, " | ");
+						if(x != 0) fprintf(fout_gccdbg, " | ");
 						fprintf(fout, "((v%d&1)", x);
-						for(int y = 1; y < p-1; y++)
+						fprintf(fout_gccdbg, "((v%d&1)", x);
+						for(int y = 1; y < p-1; y++) {
 						  fprintf(fout, " & (v%d&1)", x+y);
+						  fprintf(fout_gccdbg, " & (v%d&1)", x+y);
+            }
 						fprintf(fout, ")");
+						fprintf(fout_gccdbg, ")");
 					}
 					
 					fprintf(fout, ";\n            }\n    #;\n");
+					fprintf(fout_gccdbg, ";\n            }\n\n");
 					fprintf(fout, "END_DEF\n\n");
 				}
 			}
 		}
       fclose(fout);
+      fclose(fout_gccdbg);
+      fclose(fout_gccdbg_h);
       for(int x = 0; x < 1000; x++)
 		  free(saveit[x]);
       free(saveit);
+
+      fprintf(stderr, "in Makefile add to MY_INFO = %s\n", filename);
    } else if (formula_type == CNF2 || formula_type == CNF2MK) {
       fprintf(stdout, "c prevent any arithmetic progression of length %d for every bucket %d\n", p, k);
       for(int num = 1; num <= n; num++) {
