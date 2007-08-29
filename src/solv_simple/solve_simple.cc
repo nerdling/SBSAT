@@ -14,13 +14,16 @@ struct SmurfStateEntry{
 	//This is 1 if nTransitionVar should be inferred True,
 	//       -1 if nTransitionVar should be inferred False,
 	//        0 if nTransitionVar should not be inferred.
-	int nNextVarInThisState; //There are n SmurfStateEntries linked together,
-	                         //where n is the number of variables in this SmurfStateEntry.
-                          	 //All of these SmurfStateEntries represent the same function,
-                            //but a different variable (nTransitionVar) is
-                            //highlighted for each link in the list.
-                            //If this is 0, we have reached the end of the list.
-};
+	int nNextVarInThisStateGT; //There are n SmurfStateEntries linked together
+ 	int nNextVarInThisStateLT; //in the structure of a heap,
+	                           //where n is the number of variables in this SmurfStateEntry.
+                          	   //All of these SmurfStateEntries represent the same function,
+                              //but a different variable (nTransitionVar) is
+                              //highlighted for each link in the heap.
+                              //If this is 0, we have reached a leaf node.
+	int nNextVarInThisState;   //Same as above except linked linearly, instead of a heap.
+                              //Used for computing the heuristic of a state.
+ };
 
 struct SmurfStack{
 	int nNumFreeVars;
@@ -61,7 +64,7 @@ double fSimpleSolverPrevEndTime;
 int smurfs_share_paths=1;
 
 void PrintSmurfStateEntry(SmurfStateEntry *ssEntry) {
-	d9_printf8("Var=%d, v=T:%d, v=F:%d, TWght=%4.6f, FWght=%4.6f, Inf=%d, Next=%d\n", ssEntry->nTransitionVar, ssEntry->nVarIsTrueTransition, ssEntry->nVarIsFalseTransition, ssEntry->nHeurWghtofTrueTransition, ssEntry->nHeurWghtofFalseTransition, ssEntry->nVarIsAnInference,  ssEntry->nNextVarInThisState);
+	d9_printf10("Var=%d, v=T:%d, v=F:%d, TWght=%4.6f, FWght=%4.6f, Inf=%d, NextGT=%d, NextLT=%d, Next=%d\n", ssEntry->nTransitionVar, ssEntry->nVarIsTrueTransition, ssEntry->nVarIsFalseTransition, ssEntry->nHeurWghtofTrueTransition, ssEntry->nHeurWghtofFalseTransition, ssEntry->nVarIsAnInference, ssEntry->nNextVarInThisStateGT, ssEntry->nNextVarInThisStateLT, ssEntry->nNextVarInThisState);
 }
 
 void PrintAllSmurfStateEntries() {
@@ -268,20 +271,61 @@ int DetermineNumOfSmurfStates() {
 	return num_states;
 }
 
+void fillHEAP(int index, int size, int *vbles) {
+	SmurfStateEntry *CurrState = &(SimpleSmurfProblemState->arrSmurfStatesTable[SimpleSmurfProblemState->nNumSmurfStateEntries]);
+	SimpleSmurfProblemState->nNumSmurfStateEntries++;
+	CurrState->nTransitionVar = vbles[index+(size/2)];
+	//fprintf(stderr, "%d(%d) - ", vbles[index+(size/2)], size);
+	if(size<=1) return;
+	CurrState->nNextVarInThisStateGT = SimpleSmurfProblemState->nNumSmurfStateEntries;
+	fillHEAP(index, size/2, vbles);
+	if(size<=2) return;
+	CurrState->nNextVarInThisStateLT = SimpleSmurfProblemState->nNumSmurfStateEntries;
+	fillHEAP(index+(size/2)+1, (size-(size/2))-1, vbles);
+}
+
+int findStateInHEAP(int nStartState, int var) {
+	SmurfStateEntry *pStartState = &(SimpleSmurfProblemState->arrSmurfStatesTable[nStartState]);
+	while(pStartState->nTransitionVar != var) {
+		//fprintf(stderr, "|%d, %d|", pStartState->nTransitionVar, var);
+		if(var > pStartState->nTransitionVar) {
+			nStartState = pStartState->nNextVarInThisStateGT;
+			pStartState = &(SimpleSmurfProblemState->arrSmurfStatesTable[pStartState->nNextVarInThisStateGT]);
+		} else {
+			nStartState = pStartState->nNextVarInThisStateLT;			
+			pStartState = &(SimpleSmurfProblemState->arrSmurfStatesTable[pStartState->nNextVarInThisStateLT]);
+		}
+	}
+	//fprintf(stderr, "return %d\n", pStartState->nTransitionVar);
+	return nStartState;
+}
+
 //This state, pCurrentState, cannot have any inferences, and has not been visited
 void ReadSmurfStateIntoTable(SmurfState *pCurrentState) {
 	if(pCurrentState != pTrueSmurfState && pCurrentState->pFunc->flag==0) {
 		//If this is the first transition in a SmurfState, mark this SmurfState as Visited      
 		pCurrentState->pFunc->flag = SimpleSmurfProblemState->nNumSmurfStateEntries;
+
+		//This sort was already done in src/solv_smurf/fn_smurf/bdd2smurf.cc: 
+		//qsort(pCurrentState->vbles.arrElts, pCurrentState->vbles.nNumElts, sizeof(int), revcompfunc);
+
+		int nStartState = SimpleSmurfProblemState->nNumSmurfStateEntries;
+		fillHEAP(0, pCurrentState->vbles.nNumElts, pCurrentState->vbles.arrElts);
+
+		for(int nVbleIndex = 0; nVbleIndex < pCurrentState->vbles.nNumElts-1; nVbleIndex++) {
+			SmurfStateEntry *CurrState = &(SimpleSmurfProblemState->arrSmurfStatesTable[nStartState+nVbleIndex]);
+			  CurrState->nNextVarInThisState = nStartState+nVbleIndex+1;
+		}
+		
 		for(int nVbleIndex = 0; nVbleIndex < pCurrentState->vbles.nNumElts; nVbleIndex++) {
 			//fprintf(stderr, "%d, %d, %d: ", nVbleIndex, pCurrentState->vbles.arrElts[nVbleIndex], arrSolver2IteVarMap[pCurrentState->vbles.arrElts[nVbleIndex]]);
 			//printBDDerr(pCurrentState->pFunc);
 			//fprintf(stderr, "\n");
 			//PrintAllSmurfStateEntries();
-			//Add a SmurfStateEntry into the table
-			SmurfStateEntry *CurrState = &(SimpleSmurfProblemState->arrSmurfStatesTable[SimpleSmurfProblemState->nNumSmurfStateEntries]);
-			SimpleSmurfProblemState->nNumSmurfStateEntries++;
-			CurrState->nTransitionVar = pCurrentState->vbles.arrElts[nVbleIndex];
+			int nCurrState = findStateInHEAP(nStartState, pCurrentState->vbles.arrElts[nVbleIndex]);
+			SmurfStateEntry *CurrState = &(SimpleSmurfProblemState->arrSmurfStatesTable[nCurrState]);
+
+			assert(CurrState->nTransitionVar == pCurrentState->vbles.arrElts[nVbleIndex]);
 			CurrState->nVarIsAnInference = 0;
 			CurrState->nHeurWghtofFalseTransition
 			  = pCurrentState->arrTransitions[2*nVbleIndex].fHeuristicWeight;
@@ -395,9 +439,6 @@ void ReadSmurfStateIntoTable(SmurfState *pCurrentState) {
 				//Recurse on nTransitionVar == False transition
 				ReadSmurfStateIntoTable(pTransition->pNextState);
 			}
-			
-			if(nVbleIndex+1 < pCurrentState->vbles.nNumElts)
-			  CurrState->nNextVarInThisState = SimpleSmurfProblemState->nNumSmurfStateEntries;
 		}
 	}
 }
@@ -454,7 +495,9 @@ void ReadAllSmurfsIntoTable() {
 	TrueSimpleSmurfState->nHeurWghtofFalseTransition = 0;
 	TrueSimpleSmurfState->nVarIsSafe = 0;
 	TrueSimpleSmurfState->nVarIsAnInference = 0;
-	TrueSimpleSmurfState->nNextVarInThisState = 0;
+	TrueSimpleSmurfState->nNextVarInThisStateGT = 0;
+	TrueSimpleSmurfState->nNextVarInThisStateLT = 0;
+	TrueSimpleSmurfState->nNextVarInThisState = 0;	
 	
 	clear_all_bdd_flags();
 	true_ptr->flag = 1;
@@ -605,7 +648,7 @@ int Simple_LSGB_Heuristic() {
 		dE_printf1 ("Error in heuristic routine:  No uninstantiated variable found\n");
 		exit (1);
    }
-
+	
 	SimpleSmurfProblemState->arrVarChoiceCurrLevel[SimpleSmurfProblemState->nCurrSearchTreeLevel] = nVarChoiceLevelsNum;
    return (SimpleSmurfProblemState->arrPosVarHeurWghts[nBestVble] >= SimpleSmurfProblemState->arrNegVarHeurWghts[nBestVble]?nBestVble:-nBestVble);
 }
@@ -620,7 +663,11 @@ int ApplyInferenceToSmurfs(int nBranchVar, bool bBVPolarity) {
 		if(arrSmurfStates[nSmurfNumber] == 1) continue;
 		SmurfStateEntry *pSmurfState = &(SimpleSmurfProblemState->arrSmurfStatesTable[arrSmurfStates[nSmurfNumber]]);
 		do {
-			if(pSmurfState->nTransitionVar == nBranchVar) {
+			if(pSmurfState->nTransitionVar < nBranchVar)
+			  pSmurfState = &(SimpleSmurfProblemState->arrSmurfStatesTable[pSmurfState->nNextVarInThisStateGT]);
+			else if(pSmurfState->nTransitionVar > nBranchVar)
+			  pSmurfState = &(SimpleSmurfProblemState->arrSmurfStatesTable[pSmurfState->nNextVarInThisStateLT]);
+			else { //(pSmurfState->nTransitionVar == nBranchVar) {
 				//Follow this transition and apply all inferences found.
 				int nNewSmurfState = (bBVPolarity?pSmurfState->nVarIsTrueTransition:pSmurfState->nVarIsFalseTransition);
 				pSmurfState = &(SimpleSmurfProblemState->arrSmurfStatesTable[nNewSmurfState]);
@@ -664,9 +711,7 @@ int ApplyInferenceToSmurfs(int nBranchVar, bool bBVPolarity) {
 				
 				break;
 			}
-			pSmurfState = &(SimpleSmurfProblemState->arrSmurfStatesTable[pSmurfState->nNextVarInThisState]);
-		} while (pSmurfState->nTransitionVar != 0); //If there is an ordering to the way the variables are
-		//listed in nNextVarInThisState we can possibly exit this loop faster
+		} while (pSmurfState->nTransitionVar != 0);
 		d7_printf3("      Smurf %d transitioned to state %d\n", nSmurfNumber, arrSmurfStates[nSmurfNumber]);
 	}
 	return 1;
