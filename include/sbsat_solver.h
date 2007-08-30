@@ -69,12 +69,15 @@ struct SmurfStateEntry {
 	//This is 1 if nTransitionVar should be inferred True,
 	//       -1 if nTransitionVar should be inferred False,
 	//        0 if nTransitionVar should not be inferred.
-	int nNextVarInThisState; //There are n SmurfStateEntries linked together,
-	                         //where n is the number of variables in this SmurfStateEntry.
-	                         //All of these SmurfStateEntries represent the same function,
-	                         //but a different variable (nTransitionVar) is
-	                         //highlighted for each link in the list.
-	                         //If this is 0, we have reached the end of the list.
+	int nNextVarInThisStateGT; //There are n SmurfStateEntries linked together,
+	int nNextVarInThisStateLT; //in the structure of a heap,
+	                           //where n is the number of variables in this SmurfStateEntry.
+	                           //All of these SmurfStateEntries represent the same function,
+	                           //but a different variable (nTransitionVar) is
+	                           //highlighted for each link in the heap.
+	                           //If this is 0, we have reached a leaf node.
+   int nNextVarInThisState;   //Same as above except linked linearly, instead of a heap.
+                              //Used for computing the heuristic of a state.
 };
 
 struct SmurfStack {

@@ -237,5 +237,6 @@ extern int DEBUG_LVL;
 #define d9_printf7(x1,x2,x3,x4,x5,x6,x7) D_9(fprintf(stddbg, x1, x2, x3,x4,x5,x6,x7);)
 #define d9_printf8(x1,x2,x3,x4,x5,x6,x7,x8) D_9(fprintf(stddbg, x1, x2, x3,x4,x5,x6,x7,x8);)
 #define d9_printf9(x1,x2,x3,x4,x5,x6,x7,x8,x9) D_9(fprintf(stddbg, x1, x2, x3,x4,x5,x6,x7,x8,x9);)
+#define d9_printf10(x1,x2,x3,x4,x5,x6,x7,x8,x9,x10) D_9(fprintf(stddbg, x1, x2, x3,x4,x5,x6,x7,x8,x9,x10);)
 
 #endif
