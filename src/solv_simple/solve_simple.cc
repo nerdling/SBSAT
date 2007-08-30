@@ -833,6 +833,7 @@ int SimpleBrancher() {
 			nBranchLit = Simple_LSGB_Heuristic();
 
 			ite_counters[NUM_CHOICE_POINTS]++;
+			ite_counters[NO_ERROR]++;
 			
 			//Push stack
 			SmurfStates_Push();

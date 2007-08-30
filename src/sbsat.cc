@@ -227,7 +227,7 @@ ite_final(int ret)
 
    ite_counters_f[RUNNING_TIME] = get_runtime();
    if (DEBUG_LVL == 1) {
-      d1_printf3("%s %lld ", result_string, ite_counters[NO_ERROR]);
+      d1_printf3("%s %lld ", result_string, ite_counters[NUM_CHOICE_POINTS]);//ite_counters[NO_ERROR]);
       d1_printf4("%.3fs %.3fs %.3fs\n", 
             ite_counters_f[RUNNING_TIME], 
             ite_counters_f[PREPROC_TIME], 
