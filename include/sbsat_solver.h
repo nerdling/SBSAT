@@ -65,7 +65,7 @@ struct SmurfStateEntry {
 	int nVarIsSafe; //1 if nTransitionVar is safe for True transisiton, or both.
 	                //-1 if nTransitionVar is safe for False transition.
 	                //0 if nTransitionVar is not safe.
-	int nVarIsAnInference;
+	char nVarIsAnInference;
 	//This is 1 if nTransitionVar should be inferred True,
 	//       -1 if nTransitionVar should be inferred False,
 	//        0 if nTransitionVar should not be inferred.
