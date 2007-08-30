@@ -61,6 +61,8 @@ double fSimpleSolverStartTime;
 double fSimpleSolverEndTime;
 double fSimpleSolverPrevEndTime;
 
+int add_one_display=0;
+
 int smurfs_share_paths=1;
 
 void PrintSmurfStateEntry(SmurfStateEntry *ssEntry) {
@@ -106,35 +108,30 @@ void CalculateSimpleSolverProgress(int *_whereAmI, int *_total) {
 	int soft_count=14;
 	int hard_count=28;
 	int count=0;
-/*
-	nBranchLit = SimpleSmurfProblemState->arrInferenceQueue[SimpleSmurfProblemState->arrSmurfStack[nCurrSearchTreeLevel].nNumFreeVars];
-	SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[abs(nBranchLit)] //Negate this value to flag variable as an old choicepoint
-	SimpleSmurfProblemState->arrInferenceQueue[SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars] = -nBranchLit;
-	nInfQueueHead = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
-	SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars++;
-	d7_printf3("Flipping Value of Choicepoint at level %d to %d\n", nInfQueueHead, -nBranchLit);
 
+	int nInfQueueTail = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
 	
-//	SimpleSmurfProblemState->arrInferenceQueue[
-//		SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars];
-int nCurrSearchTreeLevel = 0;
-while(nCurrSearchTreeLevel < SimpleSmurfProblemState->nCurrSearchTreeLevel && (count<soft_count || (count < hard_count && whereAmI==0))) {
-		if (nCurrSearchTreeLevel->bWasChoicePoint == true) {
+	int nCurrSearchTreeLevel = 0;
+	for(int i = 0; i < nInfQueueTail && (count<soft_count || (count < hard_count && whereAmI==0)); i++) {
+		int nBranchLit = SimpleSmurfProblemState->arrInferenceQueue[i];
+		if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[abs(nBranchLit)] < 0 ||
+		   (SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[abs(nBranchLit)] == 0 && add_one_display==1)) {
+			//This variable is an old choicepoint
 			whereAmI *= 2;
 			whereAmI += 1;
 			total *= 2;
 			total += 1;
 			count++;
-		} else if (nCurrSearchTreeLevel->nBranchVble == pChoicePoint->nBranchVble) {
+		} else if(nBranchLit == SimpleSmurfProblemState->arrInferenceQueue[SimpleSmurfProblemState->arrSmurfStack[nCurrSearchTreeLevel].nNumFreeVars]) {
+			//This variable is a current choicepoint
 			whereAmI *= 2;
 			total *= 2;
 			total += 1;
-			pChoicePoint++;
+			nCurrSearchTreeLevel++;
 			count++;
 		}
-		nCurrSearchTreeLevel++;
 	}
-*/
+	
 	*_whereAmI = whereAmI;
 	*_total    = total;
 }
@@ -161,8 +158,8 @@ void DisplaySimpleSolverBacktrackInfo(double &fSimpleSolverPrevEndTime, double &
 	d2_printf1("Progress: ");
 	char number[10];
 	char back[10] = "\b\b\b\b\b\b\b\b\b";
-	//sprintf(number, "% 3.2f%%", progress);
-	sprintf(number, " ?");
+	sprintf(number, "% 3.2f%%", progress);
+	//sprintf(number, " ?");
 	back[strlen(number)]=0;
 	if ((DEBUG_LVL&15) == 1) {
 		fprintf(stderr, "%s%s", number, back);
@@ -797,10 +794,10 @@ int backtrack() {
 	//Clear Inference Queue
 
 	//Using the inference queue to avoid a linear check over all variables.
-	for(int i = nInfQueueHead+1; i <= nInfQueueTail; i++) {
+	for(int i = nInfQueueHead+1; i < nInfQueueTail; i++) {
 		int nBranchLit = abs(SimpleSmurfProblemState->arrInferenceQueue[i]);
 		d7_printf3("      Resetting level of variable %d to %d\n", nBranchLit, SimpleSmurfProblemState->nNumVars);
-		SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[nBranchLit] = SimpleSmurfProblemState->nNumVars;		
+		SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[nBranchLit] = SimpleSmurfProblemState->nNumVars;
 	}
 	  
 /*	for(int i = 1; i < SimpleSmurfProblemState->nNumVars; i++)
@@ -876,7 +873,9 @@ int SimpleBrancher() {
 find_more_solutions: ;
 					
 					nBranchLit = SimpleSmurfProblemState->arrInferenceQueue[SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars];
-					SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[abs(nBranchLit)] -= 0; //Negate this value to flag variable as an old choicepoint
+					SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[abs(nBranchLit)] = -SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[abs(nBranchLit)]; //Negate this value to flag variable as an old choicepoint
+					if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[abs(nBranchLit)] == 0)
+					  add_one_display = 1;
 					SimpleSmurfProblemState->arrInferenceQueue[SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars] = -nBranchLit;
 					nInfQueueHead = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
 					SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars++;
