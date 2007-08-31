@@ -212,6 +212,32 @@ void DisplaySimpleSolverBacktrackInfo(double &fSimpleSolverPrevEndTime, double &
 	d2_printf1("\n");
 }
 
+ITE_INLINE
+void DisplaySimpleSolverBacktrackInfo_gnuplot(double &fSimpleSolverPrevEndTime, double &fSimpleSolverStartTime) {
+	double fSimpleSolverEndTime = ite_counters_f[CURRENT_TIME] = get_runtime();
+	double fTotalDurationInSecs = fSimpleSolverEndTime - fSimpleSolverStartTime;
+	double fDurationInSecs = fSimpleSolverEndTime - fSimpleSolverPrevEndTime;
+	double fBacktracksPerSec = BACKTRACKS_PER_STAT_REPORT / (fDurationInSecs>0?fDurationInSecs:0.001);
+	fSimpleSolverPrevEndTime = fSimpleSolverEndTime;
+	
+	fprintf(fd_csv_trace_file, "%4.3f,", fTotalDurationInSecs);
+	fprintf(fd_csv_trace_file, "%ld,%4.3f,",
+				  (long)ite_counters[NUM_BACKTRACKS], fBacktracksPerSec);
+	
+	int whereAmI = 0;
+	int total = 0;
+	double progress = 0.0;
+	CalculateSimpleSolverProgress(&whereAmI, &total);
+	if (total == 0) total=1;
+	progress = ite_counters_f[PROGRESS] = (float)whereAmI*100/total;
+	fprintf(fd_csv_trace_file, "%4.3f,", progress);
+	
+	fprintf(fd_csv_trace_file, "%lld,%lld,", ite_counters[NUM_CHOICE_POINTS], ite_counters[HEU_DEP_VAR]);
+	fprintf(fd_csv_trace_file, "%lld,", ite_counters[INF_SMURF]);
+	fprintf(fd_csv_trace_file, "%lld,", ite_counters[ERR_BT_SMURF]);
+	fprintf(fd_csv_trace_file, "%ld,%ld\n", (long)ite_counters[NUM_SOLUTIONS], (long)max_solutions);
+}
+
 int NumOfSmurfStatesInSmurf(SmurfState *pCurrentState) {
 	int num_states = 0;
 	if(pCurrentState != pTrueSmurfState) {
@@ -770,8 +796,12 @@ int SmurfStates_Pop() {
 
 	ite_counters[NUM_BACKTRACKS]++;
 	d9_printf2("\nStarting backtrack # %ld\n", (long)ite_counters[NUM_BACKTRACKS]);
-	if (ite_counters[NUM_BACKTRACKS] % BACKTRACKS_PER_STAT_REPORT == 0)
+	if (ite_counters[NUM_BACKTRACKS] % BACKTRACKS_PER_STAT_REPORT == 0) {
+      if (fd_csv_trace_file) {
+			DisplaySimpleSolverBacktrackInfo_gnuplot(fSimpleSolverPrevEndTime, fSimpleSolverStartTime);
+		}
 		DisplaySimpleSolverBacktrackInfo(fSimpleSolverPrevEndTime, fSimpleSolverStartTime);
+	}
 		
 	SimpleSmurfProblemState->nCurrSearchTreeLevel--;
 	
@@ -926,9 +956,12 @@ int simpleSolve() {
 	  functionType[x] = UNSURE;
 	int ret = Init_SimpleSmurfSolver();
 	if(ret != SOLV_UNKNOWN) return ret;
+	if(*csv_trace_file)
+	  fd_csv_trace_file = fopen(csv_trace_file, "w");
 	ret = SimpleBrancher();  
 	DisplayStatistics(ite_counters[NUM_CHOICE_POINTS], ite_counters[NUM_BACKTRACKS], ite_counters[NUM_BACKJUMPS]);
-	//Still need to do some backend stuff like record the solution and free memory.
+	if(fd_csv_trace_file) fclose(fd_csv_trace_file);
+	//Still need to do some backend stuff like free memory.
 	nForceBackjumpLevel = nForceBackjumpLevel_old;
 	BREAK_XORS = bxors_old;
 	FreeVarMap();
