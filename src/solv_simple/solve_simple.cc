@@ -552,8 +552,10 @@ void ReadAllSmurfsIntoTable() {
 
 void Calculate_Heuristic_Values() {
 	for(int i = 1; i < SimpleSmurfProblemState->nNumVars; i++) {
-		SimpleSmurfProblemState->arrPosVarHeurWghts[i] = 0.0;
-		SimpleSmurfProblemState->arrNegVarHeurWghts[i] = 0.0;
+		//This check just slows things way down
+		//if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i] >= nCurrInfLevel) {
+			SimpleSmurfProblemState->arrPosVarHeurWghts[i] = 0.0;
+			SimpleSmurfProblemState->arrNegVarHeurWghts[i] = 0.0;
 	}
 	
 	int *arrSmurfStates = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].arrSmurfStates;
@@ -685,7 +687,10 @@ int ApplyInferenceToSmurfs(int nBranchVar, bool bBVPolarity) {
 					
 					//Try to insert inference into the inference Queue
 					int nInfQueueHead = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
-					int nPrevInfLevel = abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[nInfVar]);
+					int nPrevInfLevel = /*abs(*/SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[nInfVar];
+					//Sure, nPrevInfLevel could be zero, but only if it was a choicepoint and 
+					//I think it's impossible for a prior choicepoint to be inferred here.
+					assert(nPrevInfLevel > 0);
 					d7_printf5("      Inferring %d at Level %d (prior level = %d) (State %d)\n",
 								  bInfPolarity?nInfVar:-nInfVar, nInfQueueHead, nPrevInfLevel, nNewSmurfState);
 					

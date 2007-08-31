@@ -550,7 +550,7 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 			BDDNode *v2 = (putite (intnum, bdd));
 			if(v2 == NULL) { fprintf(stderr, "\nHere, keyword 'mitosis' expects %d arguments, found %d (%s)...exiting:%d\n", tempint[0]+1, x, macros, markbdd_line); exit (1); }
 			if (v2 != ite_var (v2->variable)) {
-				fprintf(stderr, "\nKeyword 'order' expects a list of positive variables terminated by ')'(%s)...exiting:%d\n", macros, markbdd_line);
+				fprintf(stderr, "\nKeyword 'mitosis' expects a list of positive variables terminated by ')'(%s)...exiting:%d\n", macros, markbdd_line);
 				exit (1);
 			}
 			newBDD[x] = v2->variable;
