@@ -82,6 +82,8 @@ struct SmurfStateEntry {
 
 struct SmurfStack {
 	int nNumFreeVars;
+	int nHeuristicPlaceholder;
+	int nVarChoiceCurrLevel;	
 	int *arrSmurfStates;             //Pointer to array of size nNumSmurfs
 };
 
@@ -97,7 +99,6 @@ struct ProblemState {
 	                                //Smurf contained every variable. Each list is terminated by a -1 element.
 	// Dynamic
 	int nCurrSearchTreeLevel;
-	int *arrVarChoiceCurrLevel;
 	double *arrPosVarHeurWghts; //Pointer to array of size nNumVars
 	double *arrNegVarHeurWghts; //Pointer to array of size nNumVars
 	int *arrInferenceQueue;  //Pointer to array of size nNumVars (dynamically indexed by arrSmurfStack[level].nNumFreeVars

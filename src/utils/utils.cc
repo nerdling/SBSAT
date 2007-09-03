@@ -279,6 +279,7 @@ int absrevcompfunc (const void *x, const void *y)
   return 1;
 }
 
+ITE_INLINE
 void memcpy_ite( void* d, void* s, int size ) {
 
 memcpy(d,s,size);
