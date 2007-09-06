@@ -215,14 +215,13 @@ void DisplaySimpleSolverBacktrackInfo(double &fSimpleSolverPrevEndTime, double &
 
 ITE_INLINE
 void DisplaySimpleSolverBacktrackInfo_gnuplot(double &fSimpleSolverPrevEndTime, double &fSimpleSolverStartTime) {
-	double fSimpleSolverEndTime = ite_counters_f[CURRENT_TIME] = get_runtime();
+	double fSimpleSolverEndTime = ite_counters_f[CURRENT_TIME];
 	double fTotalDurationInSecs = fSimpleSolverEndTime - fSimpleSolverStartTime;
 	double fDurationInSecs = fSimpleSolverEndTime - fSimpleSolverPrevEndTime;
 	double fBacktracksPerSec = BACKTRACKS_PER_STAT_REPORT / (fDurationInSecs>0?fDurationInSecs:0.001);
-	fSimpleSolverPrevEndTime = fSimpleSolverEndTime;
 	
-	fprintf(fd_csv_trace_file, "%4.3f,", fTotalDurationInSecs);
-	fprintf(fd_csv_trace_file, "%ld,%4.3f,",
+	fprintf(fd_csv_trace_file, "%4.3f ", fTotalDurationInSecs);
+	fprintf(fd_csv_trace_file, "%ld %4.3f ",
 				  (long)ite_counters[NUM_BACKTRACKS], fBacktracksPerSec);
 	
 	int whereAmI = 0;
@@ -230,13 +229,13 @@ void DisplaySimpleSolverBacktrackInfo_gnuplot(double &fSimpleSolverPrevEndTime, 
 	double progress = 0.0;
 	CalculateSimpleSolverProgress(&whereAmI, &total);
 	if (total == 0) total=1;
-	progress = ite_counters_f[PROGRESS] = (float)whereAmI*100/total;
-	fprintf(fd_csv_trace_file, "%4.3f,", progress);
+	progress = (float)whereAmI*100/total;
+	fprintf(fd_csv_trace_file, "%4.3f ", progress);
 	
-	fprintf(fd_csv_trace_file, "%lld,%lld,", ite_counters[NUM_CHOICE_POINTS], ite_counters[HEU_DEP_VAR]);
-	fprintf(fd_csv_trace_file, "%lld,", ite_counters[INF_SMURF]);
-	fprintf(fd_csv_trace_file, "%lld,", ite_counters[ERR_BT_SMURF]);
-	fprintf(fd_csv_trace_file, "%ld,%ld\n", (long)ite_counters[NUM_SOLUTIONS], (long)max_solutions);
+	fprintf(fd_csv_trace_file, "%lld %lld ", ite_counters[NUM_CHOICE_POINTS], ite_counters[HEU_DEP_VAR]);
+	fprintf(fd_csv_trace_file, "%lld ", ite_counters[INF_SMURF]);
+	fprintf(fd_csv_trace_file, "%lld ", ite_counters[ERR_BT_SMURF]);
+	fprintf(fd_csv_trace_file, "%ld %ld\n", (long)ite_counters[NUM_SOLUTIONS], (long)max_solutions);
 }
 
 int NumOfSmurfStatesInSmurf(SmurfState *pCurrentState) {
@@ -611,7 +610,7 @@ int Simple_LSGB_Heuristic() {
 	
    Calculate_Heuristic_Values();
 	
-   int nBestVble = -1;
+   int nBestVble = 0;
    double fMaxWeight = 0;
    double fVbleWeight = 0;
    int nCurrInfLevel = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
@@ -687,7 +686,7 @@ int Simple_LSGB_Heuristic() {
 
 ITE_INLINE
 int Simple_DC_Heuristic() { //Simple Don't Care Heuristic
-   int nBestVble = -1;
+   int nBestVble = 0;
    int nCurrInfLevel = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
 
    // Determine the variable with the highest weight:
@@ -707,8 +706,10 @@ int Simple_DC_Heuristic() { //Simple Don't Care Heuristic
 				}
 				j++;
 			}
-			SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nVarChoiceCurrLevel = level;
-			return -nBestVble;
+			if (nBestVble >= 0) {
+				SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nVarChoiceCurrLevel = level;
+				return -nBestVble;
+			}
 		}
 	}
 
@@ -832,6 +833,9 @@ void SmurfStates_Push() {
 	SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel+1].nNumFreeVars =
 	  SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
 
+	SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel+1].nVarChoiceCurrLevel =
+	  SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nVarChoiceCurrLevel;
+	
 	SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel+1].nHeuristicPlaceholder =
 	  SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nHeuristicPlaceholder;
 	
@@ -877,7 +881,7 @@ int backtrack() {
 	//Clear Inference Queue
 
 	//Using the inference queue to avoid a linear check over all variables.
-	for(int i = nInfQueueHead+1; i < nInfQueueTail; i++) {
+	for(int i = nInfQueueHead; i < nInfQueueTail; i++) {
 		int nBranchLit = abs(SimpleSmurfProblemState->arrInferenceQueue[i]);
 		d7_printf3("      Resetting level of variable %d to %d\n", nBranchLit, SimpleSmurfProblemState->nNumVars);
 		SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[nBranchLit] = SimpleSmurfProblemState->nNumVars;
@@ -886,8 +890,8 @@ int backtrack() {
 /*	for(int i = 1; i < SimpleSmurfProblemState->nNumVars; i++)
 	  if(abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i]) > SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars ||
 		  abs(SimpleSmurfProblemState->arrInferenceQueue[abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i])]) != i) {
-		  d7_printf3("      Resetting level of variable %d to %d\n", i, SimpleSmurfProblemState->nNumVars);
-		  assert(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i] == SimpleSmurfProblemState->nNumVars);
+        //d7_printf3("      Resetting level of variable %d to %d\n", i, SimpleSmurfProblemState->nNumVars);
+		  assert(abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i]) == SimpleSmurfProblemState->nNumVars);
 	  }
 */
 
@@ -961,7 +965,7 @@ int SimpleBrancher() {
 find_more_solutions: ;
 					
 					nBranchLit = SimpleSmurfProblemState->arrInferenceQueue[SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars];
-					SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[abs(nBranchLit)] = -SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[abs(nBranchLit)]; //Negate this value to flag variable as an old choicepoint
+					SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[abs(nBranchLit)] = -SimpleSmurfProblemState->nCurrSearchTreeLevel; //Negate this value to flag variable as an old choicepoint
 					if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[abs(nBranchLit)] == 0)
 					  add_one_display = 1;
 					SimpleSmurfProblemState->arrInferenceQueue[SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars] = -nBranchLit;
@@ -985,11 +989,11 @@ find_more_solutions: ;
 			do {
 				if(nForceBackjumpLevel < SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nVarChoiceCurrLevel)
 				  d7_printf2("Forcing a backjump to level %d\n", nForceBackjumpLevel);
-					switch(backtrack()) {
-					 case SOLV_UNSAT: return SOLV_UNSAT;
-					 case SOLV_SAT: return SOLV_SAT;
-					 default: break;
-					}
+				switch(backtrack()) {
+				 case SOLV_UNSAT: return SOLV_UNSAT;
+				 case SOLV_SAT: return SOLV_SAT;
+				 default: break;
+				}
 			} while(nForceBackjumpLevel < SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nVarChoiceCurrLevel);
 			goto find_more_solutions;
 		}

@@ -116,8 +116,10 @@ InitVarMap()
   if(arrVarChoiceLevels) {
 	  for(int level = 0; level < nVarChoiceLevelsNum; level++) {
 		  int j=0;
-		  while(arrVarChoiceLevels[level][j]!=0)
-			 arrVarChoiceLevels[level][j] = arrIte2SolverVarMap[arrVarChoiceLevels[level][j++]];
+		  while(arrVarChoiceLevels[level][j]!=0) {
+			  arrVarChoiceLevels[level][j] = arrIte2SolverVarMap[arrVarChoiceLevels[level][j]];
+			  j++;
+		  }
 	  }
   }
 	
@@ -134,8 +136,10 @@ FreeVarMap() {
 	if(arrVarChoiceLevels) {
 		for(int level = 0; level < nVarChoiceLevelsNum; level++) {
 			int j=0;
-			while(arrVarChoiceLevels[level][j]!=0)
-			  arrVarChoiceLevels[level][j] = arrSolver2IteVarMap[arrVarChoiceLevels[level][j++]];
+			while(arrVarChoiceLevels[level][j]!=0) {
+				arrVarChoiceLevels[level][j] = arrSolver2IteVarMap[arrVarChoiceLevels[level][j]];
+				j++;
+			}
 		}
 	}
 
