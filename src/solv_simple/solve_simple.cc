@@ -634,7 +634,7 @@ int Simple_LSGB_Heuristic() {
 				}
 				j++;
 			}
-			if (nBestVble >= 0) {
+			if (nBestVble > 0) {
 				while(arrVarChoiceLevels[level][j] != 0) {
 					int i=arrVarChoiceLevels[level][j];
 					if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i] >= nCurrInfLevel) {
@@ -706,7 +706,7 @@ int Simple_DC_Heuristic() { //Simple Don't Care Heuristic
 				}
 				j++;
 			}
-			if (nBestVble >= 0) {
+			if (nBestVble > 0) {
 				SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nVarChoiceCurrLevel = level;
 				return -nBestVble;
 			}
@@ -918,8 +918,8 @@ int SimpleBrancher() {
 			//Call Heuristic to get variable and polarity
 			d7_printf2("Calling heuristic to choose choice point #%lld\n", ite_counters[NUM_CHOICE_POINTS]);
 			//if(ite_counters[NUM_CHOICE_POINTS] %128 == 64)
-			//if(SimpleSmurfProblemState->nCurrSearchTreeLevel > 9)
-			//  nBranchLit = Simple_DC_Heuristic(); //Don't Care - Choose the first unset variable found.
+			//if(SimpleSmurfProblemState->nCurrSearchTreeLevel > 10)
+			//nBranchLit = Simple_DC_Heuristic(); //Don't Care - Choose the first unset variable found.
 			//else 
 			  nBranchLit = Simple_LSGB_Heuristic();
 
