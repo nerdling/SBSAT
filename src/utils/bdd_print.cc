@@ -488,27 +488,27 @@ void printBDDdot_stdout(BDDNode **bdds, int num) {
 				fprintf(stdout, " { rank=same;\n");
 				rank = BDD_nodes[x]->variable;
 			}
-			fprintf(stdout, " %d\n", (int)BDD_nodes[x]);
+			fprintf(stdout, " %ld\n", (long)BDD_nodes[x]);
 		}
 		fprintf(stdout, " }\n");
 	
 		for(int x = 0; x < len_BDD_nodes; x++) {
 			if(BDD_nodes[x]->thenCase == true_ptr)		  
-			  fprintf(stdout, "%d->T [style=solid,fontname=""Helvetica"",fontsize=""8""]\n", (int)BDD_nodes[x]);
+			  fprintf(stdout, "%ld->T [style=solid,fontname=""Helvetica"",fontsize=""8""]\n", (long)BDD_nodes[x]);
 			else if(BDD_nodes[x]->thenCase == false_ptr)
-			  fprintf(stdout, "%d->F [style=solid,fontname=""Helvetica"",fontsize=""8""]\n", (int)BDD_nodes[x]);
+			  fprintf(stdout, "%ld->F [style=solid,fontname=""Helvetica"",fontsize=""8""]\n", (long)BDD_nodes[x]);
 			else {
-				fprintf(stdout, "%d->%d [style=solid,fontname=""Helvetica"",fontsize=""8""]\n", (int)BDD_nodes[x], (int)(BDD_nodes[x]->thenCase));
+				fprintf(stdout, "%ld->%ld [style=solid,fontname=""Helvetica"",fontsize=""8""]\n", (long)BDD_nodes[x], (long)(BDD_nodes[x]->thenCase));
 			}
 			
 			if(BDD_nodes[x]->elseCase == true_ptr)
-			  fprintf(stdout, "%d->T [style=dotted,fontname=""Helvetica"",fontsize=""8""]\n", (int)BDD_nodes[x]);
+			  fprintf(stdout, "%ld->T [style=dotted,fontname=""Helvetica"",fontsize=""8""]\n", (long)BDD_nodes[x]);
 			else if(BDD_nodes[x]->elseCase == false_ptr)
-			  fprintf(stdout, "%d->F [style=dotted,fontname=""Helvetica"",fontsize=""8""]\n", (int)BDD_nodes[x]);
+			  fprintf(stdout, "%ld->F [style=dotted,fontname=""Helvetica"",fontsize=""8""]\n", (long)BDD_nodes[x]);
 			else {
-				fprintf(stdout, "%d->%d [style=dotted,fontname=""Helvetica"",fontsize=""8""]\n", (int)BDD_nodes[x], (int)(BDD_nodes[x]->elseCase));
+				fprintf(stdout, "%ld->%ld [style=dotted,fontname=""Helvetica"",fontsize=""8""]\n", (long)BDD_nodes[x], (long)(BDD_nodes[x]->elseCase));
 			}
-			fprintf(stdout, "%d [fontname=""Helvetica"",fontsize=""16"",label=""%s""]\n", (int)BDD_nodes[x], s_name(BDD_nodes[x]->variable));
+			fprintf(stdout, "%ld [fontname=""Helvetica"",fontsize=""16"",label=""%s""]\n", (long)BDD_nodes[x], s_name(BDD_nodes[x]->variable));
 		}
 	}
 
@@ -573,27 +573,27 @@ void printBDDdot_file(BDDNode **bdds, int num) {
 				fprintf(fout, " { rank=same;\n");
 				rank = BDD_nodes[x]->variable;
 			}
-			fprintf(fout, " %d\n", (int)BDD_nodes[x]);
+			fprintf(fout, " %ld\n", (long)BDD_nodes[x]);
 		}
 		fprintf(fout, " }\n");
 		
 		for(int x = 0; x < len_BDD_nodes; x++) {
 			if(BDD_nodes[x]->thenCase == true_ptr)		  
-			  fprintf(fout, "%d->T [style=solid,fontname=""Helvetica"",fontsize=""8""]\n", (int)BDD_nodes[x]);
+			  fprintf(fout, "%ld->T [style=solid,fontname=""Helvetica"",fontsize=""8""]\n", (long)BDD_nodes[x]);
 			else if(BDD_nodes[x]->thenCase == false_ptr)
-			  fprintf(fout, "%d->F [style=solid,fontname=""Helvetica"",fontsize=""8""]\n", (int)BDD_nodes[x]);
+			  fprintf(fout, "%ld->F [style=solid,fontname=""Helvetica"",fontsize=""8""]\n", (long)BDD_nodes[x]);
 			else {
-				fprintf(fout, "%d->%d [style=solid,fontname=""Helvetica"",fontsize=""8""]\n", (int)BDD_nodes[x], (int)(BDD_nodes[x]->thenCase));
+				fprintf(fout, "%ld->%ld [style=solid,fontname=""Helvetica"",fontsize=""8""]\n", (long)BDD_nodes[x], (long)(BDD_nodes[x]->thenCase));
 			}
 			
 			if(BDD_nodes[x]->elseCase == true_ptr)
-			  fprintf(fout, "%d->T [style=dotted,fontname=""Helvetica"",fontsize=""8""]\n", (int)BDD_nodes[x]);
+			  fprintf(fout, "%ld->T [style=dotted,fontname=""Helvetica"",fontsize=""8""]\n", (long)BDD_nodes[x]);
 			else if(BDD_nodes[x]->elseCase == false_ptr)
-			  fprintf(fout, "%d->F [style=dotted,fontname=""Helvetica"",fontsize=""8""]\n", (int)BDD_nodes[x]);
+			  fprintf(fout, "%ld->F [style=dotted,fontname=""Helvetica"",fontsize=""8""]\n", (long)BDD_nodes[x]);
 			else {
-				fprintf(fout, "%d->%d [style=dotted,fontname=""Helvetica"",fontsize=""8""]\n", (int)BDD_nodes[x], (int)(BDD_nodes[x]->elseCase));
+				fprintf(fout, "%ld->%ld [style=dotted,fontname=""Helvetica"",fontsize=""8""]\n", (long)BDD_nodes[x], (long)(BDD_nodes[x]->elseCase));
 			}
-			fprintf(fout, "%d [fontname=""Helvetica"",fontsize=""16"",label=""%s""]\n", (int)BDD_nodes[x], s_name(BDD_nodes[x]->variable));
+			fprintf(fout, "%ld [fontname=""Helvetica"",fontsize=""16"",label=""%s""]\n", (long)BDD_nodes[x], s_name(BDD_nodes[x]->variable));
 		}
 	}
 
