@@ -57,34 +57,35 @@ extern t_solution_info *solution_info_head;
 //Used in the smurf_fpga output format.
 struct SmurfStateEntry {
 	// Static
+	char cType;
 	int nTransitionVar;
-	int nVarIsTrueTransition;
-	int nVarIsFalseTransition;
+	void *nVarIsTrueTransition;
+	void *nVarIsFalseTransition;
 	double nHeurWghtofTrueTransition;
 	double nHeurWghtofFalseTransition;
-	int nVarIsSafe; //1 if nTransitionVar is safe for True transisiton, or both.
+	char cVarIsSafe; //1 if nTransitionVar is safe for True transisiton, or both.
 	                //-1 if nTransitionVar is safe for False transition.
 	                //0 if nTransitionVar is not safe.
 	char nVarIsAnInference;
 	//This is 1 if nTransitionVar should be inferred True,
 	//       -1 if nTransitionVar should be inferred False,
 	//        0 if nTransitionVar should not be inferred.
-	int nNextVarInThisStateGT; //There are n SmurfStateEntries linked together,
-	int nNextVarInThisStateLT; //in the structure of a heap,
-	                           //where n is the number of variables in this SmurfStateEntry.
-	                           //All of these SmurfStateEntries represent the same function,
-	                           //but a different variable (nTransitionVar) is
-	                           //highlighted for each link in the heap.
-	                           //If this is 0, we have reached a leaf node.
-   int nNextVarInThisState;   //Same as above except linked linearly, instead of a heap.
-                              //Used for computing the heuristic of a state.
+	void *nNextVarInThisStateGT; //There are n SmurfStateEntries linked together,
+	void *nNextVarInThisStateLT; //in the structure of a heap,
+	                             //where n is the number of variables in this SmurfStateEntry.
+	                             //All of these SmurfStateEntries represent the same function,
+	                             //but a different variable (nTransitionVar) is
+	                             //highlighted for each link in the heap.
+	                             //If this is 0, we have reached a leaf node.
+   void *nNextVarInThisState;   //Same as above except linked linearly, instead of a heap.
+                                //Used for computing the heuristic of a state.
 };
 
 struct SmurfStack {
 	int nNumFreeVars;
 	int nHeuristicPlaceholder;
-	int nVarChoiceCurrLevel;	
-	int *arrSmurfStates;             //Pointer to array of size nNumSmurfs
+	int nVarChoiceCurrLevel; //Index to array of size nNumVars
+	void **arrSmurfStates;   //Pointer to array of size nNumSmurfs
 };
 
 struct ProblemState {
@@ -92,18 +93,19 @@ struct ProblemState {
 	int nNumSmurfs;
 	int nNumVars;
 	int nNumSmurfStateEntries;
-	SmurfStateEntry *arrSmurfStatesTable; //Pointer to the table of all smurf states.
-	                                      //Will be of size nNumSmurfStateEntries
+	void *vSmurfStatesTableTail;
+	void **arrSmurfStatesTable;     //Pointer to the table of all smurf states.
+	                                //Will be of size nNumSmurfStateEntries
 	int **arrVariableOccursInSmurf; //Pointer to lists of Smurfs, indexed by variable number, that contain that variable.
 	                                //Max size would be nNumSmurfs * nNumVars, but this would only happen if every
 	                                //Smurf contained every variable. Each list is terminated by a -1 element.
 	// Dynamic
 	int nCurrSearchTreeLevel;
-	double *arrPosVarHeurWghts; //Pointer to array of size nNumVars
-	double *arrNegVarHeurWghts; //Pointer to array of size nNumVars
-	int *arrInferenceQueue;  //Pointer to array of size nNumVars (dynamically indexed by arrSmurfStack[level].nNumFreeVars
+	double *arrPosVarHeurWghts;       //Pointer to array of size nNumVars
+	double *arrNegVarHeurWghts;       //Pointer to array of size nNumVars
+	int *arrInferenceQueue;           //Pointer to array of size nNumVars (dynamically indexed by arrSmurfStack[level].nNumFreeVars
 	int *arrInferenceDeclaredAtLevel; //Pointer to array of size nNumVars
-	SmurfStack *arrSmurfStack; //Pointer to array of size nNumVars
+	SmurfStack *arrSmurfStack;        //Pointer to array of size nNumVars
 };
 
 extern SmurfStateEntry *TrueSimpleSmurfState;

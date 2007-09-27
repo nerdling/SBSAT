@@ -2,6 +2,8 @@
 #include "sbsat_formats.h"
 #include "sbsat_solver.h"
 
+#ifdef MK_NULL
+
 extern SmurfStateEntry *TrueSimpleSmurfState;
 extern ProblemState *SimpleSmurfProblemState;
 extern int smurfs_share_paths;
@@ -187,3 +189,11 @@ void Smurf_FPGA() {
 	BREAK_XORS = bxors_old;
 	smurfs_share_paths = ssp_old;
 }
+
+#else 
+
+void Smurf_FPGA()
+{
+}
+
+#endif
