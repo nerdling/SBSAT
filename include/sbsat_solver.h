@@ -88,17 +88,24 @@ struct SmurfStack {
 	void **arrSmurfStates;   //Pointer to array of size nNumSmurfs
 };
 
+struct SmurfStatesTableStruct {
+	int curr_size;
+	int max_size;
+	void **StatesTable; //Pointer to a table of smurf states.
+	SmurfStatesTableStruct *pNext;
+};
+
 struct ProblemState {
 	// Static
 	int nNumSmurfs;
 	int nNumVars;
 	int nNumSmurfStateEntries;
-	void *vSmurfStatesTableTail;
-	void **arrSmurfStatesTable;     //Pointer to the table of all smurf states.
-	                                //Will be of size nNumSmurfStateEntries
-	int **arrVariableOccursInSmurf; //Pointer to lists of Smurfs, indexed by variable number, that contain that variable.
+	SmurfStatesTableStruct *arrSmurfStatesTableHead; //Pointer to the table of all smurf states
+	SmurfStatesTableStruct *arrCurrSmurfStates;      //Pointer to the current table of smurf states
+	void *pSmurfStatesTableTail;                     //Pointer to the next open block of the arrSmurfStatesTable
+	int **arrVariableOccursInSmurf; //Pointer to lists of Smurfs, indexed by variable number, that contain that variable
 	                                //Max size would be nNumSmurfs * nNumVars, but this would only happen if every
-	                                //Smurf contained every variable. Each list is terminated by a -1 element.
+	                                //Smurf contained every variable. Each list is terminated by a -1 element
 	// Dynamic
 	int nCurrSearchTreeLevel;
 	double *arrPosVarHeurWghts;       //Pointer to array of size nNumVars
