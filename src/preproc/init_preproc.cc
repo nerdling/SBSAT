@@ -122,7 +122,6 @@ Init_Preprocessing()
 	}
 
 	length_size = nmbrFunctions;
-   variables_size = nmbrFunctions;
 	
 	numout = nmbrFunctions;
 
@@ -134,8 +133,15 @@ Init_Preprocessing()
    */
    inferlist = AllocateInference(0, 0, NULL);
 	lastinfer = inferlist;
-	if(variables != NULL) ite_free((void **)&variables);
+	if(variables != NULL) { 
+		for (int x = 0; x < variables_size; x++) {
+			if (variables[x].num != NULL)
+			  delete [] variables[x].num;
+		}
+		ite_free((void **)&variables);
+	}
 	variables = (store *)ite_recalloc(NULL, 0, nmbrFunctions, sizeof(store), 9, "variables");
+   variables_size = nmbrFunctions;
 	
 	Init_Repeats();
 	
@@ -463,8 +469,9 @@ Finish_Preprocessing()
 		functions[count] = functions[x];
 		functionType[count] = functionType[x];
 		equalityVble[count] = equalityVble[x];
-		//parameterizedVars[count] = parameterizedVars[x];
+//		variables[count] = variables[x]; //Should delete the ones skipped over SEAN!!! LOOK HERE!!!
 		length[count] = length[x];
+		//parameterizedVars[count] = parameterizedVars[x];
 		if (functions[x] == true_ptr) {
 			count--; //Don't send function to the solver
 		} else if (functions[x] == false_ptr) {
@@ -482,9 +489,7 @@ Finish_Preprocessing()
 		if (variables[x].num != NULL)
 		  delete [] variables[x].num;
 	}
-
 	ite_free((void **)&variables);
-	//free(variables);
 	variables = NULL;
 	
    ite_free((void**)&bdd_tempint); bdd_tempint_max = 0;
