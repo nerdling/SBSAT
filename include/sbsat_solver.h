@@ -48,6 +48,13 @@ enum {
    STATE_HEURISTIC
 };
 
+/* list of possible smurf function types */
+enum {
+	FN_SMURF,
+	FN_INFERENCE
+};
+
+
 int solve();
 int walkSolve();
 extern t_solution_info *solution_info;
@@ -59,26 +66,33 @@ struct SmurfStateEntry {
 	// Static
 	char cType;
 	int nTransitionVar;
-	void *nVarIsTrueTransition;
-	void *nVarIsFalseTransition;
-	double nHeurWghtofTrueTransition;
-	double nHeurWghtofFalseTransition;
+	void *pVarIsTrueTransition;
+	void *pVarIsFalseTransition;
+	double fHeurWghtofTrueTransition;
+	double fHeurWghtofFalseTransition;
 	char cVarIsSafe; //1 if nTransitionVar is safe for True transisiton, or both.
-	                //-1 if nTransitionVar is safe for False transition.
-	                //0 if nTransitionVar is not safe.
-	char nVarIsAnInference;
+	                 //-1 if nTransitionVar is safe for False transition.
+	                 //0 if nTransitionVar is not safe.
 	//This is 1 if nTransitionVar should be inferred True,
 	//       -1 if nTransitionVar should be inferred False,
 	//        0 if nTransitionVar should not be inferred.
-	void *nNextVarInThisStateGT; //There are n SmurfStateEntries linked together,
-	void *nNextVarInThisStateLT; //in the structure of a heap,
+	void *pNextVarInThisStateGT; //There are n SmurfStateEntries linked together,
+	void *pNextVarInThisStateLT; //in the structure of a heap,
 	                             //where n is the number of variables in this SmurfStateEntry.
 	                             //All of these SmurfStateEntries represent the same function,
 	                             //but a different variable (nTransitionVar) is
 	                             //highlighted for each link in the heap.
 	                             //If this is 0, we have reached a leaf node.
-   void *nNextVarInThisState;   //Same as above except linked linearly, instead of a heap.
+   void *pNextVarInThisState;   //Same as above except linked linearly, instead of a heap.
                                 //Used for computing the heuristic of a state.
+};
+
+struct InferenceStateEntry {
+	// Static
+	char cType;
+	int nTransitionVar;
+	void *pVarTransition;
+	char cPolarity;
 };
 
 struct SmurfStack {
@@ -91,7 +105,7 @@ struct SmurfStack {
 struct SmurfStatesTableStruct {
 	int curr_size;
 	int max_size;
-	void **StatesTable; //Pointer to a table of smurf states.
+	void **arrStatesTable; //Pointer to a table of smurf states.
 	SmurfStatesTableStruct *pNext;
 };
 
