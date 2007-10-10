@@ -64,20 +64,23 @@ void add_tree (int level, int variable) {
 	
 	for(int x = 3; x <= level; x++) {
 
-/*		fprintf(stdout, "order(");
+		fprintf(stdout, "order(");
 		for(int y = 1; y < x; y++) {
 			for(int z = y; z < x; z++) {
 			   fprintf(stdout, "L%d_choice1_L%d_b%d, ", x, z, y);
 				fprintf(stdout, "L%d_choice2_L%d_b%d, ", x, z, y);
 			}
-			fprintf(stdout, "L%d_b%d_c, ", x, y-1);
+//			fprintf(stdout, "L%d_b%d_c, ", x, y-1);
 		}
-		fprintf(stdout, "L%d_b1, L%d_b1", x, x-1);
-		for(int y = 2; y < x; y++)
-		  fprintf(stdout, "L%d_b%d, L%d_b%d, ", x, y, x-1, y);
-		fprintf(stdout, "L%d_b%d, ", x, x);
+
+//		fprintf(stdout, "L%d_b1, L%d_b1", x, x-1);
+//		for(int y = 2; y < x; y++)
+//		  fprintf(stdout, "L%d_b%d, L%d_b%d, ", x, y, x-1, y);
+
+//		fprintf(stdout, "L%d_b%d, ", x, x);
+ 
 		fprintf(stdout, ")\n");
-*/		
+		
 		fprintf(stdout, "minmax(1, 1");
 		for(int y = 1; y < x; y++)
 		  fprintf(stdout, ", L%d_choice1_L%d", x, y);
