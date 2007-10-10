@@ -87,11 +87,6 @@ int Rebuild_BDDx (int x);
 int Rebuild_BDD (BDDNode *, int *, int *&);
 
 //Finding function types
-int isOR(BDDNode *);
-int isAND(BDDNode *);
-int isAND_EQU(BDDNode *, int *, int);
-int isXOR(BDDNode *);
-int isMIN_MAX(BDDNode *, int *, int);
 int findandset_fnType(int);
 
 BDDNode *strip_x_BDD(BDDNode *, int);

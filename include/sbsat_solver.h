@@ -51,9 +51,15 @@ enum {
 /* list of possible smurf function types */
 enum {
 	FN_SMURF,
-	FN_INFERENCE
+	FN_INFERENCE,
+	FN_OR,
+   FN_OR_COUNTER,
+	FN_XOR,
+	FN_AND_EQU,
+	FN_OR_EQU,
+	FN_MINMAX,
+	FN_NEG_MINMAX
 };
-
 
 int solve();
 int walkSolve();
@@ -64,7 +70,7 @@ extern t_solution_info *solution_info_head;
 //Used in the smurf_fpga output format.
 struct SmurfStateEntry {
 	// Static
-	char cType;
+	char cType; //FN_SMURF
 	int nTransitionVar;
 	void *pVarIsTrueTransition;
 	void *pVarIsFalseTransition;
@@ -89,10 +95,24 @@ struct SmurfStateEntry {
 
 struct InferenceStateEntry {
 	// Static
-	char cType;
+	char cType; //FN_INFERENCE
 	int nTransitionVar;
 	void *pVarTransition;
 	char cPolarity;
+};
+
+struct ORStateEntry {
+	// Static
+	char cType; //FN_OR
+	int *nTransitionVars;
+	char *cPolarity;
+	int nSize;
+};
+
+struct ORCounterStateEntry {
+	char cType; //FN_OR_COUNTER
+	void *pTransition;
+	ORStateEntry *pORState;	
 };
 
 struct SmurfStack {

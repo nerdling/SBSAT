@@ -66,4 +66,13 @@ void ite_strncpy(char *str_dst, char *str_src, int len);
   exit(1); };
 
 int functions_add(BDDNode *bdd, int fn_type, int equal_var);
+
+//Finding function types
+int isOR(BDDNode *);
+int isAND(BDDNode *);
+int isAND_EQU(BDDNode *, int *, int);
+int isXOR(BDDNode *);
+int isMIN_MAX(BDDNode *, int *, int);
+int isNEG_MIN_MAX(BDDNode *, int *, int);
+
 #endif

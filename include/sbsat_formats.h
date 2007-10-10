@@ -49,11 +49,4 @@ void printXORFormat();
 void print_xdd_d(BDDNode *);
 void print_flat_xdd(BDDNode *, int);
 
-//Finding function types
-int isOR(BDDNode *);
-int isAND(BDDNode *);
-int isAND_EQU(BDDNode *, int *, int);
-int isXOR(BDDNode *);
-int isMIN_MAX(BDDNode *, int *, int);
-
 #endif
