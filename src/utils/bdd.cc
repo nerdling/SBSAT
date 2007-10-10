@@ -1098,9 +1098,7 @@ int isXOR(BDDNode *bdd) {
 
 int isMIN_MAX(BDDNode *bdd, int *bdd_vars, int bdd_len) {
 	//fprintf(stderr, "HERE\n");
-	
-	
-	
+
 	if(IS_TRUE_FALSE(bdd)) return 0;
 	int max = -1;
 	BDDNode *tmp_bdd;
@@ -1124,6 +1122,36 @@ int isMIN_MAX(BDDNode *bdd, int *bdd_vars, int bdd_len) {
 
 	int set_true = 0;
 	if(bdd == MinMaxBDD(bdd_vars, min, max, bdd_len, set_true))
+	  return 1;	
+	return 0;
+}
+
+int isNEG_MIN_MAX(BDDNode *bdd, int *bdd_vars, int bdd_len) {
+	//fprintf(stderr, "HERE\n");
+
+	if(IS_TRUE_FALSE(bdd)) return 0;
+	int max = -1;
+	BDDNode *tmp_bdd;
+	for(tmp_bdd = bdd; !IS_TRUE_FALSE(tmp_bdd); tmp_bdd = tmp_bdd->thenCase) 
+	  max++;
+	if(tmp_bdd != true_ptr) return 0;
+
+	int min = -1;
+	for(tmp_bdd = bdd; !IS_TRUE_FALSE(tmp_bdd); tmp_bdd = tmp_bdd->elseCase)
+	  min++;
+	if(tmp_bdd == false_ptr) min = 0;
+	else if(tmp_bdd != true_ptr) return 0;
+   else min = bdd_len-min;
+	
+	if(min > max) return 0;
+	
+	//Now have the min and max
+	
+	//A slow way to do it!
+	//fprintf(stderr, "min=%d, max=%d, len=%d\n", min, max, bdd_len);
+
+	int set_true = 0;
+	if(bdd == MinMaxBDD(bdd_vars, min, max, bdd_len, set_true)->notCase)
 	  return 1;	
 	return 0;
 }
