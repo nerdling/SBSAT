@@ -102,7 +102,7 @@ int main(int argc, char **argv) {
 	} else
    if (argc > 1 && !strcmp(argv[1], "trans")) {
       if (argc < 4 || (argc > 2 && !strcmp(argv[2], "--help"))) {
-         fprintf(stderr, "usage: %s trans size\n", argv[0]);
+         fprintf(stderr, "usage: %s trans size mult\n", argv[0]);
          fprintf(stderr, "       size - row and column size of matrix\n");
 			fprintf(stderr, "       mult - a big value gives more zero entries\n");
          return 0;
