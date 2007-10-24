@@ -44,6 +44,7 @@ void rn(char *rn_type, int n, int k, int l);
 void slider2(char *out_type, int n, int sat);
 void rand_BDD(char *out_type, int num_vars, int num_funcs, int vars_per_func);
 void trans(int size, int mult);
+void trans_acl2(int size, int mult);
 void add_tree(int level, int variable);
 
 int main(int argc, char **argv) {
@@ -110,6 +111,18 @@ int main(int argc, char **argv) {
 		int size = atoi(argv[2]);
 		int mult = atoi(argv[3]);
       trans(size, mult);
+		return 0;
+	} else
+   if (argc > 1 && !strcmp(argv[1], "trans-acl2")) {
+      if (argc < 4 || (argc > 2 && !strcmp(argv[2], "--help"))) {
+         fprintf(stderr, "usage: %s trans-acl2 size mult\n", argv[0]);
+         fprintf(stderr, "       size - row and column size of matrix\n");
+			fprintf(stderr, "       mult - a big value gives more zero entries\n");
+         return 0;
+      }
+		int size = atoi(argv[2]);
+		int mult = atoi(argv[3]);
+      trans_acl2(size, mult);
 		return 0;
 	} else
    if (argc > 1 && !strcmp(argv[1], "add_tree")) {

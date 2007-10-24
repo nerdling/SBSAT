@@ -42,6 +42,21 @@
 int *rows;
 int *columns;
 
+
+void print_var_list(int **matrix,int sizex, int sizey){
+  fprintf(stdout,"'(");
+  for(int y = 1; y <= sizey; y++){
+       fprintf(stdout,"p_%d ",y);
+  }
+  for(int x = 1; x <= sizex; x++){
+    for(int y = 1; y <= sizey; y++){
+       if(matrix[x][y]<=1)
+	 fprintf(stdout,"trans_%d_%d ",x,y);
+    }
+  }
+  fprintf(stdout,")\n");
+}
+
 void gen_matrix(int **matrix, int sizex, int sizey, int mult) {
 	for(int x = 1; x <= sizex; x++) {
 		int row = -1;
@@ -155,3 +170,135 @@ void trans(int size, int mult) {
 	//fprintf(stdout, ")\n");
 
 }
+
+void trans_acl2(int size, int mult) {
+	struct timeval tv;
+	gettimeofday(&tv, NULL);
+	fprintf(stderr, "seed = %d\n", tv.tv_usec);
+	srand(tv.tv_usec);
+	//srand(497546);
+	
+	int sizex = size;
+	int sizey = size;
+	int **matrix = (int **)calloc(sizex+1, sizeof(int **));
+	rows = (int*)calloc(sizex+1, sizeof(int*));
+	columns = (int*)calloc(sizey+1, sizeof(int*));
+	gen_matrix(matrix, sizex, sizey, mult);
+   //	fprintf(stdout, "p bdd %d %d\n", 6*sizex*sizey, (5*sizex*sizey)+2*sizex+1);
+
+   //	fprintf(stdout, "initial_branch(#1 p_*)\n");
+//	fprintf(stdout, "order(");
+
+//	for(int x = 1; x <= sizex; x++) {
+//		for(int y = 1; y <= sizey; y++) {
+//			if(matrix[x][y]<=1) fprintf(stdout, "trans_%d_%d ", x, y);
+//		}
+//		fprintf(stdout, "p_%d ", x);
+//	}
+
+//	for(int x = sizex; x > 0; x--)
+//	  fprintf(stdout, "p_%d ", x);
+
+//	fprintf(stdout, ")\n");
+
+	fprintf(stdout,"(ctv ");
+
+	for(int x = sizex; x > 0; x--) {
+	  if(x != sizex)
+	    fprintf(stdout, "(q-and ");
+		for(int y = 1; y <= x; y++) {
+		  if(matrix[x][y]<=1) { fprintf(stdout, "(q-exists "); break;}
+		  if(x!=y && matrix[y][x]<=1) { fprintf(stdout, "(q-exists "); break;}
+		}
+		//	fprintf(stdout, "(q-and ");
+	}
+	
+	fprintf(stdout, "\n");
+	fprintf(stdout, "(q-and (car (qnorm-list `(,(multi-and `(\n");
+	for(int y = 1; y <= sizey; y++) {
+	  /*		if(columns[y]==1) {
+			//fprintf(stdout, "var(p_%d)\n", y);
+		} else if(columns[y]==0) {
+			//fprintf(stdout, "not(p_%d)\n", y);
+		} else if(columns[y]==-1) {
+			fprintf(stderr, "Column %d is empty - unsatisfiable\n", y);
+			exit(0);
+		} else { //columns[y] >= 2
+	  */
+			for(int x = 1; x <= sizex; x++) {
+				if(matrix[x][y]==1) fprintf(stdout, "(implies trans_%d_%d p_%d)\n", x, y, y);
+				else if(matrix[x][y]==0) fprintf(stdout, "(implies trans_%d_%d (not p_%d))\n", x, y, y);
+			}
+			//		}
+	}
+	fprintf(stdout,")))\n");
+	print_var_list(matrix,sizex,sizey);
+	fprintf(stdout,"))\n");
+	for(int x = 1; x <= sizex; x++) {
+		fprintf(stdout, "\n(car (qnorm-list `((and ,(minmax 1 1 '(");
+		for(int y = 1; y <= sizey; y++) {
+			if(matrix[x][y]<=1) fprintf(stdout, " trans_%d_%d", x, y);
+		}
+		fprintf(stdout, "))\n");
+		
+		fprintf(stdout, ",(minmax 1 1 '(");
+		for(int y = 1; y <= sizey; y++) {
+			if(matrix[y][x]<=1) fprintf(stdout, " trans_%d_%d", y, x);
+		}
+		fprintf(stdout, "))))\n");
+		//fprintf(stdout, "))\n");		
+		print_var_list(matrix,sizex,sizey);
+		fprintf(stdout,")))\n");
+		fprintf(stdout,"'(");
+
+		for(int y = 1; y <= x; y++) {
+
+		  if(x!=y && matrix[y][x]<=1) {
+		    fprintf(stdout, " trans_%d_%d ", y, x);
+		    //print_var_list(sizex,sizey);
+		    // fprintf(stdout,")\n");
+		  }
+
+		}
+		for(int y = 1; y <= x; y++) {
+		  if(matrix[x][y]<=1) {
+		    fprintf(stdout, " trans_%d_%d ", x, y);
+		    //print_var_list(sizex,sizey);
+		    //fprintf(stdout,")\n");
+		  }
+
+		}		
+
+			fprintf(stdout, ")\n");
+			print_var_list(matrix,sizex,sizey);
+			fprintf(stdout,")");
+	}
+	fprintf(stdout,")\n");
+	//fprintf(stdout,"'(");
+	//	for(int x = 1; x <= sizex; x++){
+	//  for(int y = 1; y <= sizey; y++){
+	//    fprintf(stdout,"trans_%d_%d ",x,y);
+	//  }
+	//}
+	//fprintf(stdout,")\n");
+	/*
+	fprintf(stdout,"'(");
+	for(int y = 1; y <= sizey; y++){
+	  fprintf(stdout,"p_%d ",y);
+	}
+	for(int x = 1; x <= sizex; x++){
+	  for(int y = 1; y <= sizey; y++){
+	    fprintf(stdout,"trans_%d_%d ",x,y);
+	  }
+	}
+	fprintf(stdout,")))\n");
+	*/
+	//fprintf(stdout, "print_tree($1)\n");
+	//fprintf(stdout, "countT($1, ");
+	//for(int x = sizex; x > 0; x--)
+	//	  fprintf(stdout, "p_%d ", x);
+	//fprintf(stdout, ")\n");
+
+}
+
+
