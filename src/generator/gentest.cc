@@ -43,8 +43,9 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p);
 void rn(char *rn_type, int n, int k, int l);
 void slider2(char *out_type, int n, int sat);
 void rand_BDD(char *out_type, int num_vars, int num_funcs, int vars_per_func);
-void trans(int size, int mult);
-void trans_acl2(int size, int mult);
+void trans(int size, int mult, int seed);
+void trans_acl2(int size, int mult, int seed);
+void trans_new_acl2(int size, int mult, int seed);
 void add_tree(int level, int variable);
 
 int main(int argc, char **argv) {
@@ -103,27 +104,50 @@ int main(int argc, char **argv) {
 	} else
    if (argc > 1 && !strcmp(argv[1], "trans")) {
       if (argc < 4 || (argc > 2 && !strcmp(argv[2], "--help"))) {
-         fprintf(stderr, "usage: %s trans size mult\n", argv[0]);
+         fprintf(stderr, "usage: %s trans size mult [seed]\n", argv[0]);
          fprintf(stderr, "       size - row and column size of matrix\n");
 			fprintf(stderr, "       mult - a big value gives more zero entries\n");
          return 0;
       }
 		int size = atoi(argv[2]);
 		int mult = atoi(argv[3]);
-      trans(size, mult);
+		int seed = 0;
+		if(argc == 5)
+		  seed = atoi(argv[4]);
+		trans(size, mult,seed);
 		return 0;
 	} else
    if (argc > 1 && !strcmp(argv[1], "trans-acl2")) {
       if (argc < 4 || (argc > 2 && !strcmp(argv[2], "--help"))) {
-         fprintf(stderr, "usage: %s trans-acl2 size mult\n", argv[0]);
+         fprintf(stderr, "usage: %s trans-acl2 size mult [seed]\n", argv[0]);
          fprintf(stderr, "       size - row and column size of matrix\n");
 			fprintf(stderr, "       mult - a big value gives more zero entries\n");
          return 0;
       }
 		int size = atoi(argv[2]);
 		int mult = atoi(argv[3]);
-      trans_acl2(size, mult);
+		int seed = 0;
+		if(argc == 5)
+		  seed = atoi(argv[4]);
+		trans_acl2(size, mult,seed);
 		return 0;
+	} else
+   if (argc > 1 && !strcmp(argv[1], "trans-new-acl2")) {
+      if (argc < 4 || (argc > 2 && !strcmp(argv[2], "--help"))) {
+         fprintf(stderr, "usage: %s trans-new-acl2 size mult [seed]\n", argv[0]);
+         fprintf(stderr, "       size - row and column size of matrix\n");
+			fprintf(stderr, "       mult - a big value gives more zero entries\n");
+         return 0;
+      }
+		int size = atoi(argv[2]);
+		int mult = atoi(argv[3]);
+		int seed = 0;
+		if(argc == 5)
+		  seed = atoi(argv[4]);
+		trans_new_acl2(size, mult,seed);
+		return 0;
+
+
 	} else
    if (argc > 1 && !strcmp(argv[1], "add_tree")) {
       if (argc < 4 || (argc > 2 && !strcmp(argv[2], "--help"))) {
