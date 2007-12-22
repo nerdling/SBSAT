@@ -76,7 +76,7 @@ struct SmurfStateEntry {
 	void *pVarIsFalseTransition;
 	double fHeurWghtofTrueTransition;
 	double fHeurWghtofFalseTransition;
-	char cVarIsSafe; //1 if nTransitionVar is safe for True transisiton, or both.
+	bool bVarIsSafe; //1 if nTransitionVar is safe for True transisiton, or both.
 	                 //-1 if nTransitionVar is safe for False transition.
 	                 //0 if nTransitionVar is not safe.
 	//This is 1 if nTransitionVar should be inferred True,
@@ -98,14 +98,14 @@ struct InferenceStateEntry {
 	char cType; //FN_INFERENCE
 	int nTransitionVar;
 	void *pVarTransition;
-	char cPolarity;
+	bool bPolarity;
 };
 
 struct ORStateEntry {
 	// Static
 	char cType; //FN_OR
 	int *nTransitionVars;
-	char *cPolarity;
+	bool *bPolarity;
 	int nSize;
 };
 
