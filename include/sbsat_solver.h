@@ -112,6 +112,7 @@ struct ORStateEntry {
 struct ORCounterStateEntry {
 	char cType; //FN_OR_COUNTER
 	void *pTransition;
+	int nSize;
 	ORStateEntry *pORState;	
 };
 

@@ -873,9 +873,11 @@ void Calculate_Heuristic_Values() {
 	void **arrSmurfStates = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].arrSmurfStates;
 	for(int nSmurfIndex = 0; nSmurfIndex < SimpleSmurfProblemState->nNumSmurfs; nSmurfIndex++) {
 		if(arrSmurfStates[nSmurfIndex] == pTrueSimpleSmurfState) continue;
+		SmurfStateEntry *pState = (SmurfStateEntry *)arrSmurfStates[nSmurfIndex];
+		ORStateEntry *pORState = (ORStateEntry *)arrSmurfStates[nSmurfIndex];
+		ORCounterStateEntry *pORCounterState = (ORCounterStateEntry *)arrSmurfStates[nSmurfIndex];
 		switch (((SmurfStateEntry *)arrSmurfStates[nSmurfIndex])->cType) {
 		 case FN_SMURF:
-			SmurfStateEntry *pState = (SmurfStateEntry *)arrSmurfStates[nSmurfIndex];
 			SimpleSmurfProblemState->arrPosVarHeurWghts[pState->nTransitionVar] += 
 			  pState->fHeurWghtofTrueTransition;
 			SimpleSmurfProblemState->arrNegVarHeurWghts[pState->nTransitionVar] +=  
@@ -889,7 +891,6 @@ void Calculate_Heuristic_Values() {
 			}
 			break;
 		 case FN_OR:
-			ORStateEntry *pORState = (ORStateEntry *)arrSmurfStates[nSmurfIndex];
 			//int numfound = 0; // exit when numfound = pState->nSize
 			for(int index = 0; index < pORState->nSize; index++) {
 				if(pORState->bPolarity[index] == BOOL_TRUE) {
@@ -902,7 +903,6 @@ void Calculate_Heuristic_Values() {
 			}
 			break;
 		 case FN_OR_COUNTER:
-			ORCounterStateEntry *pORCounterState = (ORCounterStateEntry *)arrSmurfStates[nSmurfIndex];
 			for(int index = 0; index < pORCounterState->pORState->nSize; index++) {
 				if(pORCounterState->pORState->bPolarity[index] == BOOL_TRUE) {
 					SimpleSmurfProblemState->arrPosVarHeurWghts[pORCounterState->pORState->nTransitionVars[index]] += JHEURISTIC_K_TRUE;
