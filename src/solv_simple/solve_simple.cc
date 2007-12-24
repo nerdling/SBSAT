@@ -872,12 +872,11 @@ void Calculate_Heuristic_Values() {
 	
 	void **arrSmurfStates = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].arrSmurfStates;
 	for(int nSmurfIndex = 0; nSmurfIndex < SimpleSmurfProblemState->nNumSmurfs; nSmurfIndex++) {
+		//TrueState
 		if(arrSmurfStates[nSmurfIndex] == pTrueSimpleSmurfState) continue;
-		SmurfStateEntry *pState = (SmurfStateEntry *)arrSmurfStates[nSmurfIndex];
-		ORStateEntry *pORState = (ORStateEntry *)arrSmurfStates[nSmurfIndex];
-		ORCounterStateEntry *pORCounterState = (ORCounterStateEntry *)arrSmurfStates[nSmurfIndex];
-		switch (((SmurfStateEntry *)arrSmurfStates[nSmurfIndex])->cType) {
-		 case FN_SMURF:
+		//FN_SMURF
+		if (((SmurfStateEntry *)arrSmurfStates[nSmurfIndex])->cType == FN_SMURF) {
+			SmurfStateEntry *pState = (SmurfStateEntry *)arrSmurfStates[nSmurfIndex];
 			SimpleSmurfProblemState->arrPosVarHeurWghts[pState->nTransitionVar] += 
 			  pState->fHeurWghtofTrueTransition;
 			SimpleSmurfProblemState->arrNegVarHeurWghts[pState->nTransitionVar] +=  
@@ -889,31 +888,40 @@ void Calculate_Heuristic_Values() {
 				SimpleSmurfProblemState->arrNegVarHeurWghts[pState->nTransitionVar] +=  
 				  pState->fHeurWghtofFalseTransition;
 			}
-			break;
-		 case FN_OR:
-			//int numfound = 0; // exit when numfound = pState->nSize
-			for(int index = 0; index < pORState->nSize; index++) {
-				if(pORState->bPolarity[index] == BOOL_TRUE) {
-					SimpleSmurfProblemState->arrPosVarHeurWghts[pORState->nTransitionVars[index]] += JHEURISTIC_K_TRUE;
-					SimpleSmurfProblemState->arrNegVarHeurWghts[pORState->nTransitionVars[index]] += LSGBORGetHeurPos(pORState);
-				} else {
-					SimpleSmurfProblemState->arrPosVarHeurWghts[pORState->nTransitionVars[index]] += LSGBORGetHeurPos(pORState);
-					SimpleSmurfProblemState->arrNegVarHeurWghts[pORState->nTransitionVars[index]] += JHEURISTIC_K_TRUE;
+		//FN_OR
+		} else if (((SmurfStateEntry *)arrSmurfStates[nSmurfIndex])->cType == FN_OR) {
+			ORStateEntry *pORState = (ORStateEntry *)arrSmurfStates[nSmurfIndex];
+			int nCurrInfLevel = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
+			int numfound = 0;
+			for(int index = 0; numfound < 2; index++) {
+				if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[pORState->nTransitionVars[index]] >= nCurrInfLevel) {
+					numfound++;
+					if(pORState->bPolarity[index] == BOOL_TRUE) {
+						SimpleSmurfProblemState->arrPosVarHeurWghts[pORState->nTransitionVars[index]] += JHEURISTIC_K_TRUE;
+						SimpleSmurfProblemState->arrNegVarHeurWghts[pORState->nTransitionVars[index]] += LSGBORGetHeurPos(pORState);
+					} else {
+						SimpleSmurfProblemState->arrPosVarHeurWghts[pORState->nTransitionVars[index]] += LSGBORGetHeurPos(pORState);
+						SimpleSmurfProblemState->arrNegVarHeurWghts[pORState->nTransitionVars[index]] += JHEURISTIC_K_TRUE;
+					}
 				}
 			}
-			break;
-		 case FN_OR_COUNTER:
-			for(int index = 0; index < pORCounterState->pORState->nSize; index++) {
-				if(pORCounterState->pORState->bPolarity[index] == BOOL_TRUE) {
-					SimpleSmurfProblemState->arrPosVarHeurWghts[pORCounterState->pORState->nTransitionVars[index]] += JHEURISTIC_K_TRUE;
-					SimpleSmurfProblemState->arrNegVarHeurWghts[pORCounterState->pORState->nTransitionVars[index]] += LSGBORCounterGetHeurPos(pORCounterState);
-				} else {
-					SimpleSmurfProblemState->arrPosVarHeurWghts[pORCounterState->pORState->nTransitionVars[index]] += LSGBORCounterGetHeurPos(pORCounterState);
-					SimpleSmurfProblemState->arrNegVarHeurWghts[pORCounterState->pORState->nTransitionVars[index]] += JHEURISTIC_K_TRUE;
+		//FN_OR_COUNTER
+		} else if (((SmurfStateEntry *)arrSmurfStates[nSmurfIndex])->cType == FN_OR_COUNTER) {
+			ORCounterStateEntry *pORCounterState = (ORCounterStateEntry *)arrSmurfStates[nSmurfIndex];
+			int nCurrInfLevel = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
+			int numfound = 0;
+			for(int index = 0; numfound < pORCounterState->nSize; index++) {
+				if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[pORCounterState->pORState->nTransitionVars[index]] >= nCurrInfLevel) {
+					numfound++;
+					if(pORCounterState->pORState->bPolarity[index] == BOOL_TRUE) {
+						SimpleSmurfProblemState->arrPosVarHeurWghts[pORCounterState->pORState->nTransitionVars[index]] += JHEURISTIC_K_TRUE;
+						SimpleSmurfProblemState->arrNegVarHeurWghts[pORCounterState->pORState->nTransitionVars[index]] += LSGBORCounterGetHeurPos(pORCounterState);
+					} else {
+						SimpleSmurfProblemState->arrPosVarHeurWghts[pORCounterState->pORState->nTransitionVars[index]] += LSGBORCounterGetHeurPos(pORCounterState);
+						SimpleSmurfProblemState->arrNegVarHeurWghts[pORCounterState->pORState->nTransitionVars[index]] += JHEURISTIC_K_TRUE;
+					}
 				}
 			}
-			break;
-		 default: break;
 		}
 	}
 	
@@ -1139,10 +1147,10 @@ int ApplyInferenceToOR(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void 
 	
 	if(pORState->bPolarity[index] == bBVPolarity) arrSmurfStates[nSmurfNumber] = pTrueSimpleSmurfState;
 	else {
-		int nInfQueueLevel = SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[nBranchVar];
+		int nInfQueueLevel = abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[nBranchVar]);
 		for(int x = 0; x < pORState->nSize; x++) {
 			int nPrevInfLevel = SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[pORState->nTransitionVars[x]];
-//			fprintf(stderr, "%d<%d x=%d var=%d pol=%d\n", nPrevInfLevel, nInfQueueLevel, x, pORState->nTransitionVars[x], pORState->bPolarity[x]);
+//			fprintf(stderr, "%d %d<%d x=%d var=%d pol=%d\n", nBranchVar, nPrevInfLevel, nInfQueueLevel, x, pORState->nTransitionVars[x], pORState->bPolarity[x]);
 //			if(x == index) continue;
 			if(nPrevInfLevel <= 0) continue;
 			if(nPrevInfLevel <= nInfQueueLevel) {
@@ -1383,7 +1391,7 @@ int SimpleBrancher() {
 find_more_solutions: ;
 					
 					nBranchLit = SimpleSmurfProblemState->arrInferenceQueue[SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars];
-					SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[abs(nBranchLit)] = -SimpleSmurfProblemState->nCurrSearchTreeLevel; //Negate this value to flag variable as an old choicepoint
+					SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[abs(nBranchLit)] = -SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars; //Negate this value to flag variable as an old choicepoint
 					if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[abs(nBranchLit)] == 0)
 					  add_one_display = 1;
 					SimpleSmurfProblemState->arrInferenceQueue[SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars] = -nBranchLit;
