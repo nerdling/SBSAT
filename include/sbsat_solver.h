@@ -66,10 +66,13 @@ int walkSolve();
 extern t_solution_info *solution_info;
 extern t_solution_info *solution_info_head;
 
+struct TypeStateEntry {
+	char cType;
+};
+
 //Structures and functions for simpleSolve
 //Used in the smurf_fpga output format.
 struct SmurfStateEntry {
-	// Static
 	char cType; //FN_SMURF
 	int nTransitionVar;
 	void *pVarIsTrueTransition;
@@ -94,7 +97,6 @@ struct SmurfStateEntry {
 };
 
 struct InferenceStateEntry {
-	// Static
 	char cType; //FN_INFERENCE
 	int nTransitionVar;
 	void *pVarTransition;
@@ -102,7 +104,6 @@ struct InferenceStateEntry {
 };
 
 struct ORStateEntry {
-	// Static
 	char cType; //FN_OR
 	int *nTransitionVars;
 	bool *bPolarity;
@@ -114,6 +115,20 @@ struct ORCounterStateEntry {
 	void *pTransition;
 	int nSize;
 	ORStateEntry *pORState;	
+};
+
+struct XORStateEntry {
+	char cType; //FN_OR
+	int *nTransitionVars;
+	bool parity;
+	int nSize;
+};
+
+struct XORCounterStateEntry {
+	char cType; //FN_OR_COUNTER
+	void *pTransition;
+	int nSize;
+	XORStateEntry *pXORState; //For heuristic purposes
 };
 
 struct SmurfStack {
@@ -131,7 +146,7 @@ struct SmurfStatesTableStruct {
 };
 
 struct ProblemState {
-	// Static
+	//Static
 	int nNumSmurfs;
 	int nNumVars;
 	int nNumSmurfStateEntries;

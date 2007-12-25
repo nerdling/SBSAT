@@ -3,8 +3,12 @@
 #include "solver.h"
 
 /********** Included in include/sbsat_solver.h *********************
-struct SmurfStateEntry{
-	// Static
+
+struct TypeStateEntry {
+   char cType;
+}
+
+ struct SmurfStateEntry{
    char cType; //FN_SMURF
    int nTransitionVar;
 	void *pVarIsTrueTransition;
@@ -26,7 +30,6 @@ struct SmurfStateEntry{
  };
 
 struct InferenceStateEntry {
-   // Static
    char cType; //FN_INFERENCE
    int nTransitionVar;
    void *pVarTransition;
@@ -34,7 +37,6 @@ struct InferenceStateEntry {
  };
 
 struct ORStateEntry {
-   // Static
    char cType; //FN_OR
    int *nTransitionVars;
    bool *bPolarity;
@@ -46,6 +48,20 @@ struct ORCounterStateEntry {
    void *pTransition;
    int nSize;
    ORStateEntry *pORState;
+};
+
+struct XORStateEntry {
+   char cType; //FN_OR
+   int *nTransitionVars;
+   bool parity;
+   int nSize;
+};
+
+struct XORCounterStateEntry {
+   char cType; //FN_OR_COUNTER
+   void *pTransition;
+   int nSize;
+   XORStateEntry *pXORState; //For heuristic purposes
 };
 
 struct SmurfStack{
@@ -151,19 +167,19 @@ void PrintAllSmurfStateEntries() {
 		for(int x = 0; x < arrSmurfStatesTable->curr_size; x+=size) {
 			state_num++;
 			d9_printf3("State %d(%x), ", state_num, arrSmurfStates);
-			if(((SmurfStateEntry *)arrSmurfStates)->cType == FN_SMURF) {
+			if(((TypeStateEntry *)arrSmurfStates)->cType == FN_SMURF) {
 				PrintSmurfStateEntry((SmurfStateEntry *)arrSmurfStates);
 				arrSmurfStates = (void *)(((SmurfStateEntry *)arrSmurfStates) + 1);
 				size = sizeof(SmurfStateEntry);
-			} else if(((SmurfStateEntry *)arrSmurfStates)->cType == FN_INFERENCE) {
+			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_INFERENCE) {
 				PrintInferenceStateEntry((InferenceStateEntry *)arrSmurfStates);
 				arrSmurfStates = (void *)(((InferenceStateEntry *)arrSmurfStates) + 1);
 				size = sizeof(InferenceStateEntry);
-			} else if(((SmurfStateEntry *)arrSmurfStates)->cType == FN_OR) {
+			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_OR) {
 				PrintORStateEntry((ORStateEntry *)arrSmurfStates);
 				arrSmurfStates = (void *)(((ORStateEntry *)arrSmurfStates) + 1);
 				size = sizeof(ORStateEntry);
-			} else if(((SmurfStateEntry *)arrSmurfStates)->cType == FN_OR_COUNTER) {
+			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_OR_COUNTER) {
 				PrintORCounterStateEntry((ORCounterStateEntry *)arrSmurfStates);
 				arrSmurfStates = (void *)(((ORCounterStateEntry *)arrSmurfStates) + 1);
 				size = sizeof(ORCounterStateEntry);
@@ -673,9 +689,9 @@ void *ReadSmurfStateIntoTable(BDDNode *pCurrentBDD) {
 			//FN_OR
 			pStartState = ReadORState(arrElts, nNumElts, pCurrentBDD, (ORStateEntry *)pStartState);
 			
-			if(((SmurfStateEntry *)pStartState)->cType == FN_OR)
+			if(((TypeStateEntry *)pStartState)->cType == FN_OR)
 			  LSGBORStateSetHeurScores((ORStateEntry *)pStartState);
-			else if(((SmurfStateEntry *)pStartState)->cType == FN_OR_COUNTER)
+			else if(((TypeStateEntry *)pStartState)->cType == FN_OR_COUNTER)
 			  LSGBORCounterStateSetHeurScores((ORCounterStateEntry *)pStartState);
 			
 //			fprintf(stderr, "v");
@@ -875,7 +891,7 @@ void Calculate_Heuristic_Values() {
 		//TrueState
 		if(arrSmurfStates[nSmurfIndex] == pTrueSimpleSmurfState) continue;
 		//FN_SMURF
-		if (((SmurfStateEntry *)arrSmurfStates[nSmurfIndex])->cType == FN_SMURF) {
+		if (((TypeStateEntry *)arrSmurfStates[nSmurfIndex])->cType == FN_SMURF) {
 			SmurfStateEntry *pState = (SmurfStateEntry *)arrSmurfStates[nSmurfIndex];
 			SimpleSmurfProblemState->arrPosVarHeurWghts[pState->nTransitionVar] += 
 			  pState->fHeurWghtofTrueTransition;
@@ -889,7 +905,7 @@ void Calculate_Heuristic_Values() {
 				  pState->fHeurWghtofFalseTransition;
 			}
 		//FN_OR
-		} else if (((SmurfStateEntry *)arrSmurfStates[nSmurfIndex])->cType == FN_OR) {
+		} else if (((TypeStateEntry *)arrSmurfStates[nSmurfIndex])->cType == FN_OR) {
 			ORStateEntry *pORState = (ORStateEntry *)arrSmurfStates[nSmurfIndex];
 			int nCurrInfLevel = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
 			int numfound = 0;
@@ -906,7 +922,7 @@ void Calculate_Heuristic_Values() {
 				}
 			}
 		//FN_OR_COUNTER
-		} else if (((SmurfStateEntry *)arrSmurfStates[nSmurfIndex])->cType == FN_OR_COUNTER) {
+		} else if (((TypeStateEntry *)arrSmurfStates[nSmurfIndex])->cType == FN_OR_COUNTER) {
 			ORCounterStateEntry *pORCounterState = (ORCounterStateEntry *)arrSmurfStates[nSmurfIndex];
 			int nCurrInfLevel = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
 			int numfound = 0;
@@ -1211,11 +1227,11 @@ int ApplyInferenceToStates(int nBranchVar, bool bBVPolarity) {
 		if(arrSmurfStates[nSmurfNumber] == pTrueSimpleSmurfState) continue;
 		void *pState = arrSmurfStates[nSmurfNumber];
 		int ret = 1;
-		if(((SmurfStateEntry *)pState)->cType == FN_SMURF) {
+		if(((TypeStateEntry *)pState)->cType == FN_SMURF) {
 			ret = ApplyInferenceToSmurfs(nBranchVar, bBVPolarity, nSmurfNumber, arrSmurfStates);
-		} else if(((SmurfStateEntry *)pState)->cType == FN_OR_COUNTER) {
+		} else if(((TypeStateEntry *)pState)->cType == FN_OR_COUNTER) {
 			ret = ApplyInferenceToORCounter(nBranchVar, bBVPolarity, nSmurfNumber, arrSmurfStates);
-		} else if(((SmurfStateEntry *)pState)->cType == FN_OR) {
+		} else if(((TypeStateEntry *)pState)->cType == FN_OR) {
 			ret = ApplyInferenceToOR(nBranchVar, bBVPolarity, nSmurfNumber, arrSmurfStates);
 		}
 		if(ret == 0) return 0;
