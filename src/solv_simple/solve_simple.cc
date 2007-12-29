@@ -1445,8 +1445,6 @@ find_more_solutions: ;
 }
 
 int simpleSolve() {
-	int bxors_old = BREAK_XORS;
-	BREAK_XORS = 0;
 	int nForceBackjumpLevel_old = nForceBackjumpLevel;
 	if(nForceBackjumpLevel < 0) nForceBackjumpLevel = nVarChoiceLevelsNum+1;
 	//Clear function type:
@@ -1464,7 +1462,6 @@ int simpleSolve() {
 	}
 	//Still need to do some backend stuff like free memory.
 	nForceBackjumpLevel = nForceBackjumpLevel_old;
-	BREAK_XORS = bxors_old;
 	FreeVarMap();
 	return ret;
 	//Hmmm I didn't free ANY of that memory. SEAN!!! FIX THIS!!!
