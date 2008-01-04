@@ -54,24 +54,24 @@ void slider2(char *out_type, int n, int sat)
  * unsat
  * (first function -- notice 1,2,3,4,5,6)
    #define add_state1(1, 2, 3, 4, 5, 6)
-   #equ(xor3(1, and(-3, 5), nand(6, 4)), ite(2, or(5, -6), -5)))
+   #equ(xor(1, and(-3, 5), nand(6, 4)), ite(2, or(5, -6), -5)))
  *
  * (second/third function)
    #define add_state2(1, 2, 3, 4, 5, 6, 7)
-   #equ(6, xor3(-1, xor3(3, and(-4, 5), 4), equ(7, 2)))
+   #equ(6, xor(-1, xor(3, and(-4, 5), 4), equ(7, 2)))
    #define add_state3(1, 2, 3, 4, 5, 6, 7)
-   #not(equ(6, xor3(-1, xor3(3, and(-4, 5), 4), equ(7, 2))))
+   #not(equ(6, xor(-1, xor(3, and(-4, 5), 4), equ(7, 2))))
  *
  * sat
  * (first function -- notice 1,2,3,5,4,6 -- 5,4 switched)
    #define add_state1(1, 2, 3, 5, 4, 6)\n");
-   #equ(xor3(1, and(-3, 5), nand(6, 4)), ite(2, or(5, -6), -5)))
+   #equ(xor(1, and(-3, 5), nand(6, 4)), ite(2, or(5, -6), -5)))
  *
  * (second/third functions - notice -- they are the same)
    #define add_state2(1, 2, 3, 4, 5, 6)
-   #xor3(-1, xor3(3, and(-4, 5), 4), equ(6, 2))
+   #xor(-1, xor(3, and(-4, 5), 4), equ(6, 2))
    #define add_state3(1, 2, 3, 4, 5, 6)
-   #xor3(-1, xor3(3, and(-4, 5), 4), equ(6, 2))
+   #xor(-1, xor(3, and(-4, 5), 4), equ(6, 2))
  *
  * numbers are generated the same way for both sat and unsat
    int start1[6] = {1, 2*s+3, 2*s+1, n/2-1-3*s, n/2-1, n/2};
@@ -104,7 +104,7 @@ void slider2_sat(char *out_type, int n)
 
    // first function
    printf("#define add_state1(1, 2, 3, 5, 4, 6)\n");
-   printf("#equ(xor3(1, and(-3, 5), nand(6, 4)), ite(2, or(5, -6), -5)))\n");
+   printf("#equ(xor(1, and(-3, 5), nand(6, 4)), ite(2, or(5, -6), -5)))\n");
    for(int i=0;i<n/2;i++) {
       printf("*add_state1(%d, %d, %d, %d, %d, %d)\n",
             start1[0], start1[1], start1[2], start1[3], start1[4], start1[5]);
@@ -117,9 +117,9 @@ void slider2_sat(char *out_type, int n)
    }
    // second and third function
    printf("#define add_state2(1, 2, 3, 4, 5, 6)\n");
-   printf("#xor3(-1, xor3(3, and(-4, 5), 4), equ(6, 2))\n");
+   printf("#xor(-1, xor(3, and(-4, 5), 4), equ(6, 2))\n");
    printf("#define add_state3(1, 2, 3, 4, 5, 6)\n");
-   printf("#xor3(-1, xor3(3, and(-4, 5), 4), equ(6, 2))\n");
+   printf("#xor(-1, xor(3, and(-4, 5), 4), equ(6, 2))\n");
    for(int i=0;i<n-n/2;i++) {
       printf("*add_state%d(%d, %d, %d, %d, %d, %d)\n", (i%2)+2,
             start2[0], start2[1], start2[2], start2[3], start2[4], start2[6]);
@@ -170,7 +170,7 @@ void slider2_unsat(char *out_type, int n)
 
    // first function
    printf("#define add_state1(1, 2, 3, 4, 5, 6)\n");
-   printf("#equ(xor3(1, and(-3, 5), nand(6, 4)), ite(2, or(5, -6), -5)))\n");
+   printf("#equ(xor(1, and(-3, 5), nand(6, 4)), ite(2, or(5, -6), -5)))\n");
    for(int i=0;i<n/2;i++) {
       printf("*add_state1(%d, %d, %d, %d, %d, %d)\n",
             start1[0], start1[1], start1[2], start1[3], start1[4], start1[5]);
@@ -183,9 +183,9 @@ void slider2_unsat(char *out_type, int n)
    }
    // second and third function
    printf("#define add_state2(1, 2, 3, 4, 5, 6, 7)\n");
-   printf("#equ(6, xor3(-1, xor3(3, and(-4, 5), 4), equ(7, 2)))\n");
+   printf("#equ(6, xor(-1, xor(3, and(-4, 5), 4), equ(7, 2)))\n");
    printf("#define add_state3(1, 2, 3, 4, 5, 6, 7)\n");
-   printf("#not(equ(6, xor3(-1, xor3(3, and(-4, 5), 4), equ(7, 2))))\n");
+   printf("#not(equ(6, xor(-1, xor(3, and(-4, 5), 4), equ(7, 2))))\n");
    for(int i=0;i<n-n/2;i++) {
       printf("*add_state%d(%d, %d, %d, %d, %d, %d, %d)\n", (i%2)+2,
             start2[0], start2[1], start2[2], start2[3], start2[4], start2[5], start2[6]);
