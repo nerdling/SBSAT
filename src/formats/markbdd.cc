@@ -583,10 +583,10 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 		expect_integer = 0;
 		if(v2 == false_ptr) max = 0;
 		else max = v2->variable;
-		if(max<min) {
-			fprintf(stderr, "\nKeyword 'minmax' cannot have it's second argument (%d) less than it's first argument (%d)...exiting:%d\n", max, min, markbdd_line);
-			exit (1);
-		}
+		//if(max<min) {
+	   //  fprintf(stderr, "\nKeyword 'minmax' cannot have it's second argument (%d) less than it's first argument (%d)...exiting:%d\n", max, min, markbdd_line);
+		//	exit (1);
+		//}
 
 		int maxarguments = 10;
 		int numarguments = 0;
@@ -609,7 +609,6 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 		for(int x = 0; x < numarguments-1; x++)
 		  if(var_list[x] == var_list[x+1]) {
 			  fprintf(stderr, "\nFound duplicate variables in the argument list for keyword 'minmax' (%s)...exiting:%d\n", macros, markbdd_line); exit(1); }
-		
 		
 		strcpy (macros, "minmax");
 		BDDNode *tempBDD = MinMaxBDD(var_list, min, max, numarguments, set_true);
