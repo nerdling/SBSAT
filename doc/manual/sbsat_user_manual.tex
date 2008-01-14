@@ -1021,18 +1021,18 @@ Page~\pageref{define-page}.
 \label{xor-result-figure}
 \begin{verbatim}
    p bdd 44 5
-   equ(xor(1, and(-17, 33)), ite(15, or(33, -40), -33)))
-   equ(xor(2, and(-18, 34)), ite(16, or(34, -41), -34)))
-   equ(xor(3, and(-19, 35)), ite(17, or(35, -42), -35)))
-   equ(xor(4, and(-20, 36)), ite(18, or(36, -43), -36)))
-   equ(xor(5, and(-21, 37)), ite(19, or(37, -44), -37)))
+   equ(xor(1, and(-17, 33)), ite(15, or(33, -40), -33))
+   equ(xor(2, and(-18, 34)), ite(16, or(34, -41), -34))
+   equ(xor(3, and(-19, 35)), ite(17, or(35, -42), -35))
+   equ(xor(4, and(-20, 36)), ite(18, or(36, -43), -36))
+   equ(xor(5, and(-21, 37)), ite(19, or(37, -44), -37))
 \end{verbatim}
 \caption{A canonical form input of ``sliding'' functions.}
 \label{add_state-1-figure}
 \begin{verbatim}
    p bdd 44 5
    #define slide(1, 17, 15, 33, 40)
-   #       equ(xor(1, and(-17, 33), ite(15, or(33, -40), -33)))
+   #       equ(xor(1, and(-17, 33)), ite(15, or(33, -40), -33))
    slide(1, 17, 15, 33, 40) 
    slide(2, 18, 16, 34, 41)
    slide(3, 19, 17, 35, 42)
