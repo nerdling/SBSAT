@@ -47,28 +47,38 @@ typedef struct BDDNodeStruct {
 
    /* memoised values */
    int flag;
-   int tmp_int; 
    infer *inferences, *tmp_infer;
-   struct BDDNodeStruct *tmp_bdd, *or_bdd, *t_and_not_e_bdd, *not_t_and_e_bdd;
-
+   
+	union {
+		struct BDDNodeStruct *tmp_bdd;
+		int tmp_int;
+	};
+	  
+	//struct BDDNodeStruct *or_bdd;
+	//struct BDDNodeStruct *t_and_not_e_bdd, *not_t_and_e_bdd;
 #ifdef BDD_MIRROR_NODE
    struct BDDNodeStruct *mirrCase;
 #endif
 
-   /* smurf state */
-   void *pState;
-   
 	/* autarky smurf state */
-	void *pState_Au;
+	//void *pState_Au;
 	
    /* for tracer5 */
    void *var_ptr;
 
-   // BDDWalksat addons
-	int hamming;
-	float density;
-	float tbr_weight;
-   // BDDWalksat end
+	union {
+		/* smurf state */
+		void *pState;
+
+		struct {
+			// BDDWalksat addons
+			int hamming;
+			float density;
+			float tbr_weight;
+			// BDDWalksat end
+		};
+	};
+	
 } BDDNode;
 
 extern   BDDNode *false_ptr, *true_ptr;

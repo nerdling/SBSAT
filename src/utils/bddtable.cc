@@ -351,11 +351,11 @@ bdd_flag_nodes(BDDNode *node)
 	bdd_flag_nodes(node->notCase->mirrCase); 
 #endif
 	//if(node->or_bdd!=NULL) bdd_flag_nodes(node->or_bdd); 
-	node->or_bdd = NULL;
+	//node->or_bdd = NULL;
 	//if(node->t_and_not_e_bdd!=NULL) bdd_flag_nodes(node->t_and_not_e_bdd);
-	node->t_and_not_e_bdd = NULL;
+	//node->t_and_not_e_bdd = NULL;
 	//if(node->not_t_and_e_bdd!=NULL) bdd_flag_nodes(node->not_t_and_e_bdd)
-	node->not_t_and_e_bdd = NULL;
+	//node->not_t_and_e_bdd = NULL;
 }
 
 int bddtable_node_new_last = 0;
@@ -393,7 +393,7 @@ bdd_gc(int force)
    if (enable_gc == 0) return;
    if (force == 0) {
       if (ite_counters[BDD_NODE_NEW]-bddtable_node_new_last < _bdd_pool_size) return;
-      if (bddtable_free_count > bddtable_free_count_last/2) return;
+      if (bddtable_free_count > bddtable_free_count_last) return;
    }
    bddtable_node_new_last = ite_counters[BDD_NODE_NEW];
 

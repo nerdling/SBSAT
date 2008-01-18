@@ -623,8 +623,8 @@ BDDNode * ite_not(BDDNode * a)
 */
 BDDNode * ite_or_te(BDDNode * a)
 {
-   if (a->or_bdd != NULL) return a->or_bdd;
-   return (a->or_bdd = ite_or(a->thenCase, a->elseCase));
+   //if (a->or_bdd != NULL) return a->or_bdd;
+   return (/*a->or_bdd =*/ ite_or(a->thenCase, a->elseCase));
 }
 
 BDDNode * ite_or (BDDNode * a, BDDNode * b)

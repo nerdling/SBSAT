@@ -57,7 +57,7 @@ Do_Apply_Inferences ()
 	inferlist = inferlist->next;	//NEW Must increment past the empty start node
    DeallocateOneInference(temp); 
 
-	if (enable_gc && (rand() % 100 < 1)) 
+//	if (enable_gc && (rand() % 100 < 1)) 
       bdd_gc();
 	//I know it looks strange to have this here twice, but it's necessary
 	//for preprocessing options that call this but don't have any inferences.

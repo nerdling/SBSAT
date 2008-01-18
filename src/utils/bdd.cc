@@ -1718,14 +1718,16 @@ BDDNode *_possible_BDD_x(BDDNode *f, int x) {
 	
 	if(f->variable == x) {
 		BDDNode *r;
-		if(f->t_and_not_e_bdd != NULL) r = f->t_and_not_e_bdd;
-		else r = and_dot(f->thenCase, ite_not(f->elseCase));
+		//if(f->t_and_not_e_bdd != NULL) r = f->t_and_not_e_bdd;
+		//else
+		  r = and_dot(f->thenCase, ite_not(f->elseCase));
 //		if(r == false_ptr) {				  
 //			return f->tmp_bdd = ite_var(-x); //Question! Maybe better to comment this out.
 //		}
 		BDDNode *e;
-		if(f->not_t_and_e_bdd != NULL) e = f->not_t_and_e_bdd;
-		else e = and_dot(f->elseCase, ite_not(f->thenCase));
+		//if(f->not_t_and_e_bdd != NULL) e = f->not_t_and_e_bdd;
+		//else
+		  e = and_dot(f->elseCase, ite_not(f->thenCase));
 //		if(e == false_ptr) {
 //			return f->tmp_bdd = ite_var(x); //Question! Maybe better to comment this out.
 //		}
@@ -1766,10 +1768,12 @@ BDDNode *_possible_BDD(BDDNode *f, int v) {
 	//if(f->variable < v) return (f->tmp_bdd = var);
 	if(f->variable == v) {
 		BDDNode *r, *e;
-		if(f->t_and_not_e_bdd != NULL) r = f->t_and_not_e_bdd;
-		else f->t_and_not_e_bdd = r = ite_and(f->thenCase, ite_not(f->elseCase));
-		if(f->not_t_and_e_bdd != NULL) e = f->not_t_and_e_bdd;
-		else f->not_t_and_e_bdd = e = ite_and(ite_not(f->thenCase), f->elseCase);
+		//if(f->t_and_not_e_bdd != NULL) r = f->t_and_not_e_bdd;
+		//else f->t_and_not_e_bdd =
+		  r = ite_and(f->thenCase, ite_not(f->elseCase));
+		//if(f->not_t_and_e_bdd != NULL) e = f->not_t_and_e_bdd;
+		//else f->not_t_and_e_bdd =
+		  e = ite_and(ite_not(f->thenCase), f->elseCase);
 		//return (f->tmp_bdd = ite(ite_var(v), r, e));
 		return (f->tmp_bdd = ite_xvar_y_z(ite_var(v), r, e));
 	}
@@ -1852,8 +1856,9 @@ infer *_possible_infer_x(BDDNode *f, int x) {
 			return copy_infer(f->tmp_infer);
 		} else {
 			BDDNode *r_BDD;
-			if(f->t_and_not_e_bdd != NULL) r_BDD = f->t_and_not_e_bdd;
-			else r_BDD = and_dot(f->thenCase, ite_not(f->elseCase));
+			//if(f->t_and_not_e_bdd != NULL) r_BDD = f->t_and_not_e_bdd;
+			//else
+			  r_BDD = and_dot(f->thenCase, ite_not(f->elseCase));
 			                 //Ex_GetInfer(f->thenCase);
 			if(r_BDD == false_ptr) {				  
             /*
@@ -1883,8 +1888,9 @@ infer *_possible_infer_x(BDDNode *f, int x) {
 				return copy_infer(f->tmp_infer);
 			}
 			BDDNode *e_BDD;
-			if(f->not_t_and_e_bdd != NULL) e_BDD = f->not_t_and_e_bdd;
-			else e_BDD = and_dot(f->elseCase, ite_not(f->thenCase));
+			//if(f->not_t_and_e_bdd != NULL) e_BDD = f->not_t_and_e_bdd;
+			//else 
+			  e_BDD = and_dot(f->elseCase, ite_not(f->thenCase));
 			                 //Ex_GetInfer(f->elseCase);
 			if(e_BDD == false_ptr) {
             /*

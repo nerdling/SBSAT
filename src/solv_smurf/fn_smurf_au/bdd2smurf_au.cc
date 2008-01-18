@@ -81,14 +81,14 @@ ComputeSmurfAuOfNormalized(BDDNodeStruct *pFunc, int nAutarkyVble)
    // Collapse 'true' SmurfAu states.
    if (pFunc == true_ptr) return pTrueSmurfAuState;
 
-   if (pFunc->pState_Au) return (SmurfAuState*)(pFunc->pState_Au);
+   //if (pFunc->pState_Au) return (SmurfAuState*)(pFunc->pState_Au);
 
    SmurfAuState *pSmurfAuState = AllocateSmurfAuState();
 
    ite_counters[SMURF_AU_NODE_NEW]++;
 
    pSmurfAuState->pFunc = pFunc;
-   pFunc->pState_Au = (void*)pSmurfAuState;
+   //pFunc->pState_Au = (void*)pSmurfAuState;
 
    // get all the variables
    long tempint_max = 0;
