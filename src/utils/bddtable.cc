@@ -448,7 +448,7 @@ bdd_gc(int force)
             // rehash
             int hash_pos = bddtable_hash_fn(node->variable, node->thenCase, node->elseCase);
             BDDNode **hash_node = bddtable_hash_memory+hash_pos;
-            node->next = *hash_node;;
+            node->next = *hash_node;
             *hash_node = node;
             node->flag = 0;
             bddtable_used_count_last++;

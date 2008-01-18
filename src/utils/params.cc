@@ -226,6 +226,8 @@ t_opt options[] = {
 		"Enable/Disable Strengthening (1/0)"},
 { &DO_INFERENCES, "In",  "In", P_INT, V(i:0,"0"),  V(i:1,"1"), VAR_NORMAL, 0, 
 		"Enable/Disable Inferences (1/0)"},
+{ &DO_EQUIVALENCES, "Eq",  "Eq", P_INT, V(i:0,"0"),  V(i:1,"1"), VAR_NORMAL, 0, 
+		"Enable/Disable Equivalences (1/0)"},
 { &DO_EXIST_QUANTIFY, "Ex",  "Ex", P_INT, V(i:0,"0"),  V(i:1,"1"), VAR_NORMAL, 0,
 		"Enable/Disable Existential Quantification (1/0)"},
 { &DO_EXIST_QUANTIFY_AND, "Ea",  "Ea",  P_INT,  V(i:0,"0"),  V(i:1,"1"), VAR_NORMAL, 0, 
