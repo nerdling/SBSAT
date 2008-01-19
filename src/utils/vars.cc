@@ -165,10 +165,14 @@ varinfo *variablelist = NULL;
 llistStruct *amount = NULL;
 int *num_funcs_var_occurs = NULL;
 
-char brancher_presets[4096]="";
+int solver_reset_level = -1;
+
+char solver_presets[4096]="";
 char comment[1024]="";
 
-char preset_variables_string[2048]="";
+char preset_variables_string[4096]="";
+char solver_polarity_presets[4096]="";
+int solver_polarity_presets_length=0;
 int prover3_max_vars=10;
 int do_split_max_vars=10;
 

@@ -94,7 +94,7 @@ struct ProblemState{
    double *arrPosVarHeurWghts;       //Pointer to array of size nNumVars
 	double *arrNegVarHeurWghts;       //Pointer to array of size nNumVars
 	int *arrInferenceQueue;           //Pointer to array of size nNumVars (dynamically indexed by arrSmurfStack[level].nNumFreeVars
-	int *arrInferenceDeclaredAtLevel; //Pointer to array of size nNumVars
+   int *arrInferenceDeclaredAtLevel; //Pointer to array of size nNumVars
 	SmurfStack *arrSmurfStack;        //Pointer to array of size nNumVars
 };
 ***********************************************************************/
@@ -113,6 +113,11 @@ double fSimpleSolverPrevEndTime;
 int add_one_display=0;
 
 int smurfs_share_paths=1;
+
+int nSimpleSolver_Reset=0;
+int nInfQueueStart=0;
+int solver_polarity_presets_count=0;
+int simple_solver_reset_level=-1;
 
 void allocate_new_SmurfStatesTable(int size) {
 	size = SMURF_TABLE_SIZE;
@@ -227,7 +232,7 @@ void CalculateSimpleSolverProgress(int *_whereAmI, int *_total) {
 	  nInfQueueTail = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
 	
 	int nCurrSearchTreeLevel = 0;
-	for(int i = 0; i < nInfQueueTail && (count<soft_count || (count < hard_count && whereAmI==0)); i++) {
+	for(int i = nInfQueueStart; i < nInfQueueTail && (count<soft_count || (count < hard_count && whereAmI==0)); i++) {
 		int nBranchLit = SimpleSmurfProblemState->arrInferenceQueue[i];
 		if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[abs(nBranchLit)] < 0 ||
 		   (SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[abs(nBranchLit)] == 0 && add_one_display==1)) {
@@ -1076,6 +1081,42 @@ int Simple_DC_Heuristic() { //Simple Don't Care Heuristic
 }
 
 ITE_INLINE
+int SimpleHeuristic() {
+	int nBranchLit;
+	
+	//if(ite_counters[NUM_CHOICE_POINTS] %128 == 64)
+	//if(SimpleSmurfProblemState->nCurrSearchTreeLevel > 10)
+	//nBranchLit = Simple_DC_Heuristic(); //Don't Care - Choose the first unset variable found.
+	//else 
+	nBranchLit = Simple_LSGB_Heuristic();
+	
+	if(solver_polarity_presets_length > solver_polarity_presets_count) {
+		d7_printf3("solver_polarity_presets forcing choice point at level %d to take value %c\n", SimpleSmurfProblemState->nCurrSearchTreeLevel, solver_polarity_presets[SimpleSmurfProblemState->nCurrSearchTreeLevel]);
+		if(nBranchLit < 0) {
+			if(solver_polarity_presets[solver_polarity_presets_count]=='+')
+			  nBranchLit = -nBranchLit;
+		} else {
+			if(solver_polarity_presets[solver_polarity_presets_count]=='-')
+			  nBranchLit = -nBranchLit;
+		}
+		solver_polarity_presets_count++;
+	}
+	
+	if(simple_solver_reset_level == SimpleSmurfProblemState->nCurrSearchTreeLevel) {
+		simple_solver_reset_level=-1;
+		nSimpleSolver_Reset=1;
+		nInfQueueStart = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars+1;
+		d7_printf2("Resetting solver at level %d\n", SimpleSmurfProblemState->nCurrSearchTreeLevel);
+		fprintf(stderr, "here");
+	}
+	
+	ite_counters[NUM_CHOICE_POINTS]++;
+	ite_counters[NO_ERROR]++;
+	
+	return nBranchLit;
+}
+
+ITE_INLINE
 int EnqueueInference(int nInfVar, bool bInfPolarity) {
 	//Try to insert inference into the inference Queue
 	int nInfQueueHead = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
@@ -1257,32 +1298,35 @@ int Init_SimpleSmurfSolver() {
 	FreeVariables();
 	//FreeVarMap(); //This is freed at the end of simpleSolve(). 
 	                //arrVarChoiceLevels and arrSolver2IteVarMap are needed during search.
+
+	simple_solver_reset_level = solver_reset_level-1;
 	
 	return ret;
 }
 
 ITE_INLINE
-void SmurfStates_Push() {
+void SmurfStates_Push(int destination) {
+	//destination=nCurrSearchTreeLevel+1, except in the case of a nSimpleSolver_Reset then destination=0
 	
-	memcpy_ite(SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel+1].arrSmurfStates,
+	memcpy_ite(SimpleSmurfProblemState->arrSmurfStack[destination].arrSmurfStates,
 				  SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].arrSmurfStates,
 				  SimpleSmurfProblemState->nNumSmurfs*sizeof(int));
 
 //	for(int i = 0; i < SimpleSmurfProblemState->nNumSmurfs; i++) {
-//		SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel+1].arrSmurfStates[i] = 
+//		SimpleSmurfProblemState->arrSmurfStack[destination].arrSmurfStates[i] = 
 //		  SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].arrSmurfStates[i];
 //	}
 	
-	SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel+1].nNumFreeVars =
+	SimpleSmurfProblemState->arrSmurfStack[destination].nNumFreeVars =
 	  SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
 
-	SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel+1].nVarChoiceCurrLevel =
+	SimpleSmurfProblemState->arrSmurfStack[destination].nVarChoiceCurrLevel =
 	  SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nVarChoiceCurrLevel;
 	
-	SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel+1].nHeuristicPlaceholder =
+	SimpleSmurfProblemState->arrSmurfStack[destination].nHeuristicPlaceholder =
 	  SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nHeuristicPlaceholder;
 	
-	SimpleSmurfProblemState->nCurrSearchTreeLevel++;
+	SimpleSmurfProblemState->nCurrSearchTreeLevel = destination;
 }
 
 ITE_INLINE
@@ -1360,17 +1404,11 @@ int SimpleBrancher() {
 			
 			//Call Heuristic to get variable and polarity
 			d7_printf2("Calling heuristic to choose choice point #%lld\n", ite_counters[NUM_CHOICE_POINTS]);
-			//if(ite_counters[NUM_CHOICE_POINTS] %128 == 64)
-			//if(SimpleSmurfProblemState->nCurrSearchTreeLevel > 10)
-			//nBranchLit = Simple_DC_Heuristic(); //Don't Care - Choose the first unset variable found.
-			//else 
-			  nBranchLit = Simple_LSGB_Heuristic();
-
-			ite_counters[NUM_CHOICE_POINTS]++;
-			ite_counters[NO_ERROR]++;
+			nBranchLit = SimpleHeuristic();
 			
 			//Push stack
-			SmurfStates_Push();
+			if(nSimpleSolver_Reset) { SmurfStates_Push(0); nSimpleSolver_Reset = 0; }
+			else SmurfStates_Push(SimpleSmurfProblemState->nCurrSearchTreeLevel+1); //Normal condition
 			
 			//Insert heuristic var into inference queue
 			nInfQueueHead = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;

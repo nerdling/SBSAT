@@ -366,7 +366,7 @@ CheckInitHooks()
 
    if (reports != 0) crtwin_init();
 
-   if (*brancher_presets) ret = BrancherPresetString(brancher_presets);
+   if (*solver_presets) ret = BrancherPresetString(solver_presets);
 
    return ret;
 }

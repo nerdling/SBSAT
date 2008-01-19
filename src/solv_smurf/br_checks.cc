@@ -150,7 +150,7 @@ CheckInitHooks()
 
    //if (reports != 0) crtwin_init();
 
-   //if (*brancher_presets) ret = BrancherPresetString(brancher_presets);
+   //if (*solverr_presets) ret = BrancherPresetString(solver_presets);
    
    // Main inferencing loop.
    fPrevEndTime = fStartTime = get_runtime();

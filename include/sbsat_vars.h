@@ -218,7 +218,11 @@ extern char csv_depth_breadth_file[256];
 extern int _bdd_pool_size;
 extern int autarky;
 
-extern char brancher_presets[4096];
+extern int solver_reset_level;
+
+extern char solver_presets[4096];
+extern char solver_polarity_presets[4096];
+extern int solver_polarity_presets_length;
 extern char comment[1024];
 
 #define _BACKTRACKS_PER_STAT_REPORT 10000
@@ -244,7 +248,7 @@ extern float JHEURISTIC_K; // Parameter to the Johnson Village heuristic.
 extern float JHEURISTIC_K_TRUE; 
 extern float JHEURISTIC_K_INF; 
 
-extern char preset_variables_string[2048];
+extern char preset_variables_string[4096];
 extern int prover3_max_vars;
 extern int do_split_max_vars;
 extern int functionTypeLimits[MAX_FUNC];

@@ -271,8 +271,6 @@ t_opt options[] = {
  */
 { NULL, "", "", P_NONE, {"0"}, {"0"}, VAR_NORMAL, 0, 
 	   "\nGeneral solver options:"},
-{ brancher_presets, "", "brancher-presets", P_STRING,	V(i:4095,"4095"), {""}, VAR_NORMAL, 0, 
-	   "Variables that are preset before the brancher is called. Options are ([[=|!|#|+var|-var] ]*)"},
 { &dependence,  "", "dependence", P_CHAR, V(i:0,"0"), V(c:'c',"c"), VAR_NORMAL, 0,
 	   "Modify Independent/Dependent Variables (n=no change, r=reverse, c=clear)"},
 { &max_solutions, "", "max-solutions", P_INT, V(i:0,"0"), V(i:1,"1"), VAR_NORMAL, 0,
@@ -308,6 +306,12 @@ t_opt options[] = {
 		"Enable/Disable backjumping (1/0)"},
 { &nForceBackjumpLevel, "", "force-backjump-level", P_INT, V(i:0,"0"), V(i:-1, "-1"), VAR_NORMAL, 0,
 	   "Set the search tree level (given by initial_branch) to backjump to once a solution is found"},
+{ solver_presets, "", "solver-presets", P_STRING,	V(i:4095,"4095"), {""}, VAR_NORMAL, 0, 
+	   "Variables that are preset before the solver is called. Options are ([[=|!|#|+var|-var] ]*)"},
+{ solver_polarity_presets, "", "solver-polarity-presets", P_STRING,	V(i:4095,"4095"), {""}, VAR_NORMAL, 0, 
+	   "Force the polarity of the top K choice points. Options are ([[=|+|-]]*)"},
+{ &solver_reset_level, "", "solver-reset-level", P_INT, V(i:0,"0"),  V(i:0,"0"), VAR_NORMAL, 0,
+			      "Force the solver to reset after the first K choice points"},
 { &MAX_NUM_CACHED_LEMMAS, "L", "max-cached-lemmas", P_INT,
 		V(i:0,"0"), V(i:5000, "5000"), VAR_NORMAL, 0,
                 "set the maximum # of lemmas"}, 
@@ -503,6 +507,13 @@ finish_params()
               break;
    }
 
+	solver_polarity_presets_length = strlen(solver_polarity_presets);
+	for(int x = 0; x < solver_polarity_presets_length; x++) {
+		if(!(solver_polarity_presets[x] == '+' || solver_polarity_presets[x] == '-')) {
+			dE_printf3("error: --solver-polarity-presets is malformed at character %d (%c)\n", x, solver_polarity_presets[x]);
+			exit(1);
+		}
+	}
 
    /* limit max vbles per smurf flag -S */
    if (MAX_VBLES_PER_SMURF > MAX_MAX_VBLES_PER_SMURF)
