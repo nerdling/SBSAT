@@ -53,9 +53,10 @@
 #define SOLV_UNSAT	8
 #define SOLV_UNKNOWN	9
 #define SOLV_ERROR  10	
+#define SOLV_LIMIT  11
 
 /* conversion result codes */
-#define CONV_OUTPUT    11	
+#define CONV_OUTPUT    12
 
 
 #ifndef ITE_INLINE

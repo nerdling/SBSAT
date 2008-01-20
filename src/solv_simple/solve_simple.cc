@@ -119,6 +119,14 @@ int nInfQueueStart=0;
 int solver_polarity_presets_count=0;
 int simple_solver_reset_level=-1;
 
+//struct AndEqFalseWghtStruct *arrAndEqFalseWght = NULL;
+HWEIGHT K = JHEURISTIC_K;
+
+// We need nMaxRHSSize to be at least one to insure that entry 1 exists
+// and we don't overrun the arrays.
+
+extern int nMaxRHSSize;
+
 void allocate_new_SmurfStatesTable(int size) {
 	size = SMURF_TABLE_SIZE;
 	SimpleSmurfProblemState->arrCurrSmurfStates->pNext = (SmurfStatesTableStruct *)ite_calloc(1, sizeof(SmurfStatesTableStruct), 9, "SimpleSmurfProblemState->arrCurrSmurfStates->pNext");
@@ -357,14 +365,28 @@ void DisplaySimpleSolverBacktrackInfo_gnuplot(double &fSimpleSolverPrevEndTime, 
 	fprintf(fd_csv_trace_file, "%ld %ld\n", (long)ite_counters[NUM_SOLUTIONS], (long)max_solutions);
 }
 
+ITE_INLINE bool CheckSimpleLimits(double fStartTime) {
+   double fEndTime;
+   fEndTime = get_runtime();
+	
+   if (nCtrlC) {
+		return 1;
+	}
 
-//struct AndEqFalseWghtStruct *arrAndEqFalseWght = NULL;
-HWEIGHT K = JHEURISTIC_K;
+   if (nTimeLimit && (fEndTime - fStartTime) > nTimeLimit) {
+		d2_printf2("Bailling out because the Time limit of %lds ", nTimeLimit);
+		d2_printf2("is smaller than elapsed time %.0fs\n", (fEndTime - fStartTime));
+		return 1;
+	}
 
-// We need nMaxRHSSize to be at least one to insure that entry 1 exists
-// and we don't overrun the arrays.
-
-extern int nMaxRHSSize;
+	if (nNumChoicePointLimit && ite_counters[NUM_CHOICE_POINTS]>nNumChoicePointLimit) {
+		d2_printf2("Bailling out because the limit on the number of choicepoints %ld ",
+					  nNumChoicePointLimit);
+		d2_printf2("is smaller than the number of choicepoints %ld\n", (long)ite_counters[NUM_CHOICE_POINTS]);
+		return 1;
+	}
+	return 0;
+}
 
 ITE_INLINE void LSGBORStateSetHeurScores(ORStateEntry *pState) {
 	int size = pState->nSize;
@@ -1340,13 +1362,16 @@ int SmurfStates_Pop() {
       if (fd_csv_trace_file) {
 			DisplaySimpleSolverBacktrackInfo_gnuplot(fSimpleSolverPrevEndTime, fSimpleSolverStartTime);
 		}
+		if(CheckSimpleLimits(fSimpleSolverStartTime)==1) return SOLV_LIMIT;
 	}
-		
+
 	SimpleSmurfProblemState->nCurrSearchTreeLevel--;
 	
-	if(SimpleSmurfProblemState->nCurrSearchTreeLevel < 0)
-	  return 0;
-	return 1;  
+	if(SimpleSmurfProblemState->nCurrSearchTreeLevel < 0) {
+		if(ite_counters[NUM_SOLUTIONS] == 0) return SOLV_UNSAT; //return Unsatisifable
+		else return SOLV_SAT;
+	}
+	return SOLV_UNKNOWN;
 }
 
 ITE_INLINE
@@ -1356,12 +1381,9 @@ int backtrack() {
 	
 	int nInfQueueTail = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
 	
-	if(SmurfStates_Pop() == 0) {
-		//We are at the top of the stack
-		if(ite_counters[NUM_SOLUTIONS] == 0) return SOLV_UNSAT; //return Unsatisifable
-		else return SOLV_SAT;
-	}
-
+	int nPop = SmurfStates_Pop();
+	if(nPop != SOLV_UNKNOWN) return nPop;
+	
 	int nInfQueueHead = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
 	
 	//Empty the inference queue & reverse polarity of cp var
@@ -1440,6 +1462,7 @@ int SimpleBrancher() {
 					switch(backtrack()) {
 					 case SOLV_UNSAT: return SOLV_UNSAT;
 					 case SOLV_SAT: return SOLV_SAT;
+					 case SOLV_LIMIT: return ret;
 					 default: break;
 					}
 					
@@ -1473,6 +1496,7 @@ find_more_solutions: ;
 				switch(backtrack()) {
 				 case SOLV_UNSAT: return SOLV_UNSAT;
 				 case SOLV_SAT: return SOLV_SAT;
+				 case SOLV_LIMIT: return ret;
 				 default: break;
 				}
 			} while(nForceBackjumpLevel < SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nVarChoiceCurrLevel);
