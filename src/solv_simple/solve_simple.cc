@@ -1110,9 +1110,9 @@ int SimpleHeuristic() {
 	
 	//if(ite_counters[NUM_CHOICE_POINTS] %128 == 64)
 	//if(SimpleSmurfProblemState->nCurrSearchTreeLevel > 10)
-	//nBranchLit = Simple_DC_Heuristic(); //Don't Care - Choose the first unset variable found.
+	  //nBranchLit = Simple_DC_Heuristic(); //Don't Care - Choose the first unset variable found.
 	//else 
-	nBranchLit = Simple_LSGB_Heuristic();
+	  nBranchLit = Simple_LSGB_Heuristic();
 	
 	if(solver_polarity_presets_length > solver_polarity_presets_count) {
 		d7_printf3("solver_polarity_presets forcing choice point at level %d to take value %c\n", SimpleSmurfProblemState->nCurrSearchTreeLevel, solver_polarity_presets[SimpleSmurfProblemState->nCurrSearchTreeLevel]);
