@@ -104,6 +104,8 @@ SmurfStateEntry *pTrueSimpleSmurfState;
 //#define HEUR_MULT 10000
 #define SMURF_TABLE_SIZE 1000000
 
+#define SMURF_STATES_INCREASE_SIZE 9
+
 ProblemState *SimpleSmurfProblemState;
 
 double fSimpleSolverStartTime;
@@ -817,7 +819,7 @@ void ReadAllSmurfsIntoTable() {
 	}
 	
 	for(int x = 0; x < SimpleSmurfProblemState->nNumVars; x++) {
-		SimpleSmurfProblemState->arrSmurfStack[x].arrSmurfStates
+		if(x < SMURF_STATES_INCREASE_SIZE) SimpleSmurfProblemState->arrSmurfStack[x].arrSmurfStates
 		  = (void **)ite_calloc(SimpleSmurfProblemState->nNumSmurfs, sizeof(int *), 9, "arrSmurfStates");
 		SimpleSmurfProblemState->arrVariableOccursInSmurf[x] = (int *)ite_calloc(temp_varcount[x]+1, sizeof(int *), 9, "arrVariableOccursInSmurf[x]");
 		SimpleSmurfProblemState->arrVariableOccursInSmurf[x][temp_varcount[x]] = -1;
@@ -1329,7 +1331,14 @@ int Init_SimpleSmurfSolver() {
 ITE_INLINE
 void SmurfStates_Push(int destination) {
 	//destination=nCurrSearchTreeLevel+1, except in the case of a nSimpleSolver_Reset then destination=0
-	
+
+	if(SimpleSmurfProblemState->arrSmurfStack[destination].arrSmurfStates == NULL) {
+		for(int i = destination; i < destination + SMURF_STATES_INCREASE_SIZE; i++)
+		  SimpleSmurfProblemState->arrSmurfStack[i].arrSmurfStates
+		  = (void **)ite_calloc(SimpleSmurfProblemState->nNumSmurfs, sizeof(int *), 9, "arrSmurfStates");
+		//fprintf(stderr, "alloc %d\n", SimpleSmurfProblemState->nCurrSearchTreeLevel);
+	}
+		  
 	memcpy_ite(SimpleSmurfProblemState->arrSmurfStack[destination].arrSmurfStates,
 				  SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].arrSmurfStates,
 				  SimpleSmurfProblemState->nNumSmurfs*sizeof(int));
