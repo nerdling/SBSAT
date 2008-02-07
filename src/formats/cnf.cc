@@ -126,7 +126,12 @@ char getNextSymbol_CNF (char macros[20], int *intnum) {
 		}	
 		if(((p >= '0') && (p <= '9')) || (p == '-')) {
 			i = 0;
+			int neg = 0;
+			if(p == '-') neg = 1;
 			while(((p >= '0') && (p <= '9')) || (p == '-')) {
+				if(neg == 1 && i == 1 && p == '0') {
+					return 'X'; //error -0 found
+				}
 				integers[i] = p;
 				i++;
             p = fgetc(finputfile);
