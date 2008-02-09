@@ -6,10 +6,12 @@ EXTRA_DIST= 12.trace.gz.params \
 				dlx2_cc_bug11.trace.Hb.params \
 				queue.14.prove.Hv.params \
 				slider_80_sat.ite.Hjq.params \
+				slider_80_sat.ite.simple.params \
 				barrel.6.prove.params \
 				dlx2_cc_bug11.trace.Hjl.params \
 				queue.14.prove.params \
 				slider_80_sat.ite.params \
+				slider_80_sat.ite.simple.params \
 				barrel.7.prove.params \
 				dlx2_cc_bug11.trace.Hv.params \
 				queue.8.prove.Hb.params \
