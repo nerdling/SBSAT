@@ -26,6 +26,8 @@ SBSAT_LIBS= \
 	solv_bddwalk/libsolv_bddwalk.a  \
 	solv_wvf/libsolv_wvf.a  \
 	solv_simple/libsolv_simple.a \
+	solv_simple/fn_smurf/libfnsmurf_simple.a \
+	solv_simple/fn_or/libfnor_simple.a \
 	postproc/libpostproc.a \
 	preproc/libpreproc.a \
 	utils/libutils.a 
