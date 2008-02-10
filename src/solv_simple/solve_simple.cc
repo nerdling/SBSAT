@@ -1331,12 +1331,13 @@ int Init_SimpleSmurfSolver() {
 ITE_INLINE
 void SmurfStates_Push(int destination) {
 	//destination=nCurrSearchTreeLevel+1, except in the case of a nSimpleSolver_Reset then destination=0
-
 	if(SimpleSmurfProblemState->arrSmurfStack[destination].arrSmurfStates == NULL) {
-		for(int i = destination; i < destination + SMURF_STATES_INCREASE_SIZE; i++)
-		  SimpleSmurfProblemState->arrSmurfStack[i].arrSmurfStates
-		  = (void **)ite_calloc(SimpleSmurfProblemState->nNumSmurfs, sizeof(int *), 9, "arrSmurfStates");
-		//fprintf(stderr, "alloc %d\n", SimpleSmurfProblemState->nCurrSearchTreeLevel);
+		//fprintf(stdout, "increasing stack size\n");
+		for(int i = destination; i < destination + SMURF_STATES_INCREASE_SIZE && i < SimpleSmurfProblemState->nNumVars; i++) {
+			SimpleSmurfProblemState->arrSmurfStack[i].arrSmurfStates
+			  = (void **)ite_calloc(SimpleSmurfProblemState->nNumSmurfs, sizeof(int *), 9, "arrSmurfStates");
+			//fprintf(stderr, "alloc %d\n", i);
+		}
 	}
 		  
 	memcpy_ite(SimpleSmurfProblemState->arrSmurfStack[destination].arrSmurfStates,
