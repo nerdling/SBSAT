@@ -55,7 +55,8 @@ enum {
 	FN_OR,
    FN_OR_COUNTER,
 	FN_XOR,
-	FN_AND_EQU,
+   FN_XOR_COUNTER,
+   FN_AND_EQU,
 	FN_OR_EQU,
 	FN_MINMAX,
 	FN_NEG_MINMAX
@@ -120,7 +121,7 @@ struct ORCounterStateEntry {
 struct XORStateEntry {
 	char cType; //FN_OR
 	int *nTransitionVars;
-	bool parity;
+	bool bParity;
 	int nSize;
 };
 

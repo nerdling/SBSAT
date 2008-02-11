@@ -39,94 +39,11 @@
 #include "sbsat_solver.h"
 #include "solver.h"
 
-struct OREqFalseWghtStruct *arrOREqFalseWght = NULL;
-struct OREqWghtStruct *arrOREqWght = NULL;
-double *arrOREqWghtCx = NULL;
-double *arrOREqWghtCe = NULL;
-double *arrOREqWghtCt = NULL; // lhs is false
+struct ORWeightStruct *arrORWeight = NULL;
 
 void LSGBORGetHeurScores(int nFnId);
 
 int nORMaxRHSSize = 1;
-
-/*void
-HrLSGBFnORInit()
-{
-   for(int j=0; arrFnORTypes[j] != 0; j++)
-   {
-      int i=arrFnORTypes[j];
-      procHeurGetScores[i] = LSGBORGetHeurScores;
-      procHeurUpdateFunctionInfEnd[i] = LSGBORUpdateFunctionInfEnd;
-   }
-}
-*/
-
-// Call this one after all functions are created (to have nORMaxRHSSize)
-ITE_INLINE void
-LSGBORInitHeuristicTables() {
-   // Initialize some tables for computing heuristic values
-   // for variables that are mentioned in special functions.
-
-   HWEIGHT K = JHEURISTIC_K;
-
-   // We need nORMaxRHSSize to be at least one to insure that entry 1 exists
-   // and we don't overrun the arrays.
-
-   arrOREqFalseWght = (OREqFalseWghtStruct*)ite_calloc(nORMaxRHSSize + 1, sizeof(OREqFalseWghtStruct), 
-          9, "arrOREqFalseWght");
-
-   arrOREqWght = (OREqWghtStruct*)ite_calloc(nORMaxRHSSize + 1,  sizeof(OREqWghtStruct),
-          9, "arrOREqWght");
-
-   // index is the CURRENT number of unknowns!
-   
-   // .fNeg = 0; should be !!! JHEURISTIC_K_TRUE !! for all indeces
-   // never happens!
-   //arrOREqFalseWght[1].fPos = 2*JHEURISTIC_K_TRUE+1*JHEURISTIC_K_INF;
-   arrOREqWght[0].fFmla = (1*JHEURISTIC_K_INF+JHEURISTIC_K_TRUE);
-   arrOREqFalseWght[1].fPos = 2*JHEURISTIC_K_TRUE+1*JHEURISTIC_K_INF;
-   arrOREqFalseWght[1].fFmla = arrOREqFalseWght[1].fPos; ///(2*K);
-
-   for (int i = 2; i <= nORMaxRHSSize; i++) {
-      arrOREqFalseWght[i].fPos = JHEURISTIC_K_TRUE+arrOREqFalseWght[i - 1].fFmla;
-      arrOREqFalseWght[i].fFmla = arrOREqFalseWght[i].fPos / (2 * K);
-   }
-
-   // now fFmla is a weight of the state of PLAIN OR
-
-   for (int i = 1; i <= nORMaxRHSSize; i++) {
-      arrOREqWght[i].fLHSPos = i*JHEURISTIC_K_INF+JHEURISTIC_K_TRUE;
-      arrOREqWght[i].fLHSNeg = arrOREqFalseWght[i].fFmla;
-      arrOREqWght[i].fRHSPos = arrOREqWght[i - 1].fFmla;
-      arrOREqWght[i].fRHSNeg = 1*JHEURISTIC_K_INF+JHEURISTIC_K_TRUE;
-
-      // HERE I'm changing fFmla to OR_EQU
-      arrOREqWght[i].fFmla
-		  = (arrOREqWght[i].fLHSPos
-			  + arrOREqWght[i].fLHSNeg
-			  + i * arrOREqWght[i].fRHSPos
-			  + i * arrOREqWght[i].fRHSNeg) / (2 * (i+1) * K);
-   }
-
-   for(int i=0;i<=nORMaxRHSSize;i++) {
-      d9_printf5("%d: PLAIN OR fFmla %f, fPos %f fNeg %f\n", i, 
-					  arrOREqFalseWght[i].fFmla,
-					  arrOREqFalseWght[i].fPos,
-					  arrOREqFalseWght[i].fNeg);
-      d9_printf5("%d: EQ OR fFmla %f, fLHSPos %f fLHSNeg %f ", i,
-					  arrOREqWght[i].fFmla,
-					  arrOREqWght[i].fLHSPos,
-					  arrOREqWght[i].fLHSNeg);
-      d9_printf3("fRHSPos %f fRHSNeg %f\n", 
-					  arrOREqWght[i].fRHSPos,
-					  arrOREqWght[i].fRHSNeg);
-   }
-}
-
-ITE_INLINE void LSGBORFreeHeuristicTables() {
-   ite_free((void**)&arrOREqFalseWght);
-   ite_free((void**)&arrOREqWght);
-}
 
 //---------------------------------------------------------------
 
@@ -138,16 +55,16 @@ ITE_INLINE void LSGBORStateSetHeurScores(ORStateEntry *pState) {
 	if(size > nORMaxRHSSize) {
 		size+=20;
 		if(nORMaxRHSSize == 1) {
-			arrOREqFalseWght = (OREqFalseWghtStruct*)ite_calloc(size+1, sizeof(OREqFalseWghtStruct), 9, "arrOREqFalseWght");
-			arrOREqFalseWght[2].fPos = JHEURISTIC_K_TRUE+JHEURISTIC_K_INF;
-			arrOREqFalseWght[2].fFmla = (arrOREqFalseWght[2].fPos + JHEURISTIC_K_TRUE) / (2*K);
+			arrORWeight = (ORWeightStruct*)ite_calloc(size+1, sizeof(ORWeightStruct), 9, "arrORWeight");
+			arrORWeight[2].fNeg = JHEURISTIC_K_TRUE+JHEURISTIC_K_INF;
+			arrORWeight[2].fFmla = (arrORWeight[2].fNeg + JHEURISTIC_K_TRUE) / (2*K);
 			nORMaxRHSSize = 2;
 		} else
-		  arrOREqFalseWght = (OREqFalseWghtStruct*)ite_recalloc(arrOREqFalseWght, nORMaxRHSSize, size+1, sizeof(OREqFalseWghtStruct), 9, "arrOREqFalseWght");
+		  arrORWeight = (ORWeightStruct*)ite_recalloc(arrORWeight, nORMaxRHSSize, size+1, sizeof(ORWeightStruct), 9, "arrORWeight");
 
 		for (int i = nORMaxRHSSize+1; i <= size; i++) {
-			arrOREqFalseWght[i].fPos = arrOREqFalseWght[i - 1].fFmla;
-			arrOREqFalseWght[i].fFmla = (arrOREqFalseWght[i].fPos + JHEURISTIC_K_TRUE) / (2*K);
+			arrORWeight[i].fNeg = arrORWeight[i - 1].fFmla;
+			arrORWeight[i].fFmla = (arrORWeight[i].fNeg + JHEURISTIC_K_TRUE) / (2*K);
 		}
 		nORMaxRHSSize = size;
 	}
@@ -158,17 +75,17 @@ ITE_INLINE void LSGBORCounterStateSetHeurScores(ORCounterStateEntry *pState) {
 }
 
 ITE_INLINE double LSGBORGetHeurScore(ORStateEntry *pState) {
-	return arrOREqFalseWght[2].fFmla;
+	return arrORWeight[2].fFmla;
 }
 
-ITE_INLINE double LSGBORGetHeurPos(ORStateEntry *pState) {
-	return arrOREqFalseWght[2].fPos;
+ITE_INLINE double LSGBORGetHeurNeg(ORStateEntry *pState) {
+	return arrORWeight[2].fNeg;
 }
 
 ITE_INLINE double LSGBORCounterGetHeurScore(ORCounterStateEntry *pState) {
-	return arrOREqFalseWght[pState->nSize].fFmla;
+	return arrORWeight[pState->nSize].fFmla;
 }
 
-ITE_INLINE double LSGBORCounterGetHeurPos(ORCounterStateEntry *pState) {
-	return arrOREqFalseWght[pState->nSize].fPos;
+ITE_INLINE double LSGBORCounterGetHeurNeg(ORCounterStateEntry *pState) {
+	return arrORWeight[pState->nSize].fNeg;
 }

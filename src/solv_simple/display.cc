@@ -70,6 +70,14 @@ void PrintAllSmurfStateEntries() {
 				PrintORCounterStateEntry((ORCounterStateEntry *)arrSmurfStates);
 				arrSmurfStates = (void *)(((ORCounterStateEntry *)arrSmurfStates) + 1);
 				size = sizeof(ORCounterStateEntry);
+			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_XOR) {
+				PrintXORStateEntry((XORStateEntry *)arrSmurfStates);
+				arrSmurfStates = (void *)(((XORStateEntry *)arrSmurfStates) + 1);
+				size = sizeof(XORStateEntry);
+			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_XOR_COUNTER) {
+				PrintXORCounterStateEntry((XORCounterStateEntry *)arrSmurfStates);
+				arrSmurfStates = (void *)(((XORCounterStateEntry *)arrSmurfStates) + 1);
+				size = sizeof(XORCounterStateEntry);
 			}
 		}
 		arrSmurfStatesTable = arrSmurfStatesTable->pNext;

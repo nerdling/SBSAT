@@ -61,69 +61,43 @@ typedef struct {
 
 //---------------------------------------------------------------------
 
-// The following structure is used for the entries in the arrOREqFalseWght
+// The following structure is used for the entries in the arrORWeight
 // array.
-// An OREqFalse constraint is one of the form
-// false = lit_1 /\ lit_2 /\ ... /\ lit_i.
-// This is equivalent to the constraint
-// -lit_1 \/ -lit_2 \/ ... \/ -lit_i
-// but the solver uses the OREqFalse form for PLAINOR special functions.
-// Also, when an OREq constraint (gets its LHS set to false) it
-// becomes an OREqFalse.
-// (Lemmas, on the other hand, are stored as disjunctions of literals.)
+// An OR constraint is one of the form
+// lit_1 \/ lit_2 \/ ... \/ lit_i.
 
-// arrOREqFalseWght[i].fPos is the heuristic weight of
-// a transisition on an OREqFalse constraint (whose RHS is of length i)
-// which sets one of the RHS literals to true.
+// arrORWeight[i].fNeg is the heuristic weight of
+// a transisition on an OR constraint (who is of length i)
+// which sets one of the literals to false.
 
-// arrOREqFalseWght[i].fNeg is the analogous weight for setting one of the
-// RHS literals to false.
-
-// arrOREqFalseWght[i].fFmla is the heuristic weight of the constraint as a
+// arrORWeight[i].fFmla is the heuristic weight of the constraint as a
 // whole.
-struct OREqFalseWghtStruct
+struct ORWeightStruct
 {
-  HWEIGHT fPos;
   HWEIGHT fNeg;
   HWEIGHT fFmla;
 };
 
 //---------------------------------------------------------------------
 
-// The following structure is used for the entries in the arrOREqWght
+// The following structure is used for the entries in the arrXORWeight
 // array.
-// An OREq constraint is one of the form
-// lit_0 = lit_1 /\ lit_2 /\ ... /\ lit_i.
+// An XOR constraint is one of the form
+// lit_1 + lit_2 + ... + lit_i.
 
-// arrOREqWght[i].fLHSPos is the heuristic weight of
-// a transisition on an OREq constraint whose RHS is of length i
-// which sets the LHS literal to true.
+// arrXORWeight[i] is the heuristic weight of the constraint as a
+// whole.
 
-// arrOREqWght[i].fLHSNeg is analogous weight for setting the LHS to false.
-
-// arrOREqWght[i].fRHSPos is the weight for setting one of the RHS literals
-// to true.
-
-// arrOREqWght[i].fRHSNeg is the weight for setting one of the RHS literals
-// to false.
-
-// arrOREqWght[i].fRHSNeg is the weight of the constraint as a whole.
-struct OREqWghtStruct
-{
-  HWEIGHT fLHSPos;
-  HWEIGHT fLHSNeg;
-  HWEIGHT fRHSPos;
-  HWEIGHT fRHSNeg;
-  HWEIGHT fFmla;
+struct XORWeightStruct {
+	HWEIGHT fFmla;
 };
+
 
 //---------------------------------------------------------------------
 
 extern HeurScores *arrHeurScores;
-extern struct OREqFalseWghtStruct *arrOREqFalseWght;
-extern struct OREqWghtStruct *arrOREqWght;
-extern double *arrOREqWghtCx;
-extern double *arrOREqWghtCe;
-extern double *arrOREqWghtCt;
+extern struct ORWeightStruct *arrORWeight;
+extern struct XORWeightStruct *arrXORWeight;
+
 
 #endif // J_HEURISTIC_H

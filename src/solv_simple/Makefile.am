@@ -1,4 +1,4 @@
-SUBDIRS= include fn_smurf fn_or
+SUBDIRS= include fn_smurf fn_or fn_xor
 
 INCLUDES=-I$(top_srcdir)/include -I$(top_srcdir)/src/solv_simple/include
 sources= solv_simple.cc solv_simple_init.cc vars_init.cc vars_map.cc \

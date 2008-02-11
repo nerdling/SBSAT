@@ -41,6 +41,7 @@
 #include "hr_lsgb.h"
 #include "fn_smurf.h"
 #include "fn_or.h"
+#include "fn_xor.h"
 #include "display.h"
 
 #define HEUR_MULT 10000

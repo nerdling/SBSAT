@@ -188,7 +188,7 @@ void *ReadSmurfStateIntoTable(BDDNode *pCurrentBDD) {
 		qsort(arrElts, nNumElts, sizeof(int), revcompfunc);
 		
 		int equ_var;
-		if(nNumElts >= 2 &&//nNumElts >= functionTypeLimits[PLAINOR] &&
+		if(nNumElts >= 3 &&//nNumElts >= functionTypeLimits[PLAINOR] &&
 			isOR(pCurrentBDD)) {
 			//FN_OR
 			pStartState = CreateORState(arrElts, nNumElts, pCurrentBDD, (ORStateEntry *)pStartState);
@@ -198,15 +198,18 @@ void *ReadSmurfStateIntoTable(BDDNode *pCurrentBDD) {
 			else if(((TypeStateEntry *)pStartState)->cType == FN_OR_COUNTER)
 			  LSGBORCounterStateSetHeurScores((ORCounterStateEntry *)pStartState);
 			//       fprintf(stderr, "v");
-		} else if(0 && nNumElts >= 3 &&//nNumElts >= functionTypeLimits[PLAINXOR] &&
+		} else if(nNumElts >= 7 &&//nNumElts >= functionTypeLimits[PLAINXOR] &&
 					 isXOR(pCurrentBDD)) {
 			//FN_XOR
 			//pStartState = CreateSmurfState(arrElts, nNumElts, pCurrentBDD, (SmurfStateEntry *)pStartState);        
 			//LSGBSmurfSetHeurScores((SmurfStateEntry *)pStartState);
-			//       fprintf(stderr, "+");
-			pCurrentBDD->pState = pTrueSimpleSmurfState;
-			pStartState = pTrueSimpleSmurfState;
-			ite_free((void **)&arrElts);
+			//fprintf(stderr, "+");
+			pStartState = CreateXORState(arrElts, nNumElts, pCurrentBDD, (XORStateEntry *)pStartState);
+			
+			if(((TypeStateEntry *)pStartState)->cType == FN_XOR)
+			  LSGBXORStateSetHeurScores((XORStateEntry *)pStartState);
+			else if(((TypeStateEntry *)pStartState)->cType == FN_XOR_COUNTER)
+			  LSGBXORCounterStateSetHeurScores((XORCounterStateEntry *)pStartState);
 		} else if(0 && nNumElts >= 3 &&//nNumElts >= functionTypeLimits[PLAINAND] &&
 					 (equ_var = isAND_EQU(pCurrentBDD, tempint, nNumElts))!=0) {
 			//FN_AND_EQU / FN_OR_EQU

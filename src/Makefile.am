@@ -28,6 +28,7 @@ SBSAT_LIBS= \
 	solv_simple/libsolv_simple.a \
 	solv_simple/fn_smurf/libfnsmurf_simple.a \
 	solv_simple/fn_or/libfnor_simple.a \
+	solv_simple/fn_xor/libfnxor_simple.a \
 	postproc/libpostproc.a \
 	preproc/libpreproc.a \
 	utils/libutils.a 

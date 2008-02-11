@@ -43,6 +43,8 @@ void *CreateORState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, ORStateEnt
 //	fprintf(stderr, "\n");
 //	PrintAllSmurfStateEntries();
 
+	pCurrentBDD->pState = (void *)pStartState;
+	
 	if(nNumElts == 2) return (void *)pStartState;
 
 	ORCounterStateEntry *pCurrORCounter;
