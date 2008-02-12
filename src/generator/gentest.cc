@@ -38,7 +38,7 @@
 #include <stdio.h>
 #include "sbsat.h"
 
-void makeXor(int variables, int functions, int length, int width);
+void makeXor(int variables, int functions, int length, int width, int fixed);
 void vanDerWaerden(char *vdw_type, int n, int k, int p);
 void rn(char *rn_type, int n, int k, int l);
 void slider2(char *out_type, int n, int sat);
@@ -65,15 +65,16 @@ int main(int argc, char **argv) {
 		return 0;
 	} else
    if (argc > 1 && !strcmp(argv[1], "xor")) { 
-      if (argc < 6 || (argc > 2 && !strcmp(argv[2], "--help"))) {
-         fprintf(stderr, "usage: %s xor #vars #functions length max_width\n", argv[0]);
+      if (argc < 7 || (argc > 2 && !strcmp(argv[2], "--help"))) {
+         fprintf(stderr, "usage: %s xor #vars #functions length max_width fixed(0/1)\n", argv[0]);
          return 0;
       }
       int variables = atoi(argv[2]);
       int functions = atoi(argv[3]);
 		int length = atoi(argv[4]);
 		int width = atoi(argv[5]);
-      makeXor(variables, functions, length, width);
+		int fixed = atoi(argv[6]);
+      makeXor(variables, functions, length, width, fixed);
 		return 0;
 	} else
    if (argc > 1 && !strcmp(argv[1], "rn")) { 

@@ -309,7 +309,7 @@ t_opt options[] = {
 { solver_presets, "", "solver-presets", P_STRING,	V(i:4095,"4095"), {""}, VAR_NORMAL, 0, 
 	   "Variables that are preset before the solver is called. Options are ([[=|!|#|+var|-var] ]*)"},
 { solver_polarity_presets, "", "solver-polarity-presets", P_STRING,	V(i:4095,"4095"), {""}, VAR_NORMAL, 0, 
-	   "Force the polarity of the top K choice points. Options are ([[=|+|-]]*)"},
+	   "Force the polarity of the top K choice points. Options are ([+|-]*)"},
 { &solver_reset_level, "", "solver-reset-level", P_INT, V(i:0,"0"),  V(i:0,"0"), VAR_NORMAL, 0,
 			      "Force the solver to reset after the first K choice points"},
 { &MAX_NUM_CACHED_LEMMAS, "L", "max-cached-lemmas", P_INT,
