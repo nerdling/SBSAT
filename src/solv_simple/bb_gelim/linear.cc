@@ -67,8 +67,8 @@ typedef struct equiv_rec {
 	int no_inp_vars; // The number of input variables                   
 	int index;       // Number of vectors we have                       
 	int vec_size;    // Number of bytes comprising each VecType vector
-	int equiv_idx;   // how many such nodes are in use.                 
-	int Tr,Fa;       // Symbols for true and false
+  //	int equiv_idx;   // how many such nodes are in use.                 
+  //	int Tr,Fa;       // Symbols for true and false
 } EquivVars;
 
 
@@ -192,8 +192,8 @@ int no_inp_vars; // The number of input variables
 int no_funcs;    // The max number of functions (rows in matrix)
 int vindex;       // Number of vectors we have 
 int vec_size;    // Number of bytes comprising each VecType vector
-int equiv_idx;   // How many such nodes are in use.     
-int Tr,Fa;       // Symbols for true and false 
+//int equiv_idx;   // How many such nodes are in use.     
+//int Tr,Fa;       // Symbols for true and false 
 
 int vecs_vlst_start;
 int vecs_vsze_start;
@@ -219,8 +219,8 @@ void initEquiv(int inp, int out, int True, int False) {
 	      cout << "Whoops! True cannot be equal to False.\n";
 	      exit(0);
       }
-      int sze = (True > False) ? True : False; 
-      sze++;
+      //      int sze = (True > False) ? True : False; 
+      //      sze++;
 
       no_funcs = out+inp; //The inp is room for equivalences.
 		                    //SEAN!!! This is a temp fix and
@@ -277,13 +277,13 @@ void initEquiv(int inp, int out, int True, int False) {
       rec = (EquivVars *)frame;
       no_inp_vars = rec->no_inp_vars = inp; // Number of input variables  
       vindex = rec->index = 0;
-      equiv_idx = rec->equiv_idx = 3; // Can't use 0 since use minus to 
+      //      equiv_idx = rec->equiv_idx = 3; // Can't use 0 since use minus to 
                                       // point to equiv node, can't use 1 
                                       // because -1 means not pointing to 
                                       // anything, can't use -2 since index 
                                       // 2 is taken for T and F
-      Tr = rec->Tr = True;
-      Fa = rec->Fa = False;
+      //      Tr = rec->Tr = True;
+      //      Fa = rec->Fa = False;
 		
 		if(ge_preproc == '1') {
 			vec_size = rec->vec_size = 1+no_inp_vars/(sizeof(VecType)*8);
@@ -379,7 +379,7 @@ int  addRow (XORd *xord) {
 		}
 		// If k == -1 then no 1's were found in the new vector.
 		if (k == -1) {
-			if (vec[vec_size-1]) return -1; // Inconsistent
+			if (vec[vec_size-1]) return -1; // Inconsistent. Is this check correct? Should it be on the last bit vs. last word?
 			else return 0; // No change
 		}
 		// Open up a new diagonal column
@@ -390,6 +390,8 @@ int  addRow (XORd *xord) {
 		int bit = save_first_column % (sizeof(VecType)*8);
 		mask[word] &= (-1 ^ (1 << bit));
 		
+		/* I think we don't have to do this because the mask is keeping track of this information. 
+
 		// Cancel all 1's in the new column.  Currently looks at *all* vectors!
 		unsigned long vec_address = frame_start + vecs_v_start;
 		for (int i=0 ; i < rec->index ; i++) {
@@ -399,7 +401,58 @@ int  addRow (XORd *xord) {
 			}
 			vec_address += vecs_rec_bytes;
 		}
-		// Insert the new row
+		*/
+	
+		//Check for inferences
+		unsigned long vec_address = frame_start + vecs_v_start;
+		for (int i=0 ; i < rec->index ; i++) {
+		  VecType *vn = (VecType *)vec_address;
+		  int inference_column = 0;
+		  
+		  int nonzerok = -1; //Check to see if there is only 1 nonzero word in the vector
+		  for (k=vec_size-1 ; k >= 0 ; k--) {
+		    if((mask[k] & vec[k]) != 0){
+		      if(nonzerok != -1){ //more than one nonzero --> no inference
+			nonzerok = -1;
+			break;
+		      }
+		      nonzerok = k;
+		    }
+		  }
+		  
+		  if(nonzerok == -1){ //try next vector		    
+		    continue;
+		  }
+
+		  // Check the nonzero word to see if there is only one bit set:
+		  VecType tmp;
+		  if ((tmp = (mask[nonzerok] & vn[nonzerok])) != 0) {
+		    int hgh = sizeof(VecType)*8-1;
+		    while (hgh > 0) { 
+		      int mid = hgh/2;
+		      if((tmp & (unsigned int) ~(-1 << mid+1)) > 0){ // bottom has a 1
+			if((tmp & (unsigned int) (-1 << mid+1)) > 0){ // top also has a 1 --> fail
+			  inference_column = -1;
+			  break;
+			}
+			tmp &= (unsigned int) ~(-1 << mid+1);
+		      }else { //top must have a 1 (because the equation is consistent)
+			inference_column += mid+1;
+			tmp >>= mid+1;
+		      }
+		      hgh /= 2;
+		    }
+		    inference_column += nonzerok*(sizeof(VecType)*8);
+		  }
+
+		  /* Call Sean's special function to store the inferences
+		  if(inference_column != -1)
+		    printf("inference column: %d\n",inference_column);		    
+		  else
+		    printf("no inference\n");		
+		  */
+		}
+	// Insert the new row
 		vindex++;
       rec->index++;
 		
