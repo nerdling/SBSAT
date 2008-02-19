@@ -468,6 +468,7 @@ int ApplyInferenceToStates(int nBranchVar, bool bBVPolarity) {
 
 ITE_INLINE
 void SmurfStates_Push(int destination) {
+
 	//destination=nCurrSearchTreeLevel+1, except in the case of a nSimpleSolver_Reset then destination=0
 	if(SimpleSmurfProblemState->arrSmurfStack[destination].arrSmurfStates == NULL) {
 		//fprintf(stdout, "increasing stack size\n");
@@ -501,7 +502,7 @@ void SmurfStates_Push(int destination) {
 
 ITE_INLINE
 int SmurfStates_Pop() {
-	d7_printf1("  Conflict - Backtracking\n");
+	d7_printf1("  Conflict - Backtracking\n")
 
 	ite_counters[NUM_BACKTRACKS]++;
 	d9_printf2("\nStarting backtrack # %ld\n", (long)ite_counters[NUM_BACKTRACKS]);

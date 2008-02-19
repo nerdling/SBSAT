@@ -13,3 +13,13 @@ void PrintXORStateEntry(XORStateEntry *ssEntry) {
 void PrintXORCounterStateEntry(XORCounterStateEntry *ssEntry) {
 	d9_printf4("Next=%x Head=%x Size=%d\n", ssEntry->pTransition, ssEntry->pXORState, ssEntry->nSize);
 }
+
+void PrintXORStateEntry_formatted(XORStateEntry *ssEntry) {
+	d2_printf2("equ(%c ", ssEntry->bParity?'T':'F');
+	d2_printf1("xor(");
+	for(int x = 0; x < ssEntry->nSize; x++) {
+		if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[ssEntry->nTransitionVars[x]] == SimpleSmurfProblemState->nNumVars)
+		  d2_printf2("%d ", ssEntry->nTransitionVars[x]);
+	}
+	d2_printf1("))\n");
+}

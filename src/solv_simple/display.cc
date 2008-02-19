@@ -84,6 +84,21 @@ void PrintAllSmurfStateEntries() {
 	}
 }
 
+void PrintAllXORSmurfStateEntries() {
+	void **arrSmurfStates = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].arrSmurfStates;
+
+	for(int i = 0; i < SimpleSmurfProblemState->nNumSmurfs; i++) {
+		if(arrSmurfStates[i] == pTrueSimpleSmurfState) continue;
+		void *pState = arrSmurfStates[i];
+		if(((TypeStateEntry *)pState)->cType == FN_XOR_COUNTER) {
+			PrintXORStateEntry_formatted(((XORCounterStateEntry *)pState)->pXORState);
+		} else if(((TypeStateEntry *)pState)->cType == FN_XOR) {
+			PrintXORStateEntry_formatted((XORStateEntry *)pState);
+		}
+	}
+	d2_printf1("\n");
+}
+
 ITE_INLINE
 void CalculateSimpleSolverProgress(int *_whereAmI, int *_total) {
 	int whereAmI=0;

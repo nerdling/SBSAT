@@ -43,6 +43,7 @@
 void DisplaySimpleStatistics(int nNumChoicePts, int nNumBacktracks, int nNumBackjumps);
 
 void PrintAllSmurfStateEntries();
+void PrintAllXORSmurfStateEntries();
 
 ITE_INLINE void CalculateSimpleSolverProgress(int *_whereAmI, int *_total);
 

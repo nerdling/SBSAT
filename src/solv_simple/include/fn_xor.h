@@ -40,6 +40,7 @@
 
 // Function structure
 void PrintXORStateEntry(XORStateEntry *ssEntry);
+void PrintXORStateEntry_formatted(XORStateEntry *ssEntry);
 void PrintXORCounterStateEntry(XORCounterStateEntry *ssEntry);
 void LSGBXORStateSetHeurScores(XORStateEntry *pState);
 void LSGBXORCounterStateSetHeurScores(XORCounterStateEntry *pState);
