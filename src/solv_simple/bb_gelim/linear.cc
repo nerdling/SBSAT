@@ -181,39 +181,35 @@ int cmp (const void *x, const void *y) {
 	return 0;
 }
 
-class Equiv {
- public:
    
-	EquivVars *rec;
-   char *frame;
-   Result *result;
-	Result tmp_result;
-	VecType **order;
+EquivVars *rec;
+char *frame;
+Result *result;
+Result tmp_result;
+VecType **order;
 	
-	int no_inp_vars; // The number of input variables 
-	int no_funcs;    // The max number of functions (rows in matrix)
-	int index;       // Number of vectors we have 
-	int vec_size;    // Number of bytes comprising each VecType vector
-	int equiv_idx;   // How many such nodes are in use.     
-	int Tr,Fa;       // Symbols for true and false 
+int no_inp_vars; // The number of input variables 
+int no_funcs;    // The max number of functions (rows in matrix)
+int vindex;       // Number of vectors we have 
+int vec_size;    // Number of bytes comprising each VecType vector
+int equiv_idx;   // How many such nodes are in use.     
+int Tr,Fa;       // Symbols for true and false 
 
-	int vecs_vlst_start;
-	int vecs_vsze_start;
-	int vecs_nvar_start;
-	int vecs_type_start;
-	int vecs_colm_start;
-	int vecs_rec_bytes;
+int vecs_vlst_start;
+int vecs_vsze_start;
+int vecs_nvar_start;
+int vecs_type_start;
+int vecs_colm_start;
+int vecs_rec_bytes;
 	
-	VecType *mask;  // 0 bits are columns of the diagonalized submatrix or assigned variables
-   int *first_bit; // first_bit[i]: pointer to vector on diagonal with first 1 bit at column i
+VecType *mask;  // 0 bits are columns of the diagonalized submatrix or assigned variables
+int *first_bit; // first_bit[i]: pointer to vector on diagonal with first 1 bit at column i
 	
-	int frame_size;
-	int vecs_v_start;
-   unsigned long frame_start;
+int frame_size;
+int vecs_v_start;
+unsigned long frame_start;
 
- public:
-
-   Equiv::Equiv(int inp, int out, int True, int False) {
+void initEquiv(int inp, int out, int True, int False) {
       if (inp >= True || inp >= False) {
 	      cout << "Whoops! No. input vars must less than True and False\n";
 	      cout << "var " << inp << " True " << True << " False " << False;
@@ -280,7 +276,7 @@ class Equiv {
 
       rec = (EquivVars *)frame;
       no_inp_vars = rec->no_inp_vars = inp; // Number of input variables  
-      index = rec->index = 0;
+      vindex = rec->index = 0;
       equiv_idx = rec->equiv_idx = 3; // Can't use 0 since use minus to 
                                       // point to equiv node, can't use 1 
                                       // because -1 means not pointing to 
@@ -305,23 +301,23 @@ class Equiv {
 		
    }
 
-   Equiv::~Equiv () { 
+void  deleteEquiv () { 
 		ite_free((void **) &frame);
 		if(ge_preproc == '1') {
 			ite_free((void **) &order);
 			ite_free((void **) &result);
 		}
-	}
+}
 
 
    // Install copy of this frame into frame of another level
-   char *Equiv::copyFrame(char *next_frame) {
+   char *copyFrame(char *next_frame) {
 		memcpy(next_frame, frame, vecs_v_start+rec->index*vecs_rec_bytes);
 		return next_frame;		
 	}
 
    // Add row to the matrix
-   int Equiv:: addRow (XORd *xord) {
+int  addRow (XORd *xord) {
 		// Return inconsistency (-1) if the row has no 1's but equals 1
 		if(!xord->nvars && xord->type) return -1;
 		
@@ -404,20 +400,18 @@ class Equiv {
 			vec_address += vecs_rec_bytes;
 		}
 		// Insert the new row
-		index++;
+		vindex++;
       rec->index++;
 		
-		//SEAN!!! TO DO!!!
-		//Mark the new column owner as a dependent variable.
 		
 		return 1;
 	}
 	
-   void Equiv::printFrameSize () {
+   void printFrameSize () {
 		cout << "Frame: " << frame_size << "\n";
 	}
 
-   void Equiv::printMask () {
+   void printMask () {
 		cout << "Mask (" << vec_size*sizeof(VecType)*8 << " bits):\n     ";
 		for (int i=0 ; i < vec_size ; i++) {
 			VecType tmp = mask[i];
@@ -429,7 +423,7 @@ class Equiv {
 		cout << "\n";
 	}
 
-   void Equiv::printLinearN () {
+   void printLinearN () {
 		printMask ();
 		cout << "Vectors:\n";
 		for (int i=0 ; i < rec->index ; i++) {
@@ -455,7 +449,7 @@ class Equiv {
 		cout << " +-----+     +-----+     +-----+     +-----+     +-----+\n";
 	}
    
-   void Equiv::printLinear () {
+   void printLinear () {
 		int xlate[512];
 		int rows[512];
 		printLinearN ();
@@ -503,4 +497,4 @@ class Equiv {
 		}
 		cout << "========================================================\n";
 	}
-};
+
