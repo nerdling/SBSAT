@@ -58,7 +58,7 @@ typedef struct xorrecord {
 	VecType *vector; // 0-1 vector showing vars in xor func and which type of xor func it is
 	int vector_size; // Number of bytes in vector
 	int *varlist;    // List of vars that are 1 in vector
-	int nvars;        // Number of vars in the function
+	int nvars;       // Number of vars in the function
 	int type;
 	struct xorrecord *next;
 } XORd;
@@ -67,8 +67,6 @@ typedef struct equiv_rec {
 	int no_inp_vars; // The number of input variables                   
 	int index;       // Number of vectors we have                       
 	int vec_size;    // Number of bytes comprising each VecType vector
-  //	int equiv_idx;   // how many such nodes are in use.                 
-  //	int Tr,Fa;       // Symbols for true and false
 } EquivVars;
 
 
@@ -184,16 +182,11 @@ int cmp (const void *x, const void *y) {
    
 EquivVars *rec;
 char *frame;
-Result *result;
-Result tmp_result;
-VecType **order;
 	
 int no_inp_vars; // The number of input variables 
 int no_funcs;    // The max number of functions (rows in matrix)
-int vindex;       // Number of vectors we have 
+int vindex;      // Number of vectors we have 
 int vec_size;    // Number of bytes comprising each VecType vector
-//int equiv_idx;   // How many such nodes are in use.     
-//int Tr,Fa;       // Symbols for true and false 
 
 int vecs_vlst_start;
 int vecs_vsze_start;
@@ -209,260 +202,226 @@ int frame_size;
 int vecs_v_start;
 unsigned long frame_start;
 
-void initEquiv(int inp, int out, int True, int False) {
-      if (inp >= True || inp >= False) {
-	      cout << "Whoops! No. input vars must less than True and False\n";
-	      cout << "var " << inp << " True " << True << " False " << False;
-	      exit(0);
-      }
-      if (True == False) {
-	      cout << "Whoops! True cannot be equal to False.\n";
-	      exit(0);
-      }
-      //      int sze = (True > False) ? True : False; 
-      //      sze++;
-
-      no_funcs = out+inp; //The inp is room for equivalences.
-		                    //SEAN!!! This is a temp fix and
-		                    //should be fixed in the future
-		//if(no_funcs > 500) no_funcs = 500;
-		//This is the MAX number of rows allowed in the xor table
+void initEquiv(int inp, int out) {
+	no_funcs = out+inp; //The inp is room for equivalences.
+	//This is the MAX number of rows allowed in the xor table
+	
+	//LinearVars
+	//Number of bytes in various fields, arrays, lists in a vector record
+	int vecs_v_bytes = (1+inp/(sizeof(VecType)*8))*sizeof(VecType); //Actual vector
+	int vecs_vlst_bytes = 0; //Variable list
+	int vecs_vsze_bytes = sizeof(int); //Size of variable list
+	int vecs_nvar_bytes = sizeof(int); //Number of rows
+	int vecs_type_bytes = sizeof(int); //Vector type
+	int vecs_colm_bytes = sizeof(int); //Column pointer
+	
+	//Starting point for various fields etc. in a vector record
+	vecs_vlst_start = vecs_v_bytes;
+	vecs_vsze_start = vecs_vlst_start + vecs_vlst_bytes;
+	vecs_nvar_start = vecs_vsze_start + vecs_vsze_bytes;
+	vecs_type_start = vecs_nvar_start + vecs_nvar_bytes;
+	vecs_colm_start = vecs_type_start + vecs_type_bytes;
+	vecs_rec_bytes  = vecs_colm_start + vecs_colm_bytes;
+	
+	int first_bit_sze;
+	int mask_sze;
+	first_bit_sze = sizeof(int)*inp;
+	mask_sze      = sizeof(VecType)*(1+inp/(sizeof(VecType)*8));
 		
-		//LinearVars
-		//Number of bytes in various fields, arrays, lists in a vector record
-		int vecs_v_bytes = (1+inp/(sizeof(VecType)*8))*sizeof(VecType); //Actual vector
-		int vecs_vlst_bytes = 0; //Variable list
-		int vecs_vsze_bytes = sizeof(int); //Size of variable list
-		int vecs_nvar_bytes = sizeof(int); //Number of rows
-		int vecs_type_bytes = sizeof(int); //Vector type
-		int vecs_colm_bytes = sizeof(int); //Column pointer
+	//LinearVars
+	int vars_sze      = sizeof(EquivVars);
+	int vars_ref      = 0;
+	int first_bit_ref = vars_ref + vars_sze;
+	int mask_ref      = first_bit_ref + first_bit_sze;
+	int vecs_v_ref = mask_ref + mask_sze;
+	vecs_v_start = vecs_v_ref;
+	
+	frame_size = vecs_v_ref + vecs_rec_bytes*no_funcs;
 		
-		//Starting point for various fields etc. in a vector record
-		vecs_vlst_start = vecs_v_bytes;
-		vecs_vsze_start = vecs_vlst_start + vecs_vlst_bytes;
-		vecs_nvar_start = vecs_vsze_start + vecs_vsze_bytes;
-		vecs_type_start = vecs_nvar_start + vecs_nvar_bytes;
-		vecs_colm_start = vecs_type_start + vecs_type_bytes;
-		vecs_rec_bytes  = vecs_colm_start + vecs_colm_bytes;
-
-		int first_bit_sze;
-		int mask_sze;
-		if(ge_preproc == '1') {
-			first_bit_sze = sizeof(int)*inp;
-			mask_sze      = sizeof(VecType)*(1+inp/(sizeof(VecType)*8));
-		} else {
-			first_bit_sze = 0;
-			mask_sze      = 0;
-		}
-		
-		//LinearVars
-		int vars_sze      = sizeof(EquivVars);
-		int vars_ref      = 0;
-		int first_bit_ref = vars_ref + vars_sze;
-		int mask_ref      = first_bit_ref + first_bit_sze;
-		int vecs_v_ref = mask_ref + mask_sze;
-		vecs_v_start = vecs_v_ref;
-		
-		if(ge_preproc == '1') {
-			frame_size = vecs_v_ref + vecs_rec_bytes*no_funcs;
-			order = (VecType **)ite_calloc(1, sizeof(VecType *)*no_funcs, 9, "gaussian elimination order");
-			result = (Result *)ite_calloc(1, sizeof(Result)*inp, 9, "gaussian elimination results");
-		} else {
-		  frame_size = mask_ref + mask_sze;
-		}
-		
-      frame = (char *)ite_calloc(1, frame_size, 9, "EquivClass memory frame");
-      frame_start = (unsigned long)frame;
-
-      rec = (EquivVars *)frame;
-      no_inp_vars = rec->no_inp_vars = inp; // Number of input variables  
-      vindex = rec->index = 0;
-      //      equiv_idx = rec->equiv_idx = 3; // Can't use 0 since use minus to 
-                                      // point to equiv node, can't use 1 
-                                      // because -1 means not pointing to 
-                                      // anything, can't use -2 since index 
-                                      // 2 is taken for T and F
-      //      Tr = rec->Tr = True;
-      //      Fa = rec->Fa = False;
-		
-		if(ge_preproc == '1') {
-			vec_size = rec->vec_size = 1+no_inp_vars/(sizeof(VecType)*8);
-			
-			mask = (VecType *)(frame_start+mask_ref);
-			for(int i=0; i < vec_size; i++) mask[i] = (VecType)(-1);
-			mask[vec_size-1] -= (1 << sizeof(VecType)*8-1);
-			
-			first_bit = (int *)(frame_start + first_bit_ref);
-			for(int i=0; i < inp; i++) first_bit[i] = null;
-			
-			for(VecType i=frame_start - frame_size; i< (VecType)vecs_rec_bytes*no_funcs; i++)
-			  frame[i] = (char)(-1);
-		}		
-		
-   }
+	frame = (char *)ite_calloc(1, frame_size, 9, "EquivClass memory frame");
+	frame_start = (unsigned long)frame;
+	
+	rec = (EquivVars *)frame;
+	no_inp_vars = rec->no_inp_vars = inp; // Number of input variables  
+	vindex = rec->index = 0;
+	
+	vec_size = rec->vec_size = 1+no_inp_vars/(sizeof(VecType)*8);
+	
+	mask = (VecType *)(frame_start+mask_ref);
+	for(int i=0; i < vec_size; i++) mask[i] = (VecType)(-1);
+	mask[vec_size-1] -= (1 << sizeof(VecType)*8-1);
+	
+	first_bit = (int *)(frame_start + first_bit_ref);
+	for(int i=0; i < inp; i++) first_bit[i] = null;
+	
+	for(VecType i=frame_start - frame_size; i< (VecType)vecs_rec_bytes*no_funcs; i++)
+	  frame[i] = (char)(-1);
+	
+	
+}
 
 void  deleteEquiv () { 
-		ite_free((void **) &frame);
-		if(ge_preproc == '1') {
-			ite_free((void **) &order);
-			ite_free((void **) &result);
-		}
+	ite_free((void **) &frame);
 }
 
 
-   // Install copy of this frame into frame of another level
-   char *copyFrame(char *next_frame) {
-		memcpy(next_frame, frame, vecs_v_start+rec->index*vecs_rec_bytes);
-		return next_frame;		
-	}
+// Push copy of this frame into frame of another level
+char *copyFrame(char *next_frame) {
+	memcpy(next_frame, frame, vecs_v_start+rec->index*vecs_rec_bytes);
+	return next_frame;		
+}
 
-   // Add row to the matrix
-int  addRow (XORd *xord) {
-		// Return inconsistency (-1) if the row has no 1's but equals 1
-		if(!xord->nvars && xord->type) return -1;
-		
-		// Return no change (0) if row is all 0
-		if(!xord->nvars) return 0;
-		
-		if(rec->index >= no_funcs) {
-			return 0; // Cannot add anymore vectors to the matrix
-		}
-		
-		// Grab a new Vector and copy xord info to it
-		unsigned long offset = frame_start + vecs_v_start + rec->index*vecs_rec_bytes;
-		VecType *vec = (VecType*)offset;
-		int *vsz = (int *)(offset+vecs_vsze_start);
-		int *vnr = (int *)(offset+vecs_nvar_start);
-		int *vty = (int *)(offset+vecs_type_start);
-
-		*vsz = xord->vector_size;
-		*vnr = xord->nvars;
-		*vty = xord->type;
-		memcpy(vec, xord->vector, sizeof(VecType)*vec_size);
-		
-		// The first 1 bit of the new vector is in a column which intersects
-		// the diagonal.  Add the existing such row to the new vector.  For
-		// all 1's of new vector in columns which intersect the diagonal, in
-		// decreasing order, add rows to new vector.  While doing this,
-		// locate the first 1 in a column intersecting the diagonal.  Open
-		// this column to the diagonal.
-		// 
-		// Eliminate all 1's of the new vector in the current diagonal matrix
-		for (int i=0 ; i < xord->nvars; i++) {
-			short int v;
-			if ((v = first_bit[(int)xord->varlist[i]]) != null) {
-				VecType *vn = (VecType *)(frame_start+vecs_v_start+v*vecs_rec_bytes);
-				for (int j=0 ; j < vec_size ; j++) vec[j] ^= vn[j];
-			}
-		}
-		// Now that all the 1's in the diagonal submatrix are taken care of,
-		// scan the vector to find the first 1 (MSB).  The variable (column)
-		// which is found is stored in "save_first_column".
-		int save_first_column = 0;
-		int k;
-		for (k=vec_size-1 ; k >= 0 ; k--) {
-			// Maybe 10 of these loops
-			VecType tmp;
-			if ((tmp = (mask[k] & vec[k])) != 0) {
-				int hgh = sizeof(VecType)*8-1;
-				while (hgh > 0) { // Maybe 5 of these loops - binary search for leading 1
-					int mid = hgh/2;
-					if (tmp >= (unsigned int)(1 << mid+1)) {
-						tmp >>= mid+1;
-						save_first_column += mid+1;
-					}
-					hgh /= 2;
-				}
-				save_first_column += k*(sizeof(VecType)*8);
-				break;
-			}
-		}
-		// If k == -1 then no 1's were found in the new vector.
-		if (k == -1) {
-			if (vec[vec_size-1]) return -1; // Inconsistent. Is this check correct? Should it be on the last bit vs. last word?
-			else return 0; // No change
-		}
-		// Open up a new diagonal column
-		unsigned long vec_add = vecs_v_start+rec->index*vecs_rec_bytes+vecs_colm_start;
-		*((short int *)(frame_start+vec_add)) = save_first_column;
-		first_bit[save_first_column] = rec->index;
-		int word = save_first_column/(sizeof(VecType)*8);
-		int bit = save_first_column % (sizeof(VecType)*8);
-		mask[word] &= (-1 ^ (1 << bit));
-		
-		/* I think we don't have to do this because the mask is keeping track of this information. 
-
-		// Cancel all 1's in the new column.  Currently looks at *all* vectors!
-		unsigned long vec_address = frame_start + vecs_v_start;
-		for (int i=0 ; i < rec->index ; i++) {
-			VecType *vn = (VecType *)vec_address;
-			if (vn[word] & (1 << bit)) {
-				for (int j=0 ; j < vec_size ; j++) vn[j] ^= vec[j];
-			}
-			vec_address += vecs_rec_bytes;
-		}
-		*/
+// Add row to the matrix
+int addRow (XORd *xord) {
+	// Return inconsistency (-1) if the row has no 1's but equals 1
+	if(!xord->nvars && xord->type) return -1;
 	
-		//Check for inferences
-		unsigned long vec_address = frame_start + vecs_v_start;
-		for (int i=0 ; i < rec->index ; i++) {
-		  VecType *vn = (VecType *)vec_address;
-		  int inference_column = 0;
-		  
-		  int nonzerok = -1; //Check to see if there is only 1 nonzero word in the vector
-		  for (k=vec_size-1 ; k >= 0 ; k--) {
-		    if((mask[k] & vec[k]) != 0){
-		      if(nonzerok != -1){ //more than one nonzero --> no inference
-			nonzerok = -1;
+	// Return no change (0) if row is all 0
+	if(!xord->nvars) return 0;
+	
+	if(rec->index >= no_funcs) {
+		return 0; // Cannot add anymore vectors to the matrix
+	}
+	
+	// Grab a new Vector and copy xord info to it
+	unsigned long offset = frame_start + vecs_v_start + rec->index*vecs_rec_bytes;
+	VecType *vec = (VecType*)offset;
+	int *vsz = (int *)(offset+vecs_vsze_start);
+	int *vnr = (int *)(offset+vecs_nvar_start);
+	int *vty = (int *)(offset+vecs_type_start);
+	
+	*vsz = xord->vector_size;
+	*vnr = xord->nvars;
+	*vty = xord->type;
+	memcpy(vec, xord->vector, sizeof(VecType)*vec_size);
+	
+	// The first 1 bit of the new vector is in a column which intersects
+	// the diagonal.  Add the existing such row to the new vector.  For
+	// all 1's of new vector in columns which intersect the diagonal, in
+	// decreasing order, add rows to new vector.  While doing this,
+	// locate the first 1 in a column intersecting the diagonal.  Open
+	// this column to the diagonal.
+	// 
+	// Eliminate all 1's of the new vector in the current diagonal matrix
+	for (int i=0 ; i < xord->nvars; i++) {
+		short int v;
+		if ((v = first_bit[(int)xord->varlist[i]]) != null) {
+			VecType *vn = (VecType *)(frame_start+vecs_v_start+v*vecs_rec_bytes);
+			for (int j=0 ; j < vec_size ; j++) vec[j] ^= vn[j];
+		}
+	}
+	//Modify this next block of code to also detect when only one 1 occurs.
+	
+	// Now that all the 1's in the diagonal submatrix are taken care of,
+	// scan the vector to find the first 1 (MSB).  The variable (column)
+	// which is found is stored in "save_first_column".
+	int save_first_column = 0;
+	int k;
+	for (k=vec_size-1 ; k >= 0 ; k--) {
+		// Maybe 10 of these loops
+		VecType tmp;
+		if ((tmp = (mask[k] & vec[k])) != 0) {
+			int hgh = sizeof(VecType)*8-1;
+			while (hgh > 0) { // Maybe 5 of these loops - binary search for leading 1
+				int mid = hgh/2;
+				if (tmp >= (unsigned int)(1 << mid+1)) {
+					tmp >>= mid+1;
+					save_first_column += mid+1;
+				}
+				hgh /= 2;
+			}
+			save_first_column += k*(sizeof(VecType)*8);
 			break;
+		}
+	}
+	//if vec only has one 1 in it, it is an inference.
+	//ret = EnqueueInference(nVariable, bPolarity);
+	//if ret == 0? conflict
+	
+	// If k == -1 then no 1's were found in the new vector.
+	if (k == -1) {
+		if (vec[vec_size-1]&(1 << (sizeof(VecType)*8-1))) return -1; // Inconsistent. Is this check correct? Should it be on the last bit vs. last word?
+		else return 0; // No change
+	}
+	// Open up a new diagonal column
+	unsigned long vec_add = vecs_v_start+rec->index*vecs_rec_bytes+vecs_colm_start;
+	*((short int *)(frame_start+vec_add)) = save_first_column;
+	first_bit[save_first_column] = rec->index;
+	int word = save_first_column/(sizeof(VecType)*8);
+	int bit = save_first_column % (sizeof(VecType)*8);
+	mask[word] &= (-1 ^ (1 << bit));
+	
+	// Cancel all 1's in the new column. Currently looks at *all* vectors!
+	unsigned long vec_address = frame_start + vecs_v_start;
+	for (int i=0 ; i < rec->index ; i++) {
+		VecType *vn = (VecType *)vec_address;
+		if (vn[word] & (1 << bit)) {
+			for (int j=0; j < vec_size; j++) vn[j] ^= vec[j];
+			//check vn for inference.
+		}
+		vec_address += vecs_rec_bytes;
+	}
+	
+	//Check for inferences
+	vec_address = frame_start + vecs_v_start;
+	for (int i=0 ; i < rec->index ; i++) {
+		VecType *vn = (VecType *)vec_address;
+		int inference_column = 0;
+		
+		int nonzerok = -1; //Check to see if there is only 1 nonzero word in the vector
+		for (k=vec_size-1 ; k >= 0 ; k--) {
+			if((mask[k] & vec[k]) != 0){
+		      if(nonzerok != -1){ //more than one nonzero --> no inference
+					nonzerok = -1;
+					break;
 		      }
 		      nonzerok = k;
-		    }
-		  }
-		  
-		  if(nonzerok == -1){ //try next vector		    
-		    continue;
-		  }
-
-		  // Check the nonzero word to see if there is only one bit set:
-		  VecType tmp;
-		  if ((tmp = (mask[nonzerok] & vn[nonzerok])) != 0) {
-		    int hgh = sizeof(VecType)*8-1;
-		    while (hgh > 0) { 
+			}
+		}
+		
+		if(nonzerok == -1){ //try next vector		    
+			continue;
+		}
+		
+		// Check the nonzero word to see if there is only one bit set:
+		VecType tmp;
+		if ((tmp = (mask[nonzerok] & vn[nonzerok])) != 0) {
+			int hgh = sizeof(VecType)*8-1;
+			while (hgh > 0) { 
 		      int mid = hgh/2;
 		      if((tmp & (unsigned int) ~(-1 << mid+1)) > 0){ // bottom has a 1
-			if((tmp & (unsigned int) (-1 << mid+1)) > 0){ // top also has a 1 --> fail
-			  inference_column = -1;
-			  break;
-			}
-			tmp &= (unsigned int) ~(-1 << mid+1);
+					if((tmp & (unsigned int) (-1 << mid+1)) > 0){ // top also has a 1 --> fail
+						inference_column = -1;
+						break;
+					}
+					tmp &= (unsigned int) ~(-1 << mid+1);
 		      }else { //top must have a 1 (because the equation is consistent)
-			inference_column += mid+1;
-			tmp >>= mid+1;
+					inference_column += mid+1;
+					tmp >>= mid+1;
 		      }
 		      hgh /= 2;
-		    }
-		    inference_column += nonzerok*(sizeof(VecType)*8);
-		  }
-
-		  /* Call Sean's special function to store the inferences
-		  if(inference_column != -1)
-		    printf("inference column: %d\n",inference_column);		    
-		  else
-		    printf("no inference\n");		
-		  */
+			}
+			inference_column += nonzerok*(sizeof(VecType)*8);
 		}
+		
+		/* Call Sean's special function to store the inferences
+		 if(inference_column != -1)
+		 printf("inference column: %d\n",inference_column);		    
+		 else
+		 printf("no inference\n");		
+		 */
+	}
 	// Insert the new row
-		vindex++;
-      rec->index++;
-		
-		
-		return 1;
-	}
+	vindex++;
+	rec->index++;
 	
-   void printFrameSize () {
-		cout << "Frame: " << frame_size << "\n";
-	}
+	
+	return 1;
+}
+
+void printFrameSize () {
+	cout << "Frame: " << frame_size << "\n";
+}
 
    void printMask () {
 		cout << "Mask (" << vec_size*sizeof(VecType)*8 << " bits):\n     ";

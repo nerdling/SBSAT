@@ -65,18 +65,19 @@ bool CheckSimpleLimits(double fStartTime) {
 }
 
 ITE_INLINE void SmurfStates_Push_Hooks() {
-
-
+//push GE table onto the stack.
+//frame allocated here?
+	
 }
 
 ITE_INLINE void SmurfStates_Pop_Hooks() {
-
+//probably do nothing.
 
 }
 
 ITE_INLINE void Alloc_SmurfStack_Hooks(int destination) {
 	//for(int i = destination; i < destination + SMURF_STATES_INCREASE_SIZE && i < SimpleSmurfProblemState->nNumVars; i++) {
-	//	SimpleSmurfProblemState->arrSmurfStack[i].???
+	//	SimpleSmurfProblemState->arrSmurfStack[i].XORframe = new_frame();???
 	//}
 	
 	
@@ -93,12 +94,14 @@ ITE_INLINE int ApplyInference_Hooks(int nBranchVar, bool bBVPolarity) {
 ITE_INLINE int ApplyInferenceToSmurf_Hook(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates) {
 	int ret = 1;
 	
+	//Addrow could be called here if arrSmurfStates[nSmurfNumber].cType == FN_XOR_GELIM
+	//call addrow
+	//arrSmurfStates[nSmurfNumber] = pTrueSimpleSmurfState;
 	
 	return ret;
 }
 
 ITE_INLINE int Backtrack_Hooks() {
-
 	int ret = SOLV_UNKNOWN;
 	
 	//Periodic Hooks
