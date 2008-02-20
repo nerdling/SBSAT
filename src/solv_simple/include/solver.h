@@ -78,6 +78,11 @@ ITE_INLINE void FreeSimpleVarMap();
 ITE_INLINE int EnqueueInference(int nInfVar, bool bInfPolarity);
 void check_SmurfStatesTableSize(int size);
 
+ITE_INLINE int ApplyInference_Hooks(int nBranchVar, bool bBVPolarity);
+ITE_INLINE int Backtrack_Hooks();
+
+ITE_INLINE void Init_Solver_Hooks();
+ITE_INLINE void Final_Solver_Hooks();
 
 /*
 typedef int  (*fnCreateFunction)(int nFnId, BDDNode *, int type, int eqVble);

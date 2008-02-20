@@ -130,29 +130,6 @@ void save_solution_simple(void) {
 	}
 }
 
-ITE_INLINE bool CheckSimpleLimits(double fStartTime) {
-   double fEndTime;
-   fEndTime = get_runtime();
-
-   if (nCtrlC) {
-		return 1;
-	}
-
-   if (nTimeLimit && (fEndTime - fStartTime) > nTimeLimit) {
-		d2_printf2("Bailling out because the Time limit of %lds ", nTimeLimit);
-		d2_printf2("is smaller than elapsed time %.0fs\n", (fEndTime - fStartTime));
-		return 1;
-	}
-
-	if (nNumChoicePointLimit && ite_counters[NUM_CHOICE_POINTS]>nNumChoicePointLimit) {
-		d2_printf2("Bailling out because the limit on the number of choicepoints %ld ",
-					  nNumChoicePointLimit);
-		d2_printf2("is smaller than the number of choicepoints %ld\n", (long)ite_counters[NUM_CHOICE_POINTS]);
-		return 1;
-	}
-	return 0;
-}
-
 ITE_INLINE
 void Calculate_Heuristic_Values() {
 
@@ -450,20 +427,23 @@ int ApplyInferenceToStates(int nBranchVar, bool bBVPolarity) {
 		if(arrSmurfStates[nSmurfNumber] == pTrueSimpleSmurfState) continue;
 		void *pState = arrSmurfStates[nSmurfNumber];
 		int ret = 1;
-		if(((TypeStateEntry *)pState)->cType == FN_SMURF) {
-			ret = ApplyInferenceToSmurf(nBranchVar, bBVPolarity, nSmurfNumber, arrSmurfStates);
-		} else if(((TypeStateEntry *)pState)->cType == FN_OR_COUNTER) {
-			ret = ApplyInferenceToORCounter(nBranchVar, bBVPolarity, nSmurfNumber, arrSmurfStates);
-		} else if(((TypeStateEntry *)pState)->cType == FN_XOR_COUNTER) {
-			ret = ApplyInferenceToXORCounter(nBranchVar, bBVPolarity, nSmurfNumber, arrSmurfStates);
-		} else if(((TypeStateEntry *)pState)->cType == FN_OR) {
-			ret = ApplyInferenceToOR(nBranchVar, bBVPolarity, nSmurfNumber, arrSmurfStates);
-		} else if(((TypeStateEntry *)pState)->cType == FN_XOR) {
-			ret = ApplyInferenceToXOR(nBranchVar, bBVPolarity, nSmurfNumber, arrSmurfStates);
+
+		switch(((TypeStateEntry *)pState)->cType) {
+		 case FN_SMURF:
+			ret = ApplyInferenceToSmurf(nBranchVar, bBVPolarity, nSmurfNumber, arrSmurfStates); break;
+		 case FN_OR_COUNTER:
+			ret = ApplyInferenceToORCounter(nBranchVar, bBVPolarity, nSmurfNumber, arrSmurfStates); break;
+		 case FN_XOR_COUNTER:
+			ret = ApplyInferenceToXORCounter(nBranchVar, bBVPolarity, nSmurfNumber, arrSmurfStates); break;
+		 case FN_OR:
+			ret = ApplyInferenceToOR(nBranchVar, bBVPolarity, nSmurfNumber, arrSmurfStates); break;
+		 case FN_XOR:
+			ret = ApplyInferenceToXOR(nBranchVar, bBVPolarity, nSmurfNumber, arrSmurfStates); break;
+		 default: break;
 		}
 		if(ret == 0) return 0;
 	}
-	return 1;
+	return ApplyInference_Hooks(nBranchVar, bBVPolarity);
 }
 
 ITE_INLINE
@@ -504,18 +484,6 @@ void SmurfStates_Push(int destination) {
 
 ITE_INLINE
 int SmurfStates_Pop() {
-	d7_printf1("  Conflict - Backtracking\n")
-
-	ite_counters[NUM_BACKTRACKS]++;
-	d9_printf2("\nStarting backtrack # %ld\n", (long)ite_counters[NUM_BACKTRACKS]);
-	if (ite_counters[NUM_BACKTRACKS] % BACKTRACKS_PER_STAT_REPORT == 0) {
-		DisplaySimpleSolverBacktrackInfo(fSimpleSolverPrevEndTime, fSimpleSolverStartTime);
-      if (fd_csv_trace_file) {
-			DisplaySimpleSolverBacktrackInfo_gnuplot(fSimpleSolverPrevEndTime, fSimpleSolverStartTime);
-		}
-		if(CheckSimpleLimits(fSimpleSolverStartTime)==1) return SOLV_LIMIT;
-	}
-
 	SimpleSmurfProblemState->nCurrSearchTreeLevel--;
 	
 	if(SimpleSmurfProblemState->nCurrSearchTreeLevel < 0) {
@@ -526,15 +494,22 @@ int SmurfStates_Pop() {
 }
 
 ITE_INLINE
-int backtrack() {
+int Backtrack() {
 	//Pop stack
 	ite_counters[ERR_BT_SMURF]++;
+	ite_counters[NUM_BACKTRACKS]++;
+
+	d7_printf1("  Conflict - Backtracking\n");
+
+	d9_printf2("\nStarting backtrack # %ld\n", (long)ite_counters[NUM_BACKTRACKS]);
+
+	int ret = Backtrack_Hooks();
 	
-	int nInfQueueTail = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
-	
+	int nInfQueueTail = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;	  
+	  
 	int nPop = SmurfStates_Pop();
 	if(nPop != SOLV_UNKNOWN) return nPop;
-	
+
 	int nInfQueueHead = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
 	
 	//Empty the inference queue & reverse polarity of cp var
@@ -547,14 +522,6 @@ int backtrack() {
 		SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[nBranchLit] = SimpleSmurfProblemState->nNumVars;
 	}
 	  
-/*	for(int i = 1; i < SimpleSmurfProblemState->nNumVars; i++)
-	  if(abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i]) > SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars ||
-		  abs(SimpleSmurfProblemState->arrInferenceQueue[abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i])]) != i) {
-        //d7_printf3("      Resetting level of variable %d to %d\n", i, SimpleSmurfProblemState->nNumVars);
-		  assert(abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i]) == SimpleSmurfProblemState->nNumVars);
-	  }
-*/
-
 	return SOLV_UNKNOWN;
 }
 
@@ -609,8 +576,7 @@ int SimpleBrancher() {
 				//apply inference to all involved smurfs
 				if(ApplyInferenceToStates(nBranchVar, bBVPolarity) == 0) {
 					//A conflict occured
-					
-					switch(backtrack()) {
+					switch(Backtrack()) {
 					 case SOLV_UNSAT: return SOLV_UNSAT;
 					 case SOLV_SAT: return SOLV_SAT;
 					 case SOLV_LIMIT: return ret;
@@ -644,7 +610,7 @@ find_more_solutions: ;
 			do {
 				if(nForceBackjumpLevel < SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nVarChoiceCurrLevel)
 				  d7_printf2("Forcing a backjump to level %d\n", nForceBackjumpLevel);
-				switch(backtrack()) {
+				switch(Backtrack()) {
 				 case SOLV_UNSAT: return SOLV_UNSAT;
 				 case SOLV_SAT: return SOLV_SAT;
 				 case SOLV_LIMIT: return ret;

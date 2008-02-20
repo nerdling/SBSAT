@@ -2,7 +2,7 @@ SUBDIRS= include fn_smurf fn_or fn_xor bb_gelim
 
 INCLUDES=-I$(top_srcdir)/include -I$(top_srcdir)/src/solv_simple/include
 sources= solv_simple.cc solv_simple_init.cc vars_init.cc vars_map.cc \
-display.cc
+display.cc hooks.cc
 
 #if MYLIBTOOL
 #noinst_LTLIBRARIES = libsolv_simple.la
