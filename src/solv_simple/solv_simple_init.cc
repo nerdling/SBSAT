@@ -61,7 +61,6 @@ void check_SmurfStatesTableSize(int size) {
 	}
 }
 
-ITE_INLINE
 void Alloc_SmurfStack(int destination) {
 	//fprintf(stdout, "increasing stack size\n");
 	for(int i = destination; i < destination + SMURF_STATES_INCREASE_SIZE && i < SimpleSmurfProblemState->nNumVars; i++) {		  
@@ -211,41 +210,52 @@ int Init_SimpleSmurfSolver() {
 	//Clear all FunctionTypes
 	for(int x = 0; x < nmbrFunctions; x++)
 	  functionType[x] = UNSURE;
+
+	simple_solver_reset_level = solver_reset_level-1;
 	
 	int nNumVars = InitSimpleVarMap();
 	/* Convert bdds to smurfs */
 	int ret = SOLV_UNKNOWN;// = CreateFunctions();
 	if (ret != SOLV_UNKNOWN) return ret;
 
-	ReadAllSmurfsIntoTable(nNumVars);
+	if(*csv_trace_file)
+	  fd_csv_trace_file = fopen(csv_trace_file, "w");
 	
-	//FreeSimpleVarMap(); //This is freed at the end of simpleSolve(). 
-	                //arrVarChoiceLevels and arrSolver2IteVarMap are needed during search.
+	Init_Solver_PreSmurfs_Hooks();
+	
+	ReadAllSmurfsIntoTable(nNumVars);
 
-	simple_solver_reset_level = solver_reset_level-1;
+	ret = Init_Solver_PostSmurfs_Hooks();
 	
 	return ret;
 }
 
-int simpleSolve() {
-	int nForceBackjumpLevel_old = nForceBackjumpLevel;
-	if(nForceBackjumpLevel < 0) nForceBackjumpLevel = nVarChoiceLevelsNum+1;
-	//Clear function type:
-	for(int x = 0; x < nmbrFunctions; x++)
-	  functionType[x] = UNSURE;
-	int ret = Init_SimpleSmurfSolver();
-	if(ret != SOLV_UNKNOWN) return ret;
-	if(*csv_trace_file)
-	  fd_csv_trace_file = fopen(csv_trace_file, "w");
-	ret = SimpleBrancher();  
+int Final_SimpleSmurfSolver() {
+
 	DisplaySimpleStatistics(ite_counters[NUM_CHOICE_POINTS], ite_counters[NUM_BACKTRACKS], ite_counters[NUM_BACKJUMPS]);
 	if (fd_csv_trace_file) {
 		DisplaySimpleSolverBacktrackInfo_gnuplot(fSimpleSolverPrevEndTime, fSimpleSolverStartTime);
 		fclose(fd_csv_trace_file);
 	}
 	//Still need to do some backend stuff like free memory.
-	nForceBackjumpLevel = nForceBackjumpLevel_old;
+
+	Final_Solver_Hooks();
+	
 	FreeSimpleVarMap();
+
+	//Hmmm I didn't free A LOT of that memory. SEAN!!! FIX THIS!!!
+}
+
+int simpleSolve() {
+	int nForceBackjumpLevel_old = nForceBackjumpLevel;
+	if(nForceBackjumpLevel < 0) nForceBackjumpLevel = nVarChoiceLevelsNum+1;
+	
+	int ret = Init_SimpleSmurfSolver();
+	if(ret != SOLV_UNKNOWN) return ret;
+
+	ret = SimpleBrancher();
+	
+	nForceBackjumpLevel = nForceBackjumpLevel_old;
+	
 	return ret;
-	//Hmmm I didn't free ANY of that memory. SEAN!!! FIX THIS!!!
 }

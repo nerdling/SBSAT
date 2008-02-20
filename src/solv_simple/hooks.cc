@@ -64,10 +64,14 @@ bool CheckSimpleLimits(double fStartTime) {
 	return 0;
 }
 
-ITE_INLINE int SmurfStates_Push_Hooks() {
-	int ret = 1;
-	
-	return ret;	
+ITE_INLINE void SmurfStates_Push_Hooks() {
+
+
+}
+
+ITE_INLINE void SmurfStates_Pop_Hooks() {
+
+
 }
 
 ITE_INLINE void Alloc_SmurfStack_Hooks(int destination) {
@@ -107,9 +111,16 @@ ITE_INLINE int Backtrack_Hooks() {
 	return ret;	
 }
 
-ITE_INLINE void Init_Solver_Hooks() {
-
+ITE_INLINE void Init_Solver_PreSmurfs_Hooks() {
 	
+	
+}
+
+ITE_INLINE int Init_Solver_PostSmurfs_Hooks() {
+	int ret = SOLV_UNKNOWN;
+	
+	
+	return ret;
 }
 
 ITE_INLINE void Final_Solver_Hooks() {

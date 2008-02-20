@@ -385,7 +385,6 @@ int SimpleHeuristic() {
 	return nBranchLit;
 }
 
-ITE_INLINE
 int EnqueueInference(int nInfVar, bool bInfPolarity) {
 	//Try to insert inference into the inference Queue
 	int nInfQueueHead = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
@@ -472,6 +471,8 @@ void SmurfStates_Push(int destination) {
 	SimpleSmurfProblemState->arrSmurfStack[destination].nHeuristicPlaceholder =
 	  SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nHeuristicPlaceholder;
 	
+	SmurfStates_Push_Hooks();
+	
 	SimpleSmurfProblemState->nCurrSearchTreeLevel = destination;
 }
 
@@ -483,6 +484,9 @@ int SmurfStates_Pop() {
 		if(ite_counters[NUM_SOLUTIONS] == 0) return SOLV_UNSAT; //return Unsatisifable
 		else return SOLV_SAT;
 	}
+
+	SmurfStates_Pop_Hooks();
+	
 	return SOLV_UNKNOWN;
 }
 
