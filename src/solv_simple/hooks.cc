@@ -59,6 +59,8 @@ bool CheckSimpleLimits(double fStartTime) {
 		return 1;
 	}
 	
+	//PrintAllXORSmurfStateEntries();
+	
 	return 0;
 }
 
@@ -66,6 +68,14 @@ ITE_INLINE int SmurfStates_Push_Hooks() {
 	int ret = 1;
 	
 	return ret;	
+}
+
+ITE_INLINE void Alloc_SmurfStack_Hooks(int destination) {
+	//for(int i = destination; i < destination + SMURF_STATES_INCREASE_SIZE && i < SimpleSmurfProblemState->nNumVars; i++) {
+	//	SimpleSmurfProblemState->arrSmurfStack[i].???
+	//}
+	
+	
 }
 
 ITE_INLINE int ApplyInference_Hooks(int nBranchVar, bool bBVPolarity) {

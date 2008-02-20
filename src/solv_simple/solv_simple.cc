@@ -449,16 +449,9 @@ int ApplyInferenceToStates(int nBranchVar, bool bBVPolarity) {
 ITE_INLINE
 void SmurfStates_Push(int destination) {
 
-	//PrintAllXORSmurfStateEntries();
-	
 	//destination=nCurrSearchTreeLevel+1, except in the case of a nSimpleSolver_Reset then destination=0
 	if(SimpleSmurfProblemState->arrSmurfStack[destination].arrSmurfStates == NULL) {
-		//fprintf(stdout, "increasing stack size\n");
-		for(int i = destination; i < destination + SMURF_STATES_INCREASE_SIZE && i < SimpleSmurfProblemState->nNumVars; i++) {
-			SimpleSmurfProblemState->arrSmurfStack[i].arrSmurfStates
-			  = (void **)ite_calloc(SimpleSmurfProblemState->nNumSmurfs, sizeof(int *), 9, "arrSmurfStates");
-			//fprintf(stderr, "alloc %d\n", i);
-		}
+		Alloc_SmurfStack(destination);
 	}
 		  
 	memcpy_ite(SimpleSmurfProblemState->arrSmurfStack[destination].arrSmurfStates,

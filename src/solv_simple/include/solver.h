@@ -75,11 +75,14 @@ int SimpleBrancher();
 ITE_INLINE int InitSimpleVarMap();
 ITE_INLINE void FreeSimpleVarMap();
 
+ITE_INLINE void Alloc_SmurfStack(int destination);
+
 ITE_INLINE int EnqueueInference(int nInfVar, bool bInfPolarity);
 void check_SmurfStatesTableSize(int size);
 
 ITE_INLINE int ApplyInference_Hooks(int nBranchVar, bool bBVPolarity);
 ITE_INLINE int Backtrack_Hooks();
+ITE_INLINE void Alloc_SmurfStack_Hooks(int destination);
 
 ITE_INLINE void Init_Solver_Hooks();
 ITE_INLINE void Final_Solver_Hooks();
