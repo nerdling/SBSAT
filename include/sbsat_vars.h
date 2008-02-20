@@ -200,6 +200,7 @@ extern int print_search_dot;
 extern int sbj;
 
 extern char ge_preproc;
+extern char use_XORGElim;
 
 extern int USE_AUTARKY_SMURFS;
 

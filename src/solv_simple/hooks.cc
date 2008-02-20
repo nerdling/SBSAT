@@ -90,6 +90,13 @@ ITE_INLINE int ApplyInference_Hooks(int nBranchVar, bool bBVPolarity) {
 	return ret;	
 }
 
+ITE_INLINE int ApplyInferenceToSmurf_Hook(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates) {
+	int ret = 1;
+	
+	
+	return ret;
+}
+
 ITE_INLINE int Backtrack_Hooks() {
 
 	int ret = SOLV_UNKNOWN;

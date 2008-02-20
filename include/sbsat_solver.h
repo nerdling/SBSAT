@@ -56,6 +56,7 @@ enum {
    FN_OR_COUNTER,
 	FN_XOR,
    FN_XOR_COUNTER,
+	FN_XOR_GELIM,
    FN_AND_EQU,
 	FN_OR_EQU,
 	FN_MINMAX,
@@ -119,17 +120,24 @@ struct ORCounterStateEntry {
 };
 
 struct XORStateEntry {
-	char cType; //FN_OR
+	char cType; //FN_XOR
 	int *nTransitionVars;
 	bool bParity;
 	int nSize;
 };
 
 struct XORCounterStateEntry {
-	char cType; //FN_OR_COUNTER
+	char cType; //FN_XOR_COUNTER
 	void *pTransition;
 	int nSize;
 	XORStateEntry *pXORState; //For heuristic purposes
+};
+
+struct XORGElimStateEntry {
+	char cType; //FN_XOR_GELIM
+	int *nTransitionVars;
+	bool bParity;
+	int nSize;
 };
 
 struct SmurfStack {

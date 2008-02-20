@@ -84,6 +84,7 @@ void check_SmurfStatesTableSize(int size);
 ITE_INLINE void SmurfStates_Push_Hooks();
 ITE_INLINE void SmurfStates_Pop_Hooks();
 ITE_INLINE int ApplyInference_Hooks(int nBranchVar, bool bBVPolarity);
+ITE_INLINE int ApplyInferenceToSmurf_Hook(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 ITE_INLINE int Backtrack_Hooks();
 ITE_INLINE void Alloc_SmurfStack_Hooks(int destination);
 ITE_INLINE void Init_Solver_PreSmurfs_Hooks();
