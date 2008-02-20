@@ -59,15 +59,13 @@ bool CheckSimpleLimits(double fStartTime) {
 		return 1;
 	}
 	
-	//PrintAllXORSmurfStateEntries();
-	
 	return 0;
 }
 
 ITE_INLINE void SmurfStates_Push_Hooks() {
 //push GE table onto the stack.
 //frame allocated here?
-	
+//	PrintAllXORSmurfStateEntries();
 }
 
 ITE_INLINE void SmurfStates_Pop_Hooks() {
