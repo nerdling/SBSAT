@@ -152,7 +152,7 @@ void Calculate_Heuristic_Values() {
 			SimpleSmurfProblemState->arrNegVarHeurWghts[((SmurfStateEntry *)pState)->nTransitionVar] +=  
 			  ((SmurfStateEntry *)pState)->fHeurWghtofFalseTransition;
 			while (((SmurfStateEntry *)pState)->pNextVarInThisState != NULL) {
-				((SmurfStateEntry *)pState) = ((SmurfStateEntry *)((SmurfStateEntry *)pState)->pNextVarInThisState);
+				pState = ((SmurfStateEntry *)pState)->pNextVarInThisState;
 				SimpleSmurfProblemState->arrPosVarHeurWghts[((SmurfStateEntry *)pState)->nTransitionVar] +=
 				  ((SmurfStateEntry *)pState)->fHeurWghtofTrueTransition;
 				SimpleSmurfProblemState->arrNegVarHeurWghts[((SmurfStateEntry *)pState)->nTransitionVar] +=  
