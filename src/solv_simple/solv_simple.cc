@@ -140,78 +140,76 @@ void Calculate_Heuristic_Values() {
 	for(int nSmurfIndex = 0; nSmurfIndex < SimpleSmurfProblemState->nNumSmurfs; nSmurfIndex++) {
 		//TrueState
 		if(arrSmurfStates[nSmurfIndex] == pTrueSimpleSmurfState) continue;
+		void *pState;
+		int nCurrInfLevel = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
+		int numfound = 0;
 		//FN_SMURF
-		if (((TypeStateEntry *)arrSmurfStates[nSmurfIndex])->cType == FN_SMURF) {
-			SmurfStateEntry *pState = (SmurfStateEntry *)arrSmurfStates[nSmurfIndex];
-			SimpleSmurfProblemState->arrPosVarHeurWghts[pState->nTransitionVar] += 
-			  pState->fHeurWghtofTrueTransition;
-			SimpleSmurfProblemState->arrNegVarHeurWghts[pState->nTransitionVar] +=  
-			  pState->fHeurWghtofFalseTransition;
-			while (pState->pNextVarInThisState != NULL) {
-				pState = (SmurfStateEntry *)pState->pNextVarInThisState;
-				SimpleSmurfProblemState->arrPosVarHeurWghts[pState->nTransitionVar] += 
-				  pState->fHeurWghtofTrueTransition;
-				SimpleSmurfProblemState->arrNegVarHeurWghts[pState->nTransitionVar] +=  
-				  pState->fHeurWghtofFalseTransition;
+		switch(((TypeStateEntry *)arrSmurfStates[nSmurfIndex])->cType) {
+		 case FN_SMURF:
+			pState = arrSmurfStates[nSmurfIndex];
+			SimpleSmurfProblemState->arrPosVarHeurWghts[((SmurfStateEntry *)pState)->nTransitionVar] +=
+			  ((SmurfStateEntry *)pState)->fHeurWghtofTrueTransition;
+			SimpleSmurfProblemState->arrNegVarHeurWghts[((SmurfStateEntry *)pState)->nTransitionVar] +=  
+			  ((SmurfStateEntry *)pState)->fHeurWghtofFalseTransition;
+			while (((SmurfStateEntry *)pState)->pNextVarInThisState != NULL) {
+				((SmurfStateEntry *)pState) = ((SmurfStateEntry *)((SmurfStateEntry *)pState)->pNextVarInThisState);
+				SimpleSmurfProblemState->arrPosVarHeurWghts[((SmurfStateEntry *)pState)->nTransitionVar] +=
+				  ((SmurfStateEntry *)pState)->fHeurWghtofTrueTransition;
+				SimpleSmurfProblemState->arrNegVarHeurWghts[((SmurfStateEntry *)pState)->nTransitionVar] +=  
+				  ((SmurfStateEntry *)pState)->fHeurWghtofFalseTransition;
 			}
-		//FN_OR
-		} else if (((TypeStateEntry *)arrSmurfStates[nSmurfIndex])->cType == FN_OR) {
-			ORStateEntry *pORState = (ORStateEntry *)arrSmurfStates[nSmurfIndex];
-			int nCurrInfLevel = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
-			int numfound = 0;
-			for(int index = 0; numfound < 2; index++) {
-				if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[pORState->nTransitionVars[index]] >= nCurrInfLevel) {
+			break;
+		 case FN_OR_COUNTER:
+			pState = arrSmurfStates[nSmurfIndex];
+			for(int index = 0; numfound < ((ORCounterStateEntry *)pState)->nSize; index++) {
+				if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[((ORCounterStateEntry *)pState)->pORState->nTransitionVars[index]] >= nCurrInfLevel) {
 					numfound++;
-					if(pORState->bPolarity[index] == BOOL_TRUE) {
-						SimpleSmurfProblemState->arrPosVarHeurWghts[pORState->nTransitionVars[index]] += JHEURISTIC_K_TRUE;
-						SimpleSmurfProblemState->arrNegVarHeurWghts[pORState->nTransitionVars[index]] += LSGBORGetHeurNeg(pORState);
+					if(((ORCounterStateEntry *)pState)->pORState->bPolarity[index] == BOOL_TRUE) {
+						SimpleSmurfProblemState->arrPosVarHeurWghts[((ORCounterStateEntry *)pState)->pORState->nTransitionVars[index]] += JHEURISTIC_K_TRUE;
+						SimpleSmurfProblemState->arrNegVarHeurWghts[((ORCounterStateEntry *)pState)->pORState->nTransitionVars[index]] += LSGBORCounterGetHeurNeg(((ORCounterStateEntry *)pState));
 					} else {
-						SimpleSmurfProblemState->arrPosVarHeurWghts[pORState->nTransitionVars[index]] += LSGBORGetHeurNeg(pORState);
-						SimpleSmurfProblemState->arrNegVarHeurWghts[pORState->nTransitionVars[index]] += JHEURISTIC_K_TRUE;
+						SimpleSmurfProblemState->arrPosVarHeurWghts[((ORCounterStateEntry *)pState)->pORState->nTransitionVars[index]] += LSGBORCounterGetHeurNeg(((ORCounterStateEntry *)pState));
+						SimpleSmurfProblemState->arrNegVarHeurWghts[((ORCounterStateEntry *)pState)->pORState->nTransitionVars[index]] += JHEURISTIC_K_TRUE;
 					}
 				}
 			}
-		//FN_OR_COUNTER
-		} else if (((TypeStateEntry *)arrSmurfStates[nSmurfIndex])->cType == FN_OR_COUNTER) {
-			ORCounterStateEntry *pORCounterState = (ORCounterStateEntry *)arrSmurfStates[nSmurfIndex];
-			int nCurrInfLevel = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
-			int numfound = 0;
-			for(int index = 0; numfound < pORCounterState->nSize; index++) {
-				if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[pORCounterState->pORState->nTransitionVars[index]] >= nCurrInfLevel) {
+			break;
+		 case FN_XOR_COUNTER:
+			pState = arrSmurfStates[nSmurfIndex];
+			for(int index = 0; numfound < ((XORCounterStateEntry *)pState)->nSize; index++) {
+				if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[((XORCounterStateEntry *)pState)->pXORState->nTransitionVars[index]] >= nCurrInfLevel) {
 					numfound++;
-					if(pORCounterState->pORState->bPolarity[index] == BOOL_TRUE) {
-						SimpleSmurfProblemState->arrPosVarHeurWghts[pORCounterState->pORState->nTransitionVars[index]] += JHEURISTIC_K_TRUE;
-						SimpleSmurfProblemState->arrNegVarHeurWghts[pORCounterState->pORState->nTransitionVars[index]] += LSGBORCounterGetHeurNeg(pORCounterState);
+					SimpleSmurfProblemState->arrPosVarHeurWghts[((XORCounterStateEntry *)pState)->pXORState->nTransitionVars[index]] += LSGBXORCounterGetHeurScoreTrans(((XORCounterStateEntry *)pState));
+					SimpleSmurfProblemState->arrNegVarHeurWghts[((XORCounterStateEntry *)pState)->pXORState->nTransitionVars[index]] += LSGBXORCounterGetHeurScoreTrans(((XORCounterStateEntry *)pState));
+				}
+			}
+			break;
+		 case FN_OR:
+			pState = arrSmurfStates[nSmurfIndex];
+			for(int index = 0; numfound < 2; index++) {
+				if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[((ORStateEntry *)pState)->nTransitionVars[index]] >= nCurrInfLevel) {
+					numfound++;
+					if(((ORStateEntry *)pState)->bPolarity[index] == BOOL_TRUE) {
+						SimpleSmurfProblemState->arrPosVarHeurWghts[((ORStateEntry *)pState)->nTransitionVars[index]] += JHEURISTIC_K_TRUE;
+						SimpleSmurfProblemState->arrNegVarHeurWghts[((ORStateEntry *)pState)->nTransitionVars[index]] += LSGBORGetHeurNeg(((ORStateEntry *)pState));
 					} else {
-						SimpleSmurfProblemState->arrPosVarHeurWghts[pORCounterState->pORState->nTransitionVars[index]] += LSGBORCounterGetHeurNeg(pORCounterState);
-						SimpleSmurfProblemState->arrNegVarHeurWghts[pORCounterState->pORState->nTransitionVars[index]] += JHEURISTIC_K_TRUE;
+						SimpleSmurfProblemState->arrPosVarHeurWghts[((ORStateEntry *)pState)->nTransitionVars[index]] += LSGBORGetHeurNeg(((ORStateEntry *)pState));
+						SimpleSmurfProblemState->arrNegVarHeurWghts[((ORStateEntry *)pState)->nTransitionVars[index]] += JHEURISTIC_K_TRUE;
 					}
 				}
 			}
-		//FN_XOR
-		} else if (((TypeStateEntry *)arrSmurfStates[nSmurfIndex])->cType == FN_XOR) {
-			XORStateEntry *pXORState = (XORStateEntry *)arrSmurfStates[nSmurfIndex];
-			int nCurrInfLevel = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
-			int numfound = 0;
+			break;
+		 case FN_XOR:
+			pState = arrSmurfStates[nSmurfIndex];
 			for(int index = 0; numfound < 2; index++) {
-				if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[pXORState->nTransitionVars[index]] >= nCurrInfLevel) {
+				if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[((XORStateEntry *)pState)->nTransitionVars[index]] >= nCurrInfLevel) {
 					numfound++;
-					SimpleSmurfProblemState->arrPosVarHeurWghts[pXORState->nTransitionVars[index]] += LSGBXORGetHeurScoreTrans(pXORState);
-					SimpleSmurfProblemState->arrNegVarHeurWghts[pXORState->nTransitionVars[index]] += LSGBXORGetHeurScoreTrans(pXORState);
+					SimpleSmurfProblemState->arrPosVarHeurWghts[((XORStateEntry *)pState)->nTransitionVars[index]] += LSGBXORGetHeurScoreTrans(((XORStateEntry *)pState));
+					SimpleSmurfProblemState->arrNegVarHeurWghts[((XORStateEntry *)pState)->nTransitionVars[index]] += LSGBXORGetHeurScoreTrans(((XORStateEntry *)pState));
 				}
 			}
-		//FN_XOR_COUNTER
-		} else if (((TypeStateEntry *)arrSmurfStates[nSmurfIndex])->cType == FN_XOR_COUNTER) {
-			XORCounterStateEntry *pXORCounterState = (XORCounterStateEntry *)arrSmurfStates[nSmurfIndex];
-			int nCurrInfLevel = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
-			int numfound = 0;
-			for(int index = 0; numfound < pXORCounterState->nSize; index++) {
-				if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[pXORCounterState->pXORState->nTransitionVars[index]] >= nCurrInfLevel) {
-					numfound++;
-					SimpleSmurfProblemState->arrPosVarHeurWghts[pXORCounterState->pXORState->nTransitionVars[index]] += LSGBXORCounterGetHeurScoreTrans(pXORCounterState);
-					SimpleSmurfProblemState->arrNegVarHeurWghts[pXORCounterState->pXORState->nTransitionVars[index]] += LSGBXORCounterGetHeurScoreTrans(pXORCounterState);
-				}
-			}
+			break;
+		 default: break;
 		}
 	}
 	
