@@ -53,7 +53,6 @@
 #include "sbsat_solver.h"
 #include "solver.h"
 
-
 #define null -1
 #define VecType unsigned long
 
@@ -310,7 +309,7 @@ int addRow (XORd *xord) {
 		short int v;
 		if ((v = first_bit[(int)xord->varlist[i]]) != null) {
 			VecType *vn = (VecType *)(frame_start+vecs_v_start+v*vecs_rec_bytes);
-			for (int j=0 ; j < vec_size ; j++) vec[j] ^= vn[j];
+			for (int j=0 ; j <= v/(sizeof(VecType)*8); j++) vec[j] ^= vn[j];
 		}
 	}
 	//Modify this next block of code to also detect when only one 1 occurs.
@@ -350,12 +349,10 @@ int addRow (XORd *xord) {
 	*((short int *)(frame_start+vec_add)) = save_first_column;
 
 	first_bit[save_first_column] = rec->index;
-	int word = save_first_column/(sizeof(VecType)*8);
+	int word = k;//save_first_column/(sizeof(VecType)*8);
 	int bit = save_first_column % (sizeof(VecType)*8);
 	mask[word] &= (-1 ^ (1 << bit));
 
-	int diagonal_block = k;
-	
 	//Look for second 1. If doesn't exist --> vec gives inference.
 	int save_second_column = 0;
 	for(; k>=0 ; k--){
@@ -389,50 +386,38 @@ int addRow (XORd *xord) {
 	for (int i=0 ; i < rec->index ; i++) {
 		VecType *vn = (VecType *)vec_address;
 		if (vn[word] & (1 << bit)) {
-			for (int j=0; j <= diagonal_block; j++) vn[j] ^= vec[j];
-
-			//check vn for inference.			
-			int inference_column = 0;
-			int nonzerok = -1; //Check to see if there is only 1 nonzero word in the vector
-			for (k=vec_size-1 ; k >= 0 ; k--) {
-			  if((mask[k] & vec[k]) != 0){
-			    if(nonzerok != -1){ //more than one nonzero --> no inference
-			      nonzerok = -1;
-			      break;
-			    }
-			    nonzerok = k;
-			  }
-			}
-		
-			if(nonzerok == -1){ //try next vector		    
-			  continue;
-			}
-		
-			// Check the nonzero word to see if there is only one bit set:
-			VecType tmp;
-			if ((tmp = (mask[nonzerok] & vn[nonzerok])) != 0) {
-			  int hgh = sizeof(VecType)*8-1;
-			  while (hgh > 0) { 
-			    int mid = hgh/2;
-			    if((tmp & (unsigned int) ~(-1 << mid+1)) > 0){ // bottom has a 1
-			      if((tmp & (unsigned int) (-1 << mid+1)) > 0){ // top also has a 1 --> fail
-				inference_column = -1;
-				break;
-			      }
-			      tmp &= (unsigned int) ~(-1 << mid+1);
-			    }else { //top must have a 1 (because the equation is consistent)
-			      inference_column += mid+1;
-			      tmp >>= mid+1;
-			    }
-			    hgh /= 2;
-			  }
-			  inference_column += nonzerok*(sizeof(VecType)*8);
-			}
-		
-			if(inference_column != -1){
-			  int ret = EnqueueInference(inference_column, vn[vec_size-1]&(1 << (sizeof(VecType)*8-1)));
-			  if(ret == 0)
-			    return -1; //Is this the return value I want?			    
+			bool nonzero = 0;
+			int j=0;
+			for (; j <= word; j++) nonzero &= mask[j] & (vn[j] ^= vec[j]);
+			for (; j < vec_size && !nonzero; j++) nonzero &= mask[j] & vn[j];
+			
+			if(!nonzero){
+				//Inference
+				int inference_column = 0;
+				
+				for (k=vec_size-1 ; k >= 0 ; k--) {
+					// Maybe 10 of these loops
+					VecType tmp;
+					if ((tmp = vn[k]) != 0) {
+						int hgh = sizeof(VecType)*8-1;
+						while (hgh > 0) { // Maybe 5 of these loops - binary search for leading 1
+							int mid = hgh/2;
+							if (tmp >= (unsigned int)(1 << mid+1)) {
+								tmp >>= mid+1;
+								inference_column += mid+1;
+							}
+							hgh /= 2;
+						}
+						
+						inference_column += k*(sizeof(VecType)*8);
+						break;
+					}
+				}
+				assert(inference_column);
+				
+				int ret = EnqueueInference(inference_column, vn[vec_size-1]&(1 << (sizeof(VecType)*8-1)));				
+				if(ret == 0)
+				  return -1; //Is this the return value I want?			    
 			}
 		}
 		vec_address += vecs_rec_bytes;
@@ -442,7 +427,6 @@ int addRow (XORd *xord) {
 	vindex++;
 	rec->index++;
 	
-	
 	return 1;
 }
 
@@ -450,90 +434,89 @@ void printFrameSize () {
 	cout << "Frame: " << frame_size << "\n";
 }
 
-   void printMask () {
-		cout << "Mask (" << vec_size*sizeof(VecType)*8 << " bits):\n     ";
-		for (int i=0 ; i < vec_size ; i++) {
-			VecType tmp = mask[i];
-			for (unsigned int j=0 ; j < sizeof(VecType)*8 ; j++) {
+void printMask () {
+	cout << "Mask (" << vec_size*sizeof(VecType)*8 << " bits):\n     ";
+	for (int i=0 ; i < vec_size ; i++) {
+		VecType tmp = mask[i];
+		for (unsigned int j=0 ; j < sizeof(VecType)*8 ; j++) {
+			if (tmp % 2) cout << "1"; else cout << "0";
+			tmp /= 2;
+		}
+	}
+	cout << "\n";
+}
+
+void printLinearN () {
+	printMask ();
+	cout << "Vectors:\n";
+	for (int i=0 ; i < rec->index ; i++) {
+		cout << "     ";
+		VecType *vn = (VecType *)(frame_start+vecs_v_start+i*vecs_rec_bytes);
+		for (int j=0 ; j < vec_size ; j++) {
+			VecType tmp = vn[j];
+			for (unsigned int k=0 ; k < sizeof(VecType)*8 ; k++) {
+				if (tmp % 2) cout << "1"; else cout << "0";
+				tmp /= 2;
+			}
+		}
+		cout << "     ";
+		for (int j=0 ; j < vec_size ; j++) {
+			VecType tmp = vn[j] & mask[j];
+			for (unsigned int k=0 ; k < sizeof(VecType)*8 ; k++) {
 				if (tmp % 2) cout << "1"; else cout << "0";
 				tmp /= 2;
 			}
 		}
 		cout << "\n";
 	}
+	cout << " +-----+     +-----+     +-----+     +-----+     +-----+\n";
+}
 
-   void printLinearN () {
-		printMask ();
-		cout << "Vectors:\n";
-		for (int i=0 ; i < rec->index ; i++) {
-			cout << "     ";
-			VecType *vn = (VecType *)(frame_start+vecs_v_start+i*vecs_rec_bytes);
-			for (int j=0 ; j < vec_size ; j++) {
-				VecType tmp = vn[j];
-				for (unsigned int k=0 ; k < sizeof(VecType)*8 ; k++) {
-					if (tmp % 2) cout << "1"; else cout << "0";
-					tmp /= 2;
-				}
-			}
-			cout << "     ";
-			for (int j=0 ; j < vec_size ; j++) {
-				VecType tmp = vn[j] & mask[j];
-				for (unsigned int k=0 ; k < sizeof(VecType)*8 ; k++) {
-					if (tmp % 2) cout << "1"; else cout << "0";
-					tmp /= 2;
-				}
-			}
-			cout << "\n";
-		}
-		cout << " +-----+     +-----+     +-----+     +-----+     +-----+\n";
+void printLinear () {
+	int xlate[512];
+	int rows[512];
+	printLinearN ();
+	for (int i=0 ; i < 512 ; i++) xlate[i] = i;
+	int j=0;
+	for (int i=no_inp_vars-1 ; i >= 0 ; i--)
+	  if (first_bit[i] != null) {
+		  rows[j] = first_bit[i]; xlate[j++] = i;
+	  }
+	
+	rows[j] = -1;
+	for (int i=no_inp_vars-1 ; i >= 0 ; i--)
+	  if (first_bit[i] == null) xlate[j++] = i;
+	
+	cout << "Mask (" << vec_size*sizeof(VecType)*8 << " bits):\n     ";
+	for (int i=0 ; i < no_inp_vars ; i++) {
+		int word = xlate[i]/(sizeof(VecType)*8);
+		int bit  = xlate[i] % (sizeof(VecType)*8);
+		if (mask[word] & (1 << bit)) cout << "1"; else cout << "0";
 	}
-   
-   void printLinear () {
-		int xlate[512];
-		int rows[512];
-		printLinearN ();
-		for (int i=0 ; i < 512 ; i++) xlate[i] = i;
-		int j=0;
-		for (int i=no_inp_vars-1 ; i >= 0 ; i--)
-		  if (first_bit[i] != null) {
-			  rows[j] = first_bit[i]; xlate[j++] = i;
-		  }
-		
-		rows[j] = -1;
-		for (int i=no_inp_vars-1 ; i >= 0 ; i--)
-		  if (first_bit[i] == null) xlate[j++] = i;
-
-		cout << "Mask (" << vec_size*sizeof(VecType)*8 << " bits):\n     ";
-		for (int i=0 ; i < no_inp_vars ; i++) {
-			int word = xlate[i]/(sizeof(VecType)*8);
-			int bit  = xlate[i] % (sizeof(VecType)*8);
-			if (mask[word] & (1 << bit)) cout << "1"; else cout << "0";
+	cout << "\n";
+	
+	cout << "Vectors:\n";
+	for (int i=0 ; rows[i] >= 0 ; i++) {
+		cout << "     ";
+		VecType *vn = (VecType *)(frame_start+vecs_v_start+rows[i]*vecs_rec_bytes);
+		for (int j=0 ; j < no_inp_vars ; j++) {
+			int word = xlate[j]/(sizeof(VecType)*8);
+			int bit  = xlate[j] % (sizeof(VecType)*8);
+			if (vn[word] & (1 << bit)) cout << "1"; else cout << "0";
 		}
+		cout << ".";
+		if (vn[vec_size-1] & (1 << (sizeof(VecType)*8-1)))
+		  cout << "1"; else cout << "0";
+		cout << "     ";
+		for (int j=0 ; j < no_inp_vars ; j++) {
+			int word = xlate[j]/(sizeof(VecType)*8);
+			int bit  = xlate[j] % (sizeof(VecType)*8);
+			if (vn[word] & mask[word] & (1 << bit)) cout << "1"; else cout << "0";
+		}
+		cout << ".";
+		if (vn[vec_size-1] & (1 << (sizeof(VecType)*8-1)))
+		  cout << "1"; else cout << "0";
 		cout << "\n";
-		
-		cout << "Vectors:\n";
-		for (int i=0 ; rows[i] >= 0 ; i++) {
-			cout << "     ";
-			VecType *vn = (VecType *)(frame_start+vecs_v_start+rows[i]*vecs_rec_bytes);
-			for (int j=0 ; j < no_inp_vars ; j++) {
-				int word = xlate[j]/(sizeof(VecType)*8);
-				int bit  = xlate[j] % (sizeof(VecType)*8);
-				if (vn[word] & (1 << bit)) cout << "1"; else cout << "0";
-			}
-			cout << ".";
-			if (vn[vec_size-1] & (1 << (sizeof(VecType)*8-1)))
-			  cout << "1"; else cout << "0";
-			cout << "     ";
-			for (int j=0 ; j < no_inp_vars ; j++) {
-				int word = xlate[j]/(sizeof(VecType)*8);
-				int bit  = xlate[j] % (sizeof(VecType)*8);
-				if (vn[word] & mask[word] & (1 << bit)) cout << "1"; else cout << "0";
-			}
-			cout << ".";
-			if (vn[vec_size-1] & (1 << (sizeof(VecType)*8-1)))
-			  cout << "1"; else cout << "0";
-			cout << "\n";
-		}
-		cout << "========================================================\n";
 	}
-
+	cout << "========================================================\n";
+}
