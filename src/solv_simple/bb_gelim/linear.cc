@@ -339,9 +339,6 @@ int addRow (XORd *xord) {
 		}
 	}
 
-	//ret = EnqueueInference(nVariable, bPolarity);
-	//if ret == 0? conflict
-	
 	// If k == -1 then no 1's were found in the new vector.
 	if (k == -1) {
 		if (vec[vec_size-1]&(1 << (sizeof(VecType)*8-1))) return -1; // Inconsistent. 
@@ -356,26 +353,28 @@ int addRow (XORd *xord) {
 	int word = save_first_column/(sizeof(VecType)*8);
 	int bit = save_first_column % (sizeof(VecType)*8);
 	mask[word] &= (-1 ^ (1 << bit));
+
+	int diagonal_block = k;
 	
 	//Look for second 1. If doesn't exist --> vec gives inference.
 	int save_second_column = 0;
-	for(k=word ; k>=0 ; k--){
-	  // Maybe 10 of these loops
-	  VecType tmp;
-	  if ((tmp = (mask[k] & vec[k])) != 0) {
-	    int hgh = sizeof(VecType)*8-1;
-	    while (hgh > 0) { // Maybe 5 of these loops - binary search for leading 1
-	      int mid = hgh/2;
-	      if (tmp >= (unsigned int)(1 << mid+1)) {
-		tmp >>= mid+1;
-		save_second_column += mid+1;
-	      }
-	      hgh /= 2;
-	    }
-	    
-	    save_second_column += k*(sizeof(VecType)*8);
-	    break;
-	  }
+	for(; k>=0 ; k--){
+		// Maybe 10 of these loops
+		VecType tmp;
+		if ((tmp = (mask[k] & vec[k])) != 0) {
+			int hgh = sizeof(VecType)*8-1;
+			while (hgh > 0) { // Maybe 5 of these loops - binary search for leading 1
+				int mid = hgh/2;
+				if (tmp >= (unsigned int)(1 << mid+1)) {
+					tmp >>= mid+1;
+					save_second_column += mid+1;
+				}
+				hgh /= 2;
+			}
+			
+			save_second_column += k*(sizeof(VecType)*8);
+			break;
+		}
 	}
 
 	// If k == -1 then we have an inference
@@ -385,13 +384,12 @@ int addRow (XORd *xord) {
 	    return -1; //Is this the return value I want?			    
 	}
 
-
 	// Cancel all 1's in the new column. Currently looks at *all* vectors!
 	unsigned long vec_address = frame_start + vecs_v_start;
 	for (int i=0 ; i < rec->index ; i++) {
 		VecType *vn = (VecType *)vec_address;
 		if (vn[word] & (1 << bit)) {
-			for (int j=0; j < vec_size; j++) vn[j] ^= vec[j];
+			for (int j=0; j <= diagonal_block; j++) vn[j] ^= vec[j];
 
 			//check vn for inference.			
 			int inference_column = 0;
