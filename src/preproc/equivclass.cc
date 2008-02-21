@@ -1611,7 +1611,7 @@ d1:;
 		}
 		// If k == -1 then no 1's were found in the new vector.
 		if (k == -1) {
-			if (vec[vec_size-1]) return -1; // Inconsistent
+			if (vec[vec_size-1] & (1 << (sizeof(VecType)*8-1))) return -1; // Inconsistent
 			else return 0; // No change
 		}
 		// Open up a new diagonal column
