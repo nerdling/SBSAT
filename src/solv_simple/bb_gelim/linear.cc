@@ -50,6 +50,9 @@
 **/
 
 #include "sbsat.h"
+#include "sbsat_solver.h"
+#include "solver.h"
+
 
 #define null -1
 #define VecType unsigned long
@@ -330,87 +333,113 @@ int addRow (XORd *xord) {
 				}
 				hgh /= 2;
 			}
+
 			save_first_column += k*(sizeof(VecType)*8);
 			break;
 		}
 	}
-	//if vec only has one 1 in it, it is an inference.
+
 	//ret = EnqueueInference(nVariable, bPolarity);
 	//if ret == 0? conflict
 	
 	// If k == -1 then no 1's were found in the new vector.
 	if (k == -1) {
-		if (vec[vec_size-1]&(1 << (sizeof(VecType)*8-1))) return -1; // Inconsistent. Is this check correct? Should it be on the last bit vs. last word?
+		if (vec[vec_size-1]&(1 << (sizeof(VecType)*8-1))) return -1; // Inconsistent. 
 		else return 0; // No change
 	}
+	
 	// Open up a new diagonal column
 	unsigned long vec_add = vecs_v_start+rec->index*vecs_rec_bytes+vecs_colm_start;
 	*((short int *)(frame_start+vec_add)) = save_first_column;
+
 	first_bit[save_first_column] = rec->index;
 	int word = save_first_column/(sizeof(VecType)*8);
 	int bit = save_first_column % (sizeof(VecType)*8);
 	mask[word] &= (-1 ^ (1 << bit));
 	
+	//Look for second 1. If doesn't exist --> vec gives inference.
+	int save_second_column = 0;
+	for(k=word ; k>=0 ; k--){
+	  // Maybe 10 of these loops
+	  VecType tmp;
+	  if ((tmp = (mask[k] & vec[k])) != 0) {
+	    int hgh = sizeof(VecType)*8-1;
+	    while (hgh > 0) { // Maybe 5 of these loops - binary search for leading 1
+	      int mid = hgh/2;
+	      if (tmp >= (unsigned int)(1 << mid+1)) {
+		tmp >>= mid+1;
+		save_second_column += mid+1;
+	      }
+	      hgh /= 2;
+	    }
+	    
+	    save_second_column += k*(sizeof(VecType)*8);
+	    break;
+	  }
+	}
+
+	// If k == -1 then we have an inference
+	if (k == -1) {
+	  int ret = EnqueueInference(save_first_column, vec[vec_size-1]&(1 << (sizeof(VecType)*8-1)));
+	  if(ret == 0)
+	    return -1; //Is this the return value I want?			    
+	}
+
+
 	// Cancel all 1's in the new column. Currently looks at *all* vectors!
 	unsigned long vec_address = frame_start + vecs_v_start;
 	for (int i=0 ; i < rec->index ; i++) {
 		VecType *vn = (VecType *)vec_address;
 		if (vn[word] & (1 << bit)) {
 			for (int j=0; j < vec_size; j++) vn[j] ^= vec[j];
-			//check vn for inference.
+
+			//check vn for inference.			
+			int inference_column = 0;
+			int nonzerok = -1; //Check to see if there is only 1 nonzero word in the vector
+			for (k=vec_size-1 ; k >= 0 ; k--) {
+			  if((mask[k] & vec[k]) != 0){
+			    if(nonzerok != -1){ //more than one nonzero --> no inference
+			      nonzerok = -1;
+			      break;
+			    }
+			    nonzerok = k;
+			  }
+			}
+		
+			if(nonzerok == -1){ //try next vector		    
+			  continue;
+			}
+		
+			// Check the nonzero word to see if there is only one bit set:
+			VecType tmp;
+			if ((tmp = (mask[nonzerok] & vn[nonzerok])) != 0) {
+			  int hgh = sizeof(VecType)*8-1;
+			  while (hgh > 0) { 
+			    int mid = hgh/2;
+			    if((tmp & (unsigned int) ~(-1 << mid+1)) > 0){ // bottom has a 1
+			      if((tmp & (unsigned int) (-1 << mid+1)) > 0){ // top also has a 1 --> fail
+				inference_column = -1;
+				break;
+			      }
+			      tmp &= (unsigned int) ~(-1 << mid+1);
+			    }else { //top must have a 1 (because the equation is consistent)
+			      inference_column += mid+1;
+			      tmp >>= mid+1;
+			    }
+			    hgh /= 2;
+			  }
+			  inference_column += nonzerok*(sizeof(VecType)*8);
+			}
+		
+			if(inference_column != -1){
+			  int ret = EnqueueInference(inference_column, vn[vec_size-1]&(1 << (sizeof(VecType)*8-1)));
+			  if(ret == 0)
+			    return -1; //Is this the return value I want?			    
+			}
 		}
 		vec_address += vecs_rec_bytes;
 	}
 	
-	//Check for inferences
-	vec_address = frame_start + vecs_v_start;
-	for (int i=0 ; i < rec->index ; i++) {
-		VecType *vn = (VecType *)vec_address;
-		int inference_column = 0;
-		
-		int nonzerok = -1; //Check to see if there is only 1 nonzero word in the vector
-		for (k=vec_size-1 ; k >= 0 ; k--) {
-			if((mask[k] & vec[k]) != 0){
-		      if(nonzerok != -1){ //more than one nonzero --> no inference
-					nonzerok = -1;
-					break;
-		      }
-		      nonzerok = k;
-			}
-		}
-		
-		if(nonzerok == -1){ //try next vector		    
-			continue;
-		}
-		
-		// Check the nonzero word to see if there is only one bit set:
-		VecType tmp;
-		if ((tmp = (mask[nonzerok] & vn[nonzerok])) != 0) {
-			int hgh = sizeof(VecType)*8-1;
-			while (hgh > 0) { 
-		      int mid = hgh/2;
-		      if((tmp & (unsigned int) ~(-1 << mid+1)) > 0){ // bottom has a 1
-					if((tmp & (unsigned int) (-1 << mid+1)) > 0){ // top also has a 1 --> fail
-						inference_column = -1;
-						break;
-					}
-					tmp &= (unsigned int) ~(-1 << mid+1);
-		      }else { //top must have a 1 (because the equation is consistent)
-					inference_column += mid+1;
-					tmp >>= mid+1;
-		      }
-		      hgh /= 2;
-			}
-			inference_column += nonzerok*(sizeof(VecType)*8);
-		}
-		
-		/* Call Sean's special function to store the inferences
-		 if(inference_column != -1)
-		 printf("inference column: %d\n",inference_column);		    
-		 else
-		 printf("no inference\n");		
-		 */
-	}
 	// Insert the new row
 	vindex++;
 	rec->index++;
