@@ -230,7 +230,7 @@ int Init_SimpleSmurfSolver() {
 	return ret;
 }
 
-int Final_SimpleSmurfSolver() {
+void Final_SimpleSmurfSolver() {
 
 	DisplaySimpleStatistics(ite_counters[NUM_CHOICE_POINTS], ite_counters[NUM_BACKTRACKS], ite_counters[NUM_BACKJUMPS]);
 	if (fd_csv_trace_file) {
@@ -256,6 +256,8 @@ int simpleSolve() {
 	ret = SimpleBrancher();
 	
 	nForceBackjumpLevel = nForceBackjumpLevel_old;
+
+	Final_SimpleSmurfSolver();
 	
 	return ret;
 }
