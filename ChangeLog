@@ -1,3 +1,86 @@
+2008-02-22 16:48  fett
+
+	* include/sbsat_solver.h, src/solv_simple/hooks.cc,
+	  src/solv_simple/solv_simple_init.cc,
+	  src/solv_simple/bb_gelim/linear.cc,
+	  src/solv_simple/include/bb_gelim.h: Smoothed out
+	  initializing/allocating/pushing/poping the Gaussian Elimination
+	  table for the simple solver.
+
+	     ~Sean
+
+2008-02-22 13:18  sarahw
+
+	* src/solv_simple/bb_gelim/linear.cc: [no log message]
+
+2008-02-22 13:16  sarahw
+
+	* src/solv_simple/bb_gelim/linear.cc: Created GETable struct as
+	  wrapper for frame. Split initialization functions into:
+	  allocFrame, initFrame, and initGETable.
+
+2008-02-21 23:32  fett
+
+	* src/solv_simple/include/bb_gelim.h: [no log message]
+
+2008-02-21 23:25  fett
+
+	* Makefile.in, doc/Makefile.in, doc/man1/Makefile.in,
+	  doc/man1/sbsat.1, examples/Makefile.in, include/Makefile.in,
+	  include/config.h, include/sbsat_solver.h, src/Makefile.am,
+	  src/Makefile.in, src/formats/Makefile.in,
+	  src/formats/5/Makefile.in, src/generator/Makefile.in,
+	  src/postproc/Makefile.in, src/preproc/Makefile.in,
+	  src/solv_bddwalk/Makefile.in, src/solv_simple/hooks.cc,
+	  src/solv_simple/solv_simple.cc,
+	  src/solv_simple/solv_simple_init.cc,
+	  src/solv_simple/bb_gelim/linear.cc,
+	  src/solv_simple/fn_or/Makefile.in,
+	  src/solv_simple/fn_smurf/Makefile.in,
+	  src/solv_simple/fn_xor/Makefile.in,
+	  src/solv_simple/include/Makefile.am,
+	  src/solv_simple/include/Makefile.in,
+	  src/solv_simple/include/solver.h, src/solv_smurf/Makefile.in,
+	  src/solv_smurf/fn_and/Makefile.in,
+	  src/solv_smurf/fn_lemma/Makefile.in,
+	  src/solv_smurf/fn_lemma_au/Makefile.in,
+	  src/solv_smurf/fn_minmax/Makefile.in,
+	  src/solv_smurf/fn_smurf/Makefile.in,
+	  src/solv_smurf/fn_smurf_au/Makefile.in,
+	  src/solv_smurf/fn_smurf_xor/Makefile.in,
+	  src/solv_smurf/fn_xor/Makefile.in,
+	  src/solv_smurf/fn_xor_smurf/Makefile.in,
+	  src/solv_smurf/hr_anne/Makefile.in,
+	  src/solv_smurf/hr_berkmin/Makefile.in,
+	  src/solv_smurf/hr_lemma/Makefile.in,
+	  src/solv_smurf/hr_lsgb/Makefile.in,
+	  src/solv_smurf/hr_lsgb_lemma/Makefile.in,
+	  src/solv_smurf/hr_lsgbw/Makefile.in,
+	  src/solv_smurf/hr_minisat/Makefile.in,
+	  src/solv_smurf/hr_null/Makefile.in,
+	  src/solv_smurf/hr_vsids/Makefile.in,
+	  src/solv_smurf/include/Makefile.in, src/solv_wvf/Makefile.in,
+	  src/utils/Makefile.in, src/utils/params.cc, tests/Makefile.in,
+	  tests/cnf/Makefile.in, tests/longer_tests/Makefile.in,
+	  tests/trace_tests/Makefile.in: Hooking the gaussian elimination
+	  table into the simple solver.
+
+2008-02-21 23:23  fett
+
+	* ChangeLog, include/sbsat_solver.h: [no log message]
+
+2008-02-21 21:01  fett
+
+	* src/solv_simple/solv_simple_init.cc: [no log message]
+
+2008-02-21 18:32  fett
+
+	* src/solv_simple/solv_simple.cc: [no log message]
+
+2008-02-21 14:09  fett
+
+	* src/solv_simple/solv_simple.cc: [no log message]
+
 2008-02-21 13:36  fett
 
 	* src/solv_simple/bb_gelim/linear.cc: [no log message]

@@ -144,8 +144,8 @@
 /*
 struct XORGElimTableStruct {
 	char *frame;
-	unsigned long *mask; // 0 bits are columns of the diagonalized submatrix or assigned variables
 	int *first_bit; // first_bit[i]: pointer to vector on diagonal with first 1 bit at column i
+   unsigned long *mask; // 0 bits are columns of the diagonalized submatrix or assigned variables
    int num_vectors;
  };
 */
