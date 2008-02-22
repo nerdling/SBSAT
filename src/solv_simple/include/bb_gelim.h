@@ -50,20 +50,14 @@ typedef struct xorrecord {
 	struct xorrecord *next;
 } XORd;
 
-typedef struct equiv_rec {
-	int no_inp_vars; // The number of input variables                   
-	int index;       // Number of vectors we have                       
-	int vec_size;    // Number of bytes comprising each VecType vector
-} EquivVars;
+void initXORGElimTable(int nFuncs, int nVars);
+void allocXORGElimTable(XORGElimTableStruct *x);
+void deleteXORGElimTable();
+void pushXORGElimTable(XORGElimTableStruct *x);
+void popXORGElimTable(XORGElimTableStruct *x);
 
-typedef struct {
-	int left, rght;
-} Result;
 
-void initGETable(int size);
-void deleteGETable();
 int addRow(XORd *xord);
-char *copyFrame(char *next_frame);
 
 void printFrameSize();
 void printLinearN();

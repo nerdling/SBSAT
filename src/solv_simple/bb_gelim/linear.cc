@@ -46,7 +46,6 @@
  *    representing value true, False is the number of the variable representing
  *    value false.
  *
-
 **/
 
 #include "sbsat.h"
@@ -142,191 +141,79 @@
 //       g. column ptr of the new row set to xord's highest order 1
 //
 
+/*
+struct XORGElimTableStruct {
+	char *frame;
+	unsigned long *mask; // 0 bits are columns of the diagonalized submatrix or assigned variables
+	int *first_bit; // first_bit[i]: pointer to vector on diagonal with first 1 bit at column i
+   int num_vectors;
+ };
+*/
 
+#define VecType unsigned long
 
-typedef struct getable{
-EquivVars *rec;
 char *frame;
-	
+unsigned long *mask; // 0 bits are columns of the diagonalized submatrix or assigned variables
+int *first_bit; // first_bit[i]: pointer to vector on diagonal with first 1 bit at column i
+int num_vectors;
+
+int frame_size;
+int vecs_rec_bytes;
 int no_inp_vars; // The number of input variables 
 int no_funcs;    // The max number of functions (rows in matrix)
 int vec_size;    // Number of bytes comprising each VecType vector
+int first_bit_ref;
+int mask_ref;
+int vecs_v_ref;
 
-//int vecs_vlst_start;
-//int vecs_vsze_start;
-//int vecs_nvar_start;
-//int vecs_type_start;
-int vecs_colm_start;
-int vecs_rec_bytes;
+void initXORGElimTable(int nFuncs, int nVars){
+	//EquivVars* rec = (EquivVars *)frame;
+	no_funcs = nFuncs; //The inp is room for equivalences.
+	no_inp_vars = nVars; // Number of input variables
+	num_vectors = 0;
+	vec_size = 1+no_inp_vars/(sizeof(VecType)*8);
 	
-VecType *mask;  // 0 bits are columns of the diagonalized submatrix or assigned variables
-int *first_bit; // first_bit[i]: pointer to vector on diagonal with first 1 bit at column i
+	vecs_rec_bytes = vec_size*sizeof(VecType); //mask_size = vecs_rec_bytes
 	
-int frame_size;
-int vecs_v_start;
-unsigned long frame_start;
-} GETable;
-
-
-GETable *table;
-
-void allocFrame(char *frame, int size){
-	int no_funcs = size+1; //The inp is room for equivalences.
-	//This is the MAX number of rows allowed in the xor table
-	
-	//LinearVars
-
-	/*
-	//Number of bytes in various fields, arrays, lists in a vector record
-	int vecs_v_bytes = (1+size/(sizeof(VecType)*8))*sizeof(VecType); //Actual vector
-	int vecs_vlst_bytes = 0; //Variable list
-	int vecs_vsze_bytes = sizeof(int); //Size of variable list
-	int vecs_nvar_bytes = sizeof(int); //Number of rows
-	int vecs_type_bytes = sizeof(int); //Vector type
-	int vecs_colm_bytes = sizeof(int); //Column pointer
-	
-	//Starting point for various fields etc. in a vector record
-	int vecs_vlst_start = vecs_v_bytes;
-	int vecs_vsze_start = vecs_vlst_start + vecs_vlst_bytes;
-	int vecs_nvar_start = vecs_vsze_start + vecs_vsze_bytes;
-	int vecs_type_start = vecs_nvar_start + vecs_nvar_bytes;
-	int vecs_colm_start = vecs_type_start + vecs_type_bytes;
-	int vecs_rec_bytes  = vecs_colm_start + vecs_colm_bytes;
-	*/
-	int vecs_rec_bytes = (1+size/(sizeof(VecType)*8))*sizeof(VecType) + 4*sizeof(int);
-	
-	int first_bit_sze;
-	int mask_sze;
-	first_bit_sze = sizeof(int)*size;
-	mask_sze      = sizeof(VecType)*(1+size/(sizeof(VecType)*8));
-
-	/*
-	//LinearVars
-	int vars_sze      = sizeof(EquivVars);
-	int vars_ref      = 0;
-	int first_bit_ref = vars_ref + vars_sze;
-	int mask_ref      = first_bit_ref + first_bit_sze;
-	*/
-	int mask_ref = sizeof(EquivVars) + first_bit_sze;
-	int vecs_v_ref = mask_ref + mask_sze;
-	
-	int frame_size = vecs_v_ref + vecs_rec_bytes*no_funcs;
-		
-	frame = (char *)ite_calloc(1, frame_size, 9, "Gaussian elimination table memory frame");
+	first_bit_ref = 0;
+	mask_ref = first_bit_ref + sizeof(int)*no_inp_vars;
+	vecs_v_ref = mask_ref + vecs_rec_bytes;
+	frame_size = vecs_v_ref + vecs_rec_bytes*no_funcs;	
 }
 
-void initFrame(char* frame,int size){
-     unsigned long frame_start = (unsigned long)frame;
-     EquivVars* rec = (EquivVars *)frame;
-     int no_funcs = size+1; //The inp is room for equivalences.
-     int no_inp_vars = rec->no_inp_vars = size; // Number of input variables
-     rec->index = 0;
-     int vec_size = rec->vec_size = 1+no_inp_vars/(sizeof(VecType)*8);
-     
-     /*
-     //Number of bytes in various fields, arrays, lists in a vector record
-     int vecs_v_bytes = (1+size/(sizeof(VecType)*8))*sizeof(VecType); //Actual vector
-     int vecs_vlst_bytes = 0; //Variable list
-     int vecs_vsze_bytes = sizeof(int); //Size of variable list
-     int vecs_nvar_bytes = sizeof(int); //Number of rows
-     int vecs_type_bytes = sizeof(int); //Vector type
-     int vecs_colm_bytes = sizeof(int); //Column pointer
-     
-     //Starting point for various fields etc. in a vector record
-     int vecs_vlst_start = vecs_v_bytes;
-     int vecs_vsze_start = vecs_vlst_start + vecs_vlst_bytes;
-     int vecs_nvar_start = vecs_vsze_start + vecs_vsze_bytes;
-     int vecs_type_start = vecs_nvar_start + vecs_nvar_bytes;
-     int vecs_colm_start = vecs_type_start + vecs_type_bytes;
-     int vecs_rec_bytes  = vecs_colm_start + vecs_colm_bytes;
-     */
-     int vecs_colm_start = (1+size/(sizeof(VecType)*8))*sizeof(VecType) + 3*sizeof(int);
-     int vecs_rec_bytes = vecs_colm_start + sizeof(int);
+void allocXORGElimTable(XORGElimTableStruct *x){
+	x->frame = (char *)ite_calloc(1, frame_size, 9, "Gaussian elimination table memory frame");
 
-     int first_bit_sze;
-     int mask_sze;
-     first_bit_sze = sizeof(int)*size;
-     mask_sze      = sizeof(VecType)*(1+size/(sizeof(VecType)*8));
-     
+	x->first_bit = (int *)(x->frame + first_bit_ref);
+	for(int i=0; i < no_inp_vars; i++) x->first_bit[i] = -1;
 
-     //LinearVars
-     int vars_sze      = sizeof(EquivVars);
-     int vars_ref      = 0;
-     int first_bit_ref = vars_ref + vars_sze;
-     int mask_ref      = first_bit_ref + first_bit_sze;
-     int vecs_v_ref = mask_ref + mask_sze;  
-     int frame_size = vecs_v_ref + vecs_rec_bytes*no_funcs;	
-     
-     VecType *mask = (VecType *)(frame_start+mask_ref);
-     for(int i=0; i < vec_size; i++) mask[i] = (VecType)(-1);
-     mask[vec_size-1] -= (1 << sizeof(VecType)*8-1);
-     
-     int *first_bit = (int *)(frame_start + first_bit_ref);
-     for(int i=0; i < size; i++) first_bit[i] = null;
-     
-     for(VecType i=frame_start - frame_size; i< (VecType)vecs_rec_bytes*no_funcs; i++)
-       frame[i] = (char)(-1);
+	x->mask = (VecType *)(x->frame + mask_ref);
+	for(int i=0; i < vec_size; i++) x->mask[i] = (VecType)(-1);
+	x->mask[vec_size-1] -= (1 << sizeof(VecType)*8-1);
+	
+	char *vv = (char *)(x->frame + vecs_v_ref);
+	for (int i=0 ; i < (VecType)vecs_rec_bytes*no_funcs; i++)
+	  vv[i] = (char)(-1);
 }
 
-void initGETable(char* frame) {
-        table = (GETable*) malloc(sizeof(GETable));
-	table->frame = frame;
-	table->rec = (EquivVars *)frame;
-	//This is the MAX number of rows allowed in the xor table
-	
-
-	/*
-	//Number of bytes in various fields, arrays, lists in a vector record
-	int vecs_v_bytes = (1+size/(sizeof(VecType)*8))*sizeof(VecType); //Actual vector
-	int vecs_vlst_bytes = 0; //Variable list
-	int vecs_vsze_bytes = sizeof(int); //Size of variable list
-	int vecs_nvar_bytes = sizeof(int); //Number of rows
-	int vecs_type_bytes = sizeof(int); //Vector type
-	int vecs_colm_bytes = sizeof(int); //Column pointer
-	
-	//Starting point for various fields etc. in a vector record
-	int vecs_vlst_start = vecs_v_bytes;
-	int vecs_vsze_start = vecs_vlst_start + vecs_vlst_bytes;
-	int vecs_nvar_start = vecs_vsze_start + vecs_vsze_bytes;
-	int vecs_type_start = vecs_nvar_start + vecs_nvar_bytes;
-	int vecs_colm_start = vecs_type_start + vecs_type_bytes;
-	int vecs_rec_bytes  = vecs_colm_start + vecs_colm_bytes;
-	*/
-	int size = table->rec->no_inp_vars;
-	table->vecs_colm_start = (1+size/(sizeof(VecType)*8))*sizeof(VecType) + 3*sizeof(int);
-	table->vecs_rec_bytes = table->vecs_colm_start + sizeof(int);
-	
-	int first_bit_sze;
-	int mask_sze;
-	first_bit_sze = sizeof(int)*size;
-	mask_sze      = sizeof(VecType)*(1+size/(sizeof(VecType)*8));
-		
-	//LinearVars
-	int vars_sze      = sizeof(EquivVars);
-	int vars_ref      = 0;
-	int first_bit_ref = vars_ref + vars_sze;
-	int mask_ref      = first_bit_ref + first_bit_sze;
-
-	table->vecs_v_start =  mask_ref + mask_sze;
-
-	table->no_inp_vars = table->rec->no_inp_vars;
-	table->vec_size = table->rec->vec_size;
-	table->no_funcs = table->no_inp_vars + 1; 
-	table->frame_start = (unsigned long)frame;
-	table->frame_size = table->vecs_v_start + table->vecs_rec_bytes*table->no_funcs;	
-	table->mask = (VecType *)(table->frame_start + mask_ref);	
-	table->first_bit = (int *)(table->frame_start + first_bit_ref);
-
+void deleteXORGElimTable () { 
+  ite_free((void **) &(frame));
 }
 
-void deleteGETable () { 
-  ite_free((void **) &(table->frame));
+// Push a copy of this frame into the frame of another level
+void pushXORGElimTable(XORGElimTableStruct *x) {
+	memcpy_ite(x->frame, frame, vecs_v_ref + num_vectors*vecs_rec_bytes);
+	x->first_bit = first_bit;
+	x->mask = mask;
+	x->num_vectors = num_vectors;
 }
 
-// Push copy of this frame into frame of another level
-char *copyFrame(char *next_frame) {
-  memcpy(next_frame, table->frame, table->vecs_v_start+table->rec->index*table->vecs_rec_bytes);
-  return next_frame;		
+//Pop this frame off the stack and revert to a previously saved frame
+void popXORGElimTable(XORGElimTableStruct *x) {
+	frame = x->frame;
+	first_bit = x->first_bit;
+	mask = x->mask;
+	num_vectors = x->num_vectors;
 }
 
 // Add row to the matrix
@@ -337,24 +224,15 @@ int addRow (XORd *xord) {
 	// Return no change (0) if row is all 0
 	if(!xord->nvars) return 0;
 	
-	if(table->rec->index >= table->no_funcs) {
+	if(num_vectors >= no_funcs) {
 		return 0; // Cannot add anymore vectors to the matrix
 	}
 	
 	// Grab a new Vector and copy xord info to it
-	unsigned long offset = table->frame_start + table->vecs_v_start + table->rec->index*table->vecs_rec_bytes;
+	unsigned long offset = ((unsigned long)frame) + vecs_v_ref + num_vectors*vecs_rec_bytes;
 	VecType *vec = (VecType*)offset;
-	/*
-	int *vsz = (int *)(offset+vecs_vsze_start);
-	int *vnr = (int *)(offset+vecs_nvar_start);
-	int *vty = (int *)(offset+vecs_type_start);
-	
-	*vsz = xord->vector_size;
-	*vnr = xord->nvars;
-	*vty = xord->type;
-	*/
 
-	memcpy(vec, xord->vector, sizeof(VecType)*table->vec_size);
+	memcpy(vec, xord->vector, sizeof(VecType)*vec_size);
 	
 	// The first 1 bit of the new vector is in a column which intersects
 	// the diagonal.  Add the existing such row to the new vector.  For
@@ -366,8 +244,8 @@ int addRow (XORd *xord) {
 	// Eliminate all 1's of the new vector in the current diagonal matrix
 	for (int i=0 ; i < xord->nvars; i++) {
 		short int v;
-		if ((v = table->first_bit[(int)xord->varlist[i]]) != null) {
-			VecType *vn = (VecType *)(table->frame_start+table->vecs_v_start+v*table->vecs_rec_bytes);
+		if ((v = first_bit[(int)xord->varlist[i]]) != -1) {
+			VecType *vn = (VecType *)(((unsigned long)frame)+vecs_v_ref+v*vecs_rec_bytes);
 			for (int j=0 ; j <= v/(sizeof(VecType)*8); j++) vec[j] ^= vn[j];
 		}
 	}
@@ -378,10 +256,10 @@ int addRow (XORd *xord) {
 	// which is found is stored in "save_first_column".
 	int save_first_column = 0;
 	int k;
-	for (k=table->vec_size-1 ; k >= 0 ; k--) {
+	for (k=vec_size-1 ; k >= 0 ; k--) {
 		// Maybe 10 of these loops
 		VecType tmp;
-		if ((tmp = (table->mask[k] & vec[k])) != 0) {
+		if ((tmp = (mask[k] & vec[k])) != 0) {
 			int hgh = sizeof(VecType)*8-1;
 			while (hgh > 0) { // Maybe 5 of these loops - binary search for leading 1
 				int mid = hgh/2;
@@ -399,25 +277,23 @@ int addRow (XORd *xord) {
 
 	// If k == -1 then no 1's were found in the new vector.
 	if (k == -1) {
-		if (vec[table->vec_size-1]&(1 << (sizeof(VecType)*8-1))) return -1; // Inconsistent. 
+		if (vec[vec_size-1]&(1 << (sizeof(VecType)*8-1))) return -1; // Inconsistent. 
 		else return 0; // No change
 	}
 	
 	// Open up a new diagonal column
-	unsigned long vec_add = table->vecs_v_start+table->rec->index*table->vecs_rec_bytes+table->vecs_colm_start;
-	*((short int *)(table->frame_start+vec_add)) = save_first_column;
 
-	table->first_bit[save_first_column] = table->rec->index;
+	first_bit[save_first_column] = num_vectors;
 	int word = k;//save_first_column/(sizeof(VecType)*8);
 	int bit = save_first_column % (sizeof(VecType)*8);
-	table->mask[word] &= (-1 ^ (1 << bit));
+	mask[word] &= (-1 ^ (1 << bit));
 
 	//Look for second 1. If doesn't exist --> vec gives inference.
 	int save_second_column = 0;
 	for(; k>=0 ; k--){
 		// Maybe 10 of these loops
 		VecType tmp;
-		if ((tmp = (table->mask[k] & vec[k])) != 0) {
+		if ((tmp = (mask[k] & vec[k])) != 0) {
 			int hgh = sizeof(VecType)*8-1;
 			while (hgh > 0) { // Maybe 5 of these loops - binary search for leading 1
 				int mid = hgh/2;
@@ -435,26 +311,26 @@ int addRow (XORd *xord) {
 
 	// If k == -1 then we have an inference
 	if (k == -1) {
-	  int ret = EnqueueInference(save_first_column, vec[table->vec_size-1]&(1 << (sizeof(VecType)*8-1)));
+	  int ret = EnqueueInference(save_first_column, vec[vec_size-1]&(1 << (sizeof(VecType)*8-1)));
 	  if(ret == 0)
 	    return -1; //Is this the return value I want?			    
 	}
 
 	// Cancel all 1's in the new column. Currently looks at *all* vectors!
-	unsigned long vec_address = table->frame_start + table->vecs_v_start;
-	for (int i=0 ; i < table->rec->index ; i++) {
+	unsigned long vec_address = ((unsigned long)frame) + vecs_v_ref;
+	for (int i=0 ; i < num_vectors ; i++) {
 		VecType *vn = (VecType *)vec_address;
 		if (vn[word] & (1 << bit)) {
 			bool nonzero = 0;
 			int j=0;
-			for (; j <= word; j++) nonzero &= table->mask[j] & (vn[j] ^= vec[j]);
-			for (; j < table->vec_size && !nonzero; j++) nonzero &= table->mask[j] & vn[j];
+			for (; j <= word; j++) nonzero &= mask[j] & (vn[j] ^= vec[j]);
+			for (; j < vec_size && !nonzero; j++) nonzero &= mask[j] & vn[j];
 			
 			if(!nonzero){
 				//Inference
 				int inference_column = 0;
 				
-				for (k=table->vec_size-1 ; k >= 0 ; k--) {
+				for (k=vec_size-1 ; k >= 0 ; k--) {
 					// Maybe 10 of these loops
 					VecType tmp;
 					if ((tmp = vn[k]) != 0) {
@@ -474,28 +350,28 @@ int addRow (XORd *xord) {
 				}
 				assert(inference_column);
 				
-				int ret = EnqueueInference(inference_column, vn[table->vec_size-1]&(1 << (sizeof(VecType)*8-1)));				
+				int ret = EnqueueInference(inference_column, vn[vec_size-1]&(1 << (sizeof(VecType)*8-1)));				
 				if(ret == 0)
 				  return -1; //Is this the return value I want?			    
 			}
 		}
-		vec_address += table->vecs_rec_bytes;
+		vec_address += vecs_rec_bytes;
 	}
 	
 	// Insert the new row
-	table->rec->index++;
+	num_vectors++;
 	
 	return 1;
 }
 
 void printFrameSize () {
-	cout << "Frame: " << table->frame_size << "\n";
+	cout << "Frame: " << frame_size << "\n";
 }
 
 void printMask () {
-	cout << "Mask (" << table->vec_size*sizeof(VecType)*8 << " bits):\n     ";
-	for (int i=0 ; i < table->vec_size ; i++) {
-		VecType tmp = table->mask[i];
+	cout << "Mask (" << vec_size*sizeof(VecType)*8 << " bits):\n     ";
+	for (int i=0 ; i < vec_size ; i++) {
+		VecType tmp = mask[i];
 		for (unsigned int j=0 ; j < sizeof(VecType)*8 ; j++) {
 			if (tmp % 2) cout << "1"; else cout << "0";
 			tmp /= 2;
@@ -507,10 +383,10 @@ void printMask () {
 void printLinearN () {
 	printMask ();
 	cout << "Vectors:\n";
-	for (int i=0 ; i < table->rec->index ; i++) {
+	for (int i=0 ; i < num_vectors ; i++) {
 		cout << "     ";
-		VecType *vn = (VecType *)(table->frame_start+table->vecs_v_start+i*table->vecs_rec_bytes);
-		for (int j=0 ; j < table->vec_size ; j++) {
+		VecType *vn = (VecType *)(((unsigned long)frame)+vecs_v_ref+i*vecs_rec_bytes);
+		for (int j=0 ; j < vec_size ; j++) {
 			VecType tmp = vn[j];
 			for (unsigned int k=0 ; k < sizeof(VecType)*8 ; k++) {
 				if (tmp % 2) cout << "1"; else cout << "0";
@@ -518,8 +394,8 @@ void printLinearN () {
 			}
 		}
 		cout << "     ";
-		for (int j=0 ; j < table->vec_size ; j++) {
-			VecType tmp = vn[j] & table->mask[j];
+		for (int j=0 ; j < vec_size ; j++) {
+			VecType tmp = vn[j] & mask[j];
 			for (unsigned int k=0 ; k < sizeof(VecType)*8 ; k++) {
 				if (tmp % 2) cout << "1"; else cout << "0";
 				tmp /= 2;
@@ -536,43 +412,43 @@ void printLinear () {
 	printLinearN ();
 	for (int i=0 ; i < 512 ; i++) xlate[i] = i;
 	int j=0;
-	for (int i=table->no_inp_vars-1 ; i >= 0 ; i--)
-	  if (table->first_bit[i] != null) {
-		  rows[j] = table->first_bit[i]; xlate[j++] = i;
+	for (int i=no_inp_vars-1 ; i >= 0 ; i--)
+	  if (first_bit[i] != -1) {
+		  rows[j] = first_bit[i]; xlate[j++] = i;
 	  }
 	
 	rows[j] = -1;
-	for (int i=table->no_inp_vars-1 ; i >= 0 ; i--)
-	  if (table->first_bit[i] == null) xlate[j++] = i;
+	for (int i=no_inp_vars-1 ; i >= 0 ; i--)
+	  if (first_bit[i] == -1) xlate[j++] = i;
 	
-	cout << "Mask (" << table->vec_size*sizeof(VecType)*8 << " bits):\n     ";
-	for (int i=0 ; i < table->no_inp_vars ; i++) {
+	cout << "Mask (" << vec_size*sizeof(VecType)*8 << " bits):\n     ";
+	for (int i=0 ; i < no_inp_vars ; i++) {
 		int word = xlate[i]/(sizeof(VecType)*8);
 		int bit  = xlate[i] % (sizeof(VecType)*8);
-		if (table->mask[word] & (1 << bit)) cout << "1"; else cout << "0";
+		if (mask[word] & (1 << bit)) cout << "1"; else cout << "0";
 	}
 	cout << "\n";
 	
 	cout << "Vectors:\n";
 	for (int i=0 ; rows[i] >= 0 ; i++) {
 		cout << "     ";
-		VecType *vn = (VecType *)(table->frame_start+table->vecs_v_start+rows[i]*table->vecs_rec_bytes);
-		for (int j=0 ; j < table->no_inp_vars ; j++) {
+		VecType *vn = (VecType *)(((unsigned long)frame)+vecs_v_ref+rows[i]*vecs_rec_bytes);
+		for (int j=0 ; j < no_inp_vars ; j++) {
 			int word = xlate[j]/(sizeof(VecType)*8);
 			int bit  = xlate[j] % (sizeof(VecType)*8);
 			if (vn[word] & (1 << bit)) cout << "1"; else cout << "0";
 		}
 		cout << ".";
-		if (vn[table->vec_size-1] & (1 << (sizeof(VecType)*8-1)))
+		if (vn[vec_size-1] & (1 << (sizeof(VecType)*8-1)))
 		  cout << "1"; else cout << "0";
 		cout << "     ";
-		for (int j=0 ; j < table->no_inp_vars ; j++) {
+		for (int j=0 ; j < no_inp_vars ; j++) {
 			int word = xlate[j]/(sizeof(VecType)*8);
 			int bit  = xlate[j] % (sizeof(VecType)*8);
-			if (vn[word] & table->mask[word] & (1 << bit)) cout << "1"; else cout << "0";
+			if (vn[word] & mask[word] & (1 << bit)) cout << "1"; else cout << "0";
 		}
 		cout << ".";
-		if (vn[table->vec_size-1] & (1 << (sizeof(VecType)*8-1)))
+		if (vn[vec_size-1] & (1 << (sizeof(VecType)*8-1)))
 		  cout << "1"; else cout << "0";
 		cout << "\n";
 	}

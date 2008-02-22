@@ -140,12 +140,19 @@ struct XORGElimStateEntry {
 	int nSize;
 };
 
+struct XORGElimTableStruct {
+	char *frame;
+	int *first_bit;
+	unsigned long *mask;
+	int num_vectors;
+};
+
 struct SmurfStack {
 	int nNumFreeVars;
 	int nHeuristicPlaceholder;
 	int nVarChoiceCurrLevel; //Index to array of size nNumVars
 	void **arrSmurfStates;   //Pointer to array of size nNumSmurfs
-	char *frame; //For holding the Gaussian Elimination Table.
+	XORGElimTableStruct *XORGElimTable; //For holding the Gaussian Elimination Table.
 };
 
 struct SmurfStatesTableStruct {

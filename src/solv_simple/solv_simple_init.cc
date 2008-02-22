@@ -91,6 +91,8 @@ int ReadAllSmurfsIntoTable(int nNumVars) {
 	SimpleSmurfProblemState->arrNegVarHeurWghts = (double *)ite_calloc(SimpleSmurfProblemState->nNumVars, sizeof(double), 9, "arrNegVarHeurWghts");
 	SimpleSmurfProblemState->arrInferenceQueue = (int *)ite_calloc(SimpleSmurfProblemState->nNumVars, sizeof(int), 9, "arrInferenceQueue");
 	SimpleSmurfProblemState->arrInferenceDeclaredAtLevel = (int *)ite_calloc(SimpleSmurfProblemState->nNumVars, sizeof(int), 9, "arrInferenceDeclaredAtLevel");
+
+	Init_Solver_PreSmurfs_Hooks();
 	
 	//Count the number of functions every variable occurs in.
 	int *temp_varcount = (int *)ite_calloc(SimpleSmurfProblemState->nNumVars, sizeof(int), 9, "temp_varcount");
@@ -166,8 +168,6 @@ int ReadAllSmurfsIntoTable(int nNumVars) {
 	clear_all_bdd_pState();
 	true_ptr->pState = pTrueSimpleSmurfState;
 
-	Init_Solver_PreSmurfs_Hooks();
-	
 	//Create the rest of the SmurfState entries
 	char p[256]; int str_length;
 	D_3(
