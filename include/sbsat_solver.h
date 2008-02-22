@@ -51,16 +51,16 @@ enum {
 /* list of possible smurf function types */
 enum {
 	FN_SMURF,
-	FN_INFERENCE,
-	FN_OR,
    FN_OR_COUNTER,
-	FN_XOR,
    FN_XOR_COUNTER,
-	FN_XOR_GELIM,
+	FN_OR,
+	FN_XOR,
    FN_AND_EQU,
 	FN_OR_EQU,
 	FN_MINMAX,
-	FN_NEG_MINMAX
+	FN_NEG_MINMAX,
+	FN_XOR_GELIM,
+   FN_INFERENCE
 };
 
 int solve();
