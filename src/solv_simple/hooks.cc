@@ -62,10 +62,15 @@ bool CheckSimpleLimits(double fStartTime) {
 	return 0;
 }
 
-ITE_INLINE void SmurfStates_Push_Hooks() {
-//push GE table onto the stack.
-//frame allocated here?
-//	PrintAllXORSmurfStateEntries();
+ITE_INLINE void SmurfStates_Push_Hooks(int destination) {
+
+	//	PrintAllXORSmurfStateEntries();
+	
+	if(use_XORGElim==1) {
+		copyFrame(SimpleSmurfProblemState->arrSmurfStack[destination].frame);
+	}
+	
+
 }
 
 ITE_INLINE void SmurfStates_Pop_Hooks() {
@@ -74,11 +79,11 @@ ITE_INLINE void SmurfStates_Pop_Hooks() {
 }
 
 ITE_INLINE void Alloc_SmurfStack_Hooks(int destination) {
-	//for(int i = destination; i < destination + SMURF_STATES_INCREASE_SIZE && i < SimpleSmurfProblemState->nNumVars; i++) {
-	//	SimpleSmurfProblemState->arrSmurfStack[i].XORframe = new_frame();???
-	//}
-	
-	
+
+	if(use_XORGElim==1) {
+//		SimpleSmurfProblemState->arrSmurfStack[destination].frame = new frame;
+	}
+
 }
 
 ITE_INLINE int ApplyInference_Hooks(int nBranchVar, bool bBVPolarity) {
@@ -121,17 +126,21 @@ ITE_INLINE int Backtrack_Hooks() {
 
 ITE_INLINE void Init_Solver_PreSmurfs_Hooks() {
 	
+	if(use_XORGElim==1) {
+		initGETable(SimpleSmurfProblemState->nNumVars);
+	}
 	
 }
 
 ITE_INLINE int Init_Solver_PostSmurfs_Hooks() {
 	int ret = SOLV_UNKNOWN;
-	
+
 	
 	return ret;
 }
 
 ITE_INLINE void Final_Solver_Hooks() {
-	
+	if(use_XORGElim==1)
+	  deleteGETable();
 	
 }

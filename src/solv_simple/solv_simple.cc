@@ -469,7 +469,7 @@ void SmurfStates_Push(int destination) {
 	SimpleSmurfProblemState->arrSmurfStack[destination].nHeuristicPlaceholder =
 	  SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nHeuristicPlaceholder;
 	
-	SmurfStates_Push_Hooks();
+	SmurfStates_Push_Hooks(destination);
 	
 	SimpleSmurfProblemState->nCurrSearchTreeLevel = destination;
 }

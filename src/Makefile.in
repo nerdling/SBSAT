@@ -73,8 +73,9 @@ am__DEPENDENCIES_1 = formats/libformats.a formats/5/libt5.a \
 	solv_simple/libsolv_simple.a \
 	solv_simple/fn_smurf/libfnsmurf_simple.a \
 	solv_simple/fn_or/libfnor_simple.a \
-	solv_simple/fn_xor/libfnxor_simple.a postproc/libpostproc.a \
-	preproc/libpreproc.a utils/libutils.a
+	solv_simple/fn_xor/libfnxor_simple.a \
+	solv_simple/bb_gelim/libbbgelim_simple.a \
+	postproc/libpostproc.a preproc/libpreproc.a utils/libutils.a
 am__DEPENDENCIES_2 =
 sbsat_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_2)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/include
@@ -119,6 +120,7 @@ ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 EXEEXT = @EXEEXT@
+GREP = @GREP@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
@@ -152,9 +154,8 @@ SHELL = @SHELL@
 STRIP = @STRIP@
 VERSION = @VERSION@
 YACC = @YACC@
+YFLAGS = @YFLAGS@
 ac_ct_CXX = @ac_ct_CXX@
-ac_ct_RANLIB = @ac_ct_RANLIB@
-ac_ct_STRIP = @ac_ct_STRIP@
 am__fastdepCXX_FALSE = @am__fastdepCXX_FALSE@
 am__fastdepCXX_TRUE = @am__fastdepCXX_TRUE@
 am__include = @am__include@
@@ -169,23 +170,30 @@ build_cpu = @build_cpu@
 build_os = @build_os@
 build_vendor = @build_vendor@
 datadir = @datadir@
+datarootdir = @datarootdir@
+docdir = @docdir@
+dvidir = @dvidir@
 exec_prefix = @exec_prefix@
 host = @host@
 host_alias = @host_alias@
 host_cpu = @host_cpu@
 host_os = @host_os@
 host_vendor = @host_vendor@
+htmldir = @htmldir@
 includedir = @includedir@
 infodir = @infodir@
 install_sh = @install_sh@
 libdir = @libdir@
 libexecdir = @libexecdir@
+localedir = @localedir@
 localstatedir = @localstatedir@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
+pdfdir = @pdfdir@
 prefix = @prefix@
 program_transform_name = @program_transform_name@
+psdir = @psdir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
@@ -220,6 +228,7 @@ SBSAT_LIBS = \
 	solv_simple/fn_smurf/libfnsmurf_simple.a \
 	solv_simple/fn_or/libfnor_simple.a \
 	solv_simple/fn_xor/libfnxor_simple.a \
+	solv_simple/bb_gelim/libbbgelim_simple.a \
 	postproc/libpostproc.a \
 	preproc/libpreproc.a \
 	utils/libutils.a 

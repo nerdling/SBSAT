@@ -53,30 +53,6 @@
 #include "sbsat_solver.h"
 #include "solver.h"
 
-#define null -1
-#define VecType unsigned long
-
-typedef struct xorrecord {
-	VecType *vector; // 0-1 vector showing vars in xor func and which type of xor func it is
-	int vector_size; // Number of bytes in vector
-	int *varlist;    // List of vars that are 1 in vector
-	int nvars;       // Number of vars in the function
-	int type;
-	struct xorrecord *next;
-} XORd;
-
-typedef struct equiv_rec {
-	int no_inp_vars; // The number of input variables                   
-	int index;       // Number of vectors we have                       
-	int vec_size;    // Number of bytes comprising each VecType vector
-} EquivVars;
-
-
-typedef struct {
-	int left, rght;
-} Result;
-
-
 // Figure 1.
 // 0-1 matrix representing a system of linear functions.  Vectors are packed
 // into 32 bit words.  The example below shows a system of 46 variables.  It
@@ -166,28 +142,11 @@ typedef struct {
 //       g. column ptr of the new row set to xord's highest order 1
 //
 
-int vsize; // Number of bytes comprising each VecType vector
-VecType *msk; // 0 bits are columns of the diagonalized submatrix or assigned variables
-
-// Compare function for the xor qsort
-int cmp (const void *x, const void *y) {
-	VecType **a = (VecType **)x;
-	VecType **b = (VecType **)y;
-	
-	for(int j = vsize-1; j >= 0; j--) {
-		if(((*a)[j] & msk[j]) < ((*b)[j] & msk[j])) return -1;
-		if(((*a)[j] & msk[j]) > ((*b)[j] & msk[j])) return 1;
-	}
-	return 0;
-}
-
-   
 EquivVars *rec;
 char *frame;
 	
 int no_inp_vars; // The number of input variables 
 int no_funcs;    // The max number of functions (rows in matrix)
-int vindex;      // Number of vectors we have 
 int vec_size;    // Number of bytes comprising each VecType vector
 
 int vecs_vlst_start;
@@ -204,13 +163,13 @@ int frame_size;
 int vecs_v_start;
 unsigned long frame_start;
 
-void initEquiv(int inp, int out) {
-	no_funcs = out+inp; //The inp is room for equivalences.
+void initGETable(int size) {
+	no_funcs = size+1; //The inp is room for equivalences.
 	//This is the MAX number of rows allowed in the xor table
 	
 	//LinearVars
 	//Number of bytes in various fields, arrays, lists in a vector record
-	int vecs_v_bytes = (1+inp/(sizeof(VecType)*8))*sizeof(VecType); //Actual vector
+	int vecs_v_bytes = (1+size/(sizeof(VecType)*8))*sizeof(VecType); //Actual vector
 	int vecs_vlst_bytes = 0; //Variable list
 	int vecs_vsze_bytes = sizeof(int); //Size of variable list
 	int vecs_nvar_bytes = sizeof(int); //Number of rows
@@ -227,8 +186,8 @@ void initEquiv(int inp, int out) {
 	
 	int first_bit_sze;
 	int mask_sze;
-	first_bit_sze = sizeof(int)*inp;
-	mask_sze      = sizeof(VecType)*(1+inp/(sizeof(VecType)*8));
+	first_bit_sze = sizeof(int)*size;
+	mask_sze      = sizeof(VecType)*(1+size/(sizeof(VecType)*8));
 		
 	//LinearVars
 	int vars_sze      = sizeof(EquivVars);
@@ -240,12 +199,13 @@ void initEquiv(int inp, int out) {
 	
 	frame_size = vecs_v_ref + vecs_rec_bytes*no_funcs;
 		
-	frame = (char *)ite_calloc(1, frame_size, 9, "EquivClass memory frame");
+	frame = (char *)ite_calloc(1, frame_size, 9, "Gaussian elimination table memory frame");
 	frame_start = (unsigned long)frame;
 	
 	rec = (EquivVars *)frame;
-	no_inp_vars = rec->no_inp_vars = inp; // Number of input variables  
-	vindex = rec->index = 0;
+
+	no_inp_vars = rec->no_inp_vars = size; // Number of input variables
+	rec->index = 0;
 	
 	vec_size = rec->vec_size = 1+no_inp_vars/(sizeof(VecType)*8);
 	
@@ -254,18 +214,15 @@ void initEquiv(int inp, int out) {
 	mask[vec_size-1] -= (1 << sizeof(VecType)*8-1);
 	
 	first_bit = (int *)(frame_start + first_bit_ref);
-	for(int i=0; i < inp; i++) first_bit[i] = null;
+	for(int i=0; i < size; i++) first_bit[i] = null;
 	
 	for(VecType i=frame_start - frame_size; i< (VecType)vecs_rec_bytes*no_funcs; i++)
 	  frame[i] = (char)(-1);
-	
-	
 }
 
-void  deleteEquiv () { 
+void deleteGETable () { 
 	ite_free((void **) &frame);
 }
-
 
 // Push copy of this frame into frame of another level
 char *copyFrame(char *next_frame) {
@@ -424,7 +381,6 @@ int addRow (XORd *xord) {
 	}
 	
 	// Insert the new row
-	vindex++;
 	rec->index++;
 	
 	return 1;

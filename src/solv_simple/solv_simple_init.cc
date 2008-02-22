@@ -67,11 +67,11 @@ void Alloc_SmurfStack(int destination) {
 		SimpleSmurfProblemState->arrSmurfStack[i].arrSmurfStates
 		  = (void **)ite_calloc(SimpleSmurfProblemState->nNumSmurfs, sizeof(int *), 9, "arrSmurfStates");
 		//fprintf(stderr, "alloc %d\n", i);
+		Alloc_SmurfStack_Hooks(i);
 	}
-	Alloc_SmurfStack_Hooks(destination);
 }
 
-void ReadAllSmurfsIntoTable(int nNumVars) {
+int ReadAllSmurfsIntoTable(int nNumVars) {
 	//Create the pTrueSimpleSmurfState entry
 	SimpleSmurfProblemState = (ProblemState *)ite_calloc(1, sizeof(ProblemState), 9, "SimpleSmurfProblemState");
 	SimpleSmurfProblemState->nNumSmurfs = nmbrFunctions;
@@ -165,6 +165,8 @@ void ReadAllSmurfsIntoTable(int nNumVars) {
 	
 	clear_all_bdd_pState();
 	true_ptr->pState = pTrueSimpleSmurfState;
+
+	Init_Solver_PreSmurfs_Hooks();
 	
 	//Create the rest of the SmurfState entries
 	char p[256]; int str_length;
@@ -202,8 +204,10 @@ void ReadAllSmurfsIntoTable(int nNumVars) {
 		 d3_printf1(p);
 		 d3_printf2("%d SmurfStates Used\n", SimpleSmurfProblemState->nNumSmurfStateEntries);  
 		 );
-	
+
 	D_9(PrintAllSmurfStateEntries(););
+	
+	return Init_Solver_PostSmurfs_Hooks();
 }
 
 int Init_SimpleSmurfSolver() {
@@ -221,12 +225,8 @@ int Init_SimpleSmurfSolver() {
 	if(*csv_trace_file)
 	  fd_csv_trace_file = fopen(csv_trace_file, "w");
 	
-	Init_Solver_PreSmurfs_Hooks();
-	
 	ReadAllSmurfsIntoTable(nNumVars);
 
-	ret = Init_Solver_PostSmurfs_Hooks();
-	
 	return ret;
 }
 

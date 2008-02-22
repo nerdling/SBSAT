@@ -145,6 +145,7 @@ struct SmurfStack {
 	int nHeuristicPlaceholder;
 	int nVarChoiceCurrLevel; //Index to array of size nNumVars
 	void **arrSmurfStates;   //Pointer to array of size nNumSmurfs
+	char *frame; //For holding the Gaussian Elimination Table.
 };
 
 struct SmurfStatesTableStruct {

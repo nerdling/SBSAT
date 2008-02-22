@@ -264,7 +264,7 @@ t_opt options[] = {
 		"Threashold above which the Sp splits BDDs"},
 { &ex_infer, "",  "ex-infer", P_INT, V(i:0,"0"),  V(i:1,"1"), VAR_NORMAL, 0,
 		"Enable/Disable Ex Quantification trying to safely assign variables before they are quantified away (1/0)"},
-{ &ge_preproc, "gauss", "gaussian-elimination", P_CHAR, V(i:0, "0"),  V(c:'0', "0"), VAR_NORMAL, 0,
+{ &ge_preproc, "gauss", "gaussian-elimination", P_CHAR, V(i:0, "0"),  V(i:'0', "0"), VAR_NORMAL, 0,
 	   "Enable/Disable Gaussian Elimination in the preprocessor (1/0)"},
 /*
  * General Solver options
@@ -319,7 +319,7 @@ t_opt options[] = {
 			      "Enable/Disable printing the search tree in .dot format (1/0)"},
 { &slide_lemmas, "", "slide-lemmas", P_INT, V(i:0,"0"),  V(i:0,"0"), VAR_CHECK+VAR_DUMP, 0,
 			      "Enable/Disable attempting to slide lemmas during search (1/0)"},
-{ &use_XORGElim, "", "gelim-smurfs", P_CHAR, V(i:0, "0"),  V(c:'0', "0"), VAR_NORMAL, 0,
+{ &use_XORGElim, "", "gelim-smurfs", P_INT, V(i:0, "0"),  V(i:'0', "0"), VAR_NORMAL, 0,
 	   "Use Gaussian Elimination during search (1/0)"},
 { &USE_AUTARKY_SMURFS, "", "autarky-smurfs", P_INT, V(i:0,"0"), V(i:0,"0"), VAR_CHECK+VAR_DUMP, 0,
 		"Use Autarky Smurfs in the solver (1/0)"},
