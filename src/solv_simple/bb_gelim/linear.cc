@@ -337,14 +337,12 @@ int addRow (XORd *xord) {
 	// Return no change (0) if row is all 0
 	if(!xord->nvars) return 0;
 	
-	EquivVars *rec = table->rec;
-	int no_funcs = table->no_funcs;
-	if(rec->index >= no_funcs) {
+	if(table->rec->index >= table->no_funcs) {
 		return 0; // Cannot add anymore vectors to the matrix
 	}
 	
 	// Grab a new Vector and copy xord info to it
-	unsigned long offset = table->frame_start + table->vecs_v_start + rec->index*table->vecs_rec_bytes;
+	unsigned long offset = table->frame_start + table->vecs_v_start + table->rec->index*table->vecs_rec_bytes;
 	VecType *vec = (VecType*)offset;
 	/*
 	int *vsz = (int *)(offset+vecs_vsze_start);
@@ -406,10 +404,10 @@ int addRow (XORd *xord) {
 	}
 	
 	// Open up a new diagonal column
-	unsigned long vec_add = table->vecs_v_start+rec->index*table->vecs_rec_bytes+table->vecs_colm_start;
+	unsigned long vec_add = table->vecs_v_start+table->rec->index*table->vecs_rec_bytes+table->vecs_colm_start;
 	*((short int *)(table->frame_start+vec_add)) = save_first_column;
 
-	table->first_bit[save_first_column] = rec->index;
+	table->first_bit[save_first_column] = table->rec->index;
 	int word = k;//save_first_column/(sizeof(VecType)*8);
 	int bit = save_first_column % (sizeof(VecType)*8);
 	table->mask[word] &= (-1 ^ (1 << bit));
@@ -444,7 +442,7 @@ int addRow (XORd *xord) {
 
 	// Cancel all 1's in the new column. Currently looks at *all* vectors!
 	unsigned long vec_address = table->frame_start + table->vecs_v_start;
-	for (int i=0 ; i < rec->index ; i++) {
+	for (int i=0 ; i < table->rec->index ; i++) {
 		VecType *vn = (VecType *)vec_address;
 		if (vn[word] & (1 << bit)) {
 			bool nonzero = 0;
@@ -485,7 +483,7 @@ int addRow (XORd *xord) {
 	}
 	
 	// Insert the new row
-	rec->index++;
+	table->rec->index++;
 	
 	return 1;
 }
