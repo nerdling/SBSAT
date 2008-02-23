@@ -222,7 +222,7 @@ void *createXORGElimTableVector(int nvars, int *varlist, bool bParity) {
 		int bit = varlist[i]%(sizeof(VecType)*8);		
 		vector[word] += (1 << bit);
 	}
-	if(bParity) vector[0]&1;
+	if(bParity) vector[0]+=1;
 	
 	return (void *)vector;
 }
@@ -412,7 +412,7 @@ void printLinearN () {
 	cout << " +-----+     +-----+     +-----+     +-----+     +-----+\n";
 }
 
-void printXORGElimVector(void *pVector) {
+void PrintXORGElimVector(void *pVector) {
 	for (int word=0 ; word < vec_size; word++) {
 		for(int bit = word==0?1:0; bit < (sizeof(VecType)*8); bit++) {
 			if (((VecType *)pVector)[word] & (1 << bit)) {

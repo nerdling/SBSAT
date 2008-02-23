@@ -78,6 +78,10 @@ void PrintAllSmurfStateEntries() {
 				PrintXORCounterStateEntry((XORCounterStateEntry *)arrSmurfStates);
 				arrSmurfStates = (void *)(((XORCounterStateEntry *)arrSmurfStates) + 1);
 				size = sizeof(XORCounterStateEntry);
+			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_XOR_GELIM) {
+				PrintXORGElimStateEntry((XORGElimStateEntry *)arrSmurfStates);
+				arrSmurfStates = (void *)(((XORGElimStateEntry *)arrSmurfStates) + 1);
+				size = sizeof(XORGElimStateEntry);
 			}
 		}
 		arrSmurfStatesTable = arrSmurfStatesTable->pNext;

@@ -15,13 +15,13 @@ void PrintXORCounterStateEntry(XORCounterStateEntry *ssEntry) {
 }
 
 void PrintXORGElimStateEntry(XORGElimStateEntry *ssEntry) {
-	d9_printf2("Parity=%d ", (int)ssEntry->pVector&1);
+	d9_printf2("Parity=%d ", ((int *)ssEntry->pVector)[0]&1);
 	d9_printf1("Vars=");
 	for(int x = 0; x < ssEntry->nSize; x++)
 	  d9_printf2("%d ", ssEntry->pnTransitionVars[x]);
 	d9_printf2("Size=%d ", ssEntry->nSize);
 	d9_printf1("Vector= ");
-	printXORGElimVector(ssEntry->pVector);
+	PrintXORGElimVector(ssEntry->pVector);
 	d9_printf1("\n");
 }
 
