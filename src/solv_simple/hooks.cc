@@ -105,10 +105,9 @@ ITE_INLINE int ApplyInferenceToSmurf_Hook(int nBranchVar, bool bBVPolarity, int 
 	int ret = 1;
 
 	if(((TypeStateEntry *)arrSmurfStates[nSmurfIndex])->cType == FN_XOR_GELIM) {
-		assert(0);
-		ret = addRowXORGElimTable(((XORGElimStateEntry *)arrSmurfStates)[nSmurfIndex].pVector,
-										  ((XORGElimStateEntry *)arrSmurfStates)[nSmurfIndex].nSize,
-										  ((XORGElimStateEntry *)arrSmurfStates)[nSmurfIndex].pnTransitionVars);
+		ret = addRowXORGElimTable(((XORGElimStateEntry *)arrSmurfStates[nSmurfIndex])->pVector,
+										  ((XORGElimStateEntry *)arrSmurfStates[nSmurfIndex])->nSize,
+										  ((XORGElimStateEntry *)arrSmurfStates[nSmurfIndex])->pnTransitionVars);
 		arrSmurfStates[nSmurfIndex] = pTrueSimpleSmurfState;
 	}
 	
@@ -147,10 +146,10 @@ ITE_INLINE void Init_Solver_PreSmurfs_Hooks() {
 ITE_INLINE int Init_Solver_MidSmurfs_Hooks(int nSmurfIndex, void **arrSmurfStates) {
 	int ret = SOLV_UNKNOWN;
 	
-	if(((TypeStateEntry *)arrSmurfStates)[nSmurfIndex].cType == FN_XOR_GELIM) {
-		ret = addRowXORGElimTable(((XORGElimStateEntry *)arrSmurfStates)[nSmurfIndex].pVector,
-										  ((XORGElimStateEntry *)arrSmurfStates)[nSmurfIndex].nSize,
-										  ((XORGElimStateEntry *)arrSmurfStates)[nSmurfIndex].pnTransitionVars);
+	if(((TypeStateEntry *)arrSmurfStates[nSmurfIndex])->cType == FN_XOR_GELIM) {
+		ret = addRowXORGElimTable(((XORGElimStateEntry *)arrSmurfStates[nSmurfIndex])->pVector,
+										  ((XORGElimStateEntry *)arrSmurfStates[nSmurfIndex])->nSize,
+										  ((XORGElimStateEntry *)arrSmurfStates[nSmurfIndex])->pnTransitionVars);
 		arrSmurfStates[nSmurfIndex] = pTrueSimpleSmurfState;
 	}
 	

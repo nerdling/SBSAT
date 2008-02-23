@@ -229,7 +229,7 @@ void *createXORGElimTableVector(int nvars, int *varlist, bool bParity) {
 
 // Add row to the matrix
 int addRowXORGElimTable (void *pVector, int nVars, int *pnVarlist) {
-	assert(nVars > 0);
+	assert(nVars > 1);
 	
 	if(num_vectors >= no_funcs) {
 		return 0; // Cannot add anymore vectors to the matrix
