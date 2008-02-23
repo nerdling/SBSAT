@@ -9,7 +9,7 @@ void *CreateXORState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, XORStateE
 	pStartState = (XORStateEntry *)SimpleSmurfProblemState->pSmurfStatesTableTail;
 	SimpleSmurfProblemState->pSmurfStatesTableTail = (void *)(pStartState + 1);
 	pStartState->cType = FN_XOR;
-	pStartState->nTransitionVars = arrElts;
+	pStartState->pnTransitionVars = arrElts;
    pStartState->nSize = nNumElts;
 	BDDNode *tmp_bdd;
 	for(tmp_bdd = pCurrentBDD; !IS_TRUE_FALSE(tmp_bdd); tmp_bdd = tmp_bdd->thenCase);
@@ -48,22 +48,24 @@ void *CreateXORState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, XORStateE
 void *CreateXORGElimState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, XORGElimStateEntry *pStartState) {
 	check_SmurfStatesTableSize(sizeof(XORGElimStateEntry));
 	ite_counters[SMURF_STATES]+=1;
-
+	
 	pStartState = (XORGElimStateEntry *)SimpleSmurfProblemState->pSmurfStatesTableTail;
 	SimpleSmurfProblemState->pSmurfStatesTableTail = (void *)(pStartState + 1);
 	pStartState->cType = FN_XOR_GELIM;
-	pStartState->nTransitionVars = arrElts;
+	pStartState->pnTransitionVars = arrElts;
    pStartState->nSize = nNumElts;
 	BDDNode *tmp_bdd;
 	for(tmp_bdd = pCurrentBDD; !IS_TRUE_FALSE(tmp_bdd); tmp_bdd = tmp_bdd->thenCase);
-	pStartState->bParity = tmp_bdd == false_ptr;
+	bool bParity = tmp_bdd == false_ptr;
 	if(nNumElts&0x1 == 1)
-	  pStartState->bParity -= 1;
+	  bParity -= 1;
 
-//	fprintf(stderr, "\nb=%d\n", pStartState->bParity);
-//	printBDDerr(pCurrentBDD);
-//	fprintf(stderr, "\n");
-//	PrintAllSmurfStateEntries();
+	pStartState->pVector = createXORGElimTableVector(nNumElts, arrElts, bParity);
 
+	//	fprintf(stderr, "\nb=%d\n", pStartState->bParity);
+	//	printBDDerr(pCurrentBDD);
+	//	fprintf(stderr, "\n");
+	//	PrintAllSmurfStateEntries();
+	
 	return pCurrentBDD->pState = (void *)pStartState;
 }

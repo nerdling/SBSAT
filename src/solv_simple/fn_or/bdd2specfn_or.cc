@@ -10,7 +10,7 @@ struct TypeStateEntry {
 
 struct ORStateEntry {
    char cType; //FN_OR
-   int *nTransitionVars;
+   int *pnTransitionVars;
    bool *bPolarity;
    int nSize;
 };
@@ -31,7 +31,7 @@ void *CreateORState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, ORStateEnt
 	pStartState = (ORStateEntry *)SimpleSmurfProblemState->pSmurfStatesTableTail;
 	SimpleSmurfProblemState->pSmurfStatesTableTail = (void *)(pStartState + 1);
 	pStartState->cType = FN_OR;
-	pStartState->nTransitionVars = arrElts;
+	pStartState->pnTransitionVars = arrElts;
    pStartState->nSize = nNumElts;
 	pStartState->bPolarity = (bool *)ite_calloc(nNumElts, sizeof(bool), 9, "bPolarity");
 	for(int x = 0; x < nNumElts; x++) {

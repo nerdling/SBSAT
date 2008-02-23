@@ -10,7 +10,7 @@ struct TypeStateEntry {
 
 struct ORStateEntry {
    char cType; //FN_OR
-   int *nTransitionVars;
+   int *pnTransitionVars;
    bool *bPolarity;
    int nSize;
 };
@@ -27,7 +27,7 @@ struct ORCounterStateEntry {
 void PrintORStateEntry(ORStateEntry *ssEntry) {
 	d9_printf1("Vars=");
 	for(int x = 0; x < ssEntry->nSize; x++)
-	  d9_printf2("%d ", ssEntry->bPolarity[x]==1?ssEntry->nTransitionVars[x]:-ssEntry->nTransitionVars[x]);
+	  d9_printf2("%d ", ssEntry->bPolarity[x]==1?ssEntry->pnTransitionVars[x]:-ssEntry->pnTransitionVars[x]);
 	d9_printf2("Size=%d\n", ssEntry->nSize);
 }
 

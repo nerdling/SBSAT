@@ -101,43 +101,43 @@ struct SmurfStateEntry {
 struct InferenceStateEntry {
 	char cType; //FN_INFERENCE
 	int nTransitionVar;
-	void *pVarTransition;
 	bool bPolarity;
+	void *pVarTransition;
 };
 
 struct ORStateEntry {
 	char cType; //FN_OR
-	int *nTransitionVars;
-	bool *bPolarity;
 	int nSize;
+	int *pnTransitionVars;
+	bool *bPolarity;
 };
 
 struct ORCounterStateEntry {
 	char cType; //FN_OR_COUNTER
-	void *pTransition;
 	int nSize;
+	void *pTransition;
 	ORStateEntry *pORState;	
 };
 
 struct XORStateEntry {
 	char cType; //FN_XOR
-	int *nTransitionVars;
-	bool bParity;
 	int nSize;
+	bool bParity;
+	int *pnTransitionVars;
 };
 
 struct XORCounterStateEntry {
 	char cType; //FN_XOR_COUNTER
-	void *pTransition;
 	int nSize;
+	void *pTransition;
 	XORStateEntry *pXORState; //For heuristic purposes
 };
 
 struct XORGElimStateEntry {
 	char cType; //FN_XOR_GELIM
-	int *nTransitionVars;
-	bool bParity;
 	int nSize;
+	void *pVector;
+	int *pnTransitionVars;
 };
 
 struct XORGElimTableStruct {

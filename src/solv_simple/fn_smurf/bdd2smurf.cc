@@ -204,9 +204,12 @@ void *ReadSmurfStateIntoTable(BDDNode *pCurrentBDD) {
 			//pStartState = CreateSmurfState(arrElts, nNumElts, pCurrentBDD, (SmurfStateEntry *)pStartState);        
 			//LSGBSmurfSetHeurScores((SmurfStateEntry *)pStartState);
 			//fprintf(stderr, "+");
-			pStartState = CreateXORState(arrElts, nNumElts, pCurrentBDD, (XORStateEntry *)pStartState);
-			
-			if(((TypeStateEntry *)pStartState)->cType == FN_XOR)
+			if(use_XORGElim==1) {
+				pStartState = CreateXORGElimState(arrElts, nNumElts, pCurrentBDD, (XORGElimStateEntry *)pStartState);
+			} else {
+				pStartState = CreateXORState(arrElts, nNumElts, pCurrentBDD, (XORStateEntry *)pStartState);
+			}
+			if(((TypeStateEntry *)pStartState)->cType == FN_XOR || ((TypeStateEntry *)pStartState)->cType == FN_XOR_GELIM)
 			  LSGBXORStateSetHeurScores((XORStateEntry *)pStartState);
 			else if(((TypeStateEntry *)pStartState)->cType == FN_XOR_COUNTER)
 			  LSGBXORCounterStateSetHeurScores((XORCounterStateEntry *)pStartState);

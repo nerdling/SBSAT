@@ -195,6 +195,7 @@ int ReadAllSmurfsIntoTable(int nNumVars) {
 			SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates[nSmurfIndex] =	ReadSmurfStateIntoTable(pInitialBDD);
 			bdd_gc();
 		}
+		Init_Solver_MidSmurfs_Hooks(nSmurfIndex, SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates);
 	}
 	D_3(
 		 for(int iter = 0; iter<str_length; iter++)

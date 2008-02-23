@@ -56,8 +56,9 @@ void deleteXORGElimTable();
 void pushXORGElimTable(XORGElimTableStruct *x);
 void popXORGElimTable(XORGElimTableStruct *x);
 
+void *createXORGElimTableVector(int nvars, int *varlist, bool bParity);
 
-int addRow(XORd *xord);
+int addRowXORGElimTable(void *pVector, int nVars, int *pnVarList);
 
 void printFrameSize();
 void printLinearN();

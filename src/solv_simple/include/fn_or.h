@@ -42,7 +42,7 @@
 
 struct ORStateEntry {
    char cType; //FN_OR
-   int *nTransitionVars;
+   int *pnTransitionVars;
    bool *bPolarity;
    int nSize;
 };

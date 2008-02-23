@@ -38,7 +38,7 @@ struct InferenceStateEntry {
 
 struct ORStateEntry {
    char cType; //FN_OR
-   int *nTransitionVars;
+   int *pnTransitionVars;
    bool *bPolarity;
    int nSize;
 };
@@ -52,7 +52,7 @@ struct ORCounterStateEntry {
 
 struct XORStateEntry {
    char cType; //FN_OR
-   int *nTransitionVars;
+   int *pnTransitionVars;
    bool parity;
    int nSize;
 };
@@ -162,14 +162,14 @@ void Calculate_Heuristic_Values() {
 		 case FN_OR_COUNTER:
 			pState = arrSmurfStates[nSmurfIndex];
 			for(int index = 0; numfound < ((ORCounterStateEntry *)pState)->nSize; index++) {
-				if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[((ORCounterStateEntry *)pState)->pORState->nTransitionVars[index]] >= nCurrInfLevel) {
+				if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[((ORCounterStateEntry *)pState)->pORState->pnTransitionVars[index]] >= nCurrInfLevel) {
 					numfound++;
 					if(((ORCounterStateEntry *)pState)->pORState->bPolarity[index] == BOOL_TRUE) {
-						SimpleSmurfProblemState->arrPosVarHeurWghts[((ORCounterStateEntry *)pState)->pORState->nTransitionVars[index]] += JHEURISTIC_K_TRUE;
-						SimpleSmurfProblemState->arrNegVarHeurWghts[((ORCounterStateEntry *)pState)->pORState->nTransitionVars[index]] += LSGBORCounterGetHeurNeg(((ORCounterStateEntry *)pState));
+						SimpleSmurfProblemState->arrPosVarHeurWghts[((ORCounterStateEntry *)pState)->pORState->pnTransitionVars[index]] += JHEURISTIC_K_TRUE;
+						SimpleSmurfProblemState->arrNegVarHeurWghts[((ORCounterStateEntry *)pState)->pORState->pnTransitionVars[index]] += LSGBORCounterGetHeurNeg(((ORCounterStateEntry *)pState));
 					} else {
-						SimpleSmurfProblemState->arrPosVarHeurWghts[((ORCounterStateEntry *)pState)->pORState->nTransitionVars[index]] += LSGBORCounterGetHeurNeg(((ORCounterStateEntry *)pState));
-						SimpleSmurfProblemState->arrNegVarHeurWghts[((ORCounterStateEntry *)pState)->pORState->nTransitionVars[index]] += JHEURISTIC_K_TRUE;
+						SimpleSmurfProblemState->arrPosVarHeurWghts[((ORCounterStateEntry *)pState)->pORState->pnTransitionVars[index]] += LSGBORCounterGetHeurNeg(((ORCounterStateEntry *)pState));
+						SimpleSmurfProblemState->arrNegVarHeurWghts[((ORCounterStateEntry *)pState)->pORState->pnTransitionVars[index]] += JHEURISTIC_K_TRUE;
 					}
 				}
 			}
@@ -177,24 +177,24 @@ void Calculate_Heuristic_Values() {
 		 case FN_XOR_COUNTER:
 			pState = arrSmurfStates[nSmurfIndex];
 			for(int index = 0; numfound < ((XORCounterStateEntry *)pState)->nSize; index++) {
-				if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[((XORCounterStateEntry *)pState)->pXORState->nTransitionVars[index]] >= nCurrInfLevel) {
+				if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[((XORCounterStateEntry *)pState)->pXORState->pnTransitionVars[index]] >= nCurrInfLevel) {
 					numfound++;
-					SimpleSmurfProblemState->arrPosVarHeurWghts[((XORCounterStateEntry *)pState)->pXORState->nTransitionVars[index]] += LSGBXORCounterGetHeurScoreTrans(((XORCounterStateEntry *)pState));
-					SimpleSmurfProblemState->arrNegVarHeurWghts[((XORCounterStateEntry *)pState)->pXORState->nTransitionVars[index]] += LSGBXORCounterGetHeurScoreTrans(((XORCounterStateEntry *)pState));
+					SimpleSmurfProblemState->arrPosVarHeurWghts[((XORCounterStateEntry *)pState)->pXORState->pnTransitionVars[index]] += LSGBXORCounterGetHeurScoreTrans(((XORCounterStateEntry *)pState));
+					SimpleSmurfProblemState->arrNegVarHeurWghts[((XORCounterStateEntry *)pState)->pXORState->pnTransitionVars[index]] += LSGBXORCounterGetHeurScoreTrans(((XORCounterStateEntry *)pState));
 				}
 			}
 			break;
 		 case FN_OR:
 			pState = arrSmurfStates[nSmurfIndex];
 			for(int index = 0; numfound < 2; index++) {
-				if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[((ORStateEntry *)pState)->nTransitionVars[index]] >= nCurrInfLevel) {
+				if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[((ORStateEntry *)pState)->pnTransitionVars[index]] >= nCurrInfLevel) {
 					numfound++;
 					if(((ORStateEntry *)pState)->bPolarity[index] == BOOL_TRUE) {
-						SimpleSmurfProblemState->arrPosVarHeurWghts[((ORStateEntry *)pState)->nTransitionVars[index]] += JHEURISTIC_K_TRUE;
-						SimpleSmurfProblemState->arrNegVarHeurWghts[((ORStateEntry *)pState)->nTransitionVars[index]] += LSGBORGetHeurNeg(((ORStateEntry *)pState));
+						SimpleSmurfProblemState->arrPosVarHeurWghts[((ORStateEntry *)pState)->pnTransitionVars[index]] += JHEURISTIC_K_TRUE;
+						SimpleSmurfProblemState->arrNegVarHeurWghts[((ORStateEntry *)pState)->pnTransitionVars[index]] += LSGBORGetHeurNeg(((ORStateEntry *)pState));
 					} else {
-						SimpleSmurfProblemState->arrPosVarHeurWghts[((ORStateEntry *)pState)->nTransitionVars[index]] += LSGBORGetHeurNeg(((ORStateEntry *)pState));
-						SimpleSmurfProblemState->arrNegVarHeurWghts[((ORStateEntry *)pState)->nTransitionVars[index]] += JHEURISTIC_K_TRUE;
+						SimpleSmurfProblemState->arrPosVarHeurWghts[((ORStateEntry *)pState)->pnTransitionVars[index]] += LSGBORGetHeurNeg(((ORStateEntry *)pState));
+						SimpleSmurfProblemState->arrNegVarHeurWghts[((ORStateEntry *)pState)->pnTransitionVars[index]] += JHEURISTIC_K_TRUE;
 					}
 				}
 			}
@@ -202,10 +202,10 @@ void Calculate_Heuristic_Values() {
 		 case FN_XOR:
 			pState = arrSmurfStates[nSmurfIndex];
 			for(int index = 0; numfound < 2; index++) {
-				if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[((XORStateEntry *)pState)->nTransitionVars[index]] >= nCurrInfLevel) {
+				if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[((XORStateEntry *)pState)->pnTransitionVars[index]] >= nCurrInfLevel) {
 					numfound++;
-					SimpleSmurfProblemState->arrPosVarHeurWghts[((XORStateEntry *)pState)->nTransitionVars[index]] += LSGBXORGetHeurScoreTrans(((XORStateEntry *)pState));
-					SimpleSmurfProblemState->arrNegVarHeurWghts[((XORStateEntry *)pState)->nTransitionVars[index]] += LSGBXORGetHeurScoreTrans(((XORStateEntry *)pState));
+					SimpleSmurfProblemState->arrPosVarHeurWghts[((XORStateEntry *)pState)->pnTransitionVars[index]] += LSGBXORGetHeurScoreTrans(((XORStateEntry *)pState));
+					SimpleSmurfProblemState->arrNegVarHeurWghts[((XORStateEntry *)pState)->pnTransitionVars[index]] += LSGBXORGetHeurScoreTrans(((XORStateEntry *)pState));
 				}
 			}
 			break;

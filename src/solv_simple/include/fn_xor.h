@@ -42,6 +42,7 @@
 void PrintXORStateEntry(XORStateEntry *ssEntry);
 void PrintXORStateEntry_formatted(XORStateEntry *ssEntry);
 void PrintXORCounterStateEntry(XORCounterStateEntry *ssEntry);
+void printXORGElimVector(void *pVector);
 void LSGBXORStateSetHeurScores(XORStateEntry *pState);
 void LSGBXORCounterStateSetHeurScores(XORCounterStateEntry *pState);
 double LSGBXORGetHeurScoreTrans(XORStateEntry *pState);
@@ -49,6 +50,7 @@ double LSGBXORGetHeurScore(XORStateEntry *pState);
 double LSGBXORCounterGetHeurScoreTrans(XORCounterStateEntry *pState);
 double LSGBXORCounterGetHeurScore(XORCounterStateEntry *pState);
 void *CreateXORState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, XORStateEntry *pStartState);
+void *CreateXORGElimState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, XORGElimStateEntry *pStartState);
 int ApplyInferenceToXOR(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 int ApplyInferenceToXORCounter(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 
