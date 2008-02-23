@@ -69,20 +69,20 @@
 //            +--first_bit[6] = null         +--first_bit[36] = 9
 //            |                              |
 //      00101000000010000001000000000010 00000000000001000000000000000000
-//      00011100001000000000010000000000 00000000000010000000000000000001
+//      00011100001000000000010000000000 00000000000010000000000000000000
 //      00000000000000000111000000000000 00000000000100000000000000000000
 //      00101000000010000001000000000010 10000000001000000000000000000000
-//      00001000000010000000000000000010 01000000010000000000000000000001
-//      00100000000000000001000000000000 00000000100000000000000000000001
-//      00001000000000000000000000000000 00000001000000000000000000000001
+//      00001000000010000000000000000010 01000000010000000000000000000000
+//      00100000000000000001000000000000 00000000100000000000000000000000
+//      00001000000000000000000000000000 00000001000000000000000000000000
 //      00000000010100000001000000100010 00000010000000000000000000000000
-//      00000000010000000001000000000000 10000100000000000000000000000001
+//      00000000010000000001000000000000 10000100000000000000000000000000
 //      00000100000001000000001000000000 00001000000000000000000000000000
 //      11000000010000000000000000000000 00010000000000000000000000000000
-//      00000000010000000000001000000000 00100000000000000000000000000001
-//      |<-------anything allowed-------->||<-------->||<---unused---->||
-//                                           diagonal                   |
-//                                           component     last column--+
+//      00000000010000000000001000000000 00100000000000000000000000000000
+//      ||<-------anything allowed------->||<-------->||<---unused----->|
+//      |                                    diagonal                    
+//      +--equality bit                      component                   
 //
 // The following additional variables are used:
 //   first_bit - If x is a column (variable) in the diagonal component then
@@ -139,7 +139,6 @@
 //       e. first_bit[xord's highest order 1] is set to new row
 //       f. mask takes a 0 in same position as xord's highest order 1
 //       g. column ptr of the new row set to xord's highest order 1
-//
 
 /*
 struct XORGElimTableStruct {
@@ -176,7 +175,7 @@ void initXORGElimTable(int nFuncs, int nVars){
 	vecs_rec_bytes = vec_size*sizeof(VecType); //mask_size = vecs_rec_bytes
 	
 	first_bit_ref = 0;
-	mask_ref = first_bit_ref + sizeof(int)*no_inp_vars;
+	mask_ref = first_bit_ref + sizeof(int)*(no_inp_vars+1);
 	vecs_v_ref = mask_ref + vecs_rec_bytes;
 	frame_size = vecs_v_ref + vecs_rec_bytes*no_funcs;	
 }
@@ -185,11 +184,11 @@ void allocXORGElimTable(XORGElimTableStruct *x){
 	x->frame = (char *)ite_calloc(1, frame_size, 9, "Gaussian elimination table memory frame");
 
 	x->first_bit = (int *)(x->frame + first_bit_ref);
-	for(int i=0; i < no_inp_vars; i++) x->first_bit[i] = -1;
+	for(int i=0; i <= no_inp_vars; i++) x->first_bit[i] = -1;
 
 	x->mask = (VecType *)(x->frame + mask_ref);
 	for(int i=0; i < vec_size; i++) x->mask[i] = (VecType)(-1);
-	x->mask[vec_size-1] -= (1 << sizeof(VecType)*8-1);
+	x->mask[0] -= 1;
 	
 	char *vv = (char *)(x->frame + vecs_v_ref);
 	for (int i=0 ; i < (VecType)vecs_rec_bytes*no_funcs; i++)
@@ -216,23 +215,31 @@ void popXORGElimTable(XORGElimTableStruct *x) {
 	num_vectors = x->num_vectors;
 }
 
-// Add row to the matrix
-int addRow (XORd *xord) {
-	// Return inconsistency (-1) if the row has no 1's but equals 1
-	if(!xord->nvars && xord->type) return -1;
+void *createXORGElimTableVector(int nvars, int *varlist, bool bParity) {
+	VecType *vector = (VecType *)ite_calloc(vec_size, sizeof(VecType), 9, "VecType *vector");
+	for (int i=0 ; i < nvars; i++) {
+		int word = varlist[i]/(sizeof(VecType)*8);
+		int bit = varlist[i]%(sizeof(VecType)*8);		
+		vector[word] += (1 << bit);
+	}
+	if(bParity) vector[0]&1;
 	
-	// Return no change (0) if row is all 0
-	if(!xord->nvars) return 0;
+	return (void *)vector;
+}
+
+// Add row to the matrix
+int addRowXORGElimTable (void *pVector, int nVars, int *pnVarlist) {
+	assert(nvars > 0);
 	
 	if(num_vectors >= no_funcs) {
 		return 0; // Cannot add anymore vectors to the matrix
 	}
 	
-	// Grab a new Vector and copy xord info to it
+	// Grab a new Vector and copy vector info to it
 	unsigned long offset = ((unsigned long)frame) + vecs_v_ref + num_vectors*vecs_rec_bytes;
 	VecType *vec = (VecType*)offset;
 
-	memcpy(vec, xord->vector, sizeof(VecType)*vec_size);
+	memcpy(vec, pVector, sizeof(VecType)*vec_size);
 	
 	// The first 1 bit of the new vector is in a column which intersects
 	// the diagonal.  Add the existing such row to the new vector.  For
@@ -242,15 +249,14 @@ int addRow (XORd *xord) {
 	// this column to the diagonal.
 	// 
 	// Eliminate all 1's of the new vector in the current diagonal matrix
-	for (int i=0 ; i < xord->nvars; i++) {
+	for (int i=0 ; i < nVars; i++) {
 		short int v;
-		if ((v = first_bit[(int)xord->varlist[i]]) != -1) {
+		if ((v = first_bit[pnVarlist[i]]) != -1) {
 			VecType *vn = (VecType *)(((unsigned long)frame)+vecs_v_ref+v*vecs_rec_bytes);
 			for (int j=0 ; j <= v/(sizeof(VecType)*8); j++) vec[j] ^= vn[j];
 		}
 	}
-	//Modify this next block of code to also detect when only one 1 occurs.
-	
+
 	// Now that all the 1's in the diagonal submatrix are taken care of,
 	// scan the vector to find the first 1 (MSB).  The variable (column)
 	// which is found is stored in "save_first_column".
@@ -277,7 +283,7 @@ int addRow (XORd *xord) {
 
 	// If k == -1 then no 1's were found in the new vector.
 	if (k == -1) {
-		if (vec[vec_size-1]&(1 << (sizeof(VecType)*8-1))) return -1; // Inconsistent. 
+		if (vec[0]&1) return -1; // Inconsistent. 
 		else return 0; // No change
 	}
 	
@@ -311,7 +317,7 @@ int addRow (XORd *xord) {
 
 	// If k == -1 then we have an inference
 	if (k == -1) {
-	  int ret = EnqueueInference(save_first_column, vec[vec_size-1]&(1 << (sizeof(VecType)*8-1)));
+	  int ret = EnqueueInference(save_first_column, vec[0]&1);
 	  if(ret == 0)
 	    return -1; //Is this the return value I want?			    
 	}
@@ -350,7 +356,7 @@ int addRow (XORd *xord) {
 				}
 				assert(inference_column);
 				
-				int ret = EnqueueInference(inference_column, vn[vec_size-1]&(1 << (sizeof(VecType)*8-1)));				
+				int ret = EnqueueInference(inference_column, vn[0]&1);				
 				if(ret == 0)
 				  return -1; //Is this the return value I want?			    
 			}
@@ -406,6 +412,21 @@ void printLinearN () {
 	cout << " +-----+     +-----+     +-----+     +-----+     +-----+\n";
 }
 
+void printXORGElimVector(void *pVector) {
+	for (int word=0 ; word < vec_size; word++) {
+		for(int bit = word==0?1:0; bit < (sizeof(VecType)*8); bit++) {
+			if (((VecType *)pVector)[word] & (1 << bit)) {
+				d2_printf1("1");
+			} else { d2_printf1("0"); }
+		}
+	}
+	
+	d2_printf1(".");
+	if (((VecType *)pVector)[0]&1) {
+		d2_printf1("1");
+	} else { d2_printf1("0"); }
+}
+
 void printLinear () {
 	int xlate[512];
 	int rows[512];
@@ -439,7 +460,7 @@ void printLinear () {
 			if (vn[word] & (1 << bit)) cout << "1"; else cout << "0";
 		}
 		cout << ".";
-		if (vn[vec_size-1] & (1 << (sizeof(VecType)*8-1)))
+		if (vn[0]&1)
 		  cout << "1"; else cout << "0";
 		cout << "     ";
 		for (int j=0 ; j < no_inp_vars ; j++) {
@@ -448,7 +469,7 @@ void printLinear () {
 			if (vn[word] & mask[word] & (1 << bit)) cout << "1"; else cout << "0";
 		}
 		cout << ".";
-		if (vn[vec_size-1] & (1 << (sizeof(VecType)*8-1)))
+		if (vn[0]&1)
 		  cout << "1"; else cout << "0";
 		cout << "\n";
 	}
