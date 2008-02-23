@@ -103,8 +103,9 @@ ITE_INLINE int ApplyInference_Hooks(int nBranchVar, bool bBVPolarity) {
 
 ITE_INLINE int ApplyInferenceToSmurf_Hook(int nBranchVar, bool bBVPolarity, int nSmurfIndex, void **arrSmurfStates) {
 	int ret = 1;
-	
+
 	if(((TypeStateEntry *)arrSmurfStates)[nSmurfIndex].cType == FN_XOR_GELIM) {
+		assert(0);
 		ret = addRowXORGElimTable(((XORGElimStateEntry *)arrSmurfStates)[nSmurfIndex].pVector,
 										  ((XORGElimStateEntry *)arrSmurfStates)[nSmurfIndex].nSize,
 										  ((XORGElimStateEntry *)arrSmurfStates)[nSmurfIndex].pnTransitionVars);

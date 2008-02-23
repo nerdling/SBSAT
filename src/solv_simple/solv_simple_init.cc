@@ -153,6 +153,7 @@ int ReadAllSmurfsIntoTable(int nNumVars) {
 	
 	//arrSmurfStatesTable[0] is reserved for the pTrueSimpleSmurfState
 	pTrueSimpleSmurfState = (SmurfStateEntry *)SimpleSmurfProblemState->arrCurrSmurfStates->arrStatesTable;
+	pTrueSimpleSmurfState->cType = FN_SMURF;
 	pTrueSimpleSmurfState->nTransitionVar = 0;
 	pTrueSimpleSmurfState->pVarIsTrueTransition = (void *)pTrueSimpleSmurfState;
 	pTrueSimpleSmurfState->pVarIsFalseTransition = (void *)pTrueSimpleSmurfState;
