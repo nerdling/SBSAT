@@ -416,14 +416,16 @@ int EnqueueInference(int nInfVar, bool bInfPolarity) {
 
 ITE_INLINE
 int ApplyInferenceToStates(int nBranchVar, bool bBVPolarity) {
+	int ret = ApplyInference_Hooks(nBranchVar, bBVPolarity);
+	if(ret == 0) return 0;
+	
 	void **arrSmurfStates = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].arrSmurfStates;
 	d7_printf2("  Transitioning Smurfs using %d\n", bBVPolarity?nBranchVar:-nBranchVar);
 	for(int i = 0; SimpleSmurfProblemState->arrVariableOccursInSmurf[nBranchVar][i] != -1; i++) {
 		int nSmurfNumber = SimpleSmurfProblemState->arrVariableOccursInSmurf[nBranchVar][i];
-		d7_printf3("    Checking Smurf %d (State %x)\n", nSmurfNumber, arrSmurfStates[nSmurfNumber]);
+		d7_printf3("    Checking Smurf %d (State %x)\n", nSmurfNumber, (unsigned int)arrSmurfStates[nSmurfNumber]);
 		if(arrSmurfStates[nSmurfNumber] == pTrueSimpleSmurfState) continue;
 		void *pState = arrSmurfStates[nSmurfNumber];
-		int ret = 1;
 
 		switch(((TypeStateEntry *)pState)->cType) {
 		 case FN_SMURF:
@@ -440,7 +442,7 @@ int ApplyInferenceToStates(int nBranchVar, bool bBVPolarity) {
 		}
 		if(ret == 0) return 0;
 	}
-	return ApplyInference_Hooks(nBranchVar, bBVPolarity);
+	return ret;
 }
 
 ITE_INLINE
@@ -517,7 +519,7 @@ int Backtrack() {
 		SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[nBranchLit] = SimpleSmurfProblemState->nNumVars;
 	}
 	  
-	return SOLV_UNKNOWN;
+	return ret;
 }
 
 int SimpleBrancher() {
