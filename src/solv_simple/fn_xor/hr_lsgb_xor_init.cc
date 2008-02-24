@@ -88,3 +88,11 @@ ITE_INLINE double LSGBXORCounterGetHeurScoreTrans(XORCounterStateEntry *pState) 
 ITE_INLINE double LSGBXORCounterGetHeurScore(XORCounterStateEntry *pState) {
 	return arrXORWeight[pState->nSize].fFmla;
 }
+
+ITE_INLINE double LSGBarrXORWeight(int nSize) {
+	return arrXORWeight[nSize].fFmla;
+}
+
+ITE_INLINE double LSGBarrXORWeightTrans(int nSize) {
+	return arrXORWeight[nSize-1].fFmla;
+}

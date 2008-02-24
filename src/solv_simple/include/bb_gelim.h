@@ -51,6 +51,8 @@ void *createXORGElimTableVector(int nvars, int *varlist, bool bParity);
 int addRowXORGElimTable(XORGElimTableStruct *x, void *pVector, int nVars, int *pnVarList);
 int ApplyInferenceToXORGElimTable(XORGElimTableStruct *x, int nVar, bool bValue);
 
+void LSGBXORGElimTableGetHeurScore(XORGElimTableStruct *x);
+
 void printFrameSize(XORGElimTableStruct *x);
 void printLinearN(XORGElimTableStruct *x);
 void printLinear(XORGElimTableStruct *x);

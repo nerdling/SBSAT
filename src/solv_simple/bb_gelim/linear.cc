@@ -164,7 +164,78 @@ int vecs_v_ref;
 void printLinear(XORGElimTableStruct *x);
 void printLinearN (XORGElimTableStruct *x);
 void PrintXORGElimVector(void *pVector);
-	
+
+static char bits_in_16bits [0x1u << 16] ;
+
+/* Iterated bitcount iterates over each bit. The while condition sometimes helps
+*    terminates the loop earlier */
+int iterated_bitcount (unsigned int n) {
+	int count=0;    
+	while (n) {
+		count += n & 0x1u;
+		n >>= 1 ;
+	}
+	return count;
+}
+
+//SEAN!!! Someday make this 64-bit compatible
+void compute_bits_in_16bits () {
+	VecType i;
+	for(i = 0; i < (VecType)(0x1u<<16); i++)
+	  bits_in_16bits [i] = iterated_bitcount (i) ;
+	return ;
+}
+
+int precomputed16_bitcount (VecType n){
+	// works only for 32-bits
+	return bits_in_16bits [n & 0xffffu]
+	  +  bits_in_16bits [(n >> 16) & 0xffffu] ;
+}
+
+void LSGBXORGElimTableGetHeurScore(XORGElimTableStruct *x) {
+	VecType vec_address = ((VecType)x->frame) + vecs_v_ref;
+//	printLinearN(x);
+	for(int i=0 ; i < x->num_vectors; i++) {
+		VecType *vn = (VecType *)vec_address;
+		int last_block = (((int *)(((VecType)x->frame) + column_ref + i*vecs_rec_bytes))[0])/(sizeof(VecType)*8);
+
+		int j=0;
+		int count = 0;
+		for(; j <= last_block; j++) count += precomputed16_bitcount(vn[j]);
+		
+		int nVar;
+		double fScore = LSGBarrXORWeightTrans(count-(vn[0]&1));
+		
+		int k;
+		for (k=last_block ; k >= 0; k--) {
+			VecType tmp;
+			VecType mask = ~0;
+			while ((tmp = vn[k]&mask) != 0) {
+				int bit = 0;
+				int hgh = sizeof(VecType)*8-1;
+				while (hgh > 0) { //Binary search for leading 1
+					int mid = hgh/2;
+					if (tmp >= (unsigned int)(1 << mid+1)) {
+						tmp >>= mid+1;
+						bit += mid+1;
+					}
+					hgh /= 2;
+				}
+				
+				nVar = bit + k*(sizeof(VecType)*8);
+				
+//				d2_printf4("%d|%d|%d ", i, nVar, count-(vn[0]&1));
+
+				SimpleSmurfProblemState->arrPosVarHeurWghts[nVar]+=fScore;
+				SimpleSmurfProblemState->arrNegVarHeurWghts[nVar]+=fScore;
+				//k=0; break;
+				mask &= ((~0) ^ (1 << bit));
+			}
+		}
+		vec_address += vecs_rec_bytes;
+	}
+}
+
 void initXORGElimTable(int nFuncs, int nVars){
 	//EquivVars* rec = (EquivVars *)frame;
 	no_funcs = nFuncs; //The inp is room for equivalences.
@@ -178,6 +249,7 @@ void initXORGElimTable(int nFuncs, int nVars){
 	column_ref = mask_ref + vec_size*sizeof(VecType);
 	vecs_v_ref = column_ref + sizeof(int);
 	frame_size = column_ref + vecs_rec_bytes*no_funcs;
+	compute_bits_in_16bits();
 }
 
 void allocXORGElimTable(XORGElimTableStruct *x){
@@ -263,7 +335,7 @@ int rediagonalizeXORGElimTable(XORGElimTableStruct *x, VecType *vec, int loc) {
 	x->mask[word] &= ((~0) ^ (1 << bit));
 	x->first_bit[save_first_column] = loc;
 
-	((int *)(((unsigned long)x->frame) + column_ref + loc*vecs_rec_bytes))[0] = save_first_column;
+	((int *)(((VecType)x->frame) + column_ref + loc*vecs_rec_bytes))[0] = save_first_column;
 	
 	//Look for second 1. If doesn't exist --> vec gives inference.
 	int save_second_column = 0;
@@ -294,7 +366,7 @@ int rediagonalizeXORGElimTable(XORGElimTableStruct *x, VecType *vec, int loc) {
 	}
 
 	// Cancel all 1's in the new column. Currently looks at *all* vectors!
-	unsigned long vec_address = ((unsigned long)x->frame) + vecs_v_ref;
+	VecType vec_address = ((VecType)x->frame) + vecs_v_ref;
 	for (int i=0 ; i < x->num_vectors; i++) {
 		if(i == loc) {
 			vec_address += vecs_rec_bytes;
@@ -310,14 +382,14 @@ int rediagonalizeXORGElimTable(XORGElimTableStruct *x, VecType *vec, int loc) {
 			
 			if(!nonzero){
 				//Inference
-				int inf = ((int *)(((unsigned long)x->frame) + column_ref + i*vecs_rec_bytes))[0];
+				int inf = ((int *)(((VecType)x->frame) + column_ref + i*vecs_rec_bytes))[0];
 				assert(inf != null);
 				
-				int word = inf/(sizeof(VecType)*8);
-				int bit = inf%(sizeof(VecType)*8);
+				int inf_word = inf/(sizeof(VecType)*8);
+				int inf_bit = inf%(sizeof(VecType)*8);
 				
 //				printLinearN(x);
-				if(vn[word]&(bit << 1))
+				if(vn[inf_word]&(1 << inf_bit))
 				  if(EnqueueInference(inf, vn[0]&1) == 0)
 					 return 0;
 			}
@@ -336,7 +408,7 @@ int addRowXORGElimTable (XORGElimTableStruct *x, void *pVector, int nVars, int *
 	}
 	
 	// Grab a new Vector and copy vector info to it
-	unsigned long offset = ((unsigned long)x->frame) + vecs_v_ref + x->num_vectors*vecs_rec_bytes;
+	VecType offset = ((VecType)x->frame) + vecs_v_ref + x->num_vectors*vecs_rec_bytes;
 	VecType *vec = (VecType*)offset;
 
 //	d2_printf1("i    ");PrintXORGElimVector(pVector);d2_printf1("\n");
@@ -354,7 +426,7 @@ int addRowXORGElimTable (XORGElimTableStruct *x, void *pVector, int nVars, int *
 	for (int i=0 ; i < nVars; i++) {
 		int v;
 		if ((v = x->first_bit[pnVarlist[i]]) != -1) {
-			VecType *vn = (VecType *)(((unsigned long)x->frame)+vecs_v_ref+v*vecs_rec_bytes);
+			VecType *vn = (VecType *)(((VecType)x->frame)+vecs_v_ref+v*vecs_rec_bytes);
 			for (int j=0 ; j <= (int)(pnVarlist[i]/(sizeof(VecType)*8)); j++) vec[j] ^= vn[j];
 //			d2_printf1("a    ");PrintXORGElimVector(vec);d2_printf2(" %d\n", v);
 		}
@@ -391,7 +463,7 @@ int ApplyInferenceToXORGElimTable (XORGElimTableStruct *x, int nVar, bool bValue
 		// column is 1, reverse the value of the last column
 
 		assert((x->mask[word] & (1 << bit)) == 0);
-		VecType *vec = (VecType *)(((unsigned long)x->frame)+vecs_v_ref+v*vecs_rec_bytes);
+		VecType *vec = (VecType *)(((VecType)x->frame)+vecs_v_ref+v*vecs_rec_bytes);
 		if(bValue) {
 			vec[0]=vec[0]^1;
 		}
@@ -406,7 +478,7 @@ int ApplyInferenceToXORGElimTable (XORGElimTableStruct *x, int nVar, bool bValue
 		// Zero out the column and set the x->mask bit to 0
 		x->mask[word] &= ((~0) ^ (1 << bit));
 
-		unsigned long vec_address = ((unsigned long)x->frame) + vecs_v_ref;
+		VecType vec_address = ((VecType)x->frame) + vecs_v_ref;
 		for (int i=0 ; i < x->num_vectors; i++) {
 			VecType *vn = (VecType *)vec_address;
 			// If the row has a 1 in the zeroed column and the value of the
@@ -426,14 +498,15 @@ int ApplyInferenceToXORGElimTable (XORGElimTableStruct *x, int nVar, bool bValue
 				if(!nonzero){
 					//Inference
 					
-					int inf = ((int *)(((unsigned long)x->frame) + column_ref + i*vecs_rec_bytes))[0];
+					int inf = ((int *)(((VecType)x->frame) + column_ref + i*vecs_rec_bytes))[0];
 					assert(inf != null);
 	
-					int word = inf/(sizeof(VecType)*8);
-					int bit = inf%(sizeof(VecType)*8);
+					int inf_word = inf/(sizeof(VecType)*8);
+					int inf_bit = inf%(sizeof(VecType)*8);
 					
+//					d2_printf5("Attemping to Infer %d %d %d %d\n", inf*((vn[0]&1)?1:-1), inf_word, inf_bit, vn[inf_word]&(1 << inf_bit));
 //					printLinearN(x);
-					if(vn[word]&(bit << 1))
+					if(vn[inf_word]&(1 << inf_bit))
 					  if(EnqueueInference(inf, vn[0]&1) == 0)
 						 return 0;
 				}
@@ -503,11 +576,11 @@ void printLinearN (XORGElimTableStruct *x) {
 	d2_printf1("Vectors:\n");
 	for (int i=0 ; i < x->num_vectors; i++) {
 		d2_printf1("     ");
-		VecType *vn = (VecType *)(((unsigned long)x->frame)+vecs_v_ref+i*vecs_rec_bytes);
+		VecType *vn = (VecType *)(((VecType)x->frame)+vecs_v_ref+i*vecs_rec_bytes);
 		PrintXORGElimVector((void *)vn);
 		d2_printf1("     ");
 		PrintMaskXORGElimVector(x, (void *)vn);
-		d2_printf2(" %d ",((int *)(((unsigned long)x->frame) + column_ref + i*vecs_rec_bytes))[0]);
+		d2_printf2(" %d ",((int *)(((VecType)x->frame) + column_ref + i*vecs_rec_bytes))[0]);
 		d2_printf1("\n");		
 	}
 	d2_printf1(" +-----+     +-----+     +-----+     +-----+     +-----+\n");
@@ -539,7 +612,7 @@ void printLinear (XORGElimTableStruct *x) {
 	cout << "Vectors:\n";
 	for (int i=0 ; rows[i] >= 0 ; i++) {
 		cout << "     ";
-		VecType *vn = (VecType *)(((unsigned long)x->frame)+vecs_v_ref+rows[i]*vecs_rec_bytes);
+		VecType *vn = (VecType *)(((VecType)x->frame)+vecs_v_ref+rows[i]*vecs_rec_bytes);
 		for (int j=0 ; j < no_inp_vars ; j++) {
 			int word = xlate[j]/(sizeof(VecType)*8);
 			int bit  = xlate[j] % (sizeof(VecType)*8);

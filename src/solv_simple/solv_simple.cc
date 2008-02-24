@@ -209,9 +209,28 @@ void Calculate_Heuristic_Values() {
 				}
 			}
 			break;
+		 case FN_XOR_GELIM:
+			pState = arrSmurfStates[nSmurfIndex];
+			for(int index = 0; index < ((XORGElimStateEntry *)pState)->nSize; index++) {
+				if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[((XORGElimStateEntry *)pState)->pnTransitionVars[index]] >= nCurrInfLevel) {
+					numfound++;
+				}
+			}
+			if(numfound == 0) arrSmurfStates[nSmurfIndex] = pTrueSimpleSmurfState;
+			else {
+				for(int index = 0; index < ((XORGElimStateEntry *)pState)->nSize; index++) {				  
+					if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[((XORGElimStateEntry *)pState)->pnTransitionVars[index]] >= nCurrInfLevel) {
+						SimpleSmurfProblemState->arrPosVarHeurWghts[((XORGElimStateEntry *)pState)->pnTransitionVars[index]] += LSGBarrXORWeightTrans(numfound);
+						SimpleSmurfProblemState->arrNegVarHeurWghts[((XORGElimStateEntry *)pState)->pnTransitionVars[index]] += LSGBarrXORWeightTrans(numfound);
+					}
+				}
+			}
+			break;
 		 default: break;
 		}
 	}
+
+	Calculate_Heuristic_Values_Hooks();
 	
 	d7_printf1("JHeuristic values:\n");
 	for(int nVar = 1; nVar < SimpleSmurfProblemState->nNumVars; nVar++) {
@@ -438,6 +457,8 @@ int ApplyInferenceToStates(int nBranchVar, bool bBVPolarity) {
 			ret = ApplyInferenceToOR(nBranchVar, bBVPolarity, nSmurfNumber, arrSmurfStates); break;
 		 case FN_XOR:
 			ret = ApplyInferenceToXOR(nBranchVar, bBVPolarity, nSmurfNumber, arrSmurfStates); break;
+		 case FN_XOR_GELIM: break; //Do nothing
+
 		 default: break;
 		}
 		if(ret == 0) return 0;

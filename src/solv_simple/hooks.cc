@@ -94,7 +94,7 @@ ITE_INLINE int ApplyInference_Hooks(int nBranchVar, bool bBVPolarity) {
 	return ret;	
 }
 
-ITE_INLINE int ApplyInferenceToSmurf_Hook(int nBranchVar, bool bBVPolarity, int nSmurfIndex, void **arrSmurfStates) {
+ITE_INLINE int ApplyInferenceToSmurf_Hooks(int nBranchVar, bool bBVPolarity, int nSmurfIndex, void **arrSmurfStates) {
 	int ret = 1;
 
 	if(((TypeStateEntry *)arrSmurfStates[nSmurfIndex])->cType == FN_XOR_GELIM) {
@@ -102,10 +102,19 @@ ITE_INLINE int ApplyInferenceToSmurf_Hook(int nBranchVar, bool bBVPolarity, int 
 										  ((XORGElimStateEntry *)arrSmurfStates[nSmurfIndex])->pVector,
 										  ((XORGElimStateEntry *)arrSmurfStates[nSmurfIndex])->nSize,
 										  ((XORGElimStateEntry *)arrSmurfStates[nSmurfIndex])->pnTransitionVars);
+		//To use the normal LSGB heuristic, comment out the line below.
 		arrSmurfStates[nSmurfIndex] = pTrueSimpleSmurfState;
 	}
 	
 	return ret;
+}
+
+ITE_INLINE void Calculate_Heuristic_Values_Hooks() {
+	
+	if(use_XORGElim==1) { //To use the normal LSGB heuristic, comment out the line below.
+	  LSGBXORGElimTableGetHeurScore(SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].XORGElimTable);
+	}
+	
 }
 
 ITE_INLINE int Backtrack_Hooks() {

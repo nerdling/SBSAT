@@ -27,7 +27,7 @@ int ApplyInferenceToSmurf(int nBranchVar, bool bBVPolarity, int nSmurfNumber, vo
 		}
 	} while (pSmurfState != NULL);
 
-	int ret = ApplyInferenceToSmurf_Hook(nBranchVar, bBVPolarity, nSmurfNumber, arrSmurfStates);
+	int ret = ApplyInferenceToSmurf_Hooks(nBranchVar, bBVPolarity, nSmurfNumber, arrSmurfStates);
 	
 	d7_printf3("      Smurf %d transitioned to state %x\n", nSmurfNumber, arrSmurfStates[nSmurfNumber]);
 
