@@ -389,9 +389,9 @@ int EnqueueInference(int nInfVar, bool bInfPolarity) {
 	int nPrevInfLevel = /*abs(*/SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[nInfVar];
 	//Sure, nPrevInfLevel could be zero, but only if it was a choicepoint and 
 	//I think it's impossible for a prior choicepoint to be inferred here.
-	assert(nPrevInfLevel > 0);
 	d7_printf4("      Inferring %d at Level %d (prior level = %d)\n",
 				  bInfPolarity?nInfVar:-nInfVar, nInfQueueHead, nPrevInfLevel);
+	assert(nPrevInfLevel > 0);
 	
 	if(nPrevInfLevel < nInfQueueHead) {
 		//Inference already in queue
@@ -450,7 +450,7 @@ void SmurfStates_Push(int destination) {
 	if(SimpleSmurfProblemState->arrSmurfStack[destination].arrSmurfStates == NULL) {
 		Alloc_SmurfStack(destination);
 	}
-		  
+
 	memcpy_ite(SimpleSmurfProblemState->arrSmurfStack[destination].arrSmurfStates,
 				  SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].arrSmurfStates,
 				  SimpleSmurfProblemState->nNumSmurfs*sizeof(int));
@@ -469,7 +469,7 @@ void SmurfStates_Push(int destination) {
 	SimpleSmurfProblemState->arrSmurfStack[destination].nHeuristicPlaceholder =
 	  SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nHeuristicPlaceholder;
 	
-	SmurfStates_Push_Hooks(destination);
+	SmurfStates_Push_Hooks(SimpleSmurfProblemState->nCurrSearchTreeLevel, destination);
 	
 	SimpleSmurfProblemState->nCurrSearchTreeLevel = destination;
 }

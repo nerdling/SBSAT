@@ -41,27 +41,18 @@
 #define null -1
 #define VecType unsigned long
 
-typedef struct xorrecord {
-	VecType *vector; // 0-1 vector showing vars in xor func and which type of xor func it is
-	int vector_size; // Number of bytes in vector
-	int *varlist;    // List of vars that are 1 in vector
-	int nvars;       // Number of vars in the function
-	int type;
-	struct xorrecord *next;
-} XORd;
-
 void initXORGElimTable(int nFuncs, int nVars);
 void allocXORGElimTable(XORGElimTableStruct *x);
-void deleteXORGElimTable();
-void pushXORGElimTable(XORGElimTableStruct *x);
-void popXORGElimTable(XORGElimTableStruct *x);
+void deleteXORGElimTable(XORGElimTableStruct *x);
+void pushXORGElimTable(XORGElimTableStruct *curr, XORGElimTableStruct *dest);
 
 void *createXORGElimTableVector(int nvars, int *varlist, bool bParity);
 
-int addRowXORGElimTable(void *pVector, int nVars, int *pnVarList);
+int addRowXORGElimTable(XORGElimTableStruct *x, void *pVector, int nVars, int *pnVarList);
+int ApplyInferenceToXORGElimTable(XORGElimTableStruct *x, int nVar, bool bValue);
 
-void printFrameSize();
-void printLinearN();
-void printLinear();
+void printFrameSize(XORGElimTableStruct *x);
+void printLinearN(XORGElimTableStruct *x);
+void printLinear(XORGElimTableStruct *x);
 
 #endif

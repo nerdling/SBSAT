@@ -62,22 +62,16 @@ bool CheckSimpleLimits(double fStartTime) {
 	return 0;
 }
 
-ITE_INLINE void SmurfStates_Push_Hooks(int destination) {
-
-	//	PrintAllXORSmurfStateEntries();
+ITE_INLINE void SmurfStates_Push_Hooks(int current, int destination) {
 	
 	if(use_XORGElim==1) {
-		pushXORGElimTable(SimpleSmurfProblemState->arrSmurfStack[destination].XORGElimTable);
+		pushXORGElimTable(SimpleSmurfProblemState->arrSmurfStack[current].XORGElimTable, SimpleSmurfProblemState->arrSmurfStack[destination].XORGElimTable);
 	}
-	
 
 }
 
 ITE_INLINE void SmurfStates_Pop_Hooks() {
 
-	if(use_XORGElim==1) {
-		popXORGElimTable(SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].XORGElimTable);
-	}	
 	
 }
 
@@ -87,8 +81,6 @@ ITE_INLINE void Alloc_SmurfStack_Hooks(int destination) {
 		SimpleSmurfProblemState->arrSmurfStack[destination].XORGElimTable = 
 		  (XORGElimTableStruct *)ite_calloc(1, sizeof(XORGElimTableStruct), 9, "XORGElimTable");
 		allocXORGElimTable(SimpleSmurfProblemState->arrSmurfStack[destination].XORGElimTable);
-		if(destination == 0) //Initialize the local GElimTable variables
-		  popXORGElimTable(SimpleSmurfProblemState->arrSmurfStack[0].XORGElimTable);
 	}
 
 }
@@ -96,7 +88,8 @@ ITE_INLINE void Alloc_SmurfStack_Hooks(int destination) {
 ITE_INLINE int ApplyInference_Hooks(int nBranchVar, bool bBVPolarity) {
 	int ret = 1;
 	
-	
+	if(use_XORGElim==1)
+	  ret = ApplyInferenceToXORGElimTable(SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].XORGElimTable, nBranchVar, bBVPolarity);
 	
 	return ret;	
 }
@@ -105,7 +98,8 @@ ITE_INLINE int ApplyInferenceToSmurf_Hook(int nBranchVar, bool bBVPolarity, int 
 	int ret = 1;
 
 	if(((TypeStateEntry *)arrSmurfStates[nSmurfIndex])->cType == FN_XOR_GELIM) {
-		ret = addRowXORGElimTable(((XORGElimStateEntry *)arrSmurfStates[nSmurfIndex])->pVector,
+		ret = addRowXORGElimTable(SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].XORGElimTable,
+										  ((XORGElimStateEntry *)arrSmurfStates[nSmurfIndex])->pVector,
 										  ((XORGElimStateEntry *)arrSmurfStates[nSmurfIndex])->nSize,
 										  ((XORGElimStateEntry *)arrSmurfStates[nSmurfIndex])->pnTransitionVars);
 		arrSmurfStates[nSmurfIndex] = pTrueSimpleSmurfState;
@@ -147,7 +141,8 @@ ITE_INLINE int Init_Solver_MidSmurfs_Hooks(int nSmurfIndex, void **arrSmurfState
 	int ret = SOLV_UNKNOWN;
 	
 	if(((TypeStateEntry *)arrSmurfStates[nSmurfIndex])->cType == FN_XOR_GELIM) {
-		ret = addRowXORGElimTable(((XORGElimStateEntry *)arrSmurfStates[nSmurfIndex])->pVector,
+		ret = addRowXORGElimTable(SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].XORGElimTable,
+										  ((XORGElimStateEntry *)arrSmurfStates[nSmurfIndex])->pVector,
 										  ((XORGElimStateEntry *)arrSmurfStates[nSmurfIndex])->nSize,
 										  ((XORGElimStateEntry *)arrSmurfStates[nSmurfIndex])->pnTransitionVars);
 		arrSmurfStates[nSmurfIndex] = pTrueSimpleSmurfState;
@@ -162,12 +157,11 @@ ITE_INLINE int Init_Solver_PostSmurfs_Hooks() {
 	int ret = SOLV_UNKNOWN;
 	
 	
-	
 	return ret;
 }
 
 ITE_INLINE void Final_Solver_Hooks() {
-	if(use_XORGElim==1)
-	  deleteXORGElimTable();
+//	if(use_XORGElim==1)
+//	  deleteXORGElimTable(SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].XORGElimTable);
 	
 }

@@ -82,7 +82,7 @@ int EnqueueInference(int nInfVar, bool bInfPolarity);
 void check_SmurfStatesTableSize(int size);
 
 //Hooks
-ITE_INLINE void SmurfStates_Push_Hooks(int destination);
+ITE_INLINE void SmurfStates_Push_Hooks(int current, int destination);
 ITE_INLINE void SmurfStates_Pop_Hooks();
 ITE_INLINE int ApplyInference_Hooks(int nBranchVar, bool bBVPolarity);
 ITE_INLINE int ApplyInferenceToSmurf_Hook(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
