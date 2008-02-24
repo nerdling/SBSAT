@@ -259,8 +259,12 @@ int rediagonalizeXORGElimTable(XORGElimTableStruct *x, VecType *vec, int loc) {
 
 	int word = k;//save_first_column/(sizeof(VecType)*8);
 	int bit = save_first_column % (sizeof(VecType)*8);
-	x->mask[word] &= ((~0) ^ (1 << bit));
 
+	x->mask[word] &= ((~0) ^ (1 << bit));
+	x->first_bit[save_first_column] = loc;
+
+	((int *)(((unsigned long)x->frame) + column_ref + loc*vecs_rec_bytes))[0] = save_first_column;
+	
 	//Look for second 1. If doesn't exist --> vec gives inference.
 	int save_second_column = 0;
 	for(; k>=0 ; k--){
@@ -286,13 +290,9 @@ int rediagonalizeXORGElimTable(XORGElimTableStruct *x, VecType *vec, int loc) {
 	if (k == -1) {
 		if(EnqueueInference(save_first_column, vec[0]&1) == 0)
 		  return 0;
-		return 2;
+		//return 2;
 	}
 
-	x->first_bit[save_first_column] = loc;
-
-	((int *)(((unsigned long)x->frame) + column_ref + loc*vecs_rec_bytes))[0] = save_first_column;
-	
 	// Cancel all 1's in the new column. Currently looks at *all* vectors!
 	unsigned long vec_address = ((unsigned long)x->frame) + vecs_v_ref;
 	for (int i=0 ; i < x->num_vectors; i++) {
@@ -451,7 +451,7 @@ void printframeSize () {
 
 void printMask (XORGElimTableStruct *x) {
 	d2_printf2("mask (%lx", vec_size*sizeof(VecType)*8);
-	d1_printf1(" bits):\n     ");
+	d2_printf1(" bits):\n     ");
 	for (int i=0 ; i < vec_size ; i++) {
 		VecType tmp = x->mask[i];
 		for (unsigned int j=i==0?1:0 ; j < sizeof(VecType)*8 ; j++) {
@@ -465,7 +465,7 @@ void printMask (XORGElimTableStruct *x) {
 		d2_printf1("1");
 	} else { d2_printf1("0"); }
 	
-	cout << "\n";
+	d2_printf1("\n");
 }
 
 void PrintXORGElimVector(void *pVector) {
@@ -500,7 +500,7 @@ void PrintMaskXORGElimVector(XORGElimTableStruct *x, void *pVector) {
 
 void printLinearN (XORGElimTableStruct *x) {
 	printMask(x);
-	cout << "Vectors:\n";
+	d2_printf1("Vectors:\n");
 	for (int i=0 ; i < x->num_vectors; i++) {
 		d2_printf1("     ");
 		VecType *vn = (VecType *)(((unsigned long)x->frame)+vecs_v_ref+i*vecs_rec_bytes);
