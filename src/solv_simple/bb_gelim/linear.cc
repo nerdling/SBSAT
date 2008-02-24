@@ -296,7 +296,7 @@ void *createXORGElimTableVector(int nvars, int *varlist, bool bParity) {
 	return (void *)vector;
 }
 
-int rediagonalizeXORGElimTable(XORGElimTableStruct *x, VecType *vec, int loc) {
+ITE_INLINE int rediagonalizeXORGElimTable(XORGElimTableStruct *x, VecType *vec, int loc) {
 	// Now that all the 1's in the diagonal submatrix are taken care of,
 	// scan the vector to find the first 1 (MSB).  The variable (column)
 	// which is found is stored in "save_first_column".

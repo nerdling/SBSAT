@@ -154,6 +154,7 @@ ITE_INLINE int Init_Solver_MidSmurfs_Hooks(int nSmurfIndex, void **arrSmurfState
 										  ((XORGElimStateEntry *)arrSmurfStates[nSmurfIndex])->pVector,
 										  ((XORGElimStateEntry *)arrSmurfStates[nSmurfIndex])->nSize,
 										  ((XORGElimStateEntry *)arrSmurfStates[nSmurfIndex])->pnTransitionVars);
+		//To use the normal LSGB heuristic, comment out the line below.
 		arrSmurfStates[nSmurfIndex] = pTrueSimpleSmurfState;
 	}
 	
