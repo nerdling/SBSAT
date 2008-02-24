@@ -158,6 +158,7 @@ int no_funcs;    // The max number of functions (rows in matrix)
 int vec_size;    // Number of bytes comprising each VecType vector
 int first_bit_ref;
 int mask_ref;
+int column_ref;
 int vecs_v_ref;
 
 void printLinear(XORGElimTableStruct *x);
@@ -170,12 +171,13 @@ void initXORGElimTable(int nFuncs, int nVars){
 	no_inp_vars = nVars; // Number of input variables
 	vec_size = 1+no_inp_vars/(sizeof(VecType)*8);
 	
-	vecs_rec_bytes = vec_size*sizeof(VecType); //mask_size = vecs_rec_bytes
+	vecs_rec_bytes = vec_size*sizeof(VecType) + sizeof(int); //mask_size = vecs_rec_bytes
 	
 	first_bit_ref = 0;
 	mask_ref = first_bit_ref + sizeof(int)*(no_inp_vars+1);
-	vecs_v_ref = mask_ref + vecs_rec_bytes;
-	frame_size = vecs_v_ref + vecs_rec_bytes*no_funcs;	
+	column_ref = mask_ref + vec_size*sizeof(VecType);
+	vecs_v_ref = column_ref + sizeof(int);
+	frame_size = column_ref + vecs_rec_bytes*no_funcs;
 }
 
 void allocXORGElimTable(XORGElimTableStruct *x){
@@ -188,7 +190,7 @@ void allocXORGElimTable(XORGElimTableStruct *x){
 	for(int i=0; i < vec_size; i++) x->mask[i] = (VecType)(~0);
 	x->mask[0] -= 1;
 	
-	char *vv = (char *)(x->frame + vecs_v_ref);
+	char *vv = (char *)(x->frame + column_ref);
 	for (int i=0 ; i < (int)(VecType)vecs_rec_bytes*no_funcs; i++)
 	  vv[i] = (char)(-1);
 
@@ -204,8 +206,10 @@ void pushXORGElimTable(XORGElimTableStruct *curr, XORGElimTableStruct *dest) {
 //	d2_printf3("Pushing Table - %d (%d)\n", curr->num_vectors, SimpleSmurfProblemState->nCurrSearchTreeLevel+1);
 //	printLinearN(curr);
 	
-	memcpy_ite(dest->frame, curr->frame, vecs_v_ref + curr->num_vectors*vecs_rec_bytes);
+	memcpy_ite(dest->frame, curr->frame, column_ref + curr->num_vectors*vecs_rec_bytes);
 	dest->num_vectors = curr->num_vectors;
+	
+//	printLinearN(dest);
 }
 
 void *createXORGElimTableVector(int nvars, int *varlist, bool bParity) {
@@ -248,7 +252,7 @@ int rediagonalizeXORGElimTable(XORGElimTableStruct *x, VecType *vec, int loc) {
 	// If k == -1 then no 1's were found in the new vector.
 	if (k == -1) {
 		if (vec[0]&1) return 0; // Inconsistent.
-		else return 1; // No change
+		else return 2; // No change
 	}
 	
 	// Open up a new diagonal column
@@ -281,11 +285,13 @@ int rediagonalizeXORGElimTable(XORGElimTableStruct *x, VecType *vec, int loc) {
 	// If k == -1 then we have an inference
 	if (k == -1) {
 		if(EnqueueInference(save_first_column, vec[0]&1) == 0)
-		  return 0; //Is this the return value I want?			    
-		return 1;
+		  return 0;
+		return 2;
 	}
 
 	x->first_bit[save_first_column] = loc;
+
+	((int *)(((unsigned long)x->frame) + column_ref + loc*vecs_rec_bytes))[0] = save_first_column;
 	
 	// Cancel all 1's in the new column. Currently looks at *all* vectors!
 	unsigned long vec_address = ((unsigned long)x->frame) + vecs_v_ref;
@@ -304,37 +310,16 @@ int rediagonalizeXORGElimTable(XORGElimTableStruct *x, VecType *vec, int loc) {
 			
 			if(!nonzero){
 				//Inference
-				int inference_column = 0;
+				int inf = ((int *)(((unsigned long)x->frame) + column_ref + i*vecs_rec_bytes))[0];
+				assert(inf != null);
 				
-				for (k=vec_size-1 ; k >= 0 ; k--) {
-					// Maybe 10 of these loops
-					VecType tmp;
-					if ((tmp = vn[k]) != 0) {
-						int hgh = sizeof(VecType)*8-1;
-						while (hgh > 0) { // Maybe 5 of these loops - binary search for leading 1
-							int mid = hgh/2;
-							if (tmp >= (unsigned int)(1 << mid+1)) {
-								tmp >>= mid+1;
-								inference_column += mid+1;
-							}
-							hgh /= 2;
-						}
-						
-						inference_column += k*(sizeof(VecType)*8);
-						break;
-					}
-				}
-
-				if(inference_column == 0 && (vn[0]&1==1)) return 0;
-				if(inference_column == 0) continue;
-				assert(inference_column);
-				//if(inference_column==0) if(vn[0]&1 == 0) return 0; //conflict?
-
-				if(x->first_bit[inference_column] == null || x->first_bit[inference_column] == i) {
-//					printLinearN(x);
-					if(EnqueueInference(inference_column, vn[0]&1) == 0)
-					  return 0; //Is this the return value I want?
-				}
+				int word = inf/(sizeof(VecType)*8);
+				int bit = inf%(sizeof(VecType)*8);
+				
+//				printLinearN(x);
+				if(vn[word]&(bit << 1))
+				  if(EnqueueInference(inf, vn[0]&1) == 0)
+					 return 0;
 			}
 		}
 		vec_address += vecs_rec_bytes;
@@ -378,8 +363,9 @@ int addRowXORGElimTable (XORGElimTableStruct *x, void *pVector, int nVars, int *
 	// Insert the new row
 	
 	int ret = rediagonalizeXORGElimTable(x, vec, x->num_vectors);
-	x->num_vectors++;
-	return ret;
+	if(ret == 1) x->num_vectors++;
+	if(ret == 0) return 0;
+	return 1;
 }
 
 // When a variable is given an assignment, 0 out that column of all rows.
@@ -414,7 +400,7 @@ int ApplyInferenceToXORGElimTable (XORGElimTableStruct *x, int nVar, bool bValue
 		//x->first_bit[nVar] = null;
 		
 		//Rediagonalize the vector.
-		return rediagonalizeXORGElimTable(x, vec, v);
+		return (rediagonalizeXORGElimTable(x, vec, v)>0);
 	} else {
 		// If the column is not in the diagonal submatrix
 		// Zero out the column and set the x->mask bit to 0
@@ -434,40 +420,22 @@ int ApplyInferenceToXORGElimTable (XORGElimTableStruct *x, int nVar, bool bValue
 
 				//Check to see if this vector has become an inference i.e. only has 1 one (the diagonal column bit).
 				bool nonzero = 0;
-				for (int j=0; j < vec_size && !nonzero; j++) nonzero |= (x->mask[j] & vn[j])!=0;
 
+				for (int j=0; j < vec_size && !nonzero; j++) nonzero |= (x->mask[j] & vn[j])!=0;
+				
 				if(!nonzero){
 					//Inference
-					int inference_column = 0;
-
-					for (int k=vec_size-1 ; k >= 0 ; k--) {
-						// Maybe 10 of these loops
-						VecType tmp;
-						if ((tmp = vn[k]) != 0) {
-							int hgh = sizeof(VecType)*8-1;
-							while (hgh > 0) { // Maybe 5 of these loops - binary search for leading 1
-								int mid = hgh/2;
-								if (tmp >= (unsigned int)(1 << mid+1)) {
-									tmp >>= mid+1;
-									inference_column += mid+1;
-								}
-								hgh /= 2;
-							}
-							
-							inference_column += k*(sizeof(VecType)*8);
-//							fprintf(stderr, "%lx %d", vn[k], inference_column);
-							break;
-						}
-					}
-
-					if(inference_column == 0 && (vn[0]&1==1)) return 0;
-					if(inference_column == 0) continue;
 					
-					if(x->first_bit[inference_column] == null || x->first_bit[inference_column] == i) {
-//						printLinearN(x);
-						if(EnqueueInference(inference_column, vn[0]&1) == 0)
-						  return 0; //Is this the return value I want?
-					}
+					int inf = ((int *)(((unsigned long)x->frame) + column_ref + i*vecs_rec_bytes))[0];
+					assert(inf != null);
+	
+					int word = inf/(sizeof(VecType)*8);
+					int bit = inf%(sizeof(VecType)*8);
+					
+//					printLinearN(x);
+					if(vn[word]&(bit << 1))
+					  if(EnqueueInference(inf, vn[0]&1) == 0)
+						 return 0;
 				}
 			}
 			vec_address += vecs_rec_bytes;
@@ -539,6 +507,7 @@ void printLinearN (XORGElimTableStruct *x) {
 		PrintXORGElimVector((void *)vn);
 		d2_printf1("     ");
 		PrintMaskXORGElimVector(x, (void *)vn);
+		d2_printf2(" %d ",((int *)(((unsigned long)x->frame) + column_ref + i*vecs_rec_bytes))[0]);
 		d2_printf1("\n");		
 	}
 	d2_printf1(" +-----+     +-----+     +-----+     +-----+     +-----+\n");
