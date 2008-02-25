@@ -49,6 +49,7 @@ void *CreateXORGElimState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, XORG
 	check_SmurfStatesTableSize(sizeof(XORGElimStateEntry));
 	ite_counters[SMURF_STATES]+=1;
 	
+	nGElimSmurf_Created = 1;
 	pStartState = (XORGElimStateEntry *)SimpleSmurfProblemState->pSmurfStatesTableTail;
 	SimpleSmurfProblemState->pSmurfStatesTableTail = (void *)(pStartState + 1);
 	pStartState->cType = FN_XOR_GELIM;

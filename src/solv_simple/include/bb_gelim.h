@@ -41,6 +41,8 @@
 #define null -1
 #define VecType unsigned long
 
+extern int nGElimSmurf_Created;
+
 void initXORGElimTable(int nFuncs, int nVars);
 void allocXORGElimTable(XORGElimTableStruct *x);
 void deleteXORGElimTable(XORGElimTableStruct *x);

@@ -277,6 +277,9 @@ void deleteXORGElimTable (XORGElimTableStruct *x) {
 void pushXORGElimTable(XORGElimTableStruct *curr, XORGElimTableStruct *dest) {
 //	d2_printf3("Pushing Table - %d (%d)\n", curr->num_vectors, SimpleSmurfProblemState->nCurrSearchTreeLevel+1);
 //	printLinearN(curr);
+
+	if(dest->frame == NULL)
+	  allocXORGElimTable(dest);
 	
 	memcpy_ite(dest->frame, curr->frame, column_ref + curr->num_vectors*vecs_rec_bytes);
 	dest->num_vectors = curr->num_vectors;

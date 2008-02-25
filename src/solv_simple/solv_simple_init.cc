@@ -209,7 +209,7 @@ int ReadAllSmurfsIntoTable(int nNumVars) {
 
 	D_9(PrintAllSmurfStateEntries(););
 	
-	return Init_Solver_PostSmurfs_Hooks();
+	return Init_Solver_PostSmurfs_Hooks(SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates);
 }
 
 int Init_SimpleSmurfSolver() {
