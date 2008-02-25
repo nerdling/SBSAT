@@ -172,7 +172,6 @@ ITE_INLINE int Init_Solver_PostSmurfs_Hooks(void **arrSmurfStates) {
 	if(use_XORGElim==1) {
 		initXORGElimTable(nCount_GElimSmurfs, SimpleSmurfProblemState->nNumVars);
 		allocXORGElimTable(SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].XORGElimTable);
-		
 		for(int nSmurfIndex = 0; nSmurfIndex < SimpleSmurfProblemState->nNumSmurfs; nSmurfIndex++) {
 			if(((TypeStateEntry *)arrSmurfStates[nSmurfIndex])->cType == FN_XOR_GELIM) {
 				ret = addRowXORGElimTable(SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].XORGElimTable,
@@ -181,7 +180,7 @@ ITE_INLINE int Init_Solver_PostSmurfs_Hooks(void **arrSmurfStates) {
 												  ((XORGElimStateEntry *)arrSmurfStates[nSmurfIndex])->pnTransitionVars);
 				//To use the normal LSGB heuristic, comment out the line below.
 				arrSmurfStates[nSmurfIndex] = pTrueSimpleSmurfState;
-				if(ret == -1) return SOLV_UNSAT;
+				if(ret == 0) return SOLV_UNSAT;
 			}
 		}
 	}

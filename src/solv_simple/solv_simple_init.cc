@@ -227,7 +227,7 @@ int Init_SimpleSmurfSolver() {
 	if(*csv_trace_file)
 	  fd_csv_trace_file = fopen(csv_trace_file, "w");
 	
-	ReadAllSmurfsIntoTable(nNumVars);
+	ret = ReadAllSmurfsIntoTable(nNumVars);
 
 	return ret;
 }
