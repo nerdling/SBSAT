@@ -614,7 +614,7 @@ void _printBDDdot_file(BDDNode *bdd) {
 		BDD_nodes = (BDDNode **)ite_realloc(BDD_nodes, max_BDD_nodes, 30+max_BDD_nodes, sizeof(BDDNode *), 9, "BDD_nodes");
 		max_BDD_nodes+=30;
 	}
-	BDD_nodes[len_BDD_nodes++] = bdd;
+	len_BDD_nodes++;
 	
 	if(!IS_TRUE_FALSE(bdd->thenCase)) {
 		_printBDDdot_file(bdd->thenCase);
@@ -623,6 +623,9 @@ void _printBDDdot_file(BDDNode *bdd) {
 	if(!IS_TRUE_FALSE(bdd->elseCase)) {
 		_printBDDdot_file(bdd->elseCase);
 	}
+
+	BDD_nodes[len_BDD_nodes] = bdd;
+	
 }
 
 void

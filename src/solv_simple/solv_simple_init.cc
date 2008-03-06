@@ -2,40 +2,27 @@
 #include "sbsat_solver.h"
 #include "solver.h"
 
-/*********************************************************************
-struct ProblemState{
-	// Static
-	int nNumSmurfs;
-	int nNumVars;
-	int nNumSmurfStateEntries;
-   SmurfStatesTableStruct *arrSmurfStatesTableHead; //Pointer to the table of all smurf states
-   SmurfStatesTableStruct *arrCurrSmurfStates;      //Pointer to the current table of smurf states
-   void *pSmurfStatesTableTail;                     //Pointer to the next open block of the arrSmurfStatesTable
-	int **arrVariableOccursInSmurf; //Pointer to lists of Smurfs, indexed by variable number, that contain that variable.
-	                                //Max size would be nNumSmurfs * nNumVars, but this would only happen if every
-               	                 //Smurf contained every variable. Each list is terminated by a -1 element.
-	// Dynamic
-	int nCurrSearchTreeLevel;
-   double *arrPosVarHeurWghts;       //Pointer to array of size nNumVars
-	double *arrNegVarHeurWghts;       //Pointer to array of size nNumVars
-	int *arrInferenceQueue;           //Pointer to array of size nNumVars (dynamically indexed by arrSmurfStack[level].nNumFreeVars
-   int *arrInferenceDeclaredAtLevel; //Pointer to array of size nNumVars
-	SmurfStack *arrSmurfStack;        //Pointer to array of size nNumVars
-};
-***********************************************************************/
-
+//A flag that determines whether or not smurf states are shared between smurfs.
 int smurfs_share_paths=1;
 
+//The main data structure holding information about the current state used
+// by the brancher.
 ProblemState *SimpleSmurfProblemState;
+
+//The True smurf state
 SmurfStateEntry *pTrueSimpleSmurfState;
 
+//Variables for runtime data
 double fSimpleSolverStartTime;
 double fSimpleSolverEndTime;
 double fSimpleSolverPrevEndTime;
 
+//Just a dummy variable for holding temp memory allocations
 int *tempint;
 long tempint_max = 0;
 
+//This allocates a new block of smurfs states and attaches them to the previous block
+//The blocks are connected by a linked list - accessed through ->pNext
 void allocate_new_SmurfStatesTable(int size) {
 	size = SMURF_TABLE_SIZE;
 	SimpleSmurfProblemState->arrCurrSmurfStates->pNext = (SmurfStatesTableStruct *)ite_calloc(1, sizeof(SmurfStatesTableStruct), 9, "SimpleSmurfProblemState->arrCurrSmurfStates->pNext");
@@ -45,6 +32,8 @@ void allocate_new_SmurfStatesTable(int size) {
 	SimpleSmurfProblemState->arrCurrSmurfStates->pNext->pNext = NULL;
 }
 
+//This checks the size of the current block of the smurf states table.
+//If the table is full, we will allocate a new block via allocate_new_SmurfStatesTable(int size)
 void check_SmurfStatesTableSize(int size) {
 	SimpleSmurfProblemState->arrCurrSmurfStates->curr_size+=size;
 	if(SimpleSmurfProblemState->arrCurrSmurfStates->curr_size >= SimpleSmurfProblemState->arrCurrSmurfStates->max_size) {
@@ -61,6 +50,9 @@ void check_SmurfStatesTableSize(int size) {
 	}
 }
 
+//This function increases the size of the smurf stack.
+//The smurf stack stores all the state specific information
+//  relevant to the search at a specific decision level
 void Alloc_SmurfStack(int destination) {
 	//fprintf(stdout, "increasing stack size\n");
 	for(int i = destination; i < destination + SMURF_STATES_INCREASE_SIZE && i < SimpleSmurfProblemState->nNumVars; i++) {		  
@@ -71,6 +63,7 @@ void Alloc_SmurfStack(int destination) {
 	}
 }
 
+//This function initializes a lot of memory, e.g. creating the smurfs from the BDDs.
 int ReadAllSmurfsIntoTable(int nNumVars) {
 	//Create the pTrueSimpleSmurfState entry
 	SimpleSmurfProblemState = (ProblemState *)ite_calloc(1, sizeof(ProblemState), 9, "SimpleSmurfProblemState");
@@ -212,6 +205,8 @@ int ReadAllSmurfsIntoTable(int nNumVars) {
 	return Init_Solver_PostSmurfs_Hooks(SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates);
 }
 
+//This initializes a few things, then calls the main initialization
+//  function - ReadAllSmurfsIntoTable(nNumVars);
 int Init_SimpleSmurfSolver() {
 	//Clear all FunctionTypes
 	for(int x = 0; x < nmbrFunctions; x++)
@@ -232,6 +227,7 @@ int Init_SimpleSmurfSolver() {
 	return ret;
 }
 
+//Here we do the clean up after the brancher is done - freeing memory etc.
 void Final_SimpleSmurfSolver() {
 
 	DisplaySimpleStatistics(ite_counters[NUM_CHOICE_POINTS], ite_counters[NUM_BACKTRACKS], ite_counters[NUM_BACKJUMPS]);
@@ -242,24 +238,11 @@ void Final_SimpleSmurfSolver() {
 	//Still need to do some backend stuff like free memory.
 
 	Final_Solver_Hooks();
-	
+
 	FreeSimpleVarMap();
 
+	ite_free((void **)&tempint);
+	tempint_max = 0;
+	
 	//Hmmm I didn't free A LOT of that memory. SEAN!!! FIX THIS!!!
-}
-
-int simpleSolve() {
-	int nForceBackjumpLevel_old = nForceBackjumpLevel;
-	if(nForceBackjumpLevel < 0) nForceBackjumpLevel = nVarChoiceLevelsNum+1;
-	
-	int ret = Init_SimpleSmurfSolver();
-	if(ret != SOLV_UNKNOWN) return ret;
-
-	ret = SimpleBrancher();
-	
-	nForceBackjumpLevel = nForceBackjumpLevel_old;
-
-	Final_SimpleSmurfSolver();
-	
-	return ret;
 }

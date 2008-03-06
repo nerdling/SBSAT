@@ -72,6 +72,7 @@ extern int *arrIte2SimpleSolverVarMap;
 extern int *arrSimpleSolver2IteVarMap;
 
 int SimpleBrancher();
+void Final_SimpleSmurfSolver();
 
 ITE_INLINE int InitSimpleVarMap();
 ITE_INLINE void FreeSimpleVarMap();

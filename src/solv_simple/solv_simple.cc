@@ -641,3 +641,21 @@ find_more_solutions: ;
 
 	return ret;
 }
+
+
+//Main solving function - calls the initialization functions, the brancher, and the cleanup
+int simpleSolve() {
+	int nForceBackjumpLevel_old = nForceBackjumpLevel;
+   if(nForceBackjumpLevel < 0) nForceBackjumpLevel = nVarChoiceLevelsNum+1;
+   
+	int ret = Init_SimpleSmurfSolver();
+	if(ret != SOLV_UNKNOWN) return ret;
+	
+	ret = SimpleBrancher();
+	
+	nForceBackjumpLevel = nForceBackjumpLevel_old;
+	
+	Final_SimpleSmurfSolver();
+	
+	return ret;
+}
