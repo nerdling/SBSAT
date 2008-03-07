@@ -143,7 +143,7 @@ struct XORGElimStateEntry {
 struct XORGElimTableStruct {
 	unsigned char *frame;
 	int *first_bit;
-	uint32_t *mask;
+	void *mask;
 	int num_vectors;
 };
 
