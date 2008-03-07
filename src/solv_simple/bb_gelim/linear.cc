@@ -66,28 +66,28 @@
 // The stored form of the matrix has been subjected to gaussian elimination
 // and consists of a diagonal component plus an arbitrary component.
 //
-//            +--first_bit[6] = null         +--first_bit[36] = 9
+//            +--first_bit[6] = -1         +--first_bit[36] = 9
 //            |                              |
-//      00101000000010000001000000000010 00000000000001000000000000000000
-//      00011100001000000000010000000000 00000000000010000000000000000000
-//      00000000000000000111000000000000 00000000000100000000000000000000
-//      00101000000010000001000000000010 10000000001000000000000000000000
-//      00001000000010000000000000000010 01000000010000000000000000000000
-//      00100000000000000001000000000000 00000000100000000000000000000000
-//      00001000000000000000000000000000 00000001000000000000000000000000
-//      00000000010100000001000000100010 00000010000000000000000000000000
-//      00000000010000000001000000000000 10000100000000000000000000000000
-//      00000100000001000000001000000000 00001000000000000000000000000000
-//      11000000010000000000000000000000 00010000000000000000000000000000
-//      00000000010000000000001000000000 00100000000000000000000000000000
-//      ||<-------anything allowed------->||<-------->||<---unused----->|
-//      |                                    diagonal                    
-//      +--equality bit                      component                   
+//      INT32 00101000000010000001000000000010 00000000000001000000000000000000 ...
+//      INT32 00011100001000000000010000000000 00000000000010000000000000000000 ...
+//      INT32 00000000000000000111000000000000 00000000000100000000000000000000 ...
+//      INT32 00101000000010000001000000000010 10000000001000000000000000000000 ...
+//      INT32 00001000000010000000000000000010 01000000010000000000000000000000 ...
+//      INT32 00100000000000000001000000000000 00000000100000000000000000000000 ...
+//      INT32 00001000000000000000000000000000 00000001000000000000000000000000 ...
+//      INT32 00000000010100000001000000100010 00000010000000000000000000000000 ...
+//      INT32 00000000010000000001000000000000 10000100000000000000000000000000 ...
+//      INT32 00000100000001000000001000000000 00001000000000000000000000000000 ...
+//      INT32 11000000010000000000000000000000 00010000000000000000000000000000 ...
+//      INT32 00000000010000000000001000000000 00100000000000000000000000000000 ...
+//      INT32 ||<-------anything allowed------->||<-------->||<---unused----->| ...
+//      INT32 |                                    diagonal                    
+//      INT32 +--equality bit                      component                   
 //
 // The following additional variables are used:
 //   first_bit - If x is a column (variable) in the diagonal component then
 //           first_bit[x] is the number of the row which has a "1" in that
-//           column.  Otherwise first_bit[x] is null.
+//           column.  Otherwise first_bit[x] is -1.
 //   mask  - 0-1 masking pattern for columns of the matrix.  If mask[x] is 1
 //           then variable x has not been assigned a value and is not a column
 //           in the diagonal component.
@@ -149,14 +149,14 @@ struct XORGElimTableStruct {
  };
 */
 
-#define VecType unsigned long
+// #define VecType uint32_t
+#define BITS_PER_BYTE 8
 
 int frame_size;
 int vecs_rec_bytes;
 int no_inp_vars; // The number of input variables 
 int no_funcs;    // The max number of functions (rows in matrix)
 int vec_size;    // Number of bytes comprising each VecType vector
-int first_bit_ref;
 int mask_ref;
 int column_ref;
 int vecs_v_ref;
@@ -165,7 +165,7 @@ void printLinear(XORGElimTableStruct *x);
 void printLinearN (XORGElimTableStruct *x);
 void PrintXORGElimVector(void *pVector);
 
-static char bits_in_16bits [0x1u << 16] ;
+static unsigned char bits_in_16bits [0x1u << 16] ;
 
 /* Iterated bitcount iterates over each bit. The while condition sometimes helps
 *    terminates the loop earlier */
@@ -193,16 +193,21 @@ int precomputed16_bitcount (VecType n){
 }
 
 void LSGBXORGElimTableGetHeurScore(XORGElimTableStruct *x) {
-	VecType vec_address = ((VecType)x->frame) + vecs_v_ref;
 //	printLinearN(x);
 	for(int i=0 ; i < x->num_vectors; i++) {
-		VecType *vn = (VecType *)vec_address;
-		int last_block = (((int *)(((VecType)x->frame) + column_ref + i*vecs_rec_bytes))[0])/(sizeof(VecType)*8);
+		VecType *vn = (VecType*)(&(((unsigned char*)(x->frame))[vecs_v_ref+i*vecs_rec_bytes]));
 
-		int j=0;
+		int32_t last_block =  
+                         (*(int32_t*)(&(((unsigned char*)(x->frame))[column_ref + (i*vecs_rec_bytes)]))) / (sizeof(VecType)*BITS_PER_BYTE);
+
+		int32_t j=0;
 		int count = 0;
 		for(; j <= last_block; j++) count += precomputed16_bitcount(vn[j]);
-		
+	
+		assert (count-(vn[0]&1)<=no_inp_vars);	
+		assert (count-(vn[0]&1)>=0);	
+		if (count == 0) continue;
+
 		int nVar;
 		double fScore = LSGBarrXORWeightTrans(count-(vn[0]&1));
 		
@@ -212,7 +217,7 @@ void LSGBXORGElimTableGetHeurScore(XORGElimTableStruct *x) {
 			VecType mask = ~0;
 			while ((tmp = vn[k]&mask) != 0) {
 				int bit = 0;
-				int hgh = sizeof(VecType)*8-1;
+				int hgh = sizeof(VecType)*BITS_PER_BYTE-1;
 				while (hgh > 0) { //Binary search for leading 1
 					int mid = hgh/2;
 					if (tmp >= (unsigned int)(1 << mid+1)) {
@@ -222,7 +227,7 @@ void LSGBXORGElimTableGetHeurScore(XORGElimTableStruct *x) {
 					hgh /= 2;
 				}
 				
-				nVar = bit + k*(sizeof(VecType)*8);
+				nVar = bit + k*(sizeof(VecType)*BITS_PER_BYTE);
 				
 //				d2_printf4("%d|%d|%d ", i, nVar, count-(vn[0]&1));
 
@@ -232,7 +237,6 @@ void LSGBXORGElimTableGetHeurScore(XORGElimTableStruct *x) {
 				mask &= ((~0) ^ (1 << bit));
 			}
 		}
-		vec_address += vecs_rec_bytes;
 	}
 }
 
@@ -240,31 +244,38 @@ void initXORGElimTable(int nFuncs, int nVars){
 	//EquivVars* rec = (EquivVars *)frame;
 	no_funcs = nFuncs; //The inp is room for equivalences.
 	no_inp_vars = nVars; // Number of input variables
-	vec_size = 1+no_inp_vars/(sizeof(VecType)*8);
+	vec_size = 1+no_inp_vars/(sizeof(VecType)*BITS_PER_BYTE);
+
+       /* counters: INT32 INT32 .. no_inp_vars+1 times */
+       /* mask:     VecType VecType ..  vec_size times */ 
+       /* rows:     INT32 VecType VecType .. vec_size times */
 	
-	vecs_rec_bytes = vec_size*sizeof(VecType) + sizeof(int); //mask_size = vecs_rec_bytes
-	
-	first_bit_ref = 0;
-	mask_ref = first_bit_ref + sizeof(int)*(no_inp_vars+1);
-	column_ref = mask_ref + vec_size*sizeof(VecType);
-	vecs_v_ref = column_ref + sizeof(int);
-	frame_size = column_ref + vecs_rec_bytes*no_funcs;
+        int counters_size = sizeof(int32_t)*(no_inp_vars+1);
+	mask_ref = counters_size; // sizeof(int32_t)*(no_inp_vars+1); // for every variable it holds diagonal row offset 
+	int mask_size = sizeof(VecType)*vec_size;
+	column_ref = mask_ref + mask_size; // sizeof(VecType)*vec_size;
+	int column_size = sizeof(int32_t) + vec_size*sizeof(VecType);
+
+	vecs_rec_bytes = column_size; // sizeof(int32_t) + vec_size*sizeof(VecType); // counter + bitvectors //mask_size = vecs_rec_bytes
+	vecs_v_ref = column_ref + sizeof(int32_t); // counter
+	frame_size = counters_size + mask_size + column_size*no_funcs; // column_ref + (sizeof(int32_t)+vec_size) /*vecs_rec_bytes*/ *no_funcs;
 	compute_bits_in_16bits();
 }
 
 void allocXORGElimTable(XORGElimTableStruct *x){
-	x->frame = (char *)ite_calloc(1, frame_size, 9, "Gaussian elimination table memory frame");
+	x->frame = (unsigned char *)ite_calloc(1, frame_size, 9, "Gaussian elimination table memory frame");
 
-	x->first_bit = (int *)(x->frame + first_bit_ref);
+	x->first_bit = (int32_t *)(x->frame);
 	for(int i=0; i <= no_inp_vars; i++) x->first_bit[i] = -1;
 
-	x->mask = (VecType *)(x->frame + mask_ref);
+	x->mask = (VecType *)(&(((unsigned char*)(x->frame))[mask_ref]));
 	for(int i=0; i < vec_size; i++) x->mask[i] = (VecType)(~0);
 	x->mask[0] -= 1;
 	
-	char *vv = (char *)(x->frame + column_ref);
-	for (int i=0 ; i < (int)(VecType)vecs_rec_bytes*no_funcs; i++)
-	  vv[i] = (char)(-1);
+	for (int i=0 ; i < no_funcs; i++) {
+	  int32_t *vv = (int32_t *)&(((unsigned char*)(x->frame))[column_ref+i*vecs_rec_bytes]);
+	  *vv = -1;
+	}
 
 	x->num_vectors = 0;
 }
@@ -290,8 +301,8 @@ void pushXORGElimTable(XORGElimTableStruct *curr, XORGElimTableStruct *dest) {
 void *createXORGElimTableVector(int nvars, int *varlist, bool bParity) {
 	VecType *vector = (VecType *)ite_calloc(vec_size, sizeof(VecType), 9, "VecType *vector");
 	for (int i=0 ; i < nvars; i++) {
-		int word = varlist[i]/(sizeof(VecType)*8);
-		int bit = varlist[i]%(sizeof(VecType)*8);		
+		int word = varlist[i]/(sizeof(VecType)*BITS_PER_BYTE);
+		int bit = varlist[i]%(sizeof(VecType)*BITS_PER_BYTE);		
 		vector[word] += (1 << bit);
 	}
 	if(bParity) vector[0]+=1;
@@ -309,7 +320,7 @@ ITE_INLINE int rediagonalizeXORGElimTable(XORGElimTableStruct *x, VecType *vec, 
 		// Maybe 10 of these loops
 		VecType tmp;
 		if ((tmp = (x->mask[k] & vec[k])) != 0) {
-			int hgh = sizeof(VecType)*8-1;
+			int hgh = sizeof(VecType)*BITS_PER_BYTE-1;
 			while (hgh > 0) { // Maybe 5 of these loops - binary search for leading 1
 				int mid = hgh/2;
 				if (tmp >= (unsigned int)(1 << mid+1)) {
@@ -319,7 +330,7 @@ ITE_INLINE int rediagonalizeXORGElimTable(XORGElimTableStruct *x, VecType *vec, 
 				hgh /= 2;
 			}
 
-			save_first_column += k*(sizeof(VecType)*8);
+			save_first_column += k*(sizeof(VecType)*BITS_PER_BYTE);
 			break;
 		}
 	}
@@ -332,13 +343,14 @@ ITE_INLINE int rediagonalizeXORGElimTable(XORGElimTableStruct *x, VecType *vec, 
 	
 	// Open up a new diagonal column
 
-	int word = k;//save_first_column/(sizeof(VecType)*8);
-	int bit = save_first_column % (sizeof(VecType)*8);
+	int word = k;//save_first_column/(sizeof(VecType)*BITS_PER_BYTE);
+	int bit = save_first_column % (sizeof(VecType)*BITS_PER_BYTE);
 
 	x->mask[word] &= ((~0) ^ (1 << bit));
 	x->first_bit[save_first_column] = loc;
 
-	((int *)(((VecType)x->frame) + column_ref + loc*vecs_rec_bytes))[0] = save_first_column;
+	// ((int *)(((VecType*)x->frame) + column_ref + loc*vecs_rec_bytes))[0] = save_first_column;
+	*(int32_t*)(&(((unsigned char*)(x->frame))[column_ref+loc*vecs_rec_bytes])) = save_first_column;
 	
 	//Look for second 1. If doesn't exist --> vec gives inference.
 	for(; k>=0 ; k--)
@@ -352,13 +364,10 @@ ITE_INLINE int rediagonalizeXORGElimTable(XORGElimTableStruct *x, VecType *vec, 
 	}
 
 	// Cancel all 1's in the new column. Currently looks at *all* vectors!
-	VecType vec_address = ((VecType)x->frame) + vecs_v_ref;
+	VecType *vec_address = (VecType*)(&(((unsigned char*)(x->frame))[vecs_v_ref]));
 	for (int i=0 ; i < x->num_vectors; i++) {
-		if(i == loc) {
-			vec_address += vecs_rec_bytes;
-			continue;
-		}
-		VecType *vn = (VecType *)vec_address;
+		if(i == loc) continue;
+		VecType *vn = (VecType*)(&(((unsigned char*)(x->frame))[vecs_v_ref+i*vecs_rec_bytes]));
 		if (vn[word] & (1 << bit)) {
 			bool nonzero = 0;
 			int j=0;
@@ -368,11 +377,11 @@ ITE_INLINE int rediagonalizeXORGElimTable(XORGElimTableStruct *x, VecType *vec, 
 			
 			if(!nonzero){
 				//Inference
-				int inf = ((int *)(((VecType)x->frame) + column_ref + i*vecs_rec_bytes))[0];
-				assert(inf != null);
+				int32_t inf = *(int32_t*)(&(((unsigned char*)(x->frame))[column_ref+i*vecs_rec_bytes]));
+				assert(inf != -1);
 				
-				int inf_word = inf/(sizeof(VecType)*8);
-				int inf_bit = inf%(sizeof(VecType)*8);
+				int inf_word = inf/(sizeof(VecType)*BITS_PER_BYTE);
+				int inf_bit = inf%(sizeof(VecType)*BITS_PER_BYTE);
 				
 //				printLinearN(x);
 				if(vn[inf_word]&(1 << inf_bit))
@@ -380,7 +389,6 @@ ITE_INLINE int rediagonalizeXORGElimTable(XORGElimTableStruct *x, VecType *vec, 
 					 return 0;
 			}
 		}
-		vec_address += vecs_rec_bytes;
 	}
 	return 1;
 }
@@ -394,8 +402,7 @@ int addRowXORGElimTable (XORGElimTableStruct *x, void *pVector, int nVars, int *
 	}
 	
 	// Grab a new Vector and copy vector info to it
-	VecType offset = ((VecType)x->frame) + vecs_v_ref + x->num_vectors*vecs_rec_bytes;
-	VecType *vec = (VecType*)offset;
+	VecType *vec = (VecType*)(&(((unsigned char*)(x->frame))[vecs_v_ref+x->num_vectors*vecs_rec_bytes]));
 
 //	d2_printf1("i    ");PrintXORGElimVector(pVector);d2_printf1("\n");
 	
@@ -412,8 +419,8 @@ int addRowXORGElimTable (XORGElimTableStruct *x, void *pVector, int nVars, int *
 	for (int i=0 ; i < nVars; i++) {
 		int v;
 		if ((v = x->first_bit[pnVarlist[i]]) != -1) {
-			VecType *vn = (VecType *)(((VecType)x->frame)+vecs_v_ref+v*vecs_rec_bytes);
-			for (int j=0 ; j <= (int)(pnVarlist[i]/(sizeof(VecType)*8)); j++) vec[j] ^= vn[j];
+			VecType *vn = (VecType*)(&(((unsigned char*)(x->frame))[vecs_v_ref+v*vecs_rec_bytes]));
+			for (int j=0 ; j <= (int)(pnVarlist[i]/(sizeof(VecType)*BITS_PER_BYTE)); j++) vec[j] ^= vn[j];
 //			d2_printf1("a    ");PrintXORGElimVector(vec);d2_printf2(" %d\n", v);
 		}
 	}
@@ -439,23 +446,23 @@ int ApplyInferenceToXORGElimTable (XORGElimTableStruct *x, int nVar, bool bValue
 //	printLinearN(x);
 	
 	//Grab word and bit positions of x->mask and vector
-	int word = nVar/(sizeof(VecType)*8);
-	int bit = nVar%(sizeof(VecType)*8);
+	int word = nVar/(sizeof(VecType)*BITS_PER_BYTE);
+	int bit = nVar%(sizeof(VecType)*BITS_PER_BYTE);
 
 	// Check whether column is in diagonal submatrix
-	if((v=x->first_bit[nVar]) != null) {
+	if((v=x->first_bit[nVar]) != -1) {
 		// If so,
 		// Zero out the diagonal and if the value of the variable of the
 		// column is 1, reverse the value of the last column
 
 		assert((x->mask[word] & (1 << bit)) == 0);
-		VecType *vec = (VecType *)(((VecType)x->frame)+vecs_v_ref+v*vecs_rec_bytes);
+		VecType *vec = (VecType*)(&(((unsigned char*)(x->frame))[vecs_v_ref+v*vecs_rec_bytes]));
 		if(bValue) {
 			vec[0]=vec[0]^1;
 		}
 		assert((vec[word]&(1 << bit))>0);
 		vec[word] ^= (1 << bit); //Remove var from the vector
-		//x->first_bit[nVar] = null;
+		//x->first_bit[nVar] = -1;
 		
 		//Rediagonalize the vector.
 		return (rediagonalizeXORGElimTable(x, vec, v)>0);
@@ -464,9 +471,9 @@ int ApplyInferenceToXORGElimTable (XORGElimTableStruct *x, int nVar, bool bValue
 		// Zero out the column and set the x->mask bit to 0
 		x->mask[word] &= ((~0) ^ (1 << bit));
 
-		VecType vec_address = ((VecType)x->frame) + vecs_v_ref;
 		for (int i=0 ; i < x->num_vectors; i++) {
-			VecType *vn = (VecType *)vec_address;
+			// VecType *vn = (VecType *)vec_address;
+			VecType *vn = (VecType*)(&(((unsigned char*)(x->frame))[vecs_v_ref+i*vecs_rec_bytes]));
 			// If the row has a 1 in the zeroed column and the value of the
 			// variable in the column is 1 then reverse the value of the last
 			// column
@@ -484,11 +491,11 @@ int ApplyInferenceToXORGElimTable (XORGElimTableStruct *x, int nVar, bool bValue
 				if(!nonzero){
 					//Inference
 					
-					int inf = ((int *)(((VecType)x->frame) + column_ref + i*vecs_rec_bytes))[0];
-					assert(inf != null);
+					int32_t inf = *(int32_t*)(&(((unsigned char*)(x->frame))[column_ref+i*vecs_rec_bytes]));
+					assert(inf != -1);
 	
-					int inf_word = inf/(sizeof(VecType)*8);
-					int inf_bit = inf%(sizeof(VecType)*8);
+					int inf_word = inf/(sizeof(VecType)*BITS_PER_BYTE);
+					int inf_bit = inf%(sizeof(VecType)*BITS_PER_BYTE);
 					
 //					d2_printf5("Attemping to Infer %d %d %d %d\n", inf*((vn[0]&1)?1:-1), inf_word, inf_bit, vn[inf_word]&(1 << inf_bit));
 //					printLinearN(x);
@@ -497,7 +504,6 @@ int ApplyInferenceToXORGElimTable (XORGElimTableStruct *x, int nVar, bool bValue
 						 return 0;
 				}
 			}
-			vec_address += vecs_rec_bytes;
 		}
 	}
 
@@ -509,11 +515,11 @@ void printframeSize () {
 }
 
 void printMask (XORGElimTableStruct *x) {
-	d2_printf2("mask (%lx", vec_size*sizeof(VecType)*8);
+	d2_printf2("mask (%lx", vec_size*sizeof(VecType)*BITS_PER_BYTE);
 	d2_printf1(" bits):\n     ");
 	for (int i=0 ; i < vec_size ; i++) {
 		VecType tmp = x->mask[i];
-		for (unsigned int j=i==0?1:0 ; j < sizeof(VecType)*8 ; j++) {
+		for (unsigned int j=i==0?1:0 ; j < sizeof(VecType)*BITS_PER_BYTE ; j++) {
 			if (tmp % 2) {d2_printf1("1");} else {d2_printf1("0");}
 			tmp /= 2;
 		}
@@ -529,7 +535,7 @@ void printMask (XORGElimTableStruct *x) {
 
 void PrintXORGElimVector(void *pVector) {
 	for (int word=0 ; word < vec_size; word++) {
-		for(int bit = word==0?1:0; bit < (int)(sizeof(VecType)*8); bit++) {
+		for(int bit = word==0?1:0; bit < (int)(sizeof(VecType)*BITS_PER_BYTE); bit++) {
 			if (((VecType *)pVector)[word] & (1 << bit)) {
 				d2_printf1("1");
 			} else { d2_printf1("0"); }
@@ -544,7 +550,7 @@ void PrintXORGElimVector(void *pVector) {
 
 void PrintMaskXORGElimVector(XORGElimTableStruct *x, void *pVector) {
 	for (int word=0 ; word < vec_size; word++) {
-		for(int bit = word==0?1:0; bit < (int)(sizeof(VecType)*8); bit++) {
+		for(int bit = word==0?1:0; bit < (int)(sizeof(VecType)*BITS_PER_BYTE); bit++) {
 			if (((VecType *)pVector)[word] & (1 << bit) & x->mask[word]) {
 				d2_printf1("1");
 			} else { d2_printf1("0"); }
@@ -562,11 +568,11 @@ void printLinearN (XORGElimTableStruct *x) {
 	d2_printf1("Vectors:\n");
 	for (int i=0 ; i < x->num_vectors; i++) {
 		d2_printf1("     ");
-		VecType *vn = (VecType *)(((VecType)x->frame)+vecs_v_ref+i*vecs_rec_bytes);
+		VecType *vn = (VecType *)(((VecType*)x->frame)+vecs_v_ref+i*vecs_rec_bytes);
 		PrintXORGElimVector((void *)vn);
 		d2_printf1("     ");
 		PrintMaskXORGElimVector(x, (void *)vn);
-		d2_printf2(" %d ",((int *)(((VecType)x->frame) + column_ref + i*vecs_rec_bytes))[0]);
+		d2_printf2(" %d ",((int *)(((VecType*)x->frame) + column_ref + i*vecs_rec_bytes))[0]);
 		d2_printf1("\n");		
 	}
 	d2_printf1(" +-----+     +-----+     +-----+     +-----+     +-----+\n");
@@ -587,10 +593,10 @@ void printLinear (XORGElimTableStruct *x) {
 	for (int i=no_inp_vars-1 ; i >= 0 ; i--)
 	  if (x->first_bit[i] == -1) xlate[j++] = i;
 	
-	cout << "x->mask (" << vec_size*sizeof(VecType)*8 << " bits):\n     ";
+	cout << "x->mask (" << vec_size*sizeof(VecType)*BITS_PER_BYTE << " bits):\n     ";
 	for (int i=0 ; i < no_inp_vars ; i++) {
-		int word = xlate[i]/(sizeof(VecType)*8);
-		int bit  = xlate[i] % (sizeof(VecType)*8);
+		int word = xlate[i]/(sizeof(VecType)*BITS_PER_BYTE);
+		int bit  = xlate[i] % (sizeof(VecType)*BITS_PER_BYTE);
 		if (x->mask[word] & (1 << bit)) cout << "1"; else cout << "0";
 	}
 	cout << "\n";
@@ -598,10 +604,10 @@ void printLinear (XORGElimTableStruct *x) {
 	cout << "Vectors:\n";
 	for (int i=0 ; rows[i] >= 0 ; i++) {
 		cout << "     ";
-		VecType *vn = (VecType *)(((VecType)x->frame)+vecs_v_ref+rows[i]*vecs_rec_bytes);
+		VecType *vn = (VecType *)(((VecType*)x->frame)+vecs_v_ref+rows[i]*vecs_rec_bytes);
 		for (int j=0 ; j < no_inp_vars ; j++) {
-			int word = xlate[j]/(sizeof(VecType)*8);
-			int bit  = xlate[j] % (sizeof(VecType)*8);
+			int word = xlate[j]/(sizeof(VecType)*BITS_PER_BYTE);
+			int bit  = xlate[j] % (sizeof(VecType)*BITS_PER_BYTE);
 			if (vn[word] & (1 << bit)) cout << "1"; else cout << "0";
 		}
 		cout << ".";
@@ -609,8 +615,8 @@ void printLinear (XORGElimTableStruct *x) {
 		  cout << "1"; else cout << "0";
 		cout << "     ";
 		for (int j=0 ; j < no_inp_vars ; j++) {
-			int word = xlate[j]/(sizeof(VecType)*8);
-			int bit  = xlate[j] % (sizeof(VecType)*8);
+			int word = xlate[j]/(sizeof(VecType)*BITS_PER_BYTE);
+			int bit  = xlate[j] % (sizeof(VecType)*BITS_PER_BYTE);
 			if (vn[word] & x->mask[word] & (1 << bit)) cout << "1"; else cout << "0";
 		}
 		cout << ".";

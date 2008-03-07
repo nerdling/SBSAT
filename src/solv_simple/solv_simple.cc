@@ -442,7 +442,7 @@ int ApplyInferenceToStates(int nBranchVar, bool bBVPolarity) {
 	d7_printf2("  Transitioning Smurfs using %d\n", bBVPolarity?nBranchVar:-nBranchVar);
 	for(int i = 0; SimpleSmurfProblemState->arrVariableOccursInSmurf[nBranchVar][i] != -1; i++) {
 		int nSmurfNumber = SimpleSmurfProblemState->arrVariableOccursInSmurf[nBranchVar][i];
-		d7_printf3("    Checking Smurf %d (State %x)\n", nSmurfNumber, (unsigned int)arrSmurfStates[nSmurfNumber]);
+		// d7_printf3("    Checking Smurf %d (State %x)\n", nSmurfNumber, (unsigned int)arrSmurfStates[nSmurfNumber]);
 		if(arrSmurfStates[nSmurfNumber] == pTrueSimpleSmurfState) continue;
 		void *pState = arrSmurfStates[nSmurfNumber];
 
@@ -476,7 +476,7 @@ void SmurfStates_Push(int destination) {
 
 	memcpy_ite(SimpleSmurfProblemState->arrSmurfStack[destination].arrSmurfStates,
 				  SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].arrSmurfStates,
-				  SimpleSmurfProblemState->nNumSmurfs*sizeof(int));
+				  SimpleSmurfProblemState->nNumSmurfs*sizeof(int*));
 
 //	for(int i = 0; i < SimpleSmurfProblemState->nNumSmurfs; i++) {
 //		SimpleSmurfProblemState->arrSmurfStack[destination].arrSmurfStates[i] = 

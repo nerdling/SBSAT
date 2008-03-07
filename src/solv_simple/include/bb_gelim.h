@@ -39,7 +39,7 @@
 #define FN_GELIM_S_H
 
 #define null -1
-#define VecType unsigned long
+#define VecType uint32_t 
 
 extern int nGElimSmurf_Created;
 

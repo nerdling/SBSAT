@@ -57,7 +57,7 @@ void Alloc_SmurfStack(int destination) {
 	//fprintf(stdout, "increasing stack size\n");
 	for(int i = destination; i < destination + SMURF_STATES_INCREASE_SIZE && i < SimpleSmurfProblemState->nNumVars; i++) {		  
 		SimpleSmurfProblemState->arrSmurfStack[i].arrSmurfStates
-		  = (void **)ite_calloc(SimpleSmurfProblemState->nNumSmurfs, sizeof(int *), 9, "arrSmurfStates");
+		  = (void **)ite_calloc(SimpleSmurfProblemState->nNumSmurfs, sizeof(void *), 9, "arrSmurfStates");
 		//fprintf(stderr, "alloc %d\n", i);
 		Alloc_SmurfStack_Hooks(i);
 	}
@@ -113,7 +113,7 @@ int ReadAllSmurfsIntoTable(int nNumVars) {
 	Alloc_SmurfStack(0); //Alloc some of the Smurf Stack
 	
 	for(int x = 0; x < SimpleSmurfProblemState->nNumVars; x++) {
-		SimpleSmurfProblemState->arrVariableOccursInSmurf[x] = (int *)ite_calloc(temp_varcount[x]+1, sizeof(int *), 9, "arrVariableOccursInSmurf[x]");
+		SimpleSmurfProblemState->arrVariableOccursInSmurf[x] = (int *)ite_calloc(temp_varcount[x]+1, sizeof(int), 9, "arrVariableOccursInSmurf[x]");
 		SimpleSmurfProblemState->arrVariableOccursInSmurf[x][temp_varcount[x]] = -1;
 		SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[x] = SimpleSmurfProblemState->nNumVars;
 		temp_varcount[x] = 0;
