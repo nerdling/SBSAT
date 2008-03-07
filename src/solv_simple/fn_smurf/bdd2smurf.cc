@@ -7,6 +7,7 @@ void fillHEAP(int index, int size, int *arrElts) {
 	SimpleSmurfProblemState->nNumSmurfStateEntries++;
 	SimpleSmurfProblemState->pSmurfStatesTableTail = (void *)(CurrState + 1);
 	CurrState->cType = FN_SMURF;
+	CurrState->ApplyInferenceToState = ApplyInferenceToSmurf;
 	CurrState->nTransitionVar = arrElts[index+(size/2)];
 	//fprintf(stderr, "%d(%d) - ", arrElts[index+(size/2)], size);
 	if(size<=1) return;
@@ -53,19 +54,21 @@ void *CreateSmurfState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, SmurfSt
 		SmurfStateEntry *CurrState = findStateInHEAP(pStartState, arrElts[nVbleIndex]);
 		
 		assert(CurrState->nTransitionVar == arrElts[nVbleIndex]);
-		
-		//Determine and record if nTransitionVar is safe
-		BDDNode *pSafeBDD = false_ptr;//safe_assign(pCurrentBDD->pFunc, CurrState->nTransitionVar);
-		if(pSafeBDD == false_ptr)
-		  CurrState->bVarIsSafe = 0;
-		else if(pSafeBDD->thenCase == true_ptr && pSafeBDD->elseCase == false_ptr) {
-			CurrState->bVarIsSafe = 1;
-			fprintf(stderr, "{+1}");
-		} else if(pSafeBDD->thenCase == false_ptr && pSafeBDD->elseCase == true_ptr) {
-			CurrState->bVarIsSafe = -1;
-			fprintf(stderr, "{-1}");
-		}
-		
+
+		/*
+			//Determine and record if nTransitionVar is safe
+			BDDNode *pSafeBDD = false_ptr;//safe_assign(pCurrentBDD->pFunc, CurrState->nTransitionVar);
+			if(pSafeBDD == false_ptr)
+			  CurrState->bVarIsSafe = 0;
+			else if(pSafeBDD->thenCase == true_ptr && pSafeBDD->elseCase == false_ptr) {
+				CurrState->bVarIsSafe = 1;
+				fprintf(stderr, "{+1}");
+			} else if(pSafeBDD->thenCase == false_ptr && pSafeBDD->elseCase == true_ptr) {
+				CurrState->bVarIsSafe = -1;
+				fprintf(stderr, "{-1}");
+			}
+		*/
+
 		//Compute the SmurfState w/ nTransitionVar = False
 		//Create Inference Transitions
 		BDDNode *infBDD = pCurrentBDD;

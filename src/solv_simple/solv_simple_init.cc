@@ -152,7 +152,7 @@ int ReadAllSmurfsIntoTable(int nNumVars) {
 	pTrueSimpleSmurfState->pVarIsFalseTransition = (void *)pTrueSimpleSmurfState;
 	pTrueSimpleSmurfState->fHeurWghtofTrueTransition = 0;
 	pTrueSimpleSmurfState->fHeurWghtofFalseTransition = 0;
-	pTrueSimpleSmurfState->bVarIsSafe = 0;
+	//pTrueSimpleSmurfState->bVarIsSafe = 0;
 	pTrueSimpleSmurfState->pNextVarInThisStateGT = NULL;
 	pTrueSimpleSmurfState->pNextVarInThisStateLT = NULL;
 	pTrueSimpleSmurfState->pNextVarInThisState = NULL;

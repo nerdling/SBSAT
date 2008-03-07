@@ -9,6 +9,7 @@ void *CreateXORState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, XORStateE
 	pStartState = (XORStateEntry *)SimpleSmurfProblemState->pSmurfStatesTableTail;
 	SimpleSmurfProblemState->pSmurfStatesTableTail = (void *)(pStartState + 1);
 	pStartState->cType = FN_XOR;
+	pStartState->ApplyInferenceToState = ApplyInferenceToXOR;
 	pStartState->pnTransitionVars = arrElts;
    pStartState->nSize = nNumElts;
 	BDDNode *tmp_bdd;
@@ -35,6 +36,7 @@ void *CreateXORState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, XORStateE
 		pCurrXORCounter = (XORCounterStateEntry *)SimpleSmurfProblemState->pSmurfStatesTableTail;
 		SimpleSmurfProblemState->pSmurfStatesTableTail = (void *)(pCurrXORCounter + 1);
 		pCurrXORCounter->cType = FN_XOR_COUNTER;
+		pStartState->ApplyInferenceToState = ApplyInferenceToXORCounter;
 		pCurrXORCounter->pTransition = pPrevXORCounter;
 		pCurrXORCounter->pXORState = pStartState;
 		pCurrXORCounter->nSize = x+1;
@@ -45,6 +47,10 @@ void *CreateXORState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, XORStateE
 	return (void *)pCurrXORCounter;
 }
 
+int return_1(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates) {
+  return 1;
+}
+
 void *CreateXORGElimState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, XORGElimStateEntry *pStartState) {
 	check_SmurfStatesTableSize(sizeof(XORGElimStateEntry));
 	ite_counters[SMURF_STATES]+=1;
@@ -53,6 +59,7 @@ void *CreateXORGElimState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, XORG
 	pStartState = (XORGElimStateEntry *)SimpleSmurfProblemState->pSmurfStatesTableTail;
 	SimpleSmurfProblemState->pSmurfStatesTableTail = (void *)(pStartState + 1);
 	pStartState->cType = FN_XOR_GELIM;
+	pStartState->ApplyInferenceToState = return_1;
 	pStartState->pnTransitionVars = arrElts;
    pStartState->nSize = nNumElts;
 	BDDNode *tmp_bdd;

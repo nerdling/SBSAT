@@ -446,21 +446,8 @@ int ApplyInferenceToStates(int nBranchVar, bool bBVPolarity) {
 		if(arrSmurfStates[nSmurfNumber] == pTrueSimpleSmurfState) continue;
 		void *pState = arrSmurfStates[nSmurfNumber];
 
-		switch(((TypeStateEntry *)pState)->cType) {
-		 case FN_SMURF:
-			ret = ApplyInferenceToSmurf(nBranchVar, bBVPolarity, nSmurfNumber, arrSmurfStates); break;
-		 case FN_OR_COUNTER:
-			ret = ApplyInferenceToORCounter(nBranchVar, bBVPolarity, nSmurfNumber, arrSmurfStates); break;
-		 case FN_XOR_COUNTER:
-			ret = ApplyInferenceToXORCounter(nBranchVar, bBVPolarity, nSmurfNumber, arrSmurfStates); break;
-		 case FN_OR:
-			ret = ApplyInferenceToOR(nBranchVar, bBVPolarity, nSmurfNumber, arrSmurfStates); break;
-		 case FN_XOR:
-			ret = ApplyInferenceToXOR(nBranchVar, bBVPolarity, nSmurfNumber, arrSmurfStates); break;
-		 case FN_XOR_GELIM: break; //Do nothing
-
-		 default: break;
-		}
+		ret = ((TypeStateEntry *)pState)->ApplyInferenceToState(nBranchVar, bBVPolarity, nSmurfNumber, arrSmurfStates);
+		
 		if(ret == 0) return 0;
 	}
 	return ret;
@@ -476,7 +463,7 @@ void SmurfStates_Push(int destination) {
 
 	memcpy_ite(SimpleSmurfProblemState->arrSmurfStack[destination].arrSmurfStates,
 				  SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].arrSmurfStates,
-				  SimpleSmurfProblemState->nNumSmurfs*sizeof(int*));
+				  SimpleSmurfProblemState->nNumSmurfs*sizeof(void *));
 
 //	for(int i = 0; i < SimpleSmurfProblemState->nNumSmurfs; i++) {
 //		SimpleSmurfProblemState->arrSmurfStack[destination].arrSmurfStates[i] = 

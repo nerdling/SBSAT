@@ -157,7 +157,6 @@ MinMaxBDD_within(int set_vars, int min, int max)
    else return false_ptr;
 }
 
-
 BDDNode *MinMaxBDD(int *vars, int min, int max, int total_vars, int set_true) {
    int i,j;
 	if(max < min) return false_ptr;

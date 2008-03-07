@@ -38,8 +38,8 @@
 #ifndef FN_GELIM_S_H
 #define FN_GELIM_S_H
 
- // #define VecType uint64_t 
- // #define BITS_64
+//  #define VecType uint64_t 
+//  #define BITS_64
 #define VecType uint32_t 
 
 extern int nGElimSmurf_Created;
