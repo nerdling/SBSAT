@@ -8,6 +8,11 @@ AM_INIT_AUTOMAKE(sbsat,2.5b-5)
 AC_CONFIG_SRCDIR([include/sbsat.h])
 AC_CONFIG_HEADER([include/config.h])
 
+saved_CXXFLAGS=${CXXFLAGS}
+AC_PROG_CXX
+CXXFLAGS=${saved_CXXFLAGS}
+
+
 # compile with optimization and without debugging by default
 MYCXXFLAGS=" -O2 -DNDEBUG "
 MYCCFLAGS=" -DNDEBUG "
@@ -288,7 +293,6 @@ AM_CONDITIONAL(MYLIBTOOL, test x$alllibtool = xtrue)
 
 # Checks for programs.
 AC_PROG_AWK
-AC_PROG_CXX
 #AC_PROG_CC
 AC_PROG_RANLIB # obsolete by LIBTOOL
 AM_PROG_LEX
