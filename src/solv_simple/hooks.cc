@@ -184,8 +184,8 @@ ITE_INLINE int Init_Solver_PostSmurfs_Hooks(void **arrSmurfStates) {
 			}
 		}
 	}
-
-	return ret;
+	if(ret != 0)
+	  return SOLV_UNKNOWN;
 }
 
 ITE_INLINE void Final_Solver_Hooks() {

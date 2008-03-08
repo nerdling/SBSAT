@@ -426,7 +426,7 @@ int addRowXORGElimTable (XORGElimTableStruct *x, void *pVector, int nVars, int *
 	d7_printf1("    Checking the addRowXORGElimTable\n");
 	
 	if(x->num_vectors >= no_funcs) {
-		return 0; // Cannot add anymore vectors to the matrix
+		assert(0); // Cannot add anymore vectors to the matrix
 	}
 	
 	// Grab a new Vector and copy vector info to it
