@@ -61,6 +61,125 @@ AC_ARG_ENABLE(coverage,
          MYCCFLAGS="${MYCCFLAGS}  -fprofile-arcs -ftest-coverage "
        fi
     fi])
+ 
+AC_ARG_ENABLE(32bits,
+[AS_HELP_STRING([--enable-32bits],[force build 32 bit version])],
+[ 
+   if test "x$enableval" = "xyes" ; then
+        orig_ccflags=$CCFLAGS
+        orig_cxxflags=$CXXFLAGS
+        FORCED_BITS=yes
+        CCFLAGS=-m32
+        CXXFLAGS=-m32
+        AC_COMPILE_IFELSE(
+            [ AC_LANG_PROGRAM([], [dnl
+                 return sizeof(void*) == 4 ? 0 : 1;
+               ])
+            ],[
+                AC_MSG_CHECKING([force 32 bit target])
+	        AC_MSG_RESULT(yes)
+                AC_RUN_IFELSE(
+                    [ AC_LANG_PROGRAM([], [dnl
+                        return sizeof(void*) == 4 ? 0 : 1;
+                    ])
+                ],[
+                    AC_MSG_CHECKING([32 bit pointer])
+                    CCFLAGS="-m32 $orig_ccflags"
+                    CXXFLAGS="-m32 $orig_cxxflags"
+	            AC_MSG_RESULT(yes)
+                ],[
+                    AC_MSG_CHECKING([32 bit pointer])
+                    CCFLAGS=$orig_ccflags;
+                    CXXFLAGS=$orig_cxxflags;
+	            AC_MSG_RESULT(no)
+                ])
+            ],[
+               AC_MSG_CHECKING([32 bit compiler])
+               CCFLAGS=$orig_ccflags;
+               CXXFLAGS=$orig_cxxflags;
+	       AC_MSG_RESULT(no)
+            ])
+        fi ])
+
+AC_ARG_ENABLE(64bits,
+[AS_HELP_STRING([--enable-64bits],[force build 64 bit version])],
+[ 
+   if test "x$enableval" = "xyes" ; then
+        orig_ccflags=$CCFLAGS
+        orig_cxxflags=$CXXFLAGS
+        FORCED_BITS=yes
+        CCFLAGS=-m64
+        CXXFLAGS=-m64
+        AC_COMPILE_IFELSE(
+            [ AC_LANG_PROGRAM([], [dnl
+                 return sizeof(void*) == 8 ? 0 : 1;
+               ])
+            ],[
+                AC_MSG_CHECKING([force 64 bit target])
+	        AC_MSG_RESULT(yes)
+                AC_RUN_IFELSE(
+                    [ AC_LANG_PROGRAM([], [dnl
+                        return sizeof(void*) == 8 ? 0 : 1;
+                    ])
+                ],[
+                    AC_MSG_CHECKING([64 bit pointer])
+                    CCFLAGS="-m64 $orig_ccflags"
+                    CXXFLAGS="-m64 $orig_cxxflags"
+	            AC_MSG_RESULT(yes)
+                ],[
+                    AC_MSG_CHECKING([64 bit pointer])
+                    CCFLAGS=$orig_ccflags;
+                    CXXFLAGS=$orig_cxxflags;
+	            AC_MSG_RESULT(no)
+                ])
+            ],[
+               AC_MSG_CHECKING([64 bit compiler])
+               CCFLAGS=$orig_ccflags;
+               CXXFLAGS=$orig_cxxflags;
+	       AC_MSG_RESULT(no)
+            ])
+        fi ])
+
+ 
+AC_MSG_CHECKING([autodetect 64 bit compiler ])
+if eval "test x$FORCED_BITS = xyes"; then
+        AC_MSG_RESULT(skip)
+else
+        AC_MSG_RESULT(go ahead)
+        orig_ccflags=$CCFLAGS
+        orig_cxxflags=$CXXFLAGS
+        FORCED_BITS=yes
+        CCFLAGS=-m64
+        CXXFLAGS=-m64
+        AC_COMPILE_IFELSE(
+            [ AC_LANG_PROGRAM([], [dnl
+                 return sizeof(void*) == 8 ? 0 : 1;
+               ])
+            ],[
+                AC_MSG_CHECKING([64 bit compiler])
+	        AC_MSG_RESULT(yes)
+                AC_RUN_IFELSE(
+                    [ AC_LANG_PROGRAM([], [dnl
+                        return sizeof(void*) == 8 ? 0 : 1;
+                    ])
+                ],[
+                    AC_MSG_CHECKING([64 bit pointer])
+                    CCFLAGS="-m64 $orig_ccflags"
+                    CXXFLAGS="-m64 $orig_cxxflags"
+	            AC_MSG_RESULT(yes)
+                ],[
+                    AC_MSG_CHECKING([64 bit pointer])
+                    CCFLAGS=$orig_ccflags;
+                    CXXFLAGS=$orig_cxxflags;
+	            AC_MSG_RESULT(no)
+                ])
+            ],[
+               AC_MSG_CHECKING([64 bit compiler])
+               CCFLAGS=$orig_ccflags;
+               CXXFLAGS=$orig_cxxflags;
+	       AC_MSG_RESULT(no)
+            ])
+        fi
 
 sbsat_static=false
 AC_ARG_ENABLE(static, 
