@@ -59,6 +59,7 @@ enum {
 	FN_AND_EQU,
 	FN_OR_EQU,
 	FN_MINMAX,
+	FN_MINMAX_COUNTER,
 	FN_NEG_MINMAX,
    FN_INFERENCE
 };
@@ -70,18 +71,21 @@ extern t_solution_info *solution_info_head;
 
 struct TypeStateEntry {
 	char cType;
+	int (*ApplyInferenceToState)(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 };
 
 //Structures and functions for simpleSolve
 //Used in the smurf_fpga output format.
 struct SmurfStateEntry {
 	char cType; //FN_SMURF
+	int (*ApplyInferenceToState)(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 	int nTransitionVar;
-	void *pVarIsTrueTransition;
-	void *pVarIsFalseTransition;
 	double fHeurWghtofTrueTransition;
 	double fHeurWghtofFalseTransition;
-	bool bVarIsSafe; //1 if nTransitionVar is safe for True transisiton, or both.
+
+	void *pVarIsTrueTransition;
+	void *pVarIsFalseTransition;
+	//bool bVarIsSafe; //1 if nTransitionVar is safe for True transisiton, or both.
 	                 //-1 if nTransitionVar is safe for False transition.
 	                 //0 if nTransitionVar is not safe.
 	//This is 1 if nTransitionVar should be inferred True,
@@ -107,6 +111,7 @@ struct InferenceStateEntry {
 
 struct ORStateEntry {
 	char cType; //FN_OR
+	int (*ApplyInferenceToState)(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 	int nSize;
 	int *pnTransitionVars;
 	bool *bPolarity;
@@ -114,6 +119,7 @@ struct ORStateEntry {
 
 struct ORCounterStateEntry {
 	char cType; //FN_OR_COUNTER
+	int (*ApplyInferenceToState)(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 	int nSize;
 	void *pTransition;
 	ORStateEntry *pORState;	
@@ -121,6 +127,7 @@ struct ORCounterStateEntry {
 
 struct XORStateEntry {
 	char cType; //FN_XOR
+	int (*ApplyInferenceToState)(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 	int nSize;
 	bool bParity;
 	int *pnTransitionVars;
@@ -128,6 +135,7 @@ struct XORStateEntry {
 
 struct XORCounterStateEntry {
 	char cType; //FN_XOR_COUNTER
+	int (*ApplyInferenceToState)(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 	int nSize;
 	void *pTransition;
 	XORStateEntry *pXORState; //For heuristic purposes
@@ -135,9 +143,27 @@ struct XORCounterStateEntry {
 
 struct XORGElimStateEntry {
 	char cType; //FN_XOR_GELIM
+	int (*ApplyInferenceToState)(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 	int nSize;
 	void *pVector;
 	int *pnTransitionVars;
+};
+
+struct MINMAXStateEntry {
+	char cType; //FN_MINMAX
+	int nSize;
+	int nMin;
+	int nMax;
+	int *pnTransitionVars;
+};
+
+struct MINMAXCounterStateEntry {
+	char cType; //FN_MINMAX_COUNTER
+	int (*ApplyInferenceToState)(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
+	int nNumTrue;
+	int nNumFalse;
+	MINMAXCounterStateEntry *pTransition;
+	MINMAXStateEntry *pMINMAXState;
 };
 
 struct XORGElimTableStruct {
