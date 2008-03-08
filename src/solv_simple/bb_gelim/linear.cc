@@ -292,8 +292,9 @@ void allocXORGElimTable(XORGElimTableStruct *x){
 	for(int i=0; i < vec_size; i++) ((VecType*)(x->mask))[i] = (VecType)(~0);
 	((VecType*)(x->mask))[0] -= 1;
 	
+	int32_t *vv = (int32_t *)&(((unsigned char*)(x->frame))[column_ref]);
 	for (int i=0 ; i < no_funcs; i++) {
-	  int32_t *vv = (int32_t *)&(((unsigned char*)(x->frame))[column_ref+i*vecs_rec_bytes]);
+		vv=(int32_t*)&(((unsigned char*)vv)[vecs_rec_bytes]);
 	  *vv = -1;
 	}
 
@@ -387,9 +388,10 @@ ITE_INLINE int rediagonalizeXORGElimTable(XORGElimTableStruct *x, VecType *vec, 
 	// Cancel all 1's in the new column. Currently looks at *all* vectors!
 	VecType *vec_address = (VecType*)(&(((unsigned char*)(x->frame))[vecs_v_ref]));
 	// fprintf(stderr, " vstart = %llx\n", vec_address[0]);
+  // VecType *vn = (VecType*)(&(((unsigned char*)(x->frame))[vecs_v_ref+i*vecs_rec_bytes]));
+  VecType *vn = (VecType*)(&(((unsigned char*)(x->frame))[vecs_v_ref]));
 	for (int i=0 ; i < x->num_vectors; i++) {
-		if(i == loc) continue;
-		VecType *vn = (VecType*)(&(((unsigned char*)(x->frame))[vecs_v_ref+i*vecs_rec_bytes]));
+		if(i == loc) { vn=(VecType*)&(((unsigned char*)vn)[vecs_rec_bytes]); continue; }
 		if (vn[word] & ((VecType)1 << bit)) {
 			bool nonzero = 0;
 			int j=0;
@@ -399,8 +401,8 @@ ITE_INLINE int rediagonalizeXORGElimTable(XORGElimTableStruct *x, VecType *vec, 
 			
 			if(!nonzero){
 				//Inference
-				int32_t inf = *(int32_t*)(&(((unsigned char*)(x->frame))[column_ref+i*vecs_rec_bytes]));
-				assert(inf != -1);
+        int32_t inf = *(int32_t*)(&(((unsigned char*)(x->frame))[column_ref+i*vecs_rec_bytes]));
+        assert(inf != -1);
 				
 				int inf_word = inf/(sizeof(VecType)*BITS_PER_BYTE);
 				int inf_bit = inf%(sizeof(VecType)*BITS_PER_BYTE);
@@ -411,6 +413,7 @@ ITE_INLINE int rediagonalizeXORGElimTable(XORGElimTableStruct *x, VecType *vec, 
 					 return 0;
 			}
 		}
+		vn=(VecType*)&(((unsigned char*)vn)[vecs_rec_bytes]);
 	}
 	// fprintf(stderr, " v = %llx\n", vec_address[0]);
 	return 1;
@@ -496,9 +499,9 @@ int ApplyInferenceToXORGElimTable (XORGElimTableStruct *x, int nVar, bool bValue
 		// Zero out the column and set the x->mask bit to 0
 		((VecType*)(x->mask))[word] &= ((~(VecType)0) ^ ((VecType)1 << bit));
 
+		VecType *vn = (VecType*)(&(((unsigned char*)(x->frame))[vecs_v_ref]));
 		for (int i=0 ; i < x->num_vectors; i++) {
 			// VecType *vn = (VecType *)vec_address;
-			VecType *vn = (VecType*)(&(((unsigned char*)(x->frame))[vecs_v_ref+i*vecs_rec_bytes]));
 			// If the row has a 1 in the zeroed column and the value of the
 			// variable in the column is 1 then reverse the value of the last
 			// column
@@ -529,7 +532,8 @@ int ApplyInferenceToXORGElimTable (XORGElimTableStruct *x, int nVar, bool bValue
 						 return 0;
 				}
 			}
-		}
+      vn=(VecType*)&(((unsigned char*)vn)[vecs_rec_bytes]);
+    }
 	}
 
 	return 1; // Normal ending
