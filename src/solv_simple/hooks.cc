@@ -103,7 +103,7 @@ ITE_INLINE int ApplyInferenceToSmurf_Hooks(int nBranchVar, bool bBVPolarity, int
 										  ((XORGElimStateEntry *)arrSmurfStates[nSmurfIndex])->nSize,
 										  ((XORGElimStateEntry *)arrSmurfStates[nSmurfIndex])->pnTransitionVars);
 		//To use the normal LSGB heuristic, comment out the line below.
-		arrSmurfStates[nSmurfIndex] = pTrueSimpleSmurfState;
+//		arrSmurfStates[nSmurfIndex] = pTrueSimpleSmurfState;
 	}
 	
 	return ret;
@@ -112,7 +112,7 @@ ITE_INLINE int ApplyInferenceToSmurf_Hooks(int nBranchVar, bool bBVPolarity, int
 ITE_INLINE void Calculate_Heuristic_Values_Hooks() {
 	
 	if(use_XORGElim==1) { //To use the normal LSGB heuristic, comment out the line below.
-		LSGBXORGElimTableGetHeurScore(SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].XORGElimTable);
+//		LSGBXORGElimTableGetHeurScore(SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].XORGElimTable);
 	}
 	
 }

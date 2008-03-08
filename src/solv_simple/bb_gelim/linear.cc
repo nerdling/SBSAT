@@ -206,7 +206,6 @@ ITE_INLINE int precomputed16_bitcount (VecType n){
 
 
 void LSGBXORGElimTableGetHeurScore(XORGElimTableStruct *x) {
-   return;
 	d7_printf1("    Checking the LSGBXORGElimTableGetHeurScore\n");
 	//printLinearN(x);
 	VecType *vn = (VecType*)(&(((unsigned char*)(x->frame))[vecs_v_ref]));
@@ -214,25 +213,25 @@ void LSGBXORGElimTableGetHeurScore(XORGElimTableStruct *x) {
 
 	for(int i=0 ; i < x->num_vectors; i++) {
 
-    int32_t local_last_block = *last_block / (sizeof(VecType)*BITS_PER_BYTE);
+		int32_t local_last_block = *last_block / (sizeof(VecType)*BITS_PER_BYTE);
 		int32_t j=0;
 		int count = 0;
 		for(; j <= local_last_block; j++) count += precomputed16_bitcount(vn[j]);
-
+		
 		if (count == 0) {
-       vn=(VecType*)&(((unsigned char*)vn)[vecs_rec_bytes]);
-       last_block=(int32_t*)&(((unsigned char*)last_block)[vecs_rec_bytes]);
-       continue;
-    }
-
+			vn=(VecType*)&(((unsigned char*)vn)[vecs_rec_bytes]);
+			last_block=(int32_t*)&(((unsigned char*)last_block)[vecs_rec_bytes]);
+			continue;
+		}
+		
 		// fprintf(stderr, " i = %d count = %d\n", i, count);
-	
+
 		assert (count-(vn[0]&1)<=no_inp_vars);	
 		assert (count-(vn[0]&1)>=0);	
+		
+		double fScore = LSGBarrXORWeightTrans(count-(vn[0]&1));
 
-    double fScore = LSGBarrXORWeightTrans(count-(vn[0]&1));
-
-    int k;
+		int k;
 		for (k=local_last_block ; k >= 0; k--) {
 			VecType tmp;
 			VecType mask = ~0;
@@ -254,7 +253,7 @@ void LSGBXORGElimTableGetHeurScore(XORGElimTableStruct *x) {
 //				d2_printf4("%d|%d|%d ", i, nVar, count-(vn[0]&1));
 				// fprintf(stderr, "fScore = %f k = %d nVar = %d\n", fScore, k, nVar);
 
-        SimpleSmurfProblemState->arrPosVarHeurWghts[nVar]+=fScore;
+				SimpleSmurfProblemState->arrPosVarHeurWghts[nVar]+=fScore;
 				SimpleSmurfProblemState->arrNegVarHeurWghts[nVar]+=fScore;
 				//k=0; break;
 				VecType tmp_mask = 1;
@@ -264,7 +263,7 @@ void LSGBXORGElimTableGetHeurScore(XORGElimTableStruct *x) {
 			}
 		}
 		vn=(VecType*)&(((unsigned char*)vn)[vecs_rec_bytes]);
-    last_block=(int32_t*)&(((unsigned char*)last_block)[vecs_rec_bytes]);
+		last_block=(int32_t*)&(((unsigned char*)last_block)[vecs_rec_bytes]);
 	}
 }
 

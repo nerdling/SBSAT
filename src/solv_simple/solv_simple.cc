@@ -298,19 +298,19 @@ int Simple_LSGB_Heuristic() {
 		}
    }
 	
-   if(nBestVble > 0) {
-		// Search through the remaining uninstantiated variables.
-		for(int i = nBestVble + 1; i < SimpleSmurfProblemState->nNumVars; i++) {
-			if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i] >= nCurrInfLevel) {
-				fVbleWeight = (1+SimpleSmurfProblemState->arrPosVarHeurWghts[i]) *
-				  (1+SimpleSmurfProblemState->arrNegVarHeurWghts[i]);
-				if(fVbleWeight >= fMaxWeight) {
-					fMaxWeight = fVbleWeight;
-					nBestVble = i;
-				}
+	// Search through the remaining uninstantiated variables.
+	for(int i = nBestVble + 1; i < SimpleSmurfProblemState->nNumVars; i++) {
+		if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i] >= nCurrInfLevel) {
+			fVbleWeight = (1+SimpleSmurfProblemState->arrPosVarHeurWghts[i]) *
+			  (1+SimpleSmurfProblemState->arrNegVarHeurWghts[i]);
+			if(fVbleWeight >= fMaxWeight) {
+				fMaxWeight = fVbleWeight;
+				nBestVble = i;
 			}
 		}
-   } else {
+	}
+	
+   if(nBestVble == 0) {
 		dE_printf1 ("Error in heuristic routine:  No uninstantiated variable found\n");
 		exit (1);
    }
