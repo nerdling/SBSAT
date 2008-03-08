@@ -36,7 +36,7 @@ void *CreateXORState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, XORStateE
 		pCurrXORCounter = (XORCounterStateEntry *)SimpleSmurfProblemState->pSmurfStatesTableTail;
 		SimpleSmurfProblemState->pSmurfStatesTableTail = (void *)(pCurrXORCounter + 1);
 		pCurrXORCounter->cType = FN_XOR_COUNTER;
-		pStartState->ApplyInferenceToState = ApplyInferenceToXORCounter;
+		pCurrXORCounter->ApplyInferenceToState = ApplyInferenceToXORCounter;
 		pCurrXORCounter->pTransition = pPrevXORCounter;
 		pCurrXORCounter->pXORState = pStartState;
 		pCurrXORCounter->nSize = x+1;

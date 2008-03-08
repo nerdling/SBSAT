@@ -1,3 +1,148 @@
+2008-03-07 19:15  fett
+
+	* include/sbsat_solver.h: [no log message]
+
+2008-03-07 17:48  fett
+
+	* src/: solv_simple/solv_simple.cc,
+	  solv_simple/solv_simple_init.cc,
+	  solv_simple/fn_or/bdd2specfn_or.cc,
+	  solv_simple/fn_smurf/bdd2smurf.cc,
+	  solv_simple/fn_xor/bdd2specfn_xor.cc,
+	  solv_simple/include/bb_gelim.h, utils/bdd.cc: [no log message]
+
+2008-03-07 17:30  mkouril
+
+	* include/sbsat_solver.h, src/solv_simple/bb_gelim/linear.cc,
+	  src/solv_simple/include/bb_gelim.h: Fixed for uint64_t VecType
+
+2008-03-07 11:36  mkouril
+
+	* include/config.h, include/sbsat_solver.h,
+	  src/solv_simple/solv_simple.cc,
+	  src/solv_simple/solv_simple_init.cc,
+	  src/solv_simple/bb_gelim/linear.cc,
+	  src/solv_simple/include/bb_gelim.h: Fixed for 64 bit
+
+2008-03-06 15:10  fett
+
+	* include/config.h, src/solv_simple/solv_simple.cc,
+	  src/solv_simple/solv_simple_init.cc,
+	  src/solv_simple/include/solver.h, src/utils/bdd_print.cc: [no log
+	  message]
+
+2008-02-25 08:17  fett
+
+	* include/config.h: [no log message]
+
+2008-02-24 20:32  fett
+
+	* src/solv_simple/: hooks.cc, solv_simple_init.cc: [no log message]
+
+2008-02-24 20:01  fett
+
+	* src/solv_simple/: hooks.cc, solv_simple_init.cc,
+	  bb_gelim/linear.cc, fn_xor/bdd2specfn_xor.cc, include/bb_gelim.h,
+	  include/solver.h: Touched up the initialization of the GE table.
+	  It only allocates the minimum number of rows needed by counting
+	  the number of smurfs that can possibly become linear.
+
+	     ~Sean
+
+2008-02-24 17:53  fett
+
+	* src/solv_simple/bb_gelim/linear.cc: [no log message]
+
+2008-02-24 17:39  fett
+
+	* src/solv_simple/: hooks.cc, bb_gelim/linear.cc: inlined the
+	  rediagonalize function
+
+2008-02-24 15:15  fett
+
+	* src/solv_simple/hooks.cc: [no log message]
+
+2008-02-24 14:28  fett
+
+	* include/sbsat_solver.h, src/solv_simple/hooks.cc,
+	  src/solv_simple/solv_simple.cc,
+	  src/solv_simple/bb_gelim/linear.cc,
+	  src/solv_simple/fn_smurf/bt_smurf.cc,
+	  src/solv_simple/fn_smurf/hr_lsgb_smurf_init.cc,
+	  src/solv_simple/fn_xor/hr_lsgb_xor_init.cc,
+	  src/solv_simple/include/bb_gelim.h,
+	  src/solv_simple/include/fn_xor.h,
+	  src/solv_simple/include/solver.h: 99% sure it's working - even
+	  the heuristic.
+
+2008-02-24 10:16  fett
+
+	* src/solv_simple/bb_gelim/linear.cc: Prior versions were broken -
+	  it now seems to be working (slider examples give correct
+	  solutions).
+
+	     ~Sean
+
+2008-02-24 09:39  fett
+
+	* src/solv_simple/bb_gelim/linear.cc: [no log message]
+
+2008-02-23 23:49  fett
+
+	* src/solv_simple/: solv_simple.cc, bb_gelim/linear.cc: I think all
+	  the mechanisms for the solver's GE table are working except for
+	  the heuristic.
+
+	     ~Sean
+
+2008-02-23 20:44  fett
+
+	* src/solv_simple/: hooks.cc, solv_simple.cc, bb_gelim/linear.cc,
+	  include/bb_gelim.h, include/solver.h: [no log message]
+
+2008-02-23 14:31  fett
+
+	* src/solv_simple/: display.cc, bb_gelim/linear.cc,
+	  fn_xor/fn_xor.cc, include/fn_xor.h: [no log message]
+
+2008-02-23 14:19  fett
+
+	* src/solv_simple/: hooks.cc, bb_gelim/linear.cc: [no log message]
+
+2008-02-23 14:13  fett
+
+	* src/solv_simple/hooks.cc: [no log message]
+
+2008-02-23 11:08  fett
+
+	* src/solv_simple/: hooks.cc, solv_simple_init.cc: [no log message]
+
+2008-02-23 10:52  fett
+
+	* src/solv_simple/bb_gelim/linear.cc: [no log message]
+
+2008-02-23 10:47  fett
+
+	* src/solv_simple/hooks.cc, src/solv_simple/solv_simple.cc,
+	  src/solv_simple/solv_simple_init.cc,
+	  src/solv_simple/bb_gelim/linear.cc,
+	  src/solv_simple/fn_or/bdd2specfn_or.cc,
+	  src/solv_simple/fn_or/bt_specfn_or.cc,
+	  src/solv_simple/fn_or/fn_or.cc,
+	  src/solv_simple/fn_smurf/bdd2smurf.cc,
+	  src/solv_simple/fn_xor/bdd2specfn_xor.cc,
+	  src/solv_simple/fn_xor/bt_specfn_xor.cc,
+	  src/solv_simple/fn_xor/fn_xor.cc,
+	  src/solv_simple/include/bb_gelim.h,
+	  src/solv_simple/include/fn_or.h,
+	  src/solv_simple/include/fn_xor.h,
+	  src/solv_simple/include/solver.h, include/sbsat_solver.h: [no log
+	  message]
+
+2008-02-22 18:35  fett
+
+	* ChangeLog, src/solv_simple/bb_gelim/linear.cc: [no log message]
+
 2008-02-22 16:48  fett
 
 	* include/sbsat_solver.h, src/solv_simple/hooks.cc,
@@ -1343,7 +1488,7 @@
 	* src/solv_smurf/br_checks.cc: re-added the ability to dump lemmas
 	  to a file.
 
-2007-03-21 22:37  fett
+2007-03-21 23:37  fett
 
 	* include/config.h, include/config.h.in,
 	  src/solv_smurf/br_backtrack.cc: It all seems to be working
@@ -1351,7 +1496,7 @@
 
 	     ~Sean
 
-2007-03-21 21:57  fett
+2007-03-21 22:57  fett
 
 	* src/solv_smurf/br_backtrack.cc: This is a little tricky. May have
 	  uncovered a long hidden bug that caused some non-UIP lemmas to be
@@ -1360,7 +1505,7 @@
 
 	     ~Sean
 
-2007-03-21 21:14  fett
+2007-03-21 22:14  fett
 
 	* Makefile.in, aclocal.m4, configure, doc/Makefile.in,
 	  doc/man1/Makefile.in, doc/man1/sbsat.1, examples/Makefile.in,
@@ -1391,28 +1536,28 @@
 
 	     ~Sean
 
-2007-03-21 20:15  fett
+2007-03-21 21:15  fett
 
 	* doc/man1/sbsat.1, include/config.h, src/preproc/do_safesearch.cc,
 	  src/solv_smurf/fn_lemma/lemmamisc.cc: [no log message]
 
-2007-03-21 18:12  fett
+2007-03-21 19:12  fett
 
 	* src/solv_smurf/: fn_create.cc, fn_lemma/lemmamisc.cc: nope..broke
 
-2007-03-21 17:21  fett
+2007-03-21 18:21  fett
 
 	* src/solv_smurf/: fn_create.cc, fn_lemma/lemmacache.cc,
 	  fn_lemma/lemmamisc.cc, fn_lemma/lemmas.cc: I am pretty sure
 	  SlideLemmas is working...
 
-2007-03-21 16:24  fett
+2007-03-21 17:24  fett
 
 	* src/solv_smurf/: br_backtrack.cc, fn_create.cc,
 	  fn_lemma/lemmamisc.cc, fn_lemma/lemmas.cc, include/fn_lemma.h:
 	  SlideLemma working?
 
-2007-03-21 09:36  fett
+2007-03-21 10:36  fett
 
 	* src/: preproc/equivclass.cc, solv_smurf/fn_create.cc,
 	  solv_smurf/fn_lemma/lemmamisc.cc, solv_smurf/include/solver.h:
@@ -1420,28 +1565,28 @@
 
 	     ~Sean & Anne
 
-2007-03-21 08:47  anne
+2007-03-21 09:47  anne
 
 	* src/solv_smurf/fn_lemma/lemmamisc.cc: SlideLemma is maybe fixed
 	  now.	~Anne
 
-2007-03-19 21:19  fett
+2007-03-19 22:19  fett
 
 	* src/formats/cnf.cc: Removed pow() function. It was causing
 	  problems w/ freebsd
 
-2007-03-19 20:13  fett
+2007-03-19 21:13  fett
 
 	* src/formats/cnf.cc: bug fixing.
 
-2007-03-19 20:01  fett
+2007-03-19 21:01  fett
 
 	* include/common.h, src/formats/cnf.cc: Added in Marijn's XOR
 	  detection functionality into cnf.cc
 
 	     ~Sean
 
-2007-03-16 20:23  fett
+2007-03-16 21:23  fett
 
 	* src/formats/cnf.cc: Added functionality to sort clauses and
 	  remove duplicates. This is a prelude for finding xors and
@@ -1449,11 +1594,11 @@
 
 	      ~Sean
 
-2007-03-16 20:04  fett
+2007-03-16 21:04  fett
 
 	* src/formats/cnf.cc: [no log message]
 
-2007-03-14 16:03  fett
+2007-03-14 17:03  fett
 
 	* src/solv_smurf/: br_backtrack.cc, fn_lemma/lemmamisc.cc,
 	  include/fn_lemma.h: Fixing SlideLemma...still broke, hopefully
@@ -1461,7 +1606,7 @@
 
 	     ~Anne & Sean
 
-2007-03-14 14:39  anne
+2007-03-14 15:39  anne
 
 	* configure, include/config.h, include/config.h.in,
 	  src/solv_smurf/fn_lemma/lemmamisc.cc: Modified SlideLemma

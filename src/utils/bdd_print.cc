@@ -628,59 +628,45 @@ void _printBDDdot_file(BDDNode *bdd) {
 	
 }
 
-void
-printCircuit ()
-{
-   if (nmbrFunctions == 0)
-   {
+void printCircuit() {
+   if (nmbrFunctions == 0) {
       fprintf (stderr, "\nCircuit contains 0 constraint\n");
       return;
    }
-   for (int i = 0; i < nmbrFunctions; i++)
-   {
+   for (int i = 0; i < nmbrFunctions; i++) {
       printBDDfile(functions[i], stddbg);
       fprintf(stddbg, "\n");
    }
 }
 
-void
-writeCircuit ()
-{
+void writeCircuit() {
    FILE * fout;
-   if ((fout = fopen ("bdd.tmp", "wb+")) == NULL)
-   { 
+   if ((fout = fopen ("bdd.tmp", "wb+")) == NULL) { 
       fprintf(stderr, "Can't open bdd.tmp for writting\n");
       exit(1);
-   };
-   if (nmbrFunctions == 0)
-   {
+   }
+   if (nmbrFunctions == 0) {
       fprintf (stderr, "\nCircuit contains 0 constraints\n");
       return;
    }
-   for (int i = 0; i < nmbrFunctions; i++)
-   {
+   for (int i = 0; i < nmbrFunctions; i++) {
       writeBDD (functions[i], fout);
       fprintf (fout, "\n");
    }
    fclose (fout);
 }
 
-void
-readCircuit ()
-{
+void readCircuit() {
    FILE * fin;
    char a[10];
-   if ((fin = fopen ("bdd.tmp", "rb")) == NULL)
-   { 
-      fprintf(stderr, "Can't open bdd.tmp for reading\n");
-      exit(1);
-   };
-   for (int i = 0; i < nmbrFunctions; i++)
-   {
+   if ((fin = fopen ("bdd.tmp", "rb")) == NULL) { 
+		fprintf(stderr, "Can't open bdd.tmp for reading\n");
+		exit(1);
+   }
+   for (int i = 0; i < nmbrFunctions; i++) {
       functions[i] = readBDD (fin);
       fgets (a, 10, fin);
    }
    fclose (fin);
    unlink ("bdd.tmp");
 }
-

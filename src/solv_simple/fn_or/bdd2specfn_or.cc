@@ -57,7 +57,7 @@ void *CreateORState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, ORStateEnt
 		pCurrORCounter = (ORCounterStateEntry *)SimpleSmurfProblemState->pSmurfStatesTableTail;
 		SimpleSmurfProblemState->pSmurfStatesTableTail = (void *)(pCurrORCounter + 1);
 		pCurrORCounter->cType = FN_OR_COUNTER;
-		pStartState->ApplyInferenceToState = ApplyInferenceToORCounter;
+		pCurrORCounter->ApplyInferenceToState = ApplyInferenceToORCounter;
 		pCurrORCounter->pTransition = pPrevORCounter;
 		pCurrORCounter->pORState = pStartState;
 		pCurrORCounter->nSize = x+1;
