@@ -187,7 +187,7 @@ void compute_bits_in_16bits () {
 }
 
 #ifdef BITS_64
-int precomputed16_bitcount (VecType n){
+ITE_INLINE int precomputed16_bitcount (VecType n){
 	// works only for 32-bits
 	// fprintf(stderr, " n = %llx\n", n);
 	return bits_in_16bits [n & 0xffffu]
@@ -196,7 +196,7 @@ int precomputed16_bitcount (VecType n){
 	  +  bits_in_16bits [(n >> 48) & 0xffffu] ;
 }
 #else
-int precomputed16_bitcount (VecType n){
+ITE_INLINE int precomputed16_bitcount (VecType n){
 	// works only for 32-bits
 	// fprintf(stderr, " n = %lx\n", n);
 	return bits_in_16bits [n & 0xffffu]
@@ -206,28 +206,34 @@ int precomputed16_bitcount (VecType n){
 
 
 void LSGBXORGElimTableGetHeurScore(XORGElimTableStruct *x) {
+   return;
 	d7_printf1("    Checking the LSGBXORGElimTableGetHeurScore\n");
 	//printLinearN(x);
+	VecType *vn = (VecType*)(&(((unsigned char*)(x->frame))[vecs_v_ref]));
+	int32_t *last_block = (int32_t*)(&(((unsigned char*)(x->frame))[column_ref]));
+
 	for(int i=0 ; i < x->num_vectors; i++) {
-		VecType *vn = (VecType*)(&(((unsigned char*)(x->frame))[vecs_v_ref+i*vecs_rec_bytes]));
 
-		int32_t last_block =  
-                         (*(int32_t*)(&(((unsigned char*)(x->frame))[column_ref + (i*vecs_rec_bytes)]))) / (sizeof(VecType)*BITS_PER_BYTE);
-
+    int32_t local_last_block = *last_block / (sizeof(VecType)*BITS_PER_BYTE);
 		int32_t j=0;
 		int count = 0;
-		for(; j <= last_block; j++) count += precomputed16_bitcount(vn[j]);
+		for(; j <= local_last_block; j++) count += precomputed16_bitcount(vn[j]);
+
+		if (count == 0) {
+       vn=(VecType*)&(((unsigned char*)vn)[vecs_rec_bytes]);
+       last_block=(int32_t*)&(((unsigned char*)last_block)[vecs_rec_bytes]);
+       continue;
+    }
+
 		// fprintf(stderr, " i = %d count = %d\n", i, count);
 	
 		assert (count-(vn[0]&1)<=no_inp_vars);	
 		assert (count-(vn[0]&1)>=0);	
-		if (count == 0) continue;
 
-		int nVar;
-		double fScore = LSGBarrXORWeightTrans(count-(vn[0]&1));
-		
-		int k;
-		for (k=last_block ; k >= 0; k--) {
+    double fScore = LSGBarrXORWeightTrans(count-(vn[0]&1));
+
+    int k;
+		for (k=local_last_block ; k >= 0; k--) {
 			VecType tmp;
 			VecType mask = ~0;
 			while ((tmp = vn[k]&mask) != 0) {
@@ -243,12 +249,12 @@ void LSGBXORGElimTableGetHeurScore(XORGElimTableStruct *x) {
 					hgh /= 2;
 				}
 				
-				nVar = bit + k*(sizeof(VecType)*BITS_PER_BYTE);
+				int nVar = bit + k*(sizeof(VecType)*BITS_PER_BYTE);
 				
 //				d2_printf4("%d|%d|%d ", i, nVar, count-(vn[0]&1));
 				// fprintf(stderr, "fScore = %f k = %d nVar = %d\n", fScore, k, nVar);
 
-				SimpleSmurfProblemState->arrPosVarHeurWghts[nVar]+=fScore;
+        SimpleSmurfProblemState->arrPosVarHeurWghts[nVar]+=fScore;
 				SimpleSmurfProblemState->arrNegVarHeurWghts[nVar]+=fScore;
 				//k=0; break;
 				VecType tmp_mask = 1;
@@ -257,6 +263,8 @@ void LSGBXORGElimTableGetHeurScore(XORGElimTableStruct *x) {
 				// mask &= ((~0) ^ (1 << bit));
 			}
 		}
+		vn=(VecType*)&(((unsigned char*)vn)[vecs_rec_bytes]);
+    last_block=(int32_t*)&(((unsigned char*)last_block)[vecs_rec_bytes]);
 	}
 }
 
