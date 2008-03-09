@@ -45,16 +45,23 @@
 
 #define CNF_USES_SYMTABLE
 
-int zecc_limit;
-int *zecc_arr;
+int nNumClauses = 0;
+int nNumCNFVariables = 0;
 
-void cnf_process(store *integers, int num_minmax, minmax * min_max_store);
+void cnf_process(Clause *pClauses);
+
+void free_clauses(Clause *pClauses) {
+	for(int x = 0; x < nNumClauses; x++) {
+		if(pClauses[x].variables != NULL) ite_free((void **)&pClauses[x].variables);
+	}
+	ite_free((void **)&pClauses);	
+}
 
 int clscompfunc(const void *x, const void *y) {
-	store pp, qq;
+	Clause pp, qq;
 	
-	pp = *(const store *)x;
-	qq = *(const store *)y;
+	pp = *(const Clause *)x;
+	qq = *(const Clause *)y;
 	
 	//Compare the lengths of the clauses.
 	if(pp.length != qq.length )
@@ -63,15 +70,15 @@ int clscompfunc(const void *x, const void *y) {
 	//The lengths of pp and qq are the same.
 	//Now take a look at the variables in the clauses.
 	for(int i = 0; i < pp.length; i++)
-	  if(abs(pp.num[i]) != abs(qq.num[i]))
-		 return (abs(pp.num[i]) < abs(qq.num[i]) ? -1 : 1);
+	  if(abs(pp.variables[i]) != abs(qq.variables[i]))
+		 return (abs(pp.variables[i]) < abs(qq.variables[i]) ? -1 : 1);
 	
 	//If the two clauses contain the same variables, then consider the
 	//literals and compare again. ( So, no abs() is used here ). This is done to make
 	//removal of duplets easy.
 	for(int i = 0; i < pp.length; i++)
-	  if(pp.num[i] != qq.num[i])
-		 return (pp.num[i] < qq.num[i] ? -1 : 1);
+	  if(pp.variables[i] != qq.variables[i])
+		 return (pp.variables[i] < qq.variables[i] ? -1 : 1);
 	
 	//Default value if all is equal. ( Thus a duplet... )
 #ifndef FORCE_STABLE_QSORT
@@ -86,718 +93,585 @@ int clscompfunc(const void *x, const void *y) {
 	return 1;
 }
 
-//If you want character support for strings and things, look in markbdd.c and copy that...
-//returns m - ?, # - for xcnf, i - for integer, e - end/error
-char getNextSymbol_CNF (char macros[20], int *intnum) {
+int getNextSymbol_CNF (int *intnum) {
 	char integers[20];
 	int i = 0;
 	int p = 0;
-   macros[0] = 0;
 	while(1) {
-      p = fgetc(finputfile);
-      if(p == EOF) return 'e';
-      if(p == 'c') {
+		p = fgetc(finputfile);
+		if(p == EOF) return ERR_IO_READ;
+		if(p == 'c') {
 			while(p != '\n') {
-            p = fgetc(finputfile);
-            if(p == EOF) return 'e';
+				d9_printf2("%c", p);
+				p = fgetc(finputfile);
+				if(p == EOF) return ERR_IO_READ;
 			}
-         p = fgetc(finputfile);
-         if (p == EOF) return 'e';
+			d9_printf2("%c", p);
+			p = fgetc(finputfile);
+			if (p == EOF) return ERR_IO_READ;
 			ungetc(p, finputfile);
 			continue;
-		}
-      if(p == '#') {
-         p = fgetc(finputfile);
-			if(p == EOF) return 'e';
-			if(((p >= 'a') && (p <= 'z')) || ((p >= 'A') && (p <= 'Z'))) {
-				while((p != '(') && (p != ' ') && (p != '\n') && (p != ';')) {
-					macros[i] = p;
-					i++;
-               p = fgetc(finputfile);
-               if (p == EOF) break;
-				}
-            if (p != EOF) ungetc(p, finputfile);
-				macros[i] = 0;
-				return 'm';
-			} else {
-				ungetc(p, finputfile);
-				return '#';
-			}
-		}	
-		if(((p >= '0') && (p <= '9')) || (p == '-')) {
+		} else if(p == 'p') {
+			d9_printf2("%c", p);
+			return IO_CNF_HEADER;
+		} else if(((p >= '0') && (p <= '9')) || (p == '-')) {
 			i = 0;
-			int neg = 0;
-			if(p == '-') neg = 1;
 			while(((p >= '0') && (p <= '9')) || (p == '-')) {
-				if(neg == 1 && i == 1 && p == '0') {
-					return 'X'; //error -0 found
-				}
 				integers[i] = p;
 				i++;
-            p = fgetc(finputfile);
-            if(p == EOF) {
-					break;
-				}
+				d9_printf2("%c", p);
+				p = fgetc(finputfile);
+				if(p == EOF) break;
 			}
 			ungetc(p, finputfile);
 			integers[i] = 0;
 			*intnum = atoi(integers);
-			return 'i';
+			return NO_ERROR;
+		} else if(p >='A' && p<='z') {
+			d9_printf2("%c", p);
+			return ERR_IO_UNEXPECTED_CHAR;
 		}
+		d9_printf2("%c", p);
 	}
 }
 
-store *getMinMax(long *tempint_max, int **tempint) {
-	int i = 0, min, max;
-	char macros[20];
-	int p;
+int CNF_to_BDD() {
 	
-	char order = getNextSymbol_CNF (macros, &min);
-   if(order == 'e') return NULL;
-	if(order != 'i' || min < 0) {
-		fprintf(stderr, "Error looking for min while parsing CNF input (%s)...exiting\n", macros);
+	//Global variables used in this function:
+	//  int nNumCNFVariables, int nNumClauses
+	
+	if(feof(finputfile)) return ERR_IO_READ;
+
+	int next_symbol;
+	int ret = NO_ERROR;
+
+	if (int i = fscanf(finputfile, "%d %d\n", &nNumCNFVariables, &nNumClauses) != 2) {
+		fprintf(stderr, "Error while parsing CNF input: bad header %d %d %d\n", i, nNumCNFVariables, nNumClauses);
 		exit(1);
 	}
-	
-   p = fgetc(finputfile);
-   if(p == EOF)  return NULL;
 
-	while(p != '[') {
-		if(p != ' ') {
-			fprintf(stderr, "\nExpecting '[' after min:%d, found (%c)...exiting\n", min, p);
-			exit (1);
-		}
-      p = fgetc(finputfile);
-      if(p == EOF) return NULL;
-	}
-   p = fgetc(finputfile);
-   if (p == EOF) return NULL;
+	d9_printf3(" cnf %d %d\n", nNumCNFVariables, nNumClauses);
 	
+	int nOrigNumClauses = nNumClauses;
+	
+	Clause *pClauses = (Clause*)ite_calloc(nNumClauses, sizeof(Clause), 9, "read_cnf()::pClauses");
+	int tempint_max = 100;
+	int *tempint = (int *)ite_calloc(tempint_max, sizeof(int *), 9, "read_cnf()::tempint");
+
+	//Get and store the CNF clauses
 	int x = 0;
-	while(p != ']') {
-		i = 0;
-		while((p >= '0') && (p<= '9')) {
-			macros[i] = p;
-			i++;
-         p = fgetc(finputfile);
-         if (p == EOF) return NULL;
+	while(1) {
+		if (x%1000 == 0) {
+			d2_printf3("\rReading CNF %d/%d ... ", x, nNumClauses);
 		}
-		if(p!=' ' && p!=']') {
-			fprintf(stderr, "\nExpecting ']', found (%c)...exiting\n", p);
-			exit (1);
-		}
-      p = fgetc(finputfile);
-      if(p == EOF) return NULL;
 		
-		if(i!=0) {
-			macros[i] = 0;
-         if (x >= *tempint_max) {
-            *tempint = (int*)ite_recalloc(*(void**)tempint, *tempint_max, *tempint_max+100, sizeof(int), 9, "tempint");
-            *tempint_max += 100;
-         }
-			(*tempint)[x] = atoi(macros);
+		ret = getNextSymbol_CNF(&next_symbol);
+		if(ret == ERR_IO_UNEXPECTED_CHAR) {
+			fprintf(stderr, "Error while parsing CNF input: Clause %d\n", x);
+			return ret;
+		}
+		
+		if (x == nNumClauses) { //Should be done reading CNF
+			if (ret == ERR_IO_READ) break; //CNF has been fully read in
+			if (next_symbol == 0) break; //Extra 0 at end of file
+			fprintf(stderr, "Warning while parsing CNF input: more than %d functions found\n", nOrigNumClauses);
+			break;
+		}
+
+		if (ret != NO_ERROR) {
+			fprintf(stderr, "Error while parsing CNF input: premature end of file, only %d functions found\n", x);
+			return ret;
+		} else {
+			int y = 0;
+			while(1) {
+				if (y >= tempint_max) {
+					tempint = (int*)ite_recalloc((void*)tempint, tempint_max, tempint_max+100, sizeof(int), 9, "read_cnf()::tempint");
+					tempint_max += 100;
+				}
+				tempint[y] = next_symbol;
+				if (tempint[y] == 0) break; //Clause has been terminated
+				ret = getNextSymbol_CNF(&next_symbol);
+				if (ret != NO_ERROR) {
+					fprintf(stderr, "Error while parsing CNF input: Clause %d\n", x);
+					return ret;
+				}
+				y++;
+			}
+			if(y==0) continue; //A '0' line -- no clause
+			pClauses[x].length = y;
+			pClauses[x].variables = (int *)ite_calloc(y+1, sizeof(int), 9, "read_cnf()::pClauses[x].variables");
+			pClauses[x].subsumed = 0;
+			pClauses[x].flag = -1;
+			for(int z = 0; z < y; z++) {
+#ifdef CNF_USES_SYMTABLE
+				pClauses[x].variables[z] = i_getsym_int(tempint[z], SYM_VAR);
+#else
+				pClauses[x].variables[z] = tempint[z];
+#endif
+				if(abs(pClauses[x].variables[z]) > nNumCNFVariables) {
+					d2e_printf1("Warning while parsing CNF input: There are more variables in input file than specified\n");
+					nNumCNFVariables = abs(pClauses[x].variables[z]);
+				}
+			}
 			x++;
 		}
 	}
-	int num_vars = x;
-	order = getNextSymbol_CNF (macros, &max);	
-   if(order == 'e') return NULL;
-	if(order != 'i' || max < 0) {
-		fprintf(stderr, "Error looking for max while parsing CNF input (%s)...exiting\n", macros);
-		exit(1);
-	}
-	if(max < min) {
-		fprintf(stderr, "Max:%d must be greater than or equal to Min:%d...exiting\n", max, min);
-		exit(1);
-	}
-	store *min_max = (store *)ite_calloc(1, sizeof(store), 9, "min_max");
-	min_max->length = num_vars;
-	min_max->num = (int *)ite_calloc(num_vars, sizeof(int), 9, "minmax->num");
-	for(x = 0; x < num_vars; x++) {
-#ifdef CNF_USES_SYMTABLE
-		min_max->num[x] = (*tempint)[x]==0?0:i_getsym_int((*tempint)[x], SYM_VAR);
-#else
-		min_max->num[x] = (*tempint)[x];
-#endif
-		if(abs((*tempint)[x]) > numinp) { //Could change this to be number of vars instead of max vars
-			fprintf(stderr, "Variable in input file is greater than allowed:%ld...exiting\n", (long)numinp-2);
-			exit(1);				
-		}
-	}
-	min_max->dag = min;
-	min_max->andor = max;
-	return min_max;
+
+	d2_printf3("\rReading CNF %d/%d ... \n", nNumClauses, nNumClauses);
+	
+	cnf_process(pClauses);
+	
+	ite_free((void **)&tempint); tempint_max = 0;
+
+	d3_printf2("Number of BDDs - %d\n", nmbrFunctions);
+	d2e_printf1("\rReading CNF ... Done                   \n");
+
+	free_clauses(pClauses);
+	
+	return NO_ERROR;
 }
 
-//Function CNF_to_BDD takes CNF input from STDIN and returns a list
-//of pointers to the tranlated BDDs
-void CNF_to_BDD(int cnf)
-{
-   int *tempint = NULL;
-   long tempint_max = 0;
-	char macros[20], order;
-	int intnum;
-   int y,i;
+void reduce_clauses(Clause *pClauses) {
 
-	
-	//FILE *fin;
-	//fin = fopen ("aa", "rb");
-//	zecc_arr = new int[1000];
-	zecc_limit = 0;
-//	do{
-//		fscanf(fin, "%d\n", &zecc_arr[zecc_limit++]);
-//	}while(zecc_arr[zecc_limit++]!=0);
-//	fclose (fin);
-	
-	//Get number of inputs and number of outputs from
-	//the header of the CNF file
-	if (fscanf(finputfile, "%ld %ld\n", &numinp, &numout) != 2) {
-         fprintf(stderr, "Error while parsing CNF input: bad header\n");
-         exit(1);
-   };
-	numinp+=2;
-	store *integers = (store *)ite_calloc(numout+2, sizeof(store), 9, "integers");
-	integers[0].length = 0;
-	store *old_integers = (store *)ite_calloc(numout+2, sizeof(store), 9, "old_integers");
-
-	d3_printf1("Storing CNF Inputs");
-
-	int old_numout = numout;
-	//Get and store the CNF clauses from STDIN
-	int num_minmax = 0;
-   long x = 0;
-   while(1) {
-      x++;
-      if (x%1000 == 1)
-         d2_printf3("\rReading CNF %ld/%ld ... ", x, numout);
-
-      order = getNextSymbol_CNF(macros, &intnum);
-      if (x == numout+1) {
-         // one beyond
-         if (order == 'e') break; // all good
-			if ((order == 'i') && (intnum == 0)) break; //Extra 0 at end of file
-         fprintf(stderr, "Warning while parsing CNF input: more than %ld functions found\n", numout);
-			break;
-         //exit(1);
-      }
-      if(order == 'e') { // error
-         fprintf(stderr, "Error while parsing CNF input: premature end of file, only %ld functions found\n", x-1);
-         exit(1);
-      } else
-      if(order == '#') { // special line (check for xcnf format?)
-         store *temp = getMinMax(&tempint_max, &tempint);
-         if(temp == NULL) {
-            fprintf(stderr, "Error while parsing CNF input: %ld...exiting\n", x);
-            exit(1);
-         }
-         integers[x].num = temp->num;
-         integers[x].length = temp->length;
-         integers[x].dag = temp->dag;
-         integers[x].andor = temp->andor;
-         ite_free((void**)&temp);
-         old_integers[x] = integers[x];
-         num_minmax++;
-      } else
-      if(order == 'i') { // integers...
-         y = 0;
-         while(1) 
-         {
-            if (y >= tempint_max) {
-               tempint = (int*)ite_recalloc((void*)tempint, tempint_max, tempint_max+100, sizeof(int), 9, "tempint");
-               tempint_max += 100;
-            }
-            tempint[y] = intnum;
-            if (tempint[y] == 0) break;
-            order = getNextSymbol_CNF(macros, &intnum);
-            if (order != 'i') {
-               fprintf(stderr, "Error while parsing CNF input:%ld...exiting\n", x);
-               exit(1);
-            }
-            y++;
-         };
-         integers[x].dag = -1;
-         if(y==0) {x--; numout--; old_numout--; continue; }
-         integers[x].num = (int *)ite_calloc(y + 1, sizeof(int), 9, "integers[x].num");
-         for(i = 0; i < y + 1; i++) {
-#ifdef CNF_USES_SYMTABLE
-            integers[x].num[i] = tempint[i]==0?0:i_getsym_int(tempint[i], SYM_VAR);
-#else
-            integers[x].num[i] = tempint[i];
-#endif         
-            if(abs(integers[x].num[i]) > numinp) { //Could change this to be number of vars instead of max vars
-               fprintf(stderr, "Variable in input file is greater than allowed:%ld...exiting\n", (long)numinp-2);
-               exit(1);				
-            }
-            //fprintf(stderr, "%d ", integers[x].num[i]);
-         }
-
-         //fprintf(stderr, "\n");
-         integers[x].length = y;
-         old_integers[x] = integers[x];
-      } else {
-         fprintf(stderr, "Error while parsing CNF input:%ld...exiting\n", x);
-         exit(1);
-      }
-   }
-   minmax *min_max_store = (minmax *)ite_calloc(num_minmax+1, sizeof(minmax), 9, "min_max_store");
-	if(num_minmax > 0) {
-		int y = 1;
-		num_minmax = 0;
-		for(long x = 1; x < numout + 1; x++) {
-			integers[y] = integers[x];
-			y++;
-			if(integers[x].dag != -1) {
-				min_max_store[num_minmax].num = integers[x].num;
-				min_max_store[num_minmax].length = integers[x].length;
-				min_max_store[num_minmax].min = integers[x].dag;
-				min_max_store[num_minmax].max = integers[x].andor;
-				num_minmax++; //this is a little silly, num_minmax = x-y
-				y--;
+	//Mark duplicate clauses
+	for(int x = 0; x < nNumClauses-1; x++) {
+		int isdup = 0;
+		if(pClauses[x].length == pClauses[x+1].length) {
+			isdup = 1;
+			for(int y = 0; y < pClauses[x].length; y++) {
+				if(pClauses[x].variables[y] != pClauses[x+1].variables[y]) {
+					isdup = 0;
+					break;
+				}
 			}
 		}
-		numout = y-1;
+		if(isdup == 1) {
+			pClauses[x+1].subsumed = 1;
+		}
+	}
+	
+	//Remove subsumed clauses
+	int subs = 0;
+	for(int x = 0; x < nNumClauses; x++) {
+		pClauses[x].length = pClauses[x+subs].length;
+		pClauses[x].variables = pClauses[x+subs].variables;
+		pClauses[x].subsumed = pClauses[x+subs].subsumed;
+		
+		if(pClauses[x+subs].subsumed == 1) {
+			pClauses[x+subs].length = 0;
+			ite_free((void **)&pClauses[x+subs].variables);
+			pClauses[x+subs].variables = NULL;
+			subs++;x--;nNumClauses--;continue;
+		}
 	}
 
-   cnf_process(integers, num_minmax, min_max_store);
-   for(long x = 1; x < old_numout + 1; x++) {
-		if(old_integers[x].num!=NULL)
-		  ite_free((void**)&old_integers[x].num);
-	}
-	ite_free((void**)&integers);
-	ite_free((void**)&old_integers);
-   ite_free((void**)&tempint); tempint_max = 0;
-	
-	d3_printf2("Number of BDDs - %ld\n", numout);
-	d2_printf1("\rReading CNF ... Done                   \n");
+	d2_printf2("Simplify removed %d clauses\n", subs);
 }
 
-void
-cnf_process(store *integers, int num_minmax, minmax * min_max_store)
-{
-	long out, count, num;
-	long y, z, i, j;
-	d3_printf2("numinp: %ld\n", numinp);
+void build_clause_BDDs(Clause *pClauses) {
+	for(int x = 0; x < nNumClauses; x++) {
+		if (x%1000 == 0)
+		  d2_printf3("\rBuilding clause BDDs %d/%d ... ", x, nNumClauses);
+		//qsort(pClauses[x].variables, pClauses[x].length, sizeof(int), abscompfunc); //This is done above
+		//qsort(pClauses[x].variables, pClauses[x].length, sizeof(int), absrevcompfunc);
+		BDDNode *pOrBDD = false_ptr;
+		for(int y = 0; y < pClauses[x].length; y++) {
+			pOrBDD = ite_or(pOrBDD, ite_var(pClauses[x].variables[y]));
+		}
+		functions_add(pOrBDD, PLAINOR, 0);
+		pClauses[x].subsumed = 1;
+	}
+}
 
+void find_and_build_xors(Clause *pClauses) {
+	//Search for XORs - This code designed after a snippet of march_dl by M. Heule
+	int xors_found = 0;
+	for(int x = 0; x < nNumClauses; x++) {
+		assert(pClauses[x].length > 0);
+		if(pClauses[x].length>1) {
+			int domain = 1<<(pClauses[x].length-1);
+			if(domain<=1) break;
+			if(domain+x > nNumClauses) break;
+			
+			int cont = 0;
+			for(int y = 1; y < domain; y++) 
+			  if(pClauses[x+y].length != pClauses[x].length) {
+				  x += (y-1);
+				  cont = 1;
+				  break;
+			  }
+			if(cont == 1) continue;
+			
+			for(int y = 0; y < pClauses[x].length; y++)
+			  if(abs(pClauses[x].variables[y]) != abs(pClauses[x+domain-1].variables[y])) {
+				  cont = 1;
+				  break;
+			  }
+			if(cont == 1) continue;
+			
+			int sign = 1;
+			for(int y = 0; y < pClauses[x].length; y++)
+			  sign *= pClauses[x].variables[y] < 0 ? -1 : 1;
+			
+			for(int y = 1; y < domain; y++) {
+				int tmp = 1;
+				for(int z = 0; z < pClauses[x+y].length; z++) //pClauses[x+y].length == pClauses[x].length
+				  tmp *= pClauses[x+y].variables[z] < 0 ? -1 : 1;
+				if(tmp != sign) {
+					cont = 1;
+					break;
+				}
+			}
+			if(cont == 1) continue;
+			
+			xors_found++;
+			BDDNode *pXorBDD = false_ptr;
+			for(int y = 0; y < pClauses[x].length; y++) {
+				pXorBDD = ite_xor(pXorBDD, ite_var(pClauses[x].variables[y]));
+			}
+			functions_add(pXorBDD, PLAINXOR, 0);
+			
+			for(int y = 0; y < domain; y++)
+				pClauses[x+y].subsumed = 1;
+			x += domain-1;
+		}
+	}
+	
+	d2_printf2("Found %d XOR functions\n", xors_found);
+}
+
+void find_and_build_andequals(Clause *pClauses) {
+	
+	int *twopos_temp = (int *)calloc(nNumCNFVariables+1, sizeof(int));
+	int *twoneg_temp = (int *)calloc(nNumCNFVariables+1, sizeof(int));
+	int *greaterpos_temp = (int *)calloc(nNumCNFVariables+1, sizeof(int));
+	int *greaterneg_temp = (int *)calloc(nNumCNFVariables+1, sizeof(int));
+	for(int x = 0; x < nNumClauses; x++) {
+		if(pClauses[x].length == 2) {
+			for(int y = 0; y < 2; y++) {
+				if(pClauses[x].variables[y] > 0)
+				  twopos_temp[pClauses[x].variables[y]]++;
+				else
+				  twoneg_temp[-pClauses[x].variables[y]]++;
+			}
+		}
+		else if(pClauses[x].length > 2) {
+			for(int y = 0; pClauses[x].variables[y] != 0; y++) {
+				if(pClauses[x].variables[y] > 0)
+				  greaterpos_temp[pClauses[x].variables[y]]++;
+				else
+				  greaterneg_temp[-pClauses[x].variables[y]]++;
+			}
+		}
+	}
+	store *two_pos = (store *)calloc(nNumCNFVariables+1, sizeof(store));
+	store *two_neg = (store *)calloc(nNumCNFVariables+1, sizeof(store));
+      
+	//two_pos and two_neg are lists that contain all the clauses
+	//that are of length 2. two_pos contains every 2 variable clause
+	//that has a positive variable, two_neg contains every 2
+	//variable clause that has a negative variable. There will most likely
+	//be some overlaps in the variable storing.
+	//EX)
+	//p cnf 3 3
+	//2 3 0
+	//-2 -3 0
+	//-2 3 0
+	//
+	//two_pos will point to (2:3)   and (-2:3)
+	//two_neg will point to (-2:-3) and (-2:3)
+	store *greater_pos = (store *)calloc(nNumCNFVariables+1, sizeof(store));
+	store *greater_neg = (store *)calloc(nNumCNFVariables+1, sizeof(store));
+      
+	//greater_pos and greater_neg are similar to two_pos and two_neg
+	//except greater_pos and greater_neg contain all clauses with more
+	//than 2 variables in length.
+	
+	//Storing appropriate array sizes...helps with memory!
+	for(int x = 1; x <= nNumCNFVariables; x++) {
+		two_pos[x].num = (int *)calloc(twopos_temp[x], sizeof(int));
+		two_neg[x].num = (int *)calloc(twoneg_temp[x], sizeof(int));
+		greater_pos[x].num = (int *)calloc(greaterpos_temp[x], sizeof(int));
+		greater_neg[x].num = (int *)calloc(greaterneg_temp[x], sizeof(int));
+	}
+	//      free(twopos_temp);
+	//      free(twoneg_temp);
+	free(greaterpos_temp);
+	free(greaterneg_temp);
+	
+	//This is where two_pos, two_neg, greater_pos, and greater_neg are
+	//filled with clauses
+	//SEAN! This could be sped up! Needs to be sped up!
+	//Take into account that clauses are now sorted.
+	
+	for(int x = 0; x < nNumClauses; x++) {
+		if(pClauses[x].length == 2) {
+			if(pClauses[x].variables[0] > 0) {
+				int y = two_pos[pClauses[x].variables[0]].length;
+				two_pos[pClauses[x].variables[0]].num[y] = x;
+				two_pos[pClauses[x].variables[0]].num[y + 1] = 0;
+				two_pos[pClauses[x].variables[0]].length++;
+			} else {
+				int y = two_neg[-pClauses[x].variables[0]].length;
+				two_neg[-pClauses[x].variables[0]].num[y] = x;
+				two_neg[-pClauses[x].variables[0]].num[y + 1] = 0;
+				two_neg[-pClauses[x].variables[0]].length++;
+			}
+			if(pClauses[x].variables[1] > 0) {
+				int y = two_pos[pClauses[x].variables[1]].length;;
+				two_pos[pClauses[x].variables[1]].num[y] = x;
+				two_pos[pClauses[x].variables[1]].num[y + 1] = 0;
+				two_pos[pClauses[x].variables[1]].length++;
+			} else {
+				int y = two_neg[-pClauses[x].variables[1]].length;;
+				two_neg[-pClauses[x].variables[1]].num[y] = x;
+				two_neg[-pClauses[x].variables[1]].num[y + 1] = 0;
+				two_neg[-pClauses[x].variables[1]].length++;
+			}
+		} else if(pClauses[x].length > 2) {
+			for(int z = 0; pClauses[x].variables[z] != 0; z++) {
+				if(pClauses[x].variables[z] > 0) {
+					int y = greater_pos[pClauses[x].variables[z]].length;;
+					greater_pos[pClauses[x].variables[z]].num[y] = x;
+					greater_pos[pClauses[x].variables[z]].num[y + 1] = 0;
+					greater_pos[pClauses[x].variables[z]].length++;
+				} else {
+					int y = greater_neg[-pClauses[x].variables[z]].length;
+					greater_neg[-pClauses[x].variables[z]].num[y] = x;
+					greater_neg[-pClauses[x].variables[z]].num[y + 1] = 0;
+					greater_neg[-pClauses[x].variables[z]].length++;
+				}
+			}
+		}
+	}
+
+	int num_andequals_found = 0;
+	
+	//ok...this is where the and= and or= are sorted out.
+	//I'll have to make a good explaination later
+	//cause this was hard to work out.
+	int and_or_do = 1;
+	while(and_or_do) {
+		and_or_do = 0;
+		for(int x = 1; x <= nNumCNFVariables; x++) {
+			
+			if (x%100 == 1)
+			  d2_printf4("\r %d AND/OR Search CNF %ld/%ld ...                                     ", num_andequals_found, x, nNumCNFVariables);
+			
+			if(two_pos[x].num[0] > 0) {
+				int out = 0;
+				for(int z = 0; z < greater_neg[x].length && (out != 1); z++) {
+
+					if ((x+z)%100 == 1)
+					  d2_printf5("\r %d AND/OR Search CNF %ld/%ld ... *** sub1 *** AND/OR Search CNF %ld ...       ", num_andequals_found, x, nNumCNFVariables, z);
+
+					
+					//if(pClauses[greater_neg[x].num[z]].length-1 > twopos_temp[x]) continue;
+					if(pClauses[greater_neg[x].num[z]].flag == -1) {
+						int y = 0;
+						int count = 0;
+						for(; y < pClauses[greater_neg[x].num[z]].length && count == y; y++) {
+							for(int i = 0; i < two_pos[x].length; i++) {
+								if(pClauses[two_pos[x].num[i]].flag == 2)
+								  continue;
+								if(((-pClauses[greater_neg[x].num[z]].variables[y] == pClauses[two_pos[x].num[i]].variables[0])
+									 &&(pClauses[two_pos[x].num[i]].variables[0] != x))
+									||((-pClauses[greater_neg[x].num[z]].variables[y] == pClauses[two_pos[x].num[i]].variables[1])
+										&&(pClauses[two_pos[x].num[i]].variables[1] != x)))
+								  {
+									  pClauses[two_pos[x].num[i]].flag = 2;
+									  count++; break;
+								  }
+							}
+						}
+						if(count == y - 1) {
+							for(int i = 0; two_pos[x].num[i] != 0; i++) {
+								if(pClauses[two_pos[x].num[i]].flag == 2) {
+									pClauses[two_pos[x].num[i]].subsumed = 1;
+								}
+							}
+							
+							and_or_do = 1;
+							pClauses[greater_neg[x].num[z]].flag = 1;
+							pClauses[greater_neg[x].num[z]].subsumed = 1;
+							out = 1;
+							num_andequals_found++;
+
+							BDDNode *pAndEqBDD = true_ptr;
+							for(int y = 0; y < pClauses[greater_neg[x].num[z]].length; y++) {
+								if(pClauses[greater_neg[x].num[z]].variables[y] != x)
+								  pAndEqBDD = ite_or(pAndEqBDD, ite_var(pClauses[greater_neg[x].num[z]].variables[y]));
+							}
+							pAndEqBDD = ite_equ(ite_var(x), pAndEqBDD);
+							functions_add(pAndEqBDD, AND_EQU, x);
+							independantVars[equalityVble[greater_neg[x].num[z]]] = 0;
+						}
+						for(int i = 0; two_pos[x].num[i] != 0; i++)
+						  pClauses[two_pos[x].num[i]].flag = -1;
+					}
+				}
+			}
+			if(two_neg[x].num[0] > 0) {
+				int out = 0;
+				for(int z = 0; z < greater_pos[x].length && (out != 1); z++) {
+
+					if ((x+z)%100 == 1)
+					  d2_printf5("\r %d AND/OR Search CNF %ld/%ld ... *** sub2 *** AND/OR Search CNF %ld ...       ", num_andequals_found, x, nNumCNFVariables, z);
+					
+					//if(pClauses[greater_pos[x].num[z]].length-1 > twoneg_temp[x]) continue;
+					if(pClauses[greater_pos[x].num[z]].flag == -1) {
+						int y = 0;
+						int count = 0;
+						for(; y < pClauses[greater_pos[x].num[z]].length && count == y; y++) {
+							for(int i = 0; i < two_neg[x].length; i++) {
+								if(pClauses[two_neg[x].num[i]].flag == 2)
+								  continue;
+								if(((pClauses[greater_pos[x].num[z]].variables[y] == -pClauses[two_neg[x].num[i]].variables[0])
+									 &&(-pClauses[two_neg[x].num[i]].variables[0] != x))
+									||((pClauses[greater_pos[x].num[z]].variables[y] == -pClauses[two_neg[x].num[i]].variables[1])
+										&&(-pClauses[two_neg[x].num[i]].variables[1] != x)))
+								  {
+									  pClauses[two_neg[x].num[i]].flag = 2;
+									  count++; break;
+								  }
+							}
+						}
+						if(count == y - 1) {
+							for(int i = 0; two_neg[x].num[i] != 0; i++) {
+								if(pClauses[two_neg[x].num[i]].flag == 2) {
+									pClauses[two_neg[x].num[i]].subsumed = 1;
+								}
+							}
+
+							and_or_do = 1;
+							pClauses[greater_pos[x].num[z]].flag = 0;
+							pClauses[greater_pos[x].num[z]].subsumed = 1;
+							out = 1;
+							num_andequals_found++;
+							
+							BDDNode *pOrEqBDD = false_ptr;
+							for(int y = 0; y < pClauses[greater_pos[x].num[z]].length; y++) {
+								if(pClauses[greater_pos[x].num[z]].variables[y] != x)
+								  pOrEqBDD = ite_or(pOrEqBDD, ite_var(pClauses[greater_pos[x].num[z]].variables[y]));
+							}
+							pOrEqBDD = ite_equ(ite_var(-x), pOrEqBDD);
+							functions_add(pOrEqBDD, OR_EQU, -x);
+							independantVars[equalityVble[greater_pos[x].num[z]]] = 0;
+						}
+						for(int i = 0; two_neg[x].num[i] != 0; i++)
+						  pClauses[two_neg[x].num[i]].flag = -1;
+					}
+				}
+			}
+		}
+	}
+	
+	//Not needed anymore, free them!
+	for(int x = 1; x < nNumCNFVariables + 1; x++) {
+		free(two_pos[x].num);
+		free(two_neg[x].num);
+		free(greater_pos[x].num);
+		free(greater_neg[x].num);
+	}
+	
+	free(twopos_temp);
+	free(twoneg_temp);
+	
+	free(two_pos);
+	free(two_neg);
+	free(greater_pos);
+	free(greater_neg);
+	
+	for(int x = 0; x < nNumClauses; x++) {
+		if(pClauses[x].flag != -1) {
+			pClauses[x].subsumed = 1;
+			pClauses[x].flag = -1;
+		}
+	}
+
+	d2_printf2("Found %d AND=/OR= functions\n", num_andequals_found);
+
+}
+
+void cnf_process(Clause *pClauses) {
+
+	d3_printf2("Number of Variables: %d\n", nNumCNFVariables);
+	
+	nmbrFunctions = 0;
+	
+	vars_alloc(nNumCNFVariables);
+	functions_alloc(nNumClauses);
+	
 	if(DO_CLUSTER) {
 	
 		//Sort variables in each clause
-		for(int x = 1; x < numout + 1; x++)
-		  qsort(integers[x].num, integers[x].length, sizeof(int), abscompfunc);
+		for(int x = 0; x < nNumClauses; x++)
+		  qsort(pClauses[x].variables, pClauses[x].length, sizeof(int), abscompfunc);
 		
 		//Sort Clauses
-		qsort(integers, numout+1, sizeof(store), clscompfunc);
+		qsort(pClauses, nNumClauses, sizeof(Clause), clscompfunc);
 		
-		//Remove duplicates
-		int dups = 0;
-		for(int x = 1; x < numout-dups; x++) {
-			int isdup = 0;
-			if(integers[x].length == integers[x+dups+1].length) {
-				isdup = 1;
-				for(int y = 0; y < integers[x].length; y++) {
-					//   fprintf(stderr, "%d ", integers[x].num[y]);
-					if(integers[x].num[y] != integers[x+dups+1].num[y]) {
-						isdup = 0;
-						break;
-					}
-				}
-			}
-			if(isdup == 1) {
-				integers[x+dups+1].length = 0;
-				dups++;x--;
-			} else {
-				integers[x+1] = integers[x+dups+1];
-			}
-			//fprintf(stderr, "\n");								
-		}
-		numout = numout-dups;
+		reduce_clauses(pClauses);
 		
-		d2_printf2("Removed %d duplicate clauses\n", dups);
+		find_and_build_xors(pClauses);
 		
-		//Search for XORs - This code designed after a snippet of march_dl by M. Heule
-		int xors_found = 0;
-		for(int x = 1; 0 && x < numout+1; x++) {
-			if(integers[x].length>1) {
-				int domain = 1<<(integers[x].length-1);
-				if(domain<1) break;
-				if(domain+x > numout+1) break;
-				
-				int cont = 0;
-				for(int y = 1; y < domain; y++) 
-				  if(integers[x+y].length != integers[x].length) {
-					  x += (y-1);
-					  cont = 1;
-					  break;
-				  }
-				if(cont == 1) continue;
+		reduce_clauses(pClauses);
 
-				for(int y = 0; y < integers[x].length; y++)
-				  if(abs(integers[x].num[y]) != abs(integers[x+domain-1].num[y])) {
-					  cont = 1;
-					  break;
-				  }
-				if(cont == 1) continue;
+		find_and_build_andequals(pClauses);
+		
+		reduce_clauses(pClauses);		  
+	}
+	
+	build_clause_BDDs(pClauses);
+	
+}
 
-				int sign = 1;
-				for(int y = 0; y < integers[x].length; y++)
-				  sign *= integers[x].num[y] < 0 ? -1 : 1;
-				
-				for(int y = 1; y < domain; y++) {
-					int tmp = 1;
-					for(int z = 0; z < integers[x+y].length; z++) //integers[x+y].length == integers[x].length
-					  tmp *= integers[x+y].num[z] < 0 ? -1 : 1;
-					if(tmp != sign) {
-						cont = 1;
-						break;
-					}
-				}
-				if(cont == 1) continue;
-				integers[x].isXor = 1;
-				xors_found++;
-				for(int y = 1; y < domain; y++)
-				  integers[x+y].isXor = -1;
-			}
-		}
 
-		d2_printf2("Found %d XOR functions\n", xors_found);
-		
-      int *twopos_temp = (int *)calloc(numinp+1, sizeof(int));
-      int *twoneg_temp = (int *)calloc(numinp+1, sizeof(int));
-      int *greaterpos_temp = (int *)calloc(numinp+1, sizeof(int));
-      int *greaterneg_temp = (int *)calloc(numinp+1, sizeof(int));
-      for(long x = 1; x < numout + 1; x++) {
-         if (x%1000 == 1)
-            d2_printf3("\rScanning CNF %ld/%ld ...        ", x, numout);
-         if(integers[x].length == 2) {
-				for(y = 0; y < 2; y++) {
-					if(integers[x].num[y] > 0)
-					  twopos_temp[integers[x].num[y]]++;
-					else
-					  twoneg_temp[-integers[x].num[y]]++;
-				}
-			}
-			else if(integers[x].length > 2) {
-				for(y = 0; integers[x].num[y] != 0; y++) {
-					if(integers[x].num[y] > 0)
-					  greaterpos_temp[integers[x].num[y]]++;
-					else
-					  greaterneg_temp[-integers[x].num[y]]++;
-				}
-			}
-		}
-      store *two_pos = (store *)calloc(numinp+1, sizeof(store));
-      store *two_neg = (store *)calloc(numinp+1, sizeof(store));
-      
-		//two_pos and two_neg are lists that contain all the clauses
-		//that are of length 2. two_pos contains every 2 variable clause
-		//that has a positive variable, two_neg contains every 2
-		//variable clause that has a negative variable. There will most likely
-		//be some overlaps in the variable storing.
-		//EX)
-		//p cnf 3 3
-		//2 3 0
-		//-2 -3 0
-		//-2 3 0
-		//
-		//two_pos will point to (2:3)   and (-2:3)
-		//two_neg will point to (-2:-3) and (-2:3)
-		store *greater_pos = (store *)calloc(numinp+1, sizeof(store));
-      store *greater_neg = (store *)calloc(numinp+1, sizeof(store));
-      
-		//greater_pos and greater_neg are similar to two_pos and two_neg
-		//except greater_pos and greater_neg contain all clauses with more
-		//than 2 variables in length.
-		d3_printf1("Done Scanning");
-      num = 0;
-      //temp = 0;
-      
-		//Storing appropriate array sizes...helps with memory!
-		for(long x = 1; x < numinp + 1; x++) {
-			two_pos[x].num = (int *)calloc(twopos_temp[x]+1, sizeof(int));
-			two_neg[x].num = (int *)calloc(twoneg_temp[x]+1, sizeof(int));
-			greater_pos[x].num = (int *)calloc(greaterpos_temp[x]+1, sizeof(int));
-			greater_neg[x].num = (int *)calloc(greaterneg_temp[x]+1, sizeof(int));
-		}
-//      free(twopos_temp);
-//      free(twoneg_temp);
-      free(greaterpos_temp);
-      free(greaterneg_temp);
-      
-		//This is where two_pos, two_neg, greater_pos, and greater_neg are
-		//filled with clauses
-		//SEAN! This could be sped up! Needs to be sped up!
-		//Take into account that clauses are now sorted.
-		
-		for(long x = 1; x < numout+1; x++) {
-         if (x%1000 == 1)
-            d2_printf3("\rStoring CNF %ld/%ld ...        ", x, numout);
-         count = 0;
-			if(integers[x].length == 2) {
-				if(integers[x].num[0] > 0) {
-					out = 0;
-					for(y = 0; two_pos[integers[x].num[0]].num[y] != 0; y++) {
-						//if there is a duplicate 2 variable clause, throw it out!
-						if(((integers[two_pos[integers[x].num[0]].num[y]].num[0] == integers[x].num[0]) 
-						  &&(integers[two_pos[integers[x].num[0]].num[y]].num[1] ==	integers[x].num[1]))
-						 ||((integers[two_pos[integers[x].num[0]].num[y]].num[0] ==	integers[x].num[1])
-						  &&(integers[two_pos[integers[x].num[0]].num[y]].num[1] == integers[x].num[0])))	
-						  {
-							  out = 1;
-							  integers[x].length = 0;
-						  }
-					}
-					if(out == 0) {
-						//if this is a unique clause then keep it
-						two_pos[integers[x].num[0]].num[y] = x;
-						two_pos[integers[x].num[0]].num[y + 1] = 0;
-					}
-				} else {
-					out = 0;
-					for(y = 0; two_neg[-integers[x].num[0]].num[y] != 0; y++) {
-						//if there is a duplicate 2 variable clause, throw it out!
-						if(((integers[two_neg[-integers[x].num[0]].num[y]].num[0] == integers[x].num[0])
-					     &&(integers[two_neg[-integers[x].num[0]].num[y]].num[1] == integers[x].num[1]))
-						 ||((integers[two_neg[-integers[x].num[0]].num[y]].num[0] == integers[x].num[1])
-						  &&(integers[two_neg[-integers[x].num[0]].num[y]].num[1] == integers[x].num[0])))
-						  {
-							  out = 1;
-							  integers[x].length = 0;
-						  }
-					}
-					if(out == 0) {
-						//if this is a unique clause then keep it
-						two_neg[-integers[x].num[0]].num[y] = x;
-						two_neg[-integers[x].num[0]].num[y + 1] = 0;
-					}
-				}
-				if(integers[x].num[1] > 0) {
-					out = 0;
-					for(y = 0; two_pos[integers[x].num[1]].num[y] != 0; y++) {
-						//if there is a duplicate 2 variable clause, throw it out!
-						if(((integers[two_pos[integers[x].num[1]].num[y]].num[0] == integers[x].num[0])
-						  &&(integers[two_pos[integers[x].num[1]].num[y]].num[1] == integers[x].num[1]))
-						 ||((integers[two_pos[integers[x].num[1]].num[y]].num[0] == integers[x].num[1]) 
-						  &&(integers[two_pos[integers[x].num[1]].num[y]].num[1] == integers[x].num[0])))
-						  {
-							  out = 1;
-							  integers[x].length = 0;
-						  }
-					}
-					if(out == 0) {
-						//if this is a unique clase then keep it
-						two_pos[integers[x].num[1]].num[y] = x;
-						two_pos[integers[x].num[1]].num[y + 1] = 0;
-					}
-				} else {
-					out = 0;
-					for(y = 0; two_neg[-integers[x].num[1]].num[y] != 0; y++) {
-						//if there is a duplicate 2 variable clause, throw it out!
-						if(((integers[two_neg[-integers[x].num[1]].num[y]].num[0] == integers[x].num[0])
-						  &&(integers[two_neg[-integers[x].num[1]].num[y]].num[1] == integers[x].num[1]))
-						 ||((integers[two_neg[-integers[x].num[1]].num[y]].num[0] == integers[x].num[1])
-						  &&(integers[two_neg[-integers[x].num[1]].num[y]].num[1] == integers[x].num[0])))
-						  {
-							  out = 1;
-							  integers[x].length = 0;
-						  }
-					}
-					if(out == 0) {
-						//if this is a unique clase then keep it
-						two_neg[-integers[x].num[1]].num[y] = x;
-						two_neg[-integers[x].num[1]].num[y + 1] = 0;
-					}
-				}
-			} else if(integers[x].length > 2) {
-				for(z = 0; integers[x].num[z] != 0; z++) {
-					if(integers[x].num[z] > 0) {
-						for(y = 0; greater_pos[integers[x].num[z]].num[y] != 0; y++) {}
-						greater_pos[integers[x].num[z]].num[y] = x;
-						greater_pos[integers[x].num[z]].num[y + 1] = 0;
-					} else {
-						for(y = 0; greater_neg[-integers[x].num[z]].num[y] != 0; y++) {}
-						greater_neg[-integers[x].num[z]].num[y] = x;
-						greater_neg[-integers[x].num[z]].num[y + 1] = 0;
-					}
-				}
-			}
-		}
-      num = 0;
-      d3_printf1("Starting Search\n");
-      
-		//ok...this is where the and= and or= are sorted out.
-		//I'll have to make a good explaination later
-		//cause this was hard to work out.
-      int and_or_do = 1;
-      while(and_or_do) {
-         and_or_do = 0;
-			for(long x = 1; x < numinp+1; x++) {
-				if (x%100 == 1)
-				  d2_printf3("\rAND/OR Search CNF %ld/%ld ...                                     ", x, numinp);
-				if(two_pos[x].num[0] > 0) {
-					out = 0;
-					for(z = 0; (greater_neg[x].num[z] != 0) && (out != 1); z++) {
-                  if ((x+z)%100 == 1)
-                     d2_printf4("\rAND/OR Search CNF %ld/%ld ... *** sub1 *** AND/OR Search CNF %ld ...       ", x, numinp, z);
-                  count = 0;
-						
-//						if(integers[greater_neg[x].num[z]].length-1 > twopos_temp[x]) continue;
-						
-						for(y = 0; integers[greater_neg[x].num[z]].num[y] != 0; y++) {
-							if(integers[greater_neg[x].num[z]].dag == -1) {
-								for(i = 0; two_pos[x].num[i] != 0; i++) {
-									if(integers[two_pos[x].num[i]].dag == 2)
-									  continue;
-									if(((-integers[greater_neg[x].num[z]].num[y] == integers[two_pos[x].num[i]].num[0])
-										&&(integers[two_pos[x].num[i]].num[0] != x))
-									 ||((-integers[greater_neg[x].num[z]].num[y] == integers[two_pos[x].num[i]].num[1])
-										&&(integers[two_pos[x].num[i]].num[1] != x)))
-									  {
-										  integers[two_pos[x].num[i]].dag = 2;
-										  count++;
-									  }
-								}
-							}
-						}
-						if(count == y - 1) {
-							for(i = 0; two_pos[x].num[i] != 0; i++) {
-								if(integers[two_pos[x].num[i]].dag == 2)
-								  integers[two_pos[x].num[i]].length = 0;
-							}
-							and_or_do = 1;
-							integers[greater_neg[x].num[z]].dag = 1;
-//							for(i = 0; -integers[greater_neg[x].num[z]].num[i] != x; i++) {}
-//							integers[greater_neg[x].num[z]].andor = i;
-							for(i = 0; integers[greater_neg[x].num[z]].num[i] != 0; i++) {}
-							integers[greater_neg[x].num[z]].length = i;
-							integers[greater_neg[x].num[z]].andor = -x;
-							out = 1;
-							num++;
-						}
-						for(i = 0; two_pos[x].num[i] != 0; i++)
-						  integers[two_pos[x].num[i]].dag = -1;
-					}
-				}
-				if(two_neg[x].num[0] > 0) {
-					out = 0;
-					for(z = 0; (greater_pos[x].num[z] != 0) && (out != 1); z++) {
-                  if ((x+z)%100 == 1)
-						  d2_printf4("\rAND/OR Search CNF %ld/%ld ... *** sub2 *** AND/OR Search CNF %ld ...       ", x, numinp, z);
-						count = 0;
-						
-//						if(integers[greater_pos[x].num[z]].length-1 > twoneg_temp[x]) continue;
-						
-						for(y = 0; integers[greater_pos[x].num[z]].num[y] != 0; y++) {
-							if(integers[greater_pos[x].num[z]].dag == -1) {
-								for(i = 0; two_neg[x].num[i] != 0; i++) {
-									if(integers[two_neg[x].num[i]].dag == 2)
-									  continue;
-									if(((integers[greater_pos[x].num[z]].num[y] == -integers[two_neg[x].num[i]].num[0])
-									 &&(-integers[two_neg[x].num[i]].num[0] != x))
-									 ||((integers[greater_pos[x].num[z]].num[y] == -integers[two_neg[x].num[i]].num[1])
-									 &&(-integers[two_neg[x].num[i]].num[1] != x)))
-									  {
-										  integers[two_neg[x].num[i]].dag = 2;
-										  count++;
-									  }
-								}
-							}
-						}
-						if(count == y - 1) {
-							for(i = 0; two_neg[x].num[i] != 0; i++) {
-								if(integers[two_neg[x].num[i]].dag == 2)
-								  integers[two_neg[x].num[i]].length = 0;
-							}
-							and_or_do = 1;
-							integers[greater_pos[x].num[z]].dag = 0;
-//							for(i = 0; integers[greater_pos[x].num[z]].num[i] != x; i++) {}
-//							integers[greater_pos[x].num[z]].andor = i;
-							for(i = 0; integers[greater_pos[x].num[z]].num[i] != 0; i++) {}
-							integers[greater_pos[x].num[z]].length = i;
-							integers[greater_pos[x].num[z]].andor = x;
-							out = 1;
-							num++;
-						}
-						for(i = 0; two_neg[x].num[i] != 0; i++)
-						  integers[two_neg[x].num[i]].dag = -1;
-					}
-				}
-			}
-		}
-      
-		//Not needed anymore, free them!
-		for(int x = 1; x < numinp + 1; x++) {
-			free(two_pos[x].num);
-			free(two_neg[x].num);
-			free(greater_pos[x].num);
-			free(greater_neg[x].num);
-		}
 
-		free(twopos_temp);
-      free(twoneg_temp);
-		
-		free(two_pos);
-      free(two_neg);
-      free(greater_pos);
-      free(greater_neg);
-      
-		//recurse is needed to seperate the and= and or= from the unclustered
-		//clauses. recurse will hold the and= and or= clauses. integers will hold
-		//the rest of the unclustered clauses.
-		store *recurse;
-      recurse = (store *)calloc(num+1, sizeof(store));
-      y = -1;
-      num = -1;
-      for(long x = 1; x < numout+1; x++) {
-			if(integers[x].dag != -1) {
-				num++;
-				recurse[num] = integers[x];
-			}
-			else if(integers[x].length > 0) {
-				y++;
-				integers[y] = integers[x];
-			}
-		}
-		
-      numout = y+1;
+
+
+/*		
+      nNumClauses = y+1;
       int recurselen = num+1;
       recurse[recurselen].dag = -1;
       d3_printf1("Done Saving");
-      int *threepos_temp = (int *)calloc(numinp+1, sizeof(int));
-      int *threeneg_temp = (int *)calloc(numinp+1, sizeof(int));
-      for(long x = 0; x < numout; x++) {
-         for(y = 0; integers[x].num[y] != 0; y++) {}
-         integers[x].length = y;
+      int *threepos_temp = (int *)calloc(nNumCNFVariables+1, sizeof(int));
+      int *threeneg_temp = (int *)calloc(nNumCNFVariables+1, sizeof(int));
+      for(long x = 0; x < nNumClauses; x++) {
+         for(y = 0; pClauses[x].variables[y] != 0; y++) {}
+         pClauses[x].length = y;
          if(y == 3) {
             for(y = 0; y < 3; y++) {
-               if(integers[x].num[y] > 0)
-                  threepos_temp[integers[x].num[y]]++;
+               if(pClauses[x].variables[y] > 0)
+                  threepos_temp[pClauses[x].variables[y]]++;
                else
-                  threeneg_temp[-integers[x].num[y]]++;
+                  threeneg_temp[-pClauses[x].variables[y]]++;
             }
          }
       }
-      store *three_pos = (store *)calloc(numinp+1, sizeof(store));
-      store *three_neg = (store *)calloc(numinp+1, sizeof(store));
+      store *three_pos = (store *)calloc(nNumCNFVariables+1, sizeof(store));
+      store *three_neg = (store *)calloc(nNumCNFVariables+1, sizeof(store));
       
 		//Store appropriate array sizes to help with memory usage
-		for(long x = 1; x < numinp+1; x++) {
-			three_pos[x].num = (int *)calloc(threepos_temp[x]+1, sizeof(int));
-			three_neg[x].num = (int *)calloc(threeneg_temp[x]+1, sizeof(int));
+		for(long x = 1; x < nNumCNFVariables+1; x++) {
+			three_pos[x].variables = (int *)calloc(threepos_temp[x]+1, sizeof(int));
+			three_neg[x].variables = (int *)calloc(threeneg_temp[x]+1, sizeof(int));
 		}
       free(threepos_temp);
       free(threeneg_temp);
       count = 0;
       
 		//Store all clauses with 3 variables so they can be clustered
-		for(long x = 0; x < numout; x++) {
-			if(integers[x].length == 3) {
+		for(long x = 0; x < nNumClauses; x++) {
+			if(pClauses[x].length == 3) {
 				count++;
 				for(i = 0; i < 3; i++) {
-					if(integers[x].num[i] < 0) {
-						three_neg[-integers[x].num[i]].num[three_neg[-integers[x].num[i]].length] = x;
-						three_neg[-integers[x].num[i]].length++;
+					if(pClauses[x].variables[i] < 0) {
+						three_neg[-pClauses[x].variables[i]].variables[three_neg[-pClauses[x].variables[i]].length] = x;
+						three_neg[-pClauses[x].variables[i]].length++;
 					} else {
-						three_pos[integers[x].num[i]].num[three_pos[integers[x].num[i]].length] = x;
-						three_pos[integers[x].num[i]].length++;
+						three_pos[pClauses[x].variables[i]].variables[three_pos[pClauses[x].variables[i]].length] = x;
+						three_pos[pClauses[x].variables[i]].length++;
 					}
 				}
 			}
@@ -826,9 +700,9 @@ cnf_process(store *integers, int num_minmax, minmax * min_max_store)
       save_4 *ites = (save_4 *)calloc(count/2+1, sizeof(save_4));
       d3_printf1 ("Finding ITEs");
       num = 0;
-      for(int x = 0; x < numinp+1; x++) {
+      for(int x = 0; x < nNumCNFVariables+1; x++) {
          if (x%1000 == 0)
-            d2_printf3("\rITE Search CNF %d/%ld       ", x, numinp);
+            d2_printf3("\rITE Search CNF %d/%ld       ", x, nNumCNFVariables);
 			v3_1count = 0;
 			v3_2count = 0;
 			for(i = 0; i < three_pos[x].length; i++) {
@@ -836,14 +710,14 @@ cnf_process(store *integers, int num_minmax, minmax * min_max_store)
 				//and clauses that have 2 negative variables
 				count = 0;
 				for(y = 0; y < 3; y++) {
-					if(integers[three_pos[x].num[i]].num[y] < 0)
+					if(pClauses[three_pos[x].variables[i]].variables[y] < 0)
 					  count++;
 				}
 				if(count == 1) {
-					v3_1[v3_1count].pos = three_pos[x].num[i];
+					v3_1[v3_1count].pos = three_pos[x].variables[i];
 					v3_1count++;
 				} else if(count == 2) {
-					v3_2[v3_2count].pos = three_pos[x].num[i];
+					v3_2[v3_2count].pos = three_pos[x].variables[i];
 					v3_2count++;
 				}
 			}
@@ -857,15 +731,15 @@ cnf_process(store *integers, int num_minmax, minmax * min_max_store)
 					v3_1[i].v1 = -1;
 					count = 0;
 					for(z = 0; z < 3; z++) {
-					  if(integers[v3_1[i].pos].num[z] != x) {
+					  if(pClauses[v3_1[i].pos].variables[z] != x) {
 					    for(j = 0; j < 3; j++) {
-					      if((integers[v3_1[i].pos].num[z] == integers[three_neg[x].num[y]].num[j])
-						 &&(integers[v3_1[i].pos].num[z] > 0))
+					      if((pClauses[v3_1[i].pos].variables[z] == pClauses[three_neg[x].variables[y]].variables[j])
+						 &&(pClauses[v3_1[i].pos].variables[z] > 0))
 						{
 						  count++;
 						  v3_1[i].v0 = z;
-						} else if(-integers[v3_1[i].pos].num[z] ==	integers[three_neg[x].num[y]].num[j])
-						  //&&(integers[v3_1[i].pos].num[z]<0))
+						} else if(-pClauses[v3_1[i].pos].variables[z] ==	pClauses[three_neg[x].variables[y]].variables[j])
+						  //&&(pClauses[v3_1[i].pos].variables[z]<0))
 						  {
 						    count++;
 						    v3_1[i].v1 = z;
@@ -875,7 +749,7 @@ cnf_process(store *integers, int num_minmax, minmax * min_max_store)
 					}
 					if(count == 2) {
 						//The counterpart clause to v3_1[i].pos is v3_1[i].neg
-						v3_1[i].neg = three_neg[x].num[y];
+						v3_1[i].neg = three_neg[x].variables[y];
 						out = 1;
 					}
 				}
@@ -892,15 +766,15 @@ cnf_process(store *integers, int num_minmax, minmax * min_max_store)
 					v3_2[i].v1 = -1;
 					count = 0;
 					for(z = 0; z < 3; z++) {
-					  if(integers[v3_2[i].pos].num[z] != x) {
+					  if(pClauses[v3_2[i].pos].variables[z] != x) {
 					    for(j = 0; j < 3; j++) {
-					      if((integers[v3_2[i].pos].num[z] == integers[three_neg[x].num[y]].num[j])
-						 &&(integers[v3_2[i].pos].num[z] < 0))
+					      if((pClauses[v3_2[i].pos].variables[z] == pClauses[three_neg[x].variables[y]].variables[j])
+						 &&(pClauses[v3_2[i].pos].variables[z] < 0))
 						{
 						  count++;
 						  v3_2[i].v0 = z;
-						} else if(-integers[v3_2[i].pos].num[z] == integers[three_neg[x].num[y]].num[j])
-						  //&&(-integers[v3_2[i].pos].num[z]>0));
+						} else if(-pClauses[v3_2[i].pos].variables[z] == pClauses[three_neg[x].variables[y]].variables[j])
+						  //&&(-pClauses[v3_2[i].pos].variables[z]>0));
 						  {
 						    count++;
 						    v3_2[i].v1 = z;
@@ -910,7 +784,7 @@ cnf_process(store *integers, int num_minmax, minmax * min_max_store)
 					}
 					if(count == 2) {
 					  //The counterpart clause to v3_2[i].pos is v3_2[i].neg
-					  v3_2[i].neg = three_neg[x].num[y];
+					  v3_2[i].neg = three_neg[x].variables[y];
 					  out = 1;
 					}
 				}
@@ -925,33 +799,33 @@ cnf_process(store *integers, int num_minmax, minmax * min_max_store)
 					if((v3_1[i].v0 == -1) || (v3_1[i].v1 == -1) 
 					 ||(v3_2[y].v0 == -1) || (v3_2[y].v1 == -1))
 					  continue;
-					if(integers[v3_1[i].pos].num[v3_1[i].v0] == -integers[v3_2[y].pos].num[v3_2[y].v0]) {
-						integers[v3_1[i].pos].length = -1;
-						integers[v3_1[i].neg].length = -1;
-						integers[v3_2[y].pos].length = -1;
-						integers[v3_2[y].neg].length = -1;
-						ites[num].vars[0] =  integers[v3_1[i].pos].num[v3_1[i].v0];
-						ites[num].vars[1] = -integers[v3_2[y].pos].num[v3_2[y].v1];
-						ites[num].vars[2] = -integers[v3_1[i].pos].num[v3_1[i].v1];
+					if(pClauses[v3_1[i].pos].variables[v3_1[i].v0] == -pClauses[v3_2[y].pos].variables[v3_2[y].v0]) {
+						pClauses[v3_1[i].pos].length = -1;
+						pClauses[v3_1[i].neg].length = -1;
+						pClauses[v3_2[y].pos].length = -1;
+						pClauses[v3_2[y].neg].length = -1;
+						ites[num].vars[0] =  pClauses[v3_1[i].pos].variables[v3_1[i].v0];
+						ites[num].vars[1] = -pClauses[v3_2[y].pos].variables[v3_2[y].v1];
+						ites[num].vars[2] = -pClauses[v3_1[i].pos].variables[v3_1[i].v1];
 						ites[num].vars[3] = x;
 						for(z = 0; z < three_pos[x].length; z++) {
 							count = 0;
 							for(j = 0; j < 3; j++) {
-								if((-integers[three_pos[x].num[z]].num[j] == ites[num].vars[1])
-								 ||(-integers[three_pos[x].num[z]].num[j] == ites[num].vars[2]))
+								if((-pClauses[three_pos[x].variables[z]].variables[j] == ites[num].vars[1])
+								 ||(-pClauses[three_pos[x].variables[z]].variables[j] == ites[num].vars[2]))
 								  count++;
 							}
 							if(count == 2)
-							  integers[three_pos[x].num[z]].length = -1;
+							  pClauses[three_pos[x].variables[z]].length = -1;
 						}
 						for(z = 0; z < three_neg[x].length; z++)	{
 							count = 0;
 							for(j = 0; j < 3; j++) {
-								if((integers[three_neg[x].num[z]].num[j] == ites[num].vars[1])
-								 ||(integers[three_neg[x].num[z]].num[j] == ites[num].vars[2]))
+								if((pClauses[three_neg[x].variables[z]].variables[j] == ites[num].vars[1])
+								 ||(pClauses[three_neg[x].variables[z]].variables[j] == ites[num].vars[2]))
 								  count++;
 							}
-							if(count == 2) integers[three_neg[x].num[z]].length = -1;
+							if(count == 2) pClauses[three_neg[x].variables[z]].length = -1;
 						}
 						num++;
 						out = 1;
@@ -959,9 +833,9 @@ cnf_process(store *integers, int num_minmax, minmax * min_max_store)
 				}
 			}
 		}
-      for(int x = 1; x < numinp+1; x++) {
-         free(three_pos[x].num);
-         free(three_neg[x].num);
+      for(int x = 1; x < nNumCNFVariables+1; x++) {
+         free(three_pos[x].variables);
+         free(three_neg[x].variables);
       }
       free(three_pos);
       free(three_neg);
@@ -970,17 +844,17 @@ cnf_process(store *integers, int num_minmax, minmax * min_max_store)
       int num_ite = num;
       num = -1;
 
-      for (long x = 0; x < numout+1; x++) {
-         if(integers[x].length != -1) {
+      for (long x = 0; x < nNumClauses+1; x++) {
+         if(pClauses[x].length != -1) {
             num++;
-            integers[num] = integers[x];
+            pClauses[num] = pClauses[x];
          }
       }
-      numout = num;
+      nNumClauses = num;
       d3_printf2("Building ITE BDDs - %d\n", num_ite);
 
-      vars_alloc(numinp);
-      functions_alloc(numout+num_ite+recurselen+5+num_minmax+xors_found);
+      vars_alloc(nNumCNFVariables);
+      functions_alloc(nNumClauses+num_ite+recurselen+5+num_minmax+xors_found);
 		
 		//Creates BDD's for the ite_equal clauses
       for(long x = 0; x < num_ite; x++) {
@@ -997,29 +871,29 @@ cnf_process(store *integers, int num_minmax, minmax * min_max_store)
       free(ites);
       
       //This or's all the variables in each individual clause
-      d3_printf2("Building unclustered BDDs - %ld\n", numout);
+      d3_printf2("Building unclustered BDDs - %ld\n", nNumClauses);
 		int num_uncluster_xor = 0;
-      for(long x = 0; x < numout; x++) {
+      for(long x = 0; x < nNumClauses; x++) {
          if (x%1000 == 0)
-            d2_printf3("\rBuilding unclustered and XOR BDDs %ld/%ld ... ", x, numout);
-         //qsort(integers[x].num, integers[x].length, sizeof(int), abscompfunc); //This is done above
-         //qsort(integers[x].num, integers[x].length, sizeof(int), absrevcompfunc);
-         if(integers[x].isXor == 0) {
+            d2_printf3("\rBuilding unclustered and XOR BDDs %ld/%ld ... ", x, nNumClauses);
+         //qsort(pClauses[x].variables, pClauses[x].length, sizeof(int), abscompfunc); //This is done above
+         //qsort(pClauses[x].variables, pClauses[x].length, sizeof(int), absrevcompfunc);
+         if(pClauses[x].isXor == 0) {
 				functions[num_uncluster_xor+num_ite] = false_ptr;
-				//	fprintf(stderr, "%d: %d ", x, integers[x].num[0]);
-				for(y = 0; y < integers[x].length; y++) {
-					functions[num_uncluster_xor+num_ite] = ite_or(functions[num_uncluster_xor+num_ite], ite_var(integers[x].num[y]));
-					//	  fprintf(stderr, "%d ", integers[x].num[y]);
+				//	fprintf(stderr, "%d: %d ", x, pClauses[x].variables[0]);
+				for(y = 0; y < pClauses[x].length; y++) {
+					functions[num_uncluster_xor+num_ite] = ite_or(functions[num_uncluster_xor+num_ite], ite_var(pClauses[x].variables[y]));
+					//	  fprintf(stderr, "%d ", pClauses[x].variables[y]);
 				}
 				//	fprintf(stderr, "0\n");
 				functionType[num_uncluster_xor+num_ite] = PLAINOR;
 				num_uncluster_xor++;
-			} else if(integers[x].isXor == 1) {
+			} else if(pClauses[x].isXor == 1) {
 				functions[num_uncluster_xor+num_ite] = false_ptr;
-				//fprintf(stderr, "%d: %d ", x, integers[x].num[0]);
-				for(y = 0; y < integers[x].length; y++) {
-					functions[num_uncluster_xor+num_ite] = ite_xor(functions[num_uncluster_xor+num_ite], ite_var(integers[x].num[y]));
-					//fprintf(stderr, "%d ", integers[x].num[y]);
+				//fprintf(stderr, "%d: %d ", x, pClauses[x].variables[0]);
+				for(y = 0; y < pClauses[x].length; y++) {
+					functions[num_uncluster_xor+num_ite] = ite_xor(functions[num_uncluster_xor+num_ite], ite_var(pClauses[x].variables[y]));
+					//fprintf(stderr, "%d ", pClauses[x].variables[y]);
 				}
             functionType[num_uncluster_xor+num_ite] = PLAINXOR;
 				num_uncluster_xor++;
@@ -1027,7 +901,7 @@ cnf_process(store *integers, int num_minmax, minmax * min_max_store)
 				//do nothing
 			}
       }
-      numout = num_uncluster_xor+num_ite;
+      nNumClauses = num_uncluster_xor+num_ite;
       
       //Creates BDD's for the and_equal and or_equal clauses
       d3_printf2("Building and= & or= BDDs - %d\n", recurselen);
@@ -1035,72 +909,72 @@ cnf_process(store *integers, int num_minmax, minmax * min_max_store)
       for(long x = 0; x < recurselen; x++) {
          if (x%1000 == 0)
             d2_printf3("\rBuilding and= & or= BDDs %ld/%d ... ", x, recurselen);
-         //qsort(recurse[x].num, recurse[x].length, sizeof(int), abscompfunc); //This is done above
-         //qsort(recurse[x].num, recurse[x].length, sizeof(int), absrevcompfunc);
-			if(integers[x].isXor == 1) {
-				functions[num_and_or+numout] = false_ptr;
-				//	fprintf(stderr, "%d: %d ", x, integers[x].num[0]);
-				for(y = 0; y < integers[x].length; y++) {
-					functions[num_and_or+numout] = ite_xor(functions[num_and_or+numout], ite_var(integers[x].num[y]));
-					//	  fprintf(stderr, "%d ", integers[x].num[y]);
+         //qsort(recurse[x].variables, recurse[x].length, sizeof(int), abscompfunc); //This is done above
+         //qsort(recurse[x].variables, recurse[x].length, sizeof(int), absrevcompfunc);
+			if(pClauses[x].isXor == 1) {
+				functions[num_and_or+nNumClauses] = false_ptr;
+				//	fprintf(stderr, "%d: %d ", x, pClauses[x].variables[0]);
+				for(y = 0; y < pClauses[x].length; y++) {
+					functions[num_and_or+nNumClauses] = ite_xor(functions[num_and_or+nNumClauses], ite_var(pClauses[x].variables[y]));
+					//	  fprintf(stderr, "%d ", pClauses[x].variables[y]);
 				}
 				num_and_or++;
-				functionType[num_and_or+numout] = PLAINXOR;
+				functionType[num_and_or+nNumClauses] = PLAINXOR;
 			}
          
 			if(recurse[x].dag > 0) {
-            functions[num_and_or+numout] = false_ptr;
+            functions[num_and_or+nNumClauses] = false_ptr;
             for(y = 0; y < recurse[x].length; y++) {
-               if(recurse[x].num[y] != recurse[x].andor)
-                  functions[num_and_or+numout] = ite_or(functions[num_and_or+numout], ite_var(recurse[x].num[y]));
+               if(recurse[x].variables[y] != recurse[x].andor)
+                  functions[num_and_or+nNumClauses] = ite_or(functions[num_and_or+nNumClauses], ite_var(recurse[x].variables[y]));
             }
-            functionType[num_and_or+numout] = OR;
-            equalityVble[num_and_or+numout] = -recurse[x].andor;
-            independantVars[equalityVble[num_and_or+numout]] = 0;
-            functions[num_and_or+numout] = ite_equ(ite_var(-recurse[x].andor), functions[num_and_or+numout]);
+            functionType[num_and_or+nNumClauses] = OR;
+            equalityVble[num_and_or+nNumClauses] = -recurse[x].andor;
+            independantVars[equalityVble[num_and_or+nNumClauses]] = 0;
+            functions[num_and_or+nNumClauses] = ite_equ(ite_var(-recurse[x].andor), functions[num_and_or+nNumClauses]);
 				num_and_or++;
          } else {
-            functions[num_and_or+numout] = true_ptr;
+            functions[num_and_or+nNumClauses] = true_ptr;
             for(y = 0; y < recurse[x].length; y++) {
-               if(recurse[x].num[y] != recurse[x].andor)
-                  functions[num_and_or+numout] = ite_and(functions[num_and_or+numout], ite_var(-recurse[x].num[y]));
+               if(recurse[x].variables[y] != recurse[x].andor)
+                  functions[num_and_or+nNumClauses] = ite_and(functions[num_and_or+nNumClauses], ite_var(-recurse[x].variables[y]));
             }
-            functionType[num_and_or+numout] = AND;
-            equalityVble[num_and_or+numout] = recurse[x].andor;
-            independantVars[equalityVble[num_and_or+numout]] = 0;
-            functions[num_and_or+numout] = ite_equ(ite_var(recurse[x].andor), functions[num_and_or+numout]);
+            functionType[num_and_or+nNumClauses] = AND;
+            equalityVble[num_and_or+nNumClauses] = recurse[x].andor;
+            independantVars[equalityVble[num_and_or+nNumClauses]] = 0;
+            functions[num_and_or+nNumClauses] = ite_equ(ite_var(recurse[x].andor), functions[num_and_or+nNumClauses]);
 				num_and_or++;
          }
       }
       free(recurse);
-      numout = numout+num_and_or;
+      nNumClauses = nNumClauses+num_and_or;
       d3_printf2("Building MinMax BDDs - %d\n", num_minmax);
       for(int x = 0; x < num_minmax; x++) {
          if (x % 1000 == 0) 
             d2_printf3("\rBuilding MinMax BDDs %d/%d ...               ", x, num_minmax);
          int set_true = 0;
-         qsort(min_max_store[x].num, min_max_store[x].length, sizeof(int), abscompfunc);
-         functions[x+numout] = MinMaxBDD(min_max_store[x].num, min_max_store[x].min, min_max_store[x].max, min_max_store[x].length, set_true);
-			functionType[x+numout] = MINMAX;
+         qsort(min_max_store[x].variables, min_max_store[x].length, sizeof(int), abscompfunc);
+         functions[x+nNumClauses] = MinMaxBDD(min_max_store[x].variables, min_max_store[x].min, min_max_store[x].max, min_max_store[x].length, set_true);
+			functionType[x+nNumClauses] = MINMAX;
       }
       ite_free((void**)&min_max_store);
-      numout = numout+num_minmax;
+      nNumClauses = nNumClauses+num_minmax;
    } else {
-      vars_alloc(numinp);
-      functions_alloc(numout+num_minmax);
+      vars_alloc(nNumCNFVariables);
+      functions_alloc(nNumClauses+num_minmax);
 		
-      d3_printf2("Building unclustered BDDs - %ld\n", numout);
+      d3_printf2("Building unclustered BDDs - %ld\n", nNumClauses);
 		
-      for(long x = 1; x < numout + 1; x++) {
+      for(long x = 1; x < nNumClauses + 1; x++) {
          if (x % 1000 == 1)
-			  d2_printf3("\rBuilding unclustered BDDs %ld/%ld ...       ", x, numout);
-         //qsort(integers[x].num, integers[x].length, sizeof(int), abscompfunc); //This is done above
-         //qsort(integers[x].num, integers[x].length, sizeof(int), absrevcompfunc);
+			  d2_printf3("\rBuilding unclustered BDDs %ld/%ld ...       ", x, nNumClauses);
+         //qsort(pClauses[x].variables, pClauses[x].length, sizeof(int), abscompfunc); //This is done above
+         //qsort(pClauses[x].variables, pClauses[x].length, sizeof(int), absrevcompfunc);
 			functions[x-1] = false_ptr;
-			//fprintf(stderr, "\n%d ", integers[x].num[0]);
-			for(y = 0; y < integers[x].length; y++) {
-				functions[x - 1] = ite_or (functions[x-1], ite_var(integers[x].num[y]));
-				//fprintf(stderr, "%d ", integers[x].num[y]);
+			//fprintf(stderr, "\n%d ", pClauses[x].variables[0]);
+			for(y = 0; y < pClauses[x].length; y++) {
+				functions[x - 1] = ite_or (functions[x-1], ite_var(pClauses[x].variables[y]));
+				//fprintf(stderr, "%d ", pClauses[x].variables[y]);
 			}
 			functionType[x-1] = PLAINOR;	  
 		}
@@ -1109,19 +983,19 @@ cnf_process(store *integers, int num_minmax, minmax * min_max_store)
          if (x % 1000 == 0) 
 			  d2_printf3("\rBuilding MinMax BDDs %d/%d ...       ", x, num_minmax);
          int set_true = 0;
-         qsort(min_max_store[x].num, min_max_store[x].length, sizeof(int), abscompfunc);
-         functions[x+numout] = MinMaxBDD(min_max_store[x].num, min_max_store[x].min, min_max_store[x].max, min_max_store[x].length, set_true);
-			functionType[x+numout] = MINMAX;
+         qsort(min_max_store[x].variables, min_max_store[x].length, sizeof(int), abscompfunc);
+         functions[x+nNumClauses] = MinMaxBDD(min_max_store[x].variables, min_max_store[x].min, min_max_store[x].max, min_max_store[x].length, set_true);
+			functionType[x+nNumClauses] = MINMAX;
 		}
 		ite_free((void**)&min_max_store);
-		numout = numout+num_minmax;
+		nNumClauses = nNumClauses+num_minmax;
    }
 	count = -1;
 	
 	d3_printf1 ("Cleaning Up");
 	
 	//Need to remove any clause that was set to True during the making of the BDDs
-	for(long x = 0; x < numout; x++) {
+	for(long x = 0; x < nNumClauses; x++) {
       count++;
       functions[count] = functions[x];
       equalityVble[count] = equalityVble[x];
@@ -1130,10 +1004,11 @@ cnf_process(store *integers, int num_minmax, minmax * min_max_store)
 		  count--;
 	}
 	
-	numout = count+1;
-	nmbrFunctions = numout;
+	nNumClauses = count+1;
+	nmbrFunctions = nNumClauses;
 }	
 
+*/
 
 void DNF_to_CNF () {
 	typedef struct {
@@ -1303,7 +1178,7 @@ DNF_to_BDD ()
    }
 
 	DO_CLUSTER = 0;
-   cnf_process(cnf_integers, 0, NULL);
+//   cnf_process(cnf_integers, 0, NULL);
 	
 	for(x = 1; x < cnf_numout + 1; x++) {
       ite_free((void**)&cnf_integers[x].num);

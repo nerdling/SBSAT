@@ -273,11 +273,11 @@ void initXORGElimTable(int nFuncs, int nVars){
 	no_inp_vars = nVars; // Number of input variables
 	vec_size = 1+no_inp_vars/(sizeof(VecType)*BITS_PER_BYTE);
 
-       /* counters: INT32 INT32 .. no_inp_vars+1 times */
-       /* mask:     VecType VecType ..  vec_size times */ 
-       /* rows:     INT32 VecType VecType .. vec_size times */
+	/* counters: INT32 INT32 .. no_inp_vars+1 times */
+	/* mask:     VecType VecType ..  vec_size times */ 
+	/* rows:     INT32 VecType VecType .. vec_size times */
 	
-        int counters_size = sizeof(int32_t)*(no_inp_vars+1);
+	int counters_size = sizeof(int32_t)*(no_inp_vars+1);
 	mask_ref = counters_size; // sizeof(int32_t)*(no_inp_vars+1); // for every variable it holds diagonal row offset 
 	int mask_size = sizeof(VecType)*vec_size;
 	column_ref = mask_ref + mask_size; // sizeof(VecType)*vec_size;
@@ -395,8 +395,8 @@ ITE_INLINE int rediagonalizeXORGElimTable(XORGElimTableStruct *x, VecType *vec, 
 	// Cancel all 1's in the new column. Currently looks at *all* vectors!
 	VecType *vec_address = (VecType*)(&(((unsigned char*)(x->frame))[vecs_v_ref]));
 	// fprintf(stderr, " vstart = %llx\n", vec_address[0]);
-  // VecType *vn = (VecType*)(&(((unsigned char*)(x->frame))[vecs_v_ref+i*vecs_rec_bytes]));
-  VecType *vn = (VecType*)(&(((unsigned char*)(x->frame))[vecs_v_ref]));
+	// VecType *vn = (VecType*)(&(((unsigned char*)(x->frame))[vecs_v_ref+i*vecs_rec_bytes]));
+	VecType *vn = (VecType*)(&(((unsigned char*)(x->frame))[vecs_v_ref]));
 	for (int i=0 ; i < x->num_vectors; i++) {
 		if(i == loc) { vn=(VecType*)&(((unsigned char*)vn)[vecs_rec_bytes]); continue; }
 		if (vn[word] & ((VecType)1 << bit)) {
@@ -408,8 +408,8 @@ ITE_INLINE int rediagonalizeXORGElimTable(XORGElimTableStruct *x, VecType *vec, 
 			
 			if(!nonzero){
 				//Inference
-        int32_t inf = *(int32_t*)(&(((unsigned char*)(x->frame))[column_ref+i*vecs_rec_bytes]));
-        assert(inf != -1);
+				int32_t inf = *(int32_t*)(&(((unsigned char*)(x->frame))[column_ref+i*vecs_rec_bytes]));
+				assert(inf != -1);
 				
 				int inf_word = inf/(sizeof(VecType)*BITS_PER_BYTE);
 				int inf_bit = inf%(sizeof(VecType)*BITS_PER_BYTE);

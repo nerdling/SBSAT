@@ -141,6 +141,7 @@ functions_add(BDDNode *bdd, int fn_type, int equal_var)
    case ITE_EQU: fn_type=ITE; break;
    case EQU: fn_type=EQU; break;
    case PLAINOR: fn_type=PLAINOR; break;
+   case PLAINXOR: fn_type=PLAINXOR; break;
    case LIMP_EQU: fn_type=UNSURE; break;
    case LNIMP_EQU: fn_type=UNSURE; break;
    case RIMP_EQU: fn_type=UNSURE; break;

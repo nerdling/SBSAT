@@ -83,7 +83,7 @@ read_input()
 	  
   case 'u': Smurfs_to_BDD(); break;
 
-  case 'c': CNF_to_BDD(1); break;
+  case 'c': CNF_to_BDD(); break;
 
   case 'd': DNF_to_BDD(); break;
 

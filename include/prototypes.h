@@ -102,7 +102,7 @@ float mark_trues(BDDNode *);
 void Fill_Density();
 char getformat (FILE *);
 void DNF_to_CNF();
-void CNF_to_BDD(int);
+int CNF_to_BDD();
 //CircuitStruct *split(int, int);
 BDDNode *set_variable_noflag(BDDNode *, int, int);
 void cheat_replace(BDDNode *, int, int);

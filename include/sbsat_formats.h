@@ -38,6 +38,13 @@
 #ifndef SBSAT_FORMATS_H
 #define SBSAT_FORMATS_H
 
+struct Clause {
+	int length;
+	int *variables;	
+	bool subsumed;
+	int flag;
+};
+
 void write_output(char formatout);
 int read_input();
 void DNF_to_BDD();

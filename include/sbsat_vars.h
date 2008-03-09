@@ -88,6 +88,9 @@
 
 /* non counter errors */
 #define ERR_IO_INIT	101
+#define ERR_IO_READ 102
+#define ERR_IO_UNEXPECTED_CHAR 103
+#define IO_CNF_HEADER 104
 
 /* ite_counters_f */
 #define RUNNING_TIME      1
