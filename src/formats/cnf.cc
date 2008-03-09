@@ -645,8 +645,6 @@ void find_and_build_iteequals(Clause *pClauses) {
 	int v3_2count;
 
 	for(int x = 0; x < nNumCNFVariables+1; x++) {
-		if (x%1000 == 0)
-		  d2_printf3("\rITE Search CNF %d/%d       ", x, nNumCNFVariables);
 		v3_1count = 0;
 		v3_2count = 0;
 		for(int i = 0; i < three_pos[x].length; i++) {
@@ -801,7 +799,7 @@ void find_and_build_iteequals(Clause *pClauses) {
 	free(v3_1);
 	free(v3_2);
 	
-	d2_printf2("\rFound %d ITE= functions\n", num_iteequals_found);
+	d2_printf2("Found %d ITE= functions\n", num_iteequals_found);
 }
 
 void cnf_process(Clause *pClauses) {
