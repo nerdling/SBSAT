@@ -342,10 +342,10 @@ void find_and_build_xors(Clause *pClauses) {
 
 void find_and_build_andequals(Clause *pClauses) {
 	
-	int *twopos_temp = (int *)calloc(nNumCNFVariables+1, sizeof(int));
-	int *twoneg_temp = (int *)calloc(nNumCNFVariables+1, sizeof(int));
-	int *greaterpos_temp = (int *)calloc(nNumCNFVariables+1, sizeof(int));
-	int *greaterneg_temp = (int *)calloc(nNumCNFVariables+1, sizeof(int));
+	int *twopos_temp = (int *)ite_calloc(nNumCNFVariables+1, sizeof(int), 9, "twopos_temp");
+	int *twoneg_temp = (int *)ite_calloc(nNumCNFVariables+1, sizeof(int), 9, "twoneg_temp");
+	int *greaterpos_temp = (int *)ite_calloc(nNumCNFVariables+1, sizeof(int), 9, "greaterpos_temp");
+	int *greaterneg_temp = (int *)ite_calloc(nNumCNFVariables+1, sizeof(int), 9, "greaternet_temp");
 	for(int x = 0; x < nNumClauses; x++) {
 		if(pClauses[x].length == 2) {
 			for(int y = 0; y < 2; y++) {
@@ -364,8 +364,8 @@ void find_and_build_andequals(Clause *pClauses) {
 			}
 		}
 	}
-	store *two_pos = (store *)calloc(nNumCNFVariables+1, sizeof(store));
-	store *two_neg = (store *)calloc(nNumCNFVariables+1, sizeof(store));
+	store *two_pos = (store *)ite_calloc(nNumCNFVariables+1, sizeof(store), 9, "two_pos");
+	store *two_neg = (store *)ite_calloc(nNumCNFVariables+1, sizeof(store), 9, "two_pos");
       
 	//two_pos and two_neg are lists that contain all the clauses
 	//that are of length 2. two_pos contains every 2 variable clause
@@ -380,8 +380,8 @@ void find_and_build_andequals(Clause *pClauses) {
 	//
 	//two_pos will point to (2:3)   and (-2:3)
 	//two_neg will point to (-2:-3) and (-2:3)
-	store *greater_pos = (store *)calloc(nNumCNFVariables+1, sizeof(store));
-	store *greater_neg = (store *)calloc(nNumCNFVariables+1, sizeof(store));
+	store *greater_pos = (store *)ite_calloc(nNumCNFVariables+1, sizeof(store), 9, "greater_pos");
+	store *greater_neg = (store *)ite_calloc(nNumCNFVariables+1, sizeof(store), 9, "greater_neg");
       
 	//greater_pos and greater_neg are similar to two_pos and two_neg
 	//except greater_pos and greater_neg contain all clauses with more
@@ -389,15 +389,15 @@ void find_and_build_andequals(Clause *pClauses) {
 	
 	//Storing appropriate array sizes...helps with memory!
 	for(int x = 1; x <= nNumCNFVariables; x++) {
-		two_pos[x].num = (int *)calloc(twopos_temp[x], sizeof(int));
-		two_neg[x].num = (int *)calloc(twoneg_temp[x], sizeof(int));
-		greater_pos[x].num = (int *)calloc(greaterpos_temp[x], sizeof(int));
-		greater_neg[x].num = (int *)calloc(greaterneg_temp[x], sizeof(int));
+		two_pos[x].num = (int *)ite_calloc(twopos_temp[x], sizeof(int), 9, "two_pos[x].num");
+		two_neg[x].num = (int *)ite_calloc(twoneg_temp[x], sizeof(int), 9, "two_neg[x].num");
+		greater_pos[x].num = (int *)ite_calloc(greaterpos_temp[x], sizeof(int), 9, "greater_pos[x].num");
+		greater_neg[x].num = (int *)ite_calloc(greaterneg_temp[x], sizeof(int), 9, "greater_neg[x].num");
 	}
 	//      free(twopos_temp);
 	//      free(twoneg_temp);
-	free(greaterpos_temp);
-	free(greaterneg_temp);
+	ite_free((void **)&greaterpos_temp);
+	ite_free((void **)&greaterneg_temp);
 	
 	//This is where two_pos, two_neg, greater_pos, and greater_neg are
 	//filled with clauses
@@ -555,19 +555,19 @@ void find_and_build_andequals(Clause *pClauses) {
 	
 	//Not needed anymore, free them!
 	for(int x = 1; x < nNumCNFVariables + 1; x++) {
-		free(two_pos[x].num);
-		free(two_neg[x].num);
-		free(greater_pos[x].num);
-		free(greater_neg[x].num);
+		ite_free((void **)&two_pos[x].num);
+		ite_free((void **)&two_neg[x].num);
+		ite_free((void **)&greater_pos[x].num);
+		ite_free((void **)&greater_neg[x].num);
 	}
 	
-	free(twopos_temp);
-	free(twoneg_temp);
+	ite_free((void **)&twopos_temp);
+	ite_free((void **)&twoneg_temp);
 	
-	free(two_pos);
-	free(two_neg);
-	free(greater_pos);
-	free(greater_neg);
+	ite_free((void **)&two_pos);
+	ite_free((void **)&two_neg);
+	ite_free((void **)&greater_pos);
+	ite_free((void **)&greater_neg);
 	
 	for(int x = 0; x < nNumClauses; x++) {
 		if(pClauses[x].flag != -1) {
@@ -584,8 +584,8 @@ void find_and_build_iteequals(Clause *pClauses) {
 
 	int num_iteequals_found = 0;
 	
-	int *threepos_temp = (int *)calloc(nNumCNFVariables+1, sizeof(int));
-	int *threeneg_temp = (int *)calloc(nNumCNFVariables+1, sizeof(int));
+	int *threepos_temp = (int *)ite_calloc(nNumCNFVariables+1, sizeof(int), 9, "threepos_temp");
+	int *threeneg_temp = (int *)ite_calloc(nNumCNFVariables+1, sizeof(int), 9, "threeneg_temp");
 	for(int x = 0; x < nNumClauses; x++) {
 		int y = pClauses[x].length;
 		if(y == 3) {
@@ -597,16 +597,16 @@ void find_and_build_iteequals(Clause *pClauses) {
 			}
 		}
 	}
-	store *three_pos = (store *)calloc(nNumCNFVariables+1, sizeof(store));
-	store *three_neg = (store *)calloc(nNumCNFVariables+1, sizeof(store));
+	store *three_pos = (store *)ite_calloc(nNumCNFVariables+1, sizeof(store), 9, "three_pos");
+	store *three_neg = (store *)ite_calloc(nNumCNFVariables+1, sizeof(store), 9, "three_neg");
       
 	//Store appropriate array sizes to help with memory usage
 	for(int x = 1; x < nNumCNFVariables+1; x++) {
-		three_pos[x].num = (int *)calloc(threepos_temp[x], sizeof(int));
-		three_neg[x].num = (int *)calloc(threeneg_temp[x], sizeof(int));
+		three_pos[x].num = (int *)ite_calloc(threepos_temp[x], sizeof(int), 9, "three_pos[x].num");
+		three_neg[x].num = (int *)ite_calloc(threeneg_temp[x], sizeof(int), 9, "three_neg[x].num");
 	}
-	free(threepos_temp);
-	free(threeneg_temp);
+	ite_free((void **)&threepos_temp);
+	ite_free((void **)&threeneg_temp);
 	
 	//Store all clauses with 3 variables so they can be clustered
 	int count = 0;
@@ -791,13 +791,13 @@ void find_and_build_iteequals(Clause *pClauses) {
 		}
 	}
 	for(int x = 1; x < nNumCNFVariables+1; x++) {
-		free(three_pos[x].num);
-		free(three_neg[x].num);
+		ite_free((void **)&three_pos[x].num);
+		ite_free((void **)&three_neg[x].num);
 	}
-	free(three_pos);
-	free(three_neg);
-	free(v3_1);
-	free(v3_2);
+	ite_free((void **)&three_pos);
+	ite_free((void **)&three_neg);
+	ite_free((void **)&v3_1);
+	ite_free((void **)&v3_2);
 	
 	d2_printf2("Found %d ITE= functions\n", num_iteequals_found);
 }
