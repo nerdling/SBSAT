@@ -409,23 +409,19 @@ void find_and_build_andequals(Clause *pClauses) {
 			if(pClauses[x].variables[0] > 0) {
 				int y = two_pos[pClauses[x].variables[0]].length;
 				two_pos[pClauses[x].variables[0]].num[y] = x;
-				two_pos[pClauses[x].variables[0]].num[y + 1] = 0;
 				two_pos[pClauses[x].variables[0]].length++;
 			} else {
 				int y = two_neg[-pClauses[x].variables[0]].length;
 				two_neg[-pClauses[x].variables[0]].num[y] = x;
-				two_neg[-pClauses[x].variables[0]].num[y + 1] = 0;
 				two_neg[-pClauses[x].variables[0]].length++;
 			}
 			if(pClauses[x].variables[1] > 0) {
 				int y = two_pos[pClauses[x].variables[1]].length;;
 				two_pos[pClauses[x].variables[1]].num[y] = x;
-				two_pos[pClauses[x].variables[1]].num[y + 1] = 0;
 				two_pos[pClauses[x].variables[1]].length++;
 			} else {
 				int y = two_neg[-pClauses[x].variables[1]].length;;
 				two_neg[-pClauses[x].variables[1]].num[y] = x;
-				two_neg[-pClauses[x].variables[1]].num[y + 1] = 0;
 				two_neg[-pClauses[x].variables[1]].length++;
 			}
 		} else if(pClauses[x].length > 2) {
@@ -433,12 +429,10 @@ void find_and_build_andequals(Clause *pClauses) {
 				if(pClauses[x].variables[z] > 0) {
 					int y = greater_pos[pClauses[x].variables[z]].length;;
 					greater_pos[pClauses[x].variables[z]].num[y] = x;
-					greater_pos[pClauses[x].variables[z]].num[y + 1] = 0;
 					greater_pos[pClauses[x].variables[z]].length++;
 				} else {
 					int y = greater_neg[-pClauses[x].variables[z]].length;
 					greater_neg[-pClauses[x].variables[z]].num[y] = x;
-					greater_neg[-pClauses[x].variables[z]].num[y + 1] = 0;
 					greater_neg[-pClauses[x].variables[z]].length++;
 				}
 			}
