@@ -312,8 +312,8 @@ void find_and_build_xors(Clause *pClauses) {
 			int sign = 1;
 			for(int y = 0; y < pClauses[x].length; y++)
 			  sign *= pClauses[x].variables[y] < 0 ? -1 : 1;
-			
-			for(int y = 1; y < domain; y++) {
+
+			for(int y = 1; y < domain; y++) { //Safety check - probably not needed
 				int tmp = 1;
 				for(int z = 0; z < pClauses[x+y].length; z++) //pClauses[x+y].length == pClauses[x].length
 				  tmp *= pClauses[x+y].variables[z] < 0 ? -1 : 1;
