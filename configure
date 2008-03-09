@@ -3349,6 +3349,11 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
 echo $ECHO_N "checking 64 bit pointer... $ECHO_C" >&6; }
                     CCFLAGS="-m64 $orig_ccflags"
                     CXXFLAGS="-m64 $orig_cxxflags"
+
+cat >>confdefs.h <<\_ACEOF
+#define SBSAT_64BIT true
+_ACEOF
+
 	            { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 
@@ -3493,6 +3498,11 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
 echo $ECHO_N "checking 64 bit pointer... $ECHO_C" >&6; }
                     CCFLAGS="-m64 $orig_ccflags"
                     CXXFLAGS="-m64 $orig_cxxflags"
+
+cat >>confdefs.h <<\_ACEOF
+#define SBSAT_64BIT true
+_ACEOF
+
 	            { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 

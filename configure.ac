@@ -130,6 +130,7 @@ AC_ARG_ENABLE(64bits,
                     AC_MSG_CHECKING([64 bit pointer])
                     CCFLAGS="-m64 $orig_ccflags"
                     CXXFLAGS="-m64 $orig_cxxflags"
+	            AC_DEFINE(SBSAT_64BIT,true,[Do we have 64 bit enabled?])
 	            AC_MSG_RESULT(yes)
                 ],[
                     AC_MSG_CHECKING([64 bit pointer])
@@ -171,6 +172,7 @@ else
                     AC_MSG_CHECKING([64 bit pointer])
                     CCFLAGS="-m64 $orig_ccflags"
                     CXXFLAGS="-m64 $orig_cxxflags"
+	            AC_DEFINE(SBSAT_64BIT,true,[Do we have 64 bit enabled?])
 	            AC_MSG_RESULT(yes)
                 ],[
                     AC_MSG_CHECKING([64 bit pointer])
