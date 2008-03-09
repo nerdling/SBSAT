@@ -452,7 +452,7 @@ void find_and_build_andequals(Clause *pClauses) {
 			if (x%100 == 1)
 			  d2_printf4("\r %d AND/OR Search CNF %ld/%ld ...                                     ", num_andequals_found, x, nNumCNFVariables);
 			
-			if(two_pos[x].num[0] > 0) {
+			if(two_pos[x].num[0] != NULL) {
 				int out = 0;
 				for(int z = 0; z < greater_neg[x].length && (out != 1); z++) {
 
@@ -505,7 +505,7 @@ void find_and_build_andequals(Clause *pClauses) {
 					}
 				}
 			}
-			if(two_neg[x].num[0] > 0) {
+			if(two_neg[x].num[0] != NULL) {
 				int out = 0;
 				for(int z = 0; z < greater_pos[x].length && (out != 1); z++) {
 
