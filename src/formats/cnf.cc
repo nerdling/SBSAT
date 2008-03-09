@@ -356,7 +356,7 @@ void find_and_build_andequals(Clause *pClauses) {
 			}
 		}
 		else if(pClauses[x].length > 2) {
-			for(int y = 0; pClauses[x].variables[y] != 0; y++) {
+			for(int y = 0; y < pClauses[x].length; y++) {
 				if(pClauses[x].variables[y] > 0)
 				  greaterpos_temp[pClauses[x].variables[y]]++;
 				else
@@ -425,7 +425,7 @@ void find_and_build_andequals(Clause *pClauses) {
 				two_neg[-pClauses[x].variables[1]].length++;
 			}
 		} else if(pClauses[x].length > 2) {
-			for(int z = 0; pClauses[x].variables[z] != 0; z++) {
+			for(int z = 0; z < pClauses[x].length; z++) {
 				if(pClauses[x].variables[z] > 0) {
 					int y = greater_pos[pClauses[x].variables[z]].length;;
 					greater_pos[pClauses[x].variables[z]].num[y] = x;
@@ -479,7 +479,7 @@ void find_and_build_andequals(Clause *pClauses) {
 							}
 						}
 						if(count == y - 1) {
-							for(int i = 0; two_pos[x].num[i] != 0; i++) {
+							for(int i = 0; i < two_pos[x].length; i++) {
 								if(pClauses[two_pos[x].num[i]].flag == 2) {
 									pClauses[two_pos[x].num[i]].subsumed = 1;
 								}
@@ -500,7 +500,7 @@ void find_and_build_andequals(Clause *pClauses) {
 							functions_add(pAndEqBDD, AND_EQU, x);
 							independantVars[equalityVble[greater_neg[x].num[z]]] = 0;
 						}
-						for(int i = 0; two_pos[x].num[i] != 0; i++)
+						for(int i = 0; i < two_pos[x].length; i++)
 						  pClauses[two_pos[x].num[i]].flag = -1;
 					}
 				}
@@ -531,7 +531,7 @@ void find_and_build_andequals(Clause *pClauses) {
 							}
 						}
 						if(count == y - 1) {
-							for(int i = 0; two_neg[x].num[i] != 0; i++) {
+							for(int i = 0; i < two_neg[x].length; i++) {
 								if(pClauses[two_neg[x].num[i]].flag == 2) {
 									pClauses[two_neg[x].num[i]].subsumed = 1;
 								}
@@ -552,7 +552,7 @@ void find_and_build_andequals(Clause *pClauses) {
 							functions_add(pOrEqBDD, OR_EQU, -x);
 							independantVars[equalityVble[greater_pos[x].num[z]]] = 0;
 						}
-						for(int i = 0; two_neg[x].num[i] != 0; i++)
+						for(int i = 0; i < two_neg[x].length; i++)
 						  pClauses[two_neg[x].num[i]].flag = -1;
 					}
 				}
