@@ -1,5 +1,5 @@
 c This format is no longer supported.
-p cnf 20 9
+p cnf 20 4
 c minmax.ite is the BDD counterpart to this file.
 c #1 [ 1 6 11 16 ] 3
 c #1 [ 2 7 12 17 ] 2
