@@ -107,7 +107,6 @@
 #elif HAVE_TERMCAP_H
 # include <termcap.h>
 #endif
-#endif
 #if HAVE_TERMIOS_H
 # include <termios.h>
 #endif
