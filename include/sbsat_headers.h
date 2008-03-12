@@ -102,8 +102,11 @@
 #if HAVE_REGEX_H
 # include <regex.h>
 #endif
-#if HAVE_TERMCAP_H
+#if HAVE_NCURSES_TERMCAP_H
+# include <ncurses/termcap.h>
+#elif HAVE_TERMCAP_H
 # include <termcap.h>
+#endif
 #endif
 #if HAVE_TERMIOS_H
 # include <termios.h>
