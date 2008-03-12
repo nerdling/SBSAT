@@ -66,18 +66,14 @@ typedef struct BDDNodeStruct {
    /* for tracer5 */
    void *var_ptr;
 
-	union {
-		/* smurf state */
-		void *pState;
-
-		struct {
-			// BDDWalksat addons
-			int hamming;
-			float density;
-			float tbr_weight;
-			// BDDWalksat end
-		};
-	};
+	/* smurf state */
+	void *pState;
+	
+	// BDDWalksat addons
+	int hamming;
+	float density;
+	float tbr_weight;
+	// BDDWalksat end
 	
 } BDDNode;
 
