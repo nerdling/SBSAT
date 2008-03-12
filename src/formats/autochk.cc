@@ -47,6 +47,7 @@
 char getformat (FILE *finputfile) {
 	char a, output;
 	a = fgetc (finputfile);
+  d9_printf3("getformat(FILE): first character: %c(0x%x)\n", a, a);
    
    // check for trace format
 	if (a == 'M') {
