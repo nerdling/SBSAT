@@ -264,7 +264,7 @@ t_opt options[] = {
 		"Threashold above which the Sp splits BDDs"},
 { &ex_infer, "",  "ex-infer", P_INT, V(i:0,"0"),  V(i:1,"1"), VAR_NORMAL, 0,
 		"Enable/Disable Ex Quantification trying to safely assign variables before they are quantified away (1/0)"},
-{ &ge_preproc, "gauss", "gaussian-elimination", P_CHAR, V(i:0, "0"),  V(i:'0', "0"), VAR_NORMAL, 0,
+{ &ge_preproc, "gauss", "gaussian-elimination", P_INT, V(i:0, "0"),  V(i:'0', "0"), VAR_NORMAL, 0,
 	   "Enable/Disable Gaussian Elimination in the preprocessor (1/0)"},
 /*
  * General Solver options
