@@ -168,7 +168,7 @@ struct MINMAXCounterStateEntry {
 
 struct XORGElimTableStruct {
 	unsigned char *frame;
-	int *first_bit;
+	int32_t *first_bit;
 	void *mask;
 	int num_vectors;
 };
