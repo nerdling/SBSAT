@@ -4,12 +4,15 @@
 #include <cmath>
 #include <assert.h>
 
+int main(){
+
+}
 
 ClauseTable::ClauseTable(){
   //ok = true;
 }
 
-bool ClauseTable::addClause(vec<Lit>& ps)
+bool ClauseTable::addClause(Clause* ps)
 {
  
   //if (!ok)
@@ -24,22 +27,22 @@ bool ClauseTable::addClause(vec<Lit>& ps)
                 return true;
             else if (value(ps[i]) != l_False && ps[i] != p)
                 ps[j++] = p = ps[i];
-        ps.shrink(i - j);
+        ps->shrink(i - j);
     }
     */
 
-  if (ps.size() == 0)
+  if (ps->size() == 0)
     return 0; //ok = false;
-  else if (ps.size() == 1){
+  else if (ps->size() == 1){
     //Inference
     //EnqueueInference(var(ps[0]),toInt(lbool(!sign(ps[0])))); //?? !sign???
     //return 1;
   }
   else{
-    Clause* c = Clause_new(ps, false);
-    clauses.push(c);
-    watches[toInt(~(*c)[0])].push(c);
-    watches[toInt(~(*c)[1])].push(c);
+    //Clause* c = Clause_new(ps, false);
+    clauses.push(ps);
+    watches[toInt(~(*ps)[0])].push(ps);
+    watches[toInt(~(*ps)[1])].push(ps);
   }
 
   return true;
