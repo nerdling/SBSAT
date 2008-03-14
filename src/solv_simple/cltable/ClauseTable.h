@@ -12,22 +12,21 @@ typedef int Var;
 #define var_Undef (-1)
 
 typedef int Lit;
-inline  bool sign        (Lit p)           { return p & 1; }
-inline  int  var         (Lit p)           { return p >> 1; }
+inline  bool sign(Lit p) { return p & 1; }
+inline  int  var(Lit p) { return p >> 1; }
 
-const Lit lit_Undef = var_Undef + var_Undef + (int) false;  // }- Useful special constants.
-const Lit lit_Error = var_Undef + var_Undef + (int) true;  // }
+const Lit lit_Undef = var_Undef + var_Undef;      // }- Useful special constants.
+const Lit lit_Error = var_Undef + var_Undef + 1;  // }
 
 
 //=================================================================================================
 // Lifted booleans: (3 valued logic)
 
-typedef char lbool;
-inline int   toInt  (lbool l) { return (int) l;} //l.toInt(); }
+//typedef char lbool;
 
-const lbool l_True  =  1;
-const lbool l_False = -1;
-const lbool l_Undef =  0;
+const char l_True  =  1;
+const char l_False = -1;
+const char l_Undef =  0;
 
 
 
@@ -36,26 +35,10 @@ const lbool l_Undef =  0;
 // Clause -- a simple class for representing a clause:
 
 typedef vec<Lit> Clause;
+int addClause(Clause* ps);  // Add a clause to the solver. 
+char value (Lit p);       // The current value of a literal.
+int ApplyInferenceToClauseTable(Lit p);
 
-class ClauseTable {
-public:
-  ClauseTable();
-  bool    addClause (Clause* ps);       // Add a clause to the solver. NOTE! 'ps' may be shrunk by this method!
-  //lbool   value      (Var x) const;       // The current value of a variable.
-  lbool   value      (Lit p) const;       // The current value of a literal.
-  int ApplyInferenceToClauseTable(Lit p);
-  void attachClause(Clause& c);
 
-  //private:
-  //bool                ok;    // If FALSE, the constraints are already unsatisfiable. No part of the solver state may be used!
 
- protected:
-    vec<char>           assigns;    // The current assignments (lbool:s stored as char:s).
-    vec<vec<Clause*> >  watches;   // 'watches[lit]' is a list of constraints watching 'lit' (will go there if literal becomes true).
-  vec<Clause*>        clauses;  // List of problem clauses.
-
-};
-
-//inline lbool    ClauseTable::value         (Var x) const   { return toLbool(assigns[x]); }
-inline lbool    ClauseTable::value         (Lit p) const   { sign(p) ? -assigns[var(p)] : assigns[var(p)]; }
 
