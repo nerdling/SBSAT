@@ -5,10 +5,14 @@
 #include <assert.h>
 #include <stdio.h>
 
-vec<char>           assigns;    // The current assignments 
-vec<vec<Clause*> >  watches;   // 'watches[lit]' is a list of constraints watching 'lit' (will go there if literal becomes true).
-vec<Clause*>        clauses;  // List of problem clauses.
-
+vec<char>           assigns;          // The current assignments 
+vec<vec<Clause*> >  watches;          // 'watches[lit]' is a list of constraints watching 'lit' (will go there if literal becomes true).
+vec<Clause*>        clauses;          // List of problem clauses.
+vec<Clause*>        learnts;          // List of learnt clauses.
+vec<double>         activity;         // A heuristic measurement of the activity of a variable.
+double              var_inc;          // Amount to bump next variable with.
+double    var_decay;                  // Inverse of the variable activity decay factor.                                            
+//Heap<VarOrderLt>    order_heap(VarOrderLt(activity)); // A priority queue of variables ordered with respect to the variable activity.
 
 int main(){
   //ClauseTable table;
@@ -33,9 +37,28 @@ int main(){
 
 }
 
+void initializeTable(){
+  var_inc = 1.0;
+  var_decay = 1.0 / 0.95;
+}
+
 int addClause(Clause* ps)
 {
  
+  for(int i=0;i<ps->size();i++){
+    Var v = var((*ps)[i]);
+    while(v >= assigns.size()){   
+      watches.push();          // (list for positive literal)
+      watches.push();          // (list for negative literal)
+
+      assigns.push(l_Undef);
+      activity.push(0);
+
+      //polarity    .push((char)sign);
+      //if (!order_heap.inHeap(var) && decision_var[x]) order_heap.insert(x);       
+    }
+  }  
+
   if (ps->size() == 0)
     return 0; 
   else if (ps->size() == 1){
@@ -48,12 +71,7 @@ int addClause(Clause* ps)
     Lit w1 = ((*ps)[0])^1;
     Lit w2 = ((*ps)[1])^1;
 
-    if(watches.size() < w1+1)
-      watches.growTo(w1+1);
     watches[w1].push(ps); 
-
-    if(watches.size() < w2+1)
-      watches.growTo(w2+1);
     watches[w2].push(ps); 
   }
 
@@ -67,9 +85,6 @@ int ApplyInferenceToClauseTable(Lit p) {
   //Clause* confl     = NULL;
 
   assert(value(p) == l_Undef);
-
-  if(assigns.size() < var(p)+1)
-    assigns.growTo(var(p)+1);
   assigns[var(p)] = sign(p)?l_True:l_False; 
 
   if(watches.size() >= p){
@@ -95,8 +110,6 @@ int ApplyInferenceToClauseTable(Lit p) {
 	  if (value(c[k]) != l_False){
 	    c[1] = c[k]; c[k] = false_lit;
 	    Lit w = c[1]^1;
-	    if(watches.size() < w+1)
-	      watches.growTo(w+1);
 	    watches[w].push(&c);
 	    goto FoundWatch; 
 	  }
@@ -104,7 +117,7 @@ int ApplyInferenceToClauseTable(Lit p) {
 	// Did not find watch -- clause is unit under assignment:
 	*j++ = &c;
 	if (value(first) == l_False){
-	  return 0;
+	  //return 0;
 	  //confl = &c;
 	  // Copy the remaining watches:
 	  while (i < end)
@@ -130,4 +143,20 @@ char value(Lit p) {
     return sign(p) ? assigns[var(p)] : -assigns[var(p)]; 
  
 }
+
+void varDecayActivity() { var_inc *= var_decay; }
+void varBumpActivity(Var v) {  //how to increase size of activity vector (and all other vectors)
+  int nVars = assigns.size();
+  if ( (activity[v] += var_inc) > 1e100 ) {
+    // Rescale:
+    for (int i = 0; i < nVars; i++)
+      activity[i] *= 1e-100;
+    var_inc *= 1e-100; 
+  }
+  
+  // Update order_heap with respect to new activity:
+  //  if (order_heap.inHeap(v))
+  //    order_heap.decrease(v); 
+}
+
 

@@ -39,6 +39,12 @@ int addClause(Clause* ps);  // Add a clause to the solver.
 char value (Lit p);       // The current value of a literal.
 int ApplyInferenceToClauseTable(Lit p);
 
-
+/*
+struct VarOrderLt {
+  const vec<double>&  activity;
+  bool operator () (Var x, Var y) const { return activity[x] > activity[y]; }
+  VarOrderLt(const vec<double>&  act) : activity(act) { }
+};
+*/
 
 
