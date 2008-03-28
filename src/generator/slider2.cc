@@ -106,7 +106,7 @@ void slider2_sat(char *out_type, int n)
    printf("#define add_state1(1, 2, 3, 5, 4, 6)\n");
    printf("#equ(xor(1, and(-3, 5), nand(6, 4)), ite(2, or(5, -6), -5)))\n");
    for(int i=0;i<n/2;i++) {
-      printf("*add_state1(%d, %d, %d, %d, %d, %d)\n",
+      printf("add_state1(%d, %d, %d, %d, %d, %d)\n",
             start1[0], start1[1], start1[2], start1[3], start1[4], start1[5]);
       start1[0]++;
       start1[1]++;
@@ -121,7 +121,7 @@ void slider2_sat(char *out_type, int n)
    printf("#define add_state3(1, 2, 3, 4, 5, 6)\n");
    printf("#xor(-1, xor(3, and(-4, 5), 4), equ(6, 2))\n");
    for(int i=0;i<n-n/2;i++) {
-      printf("*add_state%d(%d, %d, %d, %d, %d, %d)\n", (i%2)+2,
+      printf("add_state%d(%d, %d, %d, %d, %d, %d)\n", (i%2)+2,
             start2[0], start2[1], start2[2], start2[3], start2[4], start2[6]);
       start2[0]++;
       start2[1]++;
@@ -172,7 +172,7 @@ void slider2_unsat(char *out_type, int n)
    printf("#define add_state1(1, 2, 3, 4, 5, 6)\n");
    printf("#equ(xor(1, and(-3, 5), nand(6, 4)), ite(2, or(5, -6), -5)))\n");
    for(int i=0;i<n/2;i++) {
-      printf("*add_state1(%d, %d, %d, %d, %d, %d)\n",
+      printf("add_state1(%d, %d, %d, %d, %d, %d)\n",
             start1[0], start1[1], start1[2], start1[3], start1[4], start1[5]);
       start1[0]++;
       start1[1]++;
@@ -187,7 +187,7 @@ void slider2_unsat(char *out_type, int n)
    printf("#define add_state3(1, 2, 3, 4, 5, 6, 7)\n");
    printf("#not(equ(6, xor(-1, xor(3, and(-4, 5), 4), equ(7, 2))))\n");
    for(int i=0;i<n-n/2;i++) {
-      printf("*add_state%d(%d, %d, %d, %d, %d, %d, %d)\n", (i%2)+2,
+      printf("add_state%d(%d, %d, %d, %d, %d, %d, %d)\n", (i%2)+2,
             start2[0], start2[1], start2[2], start2[3], start2[4], start2[5], start2[6]);
       start2[0]++;
       start2[1]++;
