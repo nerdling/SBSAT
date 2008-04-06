@@ -1,3 +1,174 @@
+2008-03-15 16:52  sarahw
+
+	* src/solv_simple/cltable/: ClauseTable.C, ClauseTable.h: Fixed the
+	  way vecs are grown.
+
+2008-03-14 06:09  sarahw
+
+	* src/solv_simple/cltable/: ClauseTable.C, ClauseTable.h: Removed
+	  lbool, Clause, Lit classes from ClauseTable.C ClauseTable.h
+
+2008-03-13 18:38  sarahw
+
+	* src/solv_simple/cltable/: ClauseTable.C, ClauseTable.h: Removing
+	  class structure from clausetable.
+
+2008-03-13 16:38  sarahw
+
+	* src/solv_simple/cltable/: Alg.h, ClauseTable.C, ClauseTable.h,
+	  Sort.h, Vec.h: [no log message]
+
+2008-03-13 14:26  fett
+
+	* include/sbsat_solver.h: [no log message]
+
+2008-03-12 16:52  fett
+
+	* include/bddtable.h: [no log message]
+
+2008-03-12 16:37  fett
+
+	* doc/man1/sbsat.1, include/config.h, include/sbsat_vars.h,
+	  src/utils/params.cc, src/utils/vars.cc: [no log message]
+
+2008-03-11 20:46  mkouril
+
+	* src/formats/autochk.cc: More debug during auto format check
+
+2008-03-11 20:33  mkouril
+
+	* include/sbsat_headers.h: Fixed a problem introduced one checking
+	  before
+
+2008-03-11 20:31  mkouril
+
+	* configure, configure.ac, include/config.h, include/config.h.in,
+	  include/sbsat_headers.h: Added ncurses/termcap.h before termcap.h
+
+2008-03-10 19:17  fett
+
+	* examples/minmax.cnf, include/config.h: [no log message]
+
+2008-03-09 15:19  fett
+
+	* src/formats/cnf.cc: [no log message]
+
+2008-03-09 15:13  fett
+
+	* src/formats/cnf.cc: More cosmetic fixes.
+
+2008-03-09 14:49  fett
+
+	* examples/minmax.cnf: [no log message]
+
+2008-03-09 14:43  fett
+
+	* src/formats/cnf.cc: Cosmetic fixes.
+
+2008-03-09 14:36  fett
+
+	* src/formats/cnf.cc: Completed CNF renovations.
+
+2008-03-09 14:01  fett
+
+	* src/formats/cnf.cc: CNF pattern matching is _more_ consistent.
+	  Reworked most of it - more to come soon.
+
+	     ~Sean
+
+2008-03-09 12:48  fett
+
+	* src/formats/cnf.cc: [no log message]
+
+2008-03-09 12:44  fett
+
+	* src/formats/: cnf.cc: [no log message]
+
+2008-03-09 12:38  fett
+
+	* include/prototypes.h, include/sbsat_formats.h,
+	  include/sbsat_vars.h, src/solv_simple/hooks.cc,
+	  tests/cnf/c5-wid.cnf: [no log message]
+
+2008-03-09 12:33  fett
+
+	* src/: formats/cnf.cc, formats/read_input.cc,
+	  solv_simple/bb_gelim/linear.cc, utils/bdd_circuit_init.cc: [no
+	  log message]
+
+2008-03-08 23:41  mkouril
+
+	* configure, configure.ac, include/config.h, include/config.h.in,
+	  src/solv_simple/include/bb_gelim.h: Auto 64-bit structures enable
+
+2008-03-07 23:51  fett
+
+	* src/solv_simple/: hooks.cc, solv_simple.cc, bb_gelim/linear.cc,
+	  include/bb_gelim.h: [no log message]
+
+2008-03-07 22:05  mkouril
+
+	* src/solv_simple/: bb_gelim/linear.cc, include/bb_gelim.h: More
+	  optimizations
+
+2008-03-07 21:31  fett
+
+	* src/solv_simple/: hooks.cc, solv_simple.cc, bb_gelim/linear.cc:
+	  [no log message]
+
+2008-03-07 21:22  mkouril
+
+	* src/solv_simple/: bb_gelim/linear.cc, include/bb_gelim.h: Minor
+	  optimizations
+
+2008-03-07 21:00  fett
+
+	* ChangeLog, doc/man1/sbsat.1,
+	  src/solv_simple/fn_or/bdd2specfn_or.cc,
+	  src/solv_simple/fn_xor/bdd2specfn_xor.cc, src/utils/bdd_print.cc:
+	  [no log message]
+
+2008-03-07 20:59  mkouril
+
+	* configure, configure.ac: Removed forced -g -O2
+
+2008-03-07 20:38  mkouril
+
+	* Makefile.in, aclocal.m4, configure, configure.ac,
+	  doc/Makefile.in, doc/man1/Makefile.in, examples/Makefile.in,
+	  include/Makefile.in, include/config.h, src/Makefile.in,
+	  src/formats/Makefile.in, src/formats/5/Makefile.in,
+	  src/generator/Makefile.in, src/postproc/Makefile.in,
+	  src/preproc/Makefile.in, src/solv_bddwalk/Makefile.in,
+	  src/solv_simple/Makefile.in,
+	  src/solv_simple/bb_gelim/Makefile.in,
+	  src/solv_simple/fn_or/Makefile.in,
+	  src/solv_simple/fn_smurf/Makefile.in,
+	  src/solv_simple/fn_xor/Makefile.in,
+	  src/solv_simple/include/Makefile.in, src/solv_smurf/Makefile.in,
+	  src/solv_smurf/fn_and/Makefile.in,
+	  src/solv_smurf/fn_lemma/Makefile.in,
+	  src/solv_smurf/fn_lemma_au/Makefile.in,
+	  src/solv_smurf/fn_minmax/Makefile.in,
+	  src/solv_smurf/fn_smurf/Makefile.in,
+	  src/solv_smurf/fn_smurf_au/Makefile.in,
+	  src/solv_smurf/fn_smurf_xor/Makefile.in,
+	  src/solv_smurf/fn_xor/Makefile.in,
+	  src/solv_smurf/fn_xor_smurf/Makefile.in,
+	  src/solv_smurf/hr_anne/Makefile.in,
+	  src/solv_smurf/hr_berkmin/Makefile.in,
+	  src/solv_smurf/hr_lemma/Makefile.in,
+	  src/solv_smurf/hr_lsgb/Makefile.in,
+	  src/solv_smurf/hr_lsgb_lemma/Makefile.in,
+	  src/solv_smurf/hr_lsgbw/Makefile.in,
+	  src/solv_smurf/hr_minisat/Makefile.in,
+	  src/solv_smurf/hr_null/Makefile.in,
+	  src/solv_smurf/hr_vsids/Makefile.in,
+	  src/solv_smurf/include/Makefile.in, src/solv_wvf/Makefile.in,
+	  src/utils/Makefile.in, tests/Makefile.in, tests/cnf/Makefile.in,
+	  tests/longer_tests/Makefile.in, tests/trace_tests/Makefile.in:
+	  Added autodetect for 64 bit & force for 32/64 bit
+
 2008-03-07 19:15  fett
 
 	* include/sbsat_solver.h: [no log message]
