@@ -1,0 +1,73 @@
+// !$*UTF8*$!
+{
+	08FB7793FE84155DC02AAC07 /* Project object */ = {
+		activeArchitecture = i386;
+		activeBuildConfigurationName = Development;
+		activeExecutable = 4041BBF40DA933D20016BFBB /* sbsat */;
+		activeTarget = 8DD76FA90486AB0100D96B5E /* sbsat */;
+		addToTargets = (
+			8DD76FA90486AB0100D96B5E /* sbsat */,
+		);
+		codeSenseManager = 4041BC000DA933D30016BFBB /* Code sense */;
+		executables = (
+			4041BBF40DA933D20016BFBB /* sbsat */,
+		);
+		perUserDictionary = {
+			PBXPerProjectTemplateStateSaveDate = 229192659;
+			PBXWorkspaceStateSaveDate = 229192659;
+		};
+		sourceControlManager = 4041BBFF0DA933D30016BFBB /* Source Control */;
+		userBuildSettings = {
+			SYMROOT = /Users/fett/SAT/sbsat/src;
+		};
+	};
+	4041BBF40DA933D20016BFBB /* sbsat */ = {
+		isa = PBXExecutable;
+		activeArgIndices = (
+		);
+		argumentStrings = (
+		);
+		autoAttachOnCrash = 1;
+		breakpointsEnabled = 1;
+		configStateDict = {
+		};
+		customDataFormattersEnabled = 1;
+		debuggerPlugin = GDBDebugging;
+		disassemblyDisplayState = 0;
+		enableDebugStr = 1;
+		environmentEntries = (
+		);
+		executableSystemSymbolLevel = 0;
+		executableUserSymbolLevel = 0;
+		libgmallocEnabled = 0;
+		name = sbsat;
+		sourceDirectories = (
+		);
+	};
+	4041BBFF0DA933D30016BFBB /* Source Control */ = {
+		isa = PBXSourceControlManager;
+		fallbackIsa = XCSourceControlManager;
+		isSCMEnabled = 0;
+		scmConfiguration = {
+			repositoryName = boole;
+		};
+	};
+	4041BC000DA933D30016BFBB /* Code sense */ = {
+		isa = PBXCodeSenseManager;
+		indexTemplatePath = "";
+	};
+	4041BC9E0DA934F40016BFBB /* INSTALL */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1026, 3220}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 2290}";
+			sepNavWindowFrame = "{{38, 129}, {1085, 873}}";
+		};
+	};
+	8DD76FA90486AB0100D96B5E /* sbsat */ = {
+		activeExec = 0;
+		executables = (
+			4041BBF40DA933D20016BFBB /* sbsat */,
+		);
+	};
+}
