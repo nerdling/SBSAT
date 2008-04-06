@@ -1,4 +1,4 @@
-/*d =========FOR INTERNAL USE ONLY. NO DISTRIBUTION PLEASE ========== */
+/* =========FOR INTERNAL USE ONLY. NO DISTRIBUTION PLEASE ========== */
 
 /*********************************************************************
  Copyright 1999-2007, University of Cincinnati.  All rights reserved.
