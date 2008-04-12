@@ -32,7 +32,7 @@ void allocate_new_SmurfStatesTable(int size) {
 	SimpleSmurfProblemState->arrCurrSmurfStates->pNext->pNext = NULL;
 }
 
-void free_SmurfStatesTable() {
+void FreeSmurfStatesTable() {
 	SmurfStatesTableStruct *pTemp;
 	for(SmurfStatesTableStruct *pIter = SimpleSmurfProblemState->arrSmurfStatesTableHead; pIter != NULL;) {
 		pTemp = pIter;
@@ -74,6 +74,13 @@ void Alloc_SmurfStack(int destination) {
 		//fprintf(stderr, "alloc %d\n", i);
 		Alloc_SmurfStack_Hooks(i);
 	}
+}
+
+void FreeSmurfStack() {
+	for(int i = 0; i < SimpleSmurfProblemState->nNumVars; i++)
+	  if(SimpleSmurfProblemState->arrSmurfStack[i].arrSmurfStates != NULL)
+		 ite_free((void **)&SimpleSmurfProblemState->arrSmurfStack[i].arrSmurfStates);
+	ite_free((void **)&SimpleSmurfProblemState->arrSmurfStack);
 }
 
 //This function initializes a lot of memory, e.g. creating the smurfs from the BDDs.
@@ -285,7 +292,8 @@ void Final_SimpleSmurfSolver() {
 
 	FreeSimpleVarMap();
 
-	free_SmurfStatesTable();
+	FreeSmurfStatesTable();
+	FreeSmurfStack();
 	
 	ite_free((void **)&tempint);
 	tempint_max = 0;
