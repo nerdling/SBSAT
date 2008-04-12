@@ -88,6 +88,49 @@ void PrintAllSmurfStateEntries() {
 	}
 }
 
+void PrintAllSmurfStateEntries_dot() {
+	SmurfStatesTableStruct *arrSmurfStatesTable = SimpleSmurfProblemState->arrSmurfStatesTableHead;
+	int state_num = 0;
+	while(arrSmurfStatesTable != NULL) {
+		void *arrSmurfStates = arrSmurfStatesTable->arrStatesTable;
+		int size = 0;
+		for(int x = 0; x < arrSmurfStatesTable->curr_size; x+=size) {
+			state_num++;
+			d9_printf3("State %d(%x), ", state_num, arrSmurfStates);
+			if(((TypeStateEntry *)arrSmurfStates)->cType == FN_SMURF) {
+				PrintSmurfStateEntry((SmurfStateEntry *)arrSmurfStates);
+				arrSmurfStates = (void *)(((SmurfStateEntry *)arrSmurfStates) + 1);
+				size = sizeof(SmurfStateEntry);
+			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_INFERENCE) {
+				PrintInferenceStateEntry((InferenceStateEntry *)arrSmurfStates);
+				arrSmurfStates = (void *)(((InferenceStateEntry *)arrSmurfStates) + 1);
+				size = sizeof(InferenceStateEntry);
+			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_OR) {
+				PrintORStateEntry((ORStateEntry *)arrSmurfStates);
+				arrSmurfStates = (void *)(((ORStateEntry *)arrSmurfStates) + 1);
+				size = sizeof(ORStateEntry);
+			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_OR_COUNTER) {
+				PrintORCounterStateEntry((ORCounterStateEntry *)arrSmurfStates);
+				arrSmurfStates = (void *)(((ORCounterStateEntry *)arrSmurfStates) + 1);
+				size = sizeof(ORCounterStateEntry);
+			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_XOR) {
+				PrintXORStateEntry((XORStateEntry *)arrSmurfStates);
+				arrSmurfStates = (void *)(((XORStateEntry *)arrSmurfStates) + 1);
+				size = sizeof(XORStateEntry);
+			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_XOR_COUNTER) {
+				PrintXORCounterStateEntry((XORCounterStateEntry *)arrSmurfStates);
+				arrSmurfStates = (void *)(((XORCounterStateEntry *)arrSmurfStates) + 1);
+				size = sizeof(XORCounterStateEntry);
+			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_XOR_GELIM) {
+				PrintXORGElimStateEntry((XORGElimStateEntry *)arrSmurfStates);
+				arrSmurfStates = (void *)(((XORGElimStateEntry *)arrSmurfStates) + 1);
+				size = sizeof(XORGElimStateEntry);
+			}
+		}
+		arrSmurfStatesTable = arrSmurfStatesTable->pNext;
+	}
+}
+
 void PrintAllXORSmurfStateEntries() {
 	void **arrSmurfStates = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].arrSmurfStates;
 

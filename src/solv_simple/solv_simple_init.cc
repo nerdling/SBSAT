@@ -32,6 +32,19 @@ void allocate_new_SmurfStatesTable(int size) {
 	SimpleSmurfProblemState->arrCurrSmurfStates->pNext->pNext = NULL;
 }
 
+void free_SmurfStatesTable() {
+	SmurfStatesTableStruct *pTemp;
+	for(SmurfStatesTableStruct *pIter = SimpleSmurfProblemState->arrSmurfStatesTableHead; pIter != NULL;) {
+		pTemp = pIter;
+		pIter = pIter->pNext;
+		ite_free((void **)&pTemp->arrStatesTable);
+	}
+
+	SimpleSmurfProblemState->arrSmurfStatesTableHead = NULL;
+	SimpleSmurfProblemState->arrCurrSmurfStates = NULL;
+	SimpleSmurfProblemState->pSmurfStatesTableTail = NULL;
+}
+
 //This checks the size of the current block of the smurf states table.
 //If the table is full, we will allocate a new block via allocate_new_SmurfStatesTable(int size)
 void check_SmurfStatesTableSize(int size) {
@@ -61,6 +74,38 @@ void Alloc_SmurfStack(int destination) {
 		//fprintf(stderr, "alloc %d\n", i);
 		Alloc_SmurfStack_Hooks(i);
 	}
+}
+
+//This function initializes a lot of memory, e.g. creating the smurfs from the BDDs.
+int Init_SimpleSmurfProblemState_Smurfs(int nNumVars) {
+	//Create the pTrueSimpleSmurfState entry
+	SimpleSmurfProblemState = (ProblemState *)ite_calloc(1, sizeof(ProblemState), 9, "SimpleSmurfProblemState");
+	SimpleSmurfProblemState->nNumSmurfStateEntries = 2;
+	int size = SMURF_TABLE_SIZE;
+	SimpleSmurfProblemState->arrSmurfStatesTableHead = (SmurfStatesTableStruct *)ite_calloc(1, sizeof(SmurfStatesTableStruct), 9, "SimpleSmurfProblemState->arrSmurfStatesTableHead");
+	SimpleSmurfProblemState->arrSmurfStatesTableHead->arrStatesTable = (void **)ite_calloc(size, 1, 9, "SimpleSmurfProblemState->arrSmurfStatesTableHead->arrStatesTable");
+	SimpleSmurfProblemState->arrSmurfStatesTableHead->curr_size = sizeof(SmurfStateEntry);
+	SimpleSmurfProblemState->arrSmurfStatesTableHead->max_size = size;
+	SimpleSmurfProblemState->arrSmurfStatesTableHead->pNext = NULL;
+	SimpleSmurfProblemState->arrCurrSmurfStates = SimpleSmurfProblemState->arrSmurfStatesTableHead;
+	
+	//arrSmurfStatesTable[0] is reserved for the pTrueSimpleSmurfState
+	pTrueSimpleSmurfState = (SmurfStateEntry *)SimpleSmurfProblemState->arrCurrSmurfStates->arrStatesTable;
+	pTrueSimpleSmurfState->cType = FN_SMURF;
+	pTrueSimpleSmurfState->nTransitionVar = 0;
+	pTrueSimpleSmurfState->pVarIsTrueTransition = (void *)pTrueSimpleSmurfState;
+	pTrueSimpleSmurfState->pVarIsFalseTransition = (void *)pTrueSimpleSmurfState;
+	pTrueSimpleSmurfState->fHeurWghtofTrueTransition = 0;
+	pTrueSimpleSmurfState->fHeurWghtofFalseTransition = 0;
+	//pTrueSimpleSmurfState->bVarIsSafe = 0;
+	pTrueSimpleSmurfState->pNextVarInThisStateGT = NULL;
+	pTrueSimpleSmurfState->pNextVarInThisStateLT = NULL;
+	pTrueSimpleSmurfState->pNextVarInThisState = NULL;
+	
+	SimpleSmurfProblemState->pSmurfStatesTableTail = (void *)(pTrueSimpleSmurfState + 1);
+	
+	clear_all_bdd_pState();
+	true_ptr->pState = pTrueSimpleSmurfState;
 }
 
 //This function initializes a lot of memory, e.g. creating the smurfs from the BDDs.
@@ -185,9 +230,8 @@ int ReadAllSmurfsIntoTable(int nNumVars) {
 			SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates[nSmurfIndex] = pInitialBDD->pState;
 		} else {
 			//LSGBSmurfSetHeurScores(nSmurfIndex, pInitialState);
-			if(!smurfs_share_paths) { clear_all_bdd_pState(); true_ptr->pState = pTrueSimpleSmurfState; }
+			if(!smurfs_share_paths) { clear_all_bdd_pState(); true_ptr->pState = pTrueSimpleSmurfState; 	bdd_gc();}
 			SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates[nSmurfIndex] =	ReadSmurfStateIntoTable(pInitialBDD);
-			bdd_gc();
 		}
 		Init_Solver_MidSmurfs_Hooks(nSmurfIndex, SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates);
 	}
@@ -241,6 +285,8 @@ void Final_SimpleSmurfSolver() {
 
 	FreeSimpleVarMap();
 
+	free_SmurfStatesTable();
+	
 	ite_free((void **)&tempint);
 	tempint_max = 0;
 	
