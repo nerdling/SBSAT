@@ -352,6 +352,7 @@ void Final_SimpleSmurfSolver() {
 	FreeSmurfStatesTable();
 	FreeSmurfStack();
 	FreeSmurfSolverVars();
+	ite_free((void **)&SimpleSmurfProblemState);
 	
 	ite_free((void **)&tempint);
 	tempint_max = 0;
