@@ -38,8 +38,10 @@ void FreeSmurfStatesTable() {
 		pTemp = pIter;
 		pIter = pIter->pNext;
 		ite_free((void **)&pTemp->arrStatesTable);
+		ite_free((void **)&pTemp);
 	}
-
+	
+	SimpleSmurfProblemState->arrSmurfStatesTableHead = NULL;
 	SimpleSmurfProblemState->arrCurrSmurfStates = NULL;
 	SimpleSmurfProblemState->pSmurfStatesTableTail = NULL;
 }
