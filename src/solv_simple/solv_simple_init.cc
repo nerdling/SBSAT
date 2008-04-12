@@ -40,7 +40,6 @@ void FreeSmurfStatesTable() {
 		ite_free((void **)&pTemp->arrStatesTable);
 	}
 
-	SimpleSmurfProblemState->arrSmurfStatesTableHead = NULL;
 	SimpleSmurfProblemState->arrCurrSmurfStates = NULL;
 	SimpleSmurfProblemState->pSmurfStatesTableTail = NULL;
 }
@@ -256,6 +255,18 @@ int ReadAllSmurfsIntoTable(int nNumVars) {
 	return Init_Solver_PostSmurfs_Hooks(SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates);
 }
 
+void FreeSmurfSolverVars() {
+	for(int i = 0; i < SimpleSmurfProblemState->nNumVars; i++)
+	  if(SimpleSmurfProblemState->arrVariableOccursInSmurf[i]!=NULL)
+		 ite_free((void **)&SimpleSmurfProblemState->arrVariableOccursInSmurf[i]);
+	ite_free((void **)&SimpleSmurfProblemState->arrVariableOccursInSmurf);
+	
+	ite_free((void **)&SimpleSmurfProblemState->arrPosVarHeurWghts);
+	ite_free((void **)&SimpleSmurfProblemState->arrNegVarHeurWghts);
+	ite_free((void **)&SimpleSmurfProblemState->arrInferenceQueue);
+	ite_free((void **)&SimpleSmurfProblemState->arrInferenceDeclaredAtLevel);
+}
+
 //This initializes a few things, then calls the main initialization
 //  function - ReadAllSmurfsIntoTable(nNumVars);
 int Init_SimpleSmurfSolver() {
@@ -294,6 +305,7 @@ void Final_SimpleSmurfSolver() {
 
 	FreeSmurfStatesTable();
 	FreeSmurfStack();
+	FreeSmurfSolverVars();
 	
 	ite_free((void **)&tempint);
 	tempint_max = 0;
