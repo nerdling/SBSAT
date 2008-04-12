@@ -269,6 +269,49 @@ void FreeSmurfSolverVars() {
 	ite_free((void **)&SimpleSmurfProblemState->arrInferenceDeclaredAtLevel);
 }
 
+void FreeSmurfStateEntries() {
+	SmurfStatesTableStruct *arrSmurfStatesTable = SimpleSmurfProblemState->arrSmurfStatesTableHead;
+	int state_num = 0;
+	while(arrSmurfStatesTable != NULL) {
+		void *arrSmurfStates = arrSmurfStatesTable->arrStatesTable;
+		int size = 0;
+		for(int x = 0; x < arrSmurfStatesTable->curr_size; x+=size)	{
+			state_num++;
+			//d9_printf3("State %d(%x), ", state_num, arrSmurfStates);
+			if(((TypeStateEntry *)arrSmurfStates)->cType == FN_SMURF) {
+				FreeSmurfStateEntry((SmurfStateEntry *)arrSmurfStates);
+				arrSmurfStates = (void *)(((SmurfStateEntry *)arrSmurfStates) + 1);
+				size = sizeof(SmurfStateEntry);
+			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_INFERENCE) {							  
+				FreeInferenceStateEntry((InferenceStateEntry *)arrSmurfStates);
+				arrSmurfStates = (void *)(((InferenceStateEntry *)arrSmurfStates) + 1);
+				size = sizeof(InferenceStateEntry);
+			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_OR) {							  
+				FreeORStateEntry((ORStateEntry *)arrSmurfStates);
+				arrSmurfStates = (void *)(((ORStateEntry *)arrSmurfStates) + 1);
+				size = sizeof(ORStateEntry);
+			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_OR_COUNTER) {
+				FreeORCounterStateEntry((ORCounterStateEntry *)arrSmurfStates);
+				arrSmurfStates = (void *)(((ORCounterStateEntry *)arrSmurfStates) + 1);
+				size = sizeof(ORCounterStateEntry);
+			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_XOR) {
+				FreeXORStateEntry((XORStateEntry *)arrSmurfStates);
+				arrSmurfStates = (void *)(((XORStateEntry *)arrSmurfStates) + 1);
+				size = sizeof(XORStateEntry);
+			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_XOR_COUNTER) {
+				FreeXORCounterStateEntry((XORCounterStateEntry *)arrSmurfStates);
+				arrSmurfStates = (void *)(((XORCounterStateEntry *)arrSmurfStates) + 1);
+				size = sizeof(XORCounterStateEntry);
+			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_XOR_GELIM) {
+				FreeXORGElimStateEntry((XORGElimStateEntry *)arrSmurfStates);
+				arrSmurfStates = (void *)(((XORGElimStateEntry *)arrSmurfStates) + 1);
+				size = sizeof(XORGElimStateEntry);
+			}
+		}
+		arrSmurfStatesTable = arrSmurfStatesTable->pNext;
+	}
+}
+
 //This initializes a few things, then calls the main initialization
 //  function - ReadAllSmurfsIntoTable(nNumVars);
 int Init_SimpleSmurfSolver() {
@@ -305,6 +348,7 @@ void Final_SimpleSmurfSolver() {
 
 	FreeSimpleVarMap();
 
+	FreeSmurfStateEntries();
 	FreeSmurfStatesTable();
 	FreeSmurfStack();
 	FreeSmurfSolverVars();

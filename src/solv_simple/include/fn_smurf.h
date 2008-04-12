@@ -42,6 +42,9 @@
 void PrintSmurfStateEntry(SmurfStateEntry *ssEntry) ;
 void PrintInferenceStateEntry(InferenceStateEntry *ssEntry);
 
+void FreeSmurfStateEntry(SmurfStateEntry *ssEntry) ;
+void FreeInferenceStateEntry(InferenceStateEntry *ssEntry);
+
 void *ReadSmurfStateIntoTable(BDDNode *pCurrentBDD);
 
 void LSGBSmurfSetHeurScores(SmurfStateEntry *pState);

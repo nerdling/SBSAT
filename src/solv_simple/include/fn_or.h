@@ -60,6 +60,9 @@ struct ORCounterStateEntry {
 // Function structure
 void PrintORStateEntry(ORStateEntry *ssEntry);
 void PrintORCounterStateEntry(ORCounterStateEntry *ssEntry);
+
+void FreeORStateEntry(ORStateEntry *ssEntry);
+void FreeORCounterStateEntry(ORCounterStateEntry *ssEntry);
 void LSGBORStateSetHeurScores(ORStateEntry *pState);
 void LSGBORCounterStateSetHeurScores(ORCounterStateEntry *pState);
 double LSGBORGetHeurScore(ORStateEntry *pState);

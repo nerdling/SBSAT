@@ -9,3 +9,11 @@ void PrintSmurfStateEntry(SmurfStateEntry *ssEntry) {
 void PrintInferenceStateEntry(InferenceStateEntry *ssEntry) {
 	d9_printf4("Var=%d, Inf=%x, Polarity=%d\n", ssEntry->nTransitionVar, ssEntry->pVarTransition, ssEntry->bPolarity);
 }
+
+void FreeSmurfStateEntry(SmurfStateEntry *ssEntry) {
+
+}
+
+void FreeInferenceStateEntry(InferenceStateEntry *ssEntry) {
+
+}

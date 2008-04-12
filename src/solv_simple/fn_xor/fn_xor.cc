@@ -34,3 +34,16 @@ void PrintXORStateEntry_formatted(XORStateEntry *ssEntry) {
 	}
 	d2_printf1("))\n");
 }
+
+void FreeXORStateEntry(XORStateEntry *ssEntry) {
+	ite_free((void **)&ssEntry->pnTransitionVars);	
+}
+
+void FreeXORCounterStateEntry(XORCounterStateEntry *ssEntry) {
+	
+}
+
+void FreeXORGElimStateEntry(XORGElimStateEntry *ssEntry) {
+	ite_free((void **)&ssEntry->pnTransitionVars);
+	ite_free((void **)&ssEntry->pVector);
+}

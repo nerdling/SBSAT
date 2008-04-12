@@ -34,3 +34,12 @@ void PrintORStateEntry(ORStateEntry *ssEntry) {
 void PrintORCounterStateEntry(ORCounterStateEntry *ssEntry) {
 	d9_printf4("Next=%x Head=%x Size=%d\n", ssEntry->pTransition, ssEntry->pORState, ssEntry->nSize);
 }
+
+void FreeORStateEntry(ORStateEntry *ssEntry) {
+	ite_free((void **)&ssEntry->bPolarity);
+	ite_free((void **)&ssEntry->pnTransitionVars);
+}
+
+void FreeORCounterStateEntry(ORCounterStateEntry *ssEntry){
+	
+}

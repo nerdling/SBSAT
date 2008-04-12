@@ -46,6 +46,10 @@ void PrintXORGElimStateEntry(XORGElimStateEntry *ssEntry);
 
 void PrintXORGElimVector(void *pVector);
 
+void FreeXORStateEntry(XORStateEntry *ssEntry);
+void FreeXORCounterStateEntry(XORCounterStateEntry *ssEntry);
+void FreeXORGElimStateEntry(XORGElimStateEntry *ssEntry);
+
 void LSGBXORStateSetHeurScores(XORStateEntry *pState);
 void LSGBXORCounterStateSetHeurScores(XORCounterStateEntry *pState);
 double LSGBXORGetHeurScoreTrans(XORStateEntry *pState);
