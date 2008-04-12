@@ -39,13 +39,18 @@
 #include <sys/time.h>
 #include "sbsat.h"
 
+int prob = 1;
+
 void makeXor(int variables, int functions, int length, int width, int fixed) {
 	struct timeval tv;
 	int *pick = new int[length+(length/4)];
 	gettimeofday(&tv, NULL);
 	srand(tv.tv_usec);
 	fprintf(stdout, "p xor %d %d\n", variables, functions);
+	//fprintf(stdout, "p bdd %d %d\n", variables, functions);
 	if(width == 1) fixed = 0;
+
+	//fprintf(stdout, "and(\n");
 	for(int x = 0; x < functions; x++) {
 		int var;
       int y;
@@ -57,11 +62,26 @@ void makeXor(int variables, int functions, int length, int width, int fixed) {
 		int lin_max = 6*length/7;
 		if(fixed == 1) lin_max = 0;
 		if(width == 1) lin_max = length;
-		for(y = 0; y < lin_max; y++) {
-			var = pick[(rand() % (length+(length/7)))];
-			//var = pick[y];
-			fprintf(stdout, "x%d ", var);
+		
+		if(prob == 1) {
+			for(y = 1; y <= variables; y++) {
+				if((rand() % 2))
+				  fprintf(stdout, "x%d ", y);
+			}
+		} else if(prob == 2) {
+			fprintf(stdout, "xor(");
+			for(y = 1; y <= variables; y++) {
+				if((rand() % 2))
+				  fprintf(stdout, "x%d ", y);
+			}
+		} else {
+			for(y = 0; y < lin_max; y++) {
+				var = pick[(rand() % (length+(length/7)))];
+				//var = pick[y];
+				fprintf(stdout, "x%d ", var);
+			}
 		}
+
       /* non-linear part */
 		if(width > 1) {
 			for(/*cont*/; y < length; y++) {
@@ -83,7 +103,11 @@ void makeXor(int variables, int functions, int length, int width, int fixed) {
 		}
 		int equalvar = rand() % 2;
 		fprintf(stdout, "= %d\n", equalvar);
+		//fprintf(stdout, "%c)\n", equalvar?'T':'F');
 	}
-   delete [] pick;
+
+	//fprintf(stdout, ")\n");
+	
+	delete [] pick;
 }
 

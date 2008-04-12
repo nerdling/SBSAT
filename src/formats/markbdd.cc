@@ -38,6 +38,29 @@
 #include "sbsat.h"
 #include "sbsat_formats.h"
 
+void bdd2_flag_nodes(BDDNode *node)
+{
+	
+	   if (node->flag == 1001001001) return;
+	   node->flag = 1001001001;
+	   //node->inferences = NULL;
+	   bdd2_flag_nodes(node->thenCase);
+	   bdd2_flag_nodes(node->elseCase);
+	   bdd2_flag_nodes(node->notCase);
+	#ifdef BDD_MIRROR_NODE
+	   bdd2_flag_nodes(node->mirrCase);
+	   bdd2_flag_nodes(node->notCase->mirrCase);
+	#endif
+	   //if(node->or_bdd!=NULL) bdd_flag_nodes(node->or_bdd);
+	   //node->or_bdd = NULL;
+	   //if(node->t_and_not_e_bdd!=NULL) bdd_flag_nodes(node->t_and_not_e_bdd);
+	   //node->t_and_not_e_bdd = NULL;
+	   //if(node->not_t_and_e_bdd!=NULL) bdd_flag_nodes(node->not_t_and_e_bdd)
+	   //node->not_t_and_e_bdd = NULL;
+}
+
+
+
 char getNextSymbol (int &intnum, BDDNode * &);
 
 int markbdd_line;
@@ -959,8 +982,11 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 		BDDNode *v2 = putite(intnum, bdd);
 		if(v2 == NULL) { fprintf(stderr, "\nKeyword 'and' expects at least 2 arguments, found 1 (%s)...exiting:%d\n", macros, markbdd_line); exit (1); }
 		v1 = ite_and(v1, v2);
-		while ((v2 = putite (intnum, bdd))!=NULL)
+		while ((v2 = putite (intnum, bdd))!=NULL) {
 			v1 = ite_and(v1, v2);
+			bdd2_flag_nodes(v1);
+			bdd_gc(1);
+		}
 		strcpy (macros, "and");
 		return v1;
 	}
