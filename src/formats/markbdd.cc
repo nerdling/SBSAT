@@ -817,6 +817,28 @@ BDDNode *putite(int intnum, BDDNode * bdd)
       strcpy (macros, "print_flat_xdd");
       return v1;
 	}
+	if (!strcasecmp (macros, "print_smurf_dot_stdout")) {
+		BDDNode *v1 = putite(intnum, bdd);
+		if(v1 == NULL) { fprintf(stderr, "\nKeyword 'print_smurf_dot_stdout' expects at least 1 argument, found 0 (%s)...exiting:%d\n", macros, markbdd_line); exit (1); }
+
+		int maxarguments = 10;
+		int numarguments = 0;
+		BDDNode **put_dot_bdds = (BDDNode **)ite_calloc(maxarguments, sizeof(BDDNode *), 9, "put_dot_bdds");
+		put_dot_bdds[0] = v1;
+		numarguments++;
+		
+		while ((v1 = putite (intnum, bdd))!=NULL) {
+			if(numarguments >= maxarguments) {
+				put_dot_bdds = (BDDNode **)ite_recalloc(put_dot_bdds, maxarguments, maxarguments+10, sizeof(BDDNode *), 9, "put_dot_bdds");
+				maxarguments+=10;
+			}
+			put_dot_bdds[numarguments++] = v1;			
+		}
+      strcpy (macros, "print_dot_stdout");
+		PrintSmurfs(put_dot_bdds, numarguments);
+		ite_free((void**)&put_dot_bdds);
+      return true_ptr;
+	}
 	if (!strcasecmp (macros, "print_dot_stdout")) {
 		BDDNode *v1 = putite(intnum, bdd);
 		if(v1 == NULL) { fprintf(stderr, "\nKeyword 'print_dot_stdout' expects at least 1 argument, found 0 (%s)...exiting:%d\n", macros, markbdd_line); exit (1); }
@@ -961,7 +983,7 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 		if(v2 == NULL) { fprintf(stderr, "\nKeyword 'equ' expects at least 2 arguments, found 1 (%s)...exiting:%d\n", macros, markbdd_line); exit (1); }
 		v1 = ite_equ(v1, v2);
 		while ((v2 = putite (intnum, bdd))!=NULL)
-			v1 = ite_equ(v1, v2);
+		  v1 = ite_equ(v1, v2);
 		strcpy (macros, "equ");
 		return v1;
 	}
@@ -972,7 +994,7 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 		if(v2 == NULL) { fprintf(stderr, "\nKeyword 'imp' expects at least 2 arguments, found 1 (%s)...exiting:%d\n", macros, markbdd_line); exit (1); }
 		v1 = ite_imp(v1, v2);
 		while ((v2 = putite (intnum, bdd))!=NULL)
-			v1 = ite_imp(v1, v2);
+		  v1 = ite_imp(v1, v2);
 		strcpy (macros, "imp");
 		return v1;
 	}
@@ -982,11 +1004,8 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 		BDDNode *v2 = putite(intnum, bdd);
 		if(v2 == NULL) { fprintf(stderr, "\nKeyword 'and' expects at least 2 arguments, found 1 (%s)...exiting:%d\n", macros, markbdd_line); exit (1); }
 		v1 = ite_and(v1, v2);
-		while ((v2 = putite (intnum, bdd))!=NULL) {
-			v1 = ite_and(v1, v2);
-			bdd2_flag_nodes(v1);
-			bdd_gc(1);
-		}
+		while ((v2 = putite (intnum, bdd))!=NULL)
+		  v1 = ite_and(v1, v2);
 		strcpy (macros, "and");
 		return v1;
 	}
