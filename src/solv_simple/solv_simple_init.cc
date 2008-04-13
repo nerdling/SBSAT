@@ -85,7 +85,7 @@ void FreeSmurfStack() {
 }
 
 //This function initializes a lot of memory, e.g. creating the smurfs from the BDDs.
-int Init_SimpleSmurfProblemState_Smurfs(int nNumVars) {
+void Init_SimpleSmurfProblemState() {
 	//Create the pTrueSimpleSmurfState entry
 	SimpleSmurfProblemState = (ProblemState *)ite_calloc(1, sizeof(ProblemState), 9, "SimpleSmurfProblemState");
 	SimpleSmurfProblemState->nNumSmurfStateEntries = 2;
@@ -118,19 +118,10 @@ int Init_SimpleSmurfProblemState_Smurfs(int nNumVars) {
 
 //This function initializes a lot of memory, e.g. creating the smurfs from the BDDs.
 int ReadAllSmurfsIntoTable(int nNumVars) {
-	//Create the pTrueSimpleSmurfState entry
-	SimpleSmurfProblemState = (ProblemState *)ite_calloc(1, sizeof(ProblemState), 9, "SimpleSmurfProblemState");
+	Init_SimpleSmurfProblemState();
 	SimpleSmurfProblemState->nNumSmurfs = nmbrFunctions;
 	SimpleSmurfProblemState->nNumVars = nNumVars;
-	SimpleSmurfProblemState->nNumSmurfStateEntries = 2;
-	//ite_counters[SMURF_STATES] = DetermineNumOfSmurfStates();
-	int size = SMURF_TABLE_SIZE;
-	SimpleSmurfProblemState->arrSmurfStatesTableHead = (SmurfStatesTableStruct *)ite_calloc(1, sizeof(SmurfStatesTableStruct), 9, "SimpleSmurfProblemState->arrSmurfStatesTableHead");
-	SimpleSmurfProblemState->arrSmurfStatesTableHead->arrStatesTable = (void **)ite_calloc(size, 1, 9, "SimpleSmurfProblemState->arrSmurfStatesTableHead->arrStatesTable");
-	SimpleSmurfProblemState->arrSmurfStatesTableHead->curr_size = sizeof(SmurfStateEntry);
-	SimpleSmurfProblemState->arrSmurfStatesTableHead->max_size = size;
-	SimpleSmurfProblemState->arrSmurfStatesTableHead->pNext = NULL;
-	SimpleSmurfProblemState->arrCurrSmurfStates = SimpleSmurfProblemState->arrSmurfStatesTableHead;
+
 	SimpleSmurfProblemState->arrSmurfStack = (SmurfStack *)ite_calloc(SimpleSmurfProblemState->nNumVars, sizeof(SmurfStack), 9, "arrSmurfStack");
 	SimpleSmurfProblemState->arrVariableOccursInSmurf = (int **)ite_calloc(SimpleSmurfProblemState->nNumVars, sizeof(int *), 9, "arrVariablesOccursInSmurf");
 	SimpleSmurfProblemState->arrPosVarHeurWghts = (double *)ite_calloc(SimpleSmurfProblemState->nNumVars, sizeof(double), 9, "arrPosVarHeurWghts");
@@ -197,24 +188,6 @@ int ReadAllSmurfsIntoTable(int nNumVars) {
 	
 	ite_free((void **)&temp_varcount);
 	
-	//arrSmurfStatesTable[0] is reserved for the pTrueSimpleSmurfState
-	pTrueSimpleSmurfState = (SmurfStateEntry *)SimpleSmurfProblemState->arrCurrSmurfStates->arrStatesTable;
-	pTrueSimpleSmurfState->cType = FN_SMURF;
-	pTrueSimpleSmurfState->nTransitionVar = 0;
-	pTrueSimpleSmurfState->pVarIsTrueTransition = (void *)pTrueSimpleSmurfState;
-	pTrueSimpleSmurfState->pVarIsFalseTransition = (void *)pTrueSimpleSmurfState;
-	pTrueSimpleSmurfState->fHeurWghtofTrueTransition = 0;
-	pTrueSimpleSmurfState->fHeurWghtofFalseTransition = 0;
-	//pTrueSimpleSmurfState->bVarIsSafe = 0;
-	pTrueSimpleSmurfState->pNextVarInThisStateGT = NULL;
-	pTrueSimpleSmurfState->pNextVarInThisStateLT = NULL;
-	pTrueSimpleSmurfState->pNextVarInThisState = NULL;
-	
-	SimpleSmurfProblemState->pSmurfStatesTableTail = (void *)(pTrueSimpleSmurfState + 1);
-	
-	clear_all_bdd_pState();
-	true_ptr->pState = pTrueSimpleSmurfState;
-
 	//Create the rest of the SmurfState entries
 	char p[256]; int str_length;
 	D_3(
@@ -350,12 +323,38 @@ void Final_SimpleSmurfSolver() {
 
 	FreeSmurfStateEntries();
 	FreeSmurfStatesTable();
+
 	FreeSmurfStack();
 	FreeSmurfSolverVars();
+
 	ite_free((void **)&SimpleSmurfProblemState);
 	
 	ite_free((void **)&tempint);
 	tempint_max = 0;
 	
 	//Hmmm I didn't free A LOT of that memory. SEAN!!! FIX THIS!!!
+}
+
+// Functions for printing (via dot) the corresponding SMURFS for sets of BDDs.
+
+void FreePrintSmurfs() {
+	FreeSmurfStateEntries();
+	FreeSmurfStatesTable();
+	ite_free((void **)&SimpleSmurfProblemState);
+}
+
+int PrintSmurfs(BDDNode **bdds, int size) {
+	Init_SimpleSmurfProblemState();
+
+	for(int i = 0; i < size; i++) {
+		if(bdds[i]->pState != NULL || bdds[i] == false_ptr){
+			continue;
+		} else {
+			ReadSmurfStateIntoTable(bdds[i]);
+		}
+	}
+	
+	PrintAllSmurfStateEntries_dot();
+	
+	FreePrintSmurfs();
 }
