@@ -214,6 +214,7 @@ extern ProblemState *SimpleSmurfProblemState;
 void PrintSmurfStateEntry(SmurfStateEntry *ssEntry);
 void PrintAllSmurfStateEntries();
 int Init_SimpleSmurfSolver();
+void PrintSmurfs(); //Used to display the SMURFS via the dot format.
 int simpleSolve();
 extern int smurfs_share_paths;
 

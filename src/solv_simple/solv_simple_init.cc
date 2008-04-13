@@ -343,7 +343,7 @@ void FreePrintSmurfs() {
 	ite_free((void **)&SimpleSmurfProblemState);
 }
 
-int PrintSmurfs(BDDNode **bdds, int size) {
+void PrintSmurfs(BDDNode **bdds, int size) {
 	Init_SimpleSmurfProblemState();
 
 	for(int i = 0; i < size; i++) {
