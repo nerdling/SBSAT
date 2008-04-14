@@ -834,7 +834,7 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 			}
 			put_dot_bdds[numarguments++] = v1;			
 		}
-      strcpy (macros, "print_dot_stdout");
+      strcpy (macros, "print_smurf_dot_stdout");
 		PrintSmurfs(put_dot_bdds, numarguments);
 		ite_free((void**)&put_dot_bdds);
       return true_ptr;

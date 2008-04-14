@@ -39,8 +39,10 @@
 #define FN_SMURF_S_H
 
 // Function structure
-void PrintSmurfStateEntry(SmurfStateEntry *ssEntry) ;
+void PrintSmurfStateEntry(SmurfStateEntry *ssEntry);
+void PrintSmurfStateEntry_dot(SmurfStateEntry *ssEntry);
 void PrintInferenceStateEntry(InferenceStateEntry *ssEntry);
+void PrintInferenceStateEntry_dot(InferenceStateEntry *ssEntry);
 
 void FreeSmurfStateEntry(SmurfStateEntry *ssEntry) ;
 void FreeInferenceStateEntry(InferenceStateEntry *ssEntry);

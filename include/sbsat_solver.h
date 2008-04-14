@@ -71,6 +71,7 @@ extern t_solution_info *solution_info_head;
 
 struct TypeStateEntry {
 	char cType;
+	bool visited;
 	int (*ApplyInferenceToState)(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 };
 
@@ -78,6 +79,7 @@ struct TypeStateEntry {
 //Used in the smurf_fpga output format.
 struct SmurfStateEntry {
 	char cType; //FN_SMURF
+	bool visited;
 	int (*ApplyInferenceToState)(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 	int nTransitionVar;
 	double fHeurWghtofTrueTransition;
@@ -104,6 +106,7 @@ struct SmurfStateEntry {
 
 struct InferenceStateEntry {
 	char cType; //FN_INFERENCE
+	bool visited;
 	int nTransitionVar;
 	bool bPolarity;
 	void *pVarTransition;
@@ -111,6 +114,7 @@ struct InferenceStateEntry {
 
 struct ORStateEntry {
 	char cType; //FN_OR
+	bool visited;
 	int (*ApplyInferenceToState)(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 	int nSize;
 	int *pnTransitionVars;
@@ -119,6 +123,7 @@ struct ORStateEntry {
 
 struct ORCounterStateEntry {
 	char cType; //FN_OR_COUNTER
+	bool visited;
 	int (*ApplyInferenceToState)(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 	int nSize;
 	void *pTransition;
@@ -127,6 +132,7 @@ struct ORCounterStateEntry {
 
 struct XORStateEntry {
 	char cType; //FN_XOR
+	bool visited;
 	int (*ApplyInferenceToState)(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 	int nSize;
 	bool bParity;
@@ -135,6 +141,7 @@ struct XORStateEntry {
 
 struct XORCounterStateEntry {
 	char cType; //FN_XOR_COUNTER
+	bool visited;
 	int (*ApplyInferenceToState)(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 	int nSize;
 	void *pTransition;
@@ -143,6 +150,7 @@ struct XORCounterStateEntry {
 
 struct XORGElimStateEntry {
 	char cType; //FN_XOR_GELIM
+	bool visited;
 	int (*ApplyInferenceToState)(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 	int nSize;
 	void *pVector;
@@ -151,6 +159,7 @@ struct XORGElimStateEntry {
 
 struct MINMAXStateEntry {
 	char cType; //FN_MINMAX
+	bool visited;
 	int nSize;
 	int nMin;
 	int nMax;
@@ -159,6 +168,7 @@ struct MINMAXStateEntry {
 
 struct MINMAXCounterStateEntry {
 	char cType; //FN_MINMAX_COUNTER
+	bool visited;
 	int (*ApplyInferenceToState)(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 	int nNumTrue;
 	int nNumFalse;

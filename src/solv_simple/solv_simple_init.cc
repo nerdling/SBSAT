@@ -344,17 +344,38 @@ void FreePrintSmurfs() {
 }
 
 void PrintSmurfs(BDDNode **bdds, int size) {
+	
+   int temp_numinp = 0;
+	for (int i = 0; i < size; i++) {
+		if (bdds[i]->variable > temp_numinp)
+		  temp_numinp = bdds[i]->variable;
+	}	
+	
+	arrSimpleSolver2IteVarMap = (int *)ite_calloc(temp_numinp+1, sizeof(int), 9, "solver mapping(s2i)");
+	arrIte2SimpleSolverVarMap = (int *)ite_calloc(temp_numinp+1, sizeof(int), 9, "solver mapping(i2s)");
+
+	for(int i = 0; i <= temp_numinp; i++)
+		arrSimpleSolver2IteVarMap[i] = arrIte2SimpleSolverVarMap[i] = i;
+	
 	Init_SimpleSmurfProblemState();
 
+	//Need to start up the variable map
+	
 	for(int i = 0; i < size; i++) {
 		if(bdds[i]->pState != NULL || bdds[i] == false_ptr){
 			continue;
 		} else {
-			ReadSmurfStateIntoTable(bdds[i]);
+			fprintf(stdout, "digraph Smurf {\n");
+			fprintf(stdout, " graph [concentrate=true, nodesep=\"0.30\", ordering=in, rankdir=TB, ranksep=\"2.25\"];\n");
+			fprintf(stdout, " b%x [shape=box fontname=""Helvetica"",fontsize=""16"",label=""T""];\n", pTrueSimpleSmurfState);
+			PrintSmurf_dot(ReadSmurfStateIntoTable(bdds[i]));
+			fprintf(stdout, "}\n");
 		}
 	}
 	
-	PrintAllSmurfStateEntries_dot();
-	
+	FreeSimpleVarMap();
 	FreePrintSmurfs();
+
+	ite_free((void **)&arrSimpleSolver2IteVarMap);
+	ite_free((void **)&arrIte2SimpleSolverVarMap);
 }

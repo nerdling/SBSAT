@@ -40,9 +40,12 @@
 
 // Function structure
 void PrintXORStateEntry(XORStateEntry *ssEntry);
-void PrintXORStateEntry_formatted(XORStateEntry *ssEntry);
+void PrintXORStateEntry_dot(XORStateEntry *ssEntry);
 void PrintXORCounterStateEntry(XORCounterStateEntry *ssEntry);
+void PrintXORCounterStateEntry_dot(XORCounterStateEntry *ssEntry);
 void PrintXORGElimStateEntry(XORGElimStateEntry *ssEntry);
+void PrintXORGElimStateEntry_dot(XORGElimStateEntry *ssEntry);
+void PrintXORStateEntry_formatted(XORStateEntry *ssEntry);
 
 void PrintXORGElimVector(void *pVector);
 

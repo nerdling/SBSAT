@@ -59,7 +59,9 @@ struct ORCounterStateEntry {
 
 // Function structure
 void PrintORStateEntry(ORStateEntry *ssEntry);
+void PrintORStateEntry_dot(ORStateEntry *ssEntry);
 void PrintORCounterStateEntry(ORCounterStateEntry *ssEntry);
+void PrintORCounterStateEntry_dot(ORCounterStateEntry *ssEntry);
 
 void FreeORStateEntry(ORStateEntry *ssEntry);
 void FreeORCounterStateEntry(ORCounterStateEntry *ssEntry);

@@ -31,7 +31,18 @@ void PrintORStateEntry(ORStateEntry *ssEntry) {
 	d9_printf2("Size=%d\n", ssEntry->nSize);
 }
 
+void PrintORStateEntry_dot(ORStateEntry *ssEntry) {
+	d9_printf1("Vars=");
+	for(int x = 0; x < ssEntry->nSize; x++)
+	  d9_printf2("%d ", ssEntry->bPolarity[x]==1?ssEntry->pnTransitionVars[x]:-ssEntry->pnTransitionVars[x]);
+	d9_printf2("Size=%d\n", ssEntry->nSize);
+}
+
 void PrintORCounterStateEntry(ORCounterStateEntry *ssEntry) {
+	d9_printf4("Next=%x Head=%x Size=%d\n", ssEntry->pTransition, ssEntry->pORState, ssEntry->nSize);
+}
+
+void PrintORCounterStateEntry_dot(ORCounterStateEntry *ssEntry) {
 	d9_printf4("Next=%x Head=%x Size=%d\n", ssEntry->pTransition, ssEntry->pORState, ssEntry->nSize);
 }
 
