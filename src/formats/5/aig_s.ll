@@ -18,12 +18,15 @@ extern int s_line;
 %option prefix="aig_"
 
 
-INTNUMBER    [+-]?[0-9]+
+UNS_INT    [0-9]+
+COMMENT_HEADER "c"
+STRING [^\n]
+IO_IDENTIFIER [ilo]UNS_INT
 
 %%
 
 "p aig"		return P_AIG;
-{INTNUMBER}     { aig_lval.num=atoi(yytext); if (aig_lval.num==0) return ZERO; else return NON_ZERO; }
+{UNS_INT}	{return atoi(yytext);}
 
 
 "%"[^\n]*         /* eat up one-line comments */

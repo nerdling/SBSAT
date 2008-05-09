@@ -22,10 +22,8 @@ void aig_error(const char*);
     BDDNode *bdd;  /*                                      */
 }
 
-%token ZERO NON_ZERO P_AIG
-%type <num> NON_ZERO ZERO
-%type <bdd> non_zeros
-
+%token UNS_INT P_AIG COMMENT_HEADER STRING IO_IDENTIFIER
+%type <num> UNS_INT
 
 %% /* Grammar rules and actions follow */
 
@@ -33,22 +31,66 @@ input:  header clauses
 ;
 
 header: /* empty */
-	| P_AIG NON_ZERO NON_ZERO
+	| P_AIG UNS_INT UNS_INT UNS_INT UNS_INT UNS_INT
+	{printf("header!\n");}
 ;
 
 clauses: /* empty */
-	| clauses clause
+	| inputs latches outputs ands symbols comments
 ;
 
-clause: non_zeros ZERO
-	{ printf("=>functions[%d]\n",j++); }
+inputs: /* empty */
+	| inputs input
 ;
 
-non_zeros: NON_ZERO
-	{ $$=ite_var($1); printf("%d ", $1); }
-	| non_zeros NON_ZERO
-	{ /*$$=ite_or($2, ite_var($1) );*/ printf("%d ", $2); }
+latches: /* empty */
+	| latches latch
 ;
-	
+
+outputs: /* empty */
+	| outputs output
+;
+
+ands: /* empty */
+	| ands and
+;
+
+symbols: /* empty */
+	| symbols symbol
+;
+
+comments: /* empty */
+	| comment_header comment_lines
+;
+
+comment_lines: /* empty */
+	| comment_lines comment_line
+;
+
+input: UNS_INT
+	{printf("input = %d\n",$1);}
+;
+
+output: UNS_INT
+	{printf("output = %d\n",$1);}
+;
+
+latch: UNS_INT UNS_INT
+	{printf("latch = %d %d\n",$1,$2);}
+;
+
+and: UNS_INT UNS_INT UNS_INT
+	{printf("and = %d %d %d\n",$1,$2,$3);}
+;
+
+symbol: IO_IDENTIFIER STRING
+;
+
+comment_header: COMMENT_HEADER
+;
+
+comment_line: STRING
+;
+
 %%
 
