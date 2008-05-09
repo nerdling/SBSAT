@@ -372,7 +372,7 @@ int SimpleHeuristic() {
 	
 	//if(ite_counters[NUM_CHOICE_POINTS] %128 == 64)
 	//if(SimpleSmurfProblemState->nCurrSearchTreeLevel > 10)
-	  //nBranchLit = Simple_DC_Heuristic(); //Don't Care - Choose the first unset variable found.
+	//nBranchLit = Simple_DC_Heuristic(); //Don't Care - Choose the first unset variable found.
 	//else 
 	  nBranchLit = Simple_LSGB_Heuristic();
 	

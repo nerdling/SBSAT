@@ -53,6 +53,9 @@ extern FILE *prover3_in;
 int iscas_parse();
 extern FILE *iscas_in;
 
+int aig_parse();
+extern FILE *aig_in;
+
 int read_input_open();
 
 int
@@ -114,6 +117,13 @@ read_input()
      parser_init();
      iscas_in = finputfile;
      iscas_parse();
+     numinp = vars_max;
+     numout = functions_max;
+  } break;
+  case 'a': {
+     parser_init();
+     aig_in = finputfile;
+     aig_parse();
      numinp = vars_max;
      numout = functions_max;
   } break;
