@@ -38,6 +38,7 @@ CONFIG_CLEAN_FILES= \
 	libt5_a-prover3_g.h \
 	libt5_a-iscas_g.h \
 	libt5_a-trace_g.cc  \
+	libt5_a-aig_g.cc \
 	libt5_a-cnf_g.cc  \
 	libt5_a-bdd_g.cc \
 	libt5_a-blif_g.cc \
@@ -45,6 +46,7 @@ CONFIG_CLEAN_FILES= \
 	libt5_a-prover3_g.cc \
 	libt5_a-iscas_g.cc \
         trace_s.cc  \
+	aig_s.cc \
 	cnf_s.cc  \
 	bdd_s.cc \
 	blif_s.cc \
