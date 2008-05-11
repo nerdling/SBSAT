@@ -151,13 +151,13 @@ ite_main()
    dC_printf1("c Starting solver\n");
 
 	switch (formatout) {
-    case 'n': break;
+    case 'n': ret = SILENT; break;
     case 'b': ret = solve(); break;
     case 'w': ret = walkSolve(); break;
     case 'm': wvfSolve(); break;
 	 case 't': ret = simpleSolve(); break;
     default: write_output(formatout);   
-             ret = CONV_OUTPUT;
+		ret = CONV_OUTPUT;
    }
 
    return ret;
@@ -217,6 +217,7 @@ ite_final(int ret)
     case SOLV_UNKNOWN: strcpy(result_string, "Unknown Result"); break;
     case CONV_OUTPUT: strcpy(result_string, "Conversion"); break;
     case SOLV_ERROR: strcpy(result_string, "SOLVER ERROR: Result is not as expected"); break;
+	 case SILENT:break;
     default: sprintf(result_string, "Error(%d)", ret); break;
    }
 
@@ -305,7 +306,7 @@ ite_io_init()
    if (!strcmp(outputfile, "-")) foutputfile = stdout;
    else {
       struct stat buf;
-      if (stat(outputfile, &buf) == 0) {
+      if (stat(outputfile, &buf) == 0 && (protect_outputfile == 1)) {
          dE_printf2("Error: File %s exists\n", outputfile);
          return ERR_IO_INIT;
       }

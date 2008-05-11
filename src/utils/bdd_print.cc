@@ -447,7 +447,7 @@ int BDDcompfunc (const void *x, const void *y) {
 	return 1;
 }
 
-void _printBDDdot_file(BDDNode *bdd);
+void collect_nodes(BDDNode *bdd);
 
 void printBDDdot_stdout(BDDNode **bdds, int num) {
    fprintf(stdout, "digraph BDD {\n");
@@ -463,7 +463,7 @@ void printBDDdot_stdout(BDDNode **bdds, int num) {
 	int complex_bdd_found = 0;
 	for(int x = 0; x < num; x++) {
 		if(!IS_TRUE_FALSE(bdds[x])) {
-			_printBDDdot_file(bdds[x]);
+			collect_nodes(bdds[x]);
 			display_t = 1;
 			display_f = 1;
 			complex_bdd_found = 1;
@@ -548,7 +548,7 @@ void printBDDdot_file(BDDNode **bdds, int num) {
 	int complex_bdd_found = 0;
 	for(int x = 0; x < num; x++) {
 		if(!IS_TRUE_FALSE(bdds[x])) {
-			_printBDDdot_file(bdds[x]);
+			collect_nodes(bdds[x]);
 			display_t = 1;
 			display_f = 1;
 			complex_bdd_found = 1;
@@ -606,7 +606,7 @@ void printBDDdot_file(BDDNode **bdds, int num) {
 	fclose(fout);
 }
 
-void _printBDDdot_file(BDDNode *bdd) {
+void collect_nodes(BDDNode *bdd) {
 	if(bdd->flag!=0) return;
 	bdd->flag = 1;
 	
@@ -614,18 +614,16 @@ void _printBDDdot_file(BDDNode *bdd) {
 		BDD_nodes = (BDDNode **)ite_realloc(BDD_nodes, max_BDD_nodes, 30+max_BDD_nodes, sizeof(BDDNode *), 9, "BDD_nodes");
 		max_BDD_nodes+=30;
 	}
-	len_BDD_nodes++;
+
+	BDD_nodes[len_BDD_nodes++] = bdd;
 	
 	if(!IS_TRUE_FALSE(bdd->thenCase)) {
-		_printBDDdot_file(bdd->thenCase);
+		collect_nodes(bdd->thenCase);
 	}
 	
 	if(!IS_TRUE_FALSE(bdd->elseCase)) {
-		_printBDDdot_file(bdd->elseCase);
+		collect_nodes(bdd->elseCase);
 	}
-
-	BDD_nodes[len_BDD_nodes] = bdd;
-	
 }
 
 void printCircuit() {

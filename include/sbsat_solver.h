@@ -106,7 +106,7 @@ struct SmurfStateEntry {
 
 struct InferenceStateEntry {
 	char cType; //FN_INFERENCE
-	bool visited;
+	bool visited; //Used for displaying the smurfs
 	int nTransitionVar;
 	bool bPolarity;
 	void *pVarTransition;
@@ -114,7 +114,7 @@ struct InferenceStateEntry {
 
 struct ORStateEntry {
 	char cType; //FN_OR
-	bool visited;
+	bool visited; //Used for displaying the smurfs
 	int (*ApplyInferenceToState)(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 	int nSize;
 	int *pnTransitionVars;
@@ -123,7 +123,7 @@ struct ORStateEntry {
 
 struct ORCounterStateEntry {
 	char cType; //FN_OR_COUNTER
-	bool visited;
+	bool visited; //Used for displaying the smurfs
 	int (*ApplyInferenceToState)(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 	int nSize;
 	void *pTransition;
@@ -132,7 +132,7 @@ struct ORCounterStateEntry {
 
 struct XORStateEntry {
 	char cType; //FN_XOR
-	bool visited;
+	bool visited; //Used for displaying the smurfs
 	int (*ApplyInferenceToState)(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 	int nSize;
 	bool bParity;
@@ -141,7 +141,7 @@ struct XORStateEntry {
 
 struct XORCounterStateEntry {
 	char cType; //FN_XOR_COUNTER
-	bool visited;
+	bool visited; //Used for displaying the smurfs
 	int (*ApplyInferenceToState)(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 	int nSize;
 	void *pTransition;
@@ -150,7 +150,7 @@ struct XORCounterStateEntry {
 
 struct XORGElimStateEntry {
 	char cType; //FN_XOR_GELIM
-	bool visited;
+	bool visited; //Used for displaying the smurfs
 	int (*ApplyInferenceToState)(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 	int nSize;
 	void *pVector;
@@ -159,7 +159,8 @@ struct XORGElimStateEntry {
 
 struct MINMAXStateEntry {
 	char cType; //FN_MINMAX
-	bool visited;
+	bool visited; //Used for displaying the smurfs
+	int nVisited;
 	int nSize;
 	int nMin;
 	int nMax;
@@ -168,10 +169,11 @@ struct MINMAXStateEntry {
 
 struct MINMAXCounterStateEntry {
 	char cType; //FN_MINMAX_COUNTER
-	bool visited;
+	bool visited; //Used for displaying the smurfs
 	int (*ApplyInferenceToState)(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
+	bool bTop; //Is this the top state? Used to avoid writing the visiter flag every transition.
+	int nVarsLeft;
 	int nNumTrue;
-	int nNumFalse;
 	MINMAXCounterStateEntry *pTransition;
 	MINMAXStateEntry *pMINMAXState;
 };

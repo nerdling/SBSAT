@@ -67,7 +67,7 @@ LSGBMinMaxInitHeuristicTables()
    HWEIGHT K = JHEURISTIC_K;
 
 
-   // for every difference max-min a special table is needed
+   // for every different max-min a special table is needed
    //
    //
    // e.g. 2 [ 6 ] 4 difference is (4-2) = 2

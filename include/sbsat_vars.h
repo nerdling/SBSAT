@@ -86,6 +86,8 @@
 
 #define MAX_COUNTER      36
 
+#define SILENT 37
+
 /* non counter errors */
 #define ERR_IO_INIT	101
 #define ERR_IO_READ 102
@@ -128,6 +130,7 @@ extern char inputfile[256];
 extern char outputfile[256];
 extern FILE * finputfile;
 extern FILE * foutputfile;
+extern int protect_outputfile;
 
 extern int DO_CLUSTER; //CNF clustering
 extern int DO_COFACTOR;

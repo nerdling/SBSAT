@@ -51,6 +51,7 @@ char formatin = 'f', formatout = 'b'; //Solving the problem is the Default
 int print_tree = 0;
 char inputfile[256] = "-";
 char outputfile[256] = "-";
+int protect_outputfile = 1;
 //char progname[65] = "ite";
 FILE * finputfile = NULL;
 FILE * foutputfile = NULL;
