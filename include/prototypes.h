@@ -101,7 +101,6 @@ BDDNode *MinMaxBDD(int *, int, int, int, int);
 void unmark(BDDNode *);
 float mark_trues(BDDNode *);
 void Fill_Density();
-char getformat (FILE *);
 void DNF_to_CNF();
 int CNF_to_BDD();
 //CircuitStruct *split(int, int);
@@ -158,9 +157,6 @@ void readCircuit_wvf();
 
 ITE_INLINE void DisplaySolution(int, int []);
 void DisplayTraceInferenceQueue();
-
-int check_gzip (char *filename);
-FILE * zread(char *filename, int zip);
 
 void xorloop ();
 

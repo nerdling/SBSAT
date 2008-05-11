@@ -295,7 +295,7 @@ AM_CONDITIONAL(MYLIBTOOL, test x$alllibtool = xtrue)
 
 # Checks for programs.
 AC_PROG_AWK
-#AC_PROG_CC
+AC_PROG_CC
 AC_PROG_RANLIB # obsolete by LIBTOOL
 AM_PROG_LEX
 AC_PROG_YACC("bison -y")

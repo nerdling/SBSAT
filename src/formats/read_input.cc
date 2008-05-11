@@ -67,7 +67,7 @@ read_input()
   if (ret != NO_ERROR) return ret;
 
   /* autodetect the input format  */
-  if (formatin == ' ') formatin = getformat (finputfile);
+  if (formatin == ' ') formatin = getformat ();
 
   switch  (formatin) {
   case 't':
@@ -144,7 +144,6 @@ read_input_open()
 
    if (!strcmp(inputfile, "-")) { d2_printf2("Reading standard input %s....\n", comment); }
    else { d2_printf3("Reading File %s %s ....\n", inputfile, comment); }
-
 
    int zip=check_gzip(inputfile);
    if (zip) {

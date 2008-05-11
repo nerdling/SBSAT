@@ -14,3 +14,6 @@ sources=autochk.cc  \
 noinst_LIBRARIES = libformats.a
 libformats_a_SOURCES=$(sources)
 #endif
+
+bin_PROGRAMS = aigtoaig
+aigtoaig_SOURCES = aigtoaig.c aiger.c

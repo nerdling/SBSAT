@@ -44,7 +44,7 @@
 #include "sbsat.h"
 #include "sbsat_formats.h"
 
-char getformat (FILE *finputfile) {
+char getformat () {
 	char a, output;
 	a = fgetc (finputfile);
   d9_printf3("getformat(FILE): first character: %c(0x%x)\n", a, a);
@@ -108,6 +108,18 @@ char getformat (FILE *finputfile) {
 		return 'b';
 
    // check for smurf input format
+	} else if (a == 'a') {
+		a = fgetc (finputfile);
+		if(a == 'i') {
+			finputfile = aigread(inputfile);
+			//decode AIG format;
+			return 'a';
+		} else if(a != 'a')
+			  return 0;
+
+		ungetc(a, finputfile);
+		ungetc('a', finputfile);
+		return 'a';
 	} else if (a >= '1' && a <= '9') {
       ungetc (a, finputfile);
 		return 'u';		//u for smUrf

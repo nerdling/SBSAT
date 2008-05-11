@@ -45,6 +45,11 @@ struct Clause {
 	int flag;
 };
 
+int check_gzip (char *filename);
+FILE * zread(char *filename, int zip);
+FILE * aigread(char *filename);
+char getformat ();
+
 void write_output(char formatout);
 int read_input();
 void DNF_to_BDD();
