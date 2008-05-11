@@ -137,7 +137,6 @@ aigread(char *filename)
     int c = fgetc(infile);
     if (c!='a') {
        fprintf(stderr, "Can't use %s\n", cmd);
-		 fprintf(stderr, "Make sure the 'aigtoaig' utility is in your path\n");
 		 exit(1);
     }
     ungetc(c, infile);
