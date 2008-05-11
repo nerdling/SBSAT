@@ -33,8 +33,13 @@ dump all internal parameters before processing
 \fB\-\-input\-file\fR <string>
 input filename [default="\-"]
 .TP
-\fB\-\-output\-file\fR <string>
+\fB\-\-output\-file\fR <string>, \fB\-o\fR <string>
 output filename [default="\-"]
+.TP
+\fB\-\-protect\-output\-file\fR <number>, \fB\-pof\fR <number>
+If set to 1, SBSAT will not to overwrite an
+existing output file
+[default=1]
 .TP
 \fB\-\-temp\-dir\fR <string>
 directory for temporary files [default="$TEMP"]
