@@ -12,32 +12,37 @@ extern int s_line;
 
 %}
 %option noyywrap
-%option debug
+/*%option debug*/
 /*%option outfile="aig_s.c"*/
 %option outfile="lex.yy.c"
 %option prefix="aig_"
 
-
-UNS_INT    [0-9]+
-COMMENT_HEADER "c"
-STRING [^\n]
-IO_IDENTIFIER [ilo]UNS_INT
+UINT    [0-9]+
+COMMENT_HEADER ^c
+WORD [^ \n]+
+IO_IDENTIFIER (i|l|o)[0-9]+
+NEW_LINE "\n"
 
 %%
 
-"p aig"		return P_AIG;
-{UNS_INT}	{return atoi(yytext);}
 
+"aag"			return P_AIG;
+{UINT}			{aig_lval.num=atoi(yytext); return UINT;}
+{IO_IDENTIFIER}		{d2_printf2("identifier %s\n",yytext); return IO_IDENTIFIER;}
 
-"%"[^\n]*         /* eat up one-line comments */
-"#"[^\n]*         /* eat up one-line comments */
-"c"[^\n]*         /* eat up one-line comments */
-";"[^\n]*         /* eat up one-line comments */
+"%"[^\n]*		/* eat up one-line comments */
+"#"[^\n]*		/* eat up one-line comments */
+";"[^\n]*		/* eat up one-line comments */
 
-[ \t\r]+            /* eat up whitespace */
-"\n"	          /* eat up new-lines */ s_line++;
+[ \t\r]+		/* eat up whitespace */
 
-.                 printf( "Unrecognized character: %s\n", yytext ); 
+{COMMENT_HEADER} 	{return COMMENT_HEADER;}
+
+{WORD}		  	return WORD;
+
+{NEW_LINE}	        {s_line++; return NEW_LINE;}
+
+.                	{d2_printf2("Unknown char: %s",yytext);}
 
 %%
 

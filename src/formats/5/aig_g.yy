@@ -3,7 +3,17 @@
 #define  aig_error yy_error
 #include <stdio.h>
 #include "bddnode.h"
-int j = 0;
+#define YYDEBUG 1
+int aig_counter = 0;
+int aig_inputs;
+int aig_latches;
+int aig_outputs;
+int aig_ands;
+int aig_symbols;
+
+int aig_array[3];
+int aig_index = 0;
+
 int aig_lex();
 void aig_error(const char*);
 //#define YYSTYPE int
@@ -22,42 +32,62 @@ void aig_error(const char*);
     BDDNode *bdd;  /*                                      */
 }
 
-%token UNS_INT P_AIG COMMENT_HEADER STRING IO_IDENTIFIER
-%type <num> UNS_INT
+%token UINT P_AIG COMMENT_HEADER WORD IO_IDENTIFIER NEW_LINE
+%type <num> UINT
 
 %% /* Grammar rules and actions follow */
 
-input:  header clauses
+file:  header clauses
 ;
 
 header: /* empty */
-	| P_AIG UNS_INT UNS_INT UNS_INT UNS_INT UNS_INT
-	{printf("header!\n");}
+	| P_AIG UINT UINT UINT UINT UINT NEW_LINE
+	{aig_inputs = $3;
+	 aig_latches = $4;
+	 aig_outputs = $5;
+	 aig_ands = $6;
+	 fprintf(stderr,"header! %d %d %d %d %d\n",$2,$3,$4,$5,$6);}
 ;
 
 clauses: /* empty */
-	| inputs latches outputs ands symbols comments
+	| lines symbols comments
 ;
 
-inputs: /* empty */
-	| inputs input
+lines: /* empty */
+	| lines line
 ;
 
-latches: /* empty */
-	| latches latch
+line: uints NEW_LINE
+	{ aig_counter++; 
+	  aig_index = 0;
+	  if(aig_counter <= aig_inputs){
+	    d2_printf3("%d input = %d \n",aig_counter, aig_array[0]);
+	  }else if(aig_counter <= aig_latches + aig_inputs){
+	    d2_printf4("%d latch = %d %d\n",aig_counter, aig_array[0],aig_array[1]);
+	  }else if(aig_counter <= aig_outputs + aig_latches + aig_inputs){
+	    d2_printf3("%d output = %d\n",aig_counter,aig_array[0]);
+	  }else if(aig_counter <= aig_ands + aig_outputs + aig_latches + aig_inputs){
+	    d2_printf5("%d and = %d %d %d\n",aig_counter, aig_array[0], aig_array[1],aig_array[2]);
+	  }else{
+	    d2_printf2("symbol = %d\n",aig_counter);
+	  }
+	}
 ;
 
-outputs: /* empty */
-	| outputs output
+uints: /* empty */
+	| UINT uints
+         { aig_array[aig_index++] = $1;
+	   /*d2_printf2("\t %d\n",$1);*/}
 ;
 
-ands: /* empty */
-	| ands and
-;
 
 symbols: /* empty */
 	| symbols symbol
 ;
+
+symbol: IO_IDENTIFIER WORD NEW_LINE
+;
+
 
 comments: /* empty */
 	| comment_header comment_lines
@@ -67,30 +97,18 @@ comment_lines: /* empty */
 	| comment_lines comment_line
 ;
 
-input: UNS_INT
-	{printf("input = %d\n",$1);}
+
+comment_header: COMMENT_HEADER NEW_LINE
 ;
 
-output: UNS_INT
-	{printf("output = %d\n",$1);}
+comment_line: words NEW_LINE
 ;
 
-latch: UNS_INT UNS_INT
-	{printf("latch = %d %d\n",$1,$2);}
+words: /* empty */
+	| words WORD
+	| words UINT
 ;
 
-and: UNS_INT UNS_INT UNS_INT
-	{printf("and = %d %d %d\n",$1,$2,$3);}
-;
-
-symbol: IO_IDENTIFIER STRING
-;
-
-comment_header: COMMENT_HEADER
-;
-
-comment_line: STRING
-;
 
 %%
 
