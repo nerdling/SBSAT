@@ -79,7 +79,7 @@ line: uints NEW_LINE
 	{ 
 	  aig_index = 0;
 	  if(aig_counter < aig_inputs){
-	    aig_input_vars[aig_counter] = aig_array[0];
+	    aig_input_vars[aig_counter] = aig_array[0]/2;
 	    d2_printf3("%d input = %d \n",aig_counter, aig_array[0]);
 	  }else if(aig_counter < aig_latches + aig_inputs){
 	    d2_printf4("%d latch = %d %d\n",aig_counter, aig_array[0],aig_array[1]);
@@ -89,11 +89,11 @@ line: uints NEW_LINE
 	  }else if(aig_counter < aig_ands + aig_outputs + aig_latches + aig_inputs){
 	    BDDNode *bdd_aig_array[3];
 	    for(int i=0;i<3;i++){
-	      if(aig_array[i]%2) bdd_aig_array[i] = ite_var(-(i_getsym_int(aig_array[i]-1, SYM_VAR)));
-	      else bdd_aig_array[i] = ite_var(i_getsym_int(aig_array[i], SYM_VAR));
+	      if(aig_array[i]%2) bdd_aig_array[i] = ite_var(-(i_getsym_int(aig_array[i]/2, SYM_VAR)));
+	      else bdd_aig_array[i] = ite_var(i_getsym_int(aig_array[i]/2, SYM_VAR));
 	    }
 	    functions_add(ite_equ(bdd_aig_array[0], ite_and(bdd_aig_array[1], bdd_aig_array[2])),
-			  AND_EQU, i_getsym_int(aig_array[0], SYM_VAR));
+			  AND_EQU, i_getsym_int(aig_array[0]/2, SYM_VAR));
 		 printBDD(ite_equ(bdd_aig_array[0], ite_and(bdd_aig_array[1], bdd_aig_array[2])));
 
 	    d2_printf5("%d and = %d %d %d\n",aig_counter, aig_array[0], aig_array[1], aig_array[2]);
