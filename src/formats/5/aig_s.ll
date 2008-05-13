@@ -2,6 +2,8 @@
 #include "sbsat.h"
 #include "bddnode.h"
 #include "libt5_a-aig_g.h"
+#include <string.h>
+
 extern int s_line;
 /* remove warning about unput not used */
 #define YY_NO_UNPUT
@@ -28,7 +30,7 @@ NEW_LINE "\n"
 
 "aag"			return P_AIG;
 {UINT}			{aig_lval.num=atoi(yytext); return UINT;}
-{IO_IDENTIFIER}		{d2_printf2("identifier %s\n",yytext); return IO_IDENTIFIER;}
+{IO_IDENTIFIER}		{strncpy(aig_lval.id,yytext,200); return IO_IDENTIFIER;}
 
 "%"[^\n]*		/* eat up one-line comments */
 "#"[^\n]*		/* eat up one-line comments */
@@ -38,7 +40,7 @@ NEW_LINE "\n"
 
 {COMMENT_HEADER} 	{return COMMENT_HEADER;}
 
-{WORD}		  	return WORD;
+{WORD}		  	{strncpy(aig_lval.id,yytext,200); return WORD;}
 
 {NEW_LINE}	        {s_line++; return NEW_LINE;}
 

@@ -78,6 +78,7 @@ symrec *tputsym(int);
 symrec *getsym_i(int id);
 void    print_symtable();
 int get_or_putsym_check(char *sym_name, int sym_type, int id);
+symrec *putsym_with_id(char *sym_name, int sym_type, int id);
 
 int _sym_is_flag(int id);
 extern symrec **sym_table;
