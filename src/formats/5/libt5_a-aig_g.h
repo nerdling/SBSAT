@@ -29,32 +29,34 @@
    /* Put the tokens into the symbol table, so that GDB and other debuggers
       know about them.  */
    enum yytokentype {
-     UNS_INT = 258,
+     UINT = 258,
      P_AIG = 259,
      COMMENT_HEADER = 260,
-     STRING = 261,
-     IO_IDENTIFIER = 262
+     WORD = 261,
+     IO_IDENTIFIER = 262,
+     NEW_LINE = 263
    };
 #endif
 /* Tokens.  */
-#define UNS_INT 258
+#define UINT 258
 #define P_AIG 259
 #define COMMENT_HEADER 260
-#define STRING 261
+#define WORD 261
 #define IO_IDENTIFIER 262
+#define NEW_LINE 263
 
 
 
 
 #if ! defined (YYSTYPE) && ! defined (YYSTYPE_IS_DECLARED)
-#line 19 "aig_g.yy"
+#line 33 "aig_g.yy"
 typedef union YYSTYPE {
     int  num;      /* For returning numbers.               */
     char id[200];  /* For returning ids.                   */
     BDDNode *bdd;  /*                                      */
 } YYSTYPE;
 /* Line 1447 of yacc.c.  */
-#line 58 "libt5_a-aig_g.h"
+#line 60 "libt5_a-aig_g.h"
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
 # define YYSTYPE_IS_TRIVIAL 1

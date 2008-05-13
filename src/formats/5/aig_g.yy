@@ -89,14 +89,14 @@ line: uints NEW_LINE
 	  }else if(aig_counter < aig_ands + aig_outputs + aig_latches + aig_inputs){
 	    BDDNode *bdd_aig_array[3];
 	    for(int i=0;i<3;i++){
-	      if(aig_array[i]%2) bdd_aig_array[i] = ite_not(ite_var(aig_array[i]/2));
-	      else bdd_aig_array[i] = ite_var(aig_array[i]/2);
+	      if(aig_array[i]%2) bdd_aig_array[i] = ite_var(-(i_getsym_int(aig_array[i]-1, SYM_VAR)));
+	      else bdd_aig_array[i] = ite_var(i_getsym_int(aig_array[i], SYM_VAR));
 	    }
-	    functions_add(ite_equ(bdd_aig_array[0],ite_and(bdd_aig_array[1],bdd_aig_array[2])),
-			  AND_EQU,aig_array[0]);
+	    functions_add(ite_equ(bdd_aig_array[0], ite_and(bdd_aig_array[1], bdd_aig_array[2])),
+			  AND_EQU, i_getsym_int(aig_array[0], SYM_VAR));
+		 printBDD(ite_equ(bdd_aig_array[0], ite_and(bdd_aig_array[1], bdd_aig_array[2])));
 
-	    d2_printf5("%d and = %d %d %d\n",aig_counter, aig_array[0], aig_array[1],aig_array[2]);
-	    
+	    d2_printf5("%d and = %d %d %d\n",aig_counter, aig_array[0], aig_array[1], aig_array[2]);
 
 	  }else{
 	    //shouldn't reach this case
@@ -123,10 +123,10 @@ symbol: IO_IDENTIFIER WORD NEW_LINE
   int index = atoi($1+1);
   d2_printf4("symbol %c %d = %s\n",*$1,index,$2);
   if(*$1 == 'i'){
-    putsym_with_id($2, SYM_VAR, aig_input_vars[index]);
+//    putsym_with_id($2, SYM_VAR, aig_input_vars[index]);
     d2_printf2("\t%d\n",aig_input_vars[index]);
   }else if(*$1 == 'o'){
-    putsym_with_id($2, SYM_VAR, aig_output_literals[index]/2);
+//    putsym_with_id($2, SYM_VAR, aig_output_literals[index]/2);
     d2_printf2("\t%d\n",aig_output_literals[index]/2);
   }
 

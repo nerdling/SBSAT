@@ -64,19 +64,21 @@
    /* Put the tokens into the symbol table, so that GDB and other debuggers
       know about them.  */
    enum yytokentype {
-     UNS_INT = 258,
+     UINT = 258,
      P_AIG = 259,
      COMMENT_HEADER = 260,
-     STRING = 261,
-     IO_IDENTIFIER = 262
+     WORD = 261,
+     IO_IDENTIFIER = 262,
+     NEW_LINE = 263
    };
 #endif
 /* Tokens.  */
-#define UNS_INT 258
+#define UINT 258
 #define P_AIG 259
 #define COMMENT_HEADER 260
-#define STRING 261
+#define WORD 261
 #define IO_IDENTIFIER 262
+#define NEW_LINE 263
 
 
 
@@ -87,7 +89,21 @@
 #define  aig_error yy_error
 #include <stdio.h>
 #include "bddnode.h"
-int j = 0;
+#include "symtable.h"
+#define YYDEBUG 1
+int aig_counter = 0;
+int aig_inputs;
+int aig_latches;
+int aig_outputs;
+int aig_ands;
+int aig_symbols;
+
+int *aig_input_vars;
+int *aig_output_literals;
+int aig_array[3];
+int aig_index = 0;
+char *aig_symbol_name;
+
 int aig_lex();
 void aig_error(const char*);
 //#define YYSTYPE int
@@ -119,14 +135,14 @@ void aig_error(const char*);
 #endif
 
 #if ! defined (YYSTYPE) && ! defined (YYSTYPE_IS_DECLARED)
-#line 19 "aig_g.yy"
+#line 33 "aig_g.yy"
 typedef union YYSTYPE {
     int  num;      /* For returning numbers.               */
     char id[200];  /* For returning ids.                   */
     BDDNode *bdd;  /*                                      */
 } YYSTYPE;
 /* Line 196 of yacc.c.  */
-#line 130 "libt5_a-aig_g.cc"
+#line 146 "libt5_a-aig_g.cc"
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
 # define YYSTYPE_IS_TRIVIAL 1
@@ -138,7 +154,7 @@ typedef union YYSTYPE {
 
 
 /* Line 219 of yacc.c.  */
-#line 142 "libt5_a-aig_g.cc"
+#line 158 "libt5_a-aig_g.cc"
 
 #if ! defined (YYSIZE_T) && defined (__SIZE_TYPE__)
 # define YYSIZE_T __SIZE_TYPE__
@@ -287,22 +303,22 @@ union yyalloc
 #endif
 
 /* YYFINAL -- State number of the termination state. */
-#define YYFINAL  6
+#define YYFINAL  5
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   23
+#define YYLAST   28
 
 /* YYNTOKENS -- Number of terminals. */
-#define YYNTOKENS  8
+#define YYNTOKENS  9
 /* YYNNTS -- Number of nonterminals. */
-#define YYNNTS  17
+#define YYNNTS  14
 /* YYNRULES -- Number of rules. */
-#define YYNRULES  27
+#define YYNRULES  23
 /* YYNRULES -- Number of states. */
-#define YYNSTATES  36
+#define YYNSTATES  33
 
 /* YYTRANSLATE(YYLEX) -- Bison symbol number corresponding to YYLEX.  */
 #define YYUNDEFTOK  2
-#define YYMAXUTOK   262
+#define YYMAXUTOK   263
 
 #define YYTRANSLATE(YYX)						\
   ((unsigned int) (YYX) <= YYMAXUTOK ? yytranslate[YYX] : YYUNDEFTOK)
@@ -336,7 +352,7 @@ static const unsigned char yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
-       5,     6,     7
+       5,     6,     7,     8
 };
 
 #if YYDEBUG
@@ -344,29 +360,28 @@ static const unsigned char yytranslate[] =
    YYRHS.  */
 static const unsigned char yyprhs[] =
 {
-       0,     0,     3,     6,     7,    14,    15,    22,    23,    26,
-      27,    30,    31,    34,    35,    38,    39,    42,    43,    46,
-      47,    50,    52,    54,    57,    61,    64,    66
+       0,     0,     3,     6,     7,    15,    16,    20,    21,    24,
+      27,    28,    31,    32,    35,    39,    40,    43,    44,    47,
+      50,    53,    54,    57
 };
 
 /* YYRHS -- A `-1'-separated list of the rules' RHS. */
 static const yysigned_char yyrhs[] =
 {
-       9,     0,    -1,    10,    11,    -1,    -1,     4,     3,     3,
-       3,     3,     3,    -1,    -1,    12,    13,    14,    15,    16,
-      17,    -1,    -1,    12,     9,    -1,    -1,    13,    20,    -1,
-      -1,    14,    19,    -1,    -1,    15,    21,    -1,    -1,    16,
-      22,    -1,    -1,    23,    18,    -1,    -1,    18,    24,    -1,
-       3,    -1,     3,    -1,     3,     3,    -1,     3,     3,     3,
-      -1,     7,     6,    -1,     5,    -1,     6,    -1
+      10,     0,    -1,    11,    12,    -1,    -1,     4,     3,     3,
+       3,     3,     3,     8,    -1,    -1,    13,    16,    18,    -1,
+      -1,    13,    14,    -1,    15,     8,    -1,    -1,     3,    15,
+      -1,    -1,    16,    17,    -1,     7,     6,     8,    -1,    -1,
+      20,    19,    -1,    -1,    19,    21,    -1,     5,     8,    -1,
+      22,     8,    -1,    -1,    22,     6,    -1,    22,     3,    -1
 };
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const unsigned char yyrline[] =
 {
-       0,    30,    30,    33,    34,    38,    39,    42,    43,    46,
-      47,    50,    51,    54,    55,    58,    59,    62,    63,    66,
-      67,    70,    74,    78,    82,    86,    89,    92
+       0,    45,    45,    48,    49,    70,    71,    74,    75,    78,
+     108,   109,   117,   118,   121,   138,   139,   142,   143,   147,
+     150,   153,   154,   155
 };
 #endif
 
@@ -375,11 +390,10 @@ static const unsigned char yyrline[] =
    First, the terminals, then, starting at YYNTOKENS, nonterminals. */
 static const char *const yytname[] =
 {
-  "$end", "error", "$undefined", "UNS_INT", "P_AIG", "COMMENT_HEADER",
-  "STRING", "IO_IDENTIFIER", "$accept", "input", "header", "clauses",
-  "inputs", "latches", "outputs", "ands", "symbols", "comments",
-  "comment_lines", "output", "latch", "and", "symbol", "comment_header",
-  "comment_line", 0
+  "$end", "error", "$undefined", "UINT", "P_AIG", "COMMENT_HEADER",
+  "WORD", "IO_IDENTIFIER", "NEW_LINE", "$accept", "file", "header",
+  "clauses", "lines", "line", "uints", "symbols", "symbol", "comments",
+  "comment_lines", "comment_header", "comment_line", "words", 0
 };
 #endif
 
@@ -388,24 +402,24 @@ static const char *const yytname[] =
    token YYLEX-NUM.  */
 static const unsigned short int yytoknum[] =
 {
-       0,   256,   257,   258,   259,   260,   261,   262
+       0,   256,   257,   258,   259,   260,   261,   262,   263
 };
 # endif
 
 /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const unsigned char yyr1[] =
 {
-       0,     8,     9,    10,    10,    11,    11,    12,    12,    13,
-      13,    14,    14,    15,    15,    16,    16,    17,    17,    18,
-      18,     9,    19,    20,    21,    22,    23,    24
+       0,     9,    10,    11,    11,    12,    12,    13,    13,    14,
+      15,    15,    16,    16,    17,    18,    18,    19,    19,    20,
+      21,    22,    22,    22
 };
 
 /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
 static const unsigned char yyr2[] =
 {
-       0,     2,     2,     0,     6,     0,     6,     0,     2,     0,
-       2,     0,     2,     0,     2,     0,     2,     0,     2,     0,
-       2,     1,     1,     2,     3,     2,     1,     1
+       0,     2,     2,     0,     7,     0,     3,     0,     2,     2,
+       0,     2,     0,     2,     3,     0,     2,     0,     2,     2,
+       2,     0,     2,     2
 };
 
 /* YYDEFACT[STATE-NAME] -- Default rule to reduce with in state
@@ -413,64 +427,64 @@ static const unsigned char yyr2[] =
    means the default is an error.  */
 static const unsigned char yydefact[] =
 {
-       3,    21,     0,     0,     5,     0,     1,     2,     3,     0,
-       8,    11,     0,     0,    13,    10,     0,    23,    22,    15,
-      12,     4,     0,    17,    14,     0,    26,     0,     6,    16,
-      19,    24,    25,    18,    27,    20
+       3,     0,     0,     7,     0,     1,     2,    12,     0,    10,
+       8,     0,    15,     0,    11,     9,     0,     0,    13,     6,
+      17,     0,    19,     0,    21,     0,    14,    18,     0,     4,
+      23,    22,    20
 };
 
 /* YYDEFGOTO[NTERM-NUM]. */
 static const yysigned_char yydefgoto[] =
 {
-      -1,     3,     4,     7,     8,    11,    14,    19,    23,    28,
-      33,    20,    15,    24,    29,    30,    35
+      -1,     2,     3,     6,     7,    10,    11,    12,    18,    19,
+      24,    20,    27,    28
 };
 
 /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
    STATE-NUM.  */
-#define YYPACT_NINF -6
+#define YYPACT_NINF -4
 static const yysigned_char yypact[] =
 {
-       0,    -6,    -2,     5,    -6,     3,    -6,    -6,     0,     4,
-      -6,     6,     7,     8,     9,    -6,    10,    -6,    -6,    11,
-      -6,    -6,    12,    -5,    -6,    13,    -6,     2,    -6,    -6,
-      -6,    -6,    -6,    14,    -6,    -6
+       0,    -1,     8,    10,     9,    -4,    -4,    -2,    11,    12,
+      -4,     3,     2,    13,    -4,    -4,     5,    14,    -4,    -4,
+      -4,    15,    -4,    16,    17,    18,    -4,    -4,    -3,    -4,
+      -4,    -4,    -4
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yysigned_char yypgoto[] =
 {
-      -6,    15,    -6,    -6,    -6,    -6,    -6,    -6,    -6,    -6,
-      -6,    -6,    -6,    -6,    -6,    -6,    -6
+      -4,    -4,    -4,    -4,    -4,    -4,    19,    -4,    -4,    -4,
+      -4,    -4,    -4,    -4
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
    positive, shift that token.  If negative, reduce the rule which
    number is the opposite.  If zero, do what YYDEFACT says.
    If YYTABLE_NINF, syntax error.  */
-#define YYTABLE_NINF -1
-static const unsigned char yytable[] =
+#define YYTABLE_NINF -17
+static const yysigned_char yytable[] =
 {
-      26,     5,    27,     1,     2,     6,     9,    12,    32,    13,
-      16,    17,    18,    21,    22,    25,    31,     0,     0,     0,
-      34,     0,     0,    10
+      30,     9,     4,    31,     1,    32,   -10,    16,     5,    17,
+      -5,    15,     8,    22,    13,     9,    21,   -16,    25,     0,
+      23,     0,     0,     0,    26,     0,    29,     0,    14
 };
 
 static const yysigned_char yycheck[] =
 {
-       5,     3,     7,     3,     4,     0,     3,     3,     6,     3,
-       3,     3,     3,     3,     3,     3,     3,    -1,    -1,    -1,
-       6,    -1,    -1,     8
+       3,     3,     3,     6,     4,     8,     8,     5,     0,     7,
+       0,     8,     3,     8,     3,     3,     3,     0,     3,    -1,
+       6,    -1,    -1,    -1,     8,    -1,     8,    -1,     9
 };
 
 /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
    symbol of state STATE-NUM.  */
 static const unsigned char yystos[] =
 {
-       0,     3,     4,     9,    10,     3,     0,    11,    12,     3,
-       9,    13,     3,     3,    14,    20,     3,     3,     3,    15,
-      19,     3,     3,    16,    21,     3,     5,     7,    17,    22,
-      23,     3,     6,    18,     6,    24
+       0,     4,    10,    11,     3,     0,    12,    13,     3,     3,
+      14,    15,    16,     3,    15,     8,     5,     7,    17,    18,
+      20,     3,     8,     6,    19,     3,     8,    21,    22,     8,
+       3,     6,     8
 };
 
 #define yyerrok		(yyerrstatus = 0)
@@ -1140,28 +1154,80 @@ yyreduce:
   switch (yyn)
     {
         case 4:
-#line 35 "aig_g.yy"
-    {printf("header!\n");}
+#line 50 "aig_g.yy"
+    { aig_inputs = (yyvsp[-4].num);
+	  aig_latches = (yyvsp[-3].num);
+	  aig_outputs = (yyvsp[-2].num);
+	  aig_ands = (yyvsp[-1].num);
+	  d2_printf6("header! %d %d %d %d %d\n",(yyvsp[-5].num),(yyvsp[-4].num),(yyvsp[-3].num),(yyvsp[-2].num),(yyvsp[-1].num));
+	  if(aig_latches > 0){
+	    fprintf(stderr, "\nInput contains latches...exiting.\n");
+	    //exit(1);
+	  }
+	  if(aig_outputs > 1){
+	    fprintf(stderr, "\nInput contains more than one output.\n");
+	    //exit(1);
+	  }
+	  vars_alloc((yyvsp[-5].num)+1);
+	  functions_alloc(aig_ands);
+	  aig_input_vars = (int *) malloc(aig_inputs*sizeof(int));
+	  aig_output_literals = (int *) malloc(aig_outputs*sizeof(int));
+}
     break;
 
-  case 21:
-#line 71 "aig_g.yy"
-    {printf("input = %d\n",(yyvsp[0].num));}
-    break;
-
-  case 22:
-#line 75 "aig_g.yy"
-    {printf("output = %d\n",(yyvsp[0].num));}
-    break;
-
-  case 23:
+  case 9:
 #line 79 "aig_g.yy"
-    {printf("latch = %d %d\n",(yyvsp[-1].num),(yyvsp[0].num));}
+    { 
+	  aig_index = 0;
+	  if(aig_counter < aig_inputs){
+	    aig_input_vars[aig_counter] = aig_array[0];
+	    d2_printf3("%d input = %d \n",aig_counter, aig_array[0]);
+	  }else if(aig_counter < aig_latches + aig_inputs){
+	    d2_printf4("%d latch = %d %d\n",aig_counter, aig_array[0],aig_array[1]);
+	  }else if(aig_counter < aig_outputs + aig_latches + aig_inputs){
+	    aig_output_literals[aig_counter-aig_latches-aig_inputs] = aig_array[0];
+	    d2_printf3("%d output = %d\n",aig_counter,aig_array[0]);
+	  }else if(aig_counter < aig_ands + aig_outputs + aig_latches + aig_inputs){
+	    BDDNode *bdd_aig_array[3];
+	    for(int i=0;i<3;i++){
+	      if(aig_array[i]%2) bdd_aig_array[i] = ite_var(-(i_getsym_int(aig_array[i]-1, SYM_VAR)));
+	      else bdd_aig_array[i] = ite_var(i_getsym_int(aig_array[i], SYM_VAR));
+	    }
+	    functions_add(ite_equ(bdd_aig_array[0], ite_and(bdd_aig_array[1], bdd_aig_array[2])),
+			  AND_EQU, i_getsym_int(aig_array[0], SYM_VAR));
+		 printBDD(ite_equ(bdd_aig_array[0], ite_and(bdd_aig_array[1], bdd_aig_array[2])));
+
+	    d2_printf5("%d and = %d %d %d\n",aig_counter, aig_array[0], aig_array[1], aig_array[2]);
+
+	  }else{
+	    //shouldn't reach this case
+	  }
+	  aig_counter++; 
+	}
     break;
 
-  case 24:
-#line 83 "aig_g.yy"
-    {printf("and = %d %d %d\n",(yyvsp[-2].num),(yyvsp[-1].num),(yyvsp[0].num));}
+  case 11:
+#line 110 "aig_g.yy"
+    { 
+  aig_array[aig_index++] = (yyvsp[-1].num);
+  /*d2_printf2("\t %d\n",$1);*/
+}
+    break;
+
+  case 14:
+#line 122 "aig_g.yy"
+    { 
+  int index = atoi((yyvsp[-2].id)+1);
+  d2_printf4("symbol %c %d = %s\n",*(yyvsp[-2].id),index,(yyvsp[-1].id));
+  if(*(yyvsp[-2].id) == 'i'){
+//    putsym_with_id($2, SYM_VAR, aig_input_vars[index]);
+    d2_printf2("\t%d\n",aig_input_vars[index]);
+  }else if(*(yyvsp[-2].id) == 'o'){
+//    putsym_with_id($2, SYM_VAR, aig_output_literals[index]/2);
+    d2_printf2("\t%d\n",aig_output_literals[index]/2);
+  }
+
+}
     break;
 
 
@@ -1169,7 +1235,7 @@ yyreduce:
     }
 
 /* Line 1126 of yacc.c.  */
-#line 1173 "libt5_a-aig_g.cc"
+#line 1239 "libt5_a-aig_g.cc"
 
   yyvsp -= yylen;
   yyssp -= yylen;
@@ -1437,7 +1503,7 @@ yyreturn:
 }
 
 
-#line 95 "aig_g.yy"
+#line 159 "aig_g.yy"
 
 
 
