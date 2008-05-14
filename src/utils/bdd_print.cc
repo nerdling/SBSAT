@@ -94,6 +94,24 @@ void printBDDfile(BDDNode * bdd, FILE * fout) {
    printBDDfile(bdd->elseCase, fout);
    fprintf(fout, ")");
 }
+
+void printBDDfile_sym(BDDNode * bdd, FILE * fout) {
+   if (bdd == true_ptr) {
+      fprintf (fout, "T");
+      return;
+   }
+	if (bdd == false_ptr) {
+      fprintf (fout, "F");
+      return;
+   }
+	fprintf (fout, "(");
+   printBDDfile_sym(bdd->thenCase, fout);
+   //fprintf (stdout, "[%d]", bdd->variable);
+	/* D_4(fprintf(fout, "[%s", s_name(bdd->variable));) */
+	fprintf(fout, "[%s]", getsym_i(bdd->variable)->name);
+   printBDDfile_sym(bdd->elseCase, fout);
+   fprintf(fout, ")");
+}
 	 
 void printBDD(BDDNode * bdd) { 
    if (bdd == true_ptr) {

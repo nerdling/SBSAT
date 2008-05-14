@@ -180,6 +180,8 @@ t_opt options[] = {
                 "Output in SMURF format"},
 { &formatout, "c", "", P_PRE_CHAR, V(c:'c',"c"), V(c:'b',"b"), VAR_NORMAL, 0, 
                 "Output in CNF format"},
+{ &formatout, "a", "", P_PRE_CHAR, V(c:'a',"a"), V(c:'b',"b"), VAR_NORMAL, 0, 
+                "Output in AAG format"},
 { &formatout, "x", "", P_PRE_CHAR, V(c:'x',"x"), V(c:'b',"b"), VAR_NORMAL, 0, 
                 "Output in XOR format"},
 { &formatout, "v", "", P_PRE_CHAR, V(c:'v',"v"), V(c:'b',"b"), VAR_NORMAL, 0,

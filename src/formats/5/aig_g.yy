@@ -95,7 +95,7 @@ line: uints NEW_LINE
 	      else bdd_aig_array[i] = ite_var(i_getsym_int(aig_array[i], SYM_VAR));
 	    }
 	    functions_add(ite_equ(bdd_aig_array[2], ite_and(bdd_aig_array[1], bdd_aig_array[0])),
-			  AND_EQU, i_getsym_int(bdd_aig_array[2]->variable, SYM_VAR));
+			  UNSURE, 0);
 		 printBDD(ite_equ(bdd_aig_array[2], ite_and(bdd_aig_array[1], bdd_aig_array[0])));
 
 	    d2_printf5("%d and = %d %d %d\n",aig_counter, aig_array[2], aig_array[1], aig_array[0]);

@@ -87,6 +87,7 @@ void verifyCircuit(int);
 void printBDDerr(BDDNode *);
 void printBDD(BDDNode *);
 void printBDDfile(BDDNode *, FILE *);
+void printBDDfile_sym(BDDNode *, FILE *);
 void printBDDTree(BDDNode *, int *);
 void printITEBDD(BDDNode *);
 void printBDDdot_file(BDDNode **, int);
@@ -129,6 +130,7 @@ void printSchlipfCircuit();
 void printBDDToCNF();
 void printBDDToCNFQM();
 void printBDDToCNF3SAT();
+void printBDDToAAG();
 
 void GetInferFoAN(BDDNode *);
 infer *GetInfer(long *, long *, int **, BDDNode *);

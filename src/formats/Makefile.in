@@ -52,11 +52,11 @@ AR = ar
 ARFLAGS = cru
 libformats_a_AR = $(AR) $(ARFLAGS)
 libformats_a_LIBADD =
-am__objects_1 = autochk.$(OBJEXT) smurf.$(OBJEXT) bdd2cnf.$(OBJEXT) \
-	bddbinary.$(OBJEXT) cnf.$(OBJEXT) markbdd.$(OBJEXT) \
-	xorbdd.$(OBJEXT) sat.$(OBJEXT) smurf_fpga.$(OBJEXT) \
-	read_result.$(OBJEXT) read_input.$(OBJEXT) \
-	write_output.$(OBJEXT)
+am__objects_1 = autochk.$(OBJEXT) smurf.$(OBJEXT) bdd2aag.$(OBJEXT) \
+	bdd2cnf.$(OBJEXT) bddbinary.$(OBJEXT) cnf.$(OBJEXT) \
+	markbdd.$(OBJEXT) xorbdd.$(OBJEXT) sat.$(OBJEXT) \
+	smurf_fpga.$(OBJEXT) read_result.$(OBJEXT) \
+	read_input.$(OBJEXT) write_output.$(OBJEXT)
 am_libformats_a_OBJECTS = $(am__objects_1)
 libformats_a_OBJECTS = $(am_libformats_a_OBJECTS)
 am__installdirs = "$(DESTDIR)$(bindir)"
@@ -191,7 +191,7 @@ target_alias = @target_alias@
 INCLUDES = -I$(top_srcdir)/include
 SUBDIRS = 5
 sources = autochk.cc  \
-	smurf.cc  bdd2cnf.cc  bddbinary.cc \
+	smurf.cc  bdd2aag.cc bdd2cnf.cc  bddbinary.cc \
 	cnf.cc    markbdd.cc xorbdd.cc \
 	sat.cc  smurf_fpga.cc\
         read_result.cc read_input.cc write_output.cc
@@ -281,6 +281,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/aiger.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/aigtoaig.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/autochk.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bdd2aag.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bdd2cnf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bddbinary.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cnf.Po@am__quote@

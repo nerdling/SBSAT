@@ -55,6 +55,7 @@ int read_input();
 void DNF_to_BDD();
 void Binary_to_BDD();
 void BDD_to_Binary();
+void printBDDToAAG();
 void Smurf_FPGA();
 void printLinearFormat();
 void printXORFormat();
