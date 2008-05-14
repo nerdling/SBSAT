@@ -1,3 +1,301 @@
+2008-05-13 17:20  sarahw
+
+	* src/formats/5/: aig_g.yy, aig_s.cc, libt5_a-aig_g.cc,
+	  libt5_a-aig_g.h:
+	  Fixed AIG variables.
+
+2008-05-13 16:57  fett
+
+	* include/config.h, src/formats/5/aig_g.yy, src/formats/5/aig_s.cc,
+	  src/formats/5/libt5_a-aig_g.cc, src/formats/5/libt5_a-aig_g.h:
+	  [no log message]
+
+2008-05-13 16:06  sarahw
+
+	* include/config.h, include/symtable.h, src/formats/5/aig_g.yy,
+	  src/formats/5/aig_s.ll:
+	  Added in aig bdds. Something is broken, possibly the symbol
+	  table.
+
+2008-05-13 10:00  sarahw
+
+	* src/formats/5/: aig_g.yy, aig_s.ll: Put in structure for parsing
+	  aig files. No bdds yet!
+
+2008-05-11 14:24  fett
+
+	* include/config.h, src/utils/zread.cc: [no log message]
+
+2008-05-11 14:20  fett
+
+	* Makefile.in, configure, doc/Makefile.in, doc/man1/Makefile.in,
+	  examples/Makefile.in, include/Makefile.in, include/config.h,
+	  src/Makefile.in, src/formats/Makefile.in,
+	  src/formats/5/Makefile.in, src/generator/Makefile.in,
+	  src/postproc/Makefile.in, src/preproc/Makefile.in,
+	  src/solv_bddwalk/Makefile.in, src/solv_simple/Makefile.in,
+	  src/solv_simple/bb_gelim/Makefile.in,
+	  src/solv_simple/fn_or/Makefile.in,
+	  src/solv_simple/fn_smurf/Makefile.in,
+	  src/solv_simple/fn_xor/Makefile.in,
+	  src/solv_simple/include/Makefile.in, src/solv_smurf/Makefile.in,
+	  src/solv_smurf/fn_and/Makefile.in,
+	  src/solv_smurf/fn_lemma/Makefile.in,
+	  src/solv_smurf/fn_lemma_au/Makefile.in,
+	  src/solv_smurf/fn_minmax/Makefile.in,
+	  src/solv_smurf/fn_smurf/Makefile.in,
+	  src/solv_smurf/fn_smurf_au/Makefile.in,
+	  src/solv_smurf/fn_smurf_xor/Makefile.in,
+	  src/solv_smurf/fn_xor/Makefile.in,
+	  src/solv_smurf/fn_xor_smurf/Makefile.in,
+	  src/solv_smurf/hr_anne/Makefile.in,
+	  src/solv_smurf/hr_berkmin/Makefile.in,
+	  src/solv_smurf/hr_lemma/Makefile.in,
+	  src/solv_smurf/hr_lsgb/Makefile.in,
+	  src/solv_smurf/hr_lsgb_lemma/Makefile.in,
+	  src/solv_smurf/hr_lsgbw/Makefile.in,
+	  src/solv_smurf/hr_minisat/Makefile.in,
+	  src/solv_smurf/hr_null/Makefile.in,
+	  src/solv_smurf/hr_vsids/Makefile.in,
+	  src/solv_smurf/include/Makefile.in, src/solv_wvf/Makefile.in,
+	  src/utils/Makefile.in, tests/Makefile.in, tests/cnf/Makefile.in,
+	  tests/longer_tests/Makefile.in, tests/trace_tests/Makefile.in:
+	  [no log message]
+
+2008-05-11 14:14  fett
+
+	* Makefile.in, configure, configure.ac, doc/Makefile.in,
+	  doc/man1/Makefile.in, doc/man1/sbsat.1, examples/Makefile.in,
+	  include/Makefile.in, include/config.h, include/prototypes.h,
+	  include/sbsat_formats.h, src/Makefile.in,
+	  src/formats/Makefile.am, src/formats/Makefile.in,
+	  src/formats/aiger.c, src/formats/aiger.h, src/formats/aigtoaig.c,
+	  src/formats/autochk.cc, src/formats/read_input.cc,
+	  src/formats/5/Makefile.in, src/generator/Makefile.in,
+	  src/postproc/Makefile.in, src/preproc/Makefile.in,
+	  src/solv_bddwalk/Makefile.in, src/solv_simple/Makefile.in,
+	  src/solv_simple/bb_gelim/Makefile.in,
+	  src/solv_simple/fn_or/Makefile.in,
+	  src/solv_simple/fn_smurf/Makefile.in,
+	  src/solv_simple/fn_xor/Makefile.in,
+	  src/solv_simple/include/Makefile.in, src/solv_smurf/Makefile.in,
+	  src/solv_smurf/fn_and/Makefile.in,
+	  src/solv_smurf/fn_lemma/Makefile.in,
+	  src/solv_smurf/fn_lemma_au/Makefile.in,
+	  src/solv_smurf/fn_minmax/Makefile.in,
+	  src/solv_smurf/fn_smurf/Makefile.in,
+	  src/solv_smurf/fn_smurf_au/Makefile.in,
+	  src/solv_smurf/fn_smurf_xor/Makefile.in,
+	  src/solv_smurf/fn_xor/Makefile.in,
+	  src/solv_smurf/fn_xor_smurf/Makefile.in,
+	  src/solv_smurf/hr_anne/Makefile.in,
+	  src/solv_smurf/hr_berkmin/Makefile.in,
+	  src/solv_smurf/hr_lemma/Makefile.in,
+	  src/solv_smurf/hr_lsgb/Makefile.in,
+	  src/solv_smurf/hr_lsgb_lemma/Makefile.in,
+	  src/solv_smurf/hr_lsgbw/Makefile.in,
+	  src/solv_smurf/hr_minisat/Makefile.in,
+	  src/solv_smurf/hr_null/Makefile.in,
+	  src/solv_smurf/hr_vsids/Makefile.in,
+	  src/solv_smurf/include/Makefile.in, src/solv_wvf/Makefile.in,
+	  src/utils/Makefile.in, src/utils/zread.cc, tests/Makefile.in,
+	  tests/cnf/Makefile.in, tests/longer_tests/Makefile.in,
+	  tests/trace_tests/Makefile.in: Added binary AIG decoding
+	  capabilities.
+
+2008-05-10 20:37  fett
+
+	* doc/man1/sbsat.1, include/config.h: [no log message]
+
+2008-05-10 20:30  fett
+
+	* src/formats/5/aig_s.cc, Makefile.in, aclocal.m4, configure,
+	  doc/Makefile.in, doc/man1/Makefile.in, examples/Makefile.in,
+	  include/Makefile.in, include/config.h, include/config.h.in,
+	  include/sbsat_solver.h, include/sbsat_vars.h, src/Makefile.in,
+	  src/sbsat.cc, src/formats/Makefile.in, src/formats/5/Makefile.in,
+	  src/generator/Makefile.in, src/postproc/Makefile.in,
+	  src/preproc/Makefile.in, src/solv_bddwalk/Makefile.in,
+	  src/solv_simple/Makefile.in,
+	  src/solv_simple/bb_gelim/Makefile.in,
+	  src/solv_simple/fn_or/Makefile.in,
+	  src/solv_simple/fn_smurf/Makefile.in,
+	  src/solv_simple/fn_xor/Makefile.in,
+	  src/solv_simple/include/Makefile.in, src/solv_smurf/Makefile.in,
+	  src/solv_smurf/fn_and/Makefile.in,
+	  src/solv_smurf/fn_lemma/Makefile.in,
+	  src/solv_smurf/fn_lemma_au/Makefile.in,
+	  src/solv_smurf/fn_minmax/Makefile.in,
+	  src/solv_smurf/fn_minmax/hr_lsgb_minmax.cc,
+	  src/solv_smurf/fn_smurf/Makefile.in,
+	  src/solv_smurf/fn_smurf_au/Makefile.in,
+	  src/solv_smurf/fn_smurf_xor/Makefile.in,
+	  src/solv_smurf/fn_xor/Makefile.in,
+	  src/solv_smurf/fn_xor_smurf/Makefile.in,
+	  src/solv_smurf/hr_anne/Makefile.in,
+	  src/solv_smurf/hr_berkmin/Makefile.in,
+	  src/solv_smurf/hr_lemma/Makefile.in,
+	  src/solv_smurf/hr_lsgb/Makefile.in,
+	  src/solv_smurf/hr_lsgb_lemma/Makefile.in,
+	  src/solv_smurf/hr_lsgbw/Makefile.in,
+	  src/solv_smurf/hr_minisat/Makefile.in,
+	  src/solv_smurf/hr_null/Makefile.in,
+	  src/solv_smurf/hr_vsids/Makefile.in,
+	  src/solv_smurf/include/Makefile.in, src/solv_wvf/Makefile.in,
+	  src/utils/Makefile.in, src/utils/bdd_print.cc,
+	  src/utils/params.cc, src/utils/vars.cc, tests/Makefile.in,
+	  tests/cnf/Makefile.in, tests/longer_tests/Makefile.in,
+	  tests/trace_tests/Makefile.in: [no log message]
+
+2008-05-10 20:24  fett
+
+	* src/formats/5/: libt5_a-aig_g.cc, libt5_a-aig_g.h: [no log
+	  message]
+
+2008-05-09 17:52  sarahw
+
+	* src/formats/5/: aig_g.yy, aig_s.ll: started writing parser for
+	  aig format
+
+2008-05-09 16:57  sarahw
+
+	* aclocal.m4, configure, include/config.h, include/config.h.in,
+	  src/formats/5/Makefile.am, src/formats/5/Makefile.in,
+	  src/formats/5/libt5_a-trace_g.cc,
+	  src/formats/5/libt5_a-trace_g.h, src/generator/gentest.cc,
+	  src/generator/trans.cc: [no log message]
+
+2008-05-09 16:55  fett
+
+	* src/formats/5/: aig_g.yy, aig_s.ll: [no log message]
+
+2008-05-09 16:41  fett
+
+	* Makefile.in, aclocal.m4, configure, doc/Makefile.in,
+	  doc/man1/Makefile.in, doc/man1/sbsat.1, examples/Makefile.in,
+	  include/Makefile.in, src/Makefile.in, src/formats/Makefile.in,
+	  src/formats/read_input.cc, src/formats/5/Makefile.am,
+	  src/formats/5/Makefile.in, src/generator/Makefile.in,
+	  src/postproc/Makefile.in, src/preproc/Makefile.in,
+	  src/solv_bddwalk/Makefile.in, src/solv_simple/Makefile.in,
+	  src/solv_simple/solv_simple.cc,
+	  src/solv_simple/bb_gelim/Makefile.in,
+	  src/solv_simple/fn_or/Makefile.in,
+	  src/solv_simple/fn_smurf/Makefile.in,
+	  src/solv_simple/fn_xor/Makefile.in,
+	  src/solv_simple/include/Makefile.in, src/solv_smurf/Makefile.in,
+	  src/solv_smurf/fn_and/Makefile.in,
+	  src/solv_smurf/fn_lemma/Makefile.in,
+	  src/solv_smurf/fn_lemma_au/Makefile.in,
+	  src/solv_smurf/fn_minmax/Makefile.in,
+	  src/solv_smurf/fn_smurf/Makefile.in,
+	  src/solv_smurf/fn_smurf_au/Makefile.in,
+	  src/solv_smurf/fn_smurf_xor/Makefile.in,
+	  src/solv_smurf/fn_xor/Makefile.in,
+	  src/solv_smurf/fn_xor_smurf/Makefile.in,
+	  src/solv_smurf/hr_anne/Makefile.in,
+	  src/solv_smurf/hr_berkmin/Makefile.in,
+	  src/solv_smurf/hr_lemma/Makefile.in,
+	  src/solv_smurf/hr_lsgb/Makefile.in,
+	  src/solv_smurf/hr_lsgb_lemma/Makefile.in,
+	  src/solv_smurf/hr_lsgbw/Makefile.in,
+	  src/solv_smurf/hr_minisat/Makefile.in,
+	  src/solv_smurf/hr_null/Makefile.in,
+	  src/solv_smurf/hr_vsids/Makefile.in,
+	  src/solv_smurf/include/Makefile.in, src/solv_wvf/Makefile.in,
+	  src/utils/Makefile.in, tests/Makefile.in, tests/cnf/Makefile.in,
+	  tests/longer_tests/Makefile.in, tests/trace_tests/Makefile.in:
+	  Added the basic structure for the AIG format.
+
+2008-04-13 20:13  fett
+
+	* include/sbsat_solver.h, src/formats/markbdd.cc,
+	  src/solv_simple/display.cc, src/solv_simple/solv_simple_init.cc,
+	  src/solv_simple/fn_or/fn_or.cc,
+	  src/solv_simple/fn_smurf/fn_smurf.cc,
+	  src/solv_simple/fn_xor/fn_xor.cc,
+	  src/solv_simple/include/display.h,
+	  src/solv_simple/include/fn_or.h,
+	  src/solv_simple/include/fn_smurf.h,
+	  src/solv_simple/include/fn_xor.h, src/utils/bdd_print.cc: Can
+	  display smurfs now. Not realy pretty though.
+
+2008-04-12 20:19  fett
+
+	* include/prototypes.h, include/sbsat_solver.h,
+	  src/formats/markbdd.cc: Adding dot printing of SMURFS into
+	  markbdd.cc
+
+2008-04-12 20:09  fett
+
+	* include/sbsat_solver.h, src/solv_simple/solv_simple_init.cc: [no
+	  log message]
+
+2008-04-12 20:07  fett
+
+	* src/solv_simple/: solv_simple_init.cc, include/display.h: Adding
+	  in functionality used to print the SMURFS via dot.
+
+	     ~Sean
+
+2008-04-12 19:40  fett
+
+	* src/solv_simple/solv_simple_init.cc: Ok! Everything seems to be
+	  'free'ing alright.
+
+2008-04-12 19:19  fett
+
+	* src/solv_simple/: solv_simple_init.cc, fn_or/fn_or.cc,
+	  fn_smurf/fn_smurf.cc, fn_xor/fn_xor.cc, include/fn_or.h,
+	  include/fn_smurf.h, include/fn_xor.h: [no log message]
+
+2008-04-12 18:59  fett
+
+	* src/solv_simple/: solv_simple_init.cc: [no log message]
+
+2008-04-12 18:52  fett
+
+	* src/solv_simple/solv_simple_init.cc: [no log message]
+
+2008-04-12 18:43  fett
+
+	* include/config.h, src/formats/markbdd.cc,
+	  src/generator/xorgen.cc: [no log message]
+
+2008-04-12 18:38  fett
+
+	* src/solv_simple/: display.cc, solv_simple_init.cc: Trying to free
+	  some of the simple solver memory.
+
+2008-04-06 18:43  fett
+
+	* sbsat.xcodeproj/fett.pbxuser: ?
+
+2008-04-06 13:17  fett
+
+	* sbsat.xcodeproj/fett.pbxuser: Adding new xcode project file
+
+2008-04-06 13:06  fett
+
+	* sbsat.xcodeproj/: fett.pbxuser, project.pbxproj: Adding new xcode
+	  project file
+
+2008-04-06 13:04  fett
+
+	* src/solver/backtrack.cc: unfix :)
+
+2008-04-06 13:03  fett
+
+	* src/solver/backtrack.cc: testing xcode
+
+2008-04-05 22:34  fett
+
+	* ChangeLog, include/config.h: [no log message]
+
+2008-03-28 16:54  fett
+
+	* src/generator/slider2.cc: removed *'s
+
 2008-03-15 16:52  sarahw
 
 	* src/solv_simple/cltable/: ClauseTable.C, ClauseTable.h: Fixed the
@@ -4370,10 +4668,6 @@
 
 	* include/pools.h: Not needed.
 
-2004-05-19 19:01  mkouril
-
-	* sbsat.xcode/project.pbxproj: Updated XCode makefile
-
 2004-05-19 17:04  fett
 
 	* include/brancher.h, src/solver/backtrack.cc: partially moved
@@ -6442,10 +6736,6 @@
 2003-12-05 15:24  mkouril
 
 	* src/formats/5/README: [no log message]
-
-2003-12-05 15:23  mkouril
-
-	* sbsat.xcode/project.pbxproj: Xcode project file.
 
 2003-12-05 14:10  mkouril
 
