@@ -22,6 +22,7 @@ extern int s_line;
 UINT    [0-9]+
 COMMENT_HEADER ^c
 WORD [^ \n]+
+STRING [^\n]
 IO_IDENTIFIER (i|l|o)[0-9]+
 NEW_LINE "\n"
 

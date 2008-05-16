@@ -17,6 +17,8 @@ int *aig_output_literals;
 int aig_array[3];
 int aig_index = 0;
 char *aig_symbol_name;
+char aig_string_buffer[1000];
+int aig_string_index = 0;
 
 int aig_lex();
 void aig_error(const char*);
@@ -86,17 +88,26 @@ line: uints NEW_LINE
 	  }else if(aig_counter < aig_outputs + aig_latches + aig_inputs){
 	    aig_output_literals[aig_counter-aig_latches-aig_inputs] = aig_array[0];
 	    d2_printf3("%d output = %d\n",aig_counter,aig_array[0]);
-		 functions_add(ite_var(i_getsym_int(aig_array[0]%2?aig_array[0]-1:aig_array[0], SYM_VAR)), UNSURE, 0);
- 	  	 printBDD(ite_var(i_getsym_int(aig_array[0]%2?aig_array[0]-1:aig_array[0], SYM_VAR)));
+	    if(aig_array[0] == 0){
+	      functions_add(false_ptr, UNSURE, 0);
+	    }else if(aig_array[0]%2){
+	      functions_add(ite_var(-(i_getsym_int(aig_array[0]-1, SYM_VAR))), UNSURE, 0);
+	    }else functions_add(ite_var(i_getsym_int(aig_array[0], SYM_VAR)), UNSURE, 0);
+	    //printBDD(ite_var(i_getsym_int(aig_array[0]%2?aig_array[0]-1:aig_array[0], SYM_VAR)));
 	  }else if(aig_counter < aig_ands + aig_outputs + aig_latches + aig_inputs){
 	    BDDNode *bdd_aig_array[3];
 	    for(int i=0;i<3;i++){
-	      if(aig_array[i]%2) bdd_aig_array[i] = ite_var(-(i_getsym_int(aig_array[i]-1, SYM_VAR)));
-	      else bdd_aig_array[i] = ite_var(i_getsym_int(aig_array[i], SYM_VAR));
+	      if(aig_array[i] == 0){
+		bdd_aig_array[i] == false_ptr;
+	      }else if(aig_array[i] == 1){
+		bdd_aig_array[i] == true_ptr;
+	      }else if(aig_array[i]%2){
+		bdd_aig_array[i] = ite_var(-(i_getsym_int(aig_array[i]-1, SYM_VAR)));
+	      }else bdd_aig_array[i] = ite_var(i_getsym_int(aig_array[i], SYM_VAR));
 	    }
 	    functions_add(ite_equ(bdd_aig_array[2], ite_and(bdd_aig_array[1], bdd_aig_array[0])),
 			  UNSURE, 0);
-		 printBDD(ite_equ(bdd_aig_array[2], ite_and(bdd_aig_array[1], bdd_aig_array[0])));
+	    printBDD(ite_equ(bdd_aig_array[2], ite_and(bdd_aig_array[1], bdd_aig_array[0])));
 
 	    d2_printf5("%d and = %d %d %d\n",aig_counter, aig_array[2], aig_array[1], aig_array[0]);
 
@@ -120,10 +131,12 @@ symbols: /* empty */
 	| symbols symbol
 ;
 
-symbol: IO_IDENTIFIER WORD NEW_LINE
+symbol: IO_IDENTIFIER words NEW_LINE
 { 
   int index = atoi($1+1);
-  d2_printf4("symbol %c %d = %s\n",*$1,index,$2);
+  d2_printf4("symbol %c %d = %s\n",*$1,index,aig_string_buffer);
+  aig_string_index = 0;
+  aig_string_buffer[0] = '\0';
   if(*$1 == 'i'){
 //    putsym_with_id($2, SYM_VAR, aig_input_vars[index]);
     d2_printf2("\t%d\n",aig_input_vars[index]);
@@ -143,6 +156,11 @@ comments: /* empty */
 
 comment_lines: /* empty */
 	| comment_lines comment_line
+{
+  d2_printf2("comment: %s \n",aig_string_buffer);
+  aig_string_index = 0;
+  aig_string_buffer[0] = '\0';
+}
 ;
 
 
@@ -153,8 +171,17 @@ comment_line: words NEW_LINE
 ;
 
 words: /* empty */
-	| words WORD
+	| words word
 	| words UINT
+;
+
+word: WORD
+{  
+  strncat(aig_string_buffer, $1, aig_string_index<1000?1000-aig_string_index:0);
+  aig_string_index += strlen($1);
+  strncat(aig_string_buffer, " ", aig_string_index<1000?1000-aig_string_index:0);
+  aig_string_index++;
+}
 ;
 
 

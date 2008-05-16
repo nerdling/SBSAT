@@ -580,7 +580,7 @@ YY_DECL
 	register char *yy_cp = NULL, *yy_bp = NULL;
 	register int yy_act;
 
-#line 28 "aig_s.ll"
+#line 29 "aig_s.ll"
 
 
 
@@ -670,62 +670,62 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 31 "aig_s.ll"
+#line 32 "aig_s.ll"
 return P_AIG;
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 32 "aig_s.ll"
+#line 33 "aig_s.ll"
 {aig_lval.num=atoi(yytext); return UINT;}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 33 "aig_s.ll"
+#line 34 "aig_s.ll"
 {strncpy(aig_lval.id,yytext,200); return IO_IDENTIFIER;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 35 "aig_s.ll"
+#line 36 "aig_s.ll"
 /* eat up one-line comments */
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 36 "aig_s.ll"
+#line 37 "aig_s.ll"
 /* eat up one-line comments */
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 37 "aig_s.ll"
+#line 38 "aig_s.ll"
 /* eat up one-line comments */
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 39 "aig_s.ll"
+#line 40 "aig_s.ll"
 /* eat up whitespace */
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 41 "aig_s.ll"
+#line 42 "aig_s.ll"
 {return COMMENT_HEADER;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 43 "aig_s.ll"
+#line 44 "aig_s.ll"
 {strncpy(aig_lval.id,yytext,200); return WORD;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 45 "aig_s.ll"
+#line 46 "aig_s.ll"
 {s_line++; return NEW_LINE;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 47 "aig_s.ll"
+#line 48 "aig_s.ll"
 {d2_printf2("Unknown char: %s",yytext);}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 49 "aig_s.ll"
+#line 50 "aig_s.ll"
 ECHO;
 	YY_BREAK
 #line 732 "aig_s.cc"
@@ -1612,6 +1612,6 @@ int main()
 	return 0;
 	}
 #endif
-#line 49 "aig_s.ll"
+#line 50 "aig_s.ll"
 
 
