@@ -204,7 +204,7 @@ sources = autochk.cc  \
 #else
 noinst_LIBRARIES = libformats.a
 libformats_a_SOURCES = $(sources)
-aigtoaig_SOURCES = aigtoaig.c aiger.c
+aigtoaig_SOURCES = aigtoaig.c aiger.c aiger.h
 all: all-recursive
 
 .SUFFIXES:

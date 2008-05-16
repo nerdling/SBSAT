@@ -98,11 +98,11 @@ line: uints NEW_LINE
 	    BDDNode *bdd_aig_array[3];
 	    for(int i=0;i<3;i++){
 	      if(aig_array[i] == 0){
-		bdd_aig_array[i] == false_ptr;
+					bdd_aig_array[i] = false_ptr;
 	      }else if(aig_array[i] == 1){
-		bdd_aig_array[i] == true_ptr;
+					bdd_aig_array[i] = true_ptr;
 	      }else if(aig_array[i]%2){
-		bdd_aig_array[i] = ite_var(-(i_getsym_int(aig_array[i]-1, SYM_VAR)));
+					bdd_aig_array[i] = ite_var(-(i_getsym_int(aig_array[i]-1, SYM_VAR)));
 	      }else bdd_aig_array[i] = ite_var(i_getsym_int(aig_array[i], SYM_VAR));
 	    }
 	    functions_add(ite_equ(bdd_aig_array[2], ite_and(bdd_aig_array[1], bdd_aig_array[0])),
