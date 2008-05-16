@@ -40,7 +40,7 @@ void aig_error(const char*);
 
 %token UINT P_AIG COMMENT_HEADER WORD IO_IDENTIFIER NEW_LINE
 %type <num> UINT 
-%type <id> WORD IO_IDENTIFIER
+%type <id> word WORD IO_IDENTIFIER
 
 %% /* Grammar rules and actions follow */
 
@@ -172,15 +172,32 @@ comment_line: words NEW_LINE
 
 words: /* empty */
 	| words word
+{  
+  strncat(aig_string_buffer, $2, aig_string_index<1000?1000-aig_string_index:0);
+  aig_string_index += strlen($2);
+  strncat(aig_string_buffer, " ", aig_string_index<1000?1000-aig_string_index:0);
+  aig_string_index++;
+}
 	| words UINT
+{  
+  char int_str[10];
+  sprintf(int_str,"%d",$2);
+  strncat(aig_string_buffer, int_str, aig_string_index<1000?1000-aig_string_index:0);
+  aig_string_index += strlen(int_str);
+  strncat(aig_string_buffer, " ", aig_string_index<1000?1000-aig_string_index:0);
+  aig_string_index++;
+}
 ;
+
 
 word: WORD
 {  
+  /*
   strncat(aig_string_buffer, $1, aig_string_index<1000?1000-aig_string_index:0);
   aig_string_index += strlen($1);
   strncat(aig_string_buffer, " ", aig_string_index<1000?1000-aig_string_index:0);
   aig_string_index++;
+  */
 }
 ;
 

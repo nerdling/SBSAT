@@ -460,7 +460,7 @@ static const yytype_uint8 yyrline[] =
 {
        0,    47,    47,    50,    51,    72,    73,    76,    77,    80,
      121,   122,   130,   131,   134,   153,   154,   157,   158,   167,
-     170,   173,   174,   175,   178
+     170,   173,   174,   181,   193
 };
 #endif
 
@@ -1478,19 +1478,43 @@ yyreduce:
 }
     break;
 
-  case 24:
-#line 179 "aig_g.yy"
+  case 22:
+#line 175 "aig_g.yy"
     {  
-  strncat(aig_string_buffer, (yyvsp[(1) - (1)].id), aig_string_index<1000?1000-aig_string_index:0);
-  aig_string_index += strlen((yyvsp[(1) - (1)].id));
+  strncat(aig_string_buffer, (yyvsp[(2) - (2)].id), aig_string_index<1000?1000-aig_string_index:0);
+  aig_string_index += strlen((yyvsp[(2) - (2)].id));
   strncat(aig_string_buffer, " ", aig_string_index<1000?1000-aig_string_index:0);
   aig_string_index++;
 }
     break;
 
+  case 23:
+#line 182 "aig_g.yy"
+    {  
+  char int_str[10];
+  sprintf(int_str,"%d",(yyvsp[(2) - (2)].num));
+  strncat(aig_string_buffer, int_str, aig_string_index<1000?1000-aig_string_index:0);
+  aig_string_index += strlen(int_str);
+  strncat(aig_string_buffer, " ", aig_string_index<1000?1000-aig_string_index:0);
+  aig_string_index++;
+}
+    break;
+
+  case 24:
+#line 194 "aig_g.yy"
+    {  
+  /*
+  strncat(aig_string_buffer, $1, aig_string_index<1000?1000-aig_string_index:0);
+  aig_string_index += strlen($1);
+  strncat(aig_string_buffer, " ", aig_string_index<1000?1000-aig_string_index:0);
+  aig_string_index++;
+  */
+}
+    break;
+
 
 /* Line 1267 of yacc.c.  */
-#line 1494 "libt5_a-aig_g.cc"
+#line 1518 "libt5_a-aig_g.cc"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1704,7 +1728,7 @@ yyreturn:
 }
 
 
-#line 188 "aig_g.yy"
+#line 205 "aig_g.yy"
 
 
 
