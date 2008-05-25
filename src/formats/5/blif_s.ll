@@ -8,7 +8,7 @@
 /* remove warning statement has no effect */
 #define ECHO
 
-#define yyterminate() { blif__delete_buffer(yy_current_buffer); return YY_NULL; }
+#define yyterminate() { blif__delete_buffer(YY_CURRENT_BUFFER); return YY_NULL; }
 
 extern int s_line;
 void blif_ll_nothing() { };

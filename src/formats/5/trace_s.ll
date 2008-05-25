@@ -7,8 +7,7 @@ extern int s_line;
 #define YY_NO_UNPUT
 /* remove warning statement has no effect */
 #define ECHO
-
-#define yyterminate() { trace__delete_buffer(yy_current_buffer); return YY_NULL; }
+#define yyterminate() { trace__delete_buffer(YY_CURRENT_BUFFER); return YY_NULL; }
 
 #define FILL_OP(xfn, xfntype, xfnas, xfnneg) { trace_lval.op2fn.fn=xfn; trace_lval.op2fn.fn_type=xfntype; trace_lval.op2fn.as_type=xfnas; trace_lval.op2fn.neg_all=xfnneg; }
 %}
