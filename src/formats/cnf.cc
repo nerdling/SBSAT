@@ -43,7 +43,7 @@
 #include "sbsat.h"
 #include "sbsat_formats.h"
 
-#define CNF_USES_SYMTABLE
+#define CNF_USES_SYMTABLE //This REALLY slows down reading the CNF
 
 int nNumClauses = 0;
 int nNumCNFVariables = 0;
@@ -94,13 +94,16 @@ int clscompfunc(const void *x, const void *y) {
 }
 
 int getNextSymbol_CNF (int *intnum) {
-	char integers[20];
-	int i = 0;
 	int p = 0;
 	while(1) {
 		p = fgetc(finputfile);
 		if(p == EOF) return ERR_IO_READ;
-		if(p == 'c') {
+		else if(((p >= '0') && (p <= '9')) || (p == '-')) {			
+			ungetc(p, finputfile);
+			if(fscanf(finputfile, "%d", &(*intnum)) != 1) return ERR_IO_UNEXPECTED_CHAR;
+			d9_printf2("%d", (*intnum));
+			return NO_ERROR;
+		} else if(p == 'c') {
 			while(p != '\n') {
 				d9_printf2("%c", p);
 				p = fgetc(finputfile);
@@ -114,19 +117,6 @@ int getNextSymbol_CNF (int *intnum) {
 		} else if(p == 'p') {
 			d9_printf2("%c", p);
 			return IO_CNF_HEADER;
-		} else if(((p >= '0') && (p <= '9')) || (p == '-')) {
-			i = 0;
-			while(((p >= '0') && (p <= '9')) || (p == '-')) {
-				integers[i] = p;
-				i++;
-				d9_printf2("%c", p);
-				p = fgetc(finputfile);
-				if(p == EOF) break;
-			}
-			ungetc(p, finputfile);
-			integers[i] = 0;
-			*intnum = atoi(integers);
-			return NO_ERROR;
 		} else if(p >='A' && p<='z') {
 			d9_printf2("%c", p);
 			return ERR_IO_UNEXPECTED_CHAR;
@@ -188,31 +178,29 @@ int CNF_to_BDD() {
 					tempint = (int*)ite_recalloc((void*)tempint, tempint_max, tempint_max+100, sizeof(int), 9, "read_cnf()::tempint");
 					tempint_max += 100;
 				}
+#ifdef CNF_USES_SYMTABLE
+				tempint[y] = i_getsym_int(next_symbol, SYM_VAR);
+#else
 				tempint[y] = next_symbol;
-				if (tempint[y] == 0) break; //Clause has been terminated
+#endif
+				if(abs(tempint[y]) > nNumCNFVariables) {
+					d2e_printf1("Warning while parsing CNF input: There are more variables in input file than specified\n");
+					nNumCNFVariables = abs(tempint[y]);
+				}
 				ret = getNextSymbol_CNF(&next_symbol);
 				if (ret != NO_ERROR) {
 					fprintf(stderr, "Error while parsing CNF input: Clause %d\n", x);
 					return ret;
 				}
 				y++;
+				if (next_symbol == 0) break; //Clause has been terminated
 			}
 			if(y==0) continue; //A '0' line -- no clause
 			pClauses[x].length = y;
-			pClauses[x].variables = (int *)ite_calloc(y+1, sizeof(int), 9, "read_cnf()::pClauses[x].variables");
+			pClauses[x].variables = (int *)malloc(y * sizeof(int));
 			pClauses[x].subsumed = 0;
 			pClauses[x].flag = -1;
-			for(int z = 0; z < y; z++) {
-#ifdef CNF_USES_SYMTABLE
-				pClauses[x].variables[z] = i_getsym_int(tempint[z], SYM_VAR);
-#else
-				pClauses[x].variables[z] = tempint[z];
-#endif
-				if(abs(pClauses[x].variables[z]) > nNumCNFVariables) {
-					d2e_printf1("Warning while parsing CNF input: There are more variables in input file than specified\n");
-					nNumCNFVariables = abs(pClauses[x].variables[z]);
-				}
-			}
+			memcpy_ite(pClauses[x].variables, tempint, y*sizeof(int));
 			x++;
 		}
 	}
