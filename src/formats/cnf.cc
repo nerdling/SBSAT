@@ -209,14 +209,13 @@ int CNF_to_BDD() {
 		}
 	}
 
-	d2_printf3("\rReading CNF %d/%d ... \n", nNumClauses, nNumClauses);
+	d2_printf3("\rReading CNF %d/%d            \n", nNumClauses, nNumClauses);
 	
 	cnf_process(pClauses);
 	
 	ite_free((void **)&tempint); tempint_max = 0;
 
 	d3_printf2("Number of BDDs - %d\n", nmbrFunctions);
-	d2e_printf1("\rReading CNF ... Done                   \n");
 
 	free_clauses(pClauses);
 	
@@ -273,6 +272,7 @@ void build_clause_BDDs(Clause *pClauses) {
 		functions_add(pOrBDD, PLAINOR, 0);
 		pClauses[x].subsumed = 1;
 	}
+	d2_printf2("\rBuilt %d clause BDDs                \n", nNumClauses);
 }
 
 void find_and_build_xors(Clause *pClauses) {
@@ -568,7 +568,7 @@ void find_and_build_andequals(Clause *pClauses) {
 		}
 	}
 
-	d2_printf2("\rFound %d AND=/OR= functions\n", num_andequals_found);
+	d2_printf2("\rFound %d AND=/OR= functions           \n", num_andequals_found);
 
 }
 
@@ -794,6 +794,218 @@ void find_and_build_iteequals(Clause *pClauses) {
 	d2_printf2("Found %d ITE= functions\n", num_iteequals_found);
 }
 
+ITE_INLINE int pattern_majv_equals(Clause clause, int order[4]) {
+//	fprintf(stderr, "c[%d %d %d]\n", clause.variables[0],clause.variables[1],clause.variables[2]);
+	if((clause.variables[0] == order[0] &&
+		 clause.variables[1] == order[1] &&
+		 clause.variables[2] == order[2]) ||
+		(clause.variables[0] == order[0] &&
+		 clause.variables[1] == order[1] &&
+		 clause.variables[2] == order[3]) ||
+		(clause.variables[0] == order[0] &&
+		 clause.variables[1] == order[2] &&
+		 clause.variables[2] == order[3]) ||
+		(clause.variables[0] == order[1] &&
+		 clause.variables[1] == order[2] &&
+		 clause.variables[2] == order[3]))
+	  return 1;
+	return 0;
+}
+
+void find_and_build_majvequals(Clause *pClauses) {
+
+	int num_majvequals_found = 0;
+	
+	int *threepos_temp = (int *)ite_calloc(nNumCNFVariables+1, sizeof(int), 9, "threepos_temp");
+	int *threeneg_temp = (int *)ite_calloc(nNumCNFVariables+1, sizeof(int), 9, "threeneg_temp");
+	for(int x = 0; x < nNumClauses; x++) {
+		int y = pClauses[x].length;
+		if(y == 3) {
+			for(y = 0; y < 3; y++) {
+				if(pClauses[x].variables[y] > 0)
+				  threepos_temp[pClauses[x].variables[y]]++;
+				else
+				  threeneg_temp[-pClauses[x].variables[y]]++;
+			}
+		}
+	}
+	store *three_pos = (store *)ite_calloc(nNumCNFVariables+1, sizeof(store), 9, "three_pos");
+	store *three_neg = (store *)ite_calloc(nNumCNFVariables+1, sizeof(store), 9, "three_neg");
+      
+	//Store appropriate array sizes to help with memory usage
+	for(int x = 1; x < nNumCNFVariables+1; x++) {
+		three_pos[x].num = (int *)ite_calloc(threepos_temp[x], sizeof(int), 9, "three_pos[x].num");
+		three_neg[x].num = (int *)ite_calloc(threeneg_temp[x], sizeof(int), 9, "three_neg[x].num");
+	}
+	ite_free((void **)&threepos_temp);
+	ite_free((void **)&threeneg_temp);
+	
+	//Store all clauses with 3 variables so they can be clustered
+	int count = 0;
+	for(int x = 0; x < nNumClauses; x++) {
+		if(pClauses[x].length == 3) {
+			count++;
+			for(int i = 0; i < 3; i++) {
+				if(pClauses[x].variables[i] < 0) {
+					three_neg[-pClauses[x].variables[i]].num[three_neg[-pClauses[x].variables[i]].length] = x;
+					three_neg[-pClauses[x].variables[i]].length++;
+				} else {
+					three_pos[pClauses[x].variables[i]].num[three_pos[pClauses[x].variables[i]].length] = x;
+					three_pos[pClauses[x].variables[i]].length++;
+				}
+			}
+		}
+	}
+	
+	//v0 is in all six clauses
+	//When v0 is positive, all other literals are negative
+	//When v0 is negative, all other literals are positive
+   //v0 = majv(v1, v2, v3)
+   //---------------------
+	//v0 -v1 -v2
+	//v0 -v1 -v3
+	//v0 -v2 -v3
+	//-v0 v1 v2
+	//-v0 v1 v3
+	//-v0 v2 v3
+   //---------------------
+
+	for(int v0 = 0; v0 < nNumCNFVariables+1; v0++) {
+		if (v0%1000 == 1)
+		  d2_printf3("\rMAJV Search CNF %d/%d ... ", v0, nNumCNFVariables);
+		
+		if(three_pos[v0].length < 3 || three_neg[v0].length < 3) continue;
+		for(int i = 0; i < three_pos[v0].length-2; i++) {
+			int c1 = three_pos[v0].num[i]; //clause number 1
+			int order[4]; //To hold the ordering;
+			int v1, v2;
+			if(pClauses[c1].variables[0] == v0) {
+				v1 = pClauses[c1].variables[1];
+				v2 = pClauses[c1].variables[2];
+			} else if(pClauses[c1].variables[1] == v0) {
+				v1 = pClauses[c1].variables[0];
+				v2 = pClauses[c1].variables[2];
+			} else { 
+				assert(pClauses[c1].variables[2] == v0);
+				v1 = pClauses[c1].variables[0];
+				v2 = pClauses[c1].variables[1];
+			}
+			
+			for(int j = i+1; j < three_pos[v0].length-1; j++) {
+				int c2 = three_pos[v0].num[j]; //clause number 2
+				int v3=0;
+				if(pClauses[c2].variables[0] == v0) {
+					if(pClauses[c2].variables[1] == v1)
+					  v3 = pClauses[c2].variables[2];
+					else if(pClauses[c2].variables[2] == v1)
+					  v3 = pClauses[c2].variables[1];
+					else if(pClauses[c2].variables[1] == v2)
+					  v3 = pClauses[c2].variables[2];
+					else if(pClauses[c2].variables[2] == v2)
+					  v3 = pClauses[c2].variables[1];
+					else continue;
+				} else if(pClauses[c2].variables[1] == v0) {
+					if(pClauses[c2].variables[0] == v1)
+					  v3 = pClauses[c2].variables[2];
+					else if(pClauses[c2].variables[2] == v1)
+					  v3 = pClauses[c2].variables[0];
+					else if(pClauses[c2].variables[0] == v2)
+					  v3 = pClauses[c2].variables[2];
+					else if(pClauses[c2].variables[2] == v2)
+					  v3 = pClauses[c2].variables[0];
+					else continue;					
+				} else {
+					assert(pClauses[c2].variables[2] == v0);
+					if(pClauses[c2].variables[0] == v1)
+					  v3 = pClauses[c2].variables[1];
+					else if(pClauses[c2].variables[1] == v1)
+					  v3 = pClauses[c2].variables[0];
+					else if(pClauses[c2].variables[0] == v2)
+					  v3 = pClauses[c2].variables[1];
+					else if(pClauses[c2].variables[1] == v2)
+					  v3 = pClauses[c2].variables[0];
+					else continue;					
+				}
+				order[0]=v0; order[1]=v1; order[2]=v2; order[3]=v3;
+				qsort(order, 4, sizeof(int), abscompfunc);
+				if(abs(order[0]) == abs(order[1]) || abs(order[1]) == abs(order[2]) || abs(order[2]) == abs(order[3]))
+				  continue;
+//				fprintf(stderr, "[%d %d %d %d]", order[0], order[1], order[2], order[3]);
+				
+				int clause_found=0;
+				int c3;
+				for(int k = j+1; k < three_pos[v0].length; k++) {
+					c3 = three_pos[v0].num[k]; //clause number 3
+					if(pattern_majv_equals(pClauses[c3], order)) {
+						clause_found = 1;
+						break;
+					}
+				}
+				if(!clause_found) continue;
+
+				order[0]=-order[0]; order[1]=-order[1]; order[2]=-order[2]; order[3]=-order[3];
+				
+				clause_found=0;
+				int c4;
+				int k1;
+				for(k1 = 0; k1 < three_neg[v0].length-2; k1++) {
+					c4 = three_neg[v0].num[k1]; //clause number 4
+					if(pattern_majv_equals(pClauses[c4], order)) {
+						clause_found = 1;
+						break;
+					}
+				}
+				if(!clause_found) continue;
+				
+				clause_found=0;
+				int c5;
+				int k2;
+				for(k2 = k1+1; k2 < three_neg[v0].length-1; k2++) {
+					c5 = three_neg[v0].num[k2]; //clause number 5
+					if(pattern_majv_equals(pClauses[c5], order)) {
+						clause_found = 1;
+						break;
+					}
+				}
+				if(!clause_found) continue;
+				
+				clause_found=0;
+				int c6;
+				for(int k3 = k2+1; k3 < three_neg[v0].length; k3++) {
+					c6 = three_neg[v0].num[k3]; //clause number 6
+					if(pattern_majv_equals(pClauses[c6], order)) {
+						clause_found = 1;
+						break;
+					}
+				}
+				if(!clause_found) continue;
+
+				BDDNode *pMAJVEqBDD = ite_equ(ite_var(v0),
+														ite(ite_var(-v1), ite_or(ite_var(-v2),ite_var(-v3))
+															            , ite_and(ite_var(-v2),ite_var(-v3))));
+				functions_add(pMAJVEqBDD, ITE_EQU, v0);
+				independantVars[v0] = 0;					
+
+				pClauses[c1].subsumed = 1;
+				pClauses[c2].subsumed = 1;
+				pClauses[c3].subsumed = 1;
+				pClauses[c4].subsumed = 1;
+				pClauses[c5].subsumed = 1;
+				pClauses[c6].subsumed = 1;
+				num_majvequals_found++;
+			}
+		}
+	}
+	for(int x = 1; x < nNumCNFVariables+1; x++) {
+		ite_free((void **)&three_pos[x].num);
+		ite_free((void **)&three_neg[x].num);
+	}
+	ite_free((void **)&three_pos);
+	ite_free((void **)&three_neg);
+	
+	d2_printf2("\rFound %d MAJV= functions         \n", num_majvequals_found);
+}
+
 void cnf_process(Clause *pClauses) {
 
 	d3_printf2("Number of Variables: %d\n", nNumCNFVariables);
@@ -818,18 +1030,22 @@ void cnf_process(Clause *pClauses) {
 		
 		reduce_clauses(pClauses);
 
-		find_and_build_andequals(pClauses);
-		
-		reduce_clauses(pClauses);
+		find_and_build_majvequals(pClauses);
 
+		reduce_clauses(pClauses);
+		
 		find_and_build_iteequals(pClauses);
 		
 		reduce_clauses(pClauses);
-	
+		
+		find_and_build_andequals(pClauses);
+		
+		reduce_clauses(pClauses);
 	}
 	
 	build_clause_BDDs(pClauses);
-	
+
+	reduce_clauses(pClauses);
 }	
 
 void DNF_to_CNF () {
