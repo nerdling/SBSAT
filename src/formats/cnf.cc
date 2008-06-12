@@ -43,7 +43,7 @@
 #include "sbsat.h"
 #include "sbsat_formats.h"
 
-#define CNF_USES_SYMTABLE //This REALLY slows down reading the CNF
+#define CNF_USES_SYMTABLE
 
 int nNumClauses = 0;
 int nNumCNFVariables = 0;
@@ -143,7 +143,11 @@ int CNF_to_BDD() {
 	d9_printf3(" cnf %d %d\n", nNumCNFVariables, nNumClauses);
 	
 	int nOrigNumClauses = nNumClauses;
-	
+
+#ifdef CNF_USES_SYMTABLE
+	create_all_syms(nNumCNFVariables);
+#endif
+	  
 	Clause *pClauses = (Clause*)ite_calloc(nNumClauses, sizeof(Clause), 9, "read_cnf()::pClauses");
 	int tempint_max = 100;
 	int *tempint = (int *)ite_calloc(tempint_max, sizeof(int *), 9, "read_cnf()::tempint");
@@ -174,15 +178,16 @@ int CNF_to_BDD() {
 		} else {
 			int y = 0;
 			while(1) {
+				if (next_symbol == 0) break; //Clause has been terminated
 				if (y >= tempint_max) {
 					tempint = (int*)ite_recalloc((void*)tempint, tempint_max, tempint_max+100, sizeof(int), 9, "read_cnf()::tempint");
 					tempint_max += 100;
 				}
-#ifdef CNF_USES_SYMTABLE
-				tempint[y] = i_getsym_int(next_symbol, SYM_VAR);
-#else
+//#ifdef CNF_USES_SYMTABLE
+//				tempint[y] = i_getsym_int(next_symbol, SYM_VAR);
+//#else
 				tempint[y] = next_symbol;
-#endif
+//#endif
 				if(abs(tempint[y]) > nNumCNFVariables) {
 					d2e_printf1("Warning while parsing CNF input: There are more variables in input file than specified\n");
 					nNumCNFVariables = abs(tempint[y]);
@@ -193,7 +198,6 @@ int CNF_to_BDD() {
 					return ret;
 				}
 				y++;
-				if (next_symbol == 0) break; //Clause has been terminated
 			}
 			if(y==0) continue; //A '0' line -- no clause
 			pClauses[x].length = y;
