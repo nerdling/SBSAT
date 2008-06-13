@@ -1003,7 +1003,7 @@ void find_and_build_majvequals(Clause *pClauses) {
 	ite_free((void **)&three_pos);
 	ite_free((void **)&three_neg);
 	
-	d2_printf2("\rFound %d MAJV= functions         \n", num_majvequals_found);
+	d2_printf2("\rFound %d MAJV= functions             \n", num_majvequals_found);
 }
 
 void cnf_process(Clause *pClauses) {
