@@ -857,7 +857,7 @@ void printBDDToCNFQM () {
    }
    no_outmp_ints = z;
 
-	use_symtable = sym_all_int();
+	use_symtable = sym_all_int(); //returns the maximum integer used, or 0 if any non integers are used.
 	if(!use_symtable) {
 		print_cnf_symtable();
 	}
@@ -867,7 +867,11 @@ void printBDDToCNFQM () {
 	}
 	
    numinp = getNuminp ();
-   fprintf(foutputfile, "p cnf %ld %d\n", numinp, no_outmp_ints);
+
+	if(use_symtable)
+	  fprintf(foutputfile, "p cnf %ld %d\n", use_symtable, no_outmp_ints);
+	else
+	  fprintf(foutputfile, "p cnf %ld %d\n", numinp, no_outmp_ints);
 	
    for(int x = 0; x < numout; x++) {
 		Recd *res = funcs[x]->reduced0;
@@ -929,7 +933,7 @@ void printBDDToCNF () {
 
 	ite_free((void**)&tempint); tempint_max = 0;
 	
-	use_symtable = sym_all_int();
+	use_symtable = sym_all_int(); //returns the maximum integer used, or 0 if any non integers are used.
 	if(!use_symtable) {
 		print_cnf_symtable();
 	}
@@ -938,7 +942,11 @@ void printBDDToCNF () {
 		cnf_print_independent_vars();
 	}
 	
-   fprintf(foutputfile, "p cnf %ld %d\n", numinp, no_outmp_ints);
+	if(use_symtable)
+	  fprintf(foutputfile, "p cnf %ld %d\n", use_symtable, no_outmp_ints);
+	else
+	  fprintf(foutputfile, "p cnf %ld %d\n", numinp, no_outmp_ints);
+	
 	for (int x = 0; x < no_outmp_ints; x++) {
 		for (int a = false_paths[x].length-1; a >= 0; a--) {
 			int lit = false_paths[x].num[a];

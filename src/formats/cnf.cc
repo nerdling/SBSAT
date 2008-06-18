@@ -153,9 +153,10 @@ int CNF_to_BDD() {
 	int *tempint = (int *)ite_calloc(tempint_max, sizeof(int *), 9, "read_cnf()::tempint");
 
 	//Get and store the CNF clauses
+	int print_variable_warning = 1;
 	int x = 0;
 	while(1) {
-		if (x%1000 == 0) {
+		if (x%10000 == 0) {
 			d2_printf3("\rReading CNF %d/%d ... ", x, nNumClauses);
 		}
 		
@@ -189,8 +190,15 @@ int CNF_to_BDD() {
 				tempint[y] = next_symbol;
 //#endif
 				if(abs(tempint[y]) > nNumCNFVariables) {
-					d2e_printf1("Warning while parsing CNF input: There are more variables in input file than specified\n");
+					if(print_variable_warning) {
+						d2e_printf1("Warning while parsing CNF input: There are more variables in input file than specified\n");
+						print_variable_warning = 0;
+					}
 					nNumCNFVariables = abs(tempint[y]);
+#ifdef CNF_USES_SYMTABLE
+					create_all_syms(nNumCNFVariables);
+#endif
+
 				}
 				ret = getNextSymbol_CNF(&next_symbol);
 				if (ret != NO_ERROR) {
@@ -473,7 +481,7 @@ void find_and_build_andequals(Clause *pClauses) {
 								}
 							}
 							
-							and_or_do = 1;
+//							and_or_do = 1;
 							pClauses[greater_neg[x].num[z]].flag = 1;
 							out = 1;
 							num_andequals_found++;
@@ -522,7 +530,7 @@ void find_and_build_andequals(Clause *pClauses) {
 								}
 							}
 
-							and_or_do = 1;
+//							and_or_do = 1;
 							pClauses[greater_pos[x].num[z]].flag = 0;
 							out = 1;
 							num_andequals_found++;
@@ -874,8 +882,9 @@ void find_and_build_majvequals(Clause *pClauses) {
 		if (v0%1000 == 1)
 		  d2_printf3("\rMAJV Search CNF %d/%d ... ", v0, nNumCNFVariables);
 		
+		int out=0;
 		if(three_pos[v0].length < 3 || three_neg[v0].length < 3) continue;
-		for(int i = 0; i < three_pos[v0].length-2; i++) {
+		for(int i = 0; i < three_pos[v0].length-2 && !out; i++) {
 			int c1 = three_pos[v0].num[i]; //clause number 1
 			int order[4]; //To hold the ordering;
 			int v1, v2;
@@ -891,7 +900,7 @@ void find_and_build_majvequals(Clause *pClauses) {
 				v2 = pClauses[c1].variables[1];
 			}
 			
-			for(int j = i+1; j < three_pos[v0].length-1; j++) {
+			for(int j = i+1; j < three_pos[v0].length-1 && !out; j++) {
 				int c2 = three_pos[v0].num[j]; //clause number 2
 				int v3=0;
 				if(pClauses[c2].variables[0] == v0) {
@@ -993,6 +1002,7 @@ void find_and_build_majvequals(Clause *pClauses) {
 				pClauses[c5].subsumed = 1;
 				pClauses[c6].subsumed = 1;
 				num_majvequals_found++;
+				out=1;
 			}
 		}
 	}

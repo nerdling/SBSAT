@@ -585,12 +585,14 @@ sym_clear_all_flag()
 int
 sym_all_int()
 {
-   int i;
+   int i, max=0;
    for(i=1;i <= sym_table_idx;i++) {
       int num;
       if (sym_table[i] == NULL) continue;
       if (sym_table[i]->name == NULL) return 0;
       if (sscanf(sym_table[i]->name, "%d", &num)==0) return 0;
+		if (max < atoi(sym_table[i]->name))
+		  max = atoi(sym_table[i]->name);
    }
-   return 1;
+   return max;
 }
