@@ -1175,12 +1175,12 @@ aiger_reencode (aiger * public)
   unsigned *stack, size_stack;
   IMPORT_private_FROM (public);
 
-  assert (!aiger_error (public));
-
   aiger_symbol *symbol;
   aiger_type *type;
   aiger_and *and;
 
+  assert (!aiger_error (public));
+	
   if (aiger_is_reencoded (public))
     return;
 
