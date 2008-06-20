@@ -1,3 +1,81 @@
+2008-06-18 12:43  fett
+
+	* src/formats/aiger.c: Fixed a C specific syntax error. Breaks old
+	  (2.95.3) gcc compiler.
+
+	     ~Sean
+
+2008-06-18 10:47  fett
+
+	* src/: formats/bdd2cnf.cc, formats/cnf.cc, utils/symtable.cc:
+	  Fixed some formatting things.
+
+2008-06-13 09:48  fett
+
+	* src/preproc/do_rewind.cc: nothing...
+
+2008-06-12 21:08  fett
+
+	* src/formats/cnf.cc: [no log message]
+
+2008-06-12 17:17  fett
+
+	* src/formats/cnf.cc: Added CNF pattern matching for x=MAJV(a, b,
+	  c) functions.
+
+	     ~Sean
+
+2008-06-12 11:20  fett
+
+	* doc/man1/sbsat.1: Removing silly file.
+
+2008-06-12 09:38  fett
+
+	* ChangeLog, doc/man1/sbsat.1, include/config.h,
+	  src/formats/cnf.cc: Sped up CNF readin significantly.
+
+	     ~Sean
+
+2008-06-11 17:47  fett
+
+	* src/solv_simple/solv_simple.cc: ??
+
+2008-06-11 17:47  fett
+
+	* src/formats/5/libt5_a-aig_g.h: ?
+
+2008-06-11 17:47  fett
+
+	* src/formats/cnf.cc: Did some small optimizations for reading the
+	  CNF from the text file.
+
+	    ~Sean
+
+2008-06-11 09:19  fett
+
+	* src/solv_simple/: fn_minmax/Makefile.am, fn_minmax/Makefile.in,
+	  fn_minmax/bdd2specfn_minmax.cc, fn_minmax/bt_specfn_minmax.cc,
+	  fn_minmax/fn_minmax.cc, fn_minmax/hr_lsgb_minmax.old,
+	  fn_minmax/hr_lsgb_minmax_init.cc,
+	  fn_minmax/hr_lsgb_minmax_update.cc, fn_negminmax/Makefile.am,
+	  fn_negminmax/Makefile.in, fn_negminmax/bdd2specfn_negminmax.cc,
+	  fn_negminmax/bt_specfn_negminmax.cc,
+	  fn_negminmax/fn_negminmax.cc,
+	  fn_negminmax/hr_lsgb_negminmax_init.cc,
+	  fn_negminmax/hr_lsgb_negminmax_update.cc, include/fn_minmax.h:
+	  Adding the start of special functions minmax and negminmax. All
+	  that's left is the heuristic + testing to see if the special
+	  functions actually work right.
+
+	    ~Sean
+
+2008-05-31 23:17  fett
+
+	* src/formats/5/: aig_g.yy, libt5_a-aig_g.h: Moved aig print
+	  statments to debug level 8.
+
+	     ~Sean
+
 2008-05-25 13:57  sarahw
 
 	* src/formats/5/: aig_s.cc, bdd_s.cc, blif_s.cc, cnf_s.cc,
