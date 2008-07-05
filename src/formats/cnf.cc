@@ -45,6 +45,8 @@
 
 #define CNF_USES_SYMTABLE
 
+//#define PRINT_FACTOR_GRAPH
+
 int nNumClauses = 0;
 int nNumCNFVariables = 0;
 
@@ -91,6 +93,31 @@ int clscompfunc(const void *x, const void *y) {
 	  }
 #endif
 	return 1;
+}
+
+void print_factor_graph(Clause *pClauses) {
+
+	fprintf(foutputfile, "graph FactorGraph {\n");
+//	fprintf(foutputfile, "graph [concentrate=true, fontname=ArialMT, nodesep=\"0.30\", ordering=in, rankdir=TB, ranksep=\"2.50\"];\n");
+	fprintf(foutputfile, "graph [overlap=false,sep=1.5,size=\"8,8\"];\n");
+	fprintf(foutputfile, "edge [len=1.5];\n");
+
+	
+	for(int x = 1; x <= nNumCNFVariables; x++)
+	  fprintf(foutputfile, "%d [shape=circle,fontname=Helvetica];\n", x);
+	
+	for(int x = 0; x < nNumClauses; x++) {
+		if(pClauses[x].subsumed) continue;
+//		fprintf(foutputfile, "subgraph sg%x{\n", x);
+		fprintf(foutputfile, "%d [width=0.15,height=0.15,shape=circle,style=filled,fillcolor=black,label=\"\"];\n", x+nNumCNFVariables+1);
+		for(int y = 0; y < pClauses[x].length; y++) {
+			if(pClauses[x].variables[y] > 0) fprintf(foutputfile, "%d -- %d [style=solid,fontname=Helvetica,fontsize=8];\n", x+nNumCNFVariables+1, pClauses[x].variables[y]);
+			else fprintf(foutputfile, "%d -- %d [style=dashed,fontname=Helvetica,fontsize=8];\n", x+nNumCNFVariables+1, -pClauses[x].variables[y]);
+		}
+//		fprintf(foutputfile, "}\n");
+	}
+	
+	fprintf(foutputfile, "}\n");
 }
 
 int getNextSymbol_CNF (int *intnum) {
@@ -1033,6 +1060,12 @@ void cnf_process(Clause *pClauses) {
 		
 		//Sort Clauses
 		qsort(pClauses, nNumClauses, sizeof(Clause), clscompfunc);
+
+#ifdef PRINT_FACTOR_GRAPH
+		
+		print_factor_graph(pClauses);
+		
+#endif
 		
 		reduce_clauses(pClauses);
 
