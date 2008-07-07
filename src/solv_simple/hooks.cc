@@ -88,7 +88,7 @@ ITE_INLINE void Alloc_SmurfStack_Hooks(int destination) {
 ITE_INLINE int ApplyInference_Hooks(int nBranchVar, bool bBVPolarity) {
 	int ret = 1;
 	
-	if(use_XORGElim==1)
+	if(use_XORGElim==1) //SEAN!!! Would prefer not to do this if variable is not in the GE Table.
 	  ret = ApplyInferenceToXORGElimTable(SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].XORGElimTable, nBranchVar, bBVPolarity);
 	
 	return ret;	
