@@ -175,7 +175,7 @@ void *CreateSmurfState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, SmurfSt
 void *ReadSmurfStateIntoTable(BDDNode *pCurrentBDD) {
 	void *pStartState = pCurrentBDD->pState;
 	if(pCurrentBDD != true_ptr && pCurrentBDD->pState==NULL)  {
-		//If this is the first transition in a SmurfState, mark this SmurfState as Visited      
+		//If this is the first transition into this SmurfState, mark this SmurfState as Visited      
 		
 		long nNumElts = 0;
 		unravelBDD(&nNumElts, &tempint_max, &tempint, pCurrentBDD);

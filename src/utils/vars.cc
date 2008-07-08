@@ -136,6 +136,8 @@ int OR_EQU_LIMIT=0;
 int PLAINXOR_LIMIT=0;
 int PLAINOR_LIMIT=0;
 
+int cluster_step_increase=5;
+
 int verify_solution=1;
 
 char s_expected_result[256]="";

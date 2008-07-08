@@ -75,8 +75,8 @@ struct TypeStateEntry {
 	int (*ApplyInferenceToState)(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 };
 
-//Structures and functions for simpleSolve
-//Used in the smurf_fpga output format.
+//Structures and functions for the simpleSolver
+//Also used in the smurf_fpga output format.
 struct SmurfStateEntry {
 	char cType; //FN_SMURF
 	bool visited;
@@ -109,6 +109,13 @@ struct InferenceStateEntry {
 	bool visited; //Used for displaying the smurfs
 	int nTransitionVar;
 	bool bPolarity;
+	void *pVarTransition;
+};
+
+struct WatchedListStateEntry {
+	char cType; //FN_WATCHEDLIST
+	bool visited; //Used for displaying the smurfs
+	int **arrTransitionVarLocations;
 	void *pVarTransition;
 };
 
@@ -211,6 +218,9 @@ struct ProblemState {
 	int **arrVariableOccursInSmurf; //Pointer to lists of Smurfs, indexed by variable number, that contain that variable
 	                                //Max size would be nNumSmurfs * nNumVars, but this would only happen if every
 	                                //Smurf contained every variable. Each list is terminated by a -1 element
+	int ***arrReverseOccurenceList; //Pointer to lists of pointers into arrVariableOccursInSmurf.
+	                                //arrROL[x][y] points to the location of arrVOIS[y][?] = x
+	
 	// Dynamic
 	int nCurrSearchTreeLevel;
 	double *arrPosVarHeurWghts;       //Pointer to array of size nNumVars

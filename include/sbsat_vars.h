@@ -309,6 +309,7 @@ extern int MAX_EXQUANTIFY_CLAUSES;     //Number of clauses a variable appears in
 extern int COF_MAX;
 extern int MAX_EXQUANTIFY_VARLENGTH;   //Limits size of number of vars in 
                                      //constraints created by ExQuantify
+extern int cluster_step_increase;
 //End preprocessing globals
 
 #endif

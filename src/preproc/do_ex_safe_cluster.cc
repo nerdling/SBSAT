@@ -48,7 +48,7 @@ int check_bdd_for_safe_eq(int x, int ret);
 
 int Do_ExSafeCluster() {
 	MAX_EXQUANTIFY_CLAUSES += 5;
-	MAX_EXQUANTIFY_VARLENGTH += 5;
+	MAX_EXQUANTIFY_VARLENGTH += cluster_step_increase;
 	d3_printf2 ("EX-SAFE CLUSTERING %d - ", countBDDs());
 	str_length = 0;
 	int cofs = PREP_CHANGED;

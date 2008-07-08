@@ -39,13 +39,13 @@
 #include "sbsat_preproc.h"
 
 int MAX_EXQUANTIFY_CLAUSES = 5000;
-int MAX_EXQUANTIFY_VARLENGTH = 3;
+int MAX_EXQUANTIFY_VARLENGTH = 0;
 
 int ExQuantifyAnd();
 
 int Do_ExQuantifyAnd() {
 	MAX_EXQUANTIFY_CLAUSES += 5;
-	MAX_EXQUANTIFY_VARLENGTH +=5;
+	MAX_EXQUANTIFY_VARLENGTH +=cluster_step_increase;
 	d3_printf2 ("EXQUANTIFY AND %d - ", countBDDs());
 	int cofs = PREP_CHANGED;
 	int ret = PREP_NO_CHANGE;

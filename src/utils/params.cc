@@ -266,6 +266,8 @@ t_opt options[] = {
 		"set the time limit in seconds (0=no limit)"},
 { &do_split_max_vars, "",  "do-split-max-vars", P_INT, V(i:0,"0"),  V(i:10,"10"), VAR_NORMAL, 0,
 		"Threashold above which the Sp splits BDDs"},
+{ &cluster_step_increase, "",  "cluster-step-increase", P_INT, V(i:0,"0"),  V(i:5,"5"), VAR_NORMAL, 0,
+		"Step size used to increment the threshold under which BDDs are clustered"},
 { &ex_infer, "",  "ex-infer", P_INT, V(i:0,"0"),  V(i:1,"1"), VAR_NORMAL, 0,
 		"Enable/Disable Ex Quantification trying to safely assign variables before they are quantified away (1/0)"},
 { &ge_preproc, "gauss", "gaussian-elimination", P_INT, V(i:0, "0"),  V(i:'0', "0"), VAR_NORMAL, 0,
