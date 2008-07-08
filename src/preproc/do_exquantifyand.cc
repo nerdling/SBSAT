@@ -39,7 +39,7 @@
 #include "sbsat_preproc.h"
 
 int MAX_EXQUANTIFY_CLAUSES = 5000;
-int MAX_EXQUANTIFY_VARLENGTH = 5;
+int MAX_EXQUANTIFY_VARLENGTH = 3;
 
 int ExQuantifyAnd();
 

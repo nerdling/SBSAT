@@ -440,8 +440,8 @@ int ApplyInferenceToStates(int nBranchVar, bool bBVPolarity) {
 	
 	void **arrSmurfStates = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].arrSmurfStates;
 	d7_printf2("  Transitioning Smurfs using %d\n", bBVPolarity?nBranchVar:-nBranchVar);
-	for(int i = 0; SimpleSmurfProblemState->arrVariableOccursInSmurf[nBranchVar][i] != -1; i++) {
-		if ((SimpleSmurfProblemState->arrVariableOccursInSmurf[nBranchVar][i] >> 30) == 1) continue; //For Watched Literals
+	for(int i = SimpleSmurfProblemState->arrVariableOccursInSmurf[nBranchVar][0]; i > 0; i--) {
+		if ((SimpleSmurfProblemState->arrVariableOccursInSmurf[nBranchVar][i] >> 31) == 1) continue; //For Watched Literals
 		//if ((SimpleSmurfProblemState->arrVariableOccursInSmurf[nBranchVar][i] & 0x40000000) == 0x40000000) continue;
 		int nSmurfNumber = SimpleSmurfProblemState->arrVariableOccursInSmurf[nBranchVar][i];
 		// d7_printf3("    Checking Smurf %d (State %x)\n", nSmurfNumber, (unsigned int)arrSmurfStates[nSmurfNumber]);

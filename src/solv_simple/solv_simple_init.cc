@@ -158,9 +158,9 @@ int ReadAllSmurfsIntoTable(int nNumVars) {
 	
 	for(int x = 0; x < SimpleSmurfProblemState->nNumVars; x++) {
 		SimpleSmurfProblemState->arrVariableOccursInSmurf[x] = (int *)ite_calloc(temp_varcount[x]+1, sizeof(int), 9, "arrVariableOccursInSmurf[x]");
-		SimpleSmurfProblemState->arrVariableOccursInSmurf[x][temp_varcount[x]] = -1;
+		SimpleSmurfProblemState->arrVariableOccursInSmurf[x][0] = temp_varcount[x];
 		SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[x] = SimpleSmurfProblemState->nNumVars;
-		temp_varcount[x] = 0;
+		temp_varcount[x] = 1;
 	}
 	
 	//Fill in the variable occurance arrays for each function
