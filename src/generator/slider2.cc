@@ -143,13 +143,13 @@ void slider2_unsat_iscas(int n)
 {
    int s=n/20;
    int start1[6] = {1, 2*s+3, 2*s+1, n/2-1-3*s, n/2-1, n/2};
-   int start2[7] = {1, 2*s-1, 2*s+2, n/2-1-4*s, n/2-1-2*s, n/2-1-s, n/2};
+   int start2[7] = {n, 2*s-1, 2*s+2, n/2-1-4*s, n/2-1-2*s, n/2-1-s, n/2};
 	int tmpnum = 0;
 
    for(int i=(n/2)+1;i<=n;i++)
 	  printf("INPUT(v_%d)\n", i);
-   for(int i=1;i<=n/2;i++)
-	  printf("OUTPUT(v_%d)\n", i);
+
+	printf("OUTPUT(MITER)\n");
 
    // first function
    for(int i=0;i<n/2;i++) {
@@ -191,12 +191,12 @@ void slider2_unsat_iscas(int n)
    for(int i=0;i<n-n/2;i++) {
 		if(i%2) {
 			printf("g_%d = OR(v_%d, v_%d)\n", tmpnum+1, start2[3], start2[4]);
-			printf("g_%d = XOR(v_%d, v_%d, v_%d, v_%d, v_%d)\n", tmpnum+2, start2[1], start2[2], start2[5], start2[6], tmpnum+1);
+			printf("g_%d = XOR(v_%d, v_%d, v_%d, v_%d, g_%d)\n", tmpnum+2, start2[1], start2[2], start2[5], start2[6], tmpnum+1);
 			printf("v_%d = NOT(g_%d)\n", start2[0], tmpnum+2);
 			tmpnum+=2;
 		} else {
 			printf("g_%d = OR(v_%d, v_%d)\n", tmpnum+1, start2[3], start2[4]);
-			printf("v_%d = XOR(v_%d, v_%d, v_%d, v_%d, v_%d)\n", start2[0], start2[1], start2[2], start2[5], start2[6], tmpnum+1);
+			printf("v_%d = XOR(v_%d, v_%d, v_%d, v_%d, g_%d)\n", start2[0], start2[1], start2[2], start2[5], start2[6], tmpnum+1);
 			tmpnum+=1;
 		}
 		
@@ -208,6 +208,16 @@ void slider2_unsat_iscas(int n)
 		start2[5]++;
 		start2[6]++;
    }
+
+	for(int i=1;i<=n/2;i++) {
+		start1[0]--;
+		start2[0]--;
+		printf("g_%d = XOR(v_%d, v_%d)\n", tmpnum+i, start1[0], start2[0]);
+	}
+	printf("MITER = OR(g_%d", tmpnum+1);
+	for(int i=2;i<=n/2;i++)
+	  printf(", g_%d", tmpnum+i);
+	printf(")\n");
 }
 
 void slider2_unsat(char *out_type, int n)
