@@ -113,7 +113,7 @@ void *CreateSmurfState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, SmurfSt
 			else NextInfState->pVarTransition = infBDD->pState;
 		} else {
 			//Recurse on nTransitionVar == False transition
-			void *pNext = ReadSmurfStateIntoTable(infBDD);
+			void *pNext = ReadSmurfStateIntoTable(infBDD); //HERE
 			assert(pNext!=NULL);
 			if(bIsInference == 0) NextState->pVarIsFalseTransition = pNext; //The transition is False
 			else NextInfState->pVarTransition = pNext;
@@ -163,7 +163,7 @@ void *CreateSmurfState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, SmurfSt
 			else NextInfState->pVarTransition = infBDD->pState;
 		} else {
 			//Recurse on nTransitionVar == True transition
-			void *pNext = ReadSmurfStateIntoTable(infBDD);
+			void *pNext = ReadSmurfStateIntoTable(infBDD); //HERE
 			assert(pNext!=NULL);
 			if(bIsInference == 0) NextState->pVarIsTrueTransition = pNext; //The transition is True
 			else NextInfState->pVarTransition = pNext;
