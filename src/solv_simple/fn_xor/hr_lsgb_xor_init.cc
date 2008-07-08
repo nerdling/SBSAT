@@ -97,7 +97,7 @@ ITE_INLINE double LSGBarrXORWeightTrans(int nSize) {
 	return arrXORWeight[nSize-1].fFmla;
 }
 
-ITE_INLINE void LSGBXOR() {
-	if(arrXORWeight!=NULL) ite_free((void **)arrXORWeight);
+ITE_INLINE void LSGBXORFree() {
+	if(arrXORWeight!=NULL) ite_free((void **)&arrXORWeight);
 }
 	

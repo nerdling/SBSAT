@@ -90,6 +90,6 @@ ITE_INLINE double LSGBORCounterGetHeurNeg(ORCounterStateEntry *pState) {
 	return arrORWeight[pState->nSize].fNeg;
 }
 
-ITE_INLINE double LSGBORFree() {
-	if(arrORWeight!=NULL) ite_free((void **)arrORWeight);	
+ITE_INLINE void LSGBORFree() {
+	if(arrORWeight!=NULL) ite_free((void **)&arrORWeight);
 }

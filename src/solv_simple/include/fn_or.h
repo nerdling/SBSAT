@@ -71,6 +71,8 @@ double LSGBORGetHeurScore(ORStateEntry *pState);
 double LSGBORGetHeurNeg(ORStateEntry *pState);
 double LSGBORCounterGetHeurScore(ORCounterStateEntry *pState);
 double LSGBORCounterGetHeurNeg(ORCounterStateEntry *pState);
+void LSGBORFree();
+
 void *CreateORState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, ORStateEntry *pStartState);
 int ApplyInferenceToOR(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 int ApplyInferenceToORCounter(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);

@@ -61,6 +61,7 @@ double LSGBXORCounterGetHeurScoreTrans(XORCounterStateEntry *pState);
 double LSGBXORCounterGetHeurScore(XORCounterStateEntry *pState);
 double LSGBarrXORWeight(int nSize);
 double LSGBarrXORWeightTrans(int nSize);
+void LSGBXORFree();
 
 void *CreateXORState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, XORStateEntry *pStartState);
 void *CreateXORGElimState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, XORGElimStateEntry *pStartState);
