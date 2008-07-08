@@ -42,12 +42,14 @@
 void slider2_sat(char *out_type, int n);
 void slider2_unsat(char *out_type, int n);
 void slider2_unsat_iscas(int n);
+void slider2_unsat_trace(int n);
 
 void slider2(char *out_type, int n, int sat) 
 {
    if (sat == 0) slider2_unsat(out_type, n);
    else if (sat == 1) slider2_sat(out_type, n);
 	else if (sat == 2) slider2_unsat_iscas(n);
+	else if (sat == 3) slider2_unsat_trace(n);
 	else {
 		fprintf(stderr, "Error: Unknown out_type\n");
 		exit(0);
@@ -218,6 +220,90 @@ void slider2_unsat_iscas(int n)
 	for(int i=2;i<=n/2;i++)
 	  printf(", g_%d", tmpnum+i);
 	printf(")\n");
+}
+
+void slider2_unsat_trace(int n)
+{
+   int s=n/20;
+   int start1[6] = {1, 2*s+3, 2*s+1, n/2-1-3*s, n/2-1, n/2};
+   int start2[7] = {n, 2*s-1, 2*s+2, n/2-1-4*s, n/2-1-2*s, n/2-1-s, n/2};
+	int tmpnum = 0;
+	
+	printf("MODULE slider2_%d_unsat\nINPUT v_%d", n, (n/2)+1);
+
+   for(int i=(n/2)+2;i<=n;i++)
+	  printf(", v_%d", i);
+	printf(";\n");
+
+	printf("OUTPUT MITER;\nSTRUCTURE\n");
+
+   // first function
+   for(int i=0;i<n/2;i++) {
+	   printf("g_%d  = not(v_%d);\n", tmpnum+1, start1[1]);
+      printf("g_%d  = not(v_%d);\n", tmpnum+2, start1[2]);
+      printf("g_%d  = or(g_%d, g_%d);\n", tmpnum+3, tmpnum+1, tmpnum+2);
+      printf("g_%d  = or(v_%d, v_%d);\n", tmpnum+4, start1[1], start1[2]);
+      printf("g_%d  = and(g_%d, g_%d);\n", tmpnum+5, tmpnum+3, tmpnum+4);
+      printf("g_%d  = not(g_%d);\n", tmpnum+6, tmpnum+5);
+      printf("g_%d  = and(v_%d, g_%d);\n", tmpnum+7, start1[4], tmpnum+5);
+      printf("g_%d  = not(v_%d);\n", tmpnum+8, start1[4]);
+      printf("g_%d  = and(v_%d, g_%d);\n", tmpnum+9, start1[4], tmpnum+6);
+      printf("g_%d = and(g_%d, g_%d);\n", tmpnum+10, tmpnum+8, tmpnum+1);
+      printf("g_%d = or(g_%d, g_%d);\n", tmpnum+11, tmpnum+9, tmpnum+10);
+      printf("g_%d = and(v_%d, g_%d);\n", tmpnum+12, start1[4], tmpnum+5);
+      printf("g_%d = and(g_%d, v_%d);\n", tmpnum+13, tmpnum+8, start1[1]);
+      printf("g_%d = or(g_%d, g_%d);\n", tmpnum+14, tmpnum+12, tmpnum+13);
+      printf("g_%d = and(v_%d, g_%d);\n", tmpnum+15, start1[3], tmpnum+11);
+      printf("g_%d = not(v_%d);\n", tmpnum+16, start1[3]);
+      printf("g_%d = and(g_%d, g_%d);\n", tmpnum+17, tmpnum+16, tmpnum+14);
+      printf("g_%d = or(g_%d, g_%d);\n", tmpnum+18, tmpnum+15, tmpnum+17);
+      printf("g_%d = and(v_%d, g_%d);\n", tmpnum+19, start1[5], tmpnum+18);
+      printf("g_%d = not(v_%d);\n", tmpnum+20, start1[5]);
+      printf("g_%d = and(g_%d, g_%d);\n", tmpnum+21, tmpnum+20, tmpnum+7);
+      printf("v_%d = or(g_%d, g_%d);\n", start1[0], tmpnum+19, tmpnum+21);
+
+		tmpnum+=21;
+      start1[0]++;
+      start1[1]++;
+      start1[2]++;
+      start1[3]++;
+      start1[4]++;
+      start1[5]++;
+   }
+   // second and third function
+
+//	xor(T, 1, 2, 3, 6, 7, or(4, 5))
+
+   for(int i=0;i<n-n/2;i++) {
+		if(i%2) {
+			printf("g_%d = or(v_%d, v_%d);\n", tmpnum+1, start2[3], start2[4]);
+			printf("g_%d = xor(v_%d, v_%d, v_%d, v_%d, g_%d);\n", tmpnum+2, start2[1], start2[2], start2[5], start2[6], tmpnum+1);
+			printf("v_%d = not(g_%d);\n", start2[0], tmpnum+2);
+			tmpnum+=2;
+		} else {
+			printf("g_%d = or(v_%d, v_%d);\n", tmpnum+1, start2[3], start2[4]);
+			printf("v_%d = xor(v_%d, v_%d, v_%d, v_%d, g_%d);\n", start2[0], start2[1], start2[2], start2[5], start2[6], tmpnum+1);
+			tmpnum+=1;
+		}
+		
+		start2[0]++;
+		start2[1]++;
+		start2[2]++;
+		start2[3]++;
+		start2[4]++;
+		start2[5]++;
+		start2[6]++;
+   }
+
+	for(int i=1;i<=n/2;i++) {
+		start1[0]--;
+		start2[0]--;
+		printf("g_%d = xor(v_%d, v_%d);\n", tmpnum+i, start1[0], start2[0]);
+	}
+	printf("MITER = or(g_%d", tmpnum+1);
+	for(int i=2;i<=n/2;i++)
+	  printf(", g_%d", tmpnum+i);
+	printf(");\nfalse_value = new_int_leaf(0);\nare_equal(false_value, MITER);\nENDMODULE\n");
 }
 
 void slider2_unsat(char *out_type, int n)
