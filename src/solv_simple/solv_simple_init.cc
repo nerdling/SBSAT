@@ -253,6 +253,10 @@ void FreeSmurfSolverVars() {
 	ite_free((void **)&SimpleSmurfProblemState->arrNegVarHeurWghts);
 	ite_free((void **)&SimpleSmurfProblemState->arrInferenceQueue);
 	ite_free((void **)&SimpleSmurfProblemState->arrInferenceDeclaredAtLevel);
+
+	LSGBORFree();
+	LSGBXORFree();
+// Minmax and NegMinmax for the future
 }
 
 void FreeSmurfStateEntries() {
