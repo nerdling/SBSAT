@@ -110,8 +110,8 @@ BDD2Specfn_AND(int nFnId, BDDNode *pFunc, int nFunctionType, int nEqualityVble)
    // Here we assume that the LHS variable does not also occur on
    // the RHS of the equality.
   
-   long tempint_max = 0;
-   long nNumElts=0;
+   int tempint_max = 0;
+   int nNumElts=0;
    unravelBDD(&nNumElts, &tempint_max, &(arrSolverFunctions[nFnId].fn_and.rhsVbles.arrElts), pFunc);
    if (nNumElts>1) {
       for(int i=0;i<nNumElts;i++) {

@@ -65,8 +65,8 @@ BDD2Specfn_XOR(int nFnId, BDDNode *pFunc, int nFunctionType, int _nEqualityVble)
    // the RHS of the equality.
    //
    //
-   long tempint_max = 0;
-   long nNumElts=0;
+   int tempint_max = 0;
+   int nNumElts=0;
    unravelBDD(&nNumElts, &tempint_max, &(arrSolverFunctions[nFnId].fn_xor.rhsVbles.arrElts), pFunc);
 
    /* set polarities and map variables from ite to solver ordering */

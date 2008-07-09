@@ -71,7 +71,7 @@ extern int variables_size;
 extern int *original_functionType;
 extern int *original_equalityVble;
 
-extern long bdd_tempint_max;
+extern int bdd_tempint_max;
 extern int *bdd_tempint;
 
 extern int STRENGTH;

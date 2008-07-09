@@ -344,7 +344,7 @@ int splitXors() {
 	int *nonxor_vars = new int[numinp+1]; //This could be made better in the future.
 	int old_nmbrFunctions = nmbrFunctions; //Must do this because nmbrFunctions
 	                                       //grows as we add in extra xor constraints.
-	for(long x = 0; x < old_nmbrFunctions; x++) {
+	for(int x = 0; x < old_nmbrFunctions; x++) {
 		if(length[x] <= functionTypeLimits[PLAINXOR] || functionType[x]!=UNSURE) continue; //???
 		BDDNode *xdd = bdd2xdd(functions[x]);		
 		countSingleXors(xdd, xor_vars, nonxor_vars);
@@ -864,8 +864,8 @@ BDDNode * pruning (BDDNode * f, BDDNode * c)
 
 BDDNode *strengthen_fun(BDDNode *bddNmbr1, BDDNode *bddNmbr2)
 {	
-	long y = 0;
-   long tempint_max = 0;
+	int y = 0;
+   int tempint_max = 0;
    int *tempint=NULL;
         
 	unravelBDD(&y, &tempint_max, &tempint, bddNmbr1);
@@ -1368,9 +1368,9 @@ void countSingleXors(BDDNode *x, int *xor_vars, int *nonxor_vars) {
 	nonxor_vars[nonxor_vars_idx] = 0;
 }
 
-void _unravelBDD(long *y, long *max, int **tempint, BDDNode * func);
+void _unravelBDD(int *y, int *max, int **tempint, BDDNode * func);
 
-void unravelBDD(long *y, long *max, int **tempint, BDDNode * func) {
+void unravelBDD(int *y, int *max, int **tempint, BDDNode * func) {
   *y=0;
   // assert (no flag is set );
   start_bdd_flag_number(UNRAVELBDD_FLAG_NUMBER);
@@ -1381,7 +1381,7 @@ void unravelBDD(long *y, long *max, int **tempint, BDDNode * func) {
   }
 }
 
-void _unravelBDD(long *y, long *max, int **tempint, BDDNode * func) {
+void _unravelBDD(int *y, int *max, int **tempint, BDDNode * func) {
    if (func->flag == bdd_flag_number) return;
 	if (func->notCase->flag == bdd_flag_number) return;
    func->flag = bdd_flag_number;
@@ -2089,8 +2089,8 @@ void cheat_replace (BDDNode * f, int var, int replace) {
 
 int getoldNuminp () {
    int *tempint=NULL;
-   long tempint_max=0;
-   long y, i;
+   int tempint_max=0;
+   int y, i;
    numinp = 0;
    for (int x = 0; x < nmbrFunctions; x++) {
       y = 0;

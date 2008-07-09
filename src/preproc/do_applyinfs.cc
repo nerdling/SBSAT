@@ -742,7 +742,7 @@ int Rebuild_BDDx (int x) {
 	}
 
 	assert(x<nmbrFunctions+1);
-	long y = 0;
+	int y = 0;
 	unravelBDD(&y, &bdd_tempint_max, &bdd_tempint, functions[x]);
    int *tempint=bdd_tempint;
 //	fprintf(stderr, "%d|", y);
@@ -975,7 +975,7 @@ Rebuild_BDD (BDDNode *bdd, int *bdd_length, int *&bdd_vars)
 	  default: break;
 	}
 
-	long y = 0;	
+	int y = 0;	
 	unravelBDD(&y, &bdd_tempint_max, &bdd_tempint, bdd);
    int *tempint = bdd_tempint;
 	if (y != 0) qsort (tempint, y, sizeof (int), compfunc);

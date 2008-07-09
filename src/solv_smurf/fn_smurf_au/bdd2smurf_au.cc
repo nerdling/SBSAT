@@ -91,8 +91,8 @@ ComputeSmurfAuOfNormalized(BDDNodeStruct *pFunc, int nAutarkyVble)
    //pFunc->pState_Au = (void*)pSmurfAuState;
 
    // get all the variables
-   long tempint_max = 0;
-   long y=0;
+   int tempint_max = 0;
+   int y=0;
    unravelBDD(&y, &tempint_max, &pSmurfAuState->vbles.arrElts, pFunc);
    pSmurfAuState->vbles.nNumElts = y;
    pSmurfAuState->vbles.arrElts = (int*)realloc(pSmurfAuState->vbles.arrElts, pSmurfAuState->vbles.nNumElts*sizeof(int));

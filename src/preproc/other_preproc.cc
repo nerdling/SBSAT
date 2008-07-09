@@ -211,10 +211,10 @@ BDDNode *collect_x (BDDNode *f, int x) {
 	return find_or_add_node (f->variable, r, e);	
 }
 
-infer *NEW_GetInfer(long *y, long *max, int **tempint, BDDNode * func);
+infer *NEW_GetInfer(int *y, int *max, int **tempint, BDDNode * func);
 
 // start
-infer *GetInfer(long *y, long *max, int **tempint, BDDNode * func)
+infer *GetInfer(int *y, int *max, int **tempint, BDDNode * func)
 {
    *y=0;
    // assert (no flag is set );
@@ -226,7 +226,7 @@ infer *GetInfer(long *y, long *max, int **tempint, BDDNode * func)
    return ret;
 }
 
-infer *NEW_GetInfer(long *y, long *max, int **tempint, BDDNode * func)
+infer *NEW_GetInfer(int *y, int *max, int **tempint, BDDNode * func)
 {
 	if ((func == true_ptr) || (func == false_ptr))
 	  return NULL;
@@ -540,8 +540,8 @@ infer *Ex_GetInfer(BDDNode * func)
 void cheat_replaceall() {
 	//Get the max number of input variables
 	int *tempint=NULL;
-   long tempint_max = 0;
-	long x, y, i;
+   int tempint_max = 0;
+	int x, y, i;
 	for (x = 0; x < numout; x++) {
 		y = 0;
 		unravelBDD (&y, &tempint_max, &tempint, functions[x]);
@@ -630,7 +630,7 @@ void cheat_replaceall() {
 	numinp = replaceat;
 }
 
-void findPathsToX (BDDNode *bdd, long *path_max, int **path, int pathx, intlist *list, int *listx, BDDNode *X) {
+void findPathsToX (BDDNode *bdd, int *path_max, int **path, int pathx, intlist *list, int *listx, BDDNode *X) {
 	if (bdd == X) {
 		list[(*listx)].num = new int[pathx];
 		for (int x = 0; x < pathx; x++) {
@@ -655,278 +655,14 @@ void findPathsToX (BDDNode *bdd, long *path_max, int **path, int pathx, intlist 
 	findPathsToX (bdd->elseCase, path_max, path, pathx + 1, list, listx, X);
 }
 
-void findPathsToFalse (BDDNode *bdd, long *path_max, int **path, intlist *list, int *listx) {
+void findPathsToFalse (BDDNode *bdd, int *path_max, int **path, intlist *list, int *listx) {
 	int pathx = 0;
 	findPathsToX (bdd, path_max, path, pathx, list, listx, false_ptr);
 }
 
-void findPathsToTrue (BDDNode *bdd, long *path_max, int **path, intlist *list, int *listx) {
+void findPathsToTrue (BDDNode *bdd, int *path_max, int **path, intlist *list, int *listx) {
 	int pathx = 0;
 	findPathsToX (bdd, path_max, path, pathx, list, listx, true_ptr);
-}
-
-void Stats() {
-  int *tempint=NULL;
-  long tempint_max = 0;
-  long y;
-  int i, x;
-  int z;
-  intlist *clauses = new intlist[10000];
-
-  z = 0;
-  for (x = 0; x < numout; x++)
-    {
-      int numx = countFalses (functions[x]);
-      intlist *list = new intlist[numx];
-		int listx = 0;
-      findPathsToFalse (functions[x], &tempint_max, &tempint, list, &listx);
-      //      if (functionType[x] != AND
-      //	  && functionType[x] != OR
-      //	  && functionType[x] != ITE)
-      //	{
-		 for (y = 0; y < listx; y++)
-			{
-				clauses[z].num = list[y].num;
-				clauses[z].length = list[y].length;
-				for (int a = 0; a < clauses[z].length; a++) {
-					printf("%d ", -clauses[z].num[a]); //Need to negate all literals to get CNF
-				}
-				printf("0\n");    
-				
-				z++;
-			}
-		//       fprintf(stdout, "\nend %d\n", x);
-	 }/*
-	else if (functionType[x] == ITE)
-	  {
-	  int znow = z;
-	  printBDD (functions[x]);
-	  printf ("\n%d BDD\n", x);
-	  for (int y = 0; y < listx; y++)
-	    {
-	      clauses[z].num = list[y].num;
-	      clauses[z].length = list[y].length;
-	      for (int a = 0; a < clauses[z].length; a++)
-		{
-		  printf ("%d ", clauses[z].num[a]);
-		}
-	      printf ("0\n");
-	      z++;
-	    }
-	  printf ("\n");
-	  if (z - znow == 6)
-	    z = makeAllResolutions (clauses, znow, z);
-	  for (int y = znow; y < z; y++)
-	    {
-	      for (int a = 0; a < clauses[y].length; a++)
-		{
-		  printf ("%d ", clauses[y].num[a]);
-		}
-	      printf ("0\n");
-	    }
-
-	}
-      else
-	{
-	  int var = equalityVble[x];	//EqualityVble can be + or -
-	  int posneg = -1;	//So this is probably all 
-	  int gotit = -1;	//messed up...
-	  for (int y = 0; y < listx; y++)
-	    {
-	      for (int a = 0; a < list[y].length; a++)
-		{
-		  if (abs (list[y].num[a]) == var)
-		    {
-		      if (list[y].num[a] > 0)
-			{
-			  if (posneg == 1)
-			    gotit = 1;
-			  else
-			    posneg = 1;
-			}
-		      else
-			{
-			  if (posneg == 0)
-			    gotit = 0;
-			  else
-			    posneg = 0;
-			}
-		    }
-		}
-	      if (gotit != -1)
-		break;
-	    }
-	  if (gotit == 0)
-	    var = -var;
-	  int cla1 = -1;
-	  for (int y = 0; y < listx; y++)
-	    {
-	      if (list[y].length == length[x])
-		{
-		  for (int a = 0; a < list[y].length; a++)
-		    {
-		      if (list[y].num[a] == -var)
-			cla1 = y;
-		    }
-		}
-	    }
-	  clauses[z].num = list[cla1].num;
-	  clauses[z].length = list[cla1].length;
-	  z++;
-
-	  for (int y = 0; y < list[cla1].length; y++)
-	    {
-	      if (list[cla1].num[y] != -var)
-	        {
-	          clauses[z].num = new int[2];
-	          clauses[z].num[0] = -list[cla1].num[y];
-	          clauses[z].num[1] = var;
-	          clauses[z].length = 2;
-		  z++;
-		}
-	    }
-	}
-    }
-
-  printf ("\n");
-  for (int x = 0; x < z; x++)
-    {
-      for (int a = 0; a < clauses[x].length; a++)
-	printf2 ("%d ", clauses[x].num[a]);
-      printf1 ("0\n");
-    }*/
-
-
-	for (x = 0; x < numout; x++)
-	  {
-		  y = 0;
-		  unravelBDD (&y, &tempint_max, &tempint, functions[x]);
-		  if (y != 0) qsort (tempint, y, sizeof (int), compfunc);
-		  length[x] = y;
-		  if (variables[x].num != NULL)
-			 delete variables[x].num;
-		  variables[x].num = new int[y + 1];	//(int *)calloc(y+1, sizeof(int));
-		  for (i = 0; i < y; i++)
-			 variables[x].num[i] = tempint[i];
-	  }
-	
-	store *amount = new store[numinp + 1];
-	int *tempmem = new int[numinp + 2];
-	
-	for (i = 0; i < numinp + 2; i++)
-	  tempmem[i] = 0;
-	
-   for(x = 0; x < nmbrFunctions; x++)
-   {
-      for (i = 0; i < length[x]; i++)
-         tempmem[variables[x].num[i]]++;
-   }
-	
-   for(x = 0; x < numinp + 1; x++)
-   {
-      amount[x].num = new int[tempmem[x]];
-      amount[x].length = 0;
-   }
-	
-   for(x = 0; x < nmbrFunctions; x++)
-   {
-      for (i = 0; i < length[x]; i++)
-      {
-         amount[variables[x].num[i]].num[amount[variables[x].num[i]].
-            length] = x;
-         amount[variables[x].num[i]].length++;
-      }
-   }
-
-   for (x = 1; x < numinp + 1; x++)
-   {
-      amount[x].num[0] = x;
-   }
-	
-	y = numinp + 1;
-	qsort (amount, y, sizeof (store), amount_compfunc);
-	
-   for(x = 0; x < numinp; x++)
-   {
-      fprintf (stdout, "Variable %d occurs %d times.\n", amount[x].num[0],
-            amount[x].length);
-   }
-	
-   for(x = 0; x < numinp + 1; x++)
-   {
-      delete amount[x].num;
-      amount[x].num = new int[tempmem[x]];
-      amount[x].length = 0;
-   }
-	
-   for(x = 0; x < nmbrFunctions; x++)
-   {
-      for(i = 0; i < length[x]; i++)
-      {
-         amount[variables[x].num[i]].num[amount[variables[x].num[i]].
-            length] = x;
-         amount[variables[x].num[i]].length++;
-      }
-   }
-	
-	fprintf (stdout, "\n");
-	
-	for(x = 0; x < numout; x++)
-   {
-      y = 0;
-      unravelBDD (&y, &tempint_max, &tempint, functions[x]);
-      printBDD (functions[x]);
-      fprintf (stdout, "\nConstraint %d ", x);
-      if (functionType[x] == AND)
-         fprintf (stdout, "is an AND= function and ");
-      else if (functionType[x] == OR)
-         fprintf (stdout, "is an OR= function and ");
-      else if (functionType[x] == PLAINOR)
-         fprintf (stdout, "is a PLAINOR function and ");
-      else if (functionType[x] == ITE)
-         fprintf (stdout, "is an ITE= function and ");
-      else if (length[x] > functionTypeLimits[PLAINOR]) fprintf(stdout, "has more than PLAINOR_LIMIT (error) variables and ");
-      fprintf (stdout, "has %ld nodes and %d variables.\n", y, length[x]);
-      //if (parameterizedVars[x] != NULL)
-      //	 {
-      //		 printBDD (functions[x]);
-      //		 fprintf (stdout, "\n");
-      //		 for (int z = 0; z <= parameterizedVars[x][0]; z++)
-		//			{
-		//				fprintf (stdout, "%d|", parameterizedVars[x][z]);
-		//			}
-		//	 }
-		  fprintf (stdout, "\n\n");
-	  }
-	
-	fprintf (stdout, "\n");
-	
-	int ind = 0, dep = 0;
-	for(x = 1; x < numinp + 1; x++)
-   {
-      if (independantVars[x] == 1)
-      {
-         fprintf (stdout, "Variable %d is Independant\n", x);
-         ind++;
-      }
-      else
-      {
-         fprintf (stdout, "Variable %d is Dependant\n", x);
-         dep++;
-      }
-   }
-
-   fprintf (stdout,
-         "There are %d Independant Variables and %d Dependant Variables\n",
-         ind, dep);
-
-   ite_free((void**)&tempint); tempint_max = 0;   
-	for(x = 1; x < numinp + 1; x++)
-	  delete amount[x].num;
-	delete amount;
-	delete tempmem;
-	fprintf (stderr, "\n");
-	exit (1);
 }
 
 int
@@ -952,9 +688,9 @@ node_compfunc (const void *x, const void *y)
 }
 
 void
-Sort_BDDs (long *tempint_max, int **tempint)
+Sort_BDDs (int *tempint_max, int **tempint)
 {
-  long y = 0;
+  int y = 0;
   store *sort = new store[nmbrFunctions];
   for (int x = 0; x < nmbrFunctions; x++)
     {

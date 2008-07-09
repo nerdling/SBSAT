@@ -447,8 +447,8 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 		if(defines[whereat].bdd == NULL) { fprintf(stderr, "\nKeyword 'define' missing argument after '#' (%s)...exiting:%d\n", macros, markbdd_line); exit (1); }
 		
       int *tempint=NULL;
-		long y = 0;
-      long tempint_max = 0;
+		int y = 0;
+      int tempint_max = 0;
 		unravelBDD (&y, &tempint_max, &tempint, defines[whereat].bdd);
       if (y != 0) qsort (tempint, y, sizeof (int), compfunc);
       
@@ -557,8 +557,8 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 		BDDNode * v1 = putite (intnum, bdd);
       if(v1 == NULL) fprintf(stderr, "\nKeyword 'mitosis' expects at least 2 arguments, found 0 (%s)...exiting:%d\n", macros, markbdd_line);
 		int *tempint=NULL;
-      long tempint_max = 0;
-      long y = 0;
+      int tempint_max = 0;
+      int y = 0;
       unravelBDD (&y, &tempint_max, &tempint, v1);
       if (y != 0) qsort (tempint, y, sizeof (int), compfunc);
 
@@ -807,8 +807,8 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 		for (int i = 0; i < PRINT_TREE_WIDTH; i++)
 		  d2_printf1("-");
 		d2_printf1("\n");
-		long y = 0;
-		long tempint_max = 0;
+		int y = 0;
+		int tempint_max = 0;
 		int *tempint=NULL;
 		unravelBDD(&y, &tempint_max, &tempint, v1);
 		if(tempint!=NULL) ite_free((void **)&tempint);

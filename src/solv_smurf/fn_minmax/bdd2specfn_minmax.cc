@@ -50,8 +50,8 @@ BDD2Specfn_MINMAX(int nFnId, BDDNode *pFunc, int nFunctionType, int nEqualityVbl
    // Store variable set of RHS.
    // Here we assume that the LHS variable does not also occur on
    // the RHS of the equality.
-   long tempint_max = 0;
-   long nNumElts=0;
+   int tempint_max = 0;
+   int nNumElts=0;
    unravelBDD(&nNumElts, &tempint_max, &(arrSolverFunctions[nFnId].fn_minmax.rhsVbles.arrElts), pFunc);
 
    /* set polarities and map variables from ite to solver ordering */

@@ -319,7 +319,7 @@ void initprob(void)
 	wvariables = new intlist[numBDDs];
 	int *tempmem = new int[numvars+1];
 	int *tempint = NULL;
-	long tempint_max = 0;
+	int tempint_max = 0;
 	
 	true_var_weights = new double[numvars+1];
 	previousState = new BDDState[numBDDs];
@@ -343,7 +343,7 @@ void initprob(void)
 	}
 	
 	for(int x = 0; x < numBDDs; x++) {
-		long y = 0;
+		int y = 0;
 		unravelBDD (&y, &tempint_max, &tempint, functions[x]);
 		if (y != 0) qsort (tempint, y, sizeof (int), compfunc);
 		

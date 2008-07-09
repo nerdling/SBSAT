@@ -32,6 +32,13 @@ SmurfStateEntry *findStateInHEAP(SmurfStateEntry *pStartState, int var) {
 	return pStartState;
 }
 
+void *CreateWatchedListState(BDDNode *pNextBDD, int *arrElts_curr, int nNumElts_curr) {
+	
+
+	
+	
+}
+
 void *CreateSmurfState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, SmurfStateEntry *pStartState) {
 	check_SmurfStatesTableSize(sizeof(SmurfStateEntry)*nNumElts);
 	ite_counters[SMURF_STATES]+=nNumElts;
@@ -107,13 +114,30 @@ void *CreateSmurfState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, SmurfSt
 			}			
 			inferences = infBDD->inferences;
 		}
+
+		//Determine variable drops (bad comment - fix later)
+		
+		int nNumElts_next = 0;
+		unravelBDD(&nNumElts_next, &tempint_max, &tempint, infBDD);
+		int *arrElts_next = (int *)ite_calloc(nNumElts_next, sizeof(int), 9, "arrElts_next");
+		for (int i=0;i<nNumElts_next;i++) {
+			if (tempint[i]==0 || arrIte2SimpleSolverVarMap[tempint[i]]==0) {
+				dE_printf1("\nassigned variable in a BDD in the solver");
+				dE_printf3("\nvariable id: %d, true_false=%d\n", tempint[i], variablelist[tempint[i]].true_false);
+				exit(1);
+			}
+			arrElts_next[i] = arrIte2SimpleSolverVarMap[tempint[i]];
+		}
+		qsort(arrElts_next, nNumElts_next, sizeof(int), revcompfunc);
+
 		
 		if(infBDD->pState != NULL) {
+			ite_free((void **)&arrElts_next);
 			if(bIsInference == 0) NextState->pVarIsFalseTransition = infBDD->pState; //The transition is False
 			else NextInfState->pVarTransition = infBDD->pState;
 		} else {
 			//Recurse on nTransitionVar == False transition
-			void *pNext = ReadSmurfStateIntoTable(infBDD); //HERE
+			void *pNext = ReadSmurfStateIntoTable(infBDD, arrElts_next, nNumElts_next); //HERE
 			assert(pNext!=NULL);
 			if(bIsInference == 0) NextState->pVarIsFalseTransition = pNext; //The transition is False
 			else NextInfState->pVarTransition = pNext;
@@ -163,7 +187,7 @@ void *CreateSmurfState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, SmurfSt
 			else NextInfState->pVarTransition = infBDD->pState;
 		} else {
 			//Recurse on nTransitionVar == True transition
-			void *pNext = ReadSmurfStateIntoTable(infBDD); //HERE
+			void *pNext = ReadSmurfStateIntoTable(infBDD, NULL, 0); //HERE
 			assert(pNext!=NULL);
 			if(bIsInference == 0) NextState->pVarIsTrueTransition = pNext; //The transition is True
 			else NextInfState->pVarTransition = pNext;
@@ -172,23 +196,24 @@ void *CreateSmurfState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, SmurfSt
 	return (void *)pStartState;
 }
 
-void *ReadSmurfStateIntoTable(BDDNode *pCurrentBDD) {
+void *ReadSmurfStateIntoTable(BDDNode *pCurrentBDD, int *arrElts, int nNumElts) {
 	void *pStartState = pCurrentBDD->pState;
 	if(pCurrentBDD != true_ptr && pCurrentBDD->pState==NULL)  {
 		//If this is the first transition into this SmurfState, mark this SmurfState as Visited      
 		
-		long nNumElts = 0;
-		unravelBDD(&nNumElts, &tempint_max, &tempint, pCurrentBDD);
-		int *arrElts = (int *)ite_calloc(nNumElts, sizeof(int), 9, "arrElts");
-		for (int i=0;i<nNumElts;i++) {
-			if (tempint[i]==0 || arrIte2SimpleSolverVarMap[tempint[i]]==0) {
-				dE_printf1("\nassigned variable in a BDD in the solver");
-				dE_printf3("\nvariable id: %d, true_false=%d\n", tempint[i], variablelist[tempint[i]].true_false);
-				exit(1);
+		if(arrElts == NULL) {
+			unravelBDD(&nNumElts, &tempint_max, &tempint, pCurrentBDD);
+			arrElts = (int *)ite_calloc(nNumElts, sizeof(int), 9, "arrElts");
+			for (int i=0;i<nNumElts;i++) {
+				if (tempint[i]==0 || arrIte2SimpleSolverVarMap[tempint[i]]==0) {
+					dE_printf1("\nassigned variable in a BDD in the solver");
+					dE_printf3("\nvariable id: %d, true_false=%d\n", tempint[i], variablelist[tempint[i]].true_false);
+					exit(1);
+				}
+				arrElts[i] = arrIte2SimpleSolverVarMap[tempint[i]];
 			}
-			arrElts[i] = arrIte2SimpleSolverVarMap[tempint[i]];
+			qsort(arrElts, nNumElts, sizeof(int), revcompfunc);
 		}
-		qsort(arrElts, nNumElts, sizeof(int), revcompfunc);
 		
 		int equ_var;
 		if(nNumElts >= functionTypeLimits[PLAINOR] &&

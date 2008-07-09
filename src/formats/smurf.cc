@@ -123,9 +123,9 @@ void BDD_to_Smurfs () {
 	char *p = (char *)calloc(8192, sizeof(char));
 	store * integers;
 	int *tempint=NULL;
-   long tempint_max = 0;
-	long v, y, i;
-	long x;
+   int tempint_max = 0;
+	int v, y, i;
+	int x;
 	integers = (store *) calloc (nmbrFunctions + 1, sizeof (store));
 	numinp = 0;
 
@@ -299,7 +299,7 @@ void Smurfs_to_BDD () {
 	char string, *outvec;
 	outvec = new char[100];
 	int *tempint = NULL;
-   long tempint_max = 0;
+   int tempint_max = 0;
 	int out = 0, line, i = 0;
 	bool flag = false;
    long long y = 0;

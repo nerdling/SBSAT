@@ -47,7 +47,7 @@ void PrintInferenceStateEntry_dot(InferenceStateEntry *ssEntry);
 void FreeSmurfStateEntry(SmurfStateEntry *ssEntry) ;
 void FreeInferenceStateEntry(InferenceStateEntry *ssEntry);
 
-void *ReadSmurfStateIntoTable(BDDNode *pCurrentBDD);
+void *ReadSmurfStateIntoTable(BDDNode *pCurrentBDD, int *arrElts, int nNumElts); //arrElts can be NULL
 
 void LSGBSmurfSetHeurScores(SmurfStateEntry *pState);
 

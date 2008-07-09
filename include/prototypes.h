@@ -41,7 +41,7 @@
 
 double get_runtime();
 long get_memusage();
-void unravelBDD (long *, long *, int **, BDDNode *);
+void unravelBDD (int *, int *, int **, BDDNode *);
 int compfunc (const void *, const void *);
 int revcompfunc (const void *, const void *);
 int abscompfunc (const void *, const void *);
@@ -118,9 +118,9 @@ BDDNode *pruning_p1(BDDNode *, BDDNode *);
 BDDNode *pruning_p2(BDDNode *, BDDNode *);
 BDDNode *steal(BDDNode *, BDDNode *);
 BDDNode *Build_BDD_From_Inferences(BDDNode *);
-void findPathsToX (BDDNode *, long *, int **, int, intlist *, int *, BDDNode *);
-void findPathsToFalse(BDDNode *, long *, int **, intlist *, int *);
-void findPathsToTrue(BDDNode *, long *, int **, intlist *, int *);
+void findPathsToX (BDDNode *, int *, int **, int, intlist *, int *, BDDNode *);
+void findPathsToFalse(BDDNode *, int *, int **, intlist *, int *);
+void findPathsToTrue(BDDNode *, int *, int **, intlist *, int *);
 void readCircuit ();
 void BDD_to_Smurfs();
 
@@ -133,7 +133,7 @@ void printBDDToCNF3SAT();
 void printBDDToAAG();
 
 void GetInferFoAN(BDDNode *);
-infer *GetInfer(long *, long *, int **, BDDNode *);
+infer *GetInfer(int *, int *, int **, BDDNode *);
 void set_variable_all(llist *, int, int);
 BDDNode *set_variable(BDDNode *, int, int);
 BDDNode *set_variable_all_infs(BDDNode *);

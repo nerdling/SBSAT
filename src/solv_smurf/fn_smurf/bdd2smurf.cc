@@ -83,8 +83,8 @@ ComputeSmurfOfNormalized(BDDNodeStruct *pFunc)
    pFunc->pState = (void*)pSmurfState;
 
    // get all the variables
-   long tempint_max = 0;
-   long y=0;
+   int tempint_max = 0;
+   int y=0;
    unravelBDD(&y, &tempint_max, &pSmurfState->vbles.arrElts, pFunc);
    pSmurfState->vbles.nNumElts = y;
    pSmurfState->vbles.arrElts = (int*)realloc(pSmurfState->vbles.arrElts, pSmurfState->vbles.nNumElts*sizeof(int));

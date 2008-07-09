@@ -19,7 +19,7 @@ double fSimpleSolverPrevEndTime;
 
 //Just a dummy variable for holding temp memory allocations
 int *tempint;
-long tempint_max = 0;
+int tempint_max = 0;
 
 //This allocates a new block of smurfs states and attaches them to the previous block
 //The blocks are connected by a linked list - accessed through ->pNext
@@ -135,7 +135,7 @@ int ReadAllSmurfsIntoTable(int nNumVars) {
 	//Count the number of functions every variable occurs in.
 	int *temp_varcount = (int *)ite_calloc(SimpleSmurfProblemState->nNumVars, sizeof(int), 9, "temp_varcount");
 	for(int x = 0; x < SimpleSmurfProblemState->nNumSmurfs; x++) {
-		long nNumElts = 0;
+		int nNumElts = 0;
 		unravelBDD(&nNumElts, &tempint_max, &tempint, functions[x]);
 		for (int i=0;i<nNumElts;i++) {
 			if (tempint[i]==0 ||
@@ -166,7 +166,7 @@ int ReadAllSmurfsIntoTable(int nNumVars) {
 	
 	//Fill in the variable occurance arrays for each function
 	for(int x = 0; x < SimpleSmurfProblemState->nNumSmurfs; x++) {
-		long nNumElts = 0;
+		int nNumElts = 0;
 		unravelBDD(&nNumElts, &tempint_max, &tempint, functions[x]);
 		for (int i=0;i<nNumElts;i++) {
 			if (tempint[i]==0 ||
@@ -220,7 +220,7 @@ int ReadAllSmurfsIntoTable(int nNumVars) {
 		} else {
 			//LSGBSmurfSetHeurScores(nSmurfIndex, pInitialState);
 			if(!smurfs_share_paths) { clear_all_bdd_pState(); true_ptr->pState = pTrueSimpleSmurfState; 	bdd_gc();}
-			SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates[nSmurfIndex] =	ReadSmurfStateIntoTable(pInitialBDD);
+			SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates[nSmurfIndex] =	ReadSmurfStateIntoTable(pInitialBDD, NULL, 0);
 		}
 		Init_Solver_MidSmurfs_Hooks(nSmurfIndex, SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates);
 	}
@@ -385,7 +385,7 @@ void PrintSmurfs(BDDNode **bdds, int size) {
 			fprintf(stdout, "digraph Smurf {\n");
 			fprintf(stdout, " graph [concentrate=true, nodesep=\"0.30\", ordering=in, rankdir=TB, ranksep=\"2.25\"];\n");
 			fprintf(stdout, " b%x [shape=box fontname=""Helvetica"",fontsize=""16"",label=""T""];\n", pTrueSimpleSmurfState);
-			PrintSmurf_dot(ReadSmurfStateIntoTable(bdds[i]));
+			PrintSmurf_dot(ReadSmurfStateIntoTable(bdds[i], NULL, 0));
 			fprintf(stdout, "}\n");
 		}
 	}

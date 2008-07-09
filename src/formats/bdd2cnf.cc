@@ -723,7 +723,7 @@ Recd *resolve (int *truth_table, int sign, int no_vars, int no_outmp_ints) {
 
 void printBDDToCNFQM () {
    int *tempint=NULL, z;
-   long tempint_max=0;
+   int tempint_max=0;
 	
    func_object **funcs;
    int no_outmp_ints;
@@ -747,7 +747,7 @@ void printBDDToCNFQM () {
       fprintf(stderr, "[%d]     \r", x);
       int no_vars = 0;
 		
-      long y = 0;
+      int y = 0;
       unravelBDD(&y, &tempint_max, &tempint, functions[x]);
       if (y != 0) qsort(tempint, y, sizeof (int), compfunc);
       
@@ -893,7 +893,7 @@ void printBDDToCNFQM () {
 
 void printBDDToCNF () {
    int *tempint = NULL, z;
-   long tempint_max = 0;
+   int tempint_max = 0;
 	
    int no_outmp_ints;
    

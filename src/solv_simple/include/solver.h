@@ -66,7 +66,7 @@ extern int nInfQueueStart;
 extern int add_one_display;
 
 extern int *tempint;
-extern long tempint_max;
+extern int tempint_max;
 
 extern int *arrIte2SimpleSolverVarMap;
 extern int *arrSimpleSolver2IteVarMap;

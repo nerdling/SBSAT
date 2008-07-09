@@ -61,7 +61,7 @@ long affected;
 int length_size;
 int variables_size;
 BDDNodeStruct **xorFunctions;
-long bdd_tempint_max=0;
+int bdd_tempint_max=0;
 int *bdd_tempint=NULL;
 int *original_functionType;
 int *original_equalityVble;
@@ -464,7 +464,7 @@ Finish_Preprocessing()
 
 	//Need to remove any function that was set to True during the preprocessing of the BDDs
 	count = -1;
-	for (long x = 0; x < nmbrFunctions; x++) {
+	for (int x = 0; x < nmbrFunctions; x++) {
 		count++;
 		functions[count] = functions[x];
 		functionType[count] = functionType[x];

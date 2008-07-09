@@ -380,7 +380,7 @@ int Split_Large () {
 				ret = PREP_CHANGED;
 				intlist *list = new intlist[num];
 				int listx = 0;
-				long tempint_max = 0;
+				int tempint_max = 0;
 				int *tempint = NULL;
 				findPathsToFalse (functions[j], &tempint_max, &tempint, list, &listx);
 				ite_free((void**)&tempint); tempint_max = 0;
