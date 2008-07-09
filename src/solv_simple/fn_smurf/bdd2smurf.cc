@@ -116,7 +116,7 @@ void *CreateSmurfState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, SmurfSt
 		}
 
 		//Determine variable drops (bad comment - fix later)
-		
+
 		int nNumElts_next = 0;
 		unravelBDD(&nNumElts_next, &tempint_max, &tempint, infBDD);
 		int *arrElts_next = (int *)ite_calloc(nNumElts_next, sizeof(int), 9, "arrElts_next");
@@ -129,6 +129,10 @@ void *CreateSmurfState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, SmurfSt
 			arrElts_next[i] = arrIte2SimpleSolverVarMap[tempint[i]];
 		}
 		qsort(arrElts_next, nNumElts_next, sizeof(int), revcompfunc);
+		
+		//for(int i=0; i < (nNumElts - (nNumElts_next + infs + 1)); i++) { create this many new states ? }
+		
+		
 
 		
 		if(infBDD->pState != NULL) {
