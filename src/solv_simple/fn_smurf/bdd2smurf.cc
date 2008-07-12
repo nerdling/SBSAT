@@ -150,7 +150,7 @@ void *CreateSmurfState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, SmurfSt
 				int next=0;
 				int wl=0;
 				for(int curr=0; curr < nNumElts; curr++) {
-					if(arrElts[curr] == arrElts_next[next]) {
+					if(next < nNumElts_next && arrElts[curr] == arrElts_next[next]) {
 						next++; continue;
 					}
 					if(arrElts[curr] == pCurrState->nTransitionVar) continue;
@@ -167,8 +167,7 @@ void *CreateSmurfState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, SmurfSt
 					}
 					if(cont == 1) continue;
 
-					if(arrElts[curr] != arrElts_next[next]) 
-					  arrWatchedList[wl++] = arrElts[curr];
+					arrWatchedList[wl++] = arrElts[curr];
 				}
 				assert(next == nNumElts_next);
 				assert(wl == nWatchedListSize);
@@ -263,7 +262,7 @@ void *CreateSmurfState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, SmurfSt
 				int next=0;
 				int wl=0;
 				for(int curr=0; curr < nNumElts; curr++) {
-					if(arrElts[curr] == arrElts_next[next]) {
+					if(next < nNumElts_next && arrElts[curr] == arrElts_next[next]) {
 						next++; continue;
 					}
 					if(arrElts[curr] == pCurrState->nTransitionVar)	continue;
@@ -280,8 +279,7 @@ void *CreateSmurfState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, SmurfSt
 					}
 					if(cont == 1) continue;
 					
-					if(arrElts[curr] != arrElts_next[next])
-					  arrWatchedList[wl++] = arrElts[curr];
+					arrWatchedList[wl++] = arrElts[curr];
 				}
 				assert(next == nNumElts_next);
 				assert(wl == nWatchedListSize);
