@@ -50,7 +50,6 @@ WatchedListStateEntry *CreateWatchedListState(int *arrElts_curr, int nNumElts_cu
 			pWLState->arrWatchedList[wl++] = arrElts_curr[curr];
 		} else next++;
 	}
-	assert(curr == nNumElts_curr);
 	assert(next == nNumElts_next);
 	assert(wl == pWLState->nWatchedListSize);
 	
