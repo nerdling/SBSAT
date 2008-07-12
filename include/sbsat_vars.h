@@ -207,6 +207,7 @@ extern int sbj;
 
 extern int ge_preproc;
 extern int use_XORGElim;
+extern int use_SmurfWatchedLists;
 
 extern int USE_AUTARKY_SMURFS;
 

@@ -327,6 +327,8 @@ t_opt options[] = {
 			      "Enable/Disable attempting to slide lemmas during search (1/0)"},
 { &use_XORGElim, "", "gelim-smurfs", P_INT, V(i:0, "0"),  V(i:'0', "0"), VAR_NORMAL, 0,
 	   "Use Gaussian Elimination during search (1/0)"},
+{ &use_SmurfWatchedLists, "", "watched-smurfs", P_INT, V(i:0, "0"),  V(i:'0', "0"), VAR_NORMAL, 0,
+	   "Allow Smurf dynamic association lists during search (1/0)"},
 { &USE_AUTARKY_SMURFS, "", "autarky-smurfs", P_INT, V(i:0,"0"), V(i:0,"0"), VAR_CHECK+VAR_DUMP, 0,
 		"Use Autarky Smurfs in the solver (1/0)"},
 { &USE_AUTARKY_LEMMAS, "", "autarky-lemmas", P_INT, V(i:0,"0"), V(i:0,"0"), VAR_CHECK+VAR_DUMP, 0,

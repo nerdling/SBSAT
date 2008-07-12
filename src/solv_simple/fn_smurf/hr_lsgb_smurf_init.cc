@@ -58,28 +58,31 @@ ITE_INLINE double LSGBSumNodeWeights(SmurfStateEntry *pState) {
 	return fTotalTransitions / (((double)num_variables) * 2.0 * JHEURISTIC_K);
 }
 
-ITE_INLINE double LSGBGetHeurScoreTransition(SmurfStateEntry *pState, int nPolarity) {
+ITE_INLINE double LSGBGetHeurScoreTransition(SmurfStateEntry *pState, bool bPolarity) {
 	int num_inferences = 0;
-	//pState = (SmurfStateEntry *) (nPolarity>0?pState->pVarIsTrueTransition:pState->pVarIsFalseTransition);
-	InferenceStateEntry *pInference = (InferenceStateEntry *) (nPolarity>0?pState->pVarIsTrueTransition:pState->pVarIsFalseTransition);
-	while(pInference->cType == FN_INFERENCE) {
-		num_inferences++;
-		pInference = (InferenceStateEntry *) pInference->pVarTransition;
+
+	void *pNextState = bPolarity?pState->pVarIsTrueTransition:pState->pVarIsFalseTransition;
+	if(((TypeStateEntry *)pNextState)->cType == FN_WATCHED_LIST) { //Skip the possible FN_WATCHED_LIST State
+		pNextState = ((WatchedListStateEntry *)pNextState)->pVarTransition;
 	}
-	
+	while(((TypeStateEntry *)pNextState)->cType == FN_INFERENCE) {
+		num_inferences++;
+		pNextState = ((InferenceStateEntry *)pNextState)->pVarTransition;
+	}
+							  
 	double fInferenceWeights = JHEURISTIC_K_INF * num_inferences;	
-	if (pInference->cType == FN_SMURF) {
-		return fInferenceWeights + LSGBSumNodeWeights((SmurfStateEntry *)pInference);
-	} else if (pInference->cType == FN_OR) {
-		return fInferenceWeights + LSGBORGetHeurScore((ORStateEntry *)pInference);
-	} else if (pInference->cType == FN_OR_COUNTER) {
-		return fInferenceWeights + LSGBORCounterGetHeurScore((ORCounterStateEntry *)pInference);
-	} else if (pInference->cType == FN_XOR) {
-		return fInferenceWeights + LSGBXORGetHeurScore((XORStateEntry *)pInference);
-	} else if (pInference->cType == FN_XOR_COUNTER) {
-		return fInferenceWeights + LSGBXORCounterGetHeurScore((XORCounterStateEntry *)pInference);
-	} else if (pInference->cType == FN_XOR_GELIM) {
-		return fInferenceWeights + LSGBarrXORWeight(((XORGElimStateEntry *)pInference)->nSize);
+	if (((TypeStateEntry *)pNextState)->cType == FN_SMURF) {
+		return fInferenceWeights + LSGBSumNodeWeights((SmurfStateEntry *)pNextState);
+	} else if (((TypeStateEntry *)pNextState)->cType == FN_OR) {
+		return fInferenceWeights + LSGBORGetHeurScore((ORStateEntry *)pNextState);
+	} else if (((TypeStateEntry *)pNextState)->cType == FN_OR_COUNTER) {
+		return fInferenceWeights + LSGBORCounterGetHeurScore((ORCounterStateEntry *)pNextState);
+	} else if (((TypeStateEntry *)pNextState)->cType == FN_XOR) {
+		return fInferenceWeights + LSGBXORGetHeurScore((XORStateEntry *)pNextState);
+	} else if (((TypeStateEntry *)pNextState)->cType == FN_XOR_COUNTER) {
+		return fInferenceWeights + LSGBXORCounterGetHeurScore((XORCounterStateEntry *)pNextState);
+	} else if (((TypeStateEntry *)pNextState)->cType == FN_XOR_GELIM) {
+		return fInferenceWeights + LSGBarrXORWeight(((XORGElimStateEntry *)pNextState)->nSize);
 	}
 	return 0;
 }

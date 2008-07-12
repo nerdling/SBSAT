@@ -61,7 +61,8 @@ enum {
 	FN_MINMAX,
 	FN_MINMAX_COUNTER,
 	FN_NEG_MINMAX,
-   FN_INFERENCE
+   FN_WATCHED_LIST,
+	FN_INFERENCE
 };
 
 int solve();
@@ -113,9 +114,10 @@ struct InferenceStateEntry {
 };
 
 struct WatchedListStateEntry {
-	char cType; //FN_WATCHEDLIST
+	char cType; //FN_WATCHED_LIST
 	bool visited; //Used for displaying the smurfs
-	int **arrTransitionVarLocations;
+	int *arrWatchedList;
+	int nWatchedListSize;
 	void *pVarTransition;
 };
 

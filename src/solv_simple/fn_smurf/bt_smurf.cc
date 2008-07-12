@@ -13,16 +13,23 @@ int ApplyInferenceToSmurf(int nBranchVar, bool bBVPolarity, int nSmurfNumber, vo
 		else {
 			//(pSmurfState->nTransitionVar == nBranchVar) {
 			//Follow this transition and apply all inferences found.
-			InferenceStateEntry *pInference = (InferenceStateEntry *)(bBVPolarity?pSmurfState->pVarIsTrueTransition:pSmurfState->pVarIsFalseTransition);
-			while(pInference->cType == FN_INFERENCE) {
-				if(EnqueueInference(pInference->nTransitionVar, pInference->bPolarity > 0) == 0) return 0;
-				//Follow the transtion to the next SmurfState
-				pInference = (InferenceStateEntry *)pInference->pVarTransition;
+			void *pNextState = bBVPolarity?pSmurfState->pVarIsTrueTransition:pSmurfState->pVarIsFalseTransition;
+			if(((TypeStateEntry *)pNextState)->cType == FN_WATCHED_LIST) {
+				//SEAN!!! Remove nSmurfNumber from all vars watched lists, add info to stack.
+				pNextState = ((WatchedListStateEntry *)pNextState)->pVarTransition;
 			}
-			//assert(pInference->cType == FN_SMURF);
-			//pSmurfState = (SmurfStateEntry *)pInference;
+			while(((TypeStateEntry *)pNextState)->cType == FN_INFERENCE) {
+				if(EnqueueInference(((InferenceStateEntry *)pNextState)->nTransitionVar, ((InferenceStateEntry *)pNextState)->bPolarity > 0) == 0) return 0;
+				//Follow the transtion to the next SmurfState
+				pNextState = ((InferenceStateEntry *)pNextState)->pVarTransition;
+			}
+			if(((TypeStateEntry *)pNextState)->cType == FN_WATCHED_LIST) {
+				//SEAN!!! Remove nSmurfNumber from all vars watched lists, add info to stack.
+				pNextState = ((WatchedListStateEntry *)pNextState)->pVarTransition;
+			}
+
 			//Record the transition.
-			arrSmurfStates[nSmurfNumber] = pInference;//pSmurfState;
+			arrSmurfStates[nSmurfNumber] = pNextState;//pSmurfState;
 			break;
 		}
 	} while (pSmurfState != NULL);
