@@ -41,7 +41,7 @@ WatchedListStateEntry *CreateWatchedListState(int *arrWatchedList, int nWatchedL
 	SimpleSmurfProblemState->pSmurfStatesTableTail = (void *)(pWLState + 1);
 	pWLState->cType = FN_WATCHED_LIST;
 	pWLState->nWatchedListSize = nWatchedListSize;
-	pWLState->arrWatchedList = (int *)ite_calloc(pWLState->nWatchedListSize, sizeof(int), 9, "pWLState->nWatchedListSize");
+	pWLState->arrWatchedList = arrWatchedList;
 	return pWLState;
 }
 
