@@ -2,103 +2,6 @@
 #include "sbsat_solver.h"
 #include "solver.h"
 
-/********** Included in include/sbsat_solver.h *********************
-
-struct TypeStateEntry {
-   char cType;
-}
-
- struct SmurfStateEntry{
-   char cType; //FN_SMURF
-   int nTransitionVar;
-	void *pVarIsTrueTransition;
-	void *pVarIsFalseTransition;
-	double fHeurWghtofTrueTransition;
-	double fHeurWghtofFalseTransition;
-	//This is 1 if nTransitionVar should be inferred True,
-	//       -1 if nTransitionVar should be inferred False,
-	//        0 if nTransitionVar should not be inferred.
-	void *pNextVarInThisStateGT; //There are n SmurfStateEntries linked together
- 	void *pNextVarInThisStateLT; //in the structure of a heap,
-	                             //where n is the number of variables in this SmurfStateEntry.
-                          	     //All of these SmurfStateEntries represent the same function,
-                                //but a different variable (nTransitionVar) is
-                                //highlighted for each link in the heap.
-                                //If this is 0, we have reached a leaf node.
-	void *pNextVarInThisState;   //Same as above except linked linearly, instead of a heap.
-                                //Used for computing the heuristic of a state.
- };
-
-struct InferenceStateEntry {
-   char cType; //FN_INFERENCE
-   int nTransitionVar;
-   void *pVarTransition;
-   bool bPolarity
- };
-
-struct ORStateEntry {
-   char cType; //FN_OR
-   int *pnTransitionVars;
-   bool *bPolarity;
-   int nSize;
-};
-
-struct ORCounterStateEntry {
-   char cType; //FN_OR_COUNTER
-   void *pTransition;
-   int nSize;
-   ORStateEntry *pORState;
-};
-
-struct XORStateEntry {
-   char cType; //FN_OR
-   int *pnTransitionVars;
-   bool parity;
-   int nSize;
-};
-
-struct XORCounterStateEntry {
-   char cType; //FN_OR_COUNTER
-   void *pTransition;
-   int nSize;
-   XORStateEntry *pXORState; //For heuristic purposes
-};
-
-struct SmurfStack{
-	int nNumFreeVars;
-   int nHeuristicPlaceholder;
-   int nVarChoiceCurrLevel;   //Index to array of size nNumVars
-   void **arrSmurfStates;     //Pointer to array of size nNumSmurfs
-};
-
-struct SmurfStatesTableStruct {
-   int curr_size;
-   int max_size;
-   void **arrStatesTable; //Pointer to a table of smurf states.
-   SmurfStatesTableStruct *pNext;
-};
-
-struct ProblemState{
-	// Static
-	int nNumSmurfs;
-	int nNumVars;
-	int nNumSmurfStateEntries;
-   SmurfStatesTableStruct *arrSmurfStatesTableHead; //Pointer to the table of all smurf states
-   SmurfStatesTableStruct *arrCurrSmurfStates;      //Pointer to the current table of smurf states
-   void *pSmurfStatesTableTail;                     //Pointer to the next open block of the arrSmurfStatesTable
-	int **arrVariableOccursInSmurf; //Pointer to lists of Smurfs, indexed by variable number, that contain that variable.
-	                                //Max size would be nNumSmurfs * nNumVars, but this would only happen if every
-               	                 //Smurf contained every variable. Each list is terminated by a -1 element.
-	// Dynamic
-	int nCurrSearchTreeLevel;
-   double *arrPosVarHeurWghts;       //Pointer to array of size nNumVars
-	double *arrNegVarHeurWghts;       //Pointer to array of size nNumVars
-	int *arrInferenceQueue;           //Pointer to array of size nNumVars (dynamically indexed by arrSmurfStack[level].nNumFreeVars
-   int *arrInferenceDeclaredAtLevel; //Pointer to array of size nNumVars
-	SmurfStack *arrSmurfStack;        //Pointer to array of size nNumVars
-};
-***********************************************************************/
-
 int nSimpleSolver_Reset=0;
 int nInfQueueStart=0;
 int solver_polarity_presets_count=0;
@@ -441,7 +344,8 @@ int ApplyInferenceToStates(int nBranchVar, bool bBVPolarity) {
 	void **arrSmurfStates = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].arrSmurfStates;
 	d7_printf2("  Transitioning Smurfs using %d\n", bBVPolarity?nBranchVar:-nBranchVar);
 	for(int i = SimpleSmurfProblemState->arrVariableOccursInSmurf[nBranchVar][0]; i > 0; i--) {
-		if ((SimpleSmurfProblemState->arrVariableOccursInSmurf[nBranchVar][i] >> 31) == 1) continue; //For Watched Literals
+		if ((SimpleSmurfProblemState->arrVariableOccursInSmurf[nBranchVar][i] >> 31) == 1) continue; //Skip Non-Watched Variables
+		//SEAN IDEA: Clauses are watched on literals, so only ~half of clauses are checked each time.
 		//if ((SimpleSmurfProblemState->arrVariableOccursInSmurf[nBranchVar][i] & 0x40000000) == 0x40000000) continue;
 		int nSmurfNumber = SimpleSmurfProblemState->arrVariableOccursInSmurf[nBranchVar][i];
 		// d7_printf3("    Checking Smurf %d (State %x)\n", nSmurfNumber, (unsigned int)arrSmurfStates[nSmurfNumber]);
@@ -480,6 +384,9 @@ void SmurfStates_Push(int destination) {
 	
 	SimpleSmurfProblemState->arrSmurfStack[destination].nHeuristicPlaceholder =
 	  SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nHeuristicPlaceholder;
+
+	SimpleSmurfProblemState->arrSmurfStack[destination].nWatchedListStackTop =
+	  SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nWatchedListStackTop;
 	
 	SmurfStates_Push_Hooks(SimpleSmurfProblemState->nCurrSearchTreeLevel, destination);
 	
@@ -513,11 +420,13 @@ int Backtrack() {
 	int ret = Backtrack_Hooks();
 	
 	int nInfQueueTail = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;	  
-	  
+	int nWatchedListStackTail = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nWatchedListStackTop;
+	
 	int nPop = SmurfStates_Pop();
 	if(nPop != SOLV_UNKNOWN) return nPop;
 
 	int nInfQueueHead = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
+	int nWatchedListStackHead = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nWatchedListStackTop;
 	
 	//Empty the inference queue & reverse polarity of cp var
 	//Clear Inference Queue
@@ -528,7 +437,12 @@ int Backtrack() {
 		d7_printf3("      Resetting level of variable %d to %d\n", nBranchLit, SimpleSmurfProblemState->nNumVars);
 		SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[nBranchLit] = SimpleSmurfProblemState->nNumVars;
 	}
-	  
+
+	//Repair the watched variable lists
+	for(int i = nWatchedListStackHead; i < nWatchedListStackTail; i++) {
+		(*SimpleSmurfProblemState->arrWatchedListStack[i]) &= 0x7FFFFFFF; //Unset the top bit.
+	}
+	
 	return ret;
 }
 

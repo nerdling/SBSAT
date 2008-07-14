@@ -32,7 +32,7 @@ SmurfStateEntry *findStateInHEAP(SmurfStateEntry *pStartState, int var) {
 	return pStartState;
 }
 
-WatchedListStateEntry *CreateWatchedListState(int *arrWatchedList, int nWatchedListSize) {
+WatchedListStateEntry *CreateWatchedListState(int *pnWatchedList, int nWatchedListSize) {
 	check_SmurfStatesTableSize(sizeof(WatchedListStateEntry));
 	ite_counters[SMURF_STATES]++;
 	assert(SimpleSmurfProblemState->pSmurfStatesTableTail != NULL);
@@ -41,7 +41,7 @@ WatchedListStateEntry *CreateWatchedListState(int *arrWatchedList, int nWatchedL
 	SimpleSmurfProblemState->pSmurfStatesTableTail = (void *)(pWLState + 1);
 	pWLState->cType = FN_WATCHED_LIST;
 	pWLState->nWatchedListSize = nWatchedListSize;
-	pWLState->arrWatchedList = arrWatchedList;
+	pWLState->pnWatchedList = pnWatchedList;
 	return pWLState;
 }
 
@@ -146,7 +146,7 @@ void *CreateSmurfState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, SmurfSt
 			nWatchedListSize = nNumElts - (nNumElts_next+nNumInferences+1);
 		
 			if(nWatchedListSize > 0) { //Some variables dropped out
-				int *arrWatchedList = (int *)ite_calloc(nWatchedListSize, sizeof(int), 9, "nWatchedListSize");
+				int *pnWatchedList = (int *)ite_calloc(nWatchedListSize, sizeof(int), 9, "nWatchedListSize");
 				int next=0;
 				int wl=0;
 				for(int curr=0; curr < nNumElts; curr++) {
@@ -167,16 +167,16 @@ void *CreateSmurfState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, SmurfSt
 					}
 					if(cont == 1) continue;
 
-					arrWatchedList[wl++] = arrElts[curr];
+					pnWatchedList[wl++] = arrElts[curr];
 				}
 				assert(next == nNumElts_next);
 				assert(wl == nWatchedListSize);
 				
-				pNextWatchedListState = CreateWatchedListState(arrWatchedList, nWatchedListSize);
+				pNextWatchedListState = CreateWatchedListState(pnWatchedList, nWatchedListSize);
 				if(nNumInferences == 0)
 				  pNextState->pVarIsFalseTransition = pNextWatchedListState;
 				else {
-					pNextWatchedListState->pVarTransition = pNextState->pVarIsFalseTransition;
+					pNextWatchedListState->pTransition = pNextState->pVarIsFalseTransition;
 					pNextState->pVarIsFalseTransition = pNextWatchedListState;
 				}
 			}
@@ -185,14 +185,14 @@ void *CreateSmurfState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, SmurfSt
 		if(infBDD->pState != NULL) {
 			ite_free((void **)&arrElts_next);
 			if(nNumInferences == 0 && nWatchedListSize == 0) pNextState->pVarIsFalseTransition = infBDD->pState; //The transition is False
-			else if(nNumInferences == 0) pNextWatchedListState->pVarTransition = infBDD->pState;
+			else if(nNumInferences == 0) pNextWatchedListState->pTransition = infBDD->pState;
 			else pNextInfState->pVarTransition = infBDD->pState;
 		} else {
 			//Recurse on nTransitionVar == False transition
 			void *pNext = ReadSmurfStateIntoTable(infBDD, arrElts_next, nNumElts_next);
 			assert(pNext!=NULL);
 			if(nNumInferences == 0 && nWatchedListSize == 0) pNextState->pVarIsFalseTransition = pNext; //The transition is False
-			else if(nNumInferences == 0) pNextWatchedListState->pVarTransition = pNext;
+			else if(nNumInferences == 0) pNextWatchedListState->pTransition = pNext;
 			else pNextInfState->pVarTransition = pNext;
 		}
 
@@ -258,7 +258,7 @@ void *CreateSmurfState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, SmurfSt
 			nWatchedListSize = nNumElts - (nNumElts_next+nNumInferences+1);
 
 			if(nWatchedListSize > 0) { //Some variables dropped out
-				int *arrWatchedList = (int *)ite_calloc(nWatchedListSize, sizeof(int), 9, "nWatchedListSize");
+				int *pnWatchedList = (int *)ite_calloc(nWatchedListSize, sizeof(int), 9, "nWatchedListSize");
 				int next=0;
 				int wl=0;
 				for(int curr=0; curr < nNumElts; curr++) {
@@ -279,16 +279,16 @@ void *CreateSmurfState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, SmurfSt
 					}
 					if(cont == 1) continue;
 					
-					arrWatchedList[wl++] = arrElts[curr];
+					pnWatchedList[wl++] = arrElts[curr];
 				}
 				assert(next == nNumElts_next);
 				assert(wl == nWatchedListSize);
 				
-				pNextWatchedListState = CreateWatchedListState(arrWatchedList, nWatchedListSize);
+				pNextWatchedListState = CreateWatchedListState(pnWatchedList, nWatchedListSize);
 				if(nNumInferences == 0)
 				  pNextState->pVarIsTrueTransition = pNextWatchedListState;
 				else {
-					pNextWatchedListState->pVarTransition = pNextState->pVarIsFalseTransition;
+					pNextWatchedListState->pTransition = pNextState->pVarIsFalseTransition;
 					pNextState->pVarIsTrueTransition = pNextWatchedListState;
 				}
 			}
@@ -297,14 +297,14 @@ void *CreateSmurfState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, SmurfSt
 		if(infBDD->pState != NULL) {
 			ite_free((void **)&arrElts_next);
 			if(nNumInferences == 0 && nWatchedListSize == 0) pNextState->pVarIsTrueTransition = infBDD->pState; //The transition is True
-			else if(nNumInferences == 0) pNextWatchedListState->pVarTransition = infBDD->pState;
+			else if(nNumInferences == 0) pNextWatchedListState->pTransition = infBDD->pState;
 			else pNextInfState->pVarTransition = infBDD->pState;
 		} else {
 			//Recurse on nTransitionVar == True transition
 			void *pNext = ReadSmurfStateIntoTable(infBDD, arrElts_next, nNumElts_next);
 			assert(pNext!=NULL);
 			if(nNumInferences == 0 && nWatchedListSize == 0) pNextState->pVarIsTrueTransition = pNext; //The transition is True
-			else if(nNumInferences == 0) pNextWatchedListState->pVarTransition = pNext;
+			else if(nNumInferences == 0) pNextWatchedListState->pTransition = pNext;
 			else pNextInfState->pVarTransition = pNext;
 		}
 	}
@@ -314,7 +314,7 @@ void *CreateSmurfState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, SmurfSt
 void *ReadSmurfStateIntoTable(BDDNode *pCurrentBDD, int *arrElts, int nNumElts) {
 	void *pStartState = pCurrentBDD->pState;
 	if(pCurrentBDD != true_ptr && pCurrentBDD->pState==NULL)  {
-		//If this is the first transition into this SmurfState, mark this SmurfState as Visited      
+		//If this is the first transition into this SmurfState, mark this SmurfState as Visited
 		
 		if(arrElts == NULL) {
 			unravelBDD(&nNumElts, &tempint_max, &tempint, pCurrentBDD);

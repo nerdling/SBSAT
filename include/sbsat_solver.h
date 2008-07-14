@@ -116,9 +116,9 @@ struct InferenceStateEntry {
 struct WatchedListStateEntry {
 	char cType; //FN_WATCHED_LIST
 	bool visited; //Used for displaying the smurfs
-	int *arrWatchedList;
 	int nWatchedListSize;
-	void *pVarTransition;
+	int *pnWatchedList;
+	void *pTransition;
 };
 
 struct ORStateEntry {
@@ -198,6 +198,7 @@ struct SmurfStack {
 	int nNumFreeVars;
 	int nHeuristicPlaceholder;
 	int nVarChoiceCurrLevel; //Index to array of size nNumVars
+	int nWatchedListStackTop;
 	void **arrSmurfStates;   //Pointer to array of size nNumSmurfs
 	XORGElimTableStruct *XORGElimTable; //For holding the Gaussian Elimination Table.
 };
@@ -229,6 +230,7 @@ struct ProblemState {
 	double *arrNegVarHeurWghts;       //Pointer to array of size nNumVars
 	int *arrInferenceQueue;           //Pointer to array of size nNumVars (dynamically indexed by arrSmurfStack[level].nNumFreeVars
 	int *arrInferenceDeclaredAtLevel; //Pointer to array of size nNumVars
+	int **arrWatchedListStack;         //Pointer to array, max size is same as arrVariableOccursInSmurf
 	SmurfStack *arrSmurfStack;        //Pointer to array of size nNumVars
 };
 

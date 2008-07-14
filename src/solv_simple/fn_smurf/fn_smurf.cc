@@ -3,7 +3,7 @@
 #include "solver.h"
 
 void PrintSmurfStateEntry(SmurfStateEntry *ssEntry) {
-	d9_printf9("Var=%d, v=T:%x, v=F:%x, TWght=%4.6f, FWght=%4.6f, NextGT=%x, NextLT=%x, Next=%x\n", ssEntry->nTransitionVar, ssEntry->pVarIsTrueTransition, ssEntry->pVarIsFalseTransition, ssEntry->fHeurWghtofTrueTransition, ssEntry->fHeurWghtofFalseTransition, ssEntry->pNextVarInThisStateGT, ssEntry->pNextVarInThisStateLT, ssEntry->pNextVarInThisState);
+	d9_printf9("SM Var=%d, v=T:%x, v=F:%x, TWght=%4.6f, FWght=%4.6f, NextGT=%x, NextLT=%x, Next=%x\n", ssEntry->nTransitionVar, ssEntry->pVarIsTrueTransition, ssEntry->pVarIsFalseTransition, ssEntry->fHeurWghtofTrueTransition, ssEntry->fHeurWghtofFalseTransition, ssEntry->pNextVarInThisStateGT, ssEntry->pNextVarInThisStateLT, ssEntry->pNextVarInThisState);
 }
 
 void PrintSmurfStateEntry_dot(SmurfStateEntry *ssEntry) {
@@ -30,7 +30,7 @@ void PrintSmurfStateEntry_dot(SmurfStateEntry *ssEntry) {
 }
 
 void PrintInferenceStateEntry(InferenceStateEntry *ssEntry) {
-	d9_printf4("Var=%d, Inf=%x, Polarity=%d\n", ssEntry->nTransitionVar, ssEntry->pVarTransition, ssEntry->bPolarity);
+	d9_printf4("IN Var=%d, Inf=%x, Polarity=%d\n", ssEntry->nTransitionVar, ssEntry->pVarTransition, ssEntry->bPolarity);
 }
 
 void PrintInferenceStateEntry_dot(InferenceStateEntry *ssEntry) {
@@ -41,10 +41,27 @@ void PrintInferenceStateEntry_dot(InferenceStateEntry *ssEntry) {
 	fprintf(stdout, "b%x [shape=\"circle\", label=\"I\"]\n", ssEntry);
 }
 
+void PrintWatchedListStateEntry(WatchedListStateEntry *ssEntry) {
+   d9_printf2("WL Next=%x ", ssEntry->pTransition);
+	d9_printf1("Vars=");
+	for(int x = 0; x < ssEntry->nWatchedListSize; x++)
+	  d9_printf2("%d ", ssEntry->pnWatchedList[x]);
+	d9_printf2("Size=%d\n", ssEntry->nWatchedListSize);
+}
+
+void PrintWatchedListStateEntry_dot(WatchedListStateEntry *ssEntry) {
+
+}
+
 void FreeSmurfStateEntry(SmurfStateEntry *ssEntry) {
 
 }
 
 void FreeInferenceStateEntry(InferenceStateEntry *ssEntry) {
+
+}
+
+void FreeWatchedListStateEntry(WatchedListStateEntry *ssEntry) {
+	ite_free((void **)&ssEntry->pnWatchedList);
 
 }

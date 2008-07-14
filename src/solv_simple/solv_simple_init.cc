@@ -3,7 +3,7 @@
 #include "solver.h"
 
 //A flag that determines whether or not smurf states are shared between smurfs.
-int smurfs_share_paths=1;
+int smurfs_share_paths=0;
 
 //The main data structure holding information about the current state used
 // by the brancher.
@@ -134,6 +134,7 @@ int ReadAllSmurfsIntoTable(int nNumVars) {
 	
 	//Count the number of functions every variable occurs in.
 	int *temp_varcount = (int *)ite_calloc(SimpleSmurfProblemState->nNumVars, sizeof(int), 9, "temp_varcount");
+	int nWatchedListStackSize = 0;
 	for(int x = 0; x < SimpleSmurfProblemState->nNumSmurfs; x++) {
 		int nNumElts = 0;
 		unravelBDD(&nNumElts, &tempint_max, &tempint, functions[x]);
@@ -153,8 +154,11 @@ int ReadAllSmurfsIntoTable(int nNumVars) {
 		for(int y = 0; y < nNumElts; y++)
 		  temp_varcount[tempint[y]]++;
 		SimpleSmurfProblemState->arrReverseOccurenceList[x] = (int **)ite_calloc(nNumElts, sizeof(int *), 9, "arrReverseOccurenceList[x]");
+		nWatchedListStackSize+=nNumElts;
 	}
 
+	if(use_SmurfWatchedLists) SimpleSmurfProblemState->arrWatchedListStack = (int **)ite_calloc(nWatchedListStackSize, sizeof(int *), 9, "arrWatchedListStack");
+	
 	Alloc_SmurfStack(0); //Alloc some of the Smurf Stack
 	
 	for(int x = 0; x < SimpleSmurfProblemState->nNumVars; x++) {
@@ -189,7 +193,8 @@ int ReadAllSmurfsIntoTable(int nNumVars) {
 //			fprintf(stderr, "|%d %d|", x, *SimpleSmurfProblemState->arrReverseOccurenceList[x][y]);
 //			(*SimpleSmurfProblemState->arrReverseOccurenceList[x][y])--;
 //			fprintf(stderr, "|%d %d|", x, *SimpleSmurfProblemState->arrReverseOccurenceList[x][y]);
-			
+//			(*SimpleSmurfProblemState->arrReverseOccurenceList[x][y])=1;
+//			fprintf(stderr, "|%d %d|", x, *SimpleSmurfProblemState->arrReverseOccurenceList[x][y]);
 			temp_varcount[nVar]++;
 		}
 	}
@@ -253,7 +258,8 @@ void FreeSmurfSolverVars() {
 	ite_free((void **)&SimpleSmurfProblemState->arrNegVarHeurWghts);
 	ite_free((void **)&SimpleSmurfProblemState->arrInferenceQueue);
 	ite_free((void **)&SimpleSmurfProblemState->arrInferenceDeclaredAtLevel);
-
+	if(use_SmurfWatchedLists) ite_free((void **)&SimpleSmurfProblemState->arrWatchedListStack);
+	
 	LSGBORFree();
 	LSGBXORFree();
 // Minmax and NegMinmax for the future
@@ -276,6 +282,10 @@ void FreeSmurfStateEntries() {
 				FreeInferenceStateEntry((InferenceStateEntry *)arrSmurfStates);
 				arrSmurfStates = (void *)(((InferenceStateEntry *)arrSmurfStates) + 1);
 				size = sizeof(InferenceStateEntry);
+			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_WATCHED_LIST) {
+				FreeWatchedListStateEntry((WatchedListStateEntry *)arrSmurfStates);
+				arrSmurfStates = (void *)(((WatchedListStateEntry *)arrSmurfStates) + 1);
+				size = sizeof(WatchedListStateEntry);
 			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_OR) {							  
 				FreeORStateEntry((ORStateEntry *)arrSmurfStates);
 				arrSmurfStates = (void *)(((ORStateEntry *)arrSmurfStates) + 1);
