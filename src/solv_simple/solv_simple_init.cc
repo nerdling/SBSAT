@@ -3,7 +3,7 @@
 #include "solver.h"
 
 //A flag that determines whether or not smurf states are shared between smurfs.
-int smurfs_share_paths=0;
+int smurfs_share_paths=1;
 
 //The main data structure holding information about the current state used
 // by the brancher.
