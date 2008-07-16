@@ -444,7 +444,7 @@ int are_xdd_comp(BDDNode *x, BDDNode *y) {
 		if(x->variable != y->variable) return 0;
 		if(x->thenCase != y->thenCase) return 0;
 		x = x->elseCase;
-		y = y->thenCase;		
+		y = y->elseCase;		
 	}
 	if(x == true_ptr) {
 		if(y == false_ptr)
