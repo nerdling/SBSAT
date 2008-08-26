@@ -262,6 +262,8 @@ t_opt options[] = {
 	  "Enable/Disable Creating Extended Resolvents for all pairs of variables (1/0)"},
 { &DO_DIAMETER, "Di",  "Di",  P_INT, V(i:0,"0"),  V(i:1,"1"), VAR_CHECK+VAR_DUMP, 0,
 	  "Enable/Disable Computing the diameter of variable interaction graph (1/0)"},
+{ &DO_MESSAGE_PASSING, "Mp",  "Mp",  P_INT, V(i:0,"0"),  V(i:1,"1"), VAR_NORMAL, 0,
+	  "Enable/Disable Use of message passing routines like BP/SP etc. (1/0)"},
 { &max_preproc_time, "",  "max-preproc-time", P_INT, V(i:0,"0"),  V(i:0,"0"), VAR_NORMAL, 0,
 		"set the time limit in seconds (0=no limit)"},
 { &do_split_max_vars, "",  "do-split-max-vars", P_INT, V(i:0,"0"),  V(i:10,"10"), VAR_NORMAL, 0,
@@ -616,6 +618,7 @@ DO_ALL(int value)
 	set_param_int(strcpy(tmp_str, "Is"), value);
 	set_param_int(strcpy(tmp_str, "Er"), value);
 	set_param_int(strcpy(tmp_str, "Di"), value);
+	set_param_int(strcpy(tmp_str, "Mp"), value);
    // also add a line to the following function
 }
 
@@ -642,6 +645,7 @@ DO_ALL_default(int value)
 	change_defa_param_int(strcpy(tmp_str, "Is"), value);
 	change_defa_param_int(strcpy(tmp_str, "Er"), value);
 	change_defa_param_int(strcpy(tmp_str, "Di"), value);
+	change_defa_param_int(strcpy(tmp_str, "Mp"), value);
 }
 
 void

@@ -83,6 +83,7 @@ preproc_type preproc[] = {
   { "Is", 2, Do_Identify_Same_Structure, NULL, &DO_IDENTIFY_SAME_STRUCTURE},
   { "Er", 2, Do_ExtendRes, NULL, &DO_EXTEND_RES},
   { "Di", 2, Do_Diameter, NULL, &DO_DIAMETER},
+  { "Mp", 2, Do_Message_Passing, NULL, &DO_MESSAGE_PASSING},
   { "", 0, NULL, NULL, NULL }
 };
 
