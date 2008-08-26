@@ -154,6 +154,7 @@ extern int DO_PROVER3;
 extern int DO_IDENTIFY_SAME_STRUCTURE;
 extern int DO_EXTEND_RES;
 extern int DO_DIAMETER;
+extern int DO_MESSAGE_PASSING;
 
 extern int PARAMS_DUMP;
 
@@ -294,6 +295,8 @@ extern int DO_SIMPLEAND;
 extern int DO_SAFE_ASSIGN;
 extern int DO_SAFE_SEARCH;
 extern int DO_STEAL;
+extern int DO_MESSAGE_PASSING;
+extern int DO_DIAMETER;
 extern int DO_INFERENCES;
 extern int DO_EXIST_QUANTIFY;
 extern int DO_EXIST_QUANTIFY_AND;

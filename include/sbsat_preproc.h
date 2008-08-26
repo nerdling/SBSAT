@@ -131,6 +131,7 @@ int Do_ExtendRes();
 int Do_Diameter();
 void Do_Flow();
 void Do_Flow_Grouping();
+int Do_Message_Passing();
 
 int Finish_Preprocessing();
 int Init_Preprocessing();
