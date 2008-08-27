@@ -39,6 +39,7 @@
 #define SBSAT_PREPROC_H
 
 #include "equivclass.h"
+
 extern Equiv *l;
 //extern int *tempint;
 extern infer *lastinfer;

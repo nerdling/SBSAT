@@ -7,13 +7,18 @@ int nInfQueueStart=0;
 int solver_polarity_presets_count=0;
 int simple_solver_reset_level=-1;
 int add_one_display=0;
+int solutions_overflow=0;
 
 ITE_INLINE
 void save_solution_simple(void) {
-	d7_printf1("      Solution found\n");
 	if (result_display_type) {
+		d7_printf1("      Solution found\n");
+		ite_counters[NUM_SOLUTIONS]++;
 		/* create another node in solution chain */
 		d7_printf1("      Recording solution\n");
+
+		int nCurrInfLevel = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
+		
 		t_solution_info *tmp_solution_info;
 		tmp_solution_info = (t_solution_info*)calloc(1, sizeof(t_solution_info));
 		
@@ -28,9 +33,26 @@ void save_solution_simple(void) {
 		tmp_solution_info->arrElts = new int[numinp+1];//new int[SimpleSmurfProblemState->nNumVars+2];
 		
 		for (int i = 0; i<SimpleSmurfProblemState->nNumVars; i++) {
-			tmp_solution_info->arrElts[arrSimpleSolver2IteVarMap[abs(SimpleSmurfProblemState->arrInferenceQueue[i])]] = (SimpleSmurfProblemState->arrInferenceQueue[i]>0)?BOOL_TRUE:BOOL_FALSE;
+			if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i] >= nCurrInfLevel)
+			  tmp_solution_info->arrElts[arrSimpleSolver2IteVarMap[abs(SimpleSmurfProblemState->arrInferenceQueue[i])]] = BOOL_UNKNOWN;
+			else
+			  tmp_solution_info->arrElts[arrSimpleSolver2IteVarMap[abs(SimpleSmurfProblemState->arrInferenceQueue[i])]] = (SimpleSmurfProblemState->arrInferenceQueue[i]>0)?BOOL_TRUE:BOOL_FALSE;
 		}
-	}
+	} else {
+		LONG64 save_sol = ite_counters[NUM_SOLUTIONS];
+
+		//SEAN!!! Really, this should only count solutions to variables 1..nForceBackjumpLevel
+		ite_counters[NUM_SOLUTIONS]+=
+		  ((LONG64)1)<<((LONG64)(SimpleSmurfProblemState->nNumVars-1 - SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars));
+
+		if(((SimpleSmurfProblemState->nNumVars-1 - SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars) > 63)
+			|| ite_counters[NUM_SOLUTIONS]<(LONG64)0
+			|| ite_counters[NUM_SOLUTIONS]<(LONG64)save_sol
+			) {
+			solutions_overflow=1;
+			d7_printf1("Number of solutions is >= 2^64\n");
+		}
+	}	
 }
 
 ITE_INLINE
@@ -375,13 +397,16 @@ void SmurfStates_Push(int destination) {
 //		SimpleSmurfProblemState->arrSmurfStack[destination].arrSmurfStates[i] = 
 //		  SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].arrSmurfStates[i];
 //	}
-	
-	SimpleSmurfProblemState->arrSmurfStack[destination].nNumFreeVars =
-	  SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
 
 	SimpleSmurfProblemState->arrSmurfStack[destination].nVarChoiceCurrLevel =
 	  SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nVarChoiceCurrLevel;
-	
+
+	SimpleSmurfProblemState->arrSmurfStack[destination].nNumSmurfsSatisfied =
+	  SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumSmurfsSatisfied;
+
+	SimpleSmurfProblemState->arrSmurfStack[destination].nNumFreeVars =
+	  SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
+
 	SimpleSmurfProblemState->arrSmurfStack[destination].nHeuristicPlaceholder =
 	  SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nHeuristicPlaceholder;
 
@@ -460,7 +485,10 @@ int SimpleBrancher() {
 		bool bBVPolarity; 
 		int nBranchLit, nInfQueueHead, nPrevInfLevel, nBranchVar;
 		  
-		while(SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars < SimpleSmurfProblemState->nNumVars-1) {
+		while(SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars < SimpleSmurfProblemState->nNumVars-1
+				&& (nForceBackjumpLevel>0 || /*result_display_type ||*/ SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumSmurfsSatisfied < SimpleSmurfProblemState->nNumSmurfs)
+				//SEAN!!! Really, this should only count solutions to variables 1..nForceBackjumpLevel
+				) {
 			//Update heuristic values
 			
 			//Call Heuristic to get variable and polarity
@@ -524,7 +552,6 @@ find_more_solutions: ;
 
 		save_solution_simple();
 
-		ite_counters[NUM_SOLUTIONS]++;
 		ret = SOLV_SAT;
 		
 		if(ite_counters[NUM_SOLUTIONS] != max_solutions_simple) {
@@ -550,9 +577,16 @@ find_more_solutions: ;
 int simpleSolve() {
 	int nForceBackjumpLevel_old = nForceBackjumpLevel;
    if(nForceBackjumpLevel < 0) nForceBackjumpLevel = nVarChoiceLevelsNum+1;
-   
+	
 	int ret = Init_SimpleSmurfSolver();
 
+	nSimpleSolver_Reset=0;
+	nInfQueueStart=0;
+	solver_polarity_presets_count=0;
+	simple_solver_reset_level=-1;
+	add_one_display=0;
+	solutions_overflow=0;
+	
 	if(ret != SOLV_UNKNOWN) return ret;
 	
 	ret = SimpleBrancher();

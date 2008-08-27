@@ -101,6 +101,11 @@ float JHEURISTIC_K=_JHEURISTIC_K;
 float JHEURISTIC_K_TRUE=0;
 float JHEURISTIC_K_INF=1;
 
+int mp_vars_to_set_for_each_survey = 1;
+int mp_surveys = 0;
+
+int random_seed = 0;
+
 long nTimeLimit = 0;
 long nNumChoicePointLimit = 0;
 
@@ -144,7 +149,7 @@ int verify_solution=1;
 
 char s_expected_result[256]="";
 
-int  max_solutions=0;
+LONG64 max_solutions=0;
 
 int BREAK_XORS=0;
 int SMURFS_SHARE_PATHS=1;

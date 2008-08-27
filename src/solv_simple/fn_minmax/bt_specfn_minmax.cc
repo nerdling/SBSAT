@@ -28,8 +28,10 @@ assert(0);
 	if(var != nBranchVar) return 1; //Var does not exist in this Smurf
 	index = index+(size/2);
 	
-	if(pMINMAXState->bPolarity[index] == bBVPolarity) arrSmurfStates[nSmurfNumber] = pTrueSimpleSmurfState;
-	else {
+	if(pMINMAXState->bPolarity[index] == bBVPolarity) {
+		arrSmurfStates[nSmurfNumber] = pTrueSimpleSmurfState;
+		SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumSmurfsSatisfied++;
+	} else {
 		int nInfQueueLevel = abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[nBranchVar]);
 		for(int x = 0; x < pMINMAXState->nSize; x++) {
 			int nPrevInfLevel = SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[pMINMAXState->pnTransitionVars[x]];
@@ -45,6 +47,7 @@ assert(0);
 			//Inference is not in inference queue, insert it.
 			if(EnqueueInference(pMINMAXState->pnTransitionVars[x], pMINMAXState->bPolarity[x]) == 0) return 0;
 			arrSmurfStates[nSmurfNumber] = pTrueSimpleSmurfState;
+			SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumSmurfsSatisfied++;
 			break;
 		}
 	}
@@ -59,6 +62,7 @@ int ApplyInferenceToMINMAXCounter(int nBranchVar, bool bBVPolarity, int nSmurfNu
 	if(pMINMAXCounterState->bTop) { //Only one Smurf may claim ownership of this function.
 		if(pMINMAXState->nVisited == ite_counters[NUM_CHOICE_POINTS]) {
 			arrSmurfStates[nSmurfNumber] = pTrueSimpleSmurfState;
+			SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumSmurfsSatisfied++;
 			d7_printf3("      MINMAXCounterSmurf %d transitioned to state %x\n", nSmurfNumber, arrSmurfStates[nSmurfNumber]);
 			return 1;
 		}
@@ -94,6 +98,7 @@ int ApplyInferenceToMINMAXCounter(int nBranchVar, bool bBVPolarity, int nSmurfNu
 	if(pMINMAXCounterState->nNumTrue >= pMINMAXState->nMin && pMINMAXCounterState->nNumTrue <= pMINMAXState->nMax &&
 		(pMINMAXCounterState->nVarsLeft <= (pMINMAXState->nMax - pMINMAXState->nNumTrue))) {
 		arrSmurfStates[nSmurfNumber] = pTrueSimpleSmurfState;
+		SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumSmurfsSatisfied++;
 	} else if((pMINMAXCounterState->nNumTrue < pMINMAXState->nMin) &&
 				 (pMINMAXCounterState->nVarsLeft == (pMINMAXState->nMin - pMINMAXCounterState->nNumTrue))) {
 		//Infer remaining variables to True
@@ -104,6 +109,7 @@ int ApplyInferenceToMINMAXCounter(int nBranchVar, bool bBVPolarity, int nSmurfNu
 			if(EnqueueInference(pMINMAXState->pnTransitionVars[x], 0) == 1) return 0;
 		}
 		arrSmurfStates[nSmurfNumber] = pTrueSimpleSmurfState;
+		SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumSmurfsSatisfied++;
 	} else if(pMINMAXCounterState->nNumTrue == pMINMAXState->nMax) {
 		//Infer remaining variables to False
 		int nInfQueueLevel = abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[nBranchVar]);
@@ -114,6 +120,7 @@ int ApplyInferenceToMINMAXCounter(int nBranchVar, bool bBVPolarity, int nSmurfNu
 			if(EnqueueInference(pMINMAXState->pnTransitionVars[x], 0) == 0) return 0;
 		}
 		arrSmurfStates[nSmurfNumber] = pTrueSimpleSmurfState;
+		SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumSmurfsSatisfied++;
 	} else arrSmurfStates[nSmurfNumber] = pMINMAXCounterState;
 	
 	d7_printf3("      MINMAXCounterSmurf %d transitioned to state %x\n", nSmurfNumber, arrSmurfStates[nSmurfNumber]);

@@ -57,9 +57,10 @@ enum {
 	CLEANPOSSIBLE_FLAG_NUMBER,
    PRINTSHAREDBDDS_FLAG_NUMBER,
    REDUCEDREPLACE_FLAG_NUMBER,
+   MESSAGEPASSING_FLAG_NUMBER,
    MAX_FLAG_NUMBER
 };
-int last_bdd_flag_number[MAX_FLAG_NUMBER] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+int last_bdd_flag_number[MAX_FLAG_NUMBER] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 int bdd_flag_number = 2;
 
 inline void
@@ -70,7 +71,7 @@ start_bdd_flag_number(int last_bdd_flag)
    {
       bdd_flag_number++;
       if (bdd_flag_number > 1000000000) {
-         bdd_gc();
+         bdd_gc(); // SEAN!!! Warning, this could be unsafe.
          for(int i=0;i<MAX_FLAG_NUMBER;i++)
             last_bdd_flag_number[i] = 0;
          bdd_flag_number = 3;
@@ -279,6 +280,25 @@ int HammingDistance (BDDNode *f, BDDNode *c) {
 	//if(c->hamming > -2)
 }
 */
+
+extern double *mp_pos_biases;
+extern double *mp_neg_biases;
+
+double _calculateNeed(BDDNode *f) {
+	if(f == true_ptr) return 0.0;
+	if(f == false_ptr) return 1.0;
+	if(f->flag == bdd_flag_number) return f->tbr_weight;
+	f->flag = bdd_flag_number;
+	double r = _calculateNeed(f->thenCase);
+	double e = _calculateNeed(f->elseCase);
+	return (f->tbr_weight = (r*mp_pos_biases[f->variable]) + (e*mp_neg_biases[f->variable]));
+}
+
+double calculateNeed(BDDNode *f, int v, int pos) {
+	BDDNode *vBDD = set_variable (f, v, pos);
+	start_bdd_flag_number(MESSAGEPASSING_FLAG_NUMBER);
+	return _calculateNeed(vBDD);
+}
 
 int are_oppos(BDDNode *f, BDDNode *c) {
 	if(f->notCase != NULL && f->notCase == c) {
@@ -1550,7 +1570,7 @@ BDDNode *safe_assign_eq(BDDNode *f, int v) {
 	return safe_infs;
 }
 
-//SEAN FIX THIS!!!
+//SEAN CONTINUE WORKING ON THIS!!!
 BDDNode *_safe_assign_func(BDDNode *, BDDNode *);
 
 BDDNode *safe_assign_func(BDDNode *f, int x) {

@@ -121,7 +121,7 @@ int ReadAllSmurfsIntoTable(int nNumVars) {
 	Init_SimpleSmurfProblemState();
 	SimpleSmurfProblemState->nNumSmurfs = nmbrFunctions;
 	SimpleSmurfProblemState->nNumVars = nNumVars;
-
+	
 	SimpleSmurfProblemState->arrSmurfStack = (SmurfStack *)ite_calloc(SimpleSmurfProblemState->nNumVars, sizeof(SmurfStack), 9, "arrSmurfStack");
 	SimpleSmurfProblemState->arrVariableOccursInSmurf = (int **)ite_calloc(SimpleSmurfProblemState->nNumVars, sizeof(int *), 9, "arrVariablesOccursInSmurf");
 	SimpleSmurfProblemState->arrReverseOccurenceList = (int ***)ite_calloc(SimpleSmurfProblemState->nNumSmurfs, sizeof(int **), 9, "arrReverseOccurenceList");
@@ -226,6 +226,8 @@ int ReadAllSmurfsIntoTable(int nNumVars) {
 			//LSGBSmurfSetHeurScores(nSmurfIndex, pInitialState);
 			if(!smurfs_share_paths) { clear_all_bdd_pState(); true_ptr->pState = pTrueSimpleSmurfState; 	bdd_gc();}
 			SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates[nSmurfIndex] =	ReadSmurfStateIntoTable(pInitialBDD, NULL, 0);
+			if(SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates[nSmurfIndex] == pTrueSimpleSmurfState)
+			  SimpleSmurfProblemState->arrSmurfStack[0].nNumSmurfsSatisfied++;
 		}
 		Init_Solver_MidSmurfs_Hooks(nSmurfIndex, SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates);
 	}

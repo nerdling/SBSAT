@@ -52,6 +52,7 @@ int ApplyInferenceToXOR(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void
 	//Inference is not in inference queue, insert it.
 	if(EnqueueInference(pXORState->pnTransitionVars[nInference], bParity) == 0) return 0;
 	arrSmurfStates[nSmurfNumber] = pTrueSimpleSmurfState;
+	SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumSmurfsSatisfied++;
 	
 	d7_printf3("      XORSmurf %d transitioned to state %x\n", nSmurfNumber, arrSmurfStates[nSmurfNumber]);
 	return 1;
@@ -83,6 +84,9 @@ int ApplyInferenceToXORCounter(int nBranchVar, bool bBVPolarity, int nSmurfNumbe
 	if(var != nBranchVar) return 1; //Var does not exist in this Smurf
 
 	arrSmurfStates[nSmurfNumber] = pXORCounterState->pTransition;
+
+//	if(arrSmurfStates[nSmurfNumber] == pTrueSimpleSmurfState) //Can't happen here
+//	  SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumSmurfsSatisfied++;
 	
 	d7_printf3("      XORCounterSmurf %d transitioned to state %x\n", nSmurfNumber, arrSmurfStates[nSmurfNumber]);
 	return 1;

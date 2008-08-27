@@ -56,7 +56,7 @@ BDDNode *bdd2xdd(BDDNode *);
 int splitXors();
 void countSingleXors(BDDNode *, int *, int *);
 int are_oppos(BDDNode *, BDDNode *);
-	
+
 void SAT_to_CNF();
 void Smurfs_to_BDD();
 void Do_Lemmas();
@@ -102,6 +102,7 @@ BDDNode *MinMaxBDD(int *, int, int, int, int);
 void unmark(BDDNode *);
 float mark_trues(BDDNode *);
 void Fill_Density();
+double calculateNeed(BDDNode *f, int v, int pos); //For calculating sigma of the message passing routines.
 void DNF_to_CNF();
 int CNF_to_BDD();
 //CircuitStruct *split(int, int);

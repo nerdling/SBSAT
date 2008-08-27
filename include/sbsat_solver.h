@@ -195,9 +195,10 @@ struct XORGElimTableStruct {
 };
 
 struct SmurfStack {
-	int nNumFreeVars;
-	int nHeuristicPlaceholder;
 	int nVarChoiceCurrLevel; //Index to array of size nNumVars
+	int nNumFreeVars;
+	int nNumSmurfsSatisfied;
+	int nHeuristicPlaceholder;
 	int nWatchedListStackTop;
 	void **arrSmurfStates;   //Pointer to array of size nNumSmurfs
 	XORGElimTableStruct *XORGElimTable; //For holding the Gaussian Elimination Table.

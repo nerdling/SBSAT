@@ -47,8 +47,10 @@ void ctrl_c_proc(int x);
 
 char sHeuristic[10]="j";
 char cnfformat[256]="noqm";
-char dependence='c';
 int  n_cnfformat=CNF_NOQM;
+char mp_heuristic[10]="SP";
+int  n_mp_heuristic=heuristic_SP;
+char dependence='c';
 char sResult[4]="n";
 int  ctrl_c=0;
 int  nCtrlC=0; /* ctrl c pressed */
@@ -91,6 +93,8 @@ t_opt options[] = {
                 "output filename"},
 { &protect_outputfile, "pof",   "protect-output-file", P_INT, V(i:0,"0"), V(i:1,"1"), VAR_NORMAL, 0,
               "If set to 1, SBSAT will not to overwrite an existing output file"},
+{ &random_seed, "seed", "random-seed", P_INT, V(i:0,"0"), V(i:0,"0"), VAR_NORMAL, 0,
+              "Random seed to use (0 generates a random seed)."},
 { temp_dir, "", "temp-dir", P_STRING, 
 		V(i:255,"255"), {"$TEMP"}, VAR_NORMAL, 0, 
                 "directory for temporary files"},
@@ -268,6 +272,12 @@ t_opt options[] = {
 		"set the time limit in seconds (0=no limit)"},
 { &do_split_max_vars, "",  "do-split-max-vars", P_INT, V(i:0,"0"),  V(i:10,"10"), VAR_NORMAL, 0,
 		"Threashold above which the Sp splits BDDs"},
+{ mp_heuristic,  "", "mp-heuristic", P_STRING, V(i:"8","8"), {"SP"}, VAR_NORMAL, 0,
+      "Message Passing (Mp) heuristic (BP, EMBPL, EMBPG, EMBPGV2, SP, EMSPL, EMSPG, EMSPGV2)"},
+{ &mp_surveys, "",  "mp-surveys",  P_INT, V(i:0,"0"),  V(i:0,"0"), VAR_NORMAL, 0,
+	  "Number surveys to take before exiting the Mp routine."},
+{ &mp_vars_to_set_for_each_survey, "",  "mp-vars-to-set",  P_INT, V(i:0,"0"),  V(i:1,"1"), VAR_NORMAL, 0,
+	  "Number of variables to assign after each convergance of an Mp routine."},
 { &cluster_step_increase, "",  "cluster-step-increase", P_INT, V(i:0,"0"),  V(i:5,"5"), VAR_NORMAL, 0,
 		"Step size used to increment the threshold under which BDDs are clustered"},
 { &ex_infer, "",  "ex-infer", P_INT, V(i:0,"0"),  V(i:1,"1"), VAR_NORMAL, 0,
@@ -281,7 +291,7 @@ t_opt options[] = {
 	   "\nGeneral solver options:"},
 { &dependence,  "", "dependence", P_CHAR, V(i:0,"0"), V(c:'c',"c"), VAR_NORMAL, 0,
 	   "Modify Independent/Dependent Variables (n=no change, r=reverse, c=clear)"},
-{ &max_solutions, "", "max-solutions", P_INT, V(i:0,"0"), V(i:1,"1"), VAR_NORMAL, 0,
+{ &max_solutions, "", "max-solutions", P_LONG, V(i:0,"0"), V(i:1,"1"), VAR_NORMAL, 0,
 		"Set the maximum number of solutions to search for. 0 will cause the solver to search for as many solutions as it can find. The algorithm does not guarantee that it reports all possible solutions."},
 { &autarky, "", "autarky", P_INT, V(i:0,"0"), V(i:0,"0"), VAR_CHECK+VAR_DUMP, 0,
 		"Enable/Disable autarkies (1/0)"},
@@ -547,6 +557,20 @@ finish_params()
             exit(1);
          }
 
+	/* check validity of the mp-heuristic option */
+	if (!strcmp(mp_heuristic, "BP")) n_mp_heuristic = heuristic_BP; else
+	   if (!strcmp(mp_heuristic, "EMBPL"))   n_mp_heuristic = heuristic_EMBPL; else
+	      if (!strcmp(mp_heuristic, "EMBPG")) n_mp_heuristic = heuristic_EMBPG; else
+	  	      if (!strcmp(mp_heuristic, "EMBPGV2")) n_mp_heuristic = heuristic_EMBPGV2; else
+	  	  	      if (!strcmp(mp_heuristic, "SP")) n_mp_heuristic = heuristic_SP; else
+	  	  	  	      if (!strcmp(mp_heuristic, "EMSPL")) n_mp_heuristic = heuristic_EMSPL; else
+	  	  	  	  	      if (!strcmp(mp_heuristic, "EMSPG")) n_mp_heuristic = heuristic_EMSPG; else
+	  	  	  	  	  	      if (!strcmp(mp_heuristic, "EMSPGV2")) n_mp_heuristic = heuristic_EMSPGV2; else
+	      {
+				dE_printf2("error: Unrecognized Mp heuristic: %s\n", mp_heuristic); 
+				exit(1);
+			}
+	
    /* install ctrl-c function if ctrl_c enabled */
    if (ctrl_c == 1) {
       signal (SIGINT, ctrl_c_proc);

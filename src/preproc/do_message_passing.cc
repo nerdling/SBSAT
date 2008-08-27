@@ -68,18 +68,7 @@
 
 int MAXITERATIONS = 100;
 double EPSILON = 0.001;
-int MP_VARS_TO_SET = 0;
 
-#define heuristic_BP 0
-#define heuristic_SP 1
-#define heuristic_EMBPL 2
-#define heuristic_EMBPG 3
-#define heuristic_EMSPL 4
-#define heuristic_EMSPG 5
-#define heuristic_EMSPGV2 6
-#define heuristic_EMBPGV2 7
-
-extern int random_seed;
 double mp_seed;
 void clear_all_bdd_density();
 
@@ -96,11 +85,11 @@ inline double drand() {
 
 int ComputeSurvey(int);
 
-double *pos_biases, *neg_biases, *star_biases;
+double *mp_pos_biases, *mp_neg_biases, *mp_star_biases;
 
 //SCOREVARSKEW: Score a survey variable by the difference between its positive and negative readings.
 double scoreVarSkew(int v) {
-	return fabs(pos_biases[v] - neg_biases[v]);
+	return fabs(mp_pos_biases[v] - mp_neg_biases[v]);
 }
 
 // REPORTBIASES: Report biases for all the variables.
@@ -111,10 +100,10 @@ void reportBiases() {
 	for (v = 1; v <= numinp; v++) {
 		if(variablelist[v].true_false != -1 || variablelist[v].equalvars != 0) {			  
 				d4_printf6(" %8d Fix: %2d (%1.3f)   (%1.3f)   (%1.3f)\n",
-							  v, variablelist[v].true_false, pos_biases[v], neg_biases[v], star_biases[v]);
+							  v, variablelist[v].true_false, mp_pos_biases[v], mp_neg_biases[v], mp_star_biases[v]);
 		} else {
 			d4_printf5(" %8d  %1.3f     %1.3f     %1.3f\n",
-						  v, pos_biases[v], neg_biases[v], star_biases[v]);
+						  v, mp_pos_biases[v], mp_neg_biases[v], mp_star_biases[v]);
 		}
 	}
 }
@@ -135,18 +124,18 @@ void initializeBiases(int heuristic_mode) {
 			 (heuristic_mode == heuristic_EMBPGV2)) {
 			pos = drand(); neg = drand();
 			sum = pos + neg;
-			pos_biases[i] = pos / sum;
-			neg_biases[i] = 1.0 - pos_biases[i];
-			star_biases[i] = 0.0; //Not used
+			mp_pos_biases[i] = pos / sum;
+			mp_neg_biases[i] = 1.0 - mp_pos_biases[i];
+			mp_star_biases[i] = 0.0; //Not used
 		} else if ((heuristic_mode == heuristic_SP) ||
 					  (heuristic_mode == heuristic_EMSPL) ||
 					  (heuristic_mode == heuristic_EMSPG) ||
 					  (heuristic_mode == heuristic_EMSPGV2)) {
 			pos = drand(); neg = drand(); star = drand();
 			sum = pos + neg + star;
-			pos_biases[i] = pos / sum;
-			neg_biases[i] = neg / sum;
-			star_biases[i] = 1.0 - pos_biases[i] - neg_biases[i];			
+			mp_pos_biases[i] = pos / sum;
+			mp_neg_biases[i] = neg / sum;
+			mp_star_biases[i] = 1.0 - mp_pos_biases[i] - mp_neg_biases[i];			
 		}
 	}
 }
@@ -166,24 +155,30 @@ int Do_Message_Passing() {
 	);
 
 	mp_seed = (double)random_seed;
-	int heuristic_mode = heuristic_SP; //SEAN!!! Make this a command line option
+	int heuristic_mode = n_mp_heuristic;
 
-	MP_VARS_TO_SET = numinp; //SEAN!!! Make this a command line option
+	if(mp_surveys == 0) mp_surveys = numinp;
 	
 	surveys_attempted = 0;
 	surveys_converged = 0;
 	
-	pos_biases = (double *)ite_calloc(numinp+1, sizeof(double), 9, "pos_biases");
-	neg_biases = (double *)ite_calloc(numinp+1, sizeof(double), 9, "neg_biases");
-	star_biases = (double *)ite_calloc(numinp+1, sizeof(double), 9, "star_biases");
+	mp_pos_biases = (double *)ite_calloc(numinp+1, sizeof(double), 9, "mp_pos_biases");
+	mp_neg_biases = (double *)ite_calloc(numinp+1, sizeof(double), 9, "mp_neg_biases");
+	mp_star_biases = (double *)ite_calloc(numinp+1, sizeof(double), 9, "mp_star_biases");
 	
 	int surveys = 0;
-
+	int vars_set = 0;
+	
 	int converged = 1;
-	while (converged == 1 && surveys_converged < MP_VARS_TO_SET) {
-		initializeBiases(heuristic_mode);
-		converged = ComputeSurvey(heuristic_mode);
-		surveys++;
+	while (converged == 1) {
+
+		if(mp_vars_to_set_for_each_survey>0 && vars_set%mp_vars_to_set_for_each_survey == 0) {
+			if(surveys >= mp_surveys) break;
+			initializeBiases(heuristic_mode);
+			converged = ComputeSurvey(heuristic_mode);
+			surveys++;
+		}
+
 		if(converged == 1)
 		  ret = PREP_CHANGED;
 		
@@ -202,21 +197,22 @@ int Do_Message_Passing() {
 		}
 		if(var_found == 0) break;
 		
-		sign = (pos_biases[next] > neg_biases[next]);
-		
+		sign = (mp_pos_biases[next] > mp_neg_biases[next]);
+
+		vars_set++;
 		if(converged == 1) {
 			BDDNode *inferBDD = sign?ite_var(next):ite_var(-next);
 			int bdd_length = 0;
 			int *bdd_vars = NULL;
 			switch (int r=Rebuild_BDD(inferBDD, &bdd_length, bdd_vars)) {
-			  case TRIV_UNSAT:
+			  case TRIV_UNSAT: //Not really unsat.
 			  case TRIV_SAT:
 			  case PREP_ERROR: return r;
 			  default: break;				
 			}
 
 			switch (int r=Do_Apply_Inferences()) {
-			  case TRIV_UNSAT:
+			  case TRIV_UNSAT: //Not really unsat.
 			  case TRIV_SAT:
 			  case PREP_ERROR: return r;
 			  default: break;
@@ -239,27 +235,32 @@ int Do_Message_Passing() {
 		}
 	}
 
-	ite_free((void **)&pos_biases);
-	ite_free((void **)&neg_biases);
-	ite_free((void **)&star_biases);
+	ite_free((void **)&mp_pos_biases);
+	ite_free((void **)&mp_neg_biases);
+	ite_free((void **)&mp_star_biases);
 	
 	d3_printf1 ("\n");
 	d2e_printf1 ("\r                  ");
 	return ret;
 }
 
+/* //This code is in utils/bdd.cc
 double _calculateNeed(BDDNode *f) {
 	if(f == true_ptr) return 0.0;
 	if(f == false_ptr) return 1.0;
+	if(f->flag == bdd_flag_number) return f->tbr_weight;
+	f->flag = bdd_flag_number
 	double r = _calculateNeed(f->thenCase);
 	double e = _calculateNeed(f->elseCase);
-	return f->tbr_weight = (r*pos_biases[f->variable]) + (e*neg_biases[f->variable]);
+	return (f->tbr_weight = (r*mp_pos_biases[f->variable]) + (e*mp_neg_biases[f->variable]));
 }
 
 double calculateNeed(BDDNode *f, int v, int pos) {
 	BDDNode *vBDD = set_variable (f, v, pos);
+   start_bdd_flag_number(MESSAGEPASSING_FLAG_NUMBER);
 	return _calculateNeed(vBDD);
 }
+*/
 
 // CALCULATEFREEDOM: Calculate probability (by _product_) that no BDD in the given list needs variable v;
 // as a SIDE EFFECT, store the number of active BDDs in the list, in given address.  This corresponds to the
@@ -270,7 +271,7 @@ double calculateFreedom(int v, int pos, int &count) {
 	
 	int i;
 	BDDNode *f;
-	
+
 	// Loop through the BDDs.
 	for(llist *k = amount[v].head; k != NULL; k = k->next) {
 		f = functions[k->num];
@@ -355,9 +356,9 @@ double determineRatioBP(int v, int nneg, int npos, double wplus, double wminus) 
 	}
 
 	// Store the resulting values.
-	old_pos = pos_biases[v];
-	pos_biases[v] = new_pos;
-	neg_biases[v] = 1.0 - new_pos;
+	old_pos = mp_pos_biases[v];
+	mp_pos_biases[v] = new_pos;
+	mp_neg_biases[v] = 1.0 - new_pos;
 	
 	// Finally, return a float measuring how much this variable actually moved.
 	return fabs(old_pos - new_pos);
@@ -416,11 +417,11 @@ double determineRatioSP(int v, int nneg, int npos, double wplus, double wminus, 
 
 	//d4_printf4(":%f %f %f\n", new_pos, new_neg, 1.0 - new_pos - new_neg);
 	// Store the resulting values.
-	old_pos = pos_biases[v];
-	old_neg = neg_biases[v];
-	pos_biases[v] = new_pos;
-	neg_biases[v] = new_neg;
-	star_biases[v] = 1.0 - new_pos - new_neg;
+	old_pos = mp_pos_biases[v];
+	old_neg = mp_neg_biases[v];
+	mp_pos_biases[v] = new_pos;
+	mp_neg_biases[v] = new_neg;
+	mp_star_biases[v] = 1.0 - new_pos - new_neg;
 	
 	// Finally, return a float measuring how much this variable actually moved.
 	return fabs(old_pos - new_pos) + fabs(old_neg - new_neg);
@@ -429,7 +430,7 @@ double determineRatioSP(int v, int nneg, int npos, double wplus, double wminus, 
 // UPDATEBP: Update a variable according to BP.
 double updateBP(int v) {
 	int nneg, npos;  //number of active negative and positive BDDs for v.
-	  double alpha = calculateFreedom(v, 1, nneg);
+	double alpha = calculateFreedom(v, 1, nneg);
 	double beta = calculateFreedom(v, 0, npos);
 	
 	return determineRatioBP(v, nneg, npos, alpha, beta);

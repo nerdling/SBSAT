@@ -48,8 +48,10 @@ int ApplyInferenceToOR(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void 
 	if(var != nBranchVar) return 1; //Var does not exist in this Smurf
 	index = index+(size/2);
 	
-	if(pORState->bPolarity[index] == bBVPolarity) arrSmurfStates[nSmurfNumber] = pTrueSimpleSmurfState;
-	else {
+	if(pORState->bPolarity[index] == bBVPolarity) { 
+		arrSmurfStates[nSmurfNumber] = pTrueSimpleSmurfState;
+		SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumSmurfsSatisfied++;
+	} else {
 		int nInfQueueLevel = abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[nBranchVar]);
 		for(int x = 0; x < pORState->nSize; x++) {
 			int nPrevInfLevel = SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[pORState->pnTransitionVars[x]];
@@ -65,6 +67,7 @@ int ApplyInferenceToOR(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void 
 			//Inference is not in inference queue, insert it.
 			if(EnqueueInference(pORState->pnTransitionVars[x], pORState->bPolarity[x]) == 0) return 0;
 			arrSmurfStates[nSmurfNumber] = pTrueSimpleSmurfState;
+			SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumSmurfsSatisfied++;
 			break;
 		}
 	}
@@ -96,8 +99,10 @@ int ApplyInferenceToORCounter(int nBranchVar, bool bBVPolarity, int nSmurfNumber
 	if(var != nBranchVar) return 1; //Var does not exist in this Smurf
 	index = index+(size/2);
 	
-	if(pORState->bPolarity[index] == bBVPolarity) arrSmurfStates[nSmurfNumber] = pTrueSimpleSmurfState;
-	else {
+	if(pORState->bPolarity[index] == bBVPolarity) { 
+		arrSmurfStates[nSmurfNumber] = pTrueSimpleSmurfState;
+		SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumSmurfsSatisfied++;
+	} else {
 		arrSmurfStates[nSmurfNumber] = pORCounterState->pTransition;
 	}	
 	d7_printf3("      ORCounterSmurf %d transitioned to state %x\n", nSmurfNumber, arrSmurfStates[nSmurfNumber]);

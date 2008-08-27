@@ -109,6 +109,19 @@ enum {
 	CNF_3SAT
 };
 
+enum {
+	heuristic_BP,
+	heuristic_EMBPL,
+   heuristic_EMBPG,
+   heuristic_EMBPGV2,
+   heuristic_SP,
+   heuristic_EMSPL,
+   heuristic_EMSPG,
+   heuristic_EMSPGV2
+};
+
+extern int random_seed;
+
 void params_consistency_check ();
 int params_parse_cmd_line(int argc, char *argv[]);
 void params_dump();
@@ -124,6 +137,9 @@ extern int nForceBackjumpLevel;
 extern char formatin;
 extern char formatout;
 extern int n_cnfformat;
+extern int n_mp_heuristic;
+extern int mp_vars_to_set_for_each_survey;
+extern int mp_surveys;
 extern int print_tree;
 
 extern char inputfile[256];
@@ -189,7 +205,7 @@ extern int verify_solution;
 
 extern char s_expected_result[256];
 
-extern int  max_solutions;
+extern LONG64  max_solutions;
 
 extern char sHeuristic[10];
 

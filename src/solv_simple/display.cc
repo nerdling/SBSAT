@@ -39,6 +39,8 @@
 #include "sbsat_solver.h"
 #include "solver.h"
 
+extern int solutions_overflow;
+
 void DisplaySimpleStatistics(int nNumChoicePts, int nNumBacktracks, int nNumBackjumps) {
 	d2_printf2("Choice Points: %d", nNumChoicePts);
 	d2_printf3(", Backtracks: %d, Backjumps: %d \n", 
@@ -234,8 +236,8 @@ void DisplaySimpleSolverBacktrackInfo(double &fSimpleSolverPrevEndTime, double &
 	if (autarky) d2_printf3(" Autarkies: %ld (avg au len: %.1f)\n",
 									(long)ite_counters[NUM_TOTAL_AUTARKIES],
 									(float)ite_counters[NUM_TOTAL_AUTARKIES]/(1+ite_counters[NUM_AUTARKIES]));
-	if (max_solutions != 1) d2_printf3(" Solutions found: %ld/%ld\n",
-												  (long)ite_counters[NUM_SOLUTIONS], (long)max_solutions);
+	if (max_solutions != 1 && solutions_overflow==0) { d2_printf3(" Solutions found: %lld/%lld\n", ite_counters[NUM_SOLUTIONS], max_solutions); }
+	else if(solutions_overflow) d2_printf2(" Solutions found: > %lld\n", ~(((long long)1)<<(long long)63));
 	
 	d2_printf1("\n");
 }
