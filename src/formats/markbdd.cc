@@ -812,7 +812,8 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 		int *tempint=NULL;
 		unravelBDD(&y, &tempint_max, &tempint, v1);
 		if(tempint!=NULL) ite_free((void **)&tempint);
-		print_flat_xdd(bdd2xdd(v1), y);
+		if(y == 0) { d2_printf1("0"); }
+		else { print_flat_xdd(bdd2xdd(v1), y); }
 		d2_printf1(" = 0\n");
       strcpy (macros, "print_flat_xdd");
       return v1;

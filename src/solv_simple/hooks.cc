@@ -179,7 +179,7 @@ ITE_INLINE int Init_Solver_PostSmurfs_Hooks(void **arrSmurfStates) {
 												  ((XORGElimStateEntry *)arrSmurfStates[nSmurfIndex])->nSize,
 												  ((XORGElimStateEntry *)arrSmurfStates[nSmurfIndex])->pnTransitionVars);
 				//To use the normal LSGB heuristic, comment out the line below.
-				arrSmurfStates[nSmurfIndex] = pTrueSimpleSmurfState;
+				//arrSmurfStates[nSmurfIndex] = pTrueSimpleSmurfState;
 				if(ret == 0) return SOLV_UNSAT;
 			}
 		}

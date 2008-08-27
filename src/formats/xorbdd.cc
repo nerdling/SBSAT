@@ -47,9 +47,9 @@ struct xor_of_ands {
 int are_xdd_comp(BDDNode *x, BDDNode *y);
 
 void print_xdd_d(BDDNode *xdd) {
-	if(xdd == true_ptr) d2_printf1("1");
-//	fprintf(stderr, "here(%d %d, %d, %d)", xdd, xdd->variable, xdd->thenCase, xdd->elseCase);
-	if(xdd->thenCase == xdd->elseCase) {
+	if(xdd == true_ptr) {
+		d2_printf1("1");
+	} else if(xdd->thenCase == xdd->elseCase) {
 //		d2_printf1("(");
 //		d2e_printf2("x[%s] + 1", s_name(xdd->variable));
 //		d3e_printf2("x[%d] + 1", xdd->variable);

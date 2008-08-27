@@ -300,7 +300,7 @@ void allocXORGElimTable(XORGElimTableStruct *x){
 	((VecType*)(x->mask))[0] -= 1;
 	
 	int32_t *vv = (int32_t *)&(((unsigned char*)(x->frame))[column_ref]);
-	for (int i=0 ; i < no_funcs; i++) {
+	for (int i=0 ; i < no_funcs-1; i++) {
 		vv=(int32_t*)&(((unsigned char*)vv)[vecs_rec_bytes]);
 	  *vv = -1;
 	}
