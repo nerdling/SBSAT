@@ -67,7 +67,6 @@
 #include "sbsat_preproc.h"
 
 int MAXITERATIONS = 100;
-double EPSILON = 0.001;
 
 double mp_seed;
 void clear_all_bdd_density();
@@ -148,8 +147,10 @@ int Do_Message_Passing() {
 	int next = 1;
 	int sign = 0;
 
+	if(mp_surveys == 0) mp_surveys = numinp;
+	
 	D_3(
-		 sprintf(p, "{0:0/%ld}", numinp);
+		 sprintf(p, "{0:0/%ld}", mp_surveys);
 		 str_length = strlen(p);
 		 d3_printf1(p);
 	);
@@ -157,8 +158,6 @@ int Do_Message_Passing() {
 	mp_seed = (double)random_seed;
 	int heuristic_mode = n_mp_heuristic;
 
-	if(mp_surveys == 0) mp_surveys = numinp;
-	
 	surveys_attempted = 0;
 	surveys_converged = 0;
 	
@@ -223,7 +222,7 @@ int Do_Message_Passing() {
 		}
 		
 		D_3(
-			 sprintf(p, "{0:%d/%ld}", surveys, numinp);
+			 sprintf(p, "{0:%d/%ld}", surveys, mp_surveys);
 			 str_length = strlen(p);
 			 d3_printf1(p);
 			 );
@@ -541,11 +540,11 @@ int ComputeSurvey (int heuristic_mode) {
 			//Keep track of maximal change in order to test for convergence.
 			if (change > max_change) max_change = change;
 		}
-	} while (max_change > EPSILON && iter++ < MAXITERATIONS);
+	} while (max_change > mp_epsilon && iter++ < MAXITERATIONS);
 	
 	//Update stats, print log messages, and return flag according to convergence or timeout.
 	surveys_attempted++;
-	if(max_change <= EPSILON) {
+	if(max_change <= mp_epsilon) {
 		surveys_converged++;
 		d3_printf1(":-)\n");
 		D_4(reportBiases(););

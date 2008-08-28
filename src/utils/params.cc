@@ -278,6 +278,8 @@ t_opt options[] = {
 	   "Number of surveys to take before exiting the Mp routine."},
 { &mp_vars_to_set_for_each_survey, "",  "mp-vars-to-set",  P_INT, V(i:0,"0"),  V(i:1,"1"), VAR_NORMAL, 0,
 	   "Number of variables to assign after each convergent Mp survey."},
+{ &mp_epsilon, "",  "mp-epsilon",  P_FLOAT, V(i:0,"0"),  V(i:1,"0.001"), VAR_NORMAL, 0,
+	   "Change needed for an Mp survey to be considered non-convergent."},
 { &cluster_step_increase, "",  "cluster-step-increase", P_INT, V(i:0,"0"),  V(i:5,"5"), VAR_NORMAL, 0,
 		"Step size used to increment the threshold under which BDDs are clustered"},
 { &ex_infer, "",  "ex-infer", P_INT, V(i:0,"0"),  V(i:1,"1"), VAR_NORMAL, 0,

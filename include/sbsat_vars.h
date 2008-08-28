@@ -140,6 +140,7 @@ extern int n_cnfformat;
 extern int n_mp_heuristic;
 extern int mp_vars_to_set_for_each_survey;
 extern int mp_surveys;
+extern float mp_epsilon;
 extern int print_tree;
 
 extern char inputfile[256];

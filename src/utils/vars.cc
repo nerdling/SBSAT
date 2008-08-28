@@ -103,6 +103,7 @@ float JHEURISTIC_K_INF=1;
 
 int mp_vars_to_set_for_each_survey = 1;
 int mp_surveys = 0;
+float mp_epsilon = 0.001;
 
 int random_seed = 0;
 
