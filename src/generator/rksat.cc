@@ -46,7 +46,7 @@ void rksat(int n, int m, int k, int seed) {
 	gettimeofday(&tv, &tzp);
 	if(seed == 0) seed = ((tv.tv_sec & 0177 ) * 1000000) + tv.tv_usec;
 	fprintf(stderr, "seed = %d\n", seed);
-	srandom(seed);
+	srand(seed);
 	
 	fprintf(stdout, "p cnf %d %d\n", n, m);
 	

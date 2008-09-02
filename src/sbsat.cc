@@ -79,6 +79,7 @@ main(int argc, char *argv[])
 	  random_seed = ((tv1.tv_sec & 0177 ) * 1000000) + tv1.tv_usec;
 	d3_printf2("Random seed = %d\n", random_seed);
 	srandom(random_seed);	
+	srand(random_seed);
 
    if (ret == NO_ERROR) {
       ret = ite_main_load();

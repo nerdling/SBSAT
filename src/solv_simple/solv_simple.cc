@@ -11,14 +11,13 @@ int solutions_overflow=0;
 
 ITE_INLINE
 void save_solution_simple(void) {
+	d7_printf1("      Solution found\n");
+
 	if (result_display_type) {
-		d7_printf1("      Solution found\n");
 		ite_counters[NUM_SOLUTIONS]++;
 		/* create another node in solution chain */
 		d7_printf1("      Recording solution\n");
 
-		int nCurrInfLevel = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
-		
 		t_solution_info *tmp_solution_info;
 		tmp_solution_info = (t_solution_info*)calloc(1, sizeof(t_solution_info));
 		
@@ -31,6 +30,8 @@ void save_solution_simple(void) {
 		}
 		tmp_solution_info->nNumElts = numinp+1;//SimpleSmurfProblemState->nNumVars+1;
 		tmp_solution_info->arrElts = new int[numinp+1];//new int[SimpleSmurfProblemState->nNumVars+2];
+
+		int nCurrInfLevel = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
 		
 		for (int i = 0; i<SimpleSmurfProblemState->nNumVars; i++) {
 			if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i] >= nCurrInfLevel)
@@ -39,21 +40,44 @@ void save_solution_simple(void) {
 			  tmp_solution_info->arrElts[arrSimpleSolver2IteVarMap[abs(SimpleSmurfProblemState->arrInferenceQueue[i])]] = (SimpleSmurfProblemState->arrInferenceQueue[i]>0)?BOOL_TRUE:BOOL_FALSE;
 		}
 	} else {
+		int num_vars = 0;
 		LONG64 save_sol = ite_counters[NUM_SOLUTIONS];
 
-		//SEAN!!! Really, this should only count solutions to variables 1..nForceBackjumpLevel
-		ite_counters[NUM_SOLUTIONS]+=
-		  ((LONG64)1)<<((LONG64)(SimpleSmurfProblemState->nNumVars-1 - SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars));
+		//Handle nForceBackjumpLevel
+		if (arrVarChoiceLevels && nForceBackjumpLevel>=0 && nForceBackjumpLevel<nVarChoiceLevelsNum) {
+			int num_vars = 0;
+			int nCurrInfLevel = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
+			int level=SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nVarChoiceCurrLevel;
+			for(;level<nVarChoiceLevelsNum;level++) {
+				if(nForceBackjumpLevel < level) break;
+				int j=SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nHeuristicPlaceholder;
+				while(arrVarChoiceLevels[level][j] != 0) {
+					int i=arrVarChoiceLevels[level][j];
+					if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i] >= nCurrInfLevel) {
+						//double # of solutions
+						num_vars++;
+					}
+					j++;
+				}
+			}
+			ite_counters[NUM_SOLUTIONS]+=((LONG64)1)<<((LONG64)(num_vars));
+		} else {
+			ite_counters[NUM_SOLUTIONS]+=
+			  ((LONG64)1)<<((LONG64)(SimpleSmurfProblemState->nNumVars-1 - SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars));
+			
+			num_vars = SimpleSmurfProblemState->nNumVars-1 - SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
+		}
 
-		if(((SimpleSmurfProblemState->nNumVars-1 - SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars) > 63)
+		if((num_vars > 63)
 			|| ite_counters[NUM_SOLUTIONS]<(LONG64)0
 			|| ite_counters[NUM_SOLUTIONS]<(LONG64)save_sol
 			) {
 			solutions_overflow=1;
 			d7_printf1("Number of solutions is >= 2^64\n");
 		}
-	}	
+	}
 }
+
 
 ITE_INLINE
 void Calculate_Heuristic_Values() {
@@ -486,8 +510,7 @@ int SimpleBrancher() {
 		int nBranchLit, nInfQueueHead, nPrevInfLevel, nBranchVar;
 		  
 		while(SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars < SimpleSmurfProblemState->nNumVars-1
-				&& (nForceBackjumpLevel>0 || /*result_display_type ||*/ SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumSmurfsSatisfied < SimpleSmurfProblemState->nNumSmurfs)
-				//SEAN!!! Really, this should only count solutions to variables 1..nForceBackjumpLevel
+				&& (result_display_type || SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumSmurfsSatisfied < SimpleSmurfProblemState->nNumSmurfs)
 				) {
 			//Update heuristic values
 			
