@@ -32,10 +32,13 @@ void PrintORStateEntry(ORStateEntry *ssEntry) {
 }
 
 void PrintORStateEntry_dot(ORStateEntry *ssEntry) {
-	d9_printf1("OR Vars=");
-	for(int x = 0; x < ssEntry->nSize; x++)
-	  d9_printf2("%d ", ssEntry->bPolarity[x]==1?ssEntry->pnTransitionVars[x]:-ssEntry->pnTransitionVars[x]);
-	d9_printf2("Size=%d\n", ssEntry->nSize);
+	fprintf(stdout, " b%x->b%x [style=solid, fontname=\"Helvetica\",label=\"If v!=p, n--\"]\n", ssEntry, ssEntry);
+	fprintf(stdout, " b%x->b%x [style=solid, fontname=\"Helvetica\",label=\"If v==p\"]\n", ssEntry, pTrueSimpleSmurfState);
+	fprintf(stdout, " b%x->i%x [style=solid, fontname=\"Helvetica\",label=\"If n==1\"]\n", ssEntry, ssEntry);
+	fprintf(stdout, " i%x->b%x [style=solid, fontname=\"Helvetica\",label=\"v=p\"]\n", ssEntry, pTrueSimpleSmurfState);
+
+	fprintf(stdout, " i%x [shape=\"ellipse\", label=\"I\"]\n", ssEntry);
+	fprintf(stdout, " b%x [shape=\"ellipse\", label=\"OR, n=%d\"]\n", ssEntry, ssEntry->nSize);
 }
 
 void PrintORCounterStateEntry(ORCounterStateEntry *ssEntry) {
@@ -43,7 +46,13 @@ void PrintORCounterStateEntry(ORCounterStateEntry *ssEntry) {
 }
 
 void PrintORCounterStateEntry_dot(ORCounterStateEntry *ssEntry) {
-	d9_printf4("OR Next=%x Head=%x Size=%d\n", ssEntry->pTransition, ssEntry->pORState, ssEntry->nSize);
+	fprintf(stdout, " b%x->b%x [style=solid, fontname=\"Helvetica\",label=\"If v!=p, n--\"]\n", ssEntry, ssEntry);
+	fprintf(stdout, " b%x->b%x [style=solid, fontname=\"Helvetica\",label=\"If v==p\"]\n", ssEntry, pTrueSimpleSmurfState);
+	fprintf(stdout, " b%x->i%x [style=solid, fontname=\"Helvetica\",label=\"If n==1\"]\n", ssEntry, ssEntry);
+	fprintf(stdout, " i%x->b%x [style=solid, fontname=\"Helvetica\",label=\"v=p\"]\n", ssEntry, pTrueSimpleSmurfState);
+
+	fprintf(stdout, " i%x [shape=\"ellipse\", label=\"I\"]\n", ssEntry);
+	fprintf(stdout, " b%x [shape=\"ellipse\", label=\"OR, n=%d\"]\n", ssEntry, ssEntry->pORState->nSize);
 }
 
 void FreeORStateEntry(ORStateEntry *ssEntry) {

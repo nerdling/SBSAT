@@ -11,11 +11,12 @@ void PrintXORStateEntry(XORStateEntry *ssEntry) {
 }
 
 void PrintXORStateEntry_dot(XORStateEntry *ssEntry) {
-	d9_printf2("XOR Parity=%d ", ssEntry->bParity);
-	d9_printf1("Vars=");
-	for(int x = 0; x < ssEntry->nSize; x++)
-	  d9_printf2("%d ", ssEntry->pnTransitionVars[x]);
-	d9_printf2("Size=%d\n", ssEntry->nSize);
+   fprintf(stdout, " b%x->b%x [style=solid, fontname=\"Helvetica\",label=\"n--\"]\n", ssEntry, ssEntry);
+	fprintf(stdout, " b%x->i%x [style=solid, fontname=\"Helvetica\",label=\"If n==1\"]\n", ssEntry, ssEntry);
+	fprintf(stdout, " i%x->b%x [style=solid, fontname=\"Helvetica\",label=\"v=p\"]\n", ssEntry, pTrueSimpleSmurfState);
+	
+	fprintf(stdout, " i%x [shape=\"ellipse\", label=\"I\"]\n", ssEntry);
+	fprintf(stdout, " b%x [shape=\"ellipse\", label=\"XOR, n=%d\"]\n", ssEntry, ssEntry->nSize);
 }
 
 void PrintXORCounterStateEntry(XORCounterStateEntry *ssEntry) {
@@ -23,7 +24,12 @@ void PrintXORCounterStateEntry(XORCounterStateEntry *ssEntry) {
 }
 
 void PrintXORCounterStateEntry_dot(XORCounterStateEntry *ssEntry) {
-	d9_printf4("XOR Next=%x Head=%x Size=%d\n", ssEntry->pTransition, ssEntry->pXORState, ssEntry->nSize);
+   fprintf(stdout, " b%x->b%x [style=solid, fontname=\"Helvetica\",label=\"n--\"]\n", ssEntry, ssEntry);
+	fprintf(stdout, " b%x->i%x [style=solid, fontname=\"Helvetica\",label=\"If n==1\"]\n", ssEntry, ssEntry);
+	fprintf(stdout, " i%x->b%x [style=solid, fontname=\"Helvetica\",label=\"v=p\"]\n", ssEntry, pTrueSimpleSmurfState);
+	
+	fprintf(stdout, " i%x [shape=\"ellipse\", label=\"I\"]\n", ssEntry);
+	fprintf(stdout, " b%x [shape=\"ellipse\", label=\"XOR, n=%d\"]\n", ssEntry, ssEntry->pXORState->nSize);
 }
 
 void PrintXORGElimStateEntry(XORGElimStateEntry *ssEntry) {
@@ -38,14 +44,12 @@ void PrintXORGElimStateEntry(XORGElimStateEntry *ssEntry) {
 }
 
 void PrintXORGElimStateEntry_dot(XORGElimStateEntry *ssEntry) {
-	d9_printf2("XOR Parity=%d ", ((int *)ssEntry->pVector)[0]&1);
-	d9_printf1("Vars=");
-	for(int x = 0; x < ssEntry->nSize; x++)
-	  d9_printf2("%d ", ssEntry->pnTransitionVars[x]);
-	d9_printf2("Size=%d ", ssEntry->nSize);
-	d9_printf1("Vector= ");
-	PrintXORGElimVector(ssEntry->pVector);
-	d9_printf1("\n");
+   fprintf(stdout, " b%x->b%x [style=solid, fontname=\"Helvetica\",label=\"n--\"]\n", ssEntry, ssEntry);
+	fprintf(stdout, " b%x->i%x [style=solid, fontname=\"Helvetica\",label=\"If n==1\"]\n", ssEntry, ssEntry);
+	fprintf(stdout, " i%x->b%x [style=solid, fontname=\"Helvetica\",label=\"v=p\"]\n", ssEntry, pTrueSimpleSmurfState);
+	
+	fprintf(stdout, " i%x [shape=\"ellipse\", label=\"I\"]\n", ssEntry);
+	fprintf(stdout, " b%x [shape=\"ellipse\", label=\"GE XOR, n=%d\"]\n", ssEntry, ssEntry->nSize);
 }
 
 void PrintXORStateEntry_formatted(XORStateEntry *ssEntry) {

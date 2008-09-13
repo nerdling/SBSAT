@@ -22,8 +22,8 @@ void PrintSmurfStateEntry_dot(SmurfStateEntry *ssEntry) {
 */	
 	pState = ssEntry;
 	while(pState != NULL) {
-		fprintf(stdout, " b%x->b%x [style=solid,fontname=\"Helvetica\",fontsize=\"8\",label=\"%s\"]\n", ssEntry, pState->pVarIsTrueTransition, s_name(arrSimpleSolver2IteVarMap[pState->nTransitionVar]));
-		fprintf(stdout, " b%x->b%x [style=dotted,fontname=\"Helvetica\",fontsize=\"8\",label=\"-%s\"]\n", ssEntry, pState->pVarIsFalseTransition, s_name(arrSimpleSolver2IteVarMap[pState->nTransitionVar]));
+		fprintf(stdout, " b%x->b%x [style=solid,fontname=\"Helvetica\",label=\"%s\"]\n", ssEntry, pState->pVarIsTrueTransition, s_name(arrSimpleSolver2IteVarMap[pState->nTransitionVar]));
+		fprintf(stdout, " b%x->b%x [style=dotted,fontname=\"Helvetica\",label=\"-%s\"]\n", ssEntry, pState->pVarIsFalseTransition, s_name(arrSimpleSolver2IteVarMap[pState->nTransitionVar]));
 //		fprintf(stdout, "%x [
 		pState = (SmurfStateEntry *)pState->pNextVarInThisState;
    }
@@ -35,10 +35,10 @@ void PrintInferenceStateEntry(InferenceStateEntry *ssEntry) {
 
 void PrintInferenceStateEntry_dot(InferenceStateEntry *ssEntry) {
 	if(ssEntry->bPolarity)
-	  fprintf(stdout, " b%x->b%x [style=solid,fontname=\"Helvetica\",fontsize=\"8\",label=\"%s\"]\n", ssEntry, ssEntry->pVarTransition, s_name(arrSimpleSolver2IteVarMap[ssEntry->nTransitionVar]));
+	  fprintf(stdout, " b%x->b%x [style=solid,fontname=\"Helvetica\",label=\"%s\"]\n", ssEntry, ssEntry->pVarTransition, s_name(arrSimpleSolver2IteVarMap[ssEntry->nTransitionVar]));
 	else
-	  fprintf(stdout, " b%x->b%x [style=dotted,fontname=\"Helvetica\",fontsize=\"8\",label=\"-%s\"]\n", ssEntry, ssEntry->pVarTransition, s_name(arrSimpleSolver2IteVarMap[ssEntry->nTransitionVar]));
-	fprintf(stdout, "b%x [shape=\"circle\", label=\"I\"]\n", ssEntry);
+	  fprintf(stdout, " b%x->b%x [style=dotted,fontname=\"Helvetica\",label=\"-%s\"]\n", ssEntry, ssEntry->pVarTransition, s_name(arrSimpleSolver2IteVarMap[ssEntry->nTransitionVar]));
+	fprintf(stdout, " b%x [shape=\"ellipse\", label=\"I\"]\n", ssEntry);
 }
 
 void PrintWatchedListStateEntry(WatchedListStateEntry *ssEntry) {

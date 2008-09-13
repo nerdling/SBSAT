@@ -396,7 +396,7 @@ void PrintSmurfs(BDDNode **bdds, int size) {
 		} else {
 			fprintf(stdout, "digraph Smurf {\n");
 			fprintf(stdout, " graph [concentrate=true, nodesep=\"0.30\", ordering=in, rankdir=TB, ranksep=\"2.25\"];\n");
-			fprintf(stdout, " b%x [shape=box fontname=""Helvetica"",fontsize=""16"",label=""T""];\n", pTrueSimpleSmurfState);
+			fprintf(stdout, " b%x [shape=box fontname=""Helvetica"",label=""T""];\n", pTrueSimpleSmurfState);
 			PrintSmurf_dot(ReadSmurfStateIntoTable(bdds[i], NULL, 0));
 			fprintf(stdout, "}\n");
 		}
