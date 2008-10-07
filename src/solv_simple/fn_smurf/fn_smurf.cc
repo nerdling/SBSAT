@@ -9,17 +9,6 @@ void PrintSmurfStateEntry(SmurfStateEntry *ssEntry) {
 void PrintSmurfStateEntry_dot(SmurfStateEntry *ssEntry) {
 	SmurfStateEntry *pState = ssEntry;
 
-/*	fprintf(stdout, " { rank=same;\n");
-	while(pState != NULL) {
-		if(pState->pVarIsTrueTransition != pTrueSimpleSmurfState)
-		  fprintf(stdout, "   b%x\n", pState->pVarIsTrueTransition);
-		if(pState->pVarIsFalseTransition != pTrueSimpleSmurfState)
-		  fprintf(stdout, "   b%x\n", pState->pVarIsFalseTransition);
-//		fprintf(stdout, "%x [
-		pState = (SmurfStateEntry *)pState->pNextVarInThisState;
-   }
-	fprintf(stdout, " }\n");
-*/	
 	pState = ssEntry;
 	while(pState != NULL) {
 		fprintf(stdout, " b%x->b%x [style=solid,fontname=\"Helvetica\",label=\"%s\"]\n", ssEntry, pState->pVarIsTrueTransition, s_name(arrSimpleSolver2IteVarMap[pState->nTransitionVar]));

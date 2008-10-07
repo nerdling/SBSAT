@@ -98,7 +98,7 @@ void PrintSmurf_dot(void *ssEntry) {
 	if(((TypeStateEntry *)ssEntry)->visited) return;
 	((TypeStateEntry *)ssEntry)->visited = 1;
 	if(((SmurfStateEntry *)ssEntry) == pTrueSimpleSmurfState) {
-	
+		
 	} else if(((TypeStateEntry *)ssEntry)->cType == FN_SMURF) {
 		PrintSmurfStateEntry_dot((SmurfStateEntry *)ssEntry);
 		fprintf(stdout, " b%x [shape=\"ellipse\", label=\"S\"]\n", ssEntry);
