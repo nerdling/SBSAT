@@ -449,7 +449,11 @@ void trans(int size, int mult, int seed) {
 	gen_matrix(matrix, sizex, sizey, mult);
 	fprintf(stdout, "p bdd %d %d\n", 6*sizex*sizey, (5*sizex*sizey)+2*sizex+1);
 
-	fprintf(stdout, "initial_branch(#1 p_*)\n");
+	//fprintf(stdout, "initial_branch(#1 p_*)\n");
+	fprintf(stdout, "initial_branch(#1 ");
+	for(int x = 1; x <= sizex; x++)
+		fprintf(stdout, "p_%d ", x);
+	fprintf(stdout, ")\n");
 	//fprintf(stdout, "order(");
 
 	//for(int x = 1; x <= sizex; x++) {

@@ -164,7 +164,7 @@ int Do_Message_Passing() {
 	mp_pos_biases = (double *)ite_calloc(numinp+1, sizeof(double), 9, "mp_pos_biases");
 	mp_neg_biases = (double *)ite_calloc(numinp+1, sizeof(double), 9, "mp_neg_biases");
 	mp_star_biases = (double *)ite_calloc(numinp+1, sizeof(double), 9, "mp_star_biases");
-	
+
 	int surveys = 0;
 	int vars_set = 0;
 	
@@ -173,7 +173,7 @@ int Do_Message_Passing() {
 
 		if(mp_vars_to_set_for_each_survey>0 && vars_set%mp_vars_to_set_for_each_survey == 0) {
 			if(surveys >= mp_surveys) break;
-			initializeBiases(heuristic_mode);
+			initializeBiases(heuristic_mode); // Maybe put a flag here.
 			converged = ComputeSurvey(heuristic_mode);
 			surveys++;
 		}
@@ -276,12 +276,11 @@ double calculateFreedom(int v, int pos, int &count) {
 		f = functions[k->num];
 		  
 		double need = calculateNeed(f, v, pos);
+		
 		if(need != 0.0) {
 			retcount++;
-			// Update product of probabilities.  Remember that we want the prob that the BDD
-			// _doesn't_ need the var's help, so we subtract the running product from one.
-			retval *= 1.0 - need;
 		}
+		retval *= 1.0 - need;
 	}
 	
 	count = retcount;  // SIDE EFFECT
@@ -303,15 +302,33 @@ double calculateRestriction(int v, int pos, int &count) {
 		f = functions[k->num];
 		  
 		double need = calculateNeed(f, v, pos);
+//		fprintf(stderr, "[%4.6f %d]   ", need, pos);
 		if(need != 0.0) {
 			retcount++;
-			// Update product of probabilities.  Remember that we want the prob that the BDD
-			// _doesn't_ need the var's help, so we subtract the running sum from one.
-			retval += 1.0 - need;
 		}
+		retval += 1.0 - need;
 	}
 	
 	count = retcount;  // SIDE EFFECT
+	return retval;
+}
+
+double calculateIndifference(int v) {
+	double retval = 0.0;
+
+	int i;
+	BDDNode *f;
+	
+	// Loop through the BDDs.
+	for(llist *k = amount[v].head; k != NULL; k = k->next) {
+		f = functions[k->num];
+		  
+		double need_pos = calculateNeed(f, v, 0);
+		double need_neg = calculateNeed(f, v, 1);
+		double need_prod = (1.0-need_pos)*(1.0-need_neg);
+		retval += need_prod;
+	}
+	
 	return retval;
 }
 
@@ -442,7 +459,8 @@ double updateEMBPL(int v) {
 	double sum_beta = calculateRestriction(v, 0, npos);
 	
 	double c = double(nneg + npos);
-	return determineRatioBP(v, nneg, npos, c - sum_alpha, c - sum_beta);
+	return determineRatioBP(v, nneg, npos, sum_alpha, sum_beta);
+//	return determineRatioBP(v, nneg, npos, c - sum_alpha, c - sum_beta);
 }
 
 // UPDATEEMBPG: Update a variable accoring to EMBP-G.
@@ -451,7 +469,8 @@ double updateEMBPG(int v) {
 	double alpha = calculateFreedom(v, 1, nneg);
 	double beta = calculateFreedom(v, 0, npos);
 	
-	return determineRatioBP(v, nneg, npos, (double)nneg * alpha + (double)npos, (double)npos * beta + (double)nneg);
+	return determineRatioBP(v, nneg, npos, alpha, beta);
+//	return determineRatioBP(v, nneg, npos, ((double)nneg) * alpha + (double)npos, ((double)npos) * beta + (double)nneg);	
 }
 
 // UPDATEEMBPGV2: Update a variable accoring to EMBP-G-V2.
@@ -461,13 +480,14 @@ double updateEMBPGV2(int v) {
 	double beta = calculateFreedom(v, 0, npos);
 	
 	double c = double(nneg + npos);
-	return determineRatioBP(v, nneg, npos, c * alpha, c * beta);
+	return determineRatioBP(v, nneg, npos, alpha, beta);
+	//	return determineRatioBP(v, nneg, npos, c * alpha, c * beta);
 }
 
 // UPDATESP: Update a variable according to SP.
 double updateSP(int v) {
 	int nneg, npos;    // number of active negative and positive BDDs for v.
-	double rho = 0;//0.95; // important to prevent the trivial core, as in for instance, Maneva '06
+	double rho = 0.0;  //0.95; // important to prevent the trivial core, as in for instance, Maneva '06
 	
 	double alpha = calculateFreedom(v, 1, nneg);
 	double beta = calculateFreedom(v, 0, npos);
@@ -481,9 +501,13 @@ double updateEMSPL(int v) {
 	int nneg, npos;  // number of active negative and positive BDDs for v.
 	double sum_alpha = calculateRestriction(v, 1, nneg);
 	double sum_beta = calculateRestriction(v, 0, npos);
+	double prod_alpha_beta = calculateIndifference(v);
+	
+//	fprintf(stderr, "{%4.6f %4.6f %4.6f %d %d}\n", sum_alpha, sum_beta, prod_alpha_beta, nneg, npos);
 	
 	double c = double(nneg + npos);
-	return determineRatioSP(v, nneg, npos, c - sum_alpha, c - sum_beta, c - sum_alpha - sum_beta);
+	return determineRatioSP(v, nneg, npos, sum_alpha, sum_beta, prod_alpha_beta);
+	//	return determineRatioSP(v, nneg, npos, c - sum_alpha, c - sum_beta, c - sum_alpha - sum_beta);
 }
 
 // UPDATEEMSPG: Update a variable accoring to EMSP-G.
@@ -506,7 +530,8 @@ double updateEMSPGV2(int v) {
 	
 	double prod = alpha * beta;
 	double c = double(nneg + npos);
-	return determineRatioSP(v, nneg, npos, c * (alpha - prod), c * (beta - prod), c * prod);
+	return determineRatioSP(v, nneg, npos, alpha - prod, beta - prod, prod);
+	//	return determineRatioSP(v, nneg, npos, c * (alpha - prod), c * (beta - prod), c * prod);
 }
 
 int ComputeSurvey (int heuristic_mode) {
@@ -520,6 +545,7 @@ int ComputeSurvey (int heuristic_mode) {
 		max_change = 0.0;
 		reportBiases();
 		for (v = 1; v <= numinp; v++) {
+//		for (v = numinp; v > 0; v--) {
 			// clear_all_bdd_density();
 			if(variablelist[v].true_false != -1 || variablelist[v].equalvars != 0)
 			  continue;
