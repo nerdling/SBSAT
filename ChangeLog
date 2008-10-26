@@ -1,3 +1,329 @@
+2008-10-26 16:02  fett
+
+	* src/utils/params.cc: Lowered all the function type limits to 2.
+
+2008-10-26 14:04  fett
+
+	* src/utils/bdd_print.cc: checking fix.
+
+2008-10-26 13:50  fett
+
+	* include/common.h, include/sbsat_formats.h,
+	  include/sbsat_preproc.h, include/sbsat_utils.h,
+	  src/formats/write_output.cc, src/formats/5/Makefile.am,
+	  src/formats/5/Makefile.in, src/formats/5/bddnode.cc,
+	  src/formats/5/tracetest.cc, src/utils/bdd.cc,
+	  src/utils/bdd_print.cc, src/utils/params.cc: Added the 'bdd'
+	  format as an output. Double freeing something - shipping to boole
+	  for valgrind debugging.
+
+2008-10-21 19:49  fett
+
+	* Makefile.in, aclocal.m4, configure, doc/Makefile.in,
+	  doc/man1/Makefile.in, examples/Makefile.in, include/Makefile.in,
+	  include/config.h, src/generator/trans.cc,
+	  src/preproc/do_message_passing.cc, tests/Makefile.in,
+	  tests/cnf/Makefile.in, tests/longer_tests/Makefile.in,
+	  tests/trace_tests/Makefile.in: fixing the message passing code w/
+	  Eric
+
+	     ~Sean
+
+2008-10-21 07:01  franco
+
+	* src/: Makefile.in, formats/Makefile.in, formats/5/Makefile.in,
+	  generator/Makefile.in, postproc/Makefile.in, preproc/Makefile.in,
+	  solv_bddwalk/Makefile.in, solv_simple/Makefile.in,
+	  solv_simple/bb_gelim/Makefile.in, solv_simple/fn_or/Makefile.in,
+	  solv_simple/fn_smurf/Makefile.in, solv_simple/fn_xor/Makefile.in,
+	  solv_simple/include/Makefile.in, solv_smurf/Makefile.in,
+	  solv_smurf/fn_and/Makefile.in, solv_smurf/fn_lemma/Makefile.in,
+	  solv_smurf/fn_lemma_au/Makefile.in,
+	  solv_smurf/fn_minmax/Makefile.in,
+	  solv_smurf/fn_smurf/Makefile.in,
+	  solv_smurf/fn_smurf_au/Makefile.in,
+	  solv_smurf/fn_smurf_xor/Makefile.in,
+	  solv_smurf/fn_xor/Makefile.in,
+	  solv_smurf/fn_xor_smurf/Makefile.in,
+	  solv_smurf/hr_anne/Makefile.in,
+	  solv_smurf/hr_berkmin/Makefile.in,
+	  solv_smurf/hr_lemma/Makefile.in, solv_smurf/hr_lsgb/Makefile.in,
+	  solv_smurf/hr_lsgb_lemma/Makefile.in,
+	  solv_smurf/hr_lsgbw/Makefile.in,
+	  solv_smurf/hr_minisat/Makefile.in,
+	  solv_smurf/hr_null/Makefile.in, solv_smurf/hr_vsids/Makefile.in,
+	  solv_smurf/include/Makefile.in, solv_wvf/Makefile.in,
+	  utils/Makefile.in: [no log message]
+
+2008-10-07 10:59  fett
+
+	* src/solv_simple/: display.cc, fn_smurf/fn_smurf.cc: [no log
+	  message]
+
+2008-09-12 23:19  fett
+
+	* src/solv_simple/: display.cc, solv_simple_init.cc,
+	  fn_or/fn_or.cc, fn_smurf/fn_smurf.cc, fn_xor/fn_xor.cc: upgrading
+	  the smurf dot output.
+
+	     ~Sean
+
+2008-09-01 23:28  fett
+
+	* src/: sbsat.cc, generator/rksat.cc, solv_simple/solv_simple.cc:
+	  Fixed the randomizer.
+
+	  New way of computing number of solutions now takes into account
+	  nForceBackjumpLevel.
+
+	     ~Sean
+
+2008-08-27 20:47  fett
+
+	* include/sbsat_vars.h, src/preproc/do_message_passing.cc,
+	  src/utils/params.cc, src/utils/vars.cc: [no log message]
+
+2008-08-27 18:51  fett
+
+	* src/utils/params.cc: [no log message]
+
+2008-08-27 17:19  fett
+
+	* include/prototypes.h, include/sbsat_preproc.h,
+	  include/sbsat_solver.h, include/sbsat_vars.h, src/sbsat.cc,
+	  src/preproc/do_message_passing.cc, src/solv_simple/display.cc,
+	  src/solv_simple/solv_simple.cc,
+	  src/solv_simple/solv_simple_init.cc,
+	  src/solv_simple/fn_minmax/bt_specfn_minmax.cc,
+	  src/solv_simple/fn_negminmax/bt_specfn_negminmax.cc,
+	  src/solv_simple/fn_or/bt_specfn_or.cc,
+	  src/solv_simple/fn_smurf/bt_smurf.cc,
+	  src/solv_simple/fn_xor/bt_specfn_xor.cc, src/utils/bdd.cc,
+	  src/utils/params.cc, src/utils/vars.cc: Simple fixes and
+	  cosmetics (mostly Mp based) like adding the ability to set the
+	  random seed on the command line.
+
+	     ~Sean
+
+2008-08-27 00:56  fett
+
+	* src/: Makefile.in, formats/Makefile.in, formats/markbdd.cc,
+	  formats/xorbdd.cc, formats/5/Makefile.in, generator/Makefile.in,
+	  postproc/Makefile.in, preproc/Makefile.in,
+	  solv_bddwalk/Makefile.in, solv_simple/Makefile.in,
+	  solv_simple/hooks.cc, solv_simple/bb_gelim/Makefile.in,
+	  solv_simple/bb_gelim/linear.cc, solv_simple/fn_or/Makefile.in,
+	  solv_simple/fn_smurf/Makefile.in, solv_simple/fn_xor/Makefile.in,
+	  solv_simple/include/Makefile.in, solv_smurf/Makefile.in,
+	  solv_smurf/fn_and/Makefile.in, solv_smurf/fn_lemma/Makefile.in,
+	  solv_smurf/fn_lemma_au/Makefile.in,
+	  solv_smurf/fn_minmax/Makefile.in,
+	  solv_smurf/fn_smurf/Makefile.in,
+	  solv_smurf/fn_smurf_au/Makefile.in,
+	  solv_smurf/fn_smurf_xor/Makefile.in,
+	  solv_smurf/fn_xor/Makefile.in,
+	  solv_smurf/fn_xor_smurf/Makefile.in,
+	  solv_smurf/hr_anne/Makefile.in,
+	  solv_smurf/hr_berkmin/Makefile.in,
+	  solv_smurf/hr_lemma/Makefile.in, solv_smurf/hr_lsgb/Makefile.in,
+	  solv_smurf/hr_lsgb_lemma/Makefile.in,
+	  solv_smurf/hr_lsgbw/Makefile.in,
+	  solv_smurf/hr_minisat/Makefile.in,
+	  solv_smurf/hr_null/Makefile.in, solv_smurf/hr_vsids/Makefile.in,
+	  solv_smurf/include/Makefile.in, solv_wvf/Makefile.in,
+	  utils/Makefile.in: [no log message]
+
+2008-08-26 18:23  fett
+
+	* Makefile.in, aclocal.m4, configure, doc/Makefile.in,
+	  doc/man1/Makefile.in, examples/Makefile.in, include/Makefile.in,
+	  include/config.h, include/sbsat_preproc.h, include/sbsat_vars.h,
+	  tests/Makefile.in, tests/cnf/Makefile.in,
+	  tests/longer_tests/Makefile.in, tests/trace_tests/Makefile.in:
+	  [no log message]
+
+2008-08-26 16:25  fett
+
+	* src/: Makefile.in, sbsat.cc, formats/Makefile.in,
+	  formats/5/Makefile.in, generator/Makefile.am,
+	  generator/Makefile.in, generator/gentest.cc, generator/rksat.cc,
+	  postproc/Makefile.in, preproc/Makefile.am, preproc/Makefile.in,
+	  preproc/do_message_passing.cc, preproc/preprocess.cc,
+	  solv_bddwalk/Makefile.in, solv_simple/Makefile.in,
+	  solv_simple/bb_gelim/Makefile.in, solv_simple/fn_or/Makefile.in,
+	  solv_simple/fn_smurf/Makefile.in, solv_simple/fn_xor/Makefile.in,
+	  solv_simple/include/Makefile.in, solv_smurf/Makefile.in,
+	  solv_smurf/fn_and/Makefile.in, solv_smurf/fn_lemma/Makefile.in,
+	  solv_smurf/fn_lemma_au/Makefile.in,
+	  solv_smurf/fn_minmax/Makefile.in,
+	  solv_smurf/fn_smurf/Makefile.in,
+	  solv_smurf/fn_smurf_au/Makefile.in,
+	  solv_smurf/fn_smurf_xor/Makefile.in,
+	  solv_smurf/fn_xor/Makefile.in,
+	  solv_smurf/fn_xor_smurf/Makefile.in,
+	  solv_smurf/hr_anne/Makefile.in,
+	  solv_smurf/hr_berkmin/Makefile.in,
+	  solv_smurf/hr_lemma/Makefile.in, solv_smurf/hr_lsgb/Makefile.in,
+	  solv_smurf/hr_lsgb_lemma/Makefile.in,
+	  solv_smurf/hr_lsgbw/Makefile.in,
+	  solv_smurf/hr_minisat/Makefile.in,
+	  solv_smurf/hr_null/Makefile.in, solv_smurf/hr_vsids/Makefile.in,
+	  solv_smurf/include/Makefile.in, solv_wvf/Makefile.in,
+	  utils/Makefile.in, utils/params.cc, utils/vars.cc: Added a random
+	  K-SAT generator.
+
+	  Added most of the message passing schemes from VarSat. This was
+	  implemented as a preprocessing option "Mp". Still need to add
+	  command-line support for the various options.
+
+	    ~Sean
+
+2008-07-15 20:38  fett
+
+	* src/: formats/xorbdd.cc, formats/5/libt5_a-aig_g.h, utils/bdd.cc:
+	  Changed the way xdds are printed - more compact factoring.
+
+2008-07-14 02:12  fett
+
+	* src/solv_simple/solv_simple_init.cc: It turns out that smurfs
+	  have a greater need of sharing states than I previously though.
+
+	     ~Sean
+
+2008-07-14 01:52  fett
+
+	* include/sbsat_solver.h, src/solv_simple/display.cc,
+	  src/solv_simple/solv_simple.cc,
+	  src/solv_simple/solv_simple_init.cc,
+	  src/solv_simple/fn_or/fn_or.cc,
+	  src/solv_simple/fn_smurf/bdd2smurf.cc,
+	  src/solv_simple/fn_smurf/bt_smurf.cc,
+	  src/solv_simple/fn_smurf/fn_smurf.cc,
+	  src/solv_simple/fn_smurf/hr_lsgb_smurf_init.cc,
+	  src/solv_simple/fn_xor/fn_xor.cc,
+	  src/solv_simple/include/fn_smurf.h: Working on watched literals
+	  for smurfs still. SBSAT is in working conditon, but still more to
+	  do.
+
+2008-07-12 16:11  fett
+
+	* src/solv_simple/fn_smurf/bdd2smurf.cc: [no log message]
+
+2008-07-12 15:51  fett
+
+	* src/solv_simple/fn_smurf/bdd2smurf.cc: [no log message]
+
+2008-07-12 15:50  fett
+
+	* src/solv_simple/fn_smurf/bdd2smurf.cc: fixing bugs :)
+
+2008-07-12 14:43  fett
+
+	* src/solv_simple/fn_smurf/bdd2smurf.cc: [no log message]
+
+2008-07-12 14:33  fett
+
+	* include/sbsat_solver.h, include/sbsat_vars.h,
+	  src/formats/5/aig_g.yy, src/formats/5/libt5_a-aig_g.h,
+	  src/solv_simple/fn_smurf/bdd2smurf.cc,
+	  src/solv_simple/fn_smurf/bt_smurf.cc,
+	  src/solv_simple/fn_smurf/hr_lsgb_smurf_init.cc,
+	  src/utils/params.cc, src/utils/vars.cc: Finished Adding and
+	  Creating WatchedListStateEntry.
+
+	  Next step is to modify the variable/inference lists based on
+	  these states and undo the modifications during backtrack.
+
+2008-07-09 10:52  fett
+
+	* src/solv_simple/fn_smurf/bdd2smurf.cc: [no log message]
+
+2008-07-09 02:00  fett
+
+	* include/config.h, include/prototypes.h, include/sbsat_preproc.h,
+	  src/formats/bdd2cnf.cc, src/formats/markbdd.cc,
+	  src/formats/smurf.cc, src/preproc/do_applyinfs.cc,
+	  src/preproc/do_split.cc, src/preproc/init_preproc.cc,
+	  src/preproc/other_preproc.cc, src/solv_bddwalk/bddwalk.cc,
+	  src/solv_simple/solv_simple_init.cc,
+	  src/solv_simple/fn_smurf/bdd2smurf.cc,
+	  src/solv_simple/include/fn_smurf.h,
+	  src/solv_simple/include/solver.h,
+	  src/solv_smurf/fn_and/bdd2specfn_and.cc,
+	  src/solv_smurf/fn_minmax/bdd2specfn_minmax.cc,
+	  src/solv_smurf/fn_smurf/bdd2smurf.cc,
+	  src/solv_smurf/fn_smurf_au/bdd2smurf_au.cc,
+	  src/solv_smurf/fn_xor/bdd2specfn_xor.cc, src/utils/bdd.cc:
+	  Changed A LOT of 'long's to 'int's in the attempt to make things
+	  cleaner and to 'more cleanly' support dynamic occurence lists in
+	  the simple_solver.
+
+	     ~Sean
+
+2008-07-08 19:26  fett
+
+	* src/solv_simple/fn_smurf/bdd2smurf.cc: [no log message]
+
+2008-07-08 19:17  fett
+
+	* src/solv_simple/: fn_minmax/hr_lsgb_minmax_init.cc,
+	  fn_negminmax/hr_lsgb_negminmax_init.cc, fn_or/hr_lsgb_or_init.cc,
+	  fn_xor/hr_lsgb_xor_init.cc, include/fn_or.h, include/fn_xor.h:
+	  free'd heuristic memory for special states.
+
+	    ~Sean
+
+2008-07-08 19:03  fett
+
+	* src/solv_simple/: solv_simple_init.cc,
+	  fn_minmax/hr_lsgb_minmax_init.cc,
+	  fn_negminmax/hr_lsgb_negminmax_init.cc, fn_or/hr_lsgb_or_init.cc,
+	  fn_xor/hr_lsgb_xor_init.cc: [no log message]
+
+2008-07-08 18:55  fett
+
+	* include/config.h, include/sbsat_solver.h, include/sbsat_vars.h,
+	  src/formats/5/libt5_a-aig_g.h, src/preproc/do_ex_safe_cluster.cc,
+	  src/preproc/do_exquantifyand.cc, src/preproc/do_rewind.cc,
+	  src/solv_simple/solv_simple_init.cc,
+	  src/solv_simple/fn_smurf/bdd2smurf.cc, src/utils/params.cc,
+	  src/utils/vars.cc: [no log message]
+
+2008-07-08 11:21  fett
+
+	* src/: preproc/do_exquantifyand.cc, preproc/do_rewind.cc,
+	  solv_simple/solv_simple.cc, solv_simple/solv_simple_init.cc:
+	  Making things amenable for watched literals.
+
+2008-07-08 01:20  fett
+
+	* src/generator/slider2.cc: Added trace format for slider2
+
+2008-07-07 22:48  fett
+
+	* src/generator/slider2.cc: [no log message]
+
+2008-07-07 14:17  fett
+
+	* src/generator/slider2.cc: trying to make an iscas output for
+	  slider2
+
+	     ~Sean
+
+2008-07-07 10:47  fett
+
+	* src/solv_simple/hooks.cc: Added a comment, could speed up the ge
+	  table.
+
+2008-07-05 13:06  fett
+
+	* src/: formats/cnf.cc, solv_simple/solv_simple.cc: Just making
+	  sure CVS works again :)
+
+2008-06-19 20:23  fett
+
+	* ChangeLog: [no log message]
+
 2008-06-18 12:43  fett
 
 	* src/formats/aiger.c: Fixed a C specific syntax error. Breaks old

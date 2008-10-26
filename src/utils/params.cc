@@ -149,9 +149,13 @@ t_opt options[] = {
                 "The minimum # of literals to flag sp. function or_equ"},
 { functionTypeLimits+PLAINOR, "", "limit-or", P_INT, V(i:0,"0"), V(i:2,"2"), VAR_NORMAL, 0,
                 "The minimum # of literals to flag sp. function or"},
+{ functionTypeLimits+PLAINAND, "", "limit-and", P_INT, V(i:0,"0"), V(i:2,"2"), VAR_NORMAL, 0,
+                "The minimum # of literals to flag sp. function or"},
 { functionTypeLimits+PLAINXOR, "", "limit-xor", P_INT, V(i:0,"0"), V(i:2,"2"), VAR_NORMAL, 0,
                 "The minimum # of literals to flag sp. function xor"},
 { functionTypeLimits+MINMAX, "", "limit-minmax", P_INT, V(i:0,"0"), V(i:2,"2"), VAR_NORMAL, 0,
+                "The minimum # of literals to flag sp. function minmax"},
+{ functionTypeLimits+NEG_MINMAX, "", "limit-neg-minmax", P_INT, V(i:0,"0"), V(i:20,"20"), VAR_NORMAL, 0,
                 "The minimum # of literals to flag sp. function minmax"},
 /*{ &AND_EQU_LIMIT, "", "limit-and-equ", P_INT, V(i:0,"0"), V(i:2,"2"), VAR_NORMAL, 0, 
                 "The minimum # of literals to flag sp. function and_equ"},
@@ -430,7 +434,7 @@ void
 init_params()
 {
    for(int i=0;i<MAX_FUNC;i++)
-      functionTypeLimits[i] = 2;//1000000000; /* huge number max_int? */
+      functionTypeLimits[i] = 1000000000; /* huge number max_int? */
 }
 
 /* To be used with "SATRAM" or "SATTIMEOUT" */

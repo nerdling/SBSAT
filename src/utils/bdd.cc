@@ -1226,7 +1226,7 @@ int findandset_fnType(int x) {
 		return 1;
 	}
 
-	if (length[x] >= functionTypeLimits[MINMAX] &&
+	if (length[x] >= functionTypeLimits[NEG_MINMAX] &&
 		 isNEG_MIN_MAX(functions[x], variables[x].num, length[x])) {
 		functionType[x] = NEG_MINMAX;
 		return 1;
