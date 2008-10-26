@@ -57,6 +57,7 @@ void Binary_to_BDD();
 void BDD_to_Binary();
 void printBDDToAAG();
 void Smurf_FPGA();
+void printBDDFormat();
 void printLinearFormat();
 void printXORFormat();
 void print_xdd_d(BDDNode *);

@@ -56,8 +56,8 @@ CONFIG_CLEAN_FILES= \
         trace_s.cc  
 
 
-bin_PROGRAMS = tracetest
-tracetest_SOURCES = tracetest.cc  # bddnode.cc
+#bin_PROGRAMS = tracetest
+#tracetest_SOURCES = tracetest.cc  # bddnode.cc
 
 #if MYLIBTOOL
 #noinst_LTLIBRARIES = libt5.la
@@ -68,7 +68,7 @@ tracetest_SOURCES = tracetest.cc  # bddnode.cc
 noinst_LIBRARIES = libt5.a
 libt5_a_SOURCES = $(sources)
 libt5_a_YFLAGS =  -d
-tracetest_LDADD = ../../preproc/libpreproc.a libt5.a ../../utils/libutils.a
+#tracetest_LDADD = ../../preproc/libpreproc.a libt5.a ../../utils/libutils.a
 #endif
 
 #libt5_a_CXXFLAGS =  -pg

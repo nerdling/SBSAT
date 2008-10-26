@@ -38,7 +38,6 @@
 #include "sbsat.h"
 #include "bddnode.h"
 
-BDDNode **xorFunctions;
 char filename[128]="stdin";
 extern int s_error;
 

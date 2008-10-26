@@ -184,6 +184,8 @@ t_opt options[] = {
                 "Output in SMURF format"},
 { &formatout, "c", "", P_PRE_CHAR, V(c:'c',"c"), V(c:'b',"b"), VAR_NORMAL, 0, 
                 "Output in CNF format"},
+{ &formatout, "i", "", P_PRE_CHAR, V(c:'i',"i"), V(c:'b',"b"), VAR_NORMAL, 0,
+                "Output in ITE(bdd) format"},
 { &formatout, "a", "", P_PRE_CHAR, V(c:'a',"a"), V(c:'b',"b"), VAR_NORMAL, 0, 
                 "Output in AAG format"},
 { &formatout, "x", "", P_PRE_CHAR, V(c:'x',"x"), V(c:'b',"b"), VAR_NORMAL, 0, 
@@ -428,7 +430,7 @@ void
 init_params()
 {
    for(int i=0;i<MAX_FUNC;i++)
-      functionTypeLimits[i] = 1000000000; /* huge number max_int? */
+      functionTypeLimits[i] = 2;//1000000000; /* huge number max_int? */
 }
 
 /* To be used with "SATRAM" or "SATTIMEOUT" */

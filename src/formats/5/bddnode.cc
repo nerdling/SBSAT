@@ -39,7 +39,6 @@
 #include "bddnode.h"
 
 int *length;
-BDDNode *xorFunctions;
 int nmbrFunctions=0;
 int numBuckets;
 int sizeBuckets;

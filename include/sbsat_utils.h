@@ -68,6 +68,8 @@ void ite_strncpy(char *str_dst, char *str_src, int len);
 int functions_add(BDDNode *bdd, int fn_type, int equal_var);
 
 //Finding function types
+int findandset_fnType(int);
+int findandret_fnType(BDDNode *, int *, int *&);
 int isOR(BDDNode *);
 int isAND(BDDNode *);
 int isAND_EQU(BDDNode *, int *, int);

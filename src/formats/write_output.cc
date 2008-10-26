@@ -77,7 +77,7 @@ write_output (char formatout)
 	      }
 	      break;
 
-    case 'i': printSchlipfCircuit (); break;
+    case 'i': printBDDFormat (); break;
 		 
 	 case 'a': printBDDToAAG (); break;
 

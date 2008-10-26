@@ -931,8 +931,8 @@ BDDNode *strengthen_fun(BDDNode *bddNmbr1, BDDNode *bddNmbr2)
 	for (; bdd2pos < length2; bdd2pos++)
 	  quantifiedBDD2 = xquantify(quantifiedBDD2, vars2[bdd2pos]);
 	
-	if(length1 > 0) delete []vars1;
-	if(length2 > 0) delete []vars2;
+	if(length1 > 0) delete [] vars1;
+	if(length2 > 0) delete [] vars2;
 	return ite_and(bddNmbr1, quantifiedBDD2);
 }
 
@@ -1071,26 +1071,30 @@ int countTrues (BDDNode * bdd) {
 
 int isOR(BDDNode *bdd) {
 	if(IS_TRUE_FALSE(bdd)) return 0;
+	int size = 0;
 	while(bdd != false_ptr) {
 		if(bdd->thenCase == true_ptr)
 		  bdd = bdd->elseCase;
 		else if(bdd->elseCase == true_ptr)
 		  bdd = bdd->thenCase;
 		else return 0;
+		size++;
 	}
-	return 1;
+	return size>1;
 }
 
 int isAND(BDDNode *bdd) {
 	if(IS_TRUE_FALSE(bdd)) return 0;
+	int size = 0;
 	while(bdd != true_ptr) {
 		if(bdd->thenCase == false_ptr)
 		  bdd = bdd->elseCase;
 		else if(bdd->elseCase == false_ptr)
 		  bdd = bdd->thenCase;
 		else return 0;
+		size++;		
 	}
-	return 1;
+	return size>1;
 }
 
 //returns 0 for NO
@@ -1111,9 +1115,16 @@ int isAND_EQU(BDDNode *bdd, int *bdd_vars, int bdd_len) {
 
 int isXOR(BDDNode *bdd) {
 	if(IS_TRUE_FALSE(bdd)) return 0;
+	int size = 0;
 	for(;!IS_TRUE_FALSE(bdd);bdd = bdd->thenCase) {
 		if(bdd->thenCase != bdd->elseCase->notCase) return 0;
+		size++;
 	}
+	return size>1;	
+}
+
+int isITE(BDDNode *bdd) {
+	//SEAN!!! Write it.
 	return 1;	
 }
 
@@ -1214,9 +1225,70 @@ int findandset_fnType(int x) {
 		functionType[x] = MINMAX;
 		return 1;
 	}
-	
-	
+
+	if (length[x] >= functionTypeLimits[MINMAX] &&
+		 isNEG_MIN_MAX(functions[x], variables[x].num, length[x])) {
+		functionType[x] = NEG_MINMAX;
+		return 1;
+	}
+
 	return 0;
+}
+
+//To set the fnType the function must be UNSURE to start with
+int findandret_fnType(BDDNode *bdd, int *bdd_length, int *&bdd_vars) {
+	if(IS_TRUE_FALSE(bdd)) return UNSURE;
+	
+   int *bdd_tempint = NULL;
+	int bdd_tempint_max = 0;
+	int y = 0;
+	unravelBDD(&y, &bdd_tempint_max, &bdd_tempint, bdd);
+	int *tempint = bdd_tempint;
+	if (y != 0) qsort (tempint, y, sizeof (int), compfunc);
+	
+	(*bdd_length) = y;
+	bdd_vars = new int[y + 1]; //(int *)calloc(y+1, sizeof(int));
+	for (int i = 0; i < y; i++)
+	  bdd_vars[i] = tempint[i];
+	ite_free((void**)&bdd_tempint);
+	
+	if ((*bdd_length) >= functionTypeLimits[PLAINOR] &&
+		 isOR(bdd)) {
+		return PLAINOR;
+	}
+
+	if ((*bdd_length) >= functionTypeLimits[PLAINAND] &&
+		 isAND(bdd)) {
+		return PLAINAND;
+	}
+
+	if ((*bdd_length) >= functionTypeLimits[PLAINXOR] &&
+		 isXOR(bdd)) {
+		return PLAINXOR;
+	}
+	
+	if ((*bdd_length) >= functionTypeLimits[AND]) {
+		int equ_var = isAND_EQU(bdd, bdd_vars, (*bdd_length));
+		if(equ_var != 0) {
+				if(equ_var > 0) {
+				return AND;
+			} else { //equ_var < 0 for sure
+				return OR;
+			}
+		}
+	}
+
+	if ((*bdd_length) >= functionTypeLimits[MINMAX] &&
+		 isMIN_MAX(bdd, bdd_vars, (*bdd_length))) {
+		return MINMAX;
+	}
+
+	if ((*bdd_length) >= functionTypeLimits[MINMAX] &&
+		 isNEG_MIN_MAX(bdd, bdd_vars, (*bdd_length))) {
+		return NEG_MINMAX;
+	}
+
+	return UNSURE;
 }
 
 int

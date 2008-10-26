@@ -87,9 +87,6 @@ void UnSetRepeats(int x);
 int Rebuild_BDDx (int x);
 int Rebuild_BDD (BDDNode *, int *, int *&);
 
-//Finding function types
-int findandset_fnType(int);
-
 BDDNode *strip_x_BDD(BDDNode *, int);
 BDDNode *strip_x(int, int);
 BDDNode *collect_x (BDDNode *, int);

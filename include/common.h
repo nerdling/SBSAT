@@ -82,10 +82,12 @@ enum {
   IMPAND,    /* 15 *///x-> a & b & c
   IMPOR,     /* 16 *///x-> a v b v c
   PLAINOR,   /* 17 *///a v b v c
-  PLAINXOR,  /* 18 *///a + b + c
-  MINMAX,    /* 19 */
+  PLAINAND,  /* 18 *///a & b & c
+  PLAINXOR,  /* 19 *///a + b + c
+  MINMAX,    /* 20 */
+  NEG_MINMAX,/* 21 */
 
-  EQU_BASE=20,  /* equ_base + 0 */
+  EQU_BASE=22,  /* equ_base + 0 */
   AND_EQU,       /* equ_base + 1 */
   NAND_EQU,      /* equ_base + 2 */
   OR_EQU,        /* equ_base + 3 */

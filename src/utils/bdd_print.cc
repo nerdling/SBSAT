@@ -381,32 +381,186 @@ printBDDTree(BDDNode * bdd, int *which_zoom)
 }
 
 void
-printITEBDD (BDDNode * bdd)
-{
-   if (bdd == true_ptr)
-   {
+printITEBDD (BDDNode * bdd) {
+   if (bdd == true_ptr) {
       fprintf (stdout, "T");
       return;
    }
-   if (bdd == false_ptr)
-   {
+   if (bdd == false_ptr) {
       fprintf (stdout, "F");
       return;
    }
-   fprintf (stdout, "ITE(%d, ", bdd->variable);
-   printITEBDD (bdd->thenCase);
+   fprintf (stdout, "ite(%s, ", s_name(bdd->variable)); //use symbol table
+	//fprintf (stdout, "ITE(%d, ", bdd->variable);
+
+	printITEBDD (bdd->thenCase);
    fprintf (stdout, ", ");
    if (bdd->elseCase == true_ptr)
       fprintf (stdout, "T)");
-
    else if (bdd->elseCase == false_ptr)
       fprintf (stdout, "F)");
-
-   else
-   {
+   else {
       printITEBDD (bdd->elseCase);
       fprintf (stdout, ")");
    }
+}
+
+void printBDD_ReduceSpecFunc(BDDNode *bdd, FILE *fout);
+
+void printITEBDD_file (BDDNode *bdd, FILE *fout) {
+   if (bdd == true_ptr) {
+      fprintf (fout, "T");
+      return;
+   }
+   if (bdd == false_ptr) {
+      fprintf (fout, "F");
+      return;
+   }
+	if(bdd->thenCase == bdd->elseCase->notCase) {
+		fprintf(fout, "equ(%s, ", s_name(bdd->variable));
+		printBDD_ReduceSpecFunc (bdd->thenCase, fout);
+		fprintf (fout, ")");
+	} else {
+		fprintf (fout, "ite(%s, ", s_name(bdd->variable));
+		printBDD_ReduceSpecFunc (bdd->thenCase, fout);
+		fprintf (fout, ", ");
+		if (bdd->elseCase == true_ptr)
+		  fprintf (fout, "T)");
+		else if (bdd->elseCase == false_ptr)
+		  fprintf (fout, "F)");
+		else {
+			printBDD_ReduceSpecFunc (bdd->elseCase, fout);
+			fprintf (fout, ")");
+		}
+	}
+}
+
+void printBDD_ReduceSpecFunc(BDDNode *bdd, FILE *fout) {
+	int bdd_length;
+	int *bdd_vars;
+	int fn_type = findandret_fnType(bdd, &bdd_length, bdd_vars);
+
+	if(bdd_length < 2 || fn_type == UNSURE) {
+		printITEBDD_file(bdd, fout);		  
+	} else if(fn_type == PLAINOR) {
+		fprintf(fout, "or(");
+		while(bdd != false_ptr) {
+			if(bdd->thenCase == true_ptr) {
+				fprintf(fout, "%s", s_name(bdd->variable));
+				bdd = bdd->elseCase;
+			}
+			else if(bdd->elseCase == true_ptr) {
+				fprintf(fout, "not(%s)", s_name(bdd->variable));
+				bdd = bdd->thenCase;
+			}
+			if(bdd != false_ptr)
+			  fprintf(fout, ", ");
+		}
+		fprintf(fout, ")");		
+	} else if(fn_type == PLAINAND) {
+		fprintf(fout, "and(");
+		while(bdd != true_ptr) {
+			if(bdd->thenCase == false_ptr) {
+				fprintf(fout, "not(%s)", s_name(bdd->variable));
+				bdd = bdd->elseCase;
+			}
+			else if(bdd->elseCase == false_ptr) {
+				fprintf(fout, "%s", s_name(bdd->variable));
+				bdd = bdd->thenCase;
+			}
+			if(bdd != true_ptr)
+			  fprintf(fout, ", ");
+		}
+		fprintf(fout, ")");		
+	} else if(fn_type == PLAINXOR) {
+		fprintf(fout, "xor(%s", s_name(bdd_vars[0]));
+		for(int y = 1; y < bdd_length; y++)
+		  fprintf(fout, ", %s", s_name(bdd_vars[y]));
+		fprintf(fout, ")");		
+	} else if(fn_type == AND) {
+		int equ_var = isAND_EQU(bdd, bdd_vars, bdd_length);
+		fprintf(fout, "equ(");
+		fprintf(fout, "%s, ", s_name(equ_var));
+		bdd = set_variable(bdd, equ_var, 1);
+		fprintf(fout, "and(");
+		while(bdd != true_ptr) {
+			if(bdd->thenCase == false_ptr) {
+				fprintf(fout, "not(%s)", s_name(bdd->variable));
+				bdd = bdd->elseCase;
+			}
+			else if(bdd->elseCase == false_ptr) {
+				fprintf(fout, "%s", s_name(bdd->variable));
+				bdd = bdd->thenCase;
+			}
+			if(bdd != true_ptr)
+			  fprintf(fout, ", ");
+		}
+		fprintf(fout, "))");
+	} else if(fn_type == OR) {
+		int equ_var = -isAND_EQU(bdd, bdd_vars, bdd_length);
+		fprintf(fout, "equ(");
+		fprintf(fout, "%s, ", s_name(equ_var));
+		bdd = set_variable(bdd, equ_var, 1);
+		fprintf(fout, "or(");
+		while(bdd != false_ptr) {
+			if(bdd->thenCase == true_ptr) {
+				fprintf(fout, "%s", s_name(bdd->variable));
+				bdd = bdd->elseCase;
+			}
+			else if(bdd->elseCase == true_ptr) {
+				fprintf(fout, "not(%s)", s_name(bdd->variable));
+				bdd = bdd->thenCase;
+			}
+			if(bdd != false_ptr)
+			  fprintf(fout, ", ");
+		}
+		fprintf(fout, "))");
+	} else if(fn_type == MINMAX) {
+		int max = -1;
+		BDDNode *tmp_bdd;
+		for(tmp_bdd = bdd; !IS_TRUE_FALSE(tmp_bdd); tmp_bdd = tmp_bdd->thenCase)
+		  max++;
+		
+		int min = -1;
+		for(tmp_bdd = bdd; !IS_TRUE_FALSE(tmp_bdd); tmp_bdd = tmp_bdd->elseCase)
+		  min++;
+		if(tmp_bdd == true_ptr) min = 0;
+		else min = bdd_length-min;
+		fprintf(fout, "minmax(%d, %d, %s", min, max, s_name(bdd_vars[0]));
+		for(int y = 1; y < bdd_length; y++)
+		  fprintf(fout, ", %s", s_name(bdd_vars[y]));
+		fprintf(fout, ")");
+		
+	} else if(fn_type == NEG_MINMAX) {		
+		int max = -1;
+		BDDNode *tmp_bdd;
+		for(tmp_bdd = bdd; !IS_TRUE_FALSE(tmp_bdd); tmp_bdd = tmp_bdd->thenCase)
+		  max++;
+		
+		int min = -1;
+		for(tmp_bdd = bdd; !IS_TRUE_FALSE(tmp_bdd); tmp_bdd = tmp_bdd->elseCase)
+		  min++;
+		if(tmp_bdd == false_ptr) min = 0;
+		else min = bdd_length-min;
+		
+		fprintf(fout, "not(minmax(%d, %d, %s", min, max, s_name(bdd_vars[0]));
+		for(int y = 1; y < bdd_length; y++)
+		  fprintf(fout, ", %s", s_name(bdd_vars[y]));
+		fprintf(fout, "))");
+	}
+	
+	delete [] bdd_vars;
+
+	return;
+}
+
+void
+printBDDFormat () {
+	fprintf(foutputfile, "p bdd %d %d\n", getNuminp(), nmbrFunctions);
+	for(int x = 0; x < nmbrFunctions; x++) {
+		printBDD_ReduceSpecFunc(functions[x], foutputfile);
+		fprintf(stdout, "\n");
+	}
 }
 
 void
