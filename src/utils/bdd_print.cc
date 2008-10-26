@@ -436,8 +436,8 @@ void printITEBDD_file (BDDNode *bdd, FILE *fout) {
 }
 
 void printBDD_ReduceSpecFunc(BDDNode *bdd, FILE *fout) {
-	int bdd_length;
-	int *bdd_vars;
+	int bdd_length = 0;
+	int *bdd_vars = NULL;
 	int fn_type = findandret_fnType(bdd, &bdd_length, bdd_vars);
 
 	if(bdd_length < 2 || fn_type == UNSURE) {
@@ -549,7 +549,7 @@ void printBDD_ReduceSpecFunc(BDDNode *bdd, FILE *fout) {
 		fprintf(fout, "))");
 	}
 	
-	delete [] bdd_vars;
+	if(bdd_vars != NULL) delete [] bdd_vars;
 
 	return;
 }
