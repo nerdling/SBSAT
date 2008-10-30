@@ -25,6 +25,13 @@ AC_ARG_ENABLE(optimization,
 	MYCCFLAGS="-xO5 -KPIC -dalign -native"
     fi])
 
+AC_ARG_ENABLE(openmp,
+[  --enable-openmp	Turn on openmp parallel segemts (default=no)],
+    [if eval "test x$enable_optimization = xyes"; then
+        MYCXXFLAGS="${MYCXXFLAGS} -fopenmp "
+	MYCCFLAGS="${MYCCFLAGS} -fopenmp "
+    fi])
+
 AC_ARG_ENABLE(debug, 
 [  --enable-debug          Turn on compiler debugging information (default=no)],
     [if eval "test x$enable_debug = xyes"; then

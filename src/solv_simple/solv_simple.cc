@@ -1,6 +1,7 @@
 #include "sbsat.h"
 #include "sbsat_solver.h"
 #include "solver.h"
+#include <omp.h>
 
 int nSimpleSolver_Reset=0;
 int nInfQueueStart=0;
@@ -86,6 +87,11 @@ void Calculate_Heuristic_Values() {
 	memset(SimpleSmurfProblemState->arrNegVarHeurWghts, 0, sizeof(double)*SimpleSmurfProblemState->nNumVars);
 	
 	void **arrSmurfStates = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].arrSmurfStates;
+
+//#pragma omp parallel num_threads(2)
+	  {
+
+//#pragma omp for schedule(static, 1)
 	for(int nSmurfIndex = 0; nSmurfIndex < SimpleSmurfProblemState->nNumSmurfs; nSmurfIndex++) {
 		//TrueState
 		if(arrSmurfStates[nSmurfIndex] == pTrueSimpleSmurfState) continue;
@@ -96,14 +102,18 @@ void Calculate_Heuristic_Values() {
 		switch(((TypeStateEntry *)arrSmurfStates[nSmurfIndex])->cType) {
 		 case FN_SMURF:
 			pState = arrSmurfStates[nSmurfIndex];
+//#pragma omp atomic
 			SimpleSmurfProblemState->arrPosVarHeurWghts[((SmurfStateEntry *)pState)->nTransitionVar] +=
 			  ((SmurfStateEntry *)pState)->fHeurWghtofTrueTransition;
+//#pragma omp atomic
 			SimpleSmurfProblemState->arrNegVarHeurWghts[((SmurfStateEntry *)pState)->nTransitionVar] +=  
 			  ((SmurfStateEntry *)pState)->fHeurWghtofFalseTransition;
 			while (((SmurfStateEntry *)pState)->pNextVarInThisState != NULL) {
 				pState = ((SmurfStateEntry *)pState)->pNextVarInThisState;
+//#pragma omp atomic
 				SimpleSmurfProblemState->arrPosVarHeurWghts[((SmurfStateEntry *)pState)->nTransitionVar] +=
 				  ((SmurfStateEntry *)pState)->fHeurWghtofTrueTransition;
+//#pragma omp atomic
 				SimpleSmurfProblemState->arrNegVarHeurWghts[((SmurfStateEntry *)pState)->nTransitionVar] +=  
 				  ((SmurfStateEntry *)pState)->fHeurWghtofFalseTransition;
 			}
@@ -114,10 +124,14 @@ void Calculate_Heuristic_Values() {
 				if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[((ORCounterStateEntry *)pState)->pORState->pnTransitionVars[index]] >= nCurrInfLevel) {
 					numfound++;
 					if(((ORCounterStateEntry *)pState)->pORState->bPolarity[index] == BOOL_TRUE) {
+//#pragma omp atomic
 						SimpleSmurfProblemState->arrPosVarHeurWghts[((ORCounterStateEntry *)pState)->pORState->pnTransitionVars[index]] += JHEURISTIC_K_TRUE;
+//#pragma omp atomic
 						SimpleSmurfProblemState->arrNegVarHeurWghts[((ORCounterStateEntry *)pState)->pORState->pnTransitionVars[index]] += LSGBORCounterGetHeurNeg(((ORCounterStateEntry *)pState));
 					} else {
+//#pragma omp atomic
 						SimpleSmurfProblemState->arrPosVarHeurWghts[((ORCounterStateEntry *)pState)->pORState->pnTransitionVars[index]] += LSGBORCounterGetHeurNeg(((ORCounterStateEntry *)pState));
+//#pragma omp atomic
 						SimpleSmurfProblemState->arrNegVarHeurWghts[((ORCounterStateEntry *)pState)->pORState->pnTransitionVars[index]] += JHEURISTIC_K_TRUE;
 					}
 				}
@@ -128,7 +142,9 @@ void Calculate_Heuristic_Values() {
 			for(int index = 0; numfound < ((XORCounterStateEntry *)pState)->nSize; index++) {
 				if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[((XORCounterStateEntry *)pState)->pXORState->pnTransitionVars[index]] >= nCurrInfLevel) {
 					numfound++;
+//#pragma omp atomic
 					SimpleSmurfProblemState->arrPosVarHeurWghts[((XORCounterStateEntry *)pState)->pXORState->pnTransitionVars[index]] += LSGBXORCounterGetHeurScoreTrans(((XORCounterStateEntry *)pState));
+//#pragma omp atomic
 					SimpleSmurfProblemState->arrNegVarHeurWghts[((XORCounterStateEntry *)pState)->pXORState->pnTransitionVars[index]] += LSGBXORCounterGetHeurScoreTrans(((XORCounterStateEntry *)pState));
 				}
 			}
@@ -139,10 +155,14 @@ void Calculate_Heuristic_Values() {
 				if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[((ORStateEntry *)pState)->pnTransitionVars[index]] >= nCurrInfLevel) {
 					numfound++;
 					if(((ORStateEntry *)pState)->bPolarity[index] == BOOL_TRUE) {
+//#pragma omp atomic
 						SimpleSmurfProblemState->arrPosVarHeurWghts[((ORStateEntry *)pState)->pnTransitionVars[index]] += JHEURISTIC_K_TRUE;
+//#pragma omp atomic
 						SimpleSmurfProblemState->arrNegVarHeurWghts[((ORStateEntry *)pState)->pnTransitionVars[index]] += LSGBORGetHeurNeg(((ORStateEntry *)pState));
 					} else {
+//#pragma omp atomic
 						SimpleSmurfProblemState->arrPosVarHeurWghts[((ORStateEntry *)pState)->pnTransitionVars[index]] += LSGBORGetHeurNeg(((ORStateEntry *)pState));
+//#pragma omp atomic
 						SimpleSmurfProblemState->arrNegVarHeurWghts[((ORStateEntry *)pState)->pnTransitionVars[index]] += JHEURISTIC_K_TRUE;
 					}
 				}
@@ -153,7 +173,9 @@ void Calculate_Heuristic_Values() {
 			for(int index = 0; numfound < 2; index++) {
 				if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[((XORStateEntry *)pState)->pnTransitionVars[index]] >= nCurrInfLevel) {
 					numfound++;
+//#pragma omp atomic
 					SimpleSmurfProblemState->arrPosVarHeurWghts[((XORStateEntry *)pState)->pnTransitionVars[index]] += LSGBXORGetHeurScoreTrans(((XORStateEntry *)pState));
+//#pragma omp atomic
 					SimpleSmurfProblemState->arrNegVarHeurWghts[((XORStateEntry *)pState)->pnTransitionVars[index]] += LSGBXORGetHeurScoreTrans(((XORStateEntry *)pState));
 				}
 			}
@@ -169,7 +191,9 @@ void Calculate_Heuristic_Values() {
 			else {
 				for(int index = 0; index < ((XORGElimStateEntry *)pState)->nSize; index++) {				  
 					if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[((XORGElimStateEntry *)pState)->pnTransitionVars[index]] >= nCurrInfLevel) {
+//#pragma omp atomic
 						SimpleSmurfProblemState->arrPosVarHeurWghts[((XORGElimStateEntry *)pState)->pnTransitionVars[index]] += LSGBarrXORWeightTrans(numfound);
+//#pragma omp atomic
 						SimpleSmurfProblemState->arrNegVarHeurWghts[((XORGElimStateEntry *)pState)->pnTransitionVars[index]] += LSGBarrXORWeightTrans(numfound);
 					}
 				}
@@ -178,6 +202,7 @@ void Calculate_Heuristic_Values() {
 		 default: break;
 		}
 	}
+   } //end omp pragma
 
 	Calculate_Heuristic_Values_Hooks();
 	
@@ -321,7 +346,7 @@ int SimpleHeuristic() {
 	
 	//if(ite_counters[NUM_CHOICE_POINTS] %128 == 64)
 	//if(SimpleSmurfProblemState->nCurrSearchTreeLevel > 10)
-	//  nBranchLit = Simple_DC_Heuristic(); //Don't Care - Choose the first unset variable found.
+	//nBranchLit = Simple_DC_Heuristic(); //Don't Care - Choose the first unset variable found.
 	//else 
 	  nBranchLit = Simple_LSGB_Heuristic();
 	
