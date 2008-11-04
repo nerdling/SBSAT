@@ -39,7 +39,7 @@
 #include <sys/time.h>
 #include "sbsat.h"
 
-int prob = 1;
+int prob = 0;
 
 void makeXor(int variables, int functions, int length, int width, int fixed) {
 	struct timeval tv;
