@@ -8,22 +8,26 @@ void *CreateMINMAXState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, MINMAX
 
 	pStartState = (MINMAXStateEntry *)SimpleSmurfProblemState->pSmurfStatesTableTail;
 	SimpleSmurfProblemState->pSmurfStatesTableTail = (void *)(pStartState + 1);
-	
-	if(IS_TRUE_FALSE(bdd)) assert(0);
+
+	assert(nNumElts > 2); //OR and XOR cover all 2 variable Boolean functions w/ no immediate inferences.
+
 	int max = -1;
 	BDDNode *tmp_bdd;
 	for(tmp_bdd = pCurrentBDD; !IS_TRUE_FALSE(tmp_bdd); tmp_bdd = tmp_bdd->thenCase)
 	  max++;
-	if(tmp_bdd != false_ptr) assert(0);
+	
+	assert(tmp_bdd == false_ptr);
 	
 	int min = -1;
 	for(tmp_bdd = pCurrentBDD; !IS_TRUE_FALSE(tmp_bdd); tmp_bdd = tmp_bdd->elseCase)
 	  min++;
 	if(tmp_bdd == true_ptr) min = 0;
-	else if(tmp_bdd != false_ptr) assert(0);
-	else min = bdd_len-min;
-	
-	if(min > max) assert(0);
+	else {
+		assert(tmp_bdd == false_ptr);
+		min = bdd_len-min;
+	}
+
+	assert(min <= max)
 	
 	pStartState->cType = FN_MINMAX;
    pStartState->nSize = nNumElts;
@@ -33,11 +37,9 @@ void *CreateMINMAXState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, MINMAX
 
 	pCurrentBDD->pState = (void *)pStartState;
 	
-	if(nNumElts == 2) return (void *)pStartState;
-
 	MINMAXStateEntry *pCurrMINMAXCounter;
 	void *pPrevMINMAXCounter = (void *)pTrueSimpleSmurfState;//pStartState;
-	for(int x = 1; x < nNumElts; x++) {
+	for(int x = 2; x <= nNumElts; x++) {
 //		fprintf(stderr, "%d, %d, %d: ", x, arrElts[x], arrSimpleSolver2IteVarMap[arrElts[x]]);
 		check_SmurfStatesTableSize(sizeof(MINMAXCounterStateEntry));
 		ite_counters[SMURF_STATES]+=1;
@@ -48,15 +50,13 @@ void *CreateMINMAXState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, MINMAX
 		pCurrMINMAXCounter->cType = FN_MINMAX_COUNTER;
 		pCurrMINMAXCounter->ApplyInferenceToState = ApplyInferenceToMINMAXCounter;
 
-		pCurrMINMAXCounter->bTop = 0;
 		pCurrMINMAXCounter->nVarsLeft = x;
-		pCurrMINMAXCounter->nNumTrue = 0;
+		pCurrMINMAXCounter->nNumTrue = 0; //Dynamic
 		pCurrMINMAXCounter->pTransition = pPrevMINMAXCounter;
 		pCurrMINMAXCounter->pMINMAXState = pStartState;
 		pPrevMINMAXCounter = (void *)pCurrMINMAXCounter;
 	}
 
-	pCurrMINMAXCounter->bTop = 1;
 	pCurrentBDD->pState = (void *)pCurrMINMAXCounter;
 	return (void *)pCurrMINMAXCounter;
 }

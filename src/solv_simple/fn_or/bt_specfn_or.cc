@@ -53,6 +53,8 @@ int ApplyInferenceToOR(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void 
 		SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumSmurfsSatisfied++;
 	} else {
 		int nInfQueueLevel = abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[nBranchVar]);
+		int infer_var;
+		int num_unset_vars = 0;
 		for(int x = 0; x < pORState->nSize; x++) {
 			int nPrevInfLevel = SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[pORState->pnTransitionVars[x]];
 //			fprintf(stderr, "%d %d<%d x=%d var=%d pol=%d\n", nBranchVar, nPrevInfLevel, nInfQueueLevel, x, pORState->pnTransitionVars[x], pORState->bPolarity[x]);
@@ -63,14 +65,16 @@ int ApplyInferenceToOR(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void 
 						 ((SimpleSmurfProblemState->arrInferenceQueue[nPrevInfLevel] > 0) != pORState->bPolarity[x]));
 				continue;
 			}
-			
-			//Inference is not in inference queue, insert it.
-			if(EnqueueInference(pORState->pnTransitionVars[x], pORState->bPolarity[x]) == 0) return 0;
-			arrSmurfStates[nSmurfNumber] = pTrueSimpleSmurfState;
-			SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumSmurfsSatisfied++;
-			break;
+
+			if(++num_unset_vars > 1) return 1; //This smurf will not infer any variables (this is in preparation for using watched literals
+			infer_var = x;
 		}
+		//Inference is not in inference queue, insert it.	
+		if(EnqueueInference(pORState->pnTransitionVars[infer_var], pORState->bPolarity[infer_var]) == 0) return 0;
+		arrSmurfStates[nSmurfNumber] = pTrueSimpleSmurfState;
+		SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumSmurfsSatisfied++;
 	}
+
 	d7_printf3("      ORSmurf %d transitioned to state %x\n", nSmurfNumber, arrSmurfStates[nSmurfNumber]);
 	return 1;
 }

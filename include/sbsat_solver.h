@@ -180,9 +180,8 @@ struct MINMAXCounterStateEntry {
 	char cType; //FN_MINMAX_COUNTER
 	bool visited; //Used for displaying the smurfs
 	int (*ApplyInferenceToState)(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
-	bool bTop; //Is this the top state? Used to avoid writing the visiter flag every transition.
 	int nVarsLeft;
-	int nNumTrue;
+	int nNumTrue; //Dynamic
 	MINMAXCounterStateEntry *pTransition;
 	MINMAXStateEntry *pMINMAXState;
 };

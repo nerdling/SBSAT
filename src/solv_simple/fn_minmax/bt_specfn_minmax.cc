@@ -3,7 +3,7 @@
 #include "solver.h"
 
 int ApplyInferenceToMINMAX(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates) {
-//I don't think this should happen w/ the current setup.
+//I don't think this should happen w/ the current setup...yet - use for watched literals
 assert(0);
 	MINMAXStateEntry *pMINMAXState = (MINMAXStateEntry *)arrSmurfStates[nSmurfNumber];	
 	
@@ -59,16 +59,6 @@ int ApplyInferenceToMINMAXCounter(int nBranchVar, bool bBVPolarity, int nSmurfNu
 	MINMAXCounterStateEntry *pMINMAXCounterState = (MINMAXCounterStateEntry *)arrSmurfStates[nSmurfNumber];
 	MINMAXStateEntry *pMINMAXState = (MINMAXStateEntry *)pMINMAXCounterState->pMINMAXState;
 
-	if(pMINMAXCounterState->bTop) { //Only one Smurf may claim ownership of this function.
-		if(pMINMAXState->nVisited == ite_counters[NUM_CHOICE_POINTS]) {
-			arrSmurfStates[nSmurfNumber] = pTrueSimpleSmurfState;
-			SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumSmurfsSatisfied++;
-			d7_printf3("      MINMAXCounterSmurf %d transitioned to state %x\n", nSmurfNumber, arrSmurfStates[nSmurfNumber]);
-			return 1;
-		}
-		pMINMAXState->nVisited = ite_counters[NUM_CHOICE_POINTS];
-	}
-	
 	int index = 0;
 	int size = pMINMAXState->nSize;
 	int prev = 0;
@@ -106,7 +96,7 @@ int ApplyInferenceToMINMAXCounter(int nBranchVar, bool bBVPolarity, int nSmurfNu
 			int nPrevInfLevel = SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[pMINMAXState->pnTransitionVars[x]];
 			if(nPrevInfLevel <= nInfQueueLevel)	continue;
 			//Inference is not in inference queue, insert it.
-			if(EnqueueInference(pMINMAXState->pnTransitionVars[x], 0) == 1) return 0;
+			if(EnqueueInference(pMINMAXState->pnTransitionVars[x], 1) == 0) return 0;
 		}
 		arrSmurfStates[nSmurfNumber] = pTrueSimpleSmurfState;
 		SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumSmurfsSatisfied++;

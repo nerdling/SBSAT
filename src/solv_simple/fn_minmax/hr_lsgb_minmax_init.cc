@@ -94,3 +94,197 @@ ITE_INLINE void LSGBORFree() {
 	if(arrORWeight!=NULL) ite_free((void **)&arrORWeight);
 }
 
+
+
+
+
+double ***arrMinmaxWghts = NULL;
+int max_minmax_diff=0;
+int *arrMaxMinmaxTrue = NULL;
+int *arrMaxMinmaxFalse = NULL;
+
+extern int arrFnMinMaxTypes[];
+
+ITE_INLINE void LSGBMinMaxInitHeuristicTables();
+ITE_INLINE void LSGBMinMaxFreeHeuristicTables();
+
+void
+HrLSGBFnMinMaxInit()
+{
+   for(int j=0; arrFnMinMaxTypes[j] != 0; j++)
+   {
+      int i=arrFnMinMaxTypes[j];
+      procHeurGetScores[i] = LSGBMinMaxGetHeurScores;
+      procHeurUpdateFunctionInfEnd[i] = LSGBMinMaxUpdateFunctionInfEnd;
+   }
+}
+
+
+ITE_INLINE void
+LSGBMinMaxInitHeuristicTables()
+{
+   HWEIGHT K = JHEURISTIC_K;
+
+
+   // For every different max-min a special table is needed
+   //
+   //
+   // e.g. 2 [ 6 ] 4 difference is (4-2) = 2
+   //
+   // |   .
+   // 6   .
+   // |   3
+   // 4   2
+   // |   1  the rest is 
+   // 2   0  (down + left) / 2K
+   // |   0
+   // 0   0 0 0 1 2 3 ..
+   //   
+   //     0---2---4---6---...
+   //      <--- left potentially set to false
+   //
+   // 2 [ 6 ] 4 will start at x (left set to false) (6-2) and y (left set to true 4)
+   // 12 [ 16 ] 14 will start at x (left set to false) (16-12) and y (left set to true 14)
+
+   // arrMinmaxWghts [ diff=max-min ] [ left unset to True (start with max) ] [ left unset to False (start with n-min) ]
+
+   // Find out the length of the diff (min,max) array
+   for(int i=0; i<nNumFuncs; i++) 
+      if (arrSolverFunctions[i].nType == MINMAX) {
+         if (max_minmax_diff < (arrSolverFunctions[i].fn_minmax.max - arrSolverFunctions[i].fn_minmax.min)) {
+            max_minmax_diff = (arrSolverFunctions[i].fn_minmax.max - arrSolverFunctions[i].fn_minmax.min);
+         }
+      }
+
+   arrMinmaxWghts = (double***)ite_calloc(max_minmax_diff+1, sizeof(double**), 2, "arrMinmaxWghts");
+   arrMaxMinmaxTrue = (int*)ite_calloc(max_minmax_diff+1, sizeof(int), 2, "arrMaxMinmaxSet");
+   arrMaxMinmaxFalse = (int*)ite_calloc(max_minmax_diff+1, sizeof(int), 2, "arrMaxMinmaxUnset");
+
+   // Find out the max bounds for each diff (min,max) array
+   for(int i=0; i<nNumFuncs; i++) 
+      if (arrSolverFunctions[i].nType == MINMAX) {
+         int minmax_diff = (arrSolverFunctions[i].fn_minmax.max - arrSolverFunctions[i].fn_minmax.min);
+         if (arrMaxMinmaxTrue[minmax_diff] < arrSolverFunctions[i].fn_minmax.max)
+            arrMaxMinmaxTrue[minmax_diff] = arrSolverFunctions[i].fn_minmax.max;
+         if (arrMaxMinmaxFalse[minmax_diff] < arrSolverFunctions[i].fn_minmax.rhsVbles.nNumElts - arrSolverFunctions[i].fn_minmax.min)
+            arrMaxMinmaxFalse[minmax_diff] = arrSolverFunctions[i].fn_minmax.rhsVbles.nNumElts - arrSolverFunctions[i].fn_minmax.min;
+      }
+
+   // create arrays and compute the weights
+   for(int i=0; i<=max_minmax_diff; i++) {
+      if (arrMaxMinmaxTrue[i] == 0) continue;
+      arrMinmaxWghts[i] = (double**)ite_calloc(arrMaxMinmaxTrue[i]+1, sizeof(double*), 2, "arrMinmaxWghts[]");
+      for(int j=0; j<=arrMaxMinmaxTrue[i]; j++) {
+         arrMinmaxWghts[i][j] = (double*)ite_calloc(arrMaxMinmaxFalse[i]+1, sizeof(double), 2, "arrMinmaxWghts[][]");
+         arrMinmaxWghts[i][j][0] = (j-i < 0? 0: j-i); // diff = i, j - LeftToSetTrue, 0 - LeftToSetFalse
+         if (j==0) {
+            for(int m=1; m<=arrMaxMinmaxFalse[i]; m++) {
+               arrMinmaxWghts[i][0][m] = (m-i < 0? 0: m-i);
+            }
+         } else {
+            for(int m=1; m<=arrMaxMinmaxFalse[i]; m++) {
+               arrMinmaxWghts[i][j][m] = (arrMinmaxWghts[i][j-1][m] + arrMinmaxWghts[i][j][m-1]) / (2*K);
+            }
+         }
+      }
+   }
+
+   // print it -- debug
+   /*
+    for(int i=0; i<=max_minmax_diff; i++) {
+    if (arrMaxMinmaxTrue[i] == 0) continue;
+    fprintf(stderr, "\nMINMAX Diff = %d: \n", i);
+    for(int j=arrMaxMinmaxTrue[i]; j>=0; j--) {
+    for(int m=0; m<=arrMaxMinmaxTrue[i]; m++) {
+    fprintf(stderr, " %2.4f ", arrMinmaxWghts[i][j][m]);
+    }
+    fprintf(stderr, "\n");
+    }
+    fprintf(stderr, "\n");
+    }
+    */
+}
+
+ITE_INLINE void
+LSGBMinMaxFreeHeuristicTables()
+{
+   for(int i=0; i<=max_minmax_diff; i++) {
+      if (arrMinmaxWghts[i] == 0) continue;
+      for(int j=0; j<=arrMaxMinmaxTrue[i]; j++) {
+         ite_free((void**)&arrMinmaxWghts[i][j]);
+      }
+      ite_free((void**)&arrMinmaxWghts[i]);
+   }
+   ite_free((void**)&arrMinmaxWghts);
+   ite_free((void**)&arrMaxMinmaxTrue);
+   ite_free((void**)&arrMaxMinmaxFalse);
+}
+
+ITE_INLINE void
+LSGBMinMaxGetHeurScores(int nFnId)
+{
+   if (arrMinmaxWghts == NULL) LSGBMinMaxInitHeuristicTables();
+
+   int minmax_diff = arrSolverFunctions[nFnId].fn_minmax.max - arrSolverFunctions[nFnId].fn_minmax.min;
+   int left_to_set_true = arrSolverFunctions[nFnId].fn_minmax.max;
+   int left_to_set_false = arrSolverFunctions[nFnId].fn_minmax.rhsVbles.nNumElts - arrSolverFunctions[nFnId].fn_minmax.min;
+   double fPosDelta = arrMinmaxWghts[minmax_diff][left_to_set_true-1][left_to_set_false];
+   double fNegDelta = arrMinmaxWghts[minmax_diff][left_to_set_true][left_to_set_false-1];
+
+   J_Update_RHS_AND(
+         arrSolverFunctions[nFnId].fn_minmax.rhsVbles.nNumElts,
+         arrSolverFunctions[nFnId].fn_minmax.rhsVbles.arrElts,
+         arrSolverFunctions[nFnId].fn_minmax.arrRHSPolarities,
+         fPosDelta, fNegDelta);
+}
+
+ITE_INLINE void
+LSGBWMinMaxGetHeurScores(int nFnId)
+{
+   fprintf(stderr, "MinMax Error: variable weights are not yet supported\n");
+   exit(1);
+}
+
+ITE_INLINE void
+LSGBMinMaxUpdateFunctionInfEnd(int nFnId)
+{
+   int nOldNumRHSUnknowns = arrSolverFunctions[nFnId].fn_minmax.nNumRHSUnknownsPrev;
+   int nNumRHSUnknowns = arrSolverFunctions[nFnId].fn_minmax.nNumRHSUnknowns;
+   int nOldRHSCounter = arrSolverFunctions[nFnId].fn_minmax.nRHSCounterPrev;
+   int nRHSCounter = arrSolverFunctions[nFnId].fn_minmax.nRHSCounter;
+
+   int minmax_diff = arrSolverFunctions[nFnId].fn_minmax.max - arrSolverFunctions[nFnId].fn_minmax.min;
+   int old_left_to_set_true = arrSolverFunctions[nFnId].fn_minmax.max-nOldRHSCounter;
+   int old_left_to_set_false = (arrSolverFunctions[nFnId].fn_minmax.rhsVbles.nNumElts - arrSolverFunctions[nFnId].fn_minmax.min) -
+      ((arrSolverFunctions[nFnId].fn_minmax.rhsVbles.nNumElts - nOldNumRHSUnknowns) - nOldRHSCounter);
+
+   int left_to_set_true = arrSolverFunctions[nFnId].fn_minmax.max-nRHSCounter;
+   int left_to_set_false = (arrSolverFunctions[nFnId].fn_minmax.rhsVbles.nNumElts - arrSolverFunctions[nFnId].fn_minmax.min) -
+      ((arrSolverFunctions[nFnId].fn_minmax.rhsVbles.nNumElts - nNumRHSUnknowns) - nRHSCounter);
+   double fPosDelta, fNegDelta;
+   if (nNumRHSUnknowns == 0) {
+      fPosDelta = -arrMinmaxWghts[minmax_diff][old_left_to_set_true==0?0:old_left_to_set_true-1][old_left_to_set_false];
+      fNegDelta = -arrMinmaxWghts[minmax_diff][old_left_to_set_true][old_left_to_set_false==0?0:old_left_to_set_false-1];
+   } else {
+      fPosDelta = arrMinmaxWghts[minmax_diff][left_to_set_true-1][left_to_set_false] -
+         arrMinmaxWghts[minmax_diff][old_left_to_set_true-1][old_left_to_set_false];
+      fNegDelta = arrMinmaxWghts[minmax_diff][left_to_set_true][left_to_set_false-1] -
+         arrMinmaxWghts[minmax_diff][old_left_to_set_true][old_left_to_set_false-1];
+   }
+
+   J_Update_RHS_AND(
+         arrSolverFunctions[nFnId].fn_minmax.rhsVbles.nNumElts,
+         arrSolverFunctions[nFnId].fn_minmax.rhsVbles.arrElts,
+         arrSolverFunctions[nFnId].fn_minmax.arrRHSPolarities,
+         fPosDelta, fNegDelta);
+}
+
+ITE_INLINE void
+LSGBWMinMaxUpdateHeuristic(int nFnId, 
+      int nOldNumRHSUnknowns, int nNumRHSUnknowns, 
+      double fOldSumRHSUnknowns, double fSumRHSUnknowns,
+      int counter)
+{
+   fprintf(stderr, "MinMax Error: variable weights are not yet supported\n");
+   exit(1);
+}

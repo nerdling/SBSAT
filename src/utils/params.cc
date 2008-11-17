@@ -153,7 +153,7 @@ t_opt options[] = {
                 "The minimum # of literals to flag sp. function or"},
 { functionTypeLimits+PLAINXOR, "", "limit-xor", P_INT, V(i:0,"0"), V(i:2,"2"), VAR_NORMAL, 0,
                 "The minimum # of literals to flag sp. function xor"},
-{ functionTypeLimits+MINMAX, "", "limit-minmax", P_INT, V(i:0,"0"), V(i:2,"2"), VAR_NORMAL, 0,
+{ functionTypeLimits+MINMAX, "", "limit-minmax", P_INT, V(i:0,"0"), V(i:3,"3"), VAR_NORMAL, 0,
                 "The minimum # of literals to flag sp. function minmax"},
 { functionTypeLimits+NEG_MINMAX, "", "limit-neg-minmax", P_INT, V(i:0,"0"), V(i:20,"20"), VAR_NORMAL, 0,
                 "The minimum # of literals to flag sp. function minmax"},
@@ -460,6 +460,9 @@ finish_params()
 
       if (sat_timeout > 0) max_preproc_time = sat_timeout / 2;
    }
+
+//	if(functionTypeLimits[MINMAX]<3) functionTypeLimits[MINMAX] = 3;
+//	if(functionTypeLimits[NEG_MINMAX]<3) functionTypeLimits[NEG_MINMAX] = 3;
 	
 	if(dependence == 'r') reverse_independant_dependant = 1;
 	if(dependence == 'c') clear_dependance = 1;
