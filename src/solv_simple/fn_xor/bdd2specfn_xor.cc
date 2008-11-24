@@ -13,9 +13,9 @@ void *CreateXORState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, XORStateE
 	pStartState->pnTransitionVars = arrElts;
    pStartState->nSize = nNumElts;
 	BDDNode *tmp_bdd;
-	for(tmp_bdd = pCurrentBDD; !IS_TRUE_FALSE(tmp_bdd); tmp_bdd = tmp_bdd->thenCase);
+	for(tmp_bdd = pCurrentBDD; !IS_TRUE_FALSE(tmp_bdd); tmp_bdd = tmp_bdd->thenCase){}
 	pStartState->bParity = tmp_bdd == false_ptr;
-	if(nNumElts&0x1 == 1)
+	if((nNumElts&0x1) == 1)
 	  pStartState->bParity -= 1;
 
 //	fprintf(stderr, "\nb=%d\n", pStartState->bParity);
@@ -63,7 +63,7 @@ void *CreateXORGElimState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, XORG
 	pStartState->pnTransitionVars = arrElts;
    pStartState->nSize = nNumElts;
 	BDDNode *tmp_bdd;
-	for(tmp_bdd = pCurrentBDD; !IS_TRUE_FALSE(tmp_bdd); tmp_bdd = tmp_bdd->thenCase);
+	for(tmp_bdd = pCurrentBDD; !IS_TRUE_FALSE(tmp_bdd); tmp_bdd = tmp_bdd->thenCase){}
 	bool bParity = tmp_bdd == false_ptr;
 	if(nNumElts&0x1 == 1)
 	  bParity -= 1;

@@ -165,7 +165,8 @@ void printLinear(XORGElimTableStruct *x);
 void printLinearN (XORGElimTableStruct *x);
 void PrintXORGElimVector(void *pVector);
 
-static unsigned char bits_in_16bits [0x1u << 16] ;
+//unsigned char
+static int bits_in_16bits [0x1u << 16] ;
 
 /* Iterated bitcount iterates over each bit. The while condition sometimes helps
 *    terminates the loop earlier */
@@ -182,7 +183,7 @@ int iterated_bitcount (unsigned int n) {
 void compute_bits_in_16bits () {
 	VecType i;
 	for(i = 0; i < (VecType)(0x1u<<16); i++)
-	  bits_in_16bits [i] = iterated_bitcount (i) ;
+	  bits_in_16bits[i] = iterated_bitcount(i) ;
 	return ;
 }
 
@@ -226,8 +227,8 @@ void LSGBXORGElimTableGetHeurScore(XORGElimTableStruct *x) {
 		
 		// fprintf(stderr, " i = %d count = %d\n", i, count);
 
-		assert (count-(vn[0]&1)<=no_inp_vars);	
-		assert (count-(vn[0]&1)>=0);	
+		assert ((count-(vn[0]&1))<=(VecType)no_inp_vars);	
+		assert ((count-(vn[0]&1))>=0);	
 		
 		double fScore = LSGBarrXORWeightTrans(count-(vn[0]&1));
 
@@ -240,7 +241,7 @@ void LSGBXORGElimTableGetHeurScore(XORGElimTableStruct *x) {
 				int hgh = sizeof(VecType)*BITS_PER_BYTE-1;
 				while (hgh > 0) { //Binary search for leading 1
 					int mid = hgh/2;
-					VecType tmp_tmp = (VecType)1<<mid+1;
+					VecType tmp_tmp = (VecType (1))<<(mid+1);
 					if (tmp >= tmp_tmp) {
 						tmp >>= mid+1;
 						bit += mid+1;
@@ -352,7 +353,7 @@ ITE_INLINE int rediagonalizeXORGElimTable(XORGElimTableStruct *x, VecType *vec, 
 			int hgh = sizeof(VecType)*BITS_PER_BYTE-1;
 			while (hgh > 0) { // Maybe 5 of these loops - binary search for leading 1
 				int mid = hgh/2;
-				VecType tmp_tmp = (VecType)1<<mid+1;
+				VecType tmp_tmp = (VecType (1))<<(mid+1);
 				if (tmp >= tmp_tmp) {
 					tmp >>= mid+1;
 					save_first_column += mid+1;
@@ -641,7 +642,7 @@ void printLinear (XORGElimTableStruct *x) {
 	for (int i=0 ; rows[i] >= 0 ; i++) {
 		cout << "     ";
 		VecType *vn = (VecType *)(((VecType*)x->frame)+vecs_v_ref+rows[i]*vecs_rec_bytes);
-		for (int j=0 ; j < no_inp_vars ; j++) {
+		for (j=0 ; j < no_inp_vars ; j++) {
 			int word = xlate[j]/(sizeof(VecType)*BITS_PER_BYTE);
 			int bit  = xlate[j] % (sizeof(VecType)*BITS_PER_BYTE);
 			if (vn[word] & (1 << bit)) cout << "1"; else cout << "0";
@@ -650,7 +651,7 @@ void printLinear (XORGElimTableStruct *x) {
 		if (vn[0]&1)
 		  cout << "1"; else cout << "0";
 		cout << "     ";
-		for (int j=0 ; j < no_inp_vars ; j++) {
+		for (j=0 ; j < no_inp_vars ; j++) {
 			int word = xlate[j]/(sizeof(VecType)*BITS_PER_BYTE);
 			int bit  = xlate[j] % (sizeof(VecType)*BITS_PER_BYTE);
 			if (vn[word] & ((VecType*)(x->mask))[word] & (1 << bit)) cout << "1"; else cout << "0";

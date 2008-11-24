@@ -11,7 +11,7 @@
 #define yyterminate() { blif__delete_buffer(YY_CURRENT_BUFFER); return YY_NULL; }
 
 extern int s_line;
-void blif_ll_nothing() { };
+void blif_ll_nothing() { }
 %}
 %s names ttable
 %option noyywrap

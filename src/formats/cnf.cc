@@ -741,7 +741,7 @@ void find_and_build_iteequals(Clause *pClauses) {
 			for(int y = 0; (y < three_neg[x].length) && (!out); y++) {
 				v3_2[i].v0 = -1;
 				v3_2[i].v1 = -1;
-				int count = 0;
+				count = 0;
 				for(int z = 0; z < 3; z++) {
 					if(pClauses[v3_2[i].pos].variables[z] != x) {
 						for(int j = 0; j < 3; j++) {
@@ -791,7 +791,6 @@ void find_and_build_iteequals(Clause *pClauses) {
 					functions_add(pIteEqBDD, ITE_EQU, x);
 					independantVars[x] = 0;					
 					
-					int count = 0;
 					for(int z = 0; z < three_pos[x].length; z++) {
 						count = 0;
 						for(int j = 0; j < 3; j++) {
@@ -1121,7 +1120,7 @@ void DNF_to_CNF () {
 	lines = lines + 1;
 	sprintf(string1, "p cnf %ld %d\n", numinp + len, lines);
 	fprintf(foutputfile, "%s", string1);
-	for(int y = 0; y < len; y++) {
+	for(y = 0; y < len; y++) {
       sprintf(string1, "%ld ", y + numinp + 1);
       fprintf(foutputfile, "%s", string1);
 	}
@@ -1130,13 +1129,13 @@ void DNF_to_CNF () {
 	for(int x = 0; x < numout; x++) {
       sprintf(string1, "%ld ", x + numinp + 1);
       fprintf(foutputfile, "%s", string1);
-      for(int y = 0; integers[x].num[y] != 0; y++) {
+      for(y = 0; integers[x].num[y] != 0; y++) {
 			sprintf(string1, "%d ", -integers[x].num[y]);
 			fprintf(foutputfile, "%s", string1);
 		}
       sprintf(string1, "0\n");
       fprintf(foutputfile, "%s", string1);
-      for(int y = 0; integers[x].num[y] != 0; y++) {
+      for(y = 0; integers[x].num[y] != 0; y++) {
 			sprintf(string1, "%ld ", -(x + numinp + 1));
 			fprintf(foutputfile, "%s", string1);
 			sprintf(string1, "%d ", integers[x].num[y]);
@@ -1207,7 +1206,7 @@ DNF_to_BDD ()
    int cnf_out_idx = 1; /* one based index? */
    cnf_integers[cnf_out_idx].num_alloc = dnf_numout+1;
    cnf_integers[cnf_out_idx].num = (int*)ite_calloc(cnf_integers[cnf_out_idx].num_alloc, sizeof(int), 9, "integers[].num");
-	for(int y = 0; y < dnf_numout; y++) {
+	for(y = 0; y < dnf_numout; y++) {
 		if (y%1000 == 1)
 		  d2_printf3("\rCreating Symbol Table Entries %d/%ld ... ", y, dnf_numout);
       cnf_integers[cnf_out_idx].num[y] = 
@@ -1229,7 +1228,6 @@ DNF_to_BDD ()
             sizeof(int), 9, "integers[].num");
       cnf_integers[cnf_out_idx].num[0] = cnf_integers[1].num[x]; // clause id
 
-      int y;
       for(y = 0; dnf_integers[x].num[y] != 0; y++) {
          cnf_integers[cnf_out_idx].num[y+1] = -dnf_integers[x].num[y];
 		}
@@ -1237,7 +1235,7 @@ DNF_to_BDD ()
       assert(y == dnf_integers[x].max);
       cnf_out_idx++;
 
-      for(int y = 0; dnf_integers[x].num[y] != 0; y++) {
+      for(y = 0; dnf_integers[x].num[y] != 0; y++) {
          cnf_integers[cnf_out_idx].num_alloc = 3;
          cnf_integers[cnf_out_idx].num = (int*)ite_calloc(cnf_integers[cnf_out_idx].num_alloc, 
             sizeof(int), 9, "integers[].num");

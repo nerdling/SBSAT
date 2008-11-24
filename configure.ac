@@ -59,7 +59,7 @@ AC_ARG_ENABLE(profile,
 AC_ARG_ENABLE(extrawarning, 
 [  --enable-extrawarning   Turn on compiler extra warning information (default=no)],
     [if eval "test x$enable_extrawarning = xyes"; then
-	MYCXXFLAGS="${MYCXXFLAGS} -pedantic -W -Winline -Wmissing-prototypes -Wpointer-arith -Wcast-qual -Wcast-align -Wsign-compare -Wno-unused -Wconversion -Waggregate-return -Wshadow -Wwrite-strings -Wno-long-long"
+	MYCXXFLAGS="${MYCXXFLAGS} -pedantic -W -Winline -Wpointer-arith -Wcast-qual -Wcast-align -Wsign-compare -Wno-unused -Wconversion -Waggregate-return -Wshadow -Wwrite-strings -Wno-long-long"
     fi])
 
 AC_ARG_ENABLE(coverage, 

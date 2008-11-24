@@ -64,5 +64,5 @@ FnXorSmurfInit()
 
    }
    return NO_ERROR;
-};
+}
 

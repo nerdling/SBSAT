@@ -166,6 +166,8 @@ struct XORGElimStateEntry {
 	int *pnTransitionVars;
 };
 
+//SEAN!!! Idea: Could make minmax state machine that is hooked together JUST like a minmax BDD.
+
 struct MINMAXStateEntry {
 	char cType; //FN_MINMAX
 	bool visited; //Used for displaying the smurfs

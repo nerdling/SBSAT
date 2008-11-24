@@ -455,10 +455,10 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
       fprintf(fout, ";\n");
 	
       // create mapping  
-      int in_map[n+1];
-      int out_map[n+1];
-      int i_left=(n+1)/2;
-      int i_right=(n+1)/2+1;
+      int *in_map = (int *)calloc(n+1, sizeof(int));
+      int *out_map = (int *)calloc(n+1, sizeof(int));
+      int i_left = (n+1)/2;
+      int i_right = (n+1)/2+1;
       int j=1;
       while(j<=n)
       {
@@ -504,7 +504,7 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
 		fprintf(fout, "}\n");
       fclose(fout);
    } else if (formula_type == CNF2IB) {
-      int y_count[n+1];
+      int *y_count = (int *)calloc(n+1, sizeof(int));
 
       char filename[100];
 //ib.h
@@ -712,7 +712,7 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
       }
 
 //p-1
-		int y_count[n+1];
+		int *y_count = (int *)calloc(n+1, sizeof(int));
 		for(int i=1;i<=n;i++) y_count[i]=0;
       for(int step = 1; step<=(n-1)/(p-1); step++) {
          for(int inf = 1; inf <= n; inf++) {
@@ -796,7 +796,7 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
       }
 
 //p-1
-		int y_count[n+1];
+		int *y_count = (int *)calloc(n+1, sizeof(int));
 		for(int i=1;i<=n;i++) y_count[i]=0;
       for(int step = 1; step<=(n-1)/(p-1); step++) {
          for(int inf = 1; inf <= n; inf++) {
@@ -871,7 +871,7 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
       }
 
 //p-1
-    int y_count[n+1];
+		int *y_count = (int *)calloc(n+1, sizeof(int));
 		for(int i=1;i<=n;i++) y_count[i]=0;
       for(int step = 1; step<=(n-1)/(p-1); step++) {
          for(int inf = 1; inf <= n; inf++) {
@@ -1117,7 +1117,7 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
       }
 		
 //p-1
-		int y_count[n+1];
+		int *y_count = (int *)calloc(n+1, sizeof(int));
 		for(int i=1;i<=n;i++) y_count[i]=0;
       for(int step = 1; step<=(n-1)/(p-1); step++) {
          for(int inf = 1; inf <= n; inf++) {

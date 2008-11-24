@@ -46,7 +46,6 @@ void save_solution_simple(void) {
 
 		//Handle nForceBackjumpLevel
 		if (arrVarChoiceLevels && nForceBackjumpLevel>=0 && nForceBackjumpLevel<nVarChoiceLevelsNum) {
-			int num_vars = 0;
 			int nCurrInfLevel = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
 			int level=SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nVarChoiceCurrLevel;
 			for(;level<nVarChoiceLevelsNum;level++) {
@@ -415,16 +414,13 @@ int ApplyInferenceToStates(int nBranchVar, bool bBVPolarity) {
 	void **arrSmurfStates = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].arrSmurfStates;
 	d7_printf2("  Transitioning Smurfs using %d\n", bBVPolarity?nBranchVar:-nBranchVar);
 	for(int i = SimpleSmurfProblemState->arrVariableOccursInSmurf[nBranchVar][0]; i > 0; i--) {
-		if ((SimpleSmurfProblemState->arrVariableOccursInSmurf[nBranchVar][i] >> 31) == 1) continue; //Skip Non-Watched Variables
 		//SEAN IDEA: Clauses are watched on literals, so only ~half of clauses are checked each time.
-		//if ((SimpleSmurfProblemState->arrVariableOccursInSmurf[nBranchVar][i] & 0x40000000) == 0x40000000) continue;
 		int nSmurfNumber = SimpleSmurfProblemState->arrVariableOccursInSmurf[nBranchVar][i];
-		// d7_printf3("    Checking Smurf %d (State %x)\n", nSmurfNumber, (unsigned int)arrSmurfStates[nSmurfNumber]);
+		d7_printf3("    Checking Smurf %d (State %x)\n", nSmurfNumber, (unsigned int)arrSmurfStates[nSmurfNumber]);
+		if ((nSmurfNumber >> 31) == 1) continue; //Skip Non-Watched Variables
+		//if ((nSmurfNumber & 0x40000000) == 0x40000000) continue;
 		if(arrSmurfStates[nSmurfNumber] == pTrueSimpleSmurfState) continue;
-		void *pState = arrSmurfStates[nSmurfNumber];
-
-		ret = ((TypeStateEntry *)pState)->ApplyInferenceToState(nBranchVar, bBVPolarity, nSmurfNumber, arrSmurfStates);
-		
+		ret = ((TypeStateEntry *)arrSmurfStates[nSmurfNumber])->ApplyInferenceToState(nBranchVar, bBVPolarity, nSmurfNumber, arrSmurfStates);
 		if(ret == 0) return 0;
 	}
 	return ret;

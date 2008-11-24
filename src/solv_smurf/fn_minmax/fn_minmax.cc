@@ -65,4 +65,4 @@ FnMinMaxInit()
 
    }
    return NO_ERROR;
-};
+}

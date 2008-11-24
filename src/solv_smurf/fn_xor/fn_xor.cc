@@ -66,4 +66,4 @@ FnXorInit()
 
    }
    return NO_ERROR;
-};
+}

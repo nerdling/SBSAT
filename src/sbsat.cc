@@ -388,7 +388,7 @@ check_expected_result(int result)
        break;
    }	
    return result;
-};
+}
 
 int
 ITE_Final(int ret)

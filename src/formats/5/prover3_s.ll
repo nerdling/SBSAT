@@ -11,7 +11,7 @@
 #define yyterminate() { prover3__delete_buffer(YY_CURRENT_BUFFER); return YY_NULL; }
 
 extern int s_line;
-void prover3_ll_nothing() { };
+void prover3_ll_nothing() { }
 %}
 %s names ttable
 %option noyywrap

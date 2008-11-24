@@ -80,5 +80,5 @@ FnSmurfXorInit()
       //procFunctionFree[0] = FnXorFree;
    }
    return NO_ERROR;
-};
+}
 

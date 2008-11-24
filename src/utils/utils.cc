@@ -360,7 +360,7 @@ get_freefile(char *basename, char *file_dir, char *filename, int filename_max)
   }
   printf("Please delete old files from %s\n", filename);
   exit (1);
-};
+}
 
 char *
 ite_basename(char *filename)
