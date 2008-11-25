@@ -622,12 +622,13 @@ int simpleSolve() {
 	int nForceBackjumpLevel_old = nForceBackjumpLevel;
    if(nForceBackjumpLevel < 0) nForceBackjumpLevel = nVarChoiceLevelsNum+1;
 	
+	simple_solver_reset_level=-1;
+	
 	int ret = Init_SimpleSmurfSolver();
 
 	nSimpleSolver_Reset=0;
 	nInfQueueStart=0;
 	solver_polarity_presets_count=0;
-	simple_solver_reset_level=-1;
 	add_one_display=0;
 	solutions_overflow=0;
 	
