@@ -416,7 +416,7 @@ int ApplyInferenceToStates(int nBranchVar, bool bBVPolarity) {
 	for(int i = SimpleSmurfProblemState->arrVariableOccursInSmurf[nBranchVar][0]; i > 0; i--) {
 		//SEAN IDEA: Clauses are watched on literals, so only ~half of clauses are checked each time.
 		int nSmurfNumber = SimpleSmurfProblemState->arrVariableOccursInSmurf[nBranchVar][i];
-		d7_printf3("    Checking Smurf %d (State %x)\n", nSmurfNumber, (unsigned int)arrSmurfStates[nSmurfNumber]);
+		d7_printf3("    Checking Smurf %d (State %x)\n", nSmurfNumber, arrSmurfStates[nSmurfNumber]);
 		if ((nSmurfNumber >> 31) == 1) continue; //Skip Non-Watched Variables
 		//if ((nSmurfNumber & 0x40000000) == 0x40000000) continue;
 		if(arrSmurfStates[nSmurfNumber] == pTrueSimpleSmurfState) continue;
