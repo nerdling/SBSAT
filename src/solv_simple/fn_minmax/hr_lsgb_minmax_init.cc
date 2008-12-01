@@ -39,64 +39,44 @@
 #include "sbsat_solver.h"
 #include "solver.h"
 
-struct ORWeightStruct *arrORWeight = NULL;
+struct MINMAXWeightStruct *arrMINMAXWeight = NULL;
 
-void LSGBORGetHeurScores(int nFnId);
-
-int nORMaxRHSSize = 1;
+void LSGBMINMAXGetHeurScores(int nFnId);
 
 //---------------------------------------------------------------
 
-ITE_INLINE void LSGBORStateSetHeurScores(ORStateEntry *pState) {
-	int size = pState->nSize;
+ITE_INLINE void LSGBMINMAXStateSetHeurScores(MINMAXStateEntry *pState) {
 
-	HWEIGHT K = JHEURISTIC_K;
-	
-	if(size > nORMaxRHSSize) {
-		size+=20;
-		if(nORMaxRHSSize == 1) {
-			arrORWeight = (ORWeightStruct*)ite_calloc(size+1, sizeof(ORWeightStruct), 9, "arrORWeight");
-			arrORWeight[2].fNeg = JHEURISTIC_K_TRUE+JHEURISTIC_K_INF;
-			arrORWeight[2].fFmla = (arrORWeight[2].fNeg + JHEURISTIC_K_TRUE) / (2*K);
-			nORMaxRHSSize = 2;
-		} else
-		  arrORWeight = (ORWeightStruct*)ite_recalloc(arrORWeight, nORMaxRHSSize, size+1, sizeof(ORWeightStruct), 9, "arrORWeight");
-
-		for (int i = nORMaxRHSSize+1; i <= size; i++) {
-			arrORWeight[i].fNeg = arrORWeight[i - 1].fFmla;
-			arrORWeight[i].fFmla = (arrORWeight[i].fNeg + JHEURISTIC_K_TRUE) / (2*K);
-		}
-		nORMaxRHSSize = size;
-	}
+	//SEAN!!! FILL IN
 }
 
-ITE_INLINE void LSGBORCounterStateSetHeurScores(ORCounterStateEntry *pState) {
-	LSGBORStateSetHeurScores(pState->pORState);
+ITE_INLINE void LSGBMINMAXCounterStateSetHeurScores(MINMAXCounterStateEntry *pState) {
+	LSGBMINMAXStateSetHeurScores(pState->pMINMAXState);
 }
 
-ITE_INLINE double LSGBORGetHeurScore(ORStateEntry *pState) {
-	return arrORWeight[2].fFmla;
+ITE_INLINE double LSGBMINMAXGetHeurScore(MINMAXStateEntry *pState) {
+	return 1.0;
 }
 
-ITE_INLINE double LSGBORGetHeurNeg(ORStateEntry *pState) {
-	return arrORWeight[2].fNeg;
+ITE_INLINE double LSGBMINMAXGetHeurNeg(MINMAXStateEntry *pState) {
+	return 1.0;
 }
 
-ITE_INLINE double LSGBORCounterGetHeurScore(ORCounterStateEntry *pState) {
-	return arrORWeight[pState->nSize].fFmla;
+ITE_INLINE double LSGBMINMAXCounterGetHeurScore(MINMAXCounterStateEntry *pState) {
+	return 1.0;
 }
 
-ITE_INLINE double LSGBORCounterGetHeurNeg(ORCounterStateEntry *pState) {
-	return arrORWeight[pState->nSize].fNeg;
+ITE_INLINE double LSGBMINMAXCounterGetHeurNeg(MINMAXCounterStateEntry *pState) {
+	return 1.0;
 }
 
-ITE_INLINE void LSGBORFree() {
-	if(arrORWeight!=NULL) ite_free((void **)&arrORWeight);
+ITE_INLINE void LSGBMINMAXFree() {
+	if(arrMINMAXWeight!=NULL) ite_free((void **)&arrMINMAXWeight);
 }
 
 
 
-
+/*
 
 double ***arrMinmaxWghts = NULL;
 int max_minmax_diff=0;
@@ -190,19 +170,18 @@ LSGBMinMaxInitHeuristicTables()
    }
 
    // print it -- debug
-   /*
-    for(int i=0; i<=max_minmax_diff; i++) {
-    if (arrMaxMinmaxTrue[i] == 0) continue;
-    fprintf(stderr, "\nMINMAX Diff = %d: \n", i);
-    for(int j=arrMaxMinmaxTrue[i]; j>=0; j--) {
-    for(int m=0; m<=arrMaxMinmaxTrue[i]; m++) {
-    fprintf(stderr, " %2.4f ", arrMinmaxWghts[i][j][m]);
-    }
-    fprintf(stderr, "\n");
-    }
-    fprintf(stderr, "\n");
-    }
-    */
+  
+ //for(int i=0; i<=max_minmax_diff; i++) {
+ //if (arrMaxMinmaxTrue[i] == 0) continue;
+ //fprintf(stderr, "\nMINMAX Diff = %d: \n", i);
+ //for(int j=arrMaxMinmaxTrue[i]; j>=0; j--) {
+ //for(int m=0; m<=arrMaxMinmaxTrue[i]; m++) {
+ //fprintf(stderr, " %2.4f ", arrMinmaxWghts[i][j][m]);
+ //}
+ //fprintf(stderr, "\n");
+ //}
+ //fprintf(stderr, "\n");
+ //}
 }
 
 ITE_INLINE void
@@ -288,3 +267,6 @@ LSGBWMinMaxUpdateHeuristic(int nFnId,
    fprintf(stderr, "MinMax Error: variable weights are not yet supported\n");
    exit(1);
 }
+
+
+*/

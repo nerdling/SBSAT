@@ -46,6 +46,23 @@ void FreeSmurfStatesTable() {
 	SimpleSmurfProblemState->pSmurfStatesTableTail = NULL;
 }
 
+void SaveSmurfStatesTable(FILE *save_solver_state) {
+	//SEAN!!! Fill this in.
+	fprintf(save_solver_state, "fill in :)");
+
+	SmurfStatesTableStruct *pTemp;
+	for(SmurfStatesTableStruct *pIter = SimpleSmurfProblemState->arrSmurfStatesTableHead; pIter != NULL;) {
+		pTemp = pIter;
+		pIter = pIter->pNext;
+		ite_free((void **)&pTemp->arrStatesTable);
+		ite_free((void **)&pTemp);
+	}
+	
+	SimpleSmurfProblemState->arrSmurfStatesTableHead = NULL;
+	SimpleSmurfProblemState->arrCurrSmurfStates = NULL;
+	SimpleSmurfProblemState->pSmurfStatesTableTail = NULL;
+}
+
 //This checks the size of the current block of the smurf states table.
 //If the table is full, we will allocate a new block via allocate_new_SmurfStatesTable(int size)
 void check_SmurfStatesTableSize(int size) {
@@ -296,6 +313,14 @@ void FreeSmurfStateEntries() {
 				FreeORCounterStateEntry((ORCounterStateEntry *)arrSmurfStates);
 				arrSmurfStates = (void *)(((ORCounterStateEntry *)arrSmurfStates) + 1);
 				size = sizeof(ORCounterStateEntry);
+			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_MINMAX) {
+				FreeMINMAXStateEntry((MINMAXStateEntry *)arrSmurfStates);
+				arrSmurfStates = (void *)(((MINMAXStateEntry *)arrSmurfStates) + 1);
+				size = sizeof(MINMAXStateEntry);
+			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_MINMAX_COUNTER) {
+				FreeMINMAXCounterStateEntry((MINMAXCounterStateEntry *)arrSmurfStates);
+				arrSmurfStates = (void *)(((MINMAXCounterStateEntry *)arrSmurfStates) + 1);
+				size = sizeof(MINMAXCounterStateEntry);
 			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_XOR) {
 				FreeXORStateEntry((XORStateEntry *)arrSmurfStates);
 				arrSmurfStates = (void *)(((XORStateEntry *)arrSmurfStates) + 1);

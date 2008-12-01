@@ -76,6 +76,14 @@ void PrintAllSmurfStateEntries() {
 				PrintORCounterStateEntry((ORCounterStateEntry *)arrSmurfStates);
 				arrSmurfStates = (void *)(((ORCounterStateEntry *)arrSmurfStates) + 1);
 				size = sizeof(ORCounterStateEntry);
+			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_MINMAX) {
+				PrintMINMAXStateEntry((MINMAXStateEntry *)arrSmurfStates);
+				arrSmurfStates = (void *)(((MINMAXStateEntry *)arrSmurfStates) + 1);
+				size = sizeof(MINMAXStateEntry);
+			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_MINMAX_COUNTER) {
+				PrintMINMAXCounterStateEntry((MINMAXCounterStateEntry *)arrSmurfStates);
+				arrSmurfStates = (void *)(((MINMAXCounterStateEntry *)arrSmurfStates) + 1);
+				size = sizeof(MINMAXCounterStateEntry);
 			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_XOR) {
 				PrintXORStateEntry((XORStateEntry *)arrSmurfStates);
 				arrSmurfStates = (void *)(((XORStateEntry *)arrSmurfStates) + 1);

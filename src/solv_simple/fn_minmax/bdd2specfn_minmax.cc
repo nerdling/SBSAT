@@ -24,10 +24,10 @@ void *CreateMINMAXState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, MINMAX
 	if(tmp_bdd == true_ptr) min = 0;
 	else {
 		assert(tmp_bdd == false_ptr);
-		min = bdd_len-min;
+		min = nNumElts-min;
 	}
 
-	assert(min <= max)
+	assert(min <= max);
 	
 	pStartState->cType = FN_MINMAX;
    pStartState->nSize = nNumElts;
@@ -35,11 +35,9 @@ void *CreateMINMAXState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, MINMAX
 	pStartState->nMax = max;
 	pStartState->pnTransitionVars = arrElts;
 
-	pCurrentBDD->pState = (void *)pStartState;
-	
-	MINMAXStateEntry *pCurrMINMAXCounter;
+	MINMAXCounterStateEntry *pCurrMINMAXCounter;
 	void *pPrevMINMAXCounter = (void *)pTrueSimpleSmurfState;//pStartState;
-	for(int x = 2; x <= nNumElts; x++) {
+	for(int x = 1; x <= nNumElts; x++) {
 //		fprintf(stderr, "%d, %d, %d: ", x, arrElts[x], arrSimpleSolver2IteVarMap[arrElts[x]]);
 		check_SmurfStatesTableSize(sizeof(MINMAXCounterStateEntry));
 		ite_counters[SMURF_STATES]+=1;

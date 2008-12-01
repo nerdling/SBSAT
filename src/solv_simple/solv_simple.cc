@@ -148,6 +148,19 @@ void Calculate_Heuristic_Values() {
 				}
 			}
 			break;
+		 case FN_MINMAX_COUNTER:
+			//SEAN!!! This needs to be fixed up.
+			pState = arrSmurfStates[nSmurfIndex];
+			for(int index = 0; numfound < ((MINMAXCounterStateEntry *)pState)->pMINMAXState->nSize; index++) {
+				if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[((MINMAXCounterStateEntry *)pState)->pMINMAXState->pnTransitionVars[index]] >= nCurrInfLevel) {
+					numfound++;
+//#pragma omp atomic
+					SimpleSmurfProblemState->arrPosVarHeurWghts[((MINMAXCounterStateEntry *)pState)->pMINMAXState->pnTransitionVars[index]] += LSGBMINMAXCounterGetHeurScore(((MINMAXCounterStateEntry *)pState));
+//#pragma omp atomic
+					SimpleSmurfProblemState->arrNegVarHeurWghts[((MINMAXCounterStateEntry *)pState)->pMINMAXState->pnTransitionVars[index]] += LSGBMINMAXCounterGetHeurScore(((MINMAXCounterStateEntry *)pState));
+				}
+			}
+			break;
 		 case FN_OR:
 			pState = arrSmurfStates[nSmurfIndex];
 			for(int index = 0; numfound < 2; index++) {

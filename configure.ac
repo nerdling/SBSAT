@@ -411,6 +411,7 @@ AC_CONFIG_FILES([Makefile
 					  src/solv_simple/fn_smurf/Makefile
 					  src/solv_simple/fn_or/Makefile
 					  src/solv_simple/fn_xor/Makefile
+					  src/solv_simple/fn_minmax/Makefile
   					  src/solv_simple/bb_gelim/Makefile
                  src/utils/Makefile
                  tests/Makefile

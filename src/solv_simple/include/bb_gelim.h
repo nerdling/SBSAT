@@ -39,10 +39,10 @@
 #define FN_GELIM_S_H
 
 #ifdef SBSAT_64BIT
-#define VecType uint64_t 
+#define VecType uint64_t
 #define BITS_64
 #else
-#define VecType uint32_t 
+#define VecType uint32_t
 #endif
 
 extern int nGElimSmurf_Created;

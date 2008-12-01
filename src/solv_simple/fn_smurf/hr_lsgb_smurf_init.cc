@@ -86,7 +86,10 @@ ITE_INLINE double LSGBGetHeurScoreTransition(SmurfStateEntry *pState, bool bPola
 		return fInferenceWeights + LSGBXORCounterGetHeurScore((XORCounterStateEntry *)pNextState);
 	} else if (((TypeStateEntry *)pNextState)->cType == FN_XOR_GELIM) {
 		return fInferenceWeights + LSGBarrXORWeight(((XORGElimStateEntry *)pNextState)->nSize);
+	} else if (((TypeStateEntry *)pNextState)->cType == FN_MINMAX_COUNTER) {
+		return fInferenceWeights + LSGBMINMAXCounterGetHeurScore((MINMAXCounterStateEntry *)pNextState);
 	}
+	
 	return 0;
 }
 

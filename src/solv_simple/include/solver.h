@@ -42,6 +42,7 @@
 #include "fn_smurf.h"
 #include "fn_or.h"
 #include "fn_xor.h"
+#include "fn_minmax.h"
 #include "display.h"
 #include "bb_gelim.h"
 

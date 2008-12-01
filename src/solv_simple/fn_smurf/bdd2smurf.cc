@@ -365,17 +365,14 @@ void *ReadSmurfStateIntoTable(BDDNode *pCurrentBDD, int *arrElts, int nNumElts) 
 			pCurrentBDD->pState = pTrueSimpleSmurfState;
 			pStartState = pTrueSimpleSmurfState;
 			ite_free((void **)&arrElts);
-		} else if(0 && nNumElts >= 3 && nNumElts >= functionTypeLimits[PLAINAND] &&
+		} else if(nNumElts >= 3 && nNumElts >= functionTypeLimits[MINMAX] &&
 					 isMIN_MAX(pCurrentBDD, tempint, nNumElts)) {
 			//FN_MINMAX
-			//pStartState = CreateSmurfState(arrElts, nNumElts, pCurrentBDD, (SmurfStateEntry *)pStartState);        
-			//LSGBSmurfSetHeurScores((SmurfStateEntry *)pStartState);
+			pStartState = CreateMINMAXState(arrElts, nNumElts, pCurrentBDD, (MINMAXStateEntry *)pStartState);
+			LSGBMINMAXCounterStateSetHeurScores((MINMAXCounterStateEntry *)pStartState);
 			//       fprintf(stderr, "M");
-			pCurrentBDD->pState = pTrueSimpleSmurfState;
-			pStartState = pTrueSimpleSmurfState;
-			ite_free((void **)&arrElts);
 		}
-		else if(0 && nNumElts >= 3 && nNumElts >= functionTypeLimits[PLAINAND] &&
+		else if(0 && nNumElts >= 3 && nNumElts >= functionTypeLimits[NEG_MINMAX] &&
 				  isNEG_MIN_MAX(pCurrentBDD, tempint, nNumElts)) {
 			//FN_NEG_MINMAX
 			//pStartState = CreateSmurfState(arrElts, nNumElts, pCurrentBDD, (SmurfStateEntry *)pStartState);        

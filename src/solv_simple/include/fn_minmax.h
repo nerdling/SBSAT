@@ -50,5 +50,7 @@ double LSGBMINMAXCounterGetHeurNeg(MINMAXCounterStateEntry *pState);
 void *CreateMINMAXState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, MINMAXStateEntry *pStartState);
 int ApplyInferenceToMINMAX(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 int ApplyInferenceToMINMAXCounter(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
+void FreeMINMAXStateEntry(MINMAXStateEntry *ssEntry);
+void FreeMINMAXCounterStateEntry(MINMAXCounterStateEntry *ssEntry);
 
 #endif

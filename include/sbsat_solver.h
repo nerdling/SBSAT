@@ -171,7 +171,6 @@ struct XORGElimStateEntry {
 struct MINMAXStateEntry {
 	char cType; //FN_MINMAX
 	bool visited; //Used for displaying the smurfs
-	int nVisited;
 	int nSize;
 	int nMin;
 	int nMax;
@@ -184,7 +183,7 @@ struct MINMAXCounterStateEntry {
 	int (*ApplyInferenceToState)(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 	int nVarsLeft;
 	int nNumTrue; //Dynamic
-	MINMAXCounterStateEntry *pTransition;
+	void *pTransition;
 	MINMAXStateEntry *pMINMAXState;
 };
 
