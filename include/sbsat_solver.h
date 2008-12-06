@@ -102,6 +102,7 @@ struct SmurfStateEntry {
 	                             //If this is 0, we have reached a leaf node.
    void *pNextVarInThisState;   //Same as above except linked linearly, instead of a heap.
                                 //Used for computing the heuristic of a state.
+	BDDNode *bdd;
 };
 
 struct InferenceStateEntry {
@@ -110,6 +111,7 @@ struct InferenceStateEntry {
 	int nTransitionVar;
 	bool bPolarity;
 	void *pVarTransition;
+	BDDNode *bdd;
 };
 
 struct ORStateEntry {
@@ -183,6 +185,7 @@ struct XORGElimTableStruct {
 	int32_t *first_bit;
 	void *mask;
 	int num_vectors;
+	int no_funcs;
 };
 
 struct SmurfStack {

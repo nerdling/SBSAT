@@ -62,10 +62,12 @@ ITE_INLINE double LSGBGetHeurScoreTransition(SmurfStateEntry *pState, bool bPola
 	int num_inferences = 0;
 
 	void *pNextState = bPolarity?pState->pVarIsTrueTransition:pState->pVarIsFalseTransition;
-	while(((TypeStateEntry *)pNextState)->cType == FN_INFERENCE) {
+	while(pNextState != NULL && ((TypeStateEntry *)pNextState)->cType == FN_INFERENCE) {
 		num_inferences++;
 		pNextState = ((InferenceStateEntry *)pNextState)->pVarTransition;
 	}
+
+	if(pNextState == NULL) return 0;
 	
 	double fInferenceWeights = JHEURISTIC_K_INF * num_inferences;	
 	if (((TypeStateEntry *)pNextState)->cType == FN_SMURF) {

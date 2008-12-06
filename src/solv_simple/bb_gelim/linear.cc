@@ -155,11 +155,14 @@ struct XORGElimTableStruct {
 int frame_size;
 int vecs_rec_bytes;
 int no_inp_vars; // The number of input variables 
-int no_funcs;    // The max number of functions (rows in matrix)
 int vec_size;    // Number of bytes comprising each VecType vector
 int mask_ref;
 int column_ref;
 int vecs_v_ref;
+int counters_size;
+int mask_size;
+int column_size;
+
 
 void printLinear(XORGElimTableStruct *x);
 void printLinearN (XORGElimTableStruct *x);
@@ -179,7 +182,6 @@ int iterated_bitcount (unsigned int n) {
 	return count;
 }
 
-//SEAN!!! Someday make this 64-bit compatible
 void compute_bits_in_16bits () {
 	VecType i;
 	for(i = 0; i < (VecType)(0x1u<<16); i++)
@@ -268,45 +270,65 @@ void LSGBXORGElimTableGetHeurScore(XORGElimTableStruct *x) {
 	}
 }
 
-void initXORGElimTable(int nFuncs, int nVars){
+void initXORGElimTable(int nVars){
 	//EquivVars* rec = (EquivVars *)frame;
-	no_funcs = nFuncs; //The inp is room for equivalences.
 	no_inp_vars = nVars; // Number of input variables
 	vec_size = 1+no_inp_vars/(sizeof(VecType)*BITS_PER_BYTE);
 
+	compute_bits_in_16bits();
+	
 	/* counters: INT32 INT32 .. no_inp_vars+1 times */
 	/* mask:     VecType VecType ..  vec_size times */ 
 	/* rows:     INT32 VecType VecType .. vec_size times */
 	
-	int counters_size = sizeof(int32_t)*(no_inp_vars+1);
+	counters_size = sizeof(int32_t)*(no_inp_vars+1);
 	mask_ref = counters_size; // sizeof(int32_t)*(no_inp_vars+1); // for every variable it holds diagonal row offset 
-	int mask_size = sizeof(VecType)*vec_size;
+	mask_size = sizeof(VecType)*vec_size;
 	column_ref = mask_ref + mask_size; // sizeof(VecType)*vec_size;
-	int column_size = sizeof(int32_t) + vec_size*sizeof(VecType);
+	column_size = sizeof(int32_t) + vec_size*sizeof(VecType);
 
 	vecs_rec_bytes = column_size; // sizeof(int32_t) + vec_size*sizeof(VecType); // counter + bitvectors //mask_size = vecs_rec_bytes
 	vecs_v_ref = column_ref + sizeof(int32_t); // counter
-	frame_size = counters_size + mask_size + column_size*no_funcs; // column_ref + (sizeof(int32_t)+vec_size) /*vecs_rec_bytes*/ *no_funcs;
-	compute_bits_in_16bits();
 }
 
-void allocXORGElimTable(XORGElimTableStruct *x){
-	x->frame = (unsigned char *)ite_calloc(1, frame_size, 9, "Gaussian elimination table memory frame");
+void allocXORGElimTable(XORGElimTableStruct *x, int no_funcs){
+	if(x->frame == NULL) {
+		fprintf(stderr, "{%d}", no_funcs);
+		frame_size = counters_size + mask_size + column_size*no_funcs;
+		x->frame = (unsigned char *)ite_calloc(1, frame_size, 9, "Gaussian elimination table memory frame");
+		
+		x->no_funcs = no_funcs;
+		
+		x->first_bit = (int32_t *)(x->frame);
+		for(int i=0; i <= no_inp_vars; i++) x->first_bit[i] = -1;
+		
+		x->mask = (void *)(&(((unsigned char*)(x->frame))[mask_ref]));
+		for(int i=0; i < vec_size; i++) ((VecType*)(x->mask))[i] = (VecType)(~0);
+		((VecType*)(x->mask))[0] -= 1;
+		
+		//Zero out new rows
+		int32_t *vv = (int32_t *)&(((unsigned char*)(x->frame))[column_ref]);
+		for (int i=0 ; i < x->no_funcs; i++) {
+			fprintf(stderr, "I=%d ", i);
+			vv=(int32_t*)&(((unsigned char*)vv)[vecs_rec_bytes]);
+			*vv = -1;
+		}
+		
+		x->num_vectors = 0;
+	} else if(x->no_funcs < no_funcs) {
+		int old_frame_size = counters_size + mask_size + column_size*x->no_funcs;
+		frame_size = counters_size + mask_size + column_size*no_funcs;
+		x->frame = (unsigned char *)ite_recalloc(x->frame, old_frame_size, frame_size, 1, 9, "Gaussian elimination table memory frame");
 
-	x->first_bit = (int32_t *)(x->frame);
-	for(int i=0; i <= no_inp_vars; i++) x->first_bit[i] = -1;
-
-	x->mask = (void *)(&(((unsigned char*)(x->frame))[mask_ref]));
-	for(int i=0; i < vec_size; i++) ((VecType*)(x->mask))[i] = (VecType)(~0);
-	((VecType*)(x->mask))[0] -= 1;
-	
-	int32_t *vv = (int32_t *)&(((unsigned char*)(x->frame))[column_ref]);
-	for (int i=0 ; i < no_funcs-1; i++) {
-		vv=(int32_t*)&(((unsigned char*)vv)[vecs_rec_bytes]);
-	  *vv = -1;
+		//Zero out new rows
+		int32_t *vv = (int32_t *)&(((unsigned char*)(x->frame))[column_ref+((x->no_funcs)*vecs_rec_bytes)]);
+		for (int i=x->no_funcs; i < no_funcs; i++) {
+			fprintf(stderr, "i=%d ", i);
+			vv=(int32_t*)&(((unsigned char*)vv)[vecs_rec_bytes]);
+			*vv = -1;
+		}
+		x->no_funcs = no_funcs;
 	}
-
-	x->num_vectors = 0;
 }
 
 void deleteXORGElimTable (XORGElimTableStruct *x) { 
@@ -318,12 +340,12 @@ void pushXORGElimTable(XORGElimTableStruct *curr, XORGElimTableStruct *dest) {
 //	d2_printf3("Pushing Table - %d (%d)\n", curr->num_vectors, SimpleSmurfProblemState->nCurrSearchTreeLevel+1);
 	// printLinearN(curr);
 
-	if(dest->frame == NULL)
-	  allocXORGElimTable(dest);
-	
+	allocXORGElimTable(dest, curr->no_funcs);
+
 	memcpy_ite(dest->frame, curr->frame, column_ref + curr->num_vectors*vecs_rec_bytes);
+	memcpy_ite(dest->first_bit, curr->first_bit, no_inp_vars);
 	dest->num_vectors = curr->num_vectors;
-	
+
 	// printLinearN(dest);
 }
 
@@ -394,7 +416,7 @@ ITE_INLINE int rediagonalizeXORGElimTable(XORGElimTableStruct *x, VecType *vec, 
 	}
 
 	// Cancel all 1's in the new column. Currently looks at *all* vectors!
-	VecType *vec_address = (VecType*)(&(((unsigned char*)(x->frame))[vecs_v_ref]));
+	//VecType *vec_address = (VecType*)(&(((unsigned char*)(x->frame))[vecs_v_ref]));
 	// fprintf(stderr, " vstart = %llx\n", vec_address[0]);
 	// VecType *vn = (VecType*)(&(((unsigned char*)(x->frame))[vecs_v_ref+i*vecs_rec_bytes]));
 	VecType *vn = (VecType*)(&(((unsigned char*)(x->frame))[vecs_v_ref]));
@@ -433,8 +455,9 @@ int addRowXORGElimTable (XORGElimTableStruct *x, void *pVector, int nVars, int *
 
 	d7_printf1("    Checking the addRowXORGElimTable\n");
 	
-	if(x->num_vectors >= no_funcs) {
-		assert(0); // Cannot add anymore vectors to the matrix
+	if(x->num_vectors >= x->no_funcs) {
+		allocXORGElimTable(x, x->num_vectors+1);
+	   //assert(0); // Cannot add anymore vectors to the matrix
 	}
 	
 	// Grab a new Vector and copy vector info to it

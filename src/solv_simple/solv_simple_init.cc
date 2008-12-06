@@ -237,7 +237,7 @@ int ReadAllSmurfsIntoTable(int nNumVars) {
 			SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates[nSmurfIndex] = pInitialBDD->pState;
 		} else {
 			//LSGBSmurfSetHeurScores(nSmurfIndex, pInitialState);
-			if(!smurfs_share_paths) { clear_all_bdd_pState(); true_ptr->pState = pTrueSimpleSmurfState; 	bdd_gc();}
+			if(!smurfs_share_paths) { clear_all_bdd_pState(); true_ptr->pState = pTrueSimpleSmurfState; /*bdd_gc();*/}
 			SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates[nSmurfIndex] =	ReadSmurfStateIntoTable(pInitialBDD, NULL, 0);
 			if(SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates[nSmurfIndex] == pTrueSimpleSmurfState)
 			  SimpleSmurfProblemState->arrSmurfStack[0].nNumSmurfsSatisfied++;

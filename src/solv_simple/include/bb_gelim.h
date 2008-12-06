@@ -47,8 +47,8 @@
 
 extern int nGElimSmurf_Created;
 
-void initXORGElimTable(int nFuncs, int nVars);
-void allocXORGElimTable(XORGElimTableStruct *x);
+void initXORGElimTable(int nVars);
+void allocXORGElimTable(XORGElimTableStruct *x, int no_funcs);
 void deleteXORGElimTable(XORGElimTableStruct *x);
 void pushXORGElimTable(XORGElimTableStruct *curr, XORGElimTableStruct *dest);
 
