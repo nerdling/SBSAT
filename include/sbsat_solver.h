@@ -61,7 +61,6 @@ enum {
 	FN_MINMAX,
 	FN_MINMAX_COUNTER,
 	FN_NEG_MINMAX,
-   FN_WATCHED_LIST,
 	FN_INFERENCE
 };
 
@@ -111,14 +110,6 @@ struct InferenceStateEntry {
 	int nTransitionVar;
 	bool bPolarity;
 	void *pVarTransition;
-};
-
-struct WatchedListStateEntry {
-	char cType; //FN_WATCHED_LIST
-	bool visited; //Used for displaying the smurfs
-	int nWatchedListSize;
-	int *pnWatchedList;
-	void *pTransition;
 };
 
 struct ORStateEntry {
@@ -199,7 +190,6 @@ struct SmurfStack {
 	int nNumFreeVars;
 	int nNumSmurfsSatisfied;
 	int nHeuristicPlaceholder;
-	int nWatchedListStackTop;
 	void **arrSmurfStates;   //Pointer to array of size nNumSmurfs
 	XORGElimTableStruct *XORGElimTable; //For holding the Gaussian Elimination Table.
 };
@@ -231,7 +221,6 @@ struct ProblemState {
 	double *arrNegVarHeurWghts;       //Pointer to array of size nNumVars
 	int *arrInferenceQueue;           //Pointer to array of size nNumVars (dynamically indexed by arrSmurfStack[level].nNumFreeVars
 	int *arrInferenceDeclaredAtLevel; //Pointer to array of size nNumVars
-	int **arrWatchedListStack;         //Pointer to array, max size is same as arrVariableOccursInSmurf
 	SmurfStack *arrSmurfStack;        //Pointer to array of size nNumVars
 };
 

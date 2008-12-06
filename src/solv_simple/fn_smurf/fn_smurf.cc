@@ -30,27 +30,10 @@ void PrintInferenceStateEntry_dot(InferenceStateEntry *ssEntry) {
 	fprintf(stdout, " b%x [shape=\"ellipse\", label=\"I\"]\n", ssEntry);
 }
 
-void PrintWatchedListStateEntry(WatchedListStateEntry *ssEntry) {
-   d9_printf2("WL Next=%x ", ssEntry->pTransition);
-	d9_printf1("Vars=");
-	for(int x = 0; x < ssEntry->nWatchedListSize; x++)
-	  d9_printf2("%d ", ssEntry->pnWatchedList[x]);
-	d9_printf2("Size=%d\n", ssEntry->nWatchedListSize);
-}
-
-void PrintWatchedListStateEntry_dot(WatchedListStateEntry *ssEntry) {
-
-}
-
 void FreeSmurfStateEntry(SmurfStateEntry *ssEntry) {
 
 }
 
 void FreeInferenceStateEntry(InferenceStateEntry *ssEntry) {
-
-}
-
-void FreeWatchedListStateEntry(WatchedListStateEntry *ssEntry) {
-	ite_free((void **)&ssEntry->pnWatchedList);
 
 }

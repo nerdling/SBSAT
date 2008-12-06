@@ -43,12 +43,9 @@ void PrintSmurfStateEntry(SmurfStateEntry *ssEntry);
 void PrintSmurfStateEntry_dot(SmurfStateEntry *ssEntry);
 void PrintInferenceStateEntry(InferenceStateEntry *ssEntry);
 void PrintInferenceStateEntry_dot(InferenceStateEntry *ssEntry);
-void PrintWatchedListStateEntry(WatchedListStateEntry *ssEntry);
-void PrintWatchedListStateEntry_dot(WatchedListStateEntry *ssEntry);
 
 void FreeSmurfStateEntry(SmurfStateEntry *ssEntry) ;
 void FreeInferenceStateEntry(InferenceStateEntry *ssEntry);
-void FreeWatchedListStateEntry(WatchedListStateEntry *ssEntry);
 
 void *ReadSmurfStateIntoTable(BDDNode *pCurrentBDD, int *arrElts, int nNumElts); //arrElts can be NULL
 

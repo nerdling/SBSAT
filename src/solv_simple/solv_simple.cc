@@ -468,9 +468,6 @@ void SmurfStates_Push(int destination) {
 	SimpleSmurfProblemState->arrSmurfStack[destination].nHeuristicPlaceholder =
 	  SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nHeuristicPlaceholder;
 
-	SimpleSmurfProblemState->arrSmurfStack[destination].nWatchedListStackTop =
-	  SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nWatchedListStackTop;
-	
 	SmurfStates_Push_Hooks(SimpleSmurfProblemState->nCurrSearchTreeLevel, destination);
 	
 	SimpleSmurfProblemState->nCurrSearchTreeLevel = destination;
@@ -503,13 +500,11 @@ int Backtrack() {
 	int ret = Backtrack_Hooks();
 	
 	int nInfQueueTail = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;	  
-	int nWatchedListStackTail = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nWatchedListStackTop;
 	
 	int nPop = SmurfStates_Pop();
 	if(nPop != SOLV_UNKNOWN) return nPop;
 
 	int nInfQueueHead = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
-	int nWatchedListStackHead = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nWatchedListStackTop;
 	
 	//Empty the inference queue & reverse polarity of cp var
 	//Clear Inference Queue
@@ -521,11 +516,6 @@ int Backtrack() {
 		SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[nBranchLit] = SimpleSmurfProblemState->nNumVars;
 	}
 
-	//Repair the watched variable lists
-	for(int i = nWatchedListStackHead; i < nWatchedListStackTail; i++) {
-		(*SimpleSmurfProblemState->arrWatchedListStack[i]) &= 0x7FFFFFFF; //Unset the top bit.
-	}
-	
 	return ret;
 }
 

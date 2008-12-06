@@ -64,10 +64,6 @@ void PrintAllSmurfStateEntries() {
 				PrintInferenceStateEntry((InferenceStateEntry *)arrSmurfStates);
 				arrSmurfStates = (void *)(((InferenceStateEntry *)arrSmurfStates) + 1);
 				size = sizeof(InferenceStateEntry);
-			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_WATCHED_LIST) {
-				PrintWatchedListStateEntry((WatchedListStateEntry *)arrSmurfStates);
-				arrSmurfStates = (void *)(((WatchedListStateEntry *)arrSmurfStates) + 1);
-				size = sizeof(WatchedListStateEntry);
 			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_OR) {
 				PrintORStateEntry((ORStateEntry *)arrSmurfStates);
 				arrSmurfStates = (void *)(((ORStateEntry *)arrSmurfStates) + 1);

@@ -32,19 +32,6 @@ SmurfStateEntry *findStateInHEAP(SmurfStateEntry *pStartState, int var) {
 	return pStartState;
 }
 
-WatchedListStateEntry *CreateWatchedListState(int *pnWatchedList, int nWatchedListSize) {
-	check_SmurfStatesTableSize(sizeof(WatchedListStateEntry));
-	ite_counters[SMURF_STATES]++;
-	assert(SimpleSmurfProblemState->pSmurfStatesTableTail != NULL);
-	WatchedListStateEntry *pWLState = (WatchedListStateEntry *)SimpleSmurfProblemState->pSmurfStatesTableTail;	
-	SimpleSmurfProblemState->nNumSmurfStateEntries++;
-	SimpleSmurfProblemState->pSmurfStatesTableTail = (void *)(pWLState + 1);
-	pWLState->cType = FN_WATCHED_LIST;
-	pWLState->nWatchedListSize = nWatchedListSize;
-	pWLState->pnWatchedList = pnWatchedList;
-	return pWLState;
-}
-
 void *CreateSmurfState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, SmurfStateEntry *pStartState) {
 	check_SmurfStatesTableSize(sizeof(SmurfStateEntry)*nNumElts);
 	ite_counters[SMURF_STATES]+=nNumElts;
@@ -122,77 +109,15 @@ void *CreateSmurfState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, SmurfSt
 			inferences = infBDD->inferences;
 //			inferences = inferences->next;
 		}
-
-		//Determine if we need to create some WatchedListStates
-
-		WatchedListStateEntry *pNextWatchedListState;
-		int nNumElts_next;
-		int *arrElts_next = NULL;
-		int nWatchedListSize = 0;
-		if(infBDD != true_ptr && use_SmurfWatchedLists) {
-			nNumElts_next = 0;
-			unravelBDD(&nNumElts_next, &tempint_max, &tempint, infBDD);
-			arrElts_next = (int *)ite_calloc(nNumElts_next, sizeof(int), 9, "arrElts_next");
-			for (int i=0;i<nNumElts_next;i++) {
-				if (tempint[i]==0 || arrIte2SimpleSolverVarMap[tempint[i]]==0) {
-					dE_printf1("\nassigned variable in a BDD in the solver");
-					dE_printf3("\nvariable id: %d, true_false=%d\n", tempint[i], variablelist[tempint[i]].true_false);
-					exit(1);
-				}
-				arrElts_next[i] = arrIte2SimpleSolverVarMap[tempint[i]];
-			}
-			qsort(arrElts_next, nNumElts_next, sizeof(int), revcompfunc);
-			
-			nWatchedListSize = nNumElts - (nNumElts_next+nNumInferences+1);
-		
-			if(nWatchedListSize > 0) { //Some variables dropped out
-				int *pnWatchedList = (int *)ite_calloc(nWatchedListSize, sizeof(int), 9, "nWatchedListSize");
-				int next=0;
-				int wl=0;
-				for(int curr=0; curr < nNumElts; curr++) {
-					if(next < nNumElts_next && arrElts[curr] == arrElts_next[next]) {
-						next++; continue;
-					}
-					if(arrElts[curr] == pCurrState->nTransitionVar) continue;
-					int cont = 0;
-					inferences = save_inferences;
-					while(inferences!=NULL) { 
-						if(inferences->nums[1] != 0) {
-							inferences = inferences->next; continue;
-						}
-						if(arrElts[curr] == abs(inferences->nums[0])) {
-							cont=1; break;
-						}
-						inferences = inferences->next;						
-					}
-					if(cont == 1) continue;
-
-					pnWatchedList[wl++] = arrElts[curr];
-				}
-				assert(next == nNumElts_next);
-				assert(wl == nWatchedListSize);
-				
-				pNextWatchedListState = CreateWatchedListState(pnWatchedList, nWatchedListSize);
-				if(nNumInferences == 0)
-				  pNextState->pVarIsFalseTransition = pNextWatchedListState;
-				else {
-					pNextWatchedListState->pTransition = pNextState->pVarIsFalseTransition;
-					pNextState->pVarIsFalseTransition = pNextWatchedListState;
-				}
-			}
-		}
 		
 		if(infBDD->pState != NULL) {
-			ite_free((void **)&arrElts_next);
-			if(nNumInferences == 0 && nWatchedListSize == 0) pNextState->pVarIsFalseTransition = infBDD->pState; //The transition is False
-			else if(nNumInferences == 0) pNextWatchedListState->pTransition = infBDD->pState;
+			if(nNumInferences == 0) pNextState->pVarIsFalseTransition = infBDD->pState; //The transition is False
 			else pNextInfState->pVarTransition = infBDD->pState;
 		} else {
 			//Recurse on nTransitionVar == False transition
-			void *pNext = ReadSmurfStateIntoTable(infBDD, arrElts_next, nNumElts_next);
+			void *pNext = ReadSmurfStateIntoTable(infBDD, NULL, 0);
 			assert(pNext!=NULL);
-			if(nNumInferences == 0 && nWatchedListSize == 0) pNextState->pVarIsFalseTransition = pNext; //The transition is False
-			else if(nNumInferences == 0) pNextWatchedListState->pTransition = pNext;
+			if(nNumInferences == 0) pNextState->pVarIsFalseTransition = pNext; //The transition is False
 			else pNextInfState->pVarTransition = pNext;
 		}
 
@@ -237,74 +162,14 @@ void *CreateSmurfState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, SmurfSt
 //			inferences = inferences->next;
 		}
 
-		//Determine if we need to create some WatchedListStates
-
-		arrElts_next = NULL;
-		nWatchedListSize = 0;
-		if(infBDD != true_ptr && use_SmurfWatchedLists) {
-			nNumElts_next = 0;
-			unravelBDD(&nNumElts_next, &tempint_max, &tempint, infBDD);
-			arrElts_next = (int *)ite_calloc(nNumElts_next, sizeof(int), 9, "arrElts_next");
-			for (int i=0;i<nNumElts_next;i++) {
-				if (tempint[i]==0 || arrIte2SimpleSolverVarMap[tempint[i]]==0) {
-					dE_printf1("\nassigned variable in a BDD in the solver");
-					dE_printf3("\nvariable id: %d, true_false=%d\n", tempint[i], variablelist[tempint[i]].true_false);
-					exit(1);
-				}
-				arrElts_next[i] = arrIte2SimpleSolverVarMap[tempint[i]];
-			}
-			qsort(arrElts_next, nNumElts_next, sizeof(int), revcompfunc);
-			
-			nWatchedListSize = nNumElts - (nNumElts_next+nNumInferences+1);
-
-			if(nWatchedListSize > 0) { //Some variables dropped out
-				int *pnWatchedList = (int *)ite_calloc(nWatchedListSize, sizeof(int), 9, "nWatchedListSize");
-				int next=0;
-				int wl=0;
-				for(int curr=0; curr < nNumElts; curr++) {
-					if(next < nNumElts_next && arrElts[curr] == arrElts_next[next]) {
-						next++; continue;
-					}
-					if(arrElts[curr] == pCurrState->nTransitionVar)	continue;
-					int cont = 0;
-					inferences = save_inferences;
-					while(inferences!=NULL) { 
-						if(inferences->nums[1] != 0) {
-							inferences = inferences->next; continue;
-						}
-						if(arrElts[curr] == abs(inferences->nums[0])) {
-							cont=1; break;
-						}
-						inferences = inferences->next;						
-					}
-					if(cont == 1) continue;
-					
-					pnWatchedList[wl++] = arrElts[curr];
-				}
-				assert(next == nNumElts_next);
-				assert(wl == nWatchedListSize);
-				
-				pNextWatchedListState = CreateWatchedListState(pnWatchedList, nWatchedListSize);
-				if(nNumInferences == 0)
-				  pNextState->pVarIsTrueTransition = pNextWatchedListState;
-				else {
-					pNextWatchedListState->pTransition = pNextState->pVarIsFalseTransition;
-					pNextState->pVarIsTrueTransition = pNextWatchedListState;
-				}
-			}
-		}
-
 		if(infBDD->pState != NULL) {
-			ite_free((void **)&arrElts_next);
-			if(nNumInferences == 0 && nWatchedListSize == 0) pNextState->pVarIsTrueTransition = infBDD->pState; //The transition is True
-			else if(nNumInferences == 0) pNextWatchedListState->pTransition = infBDD->pState;
+			if(nNumInferences == 0) pNextState->pVarIsTrueTransition = infBDD->pState; //The transition is True
 			else pNextInfState->pVarTransition = infBDD->pState;
 		} else {
 			//Recurse on nTransitionVar == True transition
-			void *pNext = ReadSmurfStateIntoTable(infBDD, arrElts_next, nNumElts_next);
+			void *pNext = ReadSmurfStateIntoTable(infBDD, NULL, 0);
 			assert(pNext!=NULL);
-			if(nNumInferences == 0 && nWatchedListSize == 0) pNextState->pVarIsTrueTransition = pNext; //The transition is True
-			else if(nNumInferences == 0) pNextWatchedListState->pTransition = pNext;
+			if(nNumInferences == 0) pNextState->pVarIsTrueTransition = pNext; //The transition is True
 			else pNextInfState->pVarTransition = pNext;
 		}
 	}
@@ -340,6 +205,7 @@ void *ReadSmurfStateIntoTable(BDDNode *pCurrentBDD, int *arrElts, int nNumElts) 
 			  LSGBORStateSetHeurScores((ORStateEntry *)pStartState);
 			else if(((TypeStateEntry *)pStartState)->cType == FN_OR_COUNTER)
 			  LSGBORCounterStateSetHeurScores((ORCounterStateEntry *)pStartState);
+			//ite_free((void **)&arrElts); This is saved on the OR State
 			//       fprintf(stderr, "v");
 		} else if(nNumElts >= functionTypeLimits[PLAINXOR] &&
 					 isXOR(pCurrentBDD)) {
@@ -356,6 +222,7 @@ void *ReadSmurfStateIntoTable(BDDNode *pCurrentBDD, int *arrElts, int nNumElts) 
 			  LSGBXORStateSetHeurScores((XORStateEntry *)pStartState);
 			else if(((TypeStateEntry *)pStartState)->cType == FN_XOR_COUNTER)
 			  LSGBXORCounterStateSetHeurScores((XORCounterStateEntry *)pStartState);
+			//ite_free((void **)&arrElts); This is saved on the XOR State
 		} else if(0 && nNumElts >= functionTypeLimits[PLAINAND] &&
 					 (equ_var = isAND_EQU(pCurrentBDD, tempint, nNumElts))!=0) {
 			//FN_AND_EQU / FN_OR_EQU
@@ -371,13 +238,14 @@ void *ReadSmurfStateIntoTable(BDDNode *pCurrentBDD, int *arrElts, int nNumElts) 
 			pStartState = CreateMINMAXState(arrElts, nNumElts, pCurrentBDD, (MINMAXStateEntry *)pStartState);
 			LSGBMINMAXCounterStateSetHeurScores((MINMAXCounterStateEntry *)pStartState);
 			//       fprintf(stderr, "M");
+			//ite_free((void **)&arrElts); This is saved on the MINMAX State
 		}
 		else if(0 && nNumElts >= 3 && nNumElts >= functionTypeLimits[NEG_MINMAX] &&
 				  isNEG_MIN_MAX(pCurrentBDD, tempint, nNumElts)) {
 			//FN_NEG_MINMAX
 			//pStartState = CreateSmurfState(arrElts, nNumElts, pCurrentBDD, (SmurfStateEntry *)pStartState);        
 			//LSGBSmurfSetHeurScores((SmurfStateEntry *)pStartState);
-			//       fprintf(stderr, "m");
+			//       fprintf(stderr, "n");
 			pCurrentBDD->pState = pTrueSimpleSmurfState;
 			pStartState = pTrueSimpleSmurfState;
 			ite_free((void **)&arrElts);
