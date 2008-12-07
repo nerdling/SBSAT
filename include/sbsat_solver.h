@@ -102,21 +102,21 @@ struct SmurfStateEntry {
 	                             //If this is 0, we have reached a leaf node.
    void *pNextVarInThisState;   //Same as above except linked linearly, instead of a heap.
                                 //Used for computing the heuristic of a state.
-	BDDNode *bdd;
+	BDDNode *pSmurfBDD; //Used when building smurfs on the fly.
 };
 
 struct InferenceStateEntry {
 	char cType; //FN_INFERENCE
-	bool visited; //Used for displaying the smurfs
+	bool visited; //Used for displaying the smurfs.
 	int nTransitionVar;
 	bool bPolarity;
 	void *pVarTransition;
-	BDDNode *bdd;
+	BDDNode *pInferenceBDD; //Used when building smurfs on the fly.
 };
 
 struct ORStateEntry {
 	char cType; //FN_OR
-	bool visited; //Used for displaying the smurfs
+	bool visited; //Used for displaying the smurfs.
 	int (*ApplyInferenceToState)(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 	int nSize;
 	int *pnTransitionVars;
@@ -125,7 +125,7 @@ struct ORStateEntry {
 
 struct ORCounterStateEntry {
 	char cType; //FN_OR_COUNTER
-	bool visited; //Used for displaying the smurfs
+	bool visited; //Used for displaying the smurfs.
 	int (*ApplyInferenceToState)(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 	int nSize;
 	void *pTransition;
@@ -134,7 +134,7 @@ struct ORCounterStateEntry {
 
 struct XORStateEntry {
 	char cType; //FN_XOR
-	bool visited; //Used for displaying the smurfs
+	bool visited; //Used for displaying the smurfs.
 	int (*ApplyInferenceToState)(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 	int nSize;
 	bool bParity;
@@ -143,7 +143,7 @@ struct XORStateEntry {
 
 struct XORCounterStateEntry {
 	char cType; //FN_XOR_COUNTER
-	bool visited; //Used for displaying the smurfs
+	bool visited; //Used for displaying the smurfs.
 	int (*ApplyInferenceToState)(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 	int nSize;
 	void *pTransition;
@@ -152,7 +152,7 @@ struct XORCounterStateEntry {
 
 struct XORGElimStateEntry {
 	char cType; //FN_XOR_GELIM
-	bool visited; //Used for displaying the smurfs
+	bool visited; //Used for displaying the smurfs.
 	int (*ApplyInferenceToState)(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 	int nSize;
 	void *pVector;
@@ -163,7 +163,7 @@ struct XORGElimStateEntry {
 
 struct MINMAXStateEntry {
 	char cType; //FN_MINMAX
-	bool visited; //Used for displaying the smurfs
+	bool visited; //Used for displaying the smurfs.
 	int nSize;
 	int nMin;
 	int nMax;
@@ -172,7 +172,7 @@ struct MINMAXStateEntry {
 
 struct MINMAXCounterStateEntry {
 	char cType; //FN_MINMAX_COUNTER
-	bool visited; //Used for displaying the smurfs
+	bool visited; //Used for displaying the smurfs.
 	int (*ApplyInferenceToState)(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 	int nVarsLeft;
 	int nNumTrue; //Dynamic

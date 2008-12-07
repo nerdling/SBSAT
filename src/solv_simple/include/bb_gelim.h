@@ -45,8 +45,6 @@
 #define VecType uint32_t
 #endif
 
-extern int nGElimSmurf_Created;
-
 void initXORGElimTable(int nVars);
 void allocXORGElimTable(XORGElimTableStruct *x, int no_funcs);
 void deleteXORGElimTable(XORGElimTableStruct *x);

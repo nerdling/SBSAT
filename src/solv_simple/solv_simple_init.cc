@@ -2,9 +2,6 @@
 #include "sbsat_solver.h"
 #include "solver.h"
 
-//A flag that determines whether or not smurf states are shared between smurfs.
-int smurfs_share_paths=1;
-
 //The main data structure holding information about the current state used
 // by the brancher.
 ProblemState *SimpleSmurfProblemState;
@@ -233,11 +230,15 @@ int ReadAllSmurfsIntoTable(int nNumVars) {
 			 }
 			 );
 		BDDNode *pInitialBDD = functions[nSmurfIndex];
-		if(pInitialBDD->pState != NULL && smurfs_share_paths) {
+		if(pInitialBDD->pState != NULL && smurfs_share_states) {
 			SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates[nSmurfIndex] = pInitialBDD->pState;
 		} else {
 			//LSGBSmurfSetHeurScores(nSmurfIndex, pInitialState);
-			if(!smurfs_share_paths) { clear_all_bdd_pState(); true_ptr->pState = pTrueSimpleSmurfState; /*bdd_gc();*/}
+			if(!smurfs_share_states) {
+				clear_all_bdd_pState(); 
+				true_ptr->pState = pTrueSimpleSmurfState;
+				if(precompute_smurfs == 1) bdd_gc(); //MUST NOT garbage collect BDDs when building smurfs on the fly.
+			}
 			SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates[nSmurfIndex] =	ReadSmurfStateIntoTable(pInitialBDD, NULL, 0);
 			if(SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates[nSmurfIndex] == pTrueSimpleSmurfState)
 			  SimpleSmurfProblemState->arrSmurfStack[0].nNumSmurfsSatisfied++;

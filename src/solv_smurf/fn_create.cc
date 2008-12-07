@@ -41,6 +41,8 @@
 
 int gnMaxVbleIndex;
 
+int smurfs_share_paths = 1;
+
 ITE_INLINE char * StringFromFunctionType(int nFuncType);
 
 ITE_INLINE void

@@ -52,7 +52,7 @@ void *CreateSmurfState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, SmurfSt
 		//    PrintAllSmurfStateEntries();
 		   
 		SmurfStateEntry *pCurrState = findStateInHEAP(pStartState, arrElts[nVbleIndex]);
-		pCurrState->bdd = pCurrentBDD;
+		pCurrState->pSmurfBDD = pCurrentBDD;
 		
 		assert(pCurrState->nTransitionVar == arrElts[nVbleIndex]);
 
@@ -117,12 +117,12 @@ void *CreateSmurfState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, SmurfSt
 		} else {
 			//Recurse on nTransitionVar == False transition
 			void *pNext = NULL;
-			if(0) {
+			if(precompute_smurfs) {
 				pNext = ReadSmurfStateIntoTable(infBDD, NULL, 0);
 				assert(pNext!=NULL);
 			}
 			if(nNumInferences == 0) pNextState->pVarIsFalseTransition = pNext; //The transition is False
-			else { pNextInfState->pVarTransition = pNext; pNextInfState->bdd = infBDD; }
+			else { pNextInfState->pVarTransition = pNext; pNextInfState->pInferenceBDD = infBDD; }
 		}
 
 		//Compute the SmurfState w/ nTransitionVar = True
@@ -172,12 +172,12 @@ void *CreateSmurfState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, SmurfSt
 		} else {
 			//Recurse on nTransitionVar == True transition
 			void *pNext = NULL;
-			if(0) {
+			if(precompute_smurfs) {
 				pNext = ReadSmurfStateIntoTable(infBDD, NULL, 0);
 				assert(pNext!=NULL);
 			}
 			if(nNumInferences == 0) pNextState->pVarIsTrueTransition = pNext; //The transition is True
-			else { pNextInfState->pVarTransition = pNext; pNextInfState->bdd = infBDD; }
+			else { pNextInfState->pVarTransition = pNext; pNextInfState->pInferenceBDD = infBDD; }
 		}
 	}
 	return (void *)pStartState;

@@ -293,7 +293,6 @@ void initXORGElimTable(int nVars){
 
 void allocXORGElimTable(XORGElimTableStruct *x, int no_funcs){
 	if(x->frame == NULL) {
-		fprintf(stderr, "{%d}", no_funcs);
 		frame_size = counters_size + mask_size + column_size*no_funcs;
 		x->frame = (unsigned char *)ite_calloc(1, frame_size, 9, "Gaussian elimination table memory frame");
 		
@@ -308,22 +307,25 @@ void allocXORGElimTable(XORGElimTableStruct *x, int no_funcs){
 		
 		//Zero out new rows
 		int32_t *vv = (int32_t *)&(((unsigned char*)(x->frame))[column_ref]);
-		for (int i=0 ; i < x->no_funcs; i++) {
-			fprintf(stderr, "I=%d ", i);
+		*vv = -1;
+		for (int i=1 ; i < x->no_funcs; i++) {
 			vv=(int32_t*)&(((unsigned char*)vv)[vecs_rec_bytes]);
 			*vv = -1;
 		}
-		
+
 		x->num_vectors = 0;
 	} else if(x->no_funcs < no_funcs) {
 		int old_frame_size = counters_size + mask_size + column_size*x->no_funcs;
 		frame_size = counters_size + mask_size + column_size*no_funcs;
 		x->frame = (unsigned char *)ite_recalloc(x->frame, old_frame_size, frame_size, 1, 9, "Gaussian elimination table memory frame");
+		
+		x->first_bit = (int32_t *)(x->frame);
 
+		x->mask = (void *)(&(((unsigned char*)(x->frame))[mask_ref]));
+		
 		//Zero out new rows
-		int32_t *vv = (int32_t *)&(((unsigned char*)(x->frame))[column_ref+((x->no_funcs)*vecs_rec_bytes)]);
+		int32_t *vv = (int32_t *)&(((unsigned char*)(x->frame))[column_ref+((x->no_funcs-1)*vecs_rec_bytes)]);
 		for (int i=x->no_funcs; i < no_funcs; i++) {
-			fprintf(stderr, "i=%d ", i);
 			vv=(int32_t*)&(((unsigned char*)vv)[vecs_rec_bytes]);
 			*vv = -1;
 		}
@@ -343,7 +345,6 @@ void pushXORGElimTable(XORGElimTableStruct *curr, XORGElimTableStruct *dest) {
 	allocXORGElimTable(dest, curr->no_funcs);
 
 	memcpy_ite(dest->frame, curr->frame, column_ref + curr->num_vectors*vecs_rec_bytes);
-	memcpy_ite(dest->first_bit, curr->first_bit, no_inp_vars);
 	dest->num_vectors = curr->num_vectors;
 
 	// printLinearN(dest);

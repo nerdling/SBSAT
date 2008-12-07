@@ -48,6 +48,8 @@ int nForceBackjumpLevel = -1;
 int ge_preproc = 0;
 int use_XORGElim = 0;
 int use_SmurfWatchedLists = 0;
+int precompute_smurfs = 1;
+int smurfs_share_states = 1;
 char formatin = 'f', formatout = 'b'; //Solving the problem is the Default
 int print_tree = 0;
 char inputfile[256] = "-";

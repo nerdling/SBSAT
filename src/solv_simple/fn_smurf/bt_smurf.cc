@@ -17,11 +17,11 @@ int ApplyInferenceToSmurf(int nBranchVar, bool bBVPolarity, int nSmurfNumber, vo
 			void *pNextState;
 			if(bBVPolarity) {
 				if(pSmurfState->pVarIsTrueTransition == NULL)
-				  pSmurfState->pVarIsTrueTransition = ReadSmurfStateIntoTable(set_variable(pSmurfState->bdd, nBranchVar, 1), NULL, 0);
+				  pSmurfState->pVarIsTrueTransition = ReadSmurfStateIntoTable(set_variable(pSmurfState->pSmurfBDD, nBranchVar, 1), NULL, 0);
 				pNextState = pSmurfState->pVarIsTrueTransition;
 			} else {
 				if(pSmurfState->pVarIsFalseTransition == NULL)
-				  pSmurfState->pVarIsFalseTransition = ReadSmurfStateIntoTable(set_variable(pSmurfState->bdd, nBranchVar, 0), NULL, 0);
+				  pSmurfState->pVarIsFalseTransition = ReadSmurfStateIntoTable(set_variable(pSmurfState->pSmurfBDD, nBranchVar, 0), NULL, 0);
 				pNextState = pSmurfState->pVarIsFalseTransition;
 			}
 			void *pPrevState;
@@ -35,7 +35,7 @@ int ApplyInferenceToSmurf(int nBranchVar, bool bBVPolarity, int nSmurfNumber, vo
 			if(pNextState == NULL) {
 				assert(((TypeStateEntry *)pPrevState)->cType == FN_INFERENCE);
 				((InferenceStateEntry *)pPrevState)->pVarTransition = ReadSmurfStateIntoTable(
-																						   set_variable(((InferenceStateEntry *)pPrevState)->bdd,
+																						   set_variable(((InferenceStateEntry *)pPrevState)->pInferenceBDD,
 																											 ((InferenceStateEntry *)pPrevState)->nTransitionVar,
 																											 ((InferenceStateEntry *)pPrevState)->bPolarity), NULL, 0);
 				pNextState = ((void *)((InferenceStateEntry *)pPrevState)->pVarTransition);

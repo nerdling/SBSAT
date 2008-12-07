@@ -94,7 +94,7 @@ ITE_INLINE int ApplyInference_Hooks(int nBranchVar, bool bBVPolarity) {
 	
 	if(use_XORGElim==1) //SEAN!!! Would prefer not to do this if variable is not in the GE Table.
 	  ret = ApplyInferenceToXORGElimTable(SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].XORGElimTable, nBranchVar, bBVPolarity);
-	
+
 	return ret;	
 }
 
@@ -106,10 +106,11 @@ ITE_INLINE int ApplyInferenceToSmurf_Hooks(int nBranchVar, bool bBVPolarity, int
 										  ((XORGElimStateEntry *)arrSmurfStates[nSmurfIndex])->pVector,
 										  ((XORGElimStateEntry *)arrSmurfStates[nSmurfIndex])->nSize,
 										  ((XORGElimStateEntry *)arrSmurfStates[nSmurfIndex])->pnTransitionVars);
-		if(ret != -1) {
+		if(ret == 1) {
 			//To use the normal LSGB heuristic, comment out the line below.
 			//arrSmurfStates[nSmurfIndex] = pTrueSimpleSmurfState; //addRowXORGElimTable returns -1 if the table is full.
-			ret = 1;
+		} else if (ret == -1) {
+			ret = 1;			
 		}
 	}
 	
@@ -129,7 +130,6 @@ ITE_INLINE int Backtrack_Hooks() {
 	
 	//Periodic Hooks
 	if (ite_counters[NUM_BACKTRACKS] % BACKTRACKS_PER_STAT_REPORT == 0) {
-
 		//Display hook
 		DisplaySimpleSolverBacktrackInfo(fSimpleSolverPrevEndTime, fSimpleSolverStartTime);
 
@@ -144,17 +144,10 @@ ITE_INLINE int Backtrack_Hooks() {
 	return ret;	
 }
 
-int nCount_GElimSmurfs;
-int nGElimSmurf_Created;
-
 ITE_INLINE void Init_Solver_PreSmurfs_Hooks() {
 	
 	if(use_XORGElim==1) {
-		nCount_GElimSmurfs = 0;
-		nGElimSmurf_Created = 0;
-
 		initXORGElimTable(SimpleSmurfProblemState->nNumVars);
-	
 	}
 	
 }
@@ -162,13 +155,6 @@ ITE_INLINE void Init_Solver_PreSmurfs_Hooks() {
 
 ITE_INLINE int Init_Solver_MidSmurfs_Hooks(int nSmurfIndex, void **arrSmurfStates) {
 	int ret = SOLV_UNKNOWN;
-	
-	if(use_XORGElim==1) {
-		if(nGElimSmurf_Created) {
-			nCount_GElimSmurfs++;
-			nGElimSmurf_Created = 0;
-		}
-	}
 	
 	return ret;
 }
@@ -178,7 +164,7 @@ ITE_INLINE int Init_Solver_PostSmurfs_Hooks(void **arrSmurfStates) {
 
 	if(use_XORGElim==1) {
 		initXORGElimTable(SimpleSmurfProblemState->nNumVars);
-		allocXORGElimTable(SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].XORGElimTable, nCount_GElimSmurfs);
+		allocXORGElimTable(SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].XORGElimTable, 0);
 		for(int nSmurfIndex = 0; nSmurfIndex < SimpleSmurfProblemState->nNumSmurfs; nSmurfIndex++) {
 			if(((TypeStateEntry *)arrSmurfStates[nSmurfIndex])->cType == FN_XOR_GELIM) {
 				ret = addRowXORGElimTable(SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].XORGElimTable,
@@ -186,9 +172,10 @@ ITE_INLINE int Init_Solver_PostSmurfs_Hooks(void **arrSmurfStates) {
 												  ((XORGElimStateEntry *)arrSmurfStates[nSmurfIndex])->nSize,
 												  ((XORGElimStateEntry *)arrSmurfStates[nSmurfIndex])->pnTransitionVars);
 				if(ret == 0) return SOLV_UNSAT;
-				if(ret != -1) {
+				if(ret == 1) {
 					//To use the normal LSGB heuristic, comment out the line below.
 					//arrSmurfStates[nSmurfIndex] = pTrueSimpleSmurfState; //addRowXORGElimTable returns -1 if the table is full.
+				} else if (ret == -1) {
 					ret = 1;
 				}
 			}

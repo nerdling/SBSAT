@@ -421,11 +421,12 @@ int EnqueueInference(int nInfVar, bool bInfPolarity) {
 
 ITE_INLINE
 int ApplyInferenceToStates(int nBranchVar, bool bBVPolarity) {
+	d7_printf2("  Transitioning Smurfs using %d\n", bBVPolarity?nBranchVar:-nBranchVar);
+	
 	int ret = ApplyInference_Hooks(nBranchVar, bBVPolarity);
 	if(ret == 0) return 0;
 	
 	void **arrSmurfStates = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].arrSmurfStates;
-	d7_printf2("  Transitioning Smurfs using %d\n", bBVPolarity?nBranchVar:-nBranchVar);
 	for(int i = SimpleSmurfProblemState->arrVariableOccursInSmurf[nBranchVar][0]; i > 0; i--) {
 		//SEAN IDEA: Clauses are watched on literals, so only ~half of clauses are checked each time.
 		int nSmurfNumber = SimpleSmurfProblemState->arrVariableOccursInSmurf[nBranchVar][i];

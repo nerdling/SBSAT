@@ -67,7 +67,7 @@ ITE_INLINE double LSGBGetHeurScoreTransition(SmurfStateEntry *pState, bool bPola
 		pNextState = ((InferenceStateEntry *)pNextState)->pVarTransition;
 	}
 
-	if(pNextState == NULL) return 0;
+	if(pNextState == NULL) return 0; //This can happen is smurfs are built in a lazily
 	
 	double fInferenceWeights = JHEURISTIC_K_INF * num_inferences;	
 	if (((TypeStateEntry *)pNextState)->cType == FN_SMURF) {
