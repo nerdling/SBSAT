@@ -273,8 +273,9 @@ extern int MAX_NUM_CACHED_LEMMAS;
 
 #define _JHEURISTIC_K 3.0 // Parameter to the Johnson Village heuristic.
 extern float JHEURISTIC_K; // Parameter to the Johnson Village heuristic.
-extern float JHEURISTIC_K_TRUE; 
-extern float JHEURISTIC_K_INF; 
+extern float JHEURISTIC_K_TRUE;
+extern float JHEURISTIC_K_INF;
+extern float JHEURISTIC_K_UNKNOWN;
 
 extern char preset_variables_string[4096];
 extern int prover3_max_vars;

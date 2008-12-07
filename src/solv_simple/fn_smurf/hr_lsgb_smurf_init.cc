@@ -67,8 +67,8 @@ ITE_INLINE double LSGBGetHeurScoreTransition(SmurfStateEntry *pState, bool bPola
 		pNextState = ((InferenceStateEntry *)pNextState)->pVarTransition;
 	}
 
-	if(pNextState == NULL) return 0; //This can happen is smurfs are built in a lazily
-	
+	if(pNextState == NULL) return JHEURISTIC_K_UNKNOWN; //This can happen if smurfs are built lazily
+
 	double fInferenceWeights = JHEURISTIC_K_INF * num_inferences;	
 	if (((TypeStateEntry *)pNextState)->cType == FN_SMURF) {
 		return fInferenceWeights + LSGBSumNodeWeights((SmurfStateEntry *)pNextState);
@@ -84,6 +84,8 @@ ITE_INLINE double LSGBGetHeurScoreTransition(SmurfStateEntry *pState, bool bPola
 		return fInferenceWeights + LSGBarrXORWeight(((XORGElimStateEntry *)pNextState)->nSize);
 	} else if (((TypeStateEntry *)pNextState)->cType == FN_MINMAX_COUNTER) {
 		return fInferenceWeights + LSGBMINMAXCounterGetHeurScore((MINMAXCounterStateEntry *)pNextState);
+	} else if (((TypeStateEntry *)pNextState)->cType == FN_MINMAX) {
+		return fInferenceWeights + LSGBMINMAXGetHeurScore((MINMAXStateEntry *)pNextState);
 	}
 	
 	return 0;

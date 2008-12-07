@@ -193,7 +193,7 @@ int ReadAllSmurfsIntoTable(int nNumVars) {
 			}
 			tempint[i] = arrIte2SimpleSolverVarMap[tempint[i]];
 		}
-		
+
 		for(int y = 0; y < nNumElts; y++) {
 			int nVar = tempint[y];
 			SimpleSmurfProblemState->arrVariableOccursInSmurf[nVar][temp_varcount[nVar]] = x;
@@ -277,7 +277,7 @@ void FreeSmurfSolverVars() {
 	
 	LSGBORFree();
 	LSGBXORFree();
-// Minmax and NegMinmax for the future
+// SEAN!!! Minmax and NegMinmax for the future
 }
 
 void FreeSmurfStateEntries() {

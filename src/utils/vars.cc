@@ -102,6 +102,7 @@ long MAX_NUM_PATH_EQUIV_SETS; /* 3^MAX_VBLES_PER_SMURF */
 float JHEURISTIC_K=_JHEURISTIC_K;
 float JHEURISTIC_K_TRUE=0;
 float JHEURISTIC_K_INF=1;
+float JHEURISTIC_K_UNKNOWN=0;
 
 int mp_vars_to_set_for_each_survey = 1;
 int mp_surveys = 0;
