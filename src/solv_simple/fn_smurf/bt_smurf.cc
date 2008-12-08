@@ -59,19 +59,24 @@ int ApplyInferenceToSmurf(int nBranchVar, bool bBVPolarity, int nSmurfNumber, vo
 	return ret;
 }
 
+//Seems to be working great...so far.
 ITE_INLINE
 int ApplyInferenceToWatchedSmurf(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates) {
+//int ApplyInferenceToSmurf(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates) {	
 	int nInfQueueHead = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
 	//SEAN!!! inferences ahead of current position may be inferred here - change the functionality a little.
 	
 	SmurfStateEntry *pSmurfState = (SmurfStateEntry *)arrSmurfStates[nSmurfNumber];
 
 	do {
-		int nPrevInfLevel = SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[pSmurfState->nTransitionVar];
+		//The abs() is necessary because old choicepoints are negative
+		int nPrevInfLevel = abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[pSmurfState->nTransitionVar]);
 
 		if(nPrevInfLevel < nInfQueueHead) { //Apply this inference
 			int nInfVar = pSmurfState->nTransitionVar;
 			bool bInfPolarity = (SimpleSmurfProblemState->arrInferenceQueue[nPrevInfLevel] > 0);
+
+			d7_printf3("      Handling inference %c%d\n", bInfPolarity?'+':'-', nInfVar);
 			
 			void *pNextState;
 			if(bInfPolarity) {

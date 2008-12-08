@@ -391,9 +391,7 @@ int SimpleHeuristic() {
 int EnqueueInference(int nInfVar, bool bInfPolarity) {
 	//Try to insert inference into the inference Queue
 	int nInfQueueHead = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
-	int nPrevInfLevel = SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[nInfVar];
-	//Sure, nPrevInfLevel could be zero, but only if it was a choicepoint and 
-	//I think it's impossible for a prior choicepoint to be inferred here.
+	int nPrevInfLevel = abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[nInfVar]);
 	d7_printf4("      Inferring %d at Level %d (prior level = %d)\n",
 				  bInfPolarity?nInfVar:-nInfVar, nInfQueueHead, nPrevInfLevel);
 	assert(nPrevInfLevel > 0);
@@ -553,7 +551,7 @@ int SimpleBrancher() {
 			//SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[abs(SimpleSmurfProblemState->arrInferenceQueue[nInfQueueHead])] =
 			//SimpleSmurfProblemState->nNumVars;
 			//Then insert new inference
-			nPrevInfLevel = SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[abs(nBranchLit)];
+			nPrevInfLevel = abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[abs(nBranchLit)]);
 			SimpleSmurfProblemState->arrInferenceQueue[nInfQueueHead] = nBranchLit;
 			SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[abs(nBranchLit)] = nInfQueueHead;
 			SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars++;
@@ -566,8 +564,7 @@ int SimpleBrancher() {
 				//Get inference
 				nBranchLit = SimpleSmurfProblemState->arrInferenceQueue[nInfQueueHead];
 				nInfQueueHead++;
-				bBVPolarity = 1;
-				if(nBranchLit < 0) bBVPolarity = 0;
+				bBVPolarity = (nBranchLit < 0)?0:1;
 				nBranchVar = bBVPolarity?nBranchLit:-nBranchLit;
 				
 				//apply inference to all involved smurfs
