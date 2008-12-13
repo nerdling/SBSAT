@@ -353,6 +353,8 @@ t_opt options[] = {
 	   "Use Gaussian Elimination during search (1/0)"},
 { &use_SmurfWatchedLists, "", "watched-smurfs", P_INT, V(i:0, "0"),  V(i:'0', "0"), VAR_NORMAL, 0,
 	   "Allow dynamic Smurf association lists during search (1/0)"},
+{ &numSmurfWatchedVars, "", "num-watched-variables", P_INT, V(i:0, "0"),  V(i:'2', "2"), VAR_NORMAL, 0,
+	   "Number of variables per Smurf to watch if watched-smurfs is enabled"},
 { &USE_AUTARKY_SMURFS, "", "autarky-smurfs", P_INT, V(i:0,"0"), V(i:0,"0"), VAR_CHECK+VAR_DUMP, 0,
 		"Use Autarky Smurfs in the solver (1/0)"},
 { &USE_AUTARKY_LEMMAS, "", "autarky-lemmas", P_INT, V(i:0,"0"), V(i:0,"0"), VAR_CHECK+VAR_DUMP, 0,

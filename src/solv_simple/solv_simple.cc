@@ -394,7 +394,7 @@ int EnqueueInference(int nInfVar, bool bInfPolarity) {
 	int nPrevInfLevel = abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[nInfVar]);
 	d7_printf4("      Inferring %d at Level %d (prior level = %d)\n",
 				  bInfPolarity?nInfVar:-nInfVar, nInfQueueHead, nPrevInfLevel);
-	assert(nPrevInfLevel > 0);
+	assert(use_SmurfWatchedLists || nPrevInfLevel > 0);
 	
 	if(nPrevInfLevel < nInfQueueHead) {
 		//Inference already in queue

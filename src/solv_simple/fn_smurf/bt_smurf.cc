@@ -68,6 +68,13 @@ int ApplyInferenceToWatchedSmurf(int nBranchVar, bool bBVPolarity, int nSmurfNum
 	
 	SmurfStateEntry *pSmurfState = (SmurfStateEntry *)arrSmurfStates[nSmurfNumber];
 
+	//SimpleSmurfProblemState->arrVariableOccursInSmurf[nVar][y]&=0x40000000; = x
+	//SimpleSmurfProblemState->arrReverseOccurenceList[x][y]<<31 == 1;
+	//(*SimpleSmurfProblemState->arrReverseOccurenceList[x][y])&=0x40000000;
+
+	int nNumWatchedNeeded = 0;
+	int nReverseListPos = 0;
+	
 	do {
 		//The abs() is necessary because old choicepoints are negative
 		int nPrevInfLevel = abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[pSmurfState->nTransitionVar]);
@@ -75,6 +82,20 @@ int ApplyInferenceToWatchedSmurf(int nBranchVar, bool bBVPolarity, int nSmurfNum
 		if(nPrevInfLevel < nInfQueueHead) { //Apply this inference
 			int nInfVar = pSmurfState->nTransitionVar;
 			bool bInfPolarity = (SimpleSmurfProblemState->arrInferenceQueue[nPrevInfLevel] > 0);
+
+/*
+			while((*SimpleSmurfProblemState->arrReverseOccurenceList[nSmurfNumber][nInfVar])>nInfVar) {
+				fprintf(stderr, "%d|", (*SimpleSmurfProblemState->arrReverseOccurenceList[nSmurfNumber][nReverseListPos]));
+				nReverseListPos++; //Skip over missing variables
+			}
+
+			assert(((*SimpleSmurfProblemState->arrReverseOccurenceList[nSmurfNumber][nReverseListPos])&0x2FFFFFFF)==nInfVar);
+			
+			if(((*SimpleSmurfProblemState->arrReverseOccurenceList[nSmurfNumber][nReverseListPos])<<31)==0) {
+				(*SimpleSmurfProblemState->arrReverseOccurenceList[nSmurfNumber][nReverseListPos])&=0x40000000;
+			  nNumWatchedNeeded++;
+			}
+*/
 
 			d7_printf3("      Handling inference %c%d\n", bInfPolarity?'+':'-', nInfVar);
 			

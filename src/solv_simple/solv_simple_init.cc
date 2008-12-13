@@ -193,7 +193,8 @@ int ReadAllSmurfsIntoTable(int nNumVars) {
 			}
 			tempint[i] = arrIte2SimpleSolverVarMap[tempint[i]];
 		}
-
+		qsort(tempint, nNumElts, sizeof(int), revcompfunc); //Necessary
+		
 		for(int y = 0; y < nNumElts; y++) {
 			int nVar = tempint[y];
 			SimpleSmurfProblemState->arrVariableOccursInSmurf[nVar][temp_varcount[nVar]] = x;
@@ -205,6 +206,11 @@ int ReadAllSmurfsIntoTable(int nNumVars) {
 //			fprintf(stderr, "|%d %d|", x, *SimpleSmurfProblemState->arrReverseOccurenceList[x][y]);
 //			(*SimpleSmurfProblemState->arrReverseOccurenceList[x][y])=1;
 //			fprintf(stderr, "|%d %d|", x, *SimpleSmurfProblemState->arrReverseOccurenceList[x][y]);
+
+			if(use_SmurfWatchedLists && y > (numSmurfWatchedVars==0?nNumElts:numSmurfWatchedVars)) {
+				SimpleSmurfProblemState->arrVariableOccursInSmurf[nVar][temp_varcount[nVar]]&=0x40000000;
+			}
+			
 			temp_varcount[nVar]++;
 		}
 	}
