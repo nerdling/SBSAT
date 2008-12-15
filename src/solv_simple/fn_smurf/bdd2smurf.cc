@@ -7,8 +7,7 @@ void fillHEAP(int index, int size, int *arrElts) {
 	SimpleSmurfProblemState->nNumSmurfStateEntries++;
 	SimpleSmurfProblemState->pSmurfStatesTableTail = (void *)(pCurrState + 1);
 	pCurrState->cType = FN_SMURF;
-	if(use_SmurfWatchedLists) pCurrState->ApplyInferenceToState = ApplyInferenceToWatchedSmurf;
-	else pCurrState->ApplyInferenceToState = ApplyInferenceToSmurf;
+	pCurrState->ApplyInferenceToState = ApplyInferenceToSmurf;
 	pCurrState->nTransitionVar = arrElts[index+(size/2)];
 	//fprintf(stderr, "%d(%d) - ", arrElts[index+(size/2)], size);
 	if(size<=1) return;
@@ -18,6 +17,17 @@ void fillHEAP(int index, int size, int *arrElts) {
 	pCurrState->pNextVarInThisStateLT = SimpleSmurfProblemState->pSmurfStatesTableTail;
 	fillHEAP(index+(size/2)+1, (size-(size/2))-1, arrElts);
 	assert(pCurrState->pNextVarInThisStateGT != pCurrState->pNextVarInThisStateLT);
+}
+
+void fillWatchedHEAP(int size, int *arrElts) {
+	for(int x = 0; x < size; x++) {
+		SmurfStateEntry *pCurrState = (SmurfStateEntry *)SimpleSmurfProblemState->pSmurfStatesTableTail;
+		SimpleSmurfProblemState->nNumSmurfStateEntries++;
+		SimpleSmurfProblemState->pSmurfStatesTableTail = (void *)(pCurrState + 1);
+		pCurrState->cType = FN_WATCHED_SMURF;
+		pCurrState->ApplyInferenceToState = ApplyInferenceToWatchedSmurf;
+		pCurrState->nTransitionVar = arrElts[x];
+	}
 }
 
 SmurfStateEntry *findStateInHEAP(SmurfStateEntry *pStartState, int var) {
@@ -33,31 +43,8 @@ SmurfStateEntry *findStateInHEAP(SmurfStateEntry *pStartState, int var) {
 	return pStartState;
 }
 
-void *CreateSmurfState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, SmurfStateEntry *pStartState) {
-	check_SmurfStatesTableSize(sizeof(SmurfStateEntry)*nNumElts);
-	ite_counters[SMURF_STATES]+=nNumElts;
-	pCurrentBDD->pState = SimpleSmurfProblemState->pSmurfStatesTableTail;
-	
-	pStartState = (SmurfStateEntry *)SimpleSmurfProblemState->pSmurfStatesTableTail;
-	fillHEAP(0, nNumElts, arrElts);
-	
-	for(int nVbleIndex = 0; nVbleIndex < nNumElts-1; nVbleIndex++) {
-		SmurfStateEntry *pCurrState = (pStartState+nVbleIndex);
-		pCurrState->pNextVarInThisState = (void *)(pStartState+nVbleIndex+1);
-	}
-
-	for(int nVbleIndex = 0; nVbleIndex < nNumElts; nVbleIndex++) {
-		//fprintf(stderr, "%d, %d, %d: ", nVbleIndex, arrElts[nVbleIndex], arrSimpleSolver2IteVarMap[arrElts[nVbleIndex]]);
-		//    printBDDerr(pCurrentBDD);
-		//    fprintf(stderr, "\n");
-		//    PrintAllSmurfStateEntries();
-		   
-		SmurfStateEntry *pCurrState = findStateInHEAP(pStartState, arrElts[nVbleIndex]);
-		pCurrState->pSmurfBDD = pCurrentBDD;
-		
-		assert(pCurrState->nTransitionVar == arrElts[nVbleIndex]);
-
-		/*
+void ComputeSmurfInferences(BDDNode *pCurrentBDD, SmurfStateEntry *pCurrState) {
+	/*
 			//Determine and record if nTransitionVar is safe
 			BDDNode *pSafeBDD = false_ptr;//safe_assign(pCurrentBDD->pFunc, pCurrState->nTransitionVar);
 			if(pSafeBDD == false_ptr)
@@ -71,118 +58,172 @@ void *CreateSmurfState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, SmurfSt
 			}
 		*/
 
-		//Compute the SmurfState w/ nTransitionVar = False
-		//Create Inference Transitions
-		BDDNode *infBDD = pCurrentBDD;
-		infBDD = set_variable(infBDD, arrSimpleSolver2IteVarMap[pCurrState->nTransitionVar], 0);
-		SmurfStateEntry *pNextState = pCurrState;
-		InferenceStateEntry *pNextInfState = NULL;
-		//Follow positive and negative inferences
-		infer *inferences = infBDD->inferences;
-		infer *save_inferences = inferences;
-		int nNumInferences = 0;
-		while(inferences!=NULL) { 
-			if(inferences->nums[1] != 0) {
-				inferences = inferences->next; continue; 
-			}
-
-			//Add a SmurfStateEntry into the table
-			if(infBDD->pState != NULL) break;
-			check_SmurfStatesTableSize(sizeof(InferenceStateEntry));
-			ite_counters[SMURF_STATES]++;
-			infBDD->pState = SimpleSmurfProblemState->pSmurfStatesTableTail;
-			if(nNumInferences == 0) pNextState->pVarIsFalseTransition = infBDD->pState; //The transition is False
-			else pNextInfState->pVarTransition = infBDD->pState;
-			nNumInferences++;
-			assert(infBDD->pState!=NULL);
-			pNextInfState = (InferenceStateEntry *)SimpleSmurfProblemState->pSmurfStatesTableTail;
-			SimpleSmurfProblemState->nNumSmurfStateEntries++;
-			SimpleSmurfProblemState->pSmurfStatesTableTail = (void *)(pNextInfState + 1);
-			pNextInfState->cType = FN_INFERENCE;
-			if(inferences->nums[0] > 0) {
-				pNextInfState->nTransitionVar = arrIte2SimpleSolverVarMap[inferences->nums[0]];
-				pNextInfState->bPolarity = 1;
-				infBDD = set_variable(infBDD, arrSimpleSolver2IteVarMap[pNextInfState->nTransitionVar], 1);
-			} else {						
-				pNextInfState->nTransitionVar = arrIte2SimpleSolverVarMap[-inferences->nums[0]];
-				pNextInfState->bPolarity = 0;
-				infBDD = set_variable(infBDD, arrSimpleSolver2IteVarMap[pNextInfState->nTransitionVar], 0);
-			}
-			inferences = infBDD->inferences;
-//			inferences = inferences->next;
+	//Compute the SmurfState w/ nTransitionVar = False
+	//Create Inference Transitions
+	BDDNode *infBDD = pCurrentBDD;
+	infBDD = set_variable(infBDD, arrSimpleSolver2IteVarMap[pCurrState->nTransitionVar], 0);
+	SmurfStateEntry *pNextState = pCurrState;
+	InferenceStateEntry *pNextInfState = NULL;
+	//Follow positive and negative inferences
+	infer *inferences = infBDD->inferences;
+	infer *save_inferences = inferences;
+	int nNumInferences = 0;
+	while(inferences!=NULL) { 
+		if(inferences->nums[1] != 0) {
+			inferences = inferences->next; continue; 
 		}
 		
-		if(infBDD->pState != NULL) {
-			if(nNumInferences == 0) pNextState->pVarIsFalseTransition = infBDD->pState; //The transition is False
-			else pNextInfState->pVarTransition = infBDD->pState;
-		} else {
-			//Recurse on nTransitionVar == False transition
-			void *pNext = NULL;
-			if(precompute_smurfs) {
-				pNext = ReadSmurfStateIntoTable(infBDD, NULL, 0);
-				assert(pNext!=NULL);
-			}
-			if(nNumInferences == 0) pNextState->pVarIsFalseTransition = pNext; //The transition is False
-			else { pNextInfState->pVarTransition = pNext; pNextInfState->pInferenceBDD = infBDD; }
-		}
-
-		//Compute the SmurfState w/ nTransitionVar = True
-		//Create Inference Transitions
-		infBDD = pCurrentBDD;
-		infBDD = set_variable(infBDD, arrSimpleSolver2IteVarMap[pCurrState->nTransitionVar], 1);
-		pNextState = pCurrState;
-		pNextInfState = NULL;
-		//Follow positive and negative inferences
-		inferences = infBDD->inferences;
-		save_inferences = inferences;
-		nNumInferences = 0;
-		while(inferences!=NULL) {
-			if(inferences->nums[1] != 0) {
-				inferences = inferences->next; continue; 
-			}
-			
-			//Add a SmurfStateEntry into the table
-			if(infBDD->pState != NULL) break;
-			check_SmurfStatesTableSize(sizeof(InferenceStateEntry));
-			ite_counters[SMURF_STATES]++;
-			infBDD->pState = SimpleSmurfProblemState->pSmurfStatesTableTail;
-			if(nNumInferences == 0) pNextState->pVarIsTrueTransition = infBDD->pState; //The transition is True
-			else pNextInfState->pVarTransition = infBDD->pState;
-			nNumInferences++;
-			assert(infBDD->pState!=NULL);
-			pNextInfState = (InferenceStateEntry *)SimpleSmurfProblemState->pSmurfStatesTableTail;
-			SimpleSmurfProblemState->nNumSmurfStateEntries++;
-			SimpleSmurfProblemState->pSmurfStatesTableTail = (void *)(pNextInfState + 1);
-			pNextInfState->cType = FN_INFERENCE;
-			if(inferences->nums[0] > 0) {
-				pNextInfState->nTransitionVar = arrIte2SimpleSolverVarMap[inferences->nums[0]];
-				pNextInfState->bPolarity = 1;
-				infBDD = set_variable(infBDD, arrSimpleSolver2IteVarMap[pNextInfState->nTransitionVar], 1);
+		//Add a SmurfStateEntry into the table
+		if(infBDD->pState != NULL) break;
+		check_SmurfStatesTableSize(sizeof(InferenceStateEntry));
+		ite_counters[SMURF_STATES]++;
+		infBDD->pState = SimpleSmurfProblemState->pSmurfStatesTableTail;
+		if(nNumInferences == 0) pNextState->pVarIsFalseTransition = infBDD->pState; //The transition is False
+		else pNextInfState->pVarTransition = infBDD->pState;
+		nNumInferences++;
+		assert(infBDD->pState!=NULL);
+		pNextInfState = (InferenceStateEntry *)SimpleSmurfProblemState->pSmurfStatesTableTail;
+		SimpleSmurfProblemState->nNumSmurfStateEntries++;
+		SimpleSmurfProblemState->pSmurfStatesTableTail = (void *)(pNextInfState + 1);
+		pNextInfState->cType = FN_INFERENCE;
+		if(inferences->nums[0] > 0) {
+			pNextInfState->nTransitionVar = arrIte2SimpleSolverVarMap[inferences->nums[0]];
+			pNextInfState->bPolarity = 1;
+			infBDD = set_variable(infBDD, arrSimpleSolver2IteVarMap[pNextInfState->nTransitionVar], 1);
 			} else {						
 				pNextInfState->nTransitionVar = arrIte2SimpleSolverVarMap[-inferences->nums[0]];
 				pNextInfState->bPolarity = 0;
 				infBDD = set_variable(infBDD, arrSimpleSolver2IteVarMap[pNextInfState->nTransitionVar], 0);
 			}
-			inferences = infBDD->inferences;
-//			inferences = inferences->next;
-		}
-
-		if(infBDD->pState != NULL) {
-			if(nNumInferences == 0) pNextState->pVarIsTrueTransition = infBDD->pState; //The transition is True
-			else pNextInfState->pVarTransition = infBDD->pState;
-		} else {
-			//Recurse on nTransitionVar == True transition
-			void *pNext = NULL;
+		inferences = infBDD->inferences;
+		//			inferences = inferences->next;
+	}
+	
+	if(infBDD->pState != NULL) {
+		if(nNumInferences == 0) pNextState->pVarIsFalseTransition = infBDD->pState; //The transition is False
+		else pNextInfState->pVarTransition = infBDD->pState;
+	} else {
+		//Recurse on nTransitionVar == False transition
+		void *pNext = NULL;
 			if(precompute_smurfs) {
 				pNext = ReadSmurfStateIntoTable(infBDD, NULL, 0);
 				assert(pNext!=NULL);
 			}
-			if(nNumInferences == 0) pNextState->pVarIsTrueTransition = pNext; //The transition is True
-			else { pNextInfState->pVarTransition = pNext; pNextInfState->pInferenceBDD = infBDD; }
+		if(nNumInferences == 0) pNextState->pVarIsFalseTransition = pNext; //The transition is False
+		else { pNextInfState->pVarTransition = pNext; pNextInfState->pInferenceBDD = infBDD; }
+	}
+	
+	//Compute the SmurfState w/ nTransitionVar = True
+	//Create Inference Transitions
+	infBDD = pCurrentBDD;
+	infBDD = set_variable(infBDD, arrSimpleSolver2IteVarMap[pCurrState->nTransitionVar], 1);
+	pNextState = pCurrState;
+	pNextInfState = NULL;
+	//Follow positive and negative inferences
+	inferences = infBDD->inferences;
+	save_inferences = inferences;
+	nNumInferences = 0;
+	while(inferences!=NULL) {
+		if(inferences->nums[1] != 0) {
+			inferences = inferences->next; continue; 
 		}
+		
+		//Add a SmurfStateEntry into the table
+		if(infBDD->pState != NULL) break;
+		check_SmurfStatesTableSize(sizeof(InferenceStateEntry));
+		ite_counters[SMURF_STATES]++;
+		infBDD->pState = SimpleSmurfProblemState->pSmurfStatesTableTail;
+		if(nNumInferences == 0) pNextState->pVarIsTrueTransition = infBDD->pState; //The transition is True
+		else pNextInfState->pVarTransition = infBDD->pState;
+		nNumInferences++;
+		assert(infBDD->pState!=NULL);
+		pNextInfState = (InferenceStateEntry *)SimpleSmurfProblemState->pSmurfStatesTableTail;
+		SimpleSmurfProblemState->nNumSmurfStateEntries++;
+		SimpleSmurfProblemState->pSmurfStatesTableTail = (void *)(pNextInfState + 1);
+		pNextInfState->cType = FN_INFERENCE;
+		if(inferences->nums[0] > 0) {
+			pNextInfState->nTransitionVar = arrIte2SimpleSolverVarMap[inferences->nums[0]];
+			pNextInfState->bPolarity = 1;
+			infBDD = set_variable(infBDD, arrSimpleSolver2IteVarMap[pNextInfState->nTransitionVar], 1);
+		} else {						
+			pNextInfState->nTransitionVar = arrIte2SimpleSolverVarMap[-inferences->nums[0]];
+			pNextInfState->bPolarity = 0;
+			infBDD = set_variable(infBDD, arrSimpleSolver2IteVarMap[pNextInfState->nTransitionVar], 0);
+		}
+		inferences = infBDD->inferences;
+		//			inferences = inferences->next;
+	}
+	
+	if(infBDD->pState != NULL) {
+		if(nNumInferences == 0) pNextState->pVarIsTrueTransition = infBDD->pState; //The transition is True
+		else pNextInfState->pVarTransition = infBDD->pState;
+	} else {
+		//Recurse on nTransitionVar == True transition
+		void *pNext = NULL;
+		if(precompute_smurfs) {
+			pNext = ReadSmurfStateIntoTable(infBDD, NULL, 0);
+			assert(pNext!=NULL);
+		}
+		if(nNumInferences == 0) pNextState->pVarIsTrueTransition = pNext; //The transition is True
+		else { pNextInfState->pVarTransition = pNext; pNextInfState->pInferenceBDD = infBDD; }
+	}
+}
+
+void *CreateSmurfState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, SmurfStateEntry *pStartState) {
+	check_SmurfStatesTableSize(sizeof(SmurfStateEntry)*nNumElts);
+	ite_counters[SMURF_STATES]+=nNumElts;
+	pCurrentBDD->pState = SimpleSmurfProblemState->pSmurfStatesTableTail;
+	
+	pStartState = (SmurfStateEntry *)SimpleSmurfProblemState->pSmurfStatesTableTail;
+	fillHEAP(0, nNumElts, arrElts);
+	
+	for(int nVbleIndex = 0; nVbleIndex < nNumElts-1; nVbleIndex++) {
+		SmurfStateEntry *pCurrState = (pStartState+nVbleIndex);
+		pCurrState->pNextVarInThisState = (void *)(pStartState+nVbleIndex+1);
+	}
+		
+	for(int nVbleIndex = 0; nVbleIndex < nNumElts; nVbleIndex++) {
+		//fprintf(stderr, "%d, %d, %d: ", nVbleIndex, arrElts[nVbleIndex], arrSimpleSolver2IteVarMap[arrElts[nVbleIndex]]);
+		//    printBDDerr(pCurrentBDD);
+		//    fprintf(stderr, "\n");
+		//    PrintAllSmurfStateEntries();
+		   
+		SmurfStateEntry *pCurrState = findStateInHEAP(pStartState, arrElts[nVbleIndex]);
+		pCurrState->pSmurfBDD = pCurrentBDD;
+		
+		assert(pCurrState->nTransitionVar == arrElts[nVbleIndex]);
+
+		ComputeSmurfInferences(pCurrentBDD, pCurrState);
+		
 	}
 	return (void *)pStartState;
 }
+
+void *CreateWatchedSmurfState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, SmurfStateEntry *pStartState) {
+	check_SmurfStatesTableSize(sizeof(SmurfStateEntry)*nNumElts);
+	ite_counters[SMURF_STATES]+=nNumElts;
+	pCurrentBDD->pState = SimpleSmurfProblemState->pSmurfStatesTableTail;
+	
+	pStartState = (SmurfStateEntry *)SimpleSmurfProblemState->pSmurfStatesTableTail;
+	fillWatchedHEAP(nNumElts, arrElts);
+	
+	for(int nVbleIndex = 0; nVbleIndex < nNumElts-1; nVbleIndex++) {
+		SmurfStateEntry *pCurrState = (pStartState+nVbleIndex);
+		pCurrState->pNextVarInThisState = (void *)(pStartState+nVbleIndex+1);
+	}
+		
+	for(int nVbleIndex = 0; nVbleIndex < nNumElts; nVbleIndex++) {
+		SmurfStateEntry *pCurrState = (pStartState+nVbleIndex);
+		pCurrState->pSmurfBDD = pCurrentBDD;
+		
+		assert(pCurrState->nTransitionVar == arrElts[nVbleIndex]);
+
+      ComputeSmurfInferences(pCurrentBDD, pCurrState);
+		
+	}
+	return (void *)pStartState;
+}
+
 
 void *ReadSmurfStateIntoTable(BDDNode *pCurrentBDD, int *arrElts, int nNumElts) {
 	void *pStartState = pCurrentBDD->pState;
@@ -259,7 +300,8 @@ void *ReadSmurfStateIntoTable(BDDNode *pCurrentBDD, int *arrElts, int nNumElts) 
 			ite_free((void **)&arrElts);
 		} else {
 			//FN_SMURF
-			pStartState = CreateSmurfState(arrElts, nNumElts, pCurrentBDD, (SmurfStateEntry *)pStartState);
+			if(use_SmurfWatchedLists) pStartState = CreateWatchedSmurfState(arrElts, nNumElts, pCurrentBDD, (SmurfStateEntry *)pStartState);
+			else pStartState = CreateSmurfState(arrElts, nNumElts, pCurrentBDD, (SmurfStateEntry *)pStartState);
 			LSGBSmurfSetHeurScores((SmurfStateEntry *)pStartState);
 			ite_free((void **)&arrElts);
 		}

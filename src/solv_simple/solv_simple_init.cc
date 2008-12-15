@@ -138,7 +138,7 @@ int ReadAllSmurfsIntoTable(int nNumVars) {
 	
 	SimpleSmurfProblemState->arrSmurfStack = (SmurfStack *)ite_calloc(SimpleSmurfProblemState->nNumVars, sizeof(SmurfStack), 9, "arrSmurfStack");
 	SimpleSmurfProblemState->arrVariableOccursInSmurf = (int **)ite_calloc(SimpleSmurfProblemState->nNumVars, sizeof(int *), 9, "arrVariablesOccursInSmurf");
-	SimpleSmurfProblemState->arrReverseOccurenceList = (int ***)ite_calloc(SimpleSmurfProblemState->nNumSmurfs, sizeof(int **), 9, "arrReverseOccurenceList");
+	SimpleSmurfProblemState->arrReverseOccurenceList = (int_p **)ite_calloc(SimpleSmurfProblemState->nNumSmurfs, sizeof(int_p *), 9, "arrReverseOccurenceList");
 	SimpleSmurfProblemState->arrPosVarHeurWghts = (double *)ite_calloc(SimpleSmurfProblemState->nNumVars, sizeof(double), 9, "arrPosVarHeurWghts");
 	SimpleSmurfProblemState->arrNegVarHeurWghts = (double *)ite_calloc(SimpleSmurfProblemState->nNumVars, sizeof(double), 9, "arrNegVarHeurWghts");
 	SimpleSmurfProblemState->arrInferenceQueue = (int *)ite_calloc(SimpleSmurfProblemState->nNumVars, sizeof(int), 9, "arrInferenceQueue");
@@ -166,7 +166,8 @@ int ReadAllSmurfsIntoTable(int nNumVars) {
 
 		for(int y = 0; y < nNumElts; y++)
 		  temp_varcount[tempint[y]]++;
-		SimpleSmurfProblemState->arrReverseOccurenceList[x] = (int **)ite_calloc(nNumElts, sizeof(int *), 9, "arrReverseOccurenceList[x]");
+		SimpleSmurfProblemState->arrReverseOccurenceList[x] = (int_p *)ite_calloc(nNumElts+1, sizeof(int_p), 9, "arrReverseOccurenceList[x]");
+		SimpleSmurfProblemState->arrReverseOccurenceList[x][0].var = nNumElts;
 	}
 
 	Alloc_SmurfStack(0); //Alloc some of the Smurf Stack
@@ -177,7 +178,7 @@ int ReadAllSmurfsIntoTable(int nNumVars) {
 		SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[x] = SimpleSmurfProblemState->nNumVars;
 		temp_varcount[x] = 1;
 	}
-	
+
 	//Fill in the variable occurance arrays for each function
 	for(int x = 0; x < SimpleSmurfProblemState->nNumSmurfs; x++) {
 		int nNumElts = 0;
@@ -198,23 +199,26 @@ int ReadAllSmurfsIntoTable(int nNumVars) {
 		for(int y = 0; y < nNumElts; y++) {
 			int nVar = tempint[y];
 			SimpleSmurfProblemState->arrVariableOccursInSmurf[nVar][temp_varcount[nVar]] = x;
-			SimpleSmurfProblemState->arrReverseOccurenceList[x][y] = &(SimpleSmurfProblemState->arrVariableOccursInSmurf[nVar][temp_varcount[nVar]]);
-//			fprintf(stderr, "|%d %d|", x, *SimpleSmurfProblemState->arrReverseOccurenceList[x][y]);
+			SimpleSmurfProblemState->arrReverseOccurenceList[x][y+1].var = nVar;
+			SimpleSmurfProblemState->arrReverseOccurenceList[x][y+1].loc = &(SimpleSmurfProblemState->arrVariableOccursInSmurf[nVar][temp_varcount[nVar]]);
+//			fprintf(stderr, "|%d %d|", x, *SimpleSmurfProblemState->arrReverseOccurenceList[x][y+1]);
 //			SimpleSmurfProblemState->arrVariableOccursInSmurf[nVar][temp_varcount[nVar]] = 7;
-//			fprintf(stderr, "|%d %d|", x, *SimpleSmurfProblemState->arrReverseOccurenceList[x][y]);
-//			(*SimpleSmurfProblemState->arrReverseOccurenceList[x][y])--;
-//			fprintf(stderr, "|%d %d|", x, *SimpleSmurfProblemState->arrReverseOccurenceList[x][y]);
-//			(*SimpleSmurfProblemState->arrReverseOccurenceList[x][y])=1;
-//			fprintf(stderr, "|%d %d|", x, *SimpleSmurfProblemState->arrReverseOccurenceList[x][y]);
+//			fprintf(stderr, "|%d %d|", x, *SimpleSmurfProblemState->arrReverseOccurenceList[x][y+1]);
+//			(*SimpleSmurfProblemState->arrReverseOccurenceList[x][y+1])--;
+//			fprintf(stderr, "|%d %d|", x, *SimpleSmurfProblemState->arrReverseOccurenceList[x][y+1]);
+//			(*SimpleSmurfProblemState->arrReverseOccurenceList[x][y+1])=1;
+//			fprintf(stderr, "|%d %d|", x, *SimpleSmurfProblemState->arrReverseOccurenceList[x][y+1]);
 
-			if(use_SmurfWatchedLists && y > (numSmurfWatchedVars==0?nNumElts:numSmurfWatchedVars)) {
-				SimpleSmurfProblemState->arrVariableOccursInSmurf[nVar][temp_varcount[nVar]]&=0x40000000;
+			if(use_SmurfWatchedLists && y > (numSmurfWatchedVars==0?nNumElts:numSmurfWatchedVars-1)) {
+//				fprintf(stderr, "/%d ", SimpleSmurfProblemState->arrVariableOccursInSmurf[nVar][temp_varcount[nVar]]);
+				SimpleSmurfProblemState->arrVariableOccursInSmurf[nVar][temp_varcount[nVar]] = -SimpleSmurfProblemState->arrVariableOccursInSmurf[nVar][temp_varcount[nVar]];
+//				fprintf(stderr, "%d\\", SimpleSmurfProblemState->arrVariableOccursInSmurf[nVar][temp_varcount[nVar]]);
 			}
 			
 			temp_varcount[nVar]++;
 		}
 	}
-	
+
 	ite_free((void **)&temp_varcount);
 	
 	//Create the rest of the SmurfState entries
@@ -295,7 +299,7 @@ void FreeSmurfStateEntries() {
 		for(int x = 0; x < arrSmurfStatesTable->curr_size; x+=size)	{
 			state_num++;
 			//d9_printf3("State %d(%x), ", state_num, arrSmurfStates);
-			if(((TypeStateEntry *)arrSmurfStates)->cType == FN_SMURF) {
+			if(((TypeStateEntry *)arrSmurfStates)->cType == FN_SMURF || ((TypeStateEntry *)arrSmurfStates)->cType == FN_WATCHED_SMURF) {
 				FreeSmurfStateEntry((SmurfStateEntry *)arrSmurfStates);
 				arrSmurfStates = (void *)(((SmurfStateEntry *)arrSmurfStates) + 1);
 				size = sizeof(SmurfStateEntry);

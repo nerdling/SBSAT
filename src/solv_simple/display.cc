@@ -56,7 +56,7 @@ void PrintAllSmurfStateEntries() {
 		for(int x = 0; x < arrSmurfStatesTable->curr_size; x+=size) {
 			state_num++;
 			d9_printf3("State %d(%x), ", state_num, arrSmurfStates);
-			if(((TypeStateEntry *)arrSmurfStates)->cType == FN_SMURF) {
+			if(((TypeStateEntry *)arrSmurfStates)->cType == FN_SMURF || ((TypeStateEntry *)arrSmurfStates)->cType == FN_WATCHED_SMURF) {
 				PrintSmurfStateEntry((SmurfStateEntry *)arrSmurfStates);
 				arrSmurfStates = (void *)(((SmurfStateEntry *)arrSmurfStates) + 1);
 				size = sizeof(SmurfStateEntry);

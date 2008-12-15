@@ -180,6 +180,11 @@ struct intlist{
   int *num;
 };
 
+struct int_p{
+  int var;
+  int *loc;
+};
+
 struct pathStruct {
 	int numpaths;
 	intlist *paths;

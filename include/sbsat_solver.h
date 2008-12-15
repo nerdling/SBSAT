@@ -51,6 +51,7 @@ enum {
 /* list of possible smurf function types */
 enum {
 	FN_SMURF,
+   FN_WATCHED_SMURF,
    FN_OR_COUNTER,
    FN_XOR_COUNTER,
 	FN_OR,
@@ -78,7 +79,7 @@ struct TypeStateEntry {
 //Structures and functions for the simpleSolver
 //Also used in the smurf_fpga output format.
 struct SmurfStateEntry {
-	char cType; //FN_SMURF
+	char cType; //FN_SMURF || FN_WATCHED_SMURF
 	bool visited;
 	int (*ApplyInferenceToState)(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 	int nTransitionVar;
@@ -88,11 +89,12 @@ struct SmurfStateEntry {
 	void *pVarIsTrueTransition;
 	void *pVarIsFalseTransition;
 	//bool bVarIsSafe; //1 if nTransitionVar is safe for True transisiton, or both.
-	                 //-1 if nTransitionVar is safe for False transition.
-	                 //0 if nTransitionVar is not safe.
+	                   //-1 if nTransitionVar is safe for False transition.
+	                   //0 if nTransitionVar is not safe.
 	//This is 1 if nTransitionVar should be inferred True,
 	//       -1 if nTransitionVar should be inferred False,
 	//        0 if nTransitionVar should not be inferred.
+                                //Used for computing the heuristic of a state.
 	void *pNextVarInThisStateGT; //There are n SmurfStateEntries linked together,
 	void *pNextVarInThisStateLT; //in the structure of a heap,
 	                             //where n is the number of variables in this SmurfStateEntry.
@@ -101,7 +103,6 @@ struct SmurfStateEntry {
 	                             //highlighted for each link in the heap.
 	                             //If this is 0, we have reached a leaf node.
    void *pNextVarInThisState;   //Same as above except linked linearly, instead of a heap.
-                                //Used for computing the heuristic of a state.
 	BDDNode *pSmurfBDD; //Used when building smurfs on the fly.
 };
 
@@ -215,8 +216,9 @@ struct ProblemState {
 	int **arrVariableOccursInSmurf; //Pointer to lists of Smurfs, indexed by variable number, that contain that variable
 	                                //Max size would be nNumSmurfs * nNumVars, but this would only happen if every
 	                                //Smurf contained every variable. Each list is terminated by a -1 element
-	int ***arrReverseOccurenceList; //Pointer to lists of pointers into arrVariableOccursInSmurf.
-	                                //arrROL[x][y] points to the location of arrVOIS[y][?] = x
+	int_p **arrReverseOccurenceList;//Pointer to lists of pointers into arrVariableOccursInSmurf.
+	                                //arrROL[x][z].loc points to the location of arrVOIS[y][?] = x
+	                                //arrROL[x][z].var = y
 	
 	// Dynamic
 	int nCurrSearchTreeLevel;

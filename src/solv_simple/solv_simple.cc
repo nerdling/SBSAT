@@ -100,6 +100,7 @@ void Calculate_Heuristic_Values() {
 		//FN_SMURF
 		switch(((TypeStateEntry *)arrSmurfStates[nSmurfIndex])->cType) {
 		 case FN_SMURF:
+		 case FN_WATCHED_SMURF:
 			pState = arrSmurfStates[nSmurfIndex];
 //#pragma omp atomic
 			SimpleSmurfProblemState->arrPosVarHeurWghts[((SmurfStateEntry *)pState)->nTransitionVar] +=
@@ -360,7 +361,7 @@ int SimpleHeuristic() {
 	//if(SimpleSmurfProblemState->nCurrSearchTreeLevel > 10)
 	//nBranchLit = Simple_DC_Heuristic(); //Don't Care - Choose the first unset variable found.
 	//else 
-	  nBranchLit = Simple_LSGB_Heuristic();
+	nBranchLit = Simple_LSGB_Heuristic();
 	
 	if(solver_polarity_presets_length > solver_polarity_presets_count) {
 		d7_printf3("solver_polarity_presets forcing choice point at level %d to take value %c\n", SimpleSmurfProblemState->nCurrSearchTreeLevel, solver_polarity_presets[SimpleSmurfProblemState->nCurrSearchTreeLevel]);
@@ -428,9 +429,9 @@ int ApplyInferenceToStates(int nBranchVar, bool bBVPolarity) {
 	for(int i = SimpleSmurfProblemState->arrVariableOccursInSmurf[nBranchVar][0]; i > 0; i--) {
 		//SEAN IDEA: Clauses are watched on literals, so only ~half of clauses are checked each time.
 		int nSmurfNumber = SimpleSmurfProblemState->arrVariableOccursInSmurf[nBranchVar][i];
+		//SmurfNumber 0 always has all it's variables watched. No big deal really.
+		if (nSmurfNumber < 0) continue; //Skip Non-Watched Variables
 		d7_printf3("    Checking Smurf %d (State %x)\n", nSmurfNumber, arrSmurfStates[nSmurfNumber]);
-		if ((nSmurfNumber >> 31) == 1) continue; //Skip Non-Watched Variables
-		//if ((nSmurfNumber & 0x40000000) == 0x40000000) continue;
 		if(arrSmurfStates[nSmurfNumber] == pTrueSimpleSmurfState) continue;
 		ret = ((TypeStateEntry *)arrSmurfStates[nSmurfNumber])->ApplyInferenceToState(nBranchVar, bBVPolarity, nSmurfNumber, arrSmurfStates);
 		if(ret == 0) return 0;
