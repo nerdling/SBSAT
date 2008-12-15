@@ -209,6 +209,7 @@ extern char s_expected_result[256];
 extern LONG64  max_solutions;
 
 extern char sHeuristic[10];
+extern char sRestartHeuristic[10];
 
 extern int BREAK_XORS;
 extern int SMURFS_SHARE_PATHS;

@@ -341,6 +341,8 @@ void FreeSmurfStateEntries() {
 	}
 }
 
+int use_poor_mans_vsids = 0;
+int *arrPMVSIDS = NULL;
 //This initializes a few things, then calls the main initialization
 //  function - ReadAllSmurfsIntoTable(nNumVars);
 int Init_SimpleSmurfSolver() {
@@ -351,14 +353,49 @@ int Init_SimpleSmurfSolver() {
 	simple_solver_reset_level = solver_reset_level-1;
 	
 	int nNumVars = InitSimpleVarMap();
-	/* Convert bdds to smurfs */
-	int ret = SOLV_UNKNOWN;// = CreateFunctions();
-	if (ret != SOLV_UNKNOWN) return ret;
 
 	if(*csv_trace_file)
 	  fd_csv_trace_file = fopen(csv_trace_file, "w");
+
+	//Set up heuristic
+	switch (sHeuristic[0]) {
+	 case 'n': Simple_Solver_Heuristic = Simple_DC_Heuristic; break;
+	 case 'j': Simple_Solver_Heuristic = Simple_LSGB_Heuristic; break;
+    case 'v': Simple_Solver_Heuristic = Simple_PMVSIDS_Heuristic; 
+		        arrPMVSIDS = (int *)ite_calloc(nNumVars, sizeof(int), 9, "arrPMVSIDS");
+		        use_poor_mans_vsids=1;
+		        break;
+	 default:
+		 dE_printf2("Error: Unknown heuristic type %c\n", sHeuristic[0]);
+		return SOLV_UNKNOWN;
+		break;
+	}
+
+	//Set up restarts
+	switch (sRestartHeuristic[0]) {
+	 case '0': use_RapidRestarts = 0; break;
+	 case 'm': use_RapidRestarts = 1;
+		        Simple_initRestart = MiniSAT_initRestart;
+		        Simple_nextRestart = MiniSAT_nextRestart; break;
+	 case 'p': use_RapidRestarts = 1;
+		        Simple_initRestart = PicoSAT_initRestart;
+		        Simple_nextRestart = PicoSAT_nextRestart; break;
+	 case 'l': use_RapidRestarts = 1;
+		        Simple_initRestart = Luby_initRestart;
+		        Simple_nextRestart = Luby_nextRestart; break;
+	 default:
+		 dE_printf2("Error: Unknown restart heuristic type %c\n", sRestartHeuristic[0]);
+		return SOLV_UNKNOWN;
+		break;
+	}
+
+	if(use_RapidRestarts) {
+		Simple_initRestart();
+		nNextRestart = Simple_nextRestart();
+	}
 	
-	ret = ReadAllSmurfsIntoTable(nNumVars);
+	//Compute SMURFS	
+	int ret = ReadAllSmurfsIntoTable(nNumVars);
 
 	return ret;
 }
@@ -383,6 +420,8 @@ void Final_SimpleSmurfSolver() {
 	FreeSmurfStack();
 	FreeSmurfSolverVars();
 
+	ite_free((void **)&arrPMVSIDS);
+	
 	ite_free((void **)&SimpleSmurfProblemState);
 	
 	ite_free((void **)&tempint);

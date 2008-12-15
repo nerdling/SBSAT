@@ -46,6 +46,7 @@ extern int print_independent_vars;
 void ctrl_c_proc(int x);
 
 char sHeuristic[10]="j";
+char sRestartHeuristic[10]="0";
 char cnfformat[256]="noqm";
 int  n_cnfformat=CNF_NOQM;
 char mp_heuristic[10]="SP";
@@ -353,6 +354,8 @@ t_opt options[] = {
 	   "Use Gaussian Elimination during search (1/0)"},
 { &use_SmurfWatchedLists, "", "watched-smurfs", P_INT, V(i:0, "0"),  V(i:'0', "0"), VAR_NORMAL, 0,
 	   "Allow dynamic Smurf association lists during search (1/0)"},
+{ sRestartHeuristic, "", "rapid-restarts", P_STRING, V(i:8,"8"), {"0"}, VAR_NORMAL, 0,
+		"Choose heuristic 0=None, m=MiniSAT, p=PicoSAT, l=Luby"},
 { &numSmurfWatchedVars, "", "num-watched-variables", P_INT, V(i:0, "0"),  V(i:'2', "2"), VAR_NORMAL, 0,
 	   "Number of variables per Smurf to watch if watched-smurfs is enabled"},
 { &USE_AUTARKY_SMURFS, "", "autarky-smurfs", P_INT, V(i:0,"0"), V(i:0,"0"), VAR_CHECK+VAR_DUMP, 0,

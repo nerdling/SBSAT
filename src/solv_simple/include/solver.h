@@ -45,6 +45,7 @@
 #include "fn_minmax.h"
 #include "display.h"
 #include "bb_gelim.h"
+#include "restarts.h"
 
 #define HEUR_MULT 10000
 #define SMURF_TABLE_SIZE 1000000
@@ -95,53 +96,5 @@ ITE_INLINE void Init_Solver_PreSmurfs_Hooks();
 ITE_INLINE int Init_Solver_MidSmurfs_Hooks(int nSmurfIndex, void **arrSmurfStates);
 ITE_INLINE int Init_Solver_PostSmurfs_Hooks(void **arrSmurfStates);
 ITE_INLINE void Final_Solver_Hooks();
-
-/*
-typedef int  (*fnCreateFunction)(int nFnId, BDDNode *, int type, int eqVble);
-typedef int  (*Save2Stack)(int id, void *one_stack);
-typedef int  (*RestoreFromStack)(void *one_stack);
-typedef int  (*UpdateAffectedFunction)(int nFnId);
-typedef int  (*UpdateAffectedFunction_Infer)(void *oneafs, int x);
-typedef int  (*HeurInit)();
-typedef int  (*HeurFree)();
-typedef int  (*HeurUpdate)();
-typedef int  (*HeurBacktrack)(int n);
-typedef int  (*HeurSelect)(int *atom, int *value);
-typedef void (*AffectedVarList)(int nFnId, int **arr1, int *num1, int **arr2, int *num2);
-typedef void (*CreateAFS)(int nFnId, int nVarId, int nAFSIndex);
-typedef void (*UpdateFunctionInfEnd)(int nFnId);
-typedef void (*HeurUpdateFunctionInfEnd)(int nFnId);
-typedef int  (*FnInit)();
-typedef int  (*HrInit)();
-typedef void (*HeurGetScores)(int nFnId);
-typedef void (*HeurTypeInit)();
-typedef void (*HeurUpdateLemma)(LemmaInfoStruct *pLemmaInfo);
-typedef void (*HeurUpdateLemmaSpace)(int *arr, int num);
-
-     
-extern int nNumFns;
-
-extern FnInit                  procFnInit[];
-extern fnCreateFunction       *procCreateFunction;
-extern Save2Stack             *procSave2Stack;
-extern RestoreFromStack       *procRestoreFromStack;
-extern UpdateAffectedFunction *procUpdateAffectedFunction;
-extern UpdateAffectedFunction_Infer *procUpdateAffectedFunction_Infer;
-extern UpdateFunctionInfEnd   *procUpdateFunctionInfEnd;
-extern AffectedVarList        *procAffectedVarList;
-extern CreateAFS              *procCreateAFS;
-
-extern HeurInit                procHeurInit;
-extern HeurFree                procHeurFree;
-extern HeurUpdate               procHeurUpdate;
-extern HeurSelect               procHeurSelect;
-extern HeurUpdateFunctionInfEnd *procHeurUpdateFunctionInfEnd;
-extern HeurBacktrack            procHeurBacktrack;
-extern HeurGetScores          *procHeurGetScores;
-extern HeurTypeInit           *procHeurTypeInit;
-extern HeurUpdateLemma         procHeurAddLemma;
-extern HeurUpdateLemma         procHeurRemoveLemma;
-extern HeurUpdateLemmaSpace    procHeurAddLemmaSpace;
-*/
 
 #endif

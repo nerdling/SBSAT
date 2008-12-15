@@ -48,7 +48,7 @@ libsolv_simple_a_AR = $(AR) $(ARFLAGS)
 libsolv_simple_a_LIBADD =
 am__objects_1 = solv_simple.$(OBJEXT) solv_simple_init.$(OBJEXT) \
 	vars_init.$(OBJEXT) vars_map.$(OBJEXT) display.$(OBJEXT) \
-	hooks.$(OBJEXT)
+	hooks.$(OBJEXT) restarts.$(OBJEXT)
 am_libsolv_simple_a_OBJECTS = $(am__objects_1)
 libsolv_simple_a_OBJECTS = $(am_libsolv_simple_a_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/include
@@ -181,7 +181,7 @@ top_srcdir = @top_srcdir@
 SUBDIRS = include fn_smurf fn_or fn_xor fn_minmax bb_gelim
 INCLUDES = -I$(top_srcdir)/include -I$(top_srcdir)/src/solv_simple/include
 sources = solv_simple.cc solv_simple_init.cc vars_init.cc vars_map.cc \
-display.cc hooks.cc
+display.cc hooks.cc restarts.cc
 
 
 #if MYLIBTOOL
@@ -239,6 +239,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/display.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hooks.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/restarts.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/solv_simple.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/solv_simple_init.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vars_init.Po@am__quote@

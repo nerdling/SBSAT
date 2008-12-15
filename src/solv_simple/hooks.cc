@@ -58,7 +58,7 @@ bool CheckSimpleLimits(double fStartTime) {
 		d2_printf2("is smaller than the number of choicepoints %ld\n", (long)ite_counters[NUM_CHOICE_POINTS]);
 		return 1;
 	}
-	
+
 	return 0;
 }
 
@@ -90,6 +90,10 @@ ITE_INLINE int ApplyInference_Hooks(int nBranchVar, bool bBVPolarity) {
 
 	if(print_search_dot) {
 
+	}
+
+	if(use_poor_mans_vsids) {
+		arrPMVSIDS[nBranchVar]++;
 	}
 	
 	if(use_XORGElim==1) //SEAN!!! Would prefer not to do this if variable is not in the GE Table.
@@ -140,7 +144,7 @@ ITE_INLINE int Backtrack_Hooks() {
 		//Solving limit hook
 		if(CheckSimpleLimits(fSimpleSolverStartTime)==1) return SOLV_LIMIT;
 	}
-	
+
 	return ret;	
 }
 

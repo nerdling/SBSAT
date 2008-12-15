@@ -35,8 +35,8 @@
  of the possibility of those damages.
 *********************************************************************/
 
-#ifndef HR_LSGB_H
-#define HR_LSGB_H
+#ifndef HR_SIMP_LSGB_H
+#define HR_SIMP_LSGB_H
 
 typedef struct {
 	double Pos;
@@ -110,9 +110,15 @@ struct MINMAXWeightStruct {
 
 //---------------------------------------------------------------------
 
+extern int (*Simple_Solver_Heuristic)();
+int Simple_DC_Heuristic();
+int Simple_LSGB_Heuristic();
+int Simple_PMVSIDS_Heuristic();
+extern int use_poor_mans_vsids;
 extern HeurScores *arrHeurScores;
 extern struct ORWeightStruct *arrORWeight;
 extern struct XORWeightStruct *arrXORWeight;
 extern struct MINMAXWeightStruct *arrMINMAXWeight;
+extern int *arrPMVSIDS;
 
-#endif // J_HEURISTIC_H
+#endif // HR_SIMP_LSGB_H
