@@ -473,9 +473,14 @@ void printBDD_ReduceSpecFunc(BDDNode *bdd, FILE *fout) {
 		}
 		fprintf(fout, ")");		
 	} else if(fn_type == PLAINXOR) {
+		int equ_var=0;
+		for (; !IS_TRUE_FALSE(bdd); bdd=bdd->thenCase);
+		equ_var = (bdd == true_ptr);
 		fprintf(fout, "xor(%s", s_name(bdd_vars[0]));
 		for(int y = 1; y < bdd_length; y++)
 		  fprintf(fout, ", %s", s_name(bdd_vars[y]));
+		if((equ_var == 1 && bdd_length%2 == 0)||
+			(equ_var == 0 && bdd_length%2 == 1)) fprintf(fout, ", T");
 		fprintf(fout, ")");		
 	} else if(fn_type == AND) {
 		int equ_var = isAND_EQU(bdd, bdd_vars, bdd_length);
@@ -559,7 +564,7 @@ printBDDFormat () {
 	fprintf(foutputfile, "p bdd %d %d\n", getNuminp(), nmbrFunctions);
 	for(int x = 0; x < nmbrFunctions; x++) {
 		printBDD_ReduceSpecFunc(functions[x], foutputfile);
-		fprintf(stdout, "\n");
+		fprintf(foutputfile, "\n");
 	}
 }
 

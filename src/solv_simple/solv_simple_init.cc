@@ -92,9 +92,12 @@ void Alloc_SmurfStack(int destination) {
 }
 
 void FreeSmurfStack() {
-	for(int i = 0; i < SimpleSmurfProblemState->nNumVars; i++)
-	  if(SimpleSmurfProblemState->arrSmurfStack[i].arrSmurfStates != NULL)
-		 ite_free((void **)&SimpleSmurfProblemState->arrSmurfStack[i].arrSmurfStates);
+	if(use_SmurfWatchedLists) ite_free((void **)&SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates);
+	else {
+		for(int i = 0; i < SimpleSmurfProblemState->nNumVars; i++)
+		  if(SimpleSmurfProblemState->arrSmurfStack[i].arrSmurfStates != NULL)
+			 ite_free((void **)&SimpleSmurfProblemState->arrSmurfStack[i].arrSmurfStates);
+	}
 	ite_free((void **)&SimpleSmurfProblemState->arrSmurfStack);
 }
 

@@ -525,10 +525,15 @@ void SmurfStates_Push(int destination) {
 		Alloc_SmurfStack(destination);
 	}
 
-	memcpy_ite(SimpleSmurfProblemState->arrSmurfStack[destination].arrSmurfStates,
-				  SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].arrSmurfStates,
-				  SimpleSmurfProblemState->nNumSmurfs*sizeof(void *));
-
+	if(use_SmurfWatchedLists) {
+		SimpleSmurfProblemState->arrSmurfStack[destination].arrSmurfStates = 
+		  SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].arrSmurfStates;
+	} else  {
+		memcpy_ite(SimpleSmurfProblemState->arrSmurfStack[destination].arrSmurfStates,
+					  SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].arrSmurfStates,
+					  SimpleSmurfProblemState->nNumSmurfs*sizeof(void *));
+	}
+		
 //	for(int i = 0; i < SimpleSmurfProblemState->nNumSmurfs; i++) {
 //		SimpleSmurfProblemState->arrSmurfStack[destination].arrSmurfStates[i] = 
 //		  SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].arrSmurfStates[i];

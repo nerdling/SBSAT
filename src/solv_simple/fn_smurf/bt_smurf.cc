@@ -67,7 +67,8 @@ int ApplyInferenceToWatchedSmurf(int nBranchVar, bool bBVPolarity, int nSmurfNum
 	//SEAN!!! inferences ahead of current position may be inferred here - changes the functionality a little. ???
 
 	SmurfStateEntry *pSmurfState = (SmurfStateEntry *)arrSmurfStates[nSmurfNumber];
-
+	SmurfStateEntry *pTopSmurf = pSmurfState;
+	
 	do {
 		//The abs() is necessary because old choicepoints are negative
 		int nInfVar = pSmurfState->nTransitionVar;
@@ -109,7 +110,8 @@ int ApplyInferenceToWatchedSmurf(int nBranchVar, bool bBVPolarity, int nSmurfNum
 			
 			d7_printf3("      Smurf %d transitioned to state %x\n", nSmurfNumber, pNextState);
 
-			arrSmurfStates[nSmurfNumber] = pNextState;
+			//arrSmurfStates[nSmurfNumber] = pNextState;
+			pTopSmurf = (SmurfStateEntry *)pNextState;
 			if(((TypeStateEntry *)pNextState)->cType == FN_SMURF || ((TypeStateEntry *)pNextState)->cType == FN_WATCHED_SMURF) {
 				//Record the transition.
 				pSmurfState = (SmurfStateEntry *)pNextState;
@@ -121,8 +123,10 @@ int ApplyInferenceToWatchedSmurf(int nBranchVar, bool bBVPolarity, int nSmurfNum
 		}
 	} while (pSmurfState != NULL && pSmurfState!=(SmurfStateEntry *)pTrueSimpleSmurfState);
 
-	if(arrSmurfStates[nSmurfNumber] == pTrueSimpleSmurfState) {
-		SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumSmurfsSatisfied++;		  
+//	if(arrSmurfStates[nSmurfNumber] == pTrueSimpleSmurfState) {
+//		SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumSmurfsSatisfied++;
+	if(pTopSmurf == pTrueSimpleSmurfState) {
+		d9_printf2("      Smurf %d transitioned to True\n", nSmurfNumber);
 	} else if(((TypeStateEntry *)arrSmurfStates[nSmurfNumber])->cType != FN_WATCHED_SMURF) {
 		//This doesn't make sense unless all special smurfs are watched.
 		if(((TypeStateEntry *)arrSmurfStates[nSmurfNumber])->ApplyInferenceToState(nBranchVar, bBVPolarity, nSmurfNumber, arrSmurfStates) == 0)
@@ -138,10 +142,19 @@ int ApplyInferenceToWatchedSmurf(int nBranchVar, bool bBVPolarity, int nSmurfNum
 		int nNumRevListVars = SimpleSmurfProblemState->arrReverseOccurenceList[nSmurfNumber][0].var;
 		int nNumSmurfVars = 0;
 
+		d9_printf3("      Current watches for Smurf %d (%d):", nSmurfNumber, nInfQueueHead);
 		for(int x = 1; x <= nNumRevListVars; x++) {
 			int nInfVar = SimpleSmurfProblemState->arrReverseOccurenceList[nSmurfNumber][x].var;
 			if(abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[nInfVar]) >= nInfQueueHead) nNumSmurfVars++;
+			D_9(
+			  if((*SimpleSmurfProblemState->arrReverseOccurenceList[nSmurfNumber][x].loc)>=0) {
+				  d9_printf3("*%d(%d) ", nInfVar, abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[nInfVar]));
+			  } else {
+				  d9_printf3("%d(%d) ", nInfVar, abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[nInfVar]));
+			  }
+			);
 		}
+		d9_printf1("\n");
 		
 		if(nNumSmurfVars >= numSmurfWatchedVars) {
 			nNumWatchedNeeded_NotSet = numSmurfWatchedVars;
@@ -157,19 +170,19 @@ int ApplyInferenceToWatchedSmurf(int nBranchVar, bool bBVPolarity, int nSmurfNum
 				//Variable has been assigned
 				if((*SimpleSmurfProblemState->arrReverseOccurenceList[nSmurfNumber][x].loc)<0) {
 					(*SimpleSmurfProblemState->arrReverseOccurenceList[nSmurfNumber][x].loc) = -(*SimpleSmurfProblemState->arrReverseOccurenceList[nSmurfNumber][x].loc);
-					d9_printf2("      Adding watch on variable %d\n", nInfVar);
+					d9_printf2("      Adding watch on fixed variable %d\n", nInfVar);
 				}
 				nNumWatchedNeeded_Set--;
 			} else if(abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[nInfVar]) >= nInfQueueHead && (nNumWatchedNeeded_NotSet > 0)) {
 				//Variable has not been assigned
 				if((*SimpleSmurfProblemState->arrReverseOccurenceList[nSmurfNumber][x].loc)<0) {
 					(*SimpleSmurfProblemState->arrReverseOccurenceList[nSmurfNumber][x].loc) = -(*SimpleSmurfProblemState->arrReverseOccurenceList[nSmurfNumber][x].loc);
-					d9_printf2("      Adding watch on variable %d\n", nInfVar);
+					d9_printf2("      Adding watch on free variable %d\n", nInfVar);
 				}
 				nNumWatchedNeeded_NotSet--;
 			} else if((*SimpleSmurfProblemState->arrReverseOccurenceList[nSmurfNumber][x].loc)>0) {
 				(*SimpleSmurfProblemState->arrReverseOccurenceList[nSmurfNumber][x].loc) = -(*SimpleSmurfProblemState->arrReverseOccurenceList[nSmurfNumber][x].loc);
-				d9_printf2("      Removing watch on variable %d\n", nInfVar);
+				d9_printf2("      Removing watch on fixed variable %d\n", nInfVar);
 			}
 		}
 	}
