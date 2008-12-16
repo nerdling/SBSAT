@@ -367,7 +367,7 @@ int Init_SimpleSmurfSolver() {
 		        break;
 	 default:
 		 dE_printf2("Error: Unknown heuristic type %c\n", sHeuristic[0]);
-		return SOLV_UNKNOWN;
+		exit(0);
 		break;
 	}
 
@@ -385,7 +385,7 @@ int Init_SimpleSmurfSolver() {
 		        Simple_nextRestart = Luby_nextRestart; break;
 	 default:
 		 dE_printf2("Error: Unknown restart heuristic type %c\n", sRestartHeuristic[0]);
-		return SOLV_UNKNOWN;
+		exit(0);
 		break;
 	}
 
