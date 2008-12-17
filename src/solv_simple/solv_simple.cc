@@ -506,7 +506,9 @@ int ApplyInferenceToStates(int nBranchVar, bool bBVPolarity) {
 	int i = SimpleSmurfProblemState->arrVariableOccursInSmurf[nBranchVar][0];
 	int *arrVarOccursInSmurf = &(SimpleSmurfProblemState->arrVariableOccursInSmurf[nBranchVar][i]);
 	for(; i > 0; i--) {
+//	for(int i = SimpleSmurfProblemState->arrVariableOccursInSmurf[nBranchVar][0]; i > 0; i--) {
 		int nSmurfNumber = *(arrVarOccursInSmurf--);
+//		int nSmurfNumber = SimpleSmurfProblemState->arrVariableOccursInSmurf[nBranchVar][i];
 		//SmurfNumber 0 always has all it's variables watched. No big deal really.
 		if (nSmurfNumber < 0) continue; //Skip Non-Watched Variables
 		d7_printf3("    Checking Smurf %d (State %x)\n", nSmurfNumber, arrSmurfStates[nSmurfNumber]);
