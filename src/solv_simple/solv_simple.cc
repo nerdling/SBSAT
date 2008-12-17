@@ -502,11 +502,11 @@ int ApplyInferenceToStates(int nBranchVar, bool bBVPolarity) {
 	
 	int ret = ApplyInference_Hooks(nBranchVar, bBVPolarity);
 	if(ret == 0) return 0;
-	
 	void **arrSmurfStates = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].arrSmurfStates;
-	for(int i = SimpleSmurfProblemState->arrVariableOccursInSmurf[nBranchVar][0]; i > 0; i--) {
-		//SEAN IDEA: Clauses are watched on literals, so only ~half of clauses are checked each time.
-		int nSmurfNumber = SimpleSmurfProblemState->arrVariableOccursInSmurf[nBranchVar][i];
+	int i = SimpleSmurfProblemState->arrVariableOccursInSmurf[nBranchVar][0];
+	int *arrVarOccursInSmurf = &(SimpleSmurfProblemState->arrVariableOccursInSmurf[nBranchVar][i]);
+	for(; i > 0; i--) {
+		int nSmurfNumber = *(arrVarOccursInSmurf--);
 		//SmurfNumber 0 always has all it's variables watched. No big deal really.
 		if (nSmurfNumber < 0) continue; //Skip Non-Watched Variables
 		d7_printf3("    Checking Smurf %d (State %x)\n", nSmurfNumber, arrSmurfStates[nSmurfNumber]);

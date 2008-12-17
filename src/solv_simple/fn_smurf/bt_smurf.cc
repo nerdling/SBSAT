@@ -143,6 +143,7 @@ int ApplyInferenceToWatchedSmurf(int nBranchVar, bool bBVPolarity, int nSmurfNum
 		int nNumSmurfVars = 0;
 
 		d9_printf3("      Current watches for Smurf %d (%d):", nSmurfNumber, nInfQueueHead);
+
 		for(int x = 1; x <= nNumRevListVars; x++) {
 			int nInfVar = SimpleSmurfProblemState->arrReverseOccurenceList[nSmurfNumber][x].var;
 			if(abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[nInfVar]) >= nInfQueueHead) nNumSmurfVars++;
@@ -163,7 +164,7 @@ int ApplyInferenceToWatchedSmurf(int nBranchVar, bool bBVPolarity, int nSmurfNum
 			nNumWatchedNeeded_NotSet = nNumSmurfVars;
 			nNumWatchedNeeded_Set = numSmurfWatchedVars - nNumSmurfVars;
 		}
-		
+
 		for(int x = 1; x <= nNumRevListVars; x++) {
 			int nInfVar = SimpleSmurfProblemState->arrReverseOccurenceList[nSmurfNumber][x].var;
 			if(abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[nInfVar]) < nInfQueueHead && (nNumWatchedNeeded_Set > 0)) {
