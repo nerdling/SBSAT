@@ -407,7 +407,7 @@ int Simple_DC_Heuristic() { //Simple Don't Care Heuristic
 			}
 			if (nBestVble > 0) {
 				SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nVarChoiceCurrLevel = level;
-				return -nBestVble;
+				return nBestVble;
 			}
 		}
 	}
@@ -427,7 +427,7 @@ int Simple_DC_Heuristic() { //Simple Don't Care Heuristic
 	
 	SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nVarChoiceCurrLevel = nVarChoiceLevelsNum;
 	assert(nBestVble>0 && nBestVble<SimpleSmurfProblemState->nNumVars);
-   return -nBestVble;
+   return nBestVble;
 }
 
 ITE_INLINE

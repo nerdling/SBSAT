@@ -5,16 +5,18 @@
 ITE_INLINE
 int ApplyInferenceToSmurf(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates) {
 	SmurfStateEntry *pSmurfState = (SmurfStateEntry *)arrSmurfStates[nSmurfNumber];
+	SmurfStateEntry *pTopState = pSmurfState;
+	void *pNextState;
 	do {
 		if(pSmurfState->nTransitionVar < nBranchVar)
 		  pSmurfState = (SmurfStateEntry *)pSmurfState->pNextVarInThisStateGT;
 		else if(pSmurfState->nTransitionVar > nBranchVar)
 		  pSmurfState = (SmurfStateEntry *)pSmurfState->pNextVarInThisStateLT;
 		else {
+			pTopState->nLemmaLiteral = bBVPolarity?-nBranchVar:nBranchVar;
 			//(pSmurfState->nTransitionVar == nBranchVar) {
 			//Follow this transition and apply all inferences found.
 //			void *pNextState = bBVPolarity?pSmurfState->pVarIsTrueTransition:pSmurfState->pVarIsFalseTransition;
-			void *pNextState;
 			if(bBVPolarity) {
 				if(pSmurfState->pVarIsTrueTransition == NULL)
 				  pSmurfState->pVarIsTrueTransition = ReadSmurfStateIntoTable(set_variable(pSmurfState->pSmurfBDD, arrSimpleSolver2IteVarMap[nBranchVar], 1), NULL, 0);
@@ -26,36 +28,63 @@ int ApplyInferenceToSmurf(int nBranchVar, bool bBVPolarity, int nSmurfNumber, vo
 			}
 			void *pPrevState = NULL;
 			while(pNextState!=NULL && ((TypeStateEntry *)pNextState)->cType == FN_INFERENCE) {
+	
+				D_7(
+					 SmurfStateEntry *pTempState = pTopState;
+					 d7_printf2("        Lemma: %d", (((InferenceStateEntry *)pNextState)->bPolarity > 0)?((InferenceStateEntry *)pNextState)->nTransitionVar:-((InferenceStateEntry *)pNextState)->nTransitionVar);
+//					 fprintf(foutputfile, "%d", (((InferenceStateEntry *)pNextState)->bPolarity > 0)?((InferenceStateEntry *)pNextState)->nTransitionVar:-((InferenceStateEntry *)pNextState)->nTransitionVar);
+					 int trues = ((InferenceStateEntry *)pNextState)->bPolarity>0?1:0;
+					 while(pTempState!=NULL) {
+						 int nInfLiteral = pTempState->nLemmaLiteral;
+						 if(nInfLiteral>0) trues = 1;
+						 d7_printf3(" %d(%x)", nInfLiteral, pTempState); //Negate literals in the path.
+//						 fprintf(foutputfile, " %d", nInfLiteral); //Negate literals in the path.
+						 pTempState = (SmurfStateEntry *)pTempState->pPreviousState;
+					 }
+//					 fprintf(foutputfile, " 0\n");
+					 d7_printf1("\n");
+					 //if(trues == 0) fprintf(stderr, "EEK\n");
+					 );
+				
+
 				if(EnqueueInference(((InferenceStateEntry *)pNextState)->nTransitionVar, ((InferenceStateEntry *)pNextState)->bPolarity > 0) == 0) return 0;
 				//Follow the transtion to the next SmurfState
+				
 				pPrevState = pNextState;
 				pNextState = ((InferenceStateEntry *)pNextState)->pVarTransition;
 			}
 
 			if(pNextState == NULL) {
 				assert(((TypeStateEntry *)pPrevState)->cType == FN_INFERENCE);
-				((InferenceStateEntry *)pPrevState)->pVarTransition = ReadSmurfStateIntoTable(
+				((InferenceStateEntry *)pPrevState)->pVarTransition = pNextState = ReadSmurfStateIntoTable(
 																						    set_variable(((InferenceStateEntry *)pPrevState)->pInferenceBDD,
 																							 arrSimpleSolver2IteVarMap[((InferenceStateEntry *)pPrevState)->nTransitionVar],
 																							 ((InferenceStateEntry *)pPrevState)->bPolarity),
-																							 NULL,
-																							 0);
-				pNextState = ((void *)((InferenceStateEntry *)pPrevState)->pVarTransition);
+																							 NULL, 0);
+				//pNextState = ((void *)((InferenceStateEntry *)pPrevState)->pVarTransition);
 			}
 			
 			//Record the transition.
+			if(((SmurfStateEntry *)pNextState) == pTrueSimpleSmurfState) {
+				SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumSmurfsSatisfied++;
+			} else if(pNextState == arrSmurfStates[((TypeStateEntry *)pNextState)->pStateOwner]) {
+				d7_printf3("      State %x currently owned by Smurf %d, transitioning to True\n", pNextState, ((TypeStateEntry *)pNextState)->pStateOwner);
+				pNextState = pTrueSimpleSmurfState;
+			} else {
+				((TypeStateEntry *)pNextState)->pPreviousState = pTopState;
+				((TypeStateEntry *)pNextState)->pStateOwner = nSmurfNumber;
+			}
+
 			arrSmurfStates[nSmurfNumber] = pNextState;
 			break;
 		}
 	} while (pSmurfState != NULL);
 
-	if(arrSmurfStates[nSmurfNumber] == pTrueSimpleSmurfState)
-	  SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumSmurfsSatisfied++;	  
-	
 	int ret = ApplyInferenceToSmurf_Hooks(nBranchVar, bBVPolarity, nSmurfNumber, arrSmurfStates);
 	
 	d7_printf3("      Smurf %d transitioned to state %x\n", nSmurfNumber, arrSmurfStates[nSmurfNumber]);
-
+	d7_printf3("      Smurf %d previously was %x\n", nSmurfNumber, ((SmurfStateEntry *)arrSmurfStates[nSmurfNumber])->pPreviousState);
+	
 	return ret;
 }
 

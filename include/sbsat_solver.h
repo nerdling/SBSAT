@@ -74,6 +74,9 @@ struct TypeStateEntry {
 	char cType;
 	bool visited;
 	int (*ApplyInferenceToState)(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
+	int pStateOwner;
+	void *pPreviousState; //Used during lemma creation.
+	int nLemmaLiteral; //Used during lemma creation.
 };
 
 //Structures and functions for the simpleSolver
@@ -82,6 +85,9 @@ struct SmurfStateEntry {
 	char cType; //FN_SMURF || FN_WATCHED_SMURF
 	bool visited;
 	int (*ApplyInferenceToState)(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
+	int pStateOwner;
+	void *pPreviousState; //Used during lemma creation.
+	int nLemmaLiteral; //Used during lemma creation.
 	int nTransitionVar;
 	double fHeurWghtofTrueTransition;
 	double fHeurWghtofFalseTransition;
@@ -119,6 +125,9 @@ struct ORStateEntry {
 	char cType; //FN_OR
 	bool visited; //Used for displaying the smurfs.
 	int (*ApplyInferenceToState)(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
+	int pStateOwner;
+	void *pPreviousState; //Used during lemma creation.
+	int nLemmaLiteral; //Used during lemma creation.
 	int nSize;
 	int *pnTransitionVars;
 	bool *bPolarity;
@@ -128,6 +137,9 @@ struct ORCounterStateEntry {
 	char cType; //FN_OR_COUNTER
 	bool visited; //Used for displaying the smurfs.
 	int (*ApplyInferenceToState)(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
+	int pStateOwner;
+	void *pPreviousState; //Used during lemma creation.
+	int nLemmaLiteral; //Used during lemma creation.
 	int nSize;
 	void *pTransition;
 	ORStateEntry *pORState;	
@@ -137,6 +149,9 @@ struct XORStateEntry {
 	char cType; //FN_XOR
 	bool visited; //Used for displaying the smurfs.
 	int (*ApplyInferenceToState)(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
+	int pStateOwner;
+	void *pPreviousState; //Used during lemma creation.
+	int nLemmaLiteral; //Used during lemma creation.
 	int nSize;
 	bool bParity;
 	int *pnTransitionVars;
@@ -146,6 +161,9 @@ struct XORCounterStateEntry {
 	char cType; //FN_XOR_COUNTER
 	bool visited; //Used for displaying the smurfs.
 	int (*ApplyInferenceToState)(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
+	int pStateOwner;
+	void *pPreviousState; //Used during lemma creation.
+	int nLemmaLiteral; //Used during lemma creation.
 	int nSize;
 	void *pTransition;
 	XORStateEntry *pXORState; //For heuristic purposes
@@ -155,6 +173,9 @@ struct XORGElimStateEntry {
 	char cType; //FN_XOR_GELIM
 	bool visited; //Used for displaying the smurfs.
 	int (*ApplyInferenceToState)(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
+	int pStateOwner;
+	void *pPreviousState; //Used during lemma creation.
+	int nLemmaLiteral; //Used during lemma creation.
 	int nSize;
 	void *pVector;
 	int *pnTransitionVars;
@@ -175,6 +196,9 @@ struct MINMAXCounterStateEntry {
 	char cType; //FN_MINMAX_COUNTER
 	bool visited; //Used for displaying the smurfs.
 	int (*ApplyInferenceToState)(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
+	int pStateOwner;
+	void *pPreviousState; //Used during lemma creation.
+	int nLemmaLiteral; //Used during lemma creation.
 	int nVarsLeft;
 	int nNumTrue; //Dynamic
 	void *pTransition;
