@@ -35,30 +35,43 @@
  of the possibility of those damages.
 *********************************************************************/
 
-#ifndef BB_GELIM_S_H
-#define BB_GELIM_S_H
+#ifndef BB_LEMMAS_S_H
+#define BB_LEMMAS_S_H
 
-#ifdef SBSAT_64BIT
-#define VecType uint64_t
-#define BITS_64
-#else
-#define VecType uint32_t
-#endif
+//Taken from PicoSAT
+typedef signed char Val;   /* TRUE, UNDEF, FALSE */
+typedef struct Lit Lit;    /* literal */
+typedef struct Cls Cls;    /* clause */
+struct Lit {
+	Val val;
+};
 
-void initXORGElimTable(int nVars);
-void allocXORGElimTable(XORGElimTableStruct *x, int no_funcs);
-void deleteXORGElimTable(XORGElimTableStruct *x);
-void pushXORGElimTable(XORGElimTableStruct *curr, XORGElimTableStruct *dest);
+struct Cls {
+	unsigned size;
+	unsigned learned:1;
+	unsigned collect:1;
+	unsigned connected:1;
+	unsigned locked:1;
+	unsigned fixed:1;
+	unsigned used:1;
+/*#ifdef TRACE
+	unsigned core:1;
+	unsigned collected:1;
+#endif*/
+	Cls *next[2];
+	Lit *lits[2];
+};
 
-void *createXORGElimTableVector(int nvars, int *varlist, bool bParity);
+//
 
-int addRowXORGElimTable(XORGElimTableStruct *x, void *pVector, int nVars, int *pnVarList);
-int ApplyInferenceToXORGElimTable(XORGElimTableStruct *x, int nVar, bool bValue);
+typedef struct SimpleLemma SimpleLemma;  /* LemmaStruct */
 
-void LSGBXORGElimTableGetHeurScore(XORGElimTableStruct *x);
+struct SimpleLemma {
+	Cls *lits;
+	int max_size;
+};
 
-void printFrameSize(XORGElimTableStruct *x);
-void printLinearN(XORGElimTableStruct *x);
-void printLinear(XORGElimTableStruct *x);
+void create_clause_from_Smurf(int nInfVar, int nNumVarsInSmurf, SmurfStateEntry *pSmurfState,
+										Cls *clause, int *lits_max_size);
 
 #endif

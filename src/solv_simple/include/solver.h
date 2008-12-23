@@ -38,6 +38,7 @@
 #ifndef SIMPLE_SOLVER_H
 #define SIMPLE_SOLVER_H
 
+#include "smurfs.h"
 #include "hr_lsgb.h"
 #include "fn_smurf.h"
 #include "fn_or.h"
@@ -45,12 +46,38 @@
 #include "fn_minmax.h"
 #include "display.h"
 #include "bb_gelim.h"
+#include "bb_lemmas.h"
 #include "restarts.h"
 
 #define HEUR_MULT 10000
 #define SMURF_TABLE_SIZE 1000000
 
 #define SMURF_STATES_INCREASE_SIZE 9
+
+typedef struct ProblemState {
+	//Static
+	int nNumSmurfs;
+	int nNumVars;
+	int nNumSmurfStateEntries;
+	SmurfStatesTableStruct *arrSmurfStatesTableHead; //Pointer to the table of all smurf states
+	SmurfStatesTableStruct *arrCurrSmurfStates;      //Pointer to the current table of smurf states
+	void *pSmurfStatesTableTail;                     //Pointer to the next open block of the arrSmurfStatesTable
+	int **arrVariableOccursInSmurf; //Pointer to lists of Smurfs, indexed by variable number, that contain that variable
+	                                //Max size would be nNumSmurfs * nNumVars, but this would only happen if every
+	                                //Smurf contained every variable. Each list is terminated by a -1 element
+	int_p **arrReverseOccurenceList;//Pointer to lists of pointers into arrVariableOccursInSmurf.
+	                                //arrROL[x][z].loc points to the location of arrVOIS[y][?] = x
+	                                //arrROL[x][z].var = y
+	
+	// Dynamic
+	int nCurrSearchTreeLevel;
+	double *arrPosVarHeurWghts;       //Pointer to array of size nNumVars
+	double *arrNegVarHeurWghts;       //Pointer to array of size nNumVars
+	int *arrInferenceQueue;           //Pointer to array of size nNumVars (dynamically indexed by arrSmurfStack[level].nNumFreeVars
+	int *arrInferenceDeclaredAtLevel; //Pointer to array of size nNumVars
+	SmurfStack *arrSmurfStack;        //Pointer to array of size nNumVars
+	SimpleLemma *arrInferenceLemmas;  //Pointer to array of size nNumVars
+} ProblemState;
 
 extern ProblemState *SimpleSmurfProblemState;
 extern SmurfStateEntry *pTrueSimpleSmurfState;

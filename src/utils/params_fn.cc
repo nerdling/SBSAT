@@ -42,7 +42,7 @@ extern int term_width;
 int params_current_src = 0;
 
 #ifndef COPYRIGHT
-#define COPYRIGHT "Copyright (C) 1999-2007, University of Cincinnati.  All rights reserved."
+#define COPYRIGHT "Copyright (C) 1999-2009, University of Cincinnati.  All rights reserved."
 #endif
 
 #ifndef AUTHORS
@@ -50,7 +50,7 @@ int params_current_src = 0;
 #endif
 
 #ifndef BUGS_EMAIL
-#define BUGS_EMAIL "<franco@gauss.ececs.uc.edu>, <mkouril@ececs.uc.edu> or <fett@gauss.ececs.uc.edu>"
+#define BUGS_EMAIL "weaversa@gmail.com"
 #endif
 
 #ifndef DESCRIPTION
@@ -804,7 +804,7 @@ show_help()
          }
       }
    }
-   fprintf(stdhelp, "\nReport bugs to %s.\n", BUGS_EMAIL);
+   fprintf(stdhelp, "\nPlease report bugs to %s.\n", BUGS_EMAIL);
    exit(0);  
 }
 

@@ -21,7 +21,7 @@ INCL=""
 AC_ARG_ENABLE(optimization, 
 [  --enable-optimization   Turn on compiler optimization (default=no)],
     [if eval "test x$enable_optimization = xyes"; then
-        MYCXXFLAGS="-O3 -DNDEBUG -ffast-math -fno-strict-aliasing -funroll-all-loops -fno-peephole -fexpensive-optimizations -fomit-frame-pointer "
+        MYCXXFLAGS="-O3 -DNDEBUG -ffast-math -fno-strict-aliasing -funroll-all-loops -fno-peephole -fexpensive-optimizations -fomit-frame-pointer -finline-limit=10000"
 	MYCCFLAGS="-xO5 -KPIC -dalign -native"
     fi])
 
@@ -210,7 +210,7 @@ AM_CONDITIONAL(SBSAT_STATIC, test x$sbsat_static = xtrue)
 # [LIBS="${LIBS} -L${withval}"])
 
 CXXFLAGS="${CXXFLAGS} ${MYCXXFLAGS} ${INCL}"
-CFLAGS="${CXXFLAGS} ${MYCXXFLAGS} ${INCL}"
+CFLAGS="${CXXFLAGS}"
 CCFLAGS="${CCFLAGS} ${MYCCFLAGS} ${INCL}"
 
 cvsbuild=false

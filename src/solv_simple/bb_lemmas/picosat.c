@@ -28,7 +28,12 @@ IN THE SOFTWARE.
 #include <ctype.h>
 #include <stdarg.h>
 
+#define bool char
+#define BDDNode void
+#define int_p void
+
 #include "picosat.h"
+#include "smurfs.h"
 
 /* By default code for 'all different constraints' is disabled, since 'NADC'
  * is defined.
@@ -426,7 +431,10 @@ struct Cls
   unsigned collected:1;
 #endif
   Cls *next[2];
-  Lit *lits[2];
+	union {
+		Lit *lits[2];
+		Lit **lits_ph;
+	};
 };
 
 #ifdef TRACE
@@ -1025,20 +1033,6 @@ lit2int (Lit * l)
 }
 
 #if !defined(NDEBUG) || defined(LOGGING)
-
-static void create_clause(int *lits, int lits_size, Cls *clause, int *lits_max_size) {
-	int clsidx = 0;
-	Lit ** p;
-	
-	if(lits_size > (*lits_max_size)) {
-		clause->lits[0] = (Lit *)realloc(clause->lits, lits_size * sizeof(Lit *));
-		(*lits_max_size) = lits_size;
-	}
-	clause->size = lits_size;
-	Lit ** eol = end_of_lits(clause);
-	for(p = clause->lits; p < eol; p++)
-	  (*p) = int2lit(lits[clsidx++]);
-}
 
 static void
 dumplits (Lit ** lits, Lit ** eol) {
@@ -3714,24 +3708,22 @@ prop2 (Lit * this)
       other = *--l;
       tmp = other->val;
 
-      if (tmp == TRUE)
-	{
+      if (tmp == TRUE) {
 #ifdef STATS
-	  othertrue++;
-	  othertrue2++;
-	  if (LIT2VAR (other)->level < level)
-	    othertrue2u++;
+			othertrue++;
+			othertrue2++;
+			if (LIT2VAR (other)->level < level)
+			  othertrue2u++;
 #endif
-	  continue;
-	}
-
-      if (tmp == FALSE)
-	{
-	  assert (!conflict);
-	  conflict = setcimpl (this, other);
-	  break;
-	}
-
+			continue;
+		}
+		 
+		 if (tmp == FALSE) {
+			 assert (!conflict);
+			 conflict = setcimpl (this, other);
+			 break;
+		 }
+		 
       assign_forced (other, LIT2REASON (NOTLIT(this)));
     }
 #else
@@ -5633,6 +5625,41 @@ decide (void)
   decisions++;
 }
 
+void create_clause_from_Smurf(int nInfVar, int nNumVarsInSmurf, SmurfStateEntry *pSmurfState,
+												 Cls *clause, int *lits_max_size) {
+	Lit ** p;
+	
+	if(nNumVarsInSmurf > (*lits_max_size)) {
+		clause->lits_ph = realloc(clause->lits_ph, nNumVarsInSmurf*sizeof(Lit *));
+		(*lits_max_size) = nNumVarsInSmurf;
+	}
+	
+	p = clause->lits;
+	(*p++) = int2lit(nInfVar);
+	int nNumVars = 1;
+	while(pSmurfState != NULL) {
+		(*p++) = int2lit(pSmurfState->nLemmaLiteral);
+		pSmurfState = (SmurfStateEntry *)pSmurfState->pPreviousState;
+		nNumVars++;
+	}
+	clause->size = nNumVars;
+}
+
+static void create_clause(int *lits, int lits_size, Cls *clause, int *lits_max_size) {
+	int clsidx = 0;
+	Lit ** p;
+
+	if(lits_size > (*lits_max_size)) {
+		clause->lits_ph = realloc(clause->lits_ph, lits_size*sizeof(Lit *));
+		(*lits_max_size) = lits_size;
+	}
+
+	clause->size = lits_size;
+	Lit ** eol = end_of_lits(clause);
+	for(p = clause->lits; p < eol; p++)
+	  (*p) = int2lit(lits[clsidx++]);
+}
+
 static int picosat_apply_inference (int var_to_assign, Cls *reason) {
 	//SEAN!!!
 	
@@ -5640,9 +5667,14 @@ static int picosat_apply_inference (int var_to_assign, Cls *reason) {
 	//lit = import_lit (int_lit);
 	lit = int2lit(var_to_assign);
 	if(lit->val != UNDEF) {
-		fprintf(stdout, "Skipping literal %d already assigned\n", var_to_assign);
-		fprintf(stdout, "1level=%d\n", level);
-		return level;
+		if(lit->val == TRUE) {
+			fprintf(stdout, "Skipping literal %d already assigned\n", var_to_assign);
+			fprintf(stdout, "1level=%d\n", level);
+			return level;
+		} else {
+			conflict = reason;
+			goto CONTIN;
+		}
 	}
 	
 	if(reason == NULL) assign_decision (lit);
@@ -5708,9 +5740,14 @@ sat (int l)
 
 	//SEAN!!!
 
-	int lits_max_size = 2;
-	Cls *clause = (Cls *)calloc(1, sizeof(Cls));
-	clause->lits[0] = (Lit *)calloc(lits_max_size, sizeof(Lit *));
+	int lits_max_size1 = 2;
+	Cls *clause1 = (Cls *)calloc(1, sizeof(Cls));
+	clause1->lits_ph = calloc(lits_max_size1, sizeof(Lit *));
+
+	int lits_max_size2 = 2;
+	Cls *clause2 = (Cls *)calloc(1, sizeof(Cls));
+	clause2->lits_ph = calloc(lits_max_size2, sizeof(Lit *));
+	
 	int *lits = (int *)calloc(100, sizeof(int));
 	
 	int ret = 0;
@@ -5719,23 +5756,30 @@ sat (int l)
 	ret = picosat_apply_inference(-1, NULL);
 	fprintf(stdout, "ret = %d\n", ret);
 
-	lits[0]=1;
-	lits[1]=2;
-	create_clause(lits, 2, clause, &lits_max_size);
 	
-	ret = picosat_apply_inference(2, clause);
+	ret = picosat_apply_inference(2, 0);
 	fprintf(stdout, "ret = %d\n", ret);
 	ret = picosat_apply_inference(2, 0);
 	fprintf(stdout, "ret = %d\n", ret);
+
 	ret = picosat_apply_inference(3, NULL);
 	fprintf(stdout, "ret = %d\n", ret);
 
-	lits[0]=-1;
+	lits[0]=-3;
 	lits[1]=-5;
-	create_clause(lits, 2, clause, &lits_max_size);
-	ret = picosat_apply_inference(-5, clause);
+	lits[2]=1;
+	create_clause(lits, 3, clause2, &lits_max_size2);
+	
+	ret = picosat_apply_inference(-5, clause2);
 	fprintf(stdout, "ret = %d\n", ret);
 
+	//lits[0]=1;
+	lits[0]=-3;
+	lits[1]=5;
+	create_clause(lits, 2, clause1, &lits_max_size1);
+
+	ret = picosat_apply_inference(5, clause1);
+	fprintf(stdout, "ret = %d\n", ret);
 	
 	ret = picosat_apply_inference(3, NULL);
 	fprintf(stdout, "ret = %d\n", ret);

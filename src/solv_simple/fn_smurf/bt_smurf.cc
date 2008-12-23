@@ -28,26 +28,31 @@ int ApplyInferenceToSmurf(int nBranchVar, bool bBVPolarity, int nSmurfNumber, vo
 			}
 			void *pPrevState = NULL;
 			while(pNextState!=NULL && ((TypeStateEntry *)pNextState)->cType == FN_INFERENCE) {
-	
+
+				//SimpleSmurfProblemState->arrInferenceLemmas[nInfLiteral].lits;
+				//SimpleSmurfProblemState->arrInferenceLemmas[nInfLiteral].max_size;
+
+				int nInfVar = ((InferenceStateEntry *)pNextState)->nTransitionVar;
+				
 				D_7(
 					 SmurfStateEntry *pTempState = pTopState;
-					 d7_printf2("        Lemma: %d", (((InferenceStateEntry *)pNextState)->bPolarity > 0)?((InferenceStateEntry *)pNextState)->nTransitionVar:-((InferenceStateEntry *)pNextState)->nTransitionVar);
-//					 fprintf(foutputfile, "%d", (((InferenceStateEntry *)pNextState)->bPolarity > 0)?((InferenceStateEntry *)pNextState)->nTransitionVar:-((InferenceStateEntry *)pNextState)->nTransitionVar);
-					 int trues = ((InferenceStateEntry *)pNextState)->bPolarity>0?1:0;
+					 d7_printf2("        Lemma: %d", (((InferenceStateEntry *)pNextState)->bPolarity > 0)?
+									nInfVar:-nInfVar);
 					 while(pTempState!=NULL) {
-						 int nInfLiteral = pTempState->nLemmaLiteral;
-						 if(nInfLiteral>0) trues = 1;
-						 d7_printf3(" %d(%x)", nInfLiteral, pTempState); //Negate literals in the path.
-//						 fprintf(foutputfile, " %d", nInfLiteral); //Negate literals in the path.
+						 d7_printf3(" %d(%x)", pTempState->nLemmaLiteral, pTempState); //Negate literals in the path.
 						 pTempState = (SmurfStateEntry *)pTempState->pPreviousState;
 					 }
-//					 fprintf(foutputfile, " 0\n");
 					 d7_printf1("\n");
-					 //if(trues == 0) fprintf(stderr, "EEK\n");
 					 );
 				
+				//Add a lemma as reference to this inference.
+				create_clause_from_Smurf((((InferenceStateEntry *)pNextState)->bPolarity > 0)?nInfVar:-nInfVar,
+												 SimpleSmurfProblemState->arrReverseOccurenceList[nSmurfNumber][0].var,
+												 pTopState, 
+												 SimpleSmurfProblemState->arrInferenceLemmas[nInfVar].lits,
+												 &SimpleSmurfProblemState->arrInferenceLemmas[nInfVar].max_size);
 
-				if(EnqueueInference(((InferenceStateEntry *)pNextState)->nTransitionVar, ((InferenceStateEntry *)pNextState)->bPolarity > 0) == 0) return 0;
+				if(EnqueueInference(nInfVar, ((InferenceStateEntry *)pNextState)->bPolarity > 0) == 0) return 0;
 				//Follow the transtion to the next SmurfState
 				
 				pPrevState = pNextState;
