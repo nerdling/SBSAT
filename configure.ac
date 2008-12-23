@@ -210,6 +210,7 @@ AM_CONDITIONAL(SBSAT_STATIC, test x$sbsat_static = xtrue)
 # [LIBS="${LIBS} -L${withval}"])
 
 CXXFLAGS="${CXXFLAGS} ${MYCXXFLAGS} ${INCL}"
+CFLAGS="${CXXFLAGS} ${MYCXXFLAGS} ${INCL}"
 CCFLAGS="${CCFLAGS} ${MYCCFLAGS} ${INCL}"
 
 cvsbuild=false
@@ -413,6 +414,7 @@ AC_CONFIG_FILES([Makefile
 					  src/solv_simple/fn_xor/Makefile
 					  src/solv_simple/fn_minmax/Makefile
   					  src/solv_simple/bb_gelim/Makefile
+					  src/solv_simple/bb_lemmas/Makefile
                  src/utils/Makefile
                  tests/Makefile
                  tests/cnf/Makefile

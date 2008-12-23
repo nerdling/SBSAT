@@ -31,6 +31,7 @@ SBSAT_LIBS= \
 	solv_simple/fn_xor/libfnxor_simple.a \
 	solv_simple/fn_minmax/libfnminmax_simple.a \
 	solv_simple/bb_gelim/libbbgelim_simple.a \
+	solv_simple/bb_lemmas/libbblemmas_simple.a \
 	postproc/libpostproc.a \
 	preproc/libpreproc.a \
 	utils/libutils.a 

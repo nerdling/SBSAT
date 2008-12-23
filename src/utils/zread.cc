@@ -123,7 +123,7 @@ aigread(char *filename)
 	if (!strcmp(filename, "-")) {
        fprintf(stderr, "Can not accept binary aig data on the standard input\n");
        fprintf(stderr, "Please use the file as a parameter or %s for the stdin instead\n", cmd);
-       fprintf(stderr, "Example: cat filename.aig | aigtoaig -a | sbsat\n", cmd);
+       fprintf(stderr, "Example: cat filename.aig | aigtoaig -a | sbsat\n");
        exit(1);
     }
 	

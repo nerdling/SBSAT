@@ -1,0 +1,41 @@
+news for release 8xx since 846
+------------------------------
+
+* switched from innter/outer to Luby style restart scheduling
+
+* less agressive reduce schedule
+
+* replaced watched literals with head and tail pointers
+
+* add 'picosat_failed_assumption', which allows to avoid tracing and core
+  generation, if one is only interested in assumptions in the core
+
+* fixed a BUG in the generic iterator code of clauses
+  (should rarely happen unless you use a very sophisticated malloc lib)
+
+news for release 846 since 632
+------------------------------
+
+* cleaned up assumption handling (actually removed buggy optimization)
+
+* incremental core generation 
+
+* experimental 'all different constraint' handling as in our FMCAD'08 paper
+
+* new API calls: 
+
+  - picosat_add_ado_lit       (add all different object literal)
+  - picosat_deref_top_level   (deref top level assignment)
+  - picosat_changed           (check whether extension was possible)
+  - picosat_measure_all_calls (per default do not measure adding time)
+  - picosat_set_prefix        (set prefix for messages)
+
+* 64 bit port (and compilation options)
+
+* optional NVSIDS visualization code
+
+* resource controlled failed literal implementation
+
+* disconnect long clauses satisfied at lower decision level
+
+* controlling restarts
