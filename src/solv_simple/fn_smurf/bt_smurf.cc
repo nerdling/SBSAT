@@ -49,8 +49,8 @@ int ApplyInferenceToSmurf(int nBranchVar, bool bBVPolarity, int nSmurfNumber, vo
 				create_clause_from_Smurf((((InferenceStateEntry *)pNextState)->bPolarity > 0)?nInfVar:-nInfVar,
 												 SimpleSmurfProblemState->arrReverseOccurenceList[nSmurfNumber][0].var,
 												 pTopState, 
-												 SimpleSmurfProblemState->arrInferenceLemmas[nInfVar].lits,
-												 &SimpleSmurfProblemState->arrInferenceLemmas[nInfVar].max_size);
+												 SimpleSmurfProblemState->arrInferenceLemmas[nInfVar].clause,
+												 &(SimpleSmurfProblemState->arrInferenceLemmas[nInfVar].max_size));
 
 				if(EnqueueInference(nInfVar, ((InferenceStateEntry *)pNextState)->bPolarity > 0) == 0) return 0;
 				//Follow the transtion to the next SmurfState

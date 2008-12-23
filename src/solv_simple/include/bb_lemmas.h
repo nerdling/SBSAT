@@ -59,7 +59,10 @@ struct Cls {
 	unsigned collected:1;
 #endif*/
 	Cls *next[2];
-	Lit *lits[2];
+	union {
+		Lit *lits[2];
+		Lit **lits_ph;
+	};
 };
 
 //
@@ -67,11 +70,13 @@ struct Cls {
 typedef struct SimpleLemma SimpleLemma;  /* LemmaStruct */
 
 struct SimpleLemma {
-	Cls *lits;
+	Cls *clause;
 	int max_size;
 };
 
-void create_clause_from_Smurf(int nInfVar, int nNumVarsInSmurf, SmurfStateEntry *pSmurfState,
-										Cls *clause, int *lits_max_size);
+extern "C" {
+	void create_clause_from_Smurf(int nInfVar, int nNumVarsInSmurf, SmurfStateEntry *pSmurfState,
+											Cls *clause, int *lits_max_size);
+}
 
 #endif

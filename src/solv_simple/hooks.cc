@@ -187,15 +187,20 @@ ITE_INLINE int Init_Solver_PostSmurfs_Hooks(void **arrSmurfStates) {
 			}
 		}
 	}
-	if(ret != 0)
-	  return SOLV_UNKNOWN;
 
 	if(use_Lemmas == 1) {
 		
 		SimpleSmurfProblemState->arrInferenceLemmas = (SimpleLemma *)ite_calloc(SimpleSmurfProblemState->nNumVars, sizeof(SimpleLemma), 9, "arrInferenceLemmas");
 		//initPicoSAT(SimpleSmurfProblemState->nNumVars);
-		  
+		for(int nSmurfIndex = 0; nSmurfIndex < SimpleSmurfProblemState->nNumSmurfs; nSmurfIndex++) {
+			SimpleSmurfProblemState->arrInferenceLemmas[nSmurfIndex].clause = (Cls *)ite_calloc(1, sizeof(Cls), 9, "arrInferenceLemmas.clause.lits");
+			SimpleSmurfProblemState->arrInferenceLemmas[nSmurfIndex].clause->lits_ph = (Lit **)ite_calloc(2, sizeof(Lit *), 9, "arrInferenceLemmas.clause.lits");
+			SimpleSmurfProblemState->arrInferenceLemmas[nSmurfIndex].max_size = 2;
+		}
 	}
+
+	if(ret != 0)
+	  return SOLV_UNKNOWN;
 	
 	return ret;
 }
