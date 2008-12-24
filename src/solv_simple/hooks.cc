@@ -189,6 +189,9 @@ ITE_INLINE int Init_Solver_PostSmurfs_Hooks(void **arrSmurfStates) {
 	}
 
 	if(use_Lemmas == 1) {
+		picosat_init();
+		picosat_adjust(SimpleSmurfProblemState->nNumVars);
+		picosat_set_seed(random_seed);
 		
 		SimpleSmurfProblemState->arrInferenceLemmas = (SimpleLemma *)ite_calloc(SimpleSmurfProblemState->nNumVars, sizeof(SimpleLemma), 9, "arrInferenceLemmas");
 		//initPicoSAT(SimpleSmurfProblemState->nNumVars);
