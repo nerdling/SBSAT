@@ -417,24 +417,20 @@ struct Rnk
   Act score;
 };
 
-struct Cls
-{
-  unsigned size;
-  unsigned learned:1;
-  unsigned collect:1;
-  unsigned connected:1;
-  unsigned locked:1;
-  unsigned fixed:1;
-  unsigned used:1;
+struct Cls {
+	unsigned size;
+	unsigned learned:1;
+	unsigned collect:1;
+	unsigned connected:1;
+	unsigned locked:1;
+	unsigned fixed:1;
+	unsigned used:1;
 #ifdef TRACE
-  unsigned core:1;
-  unsigned collected:1;
+	unsigned core:1;
+	unsigned collected:1;
 #endif
-  Cls *next[2];
-	union {
-		Lit *lits[2];
-		Lit **lits_ph;
-	};
+	Cls *next[2];
+	Lit *lits[2];
 };
 
 #ifdef TRACE
@@ -1204,7 +1200,7 @@ init (void)
   state = READY;
 }
 
-static size_t
+size_t
 bytes_clause (unsigned size, unsigned learned)
 {
   size_t res;
@@ -5626,18 +5622,15 @@ decide (void)
 }
 
 void create_clause_from_Smurf(int nInfVar, int nNumVarsInSmurf, SmurfStateEntry *pSmurfState,
-												 Cls *clause, int *lits_max_size) {
+												 Cls **clause, int *lits_max_size) {
 	Lit ** p;
 	
 	if(nNumVarsInSmurf > (*lits_max_size)) {
-		clause->lits_ph = realloc(clause->lits_ph, nNumVarsInSmurf*sizeof(Lit *));
+		(*clause) = realloc((*clause), bytes_clause(nNumVarsInSmurf, 0));
 		(*lits_max_size) = nNumVarsInSmurf;
 	}
 	
-	p = clause->lits_ph; 
-	//p = clause->lits; This doesn't work, could have something to do with
-	//the different types in the union. I don't really know why. Will probably
-	//cause problems in the future.
+	p = (*clause)->lits;
 	(*p++) = int2lit(nInfVar);
 	int nNumVars = 1;
 	while(pSmurfState != NULL) {
@@ -5645,21 +5638,21 @@ void create_clause_from_Smurf(int nInfVar, int nNumVarsInSmurf, SmurfStateEntry 
 		pSmurfState = (SmurfStateEntry *)pSmurfState->pPreviousState;
 		nNumVars++;
 	}
-	clause->size = nNumVars;
+	(*clause)->size = nNumVars;
 }
 
-static void create_clause(int *lits, int lits_size, Cls *clause, int *lits_max_size) {
+static void create_clause(int *lits, int lits_size, Cls **clause, int *lits_max_size) {
 	int clsidx = 0;
 	Lit ** p;
 
 	if(lits_size > (*lits_max_size)) {
-		clause->lits_ph = realloc(clause->lits_ph, lits_size*sizeof(Lit *));
+		(*clause) = realloc((*clause), bytes_clause(lits_size, 0));
 		(*lits_max_size) = lits_size;
 	}
 
-	clause->size = lits_size;
-	Lit ** eol = end_of_lits(clause);
-	for(p = clause->lits; p < eol; p++)
+	(*clause)->size = lits_size;
+	Lit ** eol = end_of_lits(*clause);
+	for(p = (*clause)->lits; p < eol; p++)
 	  (*p) = int2lit(lits[clsidx++]);
 }
 
@@ -5744,12 +5737,11 @@ sat (int l)
 	//SEAN!!!
 
 	int lits_max_size1 = 2;
-	Cls *clause1 = (Cls *)calloc(1, sizeof(Cls));
-	clause1->lits_ph = calloc(lits_max_size1, sizeof(Lit *));
-
+	Cls *clause1 = calloc(1, bytes_clause(lits_max_size1, 0));
+	
 	int lits_max_size2 = 2;
-	Cls *clause2 = (Cls *)calloc(1, sizeof(Cls));
-	clause2->lits_ph = calloc(lits_max_size2, sizeof(Lit *));
+	Cls *clause2 = calloc(1, bytes_clause(lits_max_size2, 0));
+	
 	
 	int *lits = (int *)calloc(100, sizeof(int));
 	
@@ -5771,15 +5763,15 @@ sat (int l)
 	lits[0]=-3;
 	lits[1]=-5;
 	lits[2]=1;
-	create_clause(lits, 3, clause2, &lits_max_size2);
-	
+	create_clause(lits, 3, &clause2, &lits_max_size2);
+
 	ret = picosat_apply_inference(-5, clause2);
 	fprintf(stdout, "ret = %d\n", ret);
 
 	//lits[0]=1;
 	lits[0]=-3;
 	lits[1]=5;
-	create_clause(lits, 2, clause1, &lits_max_size1);
+	create_clause(lits, 2, &clause1, &lits_max_size1);
 
 	ret = picosat_apply_inference(5, clause1);
 	fprintf(stdout, "ret = %d\n", ret);

@@ -150,7 +150,8 @@ void Calculate_Heuristic_Values() {
 			}
 			break;
 		 case FN_MINMAX_COUNTER:
-			//SEAN!!! This needs to be fixed up.
+			break;
+			//SEAN!!! This needs to be fixed up. numfound is incorrect and the heuristic returns 1.
 			pState = arrSmurfStates[nSmurfIndex];
 			for(int index = 0; numfound < ((MINMAXCounterStateEntry *)pState)->pMINMAXState->nSize; index++) {
 				if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[((MINMAXCounterStateEntry *)pState)->pMINMAXState->pnTransitionVars[index]] >= nCurrInfLevel) {

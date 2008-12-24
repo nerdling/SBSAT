@@ -59,10 +59,7 @@ struct Cls {
 	unsigned collected:1;
 #endif*/
 	Cls *next[2];
-	union {
-		Lit *lits[2];
-		Lit **lits_ph;
-	};
+	Lit *lits[2];
 };
 
 //
@@ -76,11 +73,12 @@ struct SimpleLemma {
 
 extern "C" {
 	void create_clause_from_Smurf(int nInfVar, int nNumVarsInSmurf, SmurfStateEntry *pSmurfState,
-											Cls *clause, int *lits_max_size);
+											Cls **clause, int *lits_max_size);
 	void picosat_set_seed(unsigned random_number_generator_seed);
 	void picosat_init(void);
 	void picosat_reset(void);
 	void picosat_adjust(int max_idx);
+	size_t bytes_clause(unsigned size, unsigned learned);
 }
 
 #endif

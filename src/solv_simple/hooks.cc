@@ -190,15 +190,13 @@ ITE_INLINE int Init_Solver_PostSmurfs_Hooks(void **arrSmurfStates) {
 
 	if(use_Lemmas == 1) {
 		picosat_init();
-		picosat_adjust(SimpleSmurfProblemState->nNumVars);
+		picosat_adjust(SimpleSmurfProblemState->nNumVars+1);
 		picosat_set_seed(random_seed);
 		
-		SimpleSmurfProblemState->arrInferenceLemmas = (SimpleLemma *)ite_calloc(SimpleSmurfProblemState->nNumVars, sizeof(SimpleLemma), 9, "arrInferenceLemmas");
-		//initPicoSAT(SimpleSmurfProblemState->nNumVars);
-		for(int nSmurfIndex = 0; nSmurfIndex < SimpleSmurfProblemState->nNumSmurfs; nSmurfIndex++) {
-			SimpleSmurfProblemState->arrInferenceLemmas[nSmurfIndex].clause = (Cls *)ite_calloc(1, sizeof(Cls), 9, "arrInferenceLemmas.clause.lits");
-			SimpleSmurfProblemState->arrInferenceLemmas[nSmurfIndex].clause->lits_ph = (Lit **)ite_calloc(2, sizeof(Lit *), 9, "arrInferenceLemmas.clause.lits");
-			SimpleSmurfProblemState->arrInferenceLemmas[nSmurfIndex].max_size = 2;
+		SimpleSmurfProblemState->arrInferenceLemmas = (SimpleLemma *)ite_calloc(SimpleSmurfProblemState->nNumVars+1, sizeof(SimpleLemma), 9, "arrInferenceLemmas");
+		for(int nVarIndex = 0; nVarIndex <= SimpleSmurfProblemState->nNumVars; nVarIndex++) {
+			SimpleSmurfProblemState->arrInferenceLemmas[nVarIndex].clause = (Cls *)ite_calloc(1, bytes_clause(2, 0), 9, "arrInferenceLemmas.clause.lits");
+			SimpleSmurfProblemState->arrInferenceLemmas[nVarIndex].max_size = 2;
 		}
 	}
 
