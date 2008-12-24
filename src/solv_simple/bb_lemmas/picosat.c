@@ -5634,7 +5634,10 @@ void create_clause_from_Smurf(int nInfVar, int nNumVarsInSmurf, SmurfStateEntry 
 		(*lits_max_size) = nNumVarsInSmurf;
 	}
 	
-	p = clause->lits;
+	p = clause->lits_ph; 
+	//p = clause->lits; This doesn't work, could have something to do with
+	//the different types in the union. I don't really know why. Will probably
+	//cause problems in the future.
 	(*p++) = int2lit(nInfVar);
 	int nNumVars = 1;
 	while(pSmurfState != NULL) {
