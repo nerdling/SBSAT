@@ -1962,61 +1962,66 @@ fixvar (Var * v)
 }
 
 static void
-assign_forced (Lit * lit, Cls * reason)
-{
-  Var *v;
-
-  assert (reason);
-  assert (lit->val == UNDEF);
-
+assign_forced (Lit * lit, Cls * reason) {
+	Var *v;
+	
+	assert (reason);
+	assert (lit->val == UNDEF);
+	
 #ifdef STATS
-  forced++;
+	forced++;
 #endif
-  assign (lit, reason);
-
+	assign (lit, reason);
+	
 #ifdef NO_BINARY_CLAUSES
-  assert (reason != &impl);
-  if (ISLITREASON (reason))
-    reason = setimpl (lit, NOTLIT (REASON2LIT (reason)));
+	assert (reason != &impl);
+	if (ISLITREASON (reason))
+	  reason = setimpl (lit, NOTLIT (REASON2LIT (reason)));
 #endif
-  LOG (fprintf (out,
-                "%sassign %d at level %d by ",
-                prefix, lit2int (lit), level);
-       dumpclsnl (reason));
+	LOG (fprintf (out,
+					  "%sassign %d at level %d by ",
+					  prefix, lit2int (lit), level);
+		  dumpclsnl (reason));
 
-  v = LIT2VAR (lit);
-  if (!level && !v->used)
-    {
+/*
+	//Hook into SBSAT
+	int ret = EnqueueInference(abs(lit2int(lit)), lit2int(lit)>0?1:0);
+	if(ret < 0) {
+		assert(0);
+		exit(0);		
+	}
+*/
+	
+	v = LIT2VAR (lit);
+	if (!level && !v->used) {
       vused++;
       v->used = 1;
-    }
-
-  if (reason && !level && reason->size > 1)
-    reason = resolve_top_level_unit (lit, reason);
-
+	}
+	
+	if (reason && !level && reason->size > 1)
+	  reason = resolve_top_level_unit (lit, reason);
+	
 #ifdef NO_BINARY_CLAUSES
-  if (ISLITREASON (reason) || reason == &impl)
-    {
+	if (ISLITREASON (reason) || reason == &impl) {
       /* DO NOTHING */
-    }
-  else
+	}
+	else
 #endif
-  if (reason)
-    {
-      assert (!reason->locked);
-      reason->locked = 1;
-
-      if (reason->learned && reason->size > 2)
-	llocked++;
-    }
-
+	  if (reason) {
+		  assert (!reason->locked);
+		  reason->locked = 1;
+		  
+		  if (reason->learned && reason->size > 2)
+			 llocked++;
+	  }
+	
 #ifdef NO_BINARY_CLAUSES
-  if (reason == &impl)
-    resetimpl ();
+	if (reason == &impl)
+	  resetimpl ();
 #endif
-
-  if (!level)
-    fixvar (v);
+	
+	if (!level)
+	  fixvar (v);
 }
 
 #ifdef NO_BINARY_CLAUSES
@@ -4095,22 +4100,36 @@ bcp (void)
   if (mtcls)
     return;
 
-  while (!conflict)
-    {
-      if (ttail2 < thead)	/* prioritize implications */
-	{
-	  propagations++;
-	  prop2 (NOTLIT (*ttail2++));
-	}
-      else if (ttail < thead)	/* unit clauses or clauses with length > 2 */
-	propl (NOTLIT (*ttail++));
+  while (!conflict) {
+
+	  if (ttail2 < thead) { /* prioritize implications */
+		  propagations++;
+		  
+		  //Hook into SBSAT
+		  int ret = EnqueueInference(abs(lit2int(*ttail2)), lit2int(*ttail2)>0?1:0);
+		  if(ret < 0) {
+			  assert(0);
+			  exit(0);
+		  }
+		  
+		  prop2 (NOTLIT (*ttail2++));
+	  } else if (ttail < thead)	{ /* unit clauses or clauses with length > 2 */
+		  
+		  //Hook into SBSAT
+		  int ret = EnqueueInference(abs(lit2int(*ttail)), lit2int(*ttail)>0?1:0);
+		  if(ret == 0) {
+
+			  //return -1;
+		  }
+		  
+		  propl (NOTLIT (*ttail++));
 #ifndef NADC
-      else if (ttailado < thead)
-	propado (LIT2VAR (*ttailado++));
+	  } else if (ttailado < thead) {
+		  propado (LIT2VAR (*ttailado++));
 #endif
-      else
-	break;		/* all assignments propagated, so break */
-    }
+	  } else
+		 break;		/* all assignments propagated, so break */
+  }
 }
 
 /* This version of 'drive' is independent of the global variable 'level' and
@@ -5125,66 +5144,61 @@ faillits (void) {
 
 #endif
 
-static void
-simplify (void)
-{
-  size_t bytes_collected;
-  unsigned collect;
-  Cls **p, *cls;
-
-  assert (!mtcls);
-  assert (!satisfied ());
-  assert (lsimplify <= propagations);
-  assert (fsimplify <= fixed);
-
+static void simplify (void) {
+	size_t bytes_collected;
+	unsigned collect;
+	Cls **p, *cls;
+	
+	assert (!mtcls);
+	assert (!satisfied ());
+	assert (lsimplify <= propagations);
+	assert (fsimplify <= fixed);
+	
 #ifndef NFL
-  if (level)
-    undo (0);
-
-  simplifying = 1;
-  faillits ();
-  simplifying = 0;
-
-  if (mtcls)
-    return;
+	if (level)
+	  undo (0);
+	
+	simplifying = 1;
+	faillits ();
+	simplifying = 0;
+	
+	if (mtcls)
+	  return;
 #endif
-
-  collect = 0;
-  for (p = SOC; p != EOC; p = NXC (p))
-    {
+	
+	collect = 0;
+	for (p = SOC; p != EOC; p = NXC (p)) {
       cls = *p;
       if (!cls)
-	continue;
-
+		  continue;
+		
 #ifdef TRACE
       if (cls->collected)
-	continue;
+		  continue;
 #endif
-
+		
       if (cls->locked)
-	continue;
+		  continue;
       
       assert (!cls->collect);
-      if (clause_is_toplevel_satisfied (cls))
-	{
-	  mark_clause_to_be_collected (cls);
-	  collect++;
+      if (clause_is_toplevel_satisfied (cls)) {
+			mark_clause_to_be_collected (cls);
+			collect++;
+		}
 	}
-    }
-
-  if (collect)
-    {
+	
+	if (collect) {
       bytes_collected = collect_clauses ();
 #ifdef STATS
       srecycled += bytes_collected;
 #endif
     }
-
-  lsimplify = propagations + 10 * (olits + llits) + 100000;
-  fsimplify = fixed;
-  simps++;
-
-  report (1, 's');
+	
+	lsimplify = propagations + 10 * (olits + llits) + 100000;
+	fsimplify = fixed;
+	simps++;
+	
+	report (1, 's');
 }
 
 static void
@@ -5625,6 +5639,8 @@ void create_clause_from_Smurf(int nInfVar, int nNumVarsInSmurf, SmurfStateEntry 
 												 Cls **clause, int *lits_max_size) {
 	Lit ** p;
 	
+	if((*clause)->used == 1) return; //Clause is already in the queue.
+	
 	if(nNumVarsInSmurf > (*lits_max_size)) {
 		(*clause) = realloc((*clause), bytes_clause(nNumVarsInSmurf, 0));
 		(*lits_max_size) = nNumVarsInSmurf;
@@ -5645,6 +5661,8 @@ static void create_clause(int *lits, int lits_size, Cls **clause, int *lits_max_
 	int clsidx = 0;
 	Lit ** p;
 
+	if((*clause)->used == 1) return; //Clause is already in the queue.
+	
 	if(lits_size > (*lits_max_size)) {
 		(*clause) = realloc((*clause), bytes_clause(lits_size, 0));
 		(*lits_max_size) = lits_size;
@@ -5656,7 +5674,7 @@ static void create_clause(int *lits, int lits_size, Cls **clause, int *lits_max_
 	  (*p) = int2lit(lits[clsidx++]);
 }
 
-static int picosat_apply_inference (int var_to_assign, Cls *reason) {
+int picosat_apply_inference (int var_to_assign, Cls *reason) {
 	//SEAN!!!
 	
 	Lit * lit;
@@ -5669,13 +5687,17 @@ static int picosat_apply_inference (int var_to_assign, Cls *reason) {
 			return level;
 		} else {
 			conflict = reason;
-			goto CONTIN;
 		}
 	}
-	
+
+	//if(reason->size == 0) assign_decision (lit);
 	if(reason == NULL) assign_decision (lit);
 	else assign_forced (lit, reason);
-	
+	return level;
+}
+
+int picosat_bcp() {
+
 	CONTIN:
 	if (!conflict)
 	  bcp ();
@@ -5685,21 +5707,21 @@ static int picosat_apply_inference (int var_to_assign, Cls *reason) {
 		backtrack ();
 		if (mtcls) {//Generated the empty clause
 			fprintf(stdout, "2level=%d\n", level);
-			return -1;//PICOSAT_UNSATISFIABLE;
+			return level;//PICOSAT_UNSATISFIABLE;
 		}
-		goto CONTIN;
 		fprintf(stdout, "3level=%d\n", level);
 		return level;
+		//goto CONTIN;
 	}
 	
 	if (fsimplify < fixed && lsimplify <= propagations) {
 		simplify ();
 		if (!bcp_queue_is_empty ())
 		  goto CONTIN;
-		
+
 		if (mtcls) {
 			fprintf(stdout, "4level=%d\n", level);
-			return -1;//PICOSAT_UNSATISFIABLE;
+			return level;//PICOSAT_UNSATISFIABLE;
 		}
 		
 		if (satisfied ()) {
@@ -5709,6 +5731,9 @@ static int picosat_apply_inference (int var_to_assign, Cls *reason) {
 		
 		assert (!level);
 	}
+
+	if (!bcp_queue_is_empty ())
+	  goto CONTIN; //Not sure this is necessary.
 	
 	//Periodic functions - call to possibly reduce the number of clauses
 	if (!lreduce)
@@ -5722,7 +5747,7 @@ static int picosat_apply_inference (int var_to_assign, Cls *reason) {
 #ifndef NASS
 	if (failed_assumption) {
 		fprintf(stdout, "6level=%d\n", level);		  
-		return -1;//PICOSAT_UNSATISFIABLE;
+		return level;//PICOSAT_UNSATISFIABLE;
 	}
 #endif
 	fprintf(stdout, "7level=%d\n", level);

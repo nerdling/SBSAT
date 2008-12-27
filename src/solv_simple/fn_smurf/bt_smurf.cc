@@ -51,8 +51,9 @@ int ApplyInferenceToSmurf(int nBranchVar, bool bBVPolarity, int nSmurfNumber, vo
 												 pTopState, 
 												 &(SimpleSmurfProblemState->arrInferenceLemmas[nInfVar].clause),
 												 &(SimpleSmurfProblemState->arrInferenceLemmas[nInfVar].max_size));
-
+				
 				if(EnqueueInference(nInfVar, ((InferenceStateEntry *)pNextState)->bPolarity > 0) == 0) return 0;
+
 				//Follow the transtion to the next SmurfState
 				
 				pPrevState = pNextState;

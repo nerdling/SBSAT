@@ -74,6 +74,8 @@ struct SimpleLemma {
 extern "C" {
 	void create_clause_from_Smurf(int nInfVar, int nNumVarsInSmurf, SmurfStateEntry *pSmurfState,
 											Cls **clause, int *lits_max_size);
+	int  picosat_apply_inference(int var_to_assign, Cls *reason);
+	int  picosat_bcp();
 	void picosat_set_seed(unsigned random_number_generator_seed);
 	void picosat_init(void);
 	void picosat_reset(void);

@@ -10,6 +10,7 @@ int simple_solver_reset_level=-1;
 int add_one_display=0;
 int solutions_overflow=0;
 long nNextRestart = 0;
+int backtrack_level = 0;
 
 ITE_INLINE
 void save_solution_simple(void) {
@@ -474,18 +475,21 @@ int EnqueueInference(int nInfVar, bool bInfPolarity) {
 	int nPrevInfLevel = abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[nInfVar]);
 	d7_printf4("      Inferring %d at Level %d (prior level = %d)\n",
 				  bInfPolarity?nInfVar:-nInfVar, nInfQueueHead, nPrevInfLevel);
-	assert(use_SmurfWatchedLists || nPrevInfLevel > 0);
+	assert(1 || use_SmurfWatchedLists || nPrevInfLevel > 0); //SEAN!!! 1 = use_lemmas flag
 	
 	if(nPrevInfLevel < nInfQueueHead) {
 		//Inference already in queue
 		if((SimpleSmurfProblemState->arrInferenceQueue[nPrevInfLevel] > 0) != bInfPolarity) {
 			//Conflict Detected;
-			d7_printf2("      Conflict when adding %d to inference queue\n", bInfPolarity?nInfVar:-nInfVar); 
+			d7_printf2("      Conflict when adding %d to the inference queue\n", bInfPolarity?nInfVar:-nInfVar); 
+			d7_printf2("  Applying conflict %d to lemma database\n", bInfPolarity?nInfVar:-nInfVar);
+			backtrack_level = picosat_apply_inference(bInfPolarity?nInfVar:-nInfVar, SimpleSmurfProblemState->arrInferenceLemmas[nInfVar].clause);
 			return 0;
 		} else {
 			//Value is already inferred the correct value
 			//Do nothing
 			d7_printf2("      Inference %d already inferred\n", bInfPolarity?nInfVar:-nInfVar); 
+		   return 2;
 		}
 	} else {
 		//Inference is not in inference queue, insert it.
@@ -499,10 +503,20 @@ int EnqueueInference(int nInfVar, bool bInfPolarity) {
 
 ITE_INLINE
 int ApplyInferenceToStates(int nBranchVar, bool bBVPolarity) {
-	d7_printf2("  Transitioning Smurfs using %d\n", bBVPolarity?nBranchVar:-nBranchVar);
+	d7_printf2("  Handling inference %d\n", bBVPolarity?nBranchVar:-nBranchVar);
 	
 	int ret = ApplyInference_Hooks(nBranchVar, bBVPolarity);
 	if(ret == 0) return 0;
+
+	if(1) { //SEAN!!! Need a use_lemmas flag or something
+		d7_printf2("  Applying %d to lemma database\n", bBVPolarity?nBranchVar:-nBranchVar);
+		backtrack_level = picosat_apply_inference(bBVPolarity?nBranchVar:-nBranchVar, SimpleSmurfProblemState->arrInferenceLemmas[nBranchVar].clause);
+		if(backtrack_level < SimpleSmurfProblemState->nCurrSearchTreeLevel) return 0;
+		backtrack_level = picosat_bcp();
+		if(backtrack_level < SimpleSmurfProblemState->nCurrSearchTreeLevel) return 0;
+	}
+
+	d7_printf2("  Transitioning Smurfs using %d\n", bBVPolarity?nBranchVar:-nBranchVar);
 	void **arrSmurfStates = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].arrSmurfStates;
 	int i = SimpleSmurfProblemState->arrVariableOccursInSmurf[nBranchVar][0];
 	int *arrVarOccursInSmurf = &(SimpleSmurfProblemState->arrVariableOccursInSmurf[nBranchVar][i]);
@@ -612,6 +626,8 @@ int SimpleBrancher() {
 
 	int ret = SOLV_UNKNOWN;
 	
+	backtrack_level = SimpleSmurfProblemState->nNumVars;
+	
 	SimpleSmurfProblemState->nCurrSearchTreeLevel = 0;
 
 	fSimpleSolverStartTime = get_runtime();
@@ -662,6 +678,21 @@ int SimpleBrancher() {
 						  nBranchLit>0?'+':'-', abs(nBranchLit), nInfQueueHead, nPrevInfLevel);
 			//    d7_printf3("Choice Point #%d = %d\n", , nBranchLit);
 
+			if(1) { //SEAN!!! need a use_lemmas flag
+				//Apply choice point to the lemma table
+				d7_printf2("  Applying choice %d to lemma database\n", bBVPolarity?nBranchVar:-nBranchVar);
+				backtrack_level = picosat_apply_inference(nBranchLit, NULL);
+				fprintf(stderr, "hi %d %d ", backtrack_level, SimpleSmurfProblemState->nCurrSearchTreeLevel);
+				while(backtrack_level < SimpleSmurfProblemState->nCurrSearchTreeLevel) {
+					switch(Backtrack()) {
+					 case SOLV_UNSAT: return SOLV_UNSAT;
+ 					 case SOLV_SAT: return SOLV_SAT;
+					 case SOLV_LIMIT: return ret;
+					 default: break;
+					}
+				}
+			}
+			
 			//While inference queue != empty {
 			while(nInfQueueHead != SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars) {
 				//Get inference
@@ -673,13 +704,27 @@ int SimpleBrancher() {
 				//apply inference to all involved smurfs
 				if(ApplyInferenceToStates(nBranchVar, bBVPolarity) == 0) {
 					//A conflict occured
-					switch(Backtrack()) {
-					 case SOLV_UNSAT: return SOLV_UNSAT;
-					 case SOLV_SAT: return SOLV_SAT;
-					 case SOLV_LIMIT: return ret;
-					 default: break;
+					if(1) { //SEAN!!! Need a use_lemmas flag or something
+						backtrack_level = picosat_bcp();
 					}
 					
+					do {
+						switch(Backtrack()) {
+						 case SOLV_UNSAT: return SOLV_UNSAT;
+						 case SOLV_SAT: return SOLV_SAT;
+						 case SOLV_LIMIT: return ret;
+						 default: break;
+						}
+					} while (backtrack_level < SimpleSmurfProblemState->nCurrSearchTreeLevel);
+
+					if(1) { //SEAN -- need a use_lemmas flag
+						continue; //The lemma table has inferred at least one UIP variable, so go check the queue.
+					}
+					
+					//To maintain consistency (and being able to find ALL solutions over months of running)
+					//I'll need this literal phase consistency heuristic thing Knot did. So, after backtracking -- 
+					//I think this will work...
+
 find_more_solutions: ;
 					
 					nBranchLit = SimpleSmurfProblemState->arrInferenceQueue[SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars];
@@ -719,7 +764,6 @@ find_more_solutions: ;
 
 	return ret;
 }
-
 
 //Main solving function - calls the initialization functions, the brancher, and the cleanup
 int simpleSolve() {
