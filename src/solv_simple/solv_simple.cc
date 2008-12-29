@@ -267,7 +267,7 @@ int Simple_LSGB_Heuristic() {
 					if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i] >= nCurrInfLevel) {
 						fVbleWeight = (1+SimpleSmurfProblemState->arrPosVarHeurWghts[i]) *
 						  (1+SimpleSmurfProblemState->arrNegVarHeurWghts[i]);
-						if(fVbleWeight >= fMaxWeight) {
+						if(fVbleWeight > fMaxWeight) {
 							fMaxWeight = fVbleWeight;
 							nBestVble = i;
 						}
@@ -295,7 +295,7 @@ int Simple_LSGB_Heuristic() {
 		if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i] >= nCurrInfLevel) {
 			fVbleWeight = (1+SimpleSmurfProblemState->arrPosVarHeurWghts[i]) *
 			  (1+SimpleSmurfProblemState->arrNegVarHeurWghts[i]);
-			if(fVbleWeight >= fMaxWeight) {
+			if(fVbleWeight > fMaxWeight) {
 				fMaxWeight = fVbleWeight;
 				nBestVble = i;
 			}
@@ -342,7 +342,7 @@ int Simple_PMVSIDS_Heuristic() {
 					int i=arrVarChoiceLevels[level][j];
 					if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i] >= nCurrInfLevel) {
 						nVbleWeight = arrPMVSIDS[i];
-						if(nVbleWeight >= nMaxWeight) {
+						if(nVbleWeight > nMaxWeight) {
 							nMaxWeight = nVbleWeight;
 							nBestVble = i;
 						}
@@ -350,7 +350,7 @@ int Simple_PMVSIDS_Heuristic() {
 					j++;
 				}
 				SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nVarChoiceCurrLevel = level;
-				return (SimpleSmurfProblemState->arrPosVarHeurWghts[nBestVble] >= SimpleSmurfProblemState->arrNegVarHeurWghts[nBestVble]?nBestVble:-nBestVble);
+				return ((SimpleSmurfProblemState->arrPosVarHeurWghts[nBestVble] >= SimpleSmurfProblemState->arrNegVarHeurWghts[nBestVble])?nBestVble:-nBestVble);
 			}
 		}
 	}
@@ -368,7 +368,7 @@ int Simple_PMVSIDS_Heuristic() {
 	for(int i = nBestVble + 1; i < SimpleSmurfProblemState->nNumVars; i++) {
 		if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i] >= nCurrInfLevel) {
 			nVbleWeight = arrPMVSIDS[i];
-			if(nVbleWeight >= nMaxWeight) {
+			if(nVbleWeight > nMaxWeight) {
 				nMaxWeight = nVbleWeight;
 				nBestVble = i;
 			}
@@ -469,35 +469,58 @@ int SimpleHeuristic() {
 	return nBranchLit;
 }
 
-int EnqueueInference(int nInfVar, bool bInfPolarity) {
+int nInEnqueueInference = 0;
+
+int EnqueueInference(int nBranchVar, bool bBVPolarity) {
+	if(nInEnqueueInference) return 1;
+	nInEnqueueInference = 1;
+	
 	//Try to insert inference into the inference Queue
 	int nInfQueueHead = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
-	int nPrevInfLevel = abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[nInfVar]);
+	int nPrevInfLevel = abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[nBranchVar]);
 	d7_printf4("      Inferring %d at Level %d (prior level = %d)\n",
-				  bInfPolarity?nInfVar:-nInfVar, nInfQueueHead, nPrevInfLevel);
+				  bBVPolarity?nBranchVar:-nBranchVar, nInfQueueHead, nPrevInfLevel);
 	assert(1 || use_SmurfWatchedLists || nPrevInfLevel > 0); //SEAN!!! 1 = use_lemmas flag
 	
 	if(nPrevInfLevel < nInfQueueHead) {
 		//Inference already in queue
-		if((SimpleSmurfProblemState->arrInferenceQueue[nPrevInfLevel] > 0) != bInfPolarity) {
+		if((SimpleSmurfProblemState->arrInferenceQueue[nPrevInfLevel] > 0) != bBVPolarity) {
 			//Conflict Detected;
-			d7_printf2("      Conflict when adding %d to the inference queue\n", bInfPolarity?nInfVar:-nInfVar); 
-			d7_printf2("  Applying conflict %d to lemma database\n", bInfPolarity?nInfVar:-nInfVar);
-			backtrack_level = picosat_apply_inference(bInfPolarity?nInfVar:-nInfVar, SimpleSmurfProblemState->arrInferenceLemmas[nInfVar].clause);
+			d7_printf2("      Conflict when adding %d to the inference queue\n", bBVPolarity?nBranchVar:-nBranchVar);
+			d7_printf2("      Applying conflict %d to lemma database\n", bBVPolarity?nBranchVar:-nBranchVar);
+			if(backtrack_level < SimpleSmurfProblemState->nCurrSearchTreeLevel) { 
+				nInEnqueueInference = 0;
+				return 0;
+			}
+			backtrack_level = picosat_bcp(); //Empty the lemma database bcp queue
+			if(backtrack_level < SimpleSmurfProblemState->nCurrSearchTreeLevel) { 
+				nInEnqueueInference = 0;
+				return 0;
+			}
+			backtrack_level = picosat_apply_inference(bBVPolarity?nBranchVar:-nBranchVar, SimpleSmurfProblemState->pConflictClause.clause);
+			nInEnqueueInference = 0;
 			return 0;
 		} else {
 			//Value is already inferred the correct value
 			//Do nothing
-			d7_printf2("      Inference %d already inferred\n", bInfPolarity?nInfVar:-nInfVar); 
+			d7_printf2("      Inference %d already inferred\n", bBVPolarity?nBranchVar:-nBranchVar); 
+			nInEnqueueInference = 0;
 		   return 2;
 		}
 	} else {
 		//Inference is not in inference queue, insert it.
-		SimpleSmurfProblemState->arrInferenceQueue[nInfQueueHead] = bInfPolarity?nInfVar:-nInfVar;
-		SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[nInfVar] = nInfQueueHead;
+		SimpleSmurfProblemState->arrInferenceQueue[nInfQueueHead] = bBVPolarity?nBranchVar:-nBranchVar;
+		SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[nBranchVar] = nInfQueueHead;
 		SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars++;
 		ite_counters[INF_SMURF]++;
+		d7_printf2("  Applying %d to lemma database\n", bBVPolarity?nBranchVar:-nBranchVar);
+		backtrack_level = picosat_apply_inference(bBVPolarity?nBranchVar:-nBranchVar, SimpleSmurfProblemState->arrInferenceLemmas[nBranchVar].clause);
+		if(backtrack_level < SimpleSmurfProblemState->nCurrSearchTreeLevel) {
+			nInEnqueueInference = 0;
+			return 0;
+		}
 	}
+	nInEnqueueInference = 0;
 	return 1;
 }
 
@@ -509,9 +532,14 @@ int ApplyInferenceToStates(int nBranchVar, bool bBVPolarity) {
 	if(ret == 0) return 0;
 
 	if(1) { //SEAN!!! Need a use_lemmas flag or something
-		d7_printf2("  Applying %d to lemma database\n", bBVPolarity?nBranchVar:-nBranchVar);
-		backtrack_level = picosat_apply_inference(bBVPolarity?nBranchVar:-nBranchVar, SimpleSmurfProblemState->arrInferenceLemmas[nBranchVar].clause);
-		if(backtrack_level < SimpleSmurfProblemState->nCurrSearchTreeLevel) return 0;
+		d7_printf1("  Calling lemma database bcp\n");
+//		assert(backtrack_level >= SimpleSmurfProblemState);
+		if(backtrack_level < SimpleSmurfProblemState->nCurrSearchTreeLevel) {
+//			fprintf(stderr, "Don't really think this can happen\n");
+//			assert(0);
+			nInEnqueueInference = 0;
+			return 0;
+		}
 		backtrack_level = picosat_bcp();
 		if(backtrack_level < SimpleSmurfProblemState->nCurrSearchTreeLevel) return 0;
 	}
@@ -680,17 +708,8 @@ int SimpleBrancher() {
 
 			if(1) { //SEAN!!! need a use_lemmas flag
 				//Apply choice point to the lemma table
-				d7_printf2("  Applying choice %d to lemma database\n", bBVPolarity?nBranchVar:-nBranchVar);
+				d7_printf2("  Applying choice %d to lemma database\n", nBranchLit);
 				backtrack_level = picosat_apply_inference(nBranchLit, NULL);
-				fprintf(stderr, "hi %d %d ", backtrack_level, SimpleSmurfProblemState->nCurrSearchTreeLevel);
-				while(backtrack_level < SimpleSmurfProblemState->nCurrSearchTreeLevel) {
-					switch(Backtrack()) {
-					 case SOLV_UNSAT: return SOLV_UNSAT;
- 					 case SOLV_SAT: return SOLV_SAT;
-					 case SOLV_LIMIT: return ret;
-					 default: break;
-					}
-				}
 			}
 			
 			//While inference queue != empty {
@@ -705,7 +724,13 @@ int SimpleBrancher() {
 				if(ApplyInferenceToStates(nBranchVar, bBVPolarity) == 0) {
 					//A conflict occured
 					if(1) { //SEAN!!! Need a use_lemmas flag or something
-						backtrack_level = picosat_bcp();
+						if(backtrack_level >= SimpleSmurfProblemState->nCurrSearchTreeLevel) {
+							d7_printf1("  Backtracking the lemma database and resolving new conflict clauses\n");							  
+							backtrack_level = picosat_bcp();
+						}
+						if(SimpleSmurfProblemState->nCurrSearchTreeLevel == 0) return SOLV_UNSAT;
+						assert(backtrack_level < SimpleSmurfProblemState->nCurrSearchTreeLevel);
+						d7_printf3("  Backtrack from level %d to level %d\n", SimpleSmurfProblemState->nCurrSearchTreeLevel, backtrack_level);
 					}
 					
 					do {
@@ -718,6 +743,9 @@ int SimpleBrancher() {
 					} while (backtrack_level < SimpleSmurfProblemState->nCurrSearchTreeLevel);
 
 					if(1) { //SEAN -- need a use_lemmas flag
+						nInfQueueHead = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
+						d7_printf1("  Calling lemma database to infer the UIP literal\n");
+						backtrack_level = picosat_bcp();
 						continue; //The lemma table has inferred at least one UIP variable, so go check the queue.
 					}
 					

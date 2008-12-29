@@ -198,6 +198,9 @@ ITE_INLINE int Init_Solver_PostSmurfs_Hooks(void **arrSmurfStates) {
 			SimpleSmurfProblemState->arrInferenceLemmas[nVarIndex].clause = (Cls *)ite_calloc(1, bytes_clause(2, 0), 9, "arrInferenceLemmas.clause.lits");
 			SimpleSmurfProblemState->arrInferenceLemmas[nVarIndex].max_size = 2;
 		}
+		SimpleSmurfProblemState->pConflictClause.clause = (Cls *)ite_calloc(1, bytes_clause(2, 0), 9, "pConflictClause.clause.lits");
+		SimpleSmurfProblemState->pConflictClause.max_size = 2;
+
 	}
 
 	if(ret != 0)

@@ -77,6 +77,7 @@ typedef struct ProblemState {
 	int *arrInferenceDeclaredAtLevel; //Pointer to array of size nNumVars
 	SmurfStack *arrSmurfStack;        //Pointer to array of size nNumVars
 	SimpleLemma *arrInferenceLemmas;  //Pointer to array of size nNumVars
+	SimpleLemma pConflictClause;
 } ProblemState;
 
 extern ProblemState *SimpleSmurfProblemState;

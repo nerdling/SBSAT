@@ -81,13 +81,13 @@ IN THE SOFTWARE.
 #define NO_BINARY_CLAUSES	/* store binary clauses more compactly */
 #endif
 
-#define LOGGING
+//#define LOGGING
 
 /* For debugging purposes you may want to define 'LOGGING', which actually
  * can be enforced by using the '--log' option for the configure script.
  */
 #ifdef LOGGING
-#define LOG(code) do { code; } while (0)
+#define LOG(code) do { code; fflush(out);} while (0)
 #else
 #define LOG(code) do { } while (0)
 #endif
@@ -3490,6 +3490,8 @@ analyze (void) {
 		} while (!v->mark);
 		
       c = var2reason (v);
+
+		LOG (fprintf (out, "%sres_conflict1 %d\n", prefix, lit2int(VAR2LIT(v))); dumpclsnl (c));
 #ifdef NO_BINARY_CLAUSES
       if (c == &impl)
 		  resetimpl ();
@@ -3618,6 +3620,7 @@ DONE_FIRST_UIP:
 		}
 		
       c = var2reason (v);
+		LOG (fprintf (out, "%sres_conflict2 %d\n", prefix, lit2int(VAR2LIT(v))); dumpclsnl (c));
       if (!c)
 		  continue;
 		
@@ -4366,7 +4369,8 @@ backtrack (void)
 
   analyze ();
   new_level = drive ();
-  assert (new_level != 1  || (ahead - added) == 2);
+// SEAN!!!
+// assert (new_level != 1  || (ahead - added) == 2);
   cls = add_simplified_clause (1);
   undo (new_level);
   force (cls);
@@ -5638,7 +5642,8 @@ decide (void)
 void create_clause_from_Smurf(int nInfVar, int nNumVarsInSmurf, SmurfStateEntry *pSmurfState,
 												 Cls **clause, int *lits_max_size) {
 	Lit ** p;
-	
+
+//	if((*clause)->locked == 1) return;
 	if((*clause)->used == 1) return; //Clause is already in the queue.
 	
 	if(nNumVarsInSmurf > (*lits_max_size)) {
@@ -5682,17 +5687,23 @@ int picosat_apply_inference (int var_to_assign, Cls *reason) {
 	lit = int2lit(var_to_assign);
 	if(lit->val != UNDEF) {
 		if(lit->val == TRUE) {
-			fprintf(stdout, "Skipping literal %d already assigned\n", var_to_assign);
-			fprintf(stdout, "1level=%d\n", level);
+			LOG(fprintf(out, "Skipping literal %d already assigned\n", var_to_assign));
+			LOG(fprintf(out, "1level=%d\n", level));
 			return level;
 		} else {
+			LOG(fprintf(out, "Assigning conflict clause\n"));
+			reason->locked=1;
 			conflict = reason;
+			return level;
 		}
 	}
 
 	//if(reason->size == 0) assign_decision (lit);
 	if(reason == NULL) assign_decision (lit);
-	else assign_forced (lit, reason);
+	else { 
+		reason->locked=0;
+		assign_forced (lit, reason);
+	}
 	return level;
 }
 
@@ -5706,10 +5717,10 @@ int picosat_bcp() {
 		//incincs (); //SEAN - increment score of the variables in the conflict clause...I think. Something like that.
 		backtrack ();
 		if (mtcls) {//Generated the empty clause
-			fprintf(stdout, "2level=%d\n", level);
+			LOG(fprintf(out, "2level=%d\n", level));
 			return level;//PICOSAT_UNSATISFIABLE;
 		}
-		fprintf(stdout, "3level=%d\n", level);
+		LOG(fprintf(out, "3level=%d\n", level));
 		return level;
 		//goto CONTIN;
 	}
@@ -5720,12 +5731,12 @@ int picosat_bcp() {
 		  goto CONTIN;
 
 		if (mtcls) {
-			fprintf(stdout, "4level=%d\n", level);
+			LOG(fprintf(out, "4level=%d\n", level));
 			return level;//PICOSAT_UNSATISFIABLE;
 		}
 		
 		if (satisfied ()) {
-			fprintf(stdout, "5level=%d\n", level);
+			LOG(fprintf(out, "5level=%d\n", level));
 			return level;//PICOSAT_SATISFIABLE;
 		}
 		
@@ -5746,11 +5757,11 @@ int picosat_bcp() {
 	//      decide (); //Call Heuristic
 #ifndef NASS
 	if (failed_assumption) {
-		fprintf(stdout, "6level=%d\n", level);		  
+		LOG(fprintf(out, "6level=%d\n", level));
 		return level;//PICOSAT_UNSATISFIABLE;
 	}
 #endif
-	fprintf(stdout, "7level=%d\n", level);
+	LOG(fprintf(out, "7level=%d\n", level));
 	return level;
 }
 
@@ -5758,56 +5769,6 @@ static int
 sat (int l)
 {
   int count = 0, backtracked;
-
-	//SEAN!!!
-
-	int lits_max_size1 = 2;
-	Cls *clause1 = calloc(1, bytes_clause(lits_max_size1, 0));
-	
-	int lits_max_size2 = 2;
-	Cls *clause2 = calloc(1, bytes_clause(lits_max_size2, 0));
-	
-	
-	int *lits = (int *)calloc(100, sizeof(int));
-	
-	int ret = 0;
-	ret = picosat_apply_inference(-1, NULL);
-	fprintf(stdout, "ret = %d\n", ret);
-	ret = picosat_apply_inference(-1, NULL);
-	fprintf(stdout, "ret = %d\n", ret);
-
-	
-	ret = picosat_apply_inference(2, 0);
-	fprintf(stdout, "ret = %d\n", ret);
-	ret = picosat_apply_inference(2, 0);
-	fprintf(stdout, "ret = %d\n", ret);
-
-	ret = picosat_apply_inference(3, NULL);
-	fprintf(stdout, "ret = %d\n", ret);
-
-	lits[0]=-3;
-	lits[1]=-5;
-	lits[2]=1;
-	create_clause(lits, 3, &clause2, &lits_max_size2);
-
-	ret = picosat_apply_inference(-5, clause2);
-	fprintf(stdout, "ret = %d\n", ret);
-
-	//lits[0]=1;
-	lits[0]=-3;
-	lits[1]=5;
-	create_clause(lits, 2, &clause1, &lits_max_size1);
-
-	ret = picosat_apply_inference(5, clause1);
-	fprintf(stdout, "ret = %d\n", ret);
-	
-	ret = picosat_apply_inference(3, NULL);
-	fprintf(stdout, "ret = %d\n", ret);
-	
-	ret = picosat_apply_inference(5, NULL);
-	fprintf(stdout, "ret = %d\n", ret);
-
-	exit(0);
 	
   if (!conflict)
     bcp ();
