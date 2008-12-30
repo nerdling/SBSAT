@@ -253,6 +253,17 @@ int ReadAllSmurfsIntoTable(int nNumVars) {
 				if(precompute_smurfs == 1) bdd_gc(); //MUST NOT garbage collect BDDs when building smurfs on the fly.
 			}
 			SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates[nSmurfIndex] =	ReadSmurfStateIntoTable(pInitialBDD, NULL, 0);
+			if(nSmurfIndex>0 && SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates[nSmurfIndex] ==
+				SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates[((TypeStateEntry *)SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates[nSmurfIndex])->pStateOwner]) {
+				//Duplicate Smurf
+				d7_printf2("Removing duplicate Smurf #%d\n", nSmurfIndex); //This really shouldn't happen because the BDD preprocessor should have already removed all duplicates.
+				SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates[nSmurfIndex] = pTrueSimpleSmurfState;
+			} else {
+				//Setting the ownership of this Smurf
+				assert(((TypeStateEntry *)SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates[nSmurfIndex])->pPreviousState == NULL);
+				((TypeStateEntry *)SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates[nSmurfIndex])->pStateOwner = nSmurfIndex;
+			}
+
 			if(SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates[nSmurfIndex] == pTrueSimpleSmurfState)
 			  SimpleSmurfProblemState->arrSmurfStack[0].nNumSmurfsSatisfied++;
 		}
