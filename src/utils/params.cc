@@ -343,6 +343,8 @@ t_opt options[] = {
 			      "Smurf states can either be precomputed before search (default), or built during search (may use less memory, but some heuristics are weaker)"},
 { &smurfs_share_states, "", "smurfs-share-states", P_INT, V(i:0,"0"),  V(i:1,"1"), VAR_NORMAL, 0,
 			      "Share Smurf states between Smurfs. May reduce memory usage if enabled (1/0)"},
+{ &use_lemmas, "", "lemmas", P_INT, V(i:0,"0"),  V(i:0,"0"), VAR_NORMAL, 0,
+			      "Turn lemmas on or off (1/0)"},
 { &MAX_NUM_CACHED_LEMMAS, "L", "max-cached-lemmas", P_INT,
 		V(i:0,"0"), V(i:5000, "5000"), VAR_NORMAL, 0,
                 "set the maximum # of lemmas"}, 

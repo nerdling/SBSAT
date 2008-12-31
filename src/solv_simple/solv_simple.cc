@@ -480,7 +480,7 @@ int EnqueueInference(int nBranchVar, bool bBVPolarity) {
 	int nPrevInfLevel = abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[nBranchVar]);
 	d7_printf4("      Inferring %d at Level %d (prior level = %d)\n",
 				  bBVPolarity?nBranchVar:-nBranchVar, nInfQueueHead, nPrevInfLevel);
-	assert(1 || use_SmurfWatchedLists || nPrevInfLevel > 0); //SEAN!!! 1 = use_lemmas flag
+	assert(use_lemmas || use_SmurfWatchedLists || nPrevInfLevel > 0);
 	
 	if(nPrevInfLevel < nInfQueueHead) {
 		//Inference already in queue
@@ -488,16 +488,19 @@ int EnqueueInference(int nBranchVar, bool bBVPolarity) {
 			//Conflict Detected;
 			d7_printf2("      Conflict when adding %d to the inference queue\n", bBVPolarity?nBranchVar:-nBranchVar);
 			d7_printf2("      Applying conflict %d to lemma database\n", bBVPolarity?nBranchVar:-nBranchVar);
-			if(backtrack_level < SimpleSmurfProblemState->nCurrSearchTreeLevel) { 
-				nInEnqueueInference = 0;
-				return 0;
+			
+			if(use_lemmas) {
+				if(backtrack_level < SimpleSmurfProblemState->nCurrSearchTreeLevel) { 
+					nInEnqueueInference = 0;
+					return 0;
+				}
+				backtrack_level = picosat_bcp(); //Empty the lemma database bcp queue
+				if(backtrack_level < SimpleSmurfProblemState->nCurrSearchTreeLevel) { 
+					nInEnqueueInference = 0;
+					return 0;
+				}
+				backtrack_level = picosat_apply_inference(bBVPolarity?nBranchVar:-nBranchVar, SimpleSmurfProblemState->pConflictClause.clause);
 			}
-			backtrack_level = picosat_bcp(); //Empty the lemma database bcp queue
-			if(backtrack_level < SimpleSmurfProblemState->nCurrSearchTreeLevel) { 
-				nInEnqueueInference = 0;
-				return 0;
-			}
-			backtrack_level = picosat_apply_inference(bBVPolarity?nBranchVar:-nBranchVar, SimpleSmurfProblemState->pConflictClause.clause);
 			nInEnqueueInference = 0;
 			return 0;
 		} else {
@@ -513,11 +516,14 @@ int EnqueueInference(int nBranchVar, bool bBVPolarity) {
 		SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[nBranchVar] = nInfQueueHead;
 		SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars++;
 		ite_counters[INF_SMURF]++;
-		d7_printf2("  Applying %d to lemma database\n", bBVPolarity?nBranchVar:-nBranchVar);
-		backtrack_level = picosat_apply_inference(bBVPolarity?nBranchVar:-nBranchVar, SimpleSmurfProblemState->arrInferenceLemmas[nBranchVar].clause);
-		if(backtrack_level < SimpleSmurfProblemState->nCurrSearchTreeLevel) {
-			nInEnqueueInference = 0;
-			return 0;
+		
+		if(use_lemmas) {
+			d7_printf2("  Applying %d to lemma database\n", bBVPolarity?nBranchVar:-nBranchVar);
+			backtrack_level = picosat_apply_inference(bBVPolarity?nBranchVar:-nBranchVar, SimpleSmurfProblemState->arrInferenceLemmas[nBranchVar].clause);
+			if(backtrack_level < SimpleSmurfProblemState->nCurrSearchTreeLevel) {
+				nInEnqueueInference = 0;
+				return 0;
+			}
 		}
 	}
 	nInEnqueueInference = 0;
@@ -531,7 +537,7 @@ int ApplyInferenceToStates(int nBranchVar, bool bBVPolarity) {
 	int ret = ApplyInference_Hooks(nBranchVar, bBVPolarity);
 	if(ret == 0) return 0;
 
-	if(1) { //SEAN!!! Need a use_lemmas flag or something
+	if(use_lemmas) {
 		d7_printf1("  Calling lemma database bcp\n");
 //		assert(backtrack_level >= SimpleSmurfProblemState);
 		if(backtrack_level < SimpleSmurfProblemState->nCurrSearchTreeLevel) {
@@ -706,7 +712,7 @@ int SimpleBrancher() {
 						  nBranchLit>0?'+':'-', abs(nBranchLit), nInfQueueHead, nPrevInfLevel);
 			//    d7_printf3("Choice Point #%d = %d\n", , nBranchLit);
 
-			if(1) { //SEAN!!! need a use_lemmas flag
+			if(use_lemmas) {
 				//Apply choice point to the lemma table
 				d7_printf2("  Applying choice %d to lemma database\n", nBranchLit);
 				backtrack_level = picosat_apply_inference(nBranchLit, NULL);
@@ -723,7 +729,7 @@ int SimpleBrancher() {
 				//apply inference to all involved smurfs
 				if(ApplyInferenceToStates(nBranchVar, bBVPolarity) == 0) {
 					//A conflict occured
-					if(1) { //SEAN!!! Need a use_lemmas flag or something
+					if(use_lemmas) {
 find_more_solutions_lemmas: ;
 						if(backtrack_level >= SimpleSmurfProblemState->nCurrSearchTreeLevel) {
 							d7_printf1("  Backtracking the lemma database and resolving new conflict clauses\n");							  
@@ -735,18 +741,16 @@ find_more_solutions_lemmas: ;
 						}
 						assert(backtrack_level < SimpleSmurfProblemState->nCurrSearchTreeLevel);
 						d7_printf3("  Backtrack from level %d to level %d\n", SimpleSmurfProblemState->nCurrSearchTreeLevel, backtrack_level);
-					}
+						
+						do {
+							switch(Backtrack()) {
+							 case SOLV_UNSAT: return SOLV_UNSAT;
+							 case SOLV_SAT: return SOLV_SAT;
+							 case SOLV_LIMIT: return ret;
+							 default: break;
+							}
+						} while (backtrack_level < SimpleSmurfProblemState->nCurrSearchTreeLevel);
 
-					do {
-						switch(Backtrack()) {
-						 case SOLV_UNSAT: return SOLV_UNSAT;
-						 case SOLV_SAT: return SOLV_SAT;
-						 case SOLV_LIMIT: return ret;
-						 default: break;
-						}
-					} while (backtrack_level < SimpleSmurfProblemState->nCurrSearchTreeLevel);
-
-					if(1) { //SEAN -- need a use_lemmas flag
 						nInfQueueHead = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
 						d7_printf1("  Calling lemma database to infer the UIP literal\n");
 						backtrack_level = picosat_bcp();
@@ -760,9 +764,16 @@ find_more_solutions_lemmas: ;
 					}
 					
 					//To maintain consistency (and being able to find ALL solutions over months of running)
-					//I'll need this literal phase consistency heuristic thing Knot did. So, after backtracking -- 
+					//I'll need this literal phase consistency heuristic thing Knot did. So, after backtracking --
 					//I think this will work...
 
+					switch(Backtrack()) {
+					 case SOLV_UNSAT: return SOLV_UNSAT;
+					 case SOLV_SAT: return SOLV_SAT;
+					 case SOLV_LIMIT: return ret;
+					 default: break;
+					}
+					
 find_more_solutions: ;
 					
 					nBranchLit = SimpleSmurfProblemState->arrInferenceQueue[SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars];
@@ -786,7 +797,7 @@ find_more_solutions: ;
 		ret = SOLV_SAT;
 		
 		if(ite_counters[NUM_SOLUTIONS] != max_solutions_simple) {
-			if(1) { //SEAN!!! Need a use_lemmas flag or something
+			if(use_lemmas) {
 				if(nForceBackjumpLevel < SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nVarChoiceCurrLevel) {
 					d7_printf2("Forcing a backjump to at least level %d\n", nForceBackjumpLevel);
 					while(nForceBackjumpLevel < SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nVarChoiceCurrLevel) {

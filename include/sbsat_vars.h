@@ -230,6 +230,7 @@ extern int use_SmurfWatchedLists;
 extern int numSmurfWatchedVars;
 extern int precompute_smurfs;
 extern int smurfs_share_states;
+extern int use_lemmas;
 
 extern int USE_AUTARKY_SMURFS;
 

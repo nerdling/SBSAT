@@ -51,6 +51,7 @@ int use_SmurfWatchedLists = 0;
 int numSmurfWatchedVars = 2;
 int precompute_smurfs = 1;
 int smurfs_share_states = 1;
+int use_lemmas = 0;
 char formatin = 'f', formatout = 'b'; //Solving the problem is the Default
 int print_tree = 0;
 char inputfile[256] = "-";

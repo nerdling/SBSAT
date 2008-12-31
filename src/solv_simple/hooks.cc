@@ -39,8 +39,6 @@
 #include "sbsat_solver.h"
 #include "solver.h"
 
-int use_Lemmas = 1; //Placeholder
-
 bool CheckSimpleLimits(double fStartTime) {
 	double fEndTime;
 	fEndTime = get_runtime();
@@ -188,7 +186,7 @@ ITE_INLINE int Init_Solver_PostSmurfs_Hooks(void **arrSmurfStates) {
 		}
 	}
 
-	if(use_Lemmas == 1) {
+	if(use_lemmas) {
 		picosat_init();
 		picosat_adjust(SimpleSmurfProblemState->nNumVars+1);
 		picosat_set_seed(random_seed);
