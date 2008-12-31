@@ -5756,7 +5756,7 @@ int picosat_bcp() {
 		backtrack ();
 		if (mtcls) {//Generated the empty clause
 			LOG(fprintf(out, "2level=%d\n", level));
-			return level;//PICOSAT_UNSATISFIABLE;
+			return -1;//level;//PICOSAT_UNSATISFIABLE;
 		}
 		LOG(fprintf(out, "3level=%d\n", level));
 		return level;
