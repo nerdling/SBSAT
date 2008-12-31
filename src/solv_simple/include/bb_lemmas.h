@@ -72,6 +72,8 @@ struct SimpleLemma {
 };
 
 extern "C" {
+	void create_clause_from_SBSAT_solution(int *arrInferenceQueue, SmurfStack *arrSmurfStack, int nCurrSearchTreeLevel,
+														Cls **clause, int *lits_max_size);
 	void create_clause_from_Smurf(int nInfVar, int nNumVarsInSmurf, SmurfStateEntry *pSmurfState,
 											Cls **clause, int *lits_max_size);
 	int  picosat_apply_inference(int var_to_assign, Cls *reason);

@@ -5270,48 +5270,46 @@ reduce (void)
   collect = 0;
   lcollect = 0;
 
-  for (p = ((fsimplify < fixed) ? SOC : lclauses); p != EOC; p = NXC (p))
-    {
-      cls = *p;
-      if (!cls)
-	continue;
-
+  for (p = ((fsimplify < fixed) ? SOC : lclauses); p != EOC; p = NXC (p)) {
+	  cls = *p;
+	  if (!cls)
+		 continue;
+	  
 #ifdef TRACE
-      if (cls->collected)
-	continue;
+	  if (cls->collected)
+		 continue;
 #endif
-
-      if (cls->locked)
-	continue;
-
-      assert (!cls->collect);
-      if (fsimplify < fixed && clause_is_toplevel_satisfied (cls))
-	{
-	  mark_clause_to_be_collected (cls);
-	  collect++;
-
-	  if (cls->learned && cls->size > 2)
-	    lcollect++;
-
-	  continue;
-	}
-
-      if (cls->fixed)
-        continue;
-
-      if (!cls->learned)
-	continue;
-
-      if (cls->size <= 2)
-	continue;
-
-      assert (rhead < eor);
-      *rhead++ = cls;
-    }
-  assert (rhead <= eor);
-
+	  
+	  if (cls->locked)
+		 continue;
+	  
+	  assert (!cls->collect);
+	  if (fsimplify < fixed && clause_is_toplevel_satisfied (cls)) {
+		  mark_clause_to_be_collected (cls);
+		  collect++;
+		  
+		  if (cls->learned && cls->size > 2)
+			 lcollect++;
+		  
+		  continue;
+	  }
+	  
+	  if (cls->fixed)
+		 continue;
+	  
+	  if (!cls->learned)
+		 continue;
+	  
+	  if (cls->size <= 2)
+		 continue;
+	  
+	  assert (rhead < eor);
+	  *rhead++ = cls;
+  }
+	assert (rhead <= eor);
+	
   fsimplify = fixed;
-
+	
   rcount = rhead - resolved;
   sort (Cls *, cmp_activity, resolved, rcount);
 
@@ -5319,57 +5317,54 @@ reduce (void)
   target = nlclauses - lcollect + 1;
 
   for (ld = 1; ld < 32 && ((unsigned) (1 << ld)) < target; ld++)
-    ;
+	  ;
   minact = mulflt (cinc, base2flt (1, -ld));
 
   target /= 2;
 
-  if (target >= rcount)
-    {
-      target = rcount;
-    }
-  else if (*CLS2ACT (resolved[target]) < minact)
-    {
-      /* If the distribution of clause activities is skewed and the median
-       * is actually below the maximum average activity, then we collect all
-       * clauses below this activity.
-       */
+  if (target >= rcount) {
+	  target = rcount;
+  } else if (*CLS2ACT (resolved[target]) < minact) {
+	  /* If the distribution of clause activities is skewed and the median
+		* is actually below the maximum average activity, then we collect all
+		* clauses below this activity.
+		*/
       while (++target < rcount && *CLS2ACT (resolved[target]) < minact)
-        ;
-    }
-  else
-    {
-      while (target > 0 && 
-	     !cmp_activity (resolved[target - 1], resolved[target]))
-	target--;
-    }
+		 ;
+  } else {
+	  while (target > 0 && !cmp_activity (resolved[target - 1], resolved[target]))
+		 target--;
+  }
 
   rhead = resolved + target;
-  while (rhead > resolved)
-    {
-      cls = *--rhead;
-      mark_clause_to_be_collected (cls);
+  while (rhead > resolved) {
+	  cls = *--rhead;
+	  LOG (fprintf (out, "marking clause to be collected: ");
+	  dumplits (cls->lits, end_of_lits (cls));
+	  fprintf(out, "\n");
+			 );
 
-      collect++;
-      if (cls->learned && cls->size > 2)	/* just for consistency */
-	lcollect++;
-    }
-
-  if (collect)
-    {
+	  mark_clause_to_be_collected (cls);
+	  
+	  collect++;
+	  if (cls->learned && cls->size > 2)	/* just for consistency */
+		 lcollect++;
+  }
+	
+	if (collect) {
       reductions++;
       bytes_collected = collect_clauses ();
 #ifdef STATS
       rrecycled += bytes_collected;
 #endif
       if (verbosity)
-	report (1, '-');
-    }
-
-  if (!lcollect)
-    inc_lreduce ();		/* avoid dead lock */
-
-  assert (rhead == resolved);
+		  report (1, '-');
+	}
+	
+	if (!lcollect)
+	  inc_lreduce ();		/* avoid dead lock */
+	
+	assert (rhead == resolved);
 }
 
 static void
@@ -5514,7 +5509,7 @@ rdecide (void)
 
   if (res->val != UNDEF)
     {
-      delta = rrng (1, max_var);
+		 delta = rrng (1, max_var);
       while (gcd (delta, max_var) != 1)
 	delta--;
 
@@ -5639,11 +5634,32 @@ decide (void)
   decisions++;
 }
 
+static void
+write_clauses (FILE * file) {
+	Lit **q, **eol;
+	Cls **p, *cls;
+
+	fprintf(stdout, "picosat clauses\n");
+	
+	for (p = SOC; p != EOC; p = NXC (p)) {
+      cls = *p;
+		
+      if (!cls)
+		  continue;
+      eol = end_of_lits (cls);
+      for (q = cls->lits; q < eol; q++) {
+			write_int (LIT2INT (*q), file);
+			fputc (' ', file);
+		}
+		
+      fputs ("0\n", file);
+	}
+}
+
 void create_clause_from_Smurf(int nInfVar, int nNumVarsInSmurf, SmurfStateEntry *pSmurfState,
 												 Cls **clause, int *lits_max_size) {
 	Lit ** p;
 
-//	if((*clause)->locked == 1) return;
 	if((*clause)->used == 1) return; //Clause is already in the queue.
 	
 	if(nNumVarsInSmurf > (*lits_max_size)) {
@@ -5660,6 +5676,26 @@ void create_clause_from_Smurf(int nInfVar, int nNumVarsInSmurf, SmurfStateEntry 
 		nNumVars++;
 	}
 	(*clause)->size = nNumVars;
+}
+
+void create_clause_from_SBSAT_solution(int *arrInferenceQueue, SmurfStack *arrSmurfStack,
+													int nCurrSearchTreeLevel, Cls **clause, int *lits_max_size) {
+	Lit ** p;
+	int i;
+	
+	assert((*clause)->used == 0);
+	
+	if(nCurrSearchTreeLevel > (*lits_max_size)) {
+		(*clause) = realloc((*clause), bytes_clause(nCurrSearchTreeLevel, 0));
+		(*lits_max_size) = nCurrSearchTreeLevel;
+	}
+	
+	(*clause)->size = nCurrSearchTreeLevel;
+	p = (*clause)->lits;
+	for(i = nCurrSearchTreeLevel-1; i >= 0; i--) {
+//		fprintf(stderr, "(%d)", -arrInferenceQueue[arrSmurfStack[i].nNumFreeVars]);
+		(*p++) = int2lit(-arrInferenceQueue[arrSmurfStack[i].nNumFreeVars]);
+	}
 }
 
 static void create_clause(int *lits, int lits_size, Cls **clause, int *lits_max_size) {
@@ -5709,6 +5745,8 @@ int picosat_apply_inference (int var_to_assign, Cls *reason) {
 
 int picosat_bcp() {
 
+	LOG(write_clauses(stdout););
+	
 	CONTIN:
 	if (!conflict)
 	  bcp ();
@@ -5725,7 +5763,7 @@ int picosat_bcp() {
 		//goto CONTIN;
 	}
 	
-	if (fsimplify < fixed && lsimplify <= propagations) {
+/*	if (fsimplify < fixed && lsimplify <= propagations) {
 		simplify ();
 		if (!bcp_queue_is_empty ())
 		  goto CONTIN;
@@ -5741,17 +5779,19 @@ int picosat_bcp() {
 		}
 		
 		assert (!level);
-	}
+	}*/
 
 	if (!bcp_queue_is_empty ())
 	  goto CONTIN; //Not sure this is necessary.
 	
 	//Periodic functions - call to possibly reduce the number of clauses
+/*
 	if (!lreduce)
 	  init_reduce ();
 	
 	if (need_to_reduce ())
 	  reduce ();
+*/
 	//
 	
 	//      decide (); //Call Heuristic
