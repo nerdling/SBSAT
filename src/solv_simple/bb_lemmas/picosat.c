@@ -46,7 +46,7 @@ IN THE SOFTWARE.
 
 /* By default we 'detach satisfied (large) clauses', e.g. NDSC undefined.
  *
-#define NDSC
+ #define NDSC
  */
 
 /* Do not use luby restart schedule instead of inner/outer.
@@ -555,32 +555,11 @@ static unsigned dfreduce;
 static unsigned llocked;	/* locked large learned clauses */
 static unsigned lfixed;		/* fixed large learned clauses */
 static unsigned lrestart;
-#ifdef NLUBY
 static unsigned drestart;
 static unsigned ddrestart;
-#else
-static unsigned lubycnt;
-static unsigned lubymaxdelta;
-static int waslubymaxdelta;
-#endif
 static unsigned long long lsimplify;
 static unsigned long long propagations;
 static unsigned fixed;		/* top level assignments */
-#ifndef NFL
-static unsigned failedlits;
-static unsigned ifailedlits;
-static unsigned efailedlits;
-static unsigned flcalls;
-#ifdef STATS
-static unsigned flrounds;
-static unsigned long long flprops;
-static unsigned long long floopsed, fltried, flskipped;
-#endif
-static unsigned long long fllimit;
-static int simplifying;
-static Lit ** saved;
-static unsigned saved_size;
-#endif
 static unsigned conflicts;
 static unsigned noclauses;	/* current number large original clauses */
 static unsigned nlclauses;	/* current number large learned clauses */
@@ -1074,6 +1053,7 @@ dumpclsnl (Cls * cls)
   fputc ('\n', out);
 }
 
+/*
 void
 dumpcnf (void)
 {
@@ -1094,7 +1074,7 @@ dumpcnf (void)
       dumpclsnl (*p);
     }
 }
-
+*/
 #endif
 
 static void
@@ -1174,50 +1154,21 @@ init (void)
   cimpl.size = 2;
 #endif
 
-#ifdef VISCORES
-  fviscores = popen (
-    "/usr/bin/gnuplot -background black"
-    " -xrm 'gnuplot*textColor:white'"
-    " -xrm 'gnuplot*borderColor:white'"
-    " -xrm 'gnuplot*axisColor:white'"
-    , "w");
-  fprintf (fviscores, "unset key\n");
-  // fprintf (fviscores, "set log y\n");
-  fflush (fviscores);
-  system ("rm -rf /tmp/picosat-viscores");
-  system ("mkdir /tmp/picosat-viscores");
-  system ("mkdir /tmp/picosat-viscores/data");
-#ifdef WRITEGIF
-  system ("mkdir /tmp/picosat-viscores/gif");
-  fprintf (fviscores,
-           "set terminal gif giant animate opt size 1024,768 x000000 xffffff"
-	   "\n");
-
-  fprintf (fviscores, 
-           "set output \"/tmp/picosat-viscores/gif/animated.gif\"\n");
-#endif
-#endif
   state = READY;
 }
 
-size_t
-bytes_clause (unsigned size, unsigned learned)
-{
-  size_t res;
-
-  res = sizeof (Cls);
-  res += size * sizeof (Lit *);
-  res -= 2 * sizeof (Lit *);
-
-  if (learned && size > 2)
-    res += sizeof (Act);	/* add activity */
-
-#ifdef TRACE
-  if (trace)
-    res += sizeof (Trd);	/* add trace data */
-#endif
-
-  return res;
+static size_t
+bytes_clause (unsigned size, unsigned learned) {
+	size_t res;
+	
+	res = sizeof (Cls);
+	res += (size-2) * sizeof (Lit *);
+	//res -= 2 * sizeof (Lit *);
+	
+	if (learned && size > 2)
+	  res += sizeof (Act);	/* add activity */
+	
+	return res;
 }
 
 static Cls *
@@ -1940,15 +1891,6 @@ assign_forced (Lit * lit, Cls * reason) {
 					  prefix, lit2int (lit), level);
 		  dumpclsnl (reason));
 
-/*
-	//Hook into SBSAT
-	int ret = EnqueueInference(abs(lit2int(lit)), lit2int(lit)>0?1:0);
-	if(ret < 0) {
-		assert(0);
-		exit(0);		
-	}
-*/
-	
 	v = LIT2VAR (lit);
 	if (!level && !v->used) {
       vused++;
@@ -3051,8 +2993,6 @@ dynamic_flips_per_assignment_per_mille (void)
   return sdflips / (FFLIPPEDPREC / 1000);
 }
 
-#ifdef NLUBY
-
 static int
 high_agility (void)
 {
@@ -3064,16 +3004,6 @@ very_high_agility (void)
 {
   return dynamic_flips_per_assignment_per_mille () >= 250;
 }
-
-#else
-
-static int
-medium_agility (void)
-{
-  return dynamic_flips_per_assignment_per_mille () >= 230;
-}
-
-#endif
 
 static void
 relemdata (int fp, double val)
@@ -3669,7 +3599,7 @@ prop2 (Lit * this)
 			 break;
 		 }
 		 
-      assign_forced (other, LIT2REASON (NOTLIT(this)));
+		 assign_forced (other, LIT2REASON (NOTLIT(this)));
     }
 #else
   /* Traverse all binary clauses with 'this'.  Head/Tail pointers for binary
@@ -3720,7 +3650,7 @@ prop2 (Lit * this)
 	  break;
 	}
 
-      assign_forced (other, cls);	/* unit clause */
+		 assign_forced (other, cls);	/* unit clause */
     }
 #endif /* !defined(NO_BINARY_CLAUSES) */
 }
@@ -3750,152 +3680,127 @@ should_disconnect_head_tail (Lit * lit)
 #endif
 
 static void
-propl (Lit * this)
-{
-  Cls *next, **htp_ptr, **new_htp_ptr;
-  Lit **l, *other, *new_lit, **eol;
-  unsigned pos;
-  Cls *cls;
-
-  htp_ptr = LIT2HTPS (this);
-  assert (this->val == FALSE);
-
-  /* Traverse all non binary clauses with 'this'.  Head/Tail pointers are
-   * updated as well.
-   */
-  for (cls = *htp_ptr; cls; cls = next)
-    {
-#ifdef STATS
-      visits++;
-      if (cls->size >= 4)
-	lvisits++;
-      traversals++;
-#endif
-#ifdef TRACE
-      assert (!cls->collected);
-#endif
+propl (Lit * this) {
+	Cls *next, **htp_ptr, **new_htp_ptr;
+	Lit **l, *other, *new_lit, **eol;
+	unsigned pos;
+	Cls *cls;
+	
+	htp_ptr = LIT2HTPS (this);
+	assert (this->val == FALSE);
+	
+	/* Traverse all non binary clauses with 'this'.  Head/Tail pointers are
+	 * updated as well.
+	 */
+	for (cls = *htp_ptr; cls; cls = next) {
       assert (cls->size > 0);
-
+//		if(rand()%10 == 0) continue;
+		
       /* With assumptions we need to traverse unit clauses as well.
        */
-      if (cls->size == 1)
-	{
-	  assert (!conflict);
-	  conflict = cls;
-	  break;
-	}
-
+      if (cls->size == 1) {
+			assert (!conflict);
+			conflict = cls;
+			break;
+		}
+		
       other = cls->lits[0];
       pos = (other != this);
-      if (!pos)
-	{
-	  other = cls->lits[1];
-#ifdef STATS
-	  traversals++;
-#endif
-	}
-
+      if (!pos) {
+			other = cls->lits[1];
+		}
+		
       assert (other == cls->lits[!pos]);
       assert (this == cls->lits[pos]);
-
+		
       next = cls->next[pos];
-
+		
       assert (!cls->collect);
-      if (other->val == TRUE)
-	{
-#ifdef STATS
-	  othertrue++;
-	  othertruel++;
-#endif
-#ifndef NDSC
-	  if (should_disconnect_head_tail (other))
-	    {
-	      new_htp_ptr = LIT2DHTPS (other);
-	      cls->next[pos] = *new_htp_ptr;
-	      *new_htp_ptr = cls;
-#ifdef STATS
-	      othertruelu++;
-#endif
-	      *htp_ptr = next;
-	      continue;
-	    }
-#endif
-	DO_NOT_MOVE_HEAD_TAIL_PTR_AND_CONTINUE:
-	  htp_ptr = cls->next + pos;
-	  continue;
-	}
+      if (other->val == TRUE) {
 
+#ifndef NDSC
+			if (should_disconnect_head_tail (other)) {
+				new_htp_ptr = LIT2DHTPS (other);
+				cls->next[pos] = *new_htp_ptr;
+				*new_htp_ptr = cls;
+				*htp_ptr = next;
+				continue;
+			}
+#endif
+			DO_NOT_MOVE_HEAD_TAIL_PTR_AND_CONTINUE:
+			htp_ptr = cls->next + pos;
+			continue;
+		}
+		
       l = cls->lits + 1;
       eol = cls->lits + cls->size;
-
+		
       /* Try to find new head/tail literal instead of 'this'.  We use
        * 'goto' style programming here in order to be able to break
        * out of the outer loop from within the following loop, e.g.
        * with the following 'break' statement.
        */
-    FIND_NEW_HEAD_TAIL_POSITION:
-
-      if (++l == eol)
-	{
-	  if (other->val == FALSE)	/* found conflict */
-	    {
-	      assert (!conflict);
-	      conflict = cls;
-	      break;			/* leave 'for' loop */
-	    }
-
-	  assign_forced (other, cls);		/* unit clause */
-	  goto DO_NOT_MOVE_HEAD_TAIL_PTR_AND_CONTINUE;
-	}
-
-#ifdef STATS
-      traversals++;
-#endif
+		FIND_NEW_HEAD_TAIL_POSITION:
+		
+      if (++l == eol) {
+			if (other->val == FALSE) {	/* found conflict */
+				assert (!conflict);
+				conflict = cls;
+				return; //break;			/* leave 'for' loop */
+			}
+			
+			assign_forced (other, cls);		/* unit clause */
+			goto DO_NOT_MOVE_HEAD_TAIL_PTR_AND_CONTINUE;
+		}
+		
       new_lit = *l;
       if (new_lit->val == FALSE)
-	goto FIND_NEW_HEAD_TAIL_POSITION;
-
+		  goto FIND_NEW_HEAD_TAIL_POSITION;
+		
       assert (new_lit->val == TRUE || new_lit->val == UNDEF);
-
+		
       /* Swap new head/tail literal with previous head/tail 'this'.
        */
       cls->lits[pos] = new_lit;
       *l = this;
-
+		
       new_htp_ptr = LIT2HTPS (new_lit);
       cls->next[pos] = *new_htp_ptr;
       *new_htp_ptr = cls;
-
+		
       *htp_ptr = next;
-    }
+	}
 }
 
+//I can propogate literals to 2-literal clauses,
+//                            n-literal clauses, 
+//                            both,
+//                            or none.
+//How great is that!!!
+
 static void
-bcp (void)
-{
-  assert (!conflict);
-
-  if (mtcls)
-    return;
-
-  while (!conflict) {
-	  
-	  if (ttail2 < thead) { /* prioritize implications */
-		  propagations++;
-		  
-		  //Hook into SBSAT
-		  EnqueueInference(abs(lit2int(*ttail2)), lit2int(*ttail2)>0?1:0);
-		  
-		  prop2 (NOTLIT (*ttail2++));
-	  } else if (ttail < thead)	{ /* unit clauses or clauses with length > 2 */
-		  propl (NOTLIT (*ttail++));
+bcp (void) {
+	assert (!conflict);
+	
+	if (mtcls)
+	  return;
+	
+	while (!conflict) {
+		if (ttail2 < thead) { /* prioritize implications */
+			propagations++;
+			EnqueueInference_lemmas_hook(abs(lit2int(*ttail2)), lit2int(*ttail2)>0?1:0);
+			prop2 (NOTLIT (*ttail2++));
+			//*ttail2++;
+		} else if (ttail < thead)	{ /* unit clauses or clauses with length > 2 */
+			propl (NOTLIT (*ttail++));
+			//*ttail++;
 #ifndef NADC
-	  } else if (ttailado < thead) {
-		  propado (LIT2VAR (*ttailado++));
+		} else if (ttailado < thead) {
+			propado (LIT2VAR (*ttailado++));
 #endif
-	  } else
-		 break;		/* all assignments propagated, so break */
-  }
+		} else
+		  return;		/* all assignments propagated, so break */
+	}
 }
 
 /* This version of 'drive' is independent of the global variable 'level' and
@@ -4006,8 +3911,8 @@ force (Cls * cls)
   if (!forced)
     return;
 
-  assign_forced (forced, reason);
-  v = LIT2VAR (forced);
+	assign_forced (forced, reason);
+	v = LIT2VAR (forced);
 }
 
 static void

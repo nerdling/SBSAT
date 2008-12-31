@@ -469,11 +469,34 @@ int SimpleHeuristic() {
 	return nBranchLit;
 }
 
-int nInEnqueueInference = 0;
+int EnqueueInference_lemmas_hook(int nBranchVar, bool bBVPolarity) {
+	//Try to insert inference into the inference Queue
+	int nInfQueueHead = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
+	int nPrevInfLevel = abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[nBranchVar]);
+	d7_printf4("      Lemma cache inferring %d at Level %d (prior level = %d)\n",
+				  bBVPolarity?nBranchVar:-nBranchVar, nInfQueueHead, nPrevInfLevel);
+	assert(use_lemmas || use_SmurfWatchedLists || nPrevInfLevel > 0);
+	
+	if(nPrevInfLevel < nInfQueueHead) {
+		//Inference already in queue
+		assert((SimpleSmurfProblemState->arrInferenceQueue[nPrevInfLevel] > 0) == bBVPolarity);
+		//Lemmas shouldn't be able to infer confliting variables.
+
+		//Value is already inferred the correct value
+		//Do nothing
+		d7_printf2("      Inference %d already inferred\n", bBVPolarity?nBranchVar:-nBranchVar); 
+		return 2;
+	} else {
+		//Inference is not in inference queue, insert it.
+		SimpleSmurfProblemState->arrInferenceQueue[nInfQueueHead] = bBVPolarity?nBranchVar:-nBranchVar;
+		SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[nBranchVar] = nInfQueueHead;
+		SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars++;
+		ite_counters[INF_SMURF]++;
+	}
+	return 1;
+}
 
 int EnqueueInference(int nBranchVar, bool bBVPolarity) {
-	if(nInEnqueueInference) return 1;
-	nInEnqueueInference = 1;
 	
 	//Try to insert inference into the inference Queue
 	int nInfQueueHead = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
@@ -491,23 +514,19 @@ int EnqueueInference(int nBranchVar, bool bBVPolarity) {
 			
 			if(use_lemmas) {
 				if(backtrack_level < SimpleSmurfProblemState->nCurrSearchTreeLevel) { 
-					nInEnqueueInference = 0;
 					return 0;
 				}
 				backtrack_level = picosat_bcp(); //Empty the lemma database bcp queue
 				if(backtrack_level < SimpleSmurfProblemState->nCurrSearchTreeLevel) { 
-					nInEnqueueInference = 0;
 					return 0;
 				}
 				backtrack_level = picosat_apply_inference(bBVPolarity?nBranchVar:-nBranchVar, SimpleSmurfProblemState->pConflictClause.clause);
 			}
-			nInEnqueueInference = 0;
 			return 0;
 		} else {
 			//Value is already inferred the correct value
 			//Do nothing
 			d7_printf2("      Inference %d already inferred\n", bBVPolarity?nBranchVar:-nBranchVar); 
-			nInEnqueueInference = 0;
 		   return 2;
 		}
 	} else {
@@ -521,12 +540,10 @@ int EnqueueInference(int nBranchVar, bool bBVPolarity) {
 			d7_printf2("  Applying %d to lemma database\n", bBVPolarity?nBranchVar:-nBranchVar);
 			backtrack_level = picosat_apply_inference(bBVPolarity?nBranchVar:-nBranchVar, SimpleSmurfProblemState->arrInferenceLemmas[nBranchVar].clause);
 			if(backtrack_level < SimpleSmurfProblemState->nCurrSearchTreeLevel) {
-				nInEnqueueInference = 0;
 				return 0;
 			}
 		}
 	}
-	nInEnqueueInference = 0;
 	return 1;
 }
 
@@ -543,7 +560,6 @@ int ApplyInferenceToStates(int nBranchVar, bool bBVPolarity) {
 		if(backtrack_level < SimpleSmurfProblemState->nCurrSearchTreeLevel) {
 //			fprintf(stderr, "Don't really think this can happen\n");
 //			assert(0);
-			nInEnqueueInference = 0;
 			return 0;
 		}
 		backtrack_level = picosat_bcp();

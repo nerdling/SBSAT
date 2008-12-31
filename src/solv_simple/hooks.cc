@@ -163,6 +163,16 @@ ITE_INLINE int Init_Solver_MidSmurfs_Hooks(int nSmurfIndex, void **arrSmurfState
 	return ret;
 }
 
+size_t bytes_clause (unsigned size, unsigned learned) {
+	size_t res;
+	
+	res = sizeof (Cls);
+	res += (size-2) * sizeof (Lit *);
+	//res -= 2 * sizeof (Lit *);
+	
+	return res;
+}
+
 ITE_INLINE int Init_Solver_PostSmurfs_Hooks(void **arrSmurfStates) {
 	int ret = SOLV_UNKNOWN;
 

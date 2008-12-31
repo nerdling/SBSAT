@@ -109,7 +109,9 @@ ITE_INLINE void FreeSimpleVarMap();
 
 void Alloc_SmurfStack(int destination);
 
-extern "C" { int EnqueueInference(int nInfVar, bool bInfPolarity); }
+extern "C" { int EnqueueInference_lemmas_hook(int nInfVar, bool bInfPolarity); }
+
+int EnqueueInference(int nInfVar, bool bInfPolarity);
 void check_SmurfStatesTableSize(int size);
 
 //Hooks

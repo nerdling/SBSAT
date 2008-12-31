@@ -82,7 +82,7 @@ extern "C" {
 	void picosat_init(void);
 	void picosat_reset(void);
 	void picosat_adjust(int max_idx);
-	size_t bytes_clause(unsigned size, unsigned learned);
+//	size_t bytes_clause(unsigned size, unsigned learned);
 }
 
 #endif
