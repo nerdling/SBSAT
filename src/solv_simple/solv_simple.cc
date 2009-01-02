@@ -12,6 +12,27 @@ int solutions_overflow=0;
 long nNextRestart = 0;
 int backtrack_level = 0;
 
+ITE_INLINE 
+void create_clause_from_SBSAT_solution(int *arrInferenceQueue, SmurfStack *arrSmurfStack,
+													int nCurrSearchTreeLevel, Cls **clause, int *lits_max_size) {
+	Lit ** p;
+	int i;
+	
+	assert((*clause)->used == 0);
+	
+	if(nCurrSearchTreeLevel > (*lits_max_size)) {
+		(*clause) = (Cls *)realloc((*clause), bytes_clause(nCurrSearchTreeLevel, 0));
+		(*lits_max_size) = nCurrSearchTreeLevel;
+	}
+	
+	(*clause)->size = nCurrSearchTreeLevel;
+	p = (*clause)->lits;
+	for(i = nCurrSearchTreeLevel-1; i >= 0; i--) {
+		//    fprintf(stderr, "(%d)", -arrInferenceQueue[arrSmurfStack[i].nNumFreeVars]);
+		(*p++) = int2lit(-arrInferenceQueue[arrSmurfStack[i].nNumFreeVars]);
+	}
+}
+
 ITE_INLINE
 void save_solution_simple(void) {
 	d7_printf1("      Solution found\n");

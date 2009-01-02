@@ -3,6 +3,29 @@
 #include "solver.h"
 
 ITE_INLINE
+void create_clause_from_Smurf(int nInfVar, int nNumVarsInSmurf, SmurfStateEntry *pSmurfState,
+										Cls **clause, int *lits_max_size) {
+	Lit ** p;
+	
+	if((*clause)->used == 1) return; //Clause is already in the queue.
+	
+	if(nNumVarsInSmurf > (*lits_max_size)) {
+		(*clause) = (Cls *)realloc((*clause), bytes_clause(nNumVarsInSmurf, 0));
+		(*lits_max_size) = nNumVarsInSmurf;
+	}
+	
+	p = (*clause)->lits;
+	(*p++) = int2lit(nInfVar);
+	int nNumVars = 1;
+	while(pSmurfState != NULL) {
+		(*p++) = int2lit(pSmurfState->nLemmaLiteral);
+		pSmurfState = (SmurfStateEntry *)pSmurfState->pPreviousState;
+		nNumVars++;
+	}
+	(*clause)->size = nNumVars;
+}
+
+ITE_INLINE
 int ApplyInferenceToSmurf(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates) {
 	SmurfStateEntry *pSmurfState = (SmurfStateEntry *)arrSmurfStates[nSmurfNumber];
 	SmurfStateEntry *pTopState = pSmurfState;
@@ -119,7 +142,7 @@ int ApplyInferenceToSmurf(int nBranchVar, bool bBVPolarity, int nSmurfNumber, vo
 	return ret;
 }
 
-//Seems to be working great...so far.
+//Seems to be working...so far.
 ITE_INLINE
 int ApplyInferenceToWatchedSmurf(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates) {
 //int ApplyInferenceToSmurf(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates) {	
