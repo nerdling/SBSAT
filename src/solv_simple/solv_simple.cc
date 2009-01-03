@@ -703,9 +703,9 @@ int SimpleBrancher() {
 
 	fSimpleSolverStartTime = get_runtime();
 
-	int max_solutions_simple = max_solutions>0?max_solutions:(max_solutions==0?-1:0);
+	LONG64 max_solutions_simple = max_solutions>0?max_solutions:(max_solutions==0?-1:0);
 	
-	while(ite_counters[NUM_SOLUTIONS] != max_solutions_simple) {
+	while((max_solutions>0)?(ite_counters[NUM_SOLUTIONS]<max_solutions_simple):1) {
 		bool bBVPolarity; 
 		int nBranchLit, nInfQueueHead, nPrevInfLevel, nBranchVar;
 		  
@@ -833,7 +833,7 @@ find_more_solutions: ;
 
 		ret = SOLV_SAT;
 		
-		if(ite_counters[NUM_SOLUTIONS] != max_solutions_simple) {
+		if((max_solutions>0)?(ite_counters[NUM_SOLUTIONS]<max_solutions_simple):1) {
 			if(use_lemmas) {
 				if(nForceBackjumpLevel < SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nVarChoiceCurrLevel) {
 					d7_printf2("Forcing a backjump to at least level %d\n", nForceBackjumpLevel);

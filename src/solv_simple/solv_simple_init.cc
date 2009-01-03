@@ -375,7 +375,10 @@ int Init_SimpleSmurfSolver() {
 	switch (sHeuristic[0]) {
 	 case 'n': Simple_Solver_Heuristic = Simple_DC_Heuristic; break;
 	 case 'j': Simple_Solver_Heuristic = Simple_LSGB_Heuristic; break;
-	 case 'p': Simple_Solver_Heuristic = picosat_decide_for_SBSAT; break;
+	 case 'p': if(use_lemmas == 0) {
+		          dE_printf1("Error: 'lemmas' must be enabled to use the PicoSAT heuristic\n");
+                exit(0);
+	           } else Simple_Solver_Heuristic = picosat_decide_for_SBSAT; break;
     case 'v': Simple_Solver_Heuristic = Simple_PMVSIDS_Heuristic; 
 		        arrPMVSIDS = (int *)ite_calloc(nNumVars, sizeof(int), 9, "arrPMVSIDS");
 		        use_poor_mans_vsids=1;
