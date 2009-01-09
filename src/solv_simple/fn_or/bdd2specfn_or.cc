@@ -46,7 +46,7 @@ void *CreateORState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, ORStateEnt
 
 	pCurrentBDD->pState = (void *)pStartState;
 	
-	if(nNumElts == 2) return (void *)pStartState;
+	if(nNumElts == 2)	return (void *)pStartState;
 
 	ORCounterStateEntry *pCurrORCounter;
 	void *pPrevORCounter = (void *)pStartState;
@@ -59,11 +59,13 @@ void *CreateORState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, ORStateEnt
 		pCurrORCounter->cType = FN_OR_COUNTER;
 		pCurrORCounter->ApplyInferenceToState = ApplyInferenceToORCounter;
 		pCurrORCounter->pTransition = pPrevORCounter;
+//		pCurrORCounter->pTransition->pPreviousState = pCurrORCounter;
 		pCurrORCounter->pORState = pStartState;
 		pCurrORCounter->nSize = x+1;
 		pPrevORCounter = (void *)pCurrORCounter;
 	}
 
 	pCurrentBDD->pState = (void *)pCurrORCounter;
+	pStartState->pORCounterState = pCurrORCounter;
 	return (void *)pCurrORCounter;
 }

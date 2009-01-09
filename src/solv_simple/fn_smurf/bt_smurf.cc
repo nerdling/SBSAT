@@ -3,7 +3,7 @@
 #include "solver.h"
 
 ITE_INLINE
-void create_clause_from_Smurf(int nInfVar, int nNumVarsInSmurf, SmurfStateEntry *pSmurfState,
+void create_clause_from_SmurfState(int nInfVar, TypeStateEntry *pSmurfState, int nNumVarsInSmurf,
 										Cls **clause, int *lits_max_size) {
 	Lit ** p;
 	
@@ -13,22 +13,60 @@ void create_clause_from_Smurf(int nInfVar, int nNumVarsInSmurf, SmurfStateEntry 
 		(*clause) = (Cls *)realloc((*clause), bytes_clause(nNumVarsInSmurf, 0));
 		(*lits_max_size) = nNumVarsInSmurf;
 	}
+
+	d7_printf2("        Lemma: %d", nInfVar);
 	
 	p = (*clause)->lits;
 	(*p++) = int2lit(nInfVar);
 	int nNumVars = 1;
 	while(pSmurfState != NULL) {
+		d7_printf3(" %d(%x)", pSmurfState->nLemmaLiteral, pSmurfState); //Negate literals in the path.
 		(*p++) = int2lit(pSmurfState->nLemmaLiteral);
-		pSmurfState = (SmurfStateEntry *)pSmurfState->pPreviousState;
+		pSmurfState = (TypeStateEntry *)pSmurfState->pPreviousState;
 		nNumVars++;
 	}
+	d7_printf1("\n");
 	(*clause)->size = nNumVars;
 }
 
 ITE_INLINE
+int SmurfState_InferWithLemma(SmurfStateEntry *pTopState, void *pNextState, int nInfVar, int nSmurfNumber) {
+	int nInfQueueHead = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
+	int nPrevInfLevel = abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[nInfVar]);
+	if(nPrevInfLevel < nInfQueueHead) {
+		if((SimpleSmurfProblemState->arrInferenceQueue[nPrevInfLevel] > 0) != ((InferenceStateEntry *)pNextState)->bPolarity) {
+			//Conflict
+			//Add a lemma to reference this conflict.
+			create_clause_from_SmurfState((((InferenceStateEntry *)pNextState)->bPolarity)?nInfVar:-nInfVar,
+													(TypeStateEntry *)pTopState,
+													SimpleSmurfProblemState->arrReverseOccurenceList[nSmurfNumber][0].var,
+													&(SimpleSmurfProblemState->pConflictClause.clause),
+													&(SimpleSmurfProblemState->pConflictClause.max_size));
+			int ret = EnqueueInference(nInfVar, ((InferenceStateEntry *)pNextState)->bPolarity);
+			assert(ret == 0);
+			return 0;
+		} else {
+			//Lit already assigned.
+			d7_printf2("      Inference %d already inferred\n", (((InferenceStateEntry *)pNextState)->bPolarity)?nInfVar:-nInfVar);
+			return 1;
+		} 
+	} else {
+		//Add a lemma as reference to this inference.
+		create_clause_from_SmurfState((((InferenceStateEntry *)pNextState)->bPolarity > 0)?nInfVar:-nInfVar,
+												(TypeStateEntry *)pTopState,
+												SimpleSmurfProblemState->arrReverseOccurenceList[nSmurfNumber][0].var,
+												&(SimpleSmurfProblemState->arrInferenceLemmas[nInfVar].clause),
+												&(SimpleSmurfProblemState->arrInferenceLemmas[nInfVar].max_size));
+		
+		if(EnqueueInference(nInfVar, ((InferenceStateEntry *)pNextState)->bPolarity) == 0) return 0;
+	}
+	return 1;
+}
+	
+ITE_INLINE
 int ApplyInferenceToSmurf(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates) {
 	SmurfStateEntry *pSmurfState = (SmurfStateEntry *)arrSmurfStates[nSmurfNumber];
-	SmurfStateEntry *pTopState = pSmurfState;
+
 	void *pNextState;
 	do {
 		if(pSmurfState->nTransitionVar < nBranchVar)
@@ -36,7 +74,7 @@ int ApplyInferenceToSmurf(int nBranchVar, bool bBVPolarity, int nSmurfNumber, vo
 		else if(pSmurfState->nTransitionVar > nBranchVar)
 		  pSmurfState = (SmurfStateEntry *)pSmurfState->pNextVarInThisStateLT;
 		else {
-			pTopState->nLemmaLiteral = bBVPolarity?-nBranchVar:nBranchVar;
+			((TypeStateEntry *)arrSmurfStates[nSmurfNumber])->nLemmaLiteral = bBVPolarity?-nBranchVar:nBranchVar; //Polarity for lemma literals is reversed
 			//(pSmurfState->nTransitionVar == nBranchVar) {
 			//Follow this transition and apply all inferences found.
 //			void *pNextState = bBVPolarity?pSmurfState->pVarIsTrueTransition:pSmurfState->pVarIsFalseTransition;
@@ -52,57 +90,14 @@ int ApplyInferenceToSmurf(int nBranchVar, bool bBVPolarity, int nSmurfNumber, vo
 			void *pPrevState = NULL;
 			while(pNextState!=NULL && ((TypeStateEntry *)pNextState)->cType == FN_INFERENCE) {
 
-				//SimpleSmurfProblemState->arrInferenceLemmas[nInfLiteral].lits;
-				//SimpleSmurfProblemState->arrInferenceLemmas[nInfLiteral].max_size;
-
 				int nInfVar = ((InferenceStateEntry *)pNextState)->nTransitionVar;
 
 				if(use_lemmas) {
-					D_7(
-						 SmurfStateEntry *pTempState = pTopState;
-						 d7_printf2("        Lemma: %d", (((InferenceStateEntry *)pNextState)->bPolarity > 0)?
-										nInfVar:-nInfVar);
-						 while(pTempState!=NULL) {
-							 d7_printf3(" %d(%x)", pTempState->nLemmaLiteral, pTempState); //Negate literals in the path.
-							 pTempState = (SmurfStateEntry *)pTempState->pPreviousState;
-						 }
-						 d7_printf1("\n");
-						 );
-					
-					//if(EnqueueInference(nInfVar, ((InferenceStateEntry *)pNextState)->bPolarity > 0) == 0) return 0;
-					int nInfQueueHead = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
-					int nPrevInfLevel = abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[nInfVar]);
-					if(nPrevInfLevel < nInfQueueHead) {
-						if(((SimpleSmurfProblemState->arrInferenceQueue[nPrevInfLevel] > 0) != (((InferenceStateEntry *)pNextState)->bPolarity > 0))) {
-							//SEAN!!! all this > 0 is probably overkill
-							//Conflict
-							//Add a lemma as reference this conflict.
-							create_clause_from_Smurf((((InferenceStateEntry *)pNextState)->bPolarity > 0)?nInfVar:-nInfVar,
-															 SimpleSmurfProblemState->arrReverseOccurenceList[nSmurfNumber][0].var,
-															 pTopState, 
-															 &(SimpleSmurfProblemState->pConflictClause.clause),
-															 &(SimpleSmurfProblemState->pConflictClause.max_size));
-							int ret = EnqueueInference(nInfVar, ((InferenceStateEntry *)pNextState)->bPolarity > 0);
-							assert(ret == 0);
-							return 0;
-						} else {
-							//Lit already assigned.
-							d7_printf2("      Inference %d already inferred\n", bBVPolarity?nBranchVar:-nBranchVar);
-						} 
-					} else {
-						//Add a lemma as reference to this inference.
-						create_clause_from_Smurf((((InferenceStateEntry *)pNextState)->bPolarity > 0)?nInfVar:-nInfVar,
-														 SimpleSmurfProblemState->arrReverseOccurenceList[nSmurfNumber][0].var,
-														 pTopState, 
-														 &(SimpleSmurfProblemState->arrInferenceLemmas[nInfVar].clause),
-														 &(SimpleSmurfProblemState->arrInferenceLemmas[nInfVar].max_size));
-						
-						if(EnqueueInference(nInfVar, ((InferenceStateEntry *)pNextState)->bPolarity > 0) == 0) return 0;
-					}
+					if(SmurfState_InferWithLemma((SmurfStateEntry *)arrSmurfStates[nSmurfNumber], pNextState, nInfVar, nSmurfNumber) == 0) return 0;
 				} else {
-					if(EnqueueInference(nInfVar, ((InferenceStateEntry *)pNextState)->bPolarity > 0) == 0) return 0;
+					if(EnqueueInference(nInfVar, ((InferenceStateEntry *)pNextState)->bPolarity) == 0) return 0;
 				}
-					
+
 				//Follow the transtion to the next SmurfState
 				pPrevState = pNextState;
 				pNextState = ((InferenceStateEntry *)pNextState)->pVarTransition;
@@ -125,7 +120,7 @@ int ApplyInferenceToSmurf(int nBranchVar, bool bBVPolarity, int nSmurfNumber, vo
 				d7_printf3("      State %x currently owned by Smurf %d, transitioning to True\n", pNextState, ((TypeStateEntry *)pNextState)->pStateOwner);
 				pNextState = pTrueSimpleSmurfState;
 			} else {
-				((TypeStateEntry *)pNextState)->pPreviousState = pTopState;
+				((TypeStateEntry *)pNextState)->pPreviousState = arrSmurfStates[nSmurfNumber];
 				((TypeStateEntry *)pNextState)->pStateOwner = nSmurfNumber;
 			}
 

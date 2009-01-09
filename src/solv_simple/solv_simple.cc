@@ -77,7 +77,7 @@ void save_solution_simple(void) {
 				int j=SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nHeuristicPlaceholder;
 				while(arrVarChoiceLevels[level][j] != 0) {
 					int i=arrVarChoiceLevels[level][j];
-					if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i] >= nCurrInfLevel) {
+					if(abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i]) >= nCurrInfLevel) {
 						//double # of solutions
 						num_vars++;
 					}
@@ -143,7 +143,7 @@ void Calculate_Heuristic_Values() {
 		 case FN_OR_COUNTER:
 			pState = arrSmurfStates[nSmurfIndex];
 			for(int index = 0; numfound < ((ORCounterStateEntry *)pState)->nSize; index++) {
-				if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[((ORCounterStateEntry *)pState)->pORState->pnTransitionVars[index]] >= nCurrInfLevel) {
+				if(abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[((ORCounterStateEntry *)pState)->pORState->pnTransitionVars[index]]) >= nCurrInfLevel) {
 					numfound++;
 					if(((ORCounterStateEntry *)pState)->pORState->bPolarity[index] == BOOL_TRUE) {
 //#pragma omp atomic
@@ -162,7 +162,7 @@ void Calculate_Heuristic_Values() {
 		 case FN_XOR_COUNTER:
 			pState = arrSmurfStates[nSmurfIndex];
 			for(int index = 0; numfound < ((XORCounterStateEntry *)pState)->nSize; index++) {
-				if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[((XORCounterStateEntry *)pState)->pXORState->pnTransitionVars[index]] >= nCurrInfLevel) {
+				if(abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[((XORCounterStateEntry *)pState)->pXORState->pnTransitionVars[index]]) >= nCurrInfLevel) {
 					numfound++;
 //#pragma omp atomic
 					SimpleSmurfProblemState->arrPosVarHeurWghts[((XORCounterStateEntry *)pState)->pXORState->pnTransitionVars[index]] += LSGBXORCounterGetHeurScoreTrans(((XORCounterStateEntry *)pState));
@@ -176,7 +176,7 @@ void Calculate_Heuristic_Values() {
 			//SEAN!!! This needs to be fixed up. numfound is incorrect and the heuristic returns 1.
 			pState = arrSmurfStates[nSmurfIndex];
 			for(int index = 0; numfound < ((MINMAXCounterStateEntry *)pState)->pMINMAXState->nSize; index++) {
-				if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[((MINMAXCounterStateEntry *)pState)->pMINMAXState->pnTransitionVars[index]] >= nCurrInfLevel) {
+				if(abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[((MINMAXCounterStateEntry *)pState)->pMINMAXState->pnTransitionVars[index]]) >= nCurrInfLevel) {
 					numfound++;
 //#pragma omp atomic
 					SimpleSmurfProblemState->arrPosVarHeurWghts[((MINMAXCounterStateEntry *)pState)->pMINMAXState->pnTransitionVars[index]] += LSGBMINMAXCounterGetHeurScore(((MINMAXCounterStateEntry *)pState));
@@ -188,7 +188,7 @@ void Calculate_Heuristic_Values() {
 		 case FN_OR:
 			pState = arrSmurfStates[nSmurfIndex];
 			for(int index = 0; numfound < 2; index++) {
-				if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[((ORStateEntry *)pState)->pnTransitionVars[index]] >= nCurrInfLevel) {
+				if(abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[((ORStateEntry *)pState)->pnTransitionVars[index]]) >= nCurrInfLevel) {
 					numfound++;
 					if(((ORStateEntry *)pState)->bPolarity[index] == BOOL_TRUE) {
 //#pragma omp atomic
@@ -207,7 +207,7 @@ void Calculate_Heuristic_Values() {
 		 case FN_XOR:
 			pState = arrSmurfStates[nSmurfIndex];
 			for(int index = 0; numfound < 2; index++) {
-				if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[((XORStateEntry *)pState)->pnTransitionVars[index]] >= nCurrInfLevel) {
+				if(abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[((XORStateEntry *)pState)->pnTransitionVars[index]]) >= nCurrInfLevel) {
 					numfound++;
 //#pragma omp atomic
 					SimpleSmurfProblemState->arrPosVarHeurWghts[((XORStateEntry *)pState)->pnTransitionVars[index]] += LSGBXORGetHeurScoreTrans(((XORStateEntry *)pState));
@@ -219,14 +219,14 @@ void Calculate_Heuristic_Values() {
 		 case FN_XOR_GELIM:
 			pState = arrSmurfStates[nSmurfIndex];
 			for(int index = 0; index < ((XORGElimStateEntry *)pState)->nSize; index++) {
-				if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[((XORGElimStateEntry *)pState)->pnTransitionVars[index]] >= nCurrInfLevel) {
+				if(abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[((XORGElimStateEntry *)pState)->pnTransitionVars[index]]) >= nCurrInfLevel) {
 					numfound++;
 				}
 			}
 			if(numfound == 0) arrSmurfStates[nSmurfIndex] = pTrueSimpleSmurfState;
 			else {
 				for(int index = 0; index < ((XORGElimStateEntry *)pState)->nSize; index++) {				  
-					if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[((XORGElimStateEntry *)pState)->pnTransitionVars[index]] >= nCurrInfLevel) {
+					if(abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[((XORGElimStateEntry *)pState)->pnTransitionVars[index]]) >= nCurrInfLevel) {
 //#pragma omp atomic
 						SimpleSmurfProblemState->arrPosVarHeurWghts[((XORGElimStateEntry *)pState)->pnTransitionVars[index]] += LSGBarrXORWeightTrans(numfound);
 //#pragma omp atomic
@@ -273,7 +273,7 @@ int Simple_LSGB_Heuristic() {
 			int j=SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nHeuristicPlaceholder;
 			while(arrVarChoiceLevels[level][j] != 0) {
 				int i=arrVarChoiceLevels[level][j];
-				if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i] >= nCurrInfLevel) {
+				if(abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i]) >= nCurrInfLevel) {
 					nBestVble = i;
 					fMaxWeight = (1+SimpleSmurfProblemState->arrPosVarHeurWghts[i]) *
 					  (1+SimpleSmurfProblemState->arrNegVarHeurWghts[i]);
@@ -285,7 +285,7 @@ int Simple_LSGB_Heuristic() {
 			if (nBestVble > 0) {
 				while(arrVarChoiceLevels[level][j] != 0) {
 					int i=arrVarChoiceLevels[level][j];
-					if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i] >= nCurrInfLevel) {
+					if(abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i]) >= nCurrInfLevel) {
 						fVbleWeight = (1+SimpleSmurfProblemState->arrPosVarHeurWghts[i]) *
 						  (1+SimpleSmurfProblemState->arrNegVarHeurWghts[i]);
 						if(fVbleWeight > fMaxWeight) {
@@ -302,7 +302,7 @@ int Simple_LSGB_Heuristic() {
 	}
 
 	for(int i = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nHeuristicPlaceholder+1; i < SimpleSmurfProblemState->nNumVars; i++) {
-		if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i] >= nCurrInfLevel) {
+		if(abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i]) >= nCurrInfLevel) {
 			nBestVble = i;
 			fMaxWeight = (1+SimpleSmurfProblemState->arrPosVarHeurWghts[i]) *
 			  (1+SimpleSmurfProblemState->arrNegVarHeurWghts[i]);
@@ -313,7 +313,7 @@ int Simple_LSGB_Heuristic() {
 	
 	// Search through the remaining uninstantiated variables.
 	for(int i = nBestVble + 1; i < SimpleSmurfProblemState->nNumVars; i++) {
-		if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i] >= nCurrInfLevel) {
+		if(abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i]) >= nCurrInfLevel) {
 			fVbleWeight = (1+SimpleSmurfProblemState->arrPosVarHeurWghts[i]) *
 			  (1+SimpleSmurfProblemState->arrNegVarHeurWghts[i]);
 			if(fVbleWeight > fMaxWeight) {
@@ -350,7 +350,7 @@ int Simple_PMVSIDS_Heuristic() {
 			int j=SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nHeuristicPlaceholder;
 			while(arrVarChoiceLevels[level][j] != 0) {
 				int i=arrVarChoiceLevels[level][j];
-				if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i] >= nCurrInfLevel) {
+				if(abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i]) >= nCurrInfLevel) {
 					nBestVble = i;
 					nMaxWeight = arrPMVSIDS[i];
 					SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nHeuristicPlaceholder = j;
@@ -361,7 +361,7 @@ int Simple_PMVSIDS_Heuristic() {
 			if (nBestVble > 0) {
 				while(arrVarChoiceLevels[level][j] != 0) {
 					int i=arrVarChoiceLevels[level][j];
-					if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i] >= nCurrInfLevel) {
+					if(abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i]) >= nCurrInfLevel) {
 						nVbleWeight = arrPMVSIDS[i];
 						if(nVbleWeight > nMaxWeight) {
 							nMaxWeight = nVbleWeight;
@@ -377,7 +377,7 @@ int Simple_PMVSIDS_Heuristic() {
 	}
 
 	for(int i = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nHeuristicPlaceholder+1; i < SimpleSmurfProblemState->nNumVars; i++) {
-		if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i] >= nCurrInfLevel) {
+		if(abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i]) >= nCurrInfLevel) {
 			nBestVble = i;
 			nMaxWeight = arrPMVSIDS[i];
 			SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nHeuristicPlaceholder = i-1;
@@ -387,7 +387,7 @@ int Simple_PMVSIDS_Heuristic() {
 	
 	// Search through the remaining uninstantiated variables.
 	for(int i = nBestVble + 1; i < SimpleSmurfProblemState->nNumVars; i++) {
-		if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i] >= nCurrInfLevel) {
+		if(abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i]) >= nCurrInfLevel) {
 			nVbleWeight = arrPMVSIDS[i];
 			if(nVbleWeight > nMaxWeight) {
 				nMaxWeight = nVbleWeight;
@@ -421,7 +421,7 @@ int Simple_DC_Heuristic() { //Simple Don't Care Heuristic
 			int j=SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nHeuristicPlaceholder;
 			while(arrVarChoiceLevels[level][j] != 0) {
 				int i=arrVarChoiceLevels[level][j];
-				if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i] >= nCurrInfLevel) {
+				if(abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i]) >= nCurrInfLevel) {
 					nBestVble = i;
 					SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nHeuristicPlaceholder = j;
 					break;
@@ -436,7 +436,7 @@ int Simple_DC_Heuristic() { //Simple Don't Care Heuristic
 	}
 
 	for(int i = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nHeuristicPlaceholder+1; i < SimpleSmurfProblemState->nNumVars; i++) {
-		if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i] >= nCurrInfLevel) {
+		if(abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i]) >= nCurrInfLevel) {
 			nBestVble = i;
 			SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nHeuristicPlaceholder = i-1;
 			break;
@@ -481,7 +481,7 @@ int SimpleHeuristic() {
 		nSimpleSolver_Reset=1;
 		nInfQueueStart = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars+1;
 		d7_printf2("Resetting solver at level %d\n", SimpleSmurfProblemState->nCurrSearchTreeLevel);
-		fprintf(stderr, "here");
+		//		fprintf(stderr, "here");
 	}
 	
 	ite_counters[NUM_CHOICE_POINTS]++;
@@ -653,7 +653,7 @@ int SmurfStates_Pop(int pop_to) {
 		
 		SimpleSmurfProblemState->nCurrSearchTreeLevel--;
 		
-		if(SimpleSmurfProblemState->nCurrSearchTreeLevel < 0) {
+		if(SimpleSmurfProblemState->nCurrSearchTreeLevel < 0 || simple_solver_reset_level!=-1) {
 			if(ite_counters[NUM_SOLUTIONS] == 0) return SOLV_UNSAT; //return Unsatisifable
 			else return SOLV_SAT;
 		}
@@ -710,7 +710,7 @@ int SimpleBrancher() {
 		int nBranchLit, nInfQueueHead, nPrevInfLevel, nBranchVar;
 		  
 		while(SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars < SimpleSmurfProblemState->nNumVars-1
-				&& (result_display_type || SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumSmurfsSatisfied < SimpleSmurfProblemState->nNumSmurfs)
+				&& (result_display_type || simple_solver_reset_level!=-1 || (SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumSmurfsSatisfied < SimpleSmurfProblemState->nNumSmurfs))
 				) {
 
 			if(use_RapidRestarts && ite_counters[NUM_BACKTRACKS]>nNextRestart) {

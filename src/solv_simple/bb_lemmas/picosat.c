@@ -78,11 +78,13 @@ int IFREDUCE;	/* initial forced reduce limit */
 #define NO_BINARY_CLAUSES	/* store binary clauses more compactly */
 #endif
 
+//#define LOGGING
+
 /* For debugging purposes you may want to define 'LOGGING', which actually
  * can be enforced by using the '--log' option for the configure script.
  */
 #ifdef LOGGING
-#define LOG(code) do { code; } while (0)
+#define LOG(code) do { code; fflush(out);} while (0)
 #else
 #define LOG(code) do { } while (0)
 #endif

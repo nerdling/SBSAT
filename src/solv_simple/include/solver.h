@@ -109,6 +109,8 @@ ITE_INLINE void FreeSimpleVarMap();
 
 void Alloc_SmurfStack(int destination);
 
+ITE_INLINE void create_clause_from_SmurfState(int nInfVar, TypeStateEntry *pSmurfState, int nNumVarsInSmurf,
+															 Cls **clause, int *lits_max_size);
 extern "C" { int EnqueueInference_lemmas_hook(int nInfVar, bool bInfPolarity); }
 
 int EnqueueInference(int nInfVar, bool bInfPolarity);

@@ -105,6 +105,8 @@ typedef struct InferenceStateEntry {
 	BDDNode *pInferenceBDD; //Used when building smurfs on the fly.
 } InferenceStateEntry;
 
+struct ORCounterStateEntry;
+
 typedef struct ORStateEntry {
 	char cType; //FN_OR
 	bool visited; //Used for displaying the smurfs.
@@ -115,6 +117,7 @@ typedef struct ORStateEntry {
 	int nSize;
 	int *pnTransitionVars;
 	bool *bPolarity;
+	ORCounterStateEntry *pORCounterState;
 } ORStateEntry;
 
 typedef struct ORCounterStateEntry {
