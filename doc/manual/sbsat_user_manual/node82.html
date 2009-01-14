@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Clustering + Existential Quantification</TITLE>
+<META NAME="description" CONTENT="Clustering + Existential Quantification">
+<META NAME="keywords" CONTENT="sbsat_user_manual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="sbsat_user_manual.css">
+
+<LINK REL="next" HREF="node83.html">
+<LINK REL="previous" HREF="node81.html">
+<LINK REL="up" HREF="node74.html">
+<LINK REL="next" HREF="node83.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1303"
+  HREF="node83.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1299"
+  HREF="node74.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1293"
+  HREF="node81.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1301"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1304"
+  HREF="node83.html">Clustering + Existential Quantification</A>
+<B> Up:</B> <A NAME="tex2html1300"
+  HREF="node74.html">Reference - Preprocessing</A>
+<B> Previous:</B> <A NAME="tex2html1294"
+  HREF="node81.html">Existential quantification</A>
+ &nbsp; <B>  <A NAME="tex2html1302"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION000118000000000000000"></A><A NAME="existential-all-section"></A>
+<BR>
+Clustering + Existential Quantification
+</H2>
+
+<P>
+This preprocessing function conjoins BDDs so that at least one
+variable can be existentially quantified away from the entire
+collection.  This operation repeatedly finds the variable that occurs
+in the least number of BDDs, conjoins those BDDs, and, if the number
+of variables in the result is less than a hard-wired constant (called
+MAX_EXQUANTIFY_VARLENGTH in the code), existentially quantifies that
+variable away from the resulting BDD.  The operation ends when the
+lowest number of BDDs a variable occurs in is greater than some
+hard-wired constant (right now called MAX_EXQUANTIFY_CLAUSES in the
+source code).
+
+<P>
+<BR><HR>
+<ADDRESS>
+Sean Weaver
+2009-01-13
+</ADDRESS>
+</BODY>
+</HTML>

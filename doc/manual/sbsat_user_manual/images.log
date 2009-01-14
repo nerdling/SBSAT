@@ -1,0 +1,535 @@
+This is pdfeTeX, Version 3.141592-1.21a-2.2 (Web2C 7.5.4) (format=latex 2007.12.16)  13 JAN 2008 22:03
+entering extended mode
+**./images.tex
+(./images.tex
+LaTeX2e <2003/12/01>
+Babel <v3.8d> and hyphenation patterns for american, french, german, ngerman, b
+ahasa, basque, bulgarian, catalan, croatian, czech, danish, dutch, esperanto, e
+stonian, finnish, greek, icelandic, irish, italian, latin, magyar, norsk, polis
+h, portuges, romanian, russian, serbian, slovak, slovene, spanish, swedish, tur
+kish, ukrainian, nohyphenation, loaded.
+
+(/sw/share/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2004/02/16 v1.4f Standard LaTeX document class
+(/sw/share/texmf-dist/tex/latex/base/size10.clo
+File: size10.clo 2004/02/16 v1.4f Standard LaTeX file (size option)
+)
+\c@part=\count79
+\c@section=\count80
+\c@subsection=\count81
+\c@subsubsection=\count82
+\c@paragraph=\count83
+\c@subparagraph=\count84
+\c@figure=\count85
+\c@table=\count86
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+\bibindent=\dimen102
+) (/sw/share/texmf-dist/tex/latex/base/ifthen.sty
+Package: ifthen 2001/05/26 v1.1c Standard LaTeX ifthen package (DPC)
+) (/sw/share/texmf-dist/tex/latex/graphics/epsfig.sty
+Package: epsfig 1999/02/16 v1.7a (e)psfig emulation (SPQR)
+(/sw/share/texmf-dist/tex/latex/graphics/graphicx.sty
+Package: graphicx 1999/02/16 v1.0f Enhanced LaTeX Graphics (DPC,SPQR)
+(/sw/share/texmf-dist/tex/latex/graphics/keyval.sty
+Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
+\KV@toks@=\toks14
+) (/sw/share/texmf-dist/tex/latex/graphics/graphics.sty
+Package: graphics 2001/07/07 v1.0n Standard LaTeX Graphics (DPC,SPQR)
+(/sw/share/texmf-dist/tex/latex/graphics/trig.sty
+Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
+) (/sw/share/texmf-dist/tex/latex/graphics/graphics.cfg
+File: graphics.cfg 2005/02/03 v1.3 graphics configuration of teTeX/TeXLive
+)
+Package graphics Info: Driver file: dvips.def on input line 80.
+(/sw/share/texmf-dist/tex/latex/graphics/dvips.def
+File: dvips.def 1999/02/16 v3.0i Driver-dependant file (DPC,SPQR)
+))
+\Gin@req@height=\dimen103
+\Gin@req@width=\dimen104
+)
+\epsfxsize=\dimen105
+\epsfysize=\dimen106
+) (/sw/share/texmf-dist/tex/latex/ae/ae.sty
+Package: ae 2001/02/12 1.3 Almost European Computer Modern
+(/sw/share/texmf-dist/tex/latex/base/fontenc.sty
+Package: fontenc 2004/02/22 v1.99f Standard LaTeX package
+(/sw/share/texmf-dist/tex/latex/base/t1enc.def
+File: t1enc.def 2004/02/22 v1.99f Standard LaTeX file
+LaTeX Font Info:    Redeclaring font encoding T1 on input line 43.
+)
+LaTeX Font Info:    Try loading font information for T1+aer on input line 100.
+(/sw/share/texmf-dist/tex/latex/ae/t1aer.fd
+File: t1aer.fd 1997/11/16 Font definitions for T1/aer.
+))) (/sw/share/texmf-dist/tex/latex/ae/aecompl.sty
+Package: aecompl 1998/07/23 0.9 T1 Complements for AE fonts (D. Roegel)
+) (/sw/share/texmf-dist/tex/latex/base/fontenc.sty
+Package: fontenc 2004/02/22 v1.99f Standard LaTeX package
+(/sw/share/texmf-dist/tex/latex/base/t1enc.def
+File: t1enc.def 2004/02/22 v1.99f Standard LaTeX file
+LaTeX Font Info:    Redeclaring font encoding T1 on input line 43.
+)) (/sw/share/texmf-dist/tex/latex/base/inputenc.sty
+Package: inputenc 2004/02/05 v1.0d Input encoding file
+(/sw/share/texmf-dist/tex/latex/base/latin1.def
+File: latin1.def 2004/02/05 v1.0d Input encoding file
+)) (/sw/share/texmf-dist/tex/latex/graphics/color.sty
+Package: color 1999/02/16 v1.0i Standard LaTeX Color (DPC)
+(/sw/share/texmf-dist/tex/latex/graphics/color.cfg
+File: color.cfg 2005/02/03 v1.3 color configuration of teTeX/TeXLive
+)
+Package color Info: Driver file: dvips.def on input line 125.
+(/sw/share/texmf-dist/tex/latex/graphics/dvipsnam.def
+File: dvipsnam.def 1999/02/16 v3.0i Driver-dependant file (DPC,SPQR)
+)) (/sw/share/texmf-dist/tex/latex/setspace/setspace.sty
+Package: setspace 2000/12/01 6.7 Contributed and Supported LaTeX2e package
+Package: `setspace' 6.7 <2000/12/01>
+) (/sw/share/texmf-dist/tex/generic/babel/babel.sty
+Package: babel 2004/11/20 v3.8d The Babel package
+(/sw/share/texmf-dist/tex/generic/babel/english.ldf
+Language: english 2004/06/14 v3.3o English support from the babel system
+(/sw/share/texmf-dist/tex/generic/babel/babel.def
+File: babel.def 2004/11/20 v3.8d Babel common definitions
+\babel@savecnt=\count87
+\U@D=\dimen107
+)
+\l@british = a dialect from \language\l@english 
+\l@UKenglish = a dialect from \language\l@english 
+\l@canadian = a dialect from \language\l@american 
+\l@australian = a dialect from \language\l@british 
+\l@newzealand = a dialect from \language\l@british 
+))
+\sizebox=\box26
+\lthtmlwrite=\write3
+(./images.aux)
+\openout1 = `images.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 151.
+LaTeX Font Info:    ... okay on input line 151.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 151.
+LaTeX Font Info:    ... okay on input line 151.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 151.
+LaTeX Font Info:    ... okay on input line 151.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 151.
+LaTeX Font Info:    ... okay on input line 151.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 151.
+LaTeX Font Info:    ... okay on input line 151.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 151.
+LaTeX Font Info:    ... okay on input line 151.
+(/Users/fett/SAT/sbsat/doc/manual/sbsat_user_manual.aux
+
+LaTeX Warning: Label `welcome-page' multiply defined.
+
+
+LaTeX Warning: Label `can' multiply defined.
+
+
+LaTeX Warning: Label `exec-figure' multiply defined.
+
+
+LaTeX Warning: Label `defs-section' multiply defined.
+
+
+LaTeX Warning: Label `bdd-definition-page' multiply defined.
+
+
+LaTeX Warning: Label `s-eq-page' multiply defined.
+
+
+LaTeX Warning: Label `s-leq-page' multiply defined.
+
+
+LaTeX Warning: Label `ready-section' multiply defined.
+
+
+LaTeX Warning: Label `install-section' multiply defined.
+
+
+LaTeX Warning: Label `compile-section' multiply defined.
+
+
+LaTeX Warning: Label `test-figure' multiply defined.
+
+
+LaTeX Warning: Label `basics-section' multiply defined.
+
+
+LaTeX Warning: Label `cnf-section' multiply defined.
+
+
+LaTeX Warning: Label `small-c-figure' multiply defined.
+
+
+LaTeX Warning: Label `small-figure' multiply defined.
+
+
+LaTeX Warning: Label `small-2-figure' multiply defined.
+
+
+LaTeX Warning: Label `help-figure' multiply defined.
+
+
+LaTeX Warning: Label `can-section' multiply defined.
+
+
+LaTeX Warning: Label `xor-section' multiply defined.
+
+
+LaTeX Warning: Label `xor-result-figure' multiply defined.
+
+
+LaTeX Warning: Label `add_state-1-figure' multiply defined.
+
+
+LaTeX Warning: Label `add_state-2-figure' multiply defined.
+
+
+LaTeX Warning: Label `complex-figure' multiply defined.
+
+
+LaTeX Warning: Label `xlate-section' multiply defined.
+
+
+LaTeX Warning: Label `reconfig-board-figure' multiply defined.
+
+
+LaTeX Warning: Label `PIN-figure' multiply defined.
+
+
+LaTeX Warning: Label `route-block-figure' multiply defined.
+
+
+LaTeX Warning: Label `int-syn-figure' multiply defined.
+
+
+LaTeX Warning: Label `sequential-figure' multiply defined.
+
+
+LaTeX Warning: Label `bmc-can-figure' multiply defined.
+
+
+LaTeX Warning: Label `preproc-opts-section' multiply defined.
+
+
+LaTeX Warning: Label `preproc-sequence-section' multiply defined.
+
+
+LaTeX Warning: Label `help-section' multiply defined.
+
+
+LaTeX Warning: Label `ref-command-line-section' multiply defined.
+
+
+LaTeX Warning: Label `walksat_page' multiply defined.
+
+
+LaTeX Warning: Label `all_page' multiply defined.
+
+
+LaTeX Warning: Label `split-page' multiply defined.
+
+
+LaTeX Warning: Label `init-file-section' multiply defined.
+
+
+LaTeX Warning: Label `init-figure' multiply defined.
+
+
+LaTeX Warning: Label `format-section' multiply defined.
+
+
+LaTeX Warning: Label `ref-can-section' multiply defined.
+
+
+LaTeX Warning: Label `ref-directives-section' multiply defined.
+
+
+LaTeX Warning: Label `define-page' multiply defined.
+
+
+LaTeX Warning: Label `print-tree-page' multiply defined.
+
+
+LaTeX Warning: Label `bdd-order-page' multiply defined.
+
+
+LaTeX Warning: Label `ref-cnf-section' multiply defined.
+
+
+LaTeX Warning: Label `ref-dnf-section' multiply defined.
+
+
+LaTeX Warning: Label `ref-xor-section' multiply defined.
+
+
+LaTeX Warning: Label `ref-trace-section' multiply defined.
+
+
+LaTeX Warning: Label `trace-format-figure' multiply defined.
+
+
+LaTeX Warning: Label `ref-prove-section' multiply defined.
+
+
+LaTeX Warning: Label `ref-smurf-section' multiply defined.
+
+
+LaTeX Warning: Label `smurf-1-figure' multiply defined.
+
+
+LaTeX Warning: Label `preproc-section' multiply defined.
+
+
+LaTeX Warning: Label `bdd-section' multiply defined.
+
+
+LaTeX Warning: Label `bdd-graph-figure' multiply defined.
+
+
+LaTeX Warning: Label `clustering-section' multiply defined.
+
+
+LaTeX Warning: Label `gcf-section' multiply defined.
+
+
+LaTeX Warning: Label `gcf-example-figure' multiply defined.
+
+
+LaTeX Warning: Label `gcf-example-1-figure' multiply defined.
+
+
+LaTeX Warning: Label `branch-prune-section' multiply defined.
+
+
+LaTeX Warning: Label `prune-1-figure' multiply defined.
+
+
+LaTeX Warning: Label `prune-2-figure' multiply defined.
+
+
+LaTeX Warning: Label `prune-3-figure' multiply defined.
+
+
+LaTeX Warning: Label `prune-4-figure' multiply defined.
+
+
+LaTeX Warning: Label `strengthening-section' multiply defined.
+
+
+LaTeX Warning: Label `strengthen-figure' multiply defined.
+
+
+LaTeX Warning: Label `inference-section' multiply defined.
+
+
+LaTeX Warning: Label `existential-section' multiply defined.
+
+
+LaTeX Warning: Label `exist-figure' multiply defined.
+
+
+LaTeX Warning: Label `existential-all-section' multiply defined.
+
+
+LaTeX Warning: Label `blurred-figure' multiply defined.
+
+
+LaTeX Warning: Label `existential-safe-section' multiply defined.
+
+
+LaTeX Warning: Label `dep-var-clus-section' multiply defined.
+
+
+LaTeX Warning: Label `rewind-section' multiply defined.
+
+
+LaTeX Warning: Label `splitter-section' multiply defined.
+
+
+LaTeX Warning: Label `universe-section' multiply defined.
+
+
+LaTeX Warning: Label `heuristic-section' multiply defined.
+
+
+LaTeX Warning: Label `smurf-section' multiply defined.
+
+
+LaTeX Warning: Label `smurf-figure' multiply defined.
+
+
+LaTeX Warning: Label `lsgb-section' multiply defined.
+
+
+LaTeX Warning: Label `chaff-section' multiply defined.
+
+
+LaTeX Warning: Label `user-defined-heuristic-section' multiply defined.
+
+
+LaTeX Warning: Label `lemma-section' multiply defined.
+
+
+LaTeX Warning: Label `lemma-section-cache' multiply defined.
+
+
+LaTeX Warning: Label `lemma-section-effect' multiply defined.
+
+
+LaTeX Warning: Label `walksat-section' multiply defined.
+
+
+LaTeX Warning: Label `wmv-section' multiply defined.
+
+
+LaTeX Warning: Label `raw-format' multiply defined.
+
+
+LaTeX Warning: Label `fancy-format' multiply defined.
+
+
+LaTeX Warning: Label `bdd-build-section' multiply defined.
+
+
+LaTeX Warning: Label `the-reduction' multiply defined.
+
+
+LaTeX Warning: Label `results-section' multiply defined.
+
+
+LaTeX Warning: Label `longMultTable' multiply defined.
+
+
+LaTeX Warning: Label `barrel' multiply defined.
+
+
+LaTeX Warning: Label `QueueTable' multiply defined.
+
+
+LaTeX Warning: Label `PermuteTable' multiply defined.
+
+
+LaTeX Warning: Label `QueueInvTable' multiply defined.
+
+
+LaTeX Warning: Label `dlxTable' multiply defined.
+
+
+LaTeX Warning: Label `SliderTable' multiply defined.
+
+
+LaTeX Warning: Label `SliderCompareTable' multiply defined.
+
+
+LaTeX Warning: Label `debug-format' multiply defined.
+
+
+LaTeX Warning: Label `debug-prints' multiply defined.
+
+
+LaTeX Warning: Label `exploit-section' multiply defined.
+
+)
+
+latex2htmlLength hsize=349.0pt
+
+latex2htmlLength vsize=633.0pt
+
+latex2htmlLength hoffset=0.0pt
+
+latex2htmlLength voffset=0.0pt
+
+latex2htmlLength topmargin=0.0pt
+
+latex2htmlLength topskip=0.00003pt
+
+latex2htmlLength headheight=0.0pt
+
+latex2htmlLength headsep=0.0pt
+
+latex2htmlLength parskip=0.0pt plus 1.0pt
+
+latex2htmlLength oddsidemargin=62.0pt
+
+latex2htmlLength evensidemargin=62.0pt
+
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <7> on input line 225.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <5> on input line 225.
+LaTeX Font Info:    Try loading font information for T1+aett on input line 228.
+
+(/sw/share/texmf-dist/tex/latex/ae/t1aett.fd
+File: t1aett.fd 1997/11/16 Font definitions for T1/aett.
+)
+l2hSize :tex2html_wrap_inline11927:14.93994pt::14.93994pt::313.48033pt.
+[1
+
+
+
+]
+l2hSize :tex2html_wrap_inline11928:14.93994pt::14.93994pt::313.48033pt.
+[2
+
+
+]
+l2hSize :tex2html_wrap_inline11933:29.93994pt::29.93994pt::313.48033pt.
+[3
+
+
+]
+l2hSize :tex2html_wrap_inline11935:29.93994pt::29.93994pt::313.48033pt.
+[4
+
+
+]
+l2hSize :tex2html_wrap_inline11937:44.93994pt::44.93994pt::313.48033pt.
+[5
+
+
+]
+l2hSize :tex2html_wrap_inline11939:51.46997pt::51.46997pt::313.48033pt.
+[6
+
+
+]
+l2hSize :tex2html_wrap_inline11941:51.46997pt::51.46997pt::313.48033pt.
+[7
+
+
+]
+
+LaTeX Warning: Reference `safe-section' on page 8 undefined on input line 324.
+
+
+Underfull \hbox (badness 1590) in paragraph at lines 324--324
+[]\T1/aer/m/n/10 This func-tion re-turns ei-ther a safe as-sig-ment for <vari-a
+ble> in
+ []
+
+l2hSize :tex2html_wrap_inline11948:37.43994pt::37.43994pt::313.48033pt.
+[8
+
+
+]
+l2hSize :tex2html_wrap_inline11956:29.93994pt::29.93994pt::313.48033pt.
+[9
+
+
+] (./images.aux)
+
+LaTeX Warning: There were undefined references.
+
+
+LaTeX Warning: There were multiply-defined labels.
+
+ ) 
+Here is how much of TeX's memory you used:
+ 1600 strings out of 94501
+ 20264 string characters out of 1176136
+ 66319 words of memory out of 1500000
+ 4773 multiletter control sequences out of 10000+50000
+ 8747 words of font info for 18 fonts, out of 1200000 for 2000
+ 580 hyphenation exceptions out of 8191
+ 32i,5n,21p,1554b,176s stack positions out of 5000i,500n,6000p,200000b,5000s
+
+Output written on images.dvi (9 pages, 5928 bytes).

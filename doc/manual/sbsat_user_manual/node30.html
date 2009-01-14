@@ -1,0 +1,180 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Preprocessor command</TITLE>
+<META NAME="description" CONTENT="Preprocessor command">
+<META NAME="keywords" CONTENT="sbsat_user_manual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="sbsat_user_manual.css">
+
+<LINK REL="previous" HREF="node29.html">
+<LINK REL="up" HREF="node27.html">
+<LINK REL="next" HREF="node31.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html631"
+  HREF="node31.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html627"
+  HREF="node27.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html623"
+  HREF="node29.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html629"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html632"
+  HREF="node31.html">Heuristics</A>
+<B> Up:</B> <A NAME="tex2html628"
+  HREF="node27.html">Preprocessing</A>
+<B> Previous:</B> <A NAME="tex2html624"
+  HREF="node29.html">Preprocessor sequence</A>
+ &nbsp; <B>  <A NAME="tex2html630"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION00061300000000000000">
+Preprocessor command</A>
+</H3>
+
+<P>
+Proprocessing is specified on the command line using the 
+<TT><I>-preprocess-sequence</I></TT> or <TT><I>-P</I></TT> switch followed by
+a preprocessor sequence.  For example,
+<BR>
+<BR>
+<BR>
+<TT>$ sbsat <I>-preprocess-sequence</I> {ExDc}3{ExSt}2{ExPr}10
+example.cnf</TT>
+<BR>
+<BR>
+<BR>
+The following does the same thing:
+<BR>
+<BR>
+<BR>
+<TT>$ sbsat <I>-P</I> {ExDc}3{ExSt}2{ExPr}10 example.cnf</TT>
+
+<P>
+For some problems, preprocessing might take too long or may not
+produce a desired result.  In this case the user may enable or disable
+preprocessing options or change their sequence.  For example,
+<BR>
+<BR>
+<BR>
+<TT>$ sbsat <I>-St</I> 0 example.cnf</TT>
+<BR>
+<BR>
+<BR>
+skips the strengthening operation in the current sequence. For example,
+<BR>
+<BR>
+<BR>
+<TT>$ sbsat <I>-P</I> {Dc{ExSt}{ExPr}St}10 <I>-St</I> 0 example.cnf</TT>
+<BR>
+<BR>
+<BR>
+is the same as
+<BR>
+<BR>
+<BR>
+<TT>$ sbsat <I>-P</I> {Dc{Ex}{ExPr}}10 example.cnf</TT>
+<BR>
+<BR>
+<BR>
+Also, the user may want to turn off every preprocessing option except one or
+two. This can be achieved by using the <I>-All</I> 0 command, which turns off
+all preprocessing options, followed by (for example) <I>-St</I> 1, which
+turns strengthening back on. For example,
+<BR>
+<BR>
+<BR>
+<TT>$ sbsat <I>-P</I> {Dc{ExSt}{ExPr}St}10 <I>-All</I> 0 <I>-St</I> 1 example.cnf</TT>
+<BR>
+<BR>
+<BR>
+is the same as
+<BR><TT>$ sbsat <I>-P</I> {{St}St}10 example.cnf</TT>
+<BR>
+<BR>
+<P>
+
+<B><U>Remark</U></B>:&nbsp;One may avoid long preprocessing by
+saving the problem after preprocessing in S<SMALL>MURF</SMALL> file
+format<A NAME="tex2html23"
+  HREF="footnode.html#foot4400"><SUP>7</SUP></A> using, for example,
+<BR>
+<TT>$ sbsat <I>-output-file</I> newfile.smurf <I>-s</I> myoldfile</TT>
+<BR>
+and disabling preprocessing the next time <TT>sbsat</TT> is applied to
+the same input using
+<BR>
+<TT>$ sbsat <I>-All</I> 0 newfile.smurf</TT>.
+
+<P>
+
+<B><U>Remark</U></B>:&nbsp;Input files in canonical form (see
+Sections&nbsp;<A HREF="node16.html#can-section">4.3</A> and&nbsp;<A HREF="node48.html#ref-can-section">9.1</A>) allow preprocessing
+operations (and some other operations) to be performed <EM>while the
+input file is parsed</EM>.  The canonical form admits directives which
+specify such operations in the order and precisely at the point they
+appear in the input file.  See Section&nbsp;<A HREF="node53.html#ref-directives-section">9.1.5</A>
+for a list of such operations.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html631"
+  HREF="node31.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html627"
+  HREF="node27.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html623"
+  HREF="node29.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html629"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html632"
+  HREF="node31.html">Heuristics</A>
+<B> Up:</B> <A NAME="tex2html628"
+  HREF="node27.html">Preprocessing</A>
+<B> Previous:</B> <A NAME="tex2html624"
+  HREF="node29.html">Preprocessor sequence</A>
+ &nbsp; <B>  <A NAME="tex2html630"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sean Weaver
+2009-01-13
+</ADDRESS>
+</BODY>
+</HTML>

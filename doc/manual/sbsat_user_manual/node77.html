@@ -1,0 +1,519 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Generalized Cofactor (GCF)</TITLE>
+<META NAME="description" CONTENT="Generalized Cofactor (GCF)">
+<META NAME="keywords" CONTENT="sbsat_user_manual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="sbsat_user_manual.css">
+
+<LINK REL="next" HREF="node78.html">
+<LINK REL="previous" HREF="node76.html">
+<LINK REL="up" HREF="node74.html">
+<LINK REL="next" HREF="node78.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1243"
+  HREF="node78.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1239"
+  HREF="node74.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1233"
+  HREF="node76.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1241"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1244"
+  HREF="node78.html">Branch Pruning</A>
+<B> Up:</B> <A NAME="tex2html1240"
+  HREF="node74.html">Reference - Preprocessing</A>
+<B> Previous:</B> <A NAME="tex2html1234"
+  HREF="node76.html">Pattern Matching: CNF</A>
+ &nbsp; <B>  <A NAME="tex2html1242"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION000113000000000000000"></A><A NAME="gcf-section"></A>
+<BR>
+Generalized Cofactor (GCF)
+</H2>
+
+<P>
+The <TT>generalized cofactor</TT> operation, denoted by <TT>gcf</TT> here
+and also known as <TT>constrain</TT> in the literature, uses <EM>sibling
+substitution</EM> to reduce BDD size.  However, unlike <TT>Prune</TT>,
+it can produce BDDs far larger than the original.  Given
+two functions, <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img2.png"
+ ALT="$f$"> and <IMG
+ WIDTH="11" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img3.png"
+ ALT="$c$">, the function <!-- MATH
+ $g={\tt gcf}(f,c)$
+ -->
+<IMG
+ WIDTH="94" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img191.png"
+ ALT="$g={\tt gcf}(f,c)$"> is such that
+<IMG
+ WIDTH="39" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img192.png"
+ ALT="$f\wedge c$"> is the same as <IMG
+ WIDTH="37" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img193.png"
+ ALT="$g\wedge c$">.  In the process, <IMG
+ WIDTH="13" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img194.png"
+ ALT="$g$"> may be
+somehow reduced compared to <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img2.png"
+ ALT="$f$"> as is the case for <TT>Prune</TT>.
+Unlike <TT>Prune</TT>, the following is true as well:
+<BR>
+<P>
+<IMG
+ WIDTH="522" HEIGHT="102" ALIGN="MIDDLE" BORDER="0"
+ SRC="img195.png"
+ ALT="$\textstyle \parbox{4.5in}{ Given Boolean functions $f_1,...,f_k$, for
+any $1\le...
+...nt satisfying the latter can be
+extended to satisfy $f_1\wedge ...\wedge f_k$.}$">
+<BR>
+<P>
+This means that, for the purposes of a solver, <TT>generalized
+cofactoring</TT> can be used to eliminate one of the BDDs among a given
+conjoined set of BDDs: the solver finds an assignment satisfying
+<!-- MATH
+ ${\tt gcf}(f_1,f_i)\wedge ...\wedge {\tt gcf}(f_k,f_i)$
+ -->
+<IMG
+ WIDTH="199" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img196.png"
+ ALT="${\tt gcf}(f_1,f_i)\wedge ...\wedge {\tt gcf}(f_k,f_i)$"> and then extends the
+assignment to satisfy <IMG
+ WIDTH="18" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img197.png"
+ ALT="$f_i$">, otherwise the solver reports that the
+instance has no solution.  However, unlike <TT>Prune</TT>, generalized
+cofactoring cannot by itself reduce the number of variables in a given
+collection of BDDs.  Other properties of the <TT>gcf</TT> operation are:
+
+<OL>
+<LI><IMG
+ WIDTH="53" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img198.png"
+ ALT="$f=c\wedge$"><TT>gcf</TT><!-- MATH
+ $(f,c)\vee \neg c\wedge$
+ -->
+<IMG
+ WIDTH="85" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img199.png"
+ ALT="$(f,c)\vee \neg c\wedge$"><TT>gcf</TT><IMG
+ WIDTH="50" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img200.png"
+ ALT="$(f,\neg c)$">.
+</LI>
+<LI><TT>gcf</TT><IMG
+ WIDTH="11" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img201.png"
+ ALT="$($"><TT>gcf</TT><IMG
+ WIDTH="78" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img202.png"
+ ALT="$(f,g),c) =$"> <TT>gcf</TT><!-- MATH
+ $(f, g\wedge c)$
+ -->
+<IMG
+ WIDTH="65" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img203.png"
+ ALT="$(f, g\wedge c)$">.
+</LI>
+<LI><TT>gcf</TT><!-- MATH
+ $(f\wedge g, c)=$
+ -->
+<IMG
+ WIDTH="83" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img204.png"
+ ALT="$(f\wedge g, c)=$"> <TT>gcf</TT><IMG
+ WIDTH="50" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img205.png"
+ ALT="$(f,c)\wedge$"> <TT>gcf</TT><IMG
+ WIDTH="39" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img206.png"
+ ALT="$(g,c)$">.
+</LI>
+<LI><TT>gcf</TT><!-- MATH
+ $(f\wedge c, c)=$
+ -->
+<IMG
+ WIDTH="82" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img207.png"
+ ALT="$(f\wedge c, c)=$"> <TT>gcf</TT><IMG
+ WIDTH="39" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img208.png"
+ ALT="$(f,c)$">.
+</LI>
+<LI><TT>gcf</TT><!-- MATH
+ $(f\wedge g, c)=$
+ -->
+<IMG
+ WIDTH="83" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img204.png"
+ ALT="$(f\wedge g, c)=$"> <TT>gcf</TT><IMG
+ WIDTH="50" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img205.png"
+ ALT="$(f,c)\wedge$"> <TT>gcf</TT><IMG
+ WIDTH="39" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img206.png"
+ ALT="$(g,c)$">.
+</LI>
+<LI><TT>gcf</TT><IMG
+ WIDTH="83" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img209.png"
+ ALT="$(f\vee g, c)=$"> <TT>gcf</TT><IMG
+ WIDTH="50" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img210.png"
+ ALT="$(f,c)\vee$"> <TT>gcf</TT><IMG
+ WIDTH="39" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img206.png"
+ ALT="$(g,c)$">.
+</LI>
+<LI><TT>gcf</TT><!-- MATH
+ $(f\vee \neg c, c)=$
+ -->
+<IMG
+ WIDTH="92" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img211.png"
+ ALT="$(f\vee \neg c, c)=$"> <TT>gcf</TT><IMG
+ WIDTH="39" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img208.png"
+ ALT="$(f,c)$">.
+</LI>
+<LI><TT>gcf</TT><!-- MATH
+ $(\neg f,c)= \neg$
+ -->
+<IMG
+ WIDTH="82" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img212.png"
+ ALT="$(\neg f,c)= \neg$"> <TT>gcf</TT><IMG
+ WIDTH="39" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img208.png"
+ ALT="$(f,c)$">.
+</LI>
+<LI>If <IMG
+ WIDTH="11" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img3.png"
+ ALT="$c$"> and <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img2.png"
+ ALT="$f$"> have no variables in common and <IMG
+ WIDTH="11" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img3.png"
+ ALT="$c$"> is satisfiable then
+<!-- MATH
+ ${\tt gcf}(f,c) = f$
+ -->
+<IMG
+ WIDTH="95" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img213.png"
+ ALT="${\tt gcf}(f,c) = f$">.
+</LI>
+</OL>
+
+<P>
+Care must be taken when cofactoring in ``both'' directions (exchanging
+<IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img2.png"
+ ALT="$f$"> for <IMG
+ WIDTH="11" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img3.png"
+ ALT="$c$">).  For example, <!-- MATH
+ $f\wedge g\wedge h$
+ -->
+<IMG
+ WIDTH="67" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img214.png"
+ ALT="$f\wedge g\wedge h$"> cannot be replaced
+by <!-- MATH
+ ${\tt gcf}(g,f)\wedge {\tt gcf}(f,g)\wedge h$
+ -->
+<IMG
+ WIDTH="172" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img215.png"
+ ALT="${\tt gcf}(g,f)\wedge {\tt gcf}(f,g)\wedge h$"> since the former may
+be unsatisfiable when the latter is satisfiable.
+
+<P>
+The pseudo C++ description of <TT>gcf</TT> is as follows:
+<BR>
+<BR>
+<BR><FONT SIZE="-1"><TT>BDD gcf (BDD <EM>f</EM>, BDD <EM>c</EM>) {</TT>
+<BR><TT>if (<EM>f</EM> == <EM>F</EM> || <EM>c</EM> == <EM>F</EM>) return <EM>F</EM>;</TT>
+<BR><TT>if (<EM>c</EM> == <EM>T</EM> || <EM>f</EM> == <EM>T</EM>) return <EM>f</EM>;</TT>
+<BR><TT>let <!-- MATH
+ $x_m = index^{-1}(\min\{index(root(c)), index(root(f))\})$
+ -->
+<IMG
+ WIDTH="369" HEIGHT="34" ALIGN="MIDDLE" BORDER="0"
+ SRC="img216.png"
+ ALT="$x_m = index^{-1}(\min\{index(root(c)), index(root(f))\})$">;</TT>
+<BR><TT>// <IMG
+ WIDTH="26" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img217.png"
+ ALT="$x_m$"> is the top variable of <EM>f</EM> and <EM>c</EM></TT>
+<BR><TT>if (Reduce<IMG
+ WIDTH="15" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img183.png"
+ ALT="$_F$">(<IMG
+ WIDTH="26" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img217.png"
+ ALT="$x_m$">, <EM>c</EM>) == <EM>F</EM>) return
+gcf(Reduce<IMG
+ WIDTH="15" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img182.png"
+ ALT="$_T$">(<IMG
+ WIDTH="26" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img217.png"
+ ALT="$x_m$">, <EM>f</EM>), Reduce<IMG
+ WIDTH="15" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img182.png"
+ ALT="$_T$">(<IMG
+ WIDTH="26" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img217.png"
+ ALT="$x_m$">, <EM>c</EM>));</TT>
+<BR><TT>if (Reduce<IMG
+ WIDTH="15" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img182.png"
+ ALT="$_T$">(<IMG
+ WIDTH="26" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img217.png"
+ ALT="$x_m$">, <EM>c</EM>) == <EM>F</EM>) return
+gcf(Reduce<IMG
+ WIDTH="15" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img183.png"
+ ALT="$_F$">(<IMG
+ WIDTH="20" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img218.png"
+ ALT="$x_c$">, <EM>f</EM>), Reduce<IMG
+ WIDTH="15" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img183.png"
+ ALT="$_F$">(<IMG
+ WIDTH="20" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img218.png"
+ ALT="$x_c$">, <EM>c</EM>));</TT>
+<BR><TT>let <IMG
+ WIDTH="24" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img178.png"
+ ALT="$h_T$"> = gcf(Reduce<IMG
+ WIDTH="15" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img182.png"
+ ALT="$_T$">(<IMG
+ WIDTH="26" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img217.png"
+ ALT="$x_m$">, <EM>f</EM>),
+Reduce<IMG
+ WIDTH="15" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img182.png"
+ ALT="$_T$">(<IMG
+ WIDTH="26" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img217.png"
+ ALT="$x_m$">, <EM>c</EM>));</TT>
+<BR><TT>let <IMG
+ WIDTH="24" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img179.png"
+ ALT="$h_F$"> = gcf(Reduce<IMG
+ WIDTH="15" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img183.png"
+ ALT="$_F$">(<IMG
+ WIDTH="26" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img217.png"
+ ALT="$x_m$">, <EM>f</EM>),
+Reduce<IMG
+ WIDTH="15" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img183.png"
+ ALT="$_F$">(<IMG
+ WIDTH="26" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img217.png"
+ ALT="$x_m$">, <EM>c</EM>));</TT>
+<BR><TT>if (<IMG
+ WIDTH="24" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img178.png"
+ ALT="$h_T$"> == <IMG
+ WIDTH="24" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img179.png"
+ ALT="$h_F$">) return <IMG
+ WIDTH="24" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img178.png"
+ ALT="$h_T$">;</TT>
+<BR><TT>return find_or_add_node(<IMG
+ WIDTH="26" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img217.png"
+ ALT="$x_m$">, <IMG
+ WIDTH="24" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img178.png"
+ ALT="$h_T$">, <IMG
+ WIDTH="24" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img179.png"
+ ALT="$h_F$">);</TT>
+<BR><TT>}</TT>
+<BR></FONT>
+
+<P>
+
+<DIV ALIGN="CENTER"><A NAME="gcf-example-figure"></A><A NAME="3114"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 21:</STRONG>
+Generalized cofactor operation on <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img2.png"
+ ALT="$f$"> and <IMG
+ WIDTH="11" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img3.png"
+ ALT="$c$"> as shown.
+In this case the result is more complicated than <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img2.png"
+ ALT="$f$">.  The variable
+ordering is <IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img4.png"
+ ALT="$x_1$">, <IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img5.png"
+ ALT="$x_2$">, <IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img6.png"
+ ALT="$x_3$">, <IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img7.png"
+ ALT="$x_4$">.</CAPTION>
+<TR><TD><IMG
+ WIDTH="485" HEIGHT="455" BORDER="0"
+ SRC="img219.png"
+ ALT="\begin{figure}\hspace*{1mm}\epsfig{figure=Fig/cofactoring2a.eps, width=2.25in}
+\...
+...
+\hspace*{30mm}\epsfig{figure=Fig/cofactoring3a.eps, width=2.5in}\end{figure}"></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+Figure&nbsp;<A HREF="#gcf-example-figure">21</A> presents an example of its use
+illustrating the possibility of increasing BDD size.
+Figure&nbsp;<A HREF="#gcf-example-1-figure">22</A> presents the same example after
+swapping <IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img4.png"
+ ALT="$x_1$"> and <IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img7.png"
+ ALT="$x_4$"> under the same variable ordering and shows
+that result produced by <TT>gcf</TT> is sensitive to variable ordering.
+Observe that the functions produced by <TT>gcf</TT> in both Figures have
+different values under the assignment <IMG
+ WIDTH="53" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img13.png"
+ ALT="$x_1=T$">, <IMG
+ WIDTH="53" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img220.png"
+ ALT="$x_3 = T$">, and <IMG
+ WIDTH="54" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img221.png"
+ ALT="$x_4 =
+F$">.  Thus, the function returned by <TT>gcf</TT> depends on the variable
+ordering as well.
+
+<P>
+
+<DIV ALIGN="CENTER"><A NAME="gcf-example-1-figure"></A><A NAME="4588"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 22:</STRONG>
+Generalized cofactor operation on the same <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img2.png"
+ ALT="$f$"> and <IMG
+ WIDTH="11" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img3.png"
+ ALT="$c$"> of
+Figure&nbsp;<A HREF="#gcf-example-figure">21</A> and with the same variable ordering
+but with <IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img4.png"
+ ALT="$x_1$"> and <IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img7.png"
+ ALT="$x_4$"> swapped.  In this case the result is less 
+complicated than <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img2.png"
+ ALT="$f$">.</CAPTION>
+<TR><TD><IMG
+ WIDTH="546" HEIGHT="397" BORDER="0"
+ SRC="img222.png"
+ ALT="\begin{figure}\hspace*{1mm}\epsfig{figure=Fig/gcf2.eps, width=3.5in}
+\vspace*{-4...
+...{10mm}\\
+\hspace*{30mm}\epsfig{figure=Fig/gcf3.eps, width=2.25in}\end{figure}"></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1243"
+  HREF="node78.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1239"
+  HREF="node74.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1233"
+  HREF="node76.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1241"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1244"
+  HREF="node78.html">Branch Pruning</A>
+<B> Up:</B> <A NAME="tex2html1240"
+  HREF="node74.html">Reference - Preprocessing</A>
+<B> Previous:</B> <A NAME="tex2html1234"
+  HREF="node76.html">Pattern Matching: CNF</A>
+ &nbsp; <B>  <A NAME="tex2html1242"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sean Weaver
+2009-01-13
+</ADDRESS>
+</BODY>
+</HTML>

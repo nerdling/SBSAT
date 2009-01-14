@@ -1,0 +1,181 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>BDD WalkSAT solver options</TITLE>
+<META NAME="description" CONTENT="BDD WalkSAT solver options">
+<META NAME="keywords" CONTENT="sbsat_user_manual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="sbsat_user_manual.css">
+
+<LINK REL="previous" HREF="node44.html">
+<LINK REL="up" HREF="node37.html">
+<LINK REL="next" HREF="node46.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html815"
+  HREF="node46.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html811"
+  HREF="node37.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html807"
+  HREF="node44.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html813"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html816"
+  HREF="node46.html">Reference - Initialization file</A>
+<B> Up:</B> <A NAME="tex2html812"
+  HREF="node37.html">Reference - Command line</A>
+<B> Previous:</B> <A NAME="tex2html808"
+  HREF="node44.html">SMURF Solver options</A>
+ &nbsp; <B>  <A NAME="tex2html814"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00088000000000000000">
+BDD WalkSAT solver options</A>
+</H2>
+
+<P>
+<TABLE CELLPADDING=3>
+<TR><TD ALIGN="LEFT"><I>-cutoff &lt;number&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">BDD WalkSAT number of flips per random</TD>
+</TR>
+<TR><TD ALIGN="LEFT">&nbsp;</TD>
+<TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="LEFT">restart [default=100000]</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-random-option &lt;number&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">BDD WalkSAT option for random walk</TD>
+</TR>
+<TR><TD ALIGN="LEFT">&nbsp;</TD>
+<TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="LEFT">(1=Pick a random path to true in current BDD,</TD>
+</TR>
+<TR><TD ALIGN="LEFT">&nbsp;</TD>
+<TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="LEFT">2=Randomly flip every variable in current BDD,</TD>
+</TR>
+<TR><TD ALIGN="LEFT">&nbsp;</TD>
+<TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="LEFT">3=Randomly flip one variable,</TD>
+</TR>
+<TR><TD ALIGN="LEFT">&nbsp;</TD>
+<TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="LEFT">4=Randomly flip one variable in current BDD) [default=1]</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-bddwalk-heur &lt;char&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">BDD WalkSAT Heuristic (a=adaptive</TD>
+</TR>
+<TR><TD ALIGN="LEFT">&nbsp;</TD>
+<TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="LEFT">novelty+, n=novelty+, r=random) [default='a']</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-taboo-max &lt;number&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">BDD WalkSAT length of taboo list</TD>
+</TR>
+<TR><TD ALIGN="LEFT">&nbsp;</TD>
+<TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="LEFT">(used in conjunction with novelty+ heuristic) [default=6]</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-taboo-multi &lt;number&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">BDD WalkSAT multiplier for the probablity</TD>
+</TR>
+<TR><TD ALIGN="LEFT">&nbsp;</TD>
+<TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="LEFT">of picking variables with taboo (used in conjunction with</TD>
+</TR>
+<TR><TD ALIGN="LEFT">&nbsp;</TD>
+<TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="LEFT">novelty+ heuristic) [default=1.500000]</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-bddwalk-wp-prob &lt;number&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">BDD WalkSAT probablity of making a</TD>
+</TR>
+<TR><TD ALIGN="LEFT">&nbsp;</TD>
+<TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="LEFT">random walk (used in conjunction with novelty+ heuristic)</TD>
+</TR>
+<TR><TD ALIGN="LEFT">&nbsp;</TD>
+<TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="LEFT">[default=0.100000]</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-bddwalk-prob &lt;number&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">BDD WalkSAT probablity of picking second</TD>
+</TR>
+<TR><TD ALIGN="LEFT">&nbsp;</TD>
+<TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="LEFT">best path (used in conjunction with novelty+ heuristic)</TD>
+</TR>
+<TR><TD ALIGN="LEFT">&nbsp;</TD>
+<TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="LEFT">[default=0.100000]</TD>
+</TR>
+</TABLE>
+
+<P>
+
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html815"
+  HREF="node46.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html811"
+  HREF="node37.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html807"
+  HREF="node44.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html813"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html816"
+  HREF="node46.html">Reference - Initialization file</A>
+<B> Up:</B> <A NAME="tex2html812"
+  HREF="node37.html">Reference - Command line</A>
+<B> Previous:</B> <A NAME="tex2html808"
+  HREF="node44.html">SMURF Solver options</A>
+ &nbsp; <B>  <A NAME="tex2html814"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sean Weaver
+2009-01-13
+</ADDRESS>
+</BODY>
+</HTML>

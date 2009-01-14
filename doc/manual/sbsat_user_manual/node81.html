@@ -1,0 +1,364 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Existential quantification</TITLE>
+<META NAME="description" CONTENT="Existential quantification">
+<META NAME="keywords" CONTENT="sbsat_user_manual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="sbsat_user_manual.css">
+
+<LINK REL="next" HREF="node82.html">
+<LINK REL="previous" HREF="node80.html">
+<LINK REL="up" HREF="node74.html">
+<LINK REL="next" HREF="node82.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1291"
+  HREF="node82.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1287"
+  HREF="node74.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1281"
+  HREF="node80.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1289"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1292"
+  HREF="node82.html">Clustering + Existential Quantification</A>
+<B> Up:</B> <A NAME="tex2html1288"
+  HREF="node74.html">Reference - Preprocessing</A>
+<B> Previous:</B> <A NAME="tex2html1282"
+  HREF="node80.html">Inferences</A>
+ &nbsp; <B>  <A NAME="tex2html1290"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION000117000000000000000"></A><A NAME="existential-section"></A>
+<BR>
+Existential quantification
+</H2>
+
+<P>
+A Boolean function which can be written 
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+f(x, {\vec g}) = (x\wedge h_1({\vec g})) \vee (\neg x\wedge h_2({\vec g}))
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="245" HEIGHT="33" BORDER="0"
+ SRC="img243.png"
+ ALT="\begin{displaymath}f(x, {\vec g}) = (x\wedge h_1({\vec g})) \vee (\neg x\wedge h_2({\vec g}))\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+can be replaced by
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+f({\vec g}) = h_1({\vec g}) \vee h_2({\vec g})
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="141" HEIGHT="33" BORDER="0"
+ SRC="img244.png"
+ ALT="\begin{displaymath}f({\vec g}) = h_1({\vec g}) \vee h_2({\vec g})\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+where <IMG
+ WIDTH="13" HEIGHT="31" ALIGN="MIDDLE" BORDER="0"
+ SRC="img245.png"
+ ALT="${\vec g}$"> is a list of one or more variables.  There is a
+solution to <IMG
+ WIDTH="35" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img246.png"
+ ALT="$f({\vec g})$"> if and only if there is a solution to
+<IMG
+ WIDTH="51" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img247.png"
+ ALT="$f(x,{\vec g})$"> so it is sufficient to solve <IMG
+ WIDTH="35" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img246.png"
+ ALT="$f({\vec g})$"> to get a
+solution to <IMG
+ WIDTH="51" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img247.png"
+ ALT="$f(x,{\vec g})$">.  Obtaining <IMG
+ WIDTH="35" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img246.png"
+ ALT="$f({\vec g})$"> from <IMG
+ WIDTH="51" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img247.png"
+ ALT="$f(x,{\vec g})$"> is known as <EM>existentially quantifying</EM> <IMG
+ WIDTH="14" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img43.png"
+ ALT="$x$"> <EM>away from</EM>
+<IMG
+ WIDTH="51" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img247.png"
+ ALT="$f(x,{\vec g})$">.  This operation is efficiently handled if <IMG
+ WIDTH="51" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img247.png"
+ ALT="$f(x,{\vec g})$"> is represented by a BDD.  However, since problems handled by
+SBSAT include conjunctions of functions and therefore ``conjunctions''
+of BDDs, existentially quantifying away a variable <EM>x</EM> succeeds
+easily only when only one of the ``conjoined'' BDDs contains <EM>x</EM>.
+Thus, this operation is typically used in conjunction with other
+preprocessing options for maximum effectiveness.
+
+<P>
+
+<DIV ALIGN="CENTER"><A NAME="exist-figure"></A><A NAME="4610"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 28:</STRONG>
+Two examples of <B>existentially quantifying away a variable
+from a function</B>.  Functions are represented as BDDs on the left.
+Variable <IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img6.png"
+ ALT="$x_3$"> is existentially quantified away from the top BDD
+leaving <EM>T</EM>, meaning that regardless of assignments given to
+variables <IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img4.png"
+ ALT="$x_1$"> and <IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img5.png"
+ ALT="$x_2$"> there is always an assignment to <IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img6.png"
+ ALT="$x_3$">
+which satisfies the function.  Variable <IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img5.png"
+ ALT="$x_2$"> is existentially
+quantified away from the bottom BDD leaving the inference <IMG
+ WIDTH="53" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img13.png"
+ ALT="$x_1=T$">.</CAPTION>
+<TR><TD><IMG
+ WIDTH="402" HEIGHT="447" BORDER="0"
+ SRC="img248.png"
+ ALT="\begin{figure}\centerline{\epsfig{figure=Fig/exquant_bdd.eps, width=3.5in}}\end{figure}"></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+The following is a pseudo C++ implementation (<IMG
+ WIDTH="15" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img46.png"
+ ALT="$\vee$"> denotes the ``or'' of
+two BDDs):
+<BR>
+<BR>
+<BR><FONT SIZE="-1"><TT>BDD ExQuant (BDD <EM>f</EM>, variable <EM>x</EM>) {</TT>
+<BR><TT>if (root(<EM>f</EM>) == <EM>x</EM>) return <EM>true</EM>(root(<EM>f</EM>))<IMG
+ WIDTH="15" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img46.png"
+ ALT="$\vee$"><EM>false</EM>(root(<EM>f</EM>));</TT>
+<BR><TT>if (<EM>index</EM>(<EM>x</EM>) &gt; <EM>index</EM>(root(<EM>f</EM>))) return
+  <EM>f</EM>;  // If <EM>x</EM> is not in <EM>f</EM> do nothing</TT>
+<BR><TT>let <IMG
+ WIDTH="29" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img224.png"
+ ALT="$h_{f_T}$"> = ExQuant(<EM>true</EM>(root(<EM>f</EM>)), <EM>x</EM>);</TT>
+<BR><TT>let <IMG
+ WIDTH="30" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img225.png"
+ ALT="$h_{f_F}$"> = ExQuant(<EM>false</EM>(root(<EM>f</EM>)), <EM>x</EM>);</TT>
+<BR><TT>if (<IMG
+ WIDTH="30" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img225.png"
+ ALT="$h_{f_F}$"> == <IMG
+ WIDTH="29" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img224.png"
+ ALT="$h_{f_T}$">) return <IMG
+ WIDTH="29" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img224.png"
+ ALT="$h_{f_T}$">;</TT>
+<BR><TT>return find_or_add_node (root(<EM>f</EM>),
+  <IMG
+ WIDTH="29" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img224.png"
+ ALT="$h_{f_T}$">, <IMG
+ WIDTH="30" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img225.png"
+ ALT="$h_{f_F}$">);</TT>
+<BR><TT>}</TT>
+<BR></FONT>
+<BR>
+<BR>
+Although this operation itself can uncover inferences (see, for
+example, Figure&nbsp;<A HREF="#exist-figure">28</A>), those same inferences are
+revealed during BDD construction due to the particular way we build
+BDDs which includes developing inference lists for each node (see
+Section&nbsp;<A HREF="node103.html#bdd-build-section">14.1</A>).  Inferences that would be caught
+later by existential quantification exist in the BDD root node
+inference lists and may be applied early.  Therefore, existential
+quantification is used by <TT>sbsat</TT> primarily to assist other
+operations, such as strengthening (see
+Section&nbsp;<A HREF="node79.html#strengthening-section">10.5</A>), to uncover those inferences that
+cannot be found during BDD construction.  Examples of the use of this
+operation are shown in Figure&nbsp;<A HREF="#exist-figure">28</A>.
+
+<P>
+Existential quantification tends to speed up searching (that is, it
+results in more choicepoints per second) but tends to increase the
+number of choicepoints.  The reason for the latter is that the
+elimination of a variable may cause subfunctions that had been linked
+only by that variable to become merged with the result that the
+distinction between the subfunctions becomes blurred.  This is
+illustrated in Figure&nbsp;<A HREF="#blurred-figure">29</A>.
+
+<P>
+
+<DIV ALIGN="CENTER"><A NAME="blurred-figure"></A><A NAME="3310"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 29:</STRONG>
+Existential quantification can cause blurring of functional
+relationships.  The top function is seen to separate variables <IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img4.png"
+ ALT="$x_1$">,
+<IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img5.png"
+ ALT="$x_2$">, and <IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img6.png"
+ ALT="$x_3$"> from <IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img7.png"
+ ALT="$x_4$">, <IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img14.png"
+ ALT="$x_5$">, and <IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img15.png"
+ ALT="$x_6$"> if <IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img16.png"
+ ALT="$x_7$"> is chosen
+during search first.  Existentially quantifying <IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img16.png"
+ ALT="$x_7$"> away from the 
+top function before search results in the bottom function in which
+no such separation is immediately evident.  Without existential
+quantification the assignment <IMG
+ WIDTH="54" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img17.png"
+ ALT="$x_8=F$">, <IMG
+ WIDTH="53" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img18.png"
+ ALT="$x_7=T$">, <IMG
+ WIDTH="53" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img19.png"
+ ALT="$x_6=T$"> reveals the
+inference <IMG
+ WIDTH="53" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img20.png"
+ ALT="$x_5=T$">.  With existential quantification the assignment
+must be augmented with <IMG
+ WIDTH="54" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img21.png"
+ ALT="$x_2=F$"> and <IMG
+ WIDTH="54" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img22.png"
+ ALT="$x_1=F$"> (but <IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img16.png"
+ ALT="$x_7$"> is no longer
+necessary) to get the same inference.</CAPTION>
+<TR><TD><IMG
+ WIDTH="402" HEIGHT="546" BORDER="0"
+ SRC="img249.png"
+ ALT="\begin{figure}\centerline{\epsfig{figure=Fig/exquantex.eps, width=3.5in}}
+\vspace*{10mm}
+\centerline{\epsfig{figure=Fig/exquantex1.eps, width=3.5in}}
+\end{figure}"></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+On the other hand there are fewer inferences to be made during search
+(``or''ing two functions removes all the <EM>F</EM> terminals that can
+be) so the time per choicepoint decreases.  The speedup can overcome
+the lost intelligence but it is sometimes better to turn it off.  The
+major benefit of existential quantification is the smaller search
+space.
+
+<P>
+If existential quantification is selected to occur during
+preprocessing (named in the command-line preprocessing sequence), when
+invoked, for every variable, the number of BDDs in which that variable
+is included is determined.  If the number is one, existential
+quantification is applied to that variable in that BDD and the process
+continues until no variables are included in a single BDD.  Thus,
+after existential quantification, all variables are in at least two
+BDDs.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1291"
+  HREF="node82.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1287"
+  HREF="node74.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1281"
+  HREF="node80.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1289"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1292"
+  HREF="node82.html">Clustering + Existential Quantification</A>
+<B> Up:</B> <A NAME="tex2html1288"
+  HREF="node74.html">Reference - Preprocessing</A>
+<B> Previous:</B> <A NAME="tex2html1282"
+  HREF="node80.html">Inferences</A>
+ &nbsp; <B>  <A NAME="tex2html1290"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sean Weaver
+2009-01-13
+</ADDRESS>
+</BODY>
+</HTML>

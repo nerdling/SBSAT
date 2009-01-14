@@ -1,0 +1,179 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Preprocessor options</TITLE>
+<META NAME="description" CONTENT="Preprocessor options">
+<META NAME="keywords" CONTENT="sbsat_user_manual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="sbsat_user_manual.css">
+
+<LINK REL="next" HREF="node29.html">
+<LINK REL="previous" HREF="node27.html">
+<LINK REL="up" HREF="node27.html">
+<LINK REL="next" HREF="node29.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html609"
+  HREF="node29.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html605"
+  HREF="node27.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html599"
+  HREF="node27.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html607"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html610"
+  HREF="node29.html">Preprocessor sequence</A>
+<B> Up:</B> <A NAME="tex2html606"
+  HREF="node27.html">Preprocessing</A>
+<B> Previous:</B> <A NAME="tex2html600"
+  HREF="node27.html">Preprocessing</A>
+ &nbsp; <B>  <A NAME="tex2html608"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION00061100000000000000">
+Preprocessor options</A>
+</H3>
+
+<P>
+Most of the many possible preprocessing options available to <TT>sbsat</TT>
+users are shown in the table below (options not listed are considered
+unstable). See Section&nbsp;<A HREF="node74.html#preproc-section">10</A> for an explanation of these
+options and when an option might pay off and when it might be a liability.
+<BR>
+<P>
+ <TABLE CELLPADDING=3 BORDER="1">
+<TR><TD ALIGN="CENTER">Name</TD>
+<TD ALIGN="CENTER">Default</TD>
+<TD ALIGN="CENTER">Option</TD>
+<TD ALIGN="CENTER">Formats</TD>
+<TD ALIGN="CENTER">Description</TD>
+</TR>
+<TR><TD ALIGN="CENTER">Pattern Matching</TD>
+<TD ALIGN="CENTER">yes</TD>
+<TD ALIGN="CENTER">Cl</TD>
+<TD ALIGN="CENTER">CNF</TD>
+<TD ALIGN="CENTER">see Section&nbsp;<A HREF="node76.html#clustering-section">10.2</A></TD>
+</TR>
+<TR><TD ALIGN="CENTER">Generalized Cofactoring</TD>
+<TD ALIGN="CENTER">yes</TD>
+<TD ALIGN="CENTER">Co</TD>
+<TD ALIGN="CENTER">All</TD>
+<TD ALIGN="CENTER">see Section&nbsp;<A HREF="node77.html#gcf-section">10.3</A></TD>
+</TR>
+<TR><TD ALIGN="CENTER">Branch Pruning</TD>
+<TD ALIGN="CENTER">yes</TD>
+<TD ALIGN="CENTER">Pr</TD>
+<TD ALIGN="CENTER">All</TD>
+<TD ALIGN="CENTER">see Section&nbsp;<A HREF="node78.html#branch-prune-section">10.4</A></TD>
+</TR>
+<TR><TD ALIGN="CENTER">Strengthening</TD>
+<TD ALIGN="CENTER">yes</TD>
+<TD ALIGN="CENTER">St</TD>
+<TD ALIGN="CENTER">All</TD>
+<TD ALIGN="CENTER">see Section&nbsp;<A HREF="node79.html#strengthening-section">10.5</A></TD>
+</TR>
+<TR><TD ALIGN="CENTER">Inferences</TD>
+<TD ALIGN="CENTER">yes</TD>
+<TD ALIGN="CENTER">In</TD>
+<TD ALIGN="CENTER">All</TD>
+<TD ALIGN="CENTER">see Section&nbsp;<A HREF="node80.html#inference-section">10.6</A></TD>
+</TR>
+<TR><TD ALIGN="CENTER">Existentially Quantify</TD>
+<TD ALIGN="CENTER">yes</TD>
+<TD ALIGN="CENTER">Ex</TD>
+<TD ALIGN="CENTER">All</TD>
+<TD ALIGN="CENTER">see Section&nbsp;<A HREF="node81.html#existential-section">10.7</A></TD>
+</TR>
+<TR><TD ALIGN="CENTER">Cluster + ExQuant</TD>
+<TD ALIGN="CENTER">yes</TD>
+<TD ALIGN="CENTER">Ea</TD>
+<TD ALIGN="CENTER">All</TD>
+<TD ALIGN="CENTER">see Section&nbsp;<A HREF="node82.html#existential-all-section">10.8</A></TD>
+</TR>
+<TR><TD ALIGN="CENTER">Cluster + ExQuant + Safe</TD>
+<TD ALIGN="CENTER">yes</TD>
+<TD ALIGN="CENTER">Es</TD>
+<TD ALIGN="CENTER">All</TD>
+<TD ALIGN="CENTER">see Section&nbsp;<A HREF="node83.html#existential-safe-section">10.9</A></TD>
+</TR>
+<TR><TD ALIGN="CENTER">Dependent Var. Clustering</TD>
+<TD ALIGN="CENTER">yes</TD>
+<TD ALIGN="CENTER">Dc</TD>
+<TD ALIGN="CENTER">All</TD>
+<TD ALIGN="CENTER">see Section&nbsp;<A HREF="node84.html#dep-var-clus-section">10.10</A></TD>
+</TR>
+<TR><TD ALIGN="CENTER">Rewind</TD>
+<TD ALIGN="CENTER">yes</TD>
+<TD ALIGN="CENTER">Rw</TD>
+<TD ALIGN="CENTER">All</TD>
+<TD ALIGN="CENTER">see Section&nbsp;<A HREF="node85.html#rewind-section">10.11</A></TD>
+</TR>
+<TR><TD ALIGN="CENTER">Splitter</TD>
+<TD ALIGN="CENTER">yes</TD>
+<TD ALIGN="CENTER">Sp</TD>
+<TD ALIGN="CENTER">All</TD>
+<TD ALIGN="CENTER">see Section&nbsp;<A HREF="node86.html#splitter-section">10.12</A></TD>
+</TR>
+</TABLE>
+<BR>
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html609"
+  HREF="node29.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html605"
+  HREF="node27.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html599"
+  HREF="node27.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html607"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html610"
+  HREF="node29.html">Preprocessor sequence</A>
+<B> Up:</B> <A NAME="tex2html606"
+  HREF="node27.html">Preprocessing</A>
+<B> Previous:</B> <A NAME="tex2html600"
+  HREF="node27.html">Preprocessing</A>
+ &nbsp; <B>  <A NAME="tex2html608"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sean Weaver
+2009-01-13
+</ADDRESS>
+</BODY>
+</HTML>

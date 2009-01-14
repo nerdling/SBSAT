@@ -1,0 +1,379 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Branch Pruning</TITLE>
+<META NAME="description" CONTENT="Branch Pruning">
+<META NAME="keywords" CONTENT="sbsat_user_manual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="sbsat_user_manual.css">
+
+<LINK REL="next" HREF="node79.html">
+<LINK REL="previous" HREF="node77.html">
+<LINK REL="up" HREF="node74.html">
+<LINK REL="next" HREF="node79.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1255"
+  HREF="node79.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1251"
+  HREF="node74.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1245"
+  HREF="node77.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1253"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1256"
+  HREF="node79.html">Strengthening</A>
+<B> Up:</B> <A NAME="tex2html1252"
+  HREF="node74.html">Reference - Preprocessing</A>
+<B> Previous:</B> <A NAME="tex2html1246"
+  HREF="node77.html">Generalized Cofactor (GCF)</A>
+ &nbsp; <B>  <A NAME="tex2html1254"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION000114000000000000000"></A><A NAME="branch-prune-section"></A>
+<BR>
+Branch Pruning
+</H2>
+
+<P>
+Branch pruning is an operation on two BDDs.  The intention is
+to remove paths from one BDD which are made irrelevant by the
+other BDD.  The following specifies how this is done in pseudo-C++ style:
+<BR>
+<BR>
+<BR><FONT SIZE="-1"><TT>BDD Prune (BDD <EM>f</EM>, BDD <EM>c</EM>) {</TT>
+<BR><TT>if (<EM>c</EM> == <EM>T</EM> || <EM>f</EM> == <EM>F</EM> ||
+<EM>f</EM> == <EM>T</EM>) return <EM>f</EM>;</TT>
+<BR><TT>if (<EM>c</EM> == <IMG
+ WIDTH="15" HEIGHT="15" ALIGN="BOTTOM" BORDER="0"
+ SRC="img45.png"
+ ALT="$\neg$"><EM>f</EM>) return <EM>F</EM>;</TT>
+<BR><TT>if (<EM>c</EM> == <EM>f</EM>) return <EM>T</EM>;</TT>
+<BR><TT>// <EM>f</EM> and <EM>c</EM> have a non-trivial relationship</TT>
+<BR><TT>let <IMG
+ WIDTH="22" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img223.png"
+ ALT="$x_f$"> = root(<EM>f</EM>);  // <IMG
+ WIDTH="22" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img223.png"
+ ALT="$x_f$"> is a variable</TT>
+<BR><TT>let <IMG
+ WIDTH="20" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img218.png"
+ ALT="$x_c$"> = root(<EM>c</EM>);  // <IMG
+ WIDTH="20" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img218.png"
+ ALT="$x_c$"> is a variable</TT>
+<BR><TT>if (<EM>index</EM>(<IMG
+ WIDTH="22" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img223.png"
+ ALT="$x_f$">) &gt; <EM>index</EM>(<IMG
+ WIDTH="20" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img218.png"
+ ALT="$x_c$">) return
+Prune(<EM>f</EM>, ExQuant(<EM>c</EM>, <IMG
+ WIDTH="20" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img218.png"
+ ALT="$x_c$">));</TT>
+<BR><TT>if (Reduce<IMG
+ WIDTH="15" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img183.png"
+ ALT="$_F$">(<IMG
+ WIDTH="22" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img223.png"
+ ALT="$x_f$">, c) == <EM>F</EM>) return
+Prune(Reduce<IMG
+ WIDTH="15" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img182.png"
+ ALT="$_T$">(<IMG
+ WIDTH="22" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img223.png"
+ ALT="$x_f$">, <EM>f</EM>), Reduce<IMG
+ WIDTH="15" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img182.png"
+ ALT="$_T$">(<IMG
+ WIDTH="22" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img223.png"
+ ALT="$x_f$">, <EM>c</EM>));</TT>
+<BR><TT>if (Reduce<IMG
+ WIDTH="15" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img182.png"
+ ALT="$_T$">(<IMG
+ WIDTH="22" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img223.png"
+ ALT="$x_f$">, c) == <EM>F</EM>) return
+Prune(Reduce<IMG
+ WIDTH="15" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img183.png"
+ ALT="$_F$">(<IMG
+ WIDTH="22" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img223.png"
+ ALT="$x_f$">, <EM>f</EM>), Reduce<IMG
+ WIDTH="15" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img183.png"
+ ALT="$_F$">(<IMG
+ WIDTH="22" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img223.png"
+ ALT="$x_f$">, <EM>c</EM>));</TT>
+<BR><TT>let <IMG
+ WIDTH="29" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img224.png"
+ ALT="$h_{f_T}$"> = Prune(Reduce<IMG
+ WIDTH="15" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img182.png"
+ ALT="$_T$">(<IMG
+ WIDTH="22" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img223.png"
+ ALT="$x_f$">, f),
+  Reduce<IMG
+ WIDTH="15" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img182.png"
+ ALT="$_T$">(<IMG
+ WIDTH="22" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img223.png"
+ ALT="$x_f$">, c));  // <IMG
+ WIDTH="29" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img224.png"
+ ALT="$h_{f_T}$"> is a BDD</TT>
+<BR><TT>let <IMG
+ WIDTH="30" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img225.png"
+ ALT="$h_{f_F}$"> = Prune(Reduce<IMG
+ WIDTH="15" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img183.png"
+ ALT="$_F$">(<IMG
+ WIDTH="22" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img223.png"
+ ALT="$x_f$">, f),
+  Reduce<IMG
+ WIDTH="15" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img183.png"
+ ALT="$_F$">(<IMG
+ WIDTH="22" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img223.png"
+ ALT="$x_f$">, c));  // <IMG
+ WIDTH="30" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img225.png"
+ ALT="$h_{f_F}$"> is a BDD</TT>
+<BR><TT>if (<IMG
+ WIDTH="29" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img224.png"
+ ALT="$h_{f_T}$"> == <IMG
+ WIDTH="30" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img225.png"
+ ALT="$h_{f_F}$">) return <IMG
+ WIDTH="29" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img224.png"
+ ALT="$h_{f_T}$">;</TT>
+<BR><TT>return find_or_add_node(<IMG
+ WIDTH="22" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img223.png"
+ ALT="$x_f$">, <IMG
+ WIDTH="29" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img224.png"
+ ALT="$h_{f_T}$">, <IMG
+ WIDTH="30" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img225.png"
+ ALT="$h_{f_F}$">);</TT>
+<BR><TT>}</TT>
+<BR>
+<BR>
+<BR></FONT>
+The procedure <EM>Prune</EM> takes two BDDs which are top-level functions
+as input and returns a BDD which can replace the BDD of argument <EM>f</EM> at the top-level.  Figure&nbsp;<A HREF="#prune-1-figure">23</A> shows an example.
+
+<P>
+
+<DIV ALIGN="CENTER"><A NAME="prune-1-figure"></A><A NAME="prune-2-figure"></A><A NAME="prune-3-figure"></A><A NAME="3189"></A><A NAME="4603"></A><A NAME="4604"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 24:</STRONG>
+Prune on one variable ordering produces no result.
+<BR>
+<STRONG>Figure 23:</STRONG>
+Example of <B>prune</B>.  Procedure <TT>Prune</TT> is applied to
+the left two BDDs and returns the right BDD.
+<BR>
+<STRONG>Figure 25:</STRONG>
+But changing the variable order results in an inference from
+pruning the two functions in Figure&nbsp;<A HREF="#prune-2-figure">24</A>.</CAPTION>
+<TR><TD><IMG
+ WIDTH="517" HEIGHT="591" BORDER="0"
+ SRC="img226.png"
+ ALT="\begin{figure}\hspace*{6mm}\epsfig{figure=Fig/branch_prune_bdd.eps, width=4.5in}...
+...*{24mm}\epsfig{figure=Fig/branch_prune_example_2.eps, width=3.3in}\end{figure}"></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+Branch pruning can reveal inferences but this depends on the variable
+ordering.  Figure&nbsp;<A HREF="#prune-2-figure">24</A> shows <TT>Prune</TT> applied to two
+BDDs with no result.  BDDs representing the same two functions but
+under a different variable ordering are pruned in
+Figure&nbsp;<A HREF="#prune-3-figure">25</A> revealing the inference <IMG
+ WIDTH="54" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img12.png"
+ ALT="$x_3=F$">.
+
+<P>
+Branch pruning is similar to a procedure called generalized cofactor
+or constrain (see Section&nbsp;<A HREF="node77.html#gcf-section">10.3</A> for a description).  Both
+<TT>Prune</TT><IMG
+ WIDTH="39" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img208.png"
+ ALT="$(f,c)$"> and <TT>gcf</TT><IMG
+ WIDTH="39" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img208.png"
+ ALT="$(f,c)$"> agree with <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img2.png"
+ ALT="$f$"> <EM>on interpretations
+where <IMG
+ WIDTH="11" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img3.png"
+ ALT="$c$"> is satisfied,</EM> but are generally somehow simpler than <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img2.png"
+ ALT="$f$">.
+Both are highly dependent upon variable ordering, so both might be
+considered ``non-logical.''  Branch pruning is implemented in SBSAT because the
+BDDs produced from it tend to be smaller.  In any case, unlike for
+gcf, BDDs can never gain in size using branch pruning.
+
+<P>
+There appear to be two gains to using branch pruning.  First, it can make
+S<SMALL>MURF</SMALL>s smaller (see Section&nbsp;<A HREF="node89.html#smurf-section">11.1</A> for information
+about S<SMALL>MURF</SMALL>s).  Second, it often <EM>appears</EM>, by avoiding
+duplicated information, to make the LSGB search heuristic's evidence
+combination rule work better.  
+
+<P>
+On the negative side, it can, in odd cases, lose local information.
+Although it may reveal some of the inferences that strengthening would
+(see below), branch pruning can still cause the number of choicepoints to
+increase.  Both these issues are related: branch pruning can spread an
+inference that is evident in one BDD over multiple BDDs (see
+Figure&nbsp;<A HREF="#prune-4-figure">26</A> for an example).
+
+<P>
+
+<DIV ALIGN="CENTER"><A NAME="prune-4-figure"></A><A NAME="4605"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 26:</STRONG>
+Example of <B>branch pruning</B> spreading an inference from one BDD
+to another.  If <IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img5.png"
+ ALT="$x_2$"> is assigned 0 in <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img2.png"
+ ALT="$f$"> then <IMG
+ WIDTH="50" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img8.png"
+ ALT="$x_4=0$"> and <IMG
+ WIDTH="50" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img9.png"
+ ALT="$x_3=0$">
+are inferred.  After applying <TT>Prune</TT> to <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img2.png"
+ ALT="$f$"> and <IMG
+ WIDTH="11" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img3.png"
+ ALT="$c$"> and
+replacing <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img2.png"
+ ALT="$f$"> with <IMG
+ WIDTH="18" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img10.png"
+ ALT="$f^\prime $">, to get the inference <IMG
+ WIDTH="50" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img9.png"
+ ALT="$x_3=0$"> from
+the choice <IMG
+ WIDTH="50" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img11.png"
+ ALT="$x_2=0$"> visit <IMG
+ WIDTH="11" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img3.png"
+ ALT="$c$"> to get <IMG
+ WIDTH="50" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img8.png"
+ ALT="$x_4=0$"> and then <IMG
+ WIDTH="18" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img10.png"
+ ALT="$f^\prime $"> to
+get <IMG
+ WIDTH="50" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img9.png"
+ ALT="$x_3=0$">.  Thus, branch pruning can increase work if not used properly.
+In this case, pruning in the reverse direction leads to a better
+result.</CAPTION>
+<TR><TD><IMG
+ WIDTH="517" HEIGHT="146" BORDER="0"
+ SRC="img227.png"
+ ALT="\begin{figure}\hspace*{6mm}\epsfig{figure=Fig/restrict.eps, width=4.5in}\end{figure}"></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1255"
+  HREF="node79.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1251"
+  HREF="node74.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1245"
+  HREF="node77.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1253"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1256"
+  HREF="node79.html">Strengthening</A>
+<B> Up:</B> <A NAME="tex2html1252"
+  HREF="node74.html">Reference - Preprocessing</A>
+<B> Previous:</B> <A NAME="tex2html1246"
+  HREF="node77.html">Generalized Cofactor (GCF)</A>
+ &nbsp; <B>  <A NAME="tex2html1254"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sean Weaver
+2009-01-13
+</ADDRESS>
+</BODY>
+</HTML>

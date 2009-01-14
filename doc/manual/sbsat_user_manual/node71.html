@@ -1,0 +1,97 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>SMURF format</TITLE>
+<META NAME="description" CONTENT="SMURF format">
+<META NAME="keywords" CONTENT="sbsat_user_manual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="sbsat_user_manual.css">
+
+<LINK REL="previous" HREF="node70.html">
+<LINK REL="up" HREF="node47.html">
+<LINK REL="next" HREF="node72.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1158"
+  HREF="node72.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1154"
+  HREF="node47.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1150"
+  HREF="node70.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1156"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1159"
+  HREF="node72.html">File Header</A>
+<B> Up:</B> <A NAME="tex2html1155"
+  HREF="node47.html">Reference - Input formats</A>
+<B> Previous:</B> <A NAME="tex2html1151"
+  HREF="node70.html">Prove format</A>
+ &nbsp; <B>  <A NAME="tex2html1157"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION000107000000000000000"></A><A NAME="ref-smurf-section"></A>
+<BR>
+S<SMALL>MURF</SMALL> format
+</H2>
+
+<P>
+This input format is intended for low-level truth table input.
+Variables are represented as positive integers.  Any set of
+Boolean functions can be accomodated.  Each function is specified in a
+section of three lines: the first line numbers the function, the
+second line specifies the variables that the function depends on, the
+third line specifies the truth table of the function or uses function
+symbols to denote commonly used functions.  All function sections are
+separated by a hash ('<TT>#</TT>') character, which is itself on a
+separate line.  A list of functions is terminated with the character
+'<TT>@</TT>' on a line by itself at the end of the file.  The header
+contains a line indicating a goal value for each function. A solution
+to the problem defined in a file is an assignment causing all Boolean
+functions to attain their goal value.  There are no comments,
+manipulators, or directives in this format.
+
+<P>
+<BR><HR>
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL>
+<LI><A NAME="tex2html1160"
+  HREF="node72.html">File Header</A>
+<LI><A NAME="tex2html1161"
+  HREF="node73.html">Boolean functions</A>
+</UL>
+<!--End of Table of Child-Links-->
+<BR><HR>
+<ADDRESS>
+Sean Weaver
+2009-01-13
+</ADDRESS>
+</BODY>
+</HTML>

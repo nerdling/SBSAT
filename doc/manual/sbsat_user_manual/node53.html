@@ -1,0 +1,315 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Directives</TITLE>
+<META NAME="description" CONTENT="Directives">
+<META NAME="keywords" CONTENT="sbsat_user_manual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="sbsat_user_manual.css">
+
+<LINK REL="previous" HREF="node52.html">
+<LINK REL="up" HREF="node48.html">
+<LINK REL="next" HREF="node54.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html940"
+  HREF="node54.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html936"
+  HREF="node48.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html932"
+  HREF="node52.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html938"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html941"
+  HREF="node54.html">CNF format</A>
+<B> Up:</B> <A NAME="tex2html937"
+  HREF="node48.html">Canonical form</A>
+<B> Previous:</B> <A NAME="tex2html933"
+  HREF="node52.html">Manipulators</A>
+ &nbsp; <B>  <A NAME="tex2html939"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION000101500000000000000"></A><A NAME="ref-directives-section"></A>
+<BR>
+Directives
+</H3>
+
+<P>
+The syntax of a directive is
+<BR>
+<BR>
+<BR><TT>&lt;command&gt; ( &lt;arg&gt; ... )</TT>
+<BR>
+<BR>
+<BR>
+where <TT>&lt;arg&gt;</TT> are Boolean functions or manipulators or variables.
+The following are commands and a description of how they apply their
+arguments.
+
+<P>
+<B>INITIAL_BRANCH</B>
+<BR>
+<BR>
+<BR><IMG
+ WIDTH="503" HEIGHT="436" ALIGN="MIDDLE" BORDER="0"
+ SRC="img143.png"
+ ALT="$\textstyle \parbox{110mm}{
+The directive {\tt INITIAL\_BRANCH} may be invoked ...
+...search order has been revealed. An example of this directive is
+the following:}$">
+<BR>
+<BR>
+<BR><TT>&nbsp;&nbsp;&nbsp;initial_branch (x1, x39,
+x5, x4, x24, x3)</TT>
+<BR>
+<BR>
+<BR><IMG
+ WIDTH="503" HEIGHT="269" ALIGN="MIDDLE" BORDER="0"
+ SRC="img144.png"
+ ALT="$\textstyle \parbox{110mm}{ This marks
+variables $x_1$, $x_{39}$, $x_5$, $x_4$, ...
+...means branch on all variables
+beginning with {\tt x3} and ending with {\tt 3}.}$">
+<BR>
+<P>
+<IMG
+ WIDTH="503" HEIGHT="78" ALIGN="MIDDLE" BORDER="0"
+ SRC="img145.png"
+ ALT="$\textstyle \parbox{110mm}{
+The order in which wild card variables are searched ...
+... {\tt initial\_branch} directives in
+one. An example of this is the following:}$">
+<BR>
+<BR>
+<BR><TT>&nbsp;&nbsp;&nbsp;initial_branch (#1, x1, x39%20.5, x5)</TT>
+<BR><TT>&nbsp;&nbsp;&nbsp;initial_branch (#2, x4, x24, x3%80.25)</TT>
+<BR>
+<BR>
+<BR><IMG
+ WIDTH="503" HEIGHT="151" ALIGN="MIDDLE" BORDER="0"
+ SRC="img146.png"
+ ALT="$\textstyle \parbox{110mm}{
+This marks variables $x_1$, $x_{39}$, and $x_5$, to ...
+... {\em False}, likewise $x_3$ is more likely be
+assigned the value {\em True}.}$">
+<BR>
+<P>
+<B>#DEFINE</B>
+<BR>
+<BR>
+<BR><A NAME="define-page"></A><IMG
+ WIDTH="503" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img147.png"
+ ALT="$\textstyle \parbox{110mm}{
+A rudimentary macro facility. The
+syntax is the following:}$">
+<BR>
+<BR>
+<BR><TT>#define &lt;pattern&gt; # &lt;Boolean-function&gt;</TT>
+<BR>
+<BR>
+<BR><IMG
+ WIDTH="503" HEIGHT="175" ALIGN="MIDDLE" BORDER="0"
+ SRC="img148.png"
+ ALT="$\textstyle \parbox{110mm}{
+where {\tt &lt;pattern&gt;} is a {\tt &lt;function-identifier...
+...{\tt &lt;function-specifier&gt;} must be arguments in
+{\tt &lt;pattern&gt;}. For example,}$">
+<BR>
+<BR>
+<BR><FONT SIZE="-1"><TT>#define slide(x1, x17, x15, x33, x40)</TT>
+<BR><TT>#&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;equ(xor(x1, and(-x17, x33),ite(x15, or(x33, -x40), -x33)))</TT>
+<BR></FONT>
+<BR>
+<BR><IMG
+ WIDTH="503" HEIGHT="102" ALIGN="MIDDLE" BORDER="0"
+ SRC="img149.png"
+ ALT="% latex2html id marker 11956
+$\textstyle \parbox{110mm}{
+substitutes the {\tt e...
+...ile. Built-in functions may not be
+redefined using {\tt \char93 define}.
+Thus,}$">
+<BR>
+<BR>
+<BR><TT>#define and(x, y, z) # or(x, y, z)</TT>
+<BR>
+<BR>
+<BR><IMG
+ WIDTH="503" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="img150.png"
+ ALT="$\textstyle \parbox{110mm}{
+causes an error message to occur}$">
+<BR>.
+
+<P>
+<B>PRINT_TREE</B>
+<BR>
+<BR>
+<BR><A NAME="print-tree-page"></A><IMG
+ WIDTH="503" HEIGHT="151" ALIGN="MIDDLE" BORDER="0"
+ SRC="img151.png"
+ ALT="$\textstyle \parbox{110mm}{
+The PRINT\_TREE function takes one Boolean function,...
+...anch is the $T$ branch and the right branch is the
+$F$ branch. For example,}$">
+<BR>
+<BR>
+<BR><TT>print_tree(or(4, 5, -6))</TT>
+<BR>
+<BR>
+<BR><IMG
+ WIDTH="503" HEIGHT="170" ALIGN="MIDDLE" BORDER="0"
+ SRC="img152.png"
+ ALT="$\textstyle \parbox{110mm}{
+prints the following to standard output:
+\par
+-{}-{}...
+...}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-
+}$">
+<BR>
+<P>
+<B>ORDER</B>
+<BR>
+<BR>
+<BR><A NAME="bdd-order-page"></A><IMG
+ WIDTH="503" HEIGHT="78" ALIGN="MIDDLE" BORDER="0"
+ SRC="img153.png"
+ ALT="$\textstyle \parbox{110mm}{
+It is possible to control the variable ordering of t...
+...he ordering can be controlled by using the {\tt order} directive,
+for example:}$">
+<BR>
+<BR>
+<BR><TT>order(a, b, c, d)</TT>
+<BR>
+<BR>
+<BR><IMG
+ WIDTH="503" HEIGHT="78" ALIGN="MIDDLE" BORDER="0"
+ SRC="img154.png"
+ ALT="$\textstyle \parbox{110mm}{
+assuming that $a$, $b$, $c$, and $d$ have not previ...
+...of printed trees, and $d$
+to occur as or near the root.
+For example, the lines}$">
+<BR>
+<BR>
+<BR><TT>order(b, a, d, c)</TT>
+<BR><TT>print_tree(minmax(1, 3, a, b, c, d))</TT>
+<BR>
+<BR>
+<BR><IMG
+ WIDTH="503" HEIGHT="244" ALIGN="MIDDLE" BORDER="0"
+ SRC="img155.png"
+ ALT="$\textstyle \parbox{110mm}{
+prints the following to standard output (assuming $a...
+...}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-
+}$">
+<BR>
+<P>
+<B>PPRINT_TREE</B>
+<BR>
+<BR>
+<BR><IMG
+ WIDTH="503" HEIGHT="78" ALIGN="MIDDLE" BORDER="0"
+ SRC="img156.png"
+ ALT="$\textstyle \parbox{110mm}{
+Does the same thing as {\tt PRINT\_TREE} except the ...
+...ical form with {\tt ite} used to indicate $T$ and
+$F$ branches. For example,}$">
+<BR>
+<BR>
+<BR><TT>pprint_tree(or(4, 5, -6))</TT>
+<BR>
+<BR>
+<BR><IMG
+ WIDTH="503" HEIGHT="194" ALIGN="MIDDLE" BORDER="0"
+ SRC="img157.png"
+ ALT="$\textstyle \parbox{110mm}{
+prints to standard output:
+\par
+-{}-{}-{}-{}-{}-{}-{...
+...}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-&nbsp;}$">
+<BR>
+<P>
+<B>PPRINT_XDD</B>
+<BR>
+<BR>
+<BR><IMG
+ WIDTH="503" HEIGHT="54" ALIGN="MIDDLE" BORDER="0"
+ SRC="img158.png"
+ ALT="$\textstyle \parbox{110mm}{
+Does a similar thing to {\tt PRINT\_TREE} except the output is shown in terms
+of nested ANDs and XORs. For example,}$">
+<BR>
+<BR>
+<BR><TT>print_xdd(or(4, 5, -6))</TT>
+<BR>
+<BR>
+<BR><IMG
+ WIDTH="503" HEIGHT="194" ALIGN="MIDDLE" BORDER="0"
+ SRC="img157.png"
+ ALT="$\textstyle \parbox{110mm}{
+prints to standard output:
+\par
+-{}-{}-{}-{}-{}-{}-{...
+...}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-&nbsp;}$">
+<BR>
+<P>
+<B>PPRINT_FLAT_XDD</B>
+<BR>
+<BR>
+<BR><IMG
+ WIDTH="503" HEIGHT="54" ALIGN="MIDDLE" BORDER="0"
+ SRC="img159.png"
+ ALT="$\textstyle \parbox{110mm}{
+Does the same thing as {\tt PRINT\_XDD} except the function is displayed in
+its unnested form. For example,}$">
+<BR>
+<BR>
+<BR><TT>print_flat_xdd(or(4, 5, -6))</TT>
+<BR>
+<BR>
+<BR><IMG
+ WIDTH="503" HEIGHT="194" ALIGN="MIDDLE" BORDER="0"
+ SRC="img157.png"
+ ALT="$\textstyle \parbox{110mm}{
+prints to standard output:
+\par
+-{}-{}-{}-{}-{}-{}-{...
+...}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-&nbsp;}$">
+<BR>
+<P>
+<BR><HR>
+<ADDRESS>
+Sean Weaver
+2009-01-13
+</ADDRESS>
+</BODY>
+</HTML>

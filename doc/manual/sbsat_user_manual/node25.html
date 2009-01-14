@@ -1,0 +1,224 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Converting the input file</TITLE>
+<META NAME="description" CONTENT="Converting the input file">
+<META NAME="keywords" CONTENT="sbsat_user_manual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="sbsat_user_manual.css">
+
+<LINK REL="previous" HREF="node24.html">
+<LINK REL="up" HREF="node13.html">
+<LINK REL="next" HREF="node26.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html561"
+  HREF="node26.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html557"
+  HREF="node13.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html553"
+  HREF="node24.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html559"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html562"
+  HREF="node26.html">Quick Start - Some</A>
+<B> Up:</B> <A NAME="tex2html558"
+  HREF="node13.html">Quick Start - The</A>
+<B> Previous:</B> <A NAME="tex2html554"
+  HREF="node24.html">Choosing a search procedure</A>
+ &nbsp; <B>  <A NAME="tex2html560"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION000510000000000000000">
+Converting the input file</A>
+</H2>
+
+<P>
+SBSAT supports conversion between some of its input formats.  For
+example, an input format such as <TT>xor</TT> may be converted to <TT>cnf</TT>. In order to get as direct a translation as possible, the
+preprocessing should be disabled when performing conversions. This can
+be achieved by using <TT><I>-In</I></TT> 0 <TT><I>-All</I></TT> 0 switches on the command line.
+
+<P>
+However, in some cases conversion is done so as to take advantage of
+preprocessing.  Thus, given a file in <TT>smurf</TT> format, one could 
+preprocess with a result in the same format or a different format like <TT>cnf</TT>.
+
+<P>
+One might also want to convert between formats so that a problem might be
+attempted on a variety of solvers.  For example, many problems come in <TT>trace</TT> or <TT>BDD</TT> formats but traditional SAT solvers do not recognize
+those formats so they must be converted to <TT>cnf</TT>.
+
+<P>
+Format conversions supported by SBSAT are listed in the following table
+(more functionality is currently being developed).  To determine whether
+format <TT>A</TT> can be converted to format <TT>B</TT>, locate <TT>A</TT>'s row and
+the answer appears in <TT>B</TT>'s column.  For example, format <TT>xor</TT>
+converts to <TT>cnf</TT> but not from <TT>cnf</TT> to <TT>xor</TT>.
+<BR>
+<P>
+<TABLE CELLPADDING=3 BORDER="1">
+<TR><TD ALIGN="CENTER" COLSPAN=1>&nbsp;</TD>
+<TD ALIGN="CENTER" COLSPAN=1><B>cnf</B></TD>
+<TD ALIGN="CENTER" COLSPAN=1><B>dnf</B></TD>
+<TD ALIGN="CENTER" COLSPAN=1><B>bdd</B></TD>
+<TD ALIGN="CENTER" COLSPAN=1><B>smurf</B></TD>
+<TD ALIGN="CENTER" COLSPAN=1><B>trace</B></TD>
+<TD ALIGN="CENTER" COLSPAN=1><B>prove</B></TD>
+<TD ALIGN="CENTER" COLSPAN=1><B>xor</B></TD>
+</TR>
+<TR><TD ALIGN="CENTER"><B>cnf</B></TD>
+<TD ALIGN="CENTER">yes</TD>
+<TD ALIGN="CENTER">no</TD>
+<TD ALIGN="CENTER">no</TD>
+<TD ALIGN="CENTER">yes</TD>
+<TD ALIGN="CENTER">no</TD>
+<TD ALIGN="CENTER">no</TD>
+<TD ALIGN="CENTER">no</TD>
+</TR>
+<TR><TD ALIGN="CENTER"><B>dnf</B></TD>
+<TD ALIGN="CENTER">yes</TD>
+<TD ALIGN="CENTER">no</TD>
+<TD ALIGN="CENTER">no</TD>
+<TD ALIGN="CENTER">yes</TD>
+<TD ALIGN="CENTER">no</TD>
+<TD ALIGN="CENTER">no</TD>
+<TD ALIGN="CENTER">no</TD>
+</TR>
+<TR><TD ALIGN="CENTER"><B>bdd</B></TD>
+<TD ALIGN="CENTER">yes</TD>
+<TD ALIGN="CENTER">no</TD>
+<TD ALIGN="CENTER">no</TD>
+<TD ALIGN="CENTER">yes</TD>
+<TD ALIGN="CENTER">no</TD>
+<TD ALIGN="CENTER">no</TD>
+<TD ALIGN="CENTER">no</TD>
+</TR>
+<TR><TD ALIGN="CENTER"><B>smurf</B></TD>
+<TD ALIGN="CENTER">yes</TD>
+<TD ALIGN="CENTER">no</TD>
+<TD ALIGN="CENTER">no</TD>
+<TD ALIGN="CENTER">yes</TD>
+<TD ALIGN="CENTER">no</TD>
+<TD ALIGN="CENTER">no</TD>
+<TD ALIGN="CENTER">no</TD>
+</TR>
+<TR><TD ALIGN="CENTER"><B>trace</B></TD>
+<TD ALIGN="CENTER">yes</TD>
+<TD ALIGN="CENTER">no</TD>
+<TD ALIGN="CENTER">no</TD>
+<TD ALIGN="CENTER">yes</TD>
+<TD ALIGN="CENTER">no</TD>
+<TD ALIGN="CENTER">no</TD>
+<TD ALIGN="CENTER">no</TD>
+</TR>
+<TR><TD ALIGN="CENTER"><B>prove</B></TD>
+<TD ALIGN="CENTER">yes</TD>
+<TD ALIGN="CENTER">no</TD>
+<TD ALIGN="CENTER">no</TD>
+<TD ALIGN="CENTER">yes</TD>
+<TD ALIGN="CENTER">no</TD>
+<TD ALIGN="CENTER">no</TD>
+<TD ALIGN="CENTER">no</TD>
+</TR>
+<TR><TD ALIGN="CENTER"><B>xor</B></TD>
+<TD ALIGN="CENTER">yes</TD>
+<TD ALIGN="CENTER">no</TD>
+<TD ALIGN="CENTER">no</TD>
+<TD ALIGN="CENTER">yes</TD>
+<TD ALIGN="CENTER">no</TD>
+<TD ALIGN="CENTER">no</TD>
+<TD ALIGN="CENTER">no</TD>
+</TR>
+</TABLE>
+<BR>
+<P>
+A sample command for translating a file of one format to another is:
+<BR>
+<BR>
+<BR><TT>$ sbsat <TT><I>-c</I></TT> example.ite &gt; example.cnf</TT>
+
+<P>
+which translates a file in trace format to one in cnf format.  To get
+a <EM>direct</EM> translation, preprocessing must be turned off.  Thus:
+<BR>
+<BR>
+<BR><TT>$ sbsat <TT><I>-c</I></TT> <TT><I>-All</I></TT> 0 <TT><I>-In</I></TT> 0 example.ite &gt; example.cnf</TT>
+
+<P>
+or
+<BR>
+<BR>
+<BR><TT>$ sbsat <TT><I>-c</I></TT> <TT><I>-All</I></TT> 0 <TT><I>-In</I></TT> 0 example.ite example.cnf</TT>
+
+<P>
+or
+<BR>
+<BR>
+<BR><TT>$ sbsat <TT><I>-c</I></TT> <TT><I>-All</I></TT> 0 <TT><I>-In</I></TT> 0 example.ite <TT><I>-output-file</I></TT> example.cnf</TT>
+
+<P>
+would be acceptable.
+
+<P>
+
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html561"
+  HREF="node26.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html557"
+  HREF="node13.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html553"
+  HREF="node24.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html559"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html562"
+  HREF="node26.html">Quick Start - Some</A>
+<B> Up:</B> <A NAME="tex2html558"
+  HREF="node13.html">Quick Start - The</A>
+<B> Previous:</B> <A NAME="tex2html554"
+  HREF="node24.html">Choosing a search procedure</A>
+ &nbsp; <B>  <A NAME="tex2html560"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sean Weaver
+2009-01-13
+</ADDRESS>
+</BODY>
+</HTML>

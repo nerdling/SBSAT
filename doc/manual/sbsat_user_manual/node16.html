@@ -1,0 +1,212 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>An input in canonical (BDD) form</TITLE>
+<META NAME="description" CONTENT="An input in canonical (BDD) form">
+<META NAME="keywords" CONTENT="sbsat_user_manual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="sbsat_user_manual.css">
+
+<LINK REL="next" HREF="node17.html">
+<LINK REL="previous" HREF="node15.html">
+<LINK REL="up" HREF="node13.html">
+<LINK REL="next" HREF="node17.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html455"
+  HREF="node17.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html451"
+  HREF="node13.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html445"
+  HREF="node15.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html453"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html456"
+  HREF="node17.html">An input in XOR</A>
+<B> Up:</B> <A NAME="tex2html452"
+  HREF="node13.html">Quick Start - The</A>
+<B> Previous:</B> <A NAME="tex2html446"
+  HREF="node15.html">A CNF formula as</A>
+ &nbsp; <B>  <A NAME="tex2html454"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00053000000000000000"></A><A NAME="can-section"></A>
+<BR>
+An input in canonical (BDD) form
+</H2>
+
+<P>
+The preferred input type is the canonical form referred to on
+Page&nbsp;<A HREF="sbsat_user_manual.html#can"><IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]"
+ SRC="file:/sw/share/lib/latex2html/icons/crossref.png"></A>.  A detailed explanation is given in
+Section&nbsp;<A HREF="node48.html#ref-can-section">9.1</A>.  The canonical form depends on the notion of
+BDDs which is explained in Section&nbsp;<A HREF="node75.html#bdd-section">10.1</A>.
+
+<P>
+An ascii file containing input in canonical form begins with a line such as the
+following:
+<BR>
+<BR>
+<BR><TT>p bdd &lt;number_of_variables&gt; &lt;number_of_functions&gt;</TT>
+<BR>
+<BR>
+<BR>
+where <TT>&lt;number_of_variables&gt;</TT> is the number of distinct
+variables present in the file and <TT>&lt;number_of_functions&gt;</TT> is the
+number of Boolean functions present in the file.  Variables are given
+names which are strings of alphabetic and numeric characters and the
+underscore character, in any order.  A comment begins with '<TT>;</TT>'
+and may start anywhere on a line and applies to the end of the line.
+Each line starting with a Boolean function identifier listed in the <B>Boolean Function</B> item of Section&nbsp;<A HREF="node5.html#defs-section">2.2</A>, or a manipulator (see
+Section&nbsp;<A HREF="node48.html#ref-can-section">9.1</A> for manipulators) represents a Boolean
+function.  For example, the following lines can be in a file containing a
+canonical form expression:
+<BR>
+<BR>
+<BR><TT>imp(-x3, -x4)</TT>
+<BR><TT>xor(x1, -x5)</TT>
+<BR><TT>xor(x8, x3, -x2, x7, -x4, -x1)</TT>
+
+<P>
+
+<B><U>Remark</U></B>:&nbsp;Since no binary function can take 1 argument,
+<TT>xor(-x1)</TT> is not admitted.
+
+<P>
+A function argument may be a variable, a function, or a reference to a
+function defined elsewhere in the file.  To support the latter, every
+function is assigned a unique index integer corresponding to the order
+the function appears in the file.  The first function has index 1, the
+next has index 2 and so on.  There may be several commented lines
+between two functions but those functions still have consecutive index
+numbers.  A function may be referenced by appending its index number
+to the '<TT>$</TT>' character.  One or more arguments of a function may
+contain function references but the references may not point forward:
+that is, the index in a function reference cannot be greater than or
+equal to the index of the function in which the reference is made.
+Here is an example:
+<BR>
+<P>
+<IMG
+ WIDTH="159" HEIGHT="169" ALIGN="MIDDLE" BORDER="0"
+ SRC="img63.png"
+ ALT="$\textstyle \parbox{5in}{
+{\tt p bdd 4 5}\\
+{\tt or(x2, x3)}\\
+{\tt and(x3, x4)}\\
+{\tt imp(x3, \$2)}\\
+{\tt xor(\$3, \$1, x4, x1)}\\
+{\tt and(x2, x3)}\\
+}$">
+<P>
+The fourth line of this group is equivalent to
+<BR>
+<BR>
+<BR><TT>xor(imp(x3, and(x3, x4)), or(x2, x3), x4, x1)</TT>
+<BR>
+<BR>
+<BR>
+which is <EM>also</EM> recognized by <TT>sbsat</TT>.
+
+<P>
+Because it is possible to reference functions, it is possible that
+some functions which are <EM>not</EM> at the <EM>top-level</EM> (that is, not
+among those to be satisfied) exist as functions specified in an input
+file.  Such functions are distinguished from top-level functions by
+prepending '<TT>*</TT>' to top-level functions only.  For example:
+<BR>
+<P>
+<IMG
+ WIDTH="167" HEIGHT="169" ALIGN="MIDDLE" BORDER="0"
+ SRC="img64.png"
+ ALT="$\textstyle \parbox{5in}{
+{\tt p bdd 4 5}\\
+{\tt or(x2, x3)}\\
+{\tt and(x3, x4)}\\
+{\tt imp(x3, \$2)}\\
+{\tt *xor(\$3, \$1, x4, x1)}\\
+{\tt *or(x2, x3)}\\
+}$">
+<P>
+represents the problem
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+((x_3 \Rightarrow (x_3\wedge x_4) )\oplus (x_2\vee x_3) \oplus x_4 \oplus x_1)\wedge (x_2\vee x_3)
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="358" HEIGHT="33" BORDER="0"
+ SRC="img65.png"
+ ALT="\begin{displaymath}
+((x_3 \Rightarrow (x_3\wedge x_4) )\oplus (x_2\vee x_3) \oplus x_4 \oplus x_1)\wedge (x_2\vee x_3)
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+If no functions have '<TT>*</TT>' prepended, then all functions are
+treated as top-level functions.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html455"
+  HREF="node17.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html451"
+  HREF="node13.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html445"
+  HREF="node15.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html453"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html456"
+  HREF="node17.html">An input in XOR</A>
+<B> Up:</B> <A NAME="tex2html452"
+  HREF="node13.html">Quick Start - The</A>
+<B> Previous:</B> <A NAME="tex2html446"
+  HREF="node15.html">A CNF formula as</A>
+ &nbsp; <B>  <A NAME="tex2html454"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sean Weaver
+2009-01-13
+</ADDRESS>
+</BODY>
+</HTML>

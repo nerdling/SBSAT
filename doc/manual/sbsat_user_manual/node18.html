@@ -1,0 +1,165 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Reusing functions (Macros)</TITLE>
+<META NAME="description" CONTENT="Reusing functions (Macros)">
+<META NAME="keywords" CONTENT="sbsat_user_manual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="sbsat_user_manual.css">
+
+<LINK REL="next" HREF="node19.html">
+<LINK REL="previous" HREF="node17.html">
+<LINK REL="up" HREF="node13.html">
+<LINK REL="next" HREF="node19.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html479"
+  HREF="node19.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html475"
+  HREF="node13.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html469"
+  HREF="node17.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html477"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html480"
+  HREF="node19.html">Printing functions</A>
+<B> Up:</B> <A NAME="tex2html476"
+  HREF="node13.html">Quick Start - The</A>
+<B> Previous:</B> <A NAME="tex2html470"
+  HREF="node17.html">An input in XOR</A>
+ &nbsp; <B>  <A NAME="tex2html478"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00055000000000000000">
+Reusing functions (Macros)</A>
+</H2>
+
+<P>
+The canonical form only (that is, not <TT>cnf</TT> or <TT>xor</TT> formats,
+among others) supports a rudimentary macro facility.  A macro is
+defined using the directive <TT>#define</TT> with the following
+syntax:
+<BR>
+<BR>
+<BR><TT>#define &lt;pattern&gt; # &lt;function-specifier&gt;</TT>
+<BR>
+<BR>
+<BR>
+where <TT>&lt;pattern&gt;</TT> consists of an identifier and a parenthesized
+argument list.  Wherever the <TT>&lt;pattern&gt;</TT> is matched in the file,
+<TT>&lt;function-specifier&gt;</TT> is substituted.  Then, <TT>&lt;function-specifier&gt;</TT> takes as parameters those arguments specified in
+<TT>&lt;pattern&gt;</TT>.
+
+<P>
+Many inputs, particularly those representing an ``unfolding'' of some
+form of temporal logic, consist of a high percentage of functions
+which are identical except that all variable input numbers are
+displaced by some amount.  In such a case there is a shortened way to
+express those functions using <TT>#define</TT>.  For example, the file
+of Figure&nbsp;<A HREF="#add_state-1-figure">8</A> may be written equivalently as the
+file of Figure&nbsp;<A HREF="#add_state-2-figure">9</A>.  More information about <TT>#define</TT> is found in Section&nbsp;<A HREF="node53.html#ref-directives-section">9.1.5</A>,
+Page&nbsp;<A HREF="node53.html#define-page"><IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]"
+ SRC="file:/sw/share/lib/latex2html/icons/crossref.png"></A>.
+
+<P>
+
+<DIV ALIGN="CENTER"><A NAME="xor-result-figure"></A><A NAME="add_state-1-figure"></A><A NAME="add_state-2-figure"></A><A NAME="649"></A><A NAME="653"></A><A NAME="4358"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 8:</STRONG>
+A canonical form input of ``sliding'' functions.
+<BR>
+<STRONG>Figure 9:</STRONG>
+An equivalent input using macros.
+<BR>
+<STRONG>Figure 7:</STRONG>
+Result of executing the command <TT>sbsat xortest.xor</TT>.</CAPTION>
+<TR><TD><IMG
+ WIDTH="506" HEIGHT="426" BORDER="0"
+ SRC="img66.png"
+ ALT="\begin{figure}\begin{verbatim}Reading File xortest.xor ....
+Reading XOR ... ...
+...)
+slide(4, 20, 18, 36, 43)
+slide(5, 21, 19, 37, 44)\end{verbatim}
+\end{figure}"></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+
+<DIV ALIGN="CENTER"><A NAME="complex-figure"></A><A NAME="659"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 10:</STRONG>
+A complex canonical form input.</CAPTION>
+<TR><TD><IMG
+ WIDTH="789" HEIGHT="797" BORDER="0"
+ SRC="img67.png"
+ ALT="\begin{figure}\begin{verbatim}p bdd 30 11 ; 30 vars, 11 functions
+Initial_Bran...
+...n created.
+; A *' in front of directives is ignored.\end{verbatim}
+\end{figure}"></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html479"
+  HREF="node19.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html475"
+  HREF="node13.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html469"
+  HREF="node17.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html477"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html480"
+  HREF="node19.html">Printing functions</A>
+<B> Up:</B> <A NAME="tex2html476"
+  HREF="node13.html">Quick Start - The</A>
+<B> Previous:</B> <A NAME="tex2html470"
+  HREF="node17.html">An input in XOR</A>
+ &nbsp; <B>  <A NAME="tex2html478"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sean Weaver
+2009-01-13
+</ADDRESS>
+</BODY>
+</HTML>

@@ -1,0 +1,269 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Manipulators</TITLE>
+<META NAME="description" CONTENT="Manipulators">
+<META NAME="keywords" CONTENT="sbsat_user_manual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="sbsat_user_manual.css">
+
+<LINK REL="next" HREF="node53.html">
+<LINK REL="previous" HREF="node51.html">
+<LINK REL="up" HREF="node48.html">
+<LINK REL="next" HREF="node53.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html930"
+  HREF="node53.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html926"
+  HREF="node48.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html920"
+  HREF="node51.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html928"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html931"
+  HREF="node53.html">Directives</A>
+<B> Up:</B> <A NAME="tex2html927"
+  HREF="node48.html">Canonical form</A>
+<B> Previous:</B> <A NAME="tex2html921"
+  HREF="node51.html">Boolean functions</A>
+ &nbsp; <B>  <A NAME="tex2html929"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION000101400000000000000">
+Manipulators</A>
+</H3>
+
+<P>
+&nbsp;<B>GCF</B>
+<BR>
+<BR>
+<BR><IMG
+ WIDTH="503" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img131.png"
+ ALT="$\textstyle \parbox{110mm}{
+The syntax for this manipulator is}$">
+<BR>
+<BR>
+<BR><TT>gcf ( &lt;function&gt; &lt;cofactor&gt; )</TT>
+<BR>
+<BR>
+<BR><IMG
+ WIDTH="503" HEIGHT="102" ALIGN="MIDDLE" BORDER="0"
+ SRC="img132.png"
+ ALT="% latex2html id marker 11933
+$\textstyle \parbox{110mm}{
+where {\tt &lt;cofactor&gt;...
+...ection} for a description of generalized cofactor and when
+it might be useful.}$">
+<BR>
+<P>
+<B>STRENGTHEN</B>
+<BR>
+<BR>
+<BR><IMG
+ WIDTH="503" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img131.png"
+ ALT="$\textstyle \parbox{110mm}{
+The syntax for this manipulator is}$">
+<BR>
+<BR>
+<BR><TT>strengthen ( &lt;function&gt;_1 &lt;function&gt;_2 )</TT>
+<BR>
+<BR>
+<BR><IMG
+ WIDTH="503" HEIGHT="102" ALIGN="MIDDLE" BORDER="0"
+ SRC="img133.png"
+ ALT="% latex2html id marker 11935
+$\textstyle \parbox{110mm}{
+where {\tt &lt;function&gt;\...
+... To find out more about strengthening see
+Section&nbsp;\ref{strengthening-section}.}$">
+<BR>
+<P>
+<B>PRUNE</B>
+<BR>
+<BR>
+<BR><IMG
+ WIDTH="503" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img131.png"
+ ALT="$\textstyle \parbox{110mm}{
+The syntax for this manipulator is}$">
+<BR>
+<BR>
+<BR><TT>prune ( &lt;function&gt;_1 &lt;function&gt;_2 )</TT>
+<BR>
+<BR>
+<BR><IMG
+ WIDTH="503" HEIGHT="151" ALIGN="MIDDLE" BORDER="0"
+ SRC="img134.png"
+ ALT="% latex2html id marker 11937
+$\textstyle \parbox{110mm}{
+where {\tt &lt;function&gt;\...
+... To find out more
+about branch pruning see Section&nbsp;\ref{branch-prune-section}.}$">
+<BR>
+<P>
+<B>EXIST</B>
+<BR>
+<BR>
+<BR><IMG
+ WIDTH="503" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img131.png"
+ ALT="$\textstyle \parbox{110mm}{
+The syntax for this manipulator is}$">
+<BR>
+<BR>
+<BR><TT>exist ( &lt;function&gt; &lt;variable&gt; )</TT>
+<BR>
+<BR>
+<BR><IMG
+ WIDTH="503" HEIGHT="170" ALIGN="MIDDLE" BORDER="0"
+ SRC="img135.png"
+ ALT="% latex2html id marker 11939
+$\textstyle \parbox{110mm}{
+where {\tt &lt;function&gt;}...
+...xistentially quantifying away variables
+see Section&nbsp;\ref{existential-section}.}$">
+<BR>
+<P>
+<B>UNIVERSE</B>
+<BR>
+<BR>
+<BR><IMG
+ WIDTH="503" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img131.png"
+ ALT="$\textstyle \parbox{110mm}{
+The syntax for this manipulator is}$">
+<BR>
+<BR>
+<BR><TT>universe ( &lt;function&gt; &lt;variable&gt; )</TT>
+<BR>
+<BR>
+<BR><IMG
+ WIDTH="503" HEIGHT="170" ALIGN="MIDDLE" BORDER="0"
+ SRC="img136.png"
+ ALT="% latex2html id marker 11941
+$\textstyle \parbox{110mm}{
+where {\tt &lt;function&gt;}...
+...out universally quantifying away variables
+see Section&nbsp;\ref{universe-section}.}$">
+<BR>
+<P>
+<B>TRUTH_TABLE</B>
+<BR>
+<BR>
+<BR><IMG
+ WIDTH="503" HEIGHT="54" ALIGN="MIDDLE" BORDER="0"
+ SRC="img137.png"
+ ALT="$\textstyle \parbox{110mm}{
+Functions can be defined by their truth table using {\tt
+TRUTH\_TABLE}. Syntax for this manipulator is}$">
+<BR>
+<BR>
+<BR><TT>truth_table ( &lt;#vars&gt; &lt;var&gt; ... &lt;var&gt; &lt;TF-string&gt; )</TT>
+<BR>
+<BR>
+<BR><IMG
+ WIDTH="503" HEIGHT="102" ALIGN="MIDDLE" BORDER="0"
+ SRC="img138.png"
+ ALT="$\textstyle \parbox{110mm}{
+where {\tt &lt;var&gt;} are variables, {\tt &lt;\char93 vars&gt;...
+...2^{\tt &lt;\char93 vars&gt;}$ symbols in the {\tt
+&lt;TF-string&gt;}. An example is this:}$">
+<BR>
+<BR>
+<BR><TT>truth_table(3 x1 x2 x3 TTFFTFFT)</TT>
+
+<P>
+<B>MINMAX</B>
+<BR>
+<BR>
+<BR><IMG
+ WIDTH="503" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img139.png"
+ ALT="$\textstyle \parbox{110mm}{
+The syntax of this function is as follows:}$">
+<BR>
+<BR>
+<BR>
+<TT>minmax ( &lt;min_#&gt; &lt;max_#&gt; &lt;blank_separated_var_list&gt; )</TT>
+<BR>
+<BR>
+<BR><IMG
+ WIDTH="503" HEIGHT="127" ALIGN="MIDDLE" BORDER="0"
+ SRC="img140.png"
+ ALT="$\textstyle \parbox{110mm}{
+where the first three arguments are positive integer...
+...in the {\tt &lt;...\_var\_list&gt;} have value {\em T}. The
+following is an example,}$">
+<BR>
+<BR>
+<BR><TT>minmax(1, 3, x13, x12, x11, x10)</TT>
+<BR>
+<BR>
+<BR><IMG
+ WIDTH="503" HEIGHT="75" ALIGN="MIDDLE" BORDER="0"
+ SRC="img141.png"
+ ALT="$\textstyle \parbox{110mm}{
+which has value {\em T} if at least 1 and no more th...
+...e {\tt PRINT\_TREE} directive below to view the truth table for
+this function.}$">
+<BR>
+<P>
+<B>SAFE</B>
+<BR>
+<BR>
+<BR><IMG
+ WIDTH="503" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img139.png"
+ ALT="$\textstyle \parbox{110mm}{
+The syntax of this function is as follows:}$">
+<BR>
+<BR>
+<BR><TT>safe ( &lt;function&gt; &lt;variable&gt; )</TT>
+<BR>
+<BR>
+<BR><IMG
+ WIDTH="503" HEIGHT="127" ALIGN="MIDDLE" BORDER="0"
+ SRC="img142.png"
+ ALT="% latex2html id marker 11948
+$\textstyle \parbox{110mm}{
+This function returns ...
+...). For more information about safe assignments see
+Section&nbsp;\ref{safe-section}.}$">
+<BR>
+<P>
+<BR><HR>
+<ADDRESS>
+Sean Weaver
+2009-01-13
+</ADDRESS>
+</BODY>
+</HTML>

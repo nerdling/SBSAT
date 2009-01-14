@@ -1,3 +1,776 @@
+2009-01-12 07:38  franco
+
+	* doc/manual/: manual.tar, sbsat_user_manual.tex,
+	  sbsat_getting/WARNINGS, sbsat_getting/footnode.html,
+	  sbsat_getting/images.pl, sbsat_getting/images.tex,
+	  sbsat_getting/img1.png, sbsat_getting/img10.png,
+	  sbsat_getting/img100.png, sbsat_getting/img101.png,
+	  sbsat_getting/img102.png, sbsat_getting/img103.png,
+	  sbsat_getting/img104.png, sbsat_getting/img105.png,
+	  sbsat_getting/img106.png, sbsat_getting/img107.png,
+	  sbsat_getting/img108.png, sbsat_getting/img109.png,
+	  sbsat_getting/img11.png, sbsat_getting/img110.png,
+	  sbsat_getting/img111.png, sbsat_getting/img112.png,
+	  sbsat_getting/img113.png, sbsat_getting/img114.png,
+	  sbsat_getting/img115.png, sbsat_getting/img116.png,
+	  sbsat_getting/img117.png, sbsat_getting/img118.png,
+	  sbsat_getting/img119.png, sbsat_getting/img12.png,
+	  sbsat_getting/img120.png, sbsat_getting/img121.png,
+	  sbsat_getting/img122.png, sbsat_getting/img123.png,
+	  sbsat_getting/img124.png, sbsat_getting/img125.png,
+	  sbsat_getting/img126.png, sbsat_getting/img127.png,
+	  sbsat_getting/img128.png, sbsat_getting/img129.png,
+	  sbsat_getting/img13.png, sbsat_getting/img130.png,
+	  sbsat_getting/img131.png, sbsat_getting/img132.png,
+	  sbsat_getting/img133.png, sbsat_getting/img134.png,
+	  sbsat_getting/img135.png, sbsat_getting/img136.png,
+	  sbsat_getting/img137.png, sbsat_getting/img138.png,
+	  sbsat_getting/img139.png, sbsat_getting/img14.png,
+	  sbsat_getting/img140.png, sbsat_getting/img141.png,
+	  sbsat_getting/img142.png, sbsat_getting/img143.png,
+	  sbsat_getting/img144.png, sbsat_getting/img145.png,
+	  sbsat_getting/img146.png, sbsat_getting/img147.png,
+	  sbsat_getting/img148.png, sbsat_getting/img149.png,
+	  sbsat_getting/img15.png, sbsat_getting/img150.png,
+	  sbsat_getting/img151.png, sbsat_getting/img152.png,
+	  sbsat_getting/img153.png, sbsat_getting/img154.png,
+	  sbsat_getting/img155.png, sbsat_getting/img156.png,
+	  sbsat_getting/img157.png, sbsat_getting/img158.png,
+	  sbsat_getting/img159.png, sbsat_getting/img16.png,
+	  sbsat_getting/img160.png, sbsat_getting/img161.png,
+	  sbsat_getting/img162.png, sbsat_getting/img163.png,
+	  sbsat_getting/img164.png, sbsat_getting/img165.png,
+	  sbsat_getting/img166.png, sbsat_getting/img167.png,
+	  sbsat_getting/img168.png, sbsat_getting/img169.png,
+	  sbsat_getting/img17.png, sbsat_getting/img170.png,
+	  sbsat_getting/img171.png, sbsat_getting/img172.png,
+	  sbsat_getting/img173.png, sbsat_getting/img174.png,
+	  sbsat_getting/img175.png, sbsat_getting/img176.png,
+	  sbsat_getting/img177.png, sbsat_getting/img178.png,
+	  sbsat_getting/img179.png, sbsat_getting/img18.png,
+	  sbsat_getting/img180.png, sbsat_getting/img181.png,
+	  sbsat_getting/img182.png, sbsat_getting/img183.png,
+	  sbsat_getting/img184.png, sbsat_getting/img185.png,
+	  sbsat_getting/img186.png, sbsat_getting/img187.png,
+	  sbsat_getting/img188.png, sbsat_getting/img189.png,
+	  sbsat_getting/img19.png, sbsat_getting/img190.png,
+	  sbsat_getting/img191.png, sbsat_getting/img192.png,
+	  sbsat_getting/img193.png, sbsat_getting/img194.png,
+	  sbsat_getting/img195.png, sbsat_getting/img196.png,
+	  sbsat_getting/img197.png, sbsat_getting/img198.png,
+	  sbsat_getting/img199.png, sbsat_getting/img2.png,
+	  sbsat_getting/img20.png, sbsat_getting/img200.png,
+	  sbsat_getting/img201.png, sbsat_getting/img202.png,
+	  sbsat_getting/img203.png, sbsat_getting/img204.png,
+	  sbsat_getting/img205.png, sbsat_getting/img206.png,
+	  sbsat_getting/img207.png, sbsat_getting/img208.png,
+	  sbsat_getting/img209.png, sbsat_getting/img21.png,
+	  sbsat_getting/img210.png, sbsat_getting/img211.png,
+	  sbsat_getting/img212.png, sbsat_getting/img213.png,
+	  sbsat_getting/img214.png, sbsat_getting/img215.png,
+	  sbsat_getting/img216.png, sbsat_getting/img217.png,
+	  sbsat_getting/img218.png, sbsat_getting/img219.png,
+	  sbsat_getting/img22.png, sbsat_getting/img220.png,
+	  sbsat_getting/img221.png, sbsat_getting/img222.png,
+	  sbsat_getting/img223.png, sbsat_getting/img224.png,
+	  sbsat_getting/img225.png, sbsat_getting/img226.png,
+	  sbsat_getting/img227.png, sbsat_getting/img228.png,
+	  sbsat_getting/img229.png, sbsat_getting/img23.png,
+	  sbsat_getting/img230.png, sbsat_getting/img231.png,
+	  sbsat_getting/img232.png, sbsat_getting/img233.png,
+	  sbsat_getting/img234.png, sbsat_getting/img235.png,
+	  sbsat_getting/img236.png, sbsat_getting/img237.png,
+	  sbsat_getting/img238.png, sbsat_getting/img239.png,
+	  sbsat_getting/img24.png, sbsat_getting/img240.png,
+	  sbsat_getting/img241.png, sbsat_getting/img242.png,
+	  sbsat_getting/img243.png, sbsat_getting/img244.png,
+	  sbsat_getting/img245.png, sbsat_getting/img246.png,
+	  sbsat_getting/img247.png, sbsat_getting/img248.png,
+	  sbsat_getting/img249.png, sbsat_getting/img25.png,
+	  sbsat_getting/img250.png, sbsat_getting/img251.png,
+	  sbsat_getting/img252.png, sbsat_getting/img253.png,
+	  sbsat_getting/img254.png, sbsat_getting/img255.png,
+	  sbsat_getting/img256.png, sbsat_getting/img257.png,
+	  sbsat_getting/img258.png, sbsat_getting/img259.png,
+	  sbsat_getting/img26.png, sbsat_getting/img260.png,
+	  sbsat_getting/img261.png, sbsat_getting/img262.png,
+	  sbsat_getting/img263.png, sbsat_getting/img264.png,
+	  sbsat_getting/img265.png, sbsat_getting/img266.png,
+	  sbsat_getting/img267.png, sbsat_getting/img268.png,
+	  sbsat_getting/img269.png, sbsat_getting/img27.png,
+	  sbsat_getting/img270.png, sbsat_getting/img271.png,
+	  sbsat_getting/img272.png, sbsat_getting/img273.png,
+	  sbsat_getting/img274.png, sbsat_getting/img275.png,
+	  sbsat_getting/img276.png, sbsat_getting/img277.png,
+	  sbsat_getting/img278.png, sbsat_getting/img279.png,
+	  sbsat_getting/img28.png, sbsat_getting/img280.png,
+	  sbsat_getting/img281.png, sbsat_getting/img282.png,
+	  sbsat_getting/img283.png, sbsat_getting/img284.png,
+	  sbsat_getting/img285.png, sbsat_getting/img286.png,
+	  sbsat_getting/img287.png, sbsat_getting/img288.png,
+	  sbsat_getting/img289.png, sbsat_getting/img29.png,
+	  sbsat_getting/img290.png, sbsat_getting/img291.png,
+	  sbsat_getting/img292.png, sbsat_getting/img293.png,
+	  sbsat_getting/img294.png, sbsat_getting/img295.png,
+	  sbsat_getting/img296.png, sbsat_getting/img297.png,
+	  sbsat_getting/img298.png, sbsat_getting/img299.png,
+	  sbsat_getting/img3.png, sbsat_getting/img30.png,
+	  sbsat_getting/img300.png, sbsat_getting/img301.png,
+	  sbsat_getting/img31.png, sbsat_getting/img32.png,
+	  sbsat_getting/img33.png, sbsat_getting/img34.png,
+	  sbsat_getting/img35.png, sbsat_getting/img36.png,
+	  sbsat_getting/img37.png, sbsat_getting/img38.png,
+	  sbsat_getting/img39.png, sbsat_getting/img4.png,
+	  sbsat_getting/img40.png, sbsat_getting/img41.png,
+	  sbsat_getting/img42.png, sbsat_getting/img43.png,
+	  sbsat_getting/img44.png, sbsat_getting/img45.png,
+	  sbsat_getting/img46.png, sbsat_getting/img47.png,
+	  sbsat_getting/img48.png, sbsat_getting/img49.png,
+	  sbsat_getting/img5.png, sbsat_getting/img50.png,
+	  sbsat_getting/img51.png, sbsat_getting/img52.png,
+	  sbsat_getting/img53.png, sbsat_getting/img54.png,
+	  sbsat_getting/img55.png, sbsat_getting/img56.png,
+	  sbsat_getting/img57.png, sbsat_getting/img58.png,
+	  sbsat_getting/img59.png, sbsat_getting/img6.png,
+	  sbsat_getting/img60.png, sbsat_getting/img61.png,
+	  sbsat_getting/img62.png, sbsat_getting/img63.png,
+	  sbsat_getting/img64.png, sbsat_getting/img65.png,
+	  sbsat_getting/img66.png, sbsat_getting/img67.png,
+	  sbsat_getting/img68.png, sbsat_getting/img69.png,
+	  sbsat_getting/img7.png, sbsat_getting/img70.png,
+	  sbsat_getting/img71.png, sbsat_getting/img72.png,
+	  sbsat_getting/img73.png, sbsat_getting/img74.png,
+	  sbsat_getting/img75.png, sbsat_getting/img76.png,
+	  sbsat_getting/img77.png, sbsat_getting/img78.png,
+	  sbsat_getting/img79.png, sbsat_getting/img8.png,
+	  sbsat_getting/img80.png, sbsat_getting/img81.png,
+	  sbsat_getting/img82.png, sbsat_getting/img83.png,
+	  sbsat_getting/img84.png, sbsat_getting/img85.png,
+	  sbsat_getting/img86.png, sbsat_getting/img87.png,
+	  sbsat_getting/img88.png, sbsat_getting/img89.png,
+	  sbsat_getting/img9.png, sbsat_getting/img90.png,
+	  sbsat_getting/img91.png, sbsat_getting/img92.png,
+	  sbsat_getting/img93.png, sbsat_getting/img94.png,
+	  sbsat_getting/img95.png, sbsat_getting/img96.png,
+	  sbsat_getting/img97.png, sbsat_getting/img98.png,
+	  sbsat_getting/img99.png, sbsat_getting/index.html,
+	  sbsat_getting/internals.pl, sbsat_getting/labels.pl,
+	  sbsat_getting/node1.html, sbsat_getting/node10.html,
+	  sbsat_getting/node100.html, sbsat_getting/node101.html,
+	  sbsat_getting/node102.html, sbsat_getting/node103.html,
+	  sbsat_getting/node104.html, sbsat_getting/node105.html,
+	  sbsat_getting/node106.html, sbsat_getting/node107.html,
+	  sbsat_getting/node108.html, sbsat_getting/node109.html,
+	  sbsat_getting/node11.html, sbsat_getting/node110.html,
+	  sbsat_getting/node111.html, sbsat_getting/node112.html,
+	  sbsat_getting/node113.html, sbsat_getting/node12.html,
+	  sbsat_getting/node13.html, sbsat_getting/node14.html,
+	  sbsat_getting/node15.html, sbsat_getting/node16.html,
+	  sbsat_getting/node17.html, sbsat_getting/node18.html,
+	  sbsat_getting/node19.html, sbsat_getting/node2.html,
+	  sbsat_getting/node20.html, sbsat_getting/node21.html,
+	  sbsat_getting/node22.html, sbsat_getting/node23.html,
+	  sbsat_getting/node24.html, sbsat_getting/node25.html,
+	  sbsat_getting/node26.html, sbsat_getting/node27.html,
+	  sbsat_getting/node28.html, sbsat_getting/node29.html,
+	  sbsat_getting/node3.html, sbsat_getting/node30.html,
+	  sbsat_getting/node31.html, sbsat_getting/node32.html,
+	  sbsat_getting/node33.html, sbsat_getting/node34.html,
+	  sbsat_getting/node35.html, sbsat_getting/node36.html,
+	  sbsat_getting/node37.html, sbsat_getting/node38.html,
+	  sbsat_getting/node39.html, sbsat_getting/node4.html,
+	  sbsat_getting/node40.html, sbsat_getting/node41.html,
+	  sbsat_getting/node42.html, sbsat_getting/node43.html,
+	  sbsat_getting/node44.html, sbsat_getting/node45.html,
+	  sbsat_getting/node46.html, sbsat_getting/node47.html,
+	  sbsat_getting/node48.html, sbsat_getting/node49.html,
+	  sbsat_getting/node5.html, sbsat_getting/node50.html,
+	  sbsat_getting/node51.html, sbsat_getting/node52.html,
+	  sbsat_getting/node53.html, sbsat_getting/node54.html,
+	  sbsat_getting/node55.html, sbsat_getting/node56.html,
+	  sbsat_getting/node57.html, sbsat_getting/node58.html,
+	  sbsat_getting/node59.html, sbsat_getting/node6.html,
+	  sbsat_getting/node60.html, sbsat_getting/node61.html,
+	  sbsat_getting/node62.html, sbsat_getting/node63.html,
+	  sbsat_getting/node64.html, sbsat_getting/node65.html,
+	  sbsat_getting/node66.html, sbsat_getting/node67.html,
+	  sbsat_getting/node68.html, sbsat_getting/node69.html,
+	  sbsat_getting/node7.html, sbsat_getting/node70.html,
+	  sbsat_getting/node71.html, sbsat_getting/node72.html,
+	  sbsat_getting/node73.html, sbsat_getting/node74.html,
+	  sbsat_getting/node75.html, sbsat_getting/node76.html,
+	  sbsat_getting/node77.html, sbsat_getting/node78.html,
+	  sbsat_getting/node79.html, sbsat_getting/node8.html,
+	  sbsat_getting/node80.html, sbsat_getting/node81.html,
+	  sbsat_getting/node82.html, sbsat_getting/node83.html,
+	  sbsat_getting/node84.html, sbsat_getting/node85.html,
+	  sbsat_getting/node86.html, sbsat_getting/node87.html,
+	  sbsat_getting/node88.html, sbsat_getting/node89.html,
+	  sbsat_getting/node9.html, sbsat_getting/node90.html,
+	  sbsat_getting/node91.html, sbsat_getting/node92.html,
+	  sbsat_getting/node93.html, sbsat_getting/node94.html,
+	  sbsat_getting/node95.html, sbsat_getting/node96.html,
+	  sbsat_getting/node97.html, sbsat_getting/node98.html,
+	  sbsat_getting/node99.html, sbsat_getting/sbsat_getting.css,
+	  sbsat_getting/sbsat_getting.html: [no log message]
+
+2009-01-10 12:07  fett
+
+	* include/config.h: [no log message]
+
+2009-01-09 18:34  fett
+
+	* src/solv_simple/: solv_simple.cc, bb_lemmas/picosat.c,
+	  fn_minmax/bt_specfn_minmax.cc, fn_or/bdd2specfn_or.cc,
+	  fn_or/bt_specfn_or.cc, fn_smurf/bt_smurf.cc,
+	  fn_xor/bt_specfn_xor.cc, include/smurfs.h, include/solver.h:
+	  Lemmas working with all special functions.
+
+	     ~Sean
+
+2009-01-02 19:30  fett
+
+	* src/solv_simple/: solv_simple.cc, solv_simple_init.cc: Fixed a
+	  silly thing with solution counting and --max-solutions
+
+	     ~Sean
+
+2009-01-02 15:04  fett
+
+	* include/config.h, src/solv_simple/hooks.cc,
+	  src/solv_simple/solv_simple.cc,
+	  src/solv_simple/solv_simple_init.cc,
+	  src/solv_simple/bb_lemmas/picosat.c,
+	  src/solv_simple/fn_smurf/bt_smurf.cc,
+	  src/solv_simple/include/bb_lemmas.h: [no log message]
+
+2009-01-01 21:53  fett
+
+	* include/config.h: [no log message]
+
+2008-12-31 16:33  fett
+
+	* include/config.h, src/solv_simple/hooks.cc,
+	  src/solv_simple/solv_simple.cc,
+	  src/solv_simple/bb_lemmas/picosat.c,
+	  src/solv_simple/include/bb_lemmas.h,
+	  src/solv_simple/include/solver.h: [no log message]
+
+2008-12-31 12:57  fett
+
+	* include/sbsat_vars.h, src/solv_simple/hooks.cc,
+	  src/solv_simple/solv_simple.cc,
+	  src/solv_simple/bb_lemmas/picosat.c,
+	  src/solv_simple/fn_smurf/bt_smurf.cc, src/utils/params.cc,
+	  src/utils/vars.cc: Added a use-lemmas flag Added support for
+	  MAX_NUM_CACHED_LEMMAS (the -L flag) into picosat.
+
+	     ~Sean
+
+2008-12-31 09:20  fett
+
+	* src/solv_simple/bb_lemmas/picosat.c: Fixed! If picosat resolves
+	  the empty clause, it now returns -1 instead of 'level'.
+
+	     ~Sean
+
+2008-12-30 20:01  fett
+
+	* src/solv_simple/: solv_simple.cc, bb_lemmas/picosat.c,
+	  include/bb_lemmas.h: Got the progress meter and solution counting
+	  working with lemmas.
+
+	  Still some small problem though.
+
+2008-12-29 22:37  fett
+
+	* src/solv_simple/solv_simple_init.cc: Fixed a small problem w/
+	  ownerships.
+
+2008-12-29 09:21  fett
+
+	* src/solv_simple/: hooks.cc, solv_simple.cc, bb_lemmas/picosat.c,
+	  fn_smurf/bt_smurf.cc, include/solver.h: lemmas working for smurfs
+	  in the simple solver. Could be A LOT better though.
+
+	     ~Sean
+
+2008-12-26 19:37  fett
+
+	* src/solv_simple/: solv_simple.cc, bb_lemmas/picosat.c,
+	  fn_smurf/bt_smurf.cc, include/bb_lemmas.h, include/solver.h:
+	  Still adding in lemmas
+
+	  SBSAT is major broken right now. Work work work...
+
+	     ~Sean
+
+2008-12-24 12:15  fett
+
+	* src/solv_simple/: hooks.cc, solv_simple.cc, bb_lemmas/picosat.c,
+	  fn_smurf/bt_smurf.cc, include/bb_lemmas.h: Lemmas are being
+	  created correctly (I am 99% sure of this).
+
+	  More to come soon!
+
+	     ~Sean
+
+2008-12-23 23:57  fett
+
+	* src/solv_simple/bb_lemmas/picosat.c: fixed??? Still something
+	  strange going on.
+
+	     ~Sean
+
+2008-12-23 23:20  fett
+
+	* include/config.h, src/solv_simple/hooks.cc,
+	  src/solv_simple/include/bb_lemmas.h: [no log message]
+
+2008-12-23 18:11  fett
+
+	* src/solv_simple/: hooks.cc, fn_smurf/bt_smurf.cc,
+	  include/bb_lemmas.h: Need to initialize PicoSAT.
+
+	     ~Sean
+
+2008-12-23 17:10  fett
+
+	* Makefile.in, aclocal.m4, configure, configure.ac,
+	  doc/Makefile.in, doc/man1/Makefile.in, examples/Makefile.in,
+	  include/Makefile.in, include/config.h, include/sbsat_solver.h,
+	  src/Makefile.in, src/formats/Makefile.in,
+	  src/formats/5/Makefile.in, src/generator/Makefile.in,
+	  src/postproc/Makefile.in, src/preproc/Makefile.in,
+	  src/solv_bddwalk/Makefile.in, src/solv_simple/Makefile.in,
+	  src/solv_simple/hooks.cc, src/solv_simple/bb_gelim/Makefile.in,
+	  src/solv_simple/bb_lemmas/picosat.c,
+	  src/solv_simple/fn_minmax/Makefile.in,
+	  src/solv_simple/fn_or/Makefile.in,
+	  src/solv_simple/fn_smurf/Makefile.in,
+	  src/solv_simple/fn_smurf/bt_smurf.cc,
+	  src/solv_simple/fn_xor/Makefile.in,
+	  src/solv_simple/include/Makefile.am,
+	  src/solv_simple/include/Makefile.in,
+	  src/solv_simple/include/bb_gelim.h,
+	  src/solv_simple/include/bb_lemmas.h,
+	  src/solv_simple/include/smurfs.h,
+	  src/solv_simple/include/solver.h, src/solv_smurf/Makefile.in,
+	  src/solv_smurf/fn_and/Makefile.in,
+	  src/solv_smurf/fn_lemma/Makefile.in,
+	  src/solv_smurf/fn_lemma_au/Makefile.in,
+	  src/solv_smurf/fn_minmax/Makefile.in,
+	  src/solv_smurf/fn_smurf/Makefile.in,
+	  src/solv_smurf/fn_smurf_au/Makefile.in,
+	  src/solv_smurf/fn_smurf_xor/Makefile.in,
+	  src/solv_smurf/fn_xor/Makefile.in,
+	  src/solv_smurf/fn_xor_smurf/Makefile.in,
+	  src/solv_smurf/hr_anne/Makefile.in,
+	  src/solv_smurf/hr_berkmin/Makefile.in,
+	  src/solv_smurf/hr_lemma/Makefile.in,
+	  src/solv_smurf/hr_lsgb/Makefile.in,
+	  src/solv_smurf/hr_lsgb_lemma/Makefile.in,
+	  src/solv_smurf/hr_lsgbw/Makefile.in,
+	  src/solv_smurf/hr_minisat/Makefile.in,
+	  src/solv_smurf/hr_null/Makefile.in,
+	  src/solv_smurf/hr_vsids/Makefile.in,
+	  src/solv_smurf/include/Makefile.in, src/solv_wvf/Makefile.in,
+	  src/utils/Makefile.in, src/utils/params.cc,
+	  src/utils/params_fn.cc, tests/Makefile.in, tests/cnf/Makefile.in,
+	  tests/longer_tests/Makefile.in, tests/trace_tests/Makefile.in:
+	  [no log message]
+
+2008-12-22 20:27  fett
+
+	* Makefile.in, aclocal.m4, configure, configure.ac,
+	  doc/Makefile.in, doc/man1/Makefile.in, examples/Makefile.in,
+	  include/Makefile.in, include/config.h, src/Makefile.am,
+	  src/Makefile.in, src/formats/Makefile.in,
+	  src/formats/5/Makefile.in, src/generator/Makefile.in,
+	  src/postproc/Makefile.in, src/preproc/Makefile.in,
+	  src/solv_bddwalk/Makefile.in, src/solv_simple/Makefile.am,
+	  src/solv_simple/Makefile.in,
+	  src/solv_simple/bb_gelim/Makefile.in,
+	  src/solv_simple/bb_lemmas/LICENSE,
+	  src/solv_simple/bb_lemmas/Makefile.am,
+	  src/solv_simple/bb_lemmas/NEWS, src/solv_simple/bb_lemmas/README,
+	  src/solv_simple/bb_lemmas/VERSION,
+	  src/solv_simple/bb_lemmas/picosat.c,
+	  src/solv_simple/bb_lemmas/picosat.h,
+	  src/solv_simple/fn_minmax/Makefile.in,
+	  src/solv_simple/fn_or/Makefile.in,
+	  src/solv_simple/fn_smurf/Makefile.in,
+	  src/solv_simple/fn_xor/Makefile.in,
+	  src/solv_simple/include/Makefile.in, src/solv_smurf/Makefile.in,
+	  src/solv_smurf/fn_and/Makefile.in,
+	  src/solv_smurf/fn_lemma/Makefile.in,
+	  src/solv_smurf/fn_lemma_au/Makefile.in,
+	  src/solv_smurf/fn_minmax/Makefile.in,
+	  src/solv_smurf/fn_smurf/Makefile.in,
+	  src/solv_smurf/fn_smurf_au/Makefile.in,
+	  src/solv_smurf/fn_smurf_xor/Makefile.in,
+	  src/solv_smurf/fn_xor/Makefile.in,
+	  src/solv_smurf/fn_xor_smurf/Makefile.in,
+	  src/solv_smurf/hr_anne/Makefile.in,
+	  src/solv_smurf/hr_berkmin/Makefile.in,
+	  src/solv_smurf/hr_lemma/Makefile.in,
+	  src/solv_smurf/hr_lsgb/Makefile.in,
+	  src/solv_smurf/hr_lsgb_lemma/Makefile.in,
+	  src/solv_smurf/hr_lsgbw/Makefile.in,
+	  src/solv_smurf/hr_minisat/Makefile.in,
+	  src/solv_smurf/hr_null/Makefile.in,
+	  src/solv_smurf/hr_vsids/Makefile.in,
+	  src/solv_smurf/include/Makefile.in, src/solv_wvf/Makefile.in,
+	  src/utils/Makefile.in, src/utils/zread.cc, tests/Makefile.in,
+	  tests/cnf/Makefile.in, tests/longer_tests/Makefile.in,
+	  tests/trace_tests/Makefile.in: Added PicoSAT code to the simple
+	  solver directory.
+
+	     ~Sean
+
+2008-12-19 18:18  fett
+
+	* include/sbsat_solver.h, src/solv_simple/solv_simple.cc,
+	  src/solv_simple/fn_smurf/bt_smurf.cc: Added ownership pointers
+	  and back pointers into state machines.  This all helps w/ lemma
+	  generation.
+
+	       ~Sean
+
+2008-12-17 17:39  fett
+
+	* src/solv_simple/solv_simple.cc: [no log message]
+
+2008-12-17 13:12  fett
+
+	* src/solv_simple/: solv_simple.cc, fn_smurf/bt_smurf.cc: [no log
+	  message]
+
+2008-12-16 17:48  fett
+
+	* include/config.h, src/solv_simple/solv_simple.cc,
+	  src/solv_simple/solv_simple_init.cc,
+	  src/solv_simple/fn_smurf/bt_smurf.cc, src/utils/bdd_print.cc:
+	  Fixed a translation error into ite format.
+
+	  Made watched smurfs a little faster...maybe.
+
+	     ~Sean
+
+2008-12-15 23:36  fett
+
+	* src/solv_simple/solv_simple_init.cc: [no log message]
+
+2008-12-15 16:30  fett
+
+	* src/solv_simple/: restarts.cc, include/Makefile.am,
+	  include/Makefile.in, include/restarts.h: [no log message]
+
+2008-12-15 16:19  fett
+
+	* include/sbsat_vars.h, src/solv_simple/Makefile.am,
+	  src/solv_simple/Makefile.in, src/solv_simple/hooks.cc,
+	  src/solv_simple/solv_simple.cc,
+	  src/solv_simple/solv_simple_init.cc,
+	  src/solv_simple/include/hr_lsgb.h,
+	  src/solv_simple/include/solver.h, src/utils/params.cc: Added in
+	  three restart strategies.
+
+	  Of course, they don't do much yet because I havn't implemented
+	  lemmas.
+
+	     ~Sean
+
+2008-12-14 23:16  fett
+
+	* include/common.h, include/config.h, include/sbsat_solver.h,
+	  src/solv_simple/display.cc, src/solv_simple/solv_simple.cc,
+	  src/solv_simple/solv_simple_init.cc,
+	  src/solv_simple/fn_smurf/bdd2smurf.cc,
+	  src/solv_simple/fn_smurf/bt_smurf.cc,
+	  src/solv_simple/fn_smurf/hr_lsgb_smurf_init.cc: Got watched
+	  pointers working for smurfs -- no special functions yet.  Slow as
+	  molasses though. Got some ideas to speed it up. Maybe I'll work
+	  on it tomorrow.
+
+	     ~Sean
+
+2008-12-12 23:40  fett
+
+	* Makefile.in, aclocal.m4, configure, doc/Makefile.in,
+	  doc/man1/Makefile.in, examples/Makefile.in, include/Makefile.in,
+	  include/config.h, include/sbsat_vars.h, src/Makefile.in,
+	  src/formats/Makefile.in, src/formats/5/Makefile.in,
+	  src/generator/Makefile.in, src/postproc/Makefile.in,
+	  src/preproc/Makefile.in, src/solv_bddwalk/Makefile.in,
+	  src/solv_simple/Makefile.in, src/solv_simple/solv_simple.cc,
+	  src/solv_simple/solv_simple_init.cc,
+	  src/solv_simple/bb_gelim/Makefile.in,
+	  src/solv_simple/fn_minmax/Makefile.in,
+	  src/solv_simple/fn_or/Makefile.in,
+	  src/solv_simple/fn_smurf/Makefile.in,
+	  src/solv_simple/fn_smurf/bdd2smurf.cc,
+	  src/solv_simple/fn_smurf/bt_smurf.cc,
+	  src/solv_simple/fn_xor/Makefile.in,
+	  src/solv_simple/include/Makefile.in,
+	  src/solv_simple/include/fn_smurf.h, src/solv_smurf/Makefile.in,
+	  src/solv_smurf/fn_and/Makefile.in,
+	  src/solv_smurf/fn_lemma/Makefile.in,
+	  src/solv_smurf/fn_lemma_au/Makefile.in,
+	  src/solv_smurf/fn_minmax/Makefile.in,
+	  src/solv_smurf/fn_smurf/Makefile.in,
+	  src/solv_smurf/fn_smurf_au/Makefile.in,
+	  src/solv_smurf/fn_smurf_xor/Makefile.in,
+	  src/solv_smurf/fn_xor/Makefile.in,
+	  src/solv_smurf/fn_xor_smurf/Makefile.in,
+	  src/solv_smurf/hr_anne/Makefile.in,
+	  src/solv_smurf/hr_berkmin/Makefile.in,
+	  src/solv_smurf/hr_lemma/Makefile.in,
+	  src/solv_smurf/hr_lsgb/Makefile.in,
+	  src/solv_smurf/hr_lsgb_lemma/Makefile.in,
+	  src/solv_smurf/hr_lsgbw/Makefile.in,
+	  src/solv_smurf/hr_minisat/Makefile.in,
+	  src/solv_smurf/hr_null/Makefile.in,
+	  src/solv_smurf/hr_vsids/Makefile.in,
+	  src/solv_smurf/include/Makefile.in, src/solv_wvf/Makefile.in,
+	  src/utils/Makefile.in, src/utils/params.cc, src/utils/vars.cc,
+	  tests/Makefile.in, tests/cnf/Makefile.in,
+	  tests/longer_tests/Makefile.in, tests/trace_tests/Makefile.in:
+	  More watched literal stuff.
+
+	     ~Sean
+
+2008-12-07 21:01  fett
+
+	* src/solv_simple/: solv_simple.cc, fn_smurf/bt_smurf.cc: Fixing up
+	  the latest watched smurfs code.
+
+2008-12-07 16:02  fett
+
+	* src/solv_simple/: solv_simple.cc, fn_smurf/bt_smurf.cc: started
+	  writing the watched-smurfs code.
+
+2008-12-07 12:13  fett
+
+	* include/sbsat_vars.h, src/solv_simple/solv_simple_init.cc,
+	  src/solv_simple/fn_smurf/bt_smurf.cc,
+	  src/solv_simple/fn_smurf/hr_lsgb_smurf_init.cc,
+	  src/utils/params.cc, src/utils/vars.cc: Fixed a few small things
+
+2008-12-07 00:00  fett
+
+	* include/sbsat_solver.h, include/sbsat_vars.h,
+	  src/solv_simple/hooks.cc, src/solv_simple/solv_simple.cc,
+	  src/solv_simple/solv_simple_init.cc,
+	  src/solv_simple/bb_gelim/linear.cc,
+	  src/solv_simple/fn_smurf/bdd2smurf.cc,
+	  src/solv_simple/fn_smurf/bt_smurf.cc,
+	  src/solv_simple/fn_smurf/hr_lsgb_smurf_init.cc,
+	  src/solv_simple/fn_xor/bdd2specfn_xor.cc,
+	  src/solv_simple/include/bb_gelim.h, src/solv_smurf/fn_create.cc,
+	  src/utils/params.cc, src/utils/vars.cc: Added the ability to
+	  build smurfs on-demand / on-the-fly / lazily instead of
+	  precomputing them prior to search. This was in the old
+	  solver...just spent the day and implemented it in the simple
+	  solver.
+
+	     ~Sean
+
+2008-12-06 18:53  fett
+
+	* include/sbsat_solver.h, src/solv_simple/hooks.cc,
+	  src/solv_simple/solv_simple_init.cc,
+	  src/solv_simple/bb_gelim/linear.cc,
+	  src/solv_simple/fn_smurf/bdd2smurf.cc,
+	  src/solv_simple/fn_smurf/bt_smurf.cc,
+	  src/solv_simple/fn_smurf/hr_lsgb_smurf_init.cc,
+	  src/solv_simple/include/bb_gelim.h: busted - need valgrind to fix
+	  it.
+
+2008-12-06 12:55  fett
+
+	* include/sbsat_solver.h, src/solv_simple/display.cc,
+	  src/solv_simple/solv_simple.cc,
+	  src/solv_simple/solv_simple_init.cc,
+	  src/solv_simple/fn_smurf/bdd2smurf.cc,
+	  src/solv_simple/fn_smurf/bt_smurf.cc,
+	  src/solv_simple/fn_smurf/fn_smurf.cc,
+	  src/solv_simple/fn_smurf/hr_lsgb_smurf_init.cc,
+	  src/solv_simple/include/fn_smurf.h: Removed code implementing a
+	  half-written idea for watched smurfs.
+
+	     ~Sean
+
+2008-12-01 07:47  fett
+
+	* Makefile.in, aclocal.m4, configure, configure.ac,
+	  doc/Makefile.in, doc/man1/Makefile.in, examples/Makefile.in,
+	  include/Makefile.in, include/config.h, include/sbsat_solver.h,
+	  src/Makefile.am, src/Makefile.in, src/formats/Makefile.in,
+	  src/formats/5/Makefile.in, src/generator/Makefile.in,
+	  src/postproc/Makefile.in, src/preproc/Makefile.in,
+	  src/solv_bddwalk/Makefile.in, src/solv_simple/Makefile.am,
+	  src/solv_simple/Makefile.in, src/solv_simple/display.cc,
+	  src/solv_simple/hooks.cc, src/solv_simple/solv_simple.cc,
+	  src/solv_simple/solv_simple_init.cc,
+	  src/solv_simple/bb_gelim/Makefile.in,
+	  src/solv_simple/fn_minmax/Makefile.in,
+	  src/solv_simple/fn_minmax/bdd2specfn_minmax.cc,
+	  src/solv_simple/fn_minmax/bt_specfn_minmax.cc,
+	  src/solv_simple/fn_minmax/fn_minmax.cc,
+	  src/solv_simple/fn_minmax/hr_lsgb_minmax_init.cc,
+	  src/solv_simple/fn_or/Makefile.in,
+	  src/solv_simple/fn_smurf/Makefile.in,
+	  src/solv_simple/fn_smurf/bdd2smurf.cc,
+	  src/solv_simple/fn_smurf/hr_lsgb_smurf_init.cc,
+	  src/solv_simple/fn_xor/Makefile.in,
+	  src/solv_simple/include/Makefile.am,
+	  src/solv_simple/include/Makefile.in,
+	  src/solv_simple/include/bb_gelim.h,
+	  src/solv_simple/include/fn_minmax.h,
+	  src/solv_simple/include/solver.h, src/solv_smurf/Makefile.in,
+	  src/solv_smurf/fn_and/Makefile.in,
+	  src/solv_smurf/fn_lemma/Makefile.in,
+	  src/solv_smurf/fn_lemma_au/Makefile.in,
+	  src/solv_smurf/fn_minmax/Makefile.in,
+	  src/solv_smurf/fn_smurf/Makefile.in,
+	  src/solv_smurf/fn_smurf_au/Makefile.in,
+	  src/solv_smurf/fn_smurf_xor/Makefile.in,
+	  src/solv_smurf/fn_xor/Makefile.in,
+	  src/solv_smurf/fn_xor_smurf/Makefile.in,
+	  src/solv_smurf/hr_anne/Makefile.in,
+	  src/solv_smurf/hr_berkmin/Makefile.in,
+	  src/solv_smurf/hr_lemma/Makefile.in,
+	  src/solv_smurf/hr_lsgb/Makefile.in,
+	  src/solv_smurf/hr_lsgb_lemma/Makefile.in,
+	  src/solv_smurf/hr_lsgbw/Makefile.in,
+	  src/solv_smurf/hr_minisat/Makefile.in,
+	  src/solv_smurf/hr_null/Makefile.in,
+	  src/solv_smurf/hr_vsids/Makefile.in,
+	  src/solv_smurf/include/Makefile.in, src/solv_wvf/Makefile.in,
+	  src/utils/Makefile.in, tests/Makefile.in, tests/cnf/Makefile.in,
+	  tests/longer_tests/Makefile.in, tests/trace_tests/Makefile.in:
+	  Added minmax functionality to the simple solver. Heuristic is not
+	  done yet though.
+
+	     ~Sean
+
+2008-11-25 11:30  fett
+
+	* src/solv_simple/: solv_simple.cc, fn_xor/bt_specfn_xor.cc: [no
+	  log message]
+
+2008-11-25 11:17  fett
+
+	* src/solv_simple/solv_simple.cc: whoops! Fixed an error where
+	  solver_reset_level was ignored.
+
+2008-11-24 13:17  fett
+
+	* Makefile.in, aclocal.m4, configure, configure.ac,
+	  doc/Makefile.in, doc/man1/Makefile.in, examples/Makefile.in,
+	  include/Makefile.in, include/config.h, include/sbsat_solver.h,
+	  src/Makefile.in, src/sbsat.cc, src/formats/Makefile.in,
+	  src/formats/cnf.cc, src/formats/5/Makefile.in,
+	  src/formats/5/blif_s.ll, src/formats/5/iscas_s.ll,
+	  src/formats/5/prover3_s.ll, src/formats/5/prover_s.ll,
+	  src/generator/Makefile.in, src/generator/vanDerWaerden.cc,
+	  src/postproc/Makefile.in, src/preproc/Makefile.in,
+	  src/solv_bddwalk/Makefile.in, src/solv_simple/Makefile.in,
+	  src/solv_simple/solv_simple.cc,
+	  src/solv_simple/bb_gelim/Makefile.in,
+	  src/solv_simple/bb_gelim/linear.cc,
+	  src/solv_simple/fn_or/Makefile.in,
+	  src/solv_simple/fn_smurf/Makefile.in,
+	  src/solv_simple/fn_xor/Makefile.in,
+	  src/solv_simple/fn_xor/bdd2specfn_xor.cc,
+	  src/solv_simple/fn_xor/bt_specfn_xor.cc,
+	  src/solv_simple/include/Makefile.in,
+	  src/solv_smurf/fn_minmax/fn_minmax.cc,
+	  src/solv_smurf/fn_smurf_xor/fn_smurf_xor.cc,
+	  src/solv_smurf/fn_xor/fn_xor.cc,
+	  src/solv_smurf/fn_xor_smurf/fn_xor_smurf.cc,
+	  src/solv_wvf/Makefile.in, src/utils/Makefile.in,
+	  src/utils/utils.cc, tests/Makefile.in, tests/cnf/Makefile.in,
+	  tests/longer_tests/Makefile.in, tests/trace_tests/Makefile.in:
+	  fixing warnings...
+
+	     ~Sean
+
+2008-11-16 22:50  fett
+
+	* include/config.h, include/sbsat_solver.h,
+	  src/solv_simple/fn_minmax/bdd2specfn_minmax.cc,
+	  src/solv_simple/fn_minmax/bt_specfn_minmax.cc,
+	  src/solv_simple/fn_minmax/hr_lsgb_minmax_init.cc,
+	  src/solv_simple/fn_or/bt_specfn_or.cc,
+	  src/solv_simple/fn_smurf/bdd2smurf.cc,
+	  src/solv_simple/include/hr_lsgb.h, src/utils/params.cc: Trying to
+	  finish the minmax special function. Also touching up the OR
+	  special function, preparing it for use with watched pointers.
+
+	     ~Sean
+
+2008-11-04 10:57  fett
+
+	* include/config.h, src/generator/xorgen.cc: Fixed the xor
+	  generator (had previously hacked it to get some specific
+	  results).
+
+2008-10-29 20:01  fett
+
+	* Makefile.in, aclocal.m4, configure, configure.ac,
+	  doc/Makefile.in, doc/man1/Makefile.in, examples/Makefile.in,
+	  include/Makefile.in, include/config.h, src/Makefile.in,
+	  src/formats/Makefile.in, src/formats/5/Makefile.in,
+	  src/generator/Makefile.in, src/postproc/Makefile.in,
+	  src/preproc/Makefile.in, src/solv_bddwalk/Makefile.in,
+	  src/solv_simple/Makefile.in, src/solv_simple/solv_simple.cc,
+	  src/solv_simple/bb_gelim/Makefile.in,
+	  src/solv_simple/fn_or/Makefile.in,
+	  src/solv_simple/fn_smurf/Makefile.in,
+	  src/solv_simple/fn_xor/Makefile.in,
+	  src/solv_simple/include/Makefile.in, src/solv_smurf/Makefile.in,
+	  src/solv_smurf/fn_and/Makefile.in,
+	  src/solv_smurf/fn_lemma/Makefile.in,
+	  src/solv_smurf/fn_lemma_au/Makefile.in,
+	  src/solv_smurf/fn_minmax/Makefile.in,
+	  src/solv_smurf/fn_smurf/Makefile.in,
+	  src/solv_smurf/fn_smurf_au/Makefile.in,
+	  src/solv_smurf/fn_smurf_xor/Makefile.in,
+	  src/solv_smurf/fn_xor/Makefile.in,
+	  src/solv_smurf/fn_xor_smurf/Makefile.in,
+	  src/solv_smurf/hr_anne/Makefile.in,
+	  src/solv_smurf/hr_berkmin/Makefile.in,
+	  src/solv_smurf/hr_lemma/Makefile.in,
+	  src/solv_smurf/hr_lsgb/Makefile.in,
+	  src/solv_smurf/hr_lsgb_lemma/Makefile.in,
+	  src/solv_smurf/hr_lsgbw/Makefile.in,
+	  src/solv_smurf/hr_minisat/Makefile.in,
+	  src/solv_smurf/hr_null/Makefile.in,
+	  src/solv_smurf/hr_vsids/Makefile.in,
+	  src/solv_smurf/include/Makefile.in, src/solv_wvf/Makefile.in,
+	  src/utils/Makefile.in, tests/Makefile.in, tests/cnf/Makefile.in,
+	  tests/longer_tests/Makefile.in, tests/trace_tests/Makefile.in:
+	  Playing around w/ openmp
+
+	     ~Sean
+
+2008-10-26 16:41  fett
+
+	* Makefile.in, aclocal.m4, configure, doc/Makefile.in,
+	  doc/man1/Makefile.in, examples/Makefile.in, include/Makefile.in,
+	  include/config.h, src/formats/5/Makefile.in, tests/Makefile.in,
+	  tests/cnf/Makefile.in, tests/longer_tests/Makefile.in,
+	  tests/trace_tests/Makefile.in: auto-everythinged.
+
+	    ~Sean
+
+2008-10-26 16:36  fett
+
+	* ChangeLog, src/utils/bdd.cc, src/utils/params.cc: [no log
+	  message]
+
 2008-10-26 16:02  fett
 
 	* src/utils/params.cc: Lowered all the function type limits to 2.

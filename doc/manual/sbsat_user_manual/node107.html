@@ -1,0 +1,2459 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Reference - Results: Experiments</TITLE>
+<META NAME="description" CONTENT="Reference - Results: Experiments">
+<META NAME="keywords" CONTENT="sbsat_user_manual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="sbsat_user_manual.css">
+
+<LINK REL="next" HREF="node108.html">
+<LINK REL="previous" HREF="node106.html">
+<LINK REL="up" HREF="sbsat_user_manual.html">
+<LINK REL="next" HREF="node108.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1607"
+  HREF="node108.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1603"
+  HREF="sbsat_user_manual.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1597"
+  HREF="node106.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1605"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1608"
+  HREF="node108.html">Reference - Debugging</A>
+<B> Up:</B> <A NAME="tex2html1604"
+  HREF="sbsat_user_manual.html">SBSAT User Manual and</A>
+<B> Previous:</B> <A NAME="tex2html1598"
+  HREF="node106.html">Reference - Results: making</A>
+ &nbsp; <B>  <A NAME="tex2html1606"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION000170000000000000000"></A><A NAME="results-section"></A>
+<BR>
+Reference - Results: Experiments
+</H1>
+
+<P>
+SBSAT was tested on several popular benchmark suites.  We also ran
+current versions of Berkmin (v. 561), zChaff (v. 2003.10.9), and
+Siege (v. 4) on these benchmarks for comparison.  In addition, we
+concocted a class of random problems, called <EM>sliders</EM>, which
+resemble BMC problems in that copies of the same function, each
+differing only in the input variables it depends on, are conjoined.
+Making those functions random, in some sense, makes sliders hard.
+Specifically, sliders are defined as follows:
+<BR>
+<P>
+<IMG
+ WIDTH="522" HEIGHT="227" ALIGN="MIDDLE" BORDER="0"
+ SRC="img281.png"
+ ALT="$\textstyle \parbox{4.5in}{ Choose $m$, even, the number of constraints and the
+...
+...rray*}where each $o_h$ is independently and uniformly chosen from $\{0,1\}$.
+}$"> 
+
+<P>
+We find sliders appealing because they resemble some real-world
+problem domains and because <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img2.png"
+ ALT="$f$"> and <IMG
+ WIDTH="13" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img194.png"
+ ALT="$g$"> can be designed to force
+inferences to occur only when nearly all inputs of <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img2.png"
+ ALT="$f$"> and <IMG
+ WIDTH="13" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img194.png"
+ ALT="$g$"> are
+assigned values.  This fact makes conflict analysis useless, and is
+challenging to a search heuristic which is looking for information
+contained in groups of variables.
+
+<P>
+At this stage of our SBSAT implementation, lemmas are
+handled in a rather primitive manner so we observe an unusually low
+number of backtracks per second.  All experiments were run on a single
+processor Pentium 4, 2 GHz, with 2 GB RAM.
+
+<P>
+Our first set of results, shown in Table&nbsp;<A HREF="#longMultTable">1</A>, is for
+the problem of verifying a long multiplier.  The circuit definition is
+available from Carnegie Mellon University.  All inputs are unsatisfiable.
+The left column of the table shows the number of time steps involved
+in the verification of each benchmark (see
+Section&nbsp;<A HREF="node106.html#the-reduction">15</A>).  Experiments were run from 4 time steps
+to 70 time steps.  The next three columns present the observed
+performance of SBSAT on three-address inputs in total number of choice
+points, total time, and search time.  The next three columns present
+the same information except when translated CNF formulas are input
+(see Section&nbsp;<A HREF="node106.html#the-reduction">15</A>).  The next two columns present the
+performance of zChaff in choice points and total time and the last two
+columns present the results of Siege and Berkmin on the CNF versions
+we generated.
+
+<P>
+<BR><P></P>
+<DIV ALIGN="CENTER"><A NAME="3616"></A>
+<TABLE>
+<CAPTION><STRONG>Table 1:</STRONG>
+SBSAT, zChaff, Siege, Berkmin times on the Long Multiplier benchmarks</CAPTION>
+<TR><TD>
+<DIV ALIGN="CENTER">
+<FONT SIZE="-2">
+<TABLE CELLPADDING=3 BORDER="1">
+<TR><TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="CENTER" COLSPAN=3>SBSAT on Three-Address</TD>
+<TD ALIGN="CENTER" COLSPAN=3>SBSAT on CNF</TD>
+<TD ALIGN="CENTER" COLSPAN=2>zChaff on CNF</TD>
+<TD ALIGN="CENTER" COLSPAN=1>Siege</TD>
+<TD ALIGN="CENTER" COLSPAN=1>Berkmin</TD>
+</TR>
+<TR><TD ALIGN="CENTER" COLSPAN=1>#time</TD>
+<TD ALIGN="CENTER" COLSPAN=1>number</TD>
+<TD ALIGN="CENTER" COLSPAN=1>total</TD>
+<TD ALIGN="CENTER" COLSPAN=1>branch</TD>
+<TD ALIGN="CENTER" COLSPAN=1>number</TD>
+<TD ALIGN="CENTER" COLSPAN=1>total</TD>
+<TD ALIGN="CENTER" COLSPAN=1>branch</TD>
+<TD ALIGN="CENTER" COLSPAN=1>number</TD>
+<TD ALIGN="CENTER" COLSPAN=1>total</TD>
+<TD ALIGN="CENTER" COLSPAN=1>total</TD>
+<TD ALIGN="CENTER" COLSPAN=1>total</TD>
+</TR>
+<TR><TD ALIGN="CENTER" COLSPAN=1>steps</TD>
+<TD ALIGN="CENTER" COLSPAN=1>choices</TD>
+<TD ALIGN="CENTER" COLSPAN=1>(sec)</TD>
+<TD ALIGN="CENTER" COLSPAN=1>(sec)</TD>
+<TD ALIGN="CENTER" COLSPAN=1>choices</TD>
+<TD ALIGN="CENTER" COLSPAN=1>(sec)</TD>
+<TD ALIGN="CENTER" COLSPAN=1>(sec)</TD>
+<TD ALIGN="CENTER" COLSPAN=1>choices</TD>
+<TD ALIGN="CENTER" COLSPAN=1>(sec)</TD>
+<TD ALIGN="CENTER" COLSPAN=1>(sec)</TD>
+<TD ALIGN="CENTER" COLSPAN=1>(sec)</TD>
+</TR>
+<TR><TD ALIGN="CENTER">4</TD>
+<TD ALIGN="RIGHT">720</TD>
+<TD ALIGN="RIGHT">2.3</TD>
+<TD ALIGN="RIGHT">0.16</TD>
+<TD ALIGN="RIGHT">687</TD>
+<TD ALIGN="RIGHT">1.47</TD>
+<TD ALIGN="RIGHT">0.86</TD>
+<TD ALIGN="RIGHT">1041</TD>
+<TD ALIGN="RIGHT">0.45</TD>
+<TD ALIGN="RIGHT">0.2</TD>
+<TD ALIGN="RIGHT">0.27</TD>
+</TR>
+<TR><TD ALIGN="CENTER">8</TD>
+<TD ALIGN="RIGHT">10000</TD>
+<TD ALIGN="RIGHT">14.78</TD>
+<TD ALIGN="RIGHT">7.12</TD>
+<TD ALIGN="RIGHT">13110</TD>
+<TD ALIGN="RIGHT">41.02</TD>
+<TD ALIGN="RIGHT">39.28</TD>
+<TD ALIGN="RIGHT">33272</TD>
+<TD ALIGN="RIGHT">50.37</TD>
+<TD ALIGN="RIGHT">12.73</TD>
+<TD ALIGN="RIGHT">18.9</TD>
+</TR>
+<TR><TD ALIGN="CENTER">12</TD>
+<TD ALIGN="RIGHT">19398</TD>
+<TD ALIGN="RIGHT">42.14</TD>
+<TD ALIGN="RIGHT">27.31</TD>
+<TD ALIGN="RIGHT">31963</TD>
+<TD ALIGN="RIGHT">167.8</TD>
+<TD ALIGN="RIGHT">163.8</TD>
+<TD ALIGN="RIGHT">122522</TD>
+<TD ALIGN="RIGHT">357.1</TD>
+<TD ALIGN="RIGHT">71.61</TD>
+<TD ALIGN="RIGHT">96.9</TD>
+</TR>
+<TR><TD ALIGN="CENTER">16</TD>
+<TD ALIGN="RIGHT">17508</TD>
+<TD ALIGN="RIGHT">61.05</TD>
+<TD ALIGN="RIGHT">38.89</TD>
+<TD ALIGN="RIGHT">32969</TD>
+<TD ALIGN="RIGHT">247.3</TD>
+<TD ALIGN="RIGHT">240.4</TD>
+<TD ALIGN="RIGHT">125026</TD>
+<TD ALIGN="RIGHT">366.7</TD>
+<TD ALIGN="RIGHT">177.4</TD>
+<TD ALIGN="RIGHT">200.6</TD>
+</TR>
+<TR><TD ALIGN="CENTER">20</TD>
+<TD ALIGN="RIGHT">14077</TD>
+<TD ALIGN="RIGHT">72.63</TD>
+<TD ALIGN="RIGHT">41.65</TD>
+<TD ALIGN="RIGHT">34426</TD>
+<TD ALIGN="RIGHT">347.0</TD>
+<TD ALIGN="RIGHT">335.1</TD>
+<TD ALIGN="RIGHT">164373</TD>
+<TD ALIGN="RIGHT">585.9</TD>
+<TD ALIGN="RIGHT">165.2</TD>
+<TD ALIGN="RIGHT">178.8</TD>
+</TR>
+<TR><TD ALIGN="CENTER">24</TD>
+<TD ALIGN="RIGHT">17775</TD>
+<TD ALIGN="RIGHT">118.5</TD>
+<TD ALIGN="RIGHT">77.03</TD>
+<TD ALIGN="RIGHT">23854</TD>
+<TD ALIGN="RIGHT">270.0</TD>
+<TD ALIGN="RIGHT">252.0</TD>
+<TD ALIGN="RIGHT">214263</TD>
+<TD ALIGN="RIGHT">790.3</TD>
+<TD ALIGN="RIGHT">542.8</TD>
+<TD ALIGN="RIGHT">312.2</TD>
+</TR>
+<TR><TD ALIGN="CENTER">28</TD>
+<TD ALIGN="RIGHT">18872</TD>
+<TD ALIGN="RIGHT">134.1</TD>
+<TD ALIGN="RIGHT">81.71</TD>
+<TD ALIGN="RIGHT">23847</TD>
+<TD ALIGN="RIGHT">319.0</TD>
+<TD ALIGN="RIGHT">293.8</TD>
+<TD ALIGN="RIGHT">220045</TD>
+<TD ALIGN="RIGHT">888.2</TD>
+<TD ALIGN="RIGHT">805.4</TD>
+<TD ALIGN="RIGHT">255.0</TD>
+</TR>
+<TR><TD ALIGN="CENTER">32</TD>
+<TD ALIGN="RIGHT">18538</TD>
+<TD ALIGN="RIGHT">155.6</TD>
+<TD ALIGN="RIGHT">90.5</TD>
+<TD ALIGN="RIGHT">16718</TD>
+<TD ALIGN="RIGHT">262.9</TD>
+<TD ALIGN="RIGHT">228.3</TD>
+<TD ALIGN="RIGHT">216916</TD>
+<TD ALIGN="RIGHT">882.8</TD>
+<TD ALIGN="RIGHT">1035</TD>
+<TD ALIGN="RIGHT">334.6</TD>
+</TR>
+<TR><TD ALIGN="CENTER">36</TD>
+<TD ALIGN="RIGHT">20356</TD>
+<TD ALIGN="RIGHT">186.8</TD>
+<TD ALIGN="RIGHT">109.9</TD>
+<TD ALIGN="RIGHT">14750</TD>
+<TD ALIGN="RIGHT">278.0</TD>
+<TD ALIGN="RIGHT">233.5</TD>
+<TD ALIGN="RIGHT">269856</TD>
+<TD ALIGN="RIGHT">1055</TD>
+<TD ALIGN="RIGHT">576.8</TD>
+<TD ALIGN="RIGHT">420.4</TD>
+</TR>
+<TR><TD ALIGN="CENTER">40</TD>
+<TD ALIGN="RIGHT">19141</TD>
+<TD ALIGN="RIGHT">203.3</TD>
+<TD ALIGN="RIGHT">113.5</TD>
+<TD ALIGN="RIGHT">11703</TD>
+<TD ALIGN="RIGHT">281.1</TD>
+<TD ALIGN="RIGHT">225.0</TD>
+<TD ALIGN="RIGHT">289687</TD>
+<TD ALIGN="RIGHT">1103</TD>
+<TD ALIGN="RIGHT">845.3</TD>
+<TD ALIGN="RIGHT">442.6</TD>
+</TR>
+<TR><TD ALIGN="CENTER">50</TD>
+<TD ALIGN="RIGHT">21867</TD>
+<TD ALIGN="RIGHT">263.0</TD>
+<TD ALIGN="RIGHT">134.4</TD>
+<TD ALIGN="RIGHT">11306</TD>
+<TD ALIGN="RIGHT">378.6</TD>
+<TD ALIGN="RIGHT">286.9</TD>
+<TD ALIGN="RIGHT">472053</TD>
+<TD ALIGN="RIGHT">2032</TD>
+<TD ALIGN="RIGHT">1552</TD>
+<TD ALIGN="RIGHT">466.9</TD>
+</TR>
+<TR><TD ALIGN="CENTER">60</TD>
+<TD ALIGN="RIGHT">24985</TD>
+<TD ALIGN="RIGHT">434.1</TD>
+<TD ALIGN="RIGHT">239.4</TD>
+<TD ALIGN="RIGHT">10844</TD>
+<TD ALIGN="RIGHT">450.2</TD>
+<TD ALIGN="RIGHT">313.6</TD>
+<TD ALIGN="RIGHT">461867</TD>
+<TD ALIGN="RIGHT">2183</TD>
+<TD ALIGN="RIGHT">3340</TD>
+<TD ALIGN="RIGHT">709.2</TD>
+</TR>
+<TR><TD ALIGN="CENTER">70</TD>
+<TD ALIGN="RIGHT">26907</TD>
+<TD ALIGN="RIGHT">618.4</TD>
+<TD ALIGN="RIGHT">335.9</TD>
+<TD ALIGN="RIGHT">11270</TD>
+<TD ALIGN="RIGHT">632.8</TD>
+<TD ALIGN="RIGHT">164.3</TD>
+<TD ALIGN="RIGHT">850942</TD>
+<TD ALIGN="RIGHT">5875</TD>
+<TD ALIGN="RIGHT">2860</TD>
+<TD ALIGN="RIGHT">844.7</TD>
+</TR>
+</TABLE></FONT></DIV>
+
+<A NAME="longMultTable"></A></TD></TR>
+</TABLE>
+</DIV><P></P>
+<BR>
+
+<P>
+Observe that SBSAT working in the user domain on three-address code
+shows a slight advantage to working with the CNF translation.  It is
+interesting that in the case of CNF inputs, more preprocessing seems
+to result in less searching.  The fact that preprocessing varies so
+much from benchmark to benchmark on CNF inputs may reflect the
+imprecision of guesses made when trying to recreate domain-specific
+information from given CNF formulas.  Such preprocessing fluctuations
+are not as pronounced when three-address codes are input to SBSAT.
+
+<P>
+Observe that zChaff and Siege cannot compete with SBSAT on long
+multiplier benchmarks.  The problem seems to be due to encountering
+many more choicepoints during search.  Berkmin visits only about an
+order of magnitude more choicepoints than SBSAT on CNF inputs but the
+slower implementation of lemmas in SBSAT enables Berkmin to be only a
+fraction slower than SBSAT, in general.  The difference in
+choicepoints suggests the success in this case is due to the complex
+search heuristic used natively in SBSAT.
+
+<P>
+Table&nbsp;<A HREF="#barrel">2</A> shows timings for the set of barrel
+benchmarks.  The three-address code equivalents were generated by
+applying the <TT>bmc</TT> tool to the output of the <TT>genbarrel</TT>
+utility in the <TT>bmc</TT> suite.  All inputs are unsatisfiable.  Runs
+were cut off prematurely if not completed before 3600 seconds.  This
+is reflected as a line (--) through a table entry.
+
+<P>
+Observe that in all cases, SBSAT solved the problems constructed from
+the three-address code without any search.  This raises the question
+of whether a BDD tool might also do as well.  This appears not to be
+the case, since we build a collection of BDDs of about 10 variables
+each and then strengthen them against each other.  The inferences
+resulting from this process are enough to generate a contradiction
+before search is applied.  We suppose a BDD tool would either have
+attempted to build a single BDD from the three-address code, in which
+case it would have been forced to give up due to unmanageable sizes,
+or it would have used the conjoin operation instead of the
+strengthening operation to combine the BDDs, probably again taking too
+much space.  Although the time taken by SBSAT in preprocessing is
+considerable, it is shown to be well-spent as SBSAT, zChaff, Siege,
+and Berkmin all have difficulty with the larger CNF versions of the
+barrel benchmarks.  Thus, it appears staying closer to the user-domain
+and preprocessing to reveal inferences early has paid off on these 
+benchmarks.
+
+<P>
+<BR><P></P>
+<DIV ALIGN="CENTER"><A NAME="3708"></A>
+<TABLE>
+<CAPTION><STRONG>Table 2:</STRONG>
+SBSAT, zChaff, Siege, Berkmin times on the Barrel benchmarks</CAPTION>
+<TR><TD>
+<DIV ALIGN="CENTER">
+<FONT SIZE="-2">
+<TABLE CELLPADDING=3 BORDER="1">
+<TR><TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="CENTER" COLSPAN=3>SBSAT on Three-Address</TD>
+<TD ALIGN="CENTER" COLSPAN=3>SBSAT on CNF</TD>
+<TD ALIGN="CENTER" COLSPAN=2>zChaff on CNF</TD>
+<TD ALIGN="CENTER" COLSPAN=1>Siege</TD>
+<TD ALIGN="CENTER" COLSPAN=1>Berkmin</TD>
+</TR>
+<TR><TD ALIGN="CENTER" COLSPAN=1>Name</TD>
+<TD ALIGN="CENTER" COLSPAN=1>number</TD>
+<TD ALIGN="CENTER" COLSPAN=1>total</TD>
+<TD ALIGN="CENTER" COLSPAN=1>branch</TD>
+<TD ALIGN="CENTER" COLSPAN=1>number</TD>
+<TD ALIGN="CENTER" COLSPAN=1>total</TD>
+<TD ALIGN="CENTER" COLSPAN=1>branch</TD>
+<TD ALIGN="CENTER" COLSPAN=1>number</TD>
+<TD ALIGN="CENTER" COLSPAN=1>total</TD>
+<TD ALIGN="CENTER" COLSPAN=1>total</TD>
+<TD ALIGN="CENTER" COLSPAN=1>total</TD>
+</TR>
+<TR><TD ALIGN="CENTER" COLSPAN=1>&nbsp;</TD>
+<TD ALIGN="CENTER" COLSPAN=1>choices</TD>
+<TD ALIGN="CENTER" COLSPAN=1>(sec)</TD>
+<TD ALIGN="CENTER" COLSPAN=1>(sec)</TD>
+<TD ALIGN="CENTER" COLSPAN=1>choices</TD>
+<TD ALIGN="CENTER" COLSPAN=1>(sec)</TD>
+<TD ALIGN="CENTER" COLSPAN=1>(sec)</TD>
+<TD ALIGN="CENTER" COLSPAN=1>choices</TD>
+<TD ALIGN="CENTER" COLSPAN=1>(sec)</TD>
+<TD ALIGN="CENTER" COLSPAN=1>(sec)</TD>
+<TD ALIGN="CENTER" COLSPAN=1>(sec)</TD>
+</TR>
+<TR><TD ALIGN="CENTER">barrel2</TD>
+<TD ALIGN="CENTER">0</TD>
+<TD ALIGN="CENTER">0.00</TD>
+<TD ALIGN="CENTER">0.00</TD>
+<TD ALIGN="CENTER">3</TD>
+<TD ALIGN="CENTER">0.05</TD>
+<TD ALIGN="CENTER">0.00</TD>
+<TD ALIGN="CENTER">3</TD>
+<TD ALIGN="CENTER">0.00</TD>
+<TD ALIGN="CENTER">0.01</TD>
+<TD ALIGN="CENTER">0.0</TD>
+</TR>
+<TR><TD ALIGN="CENTER">barrel3</TD>
+<TD ALIGN="CENTER">0</TD>
+<TD ALIGN="CENTER">0.11</TD>
+<TD ALIGN="CENTER">0.00</TD>
+<TD ALIGN="CENTER">13</TD>
+<TD ALIGN="CENTER">0.08</TD>
+<TD ALIGN="CENTER">0.00</TD>
+<TD ALIGN="CENTER">48</TD>
+<TD ALIGN="CENTER">0.00</TD>
+<TD ALIGN="CENTER">0.01</TD>
+<TD ALIGN="CENTER">0.0</TD>
+</TR>
+<TR><TD ALIGN="CENTER">barrel4</TD>
+<TD ALIGN="CENTER">0</TD>
+<TD ALIGN="CENTER">0.12</TD>
+<TD ALIGN="CENTER">0.00</TD>
+<TD ALIGN="CENTER">33</TD>
+<TD ALIGN="CENTER">0.15</TD>
+<TD ALIGN="CENTER">0.01</TD>
+<TD ALIGN="CENTER">201</TD>
+<TD ALIGN="CENTER">0.02</TD>
+<TD ALIGN="CENTER">0.01</TD>
+<TD ALIGN="CENTER">0.01</TD>
+</TR>
+<TR><TD ALIGN="CENTER">barrel5</TD>
+<TD ALIGN="CENTER">0</TD>
+<TD ALIGN="CENTER">0.72</TD>
+<TD ALIGN="CENTER">0.00</TD>
+<TD ALIGN="CENTER">354</TD>
+<TD ALIGN="CENTER">0.66</TD>
+<TD ALIGN="CENTER">0.21</TD>
+<TD ALIGN="CENTER">8856</TD>
+<TD ALIGN="CENTER">0.58</TD>
+<TD ALIGN="CENTER">0.67</TD>
+<TD ALIGN="CENTER">0.65</TD>
+</TR>
+<TR><TD ALIGN="CENTER">barrel6</TD>
+<TD ALIGN="CENTER">0</TD>
+<TD ALIGN="CENTER">1.48</TD>
+<TD ALIGN="CENTER">0.00</TD>
+<TD ALIGN="CENTER">1205</TD>
+<TD ALIGN="CENTER">2.89</TD>
+<TD ALIGN="CENTER">1.96</TD>
+<TD ALIGN="CENTER">28110</TD>
+<TD ALIGN="CENTER">2.81</TD>
+<TD ALIGN="CENTER">5.97</TD>
+<TD ALIGN="CENTER">5.56</TD>
+</TR>
+<TR><TD ALIGN="CENTER">barrel7</TD>
+<TD ALIGN="CENTER">0</TD>
+<TD ALIGN="CENTER">2.84</TD>
+<TD ALIGN="CENTER">0.00</TD>
+<TD ALIGN="CENTER">2848</TD>
+<TD ALIGN="CENTER">11.10</TD>
+<TD ALIGN="CENTER">8.51</TD>
+<TD ALIGN="CENTER">66959</TD>
+<TD ALIGN="CENTER">11.37</TD>
+<TD ALIGN="CENTER">21.19</TD>
+<TD ALIGN="CENTER">29.96</TD>
+</TR>
+<TR><TD ALIGN="CENTER">barrel8</TD>
+<TD ALIGN="CENTER">0</TD>
+<TD ALIGN="CENTER">5.05</TD>
+<TD ALIGN="CENTER">0.00</TD>
+<TD ALIGN="CENTER">4304</TD>
+<TD ALIGN="CENTER">25.15</TD>
+<TD ALIGN="CENTER">18.71</TD>
+<TD ALIGN="CENTER">116858</TD>
+<TD ALIGN="CENTER">31.98</TD>
+<TD ALIGN="CENTER">136.7</TD>
+<TD ALIGN="CENTER">298.3</TD>
+</TR>
+<TR><TD ALIGN="CENTER">barrel9</TD>
+<TD ALIGN="CENTER">0</TD>
+<TD ALIGN="CENTER">67.87</TD>
+<TD ALIGN="CENTER">0.00</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">649532</TD>
+<TD ALIGN="CENTER">254.6</TD>
+<TD ALIGN="CENTER">41.24</TD>
+<TD ALIGN="CENTER">89.27</TD>
+</TR>
+<TR><TD ALIGN="CENTER">barrel10</TD>
+<TD ALIGN="CENTER">0</TD>
+<TD ALIGN="CENTER">108.9</TD>
+<TD ALIGN="CENTER">0.00</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">1801476</TD>
+<TD ALIGN="CENTER">1191</TD>
+<TD ALIGN="CENTER">86.34</TD>
+<TD ALIGN="CENTER">184.0</TD>
+</TR>
+<TR><TD ALIGN="CENTER">barrel11</TD>
+<TD ALIGN="CENTER">0</TD>
+<TD ALIGN="CENTER">166.2</TD>
+<TD ALIGN="CENTER">0.00</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">134.7</TD>
+<TD ALIGN="CENTER">238.3</TD>
+</TR>
+<TR><TD ALIGN="CENTER">barrel12</TD>
+<TD ALIGN="CENTER">0</TD>
+<TD ALIGN="CENTER">243.8</TD>
+<TD ALIGN="CENTER">0.00</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">927.1</TD>
+<TD ALIGN="CENTER">999.3</TD>
+</TR>
+<TR><TD ALIGN="CENTER">barrel13</TD>
+<TD ALIGN="CENTER">0</TD>
+<TD ALIGN="CENTER">348.4</TD>
+<TD ALIGN="CENTER">0.00</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">629.9</TD>
+<TD ALIGN="CENTER">1049</TD>
+</TR>
+<TR><TD ALIGN="CENTER">barrel14</TD>
+<TD ALIGN="CENTER">0</TD>
+<TD ALIGN="CENTER">481.9</TD>
+<TD ALIGN="CENTER">0.00</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">2122</TD>
+<TD ALIGN="CENTER">3389</TD>
+</TR>
+<TR><TD ALIGN="CENTER">barrel15</TD>
+<TD ALIGN="CENTER">0</TD>
+<TD ALIGN="CENTER">655.9</TD>
+<TD ALIGN="CENTER">0.00</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">--</TD>
+</TR>
+<TR><TD ALIGN="CENTER">barrel16</TD>
+<TD ALIGN="CENTER">0</TD>
+<TD ALIGN="CENTER">859.7</TD>
+<TD ALIGN="CENTER">0.00</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">--</TD>
+</TR>
+</TABLE></FONT></DIV>
+
+<A NAME="barrel"></A></TD></TR>
+</TABLE>
+</DIV><P></P>
+<BR>
+
+<P>
+Tables&nbsp;<A HREF="#QueueTable">3</A>&nbsp;and&nbsp;<A HREF="#PermuteTable">4</A> show
+timings for a set of queue benchmarks and permute benchmarks generated
+by <TT>genqueue</TT> and <TT>genpermute</TT>, respectively, from the <TT>bmc</TT> suite.  Cutoff of runs was set at 3600 seconds for the queue
+benchmarks and 60000 seconds for the permute benchmarks.  All inputs
+are unsatisfiable.  The pattern observed is similar to the previous
+sets of runs.  When SBSAT works with three-address code timings are
+much better than when equivalent CNF inputs are used.  Working in
+three-address code gets results faster than other solvers on
+equivalent CNF inputs.
+
+<P>
+<BR><P></P>
+<DIV ALIGN="CENTER"><A NAME="3801"></A>
+<TABLE>
+<CAPTION><STRONG>Table 3:</STRONG>
+SBSAT, zChaff, Siege, Berkmin times on the Queue benchmarks</CAPTION>
+<TR><TD>
+<DIV ALIGN="CENTER">
+<FONT SIZE="-2">
+<TABLE CELLPADDING=3 BORDER="1">
+<TR><TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="CENTER" COLSPAN=3>SBSAT on Three-Address</TD>
+<TD ALIGN="CENTER" COLSPAN=3>SBSAT on CNF</TD>
+<TD ALIGN="CENTER" COLSPAN=2>zChaff on CNF</TD>
+<TD ALIGN="CENTER" COLSPAN=1>Siege</TD>
+<TD ALIGN="CENTER" COLSPAN=1>Berkmin</TD>
+</TR>
+<TR><TD ALIGN="CENTER" COLSPAN=1>Name</TD>
+<TD ALIGN="CENTER" COLSPAN=1>number</TD>
+<TD ALIGN="CENTER" COLSPAN=1>total</TD>
+<TD ALIGN="CENTER" COLSPAN=1>branch</TD>
+<TD ALIGN="CENTER" COLSPAN=1>number</TD>
+<TD ALIGN="CENTER" COLSPAN=1>total</TD>
+<TD ALIGN="CENTER" COLSPAN=1>branch</TD>
+<TD ALIGN="CENTER" COLSPAN=1>number</TD>
+<TD ALIGN="CENTER" COLSPAN=1>total</TD>
+<TD ALIGN="CENTER" COLSPAN=1>total</TD>
+<TD ALIGN="CENTER" COLSPAN=1>total</TD>
+</TR>
+<TR><TD ALIGN="CENTER" COLSPAN=1>&nbsp;</TD>
+<TD ALIGN="CENTER" COLSPAN=1>choices</TD>
+<TD ALIGN="CENTER" COLSPAN=1>(sec)</TD>
+<TD ALIGN="CENTER" COLSPAN=1>(sec)</TD>
+<TD ALIGN="CENTER" COLSPAN=1>choices</TD>
+<TD ALIGN="CENTER" COLSPAN=1>(sec)</TD>
+<TD ALIGN="CENTER" COLSPAN=1>(sec)</TD>
+<TD ALIGN="CENTER" COLSPAN=1>choices</TD>
+<TD ALIGN="CENTER" COLSPAN=1>(sec)</TD>
+<TD ALIGN="CENTER" COLSPAN=1>(sec)</TD>
+<TD ALIGN="CENTER" COLSPAN=1>(sec)</TD>
+</TR>
+<TR><TD ALIGN="CENTER">queue4</TD>
+<TD ALIGN="CENTER">41</TD>
+<TD ALIGN="CENTER">0.1</TD>
+<TD ALIGN="CENTER">0.0</TD>
+<TD ALIGN="CENTER">19</TD>
+<TD ALIGN="CENTER">0.11</TD>
+<TD ALIGN="CENTER">0.00</TD>
+<TD ALIGN="CENTER">32</TD>
+<TD ALIGN="CENTER">0.00</TD>
+<TD ALIGN="CENTER">0.01</TD>
+<TD ALIGN="CENTER">0.0</TD>
+</TR>
+<TR><TD ALIGN="CENTER">queue8</TD>
+<TD ALIGN="CENTER">651</TD>
+<TD ALIGN="CENTER">3.04</TD>
+<TD ALIGN="CENTER">0.07</TD>
+<TD ALIGN="CENTER">291</TD>
+<TD ALIGN="CENTER">0.49</TD>
+<TD ALIGN="CENTER">0.10</TD>
+<TD ALIGN="CENTER">561</TD>
+<TD ALIGN="CENTER">0.05</TD>
+<TD ALIGN="CENTER">0.04</TD>
+<TD ALIGN="CENTER">0.05</TD>
+</TR>
+<TR><TD ALIGN="CENTER">queue12</TD>
+<TD ALIGN="CENTER">4351</TD>
+<TD ALIGN="CENTER">5.53</TD>
+<TD ALIGN="CENTER">1.02</TD>
+<TD ALIGN="CENTER">3875</TD>
+<TD ALIGN="CENTER">5.52</TD>
+<TD ALIGN="CENTER">4.38</TD>
+<TD ALIGN="CENTER">11752</TD>
+<TD ALIGN="CENTER">3.09</TD>
+<TD ALIGN="CENTER">1.04</TD>
+<TD ALIGN="CENTER">0.96</TD>
+</TR>
+<TR><TD ALIGN="CENTER">queue16</TD>
+<TD ALIGN="CENTER">30835</TD>
+<TD ALIGN="CENTER">22.3</TD>
+<TD ALIGN="CENTER">14.7</TD>
+<TD ALIGN="CENTER">41029</TD>
+<TD ALIGN="CENTER">107</TD>
+<TD ALIGN="CENTER">104</TD>
+<TD ALIGN="CENTER">73407</TD>
+<TD ALIGN="CENTER">62.22</TD>
+<TD ALIGN="CENTER">30.27</TD>
+<TD ALIGN="CENTER">32.38</TD>
+</TR>
+<TR><TD ALIGN="CENTER">queue20</TD>
+<TD ALIGN="CENTER">311127</TD>
+<TD ALIGN="CENTER">265</TD>
+<TD ALIGN="CENTER">227</TD>
+<TD ALIGN="CENTER">565559</TD>
+<TD ALIGN="CENTER">2420</TD>
+<TD ALIGN="CENTER">2412</TD>
+<TD ALIGN="CENTER">698914</TD>
+<TD ALIGN="CENTER">1874</TD>
+<TD ALIGN="CENTER">400.4</TD>
+<TD ALIGN="CENTER">401.0</TD>
+</TR>
+<TR><TD ALIGN="CENTER">queue22</TD>
+<TD ALIGN="CENTER">1052750</TD>
+<TD ALIGN="CENTER">843</TD>
+<TD ALIGN="CENTER">798</TD>
+<TD ALIGN="CENTER">2016859</TD>
+<TD ALIGN="CENTER">9367</TD>
+<TD ALIGN="CENTER">9356</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">1886</TD>
+<TD ALIGN="CENTER">1050</TD>
+</TR>
+<TR><TD ALIGN="CENTER">queue24</TD>
+<TD ALIGN="CENTER">3262464</TD>
+<TD ALIGN="CENTER">2666</TD>
+<TD ALIGN="CENTER">2613</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">2724</TD>
+</TR>
+</TABLE></FONT></DIV>
+
+<A NAME="QueueTable"></A></TD></TR>
+</TABLE>
+</DIV><P></P>
+<BR>
+
+<P>
+<BR><P></P>
+<DIV ALIGN="CENTER"><A NAME="3889"></A>
+<TABLE>
+<CAPTION><STRONG>Table 4:</STRONG>
+SBSAT, zChaff, Siege, Berkmin times on the Permute benchmarks</CAPTION>
+<TR><TD>
+<DIV ALIGN="CENTER">
+<FONT SIZE="-2">
+<TABLE CELLPADDING=3 BORDER="1">
+<TR><TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="CENTER" COLSPAN=3>SBSAT on Three-Address</TD>
+<TD ALIGN="CENTER" COLSPAN=3>SBSAT on CNF</TD>
+<TD ALIGN="CENTER" COLSPAN=2>zChaff on CNF</TD>
+<TD ALIGN="CENTER" COLSPAN=1>Siege</TD>
+<TD ALIGN="CENTER" COLSPAN=1>Berkmin</TD>
+</TR>
+<TR><TD ALIGN="CENTER" COLSPAN=1>Name</TD>
+<TD ALIGN="CENTER" COLSPAN=1>number</TD>
+<TD ALIGN="CENTER" COLSPAN=1>total</TD>
+<TD ALIGN="CENTER" COLSPAN=1>branch</TD>
+<TD ALIGN="CENTER" COLSPAN=1>number</TD>
+<TD ALIGN="CENTER" COLSPAN=1>total</TD>
+<TD ALIGN="CENTER" COLSPAN=1>branch</TD>
+<TD ALIGN="CENTER" COLSPAN=1>number</TD>
+<TD ALIGN="CENTER" COLSPAN=1>total</TD>
+<TD ALIGN="CENTER" COLSPAN=1>total</TD>
+<TD ALIGN="CENTER" COLSPAN=1>total</TD>
+</TR>
+<TR><TD ALIGN="CENTER" COLSPAN=1>&nbsp;</TD>
+<TD ALIGN="CENTER" COLSPAN=1>choices</TD>
+<TD ALIGN="CENTER" COLSPAN=1>(sec)</TD>
+<TD ALIGN="CENTER" COLSPAN=1>(sec)</TD>
+<TD ALIGN="CENTER" COLSPAN=1>choices</TD>
+<TD ALIGN="CENTER" COLSPAN=1>(sec)</TD>
+<TD ALIGN="CENTER" COLSPAN=1>(sec)</TD>
+<TD ALIGN="CENTER" COLSPAN=1>choices</TD>
+<TD ALIGN="CENTER" COLSPAN=1>(sec)</TD>
+<TD ALIGN="CENTER" COLSPAN=1>(sec)</TD>
+<TD ALIGN="CENTER" COLSPAN=1>(sec)</TD>
+</TR>
+<TR><TD ALIGN="CENTER">permute2</TD>
+<TD ALIGN="CENTER">0</TD>
+<TD ALIGN="CENTER">0.01</TD>
+<TD ALIGN="CENTER">0.00</TD>
+<TD ALIGN="CENTER">1</TD>
+<TD ALIGN="CENTER">0.05</TD>
+<TD ALIGN="CENTER">0.00</TD>
+<TD ALIGN="CENTER">1</TD>
+<TD ALIGN="CENTER">0.00</TD>
+<TD ALIGN="CENTER">0.01</TD>
+<TD ALIGN="CENTER">0.00</TD>
+</TR>
+<TR><TD ALIGN="CENTER">permute3</TD>
+<TD ALIGN="CENTER">5</TD>
+<TD ALIGN="CENTER">0.04</TD>
+<TD ALIGN="CENTER">0.00</TD>
+<TD ALIGN="CENTER">14</TD>
+<TD ALIGN="CENTER">0.07</TD>
+<TD ALIGN="CENTER">0.00</TD>
+<TD ALIGN="CENTER">11</TD>
+<TD ALIGN="CENTER">0.00</TD>
+<TD ALIGN="CENTER">0.01</TD>
+<TD ALIGN="CENTER">0.00</TD>
+</TR>
+<TR><TD ALIGN="CENTER">permute4</TD>
+<TD ALIGN="CENTER">68</TD>
+<TD ALIGN="CENTER">0.65</TD>
+<TD ALIGN="CENTER">0.00</TD>
+<TD ALIGN="CENTER">47</TD>
+<TD ALIGN="CENTER">0.11</TD>
+<TD ALIGN="CENTER">0.00</TD>
+<TD ALIGN="CENTER">52</TD>
+<TD ALIGN="CENTER">0.00</TD>
+<TD ALIGN="CENTER">0.01</TD>
+<TD ALIGN="CENTER">0.01</TD>
+</TR>
+<TR><TD ALIGN="CENTER">permute5</TD>
+<TD ALIGN="CENTER">174</TD>
+<TD ALIGN="CENTER">10.1</TD>
+<TD ALIGN="CENTER">0.01</TD>
+<TD ALIGN="CENTER">304</TD>
+<TD ALIGN="CENTER">0.27</TD>
+<TD ALIGN="CENTER">0.10</TD>
+<TD ALIGN="CENTER">199</TD>
+<TD ALIGN="CENTER">0.02</TD>
+<TD ALIGN="CENTER">0.02</TD>
+<TD ALIGN="CENTER">0.03</TD>
+</TR>
+<TR><TD ALIGN="CENTER">permute6</TD>
+<TD ALIGN="CENTER">893</TD>
+<TD ALIGN="CENTER">11.46</TD>
+<TD ALIGN="CENTER">0.09</TD>
+<TD ALIGN="CENTER">1655</TD>
+<TD ALIGN="CENTER">1.44</TD>
+<TD ALIGN="CENTER">1.15</TD>
+<TD ALIGN="CENTER">2021</TD>
+<TD ALIGN="CENTER">0.28</TD>
+<TD ALIGN="CENTER">0.17</TD>
+<TD ALIGN="CENTER">0.16</TD>
+</TR>
+<TR><TD ALIGN="CENTER">permute7</TD>
+<TD ALIGN="CENTER">5537</TD>
+<TD ALIGN="CENTER">23.24</TD>
+<TD ALIGN="CENTER">0.81</TD>
+<TD ALIGN="CENTER">8551</TD>
+<TD ALIGN="CENTER">9.21</TD>
+<TD ALIGN="CENTER">8.77</TD>
+<TD ALIGN="CENTER">16485</TD>
+<TD ALIGN="CENTER">9.51</TD>
+<TD ALIGN="CENTER">2.88</TD>
+<TD ALIGN="CENTER">1.12</TD>
+</TR>
+<TR><TD ALIGN="CENTER">permute8</TD>
+<TD ALIGN="CENTER">64607</TD>
+<TD ALIGN="CENTER">71.16</TD>
+<TD ALIGN="CENTER">70.21</TD>
+<TD ALIGN="CENTER">58051</TD>
+<TD ALIGN="CENTER">244.1</TD>
+<TD ALIGN="CENTER">243.2</TD>
+<TD ALIGN="CENTER">110492</TD>
+<TD ALIGN="CENTER">172.93</TD>
+<TD ALIGN="CENTER">21.6</TD>
+<TD ALIGN="CENTER">15.7</TD>
+</TR>
+<TR><TD ALIGN="CENTER">permute9</TD>
+<TD ALIGN="CENTER">454726</TD>
+<TD ALIGN="CENTER">686.6</TD>
+<TD ALIGN="CENTER">685.0</TD>
+<TD ALIGN="CENTER">471422</TD>
+<TD ALIGN="CENTER">2575</TD>
+<TD ALIGN="CENTER">2573</TD>
+<TD ALIGN="CENTER">361422</TD>
+<TD ALIGN="CENTER">1018</TD>
+<TD ALIGN="CENTER">315</TD>
+<TD ALIGN="CENTER">228</TD>
+</TR>
+<TR><TD ALIGN="CENTER">permute10</TD>
+<TD ALIGN="CENTER">1311291</TD>
+<TD ALIGN="CENTER">2064</TD>
+<TD ALIGN="CENTER">2062</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">2118409</TD>
+<TD ALIGN="CENTER">12101</TD>
+<TD ALIGN="CENTER">3003</TD>
+<TD ALIGN="CENTER">3891</TD>
+</TR>
+<TR><TD ALIGN="CENTER">permute11</TD>
+<TD ALIGN="CENTER">20462503</TD>
+<TD ALIGN="CENTER">39260</TD>
+<TD ALIGN="CENTER">39257</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">--</TD>
+<TD ALIGN="CENTER">--</TD>
+</TR>
+</TABLE></FONT></DIV>
+
+<A NAME="PermuteTable"></A></TD></TR>
+</TABLE>
+</DIV><P></P>
+<BR>
+
+<P>
+The story changes on the queue invariant benchmarks of
+Table&nbsp;<A HREF="#QueueInvTable">5</A>.  In this case, SBSAT experienced memory
+problems.  In order to fit the resulting S<SMALL>MURF</SMALL>s into memory, the
+BDDs upon which they were based were required to be so small we had to
+change their maximum size manually, that is, after preprocessing.  The
+result was an unexpectedly large amount of garbling of domain-specific
+information and dismal results.  We did not feel it was worthwhile
+reporting them.  Although SBSAT did solve the CNF versions of these
+problems, the other solvers performed better as in previous benchmark
+sets.
+
+<P>
+<BR><P></P>
+<DIV ALIGN="CENTER"><A NAME="3958"></A>
+<TABLE>
+<CAPTION><STRONG>Table 5:</STRONG>
+SBSAT, zChaff, Siege, Berkmin times on the Queue Invariant benchmarks</CAPTION>
+<TR><TD>
+<DIV ALIGN="CENTER">
+<FONT SIZE="-2">
+<TABLE CELLPADDING=3 BORDER="1">
+<TR><TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="CENTER" COLSPAN=3>SBSAT on CNF</TD>
+<TD ALIGN="CENTER" COLSPAN=2>zChaff on CNF</TD>
+<TD ALIGN="CENTER" COLSPAN=1>Siege</TD>
+<TD ALIGN="CENTER" COLSPAN=1>Berkmin</TD>
+</TR>
+<TR><TD ALIGN="CENTER" COLSPAN=1>Name</TD>
+<TD ALIGN="CENTER" COLSPAN=1>number</TD>
+<TD ALIGN="CENTER" COLSPAN=1>total</TD>
+<TD ALIGN="CENTER" COLSPAN=1>branch</TD>
+<TD ALIGN="CENTER" COLSPAN=1>number</TD>
+<TD ALIGN="CENTER" COLSPAN=1>total</TD>
+<TD ALIGN="CENTER" COLSPAN=1>total</TD>
+<TD ALIGN="CENTER" COLSPAN=1>total</TD>
+</TR>
+<TR><TD ALIGN="CENTER" COLSPAN=1>&nbsp;</TD>
+<TD ALIGN="CENTER" COLSPAN=1>choices</TD>
+<TD ALIGN="CENTER" COLSPAN=1>(sec)</TD>
+<TD ALIGN="CENTER" COLSPAN=1>(sec)</TD>
+<TD ALIGN="CENTER" COLSPAN=1>choices</TD>
+<TD ALIGN="CENTER" COLSPAN=1>(sec)</TD>
+<TD ALIGN="CENTER" COLSPAN=1>(sec)</TD>
+<TD ALIGN="CENTER" COLSPAN=1>(sec)</TD>
+</TR>
+<TR><TD ALIGN="CENTER">queueinv4</TD>
+<TD ALIGN="CENTER">83</TD>
+<TD ALIGN="CENTER">0.08</TD>
+<TD ALIGN="CENTER">0.01</TD>
+<TD ALIGN="CENTER">136</TD>
+<TD ALIGN="CENTER">0.00</TD>
+<TD ALIGN="CENTER">0.01</TD>
+<TD ALIGN="CENTER">0.01</TD>
+</TR>
+<TR><TD ALIGN="CENTER">queueinv8</TD>
+<TD ALIGN="CENTER">438</TD>
+<TD ALIGN="CENTER">0.17</TD>
+<TD ALIGN="CENTER">0.07</TD>
+<TD ALIGN="CENTER">1122</TD>
+<TD ALIGN="CENTER">0.04</TD>
+<TD ALIGN="CENTER">0.06</TD>
+<TD ALIGN="CENTER">0.06</TD>
+</TR>
+<TR><TD ALIGN="CENTER">queueinv12</TD>
+<TD ALIGN="CENTER">1429</TD>
+<TD ALIGN="CENTER">0.98</TD>
+<TD ALIGN="CENTER">0.42</TD>
+<TD ALIGN="CENTER">4368</TD>
+<TD ALIGN="CENTER">0.22</TD>
+<TD ALIGN="CENTER">0.31</TD>
+<TD ALIGN="CENTER">0.12</TD>
+</TR>
+<TR><TD ALIGN="CENTER">queueinv16</TD>
+<TD ALIGN="CENTER">2411</TD>
+<TD ALIGN="CENTER">1.04</TD>
+<TD ALIGN="CENTER">0.75</TD>
+<TD ALIGN="CENTER">7721</TD>
+<TD ALIGN="CENTER">0.27</TD>
+<TD ALIGN="CENTER">0.53</TD>
+<TD ALIGN="CENTER">0.24</TD>
+</TR>
+<TR><TD ALIGN="CENTER">queueinv20</TD>
+<TD ALIGN="CENTER">4787</TD>
+<TD ALIGN="CENTER">6.81</TD>
+<TD ALIGN="CENTER">2.91</TD>
+<TD ALIGN="CENTER">16258</TD>
+<TD ALIGN="CENTER">1.63</TD>
+<TD ALIGN="CENTER">0.73</TD>
+<TD ALIGN="CENTER">0.81</TD>
+</TR>
+<TR><TD ALIGN="CENTER">queueinv24</TD>
+<TD ALIGN="CENTER">7379</TD>
+<TD ALIGN="CENTER">13.62</TD>
+<TD ALIGN="CENTER">6.00</TD>
+<TD ALIGN="CENTER">26995</TD>
+<TD ALIGN="CENTER">2.96</TD>
+<TD ALIGN="CENTER">1.89</TD>
+<TD ALIGN="CENTER">1.90</TD>
+</TR>
+<TR><TD ALIGN="CENTER">queueinv28</TD>
+<TD ALIGN="CENTER">10914</TD>
+<TD ALIGN="CENTER">25.61</TD>
+<TD ALIGN="CENTER">11.23</TD>
+<TD ALIGN="CENTER">38145</TD>
+<TD ALIGN="CENTER">5.69</TD>
+<TD ALIGN="CENTER">3.88</TD>
+<TD ALIGN="CENTER">3.40</TD>
+</TR>
+<TR><TD ALIGN="CENTER">queueinv32</TD>
+<TD ALIGN="CENTER">15403</TD>
+<TD ALIGN="CENTER">16.73</TD>
+<TD ALIGN="CENTER">14.56</TD>
+<TD ALIGN="CENTER">68641</TD>
+<TD ALIGN="CENTER">3.20</TD>
+<TD ALIGN="CENTER">3.74</TD>
+<TD ALIGN="CENTER">4.20</TD>
+</TR>
+<TR><TD ALIGN="CENTER">queueinv36</TD>
+<TD ALIGN="CENTER">21324</TD>
+<TD ALIGN="CENTER">116.6</TD>
+<TD ALIGN="CENTER">35.01</TD>
+<TD ALIGN="CENTER">103281</TD>
+<TD ALIGN="CENTER">23.58</TD>
+<TD ALIGN="CENTER">9.59</TD>
+<TD ALIGN="CENTER">10.33</TD>
+</TR>
+<TR><TD ALIGN="CENTER">queueinv40</TD>
+<TD ALIGN="CENTER">27404</TD>
+<TD ALIGN="CENTER">189.2</TD>
+<TD ALIGN="CENTER">52.54</TD>
+<TD ALIGN="CENTER">145691</TD>
+<TD ALIGN="CENTER">38.08</TD>
+<TD ALIGN="CENTER">17.62</TD>
+<TD ALIGN="CENTER">16.46</TD>
+</TR>
+<TR><TD ALIGN="CENTER">queueinv44</TD>
+<TD ALIGN="CENTER">35820</TD>
+<TD ALIGN="CENTER">309.2</TD>
+<TD ALIGN="CENTER">88.65</TD>
+<TD ALIGN="CENTER">166634</TD>
+<TD ALIGN="CENTER">46.42</TD>
+<TD ALIGN="CENTER">57.38</TD>
+<TD ALIGN="CENTER">25.16</TD>
+</TR>
+<TR><TD ALIGN="CENTER">queueinv48</TD>
+<TD ALIGN="CENTER">44719</TD>
+<TD ALIGN="CENTER">476.2</TD>
+<TD ALIGN="CENTER">135.8</TD>
+<TD ALIGN="CENTER">217615</TD>
+<TD ALIGN="CENTER">79.95</TD>
+<TD ALIGN="CENTER">62.0</TD>
+<TD ALIGN="CENTER">43.61</TD>
+</TR>
+<TR><TD ALIGN="CENTER">queueinv52</TD>
+<TD ALIGN="CENTER">52320</TD>
+<TD ALIGN="CENTER">683.8</TD>
+<TD ALIGN="CENTER">189.9</TD>
+<TD ALIGN="CENTER">297830</TD>
+<TD ALIGN="CENTER">179.2</TD>
+<TD ALIGN="CENTER">155.5</TD>
+<TD ALIGN="CENTER">55.93</TD>
+</TR>
+<TR><TD ALIGN="CENTER">queueinv56</TD>
+<TD ALIGN="CENTER">51768</TD>
+<TD ALIGN="CENTER">928.0</TD>
+<TD ALIGN="CENTER">238.9</TD>
+<TD ALIGN="CENTER">397142</TD>
+<TD ALIGN="CENTER">239.1</TD>
+<TD ALIGN="CENTER">514.9</TD>
+<TD ALIGN="CENTER">82.13</TD>
+</TR>
+</TABLE></FONT></DIV>
+
+<A NAME="QueueInvTable"></A></TD></TR>
+</TABLE>
+</DIV><P></P>
+<BR>
+
+<P>
+For completeness, we include results on the dlx suite available from
+Carnegie Mellon University in Table&nbsp;<A HREF="#dlxTable">6</A>.  Some inputs are
+satisfiable and some are unsatisfiable.  We applied SBSAT to two
+variations: namely Trace and CNF formats (both available).  All
+problems in this suite are easy for all the solvers and that is about
+all that can be said about them.  We did not include results of dlx9
+benchmarks because SBSAT had some memory problems.
+
+<P>
+<BR><P></P>
+<DIV ALIGN="CENTER"><A NAME="4645"></A>
+<TABLE>
+<CAPTION><STRONG>Table 6:</STRONG>
+SBSAT, zChaff, Siege, Berkmin times on the DLX benchmarks.
+Benchmarks with <TT>bug</TT> in the name are satisfiable (verified) and
+the rest are unsatisfiable.</CAPTION>
+<TR><TD>
+<DIV ALIGN="CENTER">
+<FONT SIZE="-2">
+<TABLE CELLPADDING=3 BORDER="1">
+<TR><TD ALIGN="LEFT">&nbsp;</TD>
+<TD ALIGN="CENTER" COLSPAN=3>SBSAT on Trace</TD>
+<TD ALIGN="CENTER" COLSPAN=3>SBSAT on CNF</TD>
+<TD ALIGN="CENTER" COLSPAN=2>zChaff on CNF</TD>
+<TD ALIGN="CENTER" COLSPAN=1>Siege</TD>
+<TD ALIGN="CENTER" COLSPAN=1>Berkmin</TD>
+</TR>
+<TR><TD ALIGN="CENTER" COLSPAN=1>Name</TD>
+<TD ALIGN="CENTER" COLSPAN=1>number</TD>
+<TD ALIGN="CENTER" COLSPAN=1>total</TD>
+<TD ALIGN="CENTER" COLSPAN=1>branch</TD>
+<TD ALIGN="CENTER" COLSPAN=1>number</TD>
+<TD ALIGN="CENTER" COLSPAN=1>total</TD>
+<TD ALIGN="CENTER" COLSPAN=1>branch</TD>
+<TD ALIGN="CENTER" COLSPAN=1>number</TD>
+<TD ALIGN="CENTER" COLSPAN=1>total</TD>
+<TD ALIGN="CENTER" COLSPAN=1>total</TD>
+<TD ALIGN="CENTER" COLSPAN=1>total</TD>
+</TR>
+<TR><TD ALIGN="CENTER" COLSPAN=1>&nbsp;</TD>
+<TD ALIGN="CENTER" COLSPAN=1>choices</TD>
+<TD ALIGN="CENTER" COLSPAN=1>(sec)</TD>
+<TD ALIGN="CENTER" COLSPAN=1>(sec)</TD>
+<TD ALIGN="CENTER" COLSPAN=1>choices</TD>
+<TD ALIGN="CENTER" COLSPAN=1>(sec)</TD>
+<TD ALIGN="CENTER" COLSPAN=1>(sec)</TD>
+<TD ALIGN="CENTER" COLSPAN=1>choices</TD>
+<TD ALIGN="CENTER" COLSPAN=1>(sec)</TD>
+<TD ALIGN="CENTER" COLSPAN=1>(sec)</TD>
+<TD ALIGN="CENTER" COLSPAN=1>(sec)</TD>
+</TR>
+<TR><TD ALIGN="LEFT">dlx1_c</TD>
+<TD ALIGN="RIGHT">525</TD>
+<TD ALIGN="RIGHT">0.12</TD>
+<TD ALIGN="RIGHT">0.02</TD>
+<TD ALIGN="RIGHT">592</TD>
+<TD ALIGN="RIGHT">0.12</TD>
+<TD ALIGN="RIGHT">0.03</TD>
+<TD ALIGN="RIGHT">1082</TD>
+<TD ALIGN="RIGHT">0.02</TD>
+<TD ALIGN="RIGHT">0.01</TD>
+<TD ALIGN="CENTER">0.01</TD>
+</TR>
+<TR><TD ALIGN="LEFT">dlx2_aa</TD>
+<TD ALIGN="RIGHT">1755</TD>
+<TD ALIGN="RIGHT">0.22</TD>
+<TD ALIGN="RIGHT">0.06</TD>
+<TD ALIGN="RIGHT">2062</TD>
+<TD ALIGN="RIGHT">0.26</TD>
+<TD ALIGN="RIGHT">0.08</TD>
+<TD ALIGN="RIGHT">5224</TD>
+<TD ALIGN="RIGHT">0.10</TD>
+<TD ALIGN="RIGHT">0.06</TD>
+<TD ALIGN="CENTER">0.02</TD>
+</TR>
+<TR><TD ALIGN="LEFT">dlx2_ca</TD>
+<TD ALIGN="RIGHT">7247</TD>
+<TD ALIGN="RIGHT">1.49</TD>
+<TD ALIGN="RIGHT">1.00</TD>
+<TD ALIGN="RIGHT">6861</TD>
+<TD ALIGN="RIGHT">1.60</TD>
+<TD ALIGN="RIGHT">0.91</TD>
+<TD ALIGN="RIGHT">9800</TD>
+<TD ALIGN="RIGHT">0.30</TD>
+<TD ALIGN="RIGHT">0.17</TD>
+<TD ALIGN="CENTER">0.12</TD>
+</TR>
+<TR><TD ALIGN="LEFT">dlx2_cc</TD>
+<TD ALIGN="RIGHT">9655</TD>
+<TD ALIGN="RIGHT">2.60</TD>
+<TD ALIGN="RIGHT">2.03</TD>
+<TD ALIGN="RIGHT">9631</TD>
+<TD ALIGN="RIGHT">2.83</TD>
+<TD ALIGN="RIGHT">1.97</TD>
+<TD ALIGN="RIGHT">17825</TD>
+<TD ALIGN="RIGHT">0.95</TD>
+<TD ALIGN="RIGHT">0.36</TD>
+<TD ALIGN="CENTER">0.26</TD>
+</TR>
+<TR><TD ALIGN="LEFT">dlx2_cl</TD>
+<TD ALIGN="RIGHT">9375</TD>
+<TD ALIGN="RIGHT">2.14</TD>
+<TD ALIGN="RIGHT">1.56</TD>
+<TD ALIGN="RIGHT">8872</TD>
+<TD ALIGN="RIGHT">2.33</TD>
+<TD ALIGN="RIGHT">0.57</TD>
+<TD ALIGN="RIGHT">25390</TD>
+<TD ALIGN="RIGHT">1.50</TD>
+<TD ALIGN="RIGHT">0.71</TD>
+<TD ALIGN="CENTER">0.29</TD>
+</TR>
+<TR><TD ALIGN="LEFT">dlx2_cs</TD>
+<TD ALIGN="RIGHT">8489</TD>
+<TD ALIGN="RIGHT">1.84</TD>
+<TD ALIGN="RIGHT">1.31</TD>
+<TD ALIGN="RIGHT">7916</TD>
+<TD ALIGN="RIGHT">2.15</TD>
+<TD ALIGN="RIGHT">1.37</TD>
+<TD ALIGN="RIGHT">16310</TD>
+<TD ALIGN="RIGHT">0.77</TD>
+<TD ALIGN="RIGHT">0.20</TD>
+<TD ALIGN="CENTER">0.23</TD>
+</TR>
+<TR><TD ALIGN="LEFT">dlx2_la</TD>
+<TD ALIGN="RIGHT">6233</TD>
+<TD ALIGN="RIGHT">1.06</TD>
+<TD ALIGN="RIGHT">0.64</TD>
+<TD ALIGN="RIGHT">6814</TD>
+<TD ALIGN="RIGHT">1.41</TD>
+<TD ALIGN="RIGHT">0.84</TD>
+<TD ALIGN="RIGHT">9246</TD>
+<TD ALIGN="RIGHT">0.26</TD>
+<TD ALIGN="RIGHT">0.11</TD>
+<TD ALIGN="CENTER">0.10</TD>
+</TR>
+<TR><TD ALIGN="LEFT">dlx2_sa</TD>
+<TD ALIGN="RIGHT">2938</TD>
+<TD ALIGN="RIGHT">0.35</TD>
+<TD ALIGN="RIGHT">0.16</TD>
+<TD ALIGN="RIGHT">2168</TD>
+<TD ALIGN="RIGHT">0.38</TD>
+<TD ALIGN="RIGHT">0.15</TD>
+<TD ALIGN="RIGHT">5563</TD>
+<TD ALIGN="RIGHT">0.14</TD>
+<TD ALIGN="RIGHT">0.08</TD>
+<TD ALIGN="CENTER">0.03</TD>
+</TR>
+<TR><TD ALIGN="LEFT">dlx2_cc_bug01</TD>
+<TD ALIGN="RIGHT">6603</TD>
+<TD ALIGN="RIGHT">1.77</TD>
+<TD ALIGN="RIGHT">1.20</TD>
+<TD ALIGN="RIGHT">6448</TD>
+<TD ALIGN="RIGHT">2.11</TD>
+<TD ALIGN="RIGHT">1.25</TD>
+<TD ALIGN="RIGHT">14471</TD>
+<TD ALIGN="RIGHT">0.84</TD>
+<TD ALIGN="RIGHT">0.18</TD>
+<TD ALIGN="CENTER">0.28</TD>
+</TR>
+<TR><TD ALIGN="LEFT">dlx2_cc_bug02</TD>
+<TD ALIGN="RIGHT">6584</TD>
+<TD ALIGN="RIGHT">1.80</TD>
+<TD ALIGN="RIGHT">1.22</TD>
+<TD ALIGN="RIGHT">6432</TD>
+<TD ALIGN="RIGHT">2.09</TD>
+<TD ALIGN="RIGHT">1.25</TD>
+<TD ALIGN="RIGHT">13717</TD>
+<TD ALIGN="RIGHT">0.79</TD>
+<TD ALIGN="RIGHT">0.48</TD>
+<TD ALIGN="CENTER">0.26</TD>
+</TR>
+<TR><TD ALIGN="LEFT">dlx2_cc_bug03</TD>
+<TD ALIGN="RIGHT">6861</TD>
+<TD ALIGN="RIGHT">1.81</TD>
+<TD ALIGN="RIGHT">1.23</TD>
+<TD ALIGN="RIGHT">6628</TD>
+<TD ALIGN="RIGHT">2.09</TD>
+<TD ALIGN="RIGHT">1.23</TD>
+<TD ALIGN="RIGHT">22776</TD>
+<TD ALIGN="RIGHT">1.05</TD>
+<TD ALIGN="RIGHT">0.01</TD>
+<TD ALIGN="CENTER">0.10</TD>
+</TR>
+<TR><TD ALIGN="LEFT">dlx2_cc_bug04</TD>
+<TD ALIGN="RIGHT">6932</TD>
+<TD ALIGN="RIGHT">1.92</TD>
+<TD ALIGN="RIGHT">1.33</TD>
+<TD ALIGN="RIGHT">6699</TD>
+<TD ALIGN="RIGHT">1.12</TD>
+<TD ALIGN="RIGHT">1.28</TD>
+<TD ALIGN="RIGHT">12860</TD>
+<TD ALIGN="RIGHT">0.52</TD>
+<TD ALIGN="RIGHT">0.08</TD>
+<TD ALIGN="CENTER">0.08</TD>
+</TR>
+<TR><TD ALIGN="LEFT">dlx2_cc_bug05</TD>
+<TD ALIGN="RIGHT">3743</TD>
+<TD ALIGN="RIGHT">1.24</TD>
+<TD ALIGN="RIGHT">0.65</TD>
+<TD ALIGN="RIGHT">3413</TD>
+<TD ALIGN="RIGHT">1.47</TD>
+<TD ALIGN="RIGHT">0.62</TD>
+<TD ALIGN="RIGHT">376</TD>
+<TD ALIGN="RIGHT">0.01</TD>
+<TD ALIGN="RIGHT">0.22</TD>
+<TD ALIGN="CENTER">0.13</TD>
+</TR>
+<TR><TD ALIGN="LEFT">dlx2_cc_bug06</TD>
+<TD ALIGN="RIGHT">3630</TD>
+<TD ALIGN="RIGHT">1.19</TD>
+<TD ALIGN="RIGHT">0.60</TD>
+<TD ALIGN="RIGHT">3581</TD>
+<TD ALIGN="RIGHT">1.52</TD>
+<TD ALIGN="RIGHT">0.67</TD>
+<TD ALIGN="RIGHT">374</TD>
+<TD ALIGN="RIGHT">0.01</TD>
+<TD ALIGN="RIGHT">0.01</TD>
+<TD ALIGN="CENTER">0.10</TD>
+</TR>
+<TR><TD ALIGN="LEFT">dlx2_cc_bug07</TD>
+<TD ALIGN="RIGHT">4601</TD>
+<TD ALIGN="RIGHT">1.36</TD>
+<TD ALIGN="RIGHT">0.77</TD>
+<TD ALIGN="RIGHT">3567</TD>
+<TD ALIGN="RIGHT">1.50</TD>
+<TD ALIGN="RIGHT">0.65</TD>
+<TD ALIGN="RIGHT">316</TD>
+<TD ALIGN="RIGHT">0.01</TD>
+<TD ALIGN="RIGHT">0.03</TD>
+<TD ALIGN="CENTER">0.05</TD>
+</TR>
+<TR><TD ALIGN="LEFT">dlx2_cc_bug08</TD>
+<TD ALIGN="RIGHT">5964</TD>
+<TD ALIGN="RIGHT">1.65</TD>
+<TD ALIGN="RIGHT">1.06</TD>
+<TD ALIGN="RIGHT">5353</TD>
+<TD ALIGN="RIGHT">1.75</TD>
+<TD ALIGN="RIGHT">0.92</TD>
+<TD ALIGN="RIGHT">747</TD>
+<TD ALIGN="RIGHT">0.02</TD>
+<TD ALIGN="RIGHT">0.01</TD>
+<TD ALIGN="CENTER">0.04</TD>
+</TR>
+<TR><TD ALIGN="LEFT">dlx2_cc_bug09</TD>
+<TD ALIGN="RIGHT">2549</TD>
+<TD ALIGN="RIGHT">0.92</TD>
+<TD ALIGN="RIGHT">0.42</TD>
+<TD ALIGN="RIGHT">2693</TD>
+<TD ALIGN="RIGHT">1.18</TD>
+<TD ALIGN="RIGHT">0.33</TD>
+<TD ALIGN="RIGHT">321</TD>
+<TD ALIGN="RIGHT">0.01</TD>
+<TD ALIGN="RIGHT">0.01</TD>
+<TD ALIGN="CENTER">0.02</TD>
+</TR>
+<TR><TD ALIGN="LEFT">dlx2_cc_bug10</TD>
+<TD ALIGN="RIGHT">3423</TD>
+<TD ALIGN="RIGHT">1.15</TD>
+<TD ALIGN="RIGHT">0.55</TD>
+<TD ALIGN="RIGHT">3564</TD>
+<TD ALIGN="RIGHT">1.41</TD>
+<TD ALIGN="RIGHT">0.56</TD>
+<TD ALIGN="RIGHT">259</TD>
+<TD ALIGN="RIGHT">0.00</TD>
+<TD ALIGN="RIGHT">0.02</TD>
+<TD ALIGN="CENTER">0.02</TD>
+</TR>
+<TR><TD ALIGN="LEFT">dlx2_cc_bug11</TD>
+<TD ALIGN="RIGHT">6037</TD>
+<TD ALIGN="RIGHT">1.60</TD>
+<TD ALIGN="RIGHT">1.03</TD>
+<TD ALIGN="RIGHT">6886</TD>
+<TD ALIGN="RIGHT">2.20</TD>
+<TD ALIGN="RIGHT">1.35</TD>
+<TD ALIGN="RIGHT">10528</TD>
+<TD ALIGN="RIGHT">0.43</TD>
+<TD ALIGN="RIGHT">0.02</TD>
+<TD ALIGN="CENTER">0.06</TD>
+</TR>
+<TR><TD ALIGN="LEFT">dlx2_cc_bug12</TD>
+<TD ALIGN="RIGHT">7099</TD>
+<TD ALIGN="RIGHT">2.00</TD>
+<TD ALIGN="RIGHT">1.43</TD>
+<TD ALIGN="RIGHT">5702</TD>
+<TD ALIGN="RIGHT">1.91</TD>
+<TD ALIGN="RIGHT">1.05</TD>
+<TD ALIGN="RIGHT">11099</TD>
+<TD ALIGN="RIGHT">0.44</TD>
+<TD ALIGN="RIGHT">0.07</TD>
+<TD ALIGN="CENTER">0.10</TD>
+</TR>
+<TR><TD ALIGN="LEFT">dlx2_cc_bug13</TD>
+<TD ALIGN="RIGHT">5998</TD>
+<TD ALIGN="RIGHT">1.69</TD>
+<TD ALIGN="RIGHT">1.12</TD>
+<TD ALIGN="RIGHT">6133</TD>
+<TD ALIGN="RIGHT">1.91</TD>
+<TD ALIGN="RIGHT">1.08</TD>
+<TD ALIGN="RIGHT">12049</TD>
+<TD ALIGN="RIGHT">0.50</TD>
+<TD ALIGN="RIGHT">0.03</TD>
+<TD ALIGN="CENTER">0.02</TD>
+</TR>
+<TR><TD ALIGN="LEFT">dlx2_cc_bug14</TD>
+<TD ALIGN="RIGHT">253</TD>
+<TD ALIGN="RIGHT">0.59</TD>
+<TD ALIGN="RIGHT">0.01</TD>
+<TD ALIGN="RIGHT">298</TD>
+<TD ALIGN="RIGHT">0.87</TD>
+<TD ALIGN="RIGHT">0.01</TD>
+<TD ALIGN="RIGHT">234</TD>
+<TD ALIGN="RIGHT">0.01</TD>
+<TD ALIGN="RIGHT">0.12</TD>
+<TD ALIGN="CENTER">0.02</TD>
+</TR>
+<TR><TD ALIGN="LEFT">dlx2_cc_bug15</TD>
+<TD ALIGN="RIGHT">4405</TD>
+<TD ALIGN="RIGHT">1.93</TD>
+<TD ALIGN="RIGHT">1.27</TD>
+<TD ALIGN="RIGHT">3756</TD>
+<TD ALIGN="RIGHT">1.99</TD>
+<TD ALIGN="RIGHT">0.99</TD>
+<TD ALIGN="RIGHT">296</TD>
+<TD ALIGN="RIGHT">0.01</TD>
+<TD ALIGN="RIGHT">0.01</TD>
+<TD ALIGN="CENTER">0.06</TD>
+</TR>
+<TR><TD ALIGN="LEFT">dlx2_cc_bug16</TD>
+<TD ALIGN="RIGHT">252</TD>
+<TD ALIGN="RIGHT">0.58</TD>
+<TD ALIGN="RIGHT">0.01</TD>
+<TD ALIGN="RIGHT">297</TD>
+<TD ALIGN="RIGHT">0.86</TD>
+<TD ALIGN="RIGHT">0.01</TD>
+<TD ALIGN="RIGHT">233</TD>
+<TD ALIGN="RIGHT">0.01</TD>
+<TD ALIGN="RIGHT">0.13</TD>
+<TD ALIGN="CENTER">0.01</TD>
+</TR>
+<TR><TD ALIGN="LEFT">dlx2_cc_bug17</TD>
+<TD ALIGN="RIGHT">504</TD>
+<TD ALIGN="RIGHT">1.16</TD>
+<TD ALIGN="RIGHT">0.06</TD>
+<TD ALIGN="RIGHT">4453</TD>
+<TD ALIGN="RIGHT">2.97</TD>
+<TD ALIGN="RIGHT">1.01</TD>
+<TD ALIGN="RIGHT">5806</TD>
+<TD ALIGN="RIGHT">0.40</TD>
+<TD ALIGN="RIGHT">0.01</TD>
+<TD ALIGN="CENTER">0.01</TD>
+</TR>
+<TR><TD ALIGN="LEFT">dlx2_cc_bug18</TD>
+<TD ALIGN="RIGHT">1066</TD>
+<TD ALIGN="RIGHT">1.06</TD>
+<TD ALIGN="RIGHT">0.10</TD>
+<TD ALIGN="RIGHT">3236</TD>
+<TD ALIGN="RIGHT">2.51</TD>
+<TD ALIGN="RIGHT">0.78</TD>
+<TD ALIGN="RIGHT">337</TD>
+<TD ALIGN="RIGHT">0.01</TD>
+<TD ALIGN="RIGHT">0.01</TD>
+<TD ALIGN="CENTER">0.02</TD>
+</TR>
+<TR><TD ALIGN="LEFT">dlx2_cc_bug19</TD>
+<TD ALIGN="RIGHT">269</TD>
+<TD ALIGN="RIGHT">0.63</TD>
+<TD ALIGN="RIGHT">0.02</TD>
+<TD ALIGN="RIGHT">302</TD>
+<TD ALIGN="RIGHT">0.89</TD>
+<TD ALIGN="RIGHT">0.02</TD>
+<TD ALIGN="RIGHT">4452</TD>
+<TD ALIGN="RIGHT">0.15</TD>
+<TD ALIGN="RIGHT">0.01</TD>
+<TD ALIGN="CENTER">0.00</TD>
+</TR>
+<TR><TD ALIGN="LEFT">dlx2_cc_bug20</TD>
+<TD ALIGN="RIGHT">703</TD>
+<TD ALIGN="RIGHT">0.60</TD>
+<TD ALIGN="RIGHT">0.03</TD>
+<TD ALIGN="RIGHT">777</TD>
+<TD ALIGN="RIGHT">0.89</TD>
+<TD ALIGN="RIGHT">0.50</TD>
+<TD ALIGN="RIGHT">521</TD>
+<TD ALIGN="RIGHT">0.01</TD>
+<TD ALIGN="RIGHT">0.01</TD>
+<TD ALIGN="CENTER">0.02</TD>
+</TR>
+<TR><TD ALIGN="LEFT">dlx2_cc_bug21</TD>
+<TD ALIGN="RIGHT">331</TD>
+<TD ALIGN="RIGHT">0.59</TD>
+<TD ALIGN="RIGHT">0.02</TD>
+<TD ALIGN="RIGHT">360</TD>
+<TD ALIGN="RIGHT">0.85</TD>
+<TD ALIGN="RIGHT">0.02</TD>
+<TD ALIGN="RIGHT">458</TD>
+<TD ALIGN="RIGHT">0.01</TD>
+<TD ALIGN="RIGHT">0.01</TD>
+<TD ALIGN="CENTER">0.01</TD>
+</TR>
+<TR><TD ALIGN="LEFT">dlx2_cc_bug22</TD>
+<TD ALIGN="RIGHT">744</TD>
+<TD ALIGN="RIGHT">0.62</TD>
+<TD ALIGN="RIGHT">0.40</TD>
+<TD ALIGN="RIGHT">865</TD>
+<TD ALIGN="RIGHT">0.91</TD>
+<TD ALIGN="RIGHT">0.05</TD>
+<TD ALIGN="RIGHT">4456</TD>
+<TD ALIGN="RIGHT">0.19</TD>
+<TD ALIGN="RIGHT">0.01</TD>
+<TD ALIGN="CENTER">0.04</TD>
+</TR>
+<TR><TD ALIGN="LEFT">dlx2_cc_bug23</TD>
+<TD ALIGN="RIGHT">620</TD>
+<TD ALIGN="RIGHT">0.60</TD>
+<TD ALIGN="RIGHT">0.03</TD>
+<TD ALIGN="RIGHT">323</TD>
+<TD ALIGN="RIGHT">0.86</TD>
+<TD ALIGN="RIGHT">0.02</TD>
+<TD ALIGN="RIGHT">4726</TD>
+<TD ALIGN="RIGHT">0.14</TD>
+<TD ALIGN="RIGHT">0.01</TD>
+<TD ALIGN="CENTER">0.10</TD>
+</TR>
+<TR><TD ALIGN="LEFT">dlx2_cc_bug24</TD>
+<TD ALIGN="RIGHT">270</TD>
+<TD ALIGN="RIGHT">0.59</TD>
+<TD ALIGN="RIGHT">0.02</TD>
+<TD ALIGN="RIGHT">313</TD>
+<TD ALIGN="RIGHT">0.86</TD>
+<TD ALIGN="RIGHT">0.02</TD>
+<TD ALIGN="RIGHT">4034</TD>
+<TD ALIGN="RIGHT">0.14</TD>
+<TD ALIGN="RIGHT">0.01</TD>
+<TD ALIGN="CENTER">0.04</TD>
+</TR>
+<TR><TD ALIGN="LEFT">dlx2_cc_bug25</TD>
+<TD ALIGN="RIGHT">3931</TD>
+<TD ALIGN="RIGHT">1.32</TD>
+<TD ALIGN="RIGHT">0.75</TD>
+<TD ALIGN="RIGHT">3233</TD>
+<TD ALIGN="RIGHT">1.44</TD>
+<TD ALIGN="RIGHT">0.59</TD>
+<TD ALIGN="RIGHT">4406</TD>
+<TD ALIGN="RIGHT">0.14</TD>
+<TD ALIGN="RIGHT">0.01</TD>
+<TD ALIGN="CENTER">0.02</TD>
+</TR>
+<TR><TD ALIGN="LEFT">dlx2_cc_bug26</TD>
+<TD ALIGN="RIGHT">4200</TD>
+<TD ALIGN="RIGHT">1.42</TD>
+<TD ALIGN="RIGHT">0.83</TD>
+<TD ALIGN="RIGHT">3687</TD>
+<TD ALIGN="RIGHT">1.58</TD>
+<TD ALIGN="RIGHT">0.48</TD>
+<TD ALIGN="RIGHT">543</TD>
+<TD ALIGN="RIGHT">0.02</TD>
+<TD ALIGN="RIGHT">0.02</TD>
+<TD ALIGN="CENTER">0.02</TD>
+</TR>
+<TR><TD ALIGN="LEFT">dlx2_cc_bug27</TD>
+<TD ALIGN="RIGHT">591</TD>
+<TD ALIGN="RIGHT">0.52</TD>
+<TD ALIGN="RIGHT">0.02</TD>
+<TD ALIGN="RIGHT">2979</TD>
+<TD ALIGN="RIGHT">1.16</TD>
+<TD ALIGN="RIGHT">0.46</TD>
+<TD ALIGN="RIGHT">293</TD>
+<TD ALIGN="RIGHT">0.01</TD>
+<TD ALIGN="RIGHT">0.03</TD>
+<TD ALIGN="CENTER">0.00</TD>
+</TR>
+<TR><TD ALIGN="LEFT">dlx2_cc_bug28</TD>
+<TD ALIGN="RIGHT">2205</TD>
+<TD ALIGN="RIGHT">0.88</TD>
+<TD ALIGN="RIGHT">0.22</TD>
+<TD ALIGN="RIGHT">5275</TD>
+<TD ALIGN="RIGHT">2.05</TD>
+<TD ALIGN="RIGHT">1.09</TD>
+<TD ALIGN="RIGHT">339</TD>
+<TD ALIGN="RIGHT">0.01</TD>
+<TD ALIGN="RIGHT">0.08</TD>
+<TD ALIGN="CENTER">0.01</TD>
+</TR>
+<TR><TD ALIGN="LEFT">dlx2_cc_bug29</TD>
+<TD ALIGN="RIGHT">324</TD>
+<TD ALIGN="RIGHT">0.58</TD>
+<TD ALIGN="RIGHT">0.01</TD>
+<TD ALIGN="RIGHT">334</TD>
+<TD ALIGN="RIGHT">0.87</TD>
+<TD ALIGN="RIGHT">0.02</TD>
+<TD ALIGN="RIGHT">243</TD>
+<TD ALIGN="RIGHT">0.01</TD>
+<TD ALIGN="RIGHT">0.19</TD>
+<TD ALIGN="CENTER">0.03</TD>
+</TR>
+<TR><TD ALIGN="LEFT">dlx2_cc_bug30</TD>
+<TD ALIGN="RIGHT">311</TD>
+<TD ALIGN="RIGHT">0.60</TD>
+<TD ALIGN="RIGHT">0.02</TD>
+<TD ALIGN="RIGHT">267</TD>
+<TD ALIGN="RIGHT">0.89</TD>
+<TD ALIGN="RIGHT">0.02</TD>
+<TD ALIGN="RIGHT">323</TD>
+<TD ALIGN="RIGHT">0.01</TD>
+<TD ALIGN="RIGHT">0.30</TD>
+<TD ALIGN="CENTER">0.02</TD>
+</TR>
+<TR><TD ALIGN="LEFT">dlx2_cc_bug31</TD>
+<TD ALIGN="RIGHT">294</TD>
+<TD ALIGN="RIGHT">0.58</TD>
+<TD ALIGN="RIGHT">0.02</TD>
+<TD ALIGN="RIGHT">325</TD>
+<TD ALIGN="RIGHT">0.88</TD>
+<TD ALIGN="RIGHT">0.02</TD>
+<TD ALIGN="RIGHT">247</TD>
+<TD ALIGN="RIGHT">0.00</TD>
+<TD ALIGN="RIGHT">0.24</TD>
+<TD ALIGN="CENTER">0.02</TD>
+</TR>
+<TR><TD ALIGN="LEFT">dlx2_cc_bug32</TD>
+<TD ALIGN="RIGHT">278</TD>
+<TD ALIGN="RIGHT">0.59</TD>
+<TD ALIGN="RIGHT">0.02</TD>
+<TD ALIGN="RIGHT">317</TD>
+<TD ALIGN="RIGHT">0.86</TD>
+<TD ALIGN="RIGHT">0.02</TD>
+<TD ALIGN="RIGHT">242</TD>
+<TD ALIGN="RIGHT">0.00</TD>
+<TD ALIGN="RIGHT">0.02</TD>
+<TD ALIGN="CENTER">0.01</TD>
+</TR>
+<TR><TD ALIGN="LEFT">dlx2_cc_bug33</TD>
+<TD ALIGN="RIGHT">299</TD>
+<TD ALIGN="RIGHT">0.58</TD>
+<TD ALIGN="RIGHT">0.02</TD>
+<TD ALIGN="RIGHT">305</TD>
+<TD ALIGN="RIGHT">0.88</TD>
+<TD ALIGN="RIGHT">0.02</TD>
+<TD ALIGN="RIGHT">272</TD>
+<TD ALIGN="RIGHT">0.01</TD>
+<TD ALIGN="RIGHT">0.19</TD>
+<TD ALIGN="CENTER">0.06</TD>
+</TR>
+<TR><TD ALIGN="LEFT">dlx2_cc_bug34</TD>
+<TD ALIGN="RIGHT">329</TD>
+<TD ALIGN="RIGHT">0.60</TD>
+<TD ALIGN="RIGHT">0.02</TD>
+<TD ALIGN="RIGHT">506</TD>
+<TD ALIGN="RIGHT">0.86</TD>
+<TD ALIGN="RIGHT">0.03</TD>
+<TD ALIGN="RIGHT">298</TD>
+<TD ALIGN="RIGHT">0.01</TD>
+<TD ALIGN="RIGHT">0.30</TD>
+<TD ALIGN="CENTER">0.02</TD>
+</TR>
+<TR><TD ALIGN="LEFT">dlx2_cc_bug35</TD>
+<TD ALIGN="RIGHT">282</TD>
+<TD ALIGN="RIGHT">0.59</TD>
+<TD ALIGN="RIGHT">0.02</TD>
+<TD ALIGN="RIGHT">328</TD>
+<TD ALIGN="RIGHT">0.89</TD>
+<TD ALIGN="RIGHT">0.02</TD>
+<TD ALIGN="RIGHT">318</TD>
+<TD ALIGN="RIGHT">0.01</TD>
+<TD ALIGN="RIGHT">0.32</TD>
+<TD ALIGN="CENTER">0.03</TD>
+</TR>
+<TR><TD ALIGN="LEFT">dlx2_cc_bug36</TD>
+<TD ALIGN="RIGHT">279</TD>
+<TD ALIGN="RIGHT">0.61</TD>
+<TD ALIGN="RIGHT">0.02</TD>
+<TD ALIGN="RIGHT">325</TD>
+<TD ALIGN="RIGHT">0.86</TD>
+<TD ALIGN="RIGHT">0.02</TD>
+<TD ALIGN="RIGHT">316</TD>
+<TD ALIGN="RIGHT">0.01</TD>
+<TD ALIGN="RIGHT">0.08</TD>
+<TD ALIGN="CENTER">0.07</TD>
+</TR>
+<TR><TD ALIGN="LEFT">dlx2_cc_bug37</TD>
+<TD ALIGN="RIGHT">3643</TD>
+<TD ALIGN="RIGHT">1.28</TD>
+<TD ALIGN="RIGHT">0.71</TD>
+<TD ALIGN="RIGHT">3214</TD>
+<TD ALIGN="RIGHT">1.45</TD>
+<TD ALIGN="RIGHT">0.60</TD>
+<TD ALIGN="RIGHT">329</TD>
+<TD ALIGN="RIGHT">0.01</TD>
+<TD ALIGN="RIGHT">0.05</TD>
+<TD ALIGN="CENTER">0.01</TD>
+</TR>
+<TR><TD ALIGN="LEFT">dlx2_cc_bug38</TD>
+<TD ALIGN="RIGHT">6249</TD>
+<TD ALIGN="RIGHT">1.70</TD>
+<TD ALIGN="RIGHT">0.43</TD>
+<TD ALIGN="RIGHT">5854</TD>
+<TD ALIGN="RIGHT">1.93</TD>
+<TD ALIGN="RIGHT">1.09</TD>
+<TD ALIGN="RIGHT">9500</TD>
+<TD ALIGN="RIGHT">0.36</TD>
+<TD ALIGN="RIGHT">0.44</TD>
+<TD ALIGN="CENTER">0.07</TD>
+</TR>
+<TR><TD ALIGN="LEFT">dlx2_cc_bug39</TD>
+<TD ALIGN="RIGHT">3307</TD>
+<TD ALIGN="RIGHT">1.07</TD>
+<TD ALIGN="RIGHT">0.54</TD>
+<TD ALIGN="RIGHT">6058</TD>
+<TD ALIGN="RIGHT">1.88</TD>
+<TD ALIGN="RIGHT">1.04</TD>
+<TD ALIGN="RIGHT">12314</TD>
+<TD ALIGN="RIGHT">0.50</TD>
+<TD ALIGN="RIGHT">0.04</TD>
+<TD ALIGN="CENTER">0.40</TD>
+</TR>
+<TR><TD ALIGN="LEFT">dlx2_cc_bug40</TD>
+<TD ALIGN="RIGHT">8046</TD>
+<TD ALIGN="RIGHT">2.21</TD>
+<TD ALIGN="RIGHT">1.64</TD>
+<TD ALIGN="RIGHT">6748</TD>
+<TD ALIGN="RIGHT">2.26</TD>
+<TD ALIGN="RIGHT">1.40</TD>
+<TD ALIGN="RIGHT">9972</TD>
+<TD ALIGN="RIGHT">0.41</TD>
+<TD ALIGN="RIGHT">0.12</TD>
+<TD ALIGN="CENTER">0.02</TD>
+</TR>
+</TABLE></FONT></DIV>
+
+<A NAME="dlxTable"></A></TD></TR>
+</TABLE>
+</DIV><P></P>
+<BR>
+
+<P>
+Finally, Table&nbsp;<A HREF="#SliderTable">7</A> shows the result of applying all
+the solvers to a family of slider problems, some satisfiable and some
+unsatisiable, based on the following:
+
+<P>
+sliderxx_sat:
+<P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{eqnarray*}
+&& f=(x_1\oplus (\neg x_{i_3}\wedge x_{i_1})\oplus\neg(x_{m/2}\wedge x_{i_4}))
+\equiv 
+ite(x_{i_2}, x_{i_1}\vee \neg x_{m/2}, \neg x_{i_1}) \\
+&& g=\neg x_1\oplus (x_{j_2}\oplus (\neg x_{j_3}\wedge x_{j_4}) 
+\oplus x_{j_3}) \oplus (x_{m/2}\equiv x_{j_1})
+\end{eqnarray*}
+ -->
+<IMG
+ WIDTH="475" HEIGHT="63" BORDER="0"
+ SRC="img282.png"
+ ALT="\begin{eqnarray*}
+&amp;&amp; f=(x_1\oplus (\neg x_{i_3}\wedge x_{i_1})\oplus\neg(x_{m/2}...
+...}\wedge x_{j_4})
+\oplus x_{j_3}) \oplus (x_{m/2}\equiv x_{j_1})
+\end{eqnarray*}"></DIV>
+<BR CLEAR="ALL"><P></P>
+
+<P>
+<DIV ALIGN="CENTER">
+<TABLE CELLPADDING=3>
+<TR><TD ALIGN="RIGHT"><IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img2.png"
+ ALT="$f$">:</TD>
+<TD ALIGN="CENTER"><TABLE CELLPADDING=3 BORDER="1">
+<TR><TD ALIGN="CENTER" COLSPAN=1><IMG
+ WIDTH="18" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img256.png"
+ ALT="$m$"></TD>
+<TD ALIGN="CENTER" COLSPAN=1><IMG
+ WIDTH="17" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="img283.png"
+ ALT="$i_1$"></TD>
+<TD ALIGN="CENTER" COLSPAN=1><IMG
+ WIDTH="17" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="img284.png"
+ ALT="$i_2$"></TD>
+<TD ALIGN="CENTER" COLSPAN=1><IMG
+ WIDTH="17" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="img285.png"
+ ALT="$i_3$"></TD>
+<TD ALIGN="CENTER" COLSPAN=1><IMG
+ WIDTH="17" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="img286.png"
+ ALT="$i_4$"></TD>
+</TR>
+<TR><TD ALIGN="CENTER">60</TD>
+<TD ALIGN="CENTER">13</TD>
+<TD ALIGN="CENTER">15</TD>
+<TD ALIGN="CENTER">17</TD>
+<TD ALIGN="CENTER">24</TD>
+</TR>
+<TR><TD ALIGN="CENTER">70</TD>
+<TD ALIGN="CENTER">12</TD>
+<TD ALIGN="CENTER">15</TD>
+<TD ALIGN="CENTER">17</TD>
+<TD ALIGN="CENTER">24</TD>
+</TR>
+<TR><TD ALIGN="CENTER">80</TD>
+<TD ALIGN="CENTER">15</TD>
+<TD ALIGN="CENTER">17</TD>
+<TD ALIGN="CENTER">33</TD>
+<TD ALIGN="CENTER">24</TD>
+</TR>
+<TR><TD ALIGN="CENTER">90</TD>
+<TD ALIGN="CENTER">15</TD>
+<TD ALIGN="CENTER">17</TD>
+<TD ALIGN="CENTER">24</TD>
+<TD ALIGN="CENTER">33</TD>
+</TR>
+<TR><TD ALIGN="CENTER">100</TD>
+<TD ALIGN="CENTER">15</TD>
+<TD ALIGN="CENTER">17</TD>
+<TD ALIGN="CENTER">24</TD>
+<TD ALIGN="CENTER">43</TD>
+</TR>
+<TR><TD ALIGN="CENTER">110</TD>
+<TD ALIGN="CENTER">15</TD>
+<TD ALIGN="CENTER">17</TD>
+<TD ALIGN="CENTER">24</TD>
+<TD ALIGN="CENTER">43</TD>
+</TR>
+<TR><TD ALIGN="CENTER">120</TD>
+<TD ALIGN="CENTER">15</TD>
+<TD ALIGN="CENTER">24</TD>
+<TD ALIGN="CENTER">43</TD>
+<TD ALIGN="CENTER">57</TD>
+</TR>
+</TABLE></TD>
+<TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="RIGHT"><IMG
+ WIDTH="13" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img194.png"
+ ALT="$g$">:</TD>
+<TD ALIGN="CENTER"><TABLE CELLPADDING=3 BORDER="1">
+<TR><TD ALIGN="CENTER" COLSPAN=1><IMG
+ WIDTH="18" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img256.png"
+ ALT="$m$"></TD>
+<TD ALIGN="CENTER" COLSPAN=1><IMG
+ WIDTH="18" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="img287.png"
+ ALT="$j_1$"></TD>
+<TD ALIGN="CENTER" COLSPAN=1><IMG
+ WIDTH="18" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="img288.png"
+ ALT="$j_2$"></TD>
+<TD ALIGN="CENTER" COLSPAN=1><IMG
+ WIDTH="18" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="img289.png"
+ ALT="$j_3$"></TD>
+<TD ALIGN="CENTER" COLSPAN=1><IMG
+ WIDTH="18" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="img290.png"
+ ALT="$j_4$"></TD>
+</TR>
+<TR><TD ALIGN="CENTER">60</TD>
+<TD ALIGN="CENTER">12</TD>
+<TD ALIGN="CENTER">16</TD>
+<TD ALIGN="CENTER">18</TD>
+<TD ALIGN="CENTER">27</TD>
+</TR>
+<TR><TD ALIGN="CENTER">70</TD>
+<TD ALIGN="CENTER">12</TD>
+<TD ALIGN="CENTER">15</TD>
+<TD ALIGN="CENTER">19</TD>
+<TD ALIGN="CENTER">27</TD>
+</TR>
+<TR><TD ALIGN="CENTER">80</TD>
+<TD ALIGN="CENTER">12</TD>
+<TD ALIGN="CENTER">16</TD>
+<TD ALIGN="CENTER">18</TD>
+<TD ALIGN="CENTER">27</TD>
+</TR>
+<TR><TD ALIGN="CENTER">90</TD>
+<TD ALIGN="CENTER">12</TD>
+<TD ALIGN="CENTER">16</TD>
+<TD ALIGN="CENTER">18</TD>
+<TD ALIGN="CENTER">27</TD>
+</TR>
+<TR><TD ALIGN="CENTER">100</TD>
+<TD ALIGN="CENTER">18</TD>
+<TD ALIGN="CENTER">26</TD>
+<TD ALIGN="CENTER">27</TD>
+<TD ALIGN="CENTER">42</TD>
+</TR>
+<TR><TD ALIGN="CENTER">110</TD>
+<TD ALIGN="CENTER">20</TD>
+<TD ALIGN="CENTER">26</TD>
+<TD ALIGN="CENTER">27</TD>
+<TD ALIGN="CENTER">42</TD>
+</TR>
+<TR><TD ALIGN="CENTER">120</TD>
+<TD ALIGN="CENTER">6</TD>
+<TD ALIGN="CENTER">18</TD>
+<TD ALIGN="CENTER">27</TD>
+<TD ALIGN="CENTER">42</TD>
+</TR>
+</TABLE></TD>
+</TR>
+</TABLE></DIV>
+
+<P>
+sliderxx_unsat:
+<P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{eqnarray*}
+&& f=(x_1\oplus (\neg x_{i_3}\wedge x_{i_1})\oplus\neg(x_{m/2}\wedge x_{i_4}))
+\equiv 
+ite(x_{i_2}, x_{i_1}\vee \neg x_{m/2}, \neg x_{i_1}) \\
+&& g=(x_{m/2} \equiv (\neg x_1 \oplus (x_{j_2} \oplus (\neg
+x_{j_3}\wedge x_{j_4}) \oplus x_{j_3}) \oplus (x_{j_5}\equiv x_{j_1})))
+\end{eqnarray*}
+ -->
+<IMG
+ WIDTH="475" HEIGHT="63" BORDER="0"
+ SRC="img291.png"
+ ALT="\begin{eqnarray*}
+&amp;&amp; f=(x_1\oplus (\neg x_{i_3}\wedge x_{i_1})\oplus\neg(x_{m/2}...
+...\wedge x_{j_4}) \oplus x_{j_3}) \oplus (x_{j_5}\equiv x_{j_1})))
+\end{eqnarray*}"></DIV>
+<BR CLEAR="ALL"><P></P>
+
+<P>
+<DIV ALIGN="CENTER">
+<TABLE CELLPADDING=3>
+<TR><TD ALIGN="RIGHT"><IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img2.png"
+ ALT="$f$">:</TD>
+<TD ALIGN="CENTER"><TABLE CELLPADDING=3 BORDER="1">
+<TR><TD ALIGN="CENTER" COLSPAN=1><IMG
+ WIDTH="18" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img256.png"
+ ALT="$m$"></TD>
+<TD ALIGN="CENTER" COLSPAN=1><IMG
+ WIDTH="17" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="img283.png"
+ ALT="$i_1$"></TD>
+<TD ALIGN="CENTER" COLSPAN=1><IMG
+ WIDTH="17" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="img284.png"
+ ALT="$i_2$"></TD>
+<TD ALIGN="CENTER" COLSPAN=1><IMG
+ WIDTH="17" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="img285.png"
+ ALT="$i_3$"></TD>
+<TD ALIGN="CENTER" COLSPAN=1><IMG
+ WIDTH="17" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="img286.png"
+ ALT="$i_4$"></TD>
+</TR>
+<TR><TD ALIGN="CENTER">60</TD>
+<TD ALIGN="CENTER">13</TD>
+<TD ALIGN="CENTER">15</TD>
+<TD ALIGN="CENTER">17</TD>
+<TD ALIGN="CENTER">24</TD>
+</TR>
+<TR><TD ALIGN="CENTER">70</TD>
+<TD ALIGN="CENTER">12</TD>
+<TD ALIGN="CENTER">15</TD>
+<TD ALIGN="CENTER">17</TD>
+<TD ALIGN="CENTER">24</TD>
+</TR>
+<TR><TD ALIGN="CENTER">80</TD>
+<TD ALIGN="CENTER">15</TD>
+<TD ALIGN="CENTER">17</TD>
+<TD ALIGN="CENTER">33</TD>
+<TD ALIGN="CENTER">24</TD>
+</TR>
+<TR><TD ALIGN="CENTER">90</TD>
+<TD ALIGN="CENTER">15</TD>
+<TD ALIGN="CENTER">17</TD>
+<TD ALIGN="CENTER">24</TD>
+<TD ALIGN="CENTER">33</TD>
+</TR>
+<TR><TD ALIGN="CENTER">100</TD>
+<TD ALIGN="CENTER">15</TD>
+<TD ALIGN="CENTER">17</TD>
+<TD ALIGN="CENTER">24</TD>
+<TD ALIGN="CENTER">43</TD>
+</TR>
+<TR><TD ALIGN="CENTER">110</TD>
+<TD ALIGN="CENTER">15</TD>
+<TD ALIGN="CENTER">17</TD>
+<TD ALIGN="CENTER">24</TD>
+<TD ALIGN="CENTER">43</TD>
+</TR>
+<TR><TD ALIGN="CENTER">120</TD>
+<TD ALIGN="CENTER">15</TD>
+<TD ALIGN="CENTER">24</TD>
+<TD ALIGN="CENTER">43</TD>
+<TD ALIGN="CENTER">57</TD>
+</TR>
+</TABLE></TD>
+<TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="RIGHT"><IMG
+ WIDTH="13" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img194.png"
+ ALT="$g$">:</TD>
+<TD ALIGN="CENTER"><TABLE CELLPADDING=3 BORDER="1">
+<TR><TD ALIGN="CENTER" COLSPAN=1><IMG
+ WIDTH="18" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img256.png"
+ ALT="$m$"></TD>
+<TD ALIGN="CENTER" COLSPAN=1><IMG
+ WIDTH="18" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="img287.png"
+ ALT="$j_1$"></TD>
+<TD ALIGN="CENTER" COLSPAN=1><IMG
+ WIDTH="18" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="img288.png"
+ ALT="$j_2$"></TD>
+<TD ALIGN="CENTER" COLSPAN=1><IMG
+ WIDTH="18" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="img289.png"
+ ALT="$j_3$"></TD>
+<TD ALIGN="CENTER" COLSPAN=1><IMG
+ WIDTH="18" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="img290.png"
+ ALT="$j_4$"></TD>
+<TD ALIGN="CENTER" COLSPAN=1><IMG
+ WIDTH="18" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="img292.png"
+ ALT="$j_5$"></TD>
+</TR>
+<TR><TD ALIGN="CENTER">60</TD>
+<TD ALIGN="CENTER">12</TD>
+<TD ALIGN="CENTER">16</TD>
+<TD ALIGN="CENTER">18</TD>
+<TD ALIGN="CENTER">19</TD>
+<TD ALIGN="CENTER">27</TD>
+</TR>
+<TR><TD ALIGN="CENTER">70</TD>
+<TD ALIGN="CENTER">12</TD>
+<TD ALIGN="CENTER">16</TD>
+<TD ALIGN="CENTER">18</TD>
+<TD ALIGN="CENTER">19</TD>
+<TD ALIGN="CENTER">27</TD>
+</TR>
+<TR><TD ALIGN="CENTER">80</TD>
+<TD ALIGN="CENTER">12</TD>
+<TD ALIGN="CENTER">16</TD>
+<TD ALIGN="CENTER">18</TD>
+<TD ALIGN="CENTER">27</TD>
+<TD ALIGN="CENTER">29</TD>
+</TR>
+<TR><TD ALIGN="CENTER">90</TD>
+<TD ALIGN="CENTER">12</TD>
+<TD ALIGN="CENTER">16</TD>
+<TD ALIGN="CENTER">18</TD>
+<TD ALIGN="CENTER">27</TD>
+<TD ALIGN="CENTER">29</TD>
+</TR>
+<TR><TD ALIGN="CENTER">100</TD>
+<TD ALIGN="CENTER">18</TD>
+<TD ALIGN="CENTER">19</TD>
+<TD ALIGN="CENTER">26</TD>
+<TD ALIGN="CENTER">27</TD>
+<TD ALIGN="CENTER">42</TD>
+</TR>
+<TR><TD ALIGN="CENTER">110</TD>
+<TD ALIGN="CENTER">18</TD>
+<TD ALIGN="CENTER">29</TD>
+<TD ALIGN="CENTER">26</TD>
+<TD ALIGN="CENTER">27</TD>
+<TD ALIGN="CENTER">42</TD>
+</TR>
+<TR><TD ALIGN="CENTER">120</TD>
+<TD ALIGN="CENTER">6</TD>
+<TD ALIGN="CENTER">18</TD>
+<TD ALIGN="CENTER">27</TD>
+<TD ALIGN="CENTER">29</TD>
+<TD ALIGN="CENTER">42</TD>
+</TR>
+</TABLE></TD>
+</TR>
+</TABLE></DIV>
+
+<P>
+If ``unsat'' is in the name of the benchmark, then it is
+unsatisfiable, otherwise it is satisfiable.  The number in the name of
+each benchmark refers to the value of <IMG
+ WIDTH="18" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img256.png"
+ ALT="$m$">.  The value of <IMG
+ WIDTH="13" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img263.png"
+ ALT="$k$"> for all
+benchmarks is fixed at 6 and the value of <IMG
+ WIDTH="10" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img293.png"
+ ALT="$l$"> is 6 or 7 (see the
+beginning of this section for an explanation of this family of
+benchmarks and the meaning of <IMG
+ WIDTH="18" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img256.png"
+ ALT="$m$">, <IMG
+ WIDTH="13" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img263.png"
+ ALT="$k$"> and <IMG
+ WIDTH="10" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img293.png"
+ ALT="$l$">).  The two functions were
+chosen to yield somewhat balanced BDDs, requiring nearly all inputs to
+have a value before an inference could be established.  These are hard
+problems and only zChaff was able to approach the runtimes of SBSAT.
+Table&nbsp;<A HREF="#SliderCompareTable">8</A> shows why these problems are
+hard.  We turned off lemmas in SBSAT and reran all the benchmarks.
+The number of choicepoints generated did not change very much.  Thus,
+for these problems, learning from conflict analysis during search
+seems to help little.  Notice also that SBSAT running time changes by
+an order of magnitude.  This clearly points to adjustments that must
+be made to lemma handling.
+
+<P>
+<BR><P></P>
+<DIV ALIGN="CENTER"><A NAME="4246"></A>
+<TABLE>
+<CAPTION><STRONG>Table 7:</STRONG>
+SBSAT, zChaff, Siege, Berkmin times on the Slider benchmarks</CAPTION>
+<TR><TD>
+<DIV ALIGN="CENTER">
+<FONT SIZE="-2">
+<TABLE CELLPADDING=3 BORDER="1">
+<TR><TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="CENTER" COLSPAN=3>SBSAT</TD>
+<TD ALIGN="CENTER" COLSPAN=2>zChaff</TD>
+<TD ALIGN="CENTER" COLSPAN=2>Siege</TD>
+<TD ALIGN="CENTER" COLSPAN=2>Berkmin</TD>
+</TR>
+<TR><TD ALIGN="CENTER" COLSPAN=1>Name</TD>
+<TD ALIGN="CENTER" COLSPAN=1>number</TD>
+<TD ALIGN="CENTER" COLSPAN=1>total</TD>
+<TD ALIGN="CENTER" COLSPAN=1>branch</TD>
+<TD ALIGN="CENTER" COLSPAN=1>number</TD>
+<TD ALIGN="CENTER" COLSPAN=1>total</TD>
+<TD ALIGN="CENTER" COLSPAN=1>number</TD>
+<TD ALIGN="CENTER" COLSPAN=1>total</TD>
+<TD ALIGN="CENTER" COLSPAN=1>number</TD>
+<TD ALIGN="CENTER" COLSPAN=1>total</TD>
+</TR>
+<TR><TD ALIGN="CENTER" COLSPAN=1>&nbsp;</TD>
+<TD ALIGN="CENTER" COLSPAN=1>choices</TD>
+<TD ALIGN="CENTER" COLSPAN=1>(sec)</TD>
+<TD ALIGN="CENTER" COLSPAN=1>(sec)</TD>
+<TD ALIGN="CENTER" COLSPAN=1>choices</TD>
+<TD ALIGN="CENTER" COLSPAN=1>(sec)</TD>
+<TD ALIGN="CENTER" COLSPAN=1>choices</TD>
+<TD ALIGN="CENTER" COLSPAN=1>(sec)</TD>
+<TD ALIGN="CENTER" COLSPAN=1>choices</TD>
+<TD ALIGN="CENTER" COLSPAN=1>(sec)</TD>
+</TR>
+<TR><TD ALIGN="CENTER">slider60_sat</TD>
+<TD ALIGN="RIGHT">1051</TD>
+<TD ALIGN="RIGHT">0.25</TD>
+<TD ALIGN="RIGHT">0.10</TD>
+<TD ALIGN="RIGHT">534</TD>
+<TD ALIGN="RIGHT">0.02</TD>
+<TD ALIGN="RIGHT">2900</TD>
+<TD ALIGN="RIGHT">0.16</TD>
+<TD ALIGN="RIGHT">2114</TD>
+<TD ALIGN="RIGHT">0.09</TD>
+</TR>
+<TR><TD ALIGN="CENTER">slider70_sat</TD>
+<TD ALIGN="RIGHT">622</TD>
+<TD ALIGN="RIGHT">0.27</TD>
+<TD ALIGN="RIGHT">0.06</TD>
+<TD ALIGN="RIGHT">1511</TD>
+<TD ALIGN="RIGHT">0.07</TD>
+<TD ALIGN="RIGHT">329</TD>
+<TD ALIGN="RIGHT">0.01</TD>
+<TD ALIGN="RIGHT">425</TD>
+<TD ALIGN="RIGHT">0.01</TD>
+</TR>
+<TR><TD ALIGN="CENTER">slider80_sat</TD>
+<TD ALIGN="RIGHT">79884</TD>
+<TD ALIGN="RIGHT">39.4</TD>
+<TD ALIGN="RIGHT">39.2</TD>
+<TD ALIGN="RIGHT">149153</TD>
+<TD ALIGN="RIGHT">52.8</TD>
+<TD ALIGN="RIGHT">38044</TD>
+<TD ALIGN="RIGHT">6.20</TD>
+<TD ALIGN="RIGHT">209805</TD>
+<TD ALIGN="RIGHT">73.5</TD>
+</TR>
+<TR><TD ALIGN="CENTER">slider90_sat</TD>
+<TD ALIGN="RIGHT">2765</TD>
+<TD ALIGN="RIGHT">0.64</TD>
+<TD ALIGN="RIGHT">0.44</TD>
+<TD ALIGN="RIGHT">66152</TD>
+<TD ALIGN="RIGHT">14.3</TD>
+<TD ALIGN="RIGHT">47180</TD>
+<TD ALIGN="RIGHT">9.56</TD>
+<TD ALIGN="RIGHT">41372</TD>
+<TD ALIGN="RIGHT">8.63</TD>
+</TR>
+<TR><TD ALIGN="CENTER">slider100_sat</TD>
+<TD ALIGN="RIGHT">36761</TD>
+<TD ALIGN="RIGHT">15.4</TD>
+<TD ALIGN="RIGHT">15.9</TD>
+<TD ALIGN="RIGHT">104054</TD>
+<TD ALIGN="RIGHT">85.5</TD>
+<TD ALIGN="RIGHT">70693</TD>
+<TD ALIGN="RIGHT">35.8</TD>
+<TD ALIGN="RIGHT">120468</TD>
+<TD ALIGN="RIGHT">48.2</TD>
+</TR>
+<TR><TD ALIGN="CENTER">slider110_sat</TD>
+<TD ALIGN="RIGHT">171163</TD>
+<TD ALIGN="RIGHT">113.4</TD>
+<TD ALIGN="RIGHT">113.2</TD>
+<TD ALIGN="RIGHT">280126</TD>
+<TD ALIGN="RIGHT">173.3</TD>
+<TD ALIGN="RIGHT">576670</TD>
+<TD ALIGN="RIGHT">437.4</TD>
+<TD ALIGN="RIGHT">1909731</TD>
+<TD ALIGN="RIGHT">801.4</TD>
+</TR>
+<TR><TD ALIGN="CENTER">slider60_unsat</TD>
+<TD ALIGN="RIGHT">9227</TD>
+<TD ALIGN="RIGHT">1.49</TD>
+<TD ALIGN="RIGHT">1.27</TD>
+<TD ALIGN="RIGHT">27414</TD>
+<TD ALIGN="RIGHT">3.4</TD>
+<TD ALIGN="RIGHT">19505</TD>
+<TD ALIGN="RIGHT">2.63</TD>
+<TD ALIGN="RIGHT">25251</TD>
+<TD ALIGN="RIGHT">4.37</TD>
+</TR>
+<TR><TD ALIGN="CENTER">slider70_unsat</TD>
+<TD ALIGN="RIGHT">7957</TD>
+<TD ALIGN="RIGHT">1.46</TD>
+<TD ALIGN="RIGHT">1.29</TD>
+<TD ALIGN="RIGHT">18157</TD>
+<TD ALIGN="RIGHT">1.93</TD>
+<TD ALIGN="RIGHT">17735</TD>
+<TD ALIGN="RIGHT">2.21</TD>
+<TD ALIGN="RIGHT">17543</TD>
+<TD ALIGN="RIGHT">2.17</TD>
+</TR>
+<TR><TD ALIGN="CENTER">slider80_unsat</TD>
+<TD ALIGN="RIGHT">148242</TD>
+<TD ALIGN="RIGHT">78.8</TD>
+<TD ALIGN="RIGHT">78.6</TD>
+<TD ALIGN="RIGHT">245112</TD>
+<TD ALIGN="RIGHT">116.6</TD>
+<TD ALIGN="RIGHT">215436</TD>
+<TD ALIGN="RIGHT">104.4</TD>
+<TD ALIGN="RIGHT">--</TD>
+<TD ALIGN="RIGHT">--</TD>
+</TR>
+<TR><TD ALIGN="CENTER">slider90_unsat</TD>
+<TD ALIGN="RIGHT">429468</TD>
+<TD ALIGN="RIGHT">263.4</TD>
+<TD ALIGN="RIGHT">263.0</TD>
+<TD ALIGN="RIGHT">685026</TD>
+<TD ALIGN="RIGHT">513.4</TD>
+<TD ALIGN="RIGHT">501539</TD>
+<TD ALIGN="RIGHT">302.5</TD>
+<TD ALIGN="RIGHT">--</TD>
+<TD ALIGN="RIGHT">--</TD>
+</TR>
+<TR><TD ALIGN="CENTER">slider100_unsat</TD>
+<TD ALIGN="RIGHT">1600514</TD>
+<TD ALIGN="RIGHT">1066</TD>
+<TD ALIGN="RIGHT">1065</TD>
+<TD ALIGN="RIGHT">1495633</TD>
+<TD ALIGN="RIGHT">3094</TD>
+<TD ALIGN="RIGHT">2482913</TD>
+<TD ALIGN="RIGHT">6540</TD>
+<TD ALIGN="RIGHT">--</TD>
+<TD ALIGN="RIGHT">--</TD>
+</TR>
+</TABLE></FONT></DIV>
+
+<A NAME="SliderTable"></A></TD></TR>
+</TABLE>
+</DIV><P></P>
+<BR>
+
+<P>
+<BR><P></P>
+<DIV ALIGN="CENTER"><A NAME="4301"></A>
+<TABLE>
+<CAPTION><STRONG>Table 8:</STRONG>
+SBSAT times and choice points on the Slider benchmarks, with
+and without Lemmas.</CAPTION>
+<TR><TD>
+<DIV ALIGN="CENTER">
+<FONT SIZE="-2">
+<TABLE CELLPADDING=3 BORDER="1">
+<TR><TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="CENTER" COLSPAN=3>SBSAT with Lemmas</TD>
+<TD ALIGN="CENTER" COLSPAN=3>SBSAT without Lemmas</TD>
+</TR>
+<TR><TD ALIGN="CENTER" COLSPAN=1>Name</TD>
+<TD ALIGN="CENTER" COLSPAN=1>number</TD>
+<TD ALIGN="CENTER" COLSPAN=1>total</TD>
+<TD ALIGN="CENTER" COLSPAN=1>branch</TD>
+<TD ALIGN="CENTER" COLSPAN=1>number</TD>
+<TD ALIGN="CENTER" COLSPAN=1>total</TD>
+<TD ALIGN="CENTER" COLSPAN=1>branch</TD>
+</TR>
+<TR><TD ALIGN="CENTER" COLSPAN=1>&nbsp;</TD>
+<TD ALIGN="CENTER" COLSPAN=1>choices</TD>
+<TD ALIGN="CENTER" COLSPAN=1>(sec)</TD>
+<TD ALIGN="CENTER" COLSPAN=1>(sec)</TD>
+<TD ALIGN="CENTER" COLSPAN=1>choices</TD>
+<TD ALIGN="CENTER" COLSPAN=1>(sec)</TD>
+<TD ALIGN="CENTER" COLSPAN=1>(sec)</TD>
+</TR>
+<TR><TD ALIGN="CENTER">slider60_sat</TD>
+<TD ALIGN="RIGHT">1051</TD>
+<TD ALIGN="RIGHT">0.25</TD>
+<TD ALIGN="RIGHT">0.10</TD>
+<TD ALIGN="RIGHT">1152</TD>
+<TD ALIGN="RIGHT">0.14</TD>
+<TD ALIGN="RIGHT">0.04</TD>
+</TR>
+<TR><TD ALIGN="CENTER">slider70_sat</TD>
+<TD ALIGN="RIGHT">622</TD>
+<TD ALIGN="RIGHT">0.27</TD>
+<TD ALIGN="RIGHT">0.06</TD>
+<TD ALIGN="RIGHT">1265</TD>
+<TD ALIGN="RIGHT">0.22</TD>
+<TD ALIGN="RIGHT">0.05</TD>
+</TR>
+<TR><TD ALIGN="CENTER">slider80_sat</TD>
+<TD ALIGN="RIGHT">79884</TD>
+<TD ALIGN="RIGHT">39.4</TD>
+<TD ALIGN="RIGHT">39.2</TD>
+<TD ALIGN="RIGHT">111575</TD>
+<TD ALIGN="RIGHT">5.22</TD>
+<TD ALIGN="RIGHT">5.12</TD>
+</TR>
+<TR><TD ALIGN="CENTER">slider90_sat</TD>
+<TD ALIGN="RIGHT">2765</TD>
+<TD ALIGN="RIGHT">0.64</TD>
+<TD ALIGN="RIGHT">0.44</TD>
+<TD ALIGN="RIGHT">3576</TD>
+<TD ALIGN="RIGHT">0.30</TD>
+<TD ALIGN="RIGHT">0.18</TD>
+</TR>
+<TR><TD ALIGN="CENTER">slider100_sat</TD>
+<TD ALIGN="RIGHT">36761</TD>
+<TD ALIGN="RIGHT">15.4</TD>
+<TD ALIGN="RIGHT">15.9</TD>
+<TD ALIGN="RIGHT">51994</TD>
+<TD ALIGN="RIGHT">2.83</TD>
+<TD ALIGN="RIGHT">2.69</TD>
+</TR>
+<TR><TD ALIGN="CENTER">slider110_sat</TD>
+<TD ALIGN="RIGHT">171163</TD>
+<TD ALIGN="RIGHT">113.4</TD>
+<TD ALIGN="RIGHT">113.2</TD>
+<TD ALIGN="RIGHT">282213</TD>
+<TD ALIGN="RIGHT">16.0</TD>
+<TD ALIGN="RIGHT">15.8</TD>
+</TR>
+<TR><TD ALIGN="CENTER">slider120_sat</TD>
+<TD ALIGN="RIGHT">--</TD>
+<TD ALIGN="RIGHT">--</TD>
+<TD ALIGN="RIGHT">--</TD>
+<TD ALIGN="RIGHT">1539977</TD>
+<TD ALIGN="RIGHT">86.3</TD>
+<TD ALIGN="RIGHT">86.1</TD>
+</TR>
+<TR><TD ALIGN="CENTER">slider60_unsat</TD>
+<TD ALIGN="RIGHT">9227</TD>
+<TD ALIGN="RIGHT">1.49</TD>
+<TD ALIGN="RIGHT">1.27</TD>
+<TD ALIGN="RIGHT">10004</TD>
+<TD ALIGN="RIGHT">0.46</TD>
+<TD ALIGN="RIGHT">0.37</TD>
+</TR>
+<TR><TD ALIGN="CENTER">slider70_unsat</TD>
+<TD ALIGN="RIGHT">7957</TD>
+<TD ALIGN="RIGHT">1.46</TD>
+<TD ALIGN="RIGHT">1.29</TD>
+<TD ALIGN="RIGHT">9373</TD>
+<TD ALIGN="RIGHT">0.50</TD>
+<TD ALIGN="RIGHT">0.39</TD>
+</TR>
+<TR><TD ALIGN="CENTER">slider80_unsat</TD>
+<TD ALIGN="RIGHT">148242</TD>
+<TD ALIGN="RIGHT">78.8</TD>
+<TD ALIGN="RIGHT">78.6</TD>
+<TD ALIGN="RIGHT">190177</TD>
+<TD ALIGN="RIGHT">8.67</TD>
+<TD ALIGN="RIGHT">8.57</TD>
+</TR>
+<TR><TD ALIGN="CENTER">slider90_unsat</TD>
+<TD ALIGN="RIGHT">429468</TD>
+<TD ALIGN="RIGHT">263.4</TD>
+<TD ALIGN="RIGHT">263.0</TD>
+<TD ALIGN="RIGHT">626812</TD>
+<TD ALIGN="RIGHT">29.8</TD>
+<TD ALIGN="RIGHT">29.7</TD>
+</TR>
+<TR><TD ALIGN="CENTER">slider100_unsat</TD>
+<TD ALIGN="RIGHT">1600514</TD>
+<TD ALIGN="RIGHT">1066</TD>
+<TD ALIGN="RIGHT">1065</TD>
+<TD ALIGN="RIGHT">2403878</TD>
+<TD ALIGN="RIGHT">124.2</TD>
+<TD ALIGN="RIGHT">124.1</TD>
+</TR>
+<TR><TD ALIGN="CENTER">slider110_unsat</TD>
+<TD ALIGN="RIGHT">--</TD>
+<TD ALIGN="RIGHT">--</TD>
+<TD ALIGN="RIGHT">--</TD>
+<TD ALIGN="RIGHT">10256075</TD>
+<TD ALIGN="RIGHT">564.7</TD>
+<TD ALIGN="RIGHT">564.5</TD>
+</TR>
+</TABLE></FONT></DIV>
+
+<A NAME="SliderCompareTable"></A></TD></TR>
+</TABLE>
+</DIV><P></P>
+<BR>
+
+<P>
+
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1607"
+  HREF="node108.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1603"
+  HREF="sbsat_user_manual.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1597"
+  HREF="node106.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1605"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1608"
+  HREF="node108.html">Reference - Debugging</A>
+<B> Up:</B> <A NAME="tex2html1604"
+  HREF="sbsat_user_manual.html">SBSAT User Manual and</A>
+<B> Previous:</B> <A NAME="tex2html1598"
+  HREF="node106.html">Reference - Results: making</A>
+ &nbsp; <B>  <A NAME="tex2html1606"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sean Weaver
+2009-01-13
+</ADDRESS>
+</BODY>
+</HTML>

@@ -1,0 +1,226 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>SMURF Solver options</TITLE>
+<META NAME="description" CONTENT="SMURF Solver options">
+<META NAME="keywords" CONTENT="sbsat_user_manual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="sbsat_user_manual.css">
+
+<LINK REL="next" HREF="node45.html">
+<LINK REL="previous" HREF="node43.html">
+<LINK REL="up" HREF="node37.html">
+<LINK REL="next" HREF="node45.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html805"
+  HREF="node45.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html801"
+  HREF="node37.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html795"
+  HREF="node43.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html803"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html806"
+  HREF="node45.html">BDD WalkSAT solver options</A>
+<B> Up:</B> <A NAME="tex2html802"
+  HREF="node37.html">Reference - Command line</A>
+<B> Previous:</B> <A NAME="tex2html796"
+  HREF="node43.html">General solver options</A>
+ &nbsp; <B>  <A NAME="tex2html804"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00087000000000000000">
+SMURF Solver options</A>
+</H2>
+
+<P>
+<TABLE CELLPADDING=3>
+<TR><TD ALIGN="LEFT"><I>-lemma-out-file &lt;string&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">File to dump lemmas to [default='''']</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-lemma-in-file &lt;string&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">File to read lemmas from [default='''']</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-csv-trace-file &lt;string&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">File to save execution trace in</TD>
+</TR>
+<TR><TD ALIGN="LEFT">&nbsp;</TD>
+<TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="LEFT">CSV format [default='''']</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-var-stat-file &lt;string&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">File to save var stats
+[default='''']</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-cvs-depth-breadth-file &lt;string&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">Save depth/breadth statistic
+[default='''']</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-backjumping &lt;number&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">Enable/Disable backjumping (1/0)</TD>
+</TR>
+<TR><TD ALIGN="LEFT">&nbsp;</TD>
+<TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="LEFT">[default=1]</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-max-cached-lemmas &lt;number&gt;,</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">Set the maximum # of lemmas</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-L &lt;number&gt;</I></TD>
+<TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="LEFT">[default=5000]</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-autarky-smurfs &lt;number&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">Use Autarky Smurfs in the solver (1/0)</TD>
+</TR>
+<TR><TD ALIGN="LEFT">&nbsp;</TD>
+<TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="LEFT">[default=0]</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-autarky-lemmas &lt;number&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">Use Autarky Lemmas in the solver (Currently Unavailiable) (1/0)</TD>
+</TR>
+<TR><TD ALIGN="LEFT">&nbsp;</TD>
+<TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="LEFT">[default=0]</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-sbj &lt;number&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">Super backjumping [default=0]</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-max-vbles-per-smurf &lt;number&gt;,</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">set the maximum number variables per</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-S &lt;number&gt;</I></TD>
+<TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="LEFT">smurf [default=8]</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-backtracks-per-report &lt;number&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">set the number of backtracks
+per report</TD>
+</TR>
+<TR><TD ALIGN="LEFT">&nbsp;</TD>
+<TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="LEFT">[default=10000]</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-max-brancher-cp &lt;number&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">set the choice point limit (0=no
+limit)</TD>
+</TR>
+<TR><TD ALIGN="LEFT">&nbsp;</TD>
+<TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="LEFT">[default=0]</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-brancher-trace-start &lt;number&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">number of backtracks to start the trace</TD>
+</TR>
+<TR><TD ALIGN="LEFT">&nbsp;</TD>
+<TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="LEFT">(when debug=9) [default=0]</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-heuristic &lt;string&gt;,</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">Choose heuristic j=LSGB, l=Chaff-like</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-H &lt;string&gt;</I></TD>
+<TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="LEFT">lemma based, i=Interactive [default=&#34;j&#34;]</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-jheuristic-k &lt;number&gt;,</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">set the value of K
+[default=3.000000]</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-K &lt;number&gt;</I></TD>
+<TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="LEFT">&nbsp;</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-jheuristic-k-true &lt;number&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">set the value of True state [default=0.000000]</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-jheuristic-k-inf &lt;number&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">set the value of the inference multiplier</TD>
+</TR>
+<TR><TD ALIGN="LEFT">&nbsp;</TD>
+<TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="LEFT">[default=1.000000]</TD>
+</TR>
+</TABLE>
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html805"
+  HREF="node45.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html801"
+  HREF="node37.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html795"
+  HREF="node43.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html803"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html806"
+  HREF="node45.html">BDD WalkSAT solver options</A>
+<B> Up:</B> <A NAME="tex2html802"
+  HREF="node37.html">Reference - Command line</A>
+<B> Previous:</B> <A NAME="tex2html796"
+  HREF="node43.html">General solver options</A>
+ &nbsp; <B>  <A NAME="tex2html804"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sean Weaver
+2009-01-13
+</ADDRESS>
+</BODY>
+</HTML>

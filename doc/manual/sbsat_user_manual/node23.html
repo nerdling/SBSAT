@@ -1,0 +1,415 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Bounded Model Checking</TITLE>
+<META NAME="description" CONTENT="Bounded Model Checking">
+<META NAME="keywords" CONTENT="sbsat_user_manual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="sbsat_user_manual.css">
+
+<LINK REL="previous" HREF="node22.html">
+<LINK REL="up" HREF="node21.html">
+<LINK REL="next" HREF="node24.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html539"
+  HREF="node24.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html535"
+  HREF="node21.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html531"
+  HREF="node22.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html537"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html540"
+  HREF="node24.html">Choosing a search procedure</A>
+<B> Up:</B> <A NAME="tex2html536"
+  HREF="node21.html">Translating an expression to</A>
+<B> Previous:</B> <A NAME="tex2html532"
+  HREF="node22.html">Interconnect synthesis in reconfigurable</A>
+ &nbsp; <B>  <A NAME="tex2html538"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION00058200000000000000">
+Bounded Model Checking</A>
+</H3>
+
+<P>
+A sequential circuit differs from a combinational circuit in that
+output values depend not only on current input values but also on the
+history of change of those values.  This may be modeled by a digraph such
+as the one in Figure&nbsp;<A HREF="#sequential-figure">15</A> where each node
+represents a state of all output and intermediate values based on some
+input change history and each arc is labeled by input(s) whose
+changing value(s) cause(s) a transition from one state to another.
+Each transition is referred to below as a <EM>time step</EM>.
+
+<P>
+Let a circuit <EM>property</EM> be expressed as a propositional Boolean
+expression.  An example of a property for a potential JK flip flop
+might be <TT>J <IMG
+ WIDTH="15" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img47.png"
+ ALT="$\wedge$"> K <IMG
+ WIDTH="15" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img47.png"
+ ALT="$\wedge$"> Q</TT> meaning that it is possible to
+have an output <TT>Q</TT> value of <EM>T</EM> if both inputs <TT>J</TT> and
+<TT>K</TT> have value <EM>T</EM>.
+
+<P>
+The following time-dependent expressions are among those that
+typically need to be proved for a sequential circuit.
+
+<P>
+<OL>
+<LI>For every path (in a corresponding digraph) property <EM>P</EM> is <EM>true</EM> at the next time step.
+</LI>
+<LI>For every path property <EM>P</EM> is <EM>true</EM> at some future time
+step.
+</LI>
+<LI>For every path property <EM>P</EM> is <EM>true</EM> at every future time
+step.
+</LI>
+<LI>For every path property <EM>P</EM> is <EM>true</EM> until property <EM>Q</EM>
+is <EM>true</EM>.
+</LI>
+<LI>There exists a path such that property <EM>P</EM> is <EM>true</EM> at the 
+next time step.
+</LI>
+<LI>There exists a path such that property <EM>P</EM> is <EM>true</EM> at some 
+future time step.
+</LI>
+<LI>There exists a path such that property <EM>P</EM> is <EM>true</EM> at every 
+future time step.
+</LI>
+<LI>There exists a path such that property <EM>P</EM> is <EM>true</EM> until 
+property <EM>Q</EM> is <EM>true</EM>.
+</LI>
+</OL>
+
+<P>
+To construct a Boolean expression which must have value <EM>T</EM> if and 
+only if the desired time-dependent expression holds, the Boolean
+expression must have components which:
+
+<P>
+<OL>
+<LI>force the property or properties of the time dependent expression to hold,
+</LI>
+<LI>establish the starting state,
+</LI>
+<LI>force legal transitions to occur.
+</LI>
+</OL>
+
+<P>
+In order for the Boolean expression to remain of reasonable size it is
+generally necessary to bound the number of time steps in which the
+time-dependent expression is to be verified; hence, bounded model checking.
+
+<P>
+
+<DIV ALIGN="CENTER"><A NAME="sequential-figure"></A><A NAME="915"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 15:</STRONG>
+A state machine representing a sequential circuit</CAPTION>
+<TR><TD><IMG
+ WIDTH="402" HEIGHT="313" BORDER="0"
+ SRC="img101.png"
+ ALT="\begin{figure}\centerline{\epsfig{figure=Fig/state.eps, width=3.5in}}\end{figure}"></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+For example, consider a simple 2-bit counter whose outputs are
+represented by variables <IMG
+ WIDTH="19" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img102.png"
+ ALT="$v_1$"> (LSB) and <IMG
+ WIDTH="19" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img103.png"
+ ALT="$v_2$"> (MSB).  Introduce
+variables <IMG
+ WIDTH="19" HEIGHT="36" ALIGN="MIDDLE" BORDER="0"
+ SRC="img104.png"
+ ALT="$v^i_1$"> and <IMG
+ WIDTH="19" HEIGHT="36" ALIGN="MIDDLE" BORDER="0"
+ SRC="img105.png"
+ ALT="$v^i_2$"> whose values are intended to be the same
+as those of variables <IMG
+ WIDTH="19" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img102.png"
+ ALT="$v_1$"> and <IMG
+ WIDTH="19" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img103.png"
+ ALT="$v_2$">, respectively, on the <IMG
+ WIDTH="10" HEIGHT="17" ALIGN="BOTTOM" BORDER="0"
+ SRC="img33.png"
+ ALT="$i$">th time
+step.  Suppose the starting state is the case where both <IMG
+ WIDTH="20" HEIGHT="34" ALIGN="MIDDLE" BORDER="0"
+ SRC="img106.png"
+ ALT="$v^0_1$"> and
+<IMG
+ WIDTH="20" HEIGHT="34" ALIGN="MIDDLE" BORDER="0"
+ SRC="img107.png"
+ ALT="$v^0_2$"> have value 0.  The transition relation is
+<DIV ALIGN="CENTER">
+<TABLE CELLPADDING=3>
+<TR><TD ALIGN="CENTER" COLSPAN=1><B><U>Current Output</U></B></TD>
+<TD ALIGN="CENTER" COLSPAN=1>&nbsp;</TD>
+<TD ALIGN="CENTER" COLSPAN=1><B><U>Next Output</U></B></TD>
+</TR>
+<TR><TD ALIGN="CENTER">00</TD>
+<TD ALIGN="CENTER">:</TD>
+<TD ALIGN="CENTER">01</TD>
+</TR>
+<TR><TD ALIGN="CENTER">01</TD>
+<TD ALIGN="CENTER">:</TD>
+<TD ALIGN="CENTER">10</TD>
+</TR>
+<TR><TD ALIGN="CENTER">10</TD>
+<TD ALIGN="CENTER">:</TD>
+<TD ALIGN="CENTER">11</TD>
+</TR>
+<TR><TD ALIGN="CENTER">11</TD>
+<TD ALIGN="CENTER">:</TD>
+<TD ALIGN="CENTER">00</TD>
+</TR>
+</TABLE>
+</DIV>
+
+<P>
+which can be expressed as the following Boolean function:
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+(v^{i+1}_1 \equiv \neg v^i_1) \wedge (v^{i+1}_2 \equiv v^i_1\oplus v^i_2).
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="220" HEIGHT="33" BORDER="0"
+ SRC="img108.png"
+ ALT="\begin{displaymath}
+(v^{i+1}_1 \equiv \neg v^i_1) \wedge (v^{i+1}_2 \equiv v^i_1\oplus v^i_2).
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+Suppose the time-dependent expression to be proved is:
+<DIV ALIGN="CENTER">
+<EM>Can the two-bit counter reach a count of 11 in exactly three time
+steps?</EM>
+
+</DIV>
+
+<P>
+Assemble the propositional formula having value <EM>T</EM> if and only
+if the above query holds as the conjunction of the following
+three parts:
+
+<OL>
+<LI><B>Force the property to hold:</B>
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+(\neg(v^0_1\wedge v^0_2)\wedge \neg(v^1_1\wedge v^1_2)\wedge
+\neg(v^2_1\wedge v^2_2)\wedge (v^3_1\wedge v^3_2))
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="338" HEIGHT="33" BORDER="0"
+ SRC="img109.png"
+ ALT="\begin{displaymath}(\neg(v^0_1\wedge v^0_2)\wedge \neg(v^1_1\wedge v^1_2)\wedge
+\neg(v^2_1\wedge v^2_2)\wedge (v^3_1\wedge v^3_2)) \end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+</LI>
+<LI><B>Express the starting state:</B>
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+(\neg v^0_1\wedge \neg v^0_2)
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="79" HEIGHT="33" BORDER="0"
+ SRC="img110.png"
+ ALT="\begin{displaymath}(\neg v^0_1\wedge \neg v^0_2) \end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+</LI>
+<LI><B>Force legal transitions (repetitions of the transition relation):</B>
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+~~(v^1_1 \equiv \neg v^0_1) \wedge (v^1_2 \equiv v^0_1\oplus v^0_2)\wedge
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="201" HEIGHT="33" BORDER="0"
+ SRC="img111.png"
+ ALT="\begin{displaymath}&nbsp;&nbsp;(v^1_1 \equiv \neg v^0_1) \wedge (v^1_2 \equiv v^0_1\oplus v^0_2)\wedge\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+<BR>
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+~~(v^2_1 \equiv \neg v^1_1) \wedge (v^2_2 \equiv v^1_1\oplus v^1_2)\wedge
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="201" HEIGHT="33" BORDER="0"
+ SRC="img112.png"
+ ALT="\begin{displaymath}&nbsp;&nbsp;(v^2_1 \equiv \neg v^1_1) \wedge (v^2_2 \equiv v^1_1\oplus v^1_2)\wedge\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+<BR>
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+(v^3_1 \equiv \neg v^2_1) \wedge (v^3_2 \equiv v^2_1\oplus v^2_2)
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="189" HEIGHT="33" BORDER="0"
+ SRC="img113.png"
+ ALT="\begin{displaymath}(v^3_1 \equiv \neg v^2_1) \wedge (v^3_2 \equiv v^2_1\oplus v^2_2)\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+</LI>
+</OL>
+
+<P>
+The reader may check that the following satisfy the above expressions:
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+v^0_1=0, v^0_2=0, v^1_1=1, v^1_2=0, v^2_1=0, v^2_2=1, v^3_1=1,
+v^3_2=1.
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="409" HEIGHT="33" BORDER="0"
+ SRC="img114.png"
+ ALT="\begin{displaymath}v^0_1=0, v^0_2=0, v^1_1=1, v^1_2=0, v^2_1=0, v^2_2=1, v^3_1=1,
+v^3_2=1.\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+This assignment can be found by running <TT>sbsat</TT> on the example file <TT>bmc_example.ite</TT> with the flag <TT><I>-R</I> r</TT>. It may also be
+verified that no other assignment of values to <IMG
+ WIDTH="19" HEIGHT="36" ALIGN="MIDDLE" BORDER="0"
+ SRC="img104.png"
+ ALT="$v^i_1$"> and <IMG
+ WIDTH="19" HEIGHT="36" ALIGN="MIDDLE" BORDER="0"
+ SRC="img105.png"
+ ALT="$v^i_2$">, <IMG
+ WIDTH="68" HEIGHT="29" ALIGN="MIDDLE" BORDER="0"
+ SRC="img115.png"
+ ALT="$0\leq
+i\leq 3$">, satisfies the above expressions by running the previous command
+with two extra flags, namely <TT><I>-max-solutions 0</I></TT> and
+<TT><I>-All 0</I></TT> (details on these flags can be found in
+Section&nbsp;<A HREF="node37.html#ref-command-line-section">7</A>). The constraints are shown in
+canonical form in Figure&nbsp;<A HREF="#bmc-can-figure">16</A>.
+
+<P>
+
+<DIV ALIGN="CENTER"><A NAME="bmc-can-figure"></A><A NAME="955"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 16:</STRONG>
+Bounded model checking example in canonical form.</CAPTION>
+<TR><TD><IMG
+ WIDTH="416" HEIGHT="262" BORDER="0"
+ SRC="img116.png"
+ ALT="\begin{figure}\begin{verbatim}p bdd 8 11
+not(and(v10, v20)) ; Force a proper...
+...1, v21))
+equ(v13, not(v12))
+equ(v23, xor(v12, v22))\end{verbatim}
+\end{figure}"></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html539"
+  HREF="node24.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html535"
+  HREF="node21.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html531"
+  HREF="node22.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html537"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html540"
+  HREF="node24.html">Choosing a search procedure</A>
+<B> Up:</B> <A NAME="tex2html536"
+  HREF="node21.html">Translating an expression to</A>
+<B> Previous:</B> <A NAME="tex2html532"
+  HREF="node22.html">Interconnect synthesis in reconfigurable</A>
+ &nbsp; <B>  <A NAME="tex2html538"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sean Weaver
+2009-01-13
+</ADDRESS>
+</BODY>
+</HTML>

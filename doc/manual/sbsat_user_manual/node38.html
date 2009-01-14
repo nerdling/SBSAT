@@ -1,0 +1,207 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>General options</TITLE>
+<META NAME="description" CONTENT="General options">
+<META NAME="keywords" CONTENT="sbsat_user_manual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="sbsat_user_manual.css">
+
+<LINK REL="next" HREF="node39.html">
+<LINK REL="previous" HREF="node37.html">
+<LINK REL="up" HREF="node37.html">
+<LINK REL="next" HREF="node39.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html733"
+  HREF="node39.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html729"
+  HREF="node37.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html723"
+  HREF="node37.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html731"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html734"
+  HREF="node39.html">BDD table options</A>
+<B> Up:</B> <A NAME="tex2html730"
+  HREF="node37.html">Reference - Command line</A>
+<B> Previous:</B> <A NAME="tex2html724"
+  HREF="node37.html">Reference - Command line</A>
+ &nbsp; <B>  <A NAME="tex2html732"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00081000000000000000">
+General options</A>
+</H2>
+
+<P>
+<TABLE CELLPADDING=3>
+<TR><TD ALIGN="LEFT"><I>-help, -h</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">Show all program options</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-version</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">Show program version</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-create-ini</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">Create ini file</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-ini &lt;string&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">Set the ini file [default=&#34;~/sbsat.ini&#34;]</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-debug &lt;number&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">debugging level (0-none, 9-max) [default=2]</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-debug-dev &lt;string&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">debugging device [default=&#34;stderr&#34;]</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-params-dump, -D</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">dump all internal parameters before processing</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-input-file &lt;string&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">input filename [default=&#34;-&#34;]</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-output-file &lt;string&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">output filename [default=&#34;-&#34;]</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-temp-dir &lt;string&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">directory for temporary files [default=&#34;$TEMP&#34;]</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-show-result &lt;string&gt;,</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">Show result ((n)one, (r)aw, (f)ancy)
+[default=&#34;n&#34;]</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-R &lt;string&gt;</I></TD>
+<TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="LEFT">&nbsp;</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-verify-solution &lt;number&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">Verify solution [default=1]</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-expected-result &lt;string&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">Report error if the result is not
+as specified</TD>
+</TR>
+<TR><TD ALIGN="LEFT">&nbsp;</TD>
+<TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="LEFT">Options are SAT, UNSAT, TRIV_SAT,</TD>
+</TR>
+<TR><TD ALIGN="LEFT">&nbsp;</TD>
+<TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="LEFT">TRIV_UNSAT, SOLV_S,</TD>
+</TR>
+<TR><TD ALIGN="LEFT">&nbsp;</TD>
+<TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="LEFT">SOLV_UNSAT [default=&#34;&#34;]</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-comment &lt;string&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">Comment to appear next to the filename [default=&#34;&#34;]</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-ctrl-c &lt;number&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">Enable/Disable Ctrl-c handler to end</TD>
+</TR>
+<TR><TD ALIGN="LEFT">&nbsp;</TD>
+<TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="LEFT">preproc/search [default=0]</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-reports &lt;number&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">Reporting style during branching</TD>
+</TR>
+<TR><TD ALIGN="LEFT">&nbsp;</TD>
+<TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="LEFT">(0 - standard, 1 - crtwin) [default=0]</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-competition &lt;number&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">Competition reporting style [default=0]</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-sattimeout &lt;number&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">For SAT Competition SATTIMEOUT [default=0]</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-satram &lt;number&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">For SAT Competition SATRAM [default=0]</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-parse-filename</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">For testing purposes</TD>
+</TR>
+</TABLE>
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html733"
+  HREF="node39.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html729"
+  HREF="node37.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html723"
+  HREF="node37.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html731"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html734"
+  HREF="node39.html">BDD table options</A>
+<B> Up:</B> <A NAME="tex2html730"
+  HREF="node37.html">Reference - Command line</A>
+<B> Previous:</B> <A NAME="tex2html724"
+  HREF="node37.html">Reference - Command line</A>
+ &nbsp; <B>  <A NAME="tex2html732"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sean Weaver
+2009-01-13
+</ADDRESS>
+</BODY>
+</HTML>

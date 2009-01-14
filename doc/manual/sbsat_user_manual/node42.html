@@ -1,0 +1,245 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Preprocessing options</TITLE>
+<META NAME="description" CONTENT="Preprocessing options">
+<META NAME="keywords" CONTENT="sbsat_user_manual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="sbsat_user_manual.css">
+
+<LINK REL="next" HREF="node43.html">
+<LINK REL="previous" HREF="node41.html">
+<LINK REL="up" HREF="node37.html">
+<LINK REL="next" HREF="node43.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html781"
+  HREF="node43.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html777"
+  HREF="node37.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html771"
+  HREF="node41.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html779"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html782"
+  HREF="node43.html">General solver options</A>
+<B> Up:</B> <A NAME="tex2html778"
+  HREF="node37.html">Reference - Command line</A>
+<B> Previous:</B> <A NAME="tex2html772"
+  HREF="node41.html">Output options</A>
+ &nbsp; <B>  <A NAME="tex2html780"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00085000000000000000">
+Preprocessing options</A>
+</H2>
+
+<P>
+<TABLE CELLPADDING=3>
+<TR><TD ALIGN="LEFT"><I>-preset-variables &lt;string&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">Variables forced during preprocessing [default=&#34;&#34;]</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-preprocess-sequence &lt;string&gt;,</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">The preprocessing sequence</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-P &lt;string&gt;</I></TD>
+<TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="LEFT">[default=&#34;{ExDc}{ExSt}{ExPr}{ExSp}{Ff}&#34;]</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-All, -All</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">Enable/Disable All Preprocessing<A NAME="all_page"></A> Options (1/0)</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-Cl &lt;number&gt;, -Cl &lt;number&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">Enable/Disable Clustering (1/0) [default=1]</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-Co &lt;number&gt;, -Co &lt;number&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">Enable/Disable Cofactoring (1/0) [default=1]</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-Pr &lt;number&gt;, -Pr &lt;number&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">Enable/Disable Pruning (1/0) [default=1]</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-St &lt;number&gt;, -St &lt;number&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">Enable/Disable Strengthening (1/0) [default=1]</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-In &lt;number&gt;, -In &lt;number&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">Enable/Disable Inferences (1/0) [default=1]</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-Ex &lt;number&gt;, -Ex &lt;number&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">Enable/Disable Existential Quantification (1/0) [default=1]</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-Ea &lt;number&gt;, -Ea &lt;number&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">Enable/Disable AND-Existential Quantification</TD>
+</TR>
+<TR><TD ALIGN="LEFT">&nbsp;</TD>
+<TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="LEFT">(1/0) [default=1]</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-Es &lt;number&gt;, -Es &lt;number&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">Enable/Disable AND-Safe Assign + Existential</TD>
+</TR>
+<TR><TD ALIGN="LEFT">&nbsp;</TD>
+<TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="LEFT">Quantification [default=1]</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-Sa &lt;number&gt;, -Sa &lt;number&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">Enable/Disable Searching for Safe Assignments</TD>
+</TR>
+<TR><TD ALIGN="LEFT">&nbsp;</TD>
+<TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="LEFT">(1/0) [default=1]</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-Ss &lt;number&gt;, -Ss &lt;number&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">Enable/Disable SafeSearch (1/0) [default=1]</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-Pa &lt;number&gt;, -Pa &lt;number&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">Enable/Disable clustering to find possible</TD>
+</TR>
+<TR><TD ALIGN="LEFT">&nbsp;</TD>
+<TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="LEFT">values to variables (1/0) [default=1]</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-Dc &lt;number&gt;, -Dc &lt;number&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">Enable/Disable Dependent Variable</TD>
+</TR>
+<TR><TD ALIGN="LEFT">&nbsp;</TD>
+<TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="LEFT">Clustering (1/0) [default=1]</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-Sp &lt;number&gt;, -Sp &lt;number&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">Enable/Disable Large Function Splitting (1/0) [default=0]</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-Rw &lt;number&gt;, -Rw &lt;number&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">Enable/Disable Rewinding of BDDs back to their</TD>
+</TR>
+<TR><TD ALIGN="LEFT">&nbsp;</TD>
+<TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="LEFT">initial state (1/0) [default=1]</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-Cf &lt;number&gt;, -Cf &lt;number&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">Enable/Disable Clearing the Function Type</TD>
+</TR>
+<TR><TD ALIGN="LEFT">&nbsp;</TD>
+<TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="LEFT">of BDDs (1/0) [default=1]</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-Ff &lt;number&gt;, -Ff &lt;number&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">Enable/Disable Searching for the Function</TD>
+</TR>
+<TR><TD ALIGN="LEFT">&nbsp;</TD>
+<TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="LEFT">Type of BDDs (1/0) [default=1]</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-P3 &lt;number&gt;, -P3 &lt;number&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">Enable/Disable Recreating a new set of</TD>
+</TR>
+<TR><TD ALIGN="LEFT">&nbsp;</TD>
+<TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="LEFT">prover3 BDDs (1/0) [default=1]</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-max-preproc-time &lt;number&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">Set the time limit in seconds (0=no limit) [default=0]</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-do-split-max-vars &lt;number&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">Threshold above which the Sp splits BDDs [default=10]</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><A NAME="split-page"></A><I>-ex-infer &lt;number&gt;</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">Enable/Disable Ex Quantification trying to safely infer</TD>
+</TR>
+<TR><TD ALIGN="LEFT">&nbsp;</TD>
+<TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="LEFT">variables before they are quantified away (1/0) [default=1]</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>-gaussian-elimination &lt;char&gt;,</I></TD>
+<TD ALIGN="CENTER">-</TD>
+<TD ALIGN="LEFT">Enable/Disable Gaussian Elimination in the preprocessor (1/0)</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><I>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-gauss &lt;char&gt;</I></TD>
+<TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="LEFT">[default='0']</TD>
+</TR>
+</TABLE>
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html781"
+  HREF="node43.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html777"
+  HREF="node37.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html771"
+  HREF="node41.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html779"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html782"
+  HREF="node43.html">General solver options</A>
+<B> Up:</B> <A NAME="tex2html778"
+  HREF="node37.html">Reference - Command line</A>
+<B> Previous:</B> <A NAME="tex2html772"
+  HREF="node41.html">Output options</A>
+ &nbsp; <B>  <A NAME="tex2html780"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sean Weaver
+2009-01-13
+</ADDRESS>
+</BODY>
+</HTML>

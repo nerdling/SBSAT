@@ -1,0 +1,208 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Pattern Matching: CNF</TITLE>
+<META NAME="description" CONTENT="Pattern Matching: CNF">
+<META NAME="keywords" CONTENT="sbsat_user_manual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="sbsat_user_manual.css">
+
+<LINK REL="next" HREF="node77.html">
+<LINK REL="previous" HREF="node75.html">
+<LINK REL="up" HREF="node74.html">
+<LINK REL="next" HREF="node77.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1231"
+  HREF="node77.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1227"
+  HREF="node74.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1221"
+  HREF="node75.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1229"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1232"
+  HREF="node77.html">Generalized Cofactor (GCF)</A>
+<B> Up:</B> <A NAME="tex2html1228"
+  HREF="node74.html">Reference - Preprocessing</A>
+<B> Previous:</B> <A NAME="tex2html1222"
+  HREF="node75.html">Binary Decision Diagrams (BDDs)</A>
+ &nbsp; <B>  <A NAME="tex2html1230"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION000112000000000000000"></A><A NAME="clustering-section"></A>
+<BR>
+Pattern Matching: CNF
+</H2>
+
+<P>
+The current version of <TT>sbsat</TT> supports clustering only when CNF
+input is given.  Our clustering algorithm is influenced solely by
+observing patterns in CNF formulas due to the <TT>dlx</TT> benchmarks
+from CMU.  Those benchmarks, before translation to CNF, consist of
+numerous lines almost all of which have a form similar to one of the 
+following:
+<P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{eqnarray*}
+&&x = and(v_1, v_2, ..., v_k)\\
+&&x = or(v_1, v_2, ..., v_k)\\
+&&x = ite(v_1, v_2, v_3)
+\end{eqnarray*}
+ -->
+<IMG
+ WIDTH="147" HEIGHT="90" BORDER="0"
+ SRC="img184.png"
+ ALT="\begin{eqnarray*}
+&amp;&amp;x = and(v_1, v_2, ..., v_k)\\
+&amp;&amp;x = or(v_1, v_2, ..., v_k)\\
+&amp;&amp;x = ite(v_1, v_2, v_3)
+\end{eqnarray*}"></DIV>
+<BR CLEAR="ALL"><P></P>
+A pass is made through all clauses of a given CNF formula looking for 
+patterns similar to the following:
+<P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{eqnarray*}
+&&(v_1\vee \bar v_2\vee \bar v_3\vee ... \vee \bar v_k)\\
+&&(\bar v_1\vee v_2)~~~~
+(\bar v_1\vee v_3)~~~~
+...~~~~
+(\bar v_1\vee v_k)
+\end{eqnarray*}
+ -->
+<IMG
+ WIDTH="254" HEIGHT="61" BORDER="0"
+ SRC="img185.png"
+ ALT="\begin{eqnarray*}
+&amp;&amp;(v_1\vee \bar v_2\vee \bar v_3\vee ... \vee \bar v_k)\\
+&amp;&amp;(...
+...1\vee v_2)&nbsp;&nbsp;&nbsp;&nbsp;
+(\bar v_1\vee v_3)&nbsp;&nbsp;&nbsp;&nbsp;
+...&nbsp;&nbsp;&nbsp;&nbsp;
+(\bar v_1\vee v_k)
+\end{eqnarray*}"></DIV>
+<BR CLEAR="ALL"><P></P>
+which in this case represents the first of the three expressions
+above.  Clauses equivalent to the second expression are similar (one
+large clause and several binary clauses) differing only in which
+literals are negated.  If a set of clauses matching the form above is
+found, then those clauses are replaced by a single BDD representing
+the corresponding <IMG
+ WIDTH="87" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img186.png"
+ ALT="$x=and(...)$"> or <IMG
+ WIDTH="76" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img187.png"
+ ALT="$x=or(...)$"> expression.  In the case
+of the <IMG
+ WIDTH="49" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img188.png"
+ ALT="$ite(...)$"> expression a pattern of six clauses of the following
+form:
+<P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{eqnarray*}
+&&(v_1\vee v_2\vee \bar v_4)~~~
+(v_1\vee \bar v_2\vee \bar v_3)~~~
+(\bar v_1\vee \bar v_2\vee v_3)~~~
+(\bar v_1\vee v_2\vee v_4)
+\end{eqnarray*}
+ -->
+<IMG
+ WIDTH="414" HEIGHT="33" BORDER="0"
+ SRC="img189.png"
+ ALT="\begin{eqnarray*}
+&amp;&amp;(v_1\vee v_2\vee \bar v_4)&nbsp;&nbsp;&nbsp;
+(v_1\vee \bar v_2\vee \bar v_3)&nbsp;&nbsp;&nbsp;
+(\bar v_1\vee \bar v_2\vee v_3)&nbsp;&nbsp;&nbsp;
+(\bar v_1\vee v_2\vee v_4)
+\end{eqnarray*}"></DIV>
+<BR CLEAR="ALL"><P></P>
+is replaced by a BDD representing the third expression above.  In
+addition, if such a pattern is found the following two clauses may
+also be removed from the original CNF formula during the clustering 
+operation without consequence:
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+(v_1\vee \bar v_3\vee \bar v_4)~~~(\bar v_1\vee v_3\vee v_4)~~~
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="198" HEIGHT="33" BORDER="0"
+ SRC="img190.png"
+ ALT="\begin{displaymath}(v_1\vee \bar v_3\vee \bar v_4)&nbsp;&nbsp;&nbsp;(\bar v_1\vee v_3\vee v_4)&nbsp;&nbsp;&nbsp;\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+Any BDD constructed in this way is marked with a special function
+identifier so that the corresponding S<SMALL>MURF</SMALL> will be 
+smaller than otherwise.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1231"
+  HREF="node77.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1227"
+  HREF="node74.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1221"
+  HREF="node75.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1229"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1232"
+  HREF="node77.html">Generalized Cofactor (GCF)</A>
+<B> Up:</B> <A NAME="tex2html1228"
+  HREF="node74.html">Reference - Preprocessing</A>
+<B> Previous:</B> <A NAME="tex2html1222"
+  HREF="node75.html">Binary Decision Diagrams (BDDs)</A>
+ &nbsp; <B>  <A NAME="tex2html1230"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sean Weaver
+2009-01-13
+</ADDRESS>
+</BODY>
+</HTML>

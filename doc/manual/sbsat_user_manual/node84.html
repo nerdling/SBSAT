@@ -1,0 +1,114 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Dependent variable clustering</TITLE>
+<META NAME="description" CONTENT="Dependent variable clustering">
+<META NAME="keywords" CONTENT="sbsat_user_manual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="sbsat_user_manual.css">
+
+<LINK REL="next" HREF="node85.html">
+<LINK REL="previous" HREF="node83.html">
+<LINK REL="up" HREF="node74.html">
+<LINK REL="next" HREF="node85.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1327"
+  HREF="node85.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1323"
+  HREF="node74.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1317"
+  HREF="node83.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1325"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1328"
+  HREF="node85.html">Rewind</A>
+<B> Up:</B> <A NAME="tex2html1324"
+  HREF="node74.html">Reference - Preprocessing</A>
+<B> Previous:</B> <A NAME="tex2html1318"
+  HREF="node83.html">Clustering + Existential Quantification</A>
+ &nbsp; <B>  <A NAME="tex2html1326"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION0001110000000000000000"></A><A NAME="dep-var-clus-section"></A>
+<BR>
+Dependent variable clustering
+</H2>
+
+<P>
+Equations such as the following:
+<BR>
+<BR>
+<BR><TT>x = and(a, b, c, d, ...)</TT>
+<BR><TT>x = or(a, b, c, d, ...)</TT>
+
+<P>
+appear often in many applications, particularly those related to
+circuits.  In such a case, the BDD corresponding to the equation is
+conjoined with all other BDDs containing variable <IMG
+ WIDTH="14" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img43.png"
+ ALT="$x$">, the variable
+appearing on the left side of equals, and then <IMG
+ WIDTH="14" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img43.png"
+ ALT="$x$"> is existentially
+quantified out of the expression entirely.  For example, the
+equations
+<BR>
+<BR>
+<BR><TT>x = and(a, b, c, d)</TT>
+<BR><TT>y = and(x, e, f, g)</TT>
+
+<P>
+are replaced by
+<BR>
+<BR>
+<BR><TT>y = and(a, b, c, d, e, f, g)</TT>
+
+<P>
+and <IMG
+ WIDTH="14" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img43.png"
+ ALT="$x$"> is eliminated.
+
+<P>
+As it currently exists in the tool, this operation is limited to cases
+where the BDDs involved all depend on 8 or fewer variables unless the
+BDDs are special functions and can be conjoined to a S<SMALL>MURF</SMALL> which
+is reasonably small in size.
+
+<P>
+<BR><HR>
+<ADDRESS>
+Sean Weaver
+2009-01-13
+</ADDRESS>
+</BODY>
+</HTML>

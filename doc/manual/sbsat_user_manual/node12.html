@@ -1,0 +1,116 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Testing SBSAT</TITLE>
+<META NAME="description" CONTENT="Testing SBSAT">
+<META NAME="keywords" CONTENT="sbsat_user_manual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="sbsat_user_manual.css">
+
+<LINK REL="previous" HREF="node10.html">
+<LINK REL="up" HREF="node6.html">
+<LINK REL="next" HREF="node13.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html395"
+  HREF="node13.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html391"
+  HREF="node6.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html387"
+  HREF="node11.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html393"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html396"
+  HREF="node13.html">Quick Start - The</A>
+<B> Up:</B> <A NAME="tex2html392"
+  HREF="node6.html">Quick Start - Getting</A>
+<B> Previous:</B> <A NAME="tex2html388"
+  HREF="node11.html">Configure options</A>
+ &nbsp; <B>  <A NAME="tex2html394"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00045000000000000000">
+Testing SBSAT</A>
+</H2>
+
+<P>
+A series of regression tests may be run by issuing the following command
+while in the root directory of the SBSAT tree:
+<BR>
+<BR>
+<BR><TT>$ make check</TT>
+<BR>
+<BR>
+<BR>
+To run any of these tests individually, change to the <TT>tests</TT> directory
+in the SBSAT directory using the following
+<BR>
+<BR>
+<BR><TT>$ cd .../tests</TT>
+<BR>
+<BR>
+<BR>
+where <TT>...</TT> is replaced by the path of the root directory of the
+SBSAT tree.  In this directory check that the following files are
+there: <TT>cnf_tests.sh</TT>, <TT>longer_tests.sh</TT>, <TT>trace_tests.sh</TT>, <TT>xor_tests.sh</TT>.  Run any of these to test some
+aspect of the solver.  For example, using the command
+<BR>
+<BR>
+<BR><TT>$ /bin/sh cnf_tests.sh</TT>
+<BR>
+<BR>
+<BR>
+results in the output of Figure&nbsp;<A HREF="#test-figure">2</A>.
+
+<P>
+
+<DIV ALIGN="CENTER"><A NAME="test-figure"></A><A NAME="4338"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 2:</STRONG>
+Result of running the cnf tests in <TT>.../tests</TT>.</CAPTION>
+<TR><TD><IMG
+ WIDTH="358" HEIGHT="195" BORDER="0"
+ SRC="img58.png"
+ ALT="\begin{figure}\begin{verbatim}===========================================
+Ch...
+...- Sucess
+===========================================\end{verbatim}
+\end{figure}"></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+
+<BR><HR>
+<ADDRESS>
+Sean Weaver
+2009-01-13
+</ADDRESS>
+</BODY>
+</HTML>

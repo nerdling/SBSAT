@@ -1,0 +1,145 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Heuristics</TITLE>
+<META NAME="description" CONTENT="Heuristics">
+<META NAME="keywords" CONTENT="sbsat_user_manual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="sbsat_user_manual.css">
+
+<LINK REL="next" HREF="node32.html">
+<LINK REL="previous" HREF="node27.html">
+<LINK REL="up" HREF="node26.html">
+<LINK REL="next" HREF="node32.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html643"
+  HREF="node32.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html639"
+  HREF="node26.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html633"
+  HREF="node30.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html641"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html644"
+  HREF="node32.html">The lemma cache</A>
+<B> Up:</B> <A NAME="tex2html640"
+  HREF="node26.html">Quick Start - Some</A>
+<B> Previous:</B> <A NAME="tex2html634"
+  HREF="node30.html">Preprocessor command</A>
+ &nbsp; <B>  <A NAME="tex2html642"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00062000000000000000">
+Heuristics</A>
+</H2>
+
+<P>
+Two search heuristics are included with SBSAT.  One of these we refer
+to as the LSGB heuristic for Locally Skewed, Globally Balanced.  It is
+designed to work well on inputs with little (known) structure and
+therefore favors assignments that reveal inferences which can be
+derived from information about individual functions (locally skewed)
+and simultaneously favors assignments that tend to balance the entire
+search space (globally balanced).  For more information on this
+heuristic and insights for its control see Section&nbsp;<A HREF="node90.html#lsgb-section">11.2</A>.
+
+<P>
+The other search heuristic is a variant of the VSIDS heuristic Chaff uses.
+See Section&nbsp;<A HREF="node91.html#chaff-section">11.3</A> for information about the use and control of
+this heuristic.
+
+<P>
+There is also an option, which we call <EM>combined</EM>, that allows the
+user to mix the two heuristics.  What this mixing accomplishes is
+given in Section&nbsp;<A HREF="node88.html#heuristic-section">11</A>.
+
+<P>
+The following table shows command line switches for selecting these
+heuristics and associated parameters.
+<BR>
+<P>
+<TABLE CELLPADDING=3 BORDER="1">
+<TR><TD ALIGN="CENTER">Heuristic</TD>
+<TD ALIGN="CENTER">Default</TD>
+<TD ALIGN="CENTER">Switch</TD>
+<TD ALIGN="CENTER">Description</TD>
+</TR>
+<TR><TD ALIGN="CENTER">LSGB</TD>
+<TD ALIGN="CENTER">yes</TD>
+<TD ALIGN="CENTER"><TT><I>-H</I></TT> <TT>j</TT></TD>
+<TD ALIGN="CENTER">Locally Skewed, Globally Balanced</TD>
+</TR>
+<TR><TD ALIGN="CENTER">VSIDS</TD>
+<TD ALIGN="CENTER">no</TD>
+<TD ALIGN="CENTER"><TT><I>-H</I></TT> <TT>l</TT></TD>
+<TD ALIGN="CENTER">Number of occurrences of literals</TD>
+</TR>
+<TR><TD ALIGN="CENTER">Combined</TD>
+<TD ALIGN="CENTER">no</TD>
+<TD ALIGN="CENTER"><TT><I>-H</I></TT> <TT>jl</TT></TD>
+<TD ALIGN="CENTER">Combination of the two above</TD>
+</TR>
+</TABLE>
+<BR>
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html643"
+  HREF="node32.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html639"
+  HREF="node26.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html633"
+  HREF="node30.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html641"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html644"
+  HREF="node32.html">The lemma cache</A>
+<B> Up:</B> <A NAME="tex2html640"
+  HREF="node26.html">Quick Start - Some</A>
+<B> Previous:</B> <A NAME="tex2html634"
+  HREF="node30.html">Preprocessor command</A>
+ &nbsp; <B>  <A NAME="tex2html642"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sean Weaver
+2009-01-13
+</ADDRESS>
+</BODY>
+</HTML>

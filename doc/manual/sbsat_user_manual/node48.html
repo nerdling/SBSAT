@@ -1,0 +1,145 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Canonical form</TITLE>
+<META NAME="description" CONTENT="Canonical form">
+<META NAME="keywords" CONTENT="sbsat_user_manual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="sbsat_user_manual.css">
+
+<LINK REL="next" HREF="node54.html">
+<LINK REL="previous" HREF="node47.html">
+<LINK REL="up" HREF="node47.html">
+<LINK REL="next" HREF="node49.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html877"
+  HREF="node49.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html873"
+  HREF="node47.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html867"
+  HREF="node47.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html875"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html878"
+  HREF="node49.html">Comments</A>
+<B> Up:</B> <A NAME="tex2html874"
+  HREF="node47.html">Reference - Input formats</A>
+<B> Previous:</B> <A NAME="tex2html868"
+  HREF="node47.html">Reference - Input formats</A>
+ &nbsp; <B>  <A NAME="tex2html876"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION000101000000000000000"></A><A NAME="ref-can-section"></A>
+<BR>
+Canonical form
+</H2>
+
+<P>
+This is the most general input format.  Variables are represented as
+strings containing letters, numbers, or underscore characters, mixed
+in any way.  Boolean functions (including manipulators), and
+directives can be split over many lines of the input file (no
+continuation character is used).  Boolean functions are assigned
+reference numbers in the order they appear in the file, beginning with
+the number 1.  If, say, the 10th Boolean function is to be an argument
+to the 24th Boolean function, then the reference '<TT>$10</TT>' may be
+used as the argument instead of writing the entire 10th function
+again.  Doing so wherever possible can considerably shorten input file
+length, but requires writing nested functions on separate lines.  It
+follows that some way is needed to distinguish those functions from
+the top-level functions (those to be conjoined as specified in the
+given problem instance): the character '<TT>*</TT>' is used in the input
+file to mark a function as a top-level function and appears as the
+first character of the first line specifying such a function.  A
+solution to the problem defined in a file is an assignment satisfying
+those functions (including manipulators) which are preceeded by '<TT>*</TT>' (values of all non-starred functions and non-starred manipulators
+do not matter). If no function is preceeded by a `*', all functions are
+considered top level functions.
+
+<P>
+Lines that get a <TT>$</TT> number start with <TT>var</TT>, <TT>not</TT>, <TT>and</TT>,
+<TT>nand</TT>, <TT>or</TT>, <TT>nor</TT>, <TT>xor</TT>, <TT>equ</TT>, <TT>same</TT>, <TT>imp</TT>, <TT>nimp</TT>, <TT>ite</TT>, <TT>gcf</TT>, <TT>strengthen</TT>, <TT>prune</TT>, <TT>exist</TT>, <TT>universe</TT>, <TT>truth_table</TT>, <TT>minmax</TT>, <TT>safe</TT>, a
+single positive or negative variable, a function previously defined in a
+<TT>#define</TT> statement, or a single number with a <TT>$</TT> in front of it.
+Lines that do not get a <TT>$</TT> number start with <TT>initialbranch</TT>, <TT>print_tree</TT>, or <TT>pprint_tree</TT>, <TT>#define</TT>, <TT>print_xdd</TT>, or
+<TT>print_flat_xdd</TT>.
+
+<P>
+<BR><HR>
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL>
+<LI><A NAME="tex2html879"
+  HREF="node49.html">Comments</A>
+<LI><A NAME="tex2html880"
+  HREF="node50.html">File Header </A>
+<LI><A NAME="tex2html881"
+  HREF="node51.html">Boolean functions</A>
+<LI><A NAME="tex2html882"
+  HREF="node52.html">Manipulators</A>
+<LI><A NAME="tex2html883"
+  HREF="node53.html">Directives</A>
+</UL>
+<!--End of Table of Child-Links-->
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html877"
+  HREF="node49.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html873"
+  HREF="node47.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html867"
+  HREF="node47.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html875"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html878"
+  HREF="node49.html">Comments</A>
+<B> Up:</B> <A NAME="tex2html874"
+  HREF="node47.html">Reference - Input formats</A>
+<B> Previous:</B> <A NAME="tex2html868"
+  HREF="node47.html">Reference - Input formats</A>
+ &nbsp; <B>  <A NAME="tex2html876"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sean Weaver
+2009-01-13
+</ADDRESS>
+</BODY>
+</HTML>

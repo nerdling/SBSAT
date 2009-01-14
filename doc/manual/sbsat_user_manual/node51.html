@@ -1,0 +1,282 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Boolean functions</TITLE>
+<META NAME="description" CONTENT="Boolean functions">
+<META NAME="keywords" CONTENT="sbsat_user_manual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="sbsat_user_manual.css">
+
+<LINK REL="next" HREF="node52.html">
+<LINK REL="previous" HREF="node50.html">
+<LINK REL="up" HREF="node48.html">
+<LINK REL="next" HREF="node52.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html918"
+  HREF="node52.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html914"
+  HREF="node48.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html908"
+  HREF="node50.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html916"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html919"
+  HREF="node52.html">Manipulators</A>
+<B> Up:</B> <A NAME="tex2html915"
+  HREF="node48.html">Canonical form</A>
+<B> Previous:</B> <A NAME="tex2html909"
+  HREF="node50.html">File Header</A>
+ &nbsp; <B>  <A NAME="tex2html917"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION000101300000000000000">
+Boolean functions</A>
+</H3>
+
+<P>
+A Boolean function may be expressed two ways:
+<BR>
+<BR>
+<BR><TT>&lt;variable&gt;</TT>
+<BR><TT>&lt;function-identifier&gt; ( arg1 arg2 ... )</TT>
+<BR>
+<BR>
+<BR>
+where <TT>&lt;function-identifier&gt;</TT> is one of the following predefined
+function identifiers, and <TT>arg#</TT> is either a variable, a Boolean
+function or a reference to a Boolean function.  The token <TT>&lt;variable&gt;</TT>
+is a character string and its use in an input file creates a simple Boolean
+function which is identified by that name, the value of which is the value
+of the variable named <TT>&lt;variable&gt;</TT>.  Every Boolean function is
+implemented as a BDD (see Section&nbsp;<A HREF="node75.html#bdd-section">10.1</A>) and may have value <EM>T</EM>, or <EM>F</EM>, or have no value, depending on its arguments: values of
+Boolean functions are given as follows for each <TT>&lt;function-identifier&gt;</TT>.
+
+<P>
+
+<B><U>Remark</U></B>:&nbsp;Most functions take an arbitrary number of
+arguments, hence, parenthesis are necessary. Commas are considered
+whitespace and are ignored, however, their use is recommended to enhance the
+human readability of input files.
+
+<P>
+<B>VAR</B>
+<BR>
+<BR>
+<BR><IMG
+ WIDTH="503" HEIGHT="197" ALIGN="MIDDLE" BORDER="0"
+ SRC="img119.png"
+ ALT="$\textstyle \parbox{110mm}{
+Variables may be defined as Boolean functions using ...
+...$' refer to previously defined functions or
+manipulators instead of variables.}$">
+<BR>
+<P>
+<B>NOT</B>
+<BR>
+<BR>
+<BR><IMG
+ WIDTH="503" HEIGHT="104" ALIGN="MIDDLE" BORDER="0"
+ SRC="img120.png"
+ ALT="$\textstyle \parbox{110mm}{
+The unary Boolean function {\tt NOT} has a value eq...
+...ace of {\tt NOT} (functions cannot be complemented in
+this way). Examples are:}$">
+<BR>
+<BR>
+<BR><TT>not(x32)</TT>
+<BR><TT>-x32</TT>
+
+<P>
+<B>ITE</B>
+<BR>
+<BR>
+<BR><IMG
+ WIDTH="503" HEIGHT="102" ALIGN="MIDDLE" BORDER="0"
+ SRC="img121.png"
+ ALT="$\textstyle \parbox{110mm}{
+The ternary Boolean function {\tt ITE} has the value...
+...first argument has value {\em F}.
+Examples of this function are the following:}$">
+<BR>
+<BR>
+<BR><TT>ite(ite( x3, $5, -x5), x4, x7)</TT>
+<BR>
+<P>
+<B>AND</B>
+<BR>
+<BR>
+<BR><IMG
+ WIDTH="503" HEIGHT="75" ALIGN="MIDDLE" BORDER="0"
+ SRC="img122.png"
+ ALT="$\textstyle \parbox{110mm}{
+This Boolean function has value {\em T} if all its ...
+... at least one argument has value {\em F}.
+Examples of its use are as
+follows:}$">
+<BR>
+<BR>
+<BR><TT>and(x1, x2, x3, x4)</TT>
+<BR><TT>and(-x1,</TT>
+<BR>&nbsp;&nbsp;&nbsp;<TT>and(x2, x3, $4),</TT>
+<BR>&nbsp;&nbsp;&nbsp;<TT>x5, $6, x7)</TT>
+
+<P>
+<B>NAND</B>
+<BR>
+<BR>
+<BR><IMG
+ WIDTH="503" HEIGHT="54" ALIGN="MIDDLE" BORDER="0"
+ SRC="img123.png"
+ ALT="$\textstyle \parbox{110mm}{
+This Boolean function has value {\em F} if all its a...
+...ue
+{\em T} and has value {\em T} if at least one argument has value {\em F}.
+}$">
+<BR>
+<P>
+<B>OR</B>
+<BR>
+<BR>
+<BR><IMG
+ WIDTH="503" HEIGHT="54" ALIGN="MIDDLE" BORDER="0"
+ SRC="img124.png"
+ ALT="$\textstyle \parbox{110mm}{
+This Boolean function has value {\em F} if all its a...
+...lue
+{\em F} and has value {\em T} if at least one argument has value {\em T}.
+}$">
+<BR>
+<P>
+<B>NOR</B>
+<BR>
+<BR>
+<BR><IMG
+ WIDTH="503" HEIGHT="54" ALIGN="MIDDLE" BORDER="0"
+ SRC="img125.png"
+ ALT="$\textstyle \parbox{110mm}{
+This Boolean function has value {\em T} if all its a...
+...ue
+{\em F} and has value {\em F} if at least one argument has value {\em T}.
+}$">
+<BR>
+<P>
+<B>XOR</B>
+<BR>
+<BR>
+<BR><IMG
+ WIDTH="503" HEIGHT="51" ALIGN="MIDDLE" BORDER="0"
+ SRC="img126.png"
+ ALT="$\textstyle \parbox{110mm}{
+This Boolean function has value {\em F} if an even number of its arguments
+have value {\em T} and has the value {\em T} otherwise.}$">
+<BR>
+<P>
+<B>EQU</B>
+<BR>
+<BR>
+<BR><IMG
+ WIDTH="503" HEIGHT="54" ALIGN="MIDDLE" BORDER="0"
+ SRC="img127.png"
+ ALT="$\textstyle \parbox{110mm}{
+This Boolean function has value {\em T} if an even n...
+...{\em F} and has the value {\em F} otherwise. This is the negation
+of {\tt XOR}}$">
+<BR>
+<P>
+<B>SAME</B>
+<BR>
+<BR>
+<BR><IMG
+ WIDTH="503" HEIGHT="54" ALIGN="MIDDLE" BORDER="0"
+ SRC="img128.png"
+ ALT="$\textstyle \parbox{110mm}{
+This Boolean function has value {\em T} if all of it...
+...he
+same value, either {\em T} or {\em F}, and has the value {\em F} otherwise.}$">
+<BR>
+<P>
+<B>IMP</B>
+<BR>
+<BR>
+<BR><IMG
+ WIDTH="503" HEIGHT="126" ALIGN="MIDDLE" BORDER="0"
+ SRC="img129.png"
+ ALT="$\textstyle \parbox{110mm}{
+As a binary Boolean function, {\tt imp} has value {\...
+...r instance, {\tt imp(x1, x2, x3)} is equivalent to {\tt imp(imp(x1,
+x2), x3)}.}$">
+<BR>
+<P>
+<B>NIMP</B>
+<BR>
+<BR>
+<BR><IMG
+ WIDTH="503" HEIGHT="148" ALIGN="MIDDLE" BORDER="0"
+ SRC="img130.png"
+ ALT="$\textstyle \parbox{110mm}{
+As a binary Boolean function, {\tt imp} has value {\...
+...nstance, {\tt nimp(x1, x2, x3)} is equivalent to {\tt nimp(nimp(x1, x2),
+x3)}.}$">
+<BR>
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html918"
+  HREF="node52.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html914"
+  HREF="node48.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html908"
+  HREF="node50.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html916"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html919"
+  HREF="node52.html">Manipulators</A>
+<B> Up:</B> <A NAME="tex2html915"
+  HREF="node48.html">Canonical form</A>
+<B> Previous:</B> <A NAME="tex2html909"
+  HREF="node50.html">File Header</A>
+ &nbsp; <B>  <A NAME="tex2html917"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sean Weaver
+2009-01-13
+</ADDRESS>
+</BODY>
+</HTML>

@@ -1,0 +1,229 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Boolean functions</TITLE>
+<META NAME="description" CONTENT="Boolean functions">
+<META NAME="keywords" CONTENT="sbsat_user_manual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="sbsat_user_manual.css">
+
+<LINK REL="previous" HREF="node72.html">
+<LINK REL="up" HREF="node71.html">
+<LINK REL="next" HREF="node74.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1182"
+  HREF="node74.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1178"
+  HREF="node71.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1174"
+  HREF="node72.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1180"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1183"
+  HREF="node74.html">Reference - Preprocessing</A>
+<B> Up:</B> <A NAME="tex2html1179"
+  HREF="node71.html">SMURF format</A>
+<B> Previous:</B> <A NAME="tex2html1175"
+  HREF="node72.html">File Header</A>
+ &nbsp; <B>  <A NAME="tex2html1181"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION000107200000000000000">
+Boolean functions</A>
+</H3>
+
+<P>
+Each Boolean function is represented by a three line section of the
+input file.  All function sections are separated by the character
+'<TT>#</TT>'.  A '<TT>#</TT>' also separates the header from the first
+function section.  The format of a function section is the
+following:
+<BR>
+<BR>
+<BR><TT>&lt;number&gt;</TT>
+<BR><TT>&lt;var&gt; ... &lt;var&gt; -1</TT>
+<BR><TT>[ &lt;truth_table&gt; | &lt;function_identifier&gt; &lt;polarity_list&gt; ]</TT>
+<BR>
+<BR>
+<BR>
+The first line of each function section is a number which is the
+identity of the function, or function number.  Typically, function
+numbers are assigned in the order the functions appear in the file,
+beginning with 1.  The second line of a function section is a blank
+separated list of variables, terminated with -1.  The third line may
+be either a truth table or a function identifier and polarity list.  
+
+<P>
+One of two possible formats for the third line is a truth table.  A
+truth table is a string of <EM>0</EM>'s and <EM>1</EM>'s, the number of
+which must be <IMG
+ WIDTH="43" HEIGHT="20" ALIGN="BOTTOM" BORDER="0"
+ SRC="img162.png"
+ ALT="$2^{\char93  inp}$"> where <IMG
+ WIDTH="41" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img163.png"
+ ALT="$\char93  inp$"> is the number of variables
+on the second line of the function section.  Each <EM>0-1</EM> character
+represents the function's value given a particular assignment of
+inputs values: the <IMG
+ WIDTH="10" HEIGHT="17" ALIGN="BOTTOM" BORDER="0"
+ SRC="img33.png"
+ ALT="$i$">th <EM>0-1</EM> character in the truth table string
+(counting from the left starting with 0) is the function value given
+an input assignment matching the bits of the binary representation for
+<IMG
+ WIDTH="10" HEIGHT="17" ALIGN="BOTTOM" BORDER="0"
+ SRC="img33.png"
+ ALT="$i$"> where the <EM>least</EM> significant bit corresponds to the value
+assigned to the <EM>leftmost</EM> variable of the second line and a bit
+value of <EM>0</EM> (<EM>1</EM>) represents an assignment of <EM>F</EM> (<EM>T</EM>).  An example of a function section with a truth table is the
+following:
+<BR>
+<BR>
+<BR><TT>2</TT>
+<BR><TT>8 9 2 4 -1</TT>
+<BR><TT>1001011011110000</TT>
+<BR>
+<BR>
+<BR>
+This function has a value <EM>F</EM> if, for example, variable 8 has
+value <EM>T</EM> and variables 2,9, and 4 have value <EM>F</EM>.  This
+function has value <EM>T</EM> if, for example, variables 2 and 8 have
+value <EM>T</EM> and variables 4 and 9 have value <EM>F</EM>.
+
+<P>
+Another possible format for the third line of a function section is
+the specification of a function identifier and polarity list.  The
+intention of this format is to allow compact specification of commonly
+used functions (especially in circuit problems) with quite a few
+arguments that would otherwise require extremely large truth tables.
+Function identifiers accepted are: <TT>and=</TT>, <TT>or=</TT>, and <TT>plainor</TT>.  The identifier <TT>plainor</TT> correspond to the ``or''
+function described in Section&nbsp;<A HREF="node5.html#defs-section">2.2</A>.  Identifiers with
+<TT>=</TT> equate a single variable on the left of the <TT>=</TT> with a
+simple expression on the right of the type indicated by the
+identifier.  For example, <TT>and=</TT> corresponds to a function of the
+form:
+<BR>
+<BR>
+<BR><TT>&lt;var&gt; = and(&lt;var&gt;, ... &lt;var&gt;)</TT>
+<BR>
+<BR>
+<BR>
+This function has value <EM>T</EM> if and only if the value of the
+variable on the left of <TT>=</TT> is the same as the logical ``and'' of
+the variables on the right of <TT>=</TT>.  For identifiers with <TT>=</TT>,
+the polarity list is a string of characters from the set <!-- MATH
+ $\{{\it
+0},{\it 1},{\it 3}\}$
+ -->
+<IMG
+ WIDTH="65" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img164.png"
+ ALT="$\{{\it
+0},{\it 1},{\it 3}\}$"> with exactly one <I>3</I>.  The number of
+characters is the number of variables identified on the second line of
+the function section and each character corresponds to an input
+variable: the leftmost character corresponding to the leftmost input
+variable.  The '<I>3</I>' identifies the input variable that is on the
+left side of <TT>=</TT>.  The remaining <EM>0</EM>'s and <EM>1</EM>'s determine
+the polarity of the variables on the right side of <TT>=</TT>.  An
+example of a function section with function identifier containing <TT>=</TT> is the following:
+<BR>
+<BR>
+<BR><TT>41</TT>
+<BR><TT>4 11 12 186 187 188 189 193 382 -1</TT>
+<BR><TT>and= 011000031</TT>
+<BR>
+<BR>
+<BR>
+This would be identical to the following:
+<BR>
+<BR>
+<BR><TT>193 = and(-4, 11, 12, -186, -187, -188, -189, 382)</TT>
+<BR>
+<BR>
+<BR>
+If this function were to have a truth table instead of <TT>and=</TT>, the
+truth table would have 512 characters.  A similar description applies
+to the polarity list of function identifiers with <TT>=</TT> except that
+no '<I>3</I>' exists in such lists.  Figure&nbsp;<A HREF="#smurf-1-figure">19</A>
+shows an example of a S<SMALL>MURF</SMALL> formatted file: for the problem depicted
+the assignment of <EM>T</EM> to variable 2 and <EM>F</EM> to all other
+variables is a solution.
+
+<P>
+
+<DIV ALIGN="CENTER"><A NAME="smurf-1-figure"></A><A NAME="4566"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 19:</STRONG>
+A S<SMALL>MURF</SMALL> formatted file</CAPTION>
+<TR><TD><IMG
+ WIDTH="191" HEIGHT="373" BORDER="0"
+ SRC="img165.png"
+ ALT="\begin{figure}\begin{verbatim}4  ..."></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1182"
+  HREF="node74.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1178"
+  HREF="node71.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1174"
+  HREF="node72.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1180"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1183"
+  HREF="node74.html">Reference - Preprocessing</A>
+<B> Up:</B> <A NAME="tex2html1179"
+  HREF="node71.html">SMURF format</A>
+<B> Previous:</B> <A NAME="tex2html1175"
+  HREF="node72.html">File Header</A>
+ &nbsp; <B>  <A NAME="tex2html1181"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sean Weaver
+2009-01-13
+</ADDRESS>
+</BODY>
+</HTML>

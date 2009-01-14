@@ -1,0 +1,141 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Controlling preprocessing and search time</TITLE>
+<META NAME="description" CONTENT="Controlling preprocessing and search time">
+<META NAME="keywords" CONTENT="sbsat_user_manual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="sbsat_user_manual.css">
+
+<LINK REL="next" HREF="node34.html">
+<LINK REL="previous" HREF="node32.html">
+<LINK REL="up" HREF="node26.html">
+<LINK REL="next" HREF="node34.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html667"
+  HREF="node34.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html663"
+  HREF="node26.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html657"
+  HREF="node32.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html665"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html668"
+  HREF="node34.html">Creating and using an</A>
+<B> Up:</B> <A NAME="tex2html664"
+  HREF="node26.html">Quick Start - Some</A>
+<B> Previous:</B> <A NAME="tex2html658"
+  HREF="node32.html">The lemma cache</A>
+ &nbsp; <B>  <A NAME="tex2html666"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00064000000000000000">
+Controlling preprocessing and search time</A>
+</H2>
+
+<P>
+In some situations preprocessing time exceeds the savings in time
+realized during search.  In this case <TT>sbsat</TT> offers some ways
+to change the amount of preprocessing time performed.  These include:
+
+<OL>
+<LI>Change the preprocessing sequence to perform less iterations (see
+Section&nbsp;<A HREF="node29.html#preproc-sequence-section">5.1.2</A>).
+</LI>
+<LI>Specify a time limit, in seconds, for how long preprocessing can
+take. After the time limit has been reached the preprocessor will quit
+and <TT>sbsat</TT> will enter the search phase.
+</LI>
+<LI>The user can terminate preprocessing interactively with <TT>^C</TT>
+provided the switch <EM>-ctrl-c 1</EM> is used on the command line.
+</LI>
+<LI>The user can fast forward through preprocessing with the arrow key
+(a feature which is soon to be added).
+</LI>
+</OL>
+
+<P>
+An example of item 2 is the following:
+<BR>
+<BR>
+<BR><TT>$ sbsat example.cnf</TT> <TT><I>-max-preproc-time</I></TT> <TT>180</TT>
+<BR>
+<BR>
+<BR>
+which allows 3 minutes for preprocessing and continues to the search phase
+after that. This time constraint is checked between preprocessing options,
+so preprocessing could potentially terminate much later than desired.
+
+<P>
+Search time can also be controlled on the command line using a similar
+switch.  For example,
+<BR>
+<BR>
+<BR><TT>$ sbsat example.cnf</TT> <TT><I>-max-branching-time</I></TT> <TT>180</TT>
+<BR>
+<BR>
+<BR>
+limits search time to 3 minutes.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html667"
+  HREF="node34.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html663"
+  HREF="node26.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html657"
+  HREF="node32.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html665"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html668"
+  HREF="node34.html">Creating and using an</A>
+<B> Up:</B> <A NAME="tex2html664"
+  HREF="node26.html">Quick Start - Some</A>
+<B> Previous:</B> <A NAME="tex2html658"
+  HREF="node32.html">The lemma cache</A>
+ &nbsp; <B>  <A NAME="tex2html666"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sean Weaver
+2009-01-13
+</ADDRESS>
+</BODY>
+</HTML>

@@ -1,0 +1,267 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Locally Skewed, Globally Balanced</TITLE>
+<META NAME="description" CONTENT="Locally Skewed, Globally Balanced">
+<META NAME="keywords" CONTENT="sbsat_user_manual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="sbsat_user_manual.css">
+
+<LINK REL="next" HREF="node91.html">
+<LINK REL="previous" HREF="node89.html">
+<LINK REL="up" HREF="node88.html">
+<LINK REL="next" HREF="node91.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1401"
+  HREF="node91.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1397"
+  HREF="node88.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1391"
+  HREF="node89.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1399"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1402"
+  HREF="node91.html">Chaff-like</A>
+<B> Up:</B> <A NAME="tex2html1398"
+  HREF="node88.html">Reference - Search heuristics</A>
+<B> Previous:</B> <A NAME="tex2html1392"
+  HREF="node89.html">State Machines Used to</A>
+ &nbsp; <B>  <A NAME="tex2html1400"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION000122000000000000000"></A><A NAME="lsgb-section"></A>
+<BR>
+Locally Skewed, Globally Balanced
+</H2>
+
+<P>
+Memoized information is currently tailored for the primary search
+heuristic called <EM>Locally Skewed, Globally Balanced</EM> or LSGB.  The
+<EM>weight</EM> of a S<SMALL>MURF</SMALL> transition counts the number of literals
+forced on the transition, plus the expected number of literals forced
+below that state, where a forced literal after <IMG
+ WIDTH="18" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img256.png"
+ ALT="$m$"> additional choices
+is weighted <IMG
+ WIDTH="47" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img257.png"
+ ALT="$1/K^m$">.  (<IMG
+ WIDTH="19" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img258.png"
+ ALT="$K$">, set experimentally, is currently 3 by
+default.)  In Figure&nbsp;<A HREF="node89.html#smurf-figure">30</A>, the transition out of the
+start state on <IMG
+ WIDTH="31" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img259.png"
+ ALT="$\neg x_1$"> has weight
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+1+(\frac{1}{K}+\frac{1}{K}+\frac{1}{K}+\frac{1}{K})/4;
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="190" HEIGHT="40" BORDER="0"
+ SRC="img260.png"
+ ALT="\begin{displaymath}1+(\frac{1}{K}+\frac{1}{K}+\frac{1}{K}+\frac{1}{K})/4;\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+the transition out on <IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img7.png"
+ ALT="$x_4$">, 
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+0+(\frac{1}{K^2}+\frac{2}{K} + \frac{1}{K} + \frac{2}{K} + \frac{2}{K} +
+\frac{1}{K})/6.
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="273" HEIGHT="40" BORDER="0"
+ SRC="img261.png"
+ ALT="\begin{displaymath}0+(\frac{1}{K^2}+\frac{2}{K} + \frac{1}{K} + \frac{2}{K} + \frac{2}{K} +
+\frac{1}{K})/6.\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+Computing these weights is expensive but they are memoized in S<SMALL>MURF</SMALL>s during preprocessing and, during search, they are looked up in
+a table instead of being recomputed each time they are needed.
+
+<P>
+For the special data structures defined above, the calculation above
+is simulated.  If a disjunction <!-- MATH
+ $\lambda_1\vee\cdots\vee\lambda_m$
+ -->
+<IMG
+ WIDTH="96" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img262.png"
+ ALT="$\lambda_1\vee\cdots\vee\lambda_m$">
+with <IMG
+ WIDTH="13" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img263.png"
+ ALT="$k$"> still unassigned variables were represented as a S<SMALL>MURF</SMALL>,
+the weight of <IMG
+ WIDTH="19" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img255.png"
+ ALT="$\lambda_i$"> is 0 (since the clause immediately becomes
+satisfied, nothing more can be forced), and the weight of
+<IMG
+ WIDTH="30" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img264.png"
+ ALT="$\neg\lambda_i$"> is <IMG
+ WIDTH="80" HEIGHT="35" ALIGN="MIDDLE" BORDER="0"
+ SRC="img265.png"
+ ALT="$1/(2K)^{k-1}$">.  This is directly coded in the
+simulated S<SMALL>MURF</SMALL>.  Exclusive disjunctions are similar.
+Assignments are similar but break into cases; one recurrence relation
+is hard to solve, so weights are precomputed as a function of
+the number of unassigned <IMG
+ WIDTH="19" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img255.png"
+ ALT="$\lambda_i$">'s and are looked up during search.
+
+<P>
+The LSGB search heuristic is similar to the ``Johnson heuristic'' on
+CNF formulas where <IMG
+ WIDTH="48" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img266.png"
+ ALT="$K=2$">.  The intuition is to branch toward forced
+inferences as quickly as possible to narrow the search space (or get
+lemmas fast).  To pick the next variable to branch on: For each
+variable <IMG
+ WIDTH="19" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img78.png"
+ ALT="$x_i$">, compute (i) the sum <IMG
+ WIDTH="26" HEIGHT="37" ALIGN="MIDDLE" BORDER="0"
+ SRC="img267.png"
+ ALT="$S_i^+$"> of the <EM>weight</EM>s of
+transitions on <IMG
+ WIDTH="19" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img78.png"
+ ALT="$x_i$"> out of all current <!-- MATH
+ ${\mbox{\sc Smurf}}$
+ -->
+<IMG
+ WIDTH="54" HEIGHT="17" ALIGN="BOTTOM" BORDER="0"
+ SRC="img268.png"
+ ALT="${\mbox{\sc Smurf}}$"> states
+and (ii) the sum <IMG
+ WIDTH="26" HEIGHT="37" ALIGN="MIDDLE" BORDER="0"
+ SRC="img269.png"
+ ALT="$S_i^-$"> of the <EM>weight</EM>s of transitions on <IMG
+ WIDTH="29" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img270.png"
+ ALT="$\neg
+x_i$">.  A high sum represents a high ``payoff.''  For an ideal
+branching variable <IMG
+ WIDTH="19" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img78.png"
+ ALT="$x_i$">, both <IMG
+ WIDTH="19" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img78.png"
+ ALT="$x_i$"> and <IMG
+ WIDTH="29" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img270.png"
+ ALT="$\neg
+x_i$"> force many
+literals, so we branch on the variable <IMG
+ WIDTH="19" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img78.png"
+ ALT="$x_i$"> where <!-- MATH
+ $S_i^+\cdot S_i^-$
+ -->
+<IMG
+ WIDTH="59" HEIGHT="37" ALIGN="MIDDLE" BORDER="0"
+ SRC="img271.png"
+ ALT="$S_i^+\cdot S_i^-$">
+is maximum.  For that variable, branch first toward the larger of
+<IMG
+ WIDTH="54" HEIGHT="37" ALIGN="MIDDLE" BORDER="0"
+ SRC="img272.png"
+ ALT="$S_i^+,S_i^-$">.<A NAME="tex2html43"
+  HREF="footnode.html#foot3439"><SUP>13</SUP></A>
+<P>
+There are circumstances where other search heuristics are known to
+work well.  LSGB was intended for applications where not much is known
+about, or easily determined about, the given problem.  If the problem
+is known to have a lot of exploitable structure, it may be better to
+specify a different heuristic.  We allow the experienced user some
+choice (see Sections&nbsp;<A HREF="node91.html#chaff-section">11.3</A>
+and&nbsp;<A HREF="node92.html#user-defined-heuristic-section">11.4</A> below for more information).
+The S<SMALL>MURF</SMALL> structure admits such heuristics as well; on a simple
+heuristic, it may not be needed, but (except for preprocessing time)
+it does not hinder either.
+
+<P>
+In Section&nbsp;<A HREF="node107.html#results-section">16</A>, we present benchmark problems comparing
+SBSAT with LSGB to other solvers such as zChaff.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1401"
+  HREF="node91.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1397"
+  HREF="node88.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1391"
+  HREF="node89.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1399"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1402"
+  HREF="node91.html">Chaff-like</A>
+<B> Up:</B> <A NAME="tex2html1398"
+  HREF="node88.html">Reference - Search heuristics</A>
+<B> Previous:</B> <A NAME="tex2html1392"
+  HREF="node89.html">State Machines Used to</A>
+ &nbsp; <B>  <A NAME="tex2html1400"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sean Weaver
+2009-01-13
+</ADDRESS>
+</BODY>
+</HTML>

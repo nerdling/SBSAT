@@ -1,0 +1,245 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Strengthening</TITLE>
+<META NAME="description" CONTENT="Strengthening">
+<META NAME="keywords" CONTENT="sbsat_user_manual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="sbsat_user_manual.css">
+
+<LINK REL="next" HREF="node80.html">
+<LINK REL="previous" HREF="node78.html">
+<LINK REL="up" HREF="node74.html">
+<LINK REL="next" HREF="node80.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1267"
+  HREF="node80.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1263"
+  HREF="node74.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1257"
+  HREF="node78.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1265"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1268"
+  HREF="node80.html">Inferences</A>
+<B> Up:</B> <A NAME="tex2html1264"
+  HREF="node74.html">Reference - Preprocessing</A>
+<B> Previous:</B> <A NAME="tex2html1258"
+  HREF="node78.html">Branch Pruning</A>
+ &nbsp; <B>  <A NAME="tex2html1266"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION000115000000000000000"></A><A NAME="strengthening-section"></A>
+<BR>
+Strengthening
+</H2>
+
+<P>
+This binary operation on BDDs helps reveal inferences that are missed
+by branch pruning due to its sensitivity to variable ordering.
+Given two BDDs, <IMG
+ WIDTH="18" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img228.png"
+ ALT="$b_1$"> and <IMG
+ WIDTH="18" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img229.png"
+ ALT="$b_2$">, strengthening conjoins <IMG
+ WIDTH="18" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img228.png"
+ ALT="$b_1$"> with 
+the <EM>projection</EM> of <IMG
+ WIDTH="18" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img229.png"
+ ALT="$b_2$"> onto the variables of <IMG
+ WIDTH="18" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img228.png"
+ ALT="$b_1$">:
+that is, <!-- MATH
+ $b_1\wedge\exists{\vec x}b_2$
+ -->
+<IMG
+ WIDTH="68" HEIGHT="31" ALIGN="MIDDLE" BORDER="0"
+ SRC="img230.png"
+ ALT="$b_1\wedge\exists{\vec x}b_2$">, where <IMG
+ WIDTH="14" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img231.png"
+ ALT="$\vec x$"> is the set of 
+variables appearing in <IMG
+ WIDTH="18" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img229.png"
+ ALT="$b_2$"> but not in <IMG
+ WIDTH="18" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img228.png"
+ ALT="$b_1$">.  Strengthening each
+<IMG
+ WIDTH="17" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img232.png"
+ ALT="$b_i$"> against all other <IMG
+ WIDTH="18" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img233.png"
+ ALT="$b_j$">s sometimes reveals additional inferences
+or equivalences as above.  Figure&nbsp;<A HREF="#strengthen-figure">27</A> shows an example.
+The following is pseudo C++ code implementing strengthening:
+<BR>
+<BR>
+<BR><FONT SIZE="-1"><TT>BDD Strengthen (BDD <IMG
+ WIDTH="18" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img228.png"
+ ALT="$b_1$">, BDD <IMG
+ WIDTH="18" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img229.png"
+ ALT="$b_2$">) {</TT>
+<BR><TT>let <!-- MATH
+ ${\vec x}=\{x : x\in b_2, x\notin b_1\}$
+ -->
+<IMG
+ WIDTH="165" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img234.png"
+ ALT="${\vec x}=\{x : x\in b_2, x\notin b_1\}$">;</TT>
+<BR><TT>for all (<IMG
+ WIDTH="42" HEIGHT="31" ALIGN="MIDDLE" BORDER="0"
+ SRC="img235.png"
+ ALT="$x\in {\vec x}$">) <IMG
+ WIDTH="18" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img229.png"
+ ALT="$b_2$"> = ExQuant(<IMG
+ WIDTH="18" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img229.png"
+ ALT="$b_2$">, <IMG
+ WIDTH="14" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img43.png"
+ ALT="$x$">);</TT>
+<BR><TT>return <IMG
+ WIDTH="50" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img236.png"
+ ALT="$b_1\wedge b_2$">;</TT>
+<BR><TT>}</TT>
+<BR></FONT>
+
+<P>
+
+<DIV ALIGN="CENTER"><A NAME="strengthen-figure"></A><A NAME="3235"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 27:</STRONG>
+...then conjoin the two BDDs.  Inference revealed is <IMG
+ WIDTH="54" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img12.png"
+ ALT="$x_3=F$">.</CAPTION>
+<TR><TD><IMG
+ WIDTH="439" HEIGHT="396" BORDER="0"
+ SRC="img237.png"
+ ALT="\begin{figure}\hspace*{24mm}\epsfig{figure=Fig/strengthening_1.eps, width=2.6in}...
+...\hspace*{10mm}\epsfig{figure=Fig/strengthening_2.eps, width=3.8in}\end{figure}"></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+Strengthening is a way to pass important information from one BDD to
+another without causing a size explosion.  No explosion can occur
+because before <IMG
+ WIDTH="18" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img228.png"
+ ALT="$b_1$"> is conjoined with <IMG
+ WIDTH="18" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img229.png"
+ ALT="$b_2$">, all variables in <IMG
+ WIDTH="18" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img229.png"
+ ALT="$b_2$">
+that don't occur in <IMG
+ WIDTH="18" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img228.png"
+ ALT="$b_1$"> are existentially quantified away.  If an
+inference (of the form <IMG
+ WIDTH="46" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img238.png"
+ ALT="$x=T$">, <IMG
+ WIDTH="47" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img239.png"
+ ALT="$x=F$">, <IMG
+ WIDTH="56" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img240.png"
+ ALT="$x=+y$">, or <IMG
+ WIDTH="56" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img241.png"
+ ALT="$x=-y$">) exists due to
+just two BDDs, then strengthening those BDDs against each other
+(pairwise) can ``move'' those inferences, even if originally spread
+across both BDDs, to one of the BDDs.  Because strengthening shares
+information between BDDs it can be thought of as sharing intelligence
+and ``strengthening'' the relationships between functions; the added
+intelligence in these strengthened functions can be exploited by a
+smart search heuristic.  We have found that, in general, strengthening
+decreases the number of choicepoints when used in conjunction with the
+LSGB heuristic, though in strange cases it can also increase the
+number of choicepoints.  We believe this is due to the delicate nature
+of some problems where duplicating information in the BDDs leads the
+heuristic astray.  Strengthening may be applied to CNF formulas 
+and in this case it is the same as applying Davis-Putnam resolution
+selectively on some of the clauses.  When used on more complex
+functions it is clearer how to use it effectively as the clauses being
+resolved are grouped with some meaning.  Evidence for this comes from
+from examples from Bounded Model Checking (see Section&nbsp;<A HREF="node107.html#results-section">16</A>).
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1267"
+  HREF="node80.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1263"
+  HREF="node74.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1257"
+  HREF="node78.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1265"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1268"
+  HREF="node80.html">Inferences</A>
+<B> Up:</B> <A NAME="tex2html1264"
+  HREF="node74.html">Reference - Preprocessing</A>
+<B> Previous:</B> <A NAME="tex2html1258"
+  HREF="node78.html">Branch Pruning</A>
+ &nbsp; <B>  <A NAME="tex2html1266"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sean Weaver
+2009-01-13
+</ADDRESS>
+</BODY>
+</HTML>

@@ -1,0 +1,189 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Installing SBSAT</TITLE>
+<META NAME="description" CONTENT="Installing SBSAT">
+<META NAME="keywords" CONTENT="sbsat_user_manual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="sbsat_user_manual.css">
+
+<LINK REL="next" HREF="node10.html">
+<LINK REL="previous" HREF="node8.html">
+<LINK REL="up" HREF="node6.html">
+<LINK REL="next" HREF="node10.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html362"
+  HREF="node10.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html358"
+  HREF="node6.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html352"
+  HREF="node8.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html360"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html363"
+  HREF="node10.html">Compiling SBSAT</A>
+<B> Up:</B> <A NAME="tex2html359"
+  HREF="node6.html">Quick Start - Getting</A>
+<B> Previous:</B> <A NAME="tex2html353"
+  HREF="node8.html">Getting SBSAT</A>
+ &nbsp; <B>  <A NAME="tex2html361"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00043000000000000000"></A><A NAME="install-section"></A>
+<BR>
+Installing SBSAT
+</H2>
+
+<P>
+These instructions are only for installing SBSAT on computers running
+unix.  Instructions for Windows machines will be supplied in a future
+release.
+
+<P>
+Become <TT>root</TT> (This step may not be necessary).  This entails knowing the
+superuser password.  At the command line prompt, issue the command <TT>su</TT>
+and enter the superuser password when requested to do so.
+
+<P>
+If you have the CDROM, insert it into the CDROM drive and mount that
+drive, usually on <TT>/mnt/cdrom</TT>, using the following:
+<BR>
+<BR>
+<BR><TT>$ mount /dev/cdrom /mnt/cdrom</TT>
+<BR>
+<BR>
+<BR>
+If this command fails, find a suitable mount point in place of <TT>/mnt/cdrom</TT> or find the correct <TT>/dev</TT> for the CDROM (for example,
+<TT>/dev/scd0</TT>) or both.  If this still fails, consult a system
+administrator.  The following assumes the above command succeeded.
+Change directory to the place where SBSAT is to be installed (for
+example <TT>/usr/local</TT>), make a directory called <TT>sbsat</TT>,
+change to that directory, and copy the contents of the CDROM to the
+current directory using the following commands:
+<BR>
+<BR>
+<BR><TT>$ cd /usr/local</TT>
+<BR><TT>$ mkdir sbsat</TT>
+<BR><TT>$ cd sbsat</TT>
+<BR><TT>$ cp -r /mnt/cdrom/* .</TT>
+<BR>
+<BR>
+<BR>
+where the `<TT>.</TT>' is part of the command and means current directory.
+Use the <TT>umount</TT> command to unmount the CDROM as follows:
+<BR>
+<BR>
+<BR><TT>$ umount /mnt/cdrom</TT>
+<BR>
+<BR>
+<BR>
+If you are installing the tarball, move it to the directory in which
+SBSAT is to reside.  For example, if the target directory is <TT>/usr/local</TT> and <TT>sbsat-latest.tar.gz</TT> exists in the home directory
+of a user named <TT>franco</TT> then issue the command
+<BR>
+<BR>
+<BR><TT>$ mv ~franco/sbsat-latest.tar.gz /usr/local</TT>
+<BR>
+<BR>
+<BR>
+Unzip and unarchive the tarball using the following commands
+<BR>
+<BR>
+<BR><TT>$ cd /usr/local</TT>
+<BR><TT>$ tar -xvzf sbsat-latest.tar.gz</TT>
+<BR>
+<BR>
+<BR>
+You may remove the tarball, if you wish, with
+<BR>
+<BR>
+<BR><TT>$ rm sbsat-latest.tar</TT>
+<BR>
+<BR>
+<BR>
+The result of the above commands is that all files of the SBSAT package
+are in a directory such as
+<BR>
+<BR>
+<BR><TT>/usr/local/sbsat-&lt;version&gt;-&lt;revision&gt;</TT>
+<BR>
+<BR>
+<BR>
+where <TT>&lt;version&gt;</TT> and <TT>&lt;revision&gt;</TT> are the version and
+revision you have installed: for example, on January 5, 2007 the
+version is <TT>2.5b</TT> and the revision is <TT>5</TT> so in this case
+the directory is
+<BR>
+<BR>
+<BR><TT>/usr/local/sbsat-2.5b-5</TT>
+<BR>
+<BR>
+<BR>
+Set a link to this directory from <TT>/usr/local</TT> using a command
+like the following except with the correct version and revision numbers:
+<BR>
+<BR>
+<BR><TT>$ ln -s sbsat-2.5b-5 sbsat</TT>
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html362"
+  HREF="node10.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html358"
+  HREF="node6.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html352"
+  HREF="node8.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html360"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html363"
+  HREF="node10.html">Compiling SBSAT</A>
+<B> Up:</B> <A NAME="tex2html359"
+  HREF="node6.html">Quick Start - Getting</A>
+<B> Previous:</B> <A NAME="tex2html353"
+  HREF="node8.html">Getting SBSAT</A>
+ &nbsp; <B>  <A NAME="tex2html361"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sean Weaver
+2009-01-13
+</ADDRESS>
+</BODY>
+</HTML>

@@ -1,0 +1,281 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Conventions</TITLE>
+<META NAME="description" CONTENT="Conventions">
+<META NAME="keywords" CONTENT="sbsat_user_manual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="sbsat_user_manual.css">
+
+<LINK REL="next" HREF="node5.html">
+<LINK REL="previous" HREF="node3.html">
+<LINK REL="up" HREF="node3.html">
+<LINK REL="next" HREF="node5.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html298"
+  HREF="node5.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html294"
+  HREF="node3.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html288"
+  HREF="node3.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html296"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html299"
+  HREF="node5.html">Definitions</A>
+<B> Up:</B> <A NAME="tex2html295"
+  HREF="node3.html">Conventions and Definitions</A>
+<B> Previous:</B> <A NAME="tex2html289"
+  HREF="node3.html">Conventions and Definitions</A>
+ &nbsp; <B>  <A NAME="tex2html297"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00031000000000000000">
+Conventions</A>
+</H2>
+
+<P>
+When describing command line or file line syntax the following
+conventions apply.  Items of important types are signified by
+enclosing the item in angle brackets.  For example,
+<BR>
+<BR>
+<BR><TT>&lt;var&gt;</TT>
+<BR>
+<BR>
+<BR>
+is an item of type <TT>&lt;var&gt;</TT>.  Presumably the types used are defined
+in the text in close proximity to the first place they occur.
+The unterminated ellipsis (<TT>...</TT>) is used to indicate
+that arbitrarily many items of the type preceeding the ellipsis are
+possible after it.  For example,
+<BR>
+<BR>
+<BR><TT>&lt;var&gt; &lt;var&gt; ...</TT>
+<BR>
+<BR>
+<BR>
+means at least two items of type <TT>&lt;var&gt;</TT>, separated by blanks.
+and
+<BR>
+<BR>
+<BR><TT>&lt;var&gt;&lt;var&gt;...</TT>
+<BR>
+<BR>
+<BR>
+means at least two items of type <TT>&lt;var&gt;</TT>, not separated by blanks.
+A terminated ellipsis is used to indicate a list of finite size (one
+or more elements). For example,
+<BR>
+<BR>
+<BR><TT>var_1 ... var_n</TT>
+<BR>
+<BR>
+<BR>
+means a list containing <TT>n</TT> items, <IMG
+ WIDTH="43" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img41.png"
+ ALT="$n\geq 1$"> (the type of the items is
+described in the surrounding text).
+An optional flag or switch will be signified by
+enclosing it in square brackets.  For example:
+<BR>
+<BR>
+<BR><TT>[-]&lt;var&gt; ...</TT>
+<BR>
+<BR>
+<BR>
+means at least one <TT>&lt;var&gt;</TT> item may or may not be
+preceeded by the character '<TT>-</TT>'.  The vertical bar ('<TT>|</TT>')
+separating items between square brackets ('<TT>[</TT>', '<TT>]</TT>')
+indicates a choice.  For example:
+<BR>
+<BR>
+<BR><TT>[a|b|c]</TT>
+<BR>
+<BR>
+<BR>
+means either <TT>a</TT> or <TT>b</TT> or <TT>c</TT>.
+
+<P>
+Various segments of an <TT>sbsat</TT> session will be highlighted using
+font changes to assist the reader in understanding the nature of
+command segments and results.  Input and output will be specified
+using the typewriter font.  For example, these segments appear like
+this
+<BR>
+<BR>
+<BR><TT>Reading file ...</TT>
+<BR>
+<BR>
+<BR>
+The $ character at the beginning of a line is the <EM>command line
+prompt</EM> and indicates that what follows is a command to be executed.
+The prompt is usually followed by an <TT>sbsat</TT> command.  For
+example, the following is a simple <TT>sbsat</TT> command:
+<BR>
+<BR>
+<BR><TT>$ sbsat file.cnf</TT>
+<BR>
+<BR>
+<BR>
+Programming options appear in italics to contrast with option
+parameters which appear in plain text.  For example, to get command
+line help use this command:
+<BR>
+<BR>
+<BR><TT>$ sbsat</TT> <I>-help</I>
+<BR>
+<BR>
+<BR>
+An input file has keywords in boldface such as in the following:
+<BR>
+<BR>
+<BR><B>and</B>&nbsp;($1,&nbsp;2)
+<BR>
+<BR>
+<BR>
+The <TT>$</TT> of the previous line is <TT>not</TT> the command line
+prompt: its use in that context will be explained in 
+Section&nbsp;<A HREF="node48.html#ref-can-section">9.1</A>.  
+
+<P>
+Boolean Quantifiers and operators shall be written in the usual
+manner.  Thus,
+<BR>
+<TABLE CELLPADDING=3>
+<TR><TD ALIGN="RIGHT"><IMG
+ WIDTH="22" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img42.png"
+ ALT="$\forall x$"></TD>
+<TD ALIGN="CENTER">means</TD>
+<TD ALIGN="LEFT">For all values of <IMG
+ WIDTH="14" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img43.png"
+ ALT="$x$"></TD>
+</TR>
+<TR><TD ALIGN="RIGHT"><IMG
+ WIDTH="22" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img44.png"
+ ALT="$\exists x$"></TD>
+<TD ALIGN="CENTER">means</TD>
+<TD ALIGN="LEFT">There exists a value for <IMG
+ WIDTH="14" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img43.png"
+ ALT="$x$"> such that</TD>
+</TR>
+<TR><TD ALIGN="RIGHT"><IMG
+ WIDTH="15" HEIGHT="15" ALIGN="BOTTOM" BORDER="0"
+ SRC="img45.png"
+ ALT="$\neg$"></TD>
+<TD ALIGN="CENTER">means</TD>
+<TD ALIGN="LEFT">negation or complementation</TD>
+</TR>
+<TR><TD ALIGN="RIGHT"><IMG
+ WIDTH="15" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img46.png"
+ ALT="$\vee$"></TD>
+<TD ALIGN="CENTER">means</TD>
+<TD ALIGN="LEFT">logical ``or''</TD>
+</TR>
+<TR><TD ALIGN="RIGHT"><IMG
+ WIDTH="15" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img47.png"
+ ALT="$\wedge$"></TD>
+<TD ALIGN="CENTER">means</TD>
+<TD ALIGN="LEFT">logical ``and''</TD>
+</TR>
+<TR><TD ALIGN="RIGHT"><IMG
+ WIDTH="20" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img48.png"
+ ALT="$\Rightarrow$"></TD>
+<TD ALIGN="CENTER">means</TD>
+<TD ALIGN="LEFT">logical ``implies''</TD>
+</TR>
+<TR><TD ALIGN="RIGHT"><IMG
+ WIDTH="17" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img23.png"
+ ALT="$\oplus $"></TD>
+<TD ALIGN="CENTER">means</TD>
+<TD ALIGN="LEFT">logical ``exclusive-or''</TD>
+</TR>
+<TR><TD ALIGN="RIGHT"><IMG
+ WIDTH="17" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img49.png"
+ ALT="$\equiv$"></TD>
+<TD ALIGN="CENTER">means</TD>
+<TD ALIGN="LEFT">equivalent</TD>
+</TR>
+<TR><TD ALIGN="RIGHT"><!-- MATH
+ $\Leftrightarrow$
+ -->
+<IMG
+ WIDTH="20" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img50.png"
+ ALT="$\Leftrightarrow$"></TD>
+<TD ALIGN="CENTER">means</TD>
+<TD ALIGN="LEFT">``if and only if''</TD>
+</TR>
+</TABLE>
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html298"
+  HREF="node5.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html294"
+  HREF="node3.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html288"
+  HREF="node3.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html296"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html299"
+  HREF="node5.html">Definitions</A>
+<B> Up:</B> <A NAME="tex2html295"
+  HREF="node3.html">Conventions and Definitions</A>
+<B> Previous:</B> <A NAME="tex2html289"
+  HREF="node3.html">Conventions and Definitions</A>
+ &nbsp; <B>  <A NAME="tex2html297"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sean Weaver
+2009-01-13
+</ADDRESS>
+</BODY>
+</HTML>

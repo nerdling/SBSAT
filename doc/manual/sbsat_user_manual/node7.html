@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Hardware Requirements</TITLE>
+<META NAME="description" CONTENT="Hardware Requirements">
+<META NAME="keywords" CONTENT="sbsat_user_manual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="sbsat_user_manual.css">
+
+<LINK REL="next" HREF="node8.html">
+<LINK REL="previous" HREF="node6.html">
+<LINK REL="up" HREF="node6.html">
+<LINK REL="next" HREF="node8.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html338"
+  HREF="node8.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html334"
+  HREF="node6.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html328"
+  HREF="node6.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html336"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html339"
+  HREF="node8.html">Getting SBSAT</A>
+<B> Up:</B> <A NAME="tex2html335"
+  HREF="node6.html">Quick Start - Getting</A>
+<B> Previous:</B> <A NAME="tex2html329"
+  HREF="node6.html">Quick Start - Getting</A>
+ &nbsp; <B>  <A NAME="tex2html337"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00041000000000000000">
+Hardware Requirements</A>
+</H2>
+
+<P>
+Currently, <TT>sbsat</TT> requires a Unix style operating system with a
+c++ compiler, preferably, but not necessarily, the GNU g++ compiler.
+All examples require at least 32MB of RAM beyond the requirements of
+the operating system.  Disk requirements depend on the operating
+system but at least 50MB of free space is required.
+
+<P>
+By default, during execution, <TT>sbsat</TT> is allocated as much RAM as
+it needs, if available.  The amount of memory requested by <TT>sbsat</TT>
+can be limited only indirectly by changing, for example, the number of
+lemmas it maintains in the cache or the size of the pools for
+different stacks<A NAME="tex2html5"
+  HREF="footnode.html#foot4333"><SUP>4</SUP></A>. There is no other
+option to limit the amount of memory it is allocated.  Experiments
+confirm that the amount of memory requested linearly follows the size
+of the problem being solved. <TT>sbsat</TT> is not multi-threaded and does not
+take advantage of multiple processors.
+
+<P>
+<BR><HR>
+<ADDRESS>
+Sean Weaver
+2009-01-13
+</ADDRESS>
+</BODY>
+</HTML>

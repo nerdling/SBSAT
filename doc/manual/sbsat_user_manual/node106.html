@@ -1,0 +1,327 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Reference - Results: making BDDs from bmc</TITLE>
+<META NAME="description" CONTENT="Reference - Results: making BDDs from bmc">
+<META NAME="keywords" CONTENT="sbsat_user_manual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="sbsat_user_manual.css">
+
+<LINK REL="next" HREF="node107.html">
+<LINK REL="previous" HREF="node102.html">
+<LINK REL="up" HREF="sbsat_user_manual.html">
+<LINK REL="next" HREF="node107.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1595"
+  HREF="node107.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1591"
+  HREF="sbsat_user_manual.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1585"
+  HREF="node105.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1593"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1596"
+  HREF="node107.html">Reference - Results: Experiments</A>
+<B> Up:</B> <A NAME="tex2html1592"
+  HREF="sbsat_user_manual.html">SBSAT User Manual and</A>
+<B> Previous:</B> <A NAME="tex2html1586"
+  HREF="node105.html">Lemma database</A>
+ &nbsp; <B>  <A NAME="tex2html1594"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION000160000000000000000"></A><A NAME="the-reduction"></A>
+<BR>
+Reference - Results: making BDDs from <TT>bmc</TT>
+</H1>
+
+<P>
+Among the experiments we have run, those inputs relating specifically
+to bounded model checking benchmarks have been obtained from the
+output of the <TT>bmc</TT> program obtainable from Carnegie Mellon University.
+That program inputs a model checking problem and a number of time
+steps and outputs a propositional logic formula representing the BMC
+problem in three formats: a large propositional logic formula,
+three-address code representing the parse tree for that formula, and a
+CNF translation of the formula.  Program <TT>bmc</TT> internally
+represents all formulas recursively as
+<DIV ALIGN="CENTER">
+<TT>&lt;function&gt;</TT> = <TT>&lt;variable&gt;</TT>;
+<BR><TT>&lt;function&gt;</TT> = <IMG
+ WIDTH="15" HEIGHT="15" ALIGN="BOTTOM" BORDER="0"
+ SRC="img45.png"
+ ALT="$\neg$"><TT>&lt;variable&gt;</TT>;
+<BR><TT>&lt;function&gt;</TT> = <TT>&lt;function&gt;</TT> <B>op</B> <TT>&lt;function&gt;</TT>;
+<BR>
+</DIV>
+where <B>op</B> is one of <IMG
+ WIDTH="15" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img46.png"
+ ALT="$\vee$">, <IMG
+ WIDTH="15" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img47.png"
+ ALT="$\wedge$">, <IMG
+ WIDTH="20" HEIGHT="15" ALIGN="BOTTOM" BORDER="0"
+ SRC="img273.png"
+ ALT="$\to$">, <IMG
+ WIDTH="17" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img49.png"
+ ALT="$\equiv$">.  The
+binary tree associated with such a recursion is stored as a tree of
+pointers.  Each node of the tree is represented as a triple of
+pointers: to the left descendent, the right descendent, and the
+parent.  A pointer to the root of such a tree represents the output
+formula in three-address code.  Further processing inside <TT>bmc</TT>
+converts this to a CNF expression which is also available as output.
+As an example, we use <TT>bmc</TT> to generate the three-address code 
+problems for queue benchmarks (see next section) as follows:
+<BR><TT>genqueue # &gt; queue#</TT>
+<BR><TT>bmc -k # queue# -prove</TT>
+<BR>
+where <TT>genqueue</TT> is part of the <TT>bmc</TT> suite and <TT>#</TT> is replaced
+by a number representing problem complexity.  The CNF versions are 
+created by replacing the last line above with this:
+<BR><TT>bmc -k # queue# -dimacs</TT>
+
+<P>
+We use <TT>bmc</TT> to generate three-address and CNF inputs directly,
+instead of taking already generated CNF formulas ``off the shelf'' so
+we have equivalent three-address and CNF data.  Thus,
+times we report for zChaff, Berkmin, and Siege may differ from
+published times.
+
+<P>
+The largest propositional logic formula output by <TT>bmc</TT> is a
+conjunction of smaller formulas, so the obvious course for SBSAT is to
+read in each of those smaller formulas as a BDD.  Nevertheless, for
+some of the <TT>bmc</TT> outputs, those propositional logic formulas were
+much too large even to store as BDDs.  Of course, we also did not want
+to use the three-address code or the CNF representation directly,
+since that would negate the benefits of S<SMALL>MURF</SMALL>s which are to
+retain potentially exploitable domain-specific relationships.  Our
+current approach is successful in spite of being amazingly simplistic.
+
+<OL>
+<LI>We read in the three-address code and recreate the large
+      propositional formula so as not to lose domain-specific 
+      information.  Starting at the bottom of this formula
+      we start building a BDD.  We use a greedy algorithm: when 
+      the BDD gets too large (10-18 variables) we insert a new 
+      variable to represent the BDD so far, include a BDD
+      asserting that is what the new variable represents, replace the
+      part we have translated with the new variable, and continue the
+      process.  
+      This particular translation goes against our intention of
+      staying in the original domain, however, this simple process 
+      still proves useful. In future research we hope to find a better 
+      algorithm.  
+</LI>
+<LI>To break each resultant BDD <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img2.png"
+ ALT="$f$"> down to a 10-variable maximum
+      (so that the S<SMALL>MURF</SMALL>s remain suitably small), we do the
+      following (see also Section&nbsp;<A HREF="node86.html#splitter-section">10.12</A>):
+
+<P>
+(a) Compute all projections <IMG
+ WIDTH="18" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img197.png"
+ ALT="$f_i$"> of the BDD onto 10-variable
+      subsets of its variable set  (see
+      Section&nbsp;<A HREF="node79.html#strengthening-section">10.5</A> for the meaning of projection).
+
+<P>
+(b) Simplify the <IMG
+ WIDTH="18" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img197.png"
+ ALT="$f_i$">'s against each other
+      and delete resultant <IMG
+ WIDTH="18" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img197.png"
+ ALT="$f_i$">'s which
+      become <TT>True</TT>.  Below we call the final simplified <IMG
+ WIDTH="18" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img197.png"
+ ALT="$f_i$">'s
+      <!-- MATH
+ $f_1,\ldots,f_k$
+ -->
+<IMG
+ WIDTH="70" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img274.png"
+ ALT="$f_1,\ldots,f_k$">.
+
+<P>
+Note that <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img2.png"
+ ALT="$f$"> logically implies each <IMG
+ WIDTH="18" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img197.png"
+ ALT="$f_i$">; we can think of them
+      as ``approximations'' to <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img2.png"
+ ALT="$f$">, in the sense that each is false on
+      some, but probably not all, of the truth assignments on which
+      <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img2.png"
+ ALT="$f$"> is false.
+
+<P>
+(c) Recall that the goal is to replace <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img2.png"
+ ALT="$f$"> with a set of smaller
+      BDD's.  Now <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img2.png"
+ ALT="$f$"> is logically equivalent to the conjunction of
+      the set <!-- MATH
+ $\{f_1,f_2,\ldots,f_k,f^\star\}$
+ -->
+<IMG
+ WIDTH="132" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img275.png"
+ ALT="$\{f_1,f_2,\ldots,f_k,f^\star\}$"> where
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+f^\star=(f_1\wedge f_2\wedge \cdots \wedge f_k)\rightarrow f
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="200" HEIGHT="33" BORDER="0"
+ SRC="img276.png"
+ ALT="\begin{displaymath}f^\star=(f_1\wedge f_2\wedge \cdots \wedge f_k)\rightarrow f\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+      (<IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img277.png"
+ ALT="$f^\star$"> just excludes the truth assignments where all the
+      <IMG
+ WIDTH="18" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img197.png"
+ ALT="$f_i$">'s are true but <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img2.png"
+ ALT="$f$"> is is false).
+
+<P>
+If <IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img277.png"
+ ALT="$f^\star$"> has <IMG
+ WIDTH="37" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img278.png"
+ ALT="$\le 10$"> variables, we replace <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img2.png"
+ ALT="$f$"> with
+      <!-- MATH
+ $\{f_1,f_2,\ldots,f_k,f^\star\}$
+ -->
+<IMG
+ WIDTH="132" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img275.png"
+ ALT="$\{f_1,f_2,\ldots,f_k,f^\star\}$">.  If <IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img277.png"
+ ALT="$f^\star$"> has <IMG
+ WIDTH="37" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img279.png"
+ ALT="$&gt;10$">
+      variables, we replace <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img2.png"
+ ALT="$f$"> with <!-- MATH
+ $\{f_1,f_2,\ldots,f_k\}$
+ -->
+<IMG
+ WIDTH="108" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img280.png"
+ ALT="$\{f_1,f_2,\ldots,f_k\}$"> plus the
+      translation of <IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img277.png"
+ ALT="$f^\star$"> to CNF.  (Typically, <IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img277.png"
+ ALT="$f^\star$"> is
+      satisfied in most truth assignments, so its CNF translation
+      should be fairly short.)
+
+<P>
+Again, this procedure is simplistic.  We hope in the future to
+      find a better algorithm.
+</LI>
+</OL>
+
+<P>
+
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1595"
+  HREF="node107.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1591"
+  HREF="sbsat_user_manual.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1585"
+  HREF="node105.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1593"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1596"
+  HREF="node107.html">Reference - Results: Experiments</A>
+<B> Up:</B> <A NAME="tex2html1592"
+  HREF="sbsat_user_manual.html">SBSAT User Manual and</A>
+<B> Previous:</B> <A NAME="tex2html1586"
+  HREF="node105.html">Lemma database</A>
+ &nbsp; <B>  <A NAME="tex2html1594"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sean Weaver
+2009-01-13
+</ADDRESS>
+</BODY>
+</HTML>

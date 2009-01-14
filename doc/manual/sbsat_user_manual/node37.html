@@ -1,0 +1,200 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Reference - Command line</TITLE>
+<META NAME="description" CONTENT="Reference - Command line">
+<META NAME="keywords" CONTENT="sbsat_user_manual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="sbsat_user_manual.css">
+
+<LINK REL="next" HREF="node46.html">
+<LINK REL="previous" HREF="node36.html">
+<LINK REL="up" HREF="sbsat_user_manual.html">
+<LINK REL="next" HREF="node38.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html713"
+  HREF="node38.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html709"
+  HREF="sbsat_user_manual.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html703"
+  HREF="node36.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html711"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html714"
+  HREF="node38.html">General options</A>
+<B> Up:</B> <A NAME="tex2html710"
+  HREF="sbsat_user_manual.html">SBSAT User Manual and</A>
+<B> Previous:</B> <A NAME="tex2html704"
+  HREF="node36.html">Quick Start - Getting</A>
+ &nbsp; <B>  <A NAME="tex2html712"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION00080000000000000000"></A><A NAME="ref-command-line-section"></A>
+<BR>
+Reference - Command line
+</H1>
+
+<P>
+The executable file that does the work of SBSAT is called <TT>sbsat</TT>
+and is run from the command prompt of a Unix shell.  The command line
+has the following structure:
+<BR>
+<BR>
+<BR><TT>sbsat [options] [inputfile [outputfile]]</TT>
+<BR>
+<BR>
+<BR>
+where <TT>inputfile</TT> is the name of a file containing a problem to be
+solved, and <TT>outputfile</TT> names a file to which output from a run of <TT>sbsat</TT> can be directed.  The <TT>inputfile</TT> can take several formats, all
+somewhat different from each other, which are described in
+Section&nbsp;<A HREF="node47.html#format-section">9</A>.  Options customize the execution of <TT>sbsat</TT>: they control preprocessing, search, input, and output specifics and
+more.  Observe that <TT>options</TT>, <TT>inputfile</TT>, and <TT>outputfile</TT> are
+all optional, but that if <TT>outputfile</TT> is used, it is expected to be
+placed after <TT>inputfile</TT>.
+
+<P>
+Options are invoked using switches.  A switch is preceeded by one or two
+dashes ('<TT>-</TT>' or '<TT>-</TT>) and should be immediately followed by a
+parameter which is either an integer or a string, depending on the switch
+(at the moment there are no integer switches associated with <TT>sbsat</TT>.
+If a switch requires a parameter, one or more blank characters separates it
+from the parameter.  Switch/parameter pairs are separated from each other
+and the file names by blanks.  There are many switches and they are
+organized below by type.
+
+<P>
+Some example runs are as follows:
+<BR>
+<BR>
+<BR><TT>$ sbsat <I>-help</I></TT>
+<BR>
+Lists all command line options
+<BR>
+<BR>
+<BR><TT>$ sbsat <I>-R</I> r example.cnf</TT>
+<BR>
+Solve the problem in <TT>example.cnf</TT>, show the
+result raw
+<BR>
+<BR>
+<BR><TT>$ sbsat <I>-P {ExDc}3{ExSt}2{ExPr}10</I> example.cnf</TT>
+<BR>
+Preprocess the problem in <TT>example.cnf</TT> a
+certain way, then solve.
+
+<P>
+Switch-parameter pairs and file names may be placed anywhere on a
+command line after <TT>sbsat</TT>.  Thus, the following two runs are
+identical:
+<BR>
+<BR>
+<BR><TT>$ sbsat <I>-R</I> r example.cnf</TT>
+<BR><TT>$ sbsat example.cnf <I>-R</I> r</TT>
+
+<P>
+A switch may appear more than once on a command line.  In that case
+the rightmost switch applies.  In case contradictory switches are
+given, the rightmost applies.  For example:
+<BR>
+<BR>
+<BR><TT>$ sbsat <I>-b -w</I></TT>
+
+<P>
+will invoke the BDD WalkSAT search (see Page&nbsp;<A HREF="node41.html#walksat_page"><IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]"
+ SRC="file:/sw/share/lib/latex2html/icons/crossref.png"></A> for
+option <TT>-w</TT>).  Some switch combinations cooperate with each other.  For
+example:
+<BR>
+<BR>
+<BR><TT>$ sbsat <I>-All</I> 0 <I>-St</I> 1</TT>
+
+<P>
+turns all preprocessing off then turns strengthening on (see
+Page&nbsp;<A HREF="node42.html#all_page"><IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]"
+ SRC="file:/sw/share/lib/latex2html/icons/crossref.png"></A> for preprocessing switches).
+
+<P>
+<BR><HR>
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL>
+<LI><A NAME="tex2html715"
+  HREF="node38.html">General options</A>
+<LI><A NAME="tex2html716"
+  HREF="node39.html">BDD table options</A>
+<LI><A NAME="tex2html717"
+  HREF="node40.html">Input options</A>
+<LI><A NAME="tex2html718"
+  HREF="node41.html">Output options</A>
+<LI><A NAME="tex2html719"
+  HREF="node42.html">Preprocessing options</A>
+<LI><A NAME="tex2html720"
+  HREF="node43.html">General solver options</A>
+<LI><A NAME="tex2html721"
+  HREF="node44.html">SMURF Solver options</A>
+<LI><A NAME="tex2html722"
+  HREF="node45.html">BDD WalkSAT solver options</A>
+</UL>
+<!--End of Table of Child-Links-->
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html713"
+  HREF="node38.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html709"
+  HREF="sbsat_user_manual.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html703"
+  HREF="node36.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html711"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html714"
+  HREF="node38.html">General options</A>
+<B> Up:</B> <A NAME="tex2html710"
+  HREF="sbsat_user_manual.html">SBSAT User Manual and</A>
+<B> Previous:</B> <A NAME="tex2html704"
+  HREF="node36.html">Quick Start - Getting</A>
+ &nbsp; <B>  <A NAME="tex2html712"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sean Weaver
+2009-01-13
+</ADDRESS>
+</BODY>
+</HTML>

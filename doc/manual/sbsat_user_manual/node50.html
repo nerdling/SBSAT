@@ -1,0 +1,90 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>File Header </TITLE>
+<META NAME="description" CONTENT="File Header ">
+<META NAME="keywords" CONTENT="sbsat_user_manual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="sbsat_user_manual.css">
+
+<LINK REL="next" HREF="node51.html">
+<LINK REL="previous" HREF="node49.html">
+<LINK REL="up" HREF="node48.html">
+<LINK REL="next" HREF="node51.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html906"
+  HREF="node51.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html902"
+  HREF="node48.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html896"
+  HREF="node49.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html904"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html907"
+  HREF="node51.html">Boolean functions</A>
+<B> Up:</B> <A NAME="tex2html903"
+  HREF="node48.html">Canonical form</A>
+<B> Previous:</B> <A NAME="tex2html897"
+  HREF="node49.html">Comments</A>
+ &nbsp; <B>  <A NAME="tex2html905"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION000101200000000000000">
+File Header </A>
+</H3>
+
+<P>
+The header conforms to the DIMACS standard which is as follows:
+<BR>
+<BR>
+<BR><TT>p bdd &lt;#vars&gt; &lt;#functions&gt;</TT>
+<BR>
+<BR>
+<BR>
+The letter '<TT>p</TT>' must appear at the start of the
+header.  The second header token, which in this case is '<TT>bdd</TT>',
+identifies the input format.  The header contains two integer fields:
+<TT>&lt;#vars&gt;</TT> is the number of distinct variables contained in the
+file; <TT>&lt;#functions&gt;</TT> is the number of Boolean functions (including
+manipulators) contained in the file.  The following is an example of a
+valid header for a file containing 97 functions composed from 56
+distinct variables.
+<BR>
+<BR>
+<BR><TT>p bdd 56 97</TT>
+
+<P>
+<BR><HR>
+<ADDRESS>
+Sean Weaver
+2009-01-13
+</ADDRESS>
+</BODY>
+</HTML>

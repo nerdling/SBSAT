@@ -1,0 +1,363 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Definitions</TITLE>
+<META NAME="description" CONTENT="Definitions">
+<META NAME="keywords" CONTENT="sbsat_user_manual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="sbsat_user_manual.css">
+
+<LINK REL="previous" HREF="node4.html">
+<LINK REL="up" HREF="node3.html">
+<LINK REL="next" HREF="node6.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html308"
+  HREF="node6.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html304"
+  HREF="node3.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html300"
+  HREF="node4.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html306"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html309"
+  HREF="node6.html">Quick Start - Getting</A>
+<B> Up:</B> <A NAME="tex2html305"
+  HREF="node3.html">Conventions and Definitions</A>
+<B> Previous:</B> <A NAME="tex2html301"
+  HREF="node4.html">Conventions</A>
+ &nbsp; <B>  <A NAME="tex2html307"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00032000000000000000"></A><A NAME="defs-section"></A>
+<BR>
+Definitions
+</H2>
+
+<P>
+
+<UL>
+<LI><B>Backjumping</B> - Advancement of the search by skipping over
+some choice points that cannot possibly lead to a solution.
+
+<P>
+</LI>
+<LI><B>BDD</B> - A Binary Decision Diagram is a DAG-representation
+of a Boolean function expressed using only the operator <TT>if-then-else</TT>,
+plus constants <EM>T</EM> and <EM>F</EM>, Boolean variables, and parentheses.  BDD
+representations are usually far more compact than truth table
+representations.  The form of BDDs we used are reduced and ordered as these are
+canonical representations of functions.<A NAME="bdd-definition-page"></A>
+<P>
+</LI>
+<LI><B>Boolean Function</B> - A Boolean function has one or more
+variable or Boolean function arguments and may or may not return a Boolean
+value depending on values assigned to or returned from its arguments.  Any
+Boolean function can be expressed in terms of a nesting of Boolean functions
+as BDDs. This fact is used to express arbitrary Boolean functions in our
+canonical form (see Section&nbsp;<A HREF="node48.html#ref-can-section">9.1</A>).
+
+<P>
+</LI>
+<LI><B>Boolean Variable</B> - A variable may or may not be assigned a
+value: if it is assigned a value that value is one of the atoms in the set
+<IMG
+ WIDTH="51" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img36.png"
+ ALT="$\{T,F\}$">, where <IMG
+ WIDTH="16" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img51.png"
+ ALT="$T$"> and <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img52.png"
+ ALT="$F$"> may be thought of as corresponding to <EM>true</EM> and <EM>false</EM>, respectively.  In this document we alternatively and
+interchangeably use the set <IMG
+ WIDTH="43" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img53.png"
+ ALT="$\{1,0\}$"> for <IMG
+ WIDTH="51" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img36.png"
+ ALT="$\{T,F\}$"> since so much of the
+literature uses that notation.  Hereafter, when we say variable we mean
+Boolean variable.
+
+<P>
+</LI>
+<LI><B>Choice point</B> - The point in a search where an uninferred variable is
+given a value decided upon by some heuristic.
+
+<P>
+</LI>
+<LI><B>Clause</B> - A disjunction (<IMG
+ WIDTH="15" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img46.png"
+ ALT="$\vee$">) of literals.  For example,
+<!-- MATH
+ $(x_{35}\vee \neg x_{42}\vee x_{12})$
+ -->
+<IMG
+ WIDTH="131" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img54.png"
+ ALT="$(x_{35}\vee \neg x_{42}\vee x_{12})$">.
+
+<P>
+</LI>
+<LI><B>CNF</B> - Conjunctive Normal Form.  A conjunction (<IMG
+ WIDTH="15" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img47.png"
+ ALT="$\wedge$">)
+of clauses.  This is an important form for Boolean expressions since
+there exists an efficient translation to a logically equivalent CNF
+expression from any Boolean expression.
+
+<P>
+</LI>
+<LI><B>DIMACS CNF</B> - Standard format accepted by all CNF SAT
+solvers.  For a complete specification of this format see
+<BR>
+<BR>
+<BR><TT><FONT SIZE="-1">ftp://dimacs.rutgers.edu/pub/challenge/satisfiability/doc/satformat.dvi</FONT></TT>
+<BR>
+<BR>
+<BR>
+Skeletal descriptions are found in Sections&nbsp;<A HREF="node15.html#cnf-section">4.2</A>
+and&nbsp;<A HREF="node54.html#ref-cnf-section">9.2</A>.
+
+<P>
+</LI>
+<LI><B>Equi-satisfiable</B> - A scheme for translating one Boolean
+function to another such that the target function is satisfiable if and only
+if the source function is satisfiable is said to produce an equi-satisfiable
+target function.<A NAME="s-eq-page"></A>
+<P>
+</LI>
+<LI><B>Inference</B> - An assignment of a value to a variable that is
+forced due to the constraints of the given expression.
+
+<P>
+</LI>
+<LI><B>Lemma</B> - A Boolean expression inferred (<I>i.e.</I>,
+learned) during the search.  SBSAT learns lemmas by analyzing why some
+branch of the search tree failed to find a solution.  SBSAT's lemmas are
+<EM>clauses</EM>.  A solver, such as SBSAT, that learns lemmas can often use
+previously learned lemmas to avoid researching the same failed
+variable assignments.
+
+<P>
+</LI>
+<LI><B>Literal</B> - A variable or its negation.  For example,
+<IMG
+ WIDTH="27" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img55.png"
+ ALT="$x_{35}$"> or <IMG
+ WIDTH="38" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img56.png"
+ ALT="$\neg x_{35}$">.  If the variable <IMG
+ WIDTH="27" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img55.png"
+ ALT="$x_{35}$"> is assigned the
+value <EM>T</EM> then the value of literal <IMG
+ WIDTH="27" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img55.png"
+ ALT="$x_{35}$"> is <EM>T</EM> and the
+value of <IMG
+ WIDTH="38" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img56.png"
+ ALT="$\neg x_{35}$"> is <EM>F</EM>.
+
+<P>
+</LI>
+<LI><B>Logically equivalent</B> - A scheme for translating one Boolean
+function to another such that the target function evaluates to the same truth
+value as the source function in every model is said to produce a logically
+equivalent target function.<A NAME="s-leq-page"></A>
+<P>
+</LI>
+<LI><B>Preprocessing</B> - Operations applied to an <TT>sbsat</TT> input
+expression <EM>before</EM> search commences.  Many such operations are
+possible and running one operation may affect the result of others.
+A list of all preprocessing options and descriptions of their
+operation is given in Section&nbsp;<A HREF="node74.html#preproc-section">10</A>.
+
+<P>
+</LI>
+<LI><B>Satisfiable</B> - A Boolean function is <EM>satisfiable</EM> if
+and only if there exists an assignment of values to its variables
+which causes it to evaluate to <EM>1</EM>.  A section of the output
+generated by <TT>sbsat</TT> says whether the input expression is
+satisfiable.  For example, see the next to last line of
+Figure&nbsp;<A HREF="node15.html#small-figure">4</A> below.
+
+<P>
+</LI>
+<LI><B>Solution</B> - An assignment of values to variables of a
+Boolean function which causes it to evaluate to <EM>1</EM>.  A section of
+the output generated by <TT>sbsat</TT> provides a solution, if one exists
+and if the proper command line switches are set.  For example, see the
+last lines of Figure&nbsp;<A HREF="node15.html#small-2-figure">5</A>.  A solution, as presented
+by <TT>sbsat</TT>, is a list of variable names and each that is
+preceeded by a '<TT>-</TT>' is assigned value <EM>F</EM> and all others are
+assigned value <EM>T</EM>.
+
+<P>
+</LI>
+<LI><B>Standard input</B> - An input stream from the console to a
+running executable, for example <TT>sbsat</TT>.  Input may be
+redirected in Unix or Windows using the <TT>&lt;</TT> character before the
+entity containing desired input, usually a file.
+
+<P>
+</LI>
+<LI><B>Standard output</B> - An output stream to the console from a
+running executable, for example <TT>sbsat</TT>.  Output may be
+redirected in Unix or Windows using the <TT>&gt;</TT> character before the
+entity which is to receive the stream, usually a file.
+
+<P>
+</LI>
+<LI><B>Switch</B> - an <TT>sbsat</TT> option given by the user on the
+command line.  Switches are always preceeded either by a dash (<TT>-</TT>) or a
+double dash (<TT>-</TT>).  All switches understood by <TT>sbsat</TT> are listed
+and described briefly in Section&nbsp;<A HREF="node37.html#ref-command-line-section">7</A>.
+
+<P>
+</LI>
+<LI><B>Truth Table</B> - The truth table for a particular Boolean
+function is a listing of all possible assignments of values to the
+variables of the function; and next to each assignment is the value
+the function takes under that assignment.
+
+<P>
+</LI>
+<LI><B>Unary, Binary, and Ternary Boolean Functions</B> (<TT>not</TT>, <TT>and</TT>,
+<TT>nand</TT>, <TT>or</TT>, <TT>nor</TT>, <TT>xor</TT>, <TT>equ</TT>, <TT>imp</TT>, <TT>nimp</TT>, <TT>ite</TT> ) - A Boolean function of two variables. There are
+<IMG
+ WIDTH="63" HEIGHT="22" ALIGN="BOTTOM" BORDER="0"
+ SRC="img57.png"
+ ALT="$2^{2^2}=16$"> different binary Boolean functions and 2 unary functions.
+Names associated with a subset of these that include only non-trivial
+functions are given in the following table where, for binary functions, the
+bits of the 1-0 strings correspond to function values given input values of
+<TT>00</TT>, <TT>01</TT>, <TT>10</TT>, and <TT>11</TT>, respectively, from left to
+right, and for the unary function the two bit strings correspond to input
+values of <TT>0</TT> and <TT>1</TT>, respectively, from left to right.  An
+important ternary function is <TT>if-then-else</TT> which we call <TT>ite</TT>.
+Its functionality is also expressed in the table with the obvious
+correspondence between input values and function values.
+<DIV ALIGN="CENTER">
+<TABLE CELLPADDING=3>
+<TR><TD ALIGN="CENTER" COLSPAN=5><U><B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Binary&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</U></B></TD>
+<TD ALIGN="CENTER" COLSPAN=1>&nbsp;</TD>
+<TD ALIGN="CENTER" COLSPAN=2><U><B>&nbsp;&nbsp;&nbsp;&nbsp;Unary&nbsp;&nbsp;&nbsp;&nbsp;</U></B></TD>
+</TR>
+<TR><TD ALIGN="RIGHT"><TT>and</TT></TD>
+<TD ALIGN="LEFT"><TT>0001</TT></TD>
+<TD ALIGN="CENTER">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+<TD ALIGN="RIGHT"><TT>nand</TT></TD>
+<TD ALIGN="LEFT"><TT>1110</TT></TD>
+<TD ALIGN="CENTER">&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+<TD ALIGN="RIGHT"><TT>not</TT></TD>
+<TD ALIGN="LEFT"><TT>10</TT></TD>
+</TR>
+<TR><TD ALIGN="RIGHT"><TT>or</TT></TD>
+<TD ALIGN="LEFT"><TT>0111</TT></TD>
+<TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="RIGHT"><TT>nor</TT></TD>
+<TD ALIGN="LEFT"><TT>1000</TT></TD>
+<TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="RIGHT">&nbsp;</TD>
+<TD ALIGN="LEFT">&nbsp;</TD>
+</TR>
+<TR><TD ALIGN="RIGHT"><TT>equ</TT></TD>
+<TD ALIGN="LEFT"><TT>1001</TT></TD>
+<TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="RIGHT"><TT>xor</TT></TD>
+<TD ALIGN="LEFT"><TT>0110</TT></TD>
+<TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="CENTER" COLSPAN=2><U><B>&nbsp;&nbsp;&nbsp;Ternary&nbsp;&nbsp;&nbsp;</U></B></TD>
+</TR>
+<TR><TD ALIGN="RIGHT"><TT>imp</TT></TD>
+<TD ALIGN="LEFT"><TT>1101</TT></TD>
+<TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="RIGHT"><TT>nimp</TT></TD>
+<TD ALIGN="LEFT"><TT>0010</TT></TD>
+<TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="RIGHT"><TT>ite</TT></TD>
+<TD ALIGN="LEFT"><TT>01010011</TT></TD>
+</TR>
+</TABLE>
+</DIV>
+
+<P>
+</LI>
+<LI><B>Unsatisfiable</B> - A Boolean function is <EM>unsatisfiable</EM>
+if and only if it is not satisfiable.  A section of the output
+generated by <TT>sbsat</TT> will say whether the input expression is
+unsatisfiable.
+
+<P>
+</LI>
+</UL>
+
+<P>
+
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html308"
+  HREF="node6.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html304"
+  HREF="node3.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html300"
+  HREF="node4.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html306"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html309"
+  HREF="node6.html">Quick Start - Getting</A>
+<B> Up:</B> <A NAME="tex2html305"
+  HREF="node3.html">Conventions and Definitions</A>
+<B> Previous:</B> <A NAME="tex2html301"
+  HREF="node4.html">Conventions</A>
+ &nbsp; <B>  <A NAME="tex2html307"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sean Weaver
+2009-01-13
+</ADDRESS>
+</BODY>
+</HTML>

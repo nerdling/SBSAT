@@ -1,0 +1,168 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Splitter</TITLE>
+<META NAME="description" CONTENT="Splitter">
+<META NAME="keywords" CONTENT="sbsat_user_manual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="sbsat_user_manual.css">
+
+<LINK REL="next" HREF="node87.html">
+<LINK REL="previous" HREF="node85.html">
+<LINK REL="up" HREF="node74.html">
+<LINK REL="next" HREF="node87.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1351"
+  HREF="node87.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1347"
+  HREF="node74.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1341"
+  HREF="node85.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1349"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1352"
+  HREF="node87.html">Universe</A>
+<B> Up:</B> <A NAME="tex2html1348"
+  HREF="node74.html">Reference - Preprocessing</A>
+<B> Previous:</B> <A NAME="tex2html1342"
+  HREF="node85.html">Rewind</A>
+ &nbsp; <B>  <A NAME="tex2html1350"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION0001112000000000000000"></A><A NAME="splitter-section"></A>
+<BR>
+Splitter
+</H2>
+
+<P>
+The splitter is intended to replace large BDDs with sets of small
+BDDs.  This is required in two circumstances.  First, one of the
+objectives of preprocessing is to reveal inferences that may be used
+to reduce the size of the input before search is applied.  This is
+done by applying various BDD operations which may result in some BDDs
+being fairly large.  But S<SMALL>MURF</SMALL>s must be created from small BDDs.
+So the large BDDs must be split into small ones which are turned into
+S<SMALL>MURF</SMALL>s.  This is accomplished by the splitter.  Second, when
+using the three-address code available from the output of the <TT>bmc</TT> tool (see Section&nbsp;<A HREF="node106.html#the-reduction">15</A>), large BDDs result and the
+splitter is used to create smaller ones from the larger ones so
+reasonable sized S<SMALL>MURF</SMALL>s can be created from them.
+
+<P>
+The splitter can be turned on by the user with the <TT>-Sp 1</TT> command
+line option.  The maximum number of variables to split on is
+controlled from the command line using the <TT>-do-split-max-vars
+&lt;number&gt;</TT> switch (Page&nbsp;<A HREF="node42.html#split-page"><IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]"
+ SRC="file:/sw/share/lib/latex2html/icons/crossref.png"></A>).  The number of variables
+to split on is 10 by default.
+
+<P>
+The splitter will first try to break up all big BDDs by selecting a
+big BDD <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img2.png"
+ ALT="$f$"> and projecting <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img2.png"
+ ALT="$f$"> onto all 10-variable subsets of it's
+variable set.  We could think of each projection <IMG
+ WIDTH="18" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img197.png"
+ ALT="$f_i$"> as a weak
+approximation to <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img2.png"
+ ALT="$f$">.  We collect these projections together and use
+branch pruning to simplify the collection.  To ``project''
+an <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img2.png"
+ ALT="$f$"> onto a set of variables means to quantify out all variables
+<EM>not</EM> in that set (see Section&nbsp;<A HREF="node79.html#strengthening-section">10.5</A> for details).
+
+<P>
+Finally, see how close we've come to <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img2.png"
+ ALT="$f$">: conjoin all these approximations
+<IMG
+ WIDTH="18" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img197.png"
+ ALT="$f_i$"> together, yielding <IMG
+ WIDTH="18" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img10.png"
+ ALT="$f^\prime $">, and replace <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img2.png"
+ ALT="$f$"> with 
+<!-- MATH
+ $and(f, not(f^\prime))$
+ -->
+<IMG
+ WIDTH="108" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img250.png"
+ ALT="$and(f, not(f^\prime))$">.
+If some BDDs still exist with more than 10 variables then the splitter will
+break all remaining big BDDs into clauses.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1351"
+  HREF="node87.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1347"
+  HREF="node74.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1341"
+  HREF="node85.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1349"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1352"
+  HREF="node87.html">Universe</A>
+<B> Up:</B> <A NAME="tex2html1348"
+  HREF="node74.html">Reference - Preprocessing</A>
+<B> Previous:</B> <A NAME="tex2html1342"
+  HREF="node85.html">Rewind</A>
+ &nbsp; <B>  <A NAME="tex2html1350"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sean Weaver
+2009-01-13
+</ADDRESS>
+</BODY>
+</HTML>

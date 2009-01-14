@@ -1,0 +1,486 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Interconnect synthesis in reconfigurable computing</TITLE>
+<META NAME="description" CONTENT="Interconnect synthesis in reconfigurable computing">
+<META NAME="keywords" CONTENT="sbsat_user_manual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="sbsat_user_manual.css">
+
+<LINK REL="next" HREF="node23.html">
+<LINK REL="previous" HREF="node21.html">
+<LINK REL="up" HREF="node21.html">
+<LINK REL="next" HREF="node23.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html529"
+  HREF="node23.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html525"
+  HREF="node21.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html519"
+  HREF="node21.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html527"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html530"
+  HREF="node23.html">Bounded Model Checking</A>
+<B> Up:</B> <A NAME="tex2html526"
+  HREF="node21.html">Translating an expression to</A>
+<B> Previous:</B> <A NAME="tex2html520"
+  HREF="node21.html">Translating an expression to</A>
+ &nbsp; <B>  <A NAME="tex2html528"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION00058100000000000000">
+Interconnect synthesis in reconfigurable computing</A>
+</H3>
+
+<P>
+
+<DIV ALIGN="CENTER"><A NAME="reconfig-board-figure"></A><A NAME="PIN-figure"></A><A NAME="route-block-figure"></A><A NAME="798"></A><A NAME="802"></A><A NAME="806"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 11:</STRONG>
+<EM>Example of a Reconfigurable Computer</EM>
+<BR>
+<STRONG>Figure 12:</STRONG>
+<EM>A Programmable Interconnection Network</EM>
+<BR>
+<STRONG>Figure 13:</STRONG>
+<EM>A typical routing block</EM></CAPTION>
+<TR><TD><IMG
+ WIDTH="402" HEIGHT="706" BORDER="0"
+ SRC="img69.png"
+ ALT="\begin{figure}\centerline{\epsfig{figure=Fig/reconfig_board.eps,width=3in,height...
+...ce*{10mm}
+\centerline{\epsfig{figure=Fig/Network.eps,width=3.5in}}\end{figure}"></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+Many reconfigurable computers consist of multiple field-programmable
+processors (FPGAs) connected through a Programmable Interconnect
+Network (PIN) as shown in Figure&nbsp;<A HREF="#reconfig-board-figure">11</A>.
+Interconnect synthesis is the process of configuring the PIN to match
+the communication requirements of the designs implemented on the
+processors.  The general architecture of a PIN is depicted in
+Figure&nbsp;<A HREF="#PIN-figure">12</A>.  A PIN routes signals between various input
+and output pins of the FPGAs: the specific routing is determined by
+the control signals on each of the routing blocks.  One of many
+available routing blocks is shown in Figure&nbsp;<A HREF="#route-block-figure">13</A>,
+this one on the well-known Wildforce board.
+
+<P>
+Typically, but not necessarily, the control signals define a
+permutation of the inputs of the block and the permuted signals are
+routed to the corresponding output pins of the block.  Each control
+signal can take a value from <IMG
+ WIDTH="51" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img36.png"
+ ALT="$\{T,F\}$"> or be unassigned.  An
+assignment of values to control signals is said to be a <EM>program</EM>
+of the interconnection network.  Thus, a program defines a routing of
+the signals through the interconnection network.  A required routing
+may be realizable through one or more programs or not realizable at
+all depending upon the routing capabilities of the interconnection
+blocks and how they are connected.  A <EM>configuration</EM> of an
+interconnection network refers to a set of routes realized by a
+program.  Whereas a program defines a configuration, it is not
+necessary that each configuration is realizable by a unique program.
+
+<P>
+The problem of interconnect synthesis can be formulated as a problem
+of determining the satisfiability of a class of QBFs.  For a PIN, let
+<IMG
+ WIDTH="25" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img70.png"
+ ALT="$PI$"> be the set of <EM>primary inputs</EM> (those connecting to FPGA
+outputs), <IMG
+ WIDTH="29" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img71.png"
+ ALT="$PO$"> be the set of <EM>primary outputs</EM> (those connecting
+to FPGA inputs), and <IMG
+ WIDTH="25" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img72.png"
+ ALT="$IO$"> be the set of <EM>intermediate outputs</EM>
+(those not directly accessible through pins).  Let <IMG
+ WIDTH="22" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img73.png"
+ ALT="$M$"> be a desired
+routing from <IMG
+ WIDTH="25" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img70.png"
+ ALT="$PI$"> to <IMG
+ WIDTH="29" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img71.png"
+ ALT="$PO$"> and <!-- MATH
+ $Constraints_{M,IO}(PI,PO)$
+ -->
+<IMG
+ WIDTH="191" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img74.png"
+ ALT="$Constraints_{M,IO}(PI,PO)$"> be a set of
+contraints which evaluates to <EM>T</EM> if and only if values on <IMG
+ WIDTH="29" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img71.png"
+ ALT="$PO$">
+match values on a given <IMG
+ WIDTH="25" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img70.png"
+ ALT="$PI$"> according to <IMG
+ WIDTH="22" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img73.png"
+ ALT="$M$"> without any
+inconsistencies among <IMG
+ WIDTH="25" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img72.png"
+ ALT="$IO$">.  The QBFs have the following form:
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+\forall ~PI~
+\exists ~PO~\&~IO~
+s.t.~Constraints_{M,IO}(PI,PO)
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="340" HEIGHT="33" BORDER="0"
+ SRC="img75.png"
+ ALT="\begin{displaymath}
+\forall&nbsp;PI&nbsp;
+\exists&nbsp;PO&nbsp;\&amp;&nbsp;IO&nbsp;
+s.t.&nbsp;Constraints_{M,IO}(PI,PO)
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+
+<P>
+For this class, there is an efficient method for eliminating the
+Quantifiers resulting in a system of quantifier-free formulas that can
+be determined using ordinary satisfiability solvers.  The key idea,
+called <EM>impulse response</EM>, is to establish constraints that force
+exactly one route from a single input to its destination at a time,
+and to repeat this process for all inputs.
+
+<P>
+Given an <IMG
+ WIDTH="14" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img76.png"
+ ALT="$n$"> dimensional Boolean vector <!-- MATH
+ $V=\{x_1, x_2, \cdots x_n\}$
+ -->
+<IMG
+ WIDTH="140" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img77.png"
+ ALT="$V=\{x_1, x_2, \cdots x_n\}$">,
+define <EM>impulse</EM>(<IMG
+ WIDTH="10" HEIGHT="17" ALIGN="BOTTOM" BORDER="0"
+ SRC="img33.png"
+ ALT="$i$">) to be an assignment of <EM>F</EM> to variable
+<IMG
+ WIDTH="19" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img78.png"
+ ALT="$x_i$"> and <EM>T</EM> to all the other variables in <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img35.png"
+ ALT="$V$">.  Clearly, there
+are <IMG
+ WIDTH="14" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img76.png"
+ ALT="$n$"> impulses for an <IMG
+ WIDTH="14" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img76.png"
+ ALT="$n$"> dimensional vector.  For each impulse, it
+is straightforward to build constraints that force the target primary
+output to take value <EM>F</EM> and all other primary outputs to take
+value <EM>T</EM> while enforcing consistency among intermediate values
+(an example follows).  Call such a constraint, for <EM>impulse</EM>(<IMG
+ WIDTH="10" HEIGHT="17" ALIGN="BOTTOM" BORDER="0"
+ SRC="img33.png"
+ ALT="$i$">),
+<!-- MATH
+ $ImpConstraint_{M,IO}(i)$
+ -->
+<IMG
+ WIDTH="166" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img79.png"
+ ALT="$ImpConstraint_{M,IO}(i)$">.  Then the QBF above can be replaced with
+the following Boolean expression:
+<BR><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{displaymath}
+\wedge_{i=1}^n ImpConstraint_{M,IO}(i) \wedge x_i\equiv F
+\wedge_{j\not=i} x_j\equiv T
+\end{displaymath}
+ -->
+
+<IMG
+ WIDTH="346" HEIGHT="33" BORDER="0"
+ SRC="img80.png"
+ ALT="\begin{displaymath}
+\wedge_{i=1}^n ImpConstraint_{M,IO}(i) \wedge x_i\equiv F
+\wedge_{j\not=i} x_j\equiv T
+\end{displaymath}">
+</DIV>
+<BR CLEAR="ALL">
+<P></P>
+which, it can be shown, evaluates to <EM>T</EM> if and only if the QBF
+above does.
+
+<P>
+Consider, for example, just the routing block of
+Figure&nbsp;<A HREF="#route-block-figure">13</A>.  The primary inputs are <!-- MATH
+ $\{x_1, x_2,
+x_3, x_4, s_1, s_2, s_3\}$
+ -->
+<IMG
+ WIDTH="172" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img81.png"
+ ALT="$\{x_1, x_2,
+x_3, x_4, s_1, s_2, s_3\}$">, the primary outputs are <!-- MATH
+ $\{o_1, o_2, o_3,
+o_4\}$
+ -->
+<IMG
+ WIDTH="101" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img82.png"
+ ALT="$\{o_1, o_2, o_3,
+o_4\}$">, and the two intermediate outputs are <IMG
+ WIDTH="57" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img83.png"
+ ALT="$\{o_5, o_6\}$">.  Suppose
+each subblock <IMG
+ WIDTH="15" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img84.png"
+ ALT="$S$"> (there are three of them) either routes its two
+inputs directly to its two outputs (for example, <IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img4.png"
+ ALT="$x_1$"> is routed to
+<IMG
+ WIDTH="19" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img85.png"
+ ALT="$o_1$"> and <IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img5.png"
+ ALT="$x_2$"> is routed to <IMG
+ WIDTH="19" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img86.png"
+ ALT="$o_5$"> through the upper left subblock if
+<IMG
+ WIDTH="53" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img87.png"
+ ALT="$s_1=F$">) or crosses its routes (for example, <IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img4.png"
+ ALT="$x_1$"> is routed to <IMG
+ WIDTH="19" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img86.png"
+ ALT="$o_5$">
+and <IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img5.png"
+ ALT="$x_2$"> is routed to <IMG
+ WIDTH="19" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img85.png"
+ ALT="$o_1$"> if <IMG
+ WIDTH="52" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img88.png"
+ ALT="$s_1=T$">).  Then one can write the four
+equations shown in the Figure that relate primary outputs to primary
+inputs.  Those equations are the basis for the consistency constraints
+needed.
+
+<P>
+The precise constraints depend on the routing desired.  Suppose we
+wish to determine whether there is a program (assignment to <!-- MATH
+ $\{s_1,
+s_2, s_3\}$
+ -->
+<IMG
+ WIDTH="78" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img89.png"
+ ALT="$\{s_1,
+s_2, s_3\}$">) that realizes the configuration <IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img4.png"
+ ALT="$x_1$"> to <IMG
+ WIDTH="19" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img85.png"
+ ALT="$o_1$">, <IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img5.png"
+ ALT="$x_2$"> to
+<IMG
+ WIDTH="19" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img90.png"
+ ALT="$o_3$">, <IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img6.png"
+ ALT="$x_3$"> to <IMG
+ WIDTH="19" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img91.png"
+ ALT="$o_2$">, and <IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img7.png"
+ ALT="$x_4$"> to <IMG
+ WIDTH="19" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img92.png"
+ ALT="$o_4$">.  For <EM>impulse</EM>(<IMG
+ WIDTH="12" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img93.png"
+ ALT="$1$">) the
+consistency constraints are
+<DIV ALIGN="CENTER">
+<!-- MATH
+ $o_{11}\equiv ite(s_{1}, x_{12}, x_{11})
+\wedge o_{12}\equiv ite(s_{3}, o_{16}, o_{15})
+\wedge o_{13}\equiv ite(s_{3}, o_{15}, o_{16})
+\wedge o_{14}\equiv ite(s_{2}, x_{13}, x_{14})$
+ -->
+<IMG
+ WIDTH="638" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img94.png"
+ ALT="$
+o_{11}\equiv ite(s_{1}, x_{12}, x_{11})
+\wedge o_{12}\equiv ite(s_{3}, o_{16},...
+...quiv ite(s_{3}, o_{15}, o_{16})
+\wedge o_{14}\equiv ite(s_{2}, x_{13}, x_{14})
+$">
+
+<BR><!-- MATH
+ $\wedge o_{15}\equiv ite(s_{1}, x_{11}, x_{12})
+\wedge o_{16}\equiv ite(s_{2}, x_{14}, x_{13})$
+ -->
+<IMG
+ WIDTH="327" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img95.png"
+ ALT="$
+\wedge o_{15}\equiv ite(s_{1}, x_{11}, x_{12})
+\wedge o_{16}\equiv ite(s_{2}, x_{14}, x_{13})
+$">
+
+<BR><!-- MATH
+ $\wedge x_{11}\equiv o_{11}$
+ -->
+<IMG
+ WIDTH="80" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img96.png"
+ ALT="$
+\wedge x_{11}\equiv o_{11}
+$">
+</DIV>
+These are conjoined with the constraints forcing <EM>impulse</EM>(<IMG
+ WIDTH="12" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img93.png"
+ ALT="$1$">) which
+are
+<DIV ALIGN="CENTER">
+<!-- MATH
+ $x_{11}\equiv F\wedge x_{12}\equiv T\wedge x_{13}\equiv T\wedge x_{14}\equiv T$
+ -->
+<IMG
+ WIDTH="280" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img97.png"
+ ALT="$x_{11}\equiv F\wedge x_{12}\equiv T\wedge x_{13}\equiv T\wedge x_{14}\equiv T$">
+</DIV>
+Similar constraints may be constructed for <EM>impulse</EM>(<IMG
+ WIDTH="12" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img98.png"
+ ALT="$2$">) through <EM>impulse</EM>(<IMG
+ WIDTH="12" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img99.png"
+ ALT="$4$">).  The conjunction of all four sets of constraints is the
+Boolean expression of interest: if some assignment to
+<!-- MATH
+ $\{s_1,s_2,s_3\}$
+ -->
+<IMG
+ WIDTH="78" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img89.png"
+ ALT="$\{s_1,
+s_2, s_3\}$"> satisfies that expression, that assignment routes
+primary inputs to primary outputs as desired.  The next step is to
+write the constraints in canonical form.  This is straightforward and
+the result is shown in Figure&nbsp;<A HREF="#int-syn-figure">14</A>.
+
+<P>
+
+<DIV ALIGN="CENTER"><A NAME="int-syn-figure"></A><A NAME="875"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 14:</STRONG>
+Interconnect synthesis example in canonical form.</CAPTION>
+<TR><TD><IMG
+ WIDTH="331" HEIGHT="833" BORDER="0"
+ SRC="img100.png"
+ ALT="\begin{figure}\begin{verbatim}p bdd 43 32
+; Consistency constraints for impu...
+...nstraint forcing impulse(4)
+and(x41, x42, x43, -x44)\end{verbatim}
+\end{figure}"></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html529"
+  HREF="node23.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html525"
+  HREF="node21.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html519"
+  HREF="node21.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html527"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html530"
+  HREF="node23.html">Bounded Model Checking</A>
+<B> Up:</B> <A NAME="tex2html526"
+  HREF="node21.html">Translating an expression to</A>
+<B> Previous:</B> <A NAME="tex2html520"
+  HREF="node21.html">Translating an expression to</A>
+ &nbsp; <B>  <A NAME="tex2html528"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sean Weaver
+2009-01-13
+</ADDRESS>
+</BODY>
+</HTML>

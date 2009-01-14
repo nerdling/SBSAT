@@ -1,0 +1,365 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Binary Decision Diagrams (BDDs)</TITLE>
+<META NAME="description" CONTENT="Binary Decision Diagrams (BDDs)">
+<META NAME="keywords" CONTENT="sbsat_user_manual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="sbsat_user_manual.css">
+
+<LINK REL="next" HREF="node76.html">
+<LINK REL="previous" HREF="node74.html">
+<LINK REL="up" HREF="node74.html">
+<LINK REL="next" HREF="node76.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1219"
+  HREF="node76.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1215"
+  HREF="node74.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1209"
+  HREF="node74.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1217"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1220"
+  HREF="node76.html">Pattern Matching: CNF</A>
+<B> Up:</B> <A NAME="tex2html1216"
+  HREF="node74.html">Reference - Preprocessing</A>
+<B> Previous:</B> <A NAME="tex2html1210"
+  HREF="node74.html">Reference - Preprocessing</A>
+ &nbsp; <B>  <A NAME="tex2html1218"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION000111000000000000000"></A><A NAME="bdd-section"></A>
+<BR>
+Binary Decision Diagrams (BDDs)
+</H2>
+
+<P>
+A Binary Decision Diagram (BDD) is a rooted, directed acyclic graph.
+A BDD is used to compactly represent the truth table, and therefore
+complete functional description, of a Boolean function.  Vertices of a
+BDD are called <EM>terminal</EM> if they have no outgoing edges and are
+called <EM>non-terminal</EM> otherwise.  There is one non-terminal
+vertex, called the <EM>root</EM>, which has no incoming edge.  There is
+at least one and there are at most two terminal vertices, one labeled
+<EM>0</EM> and one labeled <EM>1</EM>.  Non-terminal vertices are labeled to
+represent the variables of the corresponding Boolean function.  A
+non-terminal has exactly two outgoing edges, labeled <EM>T</EM> and/or
+<EM>F</EM>, and the vertices incident to edges outgoing from vertex <EM>v</EM> are called <IMG
+ WIDTH="55" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img166.png"
+ ALT="$true(v)$"> and <IMG
+ WIDTH="63" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img167.png"
+ ALT="$false(v)$">, respectively.  Associated with
+any non-terminal vertex <EM>v</EM> is an attribute called <IMG
+ WIDTH="65" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img168.png"
+ ALT="$index(v)$">
+which satisfies the properties <!-- MATH
+ $index(v) > \max\{index(true(v)),
+index(false(v))\}$
+ -->
+<IMG
+ WIDTH="352" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img169.png"
+ ALT="$index(v) &gt; \max\{index(true(v)),
+index(false(v))\}$"> and <!-- MATH
+ $index(v) = index(w)$
+ -->
+<IMG
+ WIDTH="150" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img170.png"
+ ALT="$index(v) = index(w)$"> if and only if vertices
+<EM>v</EM> and <EM>w</EM> have the same labeling (that is, correspond to the
+same variable).  Thus, the <EM>index</EM> attribute imposes a linear
+ordering on the variables of the BDD.
+
+<P>
+A Reduced Ordered Binary Decision Diagram (ROBDD) is a BDD such that:
+1) There is no vertex <EM>v</EM> such that <!-- MATH
+ $true(v) = false(v)$
+ -->
+<IMG
+ WIDTH="135" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img171.png"
+ ALT="$true(v) = false(v)$">; 2) The
+subgraphs of two distinct vertices <EM>v</EM> and <EM>w</EM> are not
+isomorphic.  A ROBDD represents a Boolean function uniquely in the
+following way.  Define <IMG
+ WIDTH="35" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img172.png"
+ ALT="$f(v)$">, <EM>v</EM> a vertex of the ROBDD,
+recursively as follows:
+
+<OL>
+<LI>If <EM>v</EM> is the terminal vertex labeled <EM>F</EM>, then <IMG
+ WIDTH="68" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img173.png"
+ ALT="$f(v)=F$">;
+</LI>
+<LI>If <EM>v</EM> is the terminal vertex labeled <EM>T</EM>, then <IMG
+ WIDTH="67" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img174.png"
+ ALT="$f(v)=T$">;
+</LI>
+<LI>Otherwise, if <EM>v</EM> is labeled <EM>x</EM>, then <!-- MATH
+ $f(v)=(x\wedge
+f(true(v)))\vee (\neg x\wedge f(false(v)))$
+ -->
+<IMG
+ WIDTH="315" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img175.png"
+ ALT="$f(v)=(x\wedge
+f(true(v)))\vee (\neg x\wedge f(false(v)))$">.
+</LI>
+</OL>
+Then <IMG
+ WIDTH="76" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img176.png"
+ ALT="$f(root(v))$"> is the function represented by the ROBDD.  Observe
+that a Boolean function has different ROBDD representations, depending
+on the variable order imposed by <EM>index</EM>, but there is only one
+ROBDD for each ordering.  Thus, ROBDDs are known as a canonical
+representation of Boolean functions.  Observe also that a path from
+root to terminal in a ROBDD corresponds to one or more rows of a truth
+table associated with the function represented by the ROBDD: the
+labels of the vertices encountered on the path are the variables and
+their assigned values are determined from the outgoing edges
+traversed, the assignment being <EM>T</EM> (<EM>F</EM>) if the <EM>true</EM>
+(<EM>false</EM>) edge is taken, respectively.  The collection of all
+paths specifies the truth table completely.  Although ROBDDs are
+actually used internally in SBSAT, they are referred to as BDDs in
+this manual.
+
+<P>
+
+<DIV ALIGN="CENTER"><A NAME="bdd-graph-figure"></A><A NAME="4568"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 20:</STRONG>
+A BDD representing <!-- MATH
+ $(x_1\vee \neg x_3)\wedge(\neg x_1\vee
+x_2)\wedge (\neg x_1\vee \neg x_2\vee x_3)$
+ -->
+<IMG
+ WIDTH="304" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img1.png"
+ ALT="$(x_1\vee \neg x_3)\wedge (\neg x_1\vee x_2)\wedge (\neg x_1\vee \neg x_2\vee x_3)$">.  The topmost vertex is
+the root.  The two bottom vertices are terminal vertices.  Edges are
+directed from upper vertices to lower vertices.  Vertex labels
+(variable names) are shown inside the vertices.  The <EM>true</EM> branch
+out of a vertex is identified with <EM>0</EM>.  The <EM>false</EM> branch is
+identified with <EM>1</EM>.  The <EM>index</EM> of a vertex is, in this
+case, the subscript of the variable labeling that vertex.</CAPTION>
+<TR><TD><IMG
+ WIDTH="230" HEIGHT="298" BORDER="0"
+ SRC="img177.png"
+ ALT="\begin{figure}\centerline{\epsfig{figure=Fig/bdd.eps, width=2in}}\end{figure}"></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+Figure&nbsp;<A HREF="#bdd-graph-figure">20</A> shows an example of a BDD and the
+function it represents.  See the data structures section for details
+on how the BDDs are implemented in SBSAT.  The following are some
+simple BDD operations that are used by preprocessing operations which
+are described in subsequent sections.
+
+<P>
+A BDD is constructed by attaching BDDs <IMG
+ WIDTH="24" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img178.png"
+ ALT="$h_T$"> and <IMG
+ WIDTH="24" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img179.png"
+ ALT="$h_F$">, representing a
+<EM>true</EM> and a <EM>false</EM> branch, respectively, to a vertex <EM>v</EM>
+with some labeling <EM>x</EM> representing the root.  We may think of the
+operation to do this as being the following, in pseudo C++ style:
+<BR>
+<BR>
+<BR><TT>BDD ite(variable <EM>x</EM>, BDD <IMG
+ WIDTH="24" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img178.png"
+ ALT="$h_T$">, BDD <IMG
+ WIDTH="24" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img179.png"
+ ALT="$h_F$">);</TT>
+<BR>
+<BR>
+<BR>
+That is, <TT>ite</TT> returns a BDD with root <EM>v</EM> labeled <EM>x</EM> and
+such that <IMG
+ WIDTH="95" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img180.png"
+ ALT="$h_T=true(v)$"> and <IMG
+ WIDTH="104" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img181.png"
+ ALT="$h_F=false(v)$">.  But the actual
+construction is such as to avoid building BDDs which are isomorphic to
+existing ones, so the following is used to implement the construction
+instead (it is too complicated to state here):
+<BR>
+<BR>
+<BR><TT>BDD find_or_add_node (variable <EM>x</EM>, BDD <IMG
+ WIDTH="24" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img178.png"
+ ALT="$h_T$">, BDD <IMG
+ WIDTH="24" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img179.png"
+ ALT="$h_F$">);</TT>
+<BR>
+<BR>
+<BR>
+This operation returns an existing BDD if there is one that matches
+<TT>ite(<EM>x</EM>, <IMG
+ WIDTH="24" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img178.png"
+ ALT="$h_T$">, <IMG
+ WIDTH="24" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img179.png"
+ ALT="$h_F$">)</TT> already, and otherwise builds a new
+BDD with root <EM>v</EM> labeled <EM>x</EM>, <EM>true</EM> branch <IMG
+ WIDTH="24" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img178.png"
+ ALT="$h_T$"> and
+<EM>false</EM> branch <IMG
+ WIDTH="24" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img179.png"
+ ALT="$h_F$"> (that is, <EM>false</EM>(<EM>v</EM>) = <IMG
+ WIDTH="24" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img179.png"
+ ALT="$h_F$"> and
+<EM>true</EM>(<EM>v</EM>) = <IMG
+ WIDTH="24" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img178.png"
+ ALT="$h_T$">).  The BDDs <IMG
+ WIDTH="24" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img178.png"
+ ALT="$h_T$"> and/or <IMG
+ WIDTH="24" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img179.png"
+ ALT="$h_F$"> may have to
+be constructed as well.
+
+<P>
+The following two simple operations are used several times in
+describing important BDD operations in subsequent sections.  They are
+given in pseudo C++ style:
+<BR>
+<BR>
+<BR><FONT SIZE="-1"><TT>BDD Reduce<IMG
+ WIDTH="15" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img182.png"
+ ALT="$_T$"> (variable <EM>x</EM>, BDD <EM>f</EM>) {</TT>
+<BR><TT>if (root(<EM>f</EM>) == <EM>x</EM>) return <EM>true</EM>(root(<EM>f</EM>));</TT>
+<BR><TT>return <EM>f</EM>;</TT>
+<BR><TT>}</TT>
+<BR></FONT>
+<BR>
+<BR><FONT SIZE="-1"><TT>BDD Reduce<IMG
+ WIDTH="15" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img183.png"
+ ALT="$_F$"> (variable <EM>x</EM>, BDD <EM>f</EM>) {</TT>
+<BR><TT>if (root(<EM>f</EM>) == <EM>x</EM>) return <EM>false</EM>(root(<EM>f</EM>));</TT>
+<BR><TT>return <EM>f</EM>;</TT>
+<BR><TT>}</TT></FONT>
+
+<P>
+
+<TT>Reduce<IMG
+ WIDTH="15" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img182.png"
+ ALT="$_T$">(<IMG
+ WIDTH="14" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img43.png"
+ ALT="$x$">,<IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img2.png"
+ ALT="$f$">)</TT> returns <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img2.png"
+ ALT="$f$"> constrained by the assignment of
+<EM>T</EM> to variable <IMG
+ WIDTH="14" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img43.png"
+ ALT="$x$"> and <TT>Reduce<IMG
+ WIDTH="15" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img183.png"
+ ALT="$_F$">(<IMG
+ WIDTH="14" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img43.png"
+ ALT="$x$">,<IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img2.png"
+ ALT="$f$">)</TT> returns <IMG
+ WIDTH="14" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img2.png"
+ ALT="$f$">
+constrained by the assignment of <EM>F</EM> to the variable <IMG
+ WIDTH="14" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img43.png"
+ ALT="$x$">.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1219"
+  HREF="node76.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1215"
+  HREF="node74.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1209"
+  HREF="node74.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1217"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1220"
+  HREF="node76.html">Pattern Matching: CNF</A>
+<B> Up:</B> <A NAME="tex2html1216"
+  HREF="node74.html">Reference - Preprocessing</A>
+<B> Previous:</B> <A NAME="tex2html1210"
+  HREF="node74.html">Reference - Preprocessing</A>
+ &nbsp; <B>  <A NAME="tex2html1218"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sean Weaver
+2009-01-13
+</ADDRESS>
+</BODY>
+</HTML>

@@ -1,0 +1,243 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>State Machines Used to Represent Functions (SMURFs)</TITLE>
+<META NAME="description" CONTENT="State Machines Used to Represent Functions (SMURFs)">
+<META NAME="keywords" CONTENT="sbsat_user_manual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="sbsat_user_manual.css">
+
+<LINK REL="next" HREF="node90.html">
+<LINK REL="previous" HREF="node88.html">
+<LINK REL="up" HREF="node88.html">
+<LINK REL="next" HREF="node90.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1389"
+  HREF="node90.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1385"
+  HREF="node88.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1379"
+  HREF="node88.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1387"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1390"
+  HREF="node90.html">Locally Skewed, Globally Balanced</A>
+<B> Up:</B> <A NAME="tex2html1386"
+  HREF="node88.html">Reference - Search heuristics</A>
+<B> Previous:</B> <A NAME="tex2html1380"
+  HREF="node88.html">Reference - Search heuristics</A>
+ &nbsp; <B>  <A NAME="tex2html1388"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION000121000000000000000"></A>
+<A NAME="smurf-section"></A>
+<BR>
+State Machines Used to Represent Functions (S<SMALL>MURF</SMALL>s)
+</H2>
+
+<P>
+Prior to searching, Boolean functions become implemented as acyclic
+Mealy machines, called S<SMALL>MURF</SMALL>s (for ``State Machine Used to
+Represent Functions'').  S<SMALL>MURF</SMALL>s help lower the overhead of
+searching and make complex search heuristics feasible: all important
+data needed for the search process and able to be computed prior to
+search is memoized in S<SMALL>MURF</SMALL> states and transitions for immediate
+access during search.  The inputs to a S<SMALL>MURF</SMALL> are literals that
+are assumed or inferred, during search, to be true; the outputs are
+sets of literals that are forced to be true (analogous to unit
+resolution in CNF) by the newly assigned inputs; and the states
+correspond to what ``portion'', or <EM>residual</EM>, of the constraint
+remains to be satisfied<A NAME="tex2html40"
+  HREF="footnode.html#foot4629"><SUP>11</SUP></A>.  S<SMALL>MURF</SMALL>s are described in
+Figure&nbsp;<A HREF="#smurf-figure">30</A>.  For a set of constraint BDDs, we compute
+the S<SMALL>MURF</SMALL>s for each of the separate BDDs and merge states with equal
+residual functions, maintaining one pointer into the resultant
+automaton for the current state of each constraint.
+
+<P>
+
+<DIV ALIGN="CENTER"><A NAME="smurf-figure"></A><A NAME="4631"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 30:</STRONG>
+
+BDDs are preprocessed into deterministic Mealy machines called ``SMURFs.''  This example explains construction. <EM>ite</EM> denotes
+if-then-else and <IMG
+ WIDTH="17" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img23.png"
+ ALT="$\oplus $"> denotes exclusive or.
+<BR>
+<BR>
+The S<SMALL>MURF</SMALL> above represents <!-- MATH
+ $\mbox{\sl
+ite}(x_1,x_2\wedge(x_3\oplus x_4),x_4\wedge(x_2\oplus x_3))$
+ -->
+<IMG
+ WIDTH="261" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img251.png"
+ ALT="$\mbox{\sl
+ite}(x_1,x_2\wedge(x_3\oplus x_4),x_4\wedge(x_2\oplus x_3))$">.  It
+represents, in part, BDDs for the function under
+all possible variable orderings -- since we cannot know in what order
+the brancher considers the variables.
+<BR>
+The start state (upper left) represents the original function.  On the
+left is a transition from the start state labeled ``<IMG
+ WIDTH="44" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img25.png"
+ ALT="$x_1;x_2$">''; this
+means that, from that state, on input <IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img4.png"
+ ALT="$x_1$">, the automaton makes a
+transition and outputs <IMG
+ WIDTH="37" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img26.png"
+ ALT="$\{x_2\}$">.  
+If the brancher guesses, or infers,
+that <IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img4.png"
+ ALT="$x_1$"> is true, it will ``tell'' the automaton to branch on <IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img4.png"
+ ALT="$x_1$">.
+The output of <IMG
+ WIDTH="37" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img26.png"
+ ALT="$\{x_2\}$"> tells the brancher that <IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img5.png"
+ ALT="$x_2$"> must also be true
+-- the analogue of unit inference in CNF.  This transition goes to a
+state labeled <IMG
+ WIDTH="56" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img27.png"
+ ALT="$x_3\oplus x_4$">, meaning that, after <IMG
+ WIDTH="44" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img28.png"
+ ALT="$x_1,x_2$"> are set
+to 1, what remains to be satisfied -- the <EM>residual function</EM> --
+is <IMG
+ WIDTH="56" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img27.png"
+ ALT="$x_3\oplus x_4$">.  On the upper right are three transitions shown
+with one arrow.  The first is from the start state on input <IMG
+ WIDTH="31" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img29.png"
+ ALT="$\neg x_2$">; it outputs <!-- MATH
+ $\{\neg x_1,x_3,x_4\}$
+ -->
+<IMG
+ WIDTH="94" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img30.png"
+ ALT="$\{\neg x_1,x_3,x_4\}$"> and goes to state 1 --
+meaning the original BDD is now satisfied, <I>i.e.</I>, that there is
+no residual constraint to satisfy.</CAPTION>
+<TR><TD>0.4Fig/smurf.eps</TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+The S<SMALL>MURF</SMALL> structure described in the figure, for a Boolean
+function with <IMG
+ WIDTH="14" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img76.png"
+ ALT="$n$"> variables, can have, in the worst case, close to
+<IMG
+ WIDTH="21" HEIGHT="17" ALIGN="BOTTOM" BORDER="0"
+ SRC="img252.png"
+ ALT="$3^n$"> states.  Thus, an Achilles' heel of SBSAT can be handling long
+input functions.  In most benchmarks, that has not been a serious
+practical problem because all individual constraint are reasonably
+short <EM>except</EM><A NAME="tex2html42"
+  HREF="footnode.html#foot3402"><SUP>12</SUP></A> for a small special group of
+functions: long clauses, long exclusive disjunctions, and
+``assignments'' <!-- MATH
+ $\lambda_0=\lambda_1\wedge\cdots\wedge\lambda_k$
+ -->
+<IMG
+ WIDTH="130" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img253.png"
+ ALT="$\lambda_0=\lambda_1\wedge\cdots\wedge\lambda_k$"> and
+<!-- MATH
+ $\lambda_0=\lambda_1\vee\cdots\vee\lambda_k$
+ -->
+<IMG
+ WIDTH="130" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img254.png"
+ ALT="$\lambda_0=\lambda_1\vee\cdots\vee\lambda_k$"> (where the <IMG
+ WIDTH="19" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img255.png"
+ ALT="$\lambda_i$">'s
+are literals).  To solve the space problem for these special
+functions, we create special data structures; these take little space
+and can simulate the S<SMALL>MURF</SMALL>s for the functions exactly with
+little time loss.  For a long clause we store only (i) whether the
+clause is already satisfied, and (ii) how many literals are currently
+not assigned truth values.  Storing exclusive disjuncts is similar.
+For the assignments, we store both the value (<EM>0</EM>,<EM>1</EM>, or
+unassigned) of the left-hand-side literal and the number of
+right-hand-side literals with undefined truth values.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1389"
+  HREF="node90.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1385"
+  HREF="node88.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1379"
+  HREF="node88.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1387"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1390"
+  HREF="node90.html">Locally Skewed, Globally Balanced</A>
+<B> Up:</B> <A NAME="tex2html1386"
+  HREF="node88.html">Reference - Search heuristics</A>
+<B> Previous:</B> <A NAME="tex2html1380"
+  HREF="node88.html">Reference - Search heuristics</A>
+ &nbsp; <B>  <A NAME="tex2html1388"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sean Weaver
+2009-01-13
+</ADDRESS>
+</BODY>
+</HTML>

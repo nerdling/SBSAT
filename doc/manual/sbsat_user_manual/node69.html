@@ -1,0 +1,135 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Boolean functions</TITLE>
+<META NAME="description" CONTENT="Boolean functions">
+<META NAME="keywords" CONTENT="sbsat_user_manual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="sbsat_user_manual.css">
+
+<LINK REL="previous" HREF="node68.html">
+<LINK REL="up" HREF="node66.html">
+<LINK REL="next" HREF="node70.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1136"
+  HREF="node70.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1132"
+  HREF="node66.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1128"
+  HREF="node68.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1134"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1137"
+  HREF="node70.html">Prove format</A>
+<B> Up:</B> <A NAME="tex2html1133"
+  HREF="node66.html">Trace format</A>
+<B> Previous:</B> <A NAME="tex2html1129"
+  HREF="node68.html">File Header</A>
+ &nbsp; <B>  <A NAME="tex2html1135"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION000105300000000000000">
+Boolean functions</A>
+</H3>
+
+<P>
+Boolean functions are specified in the structure section which
+consists of any number of statements (<TT>&lt;statement&gt;</TT> in
+Figure&nbsp;<A HREF="node66.html#trace-format-figure">18</A>), each terminated by '<TT>;</TT>'.  The
+keywords <TT>STRUCTURE</TT> and <TT>ENDMODULE</TT> must appear by themselves
+on separate lines.  A statement is either
+<BR>
+<BR>
+<BR><TT>are_equal(&lt;var&gt;, &lt;var&gt;)</TT>
+<BR>
+<BR>
+<BR>
+which forces both <TT>&lt;var&gt;</TT>s to have the same value, or
+<BR>
+<BR>
+<BR><TT>&lt;var&gt; = new_int_leaf([<I>0</I>|<I>1</I>])</TT>
+<BR>
+<BR>
+<BR>
+which forces <TT>&lt;var&gt;</TT> to have value <EM>F</EM> or <EM>T</EM> if the
+argument of <TT>new_int_leaf</TT> is <EM>0</EM> or <EM>1</EM>, respectively, or
+<BR>
+<BR>
+<BR><TT>&lt;var&gt; = &lt;function-identifier&gt;(&lt;var&gt;, ..., &lt;var&gt;)</TT>
+<BR>
+<BR>
+<BR>
+where <TT>&lt;function-identifier&gt;</TT> is one of <TT>not</TT>, <TT>and</TT>, <TT>nand</TT>, <TT>or</TT>, <TT>nor</TT>, <TT>equ</TT>, <TT>xor</TT>, <TT>imp</TT>, <TT>limp</TT>,
+<TT>lnimp</TT>, <TT>rimp</TT>, <TT>rnimp</TT>, <TT>ite</TT>. The variable lists of all
+but <TT>ite</TT> and <TT>not</TT> can be arbitrarily long.  The argument lists for
+<TT>ite</TT> and <TT>not</TT> must have exactly three and exactly one argument(s),
+respectively.  Observe there is no nesting of functions as in the case of
+the canonical form. Instead, an equality is defined and the leftside
+(temporary) variable, not appearing in either input or output section, is
+used as argument in other functions.  It is permissable to reference a
+variable that appears for the first time further ahead in the file.  A
+solution is an assignment to input variables which causes all functions
+(statements) to have value <EM>T</EM>.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1136"
+  HREF="node70.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html1132"
+  HREF="node66.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html1128"
+  HREF="node68.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html1134"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html1137"
+  HREF="node70.html">Prove format</A>
+<B> Up:</B> <A NAME="tex2html1133"
+  HREF="node66.html">Trace format</A>
+<B> Previous:</B> <A NAME="tex2html1129"
+  HREF="node68.html">File Header</A>
+ &nbsp; <B>  <A NAME="tex2html1135"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sean Weaver
+2009-01-13
+</ADDRESS>
+</BODY>
+</HTML>

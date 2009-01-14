@@ -1,0 +1,149 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>The lemma cache</TITLE>
+<META NAME="description" CONTENT="The lemma cache">
+<META NAME="keywords" CONTENT="sbsat_user_manual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="sbsat_user_manual.css">
+
+<LINK REL="next" HREF="node33.html">
+<LINK REL="previous" HREF="node31.html">
+<LINK REL="up" HREF="node26.html">
+<LINK REL="next" HREF="node33.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html655"
+  HREF="node33.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html651"
+  HREF="node26.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html645"
+  HREF="node31.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html653"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html656"
+  HREF="node33.html">Controlling preprocessing and search</A>
+<B> Up:</B> <A NAME="tex2html652"
+  HREF="node26.html">Quick Start - Some</A>
+<B> Previous:</B> <A NAME="tex2html646"
+  HREF="node31.html">Heuristics</A>
+ &nbsp; <B>  <A NAME="tex2html654"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00063000000000000000">
+The lemma cache</A>
+</H2>
+
+<P>
+The size of the cache in which the lemmas are stored is fixed
+throughout the branching process.  The memory needed to maintain the
+cache is automatically allocated and accomodates all lemmas in the
+cache.  Usually, the bigger the memory cache, the slower the search
+process.  Therefore one is confronted with the following optimization
+problem: choose the lemma cache size small enough to avoid burdensome
+overhead yet large enough that lemmas in the cache will significantly
+reduce search.  The parameter to use for controlling the lemma cache
+is <TT><I>-max-cached-lemmas</I></TT> or <TT><I>-L</I></TT> and an example of its
+use is this:
+<BR>
+<BR>
+<BR><TT>$ sbsat <I>-L</I> 1000 problem.cnf</TT>
+<BR>
+<BR>
+<BR>
+It is possible to set the lemma cache to 0. This will
+prevent any lemma from being created.<A NAME="tex2html24"
+  HREF="footnode.html#foot4406"><SUP>8</SUP></A> For example, use
+<BR>
+<BR>
+<BR><TT>$ sbsat <I>-L</I> 0 slider_80_unsat.ite</TT>
+<BR>
+<BR>
+<BR>
+For some problems this will yield significantly better results than
+when the lemmas are used.  See Section&nbsp;<A HREF="node96.html#lemma-section-effect">12.1.2</A> for
+a discussion of when to use lemmas and when not to use lemmas.
+
+<P>
+
+<B><U>Remark</U></B>:&nbsp;The heuristic used to discard lemmas from
+the cache when newly created lemmas are added to a full cache is not
+compatible with the option that disables lemma creation.  Also the
+effectivness of the lemma heuristic decreases with descreasing
+lemma cache size.  See Section&nbsp;<A HREF="node96.html#lemma-section-effect">12.1.2</A> for a
+discussion.
+
+<P>
+
+<B><U>Remark</U></B>:&nbsp;The Chaff-like (VSIDS) heuristic requires
+lemma creation and therefore is not compatible with the option that
+causes the lemmas not to be created (<I>-L</I> 0).
+
+<P>
+Backjumping is inherently tied to lemmas and therefore, the backjumping
+feature is active when <I>-L</I> has an argument greater than 0, and the
+backjumping feature is inactive when <I>-L</I> 0 is used. To turn the
+backjumping feature on, but store `almost' no lemmas, use the flag <I>-L</I>
+1. Please consider the <I>-backjumping</I> flag deprecated.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html655"
+  HREF="node33.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html651"
+  HREF="node26.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html645"
+  HREF="node31.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html653"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html656"
+  HREF="node33.html">Controlling preprocessing and search</A>
+<B> Up:</B> <A NAME="tex2html652"
+  HREF="node26.html">Quick Start - Some</A>
+<B> Previous:</B> <A NAME="tex2html646"
+  HREF="node31.html">Heuristics</A>
+ &nbsp; <B>  <A NAME="tex2html654"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sean Weaver
+2009-01-13
+</ADDRESS>
+</BODY>
+</HTML>

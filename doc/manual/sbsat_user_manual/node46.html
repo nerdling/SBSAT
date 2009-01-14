@@ -1,0 +1,152 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Reference - Initialization file</TITLE>
+<META NAME="description" CONTENT="Reference - Initialization file">
+<META NAME="keywords" CONTENT="sbsat_user_manual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="sbsat_user_manual.css">
+
+<LINK REL="next" HREF="node47.html">
+<LINK REL="previous" HREF="node37.html">
+<LINK REL="up" HREF="sbsat_user_manual.html">
+<LINK REL="next" HREF="node47.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html827"
+  HREF="node47.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html823"
+  HREF="sbsat_user_manual.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html817"
+  HREF="node45.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html825"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html828"
+  HREF="node47.html">Reference - Input formats</A>
+<B> Up:</B> <A NAME="tex2html824"
+  HREF="sbsat_user_manual.html">SBSAT User Manual and</A>
+<B> Previous:</B> <A NAME="tex2html818"
+  HREF="node45.html">BDD WalkSAT solver options</A>
+ &nbsp; <B>  <A NAME="tex2html826"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION00090000000000000000"></A><A NAME="init-file-section"></A>
+<BR>
+Reference - Initialization file
+</H1>
+
+<P>
+An initialization file allows the user to launch <TT>sbsat</TT> with a
+much abbreviated command line.  That is, the file may contain all
+switches and parameters that would normally be part of the <TT>sbsat</TT>
+command line when it is launched.  More than one initialization file
+can exist to allow the user to define different settings for different 
+problem types by creating initialization files for each type. 
+An initialization file may be loaded during launch using the following:
+<BR>
+<BR>
+<BR><TT>$ sbsat <I>-ini</I> &lt;path-to-initialization-file&gt;</TT>
+
+<P>
+If only a filename is specified instead of a path, SBSAT looks in the
+current directory for the file.  If the <I>-ini</I> switch is not
+used, then SBSAT looks in the user's home directory for <TT>sbsat.ini</TT> and loads that file if it is found.  If the file is not
+found, the default internal settings are used.  If the file exists and
+additional command line options are given, those options specified on
+the command line override any that appear in the initialization file.
+
+<P>
+An initialization file is a simple text file which may be created and
+edited using a standard text editor or created by using the following
+command which dumps the default settings, in the initialization file
+format, to a file whose name the user specifies:
+<BR>
+<BR>
+<BR><TT>$ sbsat <I>-create-ini</I> &gt; &lt;user-specified-filename&gt;</TT>
+
+<P>
+Each line of the initialization file is either whitespace or a command which
+sets an internal parameter to a value.  A command consists of a parameter
+name on the left, followed by an `<TT>=</TT>' followed by a value on the right.
+A comment is any text on any line following and including the first
+occurrence of the `<TT>#</TT>' character on that line. The sample
+initialization file shown in Figure&nbsp;<A HREF="#init-figure">17</A> presets variables 1-15
+at the start of preprocessing, sets the debug output level to 3, and changes
+the default preprocessing sequence to <TT>{ExDc}{ExSt}{ExPr}{{ExEs}1}</TT>.  An initialization file only needs
+to contain the settings the user wants modified from the default settings.
+
+<P>
+
+<DIV ALIGN="CENTER"><A NAME="init-figure"></A><A NAME="1593"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 17:</STRONG>
+Example initialization file.</CAPTION>
+<TR><TD><IMG
+ WIDTH="574" HEIGHT="167" BORDER="0"
+ SRC="img118.png"
+ ALT="\begin{figure}\begin{verbatim}..."></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html827"
+  HREF="node47.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html823"
+  HREF="sbsat_user_manual.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html817"
+  HREF="node45.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html825"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html828"
+  HREF="node47.html">Reference - Input formats</A>
+<B> Up:</B> <A NAME="tex2html824"
+  HREF="sbsat_user_manual.html">SBSAT User Manual and</A>
+<B> Previous:</B> <A NAME="tex2html818"
+  HREF="node45.html">BDD WalkSAT solver options</A>
+ &nbsp; <B>  <A NAME="tex2html826"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sean Weaver
+2009-01-13
+</ADDRESS>
+</BODY>
+</HTML>

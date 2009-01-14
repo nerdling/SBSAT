@@ -1,0 +1,166 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Preprocessor sequence</TITLE>
+<META NAME="description" CONTENT="Preprocessor sequence">
+<META NAME="keywords" CONTENT="sbsat_user_manual">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="sbsat_user_manual.css">
+
+<LINK REL="next" HREF="node30.html">
+<LINK REL="previous" HREF="node28.html">
+<LINK REL="up" HREF="node27.html">
+<LINK REL="next" HREF="node30.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html621"
+  HREF="node30.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html617"
+  HREF="node27.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html611"
+  HREF="node28.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html619"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html622"
+  HREF="node30.html">Preprocessor command</A>
+<B> Up:</B> <A NAME="tex2html618"
+  HREF="node27.html">Preprocessing</A>
+<B> Previous:</B> <A NAME="tex2html612"
+  HREF="node28.html">Preprocessor options</A>
+ &nbsp; <B>  <A NAME="tex2html620"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION00061200000000000000"></A><A NAME="preproc-sequence-section"></A>
+<BR>
+Preprocessor sequence
+</H3>
+
+<P>
+Preprocessor options can be applied in any order, as desired, and repeated
+by specifying the order and repetitions on the command line in the <EM>preprocessor sequence</EM>.  A preprocessor sequence consists of a list of <EM>preprocessor run</EM>s, or just <EM>run</EM>s.  Each run may be followed by a
+positive integer or another run.  A run is a concatenation of preprocessor
+options from the above table, wrapped inside matching curly braces.  The
+preprocessing operations specified by the options of a run are applied in
+the order in which they are specified.  The run may be repeated if it is
+immediately followed by a positive integer <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img117.png"
+ ALT="$R$">. In that case the run is
+repeated <IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img117.png"
+ ALT="$R$"> times or until the internal form is the same before and after
+the run (that is, until reaching a fixed point).  If the run is not followed
+by a number then it will repeat until reaching a fixed point.  For
+example, the following is a run which applies existential quantification,
+followed by dependent variable clustering:
+<BR>
+<BR>
+<BR><TT>{ExDc}</TT>
+<BR>
+<BR>
+<BR>
+The following is a preprocessor sequence with three runs, the first
+repeated at most 3 times, the second at most 2 times and the third at
+most 10 times:
+<BR>
+<BR>
+<BR><TT>{ExDc}3{ExSt}2{ExPr}10</TT>
+<BR>
+<BR>
+<BR>
+Nesting of runs is allowed as in
+<BR>
+<BR>
+<BR><TT>{{StDc{Pr{ExDc}3}{Ex}10}Ex}</TT>
+
+<P>
+There may be times when a preprocessor run should be run the maximum number
+of times specified, instead of stopping early once reaching a fixed point.
+There may also be times when only certain functions of a preprocessing run
+should be considered when determining a stopping condition. All of this can
+be controlled by bounding preprocessor runs, or options, inside of square
+brackets. A set of square brackets should be followed by either 0 or 1 where
+a 0 forces the internal form to be recognized as not altered, and a 1 forces
+the internal form to be recognized as altered. For example:
+<BR>
+<BR>
+<BR><TT>{[ExDc]1}</TT>10
+<BR>
+<BR>
+<BR>
+This sequence will causes the preprocessing run to loop 10 times even if the
+internal form reachs a fixed point prior to 10 iterations. This happens
+because the square brackets force <TT>sbsat</TT> to consider the internal form as
+having been modified, even though it may not have been.
+<BR>
+<BR>
+<BR><TT>{Ex[St]0Dc}</TT>
+<BR>
+<BR>
+<BR>
+This sequence causes the preprocessing run to loop only when either `Ex' or
+`Dc' modify the internal form. `St' may modify the internal form, but the
+looping process ignores this information.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html621"
+  HREF="node30.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/sw/share/lib/latex2html/icons/next.png"></A> 
+<A NAME="tex2html617"
+  HREF="node27.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/sw/share/lib/latex2html/icons/up.png"></A> 
+<A NAME="tex2html611"
+  HREF="node28.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/sw/share/lib/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html619"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/sw/share/lib/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html622"
+  HREF="node30.html">Preprocessor command</A>
+<B> Up:</B> <A NAME="tex2html618"
+  HREF="node27.html">Preprocessing</A>
+<B> Previous:</B> <A NAME="tex2html612"
+  HREF="node28.html">Preprocessor options</A>
+ &nbsp; <B>  <A NAME="tex2html620"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sean Weaver
+2009-01-13
+</ADDRESS>
+</BODY>
+</HTML>
