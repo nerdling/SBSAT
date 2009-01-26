@@ -696,6 +696,7 @@ void printBDDdot_stdout(BDDNode **bdds, int num) {
 	clear_all_bdd_flags();
 }
 
+int count = 0;
 void printBDDdot_file(BDDNode **bdds, int num) {
 	FILE *fout;
 	
@@ -704,7 +705,7 @@ void printBDDdot_file(BDDNode **bdds, int num) {
 	strcpy(filename_dot, inputfile);
 	strcat(filename_dot, ".dot");
 	
-	if(strcpy(inputfile, "-")) get_freefile(filename_dot, NULL, filename, 256);
+	if(strcmp(inputfile, "-")) get_freefile(filename_dot, NULL, filename, 256);
 	else filename[0] = 0;
 	
 	if ((fout = fopen((filename[0]==0)?"output.dot":filename, "wb+")) == NULL) {
