@@ -98,6 +98,7 @@ int initbranch_compfunc (const void *x, const void *y) {
 initbranch_struct *initbranch;
 
 int max_initbranch;
+int max_varlevel;
 
 double *arrVarTrueInfluences;
 int **arrVarChoiceLevels;
@@ -338,12 +339,26 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 						fprintf(stderr, "\nKeyword 'initial_branch' needs a positive integer as a level after '#' (%s)...exiting:%d\n", macros, markbdd_line);
 						exit (1);
 					}
+					if(v1->variable > 10000) {
+						fprintf(stderr, "\nKeyword 'initial_branch' needs a positive integer < 10000 as a level after '#' (%s)...exiting:%d\n", macros, markbdd_line);
+						exit(1);
+					}
+					if(v1->variable >= max_varlevel) max_varlevel = v1->variable+1;
 					//search for branch_level in initbranch
 					branch_level = -1;
 					for(int i = 0; i < max_initbranch; i++) {
 						if(initbranch[i].branch_level == v1->variable) {
 							branch_level = i;
 							break;
+						}
+					}
+					if(branch_level == -1) {
+						for(int i = 0; i < max_initbranch; i++) {
+							if(initbranch[i].branch_level == 0) {
+								initbranch[i].branch_level = v1->variable;
+								branch_level = i;
+								break;
+							}
 						}
 					}
 					if(branch_level == -1) {
@@ -1218,8 +1233,9 @@ void bddloop () {
 	int p = 0;
 
 	max_initbranch = 1;
+	max_varlevel = 1;
 	initbranch = (initbranch_struct *)ite_recalloc(initbranch, 0, max_initbranch, sizeof(initbranch_struct), 9, "initbranch");
-	initbranch[0].branch_level = 1;
+	initbranch[0].branch_level = 0;
 	initbranch[0].max_initbranch_level = 10;
 	initbranch[0].num_initbranch_level = 0;
 	initbranch[0].vars = (initbranch_level *)ite_recalloc(initbranch[0].vars, 0, initbranch[0].max_initbranch_level, sizeof(initbranch_level), 9, "initbranch[0].vars");
@@ -1365,20 +1381,21 @@ void bddloop () {
 
 	int *initbranch_used = (int *)ite_calloc(numinp + 2, sizeof(int), 9, "initbranch_used");
 
-	arrVarChoiceLevels = (int **)ite_calloc(max_initbranch, sizeof(int *), 9, "arrVarChoiceLevels");
+	arrVarChoiceLevels = (int **)ite_calloc(max_varlevel, sizeof(int *), 9, "arrVarChoiceLevels");
 	arrVarTrueInfluences = (double *)ite_calloc(numinp+1, sizeof(double), 9, "arrVarTrueInfluences");
 
 	for(int i = 0; i < numinp+1; i++)
 	  arrVarTrueInfluences[i] = 0.5;
 	
 	//Need to sort initbranch based on initbranch[x].branch_level
-	qsort(initbranch, max_initbranch, sizeof(initbranch_struct), initbranch_compfunc);
+	//qsort(initbranch, max_initbranch, sizeof(initbranch_struct), initbranch_compfunc);
 	
 	for(int i = 0; i < max_initbranch; i++) {
 		int max_CLevels = initbranch[i].num_initbranch_level+1;
-		arrVarChoiceLevels[i] = (int *)ite_recalloc(arrVarChoiceLevels[i], 0, max_CLevels, sizeof(int), 9, "arrVarChoiceLevels[i]");
+		arrVarChoiceLevels[initbranch[i].branch_level] = (int *)ite_recalloc(arrVarChoiceLevels[initbranch[i].branch_level], 0, max_CLevels, sizeof(int), 9, "arrVarChoiceLevels[i]");
 		//arrVarChoiceLevels[i] = (int *)ite_calloc(sizeof(int), 9, "arrVarChoiceLevels[i]");
 		int nVarChoiceIter = 0;
+		d9_printf3("[%d [%s]]", i, initbranch[i].vars[0].string);
 		for(int x = 0; x < initbranch[i].num_initbranch_level; x++) {
 			t_myregex myrg;
 			sym_regex_init(&myrg, initbranch[i].vars[x].string);
@@ -1390,11 +1407,11 @@ void bddloop () {
 					// found variable and the variable id is id
 					initbranch_used[id] = 1;
 					arrVarTrueInfluences[id] = initbranch[i].vars[x].true_inf_weight;
-					arrVarChoiceLevels[i][nVarChoiceIter++] = id;
+					arrVarChoiceLevels[initbranch[i].branch_level][nVarChoiceIter++] = id;
 					//d5_printf5("%d indep=%d %s %s\n", looper, id, getsym_i(id)->name, initbranch[i].vars[x].string);
 					d5_printf7("%d %d %s %s priority=%d true_inf=%4.6f\n", looper, id, getsym_i(id)->name, initbranch[i].vars[x].string, initbranch[i].branch_level, initbranch[i].vars[x].true_inf_weight);
 					if(nVarChoiceIter >= max_CLevels) {
-						arrVarChoiceLevels[i] = (int *)ite_recalloc(arrVarChoiceLevels[i], max_CLevels, max_CLevels+10, sizeof(int), 9, "arrVarChoiceLevels[i]");
+						arrVarChoiceLevels[initbranch[i].branch_level] = (int *)ite_recalloc(arrVarChoiceLevels[initbranch[i].branch_level], max_CLevels, max_CLevels+10, sizeof(int), 9, "arrVarChoiceLevels[i]");
 						max_CLevels += 10;
 					}
 				}
@@ -1402,18 +1419,28 @@ void bddloop () {
 			}
 			sym_regex_free(&myrg);
 		}
-		arrVarChoiceLevels[i][nVarChoiceIter] = 0;
+		arrVarChoiceLevels[initbranch[i].branch_level][nVarChoiceIter] = 0;
 	}
 
+	if(nForceBackjumpLevel >= max_varlevel) {
+		fprintf(stderr, "\n'force-backjump-level=%d' does not correspond to a level specified by 'initial_branch'...exiting\n", nForceBackjumpLevel);
+		exit(1);
+	}
+	
 	//Remove blank levels
 	int count=-1;
-	for(int x = 0; x < max_initbranch; x++) {
+	for(int x = 0; x < max_varlevel; x++) {
 		count++;
 		int *tmp = arrVarChoiceLevels[count];
 		arrVarChoiceLevels[count] = arrVarChoiceLevels[x];
-		if(arrVarChoiceLevels[x][0] == 0) {
+		if(!arrVarChoiceLevels[x] || arrVarChoiceLevels[x][0] == 0) {
+			if(nForceBackjumpLevel == x) {
+				fprintf(stderr, "\n'force-backjump-level=%d' does not correspond to a level specified by 'initial_branch'...exiting\n", nForceBackjumpLevel);
+				exit(1);
+			}
 			count--;
 		}
+		if(nForceBackjumpLevel == x) { nForceBackjumpLevel = count; d9_printf2("nFBL = %d\n", nForceBackjumpLevel);}
 		arrVarChoiceLevels[x] = tmp;
 	}
 

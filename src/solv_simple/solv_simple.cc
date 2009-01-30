@@ -282,6 +282,9 @@ int Simple_LSGB_Heuristic() {
 				}
 				j++;
 			}
+			if(SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nVarChoiceCurrLevel != level)
+			  SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nHeuristicPlaceholder=0;
+
 			if (nBestVble > 0) {
 				while(arrVarChoiceLevels[level][j] != 0) {
 					int i=arrVarChoiceLevels[level][j];
@@ -296,7 +299,10 @@ int Simple_LSGB_Heuristic() {
 					j++;
 				}
 				SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nVarChoiceCurrLevel = level;
-				return (SimpleSmurfProblemState->arrPosVarHeurWghts[nBestVble] >= SimpleSmurfProblemState->arrNegVarHeurWghts[nBestVble]?nBestVble:-nBestVble);
+				d9_printf4("Choosing %d from arrVarChoiceLevels[%d][%d]\n", nBestVble, level, SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nHeuristicPlaceholder);
+				return (((SimpleSmurfProblemState->arrPosVarHeurWghts[nBestVble]*arrVarTrueInfluences[nBestVble]) >=
+							(SimpleSmurfProblemState->arrNegVarHeurWghts[nBestVble]*(1-arrVarTrueInfluences[nBestVble])))
+							?nBestVble:-nBestVble);
 			}
 		}
 	}
@@ -325,11 +331,14 @@ int Simple_LSGB_Heuristic() {
 	
    if(nBestVble == 0) {
 		dE_printf1 ("Error in heuristic routine:  No uninstantiated variable found\n");
+		assert(0);
 		exit (1);
    }
 	
 	SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nVarChoiceCurrLevel = nVarChoiceLevelsNum;
-   return (SimpleSmurfProblemState->arrPosVarHeurWghts[nBestVble] >= SimpleSmurfProblemState->arrNegVarHeurWghts[nBestVble]?nBestVble:-nBestVble);
+		return (((SimpleSmurfProblemState->arrPosVarHeurWghts[nBestVble]*arrVarTrueInfluences[nBestVble]) >=
+					(SimpleSmurfProblemState->arrNegVarHeurWghts[nBestVble]*(1-arrVarTrueInfluences[nBestVble])))
+					?nBestVble:-nBestVble);
 }
 
 ITE_INLINE
@@ -358,6 +367,9 @@ int Simple_PMVSIDS_Heuristic() {
 				}
 				j++;
 			}
+			if(SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nVarChoiceCurrLevel != level)
+			  SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nHeuristicPlaceholder=0;
+			
 			if (nBestVble > 0) {
 				while(arrVarChoiceLevels[level][j] != 0) {
 					int i=arrVarChoiceLevels[level][j];
@@ -371,7 +383,7 @@ int Simple_PMVSIDS_Heuristic() {
 					j++;
 				}
 				SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nVarChoiceCurrLevel = level;
-				return ((SimpleSmurfProblemState->arrPosVarHeurWghts[nBestVble] >= SimpleSmurfProblemState->arrNegVarHeurWghts[nBestVble])?nBestVble:-nBestVble);
+				return arrVarTrueInfluences[nBestVble]>0.5?nBestVble:-nBestVble;
 			}
 		}
 	}
@@ -384,7 +396,7 @@ int Simple_PMVSIDS_Heuristic() {
 			break;
 		}
    }
-	
+
 	// Search through the remaining uninstantiated variables.
 	for(int i = nBestVble + 1; i < SimpleSmurfProblemState->nNumVars; i++) {
 		if(abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[i]) >= nCurrInfLevel) {
@@ -398,12 +410,13 @@ int Simple_PMVSIDS_Heuristic() {
 	
    if(nBestVble == 0) {
 		dE_printf1 ("Error in heuristic routine:  No uninstantiated variable found\n");
+		assert(0);
 		exit (1);
    }
 	
 	SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nVarChoiceCurrLevel = nVarChoiceLevelsNum;
 	assert(nBestVble>0 && nBestVble<SimpleSmurfProblemState->nNumVars);
-   return -nBestVble;
+	return arrVarTrueInfluences[nBestVble]>0.5?nBestVble:-nBestVble;
 }
 
 ITE_INLINE
@@ -428,9 +441,12 @@ int Simple_DC_Heuristic() { //Simple Don't Care Heuristic
 				}
 				j++;
 			}
+			if(SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nVarChoiceCurrLevel != level)
+			  SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nHeuristicPlaceholder=0;
 			if (nBestVble > 0) {
 				SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nVarChoiceCurrLevel = level;
-				return nBestVble;
+				d9_printf4("Choosing %d from arrVarChoiceLevels[%d][%d]\n", nBestVble, level, SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nHeuristicPlaceholder);
+				return arrVarTrueInfluences[nBestVble]>0.5?nBestVble:-nBestVble;
 			}
 		}
 	}
@@ -445,12 +461,13 @@ int Simple_DC_Heuristic() { //Simple Don't Care Heuristic
 	
    if(nBestVble == 0) {
 		dE_printf1 ("Error in heuristic routine:  No uninstantiated variable found\n");
+		assert(0);
 		exit (1);
    }
 	
 	SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nVarChoiceCurrLevel = nVarChoiceLevelsNum;
 	assert(nBestVble>0 && nBestVble<SimpleSmurfProblemState->nNumVars);
-   return nBestVble;
+	return arrVarTrueInfluences[nBestVble]>0.5?nBestVble:-nBestVble;
 }
 
 ITE_INLINE

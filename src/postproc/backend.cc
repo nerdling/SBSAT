@@ -399,8 +399,8 @@ Verify_Solver()
 	while(solution_info_head!=NULL) {
 		solution_info = solution_info_head;
 		solution_info_head = solution_info_head->next;
-		free(solution_info->arrElts);
-		free(solution_info);
+		delete [] solution_info->arrElts;
+		ite_free((void**)&solution_info);
 	}
 	solution_info = NULL;
 	delete [] original_variables;

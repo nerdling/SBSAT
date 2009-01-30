@@ -42,6 +42,8 @@
 int *arrSimpleSolver2IteVarMap=NULL;
 int *arrIte2SimpleSolverVarMap=NULL;
 
+double *arrVarTrueInfluencesPlaceHolder;
+
 ITE_INLINE
 int InitSimpleVarMap() {
    int total_vars = numinp = getNuminp();
@@ -115,7 +117,17 @@ int InitSimpleVarMap() {
 			}
 		}
 	}
-	
+	if(arrVarTrueInfluences) {
+		double *arrVarTrueInfluencesTmp = (double *)ite_calloc(nNumVars, sizeof(double), 9, "arrVarTrueInfluencesTmp");
+		for(int x=0; x < nNumVars; x++) {
+			if(arrSimpleSolver2IteVarMap[x] == 0)
+			  arrVarTrueInfluencesTmp[x] = 0.5;
+			else arrVarTrueInfluencesTmp[x] = arrVarTrueInfluences[arrSimpleSolver2IteVarMap[x]];
+		}
+		arrVarTrueInfluencesPlaceHolder = arrVarTrueInfluences;
+		arrVarTrueInfluences = arrVarTrueInfluencesTmp;
+	}
+
 	assert (nmbrFunctions > 0);
 	assert (nSolutionIndep == nIndepVars+1);
 	assert (nSolutionDep-nIndepVars-1 == nDepVars);
@@ -133,6 +145,11 @@ void FreeSimpleVarMap() {
 				j++;
 			}
 		}
+	}
+
+	if(arrVarTrueInfluences) {
+		ite_free((void**)&(arrVarTrueInfluences));
+		arrVarTrueInfluences = arrVarTrueInfluencesPlaceHolder;
 	}
 	
 	ite_free((void**)&arrSimpleSolver2IteVarMap);
