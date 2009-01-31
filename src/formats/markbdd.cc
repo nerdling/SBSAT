@@ -1355,7 +1355,7 @@ void bddloop () {
       if (p != '\n') {
 			int continue_all = 0;
 			if(p==';') continue_all = 1;
-			else if (p!='	' && p!=' ' && p!='(' && p!=')' && p!=',') {
+			else if (p!='	' && p!='\r' && p!=' ' && p!='(' && p!=')' && p!=',') {
 				fprintf(stderr, "Error: Extra characters following line %d...exiting\n", markbdd_line);
 				exit (1);
 				continue_all = 1;
@@ -1365,7 +1365,7 @@ void bddloop () {
 				if (p == '\n')
 				  break;
 				if (p == ';') continue_all = 1;
-				if (continue_all == 0 && p!='	' && p!=' ' && p!='(' && p!=')' && p!=',') {
+				if (continue_all == 0 && p!='	' && p!='\r' && p!=' ' && p!='(' && p!=')' && p!=',') {
 					fprintf(stderr, "Error: Extra characters following line %d...exiting\n", markbdd_line);
 					exit (1);
 					continue_all = 1;
