@@ -44,6 +44,8 @@ int ApplyInferenceToMINMAXCounter(int nBranchVar, bool bBVPolarity, int nSmurfNu
 	MINMAXCounterStateEntry *pMINMAXCounterState = (MINMAXCounterStateEntry *)arrSmurfStates[nSmurfNumber];
 	MINMAXStateEntry *pMINMAXState = (MINMAXStateEntry *)pMINMAXCounterState->pMINMAXState;
 	
+	assert(pMINMAXCounterState->pStateOwner == nSmurfNumber);
+	
 	int index = 0;
 	int size = pMINMAXState->nSize;
 	int prev = 0;

@@ -36,6 +36,8 @@ int ORState_InferWithLemma(ORStateEntry *pORState, int infer_var, int nSmurfNumb
 
 int ApplyInferenceToOR(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates) {
 	ORStateEntry *pORState = (ORStateEntry *)arrSmurfStates[nSmurfNumber];	
+
+	assert(pORState->pStateOwner == nSmurfNumber);
 	
 	//Check to see if nBranchVar is inferred correctly.
 	int index = 0;
@@ -96,6 +98,8 @@ int ApplyInferenceToOR(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void 
 int ApplyInferenceToORCounter(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates) {
 	ORCounterStateEntry *pORCounterState = (ORCounterStateEntry *)arrSmurfStates[nSmurfNumber];
 	ORStateEntry *pORState = (ORStateEntry *)pORCounterState->pORState;
+
+	assert(pORCounterState->pStateOwner == nSmurfNumber);
 	
 	int index = 0;
 	int size = pORState->nSize;

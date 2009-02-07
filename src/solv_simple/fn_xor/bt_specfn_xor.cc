@@ -38,6 +38,8 @@ int XORState_InferWithLemma(XORStateEntry *pXORState, int infer_var, bool bParit
 int ApplyInferenceToXOR(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates) {
 	XORStateEntry *pXORState = (XORStateEntry *)arrSmurfStates[nSmurfNumber];	
 
+	assert(pXORState->pStateOwner == nSmurfNumber);
+	
 	//Check to see if nBranchVar exists in this constraint.
 	int index = 0;
 	int size = pXORState->nSize;
@@ -99,6 +101,8 @@ int ApplyInferenceToXORCounter(int nBranchVar, bool bBVPolarity, int nSmurfNumbe
 
 	XORCounterStateEntry *pXORCounterState = (XORCounterStateEntry *)arrSmurfStates[nSmurfNumber];
 	XORStateEntry *pXORState = (XORStateEntry *)pXORCounterState->pXORState;
+
+	assert(pXORCounterState->pStateOwner == nSmurfNumber);
 	
 	int index = 0;
 	int size = pXORState->nSize;
