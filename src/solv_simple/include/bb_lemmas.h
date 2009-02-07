@@ -58,7 +58,10 @@ struct Cls {
 	unsigned core:1;
 	unsigned collected:1;
 #endif*/
-	Cls *next[2];
+//   Cls *uip;
+//   Lit *uip_literal;
+//   unsigned uip_release_level;
+   Cls *next[2];
 	Lit *lits[2];
 };
 

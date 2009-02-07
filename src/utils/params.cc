@@ -396,7 +396,7 @@ t_opt options[] = {
 { &JHEURISTIC_K_INF, "", "jheuristic-k-inf", P_FLOAT, 
 		V(i:0,"0"), V(f:1.0, "1.0"), VAR_NORMAL, 0,
 		"set the value of the inference multiplier"},
-{ &JHEURISTIC_K_UNKNOWN, "", "jheuristic-k-inf", P_FLOAT,
+{ &JHEURISTIC_K_UNKNOWN, "", "jheuristic-k-unk", P_FLOAT,
 		V(i:0,"0"), V(f:0.0, "0.0"), VAR_NORMAL, 0,
 		"set the value of unknown states (used with --precompute-states 0)"},
 
