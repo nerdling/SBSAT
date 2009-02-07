@@ -17,6 +17,15 @@ do
  if [ $? != 0 ] ; then
     exit 1;
  fi
+ echo @ECHO_N@ "`basename $i` ... @ECHO_C@"
+ PARAMS=
+ if [ -f $i.params ] ; then
+   PARAMS=`cat $i.params`
+ fi
+ ../src/sbsat --debug 0 --ini ../tests/emptyite.ini --ctrl-c 0 $i $PARAMS -t --lemmas 1 --max-solutions 0
+ if [ $? != 0 ] ; then
+    exit 1;
+ fi
 done
 
 echo ===========================================
