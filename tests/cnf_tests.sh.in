@@ -17,7 +17,7 @@ do
  if [ $? != 0 ] ; then
     exit 1;
  fi
- echo @ECHO_N@ "`basename $i` ... @ECHO_C@"
+ echo @ECHO_N@ "`basename $i` (simple_solver) ... @ECHO_C@"
  PARAMS=
  if [ -f $i.params ] ; then
    PARAMS=`cat $i.params`
