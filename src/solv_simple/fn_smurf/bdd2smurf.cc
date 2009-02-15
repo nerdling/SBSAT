@@ -205,8 +205,7 @@ void *ReadSmurfStateIntoTable(BDDNode *pCurrentBDD, int *arrElts, int nNumElts) 
 		
 		//Handle any initial inferences
 		if(pCurrentBDD->inferences!=NULL) {
-			
-			//
+			pStartState = CreateInferenceStates(pCurrentBDD);
 		
 		} else if(nNumElts >= functionTypeLimits[PLAINOR] &&
 			isOR(pCurrentBDD)) {
