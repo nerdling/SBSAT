@@ -93,6 +93,7 @@ void *CreateInferenceStates(BDDNode *infBDD) {
 		if(nNumInferences == 0) pNextState = pNext;
 		else { pNextInfState->pVarTransition = pNext; pNextInfState->pInferenceBDD = infBDD; }
 	}
+	assert(pNextState != NULL);
 	return pNextState;
 }
 
