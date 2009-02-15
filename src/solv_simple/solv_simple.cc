@@ -513,7 +513,7 @@ int EnqueueInference_lemmas_hook(int nBranchVar, bool bBVPolarity) {
 	int nPrevInfLevel = abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[nBranchVar]);
 	d7_printf4("      Lemma cache inferring %d at Level %d (prior level = %d)\n",
 				  bBVPolarity?nBranchVar:-nBranchVar, nInfQueueHead, nPrevInfLevel);
-	assert(use_lemmas || use_SmurfWatchedLists || nPrevInfLevel > 0);
+	assert(use_lemmas || use_SmurfWatchedLists || nPrevInfLevel >= 0);
 	
 	if(nPrevInfLevel < nInfQueueHead) {
 		//Inference already in queue
@@ -541,7 +541,7 @@ int EnqueueInference(int nBranchVar, bool bBVPolarity) {
 	int nPrevInfLevel = abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[nBranchVar]);
 	d7_printf4("      Inferring %d at Level %d (prior level = %d)\n",
 				  bBVPolarity?nBranchVar:-nBranchVar, nInfQueueHead, nPrevInfLevel);
-	assert(use_lemmas || use_SmurfWatchedLists || nPrevInfLevel > 0);
+	assert(use_lemmas || use_SmurfWatchedLists || nPrevInfLevel >= 0);
 	
 	if(nPrevInfLevel < nInfQueueHead) {
 		//Inference already in queue
