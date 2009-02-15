@@ -573,7 +573,7 @@ int EnqueueInference(int nBranchVar, bool bBVPolarity) {
 		SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[nBranchVar] = nInfQueueHead;
 		SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars++;
 		ite_counters[INF_SMURF]++;
-		
+
 		if(use_lemmas) {
 			d7_printf2("  Applying %d to lemma database\n", bBVPolarity?nBranchVar:-nBranchVar);
 			backtrack_level = picosat_apply_inference(bBVPolarity?nBranchVar:-nBranchVar, SimpleSmurfProblemState->arrInferenceLemmas[nBranchVar].clause);
@@ -720,7 +720,7 @@ int SimpleBrancher() {
 	
 	LONG64 max_solutions_simple = max_solutions>0?max_solutions:(max_solutions==0?-1:0);
 
-	nInfQueueHead = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
+	nInfQueueHead = 0;
 	
 	fSimpleSolverStartTime = get_runtime();
 
