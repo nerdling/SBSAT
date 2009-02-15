@@ -77,7 +77,6 @@ void *CreateInferenceStates(BDDNode *infBDD) {
 			infBDD = set_variable(infBDD, arrSimpleSolver2IteVarMap[pNextInfState->nTransitionVar], 0);
 		}
 		inferences = infBDD->inferences;
-		//			inferences = inferences->next;
 	}
 	
 	if(infBDD->pState != NULL) {
@@ -207,7 +206,8 @@ void *ReadSmurfStateIntoTable(BDDNode *pCurrentBDD, int *arrElts, int nNumElts) 
 		//Handle any initial inferences
 		if(pCurrentBDD->inferences!=NULL) {
 			pStartState = CreateInferenceStates(pCurrentBDD);
-		
+			((TypeStateEntry *)pStartState->pPreviousState = NULL);
+			ite_free((void **)&arrElts);
 		} else if(nNumElts >= functionTypeLimits[PLAINOR] &&
 			isOR(pCurrentBDD)) {
 			//FN_OR
