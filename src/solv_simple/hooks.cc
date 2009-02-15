@@ -176,7 +176,8 @@ size_t bytes_clause (unsigned size, unsigned learned) {
 ITE_INLINE int Init_Solver_PostSmurfs_Hooks(void **arrSmurfStates) {
 	int ret = SOLV_UNKNOWN;
 
-	//PicoSAT must go before the xor table, because the xor table can cause inferences.
+	//PicoSAT must go before the xor table, because we create all the lemmas
+	//here and the xor table can cause inferences, which make use of the	lemmas.
 	if(use_lemmas) {
 		picosat_init_SBSAT(SimpleSmurfProblemState->nNumSmurfs);
 		picosat_adjust(SimpleSmurfProblemState->nNumVars-1);
@@ -212,6 +213,12 @@ ITE_INLINE int Init_Solver_PostSmurfs_Hooks(void **arrSmurfStates) {
 		}
 	}
 
+	for(int nSmurfIndex = 0; nSmurfIndex < SimpleSmurfProblemState->nNumSmurfs; nSmurfIndex++) {
+		if(((TypeStateEntry *)arrSmurfStates[nSmurfIndex])->cType == FN_INFERENCE) {
+			ret = TransitionInference(nSmurfIndex, arrSmurfStates);			
+		}
+	}
+	
 	if(ret != 0)
 	  return SOLV_UNKNOWN;
 	

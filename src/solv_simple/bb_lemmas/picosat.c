@@ -4663,7 +4663,6 @@ need_to_reduce (void)
 #endif
       return 1;
     }
-
   return nlclauses >= reduce_limit_on_lclauses ();
 }
 
@@ -5439,8 +5438,8 @@ extern int MAX_NUM_CACHED_LEMMAS;
 static void
 init_reduce (void)
 {
-	lreduce = MAX_NUM_CACHED_LEMMAS<((oadded+nNumSmurfs) / 3)?MAX_NUM_CACHED_LEMMAS:((oadded+nNumSmurfs) / 3);
-	//lreduce = MAX_NUM_CACHED_LEMMAS;
+	//lreduce = MAX_NUM_CACHED_LEMMAS<((oadded+nNumSmurfs) / 3)?MAX_NUM_CACHED_LEMMAS:((oadded+nNumSmurfs) / 3);
+	lreduce = MAX_NUM_CACHED_LEMMAS;
 
   if (lreduce < 100)
     lreduce = 100;
@@ -6490,7 +6489,7 @@ picosat_init_SBSAT (int nNumSmurfs_init)
 	
 	init_restart ();
 	
-	IFREDUCE = 100000; //MAX_NUM_CACHED_LEMMAS;
+	IFREDUCE = MAX_NUM_CACHED_LEMMAS*10;
 	init_forced_reduce ();
 	
 	isimplify = fixed;
