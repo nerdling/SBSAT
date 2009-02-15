@@ -719,6 +719,8 @@ int SimpleBrancher() {
 	backtrack_level = SimpleSmurfProblemState->nNumVars;
 	
 	LONG64 max_solutions_simple = max_solutions>0?max_solutions:(max_solutions==0?-1:0);
+
+	nInfQueueHead = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
 	
 	fSimpleSolverStartTime = get_runtime();
 
