@@ -1423,7 +1423,7 @@ void bddloop () {
 	}
 
 	if(nForceBackjumpLevel >= max_varlevel) {
-		fprintf(stderr, "\n'force-backjump-level=%d' does not correspond to a level specified by 'initial_branch'...exiting\n", nForceBackjumpLevel);
+		fprintf(stderr, "\n'--force-backjump-level %d' does not correspond to a level specified by 'initial_branch'...exiting\n", nForceBackjumpLevel);
 		exit(1);
 	}
 	
@@ -1435,7 +1435,7 @@ void bddloop () {
 		arrVarChoiceLevels[count] = arrVarChoiceLevels[x];
 		if(!arrVarChoiceLevels[x] || arrVarChoiceLevels[x][0] == 0) {
 			if(nForceBackjumpLevel == x) {
-				fprintf(stderr, "\n'force-backjump-level=%d' does not correspond to a level specified by 'initial_branch'...exiting\n", nForceBackjumpLevel);
+				fprintf(stderr, "\n'--force-backjump-level %d' does not correspond to a level specified by 'initial_branch'...exiting\n", nForceBackjumpLevel);
 				exit(1);
 			}
 			count--;

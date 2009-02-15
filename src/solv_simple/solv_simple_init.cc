@@ -147,6 +147,8 @@ int ReadAllSmurfsIntoTable(int nNumVars) {
 	SimpleSmurfProblemState->arrInferenceQueue = (int *)ite_calloc(SimpleSmurfProblemState->nNumVars, sizeof(int), 9, "arrInferenceQueue");
 	SimpleSmurfProblemState->arrInferenceDeclaredAtLevel = (int *)ite_calloc(SimpleSmurfProblemState->nNumVars, sizeof(int), 9, "arrInferenceDeclaredAtLevel");
 
+	SimpleSmurfProblemState->nCurrSearchTreeLevel = 0;
+	
 	Init_Solver_PreSmurfs_Hooks();
 	
 	//Count the number of functions every variable occurs in.

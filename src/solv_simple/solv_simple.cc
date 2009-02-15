@@ -713,19 +713,29 @@ int Backtrack() {
 int SimpleBrancher() {
 
 	int ret = SOLV_UNKNOWN;
-	
+	bool bBVPolarity; 
+	int nBranchLit, nInfQueueHead, nPrevInfLevel, nBranchVar;
+
 	backtrack_level = SimpleSmurfProblemState->nNumVars;
 	
-	SimpleSmurfProblemState->nCurrSearchTreeLevel = 0;
-
-	fSimpleSolverStartTime = get_runtime();
-
 	LONG64 max_solutions_simple = max_solutions>0?max_solutions:(max_solutions==0?-1:0);
 	
+	fSimpleSolverStartTime = get_runtime();
+
+	//Clear out any initial inferences
+	while(nInfQueueHead != SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars) {
+		//Get inference
+		nBranchLit = SimpleSmurfProblemState->arrInferenceQueue[nInfQueueHead];
+		nInfQueueHead++;
+		bBVPolarity = (nBranchLit < 0)?0:1;
+		nBranchVar = bBVPolarity?nBranchLit:-nBranchLit;
+		
+		//apply inference to all involved smurfs
+		if(ApplyInferenceToStates(nBranchVar, bBVPolarity) == 0)
+		  return SOLV_UNSAT;
+	}
+	
 	while((max_solutions>0)?(ite_counters[NUM_SOLUTIONS]<max_solutions_simple):1) {
-		bool bBVPolarity; 
-		int nBranchLit, nInfQueueHead, nPrevInfLevel, nBranchVar;
-		  
 		while(SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars < SimpleSmurfProblemState->nNumVars-1
 				&& (result_display_type || simple_solver_reset_level!=-1 || (SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumSmurfsSatisfied < SimpleSmurfProblemState->nNumSmurfs))
 				) {
