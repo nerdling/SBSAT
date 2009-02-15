@@ -176,6 +176,22 @@ size_t bytes_clause (unsigned size, unsigned learned) {
 ITE_INLINE int Init_Solver_PostSmurfs_Hooks(void **arrSmurfStates) {
 	int ret = SOLV_UNKNOWN;
 
+	//PicoSAT must go before the xor table, because the xor table can cause inferences.
+	if(use_lemmas) {
+		picosat_init_SBSAT(SimpleSmurfProblemState->nNumSmurfs);
+		picosat_adjust(SimpleSmurfProblemState->nNumVars-1);
+		picosat_set_seed(random_seed);
+		
+		SimpleSmurfProblemState->arrInferenceLemmas = (SimpleLemma *)ite_calloc(SimpleSmurfProblemState->nNumVars+1, sizeof(SimpleLemma), 9, "arrInferenceLemmas");
+		for(int nVarIndex = 0; nVarIndex <= SimpleSmurfProblemState->nNumVars; nVarIndex++) {
+			SimpleSmurfProblemState->arrInferenceLemmas[nVarIndex].clause = (Cls *)ite_calloc(1, bytes_clause(2, 0), 9, "arrInferenceLemmas.clause.lits");
+			SimpleSmurfProblemState->arrInferenceLemmas[nVarIndex].max_size = 2;
+		}
+		SimpleSmurfProblemState->pConflictClause.clause = (Cls *)ite_calloc(1, bytes_clause(2, 0), 9, "pConflictClause.clause.lits");
+		SimpleSmurfProblemState->pConflictClause.max_size = 2;
+
+	}
+	
 	if(use_XORGElim==1) {
 		initXORGElimTable(SimpleSmurfProblemState->nNumVars);
 		allocXORGElimTable(SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].XORGElimTable, 0);
@@ -194,21 +210,6 @@ ITE_INLINE int Init_Solver_PostSmurfs_Hooks(void **arrSmurfStates) {
 				}
 			}
 		}
-	}
-
-	if(use_lemmas) {
-		picosat_init_SBSAT(SimpleSmurfProblemState->nNumSmurfs);
-		picosat_adjust(SimpleSmurfProblemState->nNumVars-1);
-		picosat_set_seed(random_seed);
-		
-		SimpleSmurfProblemState->arrInferenceLemmas = (SimpleLemma *)ite_calloc(SimpleSmurfProblemState->nNumVars+1, sizeof(SimpleLemma), 9, "arrInferenceLemmas");
-		for(int nVarIndex = 0; nVarIndex <= SimpleSmurfProblemState->nNumVars; nVarIndex++) {
-			SimpleSmurfProblemState->arrInferenceLemmas[nVarIndex].clause = (Cls *)ite_calloc(1, bytes_clause(2, 0), 9, "arrInferenceLemmas.clause.lits");
-			SimpleSmurfProblemState->arrInferenceLemmas[nVarIndex].max_size = 2;
-		}
-		SimpleSmurfProblemState->pConflictClause.clause = (Cls *)ite_calloc(1, bytes_clause(2, 0), 9, "pConflictClause.clause.lits");
-		SimpleSmurfProblemState->pConflictClause.max_size = 2;
-
 	}
 
 	if(ret != 0)

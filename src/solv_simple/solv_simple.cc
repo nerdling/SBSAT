@@ -548,7 +548,6 @@ int EnqueueInference(int nBranchVar, bool bBVPolarity) {
 		if((SimpleSmurfProblemState->arrInferenceQueue[nPrevInfLevel] > 0) != bBVPolarity) {
 			//Conflict Detected;
 			d7_printf2("      Conflict when adding %d to the inference queue\n", bBVPolarity?nBranchVar:-nBranchVar);
-			d7_printf2("      Applying conflict %d to lemma database\n", bBVPolarity?nBranchVar:-nBranchVar);
 			
 			if(use_lemmas) {
 				if(backtrack_level < SimpleSmurfProblemState->nCurrSearchTreeLevel) { 
@@ -558,6 +557,7 @@ int EnqueueInference(int nBranchVar, bool bBVPolarity) {
 				if(backtrack_level < SimpleSmurfProblemState->nCurrSearchTreeLevel) { 
 					return 0;
 				}
+				d7_printf2("      Applying conflict %d to lemma database\n", bBVPolarity?nBranchVar:-nBranchVar);
 				backtrack_level = picosat_apply_inference(bBVPolarity?nBranchVar:-nBranchVar, SimpleSmurfProblemState->pConflictClause.clause);
 			}
 			return 0;
