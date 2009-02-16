@@ -47,7 +47,6 @@ void *CreateInferenceStates(BDDNode *infBDD) {
 	void *pNextState = NULL;
 	InferenceStateEntry *pNextInfState = NULL;
 	infer *inferences = infBDD->inferences;
-	infer *save_inferences = inferences;
 	int nNumInferences = 0;
 	while(inferences!=NULL) {
 		if(inferences->nums[1] != 0) {
@@ -205,6 +204,7 @@ void *ReadSmurfStateIntoTable(BDDNode *pCurrentBDD, int *arrElts, int nNumElts) 
 
 		int nInferences = 0;
 		if(pCurrentBDD->inferences!=NULL) {
+			infer *inferences = pCurrentBDD->inferences;
 			while(inferences!=NULL) {
 				if(inferences->nums[1] != 0) {
 					inferences = inferences->next; continue; 
