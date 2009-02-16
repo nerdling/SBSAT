@@ -258,7 +258,8 @@ int ReadAllSmurfsIntoTable(int nNumVars) {
 			SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates[nSmurfIndex] =	ReadSmurfStateIntoTable(pInitialBDD, NULL, 0);
 			//Setting the ownership of this Smurf
 			d7_printf3("Setting owner of Smurf #%d to %d\n", nSmurfIndex, nSmurfIndex);
-			assert(((TypeStateEntry *)SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates[nSmurfIndex])->pPreviousState == NULL);
+			assert(((TypeStateEntry *)SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates[nSmurfIndex])->cType == FN_INFERENCE || 
+					 ((TypeStateEntry *)SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates[nSmurfIndex])->pPreviousState == NULL);
 			((TypeStateEntry *)SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates[nSmurfIndex])->pStateOwner = nSmurfIndex;
 
 			if(SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates[nSmurfIndex] == pTrueSimpleSmurfState)
