@@ -75,6 +75,7 @@ typedef struct SmurfStateEntry {
 	int pStateOwner;
 	void *pPreviousState; //Used during lemma creation.
 	int nLemmaLiteral; //Used during lemma creation.
+
 	int nTransitionVar;
 	double fHeurWghtofTrueTransition;
 	double fHeurWghtofFalseTransition;
@@ -99,6 +100,11 @@ typedef struct SmurfStateEntry {
 typedef struct InferenceStateEntry {
 	char cType; //FN_INFERENCE
 	bool visited; //Used for displaying the smurfs.
+	int (*ApplyInferenceToState)(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
+	int pStateOwner;
+	void *pPreviousState; //Used during lemma creation.
+	int nLemmaLiteral; //Used during lemma creation.
+
 	int nTransitionVar;
 	bool bPolarity;
 	void *pVarTransition;
@@ -114,6 +120,7 @@ typedef struct ORStateEntry {
 	int pStateOwner;
 	void *pPreviousState; //Used during lemma creation.
 	int nLemmaLiteral; //Used during lemma creation.
+
 	int nSize;
 	int *pnTransitionVars;
 	bool *bPolarity;
@@ -127,6 +134,7 @@ typedef struct ORCounterStateEntry {
 	int pStateOwner;
 	void *pPreviousState; //Used during lemma creation.
 	int nLemmaLiteral; //Used during lemma creation.
+
 	int nSize;
 	void *pTransition;
 	ORStateEntry *pORState;	
@@ -139,6 +147,7 @@ typedef struct XORStateEntry {
 	int pStateOwner;
 	void *pPreviousState; //Used during lemma creation.
 	int nLemmaLiteral; //Used during lemma creation.
+
 	int nSize;
 	bool bParity;
 	int *pnTransitionVars;
@@ -163,6 +172,7 @@ typedef struct XORGElimStateEntry {
 	int pStateOwner;
 	void *pPreviousState; //Used during lemma creation.
 	int nLemmaLiteral; //Used during lemma creation.
+
 	int nSize;
 	void *pVector;
 	int *pnTransitionVars;
@@ -186,6 +196,7 @@ typedef struct MINMAXCounterStateEntry {
 	int pStateOwner;
 	void *pPreviousState; //Used during lemma creation.
 	int nLemmaLiteral; //Used during lemma creation.
+
 	int nVarsLeft;
 	int nNumTrue; //Dynamic
 	void *pTransition;

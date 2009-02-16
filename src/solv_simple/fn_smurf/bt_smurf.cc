@@ -3,54 +3,6 @@
 #include "solver.h"
 
 ITE_INLINE
-void create_clause_from_InferenceState(int nInfVar, Cls **clause, int *lits_max_size) {
-	Lit ** p;
-	
-	if((*clause)->used == 1) return; //Clause is already in the queue.
-	
-	if(1 > (*lits_max_size)) {
-		(*clause) = (Cls *)realloc((*clause), bytes_clause(1, 0));
-		(*lits_max_size) = 1;
-	}
-
-	d7_printf2("        Lemma: %d", nInfVar);
-	
-	p = (*clause)->lits;
-	(*p++) = int2lit(nInfVar);
-	d7_printf1("\n");
-	(*clause)->size = 1;
-}
-
-ITE_INLINE
-int InferenceState_InferWithLemma(InferenceStateEntry *pNextState, int nInfVar, int nSmurfNumber) {
-	int nInfQueueHead = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
-	int nPrevInfLevel = abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[nInfVar]);
-	if(nPrevInfLevel < nInfQueueHead) {
-		if((SimpleSmurfProblemState->arrInferenceQueue[nPrevInfLevel] > 0) != ((InferenceStateEntry *)pNextState)->bPolarity) {
-			//Conflict
-			//Add a lemma to reference this conflict.
-			create_clause_from_InferenceState((((InferenceStateEntry *)pNextState)->bPolarity)?nInfVar:-nInfVar,
-														 &(SimpleSmurfProblemState->pConflictClause.clause),
-														 &(SimpleSmurfProblemState->pConflictClause.max_size));
-			int ret = EnqueueInference(nInfVar, ((InferenceStateEntry *)pNextState)->bPolarity);
-			assert(ret == 0);
-			return 0;
-		} else {
-			//Lit already assigned.
-			d7_printf2("      Inference %d already inferred\n", (((InferenceStateEntry *)pNextState)->bPolarity)?nInfVar:-nInfVar);
-			return 1;
-		} 
-	} else {
-		//Add a lemma as reference to this inference.
-		create_clause_from_InferenceState((((InferenceStateEntry *)pNextState)->bPolarity > 0)?nInfVar:-nInfVar,
-													 &(SimpleSmurfProblemState->arrInferenceLemmas[nInfVar].clause),
-													 &(SimpleSmurfProblemState->arrInferenceLemmas[nInfVar].max_size));
-		if(EnqueueInference(nInfVar, ((InferenceStateEntry *)pNextState)->bPolarity) == 0) return 0;
-	}
-	return 1;
-}
-
-ITE_INLINE
 void create_clause_from_SmurfState(int nInfVar, TypeStateEntry *pSmurfState, int nNumVarsInSmurf,
 										Cls **clause, int *lits_max_size) {
 	Lit ** p;
@@ -121,7 +73,7 @@ int TransitionInference(int nSmurfNumber, void **arrSmurfStates) {
 		int nInfVar = ((InferenceStateEntry *)pNextState)->nTransitionVar;
 		
 		if(use_lemmas) {
-			if(InferenceState_InferWithLemma((InferenceStateEntry *)pNextState, nInfVar, nSmurfNumber) == 0) return 0;
+			if(SmurfState_InferWithLemma(NULL, pNextState, nInfVar, nSmurfNumber) == 0) return 0;
 		} else {
 			if(EnqueueInference(nInfVar, ((InferenceStateEntry *)pNextState)->bPolarity) == 0) return 0;
 		}

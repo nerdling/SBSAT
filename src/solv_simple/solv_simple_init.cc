@@ -258,10 +258,8 @@ int ReadAllSmurfsIntoTable(int nNumVars) {
 			SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates[nSmurfIndex] =	ReadSmurfStateIntoTable(pInitialBDD, NULL, 0);
 			//Setting the ownership of this Smurf
 			d7_printf3("Setting owner of Smurf #%d to %d\n", nSmurfIndex, nSmurfIndex);
-			assert(((TypeStateEntry *)SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates[nSmurfIndex])->cType == FN_INFERENCE || 
-					 ((TypeStateEntry *)SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates[nSmurfIndex])->pPreviousState == NULL);
+			assert(((TypeStateEntry *)SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates[nSmurfIndex])->pPreviousState == NULL);
 			((TypeStateEntry *)SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates[nSmurfIndex])->pStateOwner = nSmurfIndex;
-
 			if(SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates[nSmurfIndex] == pTrueSimpleSmurfState)
 			  SimpleSmurfProblemState->arrSmurfStack[0].nNumSmurfsSatisfied++;
 		}
@@ -315,7 +313,7 @@ void FreeSmurfStateEntries() {
 				FreeSmurfStateEntry((SmurfStateEntry *)arrSmurfStates);
 				arrSmurfStates = (void *)(((SmurfStateEntry *)arrSmurfStates) + 1);
 				size = sizeof(SmurfStateEntry);
-			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_INFERENCE) {							  
+			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_INFERENCE) {
 				FreeInferenceStateEntry((InferenceStateEntry *)arrSmurfStates);
 				arrSmurfStates = (void *)(((InferenceStateEntry *)arrSmurfStates) + 1);
 				size = sizeof(InferenceStateEntry);
