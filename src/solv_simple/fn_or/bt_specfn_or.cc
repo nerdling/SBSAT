@@ -15,7 +15,7 @@ int ORState_InferWithLemma(ORStateEntry *pORState, int infer_var, int nSmurfNumb
 												SimpleSmurfProblemState->arrReverseOccurenceList[nSmurfNumber][0].var,
 												&(SimpleSmurfProblemState->pConflictClause.clause),
 												&(SimpleSmurfProblemState->pConflictClause.max_size));
-			int ret = EnqueueInference(nInfVar, pORState->bPolarity[infer_var]);
+			int ret = EnqueueInference(nInfVar, pORState->bPolarity[infer_var], INF_SPEC_FN_OR);
 			assert(ret == 0);
 			return 0;
 		} else {
@@ -29,7 +29,7 @@ int ORState_InferWithLemma(ORStateEntry *pORState, int infer_var, int nSmurfNumb
 											SimpleSmurfProblemState->arrReverseOccurenceList[nSmurfNumber][0].var,
 											&(SimpleSmurfProblemState->arrInferenceLemmas[nInfVar].clause),
 											&(SimpleSmurfProblemState->arrInferenceLemmas[nInfVar].max_size));
-		if(EnqueueInference(nInfVar, pORState->bPolarity[infer_var]) == 0) return 0;
+		if(EnqueueInference(nInfVar, pORState->bPolarity[infer_var], INF_SPEC_FN_OR) == 0) return 0;
 	}
 	return 1;
 }
@@ -84,7 +84,7 @@ int ApplyInferenceToOR(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void 
 		if(use_lemmas) {
 			if(ORState_InferWithLemma(pORState, infer_var, nSmurfNumber) == 0) return 0;
 		} else {			  
-			if(EnqueueInference(pORState->pnTransitionVars[infer_var], pORState->bPolarity[infer_var]) == 0) return 0;
+			if(EnqueueInference(pORState->pnTransitionVars[infer_var], pORState->bPolarity[infer_var], INF_SPEC_FN_OR) == 0) return 0;
 		}
 		
 		arrSmurfStates[nSmurfNumber] = pTrueSimpleSmurfState;

@@ -43,50 +43,64 @@
 /* counter and return values */
 #define NO_ERROR 0
 
-#define ERR_BT_SMURF 1
-#define ERR_BT_SMURF_AU 2
-#define ERR_BT_SPEC_FN_AND 3
-#define ERR_BT_SPEC_FN_XOR 4
-#define ERR_BT_LEMMA 5
-#define ERR_BT_SOL_LEMMA 6
-#define ERR_LIMITS 7
-#define ERR_BT_SPEC_FN_MINMAX 8
+//ERR_BT must follow INF for each function type
+#define INF_SMURF              1
+#define ERR_BT_SMURF           2
 
-#define INF_SMURF        10
-#define INF_SMURF_AU     11
-#define INF_SPEC_FN_AND  12 
-#define INF_SPEC_FN_XOR  13 
-#define INF_LEMMA        14
-#define INF_SPEC_FN_MINMAX  15
+#define INF_SMURF_AU           3
+#define ERR_BT_SMURF_AU        4
 
-#define SMURF_STATES	    18
-#define SMURF_AU_STATES  19
+#define INF_SPEC_FN_AND        5 
+#define ERR_BT_SPEC_FN_AND     6
 
-#define NUM_SOLUTIONS	 20
+#define INF_SPEC_FN_XOR        7
+#define ERR_BT_SPEC_FN_XOR     8
 
-#define BDD_NODE_FIND    21
-#define BDD_NODE_NEW     22
-#define BDD_NODE_STEPS   23
+#define INF_LEMMA              9
+#define ERR_BT_LEMMA          10
 
-#define SMURF_NODE_FIND    24
-#define SMURF_NODE_NEW     25
+#define ERR_BT_SOL_LEMMA      11
 
-#define SMURF_AU_NODE_FIND 26
-#define SMURF_AU_NODE_NEW  27
+#define ERR_LIMITS            12
 
-#define NUM_BACKTRACKS	 28
-#define NUM_BACKJUMPS	 29
-#define NUM_TOTAL_BACKJUMPS	 30
-#define NUM_AUTARKIES	 31
-#define NUM_TOTAL_AUTARKIES	 32
-#define NUM_CHOICE_POINTS     33
-#define HEU_DEP_VAR      34
+#define INF_SPEC_FN_MINMAX    13
+#define ERR_BT_SPEC_FN_MINMAX 14
 
-#define NUM_LEMMA_INTO_CACHE    35
+#define INF_SPEC_FN_OR        15
+#define ERR_BT_SPEC_FN_OR     16
 
-#define MAX_COUNTER      36
+#define INF_BB_GELIM          17
+#define ERR_BT_BB_GELIM       18
 
-#define SILENT 37
+#define SMURF_STATES	    30
+#define SMURF_AU_STATES  31
+
+#define NUM_SOLUTIONS	 32
+
+#define BDD_NODE_FIND    33
+#define BDD_NODE_NEW     34
+#define BDD_NODE_STEPS   35
+
+#define SMURF_NODE_FIND    36
+#define SMURF_NODE_NEW     37
+
+#define SMURF_AU_NODE_FIND 38
+#define SMURF_AU_NODE_NEW  39
+
+#define NUM_INFERENCES	 40
+#define NUM_BACKTRACKS	 41
+#define NUM_BACKJUMPS	 42
+#define NUM_TOTAL_BACKJUMPS	 43
+#define NUM_AUTARKIES	 44
+#define NUM_TOTAL_AUTARKIES	 45
+#define NUM_CHOICE_POINTS     46
+#define HEU_DEP_VAR      47
+
+#define NUM_LEMMA_INTO_CACHE    48
+
+#define MAX_COUNTER      49
+
+#define SILENT 50
 
 /* non counter errors */
 #define ERR_IO_INIT	101

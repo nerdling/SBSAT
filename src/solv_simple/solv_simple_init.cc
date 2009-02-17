@@ -265,7 +265,8 @@ int ReadAllSmurfsIntoTable(int nNumVars) {
 		}
 		Init_Solver_MidSmurfs_Hooks(nSmurfIndex, SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates);
 	}
-	D_3(
+
+   D_3(
 		 for(int iter = 0; iter<str_length; iter++)
 		 d3_printf1("\b");
 		 sprintf(p, "{%d/%d}\n", SimpleSmurfProblemState->nNumSmurfs, SimpleSmurfProblemState->nNumSmurfs);
@@ -275,7 +276,7 @@ int ReadAllSmurfsIntoTable(int nNumVars) {
 		 );
 
 	D_9(PrintAllSmurfStateEntries(););
-	
+
 	return Init_Solver_PostSmurfs_Hooks(SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates);
 }
 
@@ -297,7 +298,7 @@ void FreeSmurfSolverVars() {
 	
 	LSGBORFree();
 	LSGBXORFree();
-// SEAN!!! Minmax and NegMinmax for the future
+   LSGBMINMAXFree();
 }
 
 void FreeSmurfStateEntries() {
@@ -410,7 +411,7 @@ int Init_SimpleSmurfSolver() {
 	
 	//Compute SMURFS	
 	int ret = ReadAllSmurfsIntoTable(nNumVars);
-
+   
 	return ret;
 }
 

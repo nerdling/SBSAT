@@ -15,7 +15,7 @@ int MINMAXState_InferWithLemma(MINMAXCounterStateEntry *pMINMAXCounterState, int
 													SimpleSmurfProblemState->arrReverseOccurenceList[nSmurfNumber][0].var,
 													&(SimpleSmurfProblemState->pConflictClause.clause),
 													&(SimpleSmurfProblemState->pConflictClause.max_size));
-			int ret = EnqueueInference(nInfVar, bPolarity);
+			int ret = EnqueueInference(nInfVar, bPolarity, INF_SPEC_FN_MINMAX);
 			assert(ret == 0);
 			return 0;
 		} else {
@@ -29,7 +29,7 @@ int MINMAXState_InferWithLemma(MINMAXCounterStateEntry *pMINMAXCounterState, int
 												SimpleSmurfProblemState->arrReverseOccurenceList[nSmurfNumber][0].var,
 												&(SimpleSmurfProblemState->arrInferenceLemmas[nInfVar].clause),
 												&(SimpleSmurfProblemState->arrInferenceLemmas[nInfVar].max_size));
-		if(EnqueueInference(nInfVar, bPolarity) == 0) return 0;
+		if(EnqueueInference(nInfVar, bPolarity, INF_SPEC_FN_MINMAX) == 0) return 0;
 	}
 	return 1;
 }
@@ -93,7 +93,7 @@ int ApplyInferenceToMINMAXCounter(int nBranchVar, bool bBVPolarity, int nSmurfNu
 			if(use_lemmas) {
 				if(MINMAXState_InferWithLemma((MINMAXCounterStateEntry *)arrSmurfStates[nSmurfNumber], x, 1, nSmurfNumber) == 0) return 0;
 			} else {
-				if(EnqueueInference(pMINMAXState->pnTransitionVars[x], 1) == 0) return 0;
+				if(EnqueueInference(pMINMAXState->pnTransitionVars[x], 1, INF_SPEC_FN_MINMAX) == 0) return 0;
 			}
 
 		}
@@ -110,7 +110,7 @@ int ApplyInferenceToMINMAXCounter(int nBranchVar, bool bBVPolarity, int nSmurfNu
 			if(use_lemmas) {
 				if(MINMAXState_InferWithLemma((MINMAXCounterStateEntry *)arrSmurfStates[nSmurfNumber], x, 0, nSmurfNumber) == 0) return 0;
 			} else {
-				if(EnqueueInference(pMINMAXState->pnTransitionVars[x], 0) == 0) return 0;
+				if(EnqueueInference(pMINMAXState->pnTransitionVars[x], 0, INF_SPEC_FN_MINMAX) == 0) return 0;
 			}
 		}
 		arrSmurfStates[nSmurfNumber] = pTrueSimpleSmurfState;

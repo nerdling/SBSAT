@@ -109,10 +109,6 @@ void Calculate_Heuristic_Values() {
 	
 	void **arrSmurfStates = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].arrSmurfStates;
 
-//#pragma omp parallel num_threads(2)
-	  {
-
-//#pragma omp for schedule(static, 1)
 	for(int nSmurfIndex = 0; nSmurfIndex < SimpleSmurfProblemState->nNumSmurfs; nSmurfIndex++) {
 		//TrueState
 		if(arrSmurfStates[nSmurfIndex] == pTrueSimpleSmurfState) continue;
@@ -124,18 +120,14 @@ void Calculate_Heuristic_Values() {
 		 case FN_SMURF:
 		 case FN_WATCHED_SMURF:
 			pState = arrSmurfStates[nSmurfIndex];
-//#pragma omp atomic
 			SimpleSmurfProblemState->arrPosVarHeurWghts[((SmurfStateEntry *)pState)->nTransitionVar] +=
 			  ((SmurfStateEntry *)pState)->fHeurWghtofTrueTransition;
-//#pragma omp atomic
 			SimpleSmurfProblemState->arrNegVarHeurWghts[((SmurfStateEntry *)pState)->nTransitionVar] +=  
 			  ((SmurfStateEntry *)pState)->fHeurWghtofFalseTransition;
 			while (((SmurfStateEntry *)pState)->pNextVarInThisState != NULL) {
 				pState = ((SmurfStateEntry *)pState)->pNextVarInThisState;
-//#pragma omp atomic
 				SimpleSmurfProblemState->arrPosVarHeurWghts[((SmurfStateEntry *)pState)->nTransitionVar] +=
 				  ((SmurfStateEntry *)pState)->fHeurWghtofTrueTransition;
-//#pragma omp atomic
 				SimpleSmurfProblemState->arrNegVarHeurWghts[((SmurfStateEntry *)pState)->nTransitionVar] +=  
 				  ((SmurfStateEntry *)pState)->fHeurWghtofFalseTransition;
 			}
@@ -146,14 +138,10 @@ void Calculate_Heuristic_Values() {
 				if(abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[((ORCounterStateEntry *)pState)->pORState->pnTransitionVars[index]]) >= nCurrInfLevel) {
 					numfound++;
 					if(((ORCounterStateEntry *)pState)->pORState->bPolarity[index] == BOOL_TRUE) {
-//#pragma omp atomic
 						SimpleSmurfProblemState->arrPosVarHeurWghts[((ORCounterStateEntry *)pState)->pORState->pnTransitionVars[index]] += JHEURISTIC_K_TRUE;
-//#pragma omp atomic
 						SimpleSmurfProblemState->arrNegVarHeurWghts[((ORCounterStateEntry *)pState)->pORState->pnTransitionVars[index]] += LSGBORCounterGetHeurNeg(((ORCounterStateEntry *)pState));
 					} else {
-//#pragma omp atomic
 						SimpleSmurfProblemState->arrPosVarHeurWghts[((ORCounterStateEntry *)pState)->pORState->pnTransitionVars[index]] += LSGBORCounterGetHeurNeg(((ORCounterStateEntry *)pState));
-//#pragma omp atomic
 						SimpleSmurfProblemState->arrNegVarHeurWghts[((ORCounterStateEntry *)pState)->pORState->pnTransitionVars[index]] += JHEURISTIC_K_TRUE;
 					}
 				}
@@ -164,24 +152,19 @@ void Calculate_Heuristic_Values() {
 			for(int index = 0; numfound < ((XORCounterStateEntry *)pState)->nSize; index++) {
 				if(abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[((XORCounterStateEntry *)pState)->pXORState->pnTransitionVars[index]]) >= nCurrInfLevel) {
 					numfound++;
-//#pragma omp atomic
 					SimpleSmurfProblemState->arrPosVarHeurWghts[((XORCounterStateEntry *)pState)->pXORState->pnTransitionVars[index]] += LSGBXORCounterGetHeurScoreTrans(((XORCounterStateEntry *)pState));
-//#pragma omp atomic
 					SimpleSmurfProblemState->arrNegVarHeurWghts[((XORCounterStateEntry *)pState)->pXORState->pnTransitionVars[index]] += LSGBXORCounterGetHeurScoreTrans(((XORCounterStateEntry *)pState));
 				}
 			}
 			break;
 		 case FN_MINMAX_COUNTER:
-			break;
-			//SEAN!!! This needs to be fixed up. numfound is incorrect and the heuristic returns 1.
+			//SEAN!!! This needs to be fixed up. numfound is incorrect?
 			pState = arrSmurfStates[nSmurfIndex];
-			for(int index = 0; numfound < ((MINMAXCounterStateEntry *)pState)->pMINMAXState->nSize; index++) {
+			for(int index = 0; numfound < ((MINMAXCounterStateEntry *)pState)->nVarsLeft; index++) {
 				if(abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[((MINMAXCounterStateEntry *)pState)->pMINMAXState->pnTransitionVars[index]]) >= nCurrInfLevel) {
 					numfound++;
-//#pragma omp atomic
-					SimpleSmurfProblemState->arrPosVarHeurWghts[((MINMAXCounterStateEntry *)pState)->pMINMAXState->pnTransitionVars[index]] += LSGBMINMAXCounterGetHeurScore(((MINMAXCounterStateEntry *)pState));
-//#pragma omp atomic
-					SimpleSmurfProblemState->arrNegVarHeurWghts[((MINMAXCounterStateEntry *)pState)->pMINMAXState->pnTransitionVars[index]] += LSGBMINMAXCounterGetHeurScore(((MINMAXCounterStateEntry *)pState));
+					SimpleSmurfProblemState->arrPosVarHeurWghts[((MINMAXCounterStateEntry *)pState)->pMINMAXState->pnTransitionVars[index]] += LSGBMINMAXCounterGetHeurScorePos(((MINMAXCounterStateEntry *)pState));
+					SimpleSmurfProblemState->arrNegVarHeurWghts[((MINMAXCounterStateEntry *)pState)->pMINMAXState->pnTransitionVars[index]] += LSGBMINMAXCounterGetHeurScoreNeg(((MINMAXCounterStateEntry *)pState));
 				}
 			}
 			break;
@@ -191,14 +174,10 @@ void Calculate_Heuristic_Values() {
 				if(abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[((ORStateEntry *)pState)->pnTransitionVars[index]]) >= nCurrInfLevel) {
 					numfound++;
 					if(((ORStateEntry *)pState)->bPolarity[index] == BOOL_TRUE) {
-//#pragma omp atomic
 						SimpleSmurfProblemState->arrPosVarHeurWghts[((ORStateEntry *)pState)->pnTransitionVars[index]] += JHEURISTIC_K_TRUE;
-//#pragma omp atomic
 						SimpleSmurfProblemState->arrNegVarHeurWghts[((ORStateEntry *)pState)->pnTransitionVars[index]] += LSGBORGetHeurNeg(((ORStateEntry *)pState));
 					} else {
-//#pragma omp atomic
 						SimpleSmurfProblemState->arrPosVarHeurWghts[((ORStateEntry *)pState)->pnTransitionVars[index]] += LSGBORGetHeurNeg(((ORStateEntry *)pState));
-//#pragma omp atomic
 						SimpleSmurfProblemState->arrNegVarHeurWghts[((ORStateEntry *)pState)->pnTransitionVars[index]] += JHEURISTIC_K_TRUE;
 					}
 				}
@@ -209,9 +188,7 @@ void Calculate_Heuristic_Values() {
 			for(int index = 0; numfound < 2; index++) {
 				if(abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[((XORStateEntry *)pState)->pnTransitionVars[index]]) >= nCurrInfLevel) {
 					numfound++;
-//#pragma omp atomic
 					SimpleSmurfProblemState->arrPosVarHeurWghts[((XORStateEntry *)pState)->pnTransitionVars[index]] += LSGBXORGetHeurScoreTrans(((XORStateEntry *)pState));
-//#pragma omp atomic
 					SimpleSmurfProblemState->arrNegVarHeurWghts[((XORStateEntry *)pState)->pnTransitionVars[index]] += LSGBXORGetHeurScoreTrans(((XORStateEntry *)pState));
 				}
 			}
@@ -227,9 +204,7 @@ void Calculate_Heuristic_Values() {
 			else {
 				for(int index = 0; index < ((XORGElimStateEntry *)pState)->nSize; index++) {				  
 					if(abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[((XORGElimStateEntry *)pState)->pnTransitionVars[index]]) >= nCurrInfLevel) {
-//#pragma omp atomic
 						SimpleSmurfProblemState->arrPosVarHeurWghts[((XORGElimStateEntry *)pState)->pnTransitionVars[index]] += LSGBarrXORWeightTrans(numfound);
-//#pragma omp atomic
 						SimpleSmurfProblemState->arrNegVarHeurWghts[((XORGElimStateEntry *)pState)->pnTransitionVars[index]] += LSGBarrXORWeightTrans(numfound);
 					}
 				}
@@ -238,7 +213,6 @@ void Calculate_Heuristic_Values() {
 		 default: break;
 		}
 	}
-   } //end omp pragma
 
 	Calculate_Heuristic_Values_Hooks();
 	
@@ -529,13 +503,13 @@ int EnqueueInference_lemmas_hook(int nBranchVar, bool bBVPolarity) {
 		SimpleSmurfProblemState->arrInferenceQueue[nInfQueueHead] = bBVPolarity?nBranchVar:-nBranchVar;
 		SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[nBranchVar] = nInfQueueHead;
 		SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars++;
-		ite_counters[INF_SMURF]++;
+      ite_counters[INF_LEMMA]++;
+      ite_counters[NUM_INFERENCES]++;
 	}
 	return 1;
 }
 
-int EnqueueInference(int nBranchVar, bool bBVPolarity) {
-	
+int EnqueueInference(int nBranchVar, bool bBVPolarity, int inf_function_type) {
 	//Try to insert inference into the inference Queue
 	int nInfQueueHead = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
 	int nPrevInfLevel = abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[nBranchVar]);
@@ -548,9 +522,9 @@ int EnqueueInference(int nBranchVar, bool bBVPolarity) {
 		if((SimpleSmurfProblemState->arrInferenceQueue[nPrevInfLevel] > 0) != bBVPolarity) {
 			//Conflict Detected;
 			d7_printf2("      Conflict when adding %d to the inference queue\n", bBVPolarity?nBranchVar:-nBranchVar);
-			
+         ite_counters[inf_function_type+1]++; //ERR_BT should follow INF -- see sbsat/include/sbsat_vars.h
 			if(use_lemmas) {
-				if(backtrack_level < SimpleSmurfProblemState->nCurrSearchTreeLevel) { 
+				if(backtrack_level < SimpleSmurfProblemState->nCurrSearchTreeLevel) {
 					return 0;
 				}
 				backtrack_level = picosat_bcp(); //Empty the lemma database bcp queue
@@ -572,12 +546,14 @@ int EnqueueInference(int nBranchVar, bool bBVPolarity) {
 		SimpleSmurfProblemState->arrInferenceQueue[nInfQueueHead] = bBVPolarity?nBranchVar:-nBranchVar;
 		SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[nBranchVar] = nInfQueueHead;
 		SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars++;
-		ite_counters[INF_SMURF]++;
+		ite_counters[inf_function_type]++;
+      ite_counters[NUM_INFERENCES]++;
 
 		if(use_lemmas) {
 			d7_printf2("  Applying %d to lemma database\n", bBVPolarity?nBranchVar:-nBranchVar);
 			backtrack_level = picosat_apply_inference(bBVPolarity?nBranchVar:-nBranchVar, SimpleSmurfProblemState->arrInferenceLemmas[nBranchVar].clause);
 			if(backtrack_level < SimpleSmurfProblemState->nCurrSearchTreeLevel) {
+            ite_counters[ERR_BT_LEMMA]++;
 				return 0;
 			}
 		}
@@ -588,7 +564,7 @@ int EnqueueInference(int nBranchVar, bool bBVPolarity) {
 ITE_INLINE
 int ApplyInferenceToStates(int nBranchVar, bool bBVPolarity) {
 	d7_printf2("  Handling inference %d\n", bBVPolarity?nBranchVar:-nBranchVar);
-	
+
 	int ret = ApplyInference_Hooks(nBranchVar, bBVPolarity);
 	if(ret == 0) return 0;
 
@@ -601,7 +577,10 @@ int ApplyInferenceToStates(int nBranchVar, bool bBVPolarity) {
 			return 0;
 		}
 		backtrack_level = picosat_bcp();
-		if(backtrack_level < SimpleSmurfProblemState->nCurrSearchTreeLevel) return 0;
+		if(backtrack_level < SimpleSmurfProblemState->nCurrSearchTreeLevel) {
+         ite_counters[ERR_BT_LEMMA]++;
+         return 0;
+      }
 	}
 
 	d7_printf2("  Transitioning Smurfs using %d\n", bBVPolarity?nBranchVar:-nBranchVar);
@@ -695,7 +674,6 @@ int SmurfStates_Pop(int pop_to) {
 ITE_INLINE
 int Backtrack() {
 	//Pop stack
-	ite_counters[ERR_BT_SMURF]++;
 	ite_counters[NUM_BACKTRACKS]++;
 
 	d7_printf1("  Conflict - Backtracking\n");

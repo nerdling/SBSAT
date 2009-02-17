@@ -221,19 +221,21 @@ void DisplaySimpleSolverBacktrackInfo(double &fSimpleSolverPrevEndTime, double &
 	
 	d2_printf1("\n");
 	d2_printf1(" Inferences by ");
-	d2_printf2("smurfs: %lld; ", ite_counters[INF_SMURF]);
-	d2_printf2("ANDs: %lld; ", ite_counters[INF_SPEC_FN_AND]);
-	d2_printf2("XORs: %lld; ", ite_counters[INF_SPEC_FN_XOR]);
-	d2_printf2("MINMAXs: %lld; ", ite_counters[INF_SPEC_FN_MINMAX]);
-	if (NO_LEMMAS == 0) d2_printf2("lemmas: %lld; ", ite_counters[INF_LEMMA]);
+	if(ite_counters[INF_SMURF]>0) d2_printf2("smurfs: %lld; ", ite_counters[INF_SMURF]);
+	if(ite_counters[INF_SPEC_FN_OR]>0) d2_printf2("ORs: %lld; ", ite_counters[INF_SPEC_FN_OR]);
+   if(ite_counters[INF_SPEC_FN_XOR]>0)	d2_printf2("XORs: %lld; ", ite_counters[INF_SPEC_FN_XOR]);
+   if(ite_counters[INF_BB_GELIM]>0) d2_printf2("GELIM: %lld; ", ite_counters[INF_BB_GELIM]);
+   if(ite_counters[INF_SPEC_FN_MINMAX]>0)	d2_printf2("MINMAXs: %lld; ", ite_counters[INF_SPEC_FN_MINMAX]);
+	if(ite_counters[INF_LEMMA]>0) d2_printf2("lemmas: %lld; ", ite_counters[INF_LEMMA]);
 	d2_printf1("\n");
 	
 	d2_printf1(" Backtracks by ");
-	d2_printf2("smurfs: %lld; ", ite_counters[ERR_BT_SMURF]);
-	d2_printf2("ANDs: %lld; ", ite_counters[ERR_BT_SPEC_FN_AND]);
-	d2_printf2("XORs: %lld; ", ite_counters[ERR_BT_SPEC_FN_XOR]);
-	d2_printf2("MINMAXs: %lld; ", ite_counters[ERR_BT_SPEC_FN_MINMAX]);
-	if (NO_LEMMAS == 0) d2_printf2("lemmas: %lld; ", ite_counters[ERR_BT_LEMMA]);
+	if(ite_counters[ERR_BT_SMURF]>0) d2_printf2("smurfs: %lld; ", ite_counters[ERR_BT_SMURF]);
+	if(ite_counters[ERR_BT_SPEC_FN_OR]>0) d2_printf2("ORs: %lld; ", ite_counters[ERR_BT_SPEC_FN_OR]);
+	if(ite_counters[ERR_BT_SPEC_FN_XOR]>0) d2_printf2("XORs: %lld; ", ite_counters[ERR_BT_SPEC_FN_XOR]);
+   if(ite_counters[ERR_BT_BB_GELIM]>0) d2_printf2("GELIM: %lld; ", ite_counters[ERR_BT_BB_GELIM]);
+	if(ite_counters[ERR_BT_SPEC_FN_MINMAX]>0) d2_printf2("MINMAXs: %lld; ", ite_counters[ERR_BT_SPEC_FN_MINMAX]);
+	if(ite_counters[ERR_BT_LEMMA]>0) d2_printf2("lemmas: %lld; ", ite_counters[ERR_BT_LEMMA]);
 	d2_printf1("\n");
 	if (backjumping) d2_printf3(" Backjumps: %ld (avg bj len: %.1f)\n",
 										 (long)ite_counters[NUM_TOTAL_BACKJUMPS],
@@ -266,7 +268,7 @@ void DisplaySimpleSolverBacktrackInfo_gnuplot(double &fSimpleSolverPrevEndTime, 
 	fprintf(fd_csv_trace_file, "%4.3f ", progress);
 	
 	fprintf(fd_csv_trace_file, "%lld %lld ", ite_counters[NUM_CHOICE_POINTS], ite_counters[HEU_DEP_VAR]);
-	fprintf(fd_csv_trace_file, "%lld ", ite_counters[INF_SMURF]);
-	fprintf(fd_csv_trace_file, "%lld ", ite_counters[ERR_BT_SMURF]);
+	fprintf(fd_csv_trace_file, "%lld ", ite_counters[NUM_INFERENCES]);
+	fprintf(fd_csv_trace_file, "%lld ", ite_counters[NUM_BACKTRACKS]);
 	fprintf(fd_csv_trace_file, "%ld %ld\n", (long)ite_counters[NUM_SOLUTIONS], (long)max_solutions);
 }

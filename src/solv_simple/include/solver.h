@@ -113,7 +113,7 @@ ITE_INLINE void create_clause_from_SmurfState(int nInfVar, TypeStateEntry *pSmur
 															 Cls **clause, int *lits_max_size);
 extern "C" { int EnqueueInference_lemmas_hook(int nInfVar, bool bInfPolarity); }
 
-int EnqueueInference(int nInfVar, bool bInfPolarity);
+int EnqueueInference(int nInfVar, bool bInfPolarity, int inf_function_type);
 void check_SmurfStatesTableSize(int size);
 
 //Hooks

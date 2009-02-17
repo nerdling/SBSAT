@@ -42,7 +42,7 @@ int SmurfState_InferWithLemma(SmurfStateEntry *pTopState, void *pNextState, int 
 													SimpleSmurfProblemState->arrReverseOccurenceList[nSmurfNumber][0].var,
 													&(SimpleSmurfProblemState->pConflictClause.clause),
 													&(SimpleSmurfProblemState->pConflictClause.max_size));
-			int ret = EnqueueInference(nInfVar, ((InferenceStateEntry *)pNextState)->bPolarity);
+			int ret = EnqueueInference(nInfVar, ((InferenceStateEntry *)pNextState)->bPolarity, INF_SMURF);
 			assert(ret == 0);
 			return 0;
 		} else {
@@ -58,7 +58,7 @@ int SmurfState_InferWithLemma(SmurfStateEntry *pTopState, void *pNextState, int 
 												&(SimpleSmurfProblemState->arrInferenceLemmas[nInfVar].clause),
 												&(SimpleSmurfProblemState->arrInferenceLemmas[nInfVar].max_size));
 		
-		if(EnqueueInference(nInfVar, ((InferenceStateEntry *)pNextState)->bPolarity) == 0) return 0;
+		if(EnqueueInference(nInfVar, ((InferenceStateEntry *)pNextState)->bPolarity, INF_SMURF) == 0) return 0;
 	}
 	return 1;
 }
@@ -75,7 +75,7 @@ int TransitionInference(int nSmurfNumber, void **arrSmurfStates) {
 		if(use_lemmas) {
 			if(SmurfState_InferWithLemma(NULL, pNextState, nInfVar, nSmurfNumber) == 0) return 0;
 		} else {
-			if(EnqueueInference(nInfVar, ((InferenceStateEntry *)pNextState)->bPolarity) == 0) return 0;
+			if(EnqueueInference(nInfVar, ((InferenceStateEntry *)pNextState)->bPolarity, INF_SMURF) == 0) return 0;
 		}
 		
 		//Follow the transtion to the next SmurfState
@@ -147,7 +147,7 @@ int ApplyInferenceToSmurf(int nBranchVar, bool bBVPolarity, int nSmurfNumber, vo
 				if(use_lemmas) {
 					if(SmurfState_InferWithLemma((SmurfStateEntry *)arrSmurfStates[nSmurfNumber], pNextState, nInfVar, nSmurfNumber) == 0) return 0;
 				} else {
-					if(EnqueueInference(nInfVar, ((InferenceStateEntry *)pNextState)->bPolarity) == 0) return 0;
+					if(EnqueueInference(nInfVar, ((InferenceStateEntry *)pNextState)->bPolarity, INF_SMURF) == 0) return 0;
 				}
 
 				//Follow the transtion to the next SmurfState
@@ -221,7 +221,7 @@ int ApplyInferenceToWatchedSmurf(int nBranchVar, bool bBVPolarity, int nSmurfNum
 			}
 			void *pPrevState = NULL;
 			while(pNextState!=NULL && ((TypeStateEntry *)pNextState)->cType == FN_INFERENCE) {
-				if(EnqueueInference(((InferenceStateEntry *)pNextState)->nTransitionVar, ((InferenceStateEntry *)pNextState)->bPolarity > 0) == 0) return 0;
+				if(EnqueueInference(((InferenceStateEntry *)pNextState)->nTransitionVar, ((InferenceStateEntry *)pNextState)->bPolarity > 0, INF_SMURF) == 0) return 0;
 				//Follow the transtion to the next SmurfState
 				pPrevState = pNextState;
 				pNextState = ((InferenceStateEntry *)pNextState)->pVarTransition;

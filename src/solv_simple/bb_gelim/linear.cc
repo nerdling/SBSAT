@@ -411,7 +411,7 @@ ITE_INLINE int rediagonalizeXORGElimTable(XORGElimTableStruct *x, VecType *vec, 
 
 	// If k == -1 then we have an inference
 	if (k == -1) {
-		if(EnqueueInference(save_first_column, vec[0]&1) == 0)
+		if(EnqueueInference(save_first_column, vec[0]&1, INF_BB_GELIM) == 0)
 		  return 0;
 		//return 2;
 	}
@@ -440,7 +440,7 @@ ITE_INLINE int rediagonalizeXORGElimTable(XORGElimTableStruct *x, VecType *vec, 
 				
 				//printLinearN(x);
 				if(vn[inf_word]&((VecType)1 << inf_bit))
-				  if(EnqueueInference(inf, vn[0]&(VecType)1) == 0)
+				  if(EnqueueInference(inf, vn[0]&(VecType)1, INF_BB_GELIM) == 0)
 					 return 0;
 			}
 		}
@@ -560,7 +560,7 @@ int ApplyInferenceToXORGElimTable (XORGElimTableStruct *x, int nVar, bool bValue
 //					d2_printf5("Attemping to Infer %d %d %d %d\n", inf*((vn[0]&1)?1:-1), inf_word, inf_bit, vn[inf_word]&(1 << inf_bit));
 					//printLinearN(x);
 					if(vn[inf_word]&((VecType)1 << inf_bit))
-					  if(EnqueueInference(inf, vn[0]&1) == 0)
+					  if(EnqueueInference(inf, vn[0]&1, INF_BB_GELIM) == 0)
 						 return 0;
 				}
 			}

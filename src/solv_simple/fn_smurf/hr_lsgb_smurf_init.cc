@@ -106,3 +106,4 @@ void LSGBSmurfSetHeurScores(SmurfStateEntry *pState) {
 		pState = (SmurfStateEntry *)pState->pNextVarInThisState;
 	}
 }
+

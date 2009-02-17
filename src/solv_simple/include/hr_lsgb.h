@@ -92,22 +92,6 @@ struct XORWeightStruct {
 	HWEIGHT fFmla;
 };
 
-
-//---------------------------------------------------------------------
-
-// The following structure is used for the entries in the arrMINMAXWeight
-// array.
-// A MINMAX constraint is one of the form
-// min <= var_1 + var_2 + ... + var_i <= max
-
-// arrMINMAXWeight[i] is the heuristic weight of the constraint as a
-// whole.
-
-struct MINMAXWeightStruct {
-	HWEIGHT fFmla;
-};
-
-
 //---------------------------------------------------------------------
 
 extern int (*Simple_Solver_Heuristic)();
@@ -118,7 +102,6 @@ extern int use_poor_mans_vsids;
 extern HeurScores *arrHeurScores;
 extern struct ORWeightStruct *arrORWeight;
 extern struct XORWeightStruct *arrXORWeight;
-extern struct MINMAXWeightStruct *arrMINMAXWeight;
 extern int *arrPMVSIDS;
 
 #endif // HR_SIMP_LSGB_H

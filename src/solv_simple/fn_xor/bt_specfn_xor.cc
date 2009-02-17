@@ -15,7 +15,7 @@ int XORState_InferWithLemma(XORStateEntry *pXORState, int infer_var, bool bParit
 												SimpleSmurfProblemState->arrReverseOccurenceList[nSmurfNumber][0].var,
 												&(SimpleSmurfProblemState->pConflictClause.clause),
 												&(SimpleSmurfProblemState->pConflictClause.max_size));
-			int ret = EnqueueInference(nInfVar, bParity);
+			int ret = EnqueueInference(nInfVar, bParity, INF_SPEC_FN_XOR);
 			assert(ret == 0);
 			return 0;
 		} else {
@@ -29,7 +29,7 @@ int XORState_InferWithLemma(XORStateEntry *pXORState, int infer_var, bool bParit
 											SimpleSmurfProblemState->arrReverseOccurenceList[nSmurfNumber][0].var,
 											&(SimpleSmurfProblemState->arrInferenceLemmas[nInfVar].clause),
 											&(SimpleSmurfProblemState->arrInferenceLemmas[nInfVar].max_size));
-		if(EnqueueInference(nInfVar, bParity) == 0) return 0;
+		if(EnqueueInference(nInfVar, bParity, INF_SPEC_FN_XOR) == 0) return 0;
 	}
 	
 	return 1;
@@ -87,7 +87,7 @@ int ApplyInferenceToXOR(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void
 	if(use_lemmas) {
 		if(XORState_InferWithLemma(pXORState, infer_var, bParity, nSmurfNumber) == 0) return 0;
 	} else {
-		if(EnqueueInference(pXORState->pnTransitionVars[infer_var], bParity) == 0) return 0;
+		if(EnqueueInference(pXORState->pnTransitionVars[infer_var], bParity, INF_SPEC_FN_XOR) == 0) return 0;
 	}
 	arrSmurfStates[nSmurfNumber] = pTrueSimpleSmurfState;
 	SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumSmurfsSatisfied++;
