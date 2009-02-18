@@ -85,14 +85,14 @@ ITE_INLINE void LSGBMINMAXStateSetHeurScores(MINMAXStateEntry *pState) {
       
       for(int j=0; j<arrMaxMINMAXTrue[i]; j++) {
          arrMINMAXWghts[i][j] = (double*)ite_recalloc(arrMINMAXWghts[i][j], old_false, arrMaxMINMAXFalse[i], sizeof(double), 2, "arrMINMAXWghts[i][j]");
-         arrMINMAXWghts[i][j][0] = (j-i < 0? 0: j-i); // diff = i, j - LeftToSetTrue, 0 - LeftToSetFalse
+         arrMINMAXWghts[i][j][0] = (j-i < 0?0:j-i); // diff = i, j - LeftToSetTrue, 0 - LeftToSetFalse
          if (j==0) {
             for(int m=old_false==0?1:old_false; m<arrMaxMINMAXFalse[i]; m++) {
-               arrMINMAXWghts[i][0][m] = (m-i < 0? 0: m-i);
+               arrMINMAXWghts[i][0][m] = (m-i < 0?0:m-i);
             }
          } else {
             for(int m=old_false==0?1:old_false; m<arrMaxMINMAXFalse[i]; m++) {
-               arrMINMAXWghts[i][j][m] = (arrMINMAXWghts[i][j-1][m] + arrMINMAXWghts[i][j][m-1]) / (2*JHEURISTIC_K);
+               arrMINMAXWghts[i][j][m] = (arrMINMAXWghts[i][j-1][m] + arrMINMAXWghts[i][j][m-1]) / (2.0*JHEURISTIC_K);
             }
          }
       }
@@ -103,9 +103,9 @@ ITE_INLINE void LSGBMINMAXStateSetHeurScores(MINMAXStateEntry *pState) {
    //for(int i=0; i<nMINMAXWghtsSize; i++) {
    //if (arrMaxMINMAXTrue[i] == 0) continue;
    //fprintf(stderr, "\nMINMAX Diff = %d: \n", i);
-   //for(int j=arrMaxMINMAXTrue[i]; j>0; j--) {
-   //for(int m=0; m<arrMaxMINMAXTrue[i]; m++) {
-   //fprintf(stderr, " %2.4f ", arrMINMAXWghts[i][j][m]);
+   //for(int j=0; j < arrMaxMINMAXTrue[i]; j++) {
+   //for(int m=0; m<arrMaxMINMAXFalse[i]; m++) {
+   //fprintf(stderr, " %2.6f ", arrMINMAXWghts[i][j][m]);
    //}
    //fprintf(stderr, "\n");
    //}
@@ -127,12 +127,16 @@ ITE_INLINE double LSGBMINMAXCounterGetHeurScore(MINMAXCounterStateEntry *pState)
 
 ITE_INLINE double LSGBMINMAXCounterGetHeurScorePos(MINMAXCounterStateEntry *pState) {
    MINMAXStateEntry *pMINMAXState = pState->pMINMAXState;
-   return arrMINMAXWghts[pMINMAXState->nMax - pMINMAXState->nMin][pMINMAXState->nMax-1][pMINMAXState->nSize - pMINMAXState->nMin];
+   int max = pMINMAXState->nMax - (pState->nNumTrue+1);
+   int min = pMINMAXState->nMin - (pState->nNumTrue+1);
+   return arrMINMAXWghts[pMINMAXState->nMax - pMINMAXState->nMin][max][((pState->nVarsLeft-1) - min)];
 }
 
 ITE_INLINE double LSGBMINMAXCounterGetHeurScoreNeg(MINMAXCounterStateEntry *pState) {
    MINMAXStateEntry *pMINMAXState = pState->pMINMAXState;
-   return arrMINMAXWghts[pMINMAXState->nMax - pMINMAXState->nMin][pMINMAXState->nMax][(pMINMAXState->nSize - pMINMAXState->nMin) - 1];
+   int max = pMINMAXState->nMax - pState->nNumTrue;
+   int min = pMINMAXState->nMin - pState->nNumTrue;
+   return arrMINMAXWghts[pMINMAXState->nMax - pMINMAXState->nMin][max][(pState->nVarsLeft-1) - min];
 }
 
 ITE_INLINE void LSGBMINMAXFree() {
