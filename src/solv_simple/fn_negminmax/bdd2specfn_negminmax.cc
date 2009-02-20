@@ -2,61 +2,59 @@
 #include "sbsat_solver.h"
 #include "solver.h"
 
-void *CreateMINMAXState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, MINMAXStateEntry *pStartState) {
-	check_SmurfStatesTableSize(sizeof(MINMAXStateEntry));
+void *CreateNEGMINMAXState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, NEGMINMAXStateEntry *pStartState) {
+	check_SmurfStatesTableSize(sizeof(NEGMINMAXStateEntry));
 	ite_counters[SMURF_STATES]+=1;
 
-	pStartState = (MINMAXStateEntry *)SimpleSmurfProblemState->pSmurfStatesTableTail;
+	pStartState = (NEGMINMAXStateEntry *)SimpleSmurfProblemState->pSmurfStatesTableTail;
 	SimpleSmurfProblemState->pSmurfStatesTableTail = (void *)(pStartState + 1);
-	
-	if(IS_TRUE_FALSE(bdd)) assert(0);
+
+	//assert(nNumElts > 2); //OR and XOR cover all 2 variable Boolean functions w/ no immediate inferences.
+
 	int max = -1;
 	BDDNode *tmp_bdd;
 	for(tmp_bdd = pCurrentBDD; !IS_TRUE_FALSE(tmp_bdd); tmp_bdd = tmp_bdd->thenCase)
 	  max++;
-	if(tmp_bdd != false_ptr) assert(0);
+	
+	assert(tmp_bdd == true_ptr);
 	
 	int min = -1;
 	for(tmp_bdd = pCurrentBDD; !IS_TRUE_FALSE(tmp_bdd); tmp_bdd = tmp_bdd->elseCase)
 	  min++;
-	if(tmp_bdd == true_ptr) min = 0;
-	else if(tmp_bdd != false_ptr) assert(0);
-	else min = bdd_len-min;
+	if(tmp_bdd == false_ptr) min = 0;
+	else {
+		assert(tmp_bdd == true_ptr);
+		min = nNumElts-min;
+	}
+
+	assert(min <= max);
 	
-	if(min > max) assert(0);
-	
-	pStartState->cType = FN_MINMAX;
+	pStartState->cType = FN_NEG_MINMAX;
    pStartState->nSize = nNumElts;
 	pStartState->nMin = min;
 	pStartState->nMax = max;
 	pStartState->pnTransitionVars = arrElts;
 
-	pCurrentBDD->pState = (void *)pStartState;
-	
-	if(nNumElts == 2) return (void *)pStartState;
-
-	MINMAXStateEntry *pCurrMINMAXCounter;
-	void *pPrevMINMAXCounter = (void *)pTrueSimpleSmurfState;//pStartState;
-	for(int x = 1; x < nNumElts; x++) {
+	NEGMINMAXCounterStateEntry *pCurrNEGMINMAXCounter;
+	void *pPrevNEGMINMAXCounter = (void *)pTrueSimpleSmurfState;//pStartState;
+	for(int x = 1; x <= nNumElts; x++) {
 //		fprintf(stderr, "%d, %d, %d: ", x, arrElts[x], arrSimpleSolver2IteVarMap[arrElts[x]]);
-		check_SmurfStatesTableSize(sizeof(MINMAXCounterStateEntry));
+		check_SmurfStatesTableSize(sizeof(NEGMINMAXCounterStateEntry));
 		ite_counters[SMURF_STATES]+=1;
 		
-		pCurrMINMAXCounter = (MINMAXCounterStateEntry *)SimpleSmurfProblemState->pSmurfStatesTableTail;
-		SimpleSmurfProblemState->pSmurfStatesTableTail = (void *)(pCurrMINMAXCounter + 1);
+		pCurrNEGMINMAXCounter = (NEGMINMAXCounterStateEntry *)SimpleSmurfProblemState->pSmurfStatesTableTail;
+		SimpleSmurfProblemState->pSmurfStatesTableTail = (void *)(pCurrNEGMINMAXCounter + 1);
 
-		pCurrMINMAXCounter->cType = FN_MINMAX_COUNTER;
-		pCurrMINMAXCounter->ApplyInferenceToState = ApplyInferenceToMINMAXCounter;
+		pCurrNEGMINMAXCounter->cType = FN_NEG_MINMAX_COUNTER;
+		pCurrNEGMINMAXCounter->ApplyInferenceToState = ApplyInferenceToNEGMINMAXCounter;
 
-		pCurrMINMAXCounter->bTop = 0;
-		pCurrMINMAXCounter->nVarsLeft = x;
-		pCurrMINMAXCounter->nNumTrue = 0;
-		pCurrMINMAXCounter->pTransition = pPrevMINMAXCounter;
-		pCurrMINMAXCounter->pMINMAXState = pStartState;
-		pPrevMINMAXCounter = (void *)pCurrMINMAXCounter;
+		pCurrNEGMINMAXCounter->nVarsLeft = x;
+		pCurrNEGMINMAXCounter->nNumTrue = 0; //Dynamic
+		pCurrNEGMINMAXCounter->pTransition = pPrevNEGMINMAXCounter;
+		pCurrNEGMINMAXCounter->pNEGMINMAXState = pStartState;
+		pPrevNEGMINMAXCounter = (void *)pCurrNEGMINMAXCounter;
 	}
 
-	pCurrMINMAXCounter->bTop = 1;
-	pCurrentBDD->pState = (void *)pCurrMINMAXCounter;
-	return (void *)pCurrMINMAXCounter;
+	pCurrentBDD->pState = (void *)pCurrNEGMINMAXCounter;
+	return (void *)pCurrNEGMINMAXCounter;
 }

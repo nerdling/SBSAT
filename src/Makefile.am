@@ -30,6 +30,7 @@ SBSAT_LIBS= \
 	solv_simple/fn_or/libfnor_simple.a \
 	solv_simple/fn_xor/libfnxor_simple.a \
 	solv_simple/fn_minmax/libfnminmax_simple.a \
+  	solv_simple/fn_negminmax/libfnnegminmax_simple.a \
 	solv_simple/bb_gelim/libbbgelim_simple.a \
 	solv_simple/bb_lemmas/libbblemmas_simple.a \
 	postproc/libpostproc.a \
@@ -52,6 +53,7 @@ SBSAT_LIBS= \
 	#solv_smurf/fn_xor_smurf/libfnxorsmurf.a  \
 	#solv_smurf/fn_xor/libfnxor.a  \
 	#solv_smurf/fn_minmax/libfnminmax.a  \
+  	#solv_smurf/fn_negminmax/libfnnegminmax.a  \
 	#solv_smurf/fn_and/libfnand.a  \
 	#solv_smurf/fn_smurf_xor/libfnsmurfxor.a  \
 	#solv_smurf/fn_smurf_au/libfnsmurfau.a  \

@@ -54,6 +54,7 @@ enum {
 	FN_MINMAX,
 	FN_MINMAX_COUNTER,
 	FN_NEG_MINMAX,
+   FN_NEG_MINMAX_COUNTER,
 	FN_INFERENCE
 };
 
@@ -202,6 +203,29 @@ typedef struct MINMAXCounterStateEntry {
 	void *pTransition;
 	MINMAXStateEntry *pMINMAXState;
 } MINMAXCounterStateEntry;
+
+typedef struct NEGMINMAXStateEntry {
+	char cType; //FN_NEG_MINMAX
+	bool visited; //Used for displaying the smurfs.
+	int nSize;
+	int nMin;
+	int nMax;
+	int *pnTransitionVars;
+} NEGMINMAXStateEntry;
+
+typedef struct NEGMINMAXCounterStateEntry {
+	char cType; //FN_NEG_MINMAX_COUNTER
+	bool visited; //Used for displaying the smurfs.
+	int (*ApplyInferenceToState)(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
+	int pStateOwner;
+	void *pPreviousState; //Used during lemma creation.
+	int nLemmaLiteral; //Used during lemma creation.
+
+	int nVarsLeft;
+	int nNumTrue; //Dynamic
+	void *pTransition;
+	NEGMINMAXStateEntry *pNEGMINMAXState;
+} NEGMINMAXCounterStateEntry;
 
 typedef struct XORGElimTableStruct {
 	unsigned char *frame;

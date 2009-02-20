@@ -413,6 +413,7 @@ AC_CONFIG_FILES([Makefile
 					  src/solv_simple/fn_or/Makefile
 					  src/solv_simple/fn_xor/Makefile
 					  src/solv_simple/fn_minmax/Makefile
+                 src/solv_simple/fn_negminmax/Makefile
   					  src/solv_simple/bb_gelim/Makefile
 					  src/solv_simple/bb_lemmas/Makefile
                  src/utils/Makefile

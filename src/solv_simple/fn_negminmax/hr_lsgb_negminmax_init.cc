@@ -39,57 +39,123 @@
 #include "sbsat_solver.h"
 #include "solver.h"
 
-struct ORWeightStruct *arrORWeight = NULL;
+double ***arrNEGMINMAXWghts = NULL;
+int *arrMaxNEGMINMAXTrue = NULL;
+int *arrMaxNEGMINMAXFalse = NULL;
 
-void LSGBORGetHeurScores(int nFnId);
+int nNEGMINMAXWghtsSize = 0;
 
-int nORMaxRHSSize = 1;
+void LSGBNEGMINMAXGetHeurScores(int nFnId);
 
 //---------------------------------------------------------------
 
-ITE_INLINE void LSGBORStateSetHeurScores(ORStateEntry *pState) {
-	int size = pState->nSize;
+ITE_INLINE void LSGBNEGMINMAXStateSetHeurScores(NEGMINMAXStateEntry *pState) {
+   // Find out the length of the diff (max-min)
 
-	HWEIGHT K = JHEURISTIC_K;
-	
-	if(size > nORMaxRHSSize) {
-		size+=20;
-		if(nORMaxRHSSize == 1) {
-			arrORWeight = (ORWeightStruct*)ite_calloc(size+1, sizeof(ORWeightStruct), 9, "arrORWeight");
-			arrORWeight[2].fNeg = JHEURISTIC_K_TRUE+JHEURISTIC_K_INF;
-			arrORWeight[2].fFmla = (arrORWeight[2].fNeg + JHEURISTIC_K_TRUE) / (2*K);
-			nORMaxRHSSize = 2;
-		} else
-		  arrORWeight = (ORWeightStruct*)ite_recalloc(arrORWeight, nORMaxRHSSize, size+1, sizeof(ORWeightStruct), 9, "arrORWeight");
+   int minmax_diff = pState->nMax - pState->nMin;
 
-		for (int i = nORMaxRHSSize+1; i <= size; i++) {
-			arrORWeight[i].fNeg = arrORWeight[i - 1].fFmla;
-			arrORWeight[i].fFmla = (arrORWeight[i].fNeg + JHEURISTIC_K_TRUE) / (2*K);
-		}
-		nORMaxRHSSize = size;
-	}
+   if(nNEGMINMAXWghtsSize < minmax_diff+1) {
+      arrNEGMINMAXWghts = (double***)ite_recalloc(arrNEGMINMAXWghts, nNEGMINMAXWghtsSize, minmax_diff+1, sizeof(double**), 2, "arrNEGMINMAXWghts");
+      arrMaxNEGMINMAXTrue = (int*)ite_recalloc(arrMaxNEGMINMAXTrue, nNEGMINMAXWghtsSize, minmax_diff+1, sizeof(int), 2, "arrMaxNEGMINMAXTrue");
+      arrMaxNEGMINMAXFalse = (int*)ite_recalloc(arrMaxNEGMINMAXFalse, nNEGMINMAXWghtsSize, minmax_diff+1, sizeof(int), 2, "arrMaxNEGMINMAXFalse");
+
+      nNEGMINMAXWghtsSize = minmax_diff+1;
+   }
+   
+   int recompute_true = 0;
+   int old_true = 0;
+   if (arrMaxNEGMINMAXTrue[minmax_diff] < (pState->nMin + 1)) {
+      recompute_true = 1;
+      old_true = arrMaxNEGMINMAXTrue[minmax_diff];
+      arrMaxNEGMINMAXTrue[minmax_diff] = pState->nMin + 1;
+   }
+
+   int recompute_false = 0;
+   int old_false = 0;
+   if (arrMaxNEGMINMAXFalse[minmax_diff] < ((pState->nSize - pState->nMax) + 1)) {
+      recompute_false = 1;
+      old_false = arrMaxNEGMINMAXFalse[minmax_diff];
+      arrMaxNEGMINMAXFalse[minmax_diff] = (pState->nSize - pState->nMax) + 1;
+   }
+
+   if(recompute_true>0 || recompute_false>0) {
+      int i = minmax_diff;
+      if(recompute_true > 0)
+        arrNEGMINMAXWghts[i] = (double**)ite_recalloc(arrNEGMINMAXWghts[i], old_true, arrMaxNEGMINMAXTrue[i], sizeof(double*), 2, "arrNEGMINMAXWghts[i]");
+      
+      for(int j=0; j<arrMaxNEGMINMAXTrue[i]; j++) {
+         arrNEGMINMAXWghts[i][j] = (double*)ite_recalloc(arrNEGMINMAXWghts[i][j], old_false, arrMaxNEGMINMAXFalse[i], sizeof(double), 2, "arrNEGMINMAXWghts[i][j]");
+         arrNEGMINMAXWghts[i][j][0] = i+1; // diff = i
+         if (j==0) {
+            for(int m=old_false==0?1:old_false; m<arrMaxNEGMINMAXFalse[i]; m++) {
+               arrNEGMINMAXWghts[i][0][m] = i+1;
+            }
+         } else {
+            for(int m=old_false==0?1:old_false; m<arrMaxNEGMINMAXFalse[i]; m++) {
+               arrNEGMINMAXWghts[i][j][m] = (arrNEGMINMAXWghts[i][j-1][m] + arrNEGMINMAXWghts[i][j][m-1]) / (2.0*JHEURISTIC_K);
+            }
+         }
+      }
+   }
+
+   // print it -- debug
+   // 
+   //for(int i=0; i<nNEGMINMAXWghtsSize; i++) {
+   //if (arrMaxNEGMINMAXTrue[i] == 0) continue;
+   //fprintf(stderr, "\nNEGMINMAX Diff = %d: \n", i);
+   //for(int j=0; j < arrMaxNEGMINMAXTrue[i]; j++) {
+   //for(int m=0; m<arrMaxNEGMINMAXFalse[i]; m++) {
+   //fprintf(stderr, " %2.6f ", arrNEGMINMAXWghts[i][j][m]);
+   //}
+   //fprintf(stderr, "\n");
+   //}
+   //fprintf(stderr, "\n");
+   //}
 }
 
-ITE_INLINE void LSGBORCounterStateSetHeurScores(ORCounterStateEntry *pState) {
-	LSGBORStateSetHeurScores(pState->pORState);
+ITE_INLINE void LSGBNEGMINMAXCounterStateSetHeurScores(NEGMINMAXCounterStateEntry *pState) {
+	LSGBNEGMINMAXStateSetHeurScores(pState->pNEGMINMAXState);
 }
 
-ITE_INLINE double LSGBORGetHeurScore(ORStateEntry *pState) {
-	return arrORWeight[2].fFmla;
+ITE_INLINE double LSGBNEGMINMAXGetHeurScore(NEGMINMAXStateEntry *pState) {
+   return arrNEGMINMAXWghts[pState->nMax - pState->nMin][pState->nMax][pState->nSize - pState->nMin];
 }
 
-ITE_INLINE double LSGBORGetHeurNeg(ORStateEntry *pState) {
-	return arrORWeight[2].fNeg;
+ITE_INLINE double LSGBNEGMINMAXCounterGetHeurScore(NEGMINMAXCounterStateEntry *pState) {
+	return LSGBNEGMINMAXGetHeurScore(pState->pNEGMINMAXState);
 }
 
-ITE_INLINE double LSGBORCounterGetHeurScore(ORCounterStateEntry *pState) {
-	return arrORWeight[pState->nSize].fFmla;
+ITE_INLINE double LSGBNEGMINMAXCounterGetHeurScorePos(NEGMINMAXCounterStateEntry *pState) {
+   NEGMINMAXStateEntry *pNEGMINMAXState = pState->pNEGMINMAXState;
+   int max = pNEGMINMAXState->nMax - (pState->nNumTrue+1);
+   int min = pNEGMINMAXState->nMin - (pState->nNumTrue+1);
+   return 1;
+   if(min < 0) fprintf(stderr, "EEK");
+   if(((pState->nVarsLeft-1) - max) < 0) fprintf(stderr, "EEK1");
+   return arrNEGMINMAXWghts[pNEGMINMAXState->nMax - pNEGMINMAXState->nMin][min][((pState->nVarsLeft-1) - max)];
 }
 
-ITE_INLINE double LSGBORCounterGetHeurNeg(ORCounterStateEntry *pState) {
-	return arrORWeight[pState->nSize].fNeg;
+ITE_INLINE double LSGBNEGMINMAXCounterGetHeurScoreNeg(NEGMINMAXCounterStateEntry *pState) {
+   NEGMINMAXStateEntry *pNEGMINMAXState = pState->pNEGMINMAXState;
+   int max = pNEGMINMAXState->nMax - pState->nNumTrue;
+   int min = pNEGMINMAXState->nMin - pState->nNumTrue;
+   return 1;
+   if(min < 0) fprintf(stderr, "EEK3");
+   if(((pState->nVarsLeft-1) - max) < 0) fprintf(stderr, "EEK4");
+   return arrNEGMINMAXWghts[pNEGMINMAXState->nMax - pNEGMINMAXState->nMin][min][(pState->nVarsLeft-1) - max];
 }
 
-ITE_INLINE void LSGBORFree() {
-	if(arrORWeight!=NULL) ite_free((void **)&arrORWeight);
+ITE_INLINE void LSGBNEGMINMAXFree() {
+   for(int i = 0; i < nNEGMINMAXWghtsSize; i++) {
+      if(arrMaxNEGMINMAXTrue[i] == 0) continue;
+      for(int j=0; j < arrMaxNEGMINMAXTrue[i]; j++)
+        ite_free((void **)&arrNEGMINMAXWghts[i][j]);
+      ite_free((void **)&arrNEGMINMAXWghts[i]);
+   }
+   
+   if(arrNEGMINMAXWghts!=NULL) ite_free((void **)&arrNEGMINMAXWghts);
+   if(arrMaxNEGMINMAXTrue!=NULL) ite_free((void **)&arrMaxNEGMINMAXTrue);
+   if(arrMaxNEGMINMAXFalse!=NULL) ite_free((void **)&arrMaxNEGMINMAXFalse);
+   
+   nNEGMINMAXWghtsSize = 0;
 }

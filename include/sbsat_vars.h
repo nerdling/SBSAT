@@ -66,11 +66,14 @@
 #define INF_SPEC_FN_MINMAX    13
 #define ERR_BT_SPEC_FN_MINMAX 14
 
-#define INF_SPEC_FN_OR        15
-#define ERR_BT_SPEC_FN_OR     16
+#define INF_SPEC_FN_NEG_MINMAX    15
+#define ERR_BT_SPEC_FN_NEG_MINMAX 16
 
-#define INF_BB_GELIM          17
-#define ERR_BT_BB_GELIM       18
+#define INF_SPEC_FN_OR        17
+#define ERR_BT_SPEC_FN_OR     18
+
+#define INF_BB_GELIM          19
+#define ERR_BT_BB_GELIM       20
 
 #define SMURF_STATES	    30
 #define SMURF_AU_STATES  31

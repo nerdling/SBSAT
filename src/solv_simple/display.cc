@@ -80,6 +80,14 @@ void PrintAllSmurfStateEntries() {
 				PrintMINMAXCounterStateEntry((MINMAXCounterStateEntry *)arrSmurfStates);
 				arrSmurfStates = (void *)(((MINMAXCounterStateEntry *)arrSmurfStates) + 1);
 				size = sizeof(MINMAXCounterStateEntry);
+			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_NEG_MINMAX) {
+				PrintNEGMINMAXStateEntry((NEGMINMAXStateEntry *)arrSmurfStates);
+				arrSmurfStates = (void *)(((NEGMINMAXStateEntry *)arrSmurfStates) + 1);
+				size = sizeof(NEGMINMAXStateEntry);
+			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_NEG_MINMAX_COUNTER) {
+				PrintNEGMINMAXCounterStateEntry((NEGMINMAXCounterStateEntry *)arrSmurfStates);
+				arrSmurfStates = (void *)(((NEGMINMAXCounterStateEntry *)arrSmurfStates) + 1);
+				size = sizeof(NEGMINMAXCounterStateEntry);
 			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_XOR) {
 				PrintXORStateEntry((XORStateEntry *)arrSmurfStates);
 				arrSmurfStates = (void *)(((XORStateEntry *)arrSmurfStates) + 1);
@@ -226,6 +234,7 @@ void DisplaySimpleSolverBacktrackInfo(double &fSimpleSolverPrevEndTime, double &
    if(ite_counters[INF_SPEC_FN_XOR]>0)	d2_printf2("XORs: %lld; ", ite_counters[INF_SPEC_FN_XOR]);
    if(ite_counters[INF_BB_GELIM]>0) d2_printf2("GELIM: %lld; ", ite_counters[INF_BB_GELIM]);
    if(ite_counters[INF_SPEC_FN_MINMAX]>0)	d2_printf2("MINMAXs: %lld; ", ite_counters[INF_SPEC_FN_MINMAX]);
+   if(ite_counters[INF_SPEC_FN_NEG_MINMAX]>0)	d2_printf2("NEGMINMAXs: %lld; ", ite_counters[INF_SPEC_FN_NEG_MINMAX]);
 	if(ite_counters[INF_LEMMA]>0) d2_printf2("lemmas: %lld; ", ite_counters[INF_LEMMA]);
 	d2_printf1("\n");
 	
@@ -235,6 +244,7 @@ void DisplaySimpleSolverBacktrackInfo(double &fSimpleSolverPrevEndTime, double &
 	if(ite_counters[ERR_BT_SPEC_FN_XOR]>0) d2_printf2("XORs: %lld; ", ite_counters[ERR_BT_SPEC_FN_XOR]);
    if(ite_counters[ERR_BT_BB_GELIM]>0) d2_printf2("GELIM: %lld; ", ite_counters[ERR_BT_BB_GELIM]);
 	if(ite_counters[ERR_BT_SPEC_FN_MINMAX]>0) d2_printf2("MINMAXs: %lld; ", ite_counters[ERR_BT_SPEC_FN_MINMAX]);
+   if(ite_counters[ERR_BT_SPEC_FN_NEG_MINMAX]>0) d2_printf2("NEGMINMAXs: %lld; ", ite_counters[ERR_BT_SPEC_FN_NEG_MINMAX]);
 	if(ite_counters[ERR_BT_LEMMA]>0) d2_printf2("lemmas: %lld; ", ite_counters[ERR_BT_LEMMA]);
 	d2_printf1("\n");
 	if (backjumping) d2_printf3(" Backjumps: %ld (avg bj len: %.1f)\n",

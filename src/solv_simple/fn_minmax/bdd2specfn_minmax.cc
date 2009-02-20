@@ -9,7 +9,7 @@ void *CreateMINMAXState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, MINMAX
 	pStartState = (MINMAXStateEntry *)SimpleSmurfProblemState->pSmurfStatesTableTail;
 	SimpleSmurfProblemState->pSmurfStatesTableTail = (void *)(pStartState + 1);
 
-	assert(nNumElts > 2); //OR and XOR cover all 2 variable Boolean functions w/ no immediate inferences.
+	//assert(nNumElts > 2); //OR and XOR cover all 2 variable Boolean functions w/ no immediate inferences.
 
 	int max = -1;
 	BDDNode *tmp_bdd;

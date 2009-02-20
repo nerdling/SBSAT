@@ -44,6 +44,7 @@
 #include "fn_or.h"
 #include "fn_xor.h"
 #include "fn_minmax.h"
+#include "fn_negminmax.h"
 #include "display.h"
 #include "bb_gelim.h"
 #include "bb_lemmas.h"

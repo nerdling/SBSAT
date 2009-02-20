@@ -260,17 +260,13 @@ void *ReadSmurfStateIntoTable(BDDNode *pCurrentBDD, int *arrElts, int nNumElts) 
 			pStartState = CreateMINMAXState(arrElts, nNumElts, pCurrentBDD, (MINMAXStateEntry *)pStartState);
 			LSGBMINMAXCounterStateSetHeurScores((MINMAXCounterStateEntry *)pStartState);
 			//       fprintf(stderr, "M");
-			//ite_free((void **)&arrElts); This is saved on the MINMAX State
 		}
-		else if(0 && nNumElts >= 3 && nNumElts >= functionTypeLimits[NEG_MINMAX] &&
+		else if(nNumElts >= 3 && nNumElts >= functionTypeLimits[NEG_MINMAX] &&
 				  isNEG_MIN_MAX(pCurrentBDD, tempint, nNumElts)) {
 			//FN_NEG_MINMAX
-			//pStartState = CreateSmurfState(arrElts, nNumElts, pCurrentBDD, (SmurfStateEntry *)pStartState);        
-			//LSGBSmurfSetHeurScores((SmurfStateEntry *)pStartState);
-			//       fprintf(stderr, "n");
-			pCurrentBDD->pState = pTrueSimpleSmurfState;
-			pStartState = pTrueSimpleSmurfState;
-			ite_free((void **)&arrElts);
+			pStartState = CreateNEGMINMAXState(arrElts, nNumElts, pCurrentBDD, (NEGMINMAXStateEntry *)pStartState);
+			LSGBNEGMINMAXCounterStateSetHeurScores((NEGMINMAXCounterStateEntry *)pStartState);
+			//       fprintf(stderr, "m");
 		} else {
 			//FN_SMURF
 			if(use_SmurfWatchedLists) pStartState = CreateWatchedSmurfState(arrElts, nNumElts, pCurrentBDD, (SmurfStateEntry *)pStartState);

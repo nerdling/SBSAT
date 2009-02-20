@@ -299,6 +299,7 @@ void FreeSmurfSolverVars() {
 	LSGBORFree();
 	LSGBXORFree();
    LSGBMINMAXFree();
+   LSGBNEGMINMAXFree();
 }
 
 void FreeSmurfStateEntries() {
@@ -334,6 +335,14 @@ void FreeSmurfStateEntries() {
 				FreeMINMAXCounterStateEntry((MINMAXCounterStateEntry *)arrSmurfStates);
 				arrSmurfStates = (void *)(((MINMAXCounterStateEntry *)arrSmurfStates) + 1);
 				size = sizeof(MINMAXCounterStateEntry);
+			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_NEG_MINMAX) {
+				FreeNEGMINMAXStateEntry((NEGMINMAXStateEntry *)arrSmurfStates);
+				arrSmurfStates = (void *)(((NEGMINMAXStateEntry *)arrSmurfStates) + 1);
+				size = sizeof(NEGMINMAXStateEntry);
+			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_NEG_MINMAX_COUNTER) {
+				FreeNEGMINMAXCounterStateEntry((NEGMINMAXCounterStateEntry *)arrSmurfStates);
+				arrSmurfStates = (void *)(((NEGMINMAXCounterStateEntry *)arrSmurfStates) + 1);
+				size = sizeof(NEGMINMAXCounterStateEntry);
 			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_XOR) {
 				FreeXORStateEntry((XORStateEntry *)arrSmurfStates);
 				arrSmurfStates = (void *)(((XORStateEntry *)arrSmurfStates) + 1);

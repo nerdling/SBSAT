@@ -173,6 +173,18 @@ void Calculate_Heuristic_Values() {
 				}
 			}
 			break;
+		 case FN_NEG_MINMAX_COUNTER:
+			pState = arrSmurfStates[nSmurfIndex];
+         pos_value = LSGBNEGMINMAXCounterGetHeurScorePos(((NEGMINMAXCounterStateEntry *)pState));
+         neg_value = LSGBNEGMINMAXCounterGetHeurScoreNeg(((NEGMINMAXCounterStateEntry *)pState));
+			for(int index = 0; numfound < ((NEGMINMAXCounterStateEntry *)pState)->nVarsLeft; index++) {
+				if(abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[((NEGMINMAXCounterStateEntry *)pState)->pNEGMINMAXState->pnTransitionVars[index]]) >= nCurrInfLevel) {
+					numfound++;
+					SimpleSmurfProblemState->arrPosVarHeurWghts[((NEGMINMAXCounterStateEntry *)pState)->pNEGMINMAXState->pnTransitionVars[index]] += pos_value;
+					SimpleSmurfProblemState->arrNegVarHeurWghts[((NEGMINMAXCounterStateEntry *)pState)->pNEGMINMAXState->pnTransitionVars[index]] += neg_value;
+				}
+			}
+			break;
 		 case FN_OR:
 			pState = arrSmurfStates[nSmurfIndex];
          pos_value = JHEURISTIC_K_TRUE;
