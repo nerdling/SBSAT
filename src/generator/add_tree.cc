@@ -99,10 +99,12 @@ void add_tree (int level, int variable) {
 		}
 		
 		for(int y = 1; y < x; y++) {
+			for(int z = 1; z <= y; z++)
+			  fprintf(stdout, "equ(t_L%d_choice1_L%d_b%d_L%d_b%d, equ(L%d_choice1_L%d_b%d, L%d_b%d))\n", x, y, z, y, z, x, y, z, y, z);
 			fprintf(stdout, "ite(L%d_choice1_L%d, ", x, y);
 			if(y!=1) fprintf(stdout, "and(");
 			for(int z = 1; z <= y; z++)
-			  fprintf(stdout, "equ(L%d_choice1_L%d_b%d, L%d_b%d), ", x, y, z, y, z);
+			  fprintf(stdout, "t_L%d_choice1_L%d_b%d_L%d_b%d, ", x, y, z, y, z);
 			if(y!=1) fprintf(stdout, "), and(");
 			for(int z = 1; z <= y; z++)
 			  fprintf(stdout, "-L%d_choice1_L%d_b%d, ", x, y, z);
@@ -110,10 +112,12 @@ void add_tree (int level, int variable) {
 			if(y!=1) fprintf(stdout, ")");
 			fprintf(stdout, "\n");
 
+         for(int z = 1; z <= y; z++)
+			  fprintf(stdout, "equ(t_L%d_choice2_L%d_b%d_L%d_b%d, equ(L%d_choice2_L%d_b%d, L%d_b%d))\n", x, y, z, y, z, x, y, z, y, z);
 			fprintf(stdout, "ite(L%d_choice2_L%d, ", x, y);
 			if(y!=1) fprintf(stdout, "and(");
 			for(int z = 1; z <= y; z++)
-			  fprintf(stdout, "equ(L%d_choice2_L%d_b%d, L%d_b%d), ", x, y, z, y, z);
+			  fprintf(stdout, "t_L%d_choice2_L%d_b%d_L%d_b%d, ", x, y, z, y, z);
 			if(y!=1) fprintf(stdout, "), and(");
 			for(int z = 1; z <= y; z++)
 			  fprintf(stdout, "-L%d_choice2_L%d_b%d, ", x, y, z);
