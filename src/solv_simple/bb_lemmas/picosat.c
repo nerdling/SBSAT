@@ -4654,7 +4654,7 @@ collect_clauses (void)
 static int
 need_to_reduce (void)
 {
-  if (lastreduceconflicts + dfreduce <= conflicts)
+	if (lastreduceconflicts + dfreduce <= conflicts)
     {
       dfreduce *= FREDUCE;
       dfreduce /= 100;

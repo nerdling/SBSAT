@@ -156,7 +156,7 @@ t_opt options[] = {
                 "The minimum # of literals to flag sp. function xor"},
 { functionTypeLimits+MINMAX, "", "limit-minmax", P_INT, V(i:0,"0"), V(i:3,"3"), VAR_NORMAL, 0,
                 "The minimum # of literals to flag sp. function minmax"},
-{ functionTypeLimits+NEG_MINMAX, "", "limit-neg-minmax", P_INT, V(i:0,"0"), V(i:20,"20"), VAR_NORMAL, 0,
+{ functionTypeLimits+NEG_MINMAX, "", "limit-neg-minmax", P_INT, V(i:0,"0"), V(i:3,"3"), VAR_NORMAL, 0,
                 "The minimum # of literals to flag sp. function minmax"},
 /*{ &AND_EQU_LIMIT, "", "limit-and-equ", P_INT, V(i:0,"0"), V(i:2,"2"), VAR_NORMAL, 0, 
                 "The minimum # of literals to flag sp. function and_equ"},
