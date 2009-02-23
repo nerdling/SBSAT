@@ -1,1 +1,1 @@
-barrel.7.prove -L 5000 --backjumping 1 --All 1 --formatin 3 --expected-result TRIV_UNSAT 
+barrel.7.prove --All 1 --limit-neg-minmax 100 --formatin 3 --expected-result TRIV_UNSAT 
