@@ -1,6 +1,6 @@
 INCLUDES=-I$(top_srcdir)/include -I$(top_srcdir)/src/solv_simple/include
 
-EXTRA_DIST=\ picosat.h NEWS README VERSION LICENSE
+EXTRA_DIST= picosat.h
 
 sources= picosat.c
 
