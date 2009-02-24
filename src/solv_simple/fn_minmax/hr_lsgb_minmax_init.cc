@@ -85,10 +85,10 @@ ITE_INLINE void LSGBMINMAXStateSetHeurScores(MINMAXStateEntry *pState) {
       
       for(int j=0; j<arrMaxMINMAXTrue[i]; j++) {
          arrMINMAXWghts[i][j] = (double*)ite_recalloc(arrMINMAXWghts[i][j], old_false, arrMaxMINMAXFalse[i], sizeof(double), 2, "arrMINMAXWghts[i][j]");
-         arrMINMAXWghts[i][j][0] = (j-i < 0?0:(JHEURISTIC_K_INF * (j-i))); // diff = i, j - LeftToSetTrue, 0 - LeftToSetFalse
+         arrMINMAXWghts[i][j][0] = (j-i <= 0?JHEURISTIC_K_TRUE:(JHEURISTIC_K_INF * (j-i))); // diff = i, j - LeftToSetTrue, 0 - LeftToSetFalse
          if (j==0) {
             for(int m=old_false==0?1:old_false; m<arrMaxMINMAXFalse[i]; m++) {
-               arrMINMAXWghts[i][0][m] = (m-i < 0?0:(JHEURISTIC_K_INF * (m-i)));
+               arrMINMAXWghts[i][0][m] = (m-i <= 0?JHEURISTIC_K_TRUE:(JHEURISTIC_K_INF * (m-i)));
             }
          } else {
             for(int m=old_false==0?1:old_false; m<arrMaxMINMAXFalse[i]; m++) {
@@ -129,7 +129,7 @@ ITE_INLINE double LSGBMINMAXCounterGetHeurScorePos(MINMAXCounterStateEntry *pSta
    MINMAXStateEntry *pMINMAXState = pState->pMINMAXState;
    int max = pMINMAXState->nMax - (pState->nNumTrue+1);
    int min = pMINMAXState->nMin - (pState->nNumTrue+1);
-   return arrMINMAXWghts[pMINMAXState->nMax - pMINMAXState->nMin][max][((pState->nVarsLeft-1) - min)];
+   return arrMINMAXWghts[pMINMAXState->nMax - pMINMAXState->nMin][max][(pState->nVarsLeft-1) - min];
 }
 
 ITE_INLINE double LSGBMINMAXCounterGetHeurScoreNeg(MINMAXCounterStateEntry *pState) {

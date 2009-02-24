@@ -64,18 +64,18 @@ ITE_INLINE void LSGBNEGMINMAXStateSetHeurScores(NEGMINMAXStateEntry *pState) {
    
    int recompute_true = 0;
    int old_true = 0;
-   if (arrMaxNEGMINMAXTrue[minmax_diff] < (pState->nMin + 1)) {
+   if (arrMaxNEGMINMAXTrue[minmax_diff] < (pState->nMax + 2)) {
       recompute_true = 1;
       old_true = arrMaxNEGMINMAXTrue[minmax_diff];
-      arrMaxNEGMINMAXTrue[minmax_diff] = pState->nMin + 1;
+      arrMaxNEGMINMAXTrue[minmax_diff] = pState->nMax + 2;
    }
 
    int recompute_false = 0;
    int old_false = 0;
-   if (arrMaxNEGMINMAXFalse[minmax_diff] < ((pState->nSize - pState->nMax) + 1)) {
+   if (arrMaxNEGMINMAXFalse[minmax_diff] < ((pState->nSize - pState->nMin) + 2)) {
       recompute_false = 1;
       old_false = arrMaxNEGMINMAXFalse[minmax_diff];
-      arrMaxNEGMINMAXFalse[minmax_diff] = (pState->nSize - pState->nMax) + 1;
+      arrMaxNEGMINMAXFalse[minmax_diff] = (pState->nSize - pState->nMin) + 2;
    }
 
    if(recompute_true>0 || recompute_false>0) {
@@ -85,14 +85,22 @@ ITE_INLINE void LSGBNEGMINMAXStateSetHeurScores(NEGMINMAXStateEntry *pState) {
       
       for(int j=0; j<arrMaxNEGMINMAXTrue[i]; j++) {
          arrNEGMINMAXWghts[i][j] = (double*)ite_recalloc(arrNEGMINMAXWghts[i][j], old_false, arrMaxNEGMINMAXFalse[i], sizeof(double), 2, "arrNEGMINMAXWghts[i][j]");
-         arrNEGMINMAXWghts[i][j][0] = JHEURISTIC_K_INF * (i+1); // diff = i
+         arrNEGMINMAXWghts[i][j][0] = JHEURISTIC_K_TRUE; // diff = i
          if (j==0) {
             for(int m=old_false==0?1:old_false; m<arrMaxNEGMINMAXFalse[i]; m++) {
-               arrNEGMINMAXWghts[i][0][m] = JHEURISTIC_K_INF * (i+1);
+               arrNEGMINMAXWghts[i][0][m] = JHEURISTIC_K_TRUE;
             }
          } else {
             for(int m=old_false==0?1:old_false; m<arrMaxNEGMINMAXFalse[i]; m++) {
-               arrNEGMINMAXWghts[i][j][m] = (arrNEGMINMAXWghts[i][j-1][m] + arrNEGMINMAXWghts[i][j][m-1]) / (2.0*JHEURISTIC_K);
+					if(j < i+2) {
+						if(m < i+2) {
+							arrNEGMINMAXWghts[i][j][m] = JHEURISTIC_K_TRUE;
+						} else if (m == i+2) {
+							arrNEGMINMAXWghts[i][j][m] = JHEURISTIC_K_INF*j;
+						} else arrNEGMINMAXWghts[i][j][m] = (arrNEGMINMAXWghts[i][j-1][m] + arrNEGMINMAXWghts[i][j][m-1]) / (2.0*JHEURISTIC_K);
+					} else if (m < i+2 && j == i+2) {
+						arrNEGMINMAXWghts[i][j][m] = JHEURISTIC_K_INF*m;
+					} else arrNEGMINMAXWghts[i][j][m] = (arrNEGMINMAXWghts[i][j-1][m] + arrNEGMINMAXWghts[i][j][m-1]) / (2.0*JHEURISTIC_K);
             }
          }
       }
@@ -129,20 +137,14 @@ ITE_INLINE double LSGBNEGMINMAXCounterGetHeurScorePos(NEGMINMAXCounterStateEntry
    NEGMINMAXStateEntry *pNEGMINMAXState = pState->pNEGMINMAXState;
    int max = pNEGMINMAXState->nMax - (pState->nNumTrue+1);
    int min = pNEGMINMAXState->nMin - (pState->nNumTrue+1);
-   return 1;
-   if(min < 0) fprintf(stderr, "EEK");
-   if(((pState->nVarsLeft-1) - max) < 0) fprintf(stderr, "EEK1");
-   return arrNEGMINMAXWghts[pNEGMINMAXState->nMax - pNEGMINMAXState->nMin][min][((pState->nVarsLeft-1) - max)];
+   return arrNEGMINMAXWghts[pNEGMINMAXState->nMax - pNEGMINMAXState->nMin][max+1][((pState->nVarsLeft-1) - min)+1];
 }
 
 ITE_INLINE double LSGBNEGMINMAXCounterGetHeurScoreNeg(NEGMINMAXCounterStateEntry *pState) {
    NEGMINMAXStateEntry *pNEGMINMAXState = pState->pNEGMINMAXState;
    int max = pNEGMINMAXState->nMax - pState->nNumTrue;
    int min = pNEGMINMAXState->nMin - pState->nNumTrue;
-   return 1;
-   if(min < 0) fprintf(stderr, "EEK3");
-   if(((pState->nVarsLeft-1) - max) < 0) fprintf(stderr, "EEK4");
-   return arrNEGMINMAXWghts[pNEGMINMAXState->nMax - pNEGMINMAXState->nMin][min][(pState->nVarsLeft-1) - max];
+   return arrNEGMINMAXWghts[pNEGMINMAXState->nMax - pNEGMINMAXState->nMin][max+1][((pState->nVarsLeft-1) - min)+1];
 }
 
 ITE_INLINE void LSGBNEGMINMAXFree() {
