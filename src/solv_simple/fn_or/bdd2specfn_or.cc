@@ -48,7 +48,7 @@ void *CreateORState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, ORStateEnt
 	
 	if(nNumElts == 2)	return (void *)pStartState;
 
-	ORCounterStateEntry *pCurrORCounter;
+	ORCounterStateEntry *pCurrORCounter=NULL;
 	void *pPrevORCounter = (void *)pStartState;
 	for(int x = 2; x < nNumElts; x++) {
 //		fprintf(stderr, "%d, %d, %d: ", x, arrElts[x], arrSimpleSolver2IteVarMap[arrElts[x]]);

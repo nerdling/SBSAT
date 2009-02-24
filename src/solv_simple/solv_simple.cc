@@ -52,7 +52,7 @@ void save_solution_simple(void) {
 			solution_info->next = (struct _t_solution_info*)tmp_solution_info;
 			solution_info = (t_solution_info*)(solution_info->next);
 		}
-		tmp_solution_info->nNumElts = numinp+1;//SimpleSmurfProblemState->nNumVars+1;
+		tmp_solution_info->nNumElts = (int)numinp+1;//SimpleSmurfProblemState->nNumVars+1;
 		tmp_solution_info->arrElts = new int[numinp+1];//new int[SimpleSmurfProblemState->nNumVars+2];
 
 		int nCurrInfLevel = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;

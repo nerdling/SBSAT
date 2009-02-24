@@ -27,7 +27,7 @@ void *CreateXORState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, XORStateE
 	
 	if(nNumElts == 2) return (void *)pStartState;
 
-	XORCounterStateEntry *pCurrXORCounter;
+	XORCounterStateEntry *pCurrXORCounter=NULL;
 	void *pPrevXORCounter = (void *)pStartState;
 	for(int x = 2; x < nNumElts; x++) {
 //		fprintf(stderr, "%d, %d, %d: ", x, arrElts[x], arrSimpleSolver2IteVarMap[arrElts[x]]);

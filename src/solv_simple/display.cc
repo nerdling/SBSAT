@@ -41,7 +41,7 @@
 
 extern int solutions_overflow;
 
-void DisplaySimpleStatistics(int nNumChoicePts, int nNumBacktracks, int nNumBackjumps) {
+void DisplaySimpleStatistics(long long int nNumChoicePts, long long int nNumBacktracks, long long int nNumBackjumps) {
 	d2_printf2("Choice Points: %d", nNumChoicePts);
 	d2_printf3(", Backtracks: %d, Backjumps: %d \n", 
 				  nNumBacktracks, nNumBackjumps);
@@ -187,8 +187,8 @@ void CalculateSimpleSolverProgress(int *_whereAmI, int *_total) {
 	*_total    = total;
 }
 
-void DisplaySimpleSolverBacktrackInfo(double &fSimpleSolverPrevEndTime, double &fSimpleSolverStartTime) {
-	double fSimpleSolverEndTime = ite_counters_f[CURRENT_TIME] = get_runtime();
+void DisplaySimpleSolverBacktrackInfo() {
+	fSimpleSolverEndTime = ite_counters_f[CURRENT_TIME] = get_runtime();
 	double fTotalDurationInSecs = fSimpleSolverEndTime - fSimpleSolverStartTime;
 	double fDurationInSecs = fSimpleSolverEndTime - fSimpleSolverPrevEndTime;
 	double fBacktracksPerSec = BACKTRACKS_PER_STAT_REPORT / (fDurationInSecs>0?fDurationInSecs:0.001);
@@ -259,8 +259,8 @@ void DisplaySimpleSolverBacktrackInfo(double &fSimpleSolverPrevEndTime, double &
 	d2_printf1("\n");
 }
 
-void DisplaySimpleSolverBacktrackInfo_gnuplot(double &fSimpleSolverPrevEndTime, double &fSimpleSolverStartTime) {
-	double fSimpleSolverEndTime = ite_counters_f[CURRENT_TIME];
+void DisplaySimpleSolverBacktrackInfo_gnuplot() {
+	fSimpleSolverEndTime = ite_counters_f[CURRENT_TIME];
 	double fTotalDurationInSecs = fSimpleSolverEndTime - fSimpleSolverStartTime;
 	double fDurationInSecs = fSimpleSolverEndTime - fSimpleSolverPrevEndTime;
 	double fBacktracksPerSec = BACKTRACKS_PER_STAT_REPORT / (fDurationInSecs>0?fDurationInSecs:0.001);

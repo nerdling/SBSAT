@@ -135,11 +135,11 @@ ITE_INLINE int Backtrack_Hooks() {
 	//Periodic Hooks
 	if (ite_counters[NUM_BACKTRACKS] % BACKTRACKS_PER_STAT_REPORT == 0) {
 		//Display hook
-		DisplaySimpleSolverBacktrackInfo(fSimpleSolverPrevEndTime, fSimpleSolverStartTime);
+		DisplaySimpleSolverBacktrackInfo();
 
 		//cvs trace file hook
 		if (fd_csv_trace_file) {
-			DisplaySimpleSolverBacktrackInfo_gnuplot(fSimpleSolverPrevEndTime, fSimpleSolverStartTime);
+			DisplaySimpleSolverBacktrackInfo_gnuplot();
 		}
 		//Solving limit hook
 		if(CheckSimpleLimits(fSimpleSolverStartTime)==1) return SOLV_LIMIT;

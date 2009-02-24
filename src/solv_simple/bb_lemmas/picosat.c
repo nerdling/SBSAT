@@ -116,10 +116,10 @@ int IFREDUCE;	/* initial forced reduce limit */
   do { \
     unsigned old_num = (unsigned)((end) - (start)); \
     size_t new_num = old_num ? (2 * old_num) : 1; \
-    unsigned count = (head) - (start); \
+    unsigned count_e = (head) - (start); \
     assert ((start) <= (start)); \
     RESIZEN((start),old_num,new_num); \
-    (head) = (start) + count; \
+    (head) = (start) + count_e; \
     (end) = (start) + new_num; \
   } while (0)
 

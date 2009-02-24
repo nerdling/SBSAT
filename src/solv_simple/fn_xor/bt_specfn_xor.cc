@@ -63,7 +63,7 @@ int ApplyInferenceToXOR(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void
 	int nInfQueueLevel = abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[nBranchVar]);
 
 	bool bParity = pXORState->bParity;
-	int infer_var = -1;
+	int infer_var = 0;
 	for(int x = 0; x < pXORState->nSize; x++) {
 		int nPrevInfLevel = abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[pXORState->pnTransitionVars[x]]);
 		//fprintf(stderr, "%d %d<%d x=%d var=%d pol=%d\n", nBranchVar, nPrevInfLevel, nInfQueueLevel, x, pXORState->pnTransitionVars[x], pXORState->bPolarity[x]);

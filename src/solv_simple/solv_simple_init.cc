@@ -227,11 +227,11 @@ int ReadAllSmurfsIntoTable(int nNumVars) {
 	ite_free((void **)&temp_varcount);
 	
 	//Create the rest of the SmurfState entries
-	char p[256]; int str_length;
+	char p[256]; int str_length=0;
 	D_3(
 		 d3_printf1("Building Smurfs: ");
 		 sprintf(p, "{0/%d}",  SimpleSmurfProblemState->nNumSmurfs);
-		 str_length = strlen(p);
+		 str_length = (int)strlen(p);
 		 d3_printf1(p);
 		 );
 	for(int nSmurfIndex = 0; nSmurfIndex < SimpleSmurfProblemState->nNumSmurfs; nSmurfIndex++) {
@@ -240,7 +240,7 @@ int ReadAllSmurfsIntoTable(int nNumVars) {
 				 for(int iter = 0; iter<str_length; iter++)
 					d3_printf1("\b");
 				 sprintf(p, "{%d/%d}", nSmurfIndex, SimpleSmurfProblemState->nNumSmurfs);
-				 str_length = strlen(p);
+				 str_length = (int)strlen(p);
 				 d3_printf1(p);
 			 }
 			 );
@@ -270,7 +270,7 @@ int ReadAllSmurfsIntoTable(int nNumVars) {
 		 for(int iter = 0; iter<str_length; iter++)
 		 d3_printf1("\b");
 		 sprintf(p, "{%d/%d}\n", SimpleSmurfProblemState->nNumSmurfs, SimpleSmurfProblemState->nNumSmurfs);
-		 str_length = strlen(p);
+		 str_length = (int)strlen(p);
 		 d3_printf1(p);
 		 d3_printf2("%d SmurfStates Used\n", SimpleSmurfProblemState->nNumSmurfStateEntries);  
 		 );
@@ -429,7 +429,7 @@ void Final_SimpleSmurfSolver() {
 
 	DisplaySimpleStatistics(ite_counters[NUM_CHOICE_POINTS], ite_counters[NUM_BACKTRACKS], ite_counters[NUM_BACKJUMPS]);
 	if (fd_csv_trace_file) {
-		DisplaySimpleSolverBacktrackInfo_gnuplot(fSimpleSolverPrevEndTime, fSimpleSolverStartTime);
+		DisplaySimpleSolverBacktrackInfo_gnuplot();
 		fclose(fd_csv_trace_file);
 	}
 	//Still need to do some backend stuff like free memory.

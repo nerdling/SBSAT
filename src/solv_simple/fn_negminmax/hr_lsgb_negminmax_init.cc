@@ -96,10 +96,10 @@ ITE_INLINE void LSGBNEGMINMAXStateSetHeurScores(NEGMINMAXStateEntry *pState) {
 						if(m < i+2) {
 							arrNEGMINMAXWghts[i][j][m] = JHEURISTIC_K_TRUE;
 						} else if (m == i+2) {
-							arrNEGMINMAXWghts[i][j][m] = JHEURISTIC_K_INF*j;
+							arrNEGMINMAXWghts[i][j][m] = JHEURISTIC_K_INF*(double)j;
 						} else arrNEGMINMAXWghts[i][j][m] = (arrNEGMINMAXWghts[i][j-1][m] + arrNEGMINMAXWghts[i][j][m-1]) / (2.0*JHEURISTIC_K);
 					} else if (m < i+2 && j == i+2) {
-						arrNEGMINMAXWghts[i][j][m] = JHEURISTIC_K_INF*m;
+						arrNEGMINMAXWghts[i][j][m] = JHEURISTIC_K_INF*(double)m;
 					} else arrNEGMINMAXWghts[i][j][m] = (arrNEGMINMAXWghts[i][j-1][m] + arrNEGMINMAXWghts[i][j][m-1]) / (2.0*JHEURISTIC_K);
             }
          }

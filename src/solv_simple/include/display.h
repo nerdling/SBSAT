@@ -40,7 +40,7 @@
 
 /********** Included in include/solver.h **********/
 
-void DisplaySimpleStatistics(int nNumChoicePts, int nNumBacktracks, int nNumBackjumps);
+void DisplaySimpleStatistics(long long int nNumChoicePts, long long int nNumBacktracks, long long int nNumBackjumps);
 
 void PrintAllSmurfStateEntries();
 void PrintSmurf_dot(void *ssEntry);
@@ -48,7 +48,7 @@ void PrintAllXORSmurfStateEntries();
 
 ITE_INLINE void CalculateSimpleSolverProgress(int *_whereAmI, int *_total);
 
-void DisplaySimpleSolverBacktrackInfo(double &fSimpleSolverPrevEndTime, double &fSimpleSolverStartTime);
-void DisplaySimpleSolverBacktrackInfo_gnuplot(double &fSimpleSolverPrevEndTime, double &fSimpleSolverStartTime);
+void DisplaySimpleSolverBacktrackInfo();
+void DisplaySimpleSolverBacktrackInfo_gnuplot();
 
 #endif

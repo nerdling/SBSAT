@@ -35,7 +35,7 @@ void *CreateNEGMINMAXState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, NEG
 	pStartState->nMax = max;
 	pStartState->pnTransitionVars = arrElts;
 
-	NEGMINMAXCounterStateEntry *pCurrNEGMINMAXCounter;
+	NEGMINMAXCounterStateEntry *pCurrNEGMINMAXCounter=NULL;
 	void *pPrevNEGMINMAXCounter = (void *)pTrueSimpleSmurfState;//pStartState;
 	for(int x = 1; x <= nNumElts; x++) {
 //		fprintf(stderr, "%d, %d, %d: ", x, arrElts[x], arrSimpleSolver2IteVarMap[arrElts[x]]);

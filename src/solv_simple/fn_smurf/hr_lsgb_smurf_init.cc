@@ -69,7 +69,7 @@ ITE_INLINE double LSGBGetHeurScoreTransition(SmurfStateEntry *pState, bool bPola
 
 	if(pNextState == NULL) return JHEURISTIC_K_UNKNOWN; //This can happen if smurfs are built lazily
 
-	double fInferenceWeights = JHEURISTIC_K_INF * num_inferences;	
+	double fInferenceWeights = JHEURISTIC_K_INF * (double)num_inferences;	
 	if (((TypeStateEntry *)pNextState)->cType == FN_SMURF || ((TypeStateEntry *)pNextState)->cType == FN_WATCHED_SMURF) {
 		return fInferenceWeights + LSGBSumNodeWeights((SmurfStateEntry *)pNextState);
 	} else if (((TypeStateEntry *)pNextState)->cType == FN_OR) {

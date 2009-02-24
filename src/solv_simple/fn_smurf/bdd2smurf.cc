@@ -127,7 +127,7 @@ void ComputeSmurfInferences(BDDNode *pCurrentBDD, SmurfStateEntry *pCurrState) {
 }
 
 void *CreateSmurfState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, SmurfStateEntry *pStartState) {
-	check_SmurfStatesTableSize(sizeof(SmurfStateEntry)*nNumElts);
+	check_SmurfStatesTableSize((int)sizeof(SmurfStateEntry)*nNumElts);
 	ite_counters[SMURF_STATES]+=nNumElts;
 	pCurrentBDD->pState = SimpleSmurfProblemState->pSmurfStatesTableTail;
 	
@@ -157,7 +157,7 @@ void *CreateSmurfState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, SmurfSt
 }
 
 void *CreateWatchedSmurfState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, SmurfStateEntry *pStartState) {
-	check_SmurfStatesTableSize(sizeof(SmurfStateEntry)*nNumElts);
+	check_SmurfStatesTableSize((int)sizeof(SmurfStateEntry)*nNumElts);
 	ite_counters[SMURF_STATES]+=nNumElts;
 	pCurrentBDD->pState = SimpleSmurfProblemState->pSmurfStatesTableTail;
 	
