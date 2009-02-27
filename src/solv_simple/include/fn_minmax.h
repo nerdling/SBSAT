@@ -38,20 +38,31 @@
 #ifndef FN_MINMAX_S_H
 #define FN_MINMAX_S_H
 
-// Function structure
-void PrintMINMAXStateEntry(MINMAXStateEntry *ssEntry);
-void PrintMINMAXCounterStateEntry(MINMAXCounterStateEntry *ssEntry);
+// MINMAX State
+
+void PrintMINMAXStateEntry(void *pState);
+
 void LSGBMINMAXStateSetHeurScores(MINMAXStateEntry *pState);
-void LSGBMINMAXCounterStateSetHeurScores(MINMAXCounterStateEntry *pState);
 double LSGBMINMAXGetHeurScore(MINMAXStateEntry *pState);
+void LSGBMINMAXFree();
+
+void *CreateMINMAXState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, MINMAXStateEntry *pStartState);
+
+int ApplyInferenceToMINMAX(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
+
+void FreeMINMAXStateEntry(void *pState);
+
+//MINMAX Counter State
+
+void PrintMINMAXCounterStateEntry(void *pState);
+
+void LSGBMINMAXCounterStateSetHeurScores(MINMAXCounterStateEntry *pState);
 double LSGBMINMAXCounterGetHeurScore(MINMAXCounterStateEntry *pState);
 double LSGBMINMAXCounterGetHeurScorePos(MINMAXCounterStateEntry *pState);
 double LSGBMINMAXCounterGetHeurScoreNeg(MINMAXCounterStateEntry *pState);
-void LSGBMINMAXFree();
-void *CreateMINMAXState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, MINMAXStateEntry *pStartState);
-int ApplyInferenceToMINMAX(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
+
 int ApplyInferenceToMINMAXCounter(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
-void FreeMINMAXStateEntry(MINMAXStateEntry *ssEntry);
-void FreeMINMAXCounterStateEntry(MINMAXCounterStateEntry *ssEntry);
+
+void FreeMINMAXCounterStateEntry(void *pState);
 
 #endif

@@ -34,7 +34,6 @@ int MINMAXState_InferWithLemma(MINMAXCounterStateEntry *pMINMAXCounterState, int
 	return 1;
 }
 
-
 int ApplyInferenceToMINMAX(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates) {
 	//I don't think this should happen w/ the current setup...yet - use for watched literals
 	assert(0);

@@ -5212,6 +5212,7 @@ simplify (void)
   Cls **p, *cls;
 
   assert (!mtcls);
+  if(satisfied()) return; //SEAN added when counting all solutions
   assert (!satisfied ());
   assert (lsimplify <= propagations);
   assert (fsimplify <= fixed);

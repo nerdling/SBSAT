@@ -38,20 +38,23 @@
 #ifndef FN_NEG_MINMAX_S_H
 #define FN_NEG_MINMAX_S_H
 
-// Function structure
-void PrintNEGMINMAXStateEntry(NEGMINMAXStateEntry *ssEntry);
-void PrintNEGMINMAXCounterStateEntry(NEGMINMAXCounterStateEntry *ssEntry);
+// NEGMINMAX State
+void PrintNEGMINMAXStateEntry(void *pState);
 void LSGBNEGMINMAXStateSetHeurScores(NEGMINMAXStateEntry *pState);
-void LSGBNEGMINMAXCounterStateSetHeurScores(NEGMINMAXCounterStateEntry *pState);
 double LSGBNEGMINMAXGetHeurScore(NEGMINMAXStateEntry *pState);
-double LSGBNEGMINMAXCounterGetHeurScore(NEGMINMAXCounterStateEntry *pState);
-double LSGBNEGMINMAXCounterGetHeurScorePos(NEGMINMAXCounterStateEntry *pState);
-double LSGBNEGMINMAXCounterGetHeurScoreNeg(NEGMINMAXCounterStateEntry *pState);
 void LSGBNEGMINMAXFree();
 void *CreateNEGMINMAXState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, NEGMINMAXStateEntry *pStartState);
 int ApplyInferenceToNEGMINMAX(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
+void FreeNEGMINMAXStateEntry(void *pState);
+
+// NEGMINMAX Counter State
+
+void PrintNEGMINMAXCounterStateEntry(void *pState);
+void LSGBNEGMINMAXCounterStateSetHeurScores(NEGMINMAXCounterStateEntry *pState);
+double LSGBNEGMINMAXCounterGetHeurScore(NEGMINMAXCounterStateEntry *pState);
+double LSGBNEGMINMAXCounterGetHeurScorePos(NEGMINMAXCounterStateEntry *pState);
+double LSGBNEGMINMAXCounterGetHeurScoreNeg(NEGMINMAXCounterStateEntry *pState);
 int ApplyInferenceToNEGMINMAXCounter(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
-void FreeNEGMINMAXStateEntry(NEGMINMAXStateEntry *ssEntry);
-void FreeNEGMINMAXCounterStateEntry(NEGMINMAXCounterStateEntry *ssEntry);
+void FreeNEGMINMAXCounterStateEntry(void *pState);
 
 #endif

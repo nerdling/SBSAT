@@ -42,8 +42,8 @@
 extern int solutions_overflow;
 
 void DisplaySimpleStatistics(long long int nNumChoicePts, long long int nNumBacktracks, long long int nNumBackjumps) {
-	d2_printf2("Choice Points: %d", nNumChoicePts);
-	d2_printf3(", Backtracks: %d, Backjumps: %d \n", 
+	d2_printf2("Choice Points: %lld", nNumChoicePts);
+	d2_printf3(", Backtracks: %lld, Backjumps: %lld \n",
 				  nNumBacktracks, nNumBackjumps);
 }
 
@@ -55,9 +55,9 @@ void PrintAllSmurfStateEntries() {
 		int size = 0;
 		for(int x = 0; x < arrSmurfStatesTable->curr_size; x+=size) {
 			state_num++;
-			d9_printf3("State %d(%x), ", state_num, arrSmurfStates);
+			d9_printf3("State %d(%x), ", state_num, (unsigned int)arrSmurfStates);
 			if(((TypeStateEntry *)arrSmurfStates)->cType == FN_SMURF || ((TypeStateEntry *)arrSmurfStates)->cType == FN_WATCHED_SMURF) {
-				PrintSmurfStateEntry((SmurfStateEntry *)arrSmurfStates);
+				PrintSmurfStateEntry(arrSmurfStates);
 				arrSmurfStates = (void *)(((SmurfStateEntry *)arrSmurfStates) + 1);
 				size = sizeof(SmurfStateEntry);
 			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_INFERENCE) {
@@ -73,19 +73,19 @@ void PrintAllSmurfStateEntries() {
 				arrSmurfStates = (void *)(((ORCounterStateEntry *)arrSmurfStates) + 1);
 				size = sizeof(ORCounterStateEntry);
 			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_MINMAX) {
-				PrintMINMAXStateEntry((MINMAXStateEntry *)arrSmurfStates);
+				PrintMINMAXStateEntry((void *)arrSmurfStates);
 				arrSmurfStates = (void *)(((MINMAXStateEntry *)arrSmurfStates) + 1);
 				size = sizeof(MINMAXStateEntry);
 			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_MINMAX_COUNTER) {
-				PrintMINMAXCounterStateEntry((MINMAXCounterStateEntry *)arrSmurfStates);
+				PrintMINMAXCounterStateEntry((void *)arrSmurfStates);
 				arrSmurfStates = (void *)(((MINMAXCounterStateEntry *)arrSmurfStates) + 1);
 				size = sizeof(MINMAXCounterStateEntry);
 			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_NEG_MINMAX) {
-				PrintNEGMINMAXStateEntry((NEGMINMAXStateEntry *)arrSmurfStates);
+				PrintNEGMINMAXStateEntry((void *)arrSmurfStates);
 				arrSmurfStates = (void *)(((NEGMINMAXStateEntry *)arrSmurfStates) + 1);
 				size = sizeof(NEGMINMAXStateEntry);
 			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_NEG_MINMAX_COUNTER) {
-				PrintNEGMINMAXCounterStateEntry((NEGMINMAXCounterStateEntry *)arrSmurfStates);
+				PrintNEGMINMAXCounterStateEntry((void *)arrSmurfStates);
 				arrSmurfStates = (void *)(((NEGMINMAXCounterStateEntry *)arrSmurfStates) + 1);
 				size = sizeof(NEGMINMAXCounterStateEntry);
 			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_XOR) {
@@ -112,8 +112,8 @@ void PrintSmurf_dot(void *ssEntry) {
 	if(((SmurfStateEntry *)ssEntry) == pTrueSimpleSmurfState) {
 		
 	} else if(((TypeStateEntry *)ssEntry)->cType == FN_SMURF) {
-		PrintSmurfStateEntry_dot((SmurfStateEntry *)ssEntry);
-		fprintf(stdout, " b%x [shape=\"ellipse\", label=\"S\"]\n", ssEntry);
+		PrintSmurfStateEntry_dot(ssEntry);
+		fprintf(stdout, " b%x [shape=\"ellipse\", label=\"S\"]\n", (unsigned int)ssEntry);
 		SmurfStateEntry *pState = (SmurfStateEntry *)ssEntry;
 		while(pState!=NULL) {
 			PrintSmurf_dot(pState->pVarIsTrueTransition); //Recurse

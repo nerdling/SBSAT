@@ -2,8 +2,8 @@
 #include "sbsat_solver.h"
 #include "solver.h"
 
-void initSmurfStateType(){
-   arrSmurfStatesTypeSize[FN_SMURF] = sizeof(SmurfStateEntry);
+void initSmurfStateType() {
+   arrStatesTypeSize[FN_SMURF] = sizeof(SmurfStateEntry);
    arrApplyInferenceToState[FN_SMURF] = ApplyInferenceToSmurf;
    arrPrintStateEntry[FN_SMURF] = PrintSmurfStateEntry;
    arrPrintStateEntry_dot[FN_SMURF] = PrintSmurfStateEntry_dot;

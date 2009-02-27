@@ -84,7 +84,7 @@ typedef struct ProblemState {
 extern ProblemState *SimpleSmurfProblemState;
 extern SmurfStateEntry *pTrueSimpleSmurfState;
 
-extern int *arrSmurfStatesTypeSize;
+extern int *arrStatesTypeSize;
 typedef int (*ApplyInferenceToState)(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 extern ApplyInferenceToState *arrApplyInferenceToState;
 
