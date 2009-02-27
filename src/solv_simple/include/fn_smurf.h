@@ -39,13 +39,13 @@
 #define FN_SMURF_S_H
 
 // Function structure
-void PrintSmurfStateEntry(SmurfStateEntry *ssEntry);
-void PrintSmurfStateEntry_dot(SmurfStateEntry *ssEntry);
-void PrintInferenceStateEntry(InferenceStateEntry *ssEntry);
-void PrintInferenceStateEntry_dot(InferenceStateEntry *ssEntry);
+void PrintSmurfStateEntry(void *pState);
+void PrintSmurfStateEntry_dot(void *pState);
+void PrintInferenceStateEntry(void *pState);
+void PrintInferenceStateEntry_dot(void *pState);
 
-void FreeSmurfStateEntry(SmurfStateEntry *ssEntry) ;
-void FreeInferenceStateEntry(InferenceStateEntry *ssEntry);
+void FreeSmurfStateEntry(void *pState) ;
+void FreeInferenceStateEntry(void *pState);
 
 void *ReadSmurfStateIntoTable(BDDNode *pCurrentBDD, int *arrElts, int nNumElts); //arrElts can be NULL
 

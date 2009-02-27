@@ -42,20 +42,23 @@
 
 /* list of possible smurf function types */
 enum {
-	FN_SMURF,
-   FN_WATCHED_SMURF,
+   FN_FREE_STATE, //0
+   FN_SMURF,
    FN_OR_COUNTER,
    FN_XOR_COUNTER,
 	FN_OR,
 	FN_XOR,
 	FN_XOR_GELIM,
-	FN_AND_EQU,
-	FN_OR_EQU,
 	FN_MINMAX,
 	FN_MINMAX_COUNTER,
 	FN_NEG_MINMAX,
    FN_NEG_MINMAX_COUNTER,
-	FN_INFERENCE
+	FN_INFERENCE,
+	FN_TYPE_STATE,
+   FN_WATCHED_SMURF,
+   FN_AND_EQU,
+	FN_OR_EQU,
+   NUM_SMURF_TYPES
 };
 
 typedef struct TypeStateEntry {

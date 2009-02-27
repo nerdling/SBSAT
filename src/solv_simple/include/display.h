@@ -40,6 +40,12 @@
 
 /********** Included in include/solver.h **********/
 
+typedef void (*PrintStateEntry)(void *pState);
+extern PrintStateEntry *arrPrintStateEntry;
+
+typedef void (*PrintStateEntry_dot)(void *pState);
+extern PrintStateEntry_dot *arrPrintStateEntry_dot;
+
 void DisplaySimpleStatistics(long long int nNumChoicePts, long long int nNumBacktracks, long long int nNumBackjumps);
 
 void PrintAllSmurfStateEntries();
