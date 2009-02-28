@@ -38,47 +38,40 @@
 #ifndef FN_OR_S_H
 #define FN_OR_S_H
 
-/********** Included in include/sbsat_solver.h *********************
+// OR State
+void initORStateType();
 
-struct ORStateEntry {
-   char cType; //FN_OR
-   int *pnTransitionVars;
-   bool *bPolarity;
-   int nSize;
-};
+void PrintORStateEntry(void *pState);
+void PrintORStateEntry_dot(void *pState);
 
-struct ORCounterStateEntry {
-   char cType; //FN_OR_COUNTER
-   void *pTransition;
-   int nSize;
-   ORStateEntry *pORState;
-};
-
-*******************************************************************/
-
-
-// Function structure
-void PrintORStateEntry(ORStateEntry *ssEntry);
-void PrintORStateEntry_dot(ORStateEntry *ssEntry);
-void PrintORCounterStateEntry(ORCounterStateEntry *ssEntry);
-void PrintORCounterStateEntry_dot(ORCounterStateEntry *ssEntry);
-
-void FreeORStateEntry(ORStateEntry *ssEntry);
-void FreeORCounterStateEntry(ORCounterStateEntry *ssEntry);
 void LSGBORStateSetHeurScores(ORStateEntry *pState);
-void LSGBORCounterStateSetHeurScores(ORCounterStateEntry *pState);
 double LSGBORGetHeurScore(ORStateEntry *pState);
 double LSGBORGetHeurNeg(ORStateEntry *pState);
-double LSGBORCounterGetHeurScore(ORCounterStateEntry *pState);
-double LSGBORCounterGetHeurNeg(ORCounterStateEntry *pState);
 void LSGBORFree();
 
+void CalculateORLSGBHeuristic(void *pState, int nCurrInfLevel);
+
 void *CreateORState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, ORStateEntry *pStartState);
+
 int ApplyInferenceToOR(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
+
+void FreeORStateEntry(void *pState);
+
+// OR Counter State
+
+void initORCounterStateType();
+
+void PrintORCounterStateEntry(void *pState);
+void PrintORCounterStateEntry_dot(void *pState);
+
+void LSGBORCounterStateSetHeurScores(ORCounterStateEntry *pState);
+double LSGBORCounterGetHeurScore(ORCounterStateEntry *pState);
+double LSGBORCounterGetHeurNeg(ORCounterStateEntry *pState);
+
+void CalculateORCounterLSGBHeuristic(void *pState, int nCurrInfLevel);
+
 int ApplyInferenceToORCounter(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 
-
-
-
+void FreeORCounterStateEntry(void *pState);
 
 #endif

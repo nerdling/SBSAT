@@ -46,7 +46,6 @@ void *CreateMINMAXState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, MINMAX
 		SimpleSmurfProblemState->pSmurfStatesTableTail = (void *)(pCurrMINMAXCounter + 1);
 
 		pCurrMINMAXCounter->cType = FN_MINMAX_COUNTER;
-		pCurrMINMAXCounter->ApplyInferenceToState = ApplyInferenceToMINMAXCounter;
 
 		pCurrMINMAXCounter->nVarsLeft = x;
 		pCurrMINMAXCounter->nNumTrue = 0; //Dynamic

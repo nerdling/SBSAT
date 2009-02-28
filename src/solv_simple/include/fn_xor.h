@@ -38,38 +38,59 @@
 #ifndef FN_XOR_S_H
 #define FN_XOR_S_H
 
-// Function structure
-void PrintXORStateEntry(XORStateEntry *ssEntry);
-void PrintXORStateEntry_dot(XORStateEntry *ssEntry);
-void PrintXORCounterStateEntry(XORCounterStateEntry *ssEntry);
-void PrintXORCounterStateEntry_dot(XORCounterStateEntry *ssEntry);
-void PrintXORGElimStateEntry(XORGElimStateEntry *ssEntry);
-void PrintXORGElimStateEntry_dot(XORGElimStateEntry *ssEntry);
-void PrintXORStateEntry_formatted(XORStateEntry *ssEntry);
+// XOR State
 
-void PrintXORGElimVector(void *pVector);
+void initXORStateType();
 
-void FreeXORStateEntry(XORStateEntry *ssEntry);
-void FreeXORCounterStateEntry(XORCounterStateEntry *ssEntry);
-void FreeXORGElimStateEntry(XORGElimStateEntry *ssEntry);
+void PrintXORStateEntry(void *pState);
+void PrintXORStateEntry_dot(void *pState);
+void PrintXORStateEntry_formatted(void *pState);
 
 void LSGBXORStateSetHeurScores(XORStateEntry *pState);
-void LSGBXORCounterStateSetHeurScores(XORCounterStateEntry *pState);
 double LSGBXORGetHeurScoreTrans(XORStateEntry *pState);
 double LSGBXORGetHeurScore(XORStateEntry *pState);
-double LSGBXORCounterGetHeurScoreTrans(XORCounterStateEntry *pState);
-double LSGBXORCounterGetHeurScore(XORCounterStateEntry *pState);
-double LSGBarrXORWeight(int nSize);
-double LSGBarrXORWeightTrans(int nSize);
 void LSGBXORFree();
 
+void CalculateXORLSGBHeuristic(void *pState, int nCurrInfLevel);
+
 void *CreateXORState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, XORStateEntry *pStartState);
-void *CreateXORGElimState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, XORGElimStateEntry *pStartState);
+
 int ApplyInferenceToXOR(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
+
+void FreeXORStateEntry(void *pState);
+
+// XOR Counter State
+
+void initXORCounterStateType();
+
+void PrintXORCounterStateEntry(void *pState);
+void PrintXORCounterStateEntry_dot(void *pState);
+
+void LSGBXORCounterStateSetHeurScores(XORCounterStateEntry *pState);
+double LSGBXORCounterGetHeurScoreTrans(XORCounterStateEntry *pState);
+double LSGBXORCounterGetHeurScore(XORCounterStateEntry *pState);
+
+void CalculateXORCounterLSGBHeuristic(void *pState, int nCurrInfLevel);
+
 int ApplyInferenceToXORCounter(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 
+void FreeXORCounterStateEntry(void *pState);
 
+// Gaussian Elimination State
 
+void initXORGElimStateType();
 
+void PrintXORGElimStateEntry(void *pState);
+void PrintXORGElimStateEntry_dot(void *pState);
+void PrintXORGElimVector(void *pVector);
+
+double LSGBarrXORWeight(int nSize);
+double LSGBarrXORWeightTrans(int nSize);
+
+void CalculateXORGElimLSGBHeuristic(void *pState, int nCurrInfLevel);
+
+void *CreateXORGElimState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, XORGElimStateEntry *pStartState);
+
+void FreeXORGElimStateEntry(void *pState);
 
 #endif

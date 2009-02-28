@@ -46,15 +46,15 @@ enum {
    FN_SMURF,
    FN_OR_COUNTER,
    FN_XOR_COUNTER,
-	FN_OR,
-	FN_XOR,
-	FN_XOR_GELIM,
-	FN_MINMAX,
 	FN_MINMAX_COUNTER,
-	FN_NEG_MINMAX,
    FN_NEG_MINMAX_COUNTER,
-	FN_INFERENCE,
-	FN_TYPE_STATE,
+   FN_OR,
+	FN_XOR,
+	FN_MINMAX,
+	FN_NEG_MINMAX,
+	FN_XOR_GELIM,
+   FN_INFERENCE,
+   FN_TYPE_STATE,
    FN_WATCHED_SMURF,
    FN_AND_EQU,
 	FN_OR_EQU,
@@ -64,7 +64,6 @@ enum {
 typedef struct TypeStateEntry {
 	char cType;
 	bool visited;
-	int (*ApplyInferenceToState)(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 	int pStateOwner;
 	void *pPreviousState; //Used during lemma creation.
 	int nLemmaLiteral; //Used during lemma creation.
@@ -75,7 +74,6 @@ typedef struct TypeStateEntry {
 typedef struct SmurfStateEntry {
 	char cType; //FN_SMURF || FN_WATCHED_SMURF
 	bool visited;
-	int (*ApplyInferenceToState)(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 	int pStateOwner;
 	void *pPreviousState; //Used during lemma creation.
 	int nLemmaLiteral; //Used during lemma creation.
@@ -104,7 +102,7 @@ typedef struct SmurfStateEntry {
 typedef struct InferenceStateEntry {
 	char cType; //FN_INFERENCE
 	bool visited; //Used for displaying the smurfs.
-	int (*ApplyInferenceToState)(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
+
 	int pStateOwner;
 	void *pPreviousState; //Used during lemma creation.
 	int nLemmaLiteral; //Used during lemma creation.
@@ -120,7 +118,6 @@ struct ORCounterStateEntry;
 typedef struct ORStateEntry {
 	char cType; //FN_OR
 	bool visited; //Used for displaying the smurfs.
-	int (*ApplyInferenceToState)(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 	int pStateOwner;
 	void *pPreviousState; //Used during lemma creation.
 	int nLemmaLiteral; //Used during lemma creation.
@@ -134,7 +131,6 @@ typedef struct ORStateEntry {
 typedef struct ORCounterStateEntry {
 	char cType; //FN_OR_COUNTER
 	bool visited; //Used for displaying the smurfs.
-	int (*ApplyInferenceToState)(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 	int pStateOwner;
 	void *pPreviousState; //Used during lemma creation.
 	int nLemmaLiteral; //Used during lemma creation.
@@ -147,7 +143,6 @@ typedef struct ORCounterStateEntry {
 typedef struct XORStateEntry {
 	char cType; //FN_XOR
 	bool visited; //Used for displaying the smurfs.
-	int (*ApplyInferenceToState)(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 	int pStateOwner;
 	void *pPreviousState; //Used during lemma creation.
 	int nLemmaLiteral; //Used during lemma creation.
@@ -160,7 +155,6 @@ typedef struct XORStateEntry {
 typedef struct XORCounterStateEntry {
 	char cType; //FN_XOR_COUNTER
 	bool visited; //Used for displaying the smurfs.
-	int (*ApplyInferenceToState)(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 	int pStateOwner;
 	void *pPreviousState; //Used during lemma creation.
 	int nLemmaLiteral; //Used during lemma creation.
@@ -172,7 +166,6 @@ typedef struct XORCounterStateEntry {
 typedef struct XORGElimStateEntry {
 	char cType; //FN_XOR_GELIM
 	bool visited; //Used for displaying the smurfs.
-	int (*ApplyInferenceToState)(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 	int pStateOwner;
 	void *pPreviousState; //Used during lemma creation.
 	int nLemmaLiteral; //Used during lemma creation.
@@ -196,7 +189,6 @@ typedef struct MINMAXStateEntry {
 typedef struct MINMAXCounterStateEntry {
 	char cType; //FN_MINMAX_COUNTER
 	bool visited; //Used for displaying the smurfs.
-	int (*ApplyInferenceToState)(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 	int pStateOwner;
 	void *pPreviousState; //Used during lemma creation.
 	int nLemmaLiteral; //Used during lemma creation.
@@ -219,7 +211,6 @@ typedef struct NEGMINMAXStateEntry {
 typedef struct NEGMINMAXCounterStateEntry {
 	char cType; //FN_NEG_MINMAX_COUNTER
 	bool visited; //Used for displaying the smurfs.
-	int (*ApplyInferenceToState)(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 	int pStateOwner;
 	void *pPreviousState; //Used during lemma creation.
 	int nLemmaLiteral; //Used during lemma creation.

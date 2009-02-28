@@ -39,3 +39,22 @@
 #include "sbsat_solver.h"
 #include "solver.h"
 
+// Smurf State
+
+void CalculateSmurfLSGBHeuristic(void *pState, int nCurrInfLevel) {
+	SmurfStateEntry *pSmurfState = (SmurfStateEntry *)pState;
+
+	SimpleSmurfProblemState->arrPosVarHeurWghts[pSmurfState->nTransitionVar] +=
+	  pSmurfState->fHeurWghtofTrueTransition;
+	SimpleSmurfProblemState->arrNegVarHeurWghts[pSmurfState->nTransitionVar] +=
+	  pSmurfState->fHeurWghtofFalseTransition;
+	while (pSmurfState->pNextVarInThisState != NULL) {
+		pSmurfState = (SmurfStateEntry *)pSmurfState->pNextVarInThisState;
+		SimpleSmurfProblemState->arrPosVarHeurWghts[pSmurfState->nTransitionVar] +=
+		  pSmurfState->fHeurWghtofTrueTransition;
+		SimpleSmurfProblemState->arrNegVarHeurWghts[pSmurfState->nTransitionVar] +=
+		  pSmurfState->fHeurWghtofFalseTransition;
+	}
+}
+
+// Inference State

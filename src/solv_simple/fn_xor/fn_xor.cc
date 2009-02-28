@@ -2,75 +2,121 @@
 #include "sbsat_solver.h"
 #include "solver.h"
 
-void PrintXORStateEntry(XORStateEntry *ssEntry) {
-	d9_printf2("XOR Parity=%d ", ssEntry->bParity);
+// XOR State
+
+void initXORStateType() {
+	arrStatesTypeSize[FN_XOR] = sizeof(XORStateEntry);
+	arrApplyInferenceToState[FN_XOR] = ApplyInferenceToXOR;
+	arrPrintStateEntry[FN_XOR] = PrintXORStateEntry;
+	arrPrintStateEntry_dot[FN_XOR] = PrintXORStateEntry_dot;
+	arrFreeStateEntry[FN_XOR] = FreeXORStateEntry;
+	arrCalculateStateHeuristic[FN_XOR] = CalculateXORLSGBHeuristic;
+}
+
+void PrintXORStateEntry(void *pState) {
+	XORStateEntry *pXORState = (XORStateEntry *)pState;
+	d9_printf2("XOR Parity=%d ", pXORState->bParity);
 	d9_printf1("Vars=");
-	for(int x = 0; x < ssEntry->nSize; x++)
-	  d9_printf2("%d ", ssEntry->pnTransitionVars[x]);
-	d9_printf2("Size=%d\n", ssEntry->nSize);
+	for(int x = 0; x < pXORState->nSize; x++)
+	  d9_printf2("%d ", pXORState->pnTransitionVars[x]);
+	d9_printf2("Size=%d\n", pXORState->nSize);
 }
 
-void PrintXORStateEntry_dot(XORStateEntry *ssEntry) {
-   fprintf(stdout, " b%x->b%x [style=solid, fontname=\"Helvetica\",label=\"n--\"]\n", ssEntry, ssEntry);
-	fprintf(stdout, " b%x->i%x [style=solid, fontname=\"Helvetica\",label=\"If n==1\"]\n", ssEntry, ssEntry);
-	fprintf(stdout, " i%x->b%x [style=solid, fontname=\"Helvetica\",label=\"v=p\"]\n", ssEntry, pTrueSimpleSmurfState);
+void PrintXORStateEntry_dot(void *pState) {
+	XORStateEntry *pXORState = (XORStateEntry *)pState;
+   fprintf(stdout, " b%p->b%p [style=solid, fontname=\"Helvetica\",label=\"n--\"]\n", (void *)pXORState, (void *)pXORState);
+	fprintf(stdout, " b%p->i%p [style=solid, fontname=\"Helvetica\",label=\"If n==1\"]\n", (void *)pXORState, (void *)pXORState);
+	fprintf(stdout, " i%p->b%p [style=solid, fontname=\"Helvetica\",label=\"v=p\"]\n", (void *)pXORState, pTrueSimpleSmurfState);
 	
-	fprintf(stdout, " i%x [shape=\"ellipse\", label=\"I\"]\n", ssEntry);
-	fprintf(stdout, " b%x [shape=\"ellipse\", label=\"XOR, n=%d\"]\n", ssEntry, ssEntry->nSize);
+	fprintf(stdout, " i%p [shape=\"ellipse\", label=\"I\"]\n", (void *)pXORState);
+	fprintf(stdout, " b%p [shape=\"ellipse\", label=\"XOR, n=%d\"]\n", pXORState, pXORState->nSize);
 }
 
-void PrintXORCounterStateEntry(XORCounterStateEntry *ssEntry) {
-	d9_printf4("XOR Next=%x Head=%x Size=%d\n", ssEntry->pTransition, ssEntry->pXORState, ssEntry->nSize);
-}
-
-void PrintXORCounterStateEntry_dot(XORCounterStateEntry *ssEntry) {
-   fprintf(stdout, " b%x->b%x [style=solid, fontname=\"Helvetica\",label=\"n--\"]\n", ssEntry, ssEntry);
-	fprintf(stdout, " b%x->i%x [style=solid, fontname=\"Helvetica\",label=\"If n==1\"]\n", ssEntry, ssEntry);
-	fprintf(stdout, " i%x->b%x [style=solid, fontname=\"Helvetica\",label=\"v=p\"]\n", ssEntry, pTrueSimpleSmurfState);
-	
-	fprintf(stdout, " i%x [shape=\"ellipse\", label=\"I\"]\n", ssEntry);
-	fprintf(stdout, " b%x [shape=\"ellipse\", label=\"XOR, n=%d\"]\n", ssEntry, ssEntry->pXORState->nSize);
-}
-
-void PrintXORGElimStateEntry(XORGElimStateEntry *ssEntry) {
-	d9_printf2("XOR Parity=%d ", ((int *)ssEntry->pVector)[0]&1);
-	d9_printf1("Vars=");
-	for(int x = 0; x < ssEntry->nSize; x++)
-	  d9_printf2("%d ", ssEntry->pnTransitionVars[x]);
-	d9_printf2("Size=%d ", ssEntry->nSize);
-	d9_printf1("Vector= ");
-	PrintXORGElimVector(ssEntry->pVector);
-	d9_printf1("\n");
-}
-
-void PrintXORGElimStateEntry_dot(XORGElimStateEntry *ssEntry) {
-   fprintf(stdout, " b%x->b%x [style=solid, fontname=\"Helvetica\",label=\"n--\"]\n", ssEntry, ssEntry);
-	fprintf(stdout, " b%x->i%x [style=solid, fontname=\"Helvetica\",label=\"If n==1\"]\n", ssEntry, ssEntry);
-	fprintf(stdout, " i%x->b%x [style=solid, fontname=\"Helvetica\",label=\"v=p\"]\n", ssEntry, pTrueSimpleSmurfState);
-	
-	fprintf(stdout, " i%x [shape=\"ellipse\", label=\"I\"]\n", ssEntry);
-	fprintf(stdout, " b%x [shape=\"ellipse\", label=\"GE XOR, n=%d\"]\n", ssEntry, ssEntry->nSize);
-}
-
-void PrintXORStateEntry_formatted(XORStateEntry *ssEntry) {
-	d2_printf2("equ(%c ", ssEntry->bParity?'T':'F');
+void PrintXORStateEntry_formatted(void *pState) {
+	XORStateEntry *pXORState = (XORStateEntry *)pState;
+	d2_printf2("equ(%c ", pXORState->bParity?'T':'F');
 	d2_printf1("xor(");
-	for(int x = 0; x < ssEntry->nSize; x++) {
-		if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[ssEntry->pnTransitionVars[x]] == SimpleSmurfProblemState->nNumVars)
-		  d2_printf2("%d ", ssEntry->pnTransitionVars[x]);
+	for(int x = 0; x < pXORState->nSize; x++) {
+		if(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[pXORState->pnTransitionVars[x]] == SimpleSmurfProblemState->nNumVars)
+		  d2_printf2("%d ", pXORState->pnTransitionVars[x]);
 	}
 	d2_printf1("))\n");
 }
 
-void FreeXORStateEntry(XORStateEntry *ssEntry) {
-	ite_free((void **)&ssEntry->pnTransitionVars);	
+void FreeXORStateEntry(void *pState) {
+	XORStateEntry *pXORState = (XORStateEntry *)pState;
+	ite_free((void **)&pXORState->pnTransitionVars);	
 }
 
-void FreeXORCounterStateEntry(XORCounterStateEntry *ssEntry) {
+// XOR Counter State
+
+void initXORCounterStateType() {
+	arrStatesTypeSize[FN_XOR_COUNTER] = sizeof(XORCounterStateEntry);
+	arrApplyInferenceToState[FN_XOR_COUNTER] = ApplyInferenceToXORCounter;
+	arrPrintStateEntry[FN_XOR_COUNTER] = PrintXORCounterStateEntry;
+	arrPrintStateEntry_dot[FN_XOR_COUNTER] = PrintXORCounterStateEntry_dot;
+	arrFreeStateEntry[FN_XOR_COUNTER] = FreeXORCounterStateEntry;
+	arrCalculateStateHeuristic[FN_XOR_COUNTER] = CalculateXORCounterLSGBHeuristic;
+}
+
+void PrintXORCounterStateEntry(void *pState) {
+	XORCounterStateEntry *pXORCounterState = (XORCounterStateEntry *)pState;
+	d9_printf4("XOR Next=%p Head=%p Size=%d\n", (void *)pXORCounterState->pTransition, (void *)pXORCounterState->pXORState, pXORCounterState->nSize);
+}
+
+void PrintXORCounterStateEntry_dot(void *pState) {
+	XORCounterStateEntry *pXORCounterState = (XORCounterStateEntry *)pState;
+   fprintf(stdout, " b%p->b%p [style=solid, fontname=\"Helvetica\",label=\"n--\"]\n", (void *)pXORCounterState, (void *)pXORCounterState);
+	fprintf(stdout, " b%p->i%p [style=solid, fontname=\"Helvetica\",label=\"If n==1\"]\n", (void *)pXORCounterState, (void *)pXORCounterState);
+	fprintf(stdout, " i%p->b%p [style=solid, fontname=\"Helvetica\",label=\"v=p\"]\n", (void *)pXORCounterState, pTrueSimpleSmurfState);
 	
+	fprintf(stdout, " i%p [shape=\"ellipse\", label=\"I\"]\n", (void *)pXORCounterState);
+	fprintf(stdout, " b%p [shape=\"ellipse\", label=\"XOR, n=%d\"]\n", (void *)pXORCounterState, pXORCounterState->pXORState->nSize);
 }
 
-void FreeXORGElimStateEntry(XORGElimStateEntry *ssEntry) {
-	ite_free((void **)&ssEntry->pnTransitionVars);
-	ite_free((void **)&ssEntry->pVector);
+void FreeXORCounterStateEntry(void *pState) {
+
+}
+
+// Gaussian Elimination State
+
+int return_1(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates) {
+	return 1;
+}
+
+void initXORGElimStateType() {
+	arrStatesTypeSize[FN_XOR_GELIM] = sizeof(XORGElimStateEntry);
+	arrApplyInferenceToState[FN_XOR_GELIM] = return_1;
+	arrPrintStateEntry[FN_XOR_GELIM] = PrintXORGElimStateEntry;
+	arrPrintStateEntry_dot[FN_XOR_GELIM] = PrintXORGElimStateEntry_dot;
+	arrFreeStateEntry[FN_XOR_GELIM] = FreeXORGElimStateEntry;
+	arrCalculateStateHeuristic[FN_XOR_GELIM] = CalculateXORGElimLSGBHeuristic;
+}
+
+void PrintXORGElimStateEntry(void *pState) {
+	XORGElimStateEntry *pXORGElimState = (XORGElimStateEntry *)pState;
+	d9_printf2("XOR Parity=%d ", ((int *)pXORGElimState->pVector)[0]&1);
+	d9_printf1("Vars=");
+	for(int x = 0; x < pXORGElimState->nSize; x++)
+	  d9_printf2("%d ", pXORGElimState->pnTransitionVars[x]);
+	d9_printf2("Size=%d ", pXORGElimState->nSize);
+	d9_printf1("Vector= ");
+	PrintXORGElimVector(pXORGElimState->pVector);
+	d9_printf1("\n");
+}
+
+void PrintXORGElimStateEntry_dot(void *pState) {
+	XORGElimStateEntry *pXORGElimState = (XORGElimStateEntry *)pState;
+   fprintf(stdout, " b%p->b%p [style=solid, fontname=\"Helvetica\",label=\"n--\"]\n", (void *)pXORGElimState, (void *)pXORGElimState);
+	fprintf(stdout, " b%p->i%p [style=solid, fontname=\"Helvetica\",label=\"If n==1\"]\n", (void *)pXORGElimState, (void *)pXORGElimState);
+	fprintf(stdout, " i%p->b%p [style=solid, fontname=\"Helvetica\",label=\"v=p\"]\n", (void *)pXORGElimState, pTrueSimpleSmurfState);
+	
+	fprintf(stdout, " i%p [shape=\"ellipse\", label=\"I\"]\n", (void *)pXORGElimState);
+	fprintf(stdout, " b%p [shape=\"ellipse\", label=\"GE XOR, n=%d\"]\n", (void *)pXORGElimState, pXORGElimState->nSize);
+}
+
+void FreeXORGElimStateEntry(void *pState) {
+	XORGElimStateEntry *pXORGElimState = (XORGElimStateEntry *)pState;
+	ite_free((void **)&pXORGElimState->pnTransitionVars);
+	ite_free((void **)&pXORGElimState->pVector);
 }

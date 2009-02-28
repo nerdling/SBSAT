@@ -39,3 +39,26 @@
 #include "sbsat_solver.h"
 #include "solver.h"
 
+// MINMAX State
+
+void CalculateMINMAXLSGBHeuristic(void *pState, int nCurrInfLevel) {
+	
+	
+	
+}
+
+// MINMAX Counter State
+
+void CalculateMINMAXCounterLSGBHeuristic(void *pState, int nCurrInfLevel) {
+	MINMAXCounterStateEntry *pMINMAXCounterState = (MINMAXCounterStateEntry *)pState;
+	double pos_value = LSGBMINMAXCounterGetHeurScorePos(pMINMAXCounterState);
+	double neg_value = LSGBMINMAXCounterGetHeurScoreNeg(pMINMAXCounterState);
+	int numfound = 0;
+	for(int index = 0; numfound < pMINMAXCounterState->nVarsLeft; index++) {
+		if(abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[pMINMAXCounterState->pMINMAXState->pnTransitionVars[index]]) >= nCurrInfLevel) {
+			numfound++;
+			SimpleSmurfProblemState->arrPosVarHeurWghts[pMINMAXCounterState->pMINMAXState->pnTransitionVars[index]] += pos_value;
+			SimpleSmurfProblemState->arrNegVarHeurWghts[pMINMAXCounterState->pMINMAXState->pnTransitionVars[index]] += neg_value;
+		}
+	}
+}

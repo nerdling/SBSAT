@@ -31,7 +31,6 @@ void *CreateORState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, ORStateEnt
 	pStartState = (ORStateEntry *)SimpleSmurfProblemState->pSmurfStatesTableTail;
 	SimpleSmurfProblemState->pSmurfStatesTableTail = (void *)(pStartState + 1);
 	pStartState->cType = FN_OR;
-	pStartState->ApplyInferenceToState = ApplyInferenceToOR;
 	pStartState->pnTransitionVars = arrElts;
    pStartState->nSize = nNumElts;
 	pStartState->bPolarity = (bool *)ite_calloc(nNumElts, sizeof(bool), 9, "bPolarity");
@@ -57,7 +56,6 @@ void *CreateORState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, ORStateEnt
 		pCurrORCounter = (ORCounterStateEntry *)SimpleSmurfProblemState->pSmurfStatesTableTail;
 		SimpleSmurfProblemState->pSmurfStatesTableTail = (void *)(pCurrORCounter + 1);
 		pCurrORCounter->cType = FN_OR_COUNTER;
-		pCurrORCounter->ApplyInferenceToState = ApplyInferenceToORCounter;
 		pCurrORCounter->pTransition = pPrevORCounter;
 //		pCurrORCounter->pTransition->pPreviousState = pCurrORCounter;
 		pCurrORCounter->pORState = pStartState;

@@ -39,3 +39,57 @@
 #include "sbsat_solver.h"
 #include "solver.h"
 
+// XOR State
+
+void CalculateXORLSGBHeuristic(void *pState, int nCurrInfLevel) {
+	XORStateEntry *pXORState = (XORStateEntry *)pState;
+	double pos_value = LSGBXORGetHeurScoreTrans(pXORState);
+	int numfound = 0;
+	for(int index = 0; numfound < 2; index++) {
+		if(abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[pXORState->pnTransitionVars[index]]) >= nCurrInfLevel) {
+			numfound++;
+			SimpleSmurfProblemState->arrPosVarHeurWghts[pXORState->pnTransitionVars[index]] += pos_value;
+			SimpleSmurfProblemState->arrNegVarHeurWghts[pXORState->pnTransitionVars[index]] += pos_value;
+		}
+	}	
+}
+
+// XOR Counter State
+
+void CalculateXORCounterLSGBHeuristic(void *pState, int nCurrInfLevel) {
+	XORCounterStateEntry *pXORCounterState = (XORCounterStateEntry *)pState;
+	double pos_value = LSGBXORCounterGetHeurScoreTrans(pXORCounterState);
+	int numfound = 0;
+	for(int index = 0; numfound < pXORCounterState->nSize; index++) {
+		if(abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[pXORCounterState->pXORState->pnTransitionVars[index]]) >= nCurrInfLevel) {
+			numfound++;
+			SimpleSmurfProblemState->arrPosVarHeurWghts[pXORCounterState->pXORState->pnTransitionVars[index]] += pos_value;
+			SimpleSmurfProblemState->arrNegVarHeurWghts[pXORCounterState->pXORState->pnTransitionVars[index]] += pos_value;
+		}
+	}
+}
+
+// Gaussian Elimination State
+
+void CalculateXORGElimLSGBHeuristic(void *pState, int nCurrInfLevel) {
+	XORGElimStateEntry *pXORGElimState = (XORGElimStateEntry *)pState;
+	int numfound = 0;
+	for(int index = 0; index < pXORGElimState->nSize; index++) {
+		if(abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[pXORGElimState->pnTransitionVars[index]]) >= nCurrInfLevel) {
+			numfound++;
+		}
+	}
+	if(numfound > 0) {
+		int pos_value = LSGBarrXORWeightTrans(numfound);
+		for(int index = 0; numfound > 0; index++) {
+			if(abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[pXORGElimState->pnTransitionVars[index]]) >= nCurrInfLevel) {
+				numfound--;
+				SimpleSmurfProblemState->arrPosVarHeurWghts[pXORGElimState->pnTransitionVars[index]] += pos_value;
+				SimpleSmurfProblemState->arrNegVarHeurWghts[pXORGElimState->pnTransitionVars[index]] += pos_value;
+			}
+		}
+	} else {
+		//Set function to True.
+
+	}
+}

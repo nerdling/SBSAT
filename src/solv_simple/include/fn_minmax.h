@@ -40,11 +40,15 @@
 
 // MINMAX State
 
+void initMINMAXStateType();
+
 void PrintMINMAXStateEntry(void *pState);
 
 void LSGBMINMAXStateSetHeurScores(MINMAXStateEntry *pState);
 double LSGBMINMAXGetHeurScore(MINMAXStateEntry *pState);
 void LSGBMINMAXFree();
+
+void CalculateMINMAXLSGBHeuristic(void *pState, int nCurrInfLevel);
 
 void *CreateMINMAXState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, MINMAXStateEntry *pStartState);
 
@@ -54,12 +58,16 @@ void FreeMINMAXStateEntry(void *pState);
 
 //MINMAX Counter State
 
+void initMINMAXCounterStateType();
+
 void PrintMINMAXCounterStateEntry(void *pState);
 
 void LSGBMINMAXCounterStateSetHeurScores(MINMAXCounterStateEntry *pState);
 double LSGBMINMAXCounterGetHeurScore(MINMAXCounterStateEntry *pState);
 double LSGBMINMAXCounterGetHeurScorePos(MINMAXCounterStateEntry *pState);
 double LSGBMINMAXCounterGetHeurScoreNeg(MINMAXCounterStateEntry *pState);
+
+void CalculateMINMAXCounterLSGBHeuristic(void *pState, int nCurrInfLevel);
 
 int ApplyInferenceToMINMAXCounter(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 

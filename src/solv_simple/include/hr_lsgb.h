@@ -99,7 +99,7 @@ int Simple_DC_Heuristic();
 int Simple_LSGB_Heuristic();
 int Simple_PMVSIDS_Heuristic();
 
-typedef void (*CalculateStateHeuristic)(void *pState);
+typedef void (*CalculateStateHeuristic)(void *pState, int nCurrInfLevel);
 extern CalculateStateHeuristic *arrCalculateStateHeuristic;
 
 extern int use_poor_mans_vsids;

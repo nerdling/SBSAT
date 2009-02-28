@@ -71,7 +71,7 @@ void check_SmurfStatesTableSize(int size) {
    assert(size >= (int)sizeof(TypeStateEntry));
    while(1) {
       if(SimpleSmurfProblemState->arrCurrSmurfStates->curr_size+size >= SimpleSmurfProblemState->arrCurrSmurfStates->max_size) {
-         //d9_printf2("Increasing size %x\n", SimpleSmurfProblemState->arrCurrSmurfStates);
+         //d9_printf2("Increasing size %p\n", SimpleSmurfProblemState->arrCurrSmurfStates);
          if(SimpleSmurfProblemState->arrCurrSmurfStates->pNext == NULL) {
             allocate_new_SmurfStatesTable(size);
             SimpleSmurfProblemState->arrCurrSmurfStates = SimpleSmurfProblemState->arrCurrSmurfStates->pNext;
@@ -134,7 +134,7 @@ void FreeSmurfStack() {
 
 void Init_SimpleSmurfProblemState() {
    //Create the pTrueSimpleSmurfState entry
-
+	
    SimpleSmurfProblemState = (ProblemState *)ite_calloc(1, sizeof(ProblemState), 9, "SimpleSmurfProblemState");
 	SimpleSmurfProblemState->nNumSmurfStateEntries = 2;
 	int size = SMURF_TABLE_SIZE;
@@ -176,7 +176,19 @@ int ReadAllSmurfsIntoTable(int nNumVars) {
    arrFreeStateEntry = (FreeStateEntry *)ite_calloc(NUM_SMURF_TYPES, sizeof(FreeStateEntry), 9, "arrFreeStateEntry");
    arrCalculateStateHeuristic = (CalculateStateHeuristic *)ite_calloc(NUM_SMURF_TYPES, sizeof(CalculateStateHeuristic), 9, "arrCalculateStateHeuristic");
    
-   Init_SimpleSmurfProblemState();
+	initSmurfStateType();
+	initORStateType();
+	initORCounterStateType();
+	initXORStateType();
+	initXORCounterStateType();
+	initXORGElimStateType();
+	initMINMAXStateType();
+	initMINMAXCounterStateType();
+	initNEGMINMAXStateType();
+	initNEGMINMAXCounterStateType();
+	initInferenceStateType();
+   
+	Init_SimpleSmurfProblemState();
 	SimpleSmurfProblemState->nNumSmurfs = nmbrFunctions;
 	SimpleSmurfProblemState->nNumVars = nNumVars;
 	
@@ -351,52 +363,10 @@ void FreeSmurfStateEntries() {
 		int size = 0;
 		for(int x = 0; x < arrSmurfStatesTable->curr_size; x+=size)	{
 			state_num++;
-			//d9_printf3("State %d(%x), ", state_num, arrSmurfStates);
-			if(((TypeStateEntry *)arrSmurfStates)->cType == FN_SMURF || ((TypeStateEntry *)arrSmurfStates)->cType == FN_WATCHED_SMURF) {
-				FreeSmurfStateEntry((SmurfStateEntry *)arrSmurfStates);
-				arrSmurfStates = (void *)(((SmurfStateEntry *)arrSmurfStates) + 1);
-				size = sizeof(SmurfStateEntry);
-			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_INFERENCE) {
-				FreeInferenceStateEntry((InferenceStateEntry *)arrSmurfStates);
-				arrSmurfStates = (void *)(((InferenceStateEntry *)arrSmurfStates) + 1);
-				size = sizeof(InferenceStateEntry);
-			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_OR) {							  
-				FreeORStateEntry((ORStateEntry *)arrSmurfStates);
-				arrSmurfStates = (void *)(((ORStateEntry *)arrSmurfStates) + 1);
-				size = sizeof(ORStateEntry);
-			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_OR_COUNTER) {
-				FreeORCounterStateEntry((ORCounterStateEntry *)arrSmurfStates);
-				arrSmurfStates = (void *)(((ORCounterStateEntry *)arrSmurfStates) + 1);
-				size = sizeof(ORCounterStateEntry);
-			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_MINMAX) {
-				FreeMINMAXStateEntry((MINMAXStateEntry *)arrSmurfStates);
-				arrSmurfStates = (void *)(((MINMAXStateEntry *)arrSmurfStates) + 1);
-				size = sizeof(MINMAXStateEntry);
-			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_MINMAX_COUNTER) {
-				FreeMINMAXCounterStateEntry((MINMAXCounterStateEntry *)arrSmurfStates);
-				arrSmurfStates = (void *)(((MINMAXCounterStateEntry *)arrSmurfStates) + 1);
-				size = sizeof(MINMAXCounterStateEntry);
-			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_NEG_MINMAX) {
-				FreeNEGMINMAXStateEntry((NEGMINMAXStateEntry *)arrSmurfStates);
-				arrSmurfStates = (void *)(((NEGMINMAXStateEntry *)arrSmurfStates) + 1);
-				size = sizeof(NEGMINMAXStateEntry);
-			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_NEG_MINMAX_COUNTER) {
-				FreeNEGMINMAXCounterStateEntry((NEGMINMAXCounterStateEntry *)arrSmurfStates);
-				arrSmurfStates = (void *)(((NEGMINMAXCounterStateEntry *)arrSmurfStates) + 1);
-				size = sizeof(NEGMINMAXCounterStateEntry);
-			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_XOR) {
-				FreeXORStateEntry((XORStateEntry *)arrSmurfStates);
-				arrSmurfStates = (void *)(((XORStateEntry *)arrSmurfStates) + 1);
-				size = sizeof(XORStateEntry);
-			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_XOR_COUNTER) {
-				FreeXORCounterStateEntry((XORCounterStateEntry *)arrSmurfStates);
-				arrSmurfStates = (void *)(((XORCounterStateEntry *)arrSmurfStates) + 1);
-				size = sizeof(XORCounterStateEntry);
-			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_XOR_GELIM) {
-				FreeXORGElimStateEntry((XORGElimStateEntry *)arrSmurfStates);
-				arrSmurfStates = (void *)(((XORGElimStateEntry *)arrSmurfStates) + 1);
-				size = sizeof(XORGElimStateEntry);
-			}
+			//d9_printf3("State %d(%p), ", state_num, arrSmurfStates);
+			arrFreeStateEntry[(int)((TypeStateEntry *)arrSmurfStates)->cType](arrSmurfStates);
+			size = arrStatesTypeSize[(int)((TypeStateEntry *)arrSmurfStates)->cType];
+			arrSmurfStates = (void *)(((char *)arrSmurfStates)+size);
 		}
 		arrSmurfStatesTable = arrSmurfStatesTable->pNext;
 	}
@@ -529,7 +499,7 @@ void PrintSmurfs(BDDNode **bdds, int size) {
 		} else {
 			fprintf(stdout, "digraph Smurf {\n");
 			fprintf(stdout, " graph [concentrate=true, nodesep=\"0.30\", ordering=in, rankdir=TB, ranksep=\"2.25\"];\n");
-			fprintf(stdout, " b%x [shape=box fontname=""Helvetica"",label=""T""];\n", (uintptr_t)pTrueSimpleSmurfState);
+			fprintf(stdout, " b%p [shape=box fontname=""Helvetica"",label=""T""];\n", (void *)pTrueSimpleSmurfState);
 			PrintSmurf_dot(ReadSmurfStateIntoTable(bdds[i], NULL, 0));
 			fprintf(stdout, "}\n");
 		}

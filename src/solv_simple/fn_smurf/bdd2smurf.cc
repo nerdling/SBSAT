@@ -7,7 +7,6 @@ void fillHEAP(int index, int size, int *arrElts) {
 	SimpleSmurfProblemState->nNumSmurfStateEntries++;
 	SimpleSmurfProblemState->pSmurfStatesTableTail = (void *)(pCurrState + 1);
 	pCurrState->cType = FN_SMURF;
-	pCurrState->ApplyInferenceToState = ApplyInferenceToSmurf;
 	pCurrState->nTransitionVar = arrElts[index+(size/2)];
 	//fprintf(stderr, "%d(%d) - ", arrElts[index+(size/2)], size);
 	if(size<=1) return;
@@ -25,7 +24,6 @@ void fillWatchedHEAP(int size, int *arrElts) {
 		SimpleSmurfProblemState->nNumSmurfStateEntries++;
 		SimpleSmurfProblemState->pSmurfStatesTableTail = (void *)(pCurrState + 1);
 		pCurrState->cType = FN_WATCHED_SMURF;
-		pCurrState->ApplyInferenceToState = ApplyInferenceToWatchedSmurf;
 		pCurrState->nTransitionVar = arrElts[x];
 	}
 }

@@ -39,22 +39,38 @@
 #define FN_NEG_MINMAX_S_H
 
 // NEGMINMAX State
+
+void initNEGMINMAXStateType();
+
 void PrintNEGMINMAXStateEntry(void *pState);
+
 void LSGBNEGMINMAXStateSetHeurScores(NEGMINMAXStateEntry *pState);
 double LSGBNEGMINMAXGetHeurScore(NEGMINMAXStateEntry *pState);
 void LSGBNEGMINMAXFree();
+
+void CalculateNEGMINMAXLSGBHeuristic(void *pState, int nCurrInfLevel);
+
 void *CreateNEGMINMAXState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, NEGMINMAXStateEntry *pStartState);
+
 int ApplyInferenceToNEGMINMAX(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
+
 void FreeNEGMINMAXStateEntry(void *pState);
 
 // NEGMINMAX Counter State
 
+void initNEGMINMAXCounterStateType();
+
 void PrintNEGMINMAXCounterStateEntry(void *pState);
+
 void LSGBNEGMINMAXCounterStateSetHeurScores(NEGMINMAXCounterStateEntry *pState);
 double LSGBNEGMINMAXCounterGetHeurScore(NEGMINMAXCounterStateEntry *pState);
 double LSGBNEGMINMAXCounterGetHeurScorePos(NEGMINMAXCounterStateEntry *pState);
 double LSGBNEGMINMAXCounterGetHeurScoreNeg(NEGMINMAXCounterStateEntry *pState);
+
+void CalculateNEGMINMAXCounterLSGBHeuristic(void *pState, int nCurrInfLevel);
+
 int ApplyInferenceToNEGMINMAXCounter(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
+
 void FreeNEGMINMAXCounterStateEntry(void *pState);
 
 #endif

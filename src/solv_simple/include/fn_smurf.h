@@ -38,22 +38,33 @@
 #ifndef FN_SMURF_S_H
 #define FN_SMURF_S_H
 
-// Function structure
+// Smurf State
+
+void initSmurfStateType();
+
 void PrintSmurfStateEntry(void *pState);
 void PrintSmurfStateEntry_dot(void *pState);
-void PrintInferenceStateEntry(void *pState);
-void PrintInferenceStateEntry_dot(void *pState);
-
-void FreeSmurfStateEntry(void *pState) ;
-void FreeInferenceStateEntry(void *pState);
-
-void *ReadSmurfStateIntoTable(BDDNode *pCurrentBDD, int *arrElts, int nNumElts); //arrElts can be NULL
 
 void LSGBSmurfSetHeurScores(SmurfStateEntry *pState);
+
+void CalculateSmurfLSGBHeuristic(void *pState, int nCurrInfLevel);
+
+void *ReadSmurfStateIntoTable(BDDNode *pCurrentBDD, int *arrElts, int nNumElts); //arrElts can be NULL
 
 int ApplyInferenceToSmurf(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 int ApplyInferenceToWatchedSmurf(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 
+void FreeSmurfStateEntry(void *pState);
+
+// Inference State
+
+void initInferenceStateType();
+
+void PrintInferenceStateEntry(void *pState);
+void PrintInferenceStateEntry_dot(void *pState);
+
 int TransitionInference(int nSmurfNumber, void **arrSmurfStates);
+
+void FreeInferenceStateEntry(void *pState);
 
 #endif

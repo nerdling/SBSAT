@@ -39,3 +39,44 @@
 #include "sbsat_solver.h"
 #include "solver.h"
 
+// OR State
+
+void CalculateORLSGBHeuristic(void *pState, int nCurrInfLevel) {
+	ORStateEntry *pORState = (ORStateEntry *)pState;
+	double pos_value = JHEURISTIC_K_TRUE;
+	double neg_value = LSGBORGetHeurNeg(pORState);
+	int numfound = 0;
+	for(int index = 0; numfound < 2; index++) {
+		if(abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[pORState->pnTransitionVars[index]]) >= nCurrInfLevel) {
+			numfound++;
+			if(pORState->bPolarity[index] == BOOL_TRUE) {
+				SimpleSmurfProblemState->arrPosVarHeurWghts[pORState->pnTransitionVars[index]] += pos_value;
+				SimpleSmurfProblemState->arrNegVarHeurWghts[pORState->pnTransitionVars[index]] += neg_value;
+			} else {
+				SimpleSmurfProblemState->arrPosVarHeurWghts[pORState->pnTransitionVars[index]] += neg_value;
+				SimpleSmurfProblemState->arrNegVarHeurWghts[pORState->pnTransitionVars[index]] += pos_value;
+			}
+		}
+	}
+}
+
+// OR Counter State
+
+void CalculateORCounterLSGBHeuristic(void *pState, int nCurrInfLevel) {
+	ORCounterStateEntry *pORCounterState = (ORCounterStateEntry *)pState;
+	double pos_value = JHEURISTIC_K_TRUE;
+	double neg_value = LSGBORCounterGetHeurNeg(pORCounterState);
+	int numfound = 0;
+	for(int index = 0; numfound < pORCounterState->nSize; index++) {
+		if(abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[pORCounterState->pORState->pnTransitionVars[index]]) >= nCurrInfLevel) {
+			numfound++;
+			if(pORCounterState->pORState->bPolarity[index] == BOOL_TRUE) {
+				SimpleSmurfProblemState->arrPosVarHeurWghts[pORCounterState->pORState->pnTransitionVars[index]] += pos_value;
+				SimpleSmurfProblemState->arrNegVarHeurWghts[pORCounterState->pORState->pnTransitionVars[index]] += neg_value;
+			} else {
+				SimpleSmurfProblemState->arrPosVarHeurWghts[pORCounterState->pORState->pnTransitionVars[index]] += neg_value;
+				SimpleSmurfProblemState->arrNegVarHeurWghts[pORCounterState->pORState->pnTransitionVars[index]] += pos_value;
+			}
+		}
+	}
+}

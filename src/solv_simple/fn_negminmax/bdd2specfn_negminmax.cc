@@ -46,7 +46,6 @@ void *CreateNEGMINMAXState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, NEG
 		SimpleSmurfProblemState->pSmurfStatesTableTail = (void *)(pCurrNEGMINMAXCounter + 1);
 
 		pCurrNEGMINMAXCounter->cType = FN_NEG_MINMAX_COUNTER;
-		pCurrNEGMINMAXCounter->ApplyInferenceToState = ApplyInferenceToNEGMINMAXCounter;
 
 		pCurrNEGMINMAXCounter->nVarsLeft = x;
 		pCurrNEGMINMAXCounter->nNumTrue = 0; //Dynamic

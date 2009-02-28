@@ -55,84 +55,34 @@ void PrintAllSmurfStateEntries() {
 		int size = 0;
 		for(int x = 0; x < arrSmurfStatesTable->curr_size; x+=size) {
 			state_num++;
-			d9_printf3("State %d(%x), ", state_num, (uintptr_t)arrSmurfStates);
-			if(((TypeStateEntry *)arrSmurfStates)->cType == FN_SMURF || ((TypeStateEntry *)arrSmurfStates)->cType == FN_WATCHED_SMURF) {
-				PrintSmurfStateEntry(arrSmurfStates);
-				arrSmurfStates = (void *)(((SmurfStateEntry *)arrSmurfStates) + 1);
-				size = sizeof(SmurfStateEntry);
-			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_INFERENCE) {
-				PrintInferenceStateEntry((InferenceStateEntry *)arrSmurfStates);
-				arrSmurfStates = (void *)(((InferenceStateEntry *)arrSmurfStates) + 1);
-				size = sizeof(InferenceStateEntry);
-			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_OR) {
-				PrintORStateEntry((ORStateEntry *)arrSmurfStates);
-				arrSmurfStates = (void *)(((ORStateEntry *)arrSmurfStates) + 1);
-				size = sizeof(ORStateEntry);
-			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_OR_COUNTER) {
-				PrintORCounterStateEntry((ORCounterStateEntry *)arrSmurfStates);
-				arrSmurfStates = (void *)(((ORCounterStateEntry *)arrSmurfStates) + 1);
-				size = sizeof(ORCounterStateEntry);
-			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_MINMAX) {
-				PrintMINMAXStateEntry((void *)arrSmurfStates);
-				arrSmurfStates = (void *)(((MINMAXStateEntry *)arrSmurfStates) + 1);
-				size = sizeof(MINMAXStateEntry);
-			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_MINMAX_COUNTER) {
-				PrintMINMAXCounterStateEntry((void *)arrSmurfStates);
-				arrSmurfStates = (void *)(((MINMAXCounterStateEntry *)arrSmurfStates) + 1);
-				size = sizeof(MINMAXCounterStateEntry);
-			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_NEG_MINMAX) {
-				PrintNEGMINMAXStateEntry((void *)arrSmurfStates);
-				arrSmurfStates = (void *)(((NEGMINMAXStateEntry *)arrSmurfStates) + 1);
-				size = sizeof(NEGMINMAXStateEntry);
-			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_NEG_MINMAX_COUNTER) {
-				PrintNEGMINMAXCounterStateEntry((void *)arrSmurfStates);
-				arrSmurfStates = (void *)(((NEGMINMAXCounterStateEntry *)arrSmurfStates) + 1);
-				size = sizeof(NEGMINMAXCounterStateEntry);
-			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_XOR) {
-				PrintXORStateEntry((XORStateEntry *)arrSmurfStates);
-				arrSmurfStates = (void *)(((XORStateEntry *)arrSmurfStates) + 1);
-				size = sizeof(XORStateEntry);
-			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_XOR_COUNTER) {
-				PrintXORCounterStateEntry((XORCounterStateEntry *)arrSmurfStates);
-				arrSmurfStates = (void *)(((XORCounterStateEntry *)arrSmurfStates) + 1);
-				size = sizeof(XORCounterStateEntry);
-			} else if(((TypeStateEntry *)arrSmurfStates)->cType == FN_XOR_GELIM) {
-				PrintXORGElimStateEntry((XORGElimStateEntry *)arrSmurfStates);
-				arrSmurfStates = (void *)(((XORGElimStateEntry *)arrSmurfStates) + 1);
-				size = sizeof(XORGElimStateEntry);
-			}
+			d9_printf3("State %d(%p), ", state_num, (void *)arrSmurfStates);
+			arrPrintStateEntry[(int)((TypeStateEntry *)arrSmurfStates)->cType](arrSmurfStates);
+			size = arrStatesTypeSize[(int)((TypeStateEntry *)arrSmurfStates)->cType];
+			arrSmurfStates = (void *)(((char *)arrSmurfStates)+size);
 		}
 		arrSmurfStatesTable = arrSmurfStatesTable->pNext;
 	}
 }
 
-void PrintSmurf_dot(void *ssEntry) {
-	if(((TypeStateEntry *)ssEntry)->visited) return;
-	((TypeStateEntry *)ssEntry)->visited = 1;
-	if(((SmurfStateEntry *)ssEntry) == pTrueSimpleSmurfState) {
+void PrintSmurf_dot(void *pState) {
+	if(((TypeStateEntry *)pState)->visited) return;
+	((TypeStateEntry *)pState)->visited = 1;
+	if(((SmurfStateEntry *)pState) == pTrueSimpleSmurfState) {
 		
-	} else if(((TypeStateEntry *)ssEntry)->cType == FN_SMURF) {
-		PrintSmurfStateEntry_dot(ssEntry);
-		fprintf(stdout, " b%x [shape=\"ellipse\", label=\"S\"]\n", (uintptr_t)ssEntry);
-		SmurfStateEntry *pState = (SmurfStateEntry *)ssEntry;
+	} else if(((TypeStateEntry *)pState)->cType == FN_SMURF) {
+		PrintSmurfStateEntry_dot(pState);
+		fprintf(stdout, " b%p [shape=\"ellipse\", label=\"S\"]\n", (void *)pState);
+		SmurfStateEntry *pState = (SmurfStateEntry *)pState;
 		while(pState!=NULL) {
 			PrintSmurf_dot(pState->pVarIsTrueTransition); //Recurse
 			PrintSmurf_dot(pState->pVarIsFalseTransition); //Recurse
 			pState = (SmurfStateEntry *)pState->pNextVarInThisState;
 		}
-	} else if(((TypeStateEntry *)ssEntry)->cType == FN_INFERENCE) {
-		PrintInferenceStateEntry_dot((InferenceStateEntry *)ssEntry);
-		PrintSmurf_dot(((InferenceStateEntry *)ssEntry)->pVarTransition); //Recurse
-	} else if(((TypeStateEntry *)ssEntry)->cType == FN_OR) {
-		PrintORStateEntry_dot((ORStateEntry *)ssEntry);
-	} else if(((TypeStateEntry *)ssEntry)->cType == FN_OR_COUNTER) {
-		PrintORCounterStateEntry_dot((ORCounterStateEntry *)ssEntry);
-	} else if(((TypeStateEntry *)ssEntry)->cType == FN_XOR) {
-		PrintXORStateEntry_dot((XORStateEntry *)ssEntry);
-	} else if(((TypeStateEntry *)ssEntry)->cType == FN_XOR_COUNTER) {
-		PrintXORCounterStateEntry_dot((XORCounterStateEntry *)ssEntry);
-	} else if(((TypeStateEntry *)ssEntry)->cType == FN_XOR_GELIM) {
-		PrintXORGElimStateEntry_dot((XORGElimStateEntry *)ssEntry);
+	} else if(((TypeStateEntry *)pState)->cType == FN_INFERENCE) {
+		PrintInferenceStateEntry_dot(pState);
+		PrintSmurf_dot(((InferenceStateEntry *)pState)->pVarTransition); //Recurse
+	} else {
+		arrPrintStateEntry_dot[(int)((TypeStateEntry *)pState)->cType](pState);
 	}
 }
 
@@ -143,9 +93,9 @@ void PrintAllXORSmurfStateEntries() {
 		if(arrSmurfStates[i] == pTrueSimpleSmurfState) continue;
 		void *pState = arrSmurfStates[i];
 		if(((TypeStateEntry *)pState)->cType == FN_XOR_COUNTER) {
-			PrintXORStateEntry_formatted(((XORCounterStateEntry *)pState)->pXORState);
+			PrintXORStateEntry_formatted((void *)((XORCounterStateEntry *)pState)->pXORState);
 		} else if(((TypeStateEntry *)pState)->cType == FN_XOR) {
-			PrintXORStateEntry_formatted((XORStateEntry *)pState);
+			PrintXORStateEntry_formatted(pState);
 		}
 	}
 	d2_printf1("\n");
@@ -204,7 +154,7 @@ void DisplaySimpleSolverBacktrackInfo() {
 	CalculateSimpleSolverProgress(&whereAmI, &total);
 	if (total == 0) total=1;
 	progress = ite_counters_f[PROGRESS] = (float)whereAmI*100/total;
-	//d2_printf3("Progress: %x/%x        ", whereAmI, total);
+	//d2_printf3("Progress: %p/%p        ", whereAmI, total);
 	d2_printf1("Progress: ");
 	char number[10];
 	char back[10] = "\b\b\b\b\b\b\b\b\b";

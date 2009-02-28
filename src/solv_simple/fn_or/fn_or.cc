@@ -2,64 +2,72 @@
 #include "sbsat_solver.h"
 #include "solver.h"
 
-/********** Included in include/sbsat_solver.h *********************
+// OR State
 
-struct TypeStateEntry {
-   char cType;
+void initORStateType() {
+	arrStatesTypeSize[FN_OR] = sizeof(ORStateEntry);
+	arrApplyInferenceToState[FN_OR] = ApplyInferenceToOR;
+	arrPrintStateEntry[FN_OR] = PrintORStateEntry;
+	arrPrintStateEntry_dot[FN_OR] = PrintORStateEntry_dot;
+	arrFreeStateEntry[FN_OR] = FreeORStateEntry;
+	arrCalculateStateHeuristic[FN_OR] = CalculateORLSGBHeuristic;
 }
 
-struct ORStateEntry {
-   char cType; //FN_OR
-   int *pnTransitionVars;
-   bool *bPolarity;
-   int nSize;
-};
-
-struct ORCounterStateEntry {
-   char cType; //FN_OR_COUNTER
-   void *pTransition;
-   int nSize;
-   ORStateEntry *pORState;
-};
-
-***********************************************************************/
-
-void PrintORStateEntry(ORStateEntry *ssEntry) {
+void PrintORStateEntry(void *pState) {
+	ORStateEntry *pORState = (ORStateEntry *)pState;
 	d9_printf1("OR Vars=");
-	for(int x = 0; x < ssEntry->nSize; x++)
-	  d9_printf2("%d ", ssEntry->bPolarity[x]==1?ssEntry->pnTransitionVars[x]:-ssEntry->pnTransitionVars[x]);
-	d9_printf2("Size=%d\n", ssEntry->nSize);
+	for(int x = 0; x < pORState->nSize; x++)
+	  d9_printf2("%d ", pORState->bPolarity[x]==1?pORState->pnTransitionVars[x]:-pORState->pnTransitionVars[x]);
+	d9_printf2("Size=%d\n", pORState->nSize);
 }
 
-void PrintORStateEntry_dot(ORStateEntry *ssEntry) {
-	fprintf(stdout, " b%x->b%x [style=solid, fontname=\"Helvetica\",label=\"If v!=p, n--\"]\n", ssEntry, ssEntry);
-	fprintf(stdout, " b%x->b%x [style=solid, fontname=\"Helvetica\",label=\"If v==p\"]\n", ssEntry, pTrueSimpleSmurfState);
-	fprintf(stdout, " b%x->i%x [style=solid, fontname=\"Helvetica\",label=\"If n==1\"]\n", ssEntry, ssEntry);
-	fprintf(stdout, " i%x->b%x [style=solid, fontname=\"Helvetica\",label=\"v=p\"]\n", ssEntry, pTrueSimpleSmurfState);
+void PrintORStateEntry_dot(void *pState) {
+	ORStateEntry *pORState = (ORStateEntry *)pState;
+	fprintf(stdout, " b%p->b%p [style=solid, fontname=\"Helvetica\",label=\"If v!=p, n--\"]\n", (void *)pORState, (void *)pORState);
+	fprintf(stdout, " b%p->b%p [style=solid, fontname=\"Helvetica\",label=\"If v==p\"]\n", (void *)pORState, pTrueSimpleSmurfState);
+	fprintf(stdout, " b%p->i%p [style=solid, fontname=\"Helvetica\",label=\"If n==1\"]\n", (void *)pORState, (void *)pORState);
+	fprintf(stdout, " i%p->b%p [style=solid, fontname=\"Helvetica\",label=\"v=p\"]\n", (void *)pORState, pTrueSimpleSmurfState);
 
-	fprintf(stdout, " i%x [shape=\"ellipse\", label=\"I\"]\n", ssEntry);
-	fprintf(stdout, " b%x [shape=\"ellipse\", label=\"OR, n=%d\"]\n", ssEntry, ssEntry->nSize);
+	fprintf(stdout, " i%p [shape=\"ellipse\", label=\"I\"]\n", (void *)pORState);
+	fprintf(stdout, " b%p [shape=\"ellipse\", label=\"OR, n=%d\"]\n", (void *)pORState, pORState->nSize);
 }
 
-void PrintORCounterStateEntry(ORCounterStateEntry *ssEntry) {
-	d9_printf4("OR Next=%x Head=%x Size=%d\n", ssEntry->pTransition, ssEntry->pORState, ssEntry->nSize);
+void FreeORStateEntry(void *pState) {
+	ORStateEntry *pORState = (ORStateEntry *)pState;
+	ite_free((void **)&pORState->bPolarity);
+	ite_free((void **)&pORState->pnTransitionVars);
 }
 
-void PrintORCounterStateEntry_dot(ORCounterStateEntry *ssEntry) {
-	fprintf(stdout, " b%x->b%x [style=solid, fontname=\"Helvetica\",label=\"If v!=p, n--\"]\n", ssEntry, ssEntry);
-	fprintf(stdout, " b%x->b%x [style=solid, fontname=\"Helvetica\",label=\"If v==p\"]\n", ssEntry, pTrueSimpleSmurfState);
-	fprintf(stdout, " b%x->i%x [style=solid, fontname=\"Helvetica\",label=\"If n==1\"]\n", ssEntry, ssEntry);
-	fprintf(stdout, " i%x->b%x [style=solid, fontname=\"Helvetica\",label=\"v=p\"]\n", ssEntry, pTrueSimpleSmurfState);
+// OR Counter State
 
-	fprintf(stdout, " i%x [shape=\"ellipse\", label=\"I\"]\n", ssEntry);
-	fprintf(stdout, " b%x [shape=\"ellipse\", label=\"OR, n=%d\"]\n", ssEntry, ssEntry->pORState->nSize);
+void initORCounterStateType() {
+	arrStatesTypeSize[FN_OR_COUNTER] = sizeof(ORCounterStateEntry);
+	arrApplyInferenceToState[FN_OR_COUNTER] = ApplyInferenceToORCounter;
+	arrPrintStateEntry[FN_OR_COUNTER] = PrintORCounterStateEntry;
+	arrPrintStateEntry_dot[FN_OR_COUNTER] = PrintORCounterStateEntry_dot;
+	arrFreeStateEntry[FN_OR_COUNTER] = FreeORCounterStateEntry;
+	arrCalculateStateHeuristic[FN_OR_COUNTER] = CalculateORCounterLSGBHeuristic;
 }
 
-void FreeORStateEntry(ORStateEntry *ssEntry) {
-	ite_free((void **)&ssEntry->bPolarity);
-	ite_free((void **)&ssEntry->pnTransitionVars);
+void PrintORCounterStateEntry_dot(void *pState) {
+	ORCounterStateEntry *pORCounterState = (ORCounterStateEntry *)pState;
+	fprintf(stdout, " b%p->b%p [style=solid, fontname=\"Helvetica\",label=\"If v!=p, n--\"]\n", (void *)pORCounterState, (void *)pORCounterState);
+	fprintf(stdout, " b%p->b%p [style=solid, fontname=\"Helvetica\",label=\"If v==p\"]\n", (void *)pORCounterState, pTrueSimpleSmurfState);
+	fprintf(stdout, " b%p->i%p [style=solid, fontname=\"Helvetica\",label=\"If n==1\"]\n", (void *)pORCounterState, (void *)pORCounterState);
+	fprintf(stdout, " i%p->b%p [style=solid, fontname=\"Helvetica\",label=\"v=p\"]\n", (void *)pORCounterState, pTrueSimpleSmurfState);
+
+	fprintf(stdout, " i%p [shape=\"ellipse\", label=\"I\"]\n", (void *)pORCounterState);
+	fprintf(stdout, " b%p [shape=\"ellipse\", label=\"OR, n=%d\"]\n", (void *)pORCounterState, pORCounterState->pORState->nSize);
 }
 
-void FreeORCounterStateEntry(ORCounterStateEntry *ssEntry){
+void PrintORCounterStateEntry(void *pState) {
+	ORCounterStateEntry *pORCounterState = (ORCounterStateEntry *)pState;
+	d9_printf4("OR Next=%p Head=%p Size=%d\n",
+				  (void *)pORCounterState->pTransition,
+				  (void *)pORCounterState->pORState,
+				  pORCounterState->nSize);
+}
+
+void FreeORCounterStateEntry(void *pState){
 	
 }

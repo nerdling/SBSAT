@@ -2,70 +2,83 @@
 #include "sbsat_solver.h"
 #include "solver.h"
 
+// Smurf State
+
 void initSmurfStateType() {
    arrStatesTypeSize[FN_SMURF] = sizeof(SmurfStateEntry);
    arrApplyInferenceToState[FN_SMURF] = ApplyInferenceToSmurf;
    arrPrintStateEntry[FN_SMURF] = PrintSmurfStateEntry;
    arrPrintStateEntry_dot[FN_SMURF] = PrintSmurfStateEntry_dot;
    arrFreeStateEntry[FN_SMURF] = FreeSmurfStateEntry;
-   arrCalculateStateHeuristic[FN_SMURF] = NULL; //SEAN!!! Create this function
+   arrCalculateStateHeuristic[FN_SMURF] = CalculateSmurfLSGBHeuristic;
 }
 
 void PrintSmurfStateEntry(void *pState) {
    SmurfStateEntry *pSmurfState = (SmurfStateEntry *)pState;
-	d9_printf9("SM Var=%d, v=T:%x, v=F:%x, TWght=%4.6f, FWght=%4.6f, NextGT=%x, NextLT=%x, Next=%x\n",
+	d9_printf9("SM Var=%d, v=T:%p, v=F:%p, TWght=%4.6f, FWght=%4.6f, NextGT=%p, NextLT=%p, Next=%p\n",
               pSmurfState->nTransitionVar, 
-              (uintptr_t)pSmurfState->pVarIsTrueTransition,
-              (uintptr_t)pSmurfState->pVarIsFalseTransition,
+              (void *)pSmurfState->pVarIsTrueTransition,
+              (void *)pSmurfState->pVarIsFalseTransition,
               pSmurfState->fHeurWghtofTrueTransition,
               pSmurfState->fHeurWghtofFalseTransition,
-              (uintptr_t)pSmurfState->pNextVarInThisStateGT,
-              (uintptr_t)pSmurfState->pNextVarInThisStateLT,
-              (uintptr_t)pSmurfState->pNextVarInThisState);
+              (void *)pSmurfState->pNextVarInThisStateGT,
+              (void *)pSmurfState->pNextVarInThisStateLT,
+              (void *)pSmurfState->pNextVarInThisState);
 }
 
 void PrintSmurfStateEntry_dot(void *pState) {
 	SmurfStateEntry *pSmurfState = (SmurfStateEntry *)pState;
    SmurfStateEntry *pTempState = pSmurfState;
 	while(pTempState != NULL) {
-		fprintf(stdout, " b%x->b%x [style=solid,fontname=\"Helvetica\",label=\"%s\"]\n", 
-              (uintptr_t)pState, 
-              (uintptr_t)pTempState->pVarIsTrueTransition, 
+		fprintf(stdout, " b%p->b%p [style=solid,fontname=\"Helvetica\",label=\"%s\"]\n", 
+              (void *)pState, 
+              (void *)pTempState->pVarIsTrueTransition, 
               s_name(arrSimpleSolver2IteVarMap[pTempState->nTransitionVar]));
-		fprintf(stdout, " b%x->b%x [style=dotted,fontname=\"Helvetica\",label=\"-%s\"]\n",
-              (uintptr_t)pState,
-              (uintptr_t)pTempState->pVarIsFalseTransition,
+		fprintf(stdout, " b%p->b%p [style=dotted,fontname=\"Helvetica\",label=\"-%s\"]\n",
+              (void *)pState,
+              (void *)pTempState->pVarIsFalseTransition,
               s_name(arrSimpleSolver2IteVarMap[pTempState->nTransitionVar]));
-//		fprintf(stdout, "%x [
+//		fprintf(stdout, "%p [
 		pTempState = (SmurfStateEntry *)pTempState->pNextVarInThisState;
    }
 }
 
+void FreeSmurfStateEntry(void *pState) {
+
+}
+
+// Inference State
+
+void initInferenceStateType() {
+   arrStatesTypeSize[FN_INFERENCE] = sizeof(InferenceStateEntry);
+   arrApplyInferenceToState[FN_INFERENCE] = NULL;//ApplyInferenceToInference; //SEAN!!! Might be good to have this
+   arrPrintStateEntry[FN_INFERENCE] = PrintInferenceStateEntry;
+   arrPrintStateEntry_dot[FN_INFERENCE] = PrintInferenceStateEntry_dot;
+   arrFreeStateEntry[FN_INFERENCE] = FreeInferenceStateEntry;
+   arrCalculateStateHeuristic[FN_INFERENCE] = NULL;
+}
+
 void PrintInferenceStateEntry(void *pState) {
    InferenceStateEntry *pInferenceState = (InferenceStateEntry *)pState;
-	d9_printf4("IN Var=%d, Inf=%x, Polarity=%d\n",
+	d9_printf4("IN Var=%d, Inf=%p, Polarity=%d\n",
               pInferenceState->nTransitionVar,
-              (uintptr_t)pInferenceState->pVarTransition,
+              (void *)pInferenceState->pVarTransition,
               pInferenceState->bPolarity);
 }
 
 void PrintInferenceStateEntry_dot(void *pState) {
    InferenceStateEntry *pInferenceState = (InferenceStateEntry *)pState;
 	if(pInferenceState->bPolarity)
-	  fprintf(stdout, " b%x->b%x [style=solid,fontname=\"Helvetica\",label=\"%s\"]\n", 
-             (uintptr_t)pInferenceState, 
-             (uintptr_t)pInferenceState->pVarTransition, 
+	  fprintf(stdout, " b%p->b%p [style=solid,fontname=\"Helvetica\",label=\"%s\"]\n", 
+             (void *)pInferenceState, 
+             (void *)pInferenceState->pVarTransition, 
              s_name(arrSimpleSolver2IteVarMap[pInferenceState->nTransitionVar]));
 	else
-	  fprintf(stdout, " b%x->b%x [style=dotted,fontname=\"Helvetica\",label=\"-%s\"]\n", 
-             (uintptr_t)pInferenceState, 
-             (uintptr_t)pInferenceState->pVarTransition, 
+	  fprintf(stdout, " b%p->b%p [style=dotted,fontname=\"Helvetica\",label=\"-%s\"]\n", 
+             (void *)pInferenceState, 
+             (void *)pInferenceState->pVarTransition, 
              s_name(arrSimpleSolver2IteVarMap[pInferenceState->nTransitionVar]));
-	fprintf(stdout, " b%x [shape=\"ellipse\", label=\"I\"]\n", (uintptr_t)pInferenceState);
-}
-
-void FreeSmurfStateEntry(void *pState) {
-
+	fprintf(stdout, " b%p [shape=\"ellipse\", label=\"I\"]\n", (void *)pInferenceState);
 }
 
 void FreeInferenceStateEntry(void *pState) {
