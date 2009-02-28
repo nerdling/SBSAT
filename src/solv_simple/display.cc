@@ -55,7 +55,7 @@ void PrintAllSmurfStateEntries() {
 		int size = 0;
 		for(int x = 0; x < arrSmurfStatesTable->curr_size; x+=size) {
 			state_num++;
-			d9_printf3("State %d(%x), ", state_num, (unsigned int)arrSmurfStates);
+			d9_printf3("State %d(%x), ", state_num, (uintptr_t)arrSmurfStates);
 			if(((TypeStateEntry *)arrSmurfStates)->cType == FN_SMURF || ((TypeStateEntry *)arrSmurfStates)->cType == FN_WATCHED_SMURF) {
 				PrintSmurfStateEntry(arrSmurfStates);
 				arrSmurfStates = (void *)(((SmurfStateEntry *)arrSmurfStates) + 1);
@@ -113,7 +113,7 @@ void PrintSmurf_dot(void *ssEntry) {
 		
 	} else if(((TypeStateEntry *)ssEntry)->cType == FN_SMURF) {
 		PrintSmurfStateEntry_dot(ssEntry);
-		fprintf(stdout, " b%x [shape=\"ellipse\", label=\"S\"]\n", (unsigned int)ssEntry);
+		fprintf(stdout, " b%x [shape=\"ellipse\", label=\"S\"]\n", (uintptr_t)ssEntry);
 		SmurfStateEntry *pState = (SmurfStateEntry *)ssEntry;
 		while(pState!=NULL) {
 			PrintSmurf_dot(pState->pVarIsTrueTransition); //Recurse
