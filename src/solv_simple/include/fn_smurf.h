@@ -45,7 +45,7 @@ void initSmurfStateType();
 void PrintSmurfStateEntry(void *pState);
 void PrintSmurfStateEntry_dot(void *pState);
 
-void LSGBSmurfSetHeurScores(SmurfStateEntry *pState);
+void LSGBSmurfSetHeurScores(void *pState);
 
 void CalculateSmurfLSGBHeuristic(void *pState, int nCurrInfLevel);
 
@@ -62,6 +62,8 @@ void initInferenceStateType();
 
 void PrintInferenceStateEntry(void *pState);
 void PrintInferenceStateEntry_dot(void *pState);
+
+void LSGBInferenceSetHeurScores(void *pState);
 
 int TransitionInference(int nSmurfNumber, void **arrSmurfStates);
 

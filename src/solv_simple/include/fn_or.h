@@ -44,7 +44,7 @@ void initORStateType();
 void PrintORStateEntry(void *pState);
 void PrintORStateEntry_dot(void *pState);
 
-void LSGBORStateSetHeurScores(ORStateEntry *pState);
+void LSGBORStateSetHeurScores(void *pState);
 double LSGBORGetHeurScore(ORStateEntry *pState);
 double LSGBORGetHeurNeg(ORStateEntry *pState);
 void LSGBORFree();
@@ -64,7 +64,7 @@ void initORCounterStateType();
 void PrintORCounterStateEntry(void *pState);
 void PrintORCounterStateEntry_dot(void *pState);
 
-void LSGBORCounterStateSetHeurScores(ORCounterStateEntry *pState);
+void LSGBORCounterStateSetHeurScores(void *pState);
 double LSGBORCounterGetHeurScore(ORCounterStateEntry *pState);
 double LSGBORCounterGetHeurNeg(ORCounterStateEntry *pState);
 

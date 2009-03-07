@@ -49,10 +49,13 @@ void LSGBNEGMINMAXGetHeurScores(int nFnId);
 
 //---------------------------------------------------------------
 
-ITE_INLINE void LSGBNEGMINMAXStateSetHeurScores(NEGMINMAXStateEntry *pState) {
+ITE_INLINE void LSGBNEGMINMAXStateSetHeurScores(void *pState) {
+	
+	NEGMINMAXStateEntry *pNEGMINMAXState = (NEGMINMAXStateEntry *)pState;
+	
    // Find out the length of the diff (max-min)
 
-   int minmax_diff = pState->nMax - pState->nMin;
+   int minmax_diff = pNEGMINMAXState->nMax - pNEGMINMAXState->nMin;
 
    if(nNEGMINMAXWghtsSize < minmax_diff+1) {
       arrNEGMINMAXWghts = (double***)ite_recalloc(arrNEGMINMAXWghts, nNEGMINMAXWghtsSize, minmax_diff+1, sizeof(double**), 2, "arrNEGMINMAXWghts");
@@ -64,18 +67,18 @@ ITE_INLINE void LSGBNEGMINMAXStateSetHeurScores(NEGMINMAXStateEntry *pState) {
    
    int recompute_true = 0;
    int old_true = 0;
-   if (arrMaxNEGMINMAXTrue[minmax_diff] < (pState->nMax + 2)) {
+   if (arrMaxNEGMINMAXTrue[minmax_diff] < (pNEGMINMAXState->nMax + 2)) {
       recompute_true = 1;
       old_true = arrMaxNEGMINMAXTrue[minmax_diff];
-      arrMaxNEGMINMAXTrue[minmax_diff] = pState->nMax + 2;
+      arrMaxNEGMINMAXTrue[minmax_diff] = pNEGMINMAXState->nMax + 2;
    }
 
    int recompute_false = 0;
    int old_false = 0;
-   if (arrMaxNEGMINMAXFalse[minmax_diff] < ((pState->nSize - pState->nMin) + 2)) {
+   if (arrMaxNEGMINMAXFalse[minmax_diff] < ((pNEGMINMAXState->nSize - pNEGMINMAXState->nMin) + 2)) {
       recompute_false = 1;
       old_false = arrMaxNEGMINMAXFalse[minmax_diff];
-      arrMaxNEGMINMAXFalse[minmax_diff] = (pState->nSize - pState->nMin) + 2;
+      arrMaxNEGMINMAXFalse[minmax_diff] = (pNEGMINMAXState->nSize - pNEGMINMAXState->nMin) + 2;
    }
 
    if(recompute_true>0 || recompute_false>0) {
@@ -121,8 +124,8 @@ ITE_INLINE void LSGBNEGMINMAXStateSetHeurScores(NEGMINMAXStateEntry *pState) {
    //}
 }
 
-ITE_INLINE void LSGBNEGMINMAXCounterStateSetHeurScores(NEGMINMAXCounterStateEntry *pState) {
-	LSGBNEGMINMAXStateSetHeurScores(pState->pNEGMINMAXState);
+ITE_INLINE void LSGBNEGMINMAXCounterStateSetHeurScores(void *pState) {
+	LSGBNEGMINMAXStateSetHeurScores(((NEGMINMAXCounterStateEntry *)pState)->pNEGMINMAXState);
 }
 
 ITE_INLINE double LSGBNEGMINMAXGetHeurScore(NEGMINMAXStateEntry *pState) {

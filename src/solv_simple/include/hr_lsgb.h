@@ -102,6 +102,9 @@ int Simple_PMVSIDS_Heuristic();
 typedef void (*CalculateStateHeuristic)(void *pState, int nCurrInfLevel);
 extern CalculateStateHeuristic *arrCalculateStateHeuristic;
 
+typedef void (*SetStateHeuristicScores)(void *pState);
+extern SetStateHeuristicScores *arrSetStateHeuristicScores;
+
 extern int use_poor_mans_vsids;
 extern HeurScores *arrHeurScores;
 extern struct ORWeightStruct *arrORWeight;

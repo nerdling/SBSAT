@@ -47,8 +47,9 @@ struct XORWeightStruct *arrXORWeight = NULL;
 
 //---------------------------------------------------------------
 
-ITE_INLINE void LSGBXORStateSetHeurScores(XORStateEntry *pState) {
-	int size = pState->nSize;
+ITE_INLINE void LSGBXORStateSetHeurScores(void *pState) {
+	XORStateEntry *pXORState = (XORStateEntry *)pState;
+	int size = pXORState->nSize;
 
 	HWEIGHT K = JHEURISTIC_K;
 	
@@ -69,8 +70,8 @@ ITE_INLINE void LSGBXORStateSetHeurScores(XORStateEntry *pState) {
 	}
 }
 
-ITE_INLINE void LSGBXORCounterStateSetHeurScores(XORCounterStateEntry *pState) {
-	LSGBXORStateSetHeurScores(pState->pXORState);
+ITE_INLINE void LSGBXORCounterStateSetHeurScores(void *pState) {
+	LSGBXORStateSetHeurScores(((XORCounterStateEntry *)pState)->pXORState);
 }
 
 ITE_INLINE double LSGBXORGetHeurScoreTrans(XORStateEntry *pState) {

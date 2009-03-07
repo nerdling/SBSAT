@@ -57,7 +57,7 @@ void *CreateXORGElimState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, XORG
 	BDDNode *tmp_bdd;
 	for(tmp_bdd = pCurrentBDD; !IS_TRUE_FALSE(tmp_bdd); tmp_bdd = tmp_bdd->thenCase){}
 	bool bParity = tmp_bdd == false_ptr;
-	if(nNumElts&0x1 == 1)
+	if((nNumElts&0x1) == 1)
 	  bParity -= 1;
 
 	pStartState->pVector = createXORGElimTableVector(nNumElts, arrElts, bParity);

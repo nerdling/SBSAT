@@ -11,6 +11,7 @@ void initXORStateType() {
 	arrPrintStateEntry_dot[FN_XOR] = PrintXORStateEntry_dot;
 	arrFreeStateEntry[FN_XOR] = FreeXORStateEntry;
 	arrCalculateStateHeuristic[FN_XOR] = CalculateXORLSGBHeuristic;
+   arrSetStateHeuristicScores[FN_XOR] = LSGBXORStateSetHeurScores;
 }
 
 void PrintXORStateEntry(void *pState) {
@@ -57,6 +58,7 @@ void initXORCounterStateType() {
 	arrPrintStateEntry_dot[FN_XOR_COUNTER] = PrintXORCounterStateEntry_dot;
 	arrFreeStateEntry[FN_XOR_COUNTER] = FreeXORCounterStateEntry;
 	arrCalculateStateHeuristic[FN_XOR_COUNTER] = CalculateXORCounterLSGBHeuristic;
+   arrSetStateHeuristicScores[FN_XOR_COUNTER] = LSGBXORCounterStateSetHeurScores;
 }
 
 void PrintXORCounterStateEntry(void *pState) {
@@ -91,6 +93,7 @@ void initXORGElimStateType() {
 	arrPrintStateEntry_dot[FN_XOR_GELIM] = PrintXORGElimStateEntry_dot;
 	arrFreeStateEntry[FN_XOR_GELIM] = FreeXORGElimStateEntry;
 	arrCalculateStateHeuristic[FN_XOR_GELIM] = CalculateXORGElimLSGBHeuristic;
+   arrSetStateHeuristicScores[FN_XOR_GELIM] = LSGBXORStateSetHeurScores;
 }
 
 void PrintXORGElimStateEntry(void *pState) {

@@ -92,7 +92,7 @@ int ApplyInferenceToXOR(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void
 	arrSmurfStates[nSmurfNumber] = pTrueSimpleSmurfState;
 	SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumSmurfsSatisfied++;
 	
-	d7_printf3("      XORSmurf %d transitioned to state %x\n", nSmurfNumber, arrSmurfStates[nSmurfNumber]);
+	d7_printf3("      XORSmurf %d transitioned to state %p\n", nSmurfNumber, arrSmurfStates[nSmurfNumber]);
 	return 1;
 }
 
@@ -131,6 +131,6 @@ int ApplyInferenceToXORCounter(int nBranchVar, bool bBVPolarity, int nSmurfNumbe
 //	if(arrSmurfStates[nSmurfNumber] == pTrueSimpleSmurfState) //Can't happen here
 //	  SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumSmurfsSatisfied++;
 	
-	d7_printf3("      XORCounterSmurf %d transitioned to state %x\n", nSmurfNumber, arrSmurfStates[nSmurfNumber]);
+	d7_printf3("      XORCounterSmurf %d transitioned to state %p\n", nSmurfNumber, arrSmurfStates[nSmurfNumber]);
 	return 1;
 }

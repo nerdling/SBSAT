@@ -11,6 +11,7 @@ void initSmurfStateType() {
    arrPrintStateEntry_dot[FN_SMURF] = PrintSmurfStateEntry_dot;
    arrFreeStateEntry[FN_SMURF] = FreeSmurfStateEntry;
    arrCalculateStateHeuristic[FN_SMURF] = CalculateSmurfLSGBHeuristic;
+   arrSetStateHeuristicScores[FN_SMURF] = LSGBSmurfSetHeurScores;
 }
 
 void PrintSmurfStateEntry(void *pState) {
@@ -56,6 +57,7 @@ void initInferenceStateType() {
    arrPrintStateEntry_dot[FN_INFERENCE] = PrintInferenceStateEntry_dot;
    arrFreeStateEntry[FN_INFERENCE] = FreeInferenceStateEntry;
    arrCalculateStateHeuristic[FN_INFERENCE] = NULL;
+   arrSetStateHeuristicScores[FN_INFERENCE] = LSGBInferenceSetHeurScores;
 }
 
 void PrintInferenceStateEntry(void *pState) {

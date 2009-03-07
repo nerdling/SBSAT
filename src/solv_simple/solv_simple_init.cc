@@ -25,6 +25,7 @@ PrintStateEntry *arrPrintStateEntry;
 PrintStateEntry_dot *arrPrintStateEntry_dot;
 FreeStateEntry *arrFreeStateEntry;
 CalculateStateHeuristic *arrCalculateStateHeuristic;
+SetStateHeuristicScores *arrSetStateHeuristicScores;
 
 //This allocates a new block of smurfs states and attaches them to the previous block
 //The blocks are connected by a linked list - accessed through ->pNext
@@ -175,6 +176,7 @@ int ReadAllSmurfsIntoTable(int nNumVars) {
    arrPrintStateEntry_dot = (PrintStateEntry_dot *)ite_calloc(NUM_SMURF_TYPES, sizeof(PrintStateEntry_dot), 9, "arrPrintStateEntry_dot");
    arrFreeStateEntry = (FreeStateEntry *)ite_calloc(NUM_SMURF_TYPES, sizeof(FreeStateEntry), 9, "arrFreeStateEntry");
    arrCalculateStateHeuristic = (CalculateStateHeuristic *)ite_calloc(NUM_SMURF_TYPES, sizeof(CalculateStateHeuristic), 9, "arrCalculateStateHeuristic");
+	arrSetStateHeuristicScores = (SetStateHeuristicScores *)ite_calloc(NUM_SMURF_TYPES, sizeof(SetStateHeuristicScores), 9, "arrSetStateHeuristicScores");
    
 	initSmurfStateType();
 	initORStateType();

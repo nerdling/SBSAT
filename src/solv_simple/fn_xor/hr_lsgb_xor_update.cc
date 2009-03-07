@@ -90,6 +90,6 @@ void CalculateXORGElimLSGBHeuristic(void *pState, int nCurrInfLevel) {
 		}
 	} else {
 		//Set function to True.
-
+		
 	}
 }

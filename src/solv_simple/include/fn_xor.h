@@ -46,7 +46,7 @@ void PrintXORStateEntry(void *pState);
 void PrintXORStateEntry_dot(void *pState);
 void PrintXORStateEntry_formatted(void *pState);
 
-void LSGBXORStateSetHeurScores(XORStateEntry *pState);
+void LSGBXORStateSetHeurScores(void *pState);
 double LSGBXORGetHeurScoreTrans(XORStateEntry *pState);
 double LSGBXORGetHeurScore(XORStateEntry *pState);
 void LSGBXORFree();
@@ -66,7 +66,7 @@ void initXORCounterStateType();
 void PrintXORCounterStateEntry(void *pState);
 void PrintXORCounterStateEntry_dot(void *pState);
 
-void LSGBXORCounterStateSetHeurScores(XORCounterStateEntry *pState);
+void LSGBXORCounterStateSetHeurScores(void *pState);
 double LSGBXORCounterGetHeurScoreTrans(XORCounterStateEntry *pState);
 double LSGBXORCounterGetHeurScore(XORCounterStateEntry *pState);
 

@@ -93,37 +93,6 @@ void *CreateInferenceStates(BDDNode *infBDD) {
 	return pNextState;
 }
 
-
-void ComputeSmurfInferences(BDDNode *pCurrentBDD, SmurfStateEntry *pCurrState) {
-	/*
-			//Determine and record if nTransitionVar is safe
-			BDDNode *pSafeBDD = false_ptr;//safe_assign(pCurrentBDD->pFunc, pCurrState->nTransitionVar);
-			if(pSafeBDD == false_ptr)
-			  pCurrState->bVarIsSafe = 0;
-			else if(pSafeBDD->thenCase == true_ptr && pSafeBDD->elseCase == false_ptr) {
-				pCurrState->bVarIsSafe = 1;
-				fprintf(stderr, "{+1}");
-			} else if(pSafeBDD->thenCase == false_ptr && pSafeBDD->elseCase == true_ptr) {
-				pCurrState->bVarIsSafe = -1;
-				fprintf(stderr, "{-1}");
-			}
-		*/
-
-	//Compute the SmurfState w/ nTransitionVar = False
-	//Create Inference Transitions
-	BDDNode *infBDD = pCurrentBDD;
-	infBDD = set_variable(infBDD, arrSimpleSolver2IteVarMap[pCurrState->nTransitionVar], 0);
-
-	pCurrState->pVarIsFalseTransition = CreateInferenceStates(infBDD);
-	
-	//Compute the SmurfState w/ nTransitionVar = True
-	//Create Inference Transitions
-	infBDD = pCurrentBDD;
-	infBDD = set_variable(infBDD, arrSimpleSolver2IteVarMap[pCurrState->nTransitionVar], 1);
-
-	pCurrState->pVarIsTrueTransition = CreateInferenceStates(infBDD);
-}
-
 void *CreateSmurfState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, SmurfStateEntry *pStartState) {
 	check_SmurfStatesTableSize((int)sizeof(SmurfStateEntry)*nNumElts);
 	ite_counters[SMURF_STATES]+=nNumElts;
@@ -148,32 +117,31 @@ void *CreateSmurfState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, SmurfSt
 		
 		assert(pCurrState->nTransitionVar == arrElts[nVbleIndex]);
 
-		ComputeSmurfInferences(pCurrentBDD, pCurrState);
+		/*
+			//Determine and record if nTransitionVar is safe
+			BDDNode *pSafeBDD = false_ptr;//safe_assign(pCurrentBDD->pFunc, pCurrState->nTransitionVar);
+			if(pSafeBDD == false_ptr)
+			  pCurrState->bVarIsSafe = 0;
+			else if(pSafeBDD->thenCase == true_ptr && pSafeBDD->elseCase == false_ptr) {
+				pCurrState->bVarIsSafe = 1;
+				fprintf(stderr, "{+1}");
+			} else if(pSafeBDD->thenCase == false_ptr && pSafeBDD->elseCase == true_ptr) {
+				pCurrState->bVarIsSafe = -1;
+				fprintf(stderr, "{-1}");
+			}
+		*/
 		
-	}
-	return (void *)pStartState;
-}
+		BDDNode *infBDD = pCurrentBDD;
+		infBDD = set_variable(infBDD, arrSimpleSolver2IteVarMap[pCurrState->nTransitionVar], 0);
+		
+		pCurrState->pVarIsFalseTransition = ReadSmurfStateIntoTable(infBDD, NULL, 0); //CreateInferenceStates(infBDD);
+		
+		//Compute the SmurfState w/ nTransitionVar = True
+		//Create Inference Transitions
+		infBDD = pCurrentBDD;
+		infBDD = set_variable(infBDD, arrSimpleSolver2IteVarMap[pCurrState->nTransitionVar], 1);
 
-void *CreateWatchedSmurfState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, SmurfStateEntry *pStartState) {
-	check_SmurfStatesTableSize((int)sizeof(SmurfStateEntry)*nNumElts);
-	ite_counters[SMURF_STATES]+=nNumElts;
-	pCurrentBDD->pState = SimpleSmurfProblemState->pSmurfStatesTableTail;
-	
-	pStartState = (SmurfStateEntry *)SimpleSmurfProblemState->pSmurfStatesTableTail;
-	fillWatchedHEAP(nNumElts, arrElts);
-	
-	for(int nVbleIndex = 0; nVbleIndex < nNumElts-1; nVbleIndex++) {
-		SmurfStateEntry *pCurrState = (pStartState+nVbleIndex);
-		pCurrState->pNextVarInThisState = (void *)(pStartState+nVbleIndex+1);
-	}
-		
-	for(int nVbleIndex = 0; nVbleIndex < nNumElts; nVbleIndex++) {
-		SmurfStateEntry *pCurrState = (pStartState+nVbleIndex);
-		pCurrState->pSmurfBDD = pCurrentBDD;
-		
-		assert(pCurrState->nTransitionVar == arrElts[nVbleIndex]);
-
-      ComputeSmurfInferences(pCurrentBDD, pCurrState);
+		pCurrState->pVarIsTrueTransition = ReadSmurfStateIntoTable(infBDD, NULL, 0);//CreateInferenceStates(infBDD);
 		
 	}
 	return (void *)pStartState;
@@ -184,22 +152,6 @@ void *ReadSmurfStateIntoTable(BDDNode *pCurrentBDD, int *arrElts, int nNumElts) 
 	if(pCurrentBDD != true_ptr && pCurrentBDD->pState==NULL)  {
 		//If this is the first transition into this SmurfState, mark this SmurfState as Visited
 		
-		if(arrElts == NULL) {
-			unravelBDD(&nNumElts, &tempint_max, &tempint, pCurrentBDD);
-			arrElts = (int *)ite_calloc(nNumElts, sizeof(int), 9, "arrElts");
-			for (int i=0;i<nNumElts;i++) {
-				if (tempint[i]==0 || arrIte2SimpleSolverVarMap[tempint[i]]==0) {
-					dE_printf1("\nassigned variable in a BDD in the solver");
-					dE_printf3("\nvariable id: %d, true_false=%d\n", tempint[i], variablelist[tempint[i]].true_false);
-					exit(1);
-				}
-				arrElts[i] = arrIte2SimpleSolverVarMap[tempint[i]];
-			}
-			qsort(arrElts, nNumElts, sizeof(int), revcompfunc);
-		}
-
-		int equ_var;
-
 		int nInferences = 0;
 		if(pCurrentBDD->inferences!=NULL) {
 			infer *inferences = pCurrentBDD->inferences;
@@ -212,66 +164,52 @@ void *ReadSmurfStateIntoTable(BDDNode *pCurrentBDD, int *arrElts, int nNumElts) 
 			}
 		}		
 		
-		//Handle any initial inferences
+		if(arrElts == NULL && nInferences == 0) {
+			unravelBDD(&nNumElts, &tempint_max, &tempint, pCurrentBDD);
+			arrElts = (int *)ite_calloc(nNumElts, sizeof(int), 9, "arrElts");
+			for (int i=0;i<nNumElts;i++) {
+				if (tempint[i]==0 || arrIte2SimpleSolverVarMap[tempint[i]]==0) {
+					dE_printf1("\nassigned variable in a BDD in the solver");
+					dE_printf3("\nvariable id: %d, true_false=%d\n", tempint[i], variablelist[tempint[i]].true_false);
+					exit(1);
+				}
+				arrElts[i] = arrIte2SimpleSolverVarMap[tempint[i]];
+			}
+			qsort(arrElts, nNumElts, sizeof(int), revcompfunc);
+		}
+		
 		if(nInferences == 1) {
+			//FN_INFERENCE
 			pStartState = CreateInferenceStates(pCurrentBDD);
 			ite_free((void **)&arrElts);
 		} else if(nNumElts >= functionTypeLimits[PLAINOR] &&
-			isOR(pCurrentBDD)) {
+					 isOR(pCurrentBDD)) {
 			//FN_OR
 			pStartState = CreateORState(arrElts, nNumElts, pCurrentBDD, (ORStateEntry *)pStartState);
-			
-			if(((TypeStateEntry *)pStartState)->cType == FN_OR)
-			  LSGBORStateSetHeurScores((ORStateEntry *)pStartState);
-			else if(((TypeStateEntry *)pStartState)->cType == FN_OR_COUNTER)
-			  LSGBORCounterStateSetHeurScores((ORCounterStateEntry *)pStartState);
-			//ite_free((void **)&arrElts); This is saved on the OR State
-			//       fprintf(stderr, "v");
 		} else if(nNumElts >= functionTypeLimits[PLAINXOR] &&
 					 isXOR(pCurrentBDD)) {
 			//FN_XOR
-			//pStartState = CreateSmurfState(arrElts, nNumElts, pCurrentBDD, (SmurfStateEntry *)pStartState);        
-			//LSGBSmurfSetHeurScores((SmurfStateEntry *)pStartState);
-			//fprintf(stderr, "+");
 			if(use_XORGElim==1) {
 				pStartState = CreateXORGElimState(arrElts, nNumElts, pCurrentBDD, (XORGElimStateEntry *)pStartState);
 			} else {
 				pStartState = CreateXORState(arrElts, nNumElts, pCurrentBDD, (XORStateEntry *)pStartState);
 			}
-			if(((TypeStateEntry *)pStartState)->cType == FN_XOR || ((TypeStateEntry *)pStartState)->cType == FN_XOR_GELIM)
-			  LSGBXORStateSetHeurScores((XORStateEntry *)pStartState);
-			else if(((TypeStateEntry *)pStartState)->cType == FN_XOR_COUNTER)
-			  LSGBXORCounterStateSetHeurScores((XORCounterStateEntry *)pStartState);
-			//ite_free((void **)&arrElts); This is saved on the XOR State
-		} else if(0 && nNumElts >= functionTypeLimits[PLAINAND] &&
-					 (equ_var = isAND_EQU(pCurrentBDD, tempint, nNumElts))!=0) {
-			//FN_AND_EQU / FN_OR_EQU
-			//pStartState = CreateSmurfState(arrElts, nNumElts, pCurrentBDD, (SmurfStateEntry *)pStartState);        
-			//LSGBSmurfSetHeurScores((SmurfStateEntry *)pStartState);
-			//       fprintf(stderr, "=");
-			pCurrentBDD->pState = pTrueSimpleSmurfState;
-			pStartState = pTrueSimpleSmurfState;
-			ite_free((void **)&arrElts);
 		} else if(nNumElts >= 3 && nNumElts >= functionTypeLimits[MINMAX] &&
 					 isMIN_MAX(pCurrentBDD, tempint, nNumElts)) {
 			//FN_MINMAX
 			pStartState = CreateMINMAXState(arrElts, nNumElts, pCurrentBDD, (MINMAXStateEntry *)pStartState);
-			LSGBMINMAXCounterStateSetHeurScores((MINMAXCounterStateEntry *)pStartState);
-			//       fprintf(stderr, "M");
 		}
 		else if(nNumElts >= 3 && nNumElts >= functionTypeLimits[NEG_MINMAX] &&
 				  isNEG_MIN_MAX(pCurrentBDD, tempint, nNumElts)) {
 			//FN_NEG_MINMAX
 			pStartState = CreateNEGMINMAXState(arrElts, nNumElts, pCurrentBDD, (NEGMINMAXStateEntry *)pStartState);
-			LSGBNEGMINMAXCounterStateSetHeurScores((NEGMINMAXCounterStateEntry *)pStartState);
-			//       fprintf(stderr, "m");
 		} else {
 			//FN_SMURF
-			if(use_SmurfWatchedLists) pStartState = CreateWatchedSmurfState(arrElts, nNumElts, pCurrentBDD, (SmurfStateEntry *)pStartState);
-			else pStartState = CreateSmurfState(arrElts, nNumElts, pCurrentBDD, (SmurfStateEntry *)pStartState);
-			LSGBSmurfSetHeurScores((SmurfStateEntry *)pStartState);
+			pStartState = CreateSmurfState(arrElts, nNumElts, pCurrentBDD, (SmurfStateEntry *)pStartState);
 			ite_free((void **)&arrElts);
 		}
+		arrSetStateHeuristicScores[(int)((TypeStateEntry *)pStartState)->cType](pStartState);
+	
 	}
 
 	return pStartState;

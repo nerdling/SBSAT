@@ -91,19 +91,22 @@ ITE_INLINE double LSGBGetHeurScoreTransition(SmurfStateEntry *pState, bool bPola
 	return 0;
 }
 
-ITE_INLINE
-void LSGBSmurfSetHeurScores(SmurfStateEntry *pState) {
-	if (pState == pTrueSimpleSmurfState) return;
+void LSGBSmurfSetHeurScores(void *pState) {
+	SmurfStateEntry *pSmurfState = (SmurfStateEntry *)pState;
+	if (pSmurfState == pTrueSimpleSmurfState) return;
 	
-	while(pState!=NULL) {
-		if (!(pState->cType == FN_SMURF || pState->cType == FN_WATCHED_SMURF)) return;
+	while(pSmurfState!=NULL) {
+		if (!(pSmurfState->cType == FN_SMURF || pSmurfState->cType == FN_WATCHED_SMURF)) return;
 		/* ----- POSITIVE TRANSITION ------ */
-		pState->fHeurWghtofTrueTransition = LSGBGetHeurScoreTransition(pState, BOOL_TRUE);
+		pSmurfState->fHeurWghtofTrueTransition = LSGBGetHeurScoreTransition(pSmurfState, BOOL_TRUE);
 		
 		/* ----- NEGATIVE TRANSITION ------ */
-		pState->fHeurWghtofFalseTransition = LSGBGetHeurScoreTransition(pState, BOOL_FALSE);
+		pSmurfState->fHeurWghtofFalseTransition = LSGBGetHeurScoreTransition(pSmurfState, BOOL_FALSE);
 		
-		pState = (SmurfStateEntry *)pState->pNextVarInThisState;
+		pSmurfState = (SmurfStateEntry *)pSmurfState->pNextVarInThisState;
 	}
 }
 
+void LSGBInferenceSetHeurScores(void *pState) {
+	
+}

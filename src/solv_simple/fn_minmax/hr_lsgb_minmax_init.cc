@@ -49,10 +49,13 @@ void LSGBMINMAXGetHeurScores(int nFnId);
 
 //---------------------------------------------------------------
 
-ITE_INLINE void LSGBMINMAXStateSetHeurScores(MINMAXStateEntry *pState) {
+ITE_INLINE void LSGBMINMAXStateSetHeurScores(void *pState) {
+
+	MINMAXStateEntry *pMINMAXState = (MINMAXStateEntry *)pState;
+	
    // Find out the length of the diff (max-min)
 
-   int minmax_diff = pState->nMax - pState->nMin;
+   int minmax_diff = pMINMAXState->nMax - pMINMAXState->nMin;
 
    if(nMINMAXWghtsSize < minmax_diff+1) {
       arrMINMAXWghts = (double***)ite_recalloc(arrMINMAXWghts, nMINMAXWghtsSize, minmax_diff+1, sizeof(double**), 2, "arrMINMAXWghts");
@@ -64,18 +67,18 @@ ITE_INLINE void LSGBMINMAXStateSetHeurScores(MINMAXStateEntry *pState) {
    
    int recompute_true = 0;
    int old_true = 0;
-   if (arrMaxMINMAXTrue[minmax_diff] < (pState->nMax + 1)) {
+   if (arrMaxMINMAXTrue[minmax_diff] < (pMINMAXState->nMax + 1)) {
       recompute_true = 1;
       old_true = arrMaxMINMAXTrue[minmax_diff];
-      arrMaxMINMAXTrue[minmax_diff] = pState->nMax + 1;
+      arrMaxMINMAXTrue[minmax_diff] = pMINMAXState->nMax + 1;
    }
 
    int recompute_false = 0;
    int old_false = 0;
-   if (arrMaxMINMAXFalse[minmax_diff] < ((pState->nSize - pState->nMin) + 1)) {
+   if (arrMaxMINMAXFalse[minmax_diff] < ((pMINMAXState->nSize - pMINMAXState->nMin) + 1)) {
       recompute_false = 1;
       old_false = arrMaxMINMAXFalse[minmax_diff];
-      arrMaxMINMAXFalse[minmax_diff] = (pState->nSize - pState->nMin) + 1;
+      arrMaxMINMAXFalse[minmax_diff] = (pMINMAXState->nSize - pMINMAXState->nMin) + 1;
    }
 
    if(recompute_true>0 || recompute_false>0) {
@@ -113,8 +116,8 @@ ITE_INLINE void LSGBMINMAXStateSetHeurScores(MINMAXStateEntry *pState) {
    //}
 }
 
-ITE_INLINE void LSGBMINMAXCounterStateSetHeurScores(MINMAXCounterStateEntry *pState) {
-	LSGBMINMAXStateSetHeurScores(pState->pMINMAXState);
+ITE_INLINE void LSGBMINMAXCounterStateSetHeurScores(void *pState) {	
+	LSGBMINMAXStateSetHeurScores(((MINMAXCounterStateEntry *)pState)->pMINMAXState);
 }
 
 ITE_INLINE double LSGBMINMAXGetHeurScore(MINMAXStateEntry *pState) {

@@ -44,7 +44,7 @@ void initMINMAXStateType();
 
 void PrintMINMAXStateEntry(void *pState);
 
-void LSGBMINMAXStateSetHeurScores(MINMAXStateEntry *pState);
+void LSGBMINMAXStateSetHeurScores(void *pState);
 double LSGBMINMAXGetHeurScore(MINMAXStateEntry *pState);
 void LSGBMINMAXFree();
 
@@ -62,7 +62,7 @@ void initMINMAXCounterStateType();
 
 void PrintMINMAXCounterStateEntry(void *pState);
 
-void LSGBMINMAXCounterStateSetHeurScores(MINMAXCounterStateEntry *pState);
+void LSGBMINMAXCounterStateSetHeurScores(void *pState);
 double LSGBMINMAXCounterGetHeurScore(MINMAXCounterStateEntry *pState);
 double LSGBMINMAXCounterGetHeurScorePos(MINMAXCounterStateEntry *pState);
 double LSGBMINMAXCounterGetHeurScoreNeg(MINMAXCounterStateEntry *pState);

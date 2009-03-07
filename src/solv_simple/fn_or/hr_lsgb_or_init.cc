@@ -47,8 +47,9 @@ int nORMaxRHSSize = 1;
 
 //---------------------------------------------------------------
 
-ITE_INLINE void LSGBORStateSetHeurScores(ORStateEntry *pState) {
-	int size = pState->nSize;
+ITE_INLINE void LSGBORStateSetHeurScores(void *pState) {
+	ORStateEntry *pORState = (ORStateEntry *)pState;
+	int size = pORState->nSize;
 
 	HWEIGHT K = JHEURISTIC_K;
 	
@@ -70,8 +71,8 @@ ITE_INLINE void LSGBORStateSetHeurScores(ORStateEntry *pState) {
 	}
 }
 
-ITE_INLINE void LSGBORCounterStateSetHeurScores(ORCounterStateEntry *pState) {
-	LSGBORStateSetHeurScores(pState->pORState);
+ITE_INLINE void LSGBORCounterStateSetHeurScores(void *pState) {
+	LSGBORStateSetHeurScores(((ORCounterStateEntry *)pState)->pORState);
 }
 
 ITE_INLINE double LSGBORGetHeurScore(ORStateEntry *pState) {
