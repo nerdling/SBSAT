@@ -39,21 +39,22 @@
 #include "sbsat_solver.h"
 #include "solver.h"
 
-ITE_INLINE double LSGBSumNodeWeights(SmurfStateEntry *pState) {
-	if (pState == pTrueSimpleSmurfState) return JHEURISTIC_K_TRUE;
+ITE_INLINE double LSGBSumNodeWeights(void *pState) {
+   SmurfStateEntry *pSmurfState = (SmurfStateEntry *)pState;
+	if (pSmurfState == pTrueSimpleSmurfState) return JHEURISTIC_K_TRUE;
 	
 	int num_variables = 0;
 	double fTotalTransitions = 0.0;
-	while(pState!=NULL) {
-		if (!(pState->cType == FN_SMURF || pState->cType == FN_WATCHED_SMURF)) return 0;
+	while(pSmurfState!=NULL) {
+		if (!(pSmurfState->cType == FN_SMURF || pSmurfState->cType == FN_WATCHED_SMURF)) return 0;
 		num_variables++;
 		/* ----- POSITIVE TRANSITION ------ */
-		fTotalTransitions += pState->fHeurWghtofTrueTransition;
+		fTotalTransitions += pSmurfState->fHeurWghtofTrueTransition;
 		
 		/* ----- NEGATIVE TRANSITION ------ */
-		fTotalTransitions += pState->fHeurWghtofFalseTransition;
+		fTotalTransitions += pSmurfState->fHeurWghtofFalseTransition;
 		
-		pState = (SmurfStateEntry *)pState->pNextVarInThisState;
+		pSmurfState = (SmurfStateEntry *)pSmurfState->pNextVarInThisState;
 	}
 	return fTotalTransitions / (((double)num_variables) * 2.0 * JHEURISTIC_K);
 }
@@ -70,28 +71,10 @@ ITE_INLINE double LSGBGetHeurScoreTransition(SmurfStateEntry *pState, bool bPola
 	if(pNextState == NULL) return JHEURISTIC_K_UNKNOWN; //This can happen if smurfs are built lazily
 
 	double fInferenceWeights = JHEURISTIC_K_INF * (double)num_inferences;	
-	if (((TypeStateEntry *)pNextState)->cType == FN_SMURF || ((TypeStateEntry *)pNextState)->cType == FN_WATCHED_SMURF) {
-		return fInferenceWeights + LSGBSumNodeWeights((SmurfStateEntry *)pNextState);
-	} else if (((TypeStateEntry *)pNextState)->cType == FN_OR) {
-		return fInferenceWeights + LSGBORGetHeurScore((ORStateEntry *)pNextState);
-	} else if (((TypeStateEntry *)pNextState)->cType == FN_OR_COUNTER) {
-		return fInferenceWeights + LSGBORCounterGetHeurScore((ORCounterStateEntry *)pNextState);
-	} else if (((TypeStateEntry *)pNextState)->cType == FN_XOR) {
-		return fInferenceWeights + LSGBXORGetHeurScore((XORStateEntry *)pNextState);
-	} else if (((TypeStateEntry *)pNextState)->cType == FN_XOR_COUNTER) {
-		return fInferenceWeights + LSGBXORCounterGetHeurScore((XORCounterStateEntry *)pNextState);
-	} else if (((TypeStateEntry *)pNextState)->cType == FN_XOR_GELIM) {
-		return fInferenceWeights + LSGBarrXORWeight(((XORGElimStateEntry *)pNextState)->nSize);
-	} else if (((TypeStateEntry *)pNextState)->cType == FN_MINMAX_COUNTER) {
-		return fInferenceWeights + LSGBMINMAXCounterGetHeurScore((MINMAXCounterStateEntry *)pNextState);
-	} else if (((TypeStateEntry *)pNextState)->cType == FN_MINMAX) {
-		return fInferenceWeights + LSGBMINMAXGetHeurScore((MINMAXStateEntry *)pNextState);
-	}
-	
-	return 0;
+   return fInferenceWeights + arrGetStateHeuristicScore[(int)((TypeStateEntry *)pNextState)->cType](pNextState);
 }
 
-void LSGBSmurfSetHeurScores(void *pState) {
+void LSGBSmurfSetHeurScore(void *pState) {
 	SmurfStateEntry *pSmurfState = (SmurfStateEntry *)pState;
 	if (pSmurfState == pTrueSimpleSmurfState) return;
 	
@@ -107,6 +90,10 @@ void LSGBSmurfSetHeurScores(void *pState) {
 	}
 }
 
-void LSGBInferenceSetHeurScores(void *pState) {
+void LSGBInferenceSetHeurScore(void *pState) {
 	
+}
+
+double LSGBInferenceGetHeurScore(void *pState) {
+	return 0.0; //Should make this accurate, in case anyone wants to use it.
 }

@@ -208,7 +208,7 @@ void *ReadSmurfStateIntoTable(BDDNode *pCurrentBDD, int *arrElts, int nNumElts) 
 			pStartState = CreateSmurfState(arrElts, nNumElts, pCurrentBDD, (SmurfStateEntry *)pStartState);
 			ite_free((void **)&arrElts);
 		}
-		arrSetStateHeuristicScores[(int)((TypeStateEntry *)pStartState)->cType](pStartState);
+		arrSetStateHeuristicScore[(int)((TypeStateEntry *)pStartState)->cType](pStartState);
 	
 	}
 

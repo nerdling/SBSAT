@@ -41,13 +41,11 @@
 
 struct ORWeightStruct *arrORWeight = NULL;
 
-void LSGBORGetHeurScores(int nFnId);
-
 int nORMaxRHSSize = 1;
 
 //---------------------------------------------------------------
 
-ITE_INLINE void LSGBORStateSetHeurScores(void *pState) {
+ITE_INLINE void LSGBORStateSetHeurScore(void *pState) {
 	ORStateEntry *pORState = (ORStateEntry *)pState;
 	int size = pORState->nSize;
 
@@ -71,11 +69,11 @@ ITE_INLINE void LSGBORStateSetHeurScores(void *pState) {
 	}
 }
 
-ITE_INLINE void LSGBORCounterStateSetHeurScores(void *pState) {
-	LSGBORStateSetHeurScores(((ORCounterStateEntry *)pState)->pORState);
+ITE_INLINE void LSGBORCounterStateSetHeurScore(void *pState) {
+	LSGBORStateSetHeurScore(((ORCounterStateEntry *)pState)->pORState);
 }
 
-ITE_INLINE double LSGBORGetHeurScore(ORStateEntry *pState) {
+ITE_INLINE double LSGBORStateGetHeurScore(void *pState) {
 	return arrORWeight[2].fFmla;
 }
 
@@ -83,8 +81,8 @@ ITE_INLINE double LSGBORGetHeurNeg(ORStateEntry *pState) {
 	return arrORWeight[2].fNeg;
 }
 
-ITE_INLINE double LSGBORCounterGetHeurScore(ORCounterStateEntry *pState) {
-	return arrORWeight[pState->nSize].fFmla;
+ITE_INLINE double LSGBORCounterStateGetHeurScore(void *pState) {
+	return arrORWeight[((ORCounterStateEntry *)pState)->nSize].fFmla;
 }
 
 ITE_INLINE double LSGBORCounterGetHeurNeg(ORCounterStateEntry *pState) {

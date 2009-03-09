@@ -11,7 +11,8 @@ void initORStateType() {
 	arrPrintStateEntry_dot[FN_OR] = PrintORStateEntry_dot;
 	arrFreeStateEntry[FN_OR] = FreeORStateEntry;
 	arrCalculateStateHeuristic[FN_OR] = CalculateORLSGBHeuristic;
-	arrSetStateHeuristicScores[FN_OR] = LSGBORStateSetHeurScores;
+	arrSetStateHeuristicScore[FN_OR] = LSGBORStateSetHeurScore;
+   arrGetStateHeuristicScore[FN_OR] = LSGBORStateGetHeurScore;
 }
 
 void PrintORStateEntry(void *pState) {
@@ -48,7 +49,8 @@ void initORCounterStateType() {
 	arrPrintStateEntry_dot[FN_OR_COUNTER] = PrintORCounterStateEntry_dot;
 	arrFreeStateEntry[FN_OR_COUNTER] = FreeORCounterStateEntry;
 	arrCalculateStateHeuristic[FN_OR_COUNTER] = CalculateORCounterLSGBHeuristic;
-	arrSetStateHeuristicScores[FN_OR_COUNTER] = LSGBORCounterStateSetHeurScores;
+	arrSetStateHeuristicScore[FN_OR_COUNTER] = LSGBORCounterStateSetHeurScore;
+   arrGetStateHeuristicScore[FN_OR_COUNTER] = LSGBORCounterStateGetHeurScore;
 }
 
 void PrintORCounterStateEntry_dot(void *pState) {

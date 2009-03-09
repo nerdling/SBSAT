@@ -25,7 +25,8 @@ PrintStateEntry *arrPrintStateEntry;
 PrintStateEntry_dot *arrPrintStateEntry_dot;
 FreeStateEntry *arrFreeStateEntry;
 CalculateStateHeuristic *arrCalculateStateHeuristic;
-SetStateHeuristicScores *arrSetStateHeuristicScores;
+SetStateHeuristicScore *arrSetStateHeuristicScore;
+GetStateHeuristicScore *arrGetStateHeuristicScore;
 
 //This allocates a new block of smurfs states and attaches them to the previous block
 //The blocks are connected by a linked list - accessed through ->pNext
@@ -176,7 +177,8 @@ int ReadAllSmurfsIntoTable(int nNumVars) {
    arrPrintStateEntry_dot = (PrintStateEntry_dot *)ite_calloc(NUM_SMURF_TYPES, sizeof(PrintStateEntry_dot), 9, "arrPrintStateEntry_dot");
    arrFreeStateEntry = (FreeStateEntry *)ite_calloc(NUM_SMURF_TYPES, sizeof(FreeStateEntry), 9, "arrFreeStateEntry");
    arrCalculateStateHeuristic = (CalculateStateHeuristic *)ite_calloc(NUM_SMURF_TYPES, sizeof(CalculateStateHeuristic), 9, "arrCalculateStateHeuristic");
-	arrSetStateHeuristicScores = (SetStateHeuristicScores *)ite_calloc(NUM_SMURF_TYPES, sizeof(SetStateHeuristicScores), 9, "arrSetStateHeuristicScores");
+	arrSetStateHeuristicScore = (SetStateHeuristicScore *)ite_calloc(NUM_SMURF_TYPES, sizeof(SetStateHeuristicScore), 9, "arrSetStateHeuristicScore");
+   arrGetStateHeuristicScore = (GetStateHeuristicScore *)ite_calloc(NUM_SMURF_TYPES, sizeof(GetStateHeuristicScore), 9, "arrGetStateHeuristicScore");
    
 	initSmurfStateType();
 	initORStateType();
@@ -304,7 +306,6 @@ int ReadAllSmurfsIntoTable(int nNumVars) {
 			d7_printf2("Removing duplicate Smurf #%d\n", nSmurfIndex); //This really shouldn't happen because the BDD preprocessor should have already removed all duplicates.
 			SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates[nSmurfIndex] = pTrueSimpleSmurfState;
 		} else {
-			//LSGBSmurfSetHeurScores(nSmurfIndex, pInitialState);
 			if(!smurfs_share_states) {
 				clear_all_bdd_pState(); 
 				true_ptr->pState = pTrueSimpleSmurfState;

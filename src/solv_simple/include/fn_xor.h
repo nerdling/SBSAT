@@ -46,9 +46,9 @@ void PrintXORStateEntry(void *pState);
 void PrintXORStateEntry_dot(void *pState);
 void PrintXORStateEntry_formatted(void *pState);
 
-void LSGBXORStateSetHeurScores(void *pState);
+void LSGBXORStateSetHeurScore(void *pState);
+double LSGBXORStateGetHeurScore(void *pState);
 double LSGBXORGetHeurScoreTrans(XORStateEntry *pState);
-double LSGBXORGetHeurScore(XORStateEntry *pState);
 void LSGBXORFree();
 
 void CalculateXORLSGBHeuristic(void *pState, int nCurrInfLevel);
@@ -66,9 +66,9 @@ void initXORCounterStateType();
 void PrintXORCounterStateEntry(void *pState);
 void PrintXORCounterStateEntry_dot(void *pState);
 
-void LSGBXORCounterStateSetHeurScores(void *pState);
+void LSGBXORCounterStateSetHeurScore(void *pState);
+double LSGBXORCounterStateGetHeurScore(void *pState);
 double LSGBXORCounterGetHeurScoreTrans(XORCounterStateEntry *pState);
-double LSGBXORCounterGetHeurScore(XORCounterStateEntry *pState);
 
 void CalculateXORCounterLSGBHeuristic(void *pState, int nCurrInfLevel);
 
@@ -84,7 +84,7 @@ void PrintXORGElimStateEntry(void *pState);
 void PrintXORGElimStateEntry_dot(void *pState);
 void PrintXORGElimVector(void *pVector);
 
-double LSGBarrXORWeight(int nSize);
+double LSGBarrXORWeight(void *pState);
 double LSGBarrXORWeightTrans(int nSize);
 
 void CalculateXORGElimLSGBHeuristic(void *pState, int nCurrInfLevel);

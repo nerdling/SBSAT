@@ -44,8 +44,8 @@ void initNEGMINMAXStateType();
 
 void PrintNEGMINMAXStateEntry(void *pState);
 
-void LSGBNEGMINMAXStateSetHeurScores(void *pState);
-double LSGBNEGMINMAXGetHeurScore(NEGMINMAXStateEntry *pState);
+void LSGBNEGMINMAXStateSetHeurScore(void *pState);
+double LSGBNEGMINMAXStateGetHeurScore(void *pState);
 void LSGBNEGMINMAXFree();
 
 void CalculateNEGMINMAXLSGBHeuristic(void *pState, int nCurrInfLevel);
@@ -62,8 +62,8 @@ void initNEGMINMAXCounterStateType();
 
 void PrintNEGMINMAXCounterStateEntry(void *pState);
 
-void LSGBNEGMINMAXCounterStateSetHeurScores(void  *pState);
-double LSGBNEGMINMAXCounterGetHeurScore(NEGMINMAXCounterStateEntry *pState);
+void LSGBNEGMINMAXCounterStateSetHeurScore(void  *pState);
+double LSGBNEGMINMAXCounterStateGetHeurScore(void *pState);
 double LSGBNEGMINMAXCounterGetHeurScorePos(NEGMINMAXCounterStateEntry *pState);
 double LSGBNEGMINMAXCounterGetHeurScoreNeg(NEGMINMAXCounterStateEntry *pState);
 

@@ -45,11 +45,9 @@ int *arrMaxNEGMINMAXFalse = NULL;
 
 int nNEGMINMAXWghtsSize = 0;
 
-void LSGBNEGMINMAXGetHeurScores(int nFnId);
-
 //---------------------------------------------------------------
 
-ITE_INLINE void LSGBNEGMINMAXStateSetHeurScores(void *pState) {
+ITE_INLINE void LSGBNEGMINMAXStateSetHeurScore(void *pState) {
 	
 	NEGMINMAXStateEntry *pNEGMINMAXState = (NEGMINMAXStateEntry *)pState;
 	
@@ -124,16 +122,17 @@ ITE_INLINE void LSGBNEGMINMAXStateSetHeurScores(void *pState) {
    //}
 }
 
-ITE_INLINE void LSGBNEGMINMAXCounterStateSetHeurScores(void *pState) {
-	LSGBNEGMINMAXStateSetHeurScores(((NEGMINMAXCounterStateEntry *)pState)->pNEGMINMAXState);
+ITE_INLINE void LSGBNEGMINMAXCounterStateSetHeurScore(void *pState) {
+	LSGBNEGMINMAXStateSetHeurScore(((NEGMINMAXCounterStateEntry *)pState)->pNEGMINMAXState);
 }
 
-ITE_INLINE double LSGBNEGMINMAXGetHeurScore(NEGMINMAXStateEntry *pState) {
-   return arrNEGMINMAXWghts[pState->nMax - pState->nMin][pState->nMax][pState->nSize - pState->nMin];
+ITE_INLINE double LSGBNEGMINMAXStateGetHeurScore(void *pState) {
+   NEGMINMAXStateEntry *pNEGMINMAXState = (NEGMINMAXStateEntry *)pState;
+   return arrNEGMINMAXWghts[pNEGMINMAXState->nMax - pNEGMINMAXState->nMin][pNEGMINMAXState->nMax][pNEGMINMAXState->nSize - pNEGMINMAXState->nMin];
 }
 
-ITE_INLINE double LSGBNEGMINMAXCounterGetHeurScore(NEGMINMAXCounterStateEntry *pState) {
-	return LSGBNEGMINMAXGetHeurScore(pState->pNEGMINMAXState);
+ITE_INLINE double LSGBNEGMINMAXCounterStateGetHeurScore(void *pState) {
+	return LSGBNEGMINMAXStateGetHeurScore(((NEGMINMAXCounterStateEntry *)pState)->pNEGMINMAXState);
 }
 
 ITE_INLINE double LSGBNEGMINMAXCounterGetHeurScorePos(NEGMINMAXCounterStateEntry *pState) {

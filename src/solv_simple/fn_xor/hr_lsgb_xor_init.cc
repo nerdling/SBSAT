@@ -39,15 +39,13 @@
 #include "sbsat_solver.h"
 #include "solver.h"
 
-void LSGBXORGetHeurScores(int nFnId);
-
 int nXORMaxRHSSize = 1;
 
 struct XORWeightStruct *arrXORWeight = NULL;
 
 //---------------------------------------------------------------
 
-ITE_INLINE void LSGBXORStateSetHeurScores(void *pState) {
+ITE_INLINE void LSGBXORStateSetHeurScore(void *pState) {
 	XORStateEntry *pXORState = (XORStateEntry *)pState;
 	int size = pXORState->nSize;
 
@@ -70,28 +68,28 @@ ITE_INLINE void LSGBXORStateSetHeurScores(void *pState) {
 	}
 }
 
-ITE_INLINE void LSGBXORCounterStateSetHeurScores(void *pState) {
-	LSGBXORStateSetHeurScores(((XORCounterStateEntry *)pState)->pXORState);
+ITE_INLINE void LSGBXORCounterStateSetHeurScore(void *pState) {
+	LSGBXORStateSetHeurScore(((XORCounterStateEntry *)pState)->pXORState);
+}
+
+ITE_INLINE double LSGBXORStateGetHeurScore(void *pState) {
+	return arrXORWeight[2].fFmla;
 }
 
 ITE_INLINE double LSGBXORGetHeurScoreTrans(XORStateEntry *pState) {
 	return arrXORWeight[1].fFmla;
 }
 
-ITE_INLINE double LSGBXORGetHeurScore(XORStateEntry *pState) {
-	return arrXORWeight[2].fFmla;
+ITE_INLINE double LSGBXORCounterStateGetHeurScore(void *pState) {
+	return arrXORWeight[((XORCounterStateEntry *)pState)->nSize].fFmla;
 }
 
 ITE_INLINE double LSGBXORCounterGetHeurScoreTrans(XORCounterStateEntry *pState) {
 	return arrXORWeight[pState->nSize-1].fFmla;
 }
 
-ITE_INLINE double LSGBXORCounterGetHeurScore(XORCounterStateEntry *pState) {
-	return arrXORWeight[pState->nSize].fFmla;
-}
-
-ITE_INLINE double LSGBarrXORWeight(int nSize) {
-	return arrXORWeight[nSize].fFmla;
+ITE_INLINE double LSGBarrXORWeight(void *pState) {
+	return arrXORWeight[((XORGElimStateEntry *)pState)->nSize].fFmla;
 }
 
 ITE_INLINE double LSGBarrXORWeightTrans(int nSize) {
@@ -101,4 +99,4 @@ ITE_INLINE double LSGBarrXORWeightTrans(int nSize) {
 ITE_INLINE void LSGBXORFree() {
 	if(arrXORWeight!=NULL) ite_free((void **)&arrXORWeight);
 }
-	
+
