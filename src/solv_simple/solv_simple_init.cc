@@ -128,8 +128,10 @@ void FreeSmurfStack() {
 	if(use_SmurfWatchedLists) ite_free((void **)&SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates);
 	else {
 		for(int i = 0; i < SimpleSmurfProblemState->nNumVars; i++)
-		  if(SimpleSmurfProblemState->arrSmurfStack[i].arrSmurfStates != NULL)
-			 ite_free((void **)&SimpleSmurfProblemState->arrSmurfStack[i].arrSmurfStates);
+		  if(SimpleSmurfProblemState->arrSmurfStack[i].arrSmurfStates != NULL) {
+           ite_free((void **)&SimpleSmurfProblemState->arrSmurfStack[i].arrSmurfStates);
+           Free_SmurfStack_Hooks(i);
+        }
 	}
 	ite_free((void **)&SimpleSmurfProblemState->arrSmurfStack);
 }
@@ -446,7 +448,6 @@ void Final_SimpleSmurfSolver() {
 		DisplaySimpleSolverBacktrackInfo_gnuplot();
 		fclose(fd_csv_trace_file);
 	}
-	//Still need to do some backend stuff like free memory.
 
 	Final_Solver_Hooks();
 
@@ -467,7 +468,6 @@ void Final_SimpleSmurfSolver() {
 	ite_free((void **)&tempint);
 	tempint_max = 0;
 	
-	//Hmmm I didn't free A LOT of that memory. SEAN!!! FIX THIS!!!
 }
 
 // Functions for printing (via dot) the corresponding SMURFS for sets of BDDs.

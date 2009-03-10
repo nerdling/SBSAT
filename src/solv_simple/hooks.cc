@@ -76,13 +76,18 @@ ITE_INLINE void SmurfStates_Pop_Hooks() {
 }
 
 ITE_INLINE void Alloc_SmurfStack_Hooks(int destination) {
-
 	if(use_XORGElim==1) {
 		SimpleSmurfProblemState->arrSmurfStack[destination].XORGElimTable = 
 		  (XORGElimTableStruct *)ite_calloc(1, sizeof(XORGElimTableStruct), 9, "XORGElimTable");
 		SimpleSmurfProblemState->arrSmurfStack[destination].XORGElimTable->frame = NULL;
 	}
+}
 
+ITE_INLINE void Free_SmurfStack_Hooks(int destination) {
+	if(use_XORGElim==1) {
+      deleteXORGElimTable(SimpleSmurfProblemState->arrSmurfStack[destination].XORGElimTable);
+      ite_free((void **)&SimpleSmurfProblemState->arrSmurfStack[destination].XORGElimTable);
+	}
 }
 
 ITE_INLINE int ApplyInference_Hooks(int nBranchVar, bool bBVPolarity) {
@@ -228,5 +233,13 @@ ITE_INLINE int Init_Solver_PostSmurfs_Hooks(void **arrSmurfStates) {
 ITE_INLINE void Final_Solver_Hooks() {
 //	if(use_XORGElim==1)
 //	  deleteXORGElimTable(SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].XORGElimTable);
-	
+   
+   if(use_lemmas) {
+		for(int nVarIndex = 0; nVarIndex <= SimpleSmurfProblemState->nNumVars; nVarIndex++) {
+			ite_free((void **)&SimpleSmurfProblemState->arrInferenceLemmas[nVarIndex].clause);
+		}
+      ite_free((void **)&SimpleSmurfProblemState->arrInferenceLemmas);
+		ite_free((void **)&SimpleSmurfProblemState->pConflictClause.clause);
+      picosat_reset();
+   }
 }

@@ -334,7 +334,8 @@ void allocXORGElimTable(XORGElimTableStruct *x, int no_funcs){
 }
 
 void deleteXORGElimTable (XORGElimTableStruct *x) { 
-  ite_free((void **) &(x->frame));
+   if(x!=NULL)
+     ite_free((void **) &(x->frame));
 }
 
 // Push a copy of this frame into the frame of another level
