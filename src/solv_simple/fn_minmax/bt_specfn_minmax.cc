@@ -2,41 +2,9 @@
 #include "sbsat_solver.h"
 #include "solver.h"
 
-ITE_INLINE
-int MINMAXState_InferWithLemma(MINMAXCounterStateEntry *pMINMAXCounterState, int infer_var, bool bPolarity, int nSmurfNumber) {
-	int nInfVar = pMINMAXCounterState->pMINMAXState->pnTransitionVars[infer_var];//, pMINMAXState->bPolarity[infer_var]
-	int nInfQueueHead = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
-	int nPrevInfLevel = abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[nInfVar]);
-	if(nPrevInfLevel < nInfQueueHead) {
-		if((SimpleSmurfProblemState->arrInferenceQueue[nPrevInfLevel] > 0) != bPolarity) {
-			//Conflict
-			//Add a lemma to reference this conflict.
-			create_clause_from_SmurfState(bPolarity?nInfVar:-nInfVar, (TypeStateEntry *)pMINMAXCounterState,
-													SimpleSmurfProblemState->arrReverseOccurenceList[nSmurfNumber][0].var,
-													&(SimpleSmurfProblemState->pConflictClause.clause),
-													&(SimpleSmurfProblemState->pConflictClause.max_size));
-			int ret = EnqueueInference(nInfVar, bPolarity, INF_SPEC_FN_MINMAX);
-			assert(ret == 0);
-			return 0;
-		} else {
-			//Lit already assigned.
-			d7_printf2("      Inference %d already inferred\n", bPolarity?nInfVar:-nInfVar);
-			return 1;
-		}
-	} else {
-		//Add a lemma as reference to this inference.
-		create_clause_from_SmurfState(bPolarity?nInfVar:-nInfVar, (TypeStateEntry *)pMINMAXCounterState,
-												SimpleSmurfProblemState->arrReverseOccurenceList[nSmurfNumber][0].var,
-												&(SimpleSmurfProblemState->arrInferenceLemmas[nInfVar].clause),
-												&(SimpleSmurfProblemState->arrInferenceLemmas[nInfVar].max_size));
-		if(EnqueueInference(nInfVar, bPolarity, INF_SPEC_FN_MINMAX) == 0) return 0;
-	}
-	return 1;
-}
-
 int ApplyInferenceToMINMAX(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates) {
-	//I don't think this should happen w/ the current setup...yet - use for watched literals
-	assert(0);
+   //I don't think this should happen w/ the current setup...yet - use for watched literals
+   assert(0);
 }
 
 int ApplyInferenceToMINMAXCounter(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates) {
@@ -89,12 +57,11 @@ int ApplyInferenceToMINMAXCounter(int nBranchVar, bool bBVPolarity, int nSmurfNu
 			int nPrevInfLevel = SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[pMINMAXState->pnTransitionVars[x]];
 			if(nPrevInfLevel <= nInfQueueLevel)	continue;
 			//Inference is not in inference queue, insert it.
-			if(use_lemmas) {
-				if(MINMAXState_InferWithLemma((MINMAXCounterStateEntry *)arrSmurfStates[nSmurfNumber], x, 1, nSmurfNumber) == 0) return 0;
-			} else {
-				if(EnqueueInference(pMINMAXState->pnTransitionVars[x], 1, INF_SPEC_FN_MINMAX) == 0) return 0;
-			}
-
+			if(TypeState_InferVar((TypeStateEntry *)arrSmurfStates[nSmurfNumber],
+                               pMINMAXCounterState->pMINMAXState->pnTransitionVars[x],
+                               1,
+                               nSmurfNumber,
+                               INF_SPEC_FN_MINMAX) == 0) return 0;
 		}
 		arrSmurfStates[nSmurfNumber] = pTrueSimpleSmurfState;
 		SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumSmurfsSatisfied++;
@@ -106,11 +73,11 @@ int ApplyInferenceToMINMAXCounter(int nBranchVar, bool bBVPolarity, int nSmurfNu
 			if(nPrevInfLevel <= nInfQueueLevel)	continue;
 			//Inference is not in inference queue, insert it.
 
-			if(use_lemmas) {
-				if(MINMAXState_InferWithLemma((MINMAXCounterStateEntry *)arrSmurfStates[nSmurfNumber], x, 0, nSmurfNumber) == 0) return 0;
-			} else {
-				if(EnqueueInference(pMINMAXState->pnTransitionVars[x], 0, INF_SPEC_FN_MINMAX) == 0) return 0;
-			}
+         if(TypeState_InferVar((TypeStateEntry *)arrSmurfStates[nSmurfNumber],
+                               pMINMAXCounterState->pMINMAXState->pnTransitionVars[x],
+                               0,
+                               nSmurfNumber,
+                               INF_SPEC_FN_MINMAX) == 0) return 0;
 		}
 		arrSmurfStates[nSmurfNumber] = pTrueSimpleSmurfState;
 		SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumSmurfsSatisfied++;

@@ -41,6 +41,7 @@
 #include "smurfs.h"
 #include "hr_lsgb.h"
 #include "fn_smurf.h"
+#include "fn_inference.h"
 #include "fn_or.h"
 #include "fn_xor.h"
 #include "fn_minmax.h"

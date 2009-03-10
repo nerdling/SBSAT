@@ -89,11 +89,3 @@ void LSGBSmurfSetHeurScore(void *pState) {
 		pSmurfState = (SmurfStateEntry *)pSmurfState->pNextVarInThisState;
 	}
 }
-
-void LSGBInferenceSetHeurScore(void *pState) {
-	
-}
-
-double LSGBInferenceGetHeurScore(void *pState) {
-	return 0.0; //Should make this accurate, in case anyone wants to use it.
-}

@@ -57,18 +57,4 @@ int ApplyInferenceToWatchedSmurf(int nBranchVar, bool bBVPolarity, int nSmurfNum
 
 void FreeSmurfStateEntry(void *pState);
 
-// Inference State
-
-void initInferenceStateType();
-
-void PrintInferenceStateEntry(void *pState);
-void PrintInferenceStateEntry_dot(void *pState);
-
-void LSGBInferenceSetHeurScore(void *pState);
-double LSGBInferenceGetHeurScore(void *pState);
-
-int TransitionInference(int nSmurfNumber, void **arrSmurfStates);
-
-void FreeInferenceStateEntry(void *pState);
-
 #endif

@@ -35,25 +35,24 @@
  of the possibility of those damages.
 *********************************************************************/
 
-#include "sbsat.h"
-#include "sbsat_solver.h"
-#include "solver.h"
+#ifndef FN_INFERENCE_S_H
+#define FN_INFERENCE_S_H
 
-// Smurf State
+// Inference State
 
-void CalculateSmurfLSGBHeuristic(void *pState, int nCurrInfLevel) {
-	SmurfStateEntry *pSmurfState = (SmurfStateEntry *)pState;
+void initInferenceStateType();
 
-	SimpleSmurfProblemState->arrPosVarHeurWghts[pSmurfState->nTransitionVar] +=
-	  pSmurfState->fHeurWghtofTrueTransition;
-	SimpleSmurfProblemState->arrNegVarHeurWghts[pSmurfState->nTransitionVar] +=
-	  pSmurfState->fHeurWghtofFalseTransition;
-	while (pSmurfState->pNextVarInThisState != NULL) {
-		pSmurfState = (SmurfStateEntry *)pSmurfState->pNextVarInThisState;
-		SimpleSmurfProblemState->arrPosVarHeurWghts[pSmurfState->nTransitionVar] +=
-		  pSmurfState->fHeurWghtofTrueTransition;
-		SimpleSmurfProblemState->arrNegVarHeurWghts[pSmurfState->nTransitionVar] +=
-		  pSmurfState->fHeurWghtofFalseTransition;
-	}
-}
+void PrintInferenceStateEntry(void *pState);
+void PrintInferenceStateEntry_dot(void *pState);
 
+void LSGBInferenceSetHeurScore(void *pState);
+double LSGBInferenceGetHeurScore(void *pState);
+
+void *CreateInferenceStates(BDDNode *infBDD);
+
+int TypeState_InferVar(TypeStateEntry *pState, int nInfVar, bool bPolarity, int nSmurfNumber, int INF_TYPE);
+int TransitionInference(int nSmurfNumber, void **arrSmurfStates);
+
+void FreeInferenceStateEntry(void *pState);
+
+#endif
