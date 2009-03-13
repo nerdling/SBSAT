@@ -509,7 +509,9 @@ Finish_Preprocessing()
 	  //printCircuitTree();
 	  //printCircuit();
 
-	if (countBDDs() == 0 || (countBDDs() <=1 && max_solutions == 1)) {
+	if (countBDDs() == 0
+		 //|| (countBDDs() < 1 && max_solutions == 1)
+		 ) {
 		ret = TRIV_SAT;
 		//d1_printf1 ("Formula was trivially satisfiable.\n");
 	}
