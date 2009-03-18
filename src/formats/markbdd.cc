@@ -38,29 +38,6 @@
 #include "sbsat.h"
 #include "sbsat_formats.h"
 
-void bdd2_flag_nodes(BDDNode *node)
-{
-	
-	   if (node->flag == 1001001001) return;
-	   node->flag = 1001001001;
-	   //node->inferences = NULL;
-	   bdd2_flag_nodes(node->thenCase);
-	   bdd2_flag_nodes(node->elseCase);
-	   bdd2_flag_nodes(node->notCase);
-	#ifdef BDD_MIRROR_NODE
-	   bdd2_flag_nodes(node->mirrCase);
-	   bdd2_flag_nodes(node->notCase->mirrCase);
-	#endif
-	   //if(node->or_bdd!=NULL) bdd_flag_nodes(node->or_bdd);
-	   //node->or_bdd = NULL;
-	   //if(node->t_and_not_e_bdd!=NULL) bdd_flag_nodes(node->t_and_not_e_bdd);
-	   //node->t_and_not_e_bdd = NULL;
-	   //if(node->not_t_and_e_bdd!=NULL) bdd_flag_nodes(node->not_t_and_e_bdd)
-	   //node->not_t_and_e_bdd = NULL;
-}
-
-
-
 char getNextSymbol (int &intnum, BDDNode * &);
 
 int markbdd_line;
@@ -114,21 +91,6 @@ int max_macros;
 char *macros;
 int negate_it;
 int expect_integer = 0;
-
-//This function prints a BDD using all available terms {ite, and, or, xor, minmax, etc.}
-//This differs from printBDD(BDDNode *f), which only uses ite.
-void print_BDD_allterms(BDDNode *f) {
-
-	int *bdd_vars;
-	int bdd_length;
-	
-	if(isOR(f)) fprintf(foutputfile, "or(blah)");
-	else if(isXOR(f)) fprintf(foutputfile, "xor(blah)");
-	else if(isAND(f)) fprintf(foutputfile, "and(blah)");
-	else if(f->thenCase == f->elseCase->notCase) fprintf(foutputfile, "equ(%d, ", f->variable);
-	else if(isMIN_MAX(f, bdd_vars, bdd_length)) fprintf(foutputfile, "minmax(blah)");
-
-}
 
 BDDNode *putite(int intnum, BDDNode * bdd)
 {
@@ -401,7 +363,7 @@ BDDNode *putite(int intnum, BDDNode * bdd)
 			 (!strcasecmp(macros, "equ")) || (!strcasecmp(macros, "imp")) ||
 			 (!strcasecmp(macros, "countT")) || (!strcasecmp(macros, "and")) ||
 			 (!strcasecmp(macros, "xor")) || (!strcasecmp(macros, "or")) ||
-		    (!strcasecmp(macros, "same"))) {
+		    (!strcasecmp(macros, "same")) || (!strcasecmp(macros, "print_smurf_dot_stdout"))) {
 			fprintf(stderr, "\n%s is a reserved word...exiting:%d\n", macros, markbdd_line);
 			exit (1);
 		}

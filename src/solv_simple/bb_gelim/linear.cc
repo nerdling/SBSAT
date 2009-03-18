@@ -565,15 +565,22 @@ int ApplyInferenceToXORGElimTable (XORGElimTableStruct *x, int nVar, bool bValue
 						 return 0;
 				}
 			}
-      vn=(VecType*)&(((unsigned char*)vn)[vecs_rec_bytes]);
-    }
+         vn=(VecType*)&(((unsigned char*)vn)[vecs_rec_bytes]);
+      }
 	}
-
+   
 	return 1; // Normal ending
 }
 
 void printframeSize () {
 	cout << "frame: " << frame_size << "\n";
+}
+
+int isMaskZero(XORGElimTableStruct *x) {
+   for (int i=0 ; i < vec_size ; i++) {
+      if(((VecType*)(x->mask))[i]!=0) return 0;
+   }
+   return 1;
 }
 
 void printMask (XORGElimTableStruct *x) {

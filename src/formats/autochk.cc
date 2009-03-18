@@ -127,7 +127,7 @@ char getformat () {
 
    // check for DIMACS
    if (feof(finputfile)) return 0;
-   while (a == 'c') {
+   while (a == 'c' || a == '\n') {
       while (a != '\n') {
          a = fgetc (finputfile);
          if (feof(finputfile)) return 0;

@@ -101,8 +101,9 @@ ITE_INLINE int ApplyInference_Hooks(int nBranchVar, bool bBVPolarity) {
 		arrPMVSIDS[nBranchVar]++;
 	}
 	
-	if(use_XORGElim==1) //SEAN!!! Would prefer not to do this if variable is not in the GE Table.
-	  ret = ApplyInferenceToXORGElimTable(SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].XORGElimTable, nBranchVar, bBVPolarity);
+	if(use_XORGElim==1) { //SEAN!!! Would prefer not to do this if variable is not in the GE Table.
+      ret = ApplyInferenceToXORGElimTable(SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].XORGElimTable, nBranchVar, bBVPolarity);
+   }
 
 	return ret;	
 }
@@ -117,7 +118,8 @@ ITE_INLINE int ApplyInferenceToSmurf_Hooks(int nBranchVar, bool bBVPolarity, int
 										  ((XORGElimStateEntry *)arrSmurfStates[nSmurfIndex])->pnTransitionVars);
 		if(ret == 1) {
 			//To use the normal LSGB heuristic, comment out the line below.
-			//arrSmurfStates[nSmurfIndex] = pTrueSimpleSmurfState; //addRowXORGElimTable returns -1 if the table is full.
+			arrSmurfStates[nSmurfIndex] = pTrueSimpleSmurfState; //addRowXORGElimTable returns -1 if the table is full.
+         SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumSmurfsSatisfied++;
 		} else if (ret == -1) {
 			ret = 1;			
 		}
@@ -157,6 +159,7 @@ ITE_INLINE void Init_Solver_PreSmurfs_Hooks() {
 	
 	if(use_XORGElim==1) {
 		initXORGElimTable(SimpleSmurfProblemState->nNumVars);
+      SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumSmurfsSatisfied--; //SEAN!!! TOTAL HACK!
 	}
 	
 }
@@ -210,7 +213,8 @@ ITE_INLINE int Init_Solver_PostSmurfs_Hooks(void **arrSmurfStates) {
 				if(ret == 0) return SOLV_UNSAT;
 				if(ret == 1) {
 					//To use the normal LSGB heuristic, comment out the line below.
-					//arrSmurfStates[nSmurfIndex] = pTrueSimpleSmurfState; //addRowXORGElimTable returns -1 if the table is full.
+					arrSmurfStates[nSmurfIndex] = pTrueSimpleSmurfState; //addRowXORGElimTable returns -1 if the table is full.
+               SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumSmurfsSatisfied++;
 				} else if (ret == -1) {
 					ret = 1;
 				}

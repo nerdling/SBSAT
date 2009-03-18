@@ -137,6 +137,30 @@ void FreeSmurfStack() {
 }
 
 void Init_SimpleSmurfProblemState() {
+   arrStatesTypeSize = (int *)ite_calloc(NUM_SMURF_TYPES, sizeof(int), 9, "arrStatesTypeSize");
+   arrStatesTypeSize[FN_FREE_STATE] = sizeof(char);
+   arrStatesTypeSize[FN_TYPE_STATE] = sizeof(TypeStateEntry);
+
+   arrApplyInferenceToState = (ApplyInferenceToState *)ite_calloc(NUM_SMURF_TYPES, sizeof(ApplyInferenceToState), 9, "arrApplyInferenceToState");
+   arrPrintStateEntry = (PrintStateEntry *)ite_calloc(NUM_SMURF_TYPES, sizeof(PrintStateEntry), 9, "arrPrintStateEntry");
+   arrPrintStateEntry_dot = (PrintStateEntry_dot *)ite_calloc(NUM_SMURF_TYPES, sizeof(PrintStateEntry_dot), 9, "arrPrintStateEntry_dot");
+   arrFreeStateEntry = (FreeStateEntry *)ite_calloc(NUM_SMURF_TYPES, sizeof(FreeStateEntry), 9, "arrFreeStateEntry");
+   arrCalculateStateHeuristic = (CalculateStateHeuristic *)ite_calloc(NUM_SMURF_TYPES, sizeof(CalculateStateHeuristic), 9, "arrCalculateStateHeuristic");
+	arrSetStateHeuristicScore = (SetStateHeuristicScore *)ite_calloc(NUM_SMURF_TYPES, sizeof(SetStateHeuristicScore), 9, "arrSetStateHeuristicScore");
+   arrGetStateHeuristicScore = (GetStateHeuristicScore *)ite_calloc(NUM_SMURF_TYPES, sizeof(GetStateHeuristicScore), 9, "arrGetStateHeuristicScore");
+   
+	initSmurfStateType();
+	initORStateType();
+	initORCounterStateType();
+	initXORStateType();
+	initXORCounterStateType();
+	initXORGElimStateType();
+	initMINMAXStateType();
+	initMINMAXCounterStateType();
+	initNEGMINMAXStateType();
+	initNEGMINMAXCounterStateType();
+	initInferenceStateType();
+   
    //Create the pTrueSimpleSmurfState entry
 	
    SimpleSmurfProblemState = (ProblemState *)ite_calloc(1, sizeof(ProblemState), 9, "SimpleSmurfProblemState");
@@ -170,30 +194,6 @@ void Init_SimpleSmurfProblemState() {
 
 //This function initializes a lot of memory, e.g. creating the smurfs from the BDDs.
 int ReadAllSmurfsIntoTable(int nNumVars) {
-   arrStatesTypeSize = (int *)ite_calloc(NUM_SMURF_TYPES, sizeof(int), 9, "arrStatesTypeSize");
-   arrStatesTypeSize[FN_FREE_STATE] = sizeof(char);
-   arrStatesTypeSize[FN_TYPE_STATE] = sizeof(TypeStateEntry);
-
-   arrApplyInferenceToState = (ApplyInferenceToState *)ite_calloc(NUM_SMURF_TYPES, sizeof(ApplyInferenceToState), 9, "arrApplyInferenceToState");
-   arrPrintStateEntry = (PrintStateEntry *)ite_calloc(NUM_SMURF_TYPES, sizeof(PrintStateEntry), 9, "arrPrintStateEntry");
-   arrPrintStateEntry_dot = (PrintStateEntry_dot *)ite_calloc(NUM_SMURF_TYPES, sizeof(PrintStateEntry_dot), 9, "arrPrintStateEntry_dot");
-   arrFreeStateEntry = (FreeStateEntry *)ite_calloc(NUM_SMURF_TYPES, sizeof(FreeStateEntry), 9, "arrFreeStateEntry");
-   arrCalculateStateHeuristic = (CalculateStateHeuristic *)ite_calloc(NUM_SMURF_TYPES, sizeof(CalculateStateHeuristic), 9, "arrCalculateStateHeuristic");
-	arrSetStateHeuristicScore = (SetStateHeuristicScore *)ite_calloc(NUM_SMURF_TYPES, sizeof(SetStateHeuristicScore), 9, "arrSetStateHeuristicScore");
-   arrGetStateHeuristicScore = (GetStateHeuristicScore *)ite_calloc(NUM_SMURF_TYPES, sizeof(GetStateHeuristicScore), 9, "arrGetStateHeuristicScore");
-   
-	initSmurfStateType();
-	initORStateType();
-	initORCounterStateType();
-	initXORStateType();
-	initXORCounterStateType();
-	initXORGElimStateType();
-	initMINMAXStateType();
-	initMINMAXCounterStateType();
-	initNEGMINMAXStateType();
-	initNEGMINMAXCounterStateType();
-	initInferenceStateType();
-   
 	Init_SimpleSmurfProblemState();
 	SimpleSmurfProblemState->nNumSmurfs = nmbrFunctions;
 	SimpleSmurfProblemState->nNumVars = nNumVars;

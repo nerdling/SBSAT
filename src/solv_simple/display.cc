@@ -72,11 +72,11 @@ void PrintSmurf_dot(void *pState) {
 	} else if(((TypeStateEntry *)pState)->cType == FN_SMURF) {
 		PrintSmurfStateEntry_dot(pState);
 		fprintf(stdout, " b%p [shape=\"ellipse\", label=\"S\"]\n", (void *)pState);
-		SmurfStateEntry *pState = (SmurfStateEntry *)pState;
-		while(pState!=NULL) {
-			PrintSmurf_dot(pState->pVarIsTrueTransition); //Recurse
-			PrintSmurf_dot(pState->pVarIsFalseTransition); //Recurse
-			pState = (SmurfStateEntry *)pState->pNextVarInThisState;
+		SmurfStateEntry *pSmurfState = (SmurfStateEntry *)pState;
+		while(pSmurfState!=NULL) {
+			PrintSmurf_dot(pSmurfState->pVarIsTrueTransition); //Recurse
+			PrintSmurf_dot(pSmurfState->pVarIsFalseTransition); //Recurse
+			pSmurfState = (SmurfStateEntry *)pSmurfState->pNextVarInThisState;
 		}
 	} else if(((TypeStateEntry *)pState)->cType == FN_INFERENCE) {
 		PrintInferenceStateEntry_dot(pState);

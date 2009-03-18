@@ -57,6 +57,8 @@ int ApplyInferenceToXORGElimTable(XORGElimTableStruct *x, int nVar, bool bValue)
 
 void LSGBXORGElimTableGetHeurScore(XORGElimTableStruct *x);
 
+int isMaskZero(XORGElimTableStruct *x);
+
 void printFrameSize(XORGElimTableStruct *x);
 void printLinearN(XORGElimTableStruct *x);
 void printLinear(XORGElimTableStruct *x);
