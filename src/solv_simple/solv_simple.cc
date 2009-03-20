@@ -10,6 +10,8 @@ int simple_solver_reset_level=-1;
 int add_one_display=0;
 int solutions_overflow=0;
 long nNextRestart = 0;
+int MAX_RESTARTS = 10;
+int nNumRestarts = 0;
 int backtrack_level = 0;
 
 ITE_INLINE 
@@ -622,8 +624,9 @@ int SimpleBrancher() {
 				&& (result_display_type || simple_solver_reset_level!=-1 || (SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumSmurfsSatisfied < SimpleSmurfProblemState->nNumSmurfs))
 				) {
 
-			if(use_RapidRestarts && ite_counters[NUM_BACKTRACKS]>nNextRestart) {
+			if(use_RapidRestarts && nNumRestarts<MAX_RESTARTS && ite_counters[NUM_BACKTRACKS]>nNextRestart) {
 				nNextRestart+=Simple_nextRestart();
+				nNumRestarts++;
 				d3_printf1("Restarting\n");
 				ite_counters[NUM_SOLUTIONS]=0;
 				nSimpleSolver_Reset=0;

@@ -117,7 +117,7 @@ int Do_Rewind() {
 
 	int Total_inferences = Pos_replace + Neg_replace + Setting_Pos + Setting_Neg;
 
-	fprintf(stderr, "%d, %d, %d, %ld, %4.2f, %lldM\n", tier, num_safe_assigns, Total_inferences, numinp, get_runtime()-start_prep, memory_used/1024);
+	//fprintf(stderr, "%d, %d, %d, %ld, %4.2f, %lldM\n", tier, num_safe_assigns, Total_inferences, numinp, get_runtime()-start_prep, memory_used/1024);
 
 	if (Total_inferences > num_inferences) num_inferences = Total_inferences;
 	else {
