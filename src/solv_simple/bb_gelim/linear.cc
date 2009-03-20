@@ -392,7 +392,10 @@ ITE_INLINE int rediagonalizeXORGElimTable(XORGElimTableStruct *x, VecType *vec, 
 
 	// If k == -1 then no 1's were found in the new vector.
 	if (k == -1) {
-		if (vec[0]&1) return 0; // Inconsistent.
+		if (vec[0]&1) {
+         //SEAN!!! Here one would need to add sort of a strange lemma
+         return 0; // Inconsistent.
+      }
 		else return 2; // No change
 	}
 	

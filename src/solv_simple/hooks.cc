@@ -119,7 +119,7 @@ ITE_INLINE int ApplyInferenceToSmurf_Hooks(int nBranchVar, bool bBVPolarity, int
 		if(ret == 1) {
 			//To use the normal LSGB heuristic, comment out the line below.
 			//arrSmurfStates[nSmurfIndex] = pTrueSimpleSmurfState; //addRowXORGElimTable returns -1 if the table is full.
-         SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumSmurfsSatisfied++;
+         //SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumSmurfsSatisfied++;
 		} else if (ret == -1) {
 			ret = 1;			
 		}
@@ -214,7 +214,7 @@ ITE_INLINE int Init_Solver_PostSmurfs_Hooks(void **arrSmurfStates) {
 				if(ret == 1) {
 					//To use the normal LSGB heuristic, comment out the line below.
 					//arrSmurfStates[nSmurfIndex] = pTrueSimpleSmurfState; //addRowXORGElimTable returns -1 if the table is full.
-               SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumSmurfsSatisfied++;
+               //SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumSmurfsSatisfied++;
 				} else if (ret == -1) {
 					ret = 1;
 				}

@@ -1642,7 +1642,7 @@ BDDNode *safe_assign_eq(BDDNode *f, int v) {
 	return safe_infs;
 }
 
-//SEAN CONTINUE WORKING ON THIS!!!
+//SEAN!!! CONTINUE WORKING ON THIS
 BDDNode *_safe_assign_func(BDDNode *, BDDNode *);
 
 BDDNode *safe_assign_func(BDDNode *f, int x) {
