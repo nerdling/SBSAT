@@ -304,12 +304,12 @@ int ReadAllSmurfsIntoTable(int nNumVars) {
 			 }
 			 );
 		BDDNode *pInitialBDD = functions[nSmurfIndex];
-// SEAN!!! THIS IS JUST PLAIN WRONG.
-//		if(pInitialBDD->pState != NULL && smurfs_share_states) { //Duplicate Smurf
-//			d7_printf2("Removing duplicate Smurf #%d\n", nSmurfIndex); //This really shouldn't happen because the BDD preprocessor should have already removed all duplicates.
-//			SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates[nSmurfIndex] = pTrueSimpleSmurfState;
-//		} else
-		 {
+		if(nSmurfIndex > 0 && pInitialBDD->pState != NULL && smurfs_share_states &&
+         SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates[((TypeStateEntry *)pInitialBDD->pState)->pStateOwner] == pInitialBDD->pState) { //Duplicate Smurf
+         //This really shouldn't happen because the BDD preprocessor should have already removed all duplicates.
+         d7_printf2("Removing duplicate Smurf #%d\n", nSmurfIndex);
+			SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates[nSmurfIndex] = pTrueSimpleSmurfState;
+		} else {
 			if(!smurfs_share_states) {
 				clear_all_bdd_pState(); 
 				true_ptr->pState = pTrueSimpleSmurfState;
