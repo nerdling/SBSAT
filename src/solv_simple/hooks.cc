@@ -168,6 +168,10 @@ ITE_INLINE void Init_Solver_PreSmurfs_Hooks() {
 ITE_INLINE int Init_Solver_MidSmurfs_Hooks(int nSmurfIndex, void **arrSmurfStates) {
 	int ret = SOLV_UNKNOWN;
 	
+   D_9(
+       arrPrintStateEntry[((TypeStateEntry *)arrSmurfStates[nSmurfIndex])->cType](arrSmurfStates[nSmurfIndex]);
+       );
+   
 	return ret;
 }
 
@@ -224,7 +228,7 @@ ITE_INLINE int Init_Solver_PostSmurfs_Hooks(void **arrSmurfStates) {
 
 	for(int nSmurfIndex = 0; nSmurfIndex < SimpleSmurfProblemState->nNumSmurfs; nSmurfIndex++) {
 		if(((TypeStateEntry *)arrSmurfStates[nSmurfIndex])->cType == FN_INFERENCE) {
-			ret = TransitionInference(nSmurfIndex, arrSmurfStates);			
+         ret = TransitionInference(nSmurfIndex, arrSmurfStates);			
 		}
 	}
 	

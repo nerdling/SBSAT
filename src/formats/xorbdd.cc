@@ -205,16 +205,16 @@ int print_xor_of_ands_file_ver2(xor_of_ands *top_xor, int use_symtable) {
 	return ret;
 }
 
-void print_xor_of_ands_file(xor_of_ands *top_xor) {
+void print_xor_of_ands_file(xor_of_ands *top_xor, int use_symtable) {
 	for(int x = 0; x < top_xor->curr_length-1; x++) {
 		if(top_xor->vars_in_and[x] == -1) { // This should never happen
 			fprintf(stderr, "XDD is malformed...exiting\n");
 			exit(0);
 		}
-		else fprintf(foutputfile, "x[%d]*", top_xor->vars_in_and[x]);
+		else fprintf(foutputfile, "x[%d]*", use_symtable?atoi(getsym_i(top_xor->vars_in_and[x])->name):top_xor->vars_in_and[x]);
 	}
 	if(top_xor->vars_in_and[top_xor->curr_length-1] == -1) fprintf(foutputfile, "1");
-	else fprintf(foutputfile, "x[%d]", top_xor->vars_in_and[top_xor->curr_length-1]);
+	else fprintf(foutputfile, "x[%d]", use_symtable?atoi(getsym_i(top_xor->vars_in_and[top_xor->curr_length-1])->name):top_xor->vars_in_and[top_xor->curr_length-1]);
 	for(xor_of_ands *tmp = top_xor->next_and; tmp!=NULL; tmp = tmp->next_and) {
 		fprintf(foutputfile, " + ");
 		
@@ -223,10 +223,10 @@ void print_xor_of_ands_file(xor_of_ands *top_xor) {
 				fprintf(stderr, "XDD is malformed...exiting\n");
 				exit(0);
 			}
-			else fprintf(foutputfile, "x[%d]*", tmp->vars_in_and[x]);
+			else fprintf(foutputfile, "x[%d]*", use_symtable?atoi(getsym_i(tmp->vars_in_and[x])->name):tmp->vars_in_and[x]);
 		}
 		if(tmp->vars_in_and[tmp->curr_length-1] == -1) fprintf(foutputfile, "1");
-		else fprintf(foutputfile, "x[%d]", tmp->vars_in_and[tmp->curr_length-1]);
+		else fprintf(foutputfile, "x[%d]", use_symtable?atoi(getsym_i(tmp->vars_in_and[tmp->curr_length-1])->name):tmp->vars_in_and[tmp->curr_length-1]);
 	}
 }
 
@@ -299,11 +299,12 @@ void print_flat_xdd(BDDNode *xdd, int size) {
 }
 
 void print_flat_xdd_file(BDDNode *xdd, int size) {
+	int use_symtable = sym_all_int();
 	xor_of_ands *top_xor = get_flat_xdd(xdd, size);
 	if(top_xor == NULL) return;
 	//print_xor_of_ands_file(top_xor);
 	top_xor = invert_xor_of_ands(top_xor);
-	print_xor_of_ands_file(top_xor);
+	print_xor_of_ands_file(top_xor, use_symtable);
 	free_xor_of_ands(top_xor);	
 }
 
@@ -326,6 +327,7 @@ void print_flat_xor_file(BDDNode *xdd, int size, int use_symtable) {
 }
 
 void printLinearFormat() {
+	int use_symtable = sym_all_int();
 	fprintf(foutputfile, "%ld\n", numinp);
 	fprintf(foutputfile, "[\n");
 	BDDNode *xdd = bdd2xdd(functions[0]);
@@ -340,7 +342,8 @@ void printLinearFormat() {
 
 	for(int x=1; x < numinp; x++) {
 		fprintf(foutputfile, ",\n");
-		fprintf(foutputfile, "x[%d]^2 + x[%d]\n", x, x);
+		fprintf(foutputfile, "x[%d]^2 + x[%d]\n", use_symtable?atoi(getsym_i(x)->name):x,
+                                                use_symtable?atoi(getsym_i(x)->name):x);
 	}
 	fprintf(foutputfile, "];\n");
 }
@@ -599,15 +602,14 @@ void xorloop () {
 	vars_alloc(numinp+2);
 	functions_alloc(numout+2);
 
-	int temp_vars = 1;
+	int temp_vars = numinp+2;
 	
-	//int *keep = new int[numout + 2];
 	BDDNode **bdds = (BDDNode **)ite_calloc(1000, sizeof(BDDNode *), 9, "bdds - xorformat");
 	int bdds_size = 1000;
 	int p = 0;
 
 	for (int x = 0; x < numinp + 1; x++) {
-		independantVars[x] = 0;
+		independantVars[x] = 1;
 	}
 	
 	while (1) {				//(p = fgetc(finputfile))!=(unsigned int)EOF) 
@@ -693,20 +695,48 @@ void xorloop () {
 				exit (0);
 			}
 		}
-	
-		/*BDDNode *linear = false_ptr;*/
+
+      //Add the new function
+      char tmp_char[100];      
+      int max_size_xor = 0;
+      for(int i = 0; i < nmbrxors; i++) {
+         int size_xor = 0;
+         for(BDDNode *tmp = bdds[i]; !IS_TRUE_FALSE(tmp); tmp = tmp->thenCase) {
+            if(++size_xor > 1) { max_size_xor++; break; }
+         }
+      }
+           
 		BDDNode *excess = false_ptr;
-		for(int i = 0; i < nmbrxors; i++) {
-			  excess = ite_xor(excess, bdds[i]);
-		}
+		if(max_size_xor < 10 /* || 1*/) {
+         for(int i = 0; i < nmbrxors; i++) {
+            excess = ite_xor(excess, bdds[i]);
+            //excess = xddxor(excess, bdd2xdd(bdds[i]));
+         }
+      } else {
+         for(int i = 0; i < nmbrxors; i++) {
+            int size_xor = 0;
+            for(BDDNode *tmp = bdds[i]; !IS_TRUE_FALSE(tmp); tmp = tmp->thenCase) 
+              if(++size_xor > 1) break;
+            if(size_xor > 1) {
+               sprintf(tmp_char, "%d", temp_vars++);
+               int new_var = i_getsym(tmp_char, SYM_VAR);
+               functions_add(ite_equ(ite_var(new_var), bdds[i]), AND_EQU, new_var);
+               independantVars[new_var] = 0;
+               excess = ite_xor(excess, ite_var(new_var));
+            } else {
+               excess = ite_xor(excess, bdds[i]);
+            }
+         }
+      }
 		
 		free(vars);
 
-      if(p=='0')			  
-         excess = ite_equ(excess, false_ptr);
-      else if(p=='1')
-         excess = ite_equ(excess, true_ptr);
-      else {
+      if(p=='0') {
+         //excess = xddnot(excess);
+         excess = ite_not(excess);
+      } else if(p=='1') {
+        //Do nothing
+      } else {
          fprintf (stderr, "\n0 or 1 expected...exiting:%d\n", xorbdd_line);
          exit (0);	
       }
