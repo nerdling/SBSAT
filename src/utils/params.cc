@@ -448,6 +448,7 @@ init_params()
 {
    for(int i=0;i<MAX_FUNC;i++)
       functionTypeLimits[i] = 1000000000; /* huge number max_int? */
+	functionTypeLimits[XDD] = 0; //Don't want to mess with XDDs
 }
 
 /* To be used with "SATRAM" or "SATTIMEOUT" */

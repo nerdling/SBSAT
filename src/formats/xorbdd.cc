@@ -707,7 +707,7 @@ void xorloop () {
       }
            
 		BDDNode *excess = false_ptr;
-		if(max_size_xor < 10 /* || 1*/) {
+		if(max_size_xor < 10 /*|| 1*/) {
          for(int i = 0; i < nmbrxors; i++) {
             excess = ite_xor(excess, bdds[i]);
             //excess = xddxor(excess, bdd2xdd(bdds[i]));
@@ -741,6 +741,7 @@ void xorloop () {
          exit (0);	
       }
       functionType[nmbrFunctions] = UNSURE;
+		//functionType[nmbrFunctions] = XDD;
       functions[nmbrFunctions] = excess;
       d4_printf2("BDD $%d: ", nmbrFunctions);
       D_4(printBDDfile(functions[nmbrFunctions], stddbg);)
@@ -764,6 +765,13 @@ void xorloop () {
 	//d4_printf1("\n");
 	Exit:;
 
+//	for(int x = 1; x < nmbrFunctions; x++) {
+//		fprintf(stderr, "%d\n", x);
+//		bdd_gc(1);
+//		functions[0] = ite_and(functions[0], functions[x]);
+//		functions[x] = true_ptr;
+//	}
+	
 	numinp = numinp+temp_vars;
 	
    d2_printf1("\rReading XOR ... Done\n");

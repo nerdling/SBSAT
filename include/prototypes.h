@@ -106,7 +106,6 @@ double calculateNeed(BDDNode *f, int v, int pos); //For calculating sigma of the
 void DNF_to_CNF();
 int CNF_to_BDD();
 //CircuitStruct *split(int, int);
-BDDNode *set_variable_noflag(BDDNode *, int, int);
 void cheat_replace(BDDNode *, int, int);
 void num_replace_all(llist *, int , int);
 BDDNode *num_replace(BDDNode *, int, int);
@@ -135,9 +134,16 @@ void printBDDToAAG();
 
 void GetInferFoAN(BDDNode *);
 infer *GetInfer(int *, int *, int **, BDDNode *);
+BDDNode *set_variable_noflag(BDDNode *, int, int);
 void set_variable_all(llist *, int, int);
 BDDNode *set_variable(BDDNode *, int, int);
 BDDNode *set_variable_all_infs(BDDNode *);
+BDDNode *set_variable_noflag(BDDNode *, int, int);
+
+//XDD set variable
+BDDNode *set_variable_xdd_noflag(BDDNode *, int, int);
+BDDNode *set_variable_xdd(BDDNode *, int, int);
+
 extern int vars_max;
 int vars_alloc(int);
 extern int functions_max;

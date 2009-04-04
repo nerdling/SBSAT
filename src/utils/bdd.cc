@@ -47,6 +47,7 @@ enum {
    UNRAVELBDD_FLAG_NUMBER, /* starting bdd dependent */
    COUNTX_FLAG_NUMBER, /* X dependent */
    SETVARIABLE_FLAG_NUMBER, /* torf+-num dependent */
+   SETVARIABLEXDD_FLAG_NUMBER, /* torf+-num dependent */
    SETVARIABLEALL_FLAG_NUMBER, /* variable list dependent */
    NUMREPLACE_FLAG_NUMBER, /* var/replace dependent */
    NUMREPLACEALL_FLAG_NUMBER, /* var/replace list dependent */
@@ -545,6 +546,43 @@ BDDNode *xddand(BDDNode *x, BDDNode *y) {
 	return itetable_add_node(15, x, y, find_or_add_node(v, r, e));
 }
 
+BDDNode *set_variable_xdd_noflag(BDDNode * f, int num, int torf) {
+	if (f->variable < num) return f;
+	if (f->variable == num) {
+		if(torf) return xddxor(f->thenCase, f->elseCase);
+		else return f->elseCase;                                                        
+	}
+	
+	BDDNode *r = set_variable_xdd_noflag(f->thenCase, num, torf);                         
+	BDDNode *e = set_variable_xdd_noflag(f->elseCase, num, torf);                         
+	if (r == false_ptr) return e;
+	return find_or_add_node(f->variable, r, e);                                       
+}
+
+BDDNode *_set_variable_xdd (BDDNode *f, int num, int torf);
+
+BDDNode * set_variable_xdd (BDDNode *f, int num, int torf) {
+   start_bdd_flag_number(SETVARIABLEXDD_FLAG_NUMBER);
+   return _set_variable_xdd(f, num, torf);
+}
+
+BDDNode * _set_variable_xdd (BDDNode * f, int num, int torf) {
+	if (f->variable < num) return f;
+	
+   if (f->flag == bdd_flag_number) return f->tmp_bdd;
+	//if (f->notCase->flag == bdd_flag_number) return f->notCase->tmp_bdd->notCase; //XDDs don't currently have a notCase
+   f->flag = bdd_flag_number;
+   
+	if (f->variable == num) {
+      if (torf) return (f->tmp_bdd = xddxor(f->thenCase, f->elseCase));
+      else return (f->tmp_bdd = f->elseCase);
+   }
+   BDDNode * r = _set_variable_xdd (f->thenCase, num, torf);
+   BDDNode * e = _set_variable_xdd (f->elseCase, num, torf);
+   if (r == false_ptr) return (f->tmp_bdd = e);
+   return (f->tmp_bdd = find_or_add_node (f->variable, r, e));
+}
+  
 BDDNode *_bdd2xdd(BDDNode *x);
 
 BDDNode *bdd2xdd(BDDNode *x) {

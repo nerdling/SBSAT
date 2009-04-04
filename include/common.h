@@ -78,7 +78,7 @@ enum {
   ITE,       /* 11 */
   NITE,      /* 12 */
   AND_EQUAL, /* 13 */
-  NEW_INT_LEAF,  /* 14 */
+  NEW_INT_LEAF, /* 14 */
   IMPAND,    /* 15 *///x-> a & b & c
   IMPOR,     /* 16 *///x-> a v b v c
   PLAINOR,   /* 17 *///a v b v c
@@ -86,8 +86,9 @@ enum {
   PLAINXOR,  /* 19 *///a + b + c
   MINMAX,    /* 20 */
   NEG_MINMAX,/* 21 */
+  XDD,       /* 22 */
 
-  EQU_BASE=22,  /* equ_base + 0 */
+  EQU_BASE=23,  /* equ_base + 0 */
   AND_EQU,       /* equ_base + 1 */
   NAND_EQU,      /* equ_base + 2 */
   OR_EQU,        /* equ_base + 3 */
