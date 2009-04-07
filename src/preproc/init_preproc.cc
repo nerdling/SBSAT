@@ -594,4 +594,3 @@ int add_newFunctions(BDDNode **new_bdds, int new_size, int **free_spots_pass) {
 	return PREP_CHANGED;
 	
 }
-

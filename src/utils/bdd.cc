@@ -1534,8 +1534,7 @@ void _unravelBDD(int *y, int *max, int **tempint, BDDNode * func) {
 
 BDDNode * _set_variable (BDDNode * f, int num, int torf);
 
-BDDNode * set_variable_all_infs(BDDNode *f) 
-{
+BDDNode * set_variable_all_infs(BDDNode *f) {
    int num,torf;
    infer *head = f->inferences;
    while(head != NULL) {
@@ -1576,8 +1575,7 @@ BDDNode * set_variable (BDDNode * f, int num, int torf) {
    return _set_variable(f, num, torf);
 }
 
-BDDNode * _set_variable (BDDNode * f, int num, int torf)
-{
+BDDNode * _set_variable (BDDNode * f, int num, int torf) {
 	if (f->variable < num) return f;
 
    if (f->flag == bdd_flag_number) return f->tmp_bdd;

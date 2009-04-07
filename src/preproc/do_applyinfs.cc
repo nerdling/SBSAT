@@ -715,7 +715,7 @@ int Rebuild_BDDx (int x) {
 	
 	if (functions[x] == false_ptr)
 	  return TRIV_UNSAT;
-	
+
 	//Get Inferences	
 	infer *lastiter = NULL;
 	infer *startiter = NULL;
@@ -893,12 +893,11 @@ int Rebuild_BDDx (int x) {
       variables[x].max = tempint[y-1];
    }
 
-   //A line like this would be better placed in smurffactory
-	//where the smurfs are made...maybe...we like to be able to preprocess
-	//things that have been made small...
-	functionType[x] = UNSURE;
-	equalityVble[x] = 0;
-	findandset_fnType(x);
+	if(functionType[x] != XDD) {
+		functionType[x] = UNSURE;
+		equalityVble[x] = 0;
+		findandset_fnType(x);
+	}
 	
 	if(ge_preproc == '1' && DO_INFERENCES) {
 //	if(ge_preproc == '1') {

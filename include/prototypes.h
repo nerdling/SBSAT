@@ -53,6 +53,10 @@ BDDNode *constant_and(BDDNode *, BDDNode *);
 BDDNode *possible_BDD(BDDNode *, int);
 
 BDDNode *bdd2xdd(BDDNode *);
+BDDNode *xddnot(BDDNode *);
+BDDNode *xddxor(BDDNode *, BDDNode *);
+BDDNode *xddand(BDDNode *, BDDNode *);
+
 int splitXors();
 void countSingleXors(BDDNode *, int *, int *);
 int are_oppos(BDDNode *, BDDNode *);
