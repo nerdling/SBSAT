@@ -707,10 +707,10 @@ void xorloop () {
       }
            
 		BDDNode *excess = false_ptr;
-		if(max_size_xor < 10 || 1) {
+		if(max_size_xor < 10) {
          for(int i = 0; i < nmbrxors; i++) {
-            //excess = ite_xor(excess, bdds[i]);
-            excess = xddxor(excess, bdd2xdd(bdds[i]));
+            excess = ite_xor(excess, bdds[i]);
+            //excess = xddxor(excess, bdd2xdd(bdds[i]));
          }
       } else {
          for(int i = 0; i < nmbrxors; i++) {
@@ -732,8 +732,8 @@ void xorloop () {
 		free(vars);
 
       if(p=='0') {
-         excess = xddnot(excess);
-         //excess = ite_not(excess);
+//         excess = xddnot(excess);
+         excess = ite_not(excess);
       } else if(p=='1') {
         //Do nothing
       } else {
@@ -741,7 +741,7 @@ void xorloop () {
          exit (0);	
       }
       functionType[nmbrFunctions] = UNSURE;
-		functionType[nmbrFunctions] = XDD;
+//		functionType[nmbrFunctions] = XDD;
       functions[nmbrFunctions] = excess;
       d4_printf2("BDD $%d: ", nmbrFunctions);
       D_4(printBDDfile(functions[nmbrFunctions], stddbg);)
