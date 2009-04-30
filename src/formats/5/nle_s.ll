@@ -19,33 +19,22 @@ extern int s_line;
 %option outfile="lex.yy.c"
 %option prefix="nle_"
 
-UINT    [0-9]+
-COMMENT_HEADER ^c
-WORD [^ \n]+
-STRING [^\n]
-IO_IDENTIFIER (i|l|o)[0-9]+
-NEW_LINE "\n"
+VAR [^ *+,\n]+
+MULT   "*"
+PLUS	"+"
+COMMA	","[ \t\r\n]
 
 %%
 
 
-"aag"			return P_nle;
-{UINT}			{nle_lval.num=atoi(yytext); return UINT;}
-{IO_IDENTIFIER}		{strncpy(nle_lval.id,yytext,200); return IO_IDENTIFIER;}
+"nle"			return P_nle;
 
-"%"[^\n]*		/* eat up one-line comments */
-"#"[^\n]*		/* eat up one-line comments */
-";"[^\n]*		/* eat up one-line comments */
+[ \t\r\n]+		/* eat up whitespace */
 
-[ \t\r]+		/* eat up whitespace */
-
-{COMMENT_HEADER} 	{return COMMENT_HEADER;}
-
-{WORD}		  	{strncpy(nle_lval.id,yytext,200); return WORD;}
-
-{NEW_LINE}	        {s_line++; return NEW_LINE;}
-
-.                	{d2_printf2("Unknown char: %s",yytext);}
+{VAR}		  	{printf("var "); strncpy(nle_lval.id,yytext,200); return VAR;}
+{COMMA}			{printf("comma\n"); return COMMA;}
+{MULT}                  {printf("mult "); return MULT;}
+{PLUS}			{printf("plus "); return PLUS;}
 
 %%
 

@@ -66,7 +66,7 @@ typedef union YYSTYPE
     char id[200];  /* For returning ids.                   */
     BDDNode *bdd;  /*                                      */
 }
-/* Line 1529 of yacc.c.  */
+/* Line 1489 of yacc.c.  */
 #line 71 "libt5_a-aig_g.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

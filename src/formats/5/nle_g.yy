@@ -6,11 +6,6 @@
 #include "symtable.h"
 #define YYDEBUG 0
 int nle_counter = 0;
-int nle_inputs;
-int nle_latches;
-int nle_outputs;
-int nle_ands;
-int nle_symbols;
 
 int *nle_input_vars;
 int *nle_output_literals;
@@ -38,18 +33,21 @@ void nle_error(const char*);
     BDDNode *bdd;  /*                                      */
 }
 
-%token UINT P_nle COMMENT_HEADER WORD IO_IDENTIFIER NEW_LINE
-%type <num> UINT 
-%type <id> word WORD IO_IDENTIFIER
+%token P_nle VAR COMMA MULT PLUS
+//%type <num> UINT 
+//%type <id> word WORD IO_IDENTIFIER
 
 %% /* Grammar rules and actions follow */
 
-file:  header clauses
+file:  header lines
 ;
 
 header: /* empty */
-	| P_nle UINT UINT UINT UINT UINT NEW_LINE
-	{ nle_inputs = $3;
+	| P_nle
+	{ 
+	// cudd init?
+/*	
+	 nle_inputs = $3;
 	  nle_latches = $4;
 	  nle_outputs = $5;
 	  nle_ands = $6;
@@ -66,19 +64,18 @@ header: /* empty */
 	  functions_alloc(nle_ands);
 	  nle_input_vars = (int *) malloc(nle_inputs*sizeof(int));
 	  nle_output_literals = (int *) malloc(nle_outputs*sizeof(int));
+*/
 }	
-;
-
-clauses: /* empty */
-	| lines symbols comments
 ;
 
 lines: /* empty */
 	| lines line
 ;
 
-line: uints NEW_LINE
+line: formula | formula COMMA line
 	{ 
+	  //printf("line\n");
+/*
 	  nle_index = 0;
 	  if(nle_counter < nle_inputs){
 	    nle_input_vars[nle_counter] = nle_array[0]/2;
@@ -114,92 +111,17 @@ line: uints NEW_LINE
 	    //shouldn't reach this case
 	  }
 	  nle_counter++; 
+*/
 	}
 ;
 
-uints: /* empty */
-	| UINT uints
+formula: VAR | VAR PLUS formula | VAR MULT formula
 { 
-  nle_array[nle_index++] = $1;
+  //printf("formula\n");
+  //nle_array[nle_index++] = $1;
   /*d8_printf2("\t %d\n",$1);*/
 }
 ;
-
-
-symbols: /* empty */
-	| symbols symbol
-;
-
-symbol: IO_IDENTIFIER words NEW_LINE
-{ 
-  int index = atoi($1+1);
-  d8_printf4("symbol %c %d = %s\n",*$1,index,nle_string_buffer);
-  nle_string_index = 0;
-  nle_string_buffer[0] = '\0';
-  if(*$1 == 'i'){
-//    putsym_with_id($2, SYM_VAR, nle_input_vars[index]);
-    d8_printf2("\t%d\n",nle_input_vars[index]);
-  }else if(*$1 == 'o'){
-//    putsym_with_id($2, SYM_VAR, nle_output_literals[index]/2);
-    d8_printf2("\t%d\n",nle_output_literals[index]/2);
-  }
-
-}
-
-;
-
-
-comments: /* empty */
-	| comment_header comment_lines
-;
-
-comment_lines: /* empty */
-	| comment_lines comment_line
-{
-  d8_printf2("comment: %s \n",nle_string_buffer);
-  nle_string_index = 0;
-  nle_string_buffer[0] = '\0';
-}
-;
-
-
-comment_header: COMMENT_HEADER NEW_LINE
-;
-
-comment_line: words NEW_LINE
-;
-
-words: /* empty */
-	| words word
-{  
-  strncat(nle_string_buffer, $2, nle_string_index<1000?1000-nle_string_index:0);
-  nle_string_index += strlen($2);
-  strncat(nle_string_buffer, " ", nle_string_index<1000?1000-nle_string_index:0);
-  nle_string_index++;
-}
-	| words UINT
-{  
-  char int_str[10];
-  sprintf(int_str,"%d",$2);
-  strncat(nle_string_buffer, int_str, nle_string_index<1000?1000-nle_string_index:0);
-  nle_string_index += strlen(int_str);
-  strncat(nle_string_buffer, " ", nle_string_index<1000?1000-nle_string_index:0);
-  nle_string_index++;
-}
-;
-
-
-word: WORD
-{  
-  /*
-  strncat(nle_string_buffer, $1, nle_string_index<1000?1000-nle_string_index:0);
-  nle_string_index += strlen($1);
-  strncat(nle_string_buffer, " ", nle_string_index<1000?1000-nle_string_index:0);
-  nle_string_index++;
-  */
-}
-;
-
 
 %%
 
