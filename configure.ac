@@ -380,6 +380,13 @@ AC_CONFIG_FILES([Makefile
                  examples/example_tests.sh
                  include/Makefile
                  src/Makefile
+                 src/cudd/Makefile
+                 src/cudd/cudd/Makefile
+                 src/cudd/epd/Makefile
+                 src/cudd/include/Makefile
+                 src/cudd/mtr/Makefile
+                 src/cudd/st/Makefile
+                 src/cudd/util/Makefile
                  src/formats/5/Makefile
                  src/formats/Makefile
                  src/generator/Makefile

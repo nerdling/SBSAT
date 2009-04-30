@@ -9221,7 +9221,7 @@ fi
 
 
 
-ac_config_files="$ac_config_files Makefile doc/Makefile doc/man1/Makefile examples/Makefile examples/example_tests.sh include/Makefile src/Makefile src/formats/5/Makefile src/formats/Makefile src/generator/Makefile src/postproc/Makefile src/preproc/Makefile src/solv_smurf/Makefile src/solv_smurf/include/Makefile src/solv_smurf/fn_xor/Makefile src/solv_smurf/fn_xor_smurf/Makefile src/solv_smurf/fn_minmax/Makefile src/solv_smurf/fn_and/Makefile src/solv_smurf/fn_lemma_au/Makefile src/solv_smurf/fn_lemma/Makefile src/solv_smurf/fn_smurf_au/Makefile src/solv_smurf/fn_smurf_xor/Makefile src/solv_smurf/fn_smurf/Makefile src/solv_smurf/hr_null/Makefile src/solv_smurf/hr_lsgb_lemma/Makefile src/solv_smurf/hr_lsgbw/Makefile src/solv_smurf/hr_lsgb/Makefile src/solv_smurf/hr_lemma/Makefile src/solv_smurf/hr_vsids/Makefile src/solv_smurf/hr_berkmin/Makefile src/solv_smurf/hr_anne/Makefile src/solv_smurf/hr_minisat/Makefile src/solv_bddwalk/Makefile src/solv_wvf/Makefile src/solv_simple/Makefile src/solv_simple/include/Makefile src/solv_simple/fn_smurf/Makefile src/solv_simple/fn_inference/Makefile src/solv_simple/fn_or/Makefile src/solv_simple/fn_xor/Makefile src/solv_simple/fn_minmax/Makefile src/solv_simple/fn_negminmax/Makefile src/solv_simple/bb_gelim/Makefile src/solv_simple/bb_lemmas/Makefile src/utils/Makefile tests/Makefile tests/cnf/Makefile tests/longer_tests/Makefile tests/trace_tests/Makefile tests/trace_tests.sh tests/xor_tests.sh tests/longer_tests.sh tests/cnf_tests.sh"
+ac_config_files="$ac_config_files Makefile doc/Makefile doc/man1/Makefile examples/Makefile examples/example_tests.sh include/Makefile src/Makefile src/cudd/Makefile src/cudd/cudd/Makefile src/cudd/epd/Makefile src/cudd/include/Makefile src/cudd/mtr/Makefile src/cudd/st/Makefile src/cudd/util/Makefile src/formats/5/Makefile src/formats/Makefile src/generator/Makefile src/postproc/Makefile src/preproc/Makefile src/solv_smurf/Makefile src/solv_smurf/include/Makefile src/solv_smurf/fn_xor/Makefile src/solv_smurf/fn_xor_smurf/Makefile src/solv_smurf/fn_minmax/Makefile src/solv_smurf/fn_and/Makefile src/solv_smurf/fn_lemma_au/Makefile src/solv_smurf/fn_lemma/Makefile src/solv_smurf/fn_smurf_au/Makefile src/solv_smurf/fn_smurf_xor/Makefile src/solv_smurf/fn_smurf/Makefile src/solv_smurf/hr_null/Makefile src/solv_smurf/hr_lsgb_lemma/Makefile src/solv_smurf/hr_lsgbw/Makefile src/solv_smurf/hr_lsgb/Makefile src/solv_smurf/hr_lemma/Makefile src/solv_smurf/hr_vsids/Makefile src/solv_smurf/hr_berkmin/Makefile src/solv_smurf/hr_anne/Makefile src/solv_smurf/hr_minisat/Makefile src/solv_bddwalk/Makefile src/solv_wvf/Makefile src/solv_simple/Makefile src/solv_simple/include/Makefile src/solv_simple/fn_smurf/Makefile src/solv_simple/fn_inference/Makefile src/solv_simple/fn_or/Makefile src/solv_simple/fn_xor/Makefile src/solv_simple/fn_minmax/Makefile src/solv_simple/fn_negminmax/Makefile src/solv_simple/bb_gelim/Makefile src/solv_simple/bb_lemmas/Makefile src/utils/Makefile tests/Makefile tests/cnf/Makefile tests/longer_tests/Makefile tests/trace_tests/Makefile tests/trace_tests.sh tests/xor_tests.sh tests/longer_tests.sh tests/cnf_tests.sh"
 
 
 cat >confcache <<\_ACEOF
@@ -9838,6 +9838,13 @@ do
     "examples/example_tests.sh") CONFIG_FILES="$CONFIG_FILES examples/example_tests.sh" ;;
     "include/Makefile") CONFIG_FILES="$CONFIG_FILES include/Makefile" ;;
     "src/Makefile") CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
+    "src/cudd/Makefile") CONFIG_FILES="$CONFIG_FILES src/cudd/Makefile" ;;
+    "src/cudd/cudd/Makefile") CONFIG_FILES="$CONFIG_FILES src/cudd/cudd/Makefile" ;;
+    "src/cudd/epd/Makefile") CONFIG_FILES="$CONFIG_FILES src/cudd/epd/Makefile" ;;
+    "src/cudd/include/Makefile") CONFIG_FILES="$CONFIG_FILES src/cudd/include/Makefile" ;;
+    "src/cudd/mtr/Makefile") CONFIG_FILES="$CONFIG_FILES src/cudd/mtr/Makefile" ;;
+    "src/cudd/st/Makefile") CONFIG_FILES="$CONFIG_FILES src/cudd/st/Makefile" ;;
+    "src/cudd/util/Makefile") CONFIG_FILES="$CONFIG_FILES src/cudd/util/Makefile" ;;
     "src/formats/5/Makefile") CONFIG_FILES="$CONFIG_FILES src/formats/5/Makefile" ;;
     "src/formats/Makefile") CONFIG_FILES="$CONFIG_FILES src/formats/Makefile" ;;
     "src/generator/Makefile") CONFIG_FILES="$CONFIG_FILES src/generator/Makefile" ;;

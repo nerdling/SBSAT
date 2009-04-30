@@ -1,9 +1,14 @@
-SUBDIRS = solv_smurf solv_bddwalk solv_wvf solv_simple utils preproc postproc formats generator
+SUBDIRS = cudd solv_smurf solv_bddwalk solv_wvf solv_simple utils preproc postproc formats generator
 
 INCLUDES=-I$(top_srcdir)/include
 sources=sbsat.cc
 SBSAT_LIBS= \
-	formats/libformats.a \
+   cudd/cudd/libcudd.a \
+   cudd/epd/libepd.a \
+   cudd/mtr/libmtr.a \
+   cudd/st/libst.a \
+   cudd/util/libcuddutil.a \
+   formats/libformats.a \
 	formats/5/libt5.a \
 	solv_smurf/libsolv_smurf.a  \
 	solv_smurf/hr_null/libhrnull.a  \
