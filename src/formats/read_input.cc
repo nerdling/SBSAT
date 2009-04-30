@@ -56,6 +56,9 @@ extern FILE *iscas_in;
 int aig_parse();
 extern FILE *aig_in;
 
+int nle_parse();
+extern FILE *nle_in;
+
 int read_input_open();
 
 int
@@ -124,6 +127,13 @@ read_input()
      parser_init();
      aig_in = finputfile;
      aig_parse();
+     numinp = vars_max;
+     numout = functions_max;
+  } break;
+  case 'l': {
+     parser_init();
+     nle_in = finputfile;
+     nle_parse();
      numinp = vars_max;
      numout = functions_max;
   } break;

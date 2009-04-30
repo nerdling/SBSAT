@@ -148,7 +148,7 @@ void Init_SimpleSmurfProblemState() {
    arrCalculateStateHeuristic = (CalculateStateHeuristic *)ite_calloc(NUM_SMURF_TYPES, sizeof(CalculateStateHeuristic), 9, "arrCalculateStateHeuristic");
 	arrSetStateHeuristicScore = (SetStateHeuristicScore *)ite_calloc(NUM_SMURF_TYPES, sizeof(SetStateHeuristicScore), 9, "arrSetStateHeuristicScore");
    arrGetStateHeuristicScore = (GetStateHeuristicScore *)ite_calloc(NUM_SMURF_TYPES, sizeof(GetStateHeuristicScore), 9, "arrGetStateHeuristicScore");
-   
+
 	initSmurfStateType();
 	initORStateType();
 	initORCounterStateType();

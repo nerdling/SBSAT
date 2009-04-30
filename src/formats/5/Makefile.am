@@ -2,6 +2,7 @@ INCLUDES=-I$(top_srcdir)/include
 AM_CFLAGS=-DYYDEBUG
 sources=trace_g.yy trace_s.ll \
 	aig_g.yy aig_s.ll \
+  	nle_g.yy nle_s.ll \
 	cnf_g.yy cnf_s.ll \
 	bdd_g.yy bdd_s.ll \
 	blif_g.yy blif_s.ll \
@@ -29,8 +30,9 @@ EXTRA_DIST=functions.h bddnode.cc tracetest.cc p3.h
 	#libt5_la-iscas_g.cc 
 
 CONFIG_CLEAN_FILES= \
-        libt5_a-trace_g.h  \
-        libt5_a-aig_g.h  \
+   libt5_a-trace_g.h  \
+   libt5_a-aig_g.h  \
+   libt5_a-nle_g.h  \
 	libt5_a-cnf_g.h  \
 	libt5_a-bdd_g.h \
 	libt5_a-blif_g.h \
@@ -39,6 +41,7 @@ CONFIG_CLEAN_FILES= \
 	libt5_a-iscas_g.h \
 	libt5_a-trace_g.cc  \
 	libt5_a-aig_g.cc \
+ 	libt5_a-nle_g.cc \
 	libt5_a-cnf_g.cc  \
 	libt5_a-bdd_g.cc \
 	libt5_a-blif_g.cc \
@@ -47,6 +50,7 @@ CONFIG_CLEAN_FILES= \
 	libt5_a-iscas_g.cc \
         trace_s.cc  \
 	aig_s.cc \
+  	nle_s.cc \
 	cnf_s.cc  \
 	bdd_s.cc \
 	blif_s.cc \
