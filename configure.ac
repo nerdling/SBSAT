@@ -122,6 +122,7 @@ AC_ARG_ENABLE(64bits,
         FORCED_BITS=yes
         CCFLAGS=-m64
         CXXFLAGS=-m64
+        CFLAGS="-DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8"
         AC_COMPILE_IFELSE(
             [ AC_LANG_PROGRAM([], [dnl
                  return sizeof(void*) == 8 ? 0 : 1;
@@ -137,6 +138,7 @@ AC_ARG_ENABLE(64bits,
                     AC_MSG_CHECKING([64 bit pointer])
                     CCFLAGS="-m64 $orig_ccflags"
                     CXXFLAGS="-m64 $orig_cxxflags"
+                    CFLAGS="-DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8"
 	            AC_DEFINE(SBSAT_64BIT,true,[Do we have 64 bit enabled?])
 	            AC_MSG_RESULT(yes)
                 ],[
@@ -164,6 +166,7 @@ else
         FORCED_BITS=yes
         CCFLAGS=-m64
         CXXFLAGS=-m64
+        CFLAGS="-DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8"
         AC_COMPILE_IFELSE(
             [ AC_LANG_PROGRAM([], [dnl
                  return sizeof(void*) == 8 ? 0 : 1;
@@ -179,6 +182,7 @@ else
                     AC_MSG_CHECKING([64 bit pointer])
                     CCFLAGS="-m64 $orig_ccflags"
                     CXXFLAGS="-m64 $orig_cxxflags"
+                    CFLAGS="-DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8"
 	            AC_DEFINE(SBSAT_64BIT,true,[Do we have 64 bit enabled?])
 	            AC_MSG_RESULT(yes)
                 ],[
@@ -210,7 +214,7 @@ AM_CONDITIONAL(SBSAT_STATIC, test x$sbsat_static = xtrue)
 # [LIBS="${LIBS} -L${withval}"])
 
 CXXFLAGS="${CXXFLAGS} ${MYCXXFLAGS} ${INCL}"
-CFLAGS="${CXXFLAGS}"
+CFLAGS="${CFLAGS} ${CXXFLAGS} -DHAVE_IEEE_754"
 CCFLAGS="${CCFLAGS} ${MYCCFLAGS} ${INCL}"
 
 cvsbuild=false

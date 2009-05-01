@@ -53,6 +53,7 @@ int c;
 #endif
 
 #ifndef UNIX
+#ifndef MAC
 #include <stdio.h>
 
 FILE *
@@ -72,6 +73,7 @@ FILE *fp;
     (void) fprintf(stderr, "pclose not supported on your operating system\n");
     return -1;
 }
+#endif
 #endif
 
 /* put something here in case some compilers abort on empty files ... */
