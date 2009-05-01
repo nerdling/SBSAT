@@ -60,6 +60,9 @@
 /* Define to 1 if you have the <ncurses/termcap.h> header file. */
 #undef HAVE_NCURSES_TERMCAP_H
 
+/* Define to 1 if you have the `popen' function. */
+#undef HAVE_POPEN
+
 /* Define to 1 if the system has the type `ptrdiff_t'. */
 #undef HAVE_PTRDIFF_T
 

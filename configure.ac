@@ -342,7 +342,7 @@ AC_FUNC_MMAP
 AC_FUNC_SELECT_ARGTYPES
 AC_TYPE_SIGNAL
 AC_FUNC_STAT
-AC_CHECK_FUNCS([getpagesize gettimeofday memmove memset munmap select sqrt strcasecmp strchr strncasecmp strrchr])
+AC_CHECK_FUNCS([popen getpagesize gettimeofday memmove memset munmap select sqrt strcasecmp strchr strncasecmp strrchr])
 AC_CHECK_LIBM
 AC_SUBST(LIBM)
 
