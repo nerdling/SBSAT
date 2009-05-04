@@ -4,10 +4,17 @@
 #include <stdio.h>
 #include "bddnode.h"
 #include "symtable.h"
+
+#include "cuddObj.hh"
+
 #define YYDEBUG 0
 int nle_counter = 0;
 
-int *nle_input_vars;
+Cudd *nle_manager;	
+int nle_nvars;
+char curr[1000];
+int cp = 0;
+
 int *nle_output_literals;
 int nle_array[3];
 int nle_index = 0;
@@ -17,6 +24,10 @@ int nle_string_index = 0;
 
 int nle_lex();
 void nle_error(const char*);
+
+#define CACHE_SLOTS 1444444
+#define MAX_MEMORY 750000000
+
 //#define YYSTYPE int
 
 //void nle_nothing() { goto yyerrlab1; };
@@ -33,19 +44,28 @@ void nle_error(const char*);
     BDDNode *bdd;  /*                                      */
 }
 
-%token P_nle VAR COMMA MULT PLUS
-//%type <num> UINT 
+%token P_nle VAR COMMA MULT PLUS UINT CONSTANT
+%type <num> UINT 
+%type <id> VAR
 //%type <id> word WORD IO_IDENTIFIER
 
 %% /* Grammar rules and actions follow */
 
-file:  header lines
+file:  header formulas
+{
+
+
+       printf("%s\n\n",curr);
+}
 ;
 
 header: /* empty */
-	| P_nle
+	| P_nle UINT
 	{ 
-	// cudd init?
+	nle_nvars = $2;
+	printf("num vars %d\n",nle_nvars);
+	nle_manager = new Cudd(0,nle_nvars,CUDD_UNIQUE_SLOTS,CACHE_SLOTS,MAX_MEMORY);
+	// doesn't seem to be possible to grow the number of variables with ZDDs.
 /*	
 	 nle_inputs = $3;
 	  nle_latches = $4;
@@ -68,13 +88,12 @@ header: /* empty */
 }	
 ;
 
-lines: /* empty */
-	| lines line
-;
 
-line: formula | formula COMMA line
+formulas: /* empty */ | formula | formulas COMMA formula
 	{ 
-	  //printf("line\n");
+  cp += sprintf (curr+cp,"****");
+//	  cp += sprintf(curr+cp,"%s",",");
+	//  fflush(stdout);
 /*
 	  nle_index = 0;
 	  if(nle_counter < nle_inputs){
@@ -115,13 +134,46 @@ line: formula | formula COMMA line
 	}
 ;
 
-formula: VAR | VAR PLUS formula | VAR MULT formula
+formula: constant | monomial | formula plus monomial | formula plus constant
 { 
-  //printf("formula\n");
+  cp += sprintf (curr+cp,"****");
+
+  //fflush(stdout);
+  //snprintf(
   //nle_array[nle_index++] = $1;
   /*d8_printf2("\t %d\n",$1);*/
 }
 ;
+
+constant: CONSTANT
+{
+  cp += sprintf(curr+cp,"%s","1");
+  //printf("constant");
+  //fflush(stdout);
+}
+;
+
+var: VAR
+{
+  cp += sprintf(curr+cp,"%s",$1);
+  printf("var %s ",$1);
+  fflush(stdout);
+}
+;
+
+plus: PLUS
+{
+  cp += sprintf(curr+cp,"%s","+");
+  //printf(" plus ");
+  //fflush(stdout);
+}
+
+monomial: var | monomial MULT var
+{
+  cp += sprintf(curr+cp,"%s","*");
+  printf(" monomial ");
+  fflush(stdout);
+}
 
 %%
 

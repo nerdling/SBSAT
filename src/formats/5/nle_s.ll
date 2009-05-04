@@ -19,10 +19,12 @@ extern int s_line;
 %option outfile="lex.yy.c"
 %option prefix="nle_"
 
+UINT    [0-9]+
 VAR [^ *+,\n]+
 MULT   "*"
 PLUS	"+"
 COMMA	","[ \t\r\n]
+CONSTANT     "1"
 
 %%
 
@@ -31,10 +33,12 @@ COMMA	","[ \t\r\n]
 
 [ \t\r\n]+		/* eat up whitespace */
 
-{VAR}		  	{printf("var "); strncpy(nle_lval.id,yytext,200); return VAR;}
-{COMMA}			{printf("comma\n"); return COMMA;}
-{MULT}                  {printf("mult "); return MULT;}
-{PLUS}			{printf("plus "); return PLUS;}
+{CONSTANT}		{return CONSTANT;}
+{UINT}			{nle_lval.num=atoi(yytext); return UINT;}
+{VAR}		  	{strncpy(nle_lval.id,yytext,200); return VAR;}
+{COMMA}			{return COMMA;}
+{MULT}                  {return MULT;}
+{PLUS}			{return PLUS;}
 
 %%
 

@@ -1,4 +1,4 @@
-INCLUDES=-I$(top_srcdir)/include
+INCLUDES=-I$(top_srcdir)/include -I$(top_srcdir)/src/cudd/include
 AM_CFLAGS=-DYYDEBUG
 sources=trace_g.yy trace_s.ll \
 	aig_g.yy aig_s.ll \
