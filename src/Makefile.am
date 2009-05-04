@@ -8,6 +8,7 @@ SBSAT_LIBS= \
    cudd/mtr/libmtr.a \
    cudd/st/libst.a \
    cudd/util/libcuddutil.a \
+   cudd/cppobj/libcuddobj.a \
    formats/libformats.a \
 	formats/5/libt5.a \
 	solv_smurf/libsolv_smurf.a  \

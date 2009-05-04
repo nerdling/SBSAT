@@ -391,6 +391,7 @@ AC_CONFIG_FILES([Makefile
                  src/cudd/mtr/Makefile
                  src/cudd/st/Makefile
                  src/cudd/util/Makefile
+                 src/cudd/cppobj/Makefile
                  src/formats/5/Makefile
                  src/formats/Makefile
                  src/generator/Makefile
