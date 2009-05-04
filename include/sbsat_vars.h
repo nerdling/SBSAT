@@ -66,8 +66,8 @@
 #define INF_SPEC_FN_MINMAX    13
 #define ERR_BT_SPEC_FN_MINMAX 14
 
-#define INF_SPEC_FN_NEG_MINMAX    15
-#define ERR_BT_SPEC_FN_NEG_MINMAX 16
+#define INF_SPEC_FN_NEGMINMAX    15
+#define ERR_BT_SPEC_FN_NEGMINMAX 16
 
 #define INF_SPEC_FN_OR        17
 #define ERR_BT_SPEC_FN_OR     18

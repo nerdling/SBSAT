@@ -81,6 +81,7 @@ extern   BDDNode *false_ptr, *true_ptr;
 
 void bdd_init();
 void itetable_init();
+void bdd_flag_nodes(BDDNode *node);
 void clear_all_bdd_flags();
 void clear_all_bdd_pState();
 BDDNode *find_or_add_node(int, BDDNode *, BDDNode *);

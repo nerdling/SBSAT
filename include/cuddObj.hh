@@ -59,8 +59,8 @@
 
 #include <string>
 #include <iostream>
-#include "util.h"
-#include "cudd.h"
+#include "../src/cudd/include/util.h"
+#include "../src/cudd/include/cudd.h"
 
 using std::cout;
 using std::cerr;
