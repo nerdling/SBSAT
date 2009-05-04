@@ -49,9 +49,9 @@ libcuddutil_a_LIBADD =
 am__objects_1 = cpu_time.$(OBJEXT) prtime.$(OBJEXT) safe_mem.$(OBJEXT) \
 	strsav.$(OBJEXT) test-sav.$(OBJEXT) datalimit.$(OBJEXT) \
 	pathsearch.$(OBJEXT) ptime.$(OBJEXT) saveimage.$(OBJEXT) \
-	stub.$(OBJEXT) texpand.$(OBJEXT) cpu_stats.$(OBJEXT) \
-	getopt.$(OBJEXT) pipefork.$(OBJEXT) restart.$(OBJEXT) \
-	state.$(OBJEXT) test-res.$(OBJEXT) tmpfile.$(OBJEXT)
+	texpand.$(OBJEXT) cpu_stats.$(OBJEXT) getopt.$(OBJEXT) \
+	pipefork.$(OBJEXT) restart.$(OBJEXT) state.$(OBJEXT) \
+	test-res.$(OBJEXT)
 am_libcuddutil_a_OBJECTS = $(am__objects_1)
 libcuddutil_a_OBJECTS = $(am_libcuddutil_a_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/include
@@ -172,9 +172,8 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 INCLUDES = -I$(top_srcdir)/include -I$(top_srcdir)/src/cudd/include
 sources = cpu_time.c prtime.c safe_mem.c strsav.c test-sav.c \
-datalimit.c pathsearch.c ptime.c saveimage.c stub.c texpand.c \
-cpu_stats.c getopt.c pipefork.c restart.c state.c test-res.c \
-tmpfile.c
+datalimit.c pathsearch.c ptime.c saveimage.c texpand.c \
+cpu_stats.c getopt.c pipefork.c restart.c state.c test-res.c
 
 noinst_LIBRARIES = libcuddutil.a
 libcuddutil_a_SOURCES = $(sources)
@@ -238,11 +237,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/saveimage.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/state.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/strsav.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stub.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test-res.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test-sav.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/texpand.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tmpfile.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<

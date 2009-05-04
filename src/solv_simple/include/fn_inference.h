@@ -51,6 +51,7 @@ double LSGBInferenceGetHeurScore(void *pState);
 void *CreateInferenceStates(BDDNode *infBDD);
 
 int TypeState_InferVar(TypeStateEntry *pState, int nInfVar, bool bPolarity, int nSmurfNumber, int INF_TYPE);
+void SetVisitedInferenceState(void *pState, int visited);
 int TransitionInference(int nSmurfNumber, void **arrSmurfStates);
 
 void FreeInferenceStateEntry(void *pState);

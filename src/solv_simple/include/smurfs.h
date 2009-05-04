@@ -47,11 +47,11 @@ enum {
    FN_OR_COUNTER,
    FN_XOR_COUNTER,
 	FN_MINMAX_COUNTER,
-   FN_NEG_MINMAX_COUNTER,
+   FN_NEGMINMAX_COUNTER,
    FN_OR,
 	FN_XOR,
 	FN_MINMAX,
-	FN_NEG_MINMAX,
+	FN_NEGMINMAX,
 	FN_XOR_GELIM,
    FN_INFERENCE,
    FN_TYPE_STATE,
@@ -126,6 +126,7 @@ typedef struct ORStateEntry {
 	int *pnTransitionVars;
 	bool *bPolarity;
 	ORCounterStateEntry *pORCounterState;
+   BDDNode *pORStateBDD;
 } ORStateEntry;
 
 typedef struct ORCounterStateEntry {
@@ -150,6 +151,7 @@ typedef struct XORStateEntry {
 	int nSize;
 	bool bParity;
 	int *pnTransitionVars;
+   BDDNode *pXORStateBDD;
 } XORStateEntry;
 
 typedef struct XORCounterStateEntry {
@@ -184,6 +186,7 @@ typedef struct MINMAXStateEntry {
 	int nMin;
 	int nMax;
 	int *pnTransitionVars;
+   BDDNode *pMINMAXStateBDD;
 } MINMAXStateEntry;
 
 typedef struct MINMAXCounterStateEntry {
@@ -200,16 +203,17 @@ typedef struct MINMAXCounterStateEntry {
 } MINMAXCounterStateEntry;
 
 typedef struct NEGMINMAXStateEntry {
-	char cType; //FN_NEG_MINMAX
+	char cType; //FN_NEGMINMAX
 	bool visited; //Used for displaying the smurfs.
 	int nSize;
 	int nMin;
 	int nMax;
 	int *pnTransitionVars;
+   BDDNode *pNEGMINMAXStateBDD;
 } NEGMINMAXStateEntry;
 
 typedef struct NEGMINMAXCounterStateEntry {
-	char cType; //FN_NEG_MINMAX_COUNTER
+	char cType; //FN_NEGMINMAX_COUNTER
 	bool visited; //Used for displaying the smurfs.
 	int pStateOwner;
 	void *pPreviousState; //Used during lemma creation.

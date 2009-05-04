@@ -5,6 +5,7 @@
 // Inference State
 void initInferenceStateType() {
    arrStatesTypeSize[FN_INFERENCE] = sizeof(InferenceStateEntry);
+   arrSetVisitedState[FN_INFERENCE] = SetVisitedInferenceState;
    arrApplyInferenceToState[FN_INFERENCE] = NULL;//ApplyInferenceToInference; //SEAN!!! Might be good to have this
    arrPrintStateEntry[FN_INFERENCE] = PrintInferenceStateEntry;
    arrPrintStateEntry_dot[FN_INFERENCE] = PrintInferenceStateEntry_dot;
@@ -38,6 +39,8 @@ void PrintInferenceStateEntry_dot(void *pState) {
 }
 
 void FreeInferenceStateEntry(void *pState) {
-
+   InferenceStateEntry *pInferenceState = (InferenceStateEntry *)pState;
+   if(pInferenceState->pInferenceBDD!=NULL) 
+     pInferenceState->pInferenceBDD->pState = NULL;
 }
 

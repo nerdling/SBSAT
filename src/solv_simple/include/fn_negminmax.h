@@ -35,8 +35,8 @@
  of the possibility of those damages.
 *********************************************************************/
 
-#ifndef FN_NEG_MINMAX_S_H
-#define FN_NEG_MINMAX_S_H
+#ifndef FN_NEGMINMAX_S_H
+#define FN_NEGMINMAX_S_H
 
 // NEGMINMAX State
 
@@ -52,6 +52,7 @@ void CalculateNEGMINMAXLSGBHeuristic(void *pState, int nCurrInfLevel);
 
 void *CreateNEGMINMAXState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, NEGMINMAXStateEntry *pStartState);
 
+void SetVisitedNEGMINMAXState(void *pState, int value);
 int ApplyInferenceToNEGMINMAX(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 
 void FreeNEGMINMAXStateEntry(void *pState);
@@ -69,6 +70,7 @@ double LSGBNEGMINMAXCounterGetHeurScoreNeg(NEGMINMAXCounterStateEntry *pState);
 
 void CalculateNEGMINMAXCounterLSGBHeuristic(void *pState, int nCurrInfLevel);
 
+void SetVisitedNEGMINMAXCounterState(void *pState, int value);
 int ApplyInferenceToNEGMINMAXCounter(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 
 void FreeNEGMINMAXCounterStateEntry(void *pState);

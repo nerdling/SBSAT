@@ -46,7 +46,7 @@ ITE_INLINE double LSGBSumNodeWeights(void *pState) {
 	int num_variables = 0;
 	double fTotalTransitions = 0.0;
 	while(pSmurfState!=NULL) {
-		if (!(pSmurfState->cType == FN_SMURF || pSmurfState->cType == FN_WATCHED_SMURF)) return 0;
+		if (!pSmurfState->cType == FN_SMURF) return 0;
 		num_variables++;
 		/* ----- POSITIVE TRANSITION ------ */
 		fTotalTransitions += pSmurfState->fHeurWghtofTrueTransition;
@@ -68,7 +68,7 @@ ITE_INLINE double LSGBGetHeurScoreTransition(SmurfStateEntry *pState, bool bPola
 		pNextState = ((InferenceStateEntry *)pNextState)->pVarTransition;
 	}
 
-	if(pNextState == NULL) return JHEURISTIC_K_UNKNOWN; //This can happen if smurfs are built lazily
+	if(pNextState == NULL || ((TypeStateEntry *)pNextState)->cType == FN_FREE_STATE) return JHEURISTIC_K_UNKNOWN; //This can happen if smurfs are built lazily
 
 	double fInferenceWeights = JHEURISTIC_K_INF * (double)num_inferences;	
    return fInferenceWeights + arrGetStateHeuristicScore[(int)((TypeStateEntry *)pNextState)->cType](pNextState);
@@ -79,7 +79,7 @@ void LSGBSmurfSetHeurScore(void *pState) {
 	if (pSmurfState == pTrueSimpleSmurfState) return;
 	
 	while(pSmurfState!=NULL) {
-		if (!(pSmurfState->cType == FN_SMURF || pSmurfState->cType == FN_WATCHED_SMURF)) return;
+		if (!pSmurfState->cType == FN_SMURF) return;
 		/* ----- POSITIVE TRANSITION ------ */
 		pSmurfState->fHeurWghtofTrueTransition = LSGBGetHeurScoreTransition(pSmurfState, BOOL_TRUE);
 		

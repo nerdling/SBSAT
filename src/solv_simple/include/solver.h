@@ -92,6 +92,9 @@ extern ApplyInferenceToState *arrApplyInferenceToState;
 typedef void (*FreeStateEntry)(void *pState);
 extern FreeStateEntry *arrFreeStateEntry;
 
+typedef void (*SetVisitedState)(void *pState, int value);
+extern SetVisitedState *arrSetVisitedState;
+
 extern double fSimpleSolverStartTime;
 extern double fSimpleSolverEndTime;
 extern double fSimpleSolverPrevEndTime;

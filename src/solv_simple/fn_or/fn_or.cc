@@ -6,6 +6,7 @@
 
 void initORStateType() {
 	arrStatesTypeSize[FN_OR] = sizeof(ORStateEntry);
+   arrSetVisitedState[FN_OR] = SetVisitedORState;
 	arrApplyInferenceToState[FN_OR] = ApplyInferenceToOR;
 	arrPrintStateEntry[FN_OR] = PrintORStateEntry;
 	arrPrintStateEntry_dot[FN_OR] = PrintORStateEntry_dot;
@@ -38,12 +39,15 @@ void FreeORStateEntry(void *pState) {
 	ORStateEntry *pORState = (ORStateEntry *)pState;
 	ite_free((void **)&pORState->bPolarity);
 	ite_free((void **)&pORState->pnTransitionVars);
+   if(pORState->pORStateBDD != NULL)
+     pORState->pORStateBDD->pState = NULL;
 }
 
 // OR Counter State
 
 void initORCounterStateType() {
 	arrStatesTypeSize[FN_OR_COUNTER] = sizeof(ORCounterStateEntry);
+   arrSetVisitedState[FN_OR_COUNTER] = SetVisitedORCounterState;
 	arrApplyInferenceToState[FN_OR_COUNTER] = ApplyInferenceToORCounter;
 	arrPrintStateEntry[FN_OR_COUNTER] = PrintORCounterStateEntry;
 	arrPrintStateEntry_dot[FN_OR_COUNTER] = PrintORCounterStateEntry_dot;

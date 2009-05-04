@@ -6,6 +6,7 @@
 
 void initSmurfStateType() {
    arrStatesTypeSize[FN_SMURF] = sizeof(SmurfStateEntry);
+   arrSetVisitedState[FN_SMURF] = SetVisitedSmurfState;
    arrApplyInferenceToState[FN_SMURF] = ApplyInferenceToSmurf;
    arrPrintStateEntry[FN_SMURF] = PrintSmurfStateEntry;
    arrPrintStateEntry_dot[FN_SMURF] = PrintSmurfStateEntry_dot;
@@ -46,5 +47,7 @@ void PrintSmurfStateEntry_dot(void *pState) {
 }
 
 void FreeSmurfStateEntry(void *pState) {
-
+   SmurfStateEntry *pSmurfState = (SmurfStateEntry *)pState;
+   if(pSmurfState->pSmurfBDD != NULL)
+     pSmurfState->pSmurfBDD->pState = NULL;
 }

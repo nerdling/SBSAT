@@ -20,6 +20,7 @@ int tempint_max = 0;
 
 //Arrays to handle state-type specific operations.
 int *arrStatesTypeSize = NULL;
+SetVisitedState *arrSetVisitedState;
 ApplyInferenceToState *arrApplyInferenceToState = NULL;
 PrintStateEntry *arrPrintStateEntry;
 PrintStateEntry_dot *arrPrintStateEntry_dot;
@@ -53,25 +54,71 @@ void FreeSmurfStatesTable() {
 	SimpleSmurfProblemState->pSmurfStatesTableTail = NULL;
 }
 
-void ClearSmurfStatesTable() {
-   //This will have to be better.
-   //Must compress the states -- similar to how the bdd table works.
+void ClearAllStatesVisitedFlag() {
 	for(SmurfStatesTableStruct *pIter = SimpleSmurfProblemState->arrSmurfStatesTableHead; pIter != NULL;) {
-      for(int x=0; ((int)(x+sizeof(TypeStateEntry)))<pIter->curr_size; x++) {
-         if(((TypeStateEntry *)pIter->arrStatesTable[x])->visited == 0) {
+      int x=0;
+      while(1) {
+         int size = arrStatesTypeSize[(unsigned char)((TypeStateEntry *)(((char *)pIter->arrStatesTable) + x))->cType];
+         if(((TypeStateEntry *)(((char *)pIter->arrStatesTable) + x))->cType!=FN_FREE_STATE && ((TypeStateEntry *)(((char *)pIter->arrStatesTable) + x))->visited == 1) {
             //Clear out this smurf
-            memset(pIter->arrStatesTable[x], 0, arrStatesTypeSize[(int)((TypeStateEntry *)pIter->arrStatesTable[x])->cType]);
+            ((TypeStateEntry *)(((char *)pIter->arrStatesTable) + x))->visited = 0;
          }
+         x+=size;
+         if(x>=SimpleSmurfProblemState->arrCurrSmurfStates->max_size) break;
       }
 		pIter = pIter->pNext;
 	}
 }
 
+void GarbageCollectSmurfStatesTable() {
+   //This may have to be better in the future.
+   //Mark state machines
+
+   pTrueSimpleSmurfState->visited = 1;
+   
+   for(int nSmurfIndex = 0; nSmurfIndex < SimpleSmurfProblemState->nNumSmurfs; nSmurfIndex++) {
+      TypeStateEntry *pState = (TypeStateEntry *)SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].arrSmurfStates[nSmurfIndex];
+      while(pState != NULL) {
+         arrSetVisitedState[(int)pState->cType](pState, 1); //Set visited flag to 1
+         pState = (TypeStateEntry *)pState->pPreviousState;
+      }
+   }
+   bdd_gc();
+   
+
+   //Clear out state machines
+	for(SmurfStatesTableStruct *pIter = SimpleSmurfProblemState->arrSmurfStatesTableHead; pIter != NULL;) {
+      int x=0;
+      while(1) {
+         int size = arrStatesTypeSize[(unsigned char)((TypeStateEntry *)(((char *)pIter->arrStatesTable) + x))->cType];//arrStatesTypeSize[(int)pIter->arrStatesTable[x]];
+         if(((TypeStateEntry *)(((char *)pIter->arrStatesTable) + x))->cType!=FN_FREE_STATE && ((TypeStateEntry *)(((char *)pIter->arrStatesTable) + x))->visited == 0) {
+            //Clear out this smurf
+            arrFreeStateEntry[(unsigned char)((TypeStateEntry *)(((char *)pIter->arrStatesTable) + x))->cType](((char *)pIter->arrStatesTable) + x);
+            memset(((char *)pIter->arrStatesTable) + x, FN_FREE_STATE, arrStatesTypeSize[(unsigned char)((TypeStateEntry *)(((char *)pIter->arrStatesTable) + x))->cType]);
+         }
+         x+=size;
+         if(x>=SimpleSmurfProblemState->arrCurrSmurfStates->max_size) break;
+      }
+      pIter->curr_size = 0;
+		pIter = pIter->pNext;
+	}
+   SimpleSmurfProblemState->arrCurrSmurfStates = SimpleSmurfProblemState->arrSmurfStatesTableHead;
+	SimpleSmurfProblemState->pSmurfStatesTableTail = (void *)(pTrueSimpleSmurfState + 1);
+   
+   ClearAllStatesVisitedFlag();
+}
+
+//void CompressSmurfStatesTable() { ??
+
 //This checks the size of the current block of the smurf states table.
 //If the table is full, we will allocate a new block via allocate_new_SmurfStatesTable(int size)
 void check_SmurfStatesTableSize(int size) {
    assert(size >= (int)sizeof(TypeStateEntry));
+   fprintf(stderr, "enter\n");
    while(1) {
+      fprintf(stderr, "%d %d %p\n", SimpleSmurfProblemState->arrCurrSmurfStates->curr_size,
+              arrStatesTypeSize[(unsigned char)((TypeStateEntry *)SimpleSmurfProblemState->pSmurfStatesTableTail)->cType],
+              SimpleSmurfProblemState->pSmurfStatesTableTail);
       if(SimpleSmurfProblemState->arrCurrSmurfStates->curr_size+size >= SimpleSmurfProblemState->arrCurrSmurfStates->max_size) {
          //d9_printf2("Increasing size %p\n", SimpleSmurfProblemState->arrCurrSmurfStates);
          if(SimpleSmurfProblemState->arrCurrSmurfStates->pNext == NULL) {
@@ -89,24 +136,30 @@ void check_SmurfStatesTableSize(int size) {
       } else if (((TypeStateEntry *)SimpleSmurfProblemState->pSmurfStatesTableTail)->cType == FN_FREE_STATE) {
          int all_clear = 1;
          char *pTempSSTT = (char *)SimpleSmurfProblemState->pSmurfStatesTableTail;
+         int blanks_size = 0;
          for(int x = SimpleSmurfProblemState->arrCurrSmurfStates->curr_size+1; x < SimpleSmurfProblemState->arrCurrSmurfStates->curr_size+size; x++) {
             pTempSSTT += 1;
+            blanks_size++;
             if(((TypeStateEntry *)pTempSSTT)->cType != FN_FREE_STATE) {
+               blanks_size += arrStatesTypeSize[(unsigned char)((TypeStateEntry *)pTempSSTT)->cType];
                all_clear = 0;
                break;
             }
          }
-               
+
          if(all_clear==1) {
             SimpleSmurfProblemState->arrCurrSmurfStates->curr_size+=size;
             break;
-         } else {
-            SimpleSmurfProblemState->pSmurfStatesTableTail = (void *)(((char *)SimpleSmurfProblemState->pSmurfStatesTableTail) +
-              arrStatesTypeSize[(unsigned char)((TypeStateEntry *)SimpleSmurfProblemState->pSmurfStatesTableTail)->cType]);
          }
+         
+         SimpleSmurfProblemState->arrCurrSmurfStates->curr_size+=blanks_size;
+         SimpleSmurfProblemState->pSmurfStatesTableTail = (void *)(((char *)SimpleSmurfProblemState->pSmurfStatesTableTail) + blanks_size);
       } else {
+         assert(arrStatesTypeSize[(unsigned char)((TypeStateEntry *)SimpleSmurfProblemState->pSmurfStatesTableTail)->cType] > 1);
          SimpleSmurfProblemState->pSmurfStatesTableTail = (void *)(((char *)SimpleSmurfProblemState->pSmurfStatesTableTail) +
            arrStatesTypeSize[(unsigned char)((TypeStateEntry *)SimpleSmurfProblemState->pSmurfStatesTableTail)->cType]);
+         SimpleSmurfProblemState->arrCurrSmurfStates->curr_size+=
+           arrStatesTypeSize[(unsigned char)((TypeStateEntry *)SimpleSmurfProblemState->pSmurfStatesTableTail)->cType];
       }
    }
 }
@@ -141,6 +194,7 @@ void Init_SimpleSmurfProblemState() {
    arrStatesTypeSize[FN_FREE_STATE] = sizeof(char);
    arrStatesTypeSize[FN_TYPE_STATE] = sizeof(TypeStateEntry);
 
+   arrSetVisitedState = (SetVisitedState *)ite_calloc(NUM_SMURF_TYPES, sizeof(SetVisitedState), 9, "arrSetVisitedState");
    arrApplyInferenceToState = (ApplyInferenceToState *)ite_calloc(NUM_SMURF_TYPES, sizeof(ApplyInferenceToState), 9, "arrApplyInferenceToState");
    arrPrintStateEntry = (PrintStateEntry *)ite_calloc(NUM_SMURF_TYPES, sizeof(PrintStateEntry), 9, "arrPrintStateEntry");
    arrPrintStateEntry_dot = (PrintStateEntry_dot *)ite_calloc(NUM_SMURF_TYPES, sizeof(PrintStateEntry_dot), 9, "arrPrintStateEntry_dot");
@@ -336,7 +390,9 @@ int ReadAllSmurfsIntoTable(int nNumVars) {
 		 );
 
 	D_9(PrintAllSmurfStateEntries(););
-
+   GarbageCollectSmurfStatesTable(); //TEST!!! SEAN!!!
+   D_9(PrintAllSmurfStateEntries(););
+   
 	return Init_Solver_PostSmurfs_Hooks(SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates);
 }
 
@@ -363,19 +419,18 @@ void FreeSmurfSolverVars() {
 }
 
 void FreeSmurfStateEntries() {
-	SmurfStatesTableStruct *arrSmurfStatesTable = SimpleSmurfProblemState->arrSmurfStatesTableHead;
-	int state_num = 0;
-	while(arrSmurfStatesTable != NULL) {
-		void *arrSmurfStates = arrSmurfStatesTable->arrStatesTable;
-		int size = 0;
-		for(int x = 0; x < arrSmurfStatesTable->curr_size; x+=size)	{
-			state_num++;
-			//d9_printf3("State %d(%p), ", state_num, arrSmurfStates);
-			arrFreeStateEntry[(int)((TypeStateEntry *)arrSmurfStates)->cType](arrSmurfStates);
-			size = arrStatesTypeSize[(int)((TypeStateEntry *)arrSmurfStates)->cType];
-			arrSmurfStates = (void *)(((char *)arrSmurfStates)+size);
-		}
-		arrSmurfStatesTable = arrSmurfStatesTable->pNext;
+	for(SmurfStatesTableStruct *pIter = SimpleSmurfProblemState->arrSmurfStatesTableHead; pIter != NULL;) {
+      int x=0;
+      while(1) {
+         int size = arrStatesTypeSize[(unsigned char)((TypeStateEntry *)(((char *)pIter->arrStatesTable) + x))->cType];
+         if(((TypeStateEntry *)(((char *)pIter->arrStatesTable) + x))->cType!=FN_FREE_STATE && ((TypeStateEntry *)(((char *)pIter->arrStatesTable) + x))->visited == 1) {
+            //Free this state
+            arrFreeStateEntry[(unsigned char)((TypeStateEntry *)(((char *)pIter->arrStatesTable) + x))->cType](((char *)pIter->arrStatesTable) + x);
+         }
+         x+=size;
+         if(x>=SimpleSmurfProblemState->arrCurrSmurfStates->max_size) break;
+      }
+		pIter = pIter->pNext;
 	}
 }
 
@@ -506,7 +561,7 @@ void PrintSmurfs(BDDNode **bdds, int size) {
 			fprintf(stdout, " graph [concentrate=true, nodesep=\"0.30\", ordering=in, rankdir=TB, ranksep=\"2.25\"];\n");
 			fprintf(stdout, " b%p [shape=box fontname=""Helvetica"",label=""T""];\n", (void *)pTrueSimpleSmurfState);
 			PrintSmurf_dot(ReadSmurfStateIntoTable(bdds[i], NULL, 0));
-			fprintf(stdout, "}\n");
+         fprintf(stdout, "}\n");
 		}
 	}
 	

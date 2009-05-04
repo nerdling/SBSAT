@@ -48,20 +48,20 @@ void DisplaySimpleStatistics(long long int nNumChoicePts, long long int nNumBack
 }
 
 void PrintAllSmurfStateEntries() {
-	SmurfStatesTableStruct *arrSmurfStatesTable = SimpleSmurfProblemState->arrSmurfStatesTableHead;
-	int state_num = 0;
-	while(arrSmurfStatesTable != NULL) {
-		void *arrSmurfStates = arrSmurfStatesTable->arrStatesTable;
-		int size = 0;
-		for(int x = 0; x < arrSmurfStatesTable->curr_size; x+=size) {
-			state_num++;
-			d9_printf3("State %d(%p), ", state_num, (void *)arrSmurfStates);
-			arrPrintStateEntry[(int)((TypeStateEntry *)arrSmurfStates)->cType](arrSmurfStates);
-			size = arrStatesTypeSize[(int)((TypeStateEntry *)arrSmurfStates)->cType];
-			arrSmurfStates = (void *)(((char *)arrSmurfStates)+size);
-		}
-		arrSmurfStatesTable = arrSmurfStatesTable->pNext;
-	}
+   int state_num = 0;
+   for(SmurfStatesTableStruct *pIter = SimpleSmurfProblemState->arrSmurfStatesTableHead; pIter != NULL;) {
+      int x=0;
+      while(1) {
+         int size = arrStatesTypeSize[(unsigned char)((TypeStateEntry *)(((char *)pIter->arrStatesTable) + x))->cType];
+         if(((TypeStateEntry *)(((char *)pIter->arrStatesTable) + x))->cType!=FN_FREE_STATE) {
+            d9_printf3("State %d(%p), ", state_num++, (void *)(((char *)pIter->arrStatesTable) + x));
+            arrPrintStateEntry[(unsigned char)((TypeStateEntry *)(((char *)pIter->arrStatesTable) + x))->cType]((void *)(((char *)pIter->arrStatesTable) + x));
+         }
+         x+=size;
+         if(x>=SimpleSmurfProblemState->arrCurrSmurfStates->max_size) break;
+      }
+      pIter = pIter->pNext;
+   }
 }
 
 void PrintSmurf_dot(void *pState) {
@@ -184,7 +184,7 @@ void DisplaySimpleSolverBacktrackInfo() {
    if(ite_counters[INF_SPEC_FN_XOR]>0)	d2_printf2("XORs: %lld; ", ite_counters[INF_SPEC_FN_XOR]);
    if(ite_counters[INF_BB_GELIM]>0) d2_printf2("GELIM: %lld; ", ite_counters[INF_BB_GELIM]);
    if(ite_counters[INF_SPEC_FN_MINMAX]>0)	d2_printf2("MINMAXs: %lld; ", ite_counters[INF_SPEC_FN_MINMAX]);
-   if(ite_counters[INF_SPEC_FN_NEG_MINMAX]>0)	d2_printf2("NEGMINMAXs: %lld; ", ite_counters[INF_SPEC_FN_NEG_MINMAX]);
+   if(ite_counters[INF_SPEC_FN_NEGMINMAX]>0)	d2_printf2("NEGMINMAXs: %lld; ", ite_counters[INF_SPEC_FN_NEGMINMAX]);
 	if(ite_counters[INF_LEMMA]>0) d2_printf2("lemmas: %lld; ", ite_counters[INF_LEMMA]);
 	d2_printf1("\n");
 	
@@ -194,7 +194,7 @@ void DisplaySimpleSolverBacktrackInfo() {
 	if(ite_counters[ERR_BT_SPEC_FN_XOR]>0) d2_printf2("XORs: %lld; ", ite_counters[ERR_BT_SPEC_FN_XOR]);
    if(ite_counters[ERR_BT_BB_GELIM]>0) d2_printf2("GELIM: %lld; ", ite_counters[ERR_BT_BB_GELIM]);
 	if(ite_counters[ERR_BT_SPEC_FN_MINMAX]>0) d2_printf2("MINMAXs: %lld; ", ite_counters[ERR_BT_SPEC_FN_MINMAX]);
-   if(ite_counters[ERR_BT_SPEC_FN_NEG_MINMAX]>0) d2_printf2("NEGMINMAXs: %lld; ", ite_counters[ERR_BT_SPEC_FN_NEG_MINMAX]);
+   if(ite_counters[ERR_BT_SPEC_FN_NEGMINMAX]>0) d2_printf2("NEGMINMAXs: %lld; ", ite_counters[ERR_BT_SPEC_FN_NEGMINMAX]);
 	if(ite_counters[ERR_BT_LEMMA]>0) d2_printf2("lemmas: %lld; ", ite_counters[ERR_BT_LEMMA]);
 	d2_printf1("\n");
 	if (backjumping) d2_printf3(" Backjumps: %ld (avg bj len: %.1f)\n",

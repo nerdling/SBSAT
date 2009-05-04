@@ -2,6 +2,27 @@
 #include "sbsat_solver.h"
 #include "solver.h"
 
+void SetVisitedNEGMINMAXState(void *pState, int value) {
+   NEGMINMAXStateEntry *pNEGMINMAXState = (NEGMINMAXStateEntry *)pState;
+   assert(pNEGMINMAXState->cType == FN_NEGMINMAX);
+   if(pNEGMINMAXState->visited != value) {
+      d7_printf3("Marking visited=%d of NEGMINMAX State %p\n", value, pNEGMINMAXState);
+      pNEGMINMAXState->visited = value;
+   }
+}
+
+void SetVisitedNEGMINMAXCounterState(void *pState, int value) {
+   NEGMINMAXCounterStateEntry *pNEGMINMAXCounterState = (NEGMINMAXCounterStateEntry *)pState;
+   assert(pNEGMINMAXCounterState->cType == FN_NEGMINMAX_COUNTER);
+   SetVisitedNEGMINMAXState(pNEGMINMAXCounterState->pNEGMINMAXState, value);
+   NEGMINMAXCounterStateEntry *tmp_negminmax = pNEGMINMAXCounterState;
+   while(tmp_negminmax != NULL && tmp_negminmax->cType == FN_NEGMINMAX_COUNTER) {
+      d7_printf3("Marking visited=%d of NEGMINMAXCounter State %p\n", value, tmp_negminmax);
+      tmp_negminmax->visited = value;
+      tmp_negminmax = (NEGMINMAXCounterStateEntry *)tmp_negminmax->pTransition;
+   }
+}
+
 int ApplyInferenceToNEGMINMAX(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates) {
 	//I don't think this should happen w/ the current setup...yet - use for watched literals
 	assert(0);
@@ -61,7 +82,7 @@ int ApplyInferenceToNEGMINMAXCounter(int nBranchVar, bool bBVPolarity, int nSmur
                                pNEGMINMAXCounterState->pNEGMINMAXState->pnTransitionVars[x],
                                1,
                                nSmurfNumber,
-                               INF_SPEC_FN_NEG_MINMAX) == 0) return 0;			
+                               INF_SPEC_FN_NEGMINMAX) == 0) return 0;			
 		}
 		arrSmurfStates[nSmurfNumber] = pTrueSimpleSmurfState;
 		SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumSmurfsSatisfied++;
@@ -77,7 +98,7 @@ int ApplyInferenceToNEGMINMAXCounter(int nBranchVar, bool bBVPolarity, int nSmur
                                pNEGMINMAXCounterState->pNEGMINMAXState->pnTransitionVars[x],
                                0,
                                nSmurfNumber,
-                               INF_SPEC_FN_NEG_MINMAX) == 0) return 0;
+                               INF_SPEC_FN_NEGMINMAX) == 0) return 0;
 		}
 		arrSmurfStates[nSmurfNumber] = pTrueSimpleSmurfState;
 		SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumSmurfsSatisfied++;
@@ -87,6 +108,6 @@ int ApplyInferenceToNEGMINMAXCounter(int nBranchVar, bool bBVPolarity, int nSmur
 		arrSmurfStates[nSmurfNumber] = pNEGMINMAXCounterState;
 	}
 	
-	d7_printf3("      NEGMINMAXCounterSmurf %d transitioned to state %x\n", nSmurfNumber, arrSmurfStates[nSmurfNumber]);
+	d7_printf3("      NEGMINMAXCounterSmurf %d transitioned to state %p\n", nSmurfNumber, arrSmurfStates[nSmurfNumber]);
 	return 1;
 }

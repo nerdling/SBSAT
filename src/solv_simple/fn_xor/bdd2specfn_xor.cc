@@ -23,6 +23,7 @@ void *CreateXORState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, XORStateE
 //	PrintAllSmurfStateEntries();
 
 	pCurrentBDD->pState = (void *)pStartState;
+   pStartState->pXORStateBDD = pCurrentBDD;
 	
 	if(nNumElts == 2) return (void *)pStartState;
 

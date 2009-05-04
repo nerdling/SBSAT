@@ -2,6 +2,22 @@
 #include "sbsat_solver.h"
 #include "solver.h"
 
+void SetVisitedSmurfState(void *pState, int value) {
+   SmurfStateEntry *pSmurfState = (SmurfStateEntry *)pState;
+   assert(pSmurfState->cType == FN_SMURF);
+
+   while(pSmurfState!=NULL && pSmurfState->visited != value) {
+      d7_printf3("Marking visited=%d of Smurf State %p\n", value, pSmurfState);
+      pSmurfState->visited = value;
+      bdd_flag_nodes(pSmurfState->pSmurfBDD);
+      if(pSmurfState->pVarIsTrueTransition != NULL && ((TypeStateEntry *)(pSmurfState->pVarIsTrueTransition))->cType == FN_INFERENCE)
+        SetVisitedInferenceState(pSmurfState->pVarIsTrueTransition, value);
+      if(pSmurfState->pVarIsFalseTransition != NULL && ((TypeStateEntry *)(pSmurfState->pVarIsFalseTransition))->cType == FN_INFERENCE)
+        SetVisitedInferenceState(pSmurfState->pVarIsFalseTransition, value);
+      pSmurfState = (SmurfStateEntry *)(pSmurfState->pNextVarInThisState);
+   }
+}
+
 ITE_INLINE
 int ApplyInferenceToSmurf(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates) {
 	SmurfStateEntry *pSmurfState = (SmurfStateEntry *)arrSmurfStates[nSmurfNumber];
@@ -18,12 +34,12 @@ int ApplyInferenceToSmurf(int nBranchVar, bool bBVPolarity, int nSmurfNumber, vo
 			//Follow this transition and apply all inferences found.
 //			void *pNextState = bBVPolarity?pSmurfState->pVarIsTrueTransition:pSmurfState->pVarIsFalseTransition;
 			if(bBVPolarity) {
-				if(pSmurfState->pVarIsTrueTransition == NULL)
-				  pSmurfState->pVarIsTrueTransition = ReadSmurfStateIntoTable(set_variable(pSmurfState->pSmurfBDD, arrSimpleSolver2IteVarMap[nBranchVar], 1), NULL, 0);
-				pNextState = pSmurfState->pVarIsTrueTransition;
+				if(pSmurfState->pVarIsTrueTransition == NULL || ((TypeStateEntry *)(pSmurfState->pVarIsTrueTransition))->cType==FN_FREE_STATE)
+              pSmurfState->pVarIsTrueTransition = ReadSmurfStateIntoTable(set_variable(pSmurfState->pSmurfBDD, arrSimpleSolver2IteVarMap[nBranchVar], 1), NULL, 0);
+            pNextState = pSmurfState->pVarIsTrueTransition;
 			} else {
-				if(pSmurfState->pVarIsFalseTransition == NULL)
-				  pSmurfState->pVarIsFalseTransition = ReadSmurfStateIntoTable(set_variable(pSmurfState->pSmurfBDD, arrSimpleSolver2IteVarMap[nBranchVar], 0), NULL, 0);
+				if(pSmurfState->pVarIsFalseTransition == NULL || ((TypeStateEntry *)(pSmurfState->pVarIsFalseTransition))->cType==FN_FREE_STATE)
+              pSmurfState->pVarIsFalseTransition = ReadSmurfStateIntoTable(set_variable(pSmurfState->pSmurfBDD, arrSimpleSolver2IteVarMap[nBranchVar], 0), NULL, 0);
 				pNextState = pSmurfState->pVarIsFalseTransition;
 			}
 			void *pPrevState = NULL;
@@ -39,7 +55,7 @@ int ApplyInferenceToSmurf(int nBranchVar, bool bBVPolarity, int nSmurfNumber, vo
 				pNextState = ((InferenceStateEntry *)pNextState)->pVarTransition;
 			}
 
-			if(pNextState == NULL) {
+			if(pNextState == NULL || ((TypeStateEntry *)pNextState)->cType==FN_FREE_STATE) {
 				assert(((TypeStateEntry *)pPrevState)->cType == FN_INFERENCE);
 				((InferenceStateEntry *)pPrevState)->pVarTransition = pNextState = ReadSmurfStateIntoTable(
 																						    set_variable(((InferenceStateEntry *)pPrevState)->pInferenceBDD,
@@ -52,7 +68,7 @@ int ApplyInferenceToSmurf(int nBranchVar, bool bBVPolarity, int nSmurfNumber, vo
 			if(((SmurfStateEntry *)pNextState) == pTrueSimpleSmurfState) {
 				SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumSmurfsSatisfied++;
 			} else if(pNextState == arrSmurfStates[((TypeStateEntry *)pNextState)->pStateOwner]) {
-				d7_printf3("      State %x currently owned by Smurf %d, transitioning to True\n", pNextState, ((TypeStateEntry *)pNextState)->pStateOwner);
+				d7_printf3("      State %p currently owned by Smurf %d, transitioning to True\n", pNextState, ((TypeStateEntry *)pNextState)->pStateOwner);
 				pNextState = pTrueSimpleSmurfState;
 			} else {
 				((TypeStateEntry *)pNextState)->pPreviousState = arrSmurfStates[nSmurfNumber];
@@ -66,8 +82,8 @@ int ApplyInferenceToSmurf(int nBranchVar, bool bBVPolarity, int nSmurfNumber, vo
 
 	int ret = ApplyInferenceToSmurf_Hooks(nBranchVar, bBVPolarity, nSmurfNumber, arrSmurfStates);
 	
-	d7_printf3("      Smurf %d transitioned to state %x\n", nSmurfNumber, arrSmurfStates[nSmurfNumber]);
-	d7_printf3("      Smurf %d previously was %x\n", nSmurfNumber, ((SmurfStateEntry *)arrSmurfStates[nSmurfNumber])->pPreviousState);
+	d7_printf3("      Smurf %d transitioned to state %p\n", nSmurfNumber, arrSmurfStates[nSmurfNumber]);
+	d7_printf3("      Smurf %d previously was %p\n", nSmurfNumber, ((SmurfStateEntry *)arrSmurfStates[nSmurfNumber])->pPreviousState);
 	
 	return ret;
 }

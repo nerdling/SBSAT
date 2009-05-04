@@ -2,6 +2,27 @@
 #include "sbsat_solver.h"
 #include "solver.h"
 
+void SetVisitedORState(void *pState, int value) {
+   ORStateEntry *pORState = (ORStateEntry *)pState;
+   assert(pORState->cType == FN_OR);
+   if(pORState->visited != value) {
+      d7_printf3("Marking visited=%d of OR State %p\n", value, pORState);
+      pORState->visited = value;
+   }   
+}
+
+void SetVisitedORCounterState(void *pState, int value) {
+   ORCounterStateEntry *pORCounterState = (ORCounterStateEntry *)pState;
+   assert(pORCounterState->cType == FN_OR_COUNTER);
+   SetVisitedORState(pORCounterState->pORState, value);
+   ORCounterStateEntry *tmp_or = pORCounterState;
+   while(tmp_or != NULL && tmp_or->cType == FN_OR_COUNTER) {
+      d7_printf3("Marking visited=%d of ORCounter State %p\n", value, tmp_or);
+      tmp_or->visited = value;
+      tmp_or = (ORCounterStateEntry *)tmp_or->pTransition;
+   }
+}
+
 int ApplyInferenceToOR(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates) {
 	ORStateEntry *pORState = (ORStateEntry *)arrSmurfStates[nSmurfNumber];	
 
@@ -60,7 +81,7 @@ int ApplyInferenceToOR(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void 
 		SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumSmurfsSatisfied++;
 	}
 
-	d7_printf3("      ORSmurf %d transitioned to state %x\n", nSmurfNumber, arrSmurfStates[nSmurfNumber]);
+	d7_printf3("      ORSmurf %d transitioned to state %p\n", nSmurfNumber, arrSmurfStates[nSmurfNumber]);
 	return 1;
 }
 
@@ -99,6 +120,6 @@ int ApplyInferenceToORCounter(int nBranchVar, bool bBVPolarity, int nSmurfNumber
 		((TypeStateEntry *)pORCounterState->pTransition)->pStateOwner = nSmurfNumber;
 		arrSmurfStates[nSmurfNumber] = pORCounterState->pTransition;
 	}	
-	d7_printf3("      ORCounterSmurf %d transitioned to state %x\n", nSmurfNumber, arrSmurfStates[nSmurfNumber]);
+	d7_printf3("      ORCounterSmurf %d transitioned to state %p\n", nSmurfNumber, arrSmurfStates[nSmurfNumber]);
 	return 1;
 }

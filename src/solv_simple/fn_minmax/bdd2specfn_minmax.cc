@@ -34,7 +34,7 @@ void *CreateMINMAXState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, MINMAX
 	pStartState->nMin = min;
 	pStartState->nMax = max;
 	pStartState->pnTransitionVars = arrElts;
-
+   
 	MINMAXCounterStateEntry *pCurrMINMAXCounter=NULL;
 	void *pPrevMINMAXCounter = (void *)pTrueSimpleSmurfState;//pStartState;
 	for(int x = 1; x <= nNumElts; x++) {
@@ -55,5 +55,7 @@ void *CreateMINMAXState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, MINMAX
 	}
 
 	pCurrentBDD->pState = (void *)pCurrMINMAXCounter;
+   pStartState->pMINMAXStateBDD = pCurrentBDD;
+   
 	return (void *)pCurrMINMAXCounter;
 }

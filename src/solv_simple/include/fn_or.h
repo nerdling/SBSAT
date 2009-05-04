@@ -53,6 +53,7 @@ void CalculateORLSGBHeuristic(void *pState, int nCurrInfLevel);
 
 void *CreateORState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, ORStateEntry *pStartState);
 
+void SetVisitedORState(void *pState, int value);
 int ApplyInferenceToOR(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 
 void FreeORStateEntry(void *pState);
@@ -70,6 +71,7 @@ double LSGBORCounterGetHeurNeg(ORCounterStateEntry *pState);
 
 void CalculateORCounterLSGBHeuristic(void *pState, int nCurrInfLevel);
 
+void SetVisitedORCounterState(void *pState, int value);
 int ApplyInferenceToORCounter(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 
 void FreeORCounterStateEntry(void *pState);

@@ -6,6 +6,7 @@
 
 void initXORStateType() {
 	arrStatesTypeSize[FN_XOR] = sizeof(XORStateEntry);
+   arrSetVisitedState[FN_XOR] = SetVisitedXORState;
 	arrApplyInferenceToState[FN_XOR] = ApplyInferenceToXOR;
 	arrPrintStateEntry[FN_XOR] = PrintXORStateEntry;
 	arrPrintStateEntry_dot[FN_XOR] = PrintXORStateEntry_dot;
@@ -47,13 +48,16 @@ void PrintXORStateEntry_formatted(void *pState) {
 
 void FreeXORStateEntry(void *pState) {
 	XORStateEntry *pXORState = (XORStateEntry *)pState;
-	ite_free((void **)&pXORState->pnTransitionVars);	
+	ite_free((void **)&pXORState->pnTransitionVars);
+   if(pXORState->pXORStateBDD != NULL)
+     pXORState->pXORStateBDD->pState = NULL;
 }
 
 // XOR Counter State
 
 void initXORCounterStateType() {
 	arrStatesTypeSize[FN_XOR_COUNTER] = sizeof(XORCounterStateEntry);
+   arrSetVisitedState[FN_XOR_COUNTER] = SetVisitedXORCounterState;
 	arrApplyInferenceToState[FN_XOR_COUNTER] = ApplyInferenceToXORCounter;
 	arrPrintStateEntry[FN_XOR_COUNTER] = PrintXORCounterStateEntry;
 	arrPrintStateEntry_dot[FN_XOR_COUNTER] = PrintXORCounterStateEntry_dot;
@@ -90,6 +94,7 @@ int return_1(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurf
 
 void initXORGElimStateType() {
 	arrStatesTypeSize[FN_XOR_GELIM] = sizeof(XORGElimStateEntry);
+   arrSetVisitedState[FN_XOR_GELIM] = SetVisitedXORGElimState;
 	arrApplyInferenceToState[FN_XOR_GELIM] = return_1;
 	arrPrintStateEntry[FN_XOR_GELIM] = PrintXORGElimStateEntry;
 	arrPrintStateEntry_dot[FN_XOR_GELIM] = PrintXORGElimStateEntry_dot;

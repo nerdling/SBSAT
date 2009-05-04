@@ -25,6 +25,7 @@ void *CreateInferenceStates(BDDNode *infBDD) {
       SimpleSmurfProblemState->nNumSmurfStateEntries++;
       SimpleSmurfProblemState->pSmurfStatesTableTail = (void *)(pNextInfState + 1);
       pNextInfState->cType = FN_INFERENCE;
+      pNextInfState->pInferenceBDD = infBDD;
       if(inferences->nums[0] > 0) {
          pNextInfState->nTransitionVar = arrIte2SimpleSolverVarMap[inferences->nums[0]];
          pNextInfState->bPolarity = 1;
@@ -48,10 +49,7 @@ void *CreateInferenceStates(BDDNode *infBDD) {
          assert(pNext!=NULL);
       }
       if(nNumInferences == 0) pNextState = pNext;
-      else {
-         pNextInfState->pVarTransition = pNext;
-         pNextInfState->pInferenceBDD = infBDD; 
-      }
+      else pNextInfState->pVarTransition = pNext;
    }
    assert(precompute_smurfs==0 || pNextState != NULL);
    return pNextState;

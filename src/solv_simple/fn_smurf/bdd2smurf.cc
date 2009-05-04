@@ -18,16 +18,6 @@ void fillHEAP(int index, int size, int *arrElts) {
 	assert(pCurrState->pNextVarInThisStateGT != pCurrState->pNextVarInThisStateLT);
 }
 
-void fillWatchedHEAP(int size, int *arrElts) {
-	for(int x = 0; x < size; x++) {
-		SmurfStateEntry *pCurrState = (SmurfStateEntry *)SimpleSmurfProblemState->pSmurfStatesTableTail;
-		SimpleSmurfProblemState->nNumSmurfStateEntries++;
-		SimpleSmurfProblemState->pSmurfStatesTableTail = (void *)(pCurrState + 1);
-		pCurrState->cType = FN_WATCHED_SMURF;
-		pCurrState->nTransitionVar = arrElts[x];
-	}
-}
-
 SmurfStateEntry *findStateInHEAP(SmurfStateEntry *pStartState, int var) {
 	while(pStartState->nTransitionVar != var) {
 		//fprintf(stderr, "|%d, %d|", pStartState->nTransitionVar, var);
@@ -53,7 +43,7 @@ void *CreateSmurfState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, SmurfSt
 		SmurfStateEntry *pCurrState = (pStartState+nVbleIndex);
 		pCurrState->pNextVarInThisState = (void *)(pStartState+nVbleIndex+1);
 	}
-		
+
 	for(int nVbleIndex = 0; nVbleIndex < nNumElts; nVbleIndex++) {
 		//fprintf(stderr, "%d, %d, %d: ", nVbleIndex, arrElts[nVbleIndex], arrSimpleSolver2IteVarMap[arrElts[nVbleIndex]]);
 		//    printBDDerr(pCurrentBDD);
@@ -158,7 +148,7 @@ void *ReadSmurfStateIntoTable(BDDNode *pCurrentBDD, int *arrElts, int nNumElts) 
 		}
 		else if(nNumElts >= 3 && nNumElts >= functionTypeLimits[NEG_MINMAX] &&
 				  isNEG_MIN_MAX(pCurrentBDD, tempint, nNumElts)) {
-			//FN_NEG_MINMAX
+			//FN_NEGMINMAX
 			pStartState = CreateNEGMINMAXState(arrElts, nNumElts, pCurrentBDD, (NEGMINMAXStateEntry *)pStartState);
 		} else {
 			//FN_SMURF

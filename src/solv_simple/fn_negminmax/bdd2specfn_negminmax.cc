@@ -29,12 +29,12 @@ void *CreateNEGMINMAXState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, NEG
 
 	assert(min <= max);
 	
-	pStartState->cType = FN_NEG_MINMAX;
+	pStartState->cType = FN_NEGMINMAX;
    pStartState->nSize = nNumElts;
 	pStartState->nMin = min;
 	pStartState->nMax = max;
 	pStartState->pnTransitionVars = arrElts;
-
+   
 	NEGMINMAXCounterStateEntry *pCurrNEGMINMAXCounter=NULL;
 	void *pPrevNEGMINMAXCounter = (void *)pTrueSimpleSmurfState;//pStartState;
 	for(int x = 1; x <= nNumElts; x++) {
@@ -45,7 +45,7 @@ void *CreateNEGMINMAXState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, NEG
 		pCurrNEGMINMAXCounter = (NEGMINMAXCounterStateEntry *)SimpleSmurfProblemState->pSmurfStatesTableTail;
 		SimpleSmurfProblemState->pSmurfStatesTableTail = (void *)(pCurrNEGMINMAXCounter + 1);
 
-		pCurrNEGMINMAXCounter->cType = FN_NEG_MINMAX_COUNTER;
+		pCurrNEGMINMAXCounter->cType = FN_NEGMINMAX_COUNTER;
 
 		pCurrNEGMINMAXCounter->nVarsLeft = x;
 		pCurrNEGMINMAXCounter->nNumTrue = 0; //Dynamic
@@ -55,5 +55,7 @@ void *CreateNEGMINMAXState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, NEG
 	}
 
 	pCurrentBDD->pState = (void *)pCurrNEGMINMAXCounter;
+   pStartState->pNEGMINMAXStateBDD = pCurrentBDD;
+   
 	return (void *)pCurrNEGMINMAXCounter;
 }

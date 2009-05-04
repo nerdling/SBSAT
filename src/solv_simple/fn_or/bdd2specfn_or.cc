@@ -39,11 +39,13 @@ void *CreateORState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, ORStateEnt
 		if(set_variable(pCurrentBDD, arrSimpleSolver2IteVarMap[arrElts[x]], 1) == true_ptr)
 		  pStartState->bPolarity[x] = 1;
 	}
+   
 //	printBDDerr(pCurrentBDD);
 //	fprintf(stderr, "\n");
 //	PrintAllSmurfStateEntries();
 
 	pCurrentBDD->pState = (void *)pStartState;
+   pStartState->pORStateBDD = pCurrentBDD;
 	
 	if(nNumElts == 2)	return (void *)pStartState;
 

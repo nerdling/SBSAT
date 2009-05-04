@@ -2,6 +2,36 @@
 #include "sbsat_solver.h"
 #include "solver.h"
 
+void SetVisitedXORState(void *pState, int value) {
+   XORStateEntry *pXORState = (XORStateEntry *)pState;
+   assert(pXORState->cType == FN_XOR);
+   if(pXORState->visited != value) {
+      d7_printf3("Marking visited=%d of XOR State %p\n", value, pXORState);
+      pXORState->visited = value;
+   }
+}
+
+void SetVisitedXORCounterState(void *pState, int value) {
+   XORCounterStateEntry *pXORCounterState = (XORCounterStateEntry *)pState;
+   assert(pXORCounterState->cType == FN_XOR_COUNTER);
+   SetVisitedXORState(pXORCounterState->pXORState, value);
+   XORCounterStateEntry *tmp_xor = pXORCounterState;
+   while(tmp_xor != NULL && tmp_xor->cType == FN_XOR_COUNTER) {
+      d7_printf3("Marking visited=%d of XORCounter State %p\n", value, tmp_xor);
+      tmp_xor->visited = value;
+      tmp_xor = (XORCounterStateEntry *)tmp_xor->pTransition;
+   }
+}
+
+void SetVisitedXORGElimState(void *pState, int value) {
+   XORGElimStateEntry *pXORGElimState = (XORGElimStateEntry *)pState;
+   assert(pXORGElimState->cType == FN_XOR_GELIM);
+   if(pXORGElimState->visited != value) {
+      d7_printf3("Marking visited=%d of XORGElim State %p\n", value, pXORGElimState);
+      pXORGElimState->visited = value;
+   }
+}
+
 int ApplyInferenceToXOR(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates) {
 	XORStateEntry *pXORState = (XORStateEntry *)arrSmurfStates[nSmurfNumber];	
 

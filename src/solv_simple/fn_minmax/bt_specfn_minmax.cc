@@ -2,6 +2,27 @@
 #include "sbsat_solver.h"
 #include "solver.h"
 
+void SetVisitedMINMAXState(void *pState, int value) {
+   MINMAXStateEntry *pMINMAXState = (MINMAXStateEntry *)pState;
+   assert(pMINMAXState->cType == FN_MINMAX);
+   if(pMINMAXState->visited != value) {
+      d7_printf3("Marking visited=%d of MINMAX State %p\n", value, pMINMAXState);
+      pMINMAXState->visited = value;
+   }
+}
+
+void SetVisitedMINMAXCounterState(void *pState, int value) {
+   MINMAXCounterStateEntry *pMINMAXCounterState = (MINMAXCounterStateEntry *)pState;
+   assert(pMINMAXCounterState->cType == FN_MINMAX_COUNTER);
+   SetVisitedMINMAXState(pMINMAXCounterState->pMINMAXState, value);
+   MINMAXCounterStateEntry *tmp_minmax = pMINMAXCounterState;
+   while(tmp_minmax != NULL && tmp_minmax->cType == FN_MINMAX_COUNTER) {
+      d7_printf3("Marking visited=%d of MINMAXCounter State %p\n", value, tmp_minmax);
+      tmp_minmax->visited = value;
+      tmp_minmax = (MINMAXCounterStateEntry *)tmp_minmax->pTransition;
+   }
+}
+
 int ApplyInferenceToMINMAX(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates) {
    //I don't think this should happen w/ the current setup...yet - use for watched literals
    assert(0);
@@ -87,6 +108,6 @@ int ApplyInferenceToMINMAXCounter(int nBranchVar, bool bBVPolarity, int nSmurfNu
 		arrSmurfStates[nSmurfNumber] = pMINMAXCounterState;
 	}
 	
-	d7_printf3("      MINMAXCounterSmurf %d transitioned to state %x\n", nSmurfNumber, arrSmurfStates[nSmurfNumber]);
+	d7_printf3("      MINMAXCounterSmurf %d transitioned to state %p\n", nSmurfNumber, arrSmurfStates[nSmurfNumber]);
 	return 1;
 }

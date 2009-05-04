@@ -55,6 +55,7 @@ void CalculateXORLSGBHeuristic(void *pState, int nCurrInfLevel);
 
 void *CreateXORState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, XORStateEntry *pStartState);
 
+void SetVisitedXORState(void *pState, int value);
 int ApplyInferenceToXOR(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 
 void FreeXORStateEntry(void *pState);
@@ -72,6 +73,7 @@ double LSGBXORCounterGetHeurScoreTrans(XORCounterStateEntry *pState);
 
 void CalculateXORCounterLSGBHeuristic(void *pState, int nCurrInfLevel);
 
+void SetVisitedXORCounterState(void *pState, int value);
 int ApplyInferenceToXORCounter(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 
 void FreeXORCounterStateEntry(void *pState);
@@ -90,6 +92,8 @@ double LSGBarrXORWeightTrans(int nSize);
 void CalculateXORGElimLSGBHeuristic(void *pState, int nCurrInfLevel);
 
 void *CreateXORGElimState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, XORGElimStateEntry *pStartState);
+
+void SetVisitedXORGElimState(void *pState, int value);
 
 void FreeXORGElimStateEntry(void *pState);
 
