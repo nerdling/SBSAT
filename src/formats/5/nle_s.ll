@@ -23,7 +23,7 @@ UINT    [0-9]+
 VAR [^ *+,\n]+
 MULT   "*"
 PLUS	"+"
-COMMA	","[ \t\r\n]
+NEWLINE   "\n"
 CONSTANT     "1"
 
 %%
@@ -31,12 +31,12 @@ CONSTANT     "1"
 
 "nle"			return P_nle;
 
-[ \t\r\n]+		/* eat up whitespace */
+[ \t\r]+		/* eat up whitespace */
 
 {CONSTANT}		{return CONSTANT;}
 {UINT}			{nle_lval.num=atoi(yytext); return UINT;}
 {VAR}		  	{strncpy(nle_lval.id,yytext,200); return VAR;}
-{COMMA}			{return COMMA;}
+{NEWLINE}		{return NEWLINE;}
 {MULT}                  {return MULT;}
 {PLUS}			{return PLUS;}
 
