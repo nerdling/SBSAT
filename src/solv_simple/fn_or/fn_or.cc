@@ -39,8 +39,9 @@ void FreeORStateEntry(void *pState) {
 	ORStateEntry *pORState = (ORStateEntry *)pState;
 	ite_free((void **)&pORState->bPolarity);
 	ite_free((void **)&pORState->pnTransitionVars);
-   if(pORState->pORStateBDD != NULL)
-     pORState->pORStateBDD->pState = NULL;
+   if(pORState->pORStateBDD != NULL) {
+      pORState->pORStateBDD->pState = NULL;
+   }
 }
 
 // OR Counter State

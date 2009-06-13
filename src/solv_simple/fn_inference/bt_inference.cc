@@ -72,12 +72,17 @@ void SetVisitedInferenceState(void *pState, int value) {
    InferenceStateEntry *pInferenceState = (InferenceStateEntry *)pState;
    assert(pInferenceState->cType == FN_INFERENCE);
    
+   InferenceStateEntry *pPreviousInference = NULL;
    while(pInferenceState!=NULL && (pInferenceState->cType == FN_INFERENCE) && pInferenceState->visited != value) {
       d7_printf3("Marking visited=%d of Inference State %p\n", value, pInferenceState);
       pInferenceState->visited = value;
       bdd_flag_nodes(pInferenceState->pInferenceBDD);
+      pPreviousInference = pInferenceState;
       pInferenceState = (InferenceStateEntry *)(pInferenceState->pVarTransition);
    }
+//Commented out to work w/ garbage collection compression (may result in slighly slower search.
+   if(pInferenceState!=NULL) // && (TypeStateEntry *)pInferenceState->visited != value)
+     pPreviousInference->pVarTransition = NULL;
 }
 
 ITE_INLINE
@@ -99,7 +104,7 @@ int TransitionInference(int nSmurfNumber, void **arrSmurfStates) {
       pNextState = ((InferenceStateEntry *)pNextState)->pVarTransition;
    }
 
-   if(pNextState == NULL || ((TypeStateEntry *)pNextState)->cType==FN_FREE_STATE) {
+   if(pNextState == NULL) {
       assert(((TypeStateEntry *)pPrevState)->cType == FN_INFERENCE);
       ((InferenceStateEntry *)pPrevState)->pVarTransition = pNextState = ReadSmurfStateIntoTable(
              set_variable(((InferenceStateEntry *)pPrevState)->pInferenceBDD,
@@ -107,6 +112,7 @@ int TransitionInference(int nSmurfNumber, void **arrSmurfStates) {
              ((InferenceStateEntry *)pPrevState)->bPolarity),
              NULL, 0);
              //pNextState = ((void *)((InferenceStateEntry *)pPrevState)->pVarTransition);
+      assert(((TypeStateEntry *)pNextState)->cType==FN_FREE_STATE);
    }
    //Record the transition.
    if(((SmurfStateEntry *)pNextState) == pTrueSimpleSmurfState) {

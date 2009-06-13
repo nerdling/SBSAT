@@ -384,6 +384,15 @@ void clear_all_bdd_pState() {
 	}
 }
 
+int
+bdd_gc_test()
+{
+   if (enable_gc == 0) return 0;
+   if (ite_counters[BDD_NODE_NEW]-bddtable_node_new_last < _bdd_pool_size) return 0;
+   if (bddtable_free_count > bddtable_free_count_last) return 0;
+   return 1;
+}
+
 void
 bdd_gc(int force)
 {

@@ -127,6 +127,7 @@ extern "C" { int EnqueueInference_lemmas_hook(int nInfVar, bool bInfPolarity); }
 
 int EnqueueInference(int nInfVar, bool bInfPolarity, int inf_function_type);
 void check_SmurfStatesTableSize(int size);
+void GarbageCollectSmurfStatesTable(int force);
 
 //Hooks
 ITE_INLINE void SmurfStates_Push_Hooks(int current, int destination);

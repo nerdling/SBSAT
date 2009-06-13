@@ -68,7 +68,7 @@ ITE_INLINE double LSGBGetHeurScoreTransition(SmurfStateEntry *pState, bool bPola
 		pNextState = ((InferenceStateEntry *)pNextState)->pVarTransition;
 	}
 
-	if(pNextState == NULL || ((TypeStateEntry *)pNextState)->cType == FN_FREE_STATE) return JHEURISTIC_K_UNKNOWN; //This can happen if smurfs are built lazily
+	if(pNextState == NULL) return JHEURISTIC_K_UNKNOWN; //This can happen if smurfs are built lazily
 
 	double fInferenceWeights = JHEURISTIC_K_INF * (double)num_inferences;	
    return fInferenceWeights + arrGetStateHeuristicScore[(int)((TypeStateEntry *)pNextState)->cType](pNextState);

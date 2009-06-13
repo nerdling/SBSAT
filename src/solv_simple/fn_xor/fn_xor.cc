@@ -49,8 +49,9 @@ void PrintXORStateEntry_formatted(void *pState) {
 void FreeXORStateEntry(void *pState) {
 	XORStateEntry *pXORState = (XORStateEntry *)pState;
 	ite_free((void **)&pXORState->pnTransitionVars);
-   if(pXORState->pXORStateBDD != NULL)
-     pXORState->pXORStateBDD->pState = NULL;
+   if(pXORState->pXORStateBDD != NULL) {
+      pXORState->pXORStateBDD->pState = NULL;
+   }
 }
 
 // XOR Counter State

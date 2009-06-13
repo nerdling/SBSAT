@@ -10,10 +10,16 @@ void SetVisitedSmurfState(void *pState, int value) {
       d7_printf3("Marking visited=%d of Smurf State %p\n", value, pSmurfState);
       pSmurfState->visited = value;
       bdd_flag_nodes(pSmurfState->pSmurfBDD);
-      if(pSmurfState->pVarIsTrueTransition != NULL && ((TypeStateEntry *)(pSmurfState->pVarIsTrueTransition))->cType == FN_INFERENCE)
-        SetVisitedInferenceState(pSmurfState->pVarIsTrueTransition, value);
-      if(pSmurfState->pVarIsFalseTransition != NULL && ((TypeStateEntry *)(pSmurfState->pVarIsFalseTransition))->cType == FN_INFERENCE)
-        SetVisitedInferenceState(pSmurfState->pVarIsFalseTransition, value);
+//      if(pSmurfState->pVarIsTrueTransition != NULL && ((TypeStateEntry *)(pSmurfState->pVarIsTrueTransition))->cType == FN_INFERENCE)
+//        SetVisitedInferenceState(pSmurfState->pVarIsTrueTransition, value);
+//Commented out to work w/ garbage collection compression (may result in slighly slower search.
+//      if((TypeStateEntry *)pSmurfState->pVarIsTrueTransition->visited != value)
+        pSmurfState->pVarIsTrueTransition = NULL;
+//      if(pSmurfState->pVarIsFalseTransition != NULL && ((TypeStateEntry *)(pSmurfState->pVarIsFalseTransition))->cType == FN_INFERENCE)
+//        SetVisitedInferenceState(pSmurfState->pVarIsFalseTransition, value);
+//Commented out to work w/ garbage collection compression (may result in slighly slower search.
+//      if((TypeStateEntry *)pSmurfState->pVarIsFalseTransition->visited != value)
+        pSmurfState->pVarIsFalseTransition = NULL;
       pSmurfState = (SmurfStateEntry *)(pSmurfState->pNextVarInThisState);
    }
 }
@@ -34,12 +40,16 @@ int ApplyInferenceToSmurf(int nBranchVar, bool bBVPolarity, int nSmurfNumber, vo
 			//Follow this transition and apply all inferences found.
 //			void *pNextState = bBVPolarity?pSmurfState->pVarIsTrueTransition:pSmurfState->pVarIsFalseTransition;
 			if(bBVPolarity) {
-				if(pSmurfState->pVarIsTrueTransition == NULL || ((TypeStateEntry *)(pSmurfState->pVarIsTrueTransition))->cType==FN_FREE_STATE)
-              pSmurfState->pVarIsTrueTransition = ReadSmurfStateIntoTable(set_variable(pSmurfState->pSmurfBDD, arrSimpleSolver2IteVarMap[nBranchVar], 1), NULL, 0);
+				if(pSmurfState->pVarIsTrueTransition == NULL) {
+               pSmurfState->pVarIsTrueTransition = ReadSmurfStateIntoTable(set_variable(pSmurfState->pSmurfBDD, arrSimpleSolver2IteVarMap[nBranchVar], 1), NULL, 0);
+               assert(((TypeStateEntry *)(pSmurfState->pVarIsTrueTransition))->cType!=FN_FREE_STATE);
+            }
             pNextState = pSmurfState->pVarIsTrueTransition;
 			} else {
-				if(pSmurfState->pVarIsFalseTransition == NULL || ((TypeStateEntry *)(pSmurfState->pVarIsFalseTransition))->cType==FN_FREE_STATE)
-              pSmurfState->pVarIsFalseTransition = ReadSmurfStateIntoTable(set_variable(pSmurfState->pSmurfBDD, arrSimpleSolver2IteVarMap[nBranchVar], 0), NULL, 0);
+				if(pSmurfState->pVarIsFalseTransition == NULL) {
+               pSmurfState->pVarIsFalseTransition = ReadSmurfStateIntoTable(set_variable(pSmurfState->pSmurfBDD, arrSimpleSolver2IteVarMap[nBranchVar], 0), NULL, 0);
+               assert(((TypeStateEntry *)(pSmurfState->pVarIsFalseTransition))->cType!=FN_FREE_STATE);
+            }
 				pNextState = pSmurfState->pVarIsFalseTransition;
 			}
 			void *pPrevState = NULL;
@@ -55,13 +65,14 @@ int ApplyInferenceToSmurf(int nBranchVar, bool bBVPolarity, int nSmurfNumber, vo
 				pNextState = ((InferenceStateEntry *)pNextState)->pVarTransition;
 			}
 
-			if(pNextState == NULL || ((TypeStateEntry *)pNextState)->cType==FN_FREE_STATE) {
+			if(pNextState == NULL) {
 				assert(((TypeStateEntry *)pPrevState)->cType == FN_INFERENCE);
 				((InferenceStateEntry *)pPrevState)->pVarTransition = pNextState = ReadSmurfStateIntoTable(
 																						    set_variable(((InferenceStateEntry *)pPrevState)->pInferenceBDD,
 																							 arrSimpleSolver2IteVarMap[((InferenceStateEntry *)pPrevState)->nTransitionVar],
 																							 ((InferenceStateEntry *)pPrevState)->bPolarity),
-																							 NULL, 0);
+                                                                                                       NULL, 0);
+            assert(((TypeStateEntry *)pNextState)->cType!=FN_FREE_STATE);
 			}
 			
 			//Record the transition.

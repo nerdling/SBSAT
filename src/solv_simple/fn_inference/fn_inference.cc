@@ -40,7 +40,8 @@ void PrintInferenceStateEntry_dot(void *pState) {
 
 void FreeInferenceStateEntry(void *pState) {
    InferenceStateEntry *pInferenceState = (InferenceStateEntry *)pState;
-   if(pInferenceState->pInferenceBDD!=NULL) 
-     pInferenceState->pInferenceBDD->pState = NULL;
+   if(pInferenceState->pInferenceBDD!=NULL) {
+      pInferenceState->pInferenceBDD->pState = NULL;
+   }
 }
 

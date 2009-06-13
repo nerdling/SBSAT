@@ -636,17 +636,19 @@ int SimpleBrancher() {
 				solutions_overflow=0;
 				SmurfStates_Pop(0);
 			}
-			
+
 			//Update heuristic values
 		
 			//Call Heuristic to get variable and polarity
 			d7_printf2("Calling heuristic to choose choice point #%lld\n", ite_counters[NUM_CHOICE_POINTS]);
 			nBranchLit = SimpleHeuristic();
-			
-			//Push stack
+
+         GarbageCollectSmurfStatesTable(0); //Garbage collect the state machines if necessary
+         
+         //Push stack
 			if(nSimpleSolver_Reset) { SmurfStates_Push(0); nSimpleSolver_Reset = 0; }
 			else SmurfStates_Push(SimpleSmurfProblemState->nCurrSearchTreeLevel+1); //Normal condition
-			
+         
 			//Insert heuristic var into inference queue
 			nInfQueueHead = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
 			//First clear out old inference

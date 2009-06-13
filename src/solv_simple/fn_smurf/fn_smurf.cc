@@ -48,6 +48,7 @@ void PrintSmurfStateEntry_dot(void *pState) {
 
 void FreeSmurfStateEntry(void *pState) {
    SmurfStateEntry *pSmurfState = (SmurfStateEntry *)pState;
-   if(pSmurfState->pSmurfBDD != NULL)
-     pSmurfState->pSmurfBDD->pState = NULL;
+   if(pSmurfState->pSmurfBDD != NULL) {
+      pSmurfState->pSmurfBDD->pState = NULL;
+   }
 }
