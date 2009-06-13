@@ -86,11 +86,12 @@ void save_solution_simple(void) {
 					j++;
 				}
 			}
+			if(use_XORGElim==1) num_vars-=nNumActiveXORGElimVectors(SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].XORGElimTable);
 			ite_counters[NUM_SOLUTIONS]+=((LONG64)1)<<((LONG64)(num_vars));
 		} else {
-			ite_counters[NUM_SOLUTIONS]+=
-			  ((LONG64)1)<<((LONG64)(SimpleSmurfProblemState->nNumVars-1 - SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars));
 			num_vars = SimpleSmurfProblemState->nNumVars-1 - SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
+			if(use_XORGElim==1) num_vars-=nNumActiveXORGElimVectors(SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].XORGElimTable);
+			ite_counters[NUM_SOLUTIONS]+=((LONG64)1)<<((LONG64)(num_vars));
 		}
 
 		if((num_vars > 63)
@@ -804,6 +805,8 @@ int simpleSolve() {
 	solver_polarity_presets_count=0;
 	add_one_display=0;
 	solutions_overflow=0;
+	int DO_EQUIVALENCES_OLD = DO_EQUIVALENCES;
+	DO_EQUIVALENCES = 0;
 	
 	if(ret != SOLV_UNKNOWN) return ret;
 	
@@ -812,6 +815,8 @@ int simpleSolve() {
 	nForceBackjumpLevel = nForceBackjumpLevel_old;
 	
 	Final_SimpleSmurfSolver();
+
+	DO_EQUIVALENCES = DO_EQUIVALENCES_OLD;
 	
 	return ret;
 }

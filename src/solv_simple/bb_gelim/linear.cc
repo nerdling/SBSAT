@@ -586,6 +586,22 @@ int isMaskZero(XORGElimTableStruct *x) {
    return 1;
 }
 
+int isVectorZero(XORGElimTableStruct *x, void *pVector) {
+	for (int word=0 ; word < vec_size; word++) {
+		if (((VecType *)pVector)[word] & ((VecType *)(x->mask))[word]) return 0;
+	}
+	return 1;
+}
+
+int nNumActiveXORGElimVectors(XORGElimTableStruct *x) {
+	int nNumActiveVectors = 0;
+	for (int i=0 ; i < x->num_vectors; i++) {
+		if(!isVectorZero(x, (&(((unsigned char*)(x->frame))[vecs_v_ref+i*vecs_rec_bytes]))))
+		  nNumActiveVectors++;
+	}
+	return nNumActiveVectors;
+}		  
+
 void printMask (XORGElimTableStruct *x) {
 	d2_printf2("mask (%lx", vec_size*sizeof(VecType)*BITS_PER_BYTE);
 	d2_printf1(" bits):\n     ");
