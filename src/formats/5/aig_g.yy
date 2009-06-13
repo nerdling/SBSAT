@@ -91,9 +91,9 @@ line: uints NEW_LINE
 	    if(aig_array[0] == 0){
 	      //functions_add(false_ptr, UNSURE, 0);
 	    }else if(aig_array[0]%2){
-	      //functions_add(ite_var(-(i_getsym_int(aig_array[0]-1, SYM_VAR))), UNSURE, 0);
+	      functions_add(ite_var(-(i_getsym_int(aig_array[0]-1, SYM_VAR))), UNSURE, 0);
 	    }else functions_add(ite_var(i_getsym_int(aig_array[0], SYM_VAR)), UNSURE, 0);
-	    //printBDD(ite_var(i_getsym_int(aig_array[0]%2?aig_array[0]-1:aig_array[0], SYM_VAR)));
+	    	//printBDD(ite_var(i_getsym_int(aig_array[0]%2?aig_array[0]-1:aig_array[0], SYM_VAR)));
 	  }else if(aig_counter < aig_ands + aig_outputs + aig_latches + aig_inputs){
 	    BDDNode *bdd_aig_array[3];
 	    for(int i=0;i<3;i++){
