@@ -409,12 +409,7 @@ int ReadAllSmurfsIntoTable(int nNumVars) {
 		 );
 
 	D_9(PrintAllSmurfStateEntries(););
-//   GarbageCollectSmurfStatesTable(1); //TEST!!! SEAN!!!
-//   D_9(PrintAllSmurfStateEntries(););
-   fflush(stderr);
-   fflush(stdout);
-   fflush(stddbg);
-   
+
 	return Init_Solver_PostSmurfs_Hooks(SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates);
 }
 

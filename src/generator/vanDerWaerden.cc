@@ -283,15 +283,15 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
       exit(1);
    }
 
-   if (formula_type == CNF || formula_type == XCNF)
-      fprintf(stdout, "c max_step %d\n", max_step);
+//   if (formula_type == CNF || formula_type == XCNF)
+//      fprintf(stdout, "c max_step %d\n", max_step);
 
    // Problem:
    // n integer, k buckets, n*k variables
 
    // 1. 
-   if (formula_type == CNF || formula_type == XCNF)
-      fprintf(stdout, "c every integer only in one bucket\n");
+//   if (formula_type == CNF || formula_type == XCNF)
+//      fprintf(stdout, "c every integer only in one bucket\n");
    for(int x = 1; x <= n; x++) {
       int bucket;
       switch (formula_type) {
@@ -341,7 +341,7 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
   }
 
    if (formula_type == CNF || formula_type == XCNF) {
-      fprintf(stdout, "c prevent any arithmetic progression of length %d for every bucket %d\n", p, k);
+//      fprintf(stdout, "c prevent any arithmetic progression of length %d for every bucket %d\n", p, k);
       for(int bucket=0; bucket<k; bucket++) {
          for(int num = 1; num <= n; num++) {
             for(int step = 1; 1; step++) {
@@ -360,7 +360,7 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
          fprintf(stderr, "======================== Problem\n");
       }
    } else if (formula_type == ITE) {
-      fprintf(stdout, "; prevent any arithmetic progression of length %d for every bucket %d\n", p, k);
+//      fprintf(stdout, "; prevent any arithmetic progression of length %d for every bucket %d\n", p, k);
       for(int bucket=0; bucket<k; bucket++) {
          for(int num = 1; num <= n; num++) {
 //#define MK_TEST
@@ -393,7 +393,7 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
          }
       }
    } else if (formula_type == ITE2) {
-      fprintf(stdout, "; prevent any arithmetic progression of length %d for every bucket %d\n", p, k);
+//      fprintf(stdout, "; prevent any arithmetic progression of length %d for every bucket %d\n", p, k);
       for(int num = 1; num <= n; num++) {
          for(int step = 1; 1; step++) {
             if (step * (p-1) + num > n) break;
@@ -1197,7 +1197,7 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
 
       fprintf(stderr, "in Makefile add to MY_INFO = %s\n", filename);
    } else if (formula_type == CNF2 || formula_type == CNF2MK) {
-      fprintf(stdout, "c prevent any arithmetic progression of length %d for every bucket %d\n", p, k);
+//      fprintf(stdout, "c prevent any arithmetic progression of length %d for every bucket %d\n", p, k);
       for(int num = 1; num <= n; num++) {
          for(int step = 1; 1; step++) {
             if (step * (p-1) + num > n) break;
@@ -1244,7 +1244,7 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
          */
       }
    } else if (formula_type == XCNF2) {
-      fprintf(stdout, "c prevent any arithmetic progression of length %d for every bucket %d\n", p, k);
+//      fprintf(stdout, "c prevent any arithmetic progression of length %d for every bucket %d\n", p, k);
       for(int num = 1; num <= n; num++) {
          for(int step = 1; 1; step++) {
             if (step * (p-1) + num > n) break;
@@ -1287,7 +1287,7 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
          fprintf(stderr, "======================== Problem\n");
       }
    } else if (formula_type == MINXCNF) {
-      fprintf(stdout, "c prevent any arithmetic progression of length %d for every bucket %d\n", p, k);
+//      fprintf(stdout, "c prevent any arithmetic progression of length %d for every bucket %d\n", p, k);
       fprintf(stdout, "#1 [ ");
       for(int y = 1; y <= n; y++)
          fprintf(stdout, "%s ", var(n, y, 0));
