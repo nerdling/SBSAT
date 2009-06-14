@@ -131,4 +131,8 @@ void FreeXORGElimStateEntry(void *pState) {
 	XORGElimStateEntry *pXORGElimState = (XORGElimStateEntry *)pState;
 	ite_free((void **)&pXORGElimState->pnTransitionVars);
 	ite_free((void **)&pXORGElimState->pVector);
+
+	if(pXORGElimState->pXORGElimStateBDD != NULL) {
+      pXORGElimState->pXORGElimStateBDD->pState = NULL;
+   }
 }

@@ -175,6 +175,7 @@ typedef struct XORGElimStateEntry {
 	int nSize;
 	void *pVector;
 	int *pnTransitionVars;
+	BDDNode *pXORGElimStateBDD;
 } XORGelimStateEntry;
 
 //SEAN!!! Idea: Could make minmax state machine that is hooked together JUST like a minmax BDD.

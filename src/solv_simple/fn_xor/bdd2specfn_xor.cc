@@ -42,8 +42,7 @@ void *CreateXORState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, XORStateE
 		pPrevXORCounter = (void *)pCurrXORCounter;
 	}
 
-	pCurrentBDD->pState = (void *)pCurrXORCounter;
-	return (void *)pCurrXORCounter;
+	return pCurrentBDD->pState = (void *)pCurrXORCounter;
 }
 
 void *CreateXORGElimState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, XORGElimStateEntry *pStartState) {
@@ -55,6 +54,7 @@ void *CreateXORGElimState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, XORG
 	pStartState->cType = FN_XOR_GELIM;
 	pStartState->pnTransitionVars = arrElts;
    pStartState->nSize = nNumElts;
+	pStartState->pXORGElimStateBDD = pCurrentBDD;
 	BDDNode *tmp_bdd;
 	for(tmp_bdd = pCurrentBDD; !IS_TRUE_FALSE(tmp_bdd); tmp_bdd = tmp_bdd->thenCase){}
 	bool bParity = tmp_bdd == false_ptr;
@@ -62,7 +62,7 @@ void *CreateXORGElimState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, XORG
 	  bParity -= 1;
 
 	pStartState->pVector = createXORGElimTableVector(nNumElts, arrElts, bParity);
-
+	
 	//	fprintf(stderr, "\nb=%d\n", pStartState->bParity);
 	//	printBDDerr(pCurrentBDD);
 	//	fprintf(stderr, "\n");
