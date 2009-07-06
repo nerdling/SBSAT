@@ -420,8 +420,8 @@
 		4041BC130DA934F40016BFBB /* pbxindex.header */ = {isa = PBXFileReference; lastKnownFileType = file; path = pbxindex.header; sourceTree = "<group>"; };
 		4041BC140DA934F40016BFBB /* protocols.pbxbtree */ = {isa = PBXFileReference; lastKnownFileType = file; path = protocols.pbxbtree; sourceTree = "<group>"; };
 		4041BC150DA934F40016BFBB /* refs.pbxbtree */ = {isa = PBXFileReference; lastKnownFileType = file; path = refs.pbxbtree; sourceTree = "<group>"; };
-		4041BC170DA934F40016BFBB /* control */ = {isa = PBXFileReference; lastKnownFileType = file; path = control; sourceTree = "<group>"; };
-		4041BC180DA934F40016BFBB /* strings */ = {isa = PBXFileReference; lastKnownFileType = file; path = strings; sourceTree = "<group>"; };
+		4041BC170DA934F40016BFBB /* control */ = {isa = PBXFileReference; lastKnownFileType = text; path = control; sourceTree = "<group>"; };
+		4041BC180DA934F40016BFBB /* strings */ = {isa = PBXFileReference; lastKnownFileType = text; path = strings; sourceTree = "<group>"; };
 		4041BC190DA934F40016BFBB /* subclasses.pbxbtree */ = {isa = PBXFileReference; lastKnownFileType = file; path = subclasses.pbxbtree; sourceTree = "<group>"; };
 		4041BC1A0DA934F40016BFBB /* symbols0.pbxsymbols */ = {isa = PBXFileReference; lastKnownFileType = file; path = symbols0.pbxsymbols; sourceTree = "<group>"; };
 		4041BC1B0DA934F40016BFBB /* ChangeLog */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ChangeLog; sourceTree = "<group>"; };
@@ -704,8 +704,8 @@
 		4041BD460DA934F40016BFBB /* pbxindex.header */ = {isa = PBXFileReference; lastKnownFileType = file; path = pbxindex.header; sourceTree = "<group>"; };
 		4041BD470DA934F40016BFBB /* protocols.pbxbtree */ = {isa = PBXFileReference; lastKnownFileType = file; path = protocols.pbxbtree; sourceTree = "<group>"; };
 		4041BD480DA934F40016BFBB /* refs.pbxbtree */ = {isa = PBXFileReference; lastKnownFileType = file; path = refs.pbxbtree; sourceTree = "<group>"; };
-		4041BD4A0DA934F40016BFBB /* control */ = {isa = PBXFileReference; lastKnownFileType = file; path = control; sourceTree = "<group>"; };
-		4041BD4B0DA934F40016BFBB /* strings */ = {isa = PBXFileReference; lastKnownFileType = file; path = strings; sourceTree = "<group>"; };
+		4041BD4A0DA934F40016BFBB /* control */ = {isa = PBXFileReference; lastKnownFileType = text; path = control; sourceTree = "<group>"; };
+		4041BD4B0DA934F40016BFBB /* strings */ = {isa = PBXFileReference; lastKnownFileType = text; path = strings; sourceTree = "<group>"; };
 		4041BD4C0DA934F40016BFBB /* subclasses.pbxbtree */ = {isa = PBXFileReference; lastKnownFileType = file; path = subclasses.pbxbtree; sourceTree = "<group>"; };
 		4041BD4D0DA934F40016BFBB /* symbols0.pbxsymbols */ = {isa = PBXFileReference; lastKnownFileType = file; path = symbols0.pbxsymbols; sourceTree = "<group>"; };
 		4041BD4E0DA934F40016BFBB /* sbsat.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sbsat.cc; sourceTree = "<group>"; };
@@ -1119,7 +1119,7 @@
 		4041BF0C0DA934F40016BFBB /* xortest.xor.params */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = xortest.xor.params; sourceTree = "<group>"; };
 		4041BF0D0DA934F40016BFBB /* THANKS */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = THANKS; sourceTree = "<group>"; };
 		4041BF0E0DA934F40016BFBB /* ylwrap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = ylwrap; sourceTree = "<group>"; };
-		8DD76FB20486AB0100D96B5E /* sbsat */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = sbsat; path = /Users/fett/SAT/sbsat/src/Development/sbsat; sourceTree = "<absolute>"; };
+		BB9AD67910018864000E7204 /* sbsat */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = sbsat; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1148,6 +1148,7 @@
 		1AB674ADFE9D54B511CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
+				BB9AD67910018864000E7204 /* sbsat */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2480,7 +2481,7 @@
 			name = sbsat;
 			productInstallPath = "$(HOME)/bin";
 			productName = sbsat;
-			productReference = 8DD76FB20486AB0100D96B5E /* sbsat */;
+			productReference = BB9AD67910018864000E7204 /* sbsat */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -2856,7 +2857,6 @@
 				HEADER_SEARCH_PATHS = "";
 				INSTALL_PATH = "$(HOME)/bin";
 				LIBRARY_SEARCH_PATHS = "";
-				OPTIMIZATION_CFLAGS = "-O0";
 				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = "-ltermcap";
 				OTHER_REZFLAGS = "";
