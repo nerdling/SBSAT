@@ -308,6 +308,7 @@ int ReadAllSmurfsIntoTable(int nNumVars) {
 	}
 
 	Alloc_SmurfStack(0); //Alloc some of the Smurf Stack
+	SimpleSmurfProblemState->arrSmurfStack[0].nIdentifier = 1;
 	
 	for(int x = 0; x < SimpleSmurfProblemState->nNumVars; x++) {
 		SimpleSmurfProblemState->arrVariableOccursInSmurf[x] = (int *)ite_calloc(temp_varcount[x]+1, sizeof(int), 9, "arrVariableOccursInSmurf[x]");

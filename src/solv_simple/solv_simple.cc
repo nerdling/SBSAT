@@ -13,6 +13,7 @@ long nNextRestart = 0;
 int MAX_RESTARTS = 10;
 int nNumRestarts = 0;
 int backtrack_level = 0;
+int just_flipped_choicepoint = 0;
 
 ITE_INLINE 
 void create_clause_from_SBSAT_solution(int *arrInferenceQueue, SmurfStack *arrSmurfStack,
@@ -380,7 +381,6 @@ int SimpleHeuristic() {
 	}
 	
 	ite_counters[NUM_CHOICE_POINTS]++;
-	ite_counters[NO_ERROR]++;
 	
 	return nBranchLit;
 }
@@ -452,7 +452,7 @@ int EnqueueInference(int nBranchVar, bool bBVPolarity, int inf_function_type) {
 		SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars++;
 		ite_counters[inf_function_type]++;
       ite_counters[NUM_INFERENCES]++;
-
+		
 		if(use_lemmas) {
 			d7_printf2("  Applying %d to lemma database\n", bBVPolarity?nBranchVar:-nBranchVar);
 			backtrack_level = picosat_apply_inference(bBVPolarity?nBranchVar:-nBranchVar, SimpleSmurfProblemState->arrInferenceLemmas[nBranchVar].clause);
@@ -468,7 +468,9 @@ int EnqueueInference(int nBranchVar, bool bBVPolarity, int inf_function_type) {
 ITE_INLINE
 int ApplyInferenceToStates(int nBranchVar, bool bBVPolarity) {
 	d7_printf2("  Handling inference %d\n", bBVPolarity?nBranchVar:-nBranchVar);
-
+	if(print_search_dot) print_dot_inference(bBVPolarity?nBranchVar:-nBranchVar);
+	ite_counters[UNIQUE_NUM]++;
+	
 	int ret = ApplyInference_Hooks(nBranchVar, bBVPolarity);
 	if(ret == 0) return 0;
 
@@ -540,6 +542,8 @@ void SmurfStates_Push(int destination) {
 	SimpleSmurfProblemState->arrSmurfStack[destination].nHeuristicPlaceholder =
 	  SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nHeuristicPlaceholder;
 
+	SimpleSmurfProblemState->arrSmurfStack[destination].nIdentifier = ite_counters[UNIQUE_NUM];
+	
 	SmurfStates_Push_Hooks(SimpleSmurfProblemState->nCurrSearchTreeLevel, destination);
 	
 	SimpleSmurfProblemState->nCurrSearchTreeLevel = destination;
@@ -736,6 +740,7 @@ find_more_solutions: ;
 					nInfQueueHead = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
 					SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars++;
 					d7_printf3("Flipping Value of Choicepoint at level %d to %d\n", nInfQueueHead, -nBranchLit);
+					just_flipped_choicepoint = -SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel+1].nIdentifier; //Used for searchtree display purposes. Not necessarily accurate unless this printing is turned on.
 					//continue the loop
 				}
 			}
@@ -805,6 +810,16 @@ int simpleSolve() {
 	solver_polarity_presets_count=0;
 	add_one_display=0;
 	solutions_overflow=0;
+	nNextRestart = 0;
+	MAX_RESTARTS = 10;
+	nNumRestarts = 0;
+	backtrack_level = 0;
+	just_flipped_choicepoint = 0;
+	ite_counters[UNIQUE_NUM] = 1;
+	
+	if(print_search_dot)
+		fprintf(stdout, "digraph SearchTree {\n ");//graph [nodesep=""0.20"", ordering=in, rankdir=TB, ranksep=""0.5""];\n");
+	
 	int DO_EQUIVALENCES_OLD = DO_EQUIVALENCES;
 	DO_EQUIVALENCES = 0;
 	
@@ -817,6 +832,9 @@ int simpleSolve() {
 	Final_SimpleSmurfSolver();
 
 	DO_EQUIVALENCES = DO_EQUIVALENCES_OLD;
+
+	if(print_search_dot)
+	  fprintf(stdout, "}\n//");
 	
 	return ret;
 }

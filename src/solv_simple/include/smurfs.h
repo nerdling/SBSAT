@@ -239,6 +239,7 @@ typedef struct SmurfStack {
 	int nNumFreeVars;
 	int nNumSmurfsSatisfied;
 	int nHeuristicPlaceholder;
+	int nIdentifier; //Used for uniqueness. Helpful for printing the search tree.
 	void **arrSmurfStates;   //Pointer to array of size nNumSmurfs
 	XORGElimTableStruct *XORGElimTable; //For holding the Gaussian Elimination Table.
 } SmurfStack;

@@ -71,7 +71,7 @@ void PrintSmurf_dot(void *pState) {
 		
 	} else if(((TypeStateEntry *)pState)->cType == FN_SMURF) {
 		PrintSmurfStateEntry_dot(pState);
-		fprintf(stdout, " b%p [shape=\"ellipse\", label=\"S\"]\n", (void *)pState);
+		fprintf(stdout, " b%p [shape=\"ellipse\", label=\"S\"];\n", (void *)pState);
 		SmurfStateEntry *pSmurfState = (SmurfStateEntry *)pState;
 		while(pSmurfState!=NULL) {
 			PrintSmurf_dot(pSmurfState->pVarIsTrueTransition); //Recurse
@@ -99,6 +99,22 @@ void PrintAllXORSmurfStateEntries() {
 		}
 	}
 	d2_printf1("\n");
+}
+
+void print_dot_inference(int var) {
+	if(just_flipped_choicepoint < 0) {
+		just_flipped_choicepoint = -just_flipped_choicepoint; //skip past the old choicepoint
+	} else {
+		fprintf(stdout, " i%d [shape=\"circle\", label=\"%d\"];\n", ite_counters[UNIQUE_NUM], var);
+		if(ite_counters[UNIQUE_NUM] != 1) {
+			if(just_flipped_choicepoint > 0) {
+				fprintf(stdout, " i%d -> i%d [style=solid,fontname=\"Helvetica\",label=\"%c\"];\n", just_flipped_choicepoint, ite_counters[UNIQUE_NUM], var>0?'+':'-');
+				just_flipped_choicepoint = 0;
+			} else {
+				fprintf(stdout, " i%d -> i%d [style=solid,fontname=\"Helvetica\",label=\"%c\"];\n", ite_counters[UNIQUE_NUM]-1, ite_counters[UNIQUE_NUM], var>0?'+':'-');
+			}
+		}
+	}
 }
 
 ITE_INLINE
@@ -171,7 +187,7 @@ void DisplaySimpleSolverBacktrackInfo() {
 	}
 	
 	d2_printf1("\n Choices (total, dependent" );
-	dC_printf4("c %4.3fs. Progress %s Choices: %lld\n", fTotalDurationInSecs, number, ite_counters[NO_ERROR]);
+	dC_printf4("c %4.3fs. Progress %s Choices: %lld\n", fTotalDurationInSecs, number, ite_counters[NUM_CHOICE_POINTS]);
 	if (backjumping) d2_printf1(", backjumped");
 	d2_printf3("): (%lld, %lld", ite_counters[NUM_CHOICE_POINTS], ite_counters[HEU_DEP_VAR]);
 	if (backjumping) d2_printf2(", %lld", ite_counters[NUM_TOTAL_BACKJUMPS]);

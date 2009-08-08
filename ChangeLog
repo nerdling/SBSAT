@@ -1,3 +1,140 @@
+2009-07-05 21:20  jeremy
+
+	* sbsat.xcodeproj/project.pbxproj:
+	  Attempt to get xcode working
+
+2009-06-14 17:56  fett
+
+	* Makefile.in, aclocal.m4, configure, configure.ac,
+	  doc/Makefile.in, doc/man1/Makefile.in, examples/Makefile.in,
+	  include/Makefile.in, include/config.h, src/Makefile.in,
+	  src/cudd/Makefile.in, src/cudd/cppobj/Makefile.in,
+	  src/cudd/cudd/Makefile.in, src/cudd/epd/Makefile.in,
+	  src/cudd/include/Makefile.in, src/cudd/mtr/Makefile.in,
+	  src/cudd/st/Makefile.in, src/cudd/util/Makefile.in,
+	  src/formats/Makefile.in, src/formats/5/Makefile.in,
+	  src/generator/Makefile.in, src/generator/vanDerWaerden.cc,
+	  src/postproc/Makefile.in, src/preproc/Makefile.in,
+	  src/solv_bddwalk/Makefile.in, src/solv_simple/Makefile.in,
+	  src/solv_simple/solv_simple_init.cc,
+	  src/solv_simple/bb_gelim/Makefile.in,
+	  src/solv_simple/bb_lemmas/Makefile.in,
+	  src/solv_simple/fn_inference/Makefile.in,
+	  src/solv_simple/fn_minmax/Makefile.in,
+	  src/solv_simple/fn_negminmax/Makefile.in,
+	  src/solv_simple/fn_or/Makefile.in,
+	  src/solv_simple/fn_smurf/Makefile.in,
+	  src/solv_simple/fn_xor/Makefile.in,
+	  src/solv_simple/include/Makefile.in, src/solv_smurf/Makefile.in,
+	  src/solv_smurf/fn_and/Makefile.in,
+	  src/solv_smurf/fn_lemma/Makefile.in,
+	  src/solv_smurf/fn_lemma_au/Makefile.in,
+	  src/solv_smurf/fn_minmax/Makefile.in,
+	  src/solv_smurf/fn_smurf/Makefile.in,
+	  src/solv_smurf/fn_smurf_au/Makefile.in,
+	  src/solv_smurf/fn_smurf_xor/Makefile.in,
+	  src/solv_smurf/fn_xor/Makefile.in,
+	  src/solv_smurf/fn_xor_smurf/Makefile.in,
+	  src/solv_smurf/hr_anne/Makefile.in,
+	  src/solv_smurf/hr_berkmin/Makefile.in,
+	  src/solv_smurf/hr_lemma/Makefile.in,
+	  src/solv_smurf/hr_lsgb/Makefile.in,
+	  src/solv_smurf/hr_lsgb_lemma/Makefile.in,
+	  src/solv_smurf/hr_lsgbw/Makefile.in,
+	  src/solv_smurf/hr_minisat/Makefile.in,
+	  src/solv_smurf/hr_null/Makefile.in,
+	  src/solv_smurf/hr_vsids/Makefile.in,
+	  src/solv_smurf/include/Makefile.in, src/solv_wvf/Makefile.in,
+	  src/utils/Makefile.in, tests/Makefile.in, tests/cnf/Makefile.in,
+	  tests/longer_tests/Makefile.am, tests/longer_tests/Makefile.in,
+	  tests/trace_tests/Makefile.in: Changed version to 2.7b
+
+	    ~Sean
+
+2009-06-14 12:23  fett
+
+	* src/solv_simple/: fn_smurf/bdd2smurf.cc,
+	  fn_xor/bdd2specfn_xor.cc, fn_xor/fn_xor.cc, include/smurfs.h:
+	  Found and fixed a problem w/ smurf garbage collection.  Also, we
+	  were creating too many state machines w/ --precompute-smurfs 0,
+	  fixed that too.
+
+	    ~Sean
+
+2009-06-13 17:53  fett
+
+	* src/formats/5/: aig_g.yy, libt5_a-aig_g.h: [no log message]
+
+2009-06-13 17:37  fett
+
+	* Makefile.in, aclocal.m4, configure, doc/Makefile.in,
+	  doc/man1/Makefile.in, examples/Makefile.in, include/Makefile.in,
+	  include/config.h, src/Makefile.in, src/cudd/Makefile.in,
+	  src/cudd/cppobj/Makefile.in, src/cudd/cudd/Makefile.in,
+	  src/cudd/epd/Makefile.in, src/cudd/include/Makefile.in,
+	  src/cudd/mtr/Makefile.in, src/cudd/st/Makefile.in,
+	  src/cudd/util/Makefile.in, src/formats/Makefile.in,
+	  src/formats/5/Makefile.in, src/generator/Makefile.in,
+	  src/postproc/Makefile.in, src/preproc/Makefile.in,
+	  src/solv_bddwalk/Makefile.in, src/solv_simple/Makefile.in,
+	  src/solv_simple/hooks.cc, src/solv_simple/solv_simple.cc,
+	  src/solv_simple/bb_gelim/Makefile.in,
+	  src/solv_simple/bb_gelim/linear.cc,
+	  src/solv_simple/bb_lemmas/Makefile.in,
+	  src/solv_simple/fn_inference/Makefile.in,
+	  src/solv_simple/fn_minmax/Makefile.in,
+	  src/solv_simple/fn_negminmax/Makefile.in,
+	  src/solv_simple/fn_or/Makefile.in,
+	  src/solv_simple/fn_smurf/Makefile.in,
+	  src/solv_simple/fn_xor/Makefile.in,
+	  src/solv_simple/include/Makefile.in,
+	  src/solv_simple/include/bb_gelim.h, src/solv_smurf/Makefile.in,
+	  src/solv_smurf/fn_and/Makefile.in,
+	  src/solv_smurf/fn_lemma/Makefile.in,
+	  src/solv_smurf/fn_lemma_au/Makefile.in,
+	  src/solv_smurf/fn_minmax/Makefile.in,
+	  src/solv_smurf/fn_smurf/Makefile.in,
+	  src/solv_smurf/fn_smurf_au/Makefile.in,
+	  src/solv_smurf/fn_smurf_xor/Makefile.in,
+	  src/solv_smurf/fn_xor/Makefile.in,
+	  src/solv_smurf/fn_xor_smurf/Makefile.in,
+	  src/solv_smurf/hr_anne/Makefile.in,
+	  src/solv_smurf/hr_berkmin/Makefile.in,
+	  src/solv_smurf/hr_lemma/Makefile.in,
+	  src/solv_smurf/hr_lsgb/Makefile.in,
+	  src/solv_smurf/hr_lsgb_lemma/Makefile.in,
+	  src/solv_smurf/hr_lsgbw/Makefile.in,
+	  src/solv_smurf/hr_minisat/Makefile.in,
+	  src/solv_smurf/hr_null/Makefile.in,
+	  src/solv_smurf/hr_vsids/Makefile.in,
+	  src/solv_smurf/include/Makefile.in, src/solv_wvf/Makefile.in,
+	  src/utils/Makefile.in, tests/Makefile.in, tests/cnf/Makefile.in,
+	  tests/longer_tests/Makefile.in, tests/trace_tests/Makefile.in:
+	  The GElim table now reports # of solutions instead of finding
+	  each solution individually. Much improvement with --max-solutions
+	  0 and a nearly linear formula.
+
+	     ~Sean
+
+2009-06-13 13:41  fett
+
+	* ChangeLog, include/prototypes.h, src/solv_simple/solv_simple.cc,
+	  src/solv_simple/solv_simple_init.cc,
+	  src/solv_simple/fn_inference/bt_inference.cc,
+	  src/solv_simple/fn_inference/fn_inference.cc,
+	  src/solv_simple/fn_minmax/fn_minmax.cc,
+	  src/solv_simple/fn_negminmax/fn_negminmax.cc,
+	  src/solv_simple/fn_or/fn_or.cc,
+	  src/solv_simple/fn_smurf/bt_smurf.cc,
+	  src/solv_simple/fn_smurf/fn_smurf.cc,
+	  src/solv_simple/fn_smurf/hr_lsgb_smurf_init.cc,
+	  src/solv_simple/fn_xor/fn_xor.cc,
+	  src/solv_simple/include/solver.h, src/utils/bddtable.cc: Added
+	  garbage collection of state machines to the simple solver.  Seems
+	  to be working correctly.
+
+	     ~Sean
+
 2009-05-06 16:18  sarahw
 
 	* src/formats/5/: nle_g.yy, nle_s.ll:

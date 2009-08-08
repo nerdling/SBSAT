@@ -101,9 +101,11 @@
 
 #define NUM_LEMMA_INTO_CACHE    48
 
-#define MAX_COUNTER      49
+#define UNIQUE_NUM 49
 
-#define SILENT 50
+#define MAX_COUNTER      50
+
+#define SILENT 51
 
 /* non counter errors */
 #define ERR_IO_INIT	101

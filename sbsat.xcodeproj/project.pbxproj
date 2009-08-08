@@ -758,7 +758,7 @@
 		4041BD850DA934F40016BFBB /* solv_simple_init.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = solv_simple_init.cc; sourceTree = "<group>"; };
 		4041BD860DA934F40016BFBB /* vars_init.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = vars_init.cc; sourceTree = "<group>"; };
 		4041BD870DA934F40016BFBB /* vars_map.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = vars_map.cc; sourceTree = "<group>"; };
-		4041BD890DA934F40016BFBB /* br_afs.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = br_afs.cc; sourceTree = "<group>"; };
+		4041BD890DA934F40016BFBB /* br_afs.cc */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; path = br_afs.cc; sourceTree = "<group>"; };
 		4041BD8A0DA934F40016BFBB /* br_backtrack.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = br_backtrack.cc; sourceTree = "<group>"; };
 		4041BD8B0DA934F40016BFBB /* br_backtrack_nl.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = br_backtrack_nl.cc; sourceTree = "<group>"; };
 		4041BD8C0DA934F40016BFBB /* br_backtrack_sbj.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = br_backtrack_sbj.cc; sourceTree = "<group>"; };
@@ -1415,10 +1415,10 @@
 				4041BD180DA934F40016BFBB /* postproc */,
 				4041BD1C0DA934F40016BFBB /* preproc */,
 				4041BD3E0DA934F40016BFBB /* README */,
+				4041BD530DA934F40016BFBB /* solv_simple */,
 				4041BD3F0DA934F40016BFBB /* sbsat.build */,
 				4041BD4E0DA934F40016BFBB /* sbsat.cc */,
 				4041BD4F0DA934F40016BFBB /* solv_bddwalk */,
-				4041BD530DA934F40016BFBB /* solv_simple */,
 				4041BD880DA934F40016BFBB /* solv_smurf */,
 				4041BE500DA934F40016BFBB /* solv_wvf */,
 				4041BE540DA934F40016BFBB /* solver */,

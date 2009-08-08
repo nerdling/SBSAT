@@ -57,4 +57,7 @@ ITE_INLINE void CalculateSimpleSolverProgress(int *_whereAmI, int *_total);
 void DisplaySimpleSolverBacktrackInfo();
 void DisplaySimpleSolverBacktrackInfo_gnuplot();
 
+extern int just_flipped_choicepoint;
+void print_dot_inference(int var);
+
 #endif
