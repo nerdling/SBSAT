@@ -66,7 +66,7 @@ def slider3_sat(out_type, size, offset):
 	print >> sys.stderr, start1
 	print >> sys.stderr, start2
 	'''
-	print "p bdd {0:d} {0:d}".format(size)
+	print "p bdd {0:d} {1:d}".format(size+offset,size)
 	print "; automatically generated SAT slider3 with size={0:d} ".format(size)
 	print "; Disclaimer: no formal analysis was done to verify SAT and UNSAT"
 
