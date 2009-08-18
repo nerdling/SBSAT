@@ -319,7 +319,7 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
        } break;
        case ITE: {
           // at least one bucket
-          fprintf(stdout, "* AND%d( OR%d(%s ", 1+k*(k-1)/2, k, var(n, x, 0));
+          fprintf(stdout, "and(or(%s ", var(n, x, 0));
           for(bucket = 1; bucket < k; bucket++)
              fprintf(stdout, "%s ", var(n, x, bucket));
           clause_count++;
@@ -327,7 +327,7 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
           // at most one bucket
           for(bucket = 0; bucket < k; bucket++) {
              for (int bucket2=bucket+1; bucket2 < k; bucket2++) {
-                fprintf(stdout, "OR(-%s  ", var(n, x, bucket));
+                fprintf(stdout, "or(-%s  ", var(n, x, bucket));
                 fprintf(stdout, "-%s) ", var(n, x, bucket2));
                 clause_count++;
              }
@@ -366,15 +366,15 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
 //#define MK_TEST
 #ifdef MK_TEST
             if ((n-num)/(p-1) == 0) continue;
-            fprintf(stdout, "* AND%d(", (n-num)/(p-1));
+            fprintf(stdout, "AND(");
 #endif
             for(int step = 1; 1; step++) {
                if (step * (p-1) + num > n) break;
                int base = num;
 #ifdef MK_TEST
-               fprintf(stdout, " OR%d( ", p);
+               fprintf(stdout, "OR( ");
 #else
-               fprintf(stdout, "* OR%d( ", p);
+               fprintf(stdout, "OR( ");
 #endif
                for(int z = 0; z < p; z++) {
                   fprintf(stdout, "-%s ", var(n, base, bucket));
@@ -398,7 +398,7 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
          for(int step = 1; 1; step++) {
             if (step * (p-1) + num > n) break;
             int base = num;
-            fprintf(stdout, "* OR%d( ", p);
+            fprintf(stdout, "OR(");
             for(int z = 0; z < p; z++) {
                fprintf(stdout, "-%s ", var(n, base, 0));
                base+=step;
@@ -406,7 +406,7 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
             fprintf(stdout, ")\n");
             clause_count++;
             base = num;
-            fprintf(stdout, "* OR%d( ", p);
+            fprintf(stdout, "OR(");
             for(int z = 0; z < p; z++) {
                fprintf(stdout, "%s ", var(n, base, 0));
                base+=step;

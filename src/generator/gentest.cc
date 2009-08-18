@@ -131,15 +131,20 @@ int main(int argc, char **argv) {
 		  return 0;
 	  } else
 	  if (argc > 1 && !strcmp(argv[1], "slider3")) {
-	  	char *argv2[argc];
-		memset(argv2,0,sizeof(argv2));
-		argv2[0] = "slider3.py";
+        char *argv2[argc];
+		  if (argc < 3 || (argc > 2 && !strcmp(argv[2], "--help"))) {
+			  fprintf(stderr, "usage: %s size\n", argv[0]);
+			  fprintf(stderr, "       size - num variables\n");
+			  return 0;
+		  }
+        memset(argv2,0,sizeof(argv2));
+        argv2[0] = "slider3.py";
 
-		memcpy(argv2 + 1, argv + 2, sizeof(char *) * (argc - 2));
-		int oranges = execv(argv2[0], argv2);
+        memcpy(argv2 + 1, argv + 2, sizeof(char *) * (argc - 2));
+        int oranges = execv(argv2[0], argv2);
 
-		printf("%s\n", strerror(oranges));
-		return oranges;
+        printf("%s\n", strerror(oranges));
+        return oranges;
 	  } else
 	  if (argc > 1 && !strcmp(argv[1], "trans")) {
 		  if (argc < 4 || (argc > 2 && !strcmp(argv[2], "--help"))) {
