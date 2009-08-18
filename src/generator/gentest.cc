@@ -132,11 +132,6 @@ int main(int argc, char **argv) {
 	  } else
 	  if (argc > 1 && !strcmp(argv[1], "slider3")) {
         char *argv2[argc];
-		  if (argc < 3 || (argc > 2 && !strcmp(argv[2], "--help"))) {
-			  fprintf(stderr, "usage: %s size\n", argv[0]);
-			  fprintf(stderr, "       size - num variables\n");
-			  return 0;
-		  }
         memset(argv2,0,sizeof(argv2));
         argv2[0] = "slider3.py";
 
