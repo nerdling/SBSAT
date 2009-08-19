@@ -2,10 +2,6 @@
 import sys
 from optparse import OptionParser 
 
-if sys.version < '2.6':
-	print "Need at least version 2.6 of Python."
-	sys.exit(1)
-
 def slider3(out_type, size, sat, offset):  
     if   sat == 0:
         slider3_unsat(out_type, size, offset)
@@ -16,7 +12,7 @@ def slider3(out_type, size, sat, offset):
     elif sat == 3:
         slider3_unsat_trace(size, offset)
     else:
-        print >> sys.stderr, 'Error: Unknown out_type: {0}'.format(out_type)
+        print >> sys.stderr, 'Error: Unknown out_type: %s' % out_type
         exit(0)
 
 '''
@@ -66,15 +62,16 @@ def slider3_sat(out_type, size, offset):
 	print >> sys.stderr, start1
 	print >> sys.stderr, start2
 	'''
-	print "p bdd {0:d} {1:d}".format(size+offset,size)
-	print "; automatically generated SAT slider3 with size={0:d} ".format(size)
+	print "p bdd %d %d" % (size+offset,size)
+	print "; automatically generated SAT slider3 with size=%d " % size
 	print "; Disclaimer: no formal analysis was done to verify SAT and UNSAT"
 
 	#first function
 	print "#define add_state1(1, 2, 3, 5, 4, 6)"
 	print "#equ(xor(1, and(-3, 5), nand(6, 4)), ite(2, or(5, -6), -5)))"
 	for i in range(0, size/2):
-		print "add_state1{0}".format(tuple(start1))
+		sys.stdout.write("add_state1")
+		print tuple(start1)
 		for item in range(len(start1)):
 			start1[item] += 1
 
@@ -84,79 +81,12 @@ def slider3_sat(out_type, size, offset):
 	print("#define add_state3(1, 2, 3, 4, 5, 6)")
 	print("#xor(-1, xor(3, and(-4, 5), 4), equ(6, 2))")
 	for i in range(0, size-size/2):
-		print "add_state{0}{1}".format((i%2)+2,tuple(start2[0:5]+start2[6:]))
+		test = (i%2)+2
+		sys.stdout.write("add_state%d" % test)
+		print tuple(start2[0:5]+start2[6:])
 		for item in range(len(start2)):
 			start2[item] += 1
     	
-	
-
-def slider3_unsat_iscas(size):
-    s = n / 20
-    start1 = [1, 2*s+3, 2*s+1, size/2-1-3*s, size/2-1, size/2+1]
-    start2 = [size, 2*s-1, 2*s+2, size/2-1-4*s, size/2-1-2*s, size/2-1-s, size/2+1]
-    tmpnum = 0
-
-    for i in range(size/2+1,size):
-        print "INPUT(v_{0:d})".format(i)
-    print "OUTPUT(MITER)"
-
-    #first function
-    for i in range(0, size/2):
-        print("g_{0:d}  = NOT(v_{1:d})".format(tmpnum+1, start1[1]))
-        print("g_{0:d}  = NOT(v_{1:d})".format(tmpnum+2, start1[2]))
-        print("g_{0:d}  = OR(g_{1:d}, g_{2:d})".format(tmpnum+3, tmpnum+1, tmpnum+2))
-        print("g_{0:d}  = OR(v_{1:d}, v_{2:d})".format(tmpnum+4, start1[1], start1[2]))
-        print("g_{0:d}  = AND(g_{1:d}, g_{2:d})".format(tmpnum+5, tmpnum+3, tmpnum+4))
-        print("g_{0:d}  = NOT(g_{1:d})\n".format(tmpnum+6, tmpnum+5))
-        print("g_{0:d}  = AND(v_{1:d}, g_{2:d})".format(tmpnum+7, start1[4], tmpnum+5))
-        print("g_{0:d}  = NOT(v_{1:d})".format(tmpnum+8, start1[4]))
-        print("g_{0:d}  = AND(v_{1:d}, g_{2:d})".format(tmpnum+9, start1[4], tmpnum+6))
-        print("g_{0:d} = AND(g_{1:d}, g_{2:d})".format(tmpnum+10, tmpnum+8, tmpnum+1))
-        print("g_{0:d} = OR(g_{1:d}, g_{2:d})".format(tmpnum+11, tmpnum+9, tmpnum+10))
-        print("g_{0:d} = AND(v_{1:d}, g_{2:d})".format(tmpnum+12, start1[4], tmpnum+5))
-        print("g_{0:d} = AND(g_{1:d}, v_{2:d})".format(tmpnum+13, tmpnum+8, start1[1]))
-        print("g_{0:d} = OR(g_{1:d}, g_{2:d})".format(tmpnum+14, tmpnum+12, tmpnum+13))
-        print("g_{0:d} = AND(v_{1:d}, g_{2:d})".format(tmpnum+15, start1[3], tmpnum+11))
-        print("g_{0:d} = NOT(v_{1:d})".format(tmpnum+16, start1[3]))
-        print("g_{0:d} = AND(g_{1:d}, g_{2:d})".format(tmpnum+17, tmpnum+16, tmpnum+14))
-        print("g_{0:d} = OR(g_{1:d}, g_{2:d})".format(tmpnum+18, tmpnum+15, tmpnum+17))
-        print("g_{0:d} = AND(v_{1:d}, g_{2:d})".format(tmpnum+19, start1[5], tmpnum+18))
-        print("g_{0:d} = NOT(v_{1:d})".format(tmpnum+20, start1[5]))
-        print("g_{0:d} = AND(g_{1:d}, g_{2:d})".format(tmpnum+21, tmpnum+20, tmpnum+7))
-        print("v_{0:d} = OR(g_{1:d}, g_{2:d})".format(start1[0], tmpnum+19, tmpnum+21))
-		
-	tmpnum += 21
-	for i in range(len(start1)):
-		start1[i] += 1
-		
-	# second and third function
-
-	# xor(T, 1, 2, 3, 6, 7, or(4, 5))
-	
-	for i in range(0, i<size-size/2):
-		if(i%2):
-			print("g_{0:d} = OR(v_{1:d}, v_{2:d})".format(tmpnum+1, start2[3], start2[4]))
-			print("g_{0:d} = XOR(v_{1:d}, v_, v_{2:d}, v_{3:d}, g_{4:d})".format(tmpnum+2, start2[1], start2[2], start2[5], start2[6], tmpnum+1))
-			print("v_{0:d} = NOT(g_{1:d})".format(start2[0], tmpnum+2))
-			tmpnum += 2
-		else:
-			print("g_{0:d} = OR(v_{1:d}, v_{2:d})".format(tmpnum+1, start2[3], start2[4]))
-			print("v_{0:d} = XOR(v_{1:d}, v_{2:d}, v_{3:d}, v_{4:d}, g_{5:d})".format(start2[0], start2[1], start2[2], start2[5], start2[6], tmpnum+1))
-			tmpnum += 1
-		
-		for item in start2:
-			start2[item] += 1
-	
-	for i in range(1, size/2):
-		start1[0] -= 1
-		start2[0] -= 1
-		print("g_{0:d} = XOR(v_{1:d}, v_{2:d})".format(tmpnum+i, start1[0], start2[0]))
-	
-	sys.stdout.write("MITER = OR(g_{0:d}".format(tmpnum+1))
-	for i in range(2,size/2):
-		sys.stdout.write(", g_{0:d}".format(tmpnum+i))
-		sys.stdout.write(")\n")
-
 def slider3_unsat_trace(size):
 	s = size/20
 	start1 = [1, 2*s+3, 2*s+1, size/2-1-3*s, size/2-1, size/2+1]
