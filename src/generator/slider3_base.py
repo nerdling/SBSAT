@@ -274,7 +274,7 @@ def slider3_unsat(out_type, size):
 
 #main method. Option parsing
 def main():
-	usage = "usage: %prog [options] size sat\n       size - num variables\n       sat - 1/0 (un/sat)"
+	usage = "usage: %prog [options] size sat\n  size                  num variables\n  sat                   1/0 (un/sat)"
 	parser = OptionParser(usage=usage)
 	parser.add_option("-o", "--offset", type="int", nargs=1, default=0, help="sets the offset", dest="offset")
 	
