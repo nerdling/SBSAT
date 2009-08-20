@@ -59,7 +59,7 @@ extern double fEndTime;
 
 int dac_numvars;
 int dac_numBDDs;
-double *dac_atom;
+double *dac_var_values;
 
 intlist *dac_occurance;
 int *dac_length;
@@ -118,7 +118,7 @@ void dac_initprob(void)
 	dac_numvars = getNuminp();
 	dac_numBDDs = nmbrFunctions;
 	
-	dac_atom = new double[dac_numvars+1];
+	dac_var_values = new double[dac_numvars+1];
 	
 	dac_occurance = new intlist[dac_numvars+1];
 	dac_length = new int[dac_numBDDs];
@@ -166,38 +166,41 @@ void dac_initprob(void)
 	ite_free((void**)&tempint); tempint_max = 0;
 }
 
-void dac_freemem(void)
-{
-	delete [] dac_atom;
-	
-	for (int x = 0; x <= dac_numvars; x++)
-	  delete [] dac_occurance[x].num;
-	delete [] dac_occurance;
-	
-	for (int x = 0; x < dac_numBDDs; x++)
-	  delete [] dac_variables[x].num;
-	delete [] dac_variables;
-	
-	delete [] dac_length;
-
+//Pb() function
+//double *dac_var_values is global
+ITE_INLINE
+double dac_average(int *dac_vars_to_average, int size) {
+   double average = 0.0;
+   for(int x = 0; x < size; x++)
+     average+=dac_var_values[dac_vars_to_average[x]];
+   return average/size;
 }
 
-//Traverse the BDD and return if the current path (stored in dac_atom[])
+//Traverse the BDD and returns if the current path + flips
 //satisfies or unsatisfies BDD f
-inline bool traverseBDD(BDDNode *f) {
-	assert(!IS_TRUE_FALSE(f)); //Assume every BDD is more complex than true or false
+//vars_to_flip must be sorted
+//double *dac_var_values is global
+ITE_INLINE
+bool traverseBDD(BDDNode *f, int *vars_to_flip, int size) {
+   int x = 0;
 	while(1) {
-		if(dac_atom[f->variable] == 1) {
-			f = f->thenCase;
-		} else {
-			f = f->elseCase;			  
-		}
 		if(f == false_ptr) return false;
 		if(f == true_ptr)	return true;
+      if(x < size && vars_to_flip[x] == f->variable) { //Flip var
+         if(dac_var_values[f->variable] >= 0.5)
+           f = f->elseCase;
+         else f = f->thenCase;
+         x++;
+      } else {
+         if(dac_var_values[f->variable] >= 0.5)
+           f = f->thenCase;
+         else f = f->elseCase;
+      }
 	}
 }
 
-void dac_save_solution(void) {
+//double *dac_var_values is global
+void dac_save_solution(double *dac_var_values) {
 	if (result_display_type) {
 		/* create another node in solution chain */
 		//Should really check against saving multiple solutions
@@ -216,7 +219,22 @@ void dac_save_solution(void) {
 		tmp_solution_info->arrElts = new int[dac_numvars+2];
 		
 		for (int i = 0; i<=dac_numvars; i++) {
-			tmp_solution_info->arrElts[i] = (dac_atom[i]>0)?BOOL_TRUE:BOOL_FALSE;
+			tmp_solution_info->arrElts[i] = (dac_var_values[i]>=0.5)?BOOL_TRUE:BOOL_FALSE;
 		}
 	}
+}
+
+void dac_freemem(void)
+{
+	delete [] dac_var_values;
+	
+	for (int x = 0; x <= dac_numvars; x++)
+	  delete [] dac_occurance[x].num;
+	delete [] dac_occurance;
+	
+	for (int x = 0; x < dac_numBDDs; x++)
+	  delete [] dac_variables[x].num;
+	delete [] dac_variables;
+	
+	delete [] dac_length;
 }
