@@ -419,6 +419,7 @@ AC_CONFIG_FILES([Makefile
                  src/solv_smurf/hr_anne/Makefile
                  src/solv_smurf/hr_minisat/Makefile
                  src/solv_bddwalk/Makefile
+                 src/solv_dac/Makefile
                  src/solv_wvf/Makefile
 					  src/solv_simple/Makefile
   					  src/solv_simple/include/Makefile

@@ -50,6 +50,7 @@ enum {
 
 int solve();
 int walkSolve();
+int dacSolve();
 extern t_solution_info *solution_info;
 extern t_solution_info *solution_info_head;
 

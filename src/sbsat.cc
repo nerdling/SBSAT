@@ -155,6 +155,7 @@ ite_main()
     case 'n': ret = SILENT; break;
     case 'b': ret = solve(); break;
     case 'w': ret = walkSolve(); break;
+    case 'a': ret = dacSolve(); break;
     case 'm': wvfSolve(); break;
 	 case 't': ret = simpleSolve(); break;
     default: write_output(formatout);   
