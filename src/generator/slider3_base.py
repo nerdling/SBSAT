@@ -7,10 +7,6 @@ def slider3(out_type, size, sat, offset):
         slider3_unsat(out_type, size, offset)
     elif sat == 1:
         slider3_sat(out_type, size, offset)
-    elif sat == 2:
-        slider3_unsat_iscas(size, offset)
-    elif sat == 3:
-        slider3_unsat_trace(size, offset)
     else:
         print >> sys.stderr, 'Error: Unknown out_type: %s' % out_type
         exit(0)
@@ -87,76 +83,6 @@ def slider3_sat(out_type, size, offset):
 		for item in range(len(start2)):
 			start2[item] += 1
     	
-def slider3_unsat_trace(size):
-	s = size/20
-	start1 = [1, 2*s+3, 2*s+1, size/2-1-3*s, size/2-1, size/2+1]
-	start2 = [size, 2*s-1, 2*s+2, size/2-1-4*s, size/2-1-2*s, size/2-1-s, size/2+1]
-	tmpnum = 0
-	
-	sys.stdout.write("MODULE slider3_{0:d}_unsat\nINPUT v_{1:d}".format(size, size/2+1))
-	for i in range(size/2+2,size+1):
-		sys.stdout.write(", v_{0:d}".format(i))
-	sys.stdout.write(";\n")
-	
-	print "OUTPUT MITER;"
-	print "STRUCTURE"
-	
-	#first function
-	for i in range(0,size/2):
-		print "g_{0:d}  = not(v_{1:d});".format(tmpnum+1, start1[1])
-		print "g_{0:d}  = not(v_{1:d});".format(tmpnum+2, start1[2])
-		print "g_{0:d}  = or(g_{1:d}, g_{3:d});".format(tmpnum+3, tmpnum+1, tmpnum+2)
-		print "g_{0:d}  = or(v_{1:d}d, v_{3:d});".format(tmpnum+4, start1[1], start1[2])
-		print "g_{0:d}  = and(g_{1:d}, g_{3:d});".format(tmpnum+5, tmpnum+3, tmpnum+4)
-		print "g_{0:d}  = not(g_{1:d});".format(tmpnum+6, tmpnum+5)
-		print "g_{0:d}  = and(v_{1:d}, g_{3:d});".format(tmpnum+7, start1[4], tmpnum+5)
-		print "g_{0:d}  = not(v_{1:d});".format(tmpnum+8, start1[4])
-		print "g_{0:d}  = and(v_{1:d}, g_{3:d});".format(tmpnum+9, start1[4], tmpnum+6)
-		print "g_{0:d} = and(g_{1:d}, g_{3:d});".format(tmpnum+10, tmpnum+8, tmpnum+1)
-		print "g_{0:d} = or(g_{1:d}, g_{3:d});".format(tmpnum+11, tmpnum+9, tmpnum+10)
-		print "g_{0:d} = and(v_{1:d}, g_{3:d});".format(tmpnum+12, start1[4], tmpnum+5)
-		print "g_{0:d} = and(g_{1:d}, v_{3:d});".format(tmpnum+13, tmpnum+8, start1[1])
-		print "g_{0:d} = or(g_{1:d}, g_{3:d});".format(tmpnum+14, tmpnum+12, tmpnum+13)
-		print "g_{0:d} = and(v_{1:d}, g_{3:d});".format(tmpnum+15, start1[3], tmpnum+11)
-		print "g_{0:d} = not(v_{1:d});".format(tmpnum+16, start1[3])
-		print "g_{0:d} = and(g_{1:d}, g_{3:d});".format(tmpnum+17, tmpnum+16, tmpnum+14)
-		print "g_{0:d} = or(g_{1:d}, g_{3:d});".format(tmpnum+18, tmpnum+15, tmpnum+17)
-		print "g_{0:d} = and(v_{1:d}, g_{3:d});".format(tmpnum+19, start1[5], tmpnum+18)
-		print "g_{0:d} = not(v_{1:d});".format(tmpnum+20, start1[5])
-		print "g_{0:d} = and(g_{1:d}, g_{3:d});".format(tmpnum+21, tmpnum+20, tmpnum+7)
-		print "v_{3:d} = or(g_{1:d}, g_{3:d});".format(start1[0], tmpnum+19, tmpnum+21)
-		
-		tmpnum += 21
-		for item in range(len(start1)):
-			start1[1]+=1
-		
-	#Second and Third function
-	
-	#xor(T, 1, 2, 3, 6, 7, or(4, 5))
-	for i in range(0,size-size/2):
-		if i%2:
-			print "g_{0:d} = or(v_{1:d}, v_{2:d});".format( tmpnum+1, start2[3], start2[4])
-			print "g_{0:d} = xor(v_{1:d}, v_{2:d}, v_{3:d}, v_{4:d}, g_{5:d});".format( tmpnum+2, start2[1], start2[2], start2[5], start2[6], tmpnum+1)
-			print "v_{0:d} = not(g_{1:d});".format( start2[0], tmpnum+2)
-			tmpnum += 2
-		else:
-			print "g_{0:d} = or(v_{1:d}, v_{2:d});".format( tmpnum+1, start2[3], start2[4])
-			print "v_{0:d} = xor(v_{1:d}, v_{2:d}, v_{3:d}, v_{4:d}, g_{5:d});".format( start2[0], start2[1], start2[2], start2[5], start2[6], tmpnum+1)
-			tmpnum+=1
-		
-		for item in range(len(start2)):
-			start2[item] += 1
-	
-	for i in range(1, size/2+1):
-		start1[0] -= 1
-		start2[0] -= 1
-		print "g_{0:d} = xor(v_{1:d}, v_{2:d});".format(tmpnum+i, start1[0], start2[0])
-	
-	sys.stdout.write("MITER = or(g_{0:d}".format(tmpnum+1))
-	for i in range(2,size/2+1):
-		sys.stdout.write(", g_{0:d}".format(tmpnum+i))
-	sys.stdout.write(");\nfalse_value = new_int_leaf(0);\nare_equal(false_value, MITER);\nENDMODULE\n")
-
 def slider3_unsat(out_type, size):
 	# 80: 1675229 124.090s 
 	# {1, 11,  9, 27, 39, 40 }
