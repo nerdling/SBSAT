@@ -133,7 +133,7 @@ int main(int argc, char **argv) {
 	  if (argc > 1 && !strcmp(argv[1], "slider3")) {
         char **argv2 = new char*[argc];
         memset(argv2,0,sizeof(argv2));
-        argv2[0] = "__PREFIX__/bin/slider3.py";
+        argv2[0] = "__PREFIX__/slider3.py";
 
         memcpy(argv2 + 1, argv + 2, sizeof(char *) * (argc - 2));
         int oranges = execv(argv2[0], argv2);
