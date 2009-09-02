@@ -38,13 +38,6 @@
 #ifndef BB_GELIM_S_H
 #define BB_GELIM_S_H
 
-#ifdef SBSAT_64BIT
-#define VecType uint64_t
-#define BITS_64
-#else
-#define VecType uint32_t
-#endif
-
 void initXORGElimTable(int nVars);
 void allocXORGElimTable(XORGElimTableStruct *x, int no_funcs);
 void deleteXORGElimTable(XORGElimTableStruct *x);

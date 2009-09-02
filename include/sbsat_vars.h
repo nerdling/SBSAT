@@ -40,6 +40,13 @@
 
 #define LONG64 long long
 
+#ifdef SBSAT_64BIT
+#define VecType uint64_t
+#define BITS_64
+#else
+#define VecType uint32_t
+#endif
+
 /* counter and return values */
 #define NO_ERROR 0
 

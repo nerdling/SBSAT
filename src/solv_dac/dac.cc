@@ -35,12 +35,6 @@
  of the possibility of those damages.
 *********************************************************************/
 
-/* walksat version 35hw4 */
-/* version 1 by Bram Cohen 7/93 */
-/* versions 2 - 35  by Henry Kautz */
-/* versions 35h by Holger H Hoos -- all modifications marked "hh" */
-/* version 35hw* by Sean Weaver -- modified to solve on BDDs instead of CNF */
-
 #include "sbsat.h"
 #include "sbsat_solver.h"
 
@@ -85,17 +79,67 @@ int dac_test_for_break() {
 void dac_initprob();
 void dac_freemem();
 
+void printVec (VecType x) {
+   for (unsigned int j=0 ; j < sizeof(VecType)*8 ; j++) {
+      if (x % 2) {
+         d2_printf1("1");
+      } else {
+         d2_printf1("0");
+      }
+      x>>=1;
+   }
+}
+
+ITE_INLINE
+int majorizedBy(VecType i, VecType j) {
+
+   VecType tmp = i;
+   i = i & ~j;
+   j = ~tmp & j;
+
+   //   if(popcount(i) > popcount(j)) return 0;
+   
+   VecType high_order_bit_i = 1;
+   while(high_order_bit_i <= i) high_order_bit_i<<=1;
+   high_order_bit_i>>=1;
+   
+   VecType high_order_bit_j = 1;
+   while(high_order_bit_j <= j) high_order_bit_j<<=1;
+   high_order_bit_j>>=1;
+
+   if(high_order_bit_i == 0) return 1;
+   if(high_order_bit_j == 0) return 0;
+   
+   while(1) {
+//      d2_printf1("\n(");
+//      printVec(high_order_bit_i);
+//      d2_printf1("     ");
+//      printVec(high_order_bit_j);
+//      d2_printf1(")");
+
+      if(high_order_bit_i > high_order_bit_j) return 0;
+      
+      high_order_bit_i>>=1;
+      high_order_bit_j>>=1;
+
+      while((high_order_bit_i&i) == 0) { high_order_bit_i>>=1; if(high_order_bit_i == 0) return 1;}
+      while((high_order_bit_j&j) == 0) { high_order_bit_j>>=1; if(high_order_bit_j == 0) return 0;}
+   }
+}
+
 int dacSolve() {
 	/* Get values from the command line */
 
 	dac_initprob(); /* initialized the BDD structures */
 	fStartTime = get_runtime();
-	while (1) {
-      if(dac_test_for_break()) break;
+   long long n = 0;
+	while (n < 10000000) {
+/*      if(dac_test_for_break()) break;
       
-      char term_char = term_getchar();
+      char term_char = (char)term_getchar();
       if (term_char==' ') { //Display status
          d2_printf1("\b");
+         d2_printf2("%d", n);
          //Print things
       } else if (term_char=='r') { //Force a random restart
          d2_printf1("\b");
@@ -105,8 +149,20 @@ int dacSolve() {
          nCtrlC = 1;
          break;
       }
+*/
+      VecType i = rand();
+      VecType j = rand();
+/*      d2_printf1("(");
+      printVec(i);
+      d2_printf1(" <=? ");
+      printVec(j);
+      d2_printf2(") : %d", majorizedBy(i, j));
+      d2_printf2(" : %d\n", majorizedBy(j, i));*/
+      majorizedBy(i, j);
+      n++;
    }
-
+   
+   
 	fEndTime = get_runtime() - fStartTime;
 	dac_freemem();
 	//if (numsuccesstry!=0) return SOLV_SAT;
@@ -200,7 +256,7 @@ bool traverseBDD(BDDNode *f, int *vars_to_flip, int size) {
 }
 
 //double *dac_var_values is global
-void dac_save_solution(double *dac_var_values) {
+void dac_save_solution() {
 	if (result_display_type) {
 		/* create another node in solution chain */
 		//Should really check against saving multiple solutions
