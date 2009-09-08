@@ -63,6 +63,8 @@ intlist *dac_variables;
 /* Main                             */
 /************************************/
 
+VecType *dac_gen_next_bubble (VecType *current_bubble, int curr, int *tail, int *max_num_vecs, int size);
+
 int dac_test_for_break() {
 	if (nTimeLimit && (get_runtime() - fStartTime) > nTimeLimit) {
 		d2_printf2("Bailling out because the Time limit of %lds ", nTimeLimit);
@@ -87,6 +89,17 @@ void printVec (VecType x) {
          d2_printf1("0");
       }
       x>>=1;
+   }
+}
+
+void printVec_size (VecType x, unsigned int size) {
+   for (unsigned int j=0 ; j < size ; j++) {
+      if ((x & (unsigned int)(1<<(size-1))) == (unsigned int)(1<<(size-1))) {
+         d2_printf1("1");
+      } else {
+         d2_printf1("0");
+      }
+      x<<=1;
    }
 }
 
@@ -127,13 +140,22 @@ int majorizedBy(VecType i, VecType j) {
    }
 }
 
+void dac_print_bubble (VecType *current_bubble, int tail, int max_num_vecs) {
+	d2_printf1("( ");
+	for(int x = 0; x < tail; x++) {
+		printVec_size(current_bubble[x], 16);
+		d2_printf1(" ");
+	}
+	d2_printf3(") %d %d\n", tail, max_num_vecs);
+}
+
 int dacSolve() {
 	/* Get values from the command line */
 
 	dac_initprob(); /* initialized the BDD structures */
 	fStartTime = get_runtime();
    long long n = 0;
-	while (n < 10000000) {
+	while (n < 1){//0000000) {
 /*      if(dac_test_for_break()) break;
       
       char term_char = (char)term_getchar();
@@ -162,11 +184,38 @@ int dacSolve() {
       n++;
    }
    
-   
+	int max_num_vecs = 2;
+	VecType *current_bubble = (VecType *)ite_calloc(max_num_vecs, sizeof(VecType), 9, "current_bubble");
+	current_bubble[0] = 1;
+	int tail = 1;
+	int size = 16;
+
+	dac_print_bubble (current_bubble, tail, max_num_vecs);
+
+	int max_tail = tail;
+	for(int x = 0; tail>0; x++) {
+		current_bubble = dac_gen_next_bubble (current_bubble, rand()%tail, &tail, &max_num_vecs, size);
+		//dac_print_bubble (current_bubble, tail, max_num_vecs);
+		if(tail > max_tail) max_tail = tail;
+	}
+	fprintf(stderr, "[%d]", max_tail);
+	
 	fEndTime = get_runtime() - fStartTime;
 	dac_freemem();
 	//if (numsuccesstry!=0) return SOLV_SAT;
 	return SOLV_UNKNOWN;
+}
+
+VecType *dac_pascal = NULL;
+
+void dac_gen_pascal(int size) {
+	assert(dac_pascal==NULL);
+	assert(size <= 64);
+	dac_pascal = (VecType *)ite_calloc(size, sizeof(VecType), 9, "dac_pascal");
+	dac_pascal[0] = 1;
+	dac_pascal[1] = 3;
+	for(int x = 2; x < size; x++)
+	  dac_pascal[x] = dac_pascal[x-1]<<1;
 }
 
 void dac_initprob(void)
@@ -174,12 +223,17 @@ void dac_initprob(void)
 	dac_numvars = getNuminp();
 	dac_numBDDs = nmbrFunctions;
 	
-	dac_var_values = new double[dac_numvars+1];
+	dac_gen_pascal(64); //????
 	
-	dac_occurance = new intlist[dac_numvars+1];
-	dac_length = new int[dac_numBDDs];
-	dac_variables = new intlist[dac_numBDDs];
-	int *tempmem = new int[dac_numvars+1];
+	dac_var_values = (double *)ite_calloc(dac_numvars+1, sizeof(double), 9, "dac_var_values");
+	
+	dac_occurance = (intlist *)ite_calloc(dac_numvars+1, sizeof(intlist), 9, "dac_occurance");
+
+	dac_length = (int *)ite_calloc(dac_numBDDs, sizeof(int), 9, "dac_numBDDs");
+
+	dac_variables = (intlist *)ite_calloc(dac_numBDDs, sizeof(intlist), 9, "dac_variables");
+
+	int *tempmem = (int*)ite_calloc(dac_numvars+1, sizeof(int), 9, "tempmem");
 	int *tempint = NULL;
 	int tempint_max = 0;
 	
@@ -193,7 +247,7 @@ void dac_initprob(void)
 		if (y != 0) qsort (tempint, y, sizeof (int), compfunc);
 		
 		dac_length[x] = y;
-		dac_variables[x].num = new int[y]; //(int *)calloc(y, sizeof(int));
+		dac_variables[x].num = (int *)ite_calloc(y, sizeof(int), 9, "dac_variables[x].num");
 		dac_variables[x].length = y;
 		for (int i = 0; i < y; i++) {
 			dac_variables[x].num[i] = tempint[i];
@@ -205,7 +259,7 @@ void dac_initprob(void)
 	//dac_variables is done
 	
 	for (int x = 0; x <= dac_numvars; x++) {
-		dac_occurance[x].num = new int[tempmem[x]];
+		dac_occurance[x].num = (int *)ite_calloc(tempmem[x], sizeof(int), 9, "dac_occurance[x].num");
 		dac_occurance[x].length = 0;
 	}
 	delete [] tempmem;
@@ -255,6 +309,34 @@ bool traverseBDD(BDDNode *f, int *vars_to_flip, int size) {
 	}
 }
 
+VecType *dac_gen_next_bubble (VecType *current_bubble, int curr, int *tail, int *max_num_vecs, int size) {
+   //Add non-majorized non-majorizing vectors
+	if((*tail) == 0) return current_bubble;
+//	d2_printf2("choose %d\n", curr);
+	for(int x = 0; x < size; x++) {
+		if((*tail) >= (*max_num_vecs)) {
+			current_bubble = (VecType *)ite_recalloc(current_bubble, (*max_num_vecs), (*tail)+1, sizeof(VecType), 9, "current_bubble");
+			(*max_num_vecs) = (*tail)+1;
+		}
+		current_bubble[*tail] = current_bubble[curr] ^ dac_pascal[x];
+		if(majorizedBy(current_bubble[*tail], current_bubble[curr])) { }
+		else {
+			for(int y = 0; y < (*tail); y++) {
+				if(y == curr) continue;
+				if(majorizedBy(current_bubble[y], current_bubble[*tail])) {
+					(*tail)--;
+					break;
+				}
+			}
+			(*tail)++;
+		}
+	}
+	//Remove selected multi-flip
+	current_bubble[curr] = current_bubble[(*tail)-1];
+	(*tail)--;
+	return current_bubble; //necessary because of the possible recalloc
+}
+
 //double *dac_var_values is global
 void dac_save_solution() {
 	if (result_display_type) {
@@ -262,7 +344,7 @@ void dac_save_solution() {
 		//Should really check against saving multiple solutions
 		
 		t_solution_info *tmp_solution_info;
-		tmp_solution_info = (t_solution_info*)calloc(1, sizeof(t_solution_info));
+		tmp_solution_info = (t_solution_info*)ite_calloc(1, sizeof(t_solution_info), 9, "tmp_solution_info");
 		
 		if (solution_info_head == NULL) {
 			solution_info = tmp_solution_info;
@@ -272,7 +354,7 @@ void dac_save_solution() {
 			solution_info = (t_solution_info*)(solution_info->next);
 		}
 		tmp_solution_info->nNumElts = dac_numvars+1;
-		tmp_solution_info->arrElts = new int[dac_numvars+2];
+		tmp_solution_info->arrElts = (int *)ite_calloc(dac_numvars+2, sizeof(int), 9, "tmp_solution_info->arrElts");
 		
 		for (int i = 0; i<=dac_numvars; i++) {
 			tmp_solution_info->arrElts[i] = (dac_var_values[i]>=0.5)?BOOL_TRUE:BOOL_FALSE;
@@ -282,15 +364,16 @@ void dac_save_solution() {
 
 void dac_freemem(void)
 {
-	delete [] dac_var_values;
+   ite_free((void **)&dac_pascal);
+	ite_free((void **)&dac_var_values);
 	
 	for (int x = 0; x <= dac_numvars; x++)
-	  delete [] dac_occurance[x].num;
-	delete [] dac_occurance;
+	  ite_free((void **)&dac_occurance[x].num);
+	ite_free((void **)&dac_occurance);
 	
 	for (int x = 0; x < dac_numBDDs; x++)
-	  delete [] dac_variables[x].num;
-	delete [] dac_variables;
+	  ite_free((void **)&dac_variables[x].num);
+	ite_free((void **)&dac_variables);
 	
-	delete [] dac_length;
+	ite_free((void **)&dac_length);
 }
