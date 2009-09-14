@@ -562,6 +562,10 @@ void printBDD_ReduceSpecFunc(BDDNode *bdd, FILE *fout) {
 void
 printBDDFormat () {
 	fprintf(foutputfile, "p bdd %d %d\n", getNuminp(), nmbrFunctions);
+   fprintf(foutputfile, "order(");
+	for(int x = 1; x <= getNuminp(); x++)
+	  fprintf(foutputfile, "%s ", s_name(x));
+	fprintf(foutputfile, ")\n");
 	for(int x = 0; x < nmbrFunctions; x++) {
 		printBDD_ReduceSpecFunc(functions[x], foutputfile);
 		fprintf(foutputfile, "\n");
