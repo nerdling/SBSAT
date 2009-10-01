@@ -4767,6 +4767,8 @@ restart (void)
   skip = medium_agility ();
 #endif
 
+	skip = 1;
+	
 #ifdef STATS
   if (skip)
     skippedrestarts++;

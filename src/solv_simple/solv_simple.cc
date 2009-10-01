@@ -298,6 +298,9 @@ int Simple_PMVSIDS_Heuristic() {
 	return arrVarTrueInfluences[nBestVble]>0.5?nBestVble:-nBestVble;
 }
 
+//SEAN!!! May consider rewriting this function to choose the largest variable first.
+//This could speed up solving because BDD operations should be simplier (largest variables
+//are at the root of a BDD.
 ITE_INLINE
 int Simple_DC_Heuristic() { //Simple Don't Care Heuristic
    int nBestVble = 0;
