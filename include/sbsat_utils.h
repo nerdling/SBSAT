@@ -37,6 +37,9 @@
 
 #ifndef SBSAT_UTILS_H
 #define SBSAT_UTILS_H
+
+double drand();
+
 /*
 #define ite_free(n) free(*(n))
 #define ite_calloc(x,y,dbglvl,forwhat) calloc(x,y)
@@ -57,7 +60,6 @@ void *_ite_realloc(void *ptr, unsigned int oldx, unsigned int x, unsigned int y,
 
 char *ite_basename(char *filename);
 void ite_strncpy(char *str_dst, char *str_src, int len);
-
 
 #define ITE_NEW_CATCH(x, desc) \
  try { x; } catch(...) { \

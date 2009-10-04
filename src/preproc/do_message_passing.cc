@@ -68,19 +68,10 @@
 
 int MAXITERATIONS = 100;
 
-double mp_seed;
 void clear_all_bdd_density();
 
 int surveys_attempted = 0;
 int surveys_converged = 0;
-
-//Returns a random float 0<=x<1. Seed must never be 0.
-inline double drand() {
-	mp_seed *= 1389796;
-	int q = (int)(mp_seed / 2147483647);
-	mp_seed -= (double)q * 2147483647;
-	return mp_seed / 2147483647;
-}
 
 int ComputeSurvey(int);
 
@@ -155,7 +146,6 @@ int Do_Message_Passing() {
 		 d3_printf1(p);
 	);
 
-	mp_seed = (double)random_seed;
 	int heuristic_mode = n_mp_heuristic;
 
 	surveys_attempted = 0;
