@@ -51,6 +51,8 @@ VecType *dac_pascal = NULL;
 int max_num_bubble_vecs;
 VecType *current_bubble;
 
+VecType vec_one = 1;
+
 /************************************/
 /* Initialization & Allocation      */
 /************************************/
@@ -65,7 +67,7 @@ int dac_initprob(void) {
 	dac_pascal[0] = 1;
 	dac_pascal[1] = 3;
 	for(int x = 2; x < pascal_size; x++)
-	  dac_pascal[x] = dac_pascal[x-1]<<1;
+	  dac_pascal[x] = dac_pascal[x-1]<<vec_one;
 
 	max_num_bubble_vecs = 2;
 	
@@ -199,15 +201,15 @@ void dac_save_solution() {
 /* Bit-Vector Routines              */
 /************************************/
 
-void printVec_size (VecType x, unsigned int size) {
+void printVec_size (VecType x, VecType size) {
 	if(size > (sizeof(VecType)*8)) size = sizeof(VecType)*8;
-   for (unsigned int j=0 ; j < size ; j++) {
-      if ((x & (unsigned int)(1<<(size-1))) == (unsigned int)(1<<(size-1))) {
+   for (int j=0 ; j < size ; j++) {
+      if ((x & vec_one<<(size-vec_one)) == (vec_one<<(size-vec_one))) {
          d2_printf1("1");
       } else {
          d2_printf1("0");
       }
-      x<<=1;
+      x<<=vec_one;
    }
 }
 
@@ -229,12 +231,12 @@ bool majorizedBy(VecType i, VecType j) {
    //   if(popcount(i) > popcount(j)) return 0;
    
    VecType high_order_bit_i = 1;
-   while(high_order_bit_i <= i) high_order_bit_i<<=1;
-   high_order_bit_i>>=1;
+   while(high_order_bit_i <= i) high_order_bit_i<<=vec_one;
+   high_order_bit_i>>=vec_one;
    
    VecType high_order_bit_j = 1;
-   while(high_order_bit_j <= j) high_order_bit_j<<=1;
-   high_order_bit_j>>=1;
+   while(high_order_bit_j <= j) high_order_bit_j<<=vec_one;
+   high_order_bit_j>>=vec_one;
 
    if(high_order_bit_i == 0) return 1;
    if(high_order_bit_j == 0) return 0;
@@ -248,11 +250,11 @@ bool majorizedBy(VecType i, VecType j) {
 
       if(high_order_bit_i > high_order_bit_j) return 0;
       
-      high_order_bit_i>>=1;
-      high_order_bit_j>>=1;
+      high_order_bit_i>>=vec_one;
+      high_order_bit_j>>=vec_one;
 
-      while((high_order_bit_i&i) == 0) { high_order_bit_i>>=1; if(high_order_bit_i == 0) return 1;}
-      while((high_order_bit_j&j) == 0) { high_order_bit_j>>=1; if(high_order_bit_j == 0) return 0;}
+      while((high_order_bit_i&i) == 0) { high_order_bit_i>>=vec_one; if(high_order_bit_i == 0) return 1;}
+      while((high_order_bit_j&j) == 0) { high_order_bit_j>>=vec_one; if(high_order_bit_j == 0) return 0;}
    }
 }
 
@@ -300,7 +302,7 @@ double sum_vec(VecType vars_to_sum, int *vec_variables) {
 	while(vars_to_sum!=0) {
 		if((vars_to_sum&1) == 1)
 		  sum+=dac_var_values[vec_variables[x]];
-		x++; vars_to_sum>>=1;
+		x++; vars_to_sum>>=vec_one;
 	}
 	return sum;
 }
@@ -322,7 +324,7 @@ void flip_vars(VecType vars_to_flip, int *vec_variables) {
 	while(vars_to_flip!=0) {
 		if((vars_to_flip&1) == 1)
 		  dac_pb_var_values[vec_variables[x]] = 1 - dac_pb_var_values[vec_variables[x]];
-		x++; vars_to_flip>>=1;
+		x++; vars_to_flip>>=vec_one;
 	}
 }
 
@@ -433,7 +435,7 @@ int dacSolve() {
 	int numsol = max_solutions;
 	int numsuccesstry = 0;
 
-	int dac_iterations = 1;
+	int dac_iterations = 0;
 	
    while(numsol==0 || (numsuccesstry < numsol)) {
 		
