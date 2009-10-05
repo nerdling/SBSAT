@@ -432,9 +432,11 @@ int dacSolve() {
 	fStartTime = get_runtime();
 	int numsol = max_solutions;
 	int numsuccesstry = 0;
+
+	int dac_iterations = 1;
 	
    while(numsol==0 || (numsuccesstry < numsol)) {
-	
+		
 		char term_char = (char)term_getchar();
 		if (term_char==' ') { //Display status
 			d2_printf1("\b");
@@ -448,19 +450,25 @@ int dacSolve() {
 			break;
 		}
 		
-		int numSAT = 0;
+		int isSAT = 1;
 		for(int x = 0; x < dac_numBDDs; x++) {
-			if(dac_traverseBDD(functions[x])) numSAT++;
-			else dac_make_multiflip (x);
+			if(!dac_traverseBDD(functions[x])) {
+				isSAT = 0;
+				dac_make_multiflip (x);
+			}
 			if(dac_test_for_break()) break;			
 		}
-		if(numSAT == dac_numBDDs) {
+		if(isSAT) {
 			dac_save_solution();
 			numsuccesstry++;
 		}
 		
+		dac_iterations++;
+		
 		if(dac_test_for_break()) break;
 	}
+	
+	d2_printf2("Iterations = %d\n", dac_iterations);
 	
 	fEndTime = get_runtime() - fStartTime;
 	dac_freemem();
