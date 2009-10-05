@@ -164,7 +164,7 @@ bool dac_test_for_break() {
 		return 1;
 	}
 	if (nCtrlC) {
-		d2_printf1("Breaking out of BDD WalkSAT\n");
+		d2_printf1("Breaking out of BDD-based Divide and Concur\n");
 		return 1;
 	}
 	return 0;
