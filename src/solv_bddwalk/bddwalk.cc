@@ -261,10 +261,11 @@ int walkSolve() {
 	wp_numerator = (int)(BDDWalk_wp_prob*(float)wp_denominator);
 	noise = BDDWalk_prob;
 	
-	gettimeofday(&tv,&tzp);
-	seed = (( tv.tv_sec & 0177 ) * 1000000) + tv.tv_usec;
+//	gettimeofday(&tv,&tzp);
+//	seed = (( tv.tv_sec & 0177 ) * 1000000) + tv.tv_usec;
+//	srandom(seed);
+
 	if (numsol==0 || numsol>numrun) numsol = numrun;
-	srandom(seed);
 	initprob(); /* initialized the BDD structures */
 	print_statistics_header();
 	fStartTime = get_runtime();
