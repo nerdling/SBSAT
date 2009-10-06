@@ -332,6 +332,8 @@ extern int BDDWalkRandomOption;
 extern float BDDWalk_wp_prob;
 extern float BDDWalk_prob;
 
+extern float dac_beta_value;
+
 //Begin preprocessing globals
 
 extern int T;

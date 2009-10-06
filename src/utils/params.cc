@@ -422,6 +422,13 @@ t_opt options[] = {
 { &BDDWalk_prob, "", "bddwalk-prob", P_FLOAT, V(i:0,"0"), V(f:0.1,"0.1"), VAR_NORMAL, 0,
 		"BDD WalkSAT probablity of picking second best path (used in conjunction with novelty+ heuristic)"},
 
+/* 
+ * BDDWalkSAT Solver options
+ */
+{ NULL, "", "", P_NONE, {"0"}, {"0"}, VAR_NORMAL, 0, 
+	        "\nDivide and Concur solver options:"},
+{ &dac_beta_value, "", "dac-beta", P_FLOAT, V(i:0,"0"), V(f:1.0,"1.0"), VAR_NORMAL, 0,
+		"Beta value used as a heuristic modifier for Difference Logic / Divide and Concur"},
 	
 /* 
  * the end

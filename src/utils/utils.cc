@@ -45,14 +45,14 @@ BDDNode *false_ptr = NULL;
 BDDNode *true_ptr = NULL;
 extern char temp_dir[256];
 
-//Returns a random float 0<=x<1. Seed must never be 0.                                                                                                                                           
+//Returns a random float 0<=x<1. Seed must never be 0.
 ITE_INLINE
 double drand() {
-   double mp_seed = 1389796 * (double) random_seed;
-	int q = (int)(mp_seed / 2147483647);                                                                                                                                                          
-	mp_seed -= (double)q * 2147483647;                                                                                                                                                            
-	return mp_seed / 2147483647;                                                                                                                                                                  
-}                                                                                                                                                                                                
+   double mp_seed = 1389796 * (double) rand();
+	int q = (int)(mp_seed / 2147483647);
+	mp_seed -= (double)q * 2147483647;
+	return mp_seed / 2147483647;
+}
 
 void *_ite_calloc(unsigned int x, unsigned int y, int dbg_lvl, const char *for_what) {
    //fprintf(stderr, "ite_calloc(x=%d, y=%d, dbg_lvl=%d, for_what=%s)\n", x, y, dbg_lvl, for_what);

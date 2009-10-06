@@ -42,9 +42,13 @@ int dac_num_vars;
 int dac_num_expanded_vars;
 int dac_numBDDs;
 double *dac_var_values;
-double *dac_pa_var_values;
-double *dac_pb_var_values;
+double *dac_var_values_tmp1;
+double *dac_var_values_tmp2;
+double *dac_var_values_tmp3;
 double *dac_qsort_var_values;
+double *dac_solution_var_values;
+
+float dac_beta_value;
 
 intlist *dac_var_instances;
 intlist *dac_variables;
@@ -88,11 +92,11 @@ int dac_initRAM(void) {
 		dac_variables[x].num = (int *)ite_calloc(y, sizeof(int), 9, "dac_variables[x].num");
 		dac_variables[x].length = y;
 		dac_num_expanded_vars += y;
-      if(dac_variables[x].length > (sizeof(VecType)*8))
+      if(dac_variables[x].length > (int)(sizeof(VecType)*8))
 		  too_many_vars = 1;
 		for (int i = 0; i < y; i++) {
 			dac_variables[x].num[i] = tempint[i];
-         tempmem[tempint[i]]++;
+			tempmem[tempint[i]]++;
       }
 	}
    
@@ -116,6 +120,7 @@ int dac_initRAM(void) {
    instance_num = 1;
    for (int x = 0; x < dac_numBDDs; x++) {
 		for (int i = 0; i < dac_variables[x].length; i++) {
+         functions[x] = num_replace(functions[x], dac_variables[x].num[i], instance_num);
          dac_variables[x].num[i] = instance_num;
          instance_num++;
       }
@@ -125,9 +130,11 @@ int dac_initRAM(void) {
 	current_bubble = (VecType *)ite_calloc(max_num_bubble_vecs, sizeof(VecType), 9, "current_bubble");
 	
 	dac_var_values = (double *)ite_calloc(dac_num_expanded_vars+1, sizeof(double), 9, "dac_var_values");
-	dac_pa_var_values = (double *)ite_calloc(dac_num_expanded_vars+1, sizeof(double), 9, "dac_pa_var_values");
-   dac_pb_var_values = (double *)ite_calloc(dac_num_expanded_vars+1, sizeof(double), 9, "dac_pb_var_values");
+	dac_var_values_tmp1 = (double *)ite_calloc(dac_num_expanded_vars+1, sizeof(double), 9, "dac_var_values_tmp1");
+	dac_var_values_tmp2 = (double *)ite_calloc(dac_num_expanded_vars+1, sizeof(double), 9, "dac_var_values_tmp2");
+	dac_var_values_tmp3 = (double *)ite_calloc(dac_num_expanded_vars+1, sizeof(double), 9, "dac_var_values_tmp3");
 
+	
 	ite_free((void **)&tempint); tempint_max = 0;
 
 	if(too_many_vars) {
@@ -141,8 +148,9 @@ int dac_initRAM(void) {
 void dac_freemem(void) {
    ite_free((void **)&dac_pascal);
 	ite_free((void **)&dac_var_values);
-	ite_free((void **)&dac_pa_var_values);
-	ite_free((void **)&dac_pb_var_values);
+	ite_free((void **)&dac_var_values_tmp1);
+	ite_free((void **)&dac_var_values_tmp2);
+	ite_free((void **)&dac_var_values_tmp3);
 
 	ite_free((void **)&current_bubble);
 
@@ -200,8 +208,7 @@ void dac_save_solution() {
 		tmp_solution_info->arrElts = (int *)ite_calloc(dac_num_vars+2, sizeof(int), 9, "tmp_solution_info->arrElts");
 		
 		for (int i = 0; i<=dac_num_vars; i++) {
-			//tmp_solution_info->arrElts[i] = (dac_var_values[i]>=0.5)?BOOL_TRUE:BOOL_FALSE;
-			tmp_solution_info->arrElts[i] = (dac_pb_var_values[i]==1)?BOOL_TRUE:BOOL_FALSE;
+			tmp_solution_info->arrElts[i] = (dac_solution_var_values[i]>0.5)?BOOL_TRUE:BOOL_FALSE;
 		}
 	}
 }
@@ -212,7 +219,7 @@ void dac_save_solution() {
 
 void printVec_size (VecType x, VecType size) {
 	if(size > (sizeof(VecType)*8)) size = sizeof(VecType)*8;
-   for (int j=0 ; j < size ; j++) {
+   for (VecType j=0 ; j < size ; j++) {
       if ((x & vec_one<<(size-vec_one)) == (vec_one<<(size-vec_one))) {
          d2_printf1("1");
       } else {
@@ -308,25 +315,31 @@ ITE_INLINE
 double sum_vec(VecType vars_to_sum, int *vec_variables, double *Pa_var_values) {
 	int x = 0;
 	double sum = 0.0;
+//d7_printf1("{");
 	while(vars_to_sum!=0) {
 		if((vars_to_sum&vec_one) == vec_one) {
+//d7_printf2("%f ", Pa_var_values[vec_variables[x]]);
 			if(Pa_var_values[vec_variables[x]] > 0.5)
-			  sum+=-(0.5-Pa_var_values[vec_variables[x]]);
+			  sum+=-(0.5-Pa_var_values[vec_variables[x]]); //SEAN!!! Should I square the sums???
 			else sum+=0.5-Pa_var_values[vec_variables[x]];
 		}
 		x++; vars_to_sum>>=vec_one;
 	}
+//d7_printf1("}\n");
 	return sum;
 }
 
 ITE_INLINE
 int find_smallest_flip(int tail, int *vec_variables, double *Pa_var_values) {
-	int low = sum_vec(current_bubble[0], vec_variables, Pa_var_values);
+	double low = sum_vec(current_bubble[0], vec_variables, Pa_var_values);
+//d7_printf2("[%f ", low);
 	int smallest_vec = 0;
 	for(int x = 1; x < tail; x++) {
-		int sum = sum_vec(current_bubble[x], vec_variables, Pa_var_values);
+		double sum = sum_vec(current_bubble[x], vec_variables, Pa_var_values);
+//d7_printf2("%f ", sum);
 		if(sum < low) { low = sum; smallest_vec = x; }
 	}
+//d7_printf2("] %d\n", smallest_vec);
 	return smallest_vec;
 }
 
@@ -334,8 +347,9 @@ ITE_INLINE
 void flip_vars(VecType vars_to_flip, int *vec_variables, double *Pa_next_var_values) {
 	int x = 0;
 	while(vars_to_flip!=0) {
-		if((vars_to_flip&vec_one) == vec_one)
+		if((vars_to_flip&vec_one) == vec_one) {
 		   Pa_next_var_values[vec_variables[x]] = 1.0 - Pa_next_var_values[vec_variables[x]];
+		}
 		x++; vars_to_flip>>=vec_one;
 	}
 }
@@ -344,11 +358,10 @@ void flip_vars(VecType vars_to_flip, int *vec_variables, double *Pa_next_var_val
 //bool *dac_pb_var_values is global
 ITE_INLINE
 bool dac_traverseBDD(BDDNode *f, double *Pa_next_var_values) {
-   int x = 0;
 	while(1) {
 		if(f == false_ptr) return 0;
 		if(f == true_ptr)	return 1;
-		if(Pa_next_var_values[f->variable] == 1)
+		if(Pa_next_var_values[f->variable] > 0.5)
 		  f = f->thenCase;
 		else f = f->elseCase;
 	}
@@ -399,12 +412,12 @@ void dac_make_multiflip (int function, double *Pa_var_values, double *Pa_next_va
 		//dac_gen_next_bubble (rand()%tail, &tail, size);
 		int smallest_vec_num = find_smallest_flip(tail, dac_variables[function].num, Pa_var_values);
 		vars_to_flip = current_bubble[smallest_vec_num];
-//		printVec_size(vars_to_flip, size);
+//printVec_size(vars_to_flip, size);
 		flip_vars(vars_to_flip, dac_variables[function].num, Pa_next_var_values);
 		if(dac_traverseBDD(functions[function], Pa_next_var_values)) break;
 		else flip_vars(vars_to_flip, dac_variables[function].num, Pa_next_var_values);
 		dac_gen_next_bubble (smallest_vec_num, &tail, size);
-//		dac_print_bubble (tail, size);
+//dac_print_bubble (tail, size);
 		if(tail > max_tail) max_tail = tail;
 		num_loops++;
 	}
@@ -412,9 +425,10 @@ void dac_make_multiflip (int function, double *Pa_var_values, double *Pa_next_va
 	  d2_printf2("BDD %d: ", function);
      printVec_size(vars_to_flip, size);
 	  d2_printf3(" [%d, %d]\n", num_loops, max_tail);
-	  for(int x = dac_variables[function].length-1; x >= 0; x--)
+/*	  for(int x = dac_variables[function].length-1; x >= 0; x--)
 	    d2_printf2("%s ", s_name(dac_variables[function].num[x]));
 	  d2_printf1("\n");
+*/
    );
 }
 
@@ -442,7 +456,7 @@ int dac_Pa(double *Pa_var_values, double *Pa_next_var_values) {
 
 //Pb() function
 void dac_Pb(double *Pb_var_values, double *Pb_next_var_values) {
-   for(int x = 1; x <= dac_num_expanded_vars; x++) {
+   for(int x = 1; x <= dac_num_vars; x++) {
       double average = 0.0;
       for(int y = 0; y < dac_var_instances[x].length; y++) {
          int var = dac_var_instances[x].num[y];
@@ -470,6 +484,34 @@ void dac_vec_add(double *var_values, double *next_var_values) {
      next_var_values[x] = var_values[x]+next_var_values[x];
 }
 
+//vector subtract and store result in the first argument
+ITE_INLINE
+void dac_vec_subtract_store1(double *next_var_values, double *var_values) {
+   for(int x = 1; x <= dac_num_expanded_vars; x++)
+     next_var_values[x] = next_var_values[x]-var_values[x];
+}
+
+//vector subtract and store result in the second argument
+ITE_INLINE
+void dac_vec_subtract_store2(double *var_values, double *next_var_values) {
+   for(int x = 1; x <= dac_num_expanded_vars; x++)
+     next_var_values[x] = var_values[x]-next_var_values[x];
+}
+
+//vector copy
+//ITE_INLINE
+void dac_vec_copy(double *var_values, double *next_var_values) {
+	memcpy_ite(next_var_values, var_values, sizeof(double)*(dac_num_expanded_vars+1));
+}
+
+//vector print
+//ITE_INLINE
+void dac_vec_print(double *var_values) {
+	for(int x = 1; x <= dac_num_expanded_vars; x++)
+	  d2_printf2("%f ", var_values[x]);
+	d2_printf1("\n");
+}
+
 /************************************/
 /* Main                             */
 /************************************/
@@ -486,7 +528,7 @@ int dacSolve() {
 	fStartTime = get_runtime();
 	int numsol = max_solutions;
 	int numsuccesstry = 0;
-
+	
 	int dac_iterations = 0;
 	
    while(numsol==0 || (numsuccesstry < numsol)) {
@@ -506,14 +548,40 @@ int dacSolve() {
 		
       //do stuff
 
-      int isSAT = 0;
-      
+		int isSAT;
+		
+		if(dac_beta_value == 1.0) {
+			//x + Pa(2*Pb(x) - x) - Pb(x)
+			dac_Pb(dac_var_values, dac_var_values_tmp1);                       //Pb(x)
+//dac_vec_print(dac_var_values_tmp1);
+			dac_vec_multiply(2.0, dac_var_values_tmp1, dac_var_values_tmp2);   //2*Pb(x)
+//dac_vec_print(dac_var_values_tmp2);
+			dac_vec_subtract_store1(dac_var_values_tmp2, dac_var_values);      //2*Pb(x)-x
+//dac_vec_print(dac_var_values_tmp2);
+			isSAT = dac_Pa(dac_var_values_tmp2, dac_var_values_tmp3);          //Pa(2*Pb(x)-x)            //save solution
+//dac_vec_print(dac_var_values_tmp3);
+			dac_vec_subtract_store2(dac_var_values_tmp3, dac_var_values_tmp1); //Pa(2*Pb(x)-x) - Pb(x)
+//dac_vec_print(dac_var_values_tmp1);
+			dac_vec_add(dac_var_values_tmp1, dac_var_values);                  //x + Pa(2*Pb(x)-x) - Pb(x)
+//dac_vec_print(dac_var_values);
+			dac_solution_var_values = dac_var_values_tmp3;
+//d2_printf1("\n");
+		} else if(dac_beta_value == -1.0) {
+			//x + Pb(2*Pa(x) - x) - Pa(x)
+				  
+		} else {
+			//x + B*(Pa((1+1/B)Pb(x) - (1/B * x)) - Pb((1-1/B)Pa(x) + (1/B * x))
+			
+		}
+		dac_iterations++;
+		
 		if(isSAT) {
 			dac_save_solution();
 			numsuccesstry++;
+			//Could print some stats here
+			dac_initStartingPoint();
+			//dac_iterations = 0;
 		}
-		
-		dac_iterations++;
 		
 		if(dac_test_for_break()) break;
 	}

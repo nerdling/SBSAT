@@ -80,7 +80,7 @@ main(int argc, char *argv[])
 	d3_printf2("Random seed = %d\n", random_seed);
 	srandom(random_seed);	
 	srand(random_seed);
-
+	
    if (ret == NO_ERROR) {
       ret = ite_main_load();
       if (ret == NO_ERROR) {
