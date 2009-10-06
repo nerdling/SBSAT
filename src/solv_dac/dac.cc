@@ -208,7 +208,7 @@ void dac_save_solution() {
 		tmp_solution_info->arrElts = (int *)ite_calloc(dac_num_vars+2, sizeof(int), 9, "tmp_solution_info->arrElts");
 		
 		for (int i = 0; i<=dac_num_vars; i++) {
-			tmp_solution_info->arrElts[i] = (dac_solution_var_values[i]>0.5)?BOOL_TRUE:BOOL_FALSE;
+			tmp_solution_info->arrElts[i] = (dac_solution_var_values[i]>=0.5)?BOOL_TRUE:BOOL_FALSE;
 		}
 	}
 }
@@ -319,7 +319,7 @@ double sum_vec(VecType vars_to_sum, int *vec_variables, double *Pa_var_values) {
 	while(vars_to_sum!=0) {
 		if((vars_to_sum&vec_one) == vec_one) {
 //d7_printf2("%f ", Pa_var_values[vec_variables[x]]);
-			if(Pa_var_values[vec_variables[x]] > 0.5)
+			if(Pa_var_values[vec_variables[x]] >= 0.5)
 			  sum+=-(0.5-Pa_var_values[vec_variables[x]]); //SEAN!!! Should I square the sums???
 			else sum+=0.5-Pa_var_values[vec_variables[x]];
 		}
@@ -361,7 +361,7 @@ bool dac_traverseBDD(BDDNode *f, double *Pa_next_var_values) {
 	while(1) {
 		if(f == false_ptr) return 0;
 		if(f == true_ptr)	return 1;
-		if(Pa_next_var_values[f->variable] > 0.5)
+		if(Pa_next_var_values[f->variable] >= 0.5)
 		  f = f->thenCase;
 		else f = f->elseCase;
 	}
@@ -442,7 +442,7 @@ int dac_Pa(double *Pa_var_values, double *Pa_next_var_values) {
    for(int x = 0; x < dac_numBDDs; x++) {
       for(int y = 0; y < dac_variables[x].length; y++) {
          int var = dac_variables[x].num[y];
-         Pa_next_var_values[var] = Pa_var_values[var]>0.5?1.0:0.0;
+         Pa_next_var_values[var] = Pa_var_values[var]>=0.5?1.0:0.0;
       }
 
       if(!dac_traverseBDD(functions[x], Pa_next_var_values)) {
@@ -538,8 +538,8 @@ int dacSolve() {
 			d2_printf1("\b");
 			//Print things
 		} else if (term_char=='r') { //Force a random restart
-			d2_printf1("\b");
-			break;
+			d2_printf1("\bRestarting\n");
+			dac_initStartingPoint();
 		} else if (term_char=='q') { //Quit
 			d2_printf1("\b");
 			nCtrlC = 1;
