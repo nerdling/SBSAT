@@ -96,13 +96,13 @@ int dac_initRAM(void) {
       }
 	}
    
-	intlist *dac_var_instances = (intlist *)ite_calloc(dac_num_expanded_vars+1, sizeof(intlist), 9, "dac_var_instances");
+	dac_var_instances = (intlist *)ite_calloc(dac_num_vars+1, sizeof(intlist), 9, "dac_var_instances");
 
    for (int x = 0; x <= dac_num_vars; x++) {
 		dac_var_instances[x].num = (int *)ite_calloc(tempmem[x], sizeof(int), 9, "dac_var_instances[x].num");
 		dac_var_instances[x].length = 0;
 	}
-	delete [] tempmem;
+	ite_free((void **)&tempmem);
 
    int instance_num = 1;
    for (int x = 0; x < dac_numBDDs; x++) {
@@ -128,7 +128,7 @@ int dac_initRAM(void) {
 	dac_pa_var_values = (double *)ite_calloc(dac_num_expanded_vars+1, sizeof(double), 9, "dac_pa_var_values");
    dac_pb_var_values = (double *)ite_calloc(dac_num_expanded_vars+1, sizeof(double), 9, "dac_pb_var_values");
 
-	ite_free((void**)&tempint); tempint_max = 0;
+	ite_free((void **)&tempint); tempint_max = 0;
 
 	if(too_many_vars) {
 		d1_printf2("DAC solver found a BDD w/ more than %ld variables - this is not currently supported\n", sizeof(VecType)*8);
@@ -141,12 +141,15 @@ int dac_initRAM(void) {
 void dac_freemem(void) {
    ite_free((void **)&dac_pascal);
 	ite_free((void **)&dac_var_values);
+	ite_free((void **)&dac_pa_var_values);
+	ite_free((void **)&dac_pb_var_values);
+
 	ite_free((void **)&current_bubble);
-	
+
 	for (int x = 0; x <= dac_num_vars; x++)
 	  ite_free((void **)&dac_var_instances[x].num);
 	ite_free((void **)&dac_var_instances);
-	
+
 	for (int x = 0; x < dac_numBDDs; x++)
 	  ite_free((void **)&dac_variables[x].num);
 	ite_free((void **)&dac_variables);
@@ -306,8 +309,11 @@ double sum_vec(VecType vars_to_sum, int *vec_variables, double *Pa_var_values) {
 	int x = 0;
 	double sum = 0.0;
 	while(vars_to_sum!=0) {
-		if((vars_to_sum&vec_one) == vec_one)
-		  sum+=abs(0.5-Pa_var_values[vec_variables[x]]);
+		if((vars_to_sum&vec_one) == vec_one) {
+			if(Pa_var_values[vec_variables[x]] > 0.5)
+			  sum+=-(0.5-Pa_var_values[vec_variables[x]]);
+			else sum+=0.5-Pa_var_values[vec_variables[x]];
+		}
 		x++; vars_to_sum>>=vec_one;
 	}
 	return sum;
