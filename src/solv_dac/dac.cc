@@ -133,7 +133,6 @@ int dac_initRAM(void) {
 	dac_var_values_tmp1 = (double *)ite_calloc(dac_num_expanded_vars+1, sizeof(double), 9, "dac_var_values_tmp1");
 	dac_var_values_tmp2 = (double *)ite_calloc(dac_num_expanded_vars+1, sizeof(double), 9, "dac_var_values_tmp2");
 	dac_var_values_tmp3 = (double *)ite_calloc(dac_num_expanded_vars+1, sizeof(double), 9, "dac_var_values_tmp3");
-
 	
 	ite_free((void **)&tempint); tempint_max = 0;
 
@@ -207,8 +206,8 @@ void dac_save_solution() {
 		tmp_solution_info->nNumElts = dac_num_vars+1;
 		tmp_solution_info->arrElts = (int *)ite_calloc(dac_num_vars+2, sizeof(int), 9, "tmp_solution_info->arrElts");
 		
-		for (int i = 0; i<=dac_num_vars; i++) {
-			tmp_solution_info->arrElts[i] = (dac_solution_var_values[i]>=0.5)?BOOL_TRUE:BOOL_FALSE;
+		for (int i = 1; i<=dac_num_vars; i++) {
+			tmp_solution_info->arrElts[i] = (dac_solution_var_values[dac_var_instances[i].num[0]]>=0.5)?BOOL_TRUE:BOOL_FALSE;
 		}
 	}
 }
@@ -320,7 +319,7 @@ double sum_vec(VecType vars_to_sum, int *vec_variables, double *Pa_var_values) {
 		if((vars_to_sum&vec_one) == vec_one) {
 //d7_printf2("%f ", Pa_var_values[vec_variables[x]]);
 			if(Pa_var_values[vec_variables[x]] >= 0.5)
-			  sum+=-(0.5-Pa_var_values[vec_variables[x]]); //SEAN!!! Should I square the sums???
+			  sum+=-(0.5-Pa_var_values[vec_variables[x]]); //SEAN!!! Should I square the sums??? 
 			else sum+=0.5-Pa_var_values[vec_variables[x]];
 		}
 		x++; vars_to_sum>>=vec_one;
@@ -354,8 +353,6 @@ void flip_vars(VecType vars_to_flip, int *vec_variables, double *Pa_next_var_val
 	}
 }
 
-//Traverse the BDD and returns True or False based on the values in dac_pb_var_values
-//bool *dac_pb_var_values is global
 ITE_INLINE
 bool dac_traverseBDD(BDDNode *f, double *Pa_next_var_values) {
 	while(1) {
@@ -425,8 +422,10 @@ void dac_make_multiflip (int function, double *Pa_var_values, double *Pa_next_va
 	  d2_printf2("BDD %d: ", function);
      printVec_size(vars_to_flip, size);
 	  d2_printf3(" [%d, %d]\n", num_loops, max_tail);
-/*	  for(int x = dac_variables[function].length-1; x >= 0; x--)
-	    d2_printf2("%s ", s_name(dac_variables[function].num[x]));
+/*
+     for(int x = dac_variables[function].length-1; x >= 0; x--)
+       d2_printf2("%d ", dac_variables[function].num[x]);
+	    //d2_printf2("%s ", s_name(dac_variables[function].num[x]));
 	  d2_printf1("\n");
 */
    );
@@ -449,7 +448,7 @@ int dac_Pa(double *Pa_var_values, double *Pa_next_var_values) {
          isSAT = 0;
          dac_make_multiflip (x, Pa_var_values, Pa_next_var_values);
       }
-      if(dac_test_for_break()) break;
+//      if(dac_test_for_break()) break;
    }
    return isSAT;
 }  
@@ -468,6 +467,14 @@ void dac_Pb(double *Pb_var_values, double *Pb_next_var_values) {
          Pb_next_var_values[var] = average;
       }
    }
+}
+
+int test_all_BDDs (double *testBDD_var_values) {
+   for(int x = 0; x < dac_numBDDs; x++) {
+      if(!dac_traverseBDD(functions[x], testBDD_var_values))           
+        return 0;      
+   }
+   return 1;
 }
 
 //vector multiply
@@ -530,7 +537,10 @@ int dacSolve() {
 	int numsuccesstry = 0;
 	
 	int dac_iterations = 0;
-	
+
+   if(dac_beta_value == 1.0)
+     dac_solution_var_values = dac_var_values_tmp1;
+   
    while(numsol==0 || (numsuccesstry < numsol)) {
 		
 		char term_char = (char)term_getchar();
@@ -548,24 +558,28 @@ int dacSolve() {
 		
       //do stuff
 
-		int isSAT;
+		int isSAT = 0;
 		
 		if(dac_beta_value == 1.0) {
-			//x + Pa(2*Pb(x) - x) - Pb(x)
-			dac_Pb(dac_var_values, dac_var_values_tmp1);                       //Pb(x)
+         //x' = x + Pa(2*Pb(x) - x) - Pb(x)
+			dac_Pb(dac_var_values, dac_var_values_tmp1);                          //Pb(x)
+         if(test_all_BDDs(dac_var_values_tmp1)) {
+            isSAT = 1;
+         } else {
 //dac_vec_print(dac_var_values_tmp1);
-			dac_vec_multiply(2.0, dac_var_values_tmp1, dac_var_values_tmp2);   //2*Pb(x)
+            dac_vec_multiply(2.0, dac_var_values_tmp1, dac_var_values_tmp2);   //2*Pb(x)
 //dac_vec_print(dac_var_values_tmp2);
-			dac_vec_subtract_store1(dac_var_values_tmp2, dac_var_values);      //2*Pb(x)-x
+            dac_vec_subtract_store1(dac_var_values_tmp2, dac_var_values);      //2*Pb(x) - x
 //dac_vec_print(dac_var_values_tmp2);
-			isSAT = dac_Pa(dac_var_values_tmp2, dac_var_values_tmp3);          //Pa(2*Pb(x)-x)            //save solution
+			//isSAT = 
+            dac_Pa(dac_var_values_tmp2, dac_var_values_tmp3);                  //Pa(2*Pb(x) - x)
 //dac_vec_print(dac_var_values_tmp3);
-			dac_vec_subtract_store2(dac_var_values_tmp3, dac_var_values_tmp1); //Pa(2*Pb(x)-x) - Pb(x)
+            dac_vec_subtract_store2(dac_var_values_tmp3, dac_var_values_tmp1); //Pa(2*Pb(x) - x) - Pb(x)
 //dac_vec_print(dac_var_values_tmp1);
-			dac_vec_add(dac_var_values_tmp1, dac_var_values);                  //x + Pa(2*Pb(x)-x) - Pb(x)
+            dac_vec_add(dac_var_values_tmp1, dac_var_values);                  //x + Pa(2*Pb(x) - x) - Pb(x)
 //dac_vec_print(dac_var_values);
-			dac_solution_var_values = dac_var_values_tmp3;
-//d2_printf1("\n");
+         }
+         //d2_printf1("\n");
 		} else if(dac_beta_value == -1.0) {
 			//x + Pb(2*Pa(x) - x) - Pa(x)
 				  
