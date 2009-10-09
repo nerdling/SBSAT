@@ -1125,7 +1125,9 @@ void save_solution(void) {
 		tmp_solution_info->arrElts = new int[numvars+2];
 		
 		for (int i = 0; i<=numvars; i++) {
-			tmp_solution_info->arrElts[i] = (atom[i]>0)?BOOL_TRUE:BOOL_FALSE;
+			if(occurance[i].length == 0) //If variable does not exist in a constraint
+			  tmp_solution_info->arrElts[i] = 2;
+			else tmp_solution_info->arrElts[i] = (atom[i]>0)?BOOL_TRUE:BOOL_FALSE;
 		}
 	}
 }

@@ -46,6 +46,7 @@ double *dac_var_values_tmp1;
 double *dac_var_values_tmp2;
 double *dac_var_values_tmp3;
 double *dac_var_values_tmp4;
+double *dac_old_var_values;
 double *dac_qsort_var_values;
 double *dac_solution_var_values;
 
@@ -107,7 +108,6 @@ int dac_initRAM(void) {
 		dac_var_instances[x].num = (int *)ite_calloc(tempmem[x], sizeof(int), 9, "dac_var_instances[x].num");
 		dac_var_instances[x].length = 0;
 	}
-	ite_free((void **)&tempmem);
 
    int instance_num = 1;
    for (int x = 0; x < dac_numBDDs; x++) {
@@ -120,13 +120,14 @@ int dac_initRAM(void) {
 
    instance_num = 1;
    for (int x = 0; x < dac_numBDDs; x++) {
+		for (int i = 0; i < dac_variables[x].length; i++)
+		  tempmem[i] = instance_num++;
+		functions[x] = mitosis_len(functions[x], dac_variables[x].num, tempmem, dac_variables[x].length);
 		for (int i = 0; i < dac_variables[x].length; i++) {
-         functions[x] = num_replace(functions[x], dac_variables[x].num[i], instance_num);
-         dac_variables[x].num[i] = instance_num;
-         instance_num++;
+			dac_variables[x].num[i] = tempmem[i];
       }
    }
-   
+
 	max_num_bubble_vecs = 2;
 	current_bubble = (VecType *)ite_calloc(max_num_bubble_vecs, sizeof(VecType), 9, "current_bubble");
 	
@@ -135,7 +136,9 @@ int dac_initRAM(void) {
 	dac_var_values_tmp2 = (double *)ite_calloc(dac_num_expanded_vars+1, sizeof(double), 9, "dac_var_values_tmp2");
 	dac_var_values_tmp3 = (double *)ite_calloc(dac_num_expanded_vars+1, sizeof(double), 9, "dac_var_values_tmp3");
    dac_var_values_tmp4 = (double *)ite_calloc(dac_num_expanded_vars+1, sizeof(double), 9, "dac_var_values_tmp4");
+   dac_old_var_values = (double *)ite_calloc(dac_num_expanded_vars+1, sizeof(double), 9, "dac_old_var_values");
 	
+	ite_free((void **)&tempmem);
 	ite_free((void **)&tempint); tempint_max = 0;
 
 	if(too_many_vars) {
@@ -190,6 +193,8 @@ bool dac_test_for_break() {
 	return 0;
 }
 
+int test_all_BDDs(double *testBDD_var_values);
+
 void dac_save_solution() {
 	if (result_display_type) {
 		/* create another node in solution chain */
@@ -207,9 +212,12 @@ void dac_save_solution() {
 		}
 		tmp_solution_info->nNumElts = dac_num_vars+1;
 		tmp_solution_info->arrElts = (int *)ite_calloc(dac_num_vars+2, sizeof(int), 9, "tmp_solution_info->arrElts");
-		
-		for (int i = 1; i<=dac_num_vars; i++) {
-			tmp_solution_info->arrElts[i] = (dac_solution_var_values[dac_var_instances[i].num[0]]>=0.0)?BOOL_TRUE:BOOL_FALSE;
+	
+		for (int i = 0; i<=dac_num_vars; i++) {
+			if(dac_var_instances[i].length == 0) //If variable does not exist in a constraint
+			  tmp_solution_info->arrElts[i] = 2;
+			else
+			  tmp_solution_info->arrElts[i] = (dac_solution_var_values[dac_var_instances[i].num[0]]>=0.0)?BOOL_TRUE:BOOL_FALSE;
 		}
 	}
 }
@@ -545,6 +553,8 @@ int dacSolve() {
 	
 	int dac_iterations = 0;
 
+	int loop_distance = 10;
+	
    if(dac_beta_value == 1.0)
      dac_solution_var_values = dac_var_values_tmp1;
 
@@ -552,22 +562,42 @@ int dacSolve() {
    d7_printf1(" : Initial random values\n");
    
    while(numsol==0 || (numsuccesstry < numsol)) {
+
+		if(dac_test_for_break()) break;
 		
 		char term_char = (char)term_getchar();
 		if (term_char==' ') { //Display status
 			d2_printf1("\b");
 			//Print things
-		} else if (term_char=='r' || ((dac_iterations%1000) == 0)) { //Force a random restart
+		} else if (term_char=='r') { //Force a random restart
 			d2_printf1("\bRestarting\n");
+			loop_distance = 10;
 			dac_initStartingPoint();
 		} else if (term_char=='q') { //Quit
 			d2_printf1("\b");
 			nCtrlC = 1;
 			break;
 		}
-		
+
       //do stuff
 
+		if(dac_iterations % loop_distance == 0) {
+			dac_vec_copy(dac_var_values, dac_old_var_values);
+			loop_distance++;
+		} else {
+			int dup = 1;
+			for(int x = 1; x <= dac_num_expanded_vars; x++)
+			  if(dac_var_values[x] != dac_old_var_values[x]) {					 
+				  dup = 0;
+				  break;
+			  }
+			if(dup == 1) {
+				d2_printf1("Restarting (loop found)\n");
+				loop_distance = 10;
+				dac_initStartingPoint();
+			}
+		}
+		
 		int isSAT = 0;
 		if(dac_beta_value == 1.0) {
          //x' = x + Pa(2*Pb(x) - x) - Pb(x)
@@ -614,8 +644,6 @@ d7_printf1(" : x + Pa(2*Pb(x) - x) - Pb(x)\n\n");
 			dac_initStartingPoint();
 			//dac_iterations = 0;
 		}
-		
-		if(dac_test_for_break()) break;
 	}
 	
 	d2_printf2("Iterations = %d\n", dac_iterations);

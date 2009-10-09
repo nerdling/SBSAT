@@ -102,9 +102,7 @@ BDDNode *f_mitosis (BDDNode *f, BDDNode **x, int *structureBDD)
 	return (ite (x[num], f_mitosis (f->thenCase, x, structureBDD), f_mitosis (f->elseCase, x, structureBDD)));
 }
 
-
-BDDNode * mitosis (BDDNode * bdd, int *structureBDD, int *newBDD)
-{
+BDDNode *mitosis (BDDNode *bdd, int *structureBDD, int *newBDD) {
    if (IS_TRUE_FALSE(bdd))	//Takes care of True and False
       return bdd;
    int v, num = 0;
@@ -112,19 +110,39 @@ BDDNode * mitosis (BDDNode * bdd, int *structureBDD, int *newBDD)
 
    //  fprintf(stderr, "v %d|", v);
    for (int x = 1; x <= structureBDD[0]; x++)
-      if (structureBDD[x] == v)
-      {
-         num = x;
-         break;
-      }
-   if (num == 0)
-   {
+	  if (structureBDD[x] == v) {
+		  num = x;
+		  break;
+	  }
+   if (num == 0) {
       //fprintf(stderr, "\nVariable %d not found in translation array...quantifying it away\n", v);
       return mitosis (xquantify (bdd, v), structureBDD, newBDD);
    }
    v = newBDD[num];
-   BDDNode * r = mitosis (bdd->thenCase, structureBDD, newBDD);
-   BDDNode * e = mitosis (bdd->elseCase, structureBDD, newBDD);
+   BDDNode *r = mitosis (bdd->thenCase, structureBDD, newBDD);
+   BDDNode *e = mitosis (bdd->elseCase, structureBDD, newBDD);
+   return ite_xvar_y_z (ite_var (v), r, e);
+}
+
+BDDNode *mitosis_len (BDDNode *bdd, int *structureBDD, int *newBDD, int length) {
+   if (IS_TRUE_FALSE(bdd))	//Takes care of True and False
+      return bdd;
+   int v, num = -1;
+   v = bdd->variable;
+
+   //fprintf(stderr, "v %d|", v);
+   for (int x = 0; x < length; x++)
+      if (structureBDD[x] == v) {
+         num = x;
+         break;
+      }
+   if (num == -1) {
+      //fprintf(stderr, "\nVariable %d not found in translation array...quantifying it away\n", v);
+      return mitosis_len (xquantify (bdd, v), structureBDD, newBDD, length);
+   }
+   v = newBDD[num];
+   BDDNode *r = mitosis_len (bdd->thenCase, structureBDD, newBDD, length);
+   BDDNode *e = mitosis_len (bdd->elseCase, structureBDD, newBDD, length);
    return ite_xvar_y_z (ite_var (v), r, e);
 }
 

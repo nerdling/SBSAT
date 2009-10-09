@@ -100,6 +100,7 @@ void PrintSmurfs(BDDNode **bdds, int size); //Used to display the SMURFS via the
 BDDNode *ReadSmurf(int *, char *, int, int *, int);
 BDDNode *mitosis(BDDNode *, int *, int *);
 BDDNode *f_mitosis(BDDNode *, BDDNode **, int *);
+BDDNode *mitosis_len(BDDNode *bdd, int *structureBDD, int *newBDD, int length);
 BDDNode *shared_structure(BDDNode *, int, int);
 BDDNode *f_apply(BDDNode *, BDDNode**);
 BDDNode *MinMaxBDD(int *, int, int, int, int);
