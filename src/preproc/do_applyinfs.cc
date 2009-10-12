@@ -896,7 +896,8 @@ int Rebuild_BDDx (int x) {
 	if(functionType[x] != XDD) {
 		functionType[x] = UNSURE;
 		equalityVble[x] = 0;
-		findandset_fnType(x);
+		if(preproc_uses_limits)
+		  findandset_fnType(x);
 	}
 	
 	if(ge_preproc == '1' && DO_INFERENCES) {

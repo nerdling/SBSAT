@@ -66,6 +66,8 @@ extern int Neg_replace;
 extern int Setting_Pos;
 extern int Setting_Neg;
 
+extern int preproc_uses_limits;
+
 extern int length_size;
 extern int variables_size;
 
