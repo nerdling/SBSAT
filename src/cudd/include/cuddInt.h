@@ -1196,6 +1196,9 @@ extern int cuddZddP (DdManager *zdd, DdNode *f);
 
 /**AutomaticEnd***************************************************************/
 
+//Added for SBSAT
+extern void ddClearFlag(DdNode *f);
+	
 #ifdef __cplusplus
 } /* end of extern "C" */
 #endif

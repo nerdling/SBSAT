@@ -62,19 +62,19 @@ enum {
 };
 
 typedef struct TypeStateEntry {
-	char cType;
-	bool visited;
-	int pStateOwner;
+	unsigned cType:5;
+	unsigned visited:1;
+	unsigned pStateOwner:26;
 	void *pPreviousState; //Used during lemma creation.
-	int nLemmaLiteral; //Used during lemma creation.
+ 	int nLemmaLiteral; //Used during lemma creation.
 } TypeStateEntry;
 
 //Structures and functions for the simpleSolver
 //Also used in the smurf_fpga output format.
 typedef struct SmurfStateEntry {
-	char cType; //FN_SMURF || FN_WATCHED_SMURF
-	bool visited;
-	int pStateOwner;
+	unsigned cType:5; //FN_SMURF || FN_WATCHED_SMURF
+	unsigned visited:1;
+	unsigned pStateOwner:26;
 	void *pPreviousState; //Used during lemma creation.
 	int nLemmaLiteral; //Used during lemma creation.
 
@@ -100,15 +100,15 @@ typedef struct SmurfStateEntry {
 } SmurfStateEntry;
 
 typedef struct InferenceStateEntry {
-	char cType; //FN_INFERENCE
-	bool visited; //Used for displaying the smurfs.
+	unsigned cType:5; //FN_INFERENCE
+	unsigned visited:1; //Used for displaying the smurfs.
 
-	int pStateOwner;
+	unsigned pStateOwner:26;
 	void *pPreviousState; //Used during lemma creation.
 	int nLemmaLiteral; //Used during lemma creation.
 
-	int nTransitionVar;
-	bool bPolarity;
+	unsigned nTransitionVar:26;
+	unsigned bPolarity:1;
 	void *pVarTransition;
 	BDDNode *pInferenceBDD; //Used when building smurfs on the fly.
 } InferenceStateEntry;
@@ -116,9 +116,9 @@ typedef struct InferenceStateEntry {
 struct ORCounterStateEntry;
 
 typedef struct ORStateEntry {
-	char cType; //FN_OR
-	bool visited; //Used for displaying the smurfs.
-	int pStateOwner;
+	unsigned cType:5; //FN_OR
+	unsigned visited:1; //Used for displaying the smurfs.
+	unsigned pStateOwner:26;
 	void *pPreviousState; //Used during lemma creation.
 	int nLemmaLiteral; //Used during lemma creation.
 
@@ -130,9 +130,9 @@ typedef struct ORStateEntry {
 } ORStateEntry;
 
 typedef struct ORCounterStateEntry {
-	char cType; //FN_OR_COUNTER
-	bool visited; //Used for displaying the smurfs.
-	int pStateOwner;
+	unsigned cType:5; //FN_OR_COUNTER
+	unsigned visited:1; //Used for displaying the smurfs.
+	unsigned pStateOwner:26;
 	void *pPreviousState; //Used during lemma creation.
 	int nLemmaLiteral; //Used during lemma creation.
 
@@ -142,22 +142,22 @@ typedef struct ORCounterStateEntry {
 } ORCounterStateEntry;
 
 typedef struct XORStateEntry {
-	char cType; //FN_XOR
-	bool visited; //Used for displaying the smurfs.
-	int pStateOwner;
+	unsigned cType:5; //FN_XOR
+	unsigned visited:1; //Used for displaying the smurfs.
+	unsigned pStateOwner:26;
 	void *pPreviousState; //Used during lemma creation.
 	int nLemmaLiteral; //Used during lemma creation.
 
-	int nSize;
-	bool bParity;
+	unsigned nSize:26;
+	unsigned bParity:1;
 	int *pnTransitionVars;
    BDDNode *pXORStateBDD;
 } XORStateEntry;
 
 typedef struct XORCounterStateEntry {
-	char cType; //FN_XOR_COUNTER
-	bool visited; //Used for displaying the smurfs.
-	int pStateOwner;
+	unsigned cType:5; //FN_XOR_COUNTER
+	unsigned visited:1; //Used for displaying the smurfs.
+	unsigned pStateOwner:26;
 	void *pPreviousState; //Used during lemma creation.
 	int nLemmaLiteral; //Used during lemma creation.
 	int nSize;
@@ -166,9 +166,9 @@ typedef struct XORCounterStateEntry {
 } XORCounterStateEntry;
 
 typedef struct XORGElimStateEntry {
-	char cType; //FN_XOR_GELIM
-	bool visited; //Used for displaying the smurfs.
-	int pStateOwner;
+	unsigned cType:5; //FN_XOR_GELIM
+	unsigned visited:1; //Used for displaying the smurfs.
+	unsigned pStateOwner:26;
 	void *pPreviousState; //Used during lemma creation.
 	int nLemmaLiteral; //Used during lemma creation.
 
@@ -181,8 +181,8 @@ typedef struct XORGElimStateEntry {
 //SEAN!!! Idea: Could make minmax state machine that is hooked together JUST like a minmax BDD.
 
 typedef struct MINMAXStateEntry {
-	char cType; //FN_MINMAX
-	bool visited; //Used for displaying the smurfs.
+	unsigned cType:5; //FN_MINMAX
+	unsigned visited:1; //Used for displaying the smurfs.
 	int nSize;
 	int nMin;
 	int nMax;
@@ -191,9 +191,9 @@ typedef struct MINMAXStateEntry {
 } MINMAXStateEntry;
 
 typedef struct MINMAXCounterStateEntry {
-	char cType; //FN_MINMAX_COUNTER
-	bool visited; //Used for displaying the smurfs.
-	int pStateOwner;
+	unsigned cType:5; //FN_MINMAX_COUNTER
+	unsigned visited:1; //Used for displaying the smurfs.
+	unsigned pStateOwner:26;
 	void *pPreviousState; //Used during lemma creation.
 	int nLemmaLiteral; //Used during lemma creation.
 
@@ -204,8 +204,8 @@ typedef struct MINMAXCounterStateEntry {
 } MINMAXCounterStateEntry;
 
 typedef struct NEGMINMAXStateEntry {
-	char cType; //FN_NEGMINMAX
-	bool visited; //Used for displaying the smurfs.
+	unsigned cType:5; //FN_NEGMINMAX
+	unsigned visited:1; //Used for displaying the smurfs.
 	int nSize;
 	int nMin;
 	int nMax;
@@ -214,9 +214,9 @@ typedef struct NEGMINMAXStateEntry {
 } NEGMINMAXStateEntry;
 
 typedef struct NEGMINMAXCounterStateEntry {
-	char cType; //FN_NEGMINMAX_COUNTER
-	bool visited; //Used for displaying the smurfs.
-	int pStateOwner;
+	unsigned cType:5; //FN_NEGMINMAX_COUNTER
+	unsigned visited:1; //Used for displaying the smurfs.
+	unsigned pStateOwner:26;
 	void *pPreviousState; //Used during lemma creation.
 	int nLemmaLiteral; //Used during lemma creation.
 

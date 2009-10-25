@@ -48,7 +48,31 @@ struct Clause {
 int check_gzip (char *filename);
 FILE * zread(char *filename, int zip);
 FILE * aigread(char *filename);
-char getformat ();
+char getformat();
+
+struct initbranch_level {
+	char *string;
+	double true_inf_weight;
+};
+
+struct initbranch_struct {
+	int branch_level;
+	int max_initbranch_level;
+	int num_initbranch_level;
+	initbranch_level *vars;
+};
+
+extern int expect_integer;
+extern initbranch_struct *initbranch;
+extern int max_initbranch;
+extern int max_varlevel;
+extern int max_defines;
+extern int totaldefines;
+extern int max_integers;
+extern char *integers;
+extern int max_macros;
+extern char *macros;
+extern int negate_it;
 
 void write_output(char formatout);
 int read_input();

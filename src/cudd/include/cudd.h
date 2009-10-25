@@ -270,19 +270,20 @@ typedef unsigned short DdHalfWord;
 typedef struct DdNode DdNode;
 
 typedef struct DdChildren {
-    struct DdNode *T;
-    struct DdNode *E;
+	struct DdNode *T;
+	struct DdNode *E;
 } DdChildren;
 
 /* The DdNode structure is the only one exported out of the package */
 struct DdNode {
-    DdHalfWord index;
-    DdHalfWord ref;		/* reference count */
-    DdNode *next;		/* next pointer for unique table */
-    union {
-	CUDD_VALUE_TYPE value;	/* for constant nodes */
-	DdChildren kids;	/* for internal nodes */
-    } type;
+	DdHalfWord index;
+	DdHalfWord ref;	/* reference count */
+	DdNode *next;		/* next pointer for unique table */
+//	void *pState;     /* SBSAT specific pointer to corresponding SMURF node */ //SEAN!!!
+	union {
+		CUDD_VALUE_TYPE value; /* for constant nodes */
+		DdChildren kids;       /* for internal nodes */
+	} type;
 };
 
 #ifdef __osf__

@@ -43,6 +43,8 @@
 
 #include "common.h" 
 
+#include "cuddObj.hh"
+
 #include "bddtable.h"
 #include "bdd_ite.h"
 #include "params.h"

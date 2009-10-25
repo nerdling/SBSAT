@@ -41,12 +41,13 @@
 
 double get_runtime();
 long get_memusage();
-void unravelBDD (int *, int *, int **, BDDNode *);
+void unravelBDD (int *y, int *max, int **tempint, BDDNode *func);
+void Dd_Support(int *y, int *max, int **tempint, DdNode * func);
 int compfunc (const void *, const void *);
 int revcompfunc (const void *, const void *);
 int abscompfunc (const void *, const void *);
 int absrevcompfunc (const void *, const void *);
-
+int initbranch_compfunc(const void *, const void *);
 
 BDDNode *and_dot(BDDNode *, BDDNode *);
 BDDNode *constant_and(BDDNode *, BDDNode *);
@@ -158,6 +159,7 @@ int getEquiv(int, int *, int);
 int *getANDLiterals(int, int *, int);
 int getTruth (int *, char *, int , BDDNode *);
 void bddloop();
+void iteloop();
 int Preprocessor();
 int getNuminp();
 int countX (BDDNode *, BDDNode *);

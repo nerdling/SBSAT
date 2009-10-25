@@ -61,7 +61,8 @@
 #include <iostream>
 #include "../src/cudd/include/util.h"
 #include "../src/cudd/include/cudd.h"
-
+#include "../src/cudd/include/cuddInt.h"
+  
 using std::cout;
 using std::cerr;
 using std::endl;

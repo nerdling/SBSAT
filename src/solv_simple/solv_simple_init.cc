@@ -542,7 +542,6 @@ void Final_SimpleSmurfSolver() {
 	
 	ite_free((void **)&tempint);
 	tempint_max = 0;
-	
 }
 
 // Functions for printing (via dot) the corresponding SMURFS for sets of BDDs.

@@ -47,25 +47,15 @@ typedef struct BDDNodeStruct {
 
    /* memoised values */
    int flag;
-   infer *inferences, *tmp_infer;
+   infer *inferences;
    
 	union {
 		struct BDDNodeStruct *tmp_bdd;
 		int tmp_int;
+      /* for tracer5 */
+      void *var_ptr;
 	};
 	  
-	//struct BDDNodeStruct *or_bdd;
-	//struct BDDNodeStruct *t_and_not_e_bdd, *not_t_and_e_bdd;
-#ifdef BDD_MIRROR_NODE
-   struct BDDNodeStruct *mirrCase;
-#endif
-
-	/* autarky smurf state */
-	//void *pState_Au;
-	
-   /* for tracer5 */
-   void *var_ptr;
-
 	/* smurf state */
 	void *pState;
 	

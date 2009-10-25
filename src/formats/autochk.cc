@@ -140,7 +140,8 @@ char getformat () {
    a = fgetc (finputfile); // space
    if (feof(finputfile) || a != ' ') return 0;
 	output = fgetc (finputfile); // format 
-   if (feof(finputfile)) return 0;
+   if(output == 'i') output = 'e';
+	if (feof(finputfile)) return 0;
 	a = fgetc (finputfile); // format
    if (feof(finputfile)) return 0;
 	a = fgetc (finputfile); // format

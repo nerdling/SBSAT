@@ -176,7 +176,7 @@ static int ddEpdCountMintermAux (DdNode *node, EpDouble *max, EpDouble *epd, st_
 static double ddCountPathAux (DdNode *node, st_table *table);
 static double ddCountPathsToNonZero (DdNode * N, st_table * table);
 static void ddSupportStep (DdNode *f, int *support);
-static void ddClearFlag (DdNode *f);
+void ddClearFlag (DdNode *f);
 static int ddLeavesInt (DdNode *n);
 static int ddPickArbitraryMinterms (DdManager *dd, DdNode *node, int nvars, int nminterms, char **string);
 static int ddPickRepresentativeCube (DdManager *dd, DdNode *node, double *weight, char *string);
@@ -3727,7 +3727,7 @@ ddSupportStep(
   SeeAlso     [ddSupportStep ddDagInt]
 
 ******************************************************************************/
-static void
+void
 ddClearFlag(
   DdNode * f)
 {

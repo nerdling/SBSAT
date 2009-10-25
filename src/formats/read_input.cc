@@ -84,6 +84,8 @@ read_input()
     } break;
 
   case 'b': bddloop(); break;
+	  
+  case 'e': iteloop(); break;
 
   case 'x': xorloop(); break;
 	  
