@@ -81,6 +81,29 @@ Init_Preprocessing()
 	DO_INFERENCES = 0;
 
 	int ret = PREP_NO_CHANGE;
+
+	
+/*	
+	
+	//CUDD TEST
+	DdManager *BDD_Manager = Cudd_Init(numinp+2, 0, CUDD_UNIQUE_SLOTS, CUDD_CACHE_SLOTS, 0);
+	DdNode *true_bdd = Cudd_ReadOne(BDD_Manager);
+	Cudd_Ref(true_bdd);
+	DdNode *false_bdd = Cudd_Not(true_bdd);
+	Cudd_Ref(false_bdd);
+	DdNode **BDD_List = BDDlist_to_CUDD(functions, nmbrFunctions, BDD_Manager);
+	for(int x = 0; x < nmbrFunctions; x++) {
+		Cudd_RecursiveDeref(BDD_Manager, BDD_List[x]);
+	}
+	if(BDD_List != NULL) ite_free((void **)&BDD_List);
+	
+	Cudd_RecursiveDeref(BDD_Manager, true_bdd);
+	Cudd_RecursiveDeref(BDD_Manager, false_bdd);
+	fprintf(stderr, "\n||| %d |||\n", Cudd_CheckZeroRef(BDD_Manager));
+	Cudd_Quit(BDD_Manager);
+*/	
+	
+	
 	
 	//start_prep = get_runtime ();	//Start clock
 												//The clock is start earlier now

@@ -766,8 +766,9 @@ void xorloop () {
 	Exit:;
 
 	numinp = numinp+temp_vars;
-	
-/*	for(int x = 1; x < nmbrFunctions; x++) {
+
+	/*
+	for(int x = 1; x < nmbrFunctions; x++) {
 		fprintf(stderr, "%d\n", x);
 		bdd_gc(1);
 		//functions[0] = ite_and(functions[0], functions[x]);
@@ -779,7 +780,8 @@ void xorloop () {
 
 		functions[x] = true_ptr;
 	}
-*/	
+	*/
+	
    d2_printf1("\rReading XOR ... Done\n");
 	ite_free((void **)&bdds); bdds_size = 0;
 }

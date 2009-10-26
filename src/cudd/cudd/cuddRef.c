@@ -462,101 +462,101 @@ int
 Cudd_CheckZeroRef(
   DdManager * manager)
 {
-    int size;
-    int i, j;
-    int remain;	/* the expected number of remaining references to one */
-    DdNodePtr *nodelist;
-    DdNode *node;
-    DdNode *sentinel = &(manager->sentinel);
-    DdSubtable *subtable;
-    int count = 0;
-    int index;
-
+	int size;
+	int i, j;
+	int remain;	/* the expected number of remaining references to one */
+	DdNodePtr *nodelist;
+	DdNode *node;
+	DdNode *sentinel = &(manager->sentinel);
+	DdSubtable *subtable;
+	int count = 0;
+	int index;
+	
 #ifndef DD_NO_DEATH_ROW
-    cuddClearDeathRow(manager);
+	cuddClearDeathRow(manager);
 #endif
-
-    /* First look at the BDD/ADD subtables. */
-    remain = 1; /* reference from the manager */
-    size = manager->size;
-    remain += 2 * size;	/* reference from the BDD projection functions */
-
-    for (i = 0; i < size; i++) {
-	subtable = &(manager->subtables[i]);
-	nodelist = subtable->nodelist;
-	for (j = 0; (unsigned) j < subtable->slots; j++) {
-	    node = nodelist[j];
-	    while (node != sentinel) {
-		if (node->ref != 0 && node->ref != DD_MAXREF) {
-		    index = (int) node->index;
-		    if (node != manager->vars[index]) {
-			count++;
-		    } else {
-			if (node->ref != 1) {
-			    count++;
+	
+	/* First look at the BDD/ADD subtables. */
+	remain = 1; /* reference from the manager */
+	size = manager->size;
+	remain += 2 * size;	/* reference from the BDD projection functions */
+	
+	for (i = 0; i < size; i++) {
+		subtable = &(manager->subtables[i]);
+		nodelist = subtable->nodelist;
+		for (j = 0; (unsigned) j < subtable->slots; j++) {
+			node = nodelist[j];
+			while (node != sentinel) {
+				if (node->ref != 0 && node->ref != DD_MAXREF) {
+					index = (int) node->index;
+					if (node != manager->vars[index]) {
+						count++;
+					} else {
+						if (node->ref != 1) {
+							count++;
+						}
+					}
+				}
+				node = node->next;
 			}
-		    }
 		}
-		node = node->next;
-	    }
 	}
-    }
-
-    /* Then look at the ZDD subtables. */
-    size = manager->sizeZ;
-    if (size) /* references from ZDD universe */
-	remain += 2;
-
-    for (i = 0; i < size; i++) {
-	subtable = &(manager->subtableZ[i]);
-	nodelist = subtable->nodelist;
-	for (j = 0; (unsigned) j < subtable->slots; j++) {
-	    node = nodelist[j];
-	    while (node != NULL) {
-		if (node->ref != 0 && node->ref != DD_MAXREF) {
-		    index = (int) node->index;
-		    if (node == manager->univ[manager->permZ[index]]) {
-			if (node->ref > 2) {
-			    count++;
+	
+	/* Then look at the ZDD subtables. */
+	size = manager->sizeZ;
+	if (size) /* references from ZDD universe */
+	  remain += 2;
+	
+	for (i = 0; i < size; i++) {
+		subtable = &(manager->subtableZ[i]);
+		nodelist = subtable->nodelist;
+		for (j = 0; (unsigned) j < subtable->slots; j++) {
+			node = nodelist[j];
+			while (node != NULL) {
+				if (node->ref != 0 && node->ref != DD_MAXREF) {
+					index = (int) node->index;
+					if (node == manager->univ[manager->permZ[index]]) {
+						if (node->ref > 2) {
+							count++;
+						}
+					} else {
+						count++;
+					}
+				}
+				node = node->next;
 			}
-		    } else {
-			count++;
-		    }
 		}
-		node = node->next;
-	    }
 	}
-    }
-
-    /* Now examine the constant table. Plusinfinity, minusinfinity, and
+	
+	/* Now examine the constant table. Plusinfinity, minusinfinity, and
     ** zero are referenced by the manager. One is referenced by the
     ** manager, by the ZDD universe, and by all projection functions.
     ** All other nodes should have no references.
     */
-    nodelist = manager->constants.nodelist;
-    for (j = 0; (unsigned) j < manager->constants.slots; j++) {
-	node = nodelist[j];
-	while (node != NULL) {
-	    if (node->ref != 0 && node->ref != DD_MAXREF) {
-		if (node == manager->one) {
-		    if ((int) node->ref != remain) {
-			count++;
-		    }
-		} else if (node == manager->zero ||
-		node == manager->plusinfinity ||
-		node == manager->minusinfinity) {
-		    if (node->ref != 1) {
-			count++;
-		    }
-		} else {
-		    count++;
+	nodelist = manager->constants.nodelist;
+	for (j = 0; (unsigned) j < manager->constants.slots; j++) {
+		node = nodelist[j];
+		while (node != NULL) {
+			if (node->ref != 0 && node->ref != DD_MAXREF) {
+				if (node == manager->one) {
+					if ((int) node->ref != remain) {
+						count++;
+					}
+				} else if (node == manager->zero ||
+							  node == manager->plusinfinity ||
+							  node == manager->minusinfinity) {
+					if (node->ref != 1) {
+						count++;
+					}
+				} else {
+					count++;
+				}
+			}
+			node = node->next;
 		}
-	    }
-	    node = node->next;
 	}
-    }
-    return(count);
-
+	return(count);
+	
 } /* end of Cudd_CheckZeroRef */
 
 

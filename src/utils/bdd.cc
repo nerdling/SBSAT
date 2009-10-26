@@ -59,9 +59,10 @@ enum {
    PRINTSHAREDBDDS_FLAG_NUMBER,
    REDUCEDREPLACE_FLAG_NUMBER,
    MESSAGEPASSING_FLAG_NUMBER,
+   BDDLISTTOCUDD_FLAG_NUMBER,
    MAX_FLAG_NUMBER
 };
-int last_bdd_flag_number[MAX_FLAG_NUMBER] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+int last_bdd_flag_number[MAX_FLAG_NUMBER] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 int bdd_flag_number = 2;
 
 inline void
@@ -1581,6 +1582,54 @@ void _Dd_Support(int *y, int *max, int **tempint, DdNode * func) {
 
 	//Mark as visited
 	func->next = Cudd_Not(func->next);
+}
+
+DdNode *BDDNode_to_DD (BDDNode *f, DdManager *BDD_Manager) {
+	if(f->flag == bdd_flag_number)
+	  return (DdNode *)(f->pState);
+
+	f->flag = bdd_flag_number;
+	
+	if(f == true_ptr) {
+		DdNode *ret = Cudd_ReadOne(BDD_Manager); Cudd_Ref(ret);
+		return (DdNode *)(f->pState = (void *)ret);
+	}
+	if(f == false_ptr) {
+		DdNode *ret = Cudd_Not(Cudd_ReadOne(BDD_Manager)); Cudd_Ref(ret);
+		return (DdNode *)(f->pState = (void *)ret);
+	}
+	
+	DdNode *r = BDDNode_to_DD(f->thenCase, BDD_Manager);
+	DdNode *e = BDDNode_to_DD(f->elseCase, BDD_Manager);
+	
+	DdNode *ret = Cudd_bddIte(BDD_Manager, Cudd_bddIthVar(BDD_Manager, f->variable), r, e); Cudd_Ref(ret);
+
+	return (DdNode *)(f->pState = (void *)ret);
+}
+
+void Clear_and_Deref_pState (BDDNode *f, DdManager *BDD_Manager) {
+	if(f->flag == bdd_flag_number) {
+		f->flag = 0;
+		Clear_and_Deref_pState(f->thenCase, BDD_Manager);
+		Clear_and_Deref_pState(f->elseCase, BDD_Manager);
+		Cudd_RecursiveDeref(BDD_Manager, (DdNode *)(f->pState));
+		f->pState = NULL;
+	}
+}
+
+DdNode **BDDlist_to_CUDD (BDDNode **bdds, int nNumBDDs, DdManager *BDD_Manager) {
+	if(nNumBDDs == 0) return NULL;
+	DdNode **cudd_bdds = (DdNode**)ite_calloc(nNumBDDs, sizeof(DdNode*), 9, "cudd_bdds");	
+	start_bdd_flag_number(BDDLISTTOCUDD_FLAG_NUMBER);
+	for(int x = 0; x < nNumBDDs; x++) {
+		cudd_bdds[x] = BDDNode_to_DD(bdds[x], BDD_Manager);
+		Cudd_Ref(cudd_bdds[x]);
+	}
+	for(int x = 0; x < nNumBDDs; x++) {
+		Clear_and_Deref_pState(bdds[x], BDD_Manager);
+	}
+	
+	return cudd_bdds;
 }
 
 BDDNode * _set_variable (BDDNode * f, int num, int torf);

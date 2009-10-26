@@ -938,9 +938,26 @@ DdNode *putite(int intnum, DdNode * bdd) {
 			Cudd_RecursiveDeref(BDD_Manager, v1);
 		}
       strcpy (macros, "print_dot");
-		//printBDDdot_file(put_dot_bdds, numarguments);
-		fprintf(stderr, "\nKeyword 'print_dot' not currently supported in the 'ite' format...exiting:%d\n", ite_line);
-		exit(1);
+
+		FILE *fout;
+		char filename[256];
+		char filename_dot[256];
+		strcpy(filename_dot, inputfile);
+		strcat(filename_dot, ".dot");
+		
+		if(strcmp(inputfile, "-")) get_freefile(filename_dot, NULL, filename, 256);
+		else filename[0] = 0;
+		
+		if ((fout = fopen((filename[0]==0)?"output.dot":filename, "wb+")) == NULL)  {
+			fprintf(stderr, "Can't open '%s' for writting", filename);
+			exit (1);
+		}
+
+		//printBDDdot_file(put_dot_bdds, numarguments);		
+		Cudd_DumpDot(BDD_Manager, numarguments, put_dot_bdds, NULL, NULL, fout);
+		
+		fclose(fout);
+
 		for(int x = 0; x < numarguments; x++)
 		  Cudd_RecursiveDeref(BDD_Manager, put_dot_bdds[x]);
 		ite_free((void**)&put_dot_bdds);
@@ -1446,7 +1463,7 @@ void iteloop () {
 					fprintf(stderr, "Too many functions, increase to larger than %ld...exiting:%d",	numout, ite_line);
 					exit (1);
 				}
-			}
+			} else Cudd_RecursiveDeref(BDD_Manager, temp);
 			d4_printf1("*");
 		} else {
 			ungetc (p, finputfile);
@@ -1466,7 +1483,7 @@ void iteloop () {
 					fprintf(stderr, "Too many functions, increase to larger than %ld...exiting:%d",	numout, ite_line);
 					exit (1);
 				}
-			}
+			} else Cudd_RecursiveDeref(BDD_Manager, temp);
 		}
       D_4(
       if ((strcasecmp (macros, "pprint_tree"))
@@ -1607,6 +1624,17 @@ void iteloop () {
 		//exit(1);
 	}
 	d2_printf1("\rReading ITE ... Done\n");
+
+	//TEST
+	for(int x = 0; x < nmbrFunctions; x++) {
+		Cudd_RecursiveDeref(BDD_Manager, BDD_List[x]);
+	}
+	Cudd_RecursiveDeref(BDD_Manager, true_bdd);
+	Cudd_RecursiveDeref(BDD_Manager, false_bdd);
+	fprintf(stderr, "\n||| %d |||\n", Cudd_CheckZeroRef(BDD_Manager));
+							  
+	
+	
 	for(int i = 0; i < max_initbranch; i++) {
 		for(int x = 0; x < initbranch[i].num_initbranch_level; x++)
 		  delete [] initbranch[i].vars[x].string;

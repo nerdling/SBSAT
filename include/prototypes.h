@@ -43,6 +43,7 @@ double get_runtime();
 long get_memusage();
 void unravelBDD (int *y, int *max, int **tempint, BDDNode *func);
 void Dd_Support(int *y, int *max, int **tempint, DdNode * func);
+DdNode **BDDlist_to_CUDD (BDDNode **bdds, int nNumBDDs, DdManager *BDD_Manager);
 int compfunc (const void *, const void *);
 int revcompfunc (const void *, const void *);
 int abscompfunc (const void *, const void *);
