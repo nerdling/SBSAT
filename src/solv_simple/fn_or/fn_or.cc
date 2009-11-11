@@ -26,13 +26,12 @@ void PrintORStateEntry(void *pState) {
 
 void PrintORStateEntry_dot(void *pState) {
 	ORStateEntry *pORState = (ORStateEntry *)pState;
-	fprintf(stdout, " b%p->b%p [style=solid, fontname=\"Helvetica\",label=\"If v!=p, n--\"]\n", (void *)pORState, (void *)pORState);
-	fprintf(stdout, " b%p->b%p [style=solid, fontname=\"Helvetica\",label=\"If v==p\"]\n", (void *)pORState, pTrueSimpleSmurfState);
-	fprintf(stdout, " b%p->i%p [style=solid, fontname=\"Helvetica\",label=\"If n==1\"]\n", (void *)pORState, (void *)pORState);
-	fprintf(stdout, " i%p->b%p [style=solid, fontname=\"Helvetica\",label=\"v=p\"]\n", (void *)pORState, pTrueSimpleSmurfState);
-
-	fprintf(stdout, " i%p [shape=\"ellipse\", label=\"I\"]\n", (void *)pORState);
-	fprintf(stdout, " b%p [shape=\"ellipse\", label=\"OR, n=%d\"]\n", (void *)pORState, pORState->nSize);
+	fprintf(stdout, " b%p->b%p [style=solid,label=\" x1 \"]\n", (void *)pORState, (void *)pTrueSimpleSmurfState);
+	fprintf(stdout, " b%p->b%p [style=dotted,label=\" -x1 : x2 \"]\n", (void *)pORState, (void *)pTrueSimpleSmurfState);
+	fprintf(stdout, " b%p->b%p [style=solid,label=\" x2 \"]\n", (void *)pORState, (void *)pTrueSimpleSmurfState);
+	fprintf(stdout, " b%p->b%p [style=dotted,label=\" -x2 : x1 \"]\n", (void *)pORState, (void *)pTrueSimpleSmurfState);
+	
+	fprintf(stdout, " b%p [shape=\"ellipse\",label=\"OR, n=%d\"]\n", (void *)pORState, 2);
 }
 
 void FreeORStateEntry(void *pState) {
@@ -60,13 +59,12 @@ void initORCounterStateType() {
 
 void PrintORCounterStateEntry_dot(void *pState) {
 	ORCounterStateEntry *pORCounterState = (ORCounterStateEntry *)pState;
-	fprintf(stdout, " b%p->b%p [style=solid, fontname=\"Helvetica\",label=\"If v!=p, n--\"]\n", (void *)pORCounterState, (void *)pORCounterState);
-	fprintf(stdout, " b%p->b%p [style=solid, fontname=\"Helvetica\",label=\"If v==p\"]\n", (void *)pORCounterState, pTrueSimpleSmurfState);
-	fprintf(stdout, " b%p->i%p [style=solid, fontname=\"Helvetica\",label=\"If n==1\"]\n", (void *)pORCounterState, (void *)pORCounterState);
-	fprintf(stdout, " i%p->b%p [style=solid, fontname=\"Helvetica\",label=\"v=p\"]\n", (void *)pORCounterState, pTrueSimpleSmurfState);
-
-	fprintf(stdout, " i%p [shape=\"ellipse\", label=\"I\"]\n", (void *)pORCounterState);
-	fprintf(stdout, " b%p [shape=\"ellipse\", label=\"OR, n=%d\"]\n", (void *)pORCounterState, pORCounterState->pORState->nSize);
+	fprintf(stdout, " b%p->b%p [style=solid,label=\" x\"]\n", (void *)pORCounterState, pTrueSimpleSmurfState);
+	fprintf(stdout, " b%p->b%p [style=dotted,label=\" -x\"]\n", (void *)pORCounterState, (void *)(pORCounterState->pTransition));
+	
+	fprintf(stdout, " b%p [shape=\"ellipse\",label=\"OR, n=%d\"]\n", (void *)pORCounterState, pORCounterState->nSize);
+	
+	arrPrintStateEntry_dot[(int)((TypeStateEntry *)(pORCounterState->pTransition))->cType](pORCounterState->pTransition);
 }
 
 void PrintORCounterStateEntry(void *pState) {

@@ -105,13 +105,13 @@ void print_dot_inference(int var) {
 	if(just_flipped_choicepoint < 0) {
 		just_flipped_choicepoint = -just_flipped_choicepoint; //skip past the old choicepoint
 	} else {
-		fprintf(stdout, " i%d [shape=\"circle\", label=\"%d\"];\n", ite_counters[UNIQUE_NUM], var);
+		fprintf(stdout, " i%d [shape=\"circle\",label=\"%d\"];\n", ite_counters[UNIQUE_NUM], var);
 		if(ite_counters[UNIQUE_NUM] != 1) {
 			if(just_flipped_choicepoint > 0) {
-				fprintf(stdout, " i%d -> i%d [style=solid,fontname=\"Helvetica\",label=\"%c\"];\n", just_flipped_choicepoint, ite_counters[UNIQUE_NUM], var>0?'+':'-');
+				fprintf(stdout, " i%d -> i%d [style=solid,label=\"%c\"];\n", just_flipped_choicepoint, ite_counters[UNIQUE_NUM], var>0?'+':'-');
 				just_flipped_choicepoint = 0;
 			} else {
-				fprintf(stdout, " i%d -> i%d [style=solid,fontname=\"Helvetica\",label=\"%c\"];\n", ite_counters[UNIQUE_NUM]-1, ite_counters[UNIQUE_NUM], var>0?'+':'-');
+				fprintf(stdout, " i%d -> i%d [style=solid,label=\"%c\"];\n", ite_counters[UNIQUE_NUM]-1, ite_counters[UNIQUE_NUM], var>0?'+':'-');
 			}
 		}
 	}

@@ -33,11 +33,11 @@ void PrintSmurfStateEntry_dot(void *pState) {
 	SmurfStateEntry *pSmurfState = (SmurfStateEntry *)pState;
    SmurfStateEntry *pTempState = pSmurfState;
 	while(pTempState != NULL) {
-		fprintf(stdout, " b%p->b%p [style=solid,fontname=\"Helvetica\",label=\"%s\"]\n", 
+		fprintf(stdout, " b%p->b%p [style=solid,label=\"%s\"]\n", 
               (void *)pState, 
               (void *)pTempState->pVarIsTrueTransition, 
               s_name(arrSimpleSolver2IteVarMap[pTempState->nTransitionVar]));
-		fprintf(stdout, " b%p->b%p [style=dotted,fontname=\"Helvetica\",label=\"-%s\"]\n",
+		fprintf(stdout, " b%p->b%p [style=dotted,label=\"-%s\"]\n",
               (void *)pState,
               (void *)pTempState->pVarIsFalseTransition,
               s_name(arrSimpleSolver2IteVarMap[pTempState->nTransitionVar]));

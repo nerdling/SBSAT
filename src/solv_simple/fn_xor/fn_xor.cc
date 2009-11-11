@@ -27,12 +27,12 @@ void PrintXORStateEntry(void *pState) {
 
 void PrintXORStateEntry_dot(void *pState) {
 	XORStateEntry *pXORState = (XORStateEntry *)pState;
-   fprintf(stdout, " b%p->b%p [style=solid, fontname=\"Helvetica\",label=\"n--\"]\n", (void *)pXORState, (void *)pXORState);
-	fprintf(stdout, " b%p->i%p [style=solid, fontname=\"Helvetica\",label=\"If n==1\"]\n", (void *)pXORState, (void *)pXORState);
-	fprintf(stdout, " i%p->b%p [style=solid, fontname=\"Helvetica\",label=\"v=p\"]\n", (void *)pXORState, pTrueSimpleSmurfState);
+   fprintf(stdout, " b%p->b%p [style=solid,label=\" x1 : -x2\"]\n", (void *)pXORState, (void *)pTrueSimpleSmurfState);
+   fprintf(stdout, " b%p->b%p [style=dotted,label=\" -x1 : x2 \"]\n", (void *)pXORState, (void *)pTrueSimpleSmurfState);
+   fprintf(stdout, " b%p->b%p [style=solid,label=\" x2 : -x1 \"]\n", (void *)pXORState, (void *)pTrueSimpleSmurfState);
+   fprintf(stdout, " b%p->b%p [style=dotted,label=\" -x2 : x1 \"]\n", (void *)pXORState, (void *)pTrueSimpleSmurfState);
 	
-	fprintf(stdout, " i%p [shape=\"ellipse\", label=\"I\"]\n", (void *)pXORState);
-	fprintf(stdout, " b%p [shape=\"ellipse\", label=\"XOR, n=%d\"]\n", pXORState, pXORState->nSize);
+	fprintf(stdout, " b%p [shape=\"ellipse\", label=\"XOR, n=%d\"]\n", pXORState, 2);
 }
 
 void PrintXORStateEntry_formatted(void *pState) {
@@ -75,12 +75,11 @@ void PrintXORCounterStateEntry(void *pState) {
 
 void PrintXORCounterStateEntry_dot(void *pState) {
 	XORCounterStateEntry *pXORCounterState = (XORCounterStateEntry *)pState;
-   fprintf(stdout, " b%p->b%p [style=solid, fontname=\"Helvetica\",label=\"n--\"]\n", (void *)pXORCounterState, (void *)pXORCounterState);
-	fprintf(stdout, " b%p->i%p [style=solid, fontname=\"Helvetica\",label=\"If n==1\"]\n", (void *)pXORCounterState, (void *)pXORCounterState);
-	fprintf(stdout, " i%p->b%p [style=solid, fontname=\"Helvetica\",label=\"v=p\"]\n", (void *)pXORCounterState, pTrueSimpleSmurfState);
-	
-	fprintf(stdout, " i%p [shape=\"ellipse\", label=\"I\"]\n", (void *)pXORCounterState);
-	fprintf(stdout, " b%p [shape=\"ellipse\", label=\"XOR, n=%d\"]\n", (void *)pXORCounterState, pXORCounterState->pXORState->nSize);
+	fprintf(stdout, " b%p->b%p [style=solid,label=\" x\"]\n", (void *)pXORCounterState, (void *)(pXORCounterState->pTransition));
+   fprintf(stdout, " b%p->b%p [style=dotted,label=\" -x\"]\n", (void *)pXORCounterState, (void *)(pXORCounterState->pTransition));
+
+	fprintf(stdout, " b%p [shape=\"ellipse\", label=\"XOR, n=%d\"]\n", (void *)pXORCounterState, pXORCounterState->nSize);
+   arrPrintStateEntry_dot[(int)((TypeStateEntry *)(pXORCounterState->pTransition))->cType](pXORCounterState->pTransition);
 }
 
 void FreeXORCounterStateEntry(void *pState) {
@@ -119,9 +118,9 @@ void PrintXORGElimStateEntry(void *pState) {
 
 void PrintXORGElimStateEntry_dot(void *pState) {
 	XORGElimStateEntry *pXORGElimState = (XORGElimStateEntry *)pState;
-   fprintf(stdout, " b%p->b%p [style=solid, fontname=\"Helvetica\",label=\"n--\"]\n", (void *)pXORGElimState, (void *)pXORGElimState);
-	fprintf(stdout, " b%p->i%p [style=solid, fontname=\"Helvetica\",label=\"If n==1\"]\n", (void *)pXORGElimState, (void *)pXORGElimState);
-	fprintf(stdout, " i%p->b%p [style=solid, fontname=\"Helvetica\",label=\"v=p\"]\n", (void *)pXORGElimState, pTrueSimpleSmurfState);
+   fprintf(stdout, " b%p->b%p [style=solid,label=\"n--\"]\n", (void *)pXORGElimState, (void *)pXORGElimState);
+	fprintf(stdout, " b%p->i%p [style=solid,label=\"If n==1\"]\n", (void *)pXORGElimState, (void *)pXORGElimState);
+	fprintf(stdout, " i%p->b%p [style=solid,label=\"v=p\"]\n", (void *)pXORGElimState, pTrueSimpleSmurfState);
 	
 	fprintf(stdout, " i%p [shape=\"ellipse\", label=\"I\"]\n", (void *)pXORGElimState);
 	fprintf(stdout, " b%p [shape=\"ellipse\", label=\"GE XOR, n=%d\"]\n", (void *)pXORGElimState, pXORGElimState->nSize);
