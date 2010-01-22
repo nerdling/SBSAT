@@ -54,7 +54,6 @@ void *ReadSmurfStateIntoTable(BDDNode *pCurrentBDD, int *arrElts, int nNumElts);
 
 void SetVisitedSmurfState(void *pState, int value);
 int ApplyInferenceToSmurf(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
-int ApplyInferenceToWatchedSmurf(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
 
 void FreeSmurfStateEntry(void *pState);
 

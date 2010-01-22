@@ -78,17 +78,38 @@ void GarbageCollectSmurfStatesTable(int force) {
    d4_printf2("SMURF_GC START (free %d) ", 0); //SEAN!!! Some indicator for progress?
    
    pTrueSimpleSmurfState->visited = 1;
- 
-   for(int nSmurfStackIdx = 0; nSmurfStackIdx <= SimpleSmurfProblemState->nCurrSearchTreeLevel; nSmurfStackIdx++) {
-      for(int nSmurfIndex = 0; nSmurfIndex < SimpleSmurfProblemState->nNumSmurfs; nSmurfIndex++) {
-         TypeStateEntry *pState = (TypeStateEntry *)SimpleSmurfProblemState->arrSmurfStack[nSmurfStackIdx].arrSmurfStates[nSmurfIndex];
-         while(pState != NULL) {
-            arrSetVisitedState[(int)pState->cType](pState, 1); //Set visited flag to 1
-            pState = (TypeStateEntry *)pState->pPreviousState;
-         }
-      }
-   }
 
+	if(use_stack_for_updating) {
+		int nSmurfStackIdx = 0;
+		for(int nSmurfIndex = 0; nSmurfIndex < SimpleSmurfProblemState->nNumSmurfs; nSmurfIndex++) {
+			TypeStateEntry *pState = (TypeStateEntry *)SimpleSmurfProblemState->arrSmurfStack[nSmurfStackIdx].arrSmurfStates[nSmurfIndex];
+			while(pState != NULL) {
+				arrSetVisitedState[(int)pState->cType](pState, 1); //Set visited flag to 1
+				pState = (TypeStateEntry *)pState->pPreviousState;
+			}
+		}
+		for(int nStackIdx = pSmurfTransitionsStack->head; nStackIdx>0; nStackIdx--) {
+			TypeStateEntry *pState = (TypeStateEntry *)pSmurfTransitionsStack->mem[nStackIdx];
+			if(pState == NULL) //Pop past the NULL designating a choice point
+				continue;
+			nStackIdx--; //Skip nSmurfNumber
+			while(pState != NULL) {
+				arrSetVisitedState[(int)pState->cType](pState, 1); //Set visited flag to 1
+				pState = (TypeStateEntry *)pState->pPreviousState;
+			}
+		}
+	} else {
+		for(int nSmurfStackIdx = 0; nSmurfStackIdx <= SimpleSmurfProblemState->nCurrSearchTreeLevel; nSmurfStackIdx++) {
+			for(int nSmurfIndex = 0; nSmurfIndex < SimpleSmurfProblemState->nNumSmurfs; nSmurfIndex++) {
+				TypeStateEntry *pState = (TypeStateEntry *)SimpleSmurfProblemState->arrSmurfStack[nSmurfStackIdx].arrSmurfStates[nSmurfIndex];
+				while(pState != NULL) {
+					arrSetVisitedState[(int)pState->cType](pState, 1); //Set visited flag to 1
+					pState = (TypeStateEntry *)pState->pPreviousState;
+				}
+			}
+		}
+	}
+	
    //Free up extra state machine memory
 	for(SmurfStatesTableStruct *pIter = SimpleSmurfProblemState->arrSmurfStatesTableHead; pIter != NULL; pIter = pIter->pNext) {
       int x=0;
@@ -197,13 +218,22 @@ void Alloc_SmurfStack(int destination) {
 }
 
 void FreeSmurfStack() {
-	if(use_SmurfWatchedLists) ite_free((void **)&SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates);
-	else {
+	if(use_stack_for_updating) {
+		ite_free((void **)&SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates);
+		SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates = NULL; //Just to be safe
+		Free_SmurfStack_Hooks(0);
+		for(int i = 1; i < SimpleSmurfProblemState->nNumVars; i++) {
+			SimpleSmurfProblemState->arrSmurfStack[i].arrSmurfStates = NULL; //Just to be safe
+			Free_SmurfStack_Hooks(i);
+		}
+		
+	} else {
 		for(int i = 0; i < SimpleSmurfProblemState->nNumVars; i++)
 		  if(SimpleSmurfProblemState->arrSmurfStack[i].arrSmurfStates != NULL) {
-           ite_free((void **)&SimpleSmurfProblemState->arrSmurfStack[i].arrSmurfStates);
-           Free_SmurfStack_Hooks(i);
-        }
+			  ite_free((void **)&SimpleSmurfProblemState->arrSmurfStack[i].arrSmurfStates);
+			  SimpleSmurfProblemState->arrSmurfStack[i].arrSmurfStates = NULL; //Just to be safe
+			  Free_SmurfStack_Hooks(i);
+		  }
 	}
 	ite_free((void **)&SimpleSmurfProblemState->arrSmurfStack);
 }
@@ -347,12 +377,6 @@ int ReadAllSmurfsIntoTable(int nNumVars) {
 //			(*SimpleSmurfProblemState->arrReverseOccurenceList[x][y+1])=1;
 //			fprintf(stderr, "|%d %d|", x, *SimpleSmurfProblemState->arrReverseOccurenceList[x][y+1]);
 
-			if(use_SmurfWatchedLists && y > (numSmurfWatchedVars==0?nNumElts:numSmurfWatchedVars-1)) {
-//				fprintf(stderr, "/%d ", SimpleSmurfProblemState->arrVariableOccursInSmurf[nVar][temp_varcount[nVar]]);
-				SimpleSmurfProblemState->arrVariableOccursInSmurf[nVar][temp_varcount[nVar]] = -SimpleSmurfProblemState->arrVariableOccursInSmurf[nVar][temp_varcount[nVar]];
-//				fprintf(stderr, "%d\\", SimpleSmurfProblemState->arrVariableOccursInSmurf[nVar][temp_varcount[nVar]]);
-			}
-			
 			temp_varcount[nVar]++;
 		}
 	}

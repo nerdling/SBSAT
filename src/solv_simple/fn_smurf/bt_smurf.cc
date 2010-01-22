@@ -12,13 +12,13 @@ void SetVisitedSmurfState(void *pState, int value) {
       bdd_flag_nodes(pSmurfState->pSmurfBDD);
 //      if(pSmurfState->pVarIsTrueTransition != NULL && ((TypeStateEntry *)(pSmurfState->pVarIsTrueTransition))->cType == FN_INFERENCE)
 //        SetVisitedInferenceState(pSmurfState->pVarIsTrueTransition, value);
-//Commented out to work w/ garbage collection compression (may result in slighly slower search.
-//      if((TypeStateEntry *)pSmurfState->pVarIsTrueTransition->visited != value)
+//Comment out to work w/ garbage collection compression (may result in slighly slower search.
+//      if(((TypeStateEntry *)pSmurfState->pVarIsTrueTransition)->visited != value)
         pSmurfState->pVarIsTrueTransition = NULL;
 //      if(pSmurfState->pVarIsFalseTransition != NULL && ((TypeStateEntry *)(pSmurfState->pVarIsFalseTransition))->cType == FN_INFERENCE)
 //        SetVisitedInferenceState(pSmurfState->pVarIsFalseTransition, value);
-//Commented out to work w/ garbage collection compression (may result in slighly slower search.
-//      if((TypeStateEntry *)pSmurfState->pVarIsFalseTransition->visited != value)
+//Comment out to work w/ garbage collection compression (may result in slighly slower search.
+//      if(((TypeStateEntry *)pSmurfState->pVarIsFalseTransition)->visited != value)
         pSmurfState->pVarIsFalseTransition = NULL;
       pSmurfState = (SmurfStateEntry *)(pSmurfState->pNextVarInThisState);
    }
@@ -97,10 +97,5 @@ int ApplyInferenceToSmurf(int nBranchVar, bool bBVPolarity, int nSmurfNumber, vo
 	d7_printf3("      Smurf %d previously was %p\n", nSmurfNumber, ((SmurfStateEntry *)arrSmurfStates[nSmurfNumber])->pPreviousState);
 	
 	return ret;
-}
-
-ITE_INLINE
-int ApplyInferenceToWatchedSmurf(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates) {
-	return 0;
 }
 

@@ -107,6 +107,9 @@ extern int nInfQueueStart;
 
 extern int add_one_display;
 
+extern void_arr_stack *pSmurfTransitionsStack;
+extern int use_stack_for_updating;
+
 extern int *tempint;
 extern int tempint_max;
 

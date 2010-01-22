@@ -252,8 +252,6 @@ extern int sbj;
 
 extern int ge_preproc;
 extern int use_XORGElim;
-extern int use_SmurfWatchedLists;
-extern int numSmurfWatchedVars;
 extern int precompute_smurfs;
 extern int smurfs_share_states;
 extern int use_lemmas;

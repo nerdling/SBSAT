@@ -15,6 +15,9 @@ int nNumRestarts = 0;
 int backtrack_level = 0;
 int just_flipped_choicepoint = 0;
 
+int use_stack_for_updating = 1;
+void_arr_stack *pSmurfTransitionsStack;
+
 ITE_INLINE 
 void create_clause_from_SBSAT_solution(int *arrInferenceQueue, SmurfStack *arrSmurfStack,
 													int nCurrSearchTreeLevel, Cls **clause, int *lits_max_size) {
@@ -394,7 +397,7 @@ int EnqueueInference_lemmas_hook(int nBranchVar, bool bBVPolarity) {
 	int nPrevInfLevel = abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[nBranchVar]);
 	d7_printf4("      Lemma cache inferring %d at Level %d (prior level = %d)\n",
 				  bBVPolarity?nBranchVar:-nBranchVar, nInfQueueHead, nPrevInfLevel);
-	assert(use_lemmas || use_SmurfWatchedLists || nPrevInfLevel >= 0);
+	assert(use_lemmas || nPrevInfLevel >= 0);
 	
 	if(nPrevInfLevel < nInfQueueHead) {
 		//Inference already in queue
@@ -422,7 +425,7 @@ int EnqueueInference(int nBranchVar, bool bBVPolarity, int inf_function_type) {
 	int nPrevInfLevel = abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[nBranchVar]);
 	d7_printf4("      Inferring %d at Level %d (prior level = %d)\n",
 				  bBVPolarity?nBranchVar:-nBranchVar, nInfQueueHead, nPrevInfLevel);
-	assert(use_lemmas || use_SmurfWatchedLists || nPrevInfLevel >= 0);
+	assert(use_lemmas || nPrevInfLevel >= 0);
 	
 	if(nPrevInfLevel < nInfQueueHead) {
 		//Inference already in queue
@@ -493,19 +496,26 @@ int ApplyInferenceToStates(int nBranchVar, bool bBVPolarity) {
 	}
 
 	d7_printf2("  Transitioning Smurfs using %d\n", bBVPolarity?nBranchVar:-nBranchVar);
+
 	void **arrSmurfStates = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].arrSmurfStates;
+	
 	int i = SimpleSmurfProblemState->arrVariableOccursInSmurf[nBranchVar][0];
 	int *arrVarOccursInSmurf = &(SimpleSmurfProblemState->arrVariableOccursInSmurf[nBranchVar][i]);
 	for(; i > 0; i--) {
-//	for(int i = SimpleSmurfProblemState->arrVariableOccursInSmurf[nBranchVar][0]; i > 0; i--) {
 		int nSmurfNumber = *(arrVarOccursInSmurf--);
-//		int nSmurfNumber = SimpleSmurfProblemState->arrVariableOccursInSmurf[nBranchVar][i];
-		//SmurfNumber 0 always has all it's variables watched. No big deal really.
 		if (nSmurfNumber < 0) continue; //Skip Non-Watched Variables
 		d7_printf3("    Checking Smurf %d (State %p)\n", nSmurfNumber, (void *)arrSmurfStates[nSmurfNumber]);
 		if(arrSmurfStates[nSmurfNumber] == pTrueSimpleSmurfState) continue;
+		//save old state
+		TypeStateEntry *pOldSmurf = (TypeStateEntry *)arrSmurfStates[nSmurfNumber];
 		ret = arrApplyInferenceToState[(int)((TypeStateEntry *)arrSmurfStates[nSmurfNumber])->cType](nBranchVar, bBVPolarity, nSmurfNumber, arrSmurfStates);
-//		ret = ((TypeStateEntry *)arrSmurfStates[nSmurfNumber])->ApplyInferenceToState(nBranchVar, bBVPolarity, nSmurfNumber, arrSmurfStates);
+
+      if(use_stack_for_updating && (pOldSmurf != arrSmurfStates[nSmurfNumber])) {
+			//push pOldSmurf and nSmurfNumber onto the stack
+			d9_printf3("pushing %d, %p\n", nSmurfNumber, pOldSmurf);
+			arr_stack_push(pSmurfTransitionsStack, (void *)nSmurfNumber);
+			arr_stack_push(pSmurfTransitionsStack, (void *)pOldSmurf);
+	   }
 		if(ret == 0) return 0;
 	}
 	return ret;
@@ -519,10 +529,13 @@ void SmurfStates_Push(int destination) {
 		Alloc_SmurfStack(destination);
 	}
 
-	if(use_SmurfWatchedLists) {
+	if(use_stack_for_updating) {
+		//push a marker on the stack.
+		d9_printf1("pushing NULL\n");
+		arr_stack_push(pSmurfTransitionsStack, (void *)NULL);
 		SimpleSmurfProblemState->arrSmurfStack[destination].arrSmurfStates = 
 		  SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].arrSmurfStates;
-	} else  {
+	} else {
 		memcpy_ite(SimpleSmurfProblemState->arrSmurfStack[destination].arrSmurfStates,
 					  SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].arrSmurfStates,
 					  SimpleSmurfProblemState->nNumSmurfs*sizeof(void *));
@@ -560,10 +573,25 @@ int SmurfStates_Pop(int pop_to) {
 	while (SimpleSmurfProblemState->nCurrSearchTreeLevel>pop_to) {
 		
 		SimpleSmurfProblemState->nCurrSearchTreeLevel--;
-		
+
 		if(SimpleSmurfProblemState->nCurrSearchTreeLevel < 0 || simple_solver_reset_level!=-1) {
 			if(ite_counters[NUM_SOLUTIONS] == 0) return SOLV_UNSAT; //return Unsatisifable
 			else return SOLV_SAT;
+		}
+
+		if(use_stack_for_updating) {
+			//pop state-machines until we are back to nCurrSearchTreeLevel
+			void **arrSmurfStates = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].arrSmurfStates;
+			while(1) {
+				TypeStateEntry *pOldSmurf = (TypeStateEntry *)arr_stack_pop(pSmurfTransitionsStack);
+				if(pOldSmurf == NULL) {
+					d9_printf1("poping NULL\n");
+					break;
+				}
+				long nSmurfNumber = (long)arr_stack_pop(pSmurfTransitionsStack);
+				arrSmurfStates[nSmurfNumber] = pOldSmurf;
+				d9_printf3("poping %d, %p\n", nSmurfNumber, pOldSmurf);
+			}
 		}
 		
 		SmurfStates_Pop_Hooks();
@@ -606,6 +634,12 @@ int SimpleBrancher() {
 	bool bBVPolarity; 
 	int nBranchLit, nInfQueueHead, nPrevInfLevel, nBranchVar;
 
+	if(use_stack_for_updating) {//SEAN!!! This should be in the init function.
+		pSmurfTransitionsStack = arr_stack_init();
+		d9_printf1("pushing Initial NULL\n");
+		arr_stack_push(pSmurfTransitionsStack, (void *)NULL);
+	}
+	
 	backtrack_level = SimpleSmurfProblemState->nNumVars;
 	
 	LONG64 max_solutions_simple = max_solutions>0?max_solutions:(max_solutions==0?-1:0);
@@ -771,7 +805,7 @@ find_more_solutions: ;
 				}
 				//Add conflict lemma
 				if(SimpleSmurfProblemState->nCurrSearchTreeLevel == 0) return SOLV_SAT;
-//				fprintf(stderr, "conflict decision == %d\n", -SimpleSmurfProblemState->arrInferenceQueue[SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel-1].nNumFreeVars]);
+				//fprintf(stderr, "conflict decision == %d\n", -SimpleSmurfProblemState->arrInferenceQueue[SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel-1].nNumFreeVars]);
 				create_clause_from_SBSAT_solution(SimpleSmurfProblemState->arrInferenceQueue,
 															 SimpleSmurfProblemState->arrSmurfStack,
 															 SimpleSmurfProblemState->nCurrSearchTreeLevel,
@@ -796,6 +830,9 @@ find_more_solutions: ;
 		}
 	}
 
+	if(use_stack_for_updating) //SEAN!!! This should be in the init function.
+	  arr_stack_free(pSmurfTransitionsStack);
+	
 	return ret;
 }
 

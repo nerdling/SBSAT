@@ -4,7 +4,7 @@ sources= \
              params.cc params_fn.cc log.cc itetable.cc \
              bddtable.cc zread.cc vars.cc infer.cc llist.cc \
 	     bdd_circuit_init.cc symtable.cc java_wrapper.cc \
-	     custprint.cc termcap.cc 
+	     custprint.cc termcap.cc queue.cc
 #EXTRA_DIST = # bddtable.cc
 
 #if MYLIBTOOL
