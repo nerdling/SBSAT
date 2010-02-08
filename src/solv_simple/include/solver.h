@@ -56,6 +56,27 @@
 
 #define SMURF_STATES_INCREASE_SIZE 9
 
+#define STATE_INIT_LIST { \
+     initSmurfStateType, \
+	  initORStateType, \
+	  initORCounterStateType, \
+	  initXORStateType, \
+	  initXORCounterStateType, \
+	  initXORGElimStateType, \
+	  initMINMAXStateType, \
+	  initMINMAXCounterStateType, \
+	  initNEGMINMAXStateType, \
+	  initNEGMINMAXCounterStateType, \
+	  initInferenceStateType, \
+	  NULL }
+
+#define STATE_FREE_LIST { \
+     LSGBORFree, \
+	  LSGBXORFree, \
+	  LSGBMINMAXFree, \
+	  LSGBNEGMINMAXFree, \
+	  NULL }
+
 typedef struct ProblemState {
 	//Static
 	int nNumSmurfs;
@@ -94,6 +115,12 @@ extern FreeStateEntry *arrFreeStateEntry;
 
 typedef void (*SetVisitedState)(void *pState, int value);
 extern SetVisitedState *arrSetVisitedState;
+
+typedef void (*InitStateType)();
+extern InitStateType arrInitStateType[];
+
+typedef void (*FreeStateType)();
+extern FreeStateType arrFreeStateType[];
 
 extern double fSimpleSolverStartTime;
 extern double fSimpleSolverEndTime;

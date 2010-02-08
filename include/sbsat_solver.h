@@ -58,5 +58,6 @@ void PrintAllSmurfStateEntries();
 int Init_SimpleSmurfSolver();
 int simpleSolve();
 extern int smurfs_share_paths;
+extern int use_stack_for_updating;
 
 #endif

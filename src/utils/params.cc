@@ -63,6 +63,7 @@ int USE_AUTARKY_LEMMAS;
 int slide_lemmas;
 int print_search_dot;
 int preproc_uses_limits;
+int use_stack_for_updating;
 
 void DO_ALL(int);
 void DO_ALL_default(int value);
@@ -353,6 +354,8 @@ t_opt options[] = {
 { &MAX_NUM_CACHED_LEMMAS, "L", "max-cached-lemmas", P_INT,
 		V(i:0,"0"), V(i:5000, "5000"), VAR_NORMAL, 0,
                 "set the maximum # of lemmas"}, 
+{ &use_stack_for_updating, "", "inc-stack", P_INT, V(i:0,"0"),  V(i:0,"0"), VAR_NORMAL, 0,
+			      "Use incrementally updated stack in the simple solver (1/0)"},
 { &print_search_dot, "", "print-search-tree", P_INT, V(i:0,"0"),  V(i:0,"0"), VAR_NORMAL, 0,
 			      "Enable/Disable printing the search tree in .dot format (1/0)"},
 { &slide_lemmas, "", "slide-lemmas", P_INT, V(i:0,"0"),  V(i:0,"0"), VAR_CHECK+VAR_DUMP, 0,

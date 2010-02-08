@@ -15,7 +15,6 @@ int nNumRestarts = 0;
 int backtrack_level = 0;
 int just_flipped_choicepoint = 0;
 
-int use_stack_for_updating = 1;
 void_arr_stack *pSmurfTransitionsStack;
 
 ITE_INLINE 

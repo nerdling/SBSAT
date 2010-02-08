@@ -29,6 +29,9 @@ CalculateStateHeuristic *arrCalculateStateHeuristic;
 SetStateHeuristicScore *arrSetStateHeuristicScore;
 GetStateHeuristicScore *arrGetStateHeuristicScore;
 
+InitStateType arrInitStateType[] = STATE_INIT_LIST;
+FreeStateType arrFreeStateType[] = STATE_FREE_LIST;
+
 //This allocates a new block of smurfs states and attaches them to the previous block
 //The blocks are connected by a linked list - accessed through ->pNext
 void allocate_new_SmurfStatesTable(int size) {
@@ -252,20 +255,11 @@ void Init_SimpleSmurfProblemState() {
 	arrSetStateHeuristicScore = (SetStateHeuristicScore *)ite_calloc(NUM_SMURF_TYPES, sizeof(SetStateHeuristicScore), 9, "arrSetStateHeuristicScore");
    arrGetStateHeuristicScore = (GetStateHeuristicScore *)ite_calloc(NUM_SMURF_TYPES, sizeof(GetStateHeuristicScore), 9, "arrGetStateHeuristicScore");
 
-	initSmurfStateType();
-	initORStateType();
-	initORCounterStateType();
-	initXORStateType();
-	initXORCounterStateType();
-	initXORGElimStateType();
-	initMINMAXStateType();
-	initMINMAXCounterStateType();
-	initNEGMINMAXStateType();
-	initNEGMINMAXCounterStateType();
-	initInferenceStateType();
+	//Initialize the various function types
+	for(int i=0;arrInitStateType[i]!=NULL;i++)
+	  arrInitStateType[i]();
    
    //Create the pTrueSimpleSmurfState entry
-	
    SimpleSmurfProblemState = (ProblemState *)ite_calloc(1, sizeof(ProblemState), 9, "SimpleSmurfProblemState");
 	SimpleSmurfProblemState->nNumSmurfStateEntries = 2;
 	int size = SMURF_TABLE_SIZE;
@@ -454,10 +448,9 @@ void FreeSmurfSolverVars() {
 	ite_free((void **)&SimpleSmurfProblemState->arrInferenceQueue);
 	ite_free((void **)&SimpleSmurfProblemState->arrInferenceDeclaredAtLevel);
 
-	LSGBORFree();
-	LSGBXORFree();
-   LSGBMINMAXFree();
-   LSGBNEGMINMAXFree();
+	//Free memory associated with the various function types.
+	for(int i=0;arrFreeStateType[i]!=NULL;i++)
+	  arrFreeStateType[i]();
 }
 
 void FreeSmurfStateEntries() {
