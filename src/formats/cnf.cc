@@ -59,6 +59,7 @@ void free_clauses(Clause *pClauses) {
 	ite_free((void **)&pClauses);	
 }
 
+//From M. Heule
 int clscompfunc(const void *x, const void *y) {
 	Clause pp, qq;
 	
