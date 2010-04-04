@@ -1217,6 +1217,10 @@ char getNextIteSymbol (int &intnum, DdNode *&bdd) {
 			fprintf(stderr, "Formula parse error...exiting:%d\n", ite_line);
 			exit (1);
 		}
+      if (p == '!') {
+			fprintf(stderr, "Formula parse error, character '!'is invalid. Use '-' or not( ... ) to negate...exiting:%d\n", ite_line);
+			exit (1);
+		}
 		if (p == ')') {
 			return ')';
 		}
