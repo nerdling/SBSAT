@@ -57,6 +57,6 @@
 #include "sbsat_vars.h"
 #include "sbsat_interface.h"
 
-#include "queue.h"
+#include "queue"
 
 #endif // SBSAT_H
