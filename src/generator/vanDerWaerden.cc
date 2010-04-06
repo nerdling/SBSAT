@@ -214,14 +214,38 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
             fprintf(fout, "#define N %d\n", n);
             fclose(fout);
          }
-         fprintf(stderr, "Running cnf2ib..."); vanDerWaerden("cnf2ib", n, k, p); fprintf(stderr, "\n");
-         fprintf(stderr, "Running cnf2cd..."); vanDerWaerden("cnf2cd", n, k, p); fprintf(stderr, "\n");
-         fprintf(stderr, "Running cnf2cp..."); vanDerWaerden("cnf2cp", n, k, p); fprintf(stderr, "\n");
-         fprintf(stderr, "Running cnf2lb..."); vanDerWaerden("cnf2lb", n, k, p); fprintf(stderr, "\n");
-         fprintf(stderr, "Running cnf2pdblk..."); vanDerWaerden("cnf2pdblk", n, k, p); fprintf(stderr, "\n");
-         fprintf(stderr, "Running cnf2pdv..."); vanDerWaerden("cnf2pdv", n, k, p); fprintf(stderr, "\n");
-         fprintf(stderr, "Running cnf2pdmacros..."); vanDerWaerden("cnf2pdmacros", n, k, p); fprintf(stderr, "\n");
-         fprintf(stderr, "Running cnf2pdinfo..."); vanDerWaerden("cnf2pdinfo", n, k, p); fprintf(stderr, "\n");
+
+         char *cnf2ib = strdup("cnf2ib");
+         fprintf(stderr, "Running cnf2ib..."); vanDerWaerden(cnf2ib, n, k, p); fprintf(stderr, "\n");
+         free(cnf2ib);
+         
+         char *cnf2cd = strdup("cnf2cd");
+         fprintf(stderr, "Running cnf2cd..."); vanDerWaerden(cnf2cd, n, k, p); fprintf(stderr, "\n");
+         free(cnf2cd);
+
+         char *cnf2cp = strdup("cnf2cp");
+         fprintf(stderr, "Running cnf2cp..."); vanDerWaerden(cnf2cp, n, k, p); fprintf(stderr, "\n");
+         free(cnf2cp);
+
+         char *cnf2lb = strdup("cnf2lb");
+         fprintf(stderr, "Running cnf2lb..."); vanDerWaerden(cnf2lb, n, k, p); fprintf(stderr, "\n");
+         free(cnf2lb);
+
+         char *cnf2pdblk = strdup("cnf2pdblk");
+         fprintf(stderr, "Running cnf2pdblk..."); vanDerWaerden(cnf2pdblk, n, k, p); fprintf(stderr, "\n");
+         free(cnf2pdblk);
+
+         char *cnf2pdv = strdup("cnf2pdv");
+         fprintf(stderr, "Running cnf2pdv..."); vanDerWaerden(cnf2pdv, n, k, p); fprintf(stderr, "\n");
+         free(cnf2pdv);
+
+         char *cnf2pdmacros = strdup("cnf2pdmacros");
+         fprintf(stderr, "Running cnf2pdmacros..."); vanDerWaerden(cnf2pdmacros, n, k, p); fprintf(stderr, "\n");
+         free(cnf2pdmacros);
+
+         char *cnf2pdinfo = strdup("cnf2pdinfo");
+         fprintf(stderr, "Running cnf2pdinfo..."); vanDerWaerden(cnf2pdinfo, n, k, p); fprintf(stderr, "\n");
+         free(cnf2pdinfo);
       }
       
       break;
@@ -599,7 +623,9 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
             char y[10];
             sprintf(y, "y_%d_%%d", inf);
             fprintf(fout, "  if");
-            print_par(fout, y, "|", y_count[inf]);
+            char *bar = strdup("|");
+            print_par(fout, y, bar, y_count[inf]);
+            free(bar);
             fprintf(fout, " y_%d=1; else y_%d=0;\n", inf, inf);
          }
       }
@@ -672,7 +698,11 @@ void vanDerWaerden(char *vdw_type, int n, int k, int p) {
          }
       }
       fprintf(fout, "  if \n");
-      print_par(fout, "y%d", "|", clause_count);
+      char *bar = strdup("|");
+      char *ptrn = strdup("y%d");
+      print_par(fout, ptrn, bar, clause_count);
+      free(bar);
+      free(ptrn);
       fprintf(fout, "\n");
       fprintf(fout, "    (*out) = 1;\n");
       fprintf(fout, "  else (*out) = 0;\n");
