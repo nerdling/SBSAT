@@ -50,6 +50,7 @@
 #include "bb_gelim.h"
 #include "bb_lemmas.h"
 #include "restarts.h"
+#include "queue.h"
 
 #define HEUR_MULT 10000
 #define SMURF_TABLE_SIZE 1000000
