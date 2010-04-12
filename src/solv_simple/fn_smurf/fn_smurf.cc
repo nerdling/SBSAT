@@ -30,6 +30,7 @@ void PrintSmurfStateEntry(void *pState) {
 }
 
 void PrintSmurfStateEntry_dot(void *pState) {
+	if(pState == (void *)pTrueSimpleSmurfState) return;
 	SmurfStateEntry *pSmurfState = (SmurfStateEntry *)pState;
    SmurfStateEntry *pTempState = pSmurfState;
 	while(pTempState != NULL) {

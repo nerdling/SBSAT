@@ -1,7 +1,7 @@
 /* =========FOR INTERNAL USE ONLY. NO DISTRIBUTION PLEASE ========== */
 
 /*********************************************************************
- Copyright 1999-2007, University of Cincinnati.  All rights reserved.
+ Copyright 1999-2008, University of Cincinnati.  All rights reserved.
  By using this software the USER indicates that he or she has read,
  understood and will comply with the following:
 
@@ -16,7 +16,7 @@
  be placed on all software copies, and a complete copy of this notice
  shall be included in all copies of the associated documentation.
  No right is  granted to use in advertising, publicity or otherwise
- any trademark,  service mark, or the name of University of Cincinnati.
+ any trademark, service mark, or the name of University of Cincinnati.
 
 
  --- This software and any associated documentation is provided "as is"
@@ -35,46 +35,61 @@
  of the possibility of those damages.
 *********************************************************************/
 
-#ifndef FN_NEGMINMAX_S_H
-#define FN_NEGMINMAX_S_H
+#include <assert.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
 
-// NEGMINMAX State
+//-------------Pointer-based Queue Manipulations---------------//
 
-void initNEGMINMAXStateType();
+typedef struct cell_queue {
+	void *x;
+	struct cell_queue *next;
+} cell_queue;
 
-void PrintNEGMINMAXStateEntry(void *pState);
-void PrintNEGMINMAXStateEntry_dot(void *pState);
+typedef struct void_queue {
+	cell_queue *head;
+	cell_queue *tail;
+} void_queue;
 
-void LSGBNEGMINMAXStateSetHeurScore(void *pState);
-double LSGBNEGMINMAXStateGetHeurScore(void *pState);
-void LSGBNEGMINMAXFree();
+//-------------Pointer-based Stack Manipulations---------------//
 
-void CalculateNEGMINMAXLSGBHeuristic(void *pState, int nCurrInfLevel);
+typedef struct cell_stack {
+	void *x;
+	struct cell_stack *push;
+	struct cell_stack *pop;
+} cell_stack;
 
-void *CreateNEGMINMAXState(int *arrElts, int nNumElts, BDDNode *pCurrentBDD, NEGMINMAXStateEntry *pStartState);
+typedef struct void_stack {
+	cell_stack *head;
+} void_stack;
 
-void SetVisitedNEGMINMAXState(void *pState, int value);
-int ApplyInferenceToNEGMINMAX(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
+//-------------Array-based Stack Manipulations---------------//
 
-void FreeNEGMINMAXStateEntry(void *pState);
+typedef struct void_arr_stack {
+	uint32_t head;
+	uint32_t size;
+	void **mem;
+} void_arr_stack;
 
-// NEGMINMAX Counter State
+//-------------Pointer-based Queue Manipulations---------------//
 
-void initNEGMINMAXCounterStateType();
+void_queue *queue_init();
+void queue_free(void_queue *queue);
+void enqueue_x(void_queue *queue, void *x);
+void *dequeue(void_queue *queue);
 
-void PrintNEGMINMAXCounterStateEntry(void *pState);
-void PrintNEGMINMAXCounterStateEntry_dot(void *pState);
+//-------------Pointer-based Stack Manipulations---------------//
 
-void LSGBNEGMINMAXCounterStateSetHeurScore(void  *pState);
-double LSGBNEGMINMAXCounterStateGetHeurScore(void *pState);
-double LSGBNEGMINMAXCounterGetHeurScorePos(NEGMINMAXCounterStateEntry *pState);
-double LSGBNEGMINMAXCounterGetHeurScoreNeg(NEGMINMAXCounterStateEntry *pState);
+void_stack *stack_init();
+void stack_free(void_stack *stack);
+void stack_push(void_stack *stack, void *x);
+void *stack_pop(void_stack *stack);
 
-void CalculateNEGMINMAXCounterLSGBHeuristic(void *pState, int nCurrInfLevel);
+//-------------Array-based Stack Manipulations---------------//
 
-void SetVisitedNEGMINMAXCounterState(void *pState, int value);
-int ApplyInferenceToNEGMINMAXCounter(int nBranchVar, bool bBVPolarity, int nSmurfNumber, void **arrSmurfStates);
-
-void FreeNEGMINMAXCounterStateEntry(void *pState);
-
-#endif
+void_arr_stack *arr_stack_init();
+void arr_stack_free(void_arr_stack *stack);
+void arr_stack_push(void_arr_stack *stack, void *x);
+void *arr_stack_pop(void_arr_stack *stack);
