@@ -1031,7 +1031,7 @@ char getNextSymbol (int &intnum, BDDNode *&bdd) {
 			exit (1);
 		}
       if (p == '!') {
-			fprintf(stderr, "Formula parse error, character '!'is invalid. Use '-' or not( ... ) to negate...exiting:%d\n", markbdd_line);
+			fprintf(stderr, "Formula parse error, character '!' is invalid. Use '-' or not( ... ) to negate...exiting:%d\n", markbdd_line);
 			exit (1);
 		}
 		if (p == ')') {
