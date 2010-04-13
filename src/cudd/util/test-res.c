@@ -22,7 +22,8 @@ char **environ;
 
     (void) printf("argc is %d\n", argc);
 
-    for(i = 0, ep = argv; *ep != 0; i++, ep++) {
+    
+    for(i = 0, ep = strtoul(argv[0], NULL, 10); *ep != 0; i++, ep++) {
 	(void) printf("%08x (%08x-%08x)\targv[%d]:\t%s\n", 
 	    ep, *ep, *ep + strlen(*ep), i, *ep);
     }
