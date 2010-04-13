@@ -160,7 +160,9 @@ void BDD_to_Smurfs () {
 	  fprintf (foutputfile, "1");
 	fprintf (foutputfile, " # Output Vector\n");
 	for (v = 0; v < nmbrFunctions; v++) {
-		fprintf (foutputfile, "#\n%ld\n", v);
+        char *frmt = strdup("#\n%ld\n");
+		fprintf (foutputfile, frmt, v);
+        free(frmt);
 		if (functions[v] == true_ptr) {
 			fprintf (foutputfile, "-1\n1\n");
 			continue;
@@ -277,7 +279,9 @@ void BDD_to_Smurfs () {
 			if(x > MAX_MAX_VBLES_PER_SMURF)
 			  fprintf(stderr, "Function %ld has %ld variables and it may take a while to consider all 2^%ld truth table values\n", v, x, x);
 			for (long long tvec = 0; tvec < ((long long)1 << x); tvec++) {
-				fprintf (foutputfile, "%d", getTruth (integers[v].num, p, x, functions[v]));
+                char *frmt = strdup("%d");
+				fprintf (foutputfile, frmt, getTruth (integers[v].num, p, x, functions[v]));
+                free(frmt);
 				bcount (p, (x - 1));
 			}
 		}

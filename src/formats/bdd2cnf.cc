@@ -353,7 +353,9 @@ void printBDDToCNF3SAT () {
    FILE *ft;  char buffer[1024];
    int clause_cnt = 0, t_cnt, max_var_no = 0;
    char tmp_bdd_filename[256];
-   get_freefile("bdd_tmp.cnf", temp_dir, tmp_bdd_filename, 255);
+   char *file = strdup("bdd_tmp.cnf");
+   get_freefile(file, temp_dir, tmp_bdd_filename, 255);
+   free(file);
 
 	use_symtable = sym_all_int();
 	

@@ -47,7 +47,11 @@
 int
 look_up (char *s)
 {
-  char *ops[OPS_NUM] = { "-out", "-in" };
+  char *op1 = strdup("-out");
+  char *op2 = strdup("-in");
+  char *ops[OPS_NUM] = { op1, op2 };
+  free(op1);
+  free(op2);
   int i;
 
   for (i = 0; i < OPS_NUM; i++)
@@ -82,8 +86,11 @@ SAT_to_CNF ()
 
   tmp = (char *) calloc (100, sizeof (char));
   Ws = (char *) calloc (MAXFILE_LENGTH, sizeof (char));
-  if (Ws == NULL)
-    print_err ("Not enough memory", 1);
+  if (Ws == NULL) {
+    char *msg = strdup("Not enough memory");
+    print_err (msg, 1);
+    free(msg);
+  }
 
   Acr = Acw = Ws;
   readfile ();
@@ -159,8 +166,11 @@ SAT_to_CNF ()
 void
 myputc (char c)
 {
-  if (Acw - Ws == MAXFILE_LENGTH)
-    print_err ("File is longer than allocated space", 1);
+  if (Acw - Ws == MAXFILE_LENGTH) {
+    char *msg = strdup("File is longer than allocated space");
+    print_err (msg, 1);
+    free(msg);
+  }
 
   if (c == ' ' && (*(Acw - 1) == ' ' || *(Acw - 1) == '\n'))
     return;
@@ -266,8 +276,11 @@ readfile ()
        }
     }
   myputc ('\0');
-  if (bracket != 0)
-     print_err ("Error in input: Mismatching brackets.", 0);
+  if (bracket != 0) {
+     char *msg = strdup("Error in input: Mismatching brackets.");
+     print_err (msg, 0);
+     free(msg);
+  }
 }
 
 //========================================================================
@@ -280,8 +293,11 @@ writestring (char *s)		/* writes a string to f cutting after
   int len = strlen (s);
   char *ls = (char *) calloc (LINE_LENGTH + 1, sizeof (char));
 
-  if (ls == NULL)
-    print_err ("Not enough memory", 1);
+  if (ls == NULL) {
+    char *msg = strdup("Not enough memory");
+    print_err (msg, 1);
+    free(msg);
+  }
 
   for (i = 0; i < len;)
     {
@@ -299,8 +315,11 @@ writestring (char *s)		/* writes a string to f cutting after
 	{
 	  nl = LINE_LENGTH;
 	  for (p = s + nl; *p != ' ' && p != s; p--, nl--);
-	  if (p == s)
-	    print_err ("Too short line_length.", 1);
+	  if (p == s) {
+        char *msg = strdup("Too short line_length.");
+	    print_err (msg, 1);
+        free(msg);
+      }
 
 	  strncpy (ls, s, nl);
 	  *(ls + nl) = '\0';
