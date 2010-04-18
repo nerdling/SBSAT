@@ -66,7 +66,7 @@ typedef struct TypeStateEntry {
 	unsigned visited:1;
 	unsigned pStateOwner:26;
 	void *pPreviousState; //Used during lemma creation.
- 	int nLemmaLiteral; //Used during lemma creation.
+ 	int32_t nLemmaLiteral; //Used during lemma creation.
 } TypeStateEntry;
 
 //Structures and functions for the simpleSolver
@@ -76,9 +76,9 @@ typedef struct SmurfStateEntry {
 	unsigned visited:1;
 	unsigned pStateOwner:26;
 	void *pPreviousState; //Used during lemma creation.
-	int nLemmaLiteral; //Used during lemma creation.
+	int32_t nLemmaLiteral; //Used during lemma creation.
 
-	int nTransitionVar;
+	int32_t nTransitionVar;
 	double fHeurWghtofTrueTransition;
 	double fHeurWghtofFalseTransition;
 
@@ -105,7 +105,7 @@ typedef struct InferenceStateEntry {
 
 	unsigned pStateOwner:26;
 	void *pPreviousState; //Used during lemma creation.
-	int nLemmaLiteral; //Used during lemma creation.
+	int32_t nLemmaLiteral; //Used during lemma creation.
 
 	unsigned nTransitionVar:26;
 	unsigned bPolarity:1;
@@ -120,9 +120,9 @@ typedef struct ORStateEntry {
 	unsigned visited:1; //Used for displaying the smurfs.
 	unsigned pStateOwner:26;
 	void *pPreviousState; //Used during lemma creation.
-	int nLemmaLiteral; //Used during lemma creation.
+	int32_t nLemmaLiteral; //Used during lemma creation.
 
-	int nSize;
+	int16_t nSize;
 	int *pnTransitionVars;
 	bool *bPolarity;
 	ORCounterStateEntry *pORCounterState;
@@ -134,9 +134,9 @@ typedef struct ORCounterStateEntry {
 	unsigned visited:1; //Used for displaying the smurfs.
 	unsigned pStateOwner:26;
 	void *pPreviousState; //Used during lemma creation.
-	int nLemmaLiteral; //Used during lemma creation.
+	int32_t nLemmaLiteral; //Used during lemma creation.
 
-	int nSize;
+	int16_t nSize;
 	void *pTransition;
 	ORStateEntry *pORState;	
 } ORCounterStateEntry;
@@ -146,7 +146,7 @@ typedef struct XORStateEntry {
 	unsigned visited:1; //Used for displaying the smurfs.
 	unsigned pStateOwner:26;
 	void *pPreviousState; //Used during lemma creation.
-	int nLemmaLiteral; //Used during lemma creation.
+	int32_t nLemmaLiteral; //Used during lemma creation.
 
 	unsigned nSize:26;
 	unsigned bParity:1;
@@ -159,8 +159,8 @@ typedef struct XORCounterStateEntry {
 	unsigned visited:1; //Used for displaying the smurfs.
 	unsigned pStateOwner:26;
 	void *pPreviousState; //Used during lemma creation.
-	int nLemmaLiteral; //Used during lemma creation.
-	int nSize;
+	int32_t nLemmaLiteral; //Used during lemma creation.
+	int32_t nSize;
 	void *pTransition;
 	XORStateEntry *pXORState; //For heuristic purposes
 } XORCounterStateEntry;
@@ -170,9 +170,9 @@ typedef struct XORGElimStateEntry {
 	unsigned visited:1; //Used for displaying the smurfs.
 	unsigned pStateOwner:26;
 	void *pPreviousState; //Used during lemma creation.
-	int nLemmaLiteral; //Used during lemma creation.
+	int32_t nLemmaLiteral; //Used during lemma creation.
 
-	int nSize;
+	int32_t nSize;
 	void *pVector;
 	int *pnTransitionVars;
 	BDDNode *pXORGElimStateBDD;
@@ -183,9 +183,9 @@ typedef struct XORGElimStateEntry {
 typedef struct MINMAXStateEntry {
 	unsigned cType:5; //FN_MINMAX
 	unsigned visited:1; //Used for displaying the smurfs.
-	int nSize;
-	int nMin;
-	int nMax;
+	int16_t nSize;
+	int16_t nMin;
+	int16_t nMax;
 	int *pnTransitionVars;
    BDDNode *pMINMAXStateBDD;
 } MINMAXStateEntry;
@@ -195,10 +195,10 @@ typedef struct MINMAXCounterStateEntry {
 	unsigned visited:1; //Used for displaying the smurfs.
 	unsigned pStateOwner:26;
 	void *pPreviousState; //Used during lemma creation.
-	int nLemmaLiteral; //Used during lemma creation.
+	int32_t nLemmaLiteral; //Used during lemma creation.
 
-	int nVarsLeft;
-	int nNumTrue; //Dynamic
+	int16_t nVarsLeft;
+	int16_t nNumTrue; //Dynamic
 	void *pTransition;
 	MINMAXStateEntry *pMINMAXState;
 } MINMAXCounterStateEntry;
@@ -206,9 +206,9 @@ typedef struct MINMAXCounterStateEntry {
 typedef struct NEGMINMAXStateEntry {
 	unsigned cType:5; //FN_NEGMINMAX
 	unsigned visited:1; //Used for displaying the smurfs.
-	int nSize;
-	int nMin;
-	int nMax;
+	int16_t nSize;
+	int16_t nMin;
+	int16_t nMax;
 	int *pnTransitionVars;
    BDDNode *pNEGMINMAXStateBDD;
 } NEGMINMAXStateEntry;
@@ -218,10 +218,10 @@ typedef struct NEGMINMAXCounterStateEntry {
 	unsigned visited:1; //Used for displaying the smurfs.
 	unsigned pStateOwner:26;
 	void *pPreviousState; //Used during lemma creation.
-	int nLemmaLiteral; //Used during lemma creation.
+	int32_t nLemmaLiteral; //Used during lemma creation.
 
-	int nVarsLeft;
-	int nNumTrue; //Dynamic
+	int16_t nVarsLeft;
+	int16_t nNumTrue; //Dynamic
 	void *pTransition;
 	NEGMINMAXStateEntry *pNEGMINMAXState;
 } NEGMINMAXCounterStateEntry;
@@ -230,24 +230,24 @@ typedef struct XORGElimTableStruct {
 	unsigned char *frame;
 	int32_t *first_bit;
 	void *mask;
-	int num_vectors;
-	int no_funcs;
+	int32_t num_vectors;
+	int32_t no_funcs;
 } XORGElimTableStruct;
 
 typedef struct SmurfStack {
-	int nVarChoiceCurrLevel; //Index to array of size nNumVars
-	int nNumFreeVars;
-	int nNumSmurfsSatisfied;
-	int nHeuristicPlaceholder;
-	int nIdentifier; //Used for uniqueness. Helpful for printing the search tree.
+	int32_t nVarChoiceCurrLevel; //Index to array of size nNumVars
+	int32_t nNumFreeVars;
+	int32_t nNumSmurfsSatisfied;
+	int32_t nHeuristicPlaceholder;
+	int32_t nIdentifier; //Used for uniqueness. Helpful for printing the search tree.
 	void **arrSmurfStates;   //Pointer to array of size nNumSmurfs
 	XORGElimTableStruct *XORGElimTable; //For holding the Gaussian Elimination Table.
 } SmurfStack;
 
 typedef struct SmurfStatesTableStruct SmurfStatesTableStruct;
 struct SmurfStatesTableStruct {
-	int curr_size;
-	int max_size;
+	int32_t curr_size;
+	int32_t max_size;
 	void **arrStatesTable; //Pointer to a table of smurf states.
 	SmurfStatesTableStruct *pNext;
 } ;

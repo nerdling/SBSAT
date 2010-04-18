@@ -26,12 +26,12 @@ void PrintInferenceStateEntry(void *pState) {
 void PrintInferenceStateEntry_dot(void *pState) {
    InferenceStateEntry *pInferenceState = (InferenceStateEntry *)pState;
    if(pInferenceState->bPolarity)
-     fprintf(stdout, " b%p->b%p [style=solid,label=\"%s\"]\n",
+     fprintf(stdout, " b%p->b%p [style=dashed,label=\": %s\"]\n",
              (void *)pInferenceState,
              (void *)pInferenceState->pVarTransition,
              s_name(arrSimpleSolver2IteVarMap[pInferenceState->nTransitionVar]));
    else
-     fprintf(stdout, " b%p->b%p [style=dotted,label=\"-%s\"]\n",
+     fprintf(stdout, " b%p->b%p [style=dashed,label=\": -%s\"]\n",
              (void *)pInferenceState,
              (void *)pInferenceState->pVarTransition,
              s_name(arrSimpleSolver2IteVarMap[pInferenceState->nTransitionVar]));
