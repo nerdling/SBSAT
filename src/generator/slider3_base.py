@@ -75,7 +75,7 @@ def slider3_sat(out_type, size, offset):
 	print("#define add_state2(1, 2, 3, 4, 5, 6)")
 	print("#xor(-1, xor(3, and(-4, 5), 4), equ(6, 2))")
 	print("#define add_state3(1, 2, 3, 4, 5, 6)")
-	print("#xor(-1, xor(3, and(-4, 5), 4), equ(6, 2))")
+	print("#not(xor(-1, xor(3, and(-4, 5), 4), equ(6, 2)))")
 	for i in range(0, size-size/2):
 		test = (i%2)+2
 		sys.stdout.write("add_state%d" % test)
