@@ -115,7 +115,9 @@ int main(int argc, char **argv) {
 		  int n = atoi(argv[2]);
 		  int k = atoi(argv[3]);
 		  int l = atoi(argv[4]);
-		  rn("cnf", n, k, l);
+          char *cnf = strdup("cnf");
+		  rn(cnf, n, k, l);
+          free(cnf);
 		  return 0;
 	  } else
 	  if (argc > 1 && !strcmp(argv[1], "slider2")) { 
@@ -127,13 +129,17 @@ int main(int argc, char **argv) {
 		  }
 		  int size = atoi(argv[2]);
 		  int sat = atoi(argv[3]);
-		  slider2("ite", size, sat);
+          char *ite = strdup("ite");
+		  slider2(ite, size, sat);
+          free(ite);
 		  return 0;
 	  } else
 	  if (argc > 1 && !strcmp(argv[1], "slider3")) {
         char **argv2 = new char*[argc];
         memset(argv2,0,sizeof(argv2));
-        argv2[0] = "__PREFIX__/slider3.py";
+        char *path = strdup("__PREFIX__/slider3.py");
+        argv2[0] = path;
+        free(path);
 
         memcpy(argv2 + 1, argv + 2, sizeof(char *) * (argc - 2));
         int oranges = execv(argv2[0], argv2);
