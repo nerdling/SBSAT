@@ -1489,7 +1489,7 @@ void iteloop () {
 				}
 			} else Cudd_RecursiveDeref(BDD_Manager, temp);
 		}
-      D_4(
+      D_5(
       if ((strcasecmp (macros, "pprint_tree"))
 			 && (strncasecmp (macros, "print_", 6))
 			 && (strcasecmp (macros, "define"))

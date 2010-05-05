@@ -1293,7 +1293,7 @@ void bddloop () {
 				}
 			}
 		}
-      D_4(
+      D_5(
       if ((strcasecmp (macros, "pprint_tree"))
 			 && (strncasecmp (macros, "print_", 6))
 			 && (strcasecmp (macros, "define"))

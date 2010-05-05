@@ -14,7 +14,7 @@
 #define HAVE_FSTREAM 1
 
 /* Define to 1 if you have the <fstream.h> header file. */
-#define HAVE_FSTREAM_H 1
+/* #undef HAVE_FSTREAM_H */
 
 /* Define to 1 if you have the `getpagesize' function. */
 #define HAVE_GETPAGESIZE 1
@@ -29,7 +29,7 @@
 #define HAVE_IOSTREAM 1
 
 /* Define to 1 if you have the <iostream.h> header file. */
-#define HAVE_IOSTREAM_H 1
+/* #undef HAVE_IOSTREAM_H */
 
 /* Define to 1 if you have the <jni.h> header file. */
 /* #undef HAVE_JNI_H */
@@ -59,7 +59,7 @@
 #define HAVE_MUNMAP 1
 
 /* Define to 1 if you have the <ncurses/termcap.h> header file. */
-/* #undef HAVE_NCURSES_TERMCAP_H */
+#define HAVE_NCURSES_TERMCAP_H 1
 
 /* Define to 1 if you have the `popen' function. */
 #define HAVE_POPEN 1
@@ -166,7 +166,7 @@
 
 /* Define to 1 if `lstat' dereferences a symlink specified with a trailing
    slash. */
-/* #undef LSTAT_FOLLOWS_SLASHED_SYMLINK */
+#define LSTAT_FOLLOWS_SLASHED_SYMLINK 1
 
 /* Name of package */
 #define PACKAGE "sbsat"
@@ -190,7 +190,7 @@
 #define RETSIGTYPE void
 
 /* Do we have 64 bit enabled? */
-#define SBSAT_64BIT true
+/* #undef SBSAT_64BIT */
 
 /* Define to the type of arg 1 for `select'. */
 #define SELECT_TYPE_ARG1 int
