@@ -44,4 +44,3 @@ void FreeInferenceStateEntry(void *pState) {
       pInferenceState->pInferenceBDD->pState = NULL;
    }
 }
-
