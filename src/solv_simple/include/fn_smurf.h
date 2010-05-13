@@ -45,6 +45,8 @@ void initSmurfStateType();
 void PrintSmurfStateEntry(void *pState);
 void PrintSmurfStateEntry_dot(void *pState);
 
+void PrintSmurfStateEntry_inferences_compressed_dot(void *pState);
+
 void LSGBSmurfSetHeurScore(void *pState);
 double LSGBSumNodeWeights(void *pState);
 

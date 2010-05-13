@@ -111,7 +111,6 @@ int TransitionInference(int nSmurfNumber, void **arrSmurfStates) {
              arrSimpleSolver2IteVarMap[((InferenceStateEntry *)pPrevState)->nTransitionVar],
              ((InferenceStateEntry *)pPrevState)->bPolarity),
              NULL, 0);
-             //pNextState = ((void *)((InferenceStateEntry *)pPrevState)->pVarTransition);
       assert(((TypeStateEntry *)pNextState)->cType==FN_FREE_STATE);
    }
    //Record the transition.

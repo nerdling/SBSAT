@@ -45,6 +45,9 @@ void initInferenceStateType();
 void PrintInferenceStateEntry(void *pState);
 void PrintInferenceStateEntry_dot(void *pState);
 
+TypeStateEntry *pGetNextSmurfStateFromInference(InferenceStateEntry *pInferenceState);
+void PrintInferenceChain_dot(InferenceStateEntry *pInferenceState);
+
 void LSGBInferenceSetHeurScore(void *pState);
 double LSGBInferenceGetHeurScore(void *pState);
 

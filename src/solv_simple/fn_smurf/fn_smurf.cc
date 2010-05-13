@@ -9,7 +9,8 @@ void initSmurfStateType() {
    arrSetVisitedState[FN_SMURF] = SetVisitedSmurfState;
    arrApplyInferenceToState[FN_SMURF] = ApplyInferenceToSmurf;
    arrPrintStateEntry[FN_SMURF] = PrintSmurfStateEntry;
-   arrPrintStateEntry_dot[FN_SMURF] = PrintSmurfStateEntry_dot;
+// arrPrintStateEntry_dot[FN_SMURF] = PrintSmurfStateEntry_dot;
+	arrPrintStateEntry_dot[FN_SMURF] = PrintSmurfStateEntry_inferences_compressed_dot;
    arrFreeStateEntry[FN_SMURF] = FreeSmurfStateEntry;
    arrCalculateStateHeuristic[FN_SMURF] = CalculateSmurfLSGBHeuristic;
    arrSetStateHeuristicScore[FN_SMURF] = LSGBSmurfSetHeurScore;
@@ -43,6 +44,44 @@ void PrintSmurfStateEntry_dot(void *pState) {
               (void *)pTempState->pVarIsFalseTransition,
               s_name(arrSimpleSolver2IteVarMap[pTempState->nTransitionVar]));
 //		fprintf(stdout, "%p [
+		pTempState = (SmurfStateEntry *)pTempState->pNextVarInThisState;
+   }
+}
+
+void PrintSmurfStateEntry_inferences_compressed_dot(void *pState) {
+	if(pState == (void *)pTrueSimpleSmurfState) return;
+	SmurfStateEntry *pSmurfState = (SmurfStateEntry *)pState;
+   SmurfStateEntry *pTempState = pSmurfState;
+	while(pTempState != NULL) {
+		TypeStateEntry *pNextState = (TypeStateEntry *)pTempState->pVarIsTrueTransition;
+		fprintf(stdout, " b%p->", (void *)pState);
+		if(pNextState->cType == FN_INFERENCE) {
+			pNextState = pGetNextSmurfStateFromInference((InferenceStateEntry *)pNextState);
+			fprintf(stdout, "b%p [style=solid,label=\"%s :",
+					  (void *)pNextState,
+					  s_name(arrSimpleSolver2IteVarMap[pTempState->nTransitionVar]));
+			PrintInferenceChain_dot((InferenceStateEntry *)pTempState->pVarIsTrueTransition);
+			fprintf(stdout, " \"]\n");
+		} else {
+			fprintf(stdout, "b%p [style=solid,label=\"%s \"]\n",
+					  (void *)pNextState,
+					  s_name(arrSimpleSolver2IteVarMap[pTempState->nTransitionVar]));
+		}
+
+		pNextState = (TypeStateEntry *)pTempState->pVarIsFalseTransition;
+		fprintf(stdout, " b%p->", (void *)pState);
+		if(pNextState->cType == FN_INFERENCE) {
+			pNextState = pGetNextSmurfStateFromInference((InferenceStateEntry *)pNextState);
+			fprintf(stdout, "b%p [style=dotted,label=\"-%s :",
+					  (void *)pNextState,
+					  s_name(arrSimpleSolver2IteVarMap[pTempState->nTransitionVar]));
+			PrintInferenceChain_dot((InferenceStateEntry *)pTempState->pVarIsFalseTransition);
+			fprintf(stdout, " \"]\n");
+		} else {
+			fprintf(stdout, "b%p [style=dotted,label=\"-%s \"]\n",
+					  (void *)pNextState,
+					  s_name(arrSimpleSolver2IteVarMap[pTempState->nTransitionVar]));
+		}
 		pTempState = (SmurfStateEntry *)pTempState->pNextVarInThisState;
    }
 }

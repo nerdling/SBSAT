@@ -15,6 +15,46 @@ void initInferenceStateType() {
    arrGetStateHeuristicScore[FN_INFERENCE] = LSGBInferenceGetHeurScore;
 }
 
+ITE_INLINE
+TypeStateEntry *pGetNextSmurfStateFromInference(InferenceStateEntry *pInferenceState) {
+	void *pNextState = pInferenceState;
+	void *pPrevState = NULL;
+	while(pNextState!=NULL && ((TypeStateEntry *)pNextState)->cType == FN_INFERENCE) {
+		//Follow the transtion to the next SmurfState
+		pPrevState = pNextState;
+		pNextState = ((InferenceStateEntry *)pNextState)->pVarTransition;
+	}
+
+	if(pNextState == NULL) {
+		assert(((TypeStateEntry *)pPrevState)->cType == FN_INFERENCE);
+		((InferenceStateEntry *)pPrevState)->pVarTransition = pNextState = ReadSmurfStateIntoTable(
+             set_variable(((InferenceStateEntry *)pPrevState)->pInferenceBDD,
+				 arrSimpleSolver2IteVarMap[((InferenceStateEntry *)pPrevState)->nTransitionVar],
+				 ((InferenceStateEntry *)pPrevState)->bPolarity),
+				 NULL, 0);
+		assert(((TypeStateEntry *)pNextState)->cType==FN_FREE_STATE);
+	}
+
+	return (TypeStateEntry *)pNextState;
+}
+
+ITE_INLINE
+void PrintInferenceChain_dot(InferenceStateEntry *pInferenceState) {
+	void *pNextState = pInferenceState;
+	while(pNextState!=NULL && ((TypeStateEntry *)pNextState)->cType == FN_INFERENCE) {
+		//Follow the transtion to the next SmurfState
+		int nInfVar = ((InferenceStateEntry *)pNextState)->nTransitionVar;
+		bool bInfPolarity = ((InferenceStateEntry *)pNextState)->bPolarity;
+		//SEAN!!! Use commas???
+		if(bInfPolarity) {
+			fprintf(stdout, " %s", s_name(arrSimpleSolver2IteVarMap[nInfVar]));			
+		} else {
+			fprintf(stdout, " -%s", s_name(arrSimpleSolver2IteVarMap[nInfVar]));
+		}
+		pNextState = ((InferenceStateEntry *)pNextState)->pVarTransition;
+	}
+}
+
 void PrintInferenceStateEntry(void *pState) {
    InferenceStateEntry *pInferenceState = (InferenceStateEntry *)pState;
    d9_printf4("IN Var=%d, Inf=%p, Polarity=%d\n",

@@ -64,6 +64,8 @@ void PrintAllSmurfStateEntries() {
    }
 }
 
+uint8_t compress_inferences_dot = 1;
+
 void PrintSmurf_dot(void *pState) {
 	if(((TypeStateEntry *)pState)->visited) return;
 	((TypeStateEntry *)pState)->visited = 1;
@@ -79,7 +81,7 @@ void PrintSmurf_dot(void *pState) {
 			pSmurfState = (SmurfStateEntry *)pSmurfState->pNextVarInThisState;
 		}
 	} else if(((TypeStateEntry *)pState)->cType == FN_INFERENCE) {
-		arrPrintStateEntry_dot[(int)((TypeStateEntry *)pState)->cType](pState);
+		//arrPrintStateEntry_dot[(int)((TypeStateEntry *)pState)->cType](pState);
 		PrintSmurf_dot(((InferenceStateEntry *)pState)->pVarTransition); //Recurse
 	} else {
 		arrPrintStateEntry_dot[(int)((TypeStateEntry *)pState)->cType](pState);
