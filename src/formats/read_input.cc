@@ -91,7 +91,7 @@ read_input()
 	  
   case 'u': Smurfs_to_BDD(); break;
 
-  case 'c': CNF_to_BDD(); break;
+  case 'c': ret = CNF_to_BDD(); break;
 
   case 'd': DNF_to_BDD(); break;
 
@@ -143,6 +143,9 @@ read_input()
       fprintf (stderr, "Problem read_input: Unknown Input Format: %c\n", formatin);
       exit (1);
   }
+   
+  if (ret != NO_ERROR) return ret;   
+   
   d9_printf1("read_input - done\n");
   return 0;
 }
