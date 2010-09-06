@@ -38,13 +38,10 @@
 #include <stdio.h>
 #include <sys/time.h>
 #include "sbsat.h"
+#include <ctime>
 
 void rksat(int n, int m, int k, int seed) {
-	struct timeval tv;
-	struct timezone tzp;
-	
-	gettimeofday(&tv, &tzp);
-	if(seed == 0) seed = ((tv.tv_sec & 0177 ) * 1000000) + tv.tv_usec;
+    if (seed == 0) seed = time(0);
 	fprintf(stderr, "seed = %d\n", seed);
 	srand(seed);
 	
