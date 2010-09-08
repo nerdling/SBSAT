@@ -108,7 +108,7 @@ int main(int argc, char **argv) {
 		  if (argc < 5 || (argc > 2 && !strcmp(argv[2], "--help"))) {
 			  fprintf(stderr, "usage: %s rn n k l\n", argv[0]);
 			  fprintf(stderr, "       n - vertices\n");
-			  fprintf(stderr, "       k - aquatances\n");
+			  fprintf(stderr, "       k - aquaintances\n");
 			  fprintf(stderr, "       l - strangers\n");
 			  return 0;
 		  }
