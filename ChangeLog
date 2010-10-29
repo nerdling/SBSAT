@@ -1,3 +1,76 @@
+2010-09-07 21:24  jeremy
+
+	* src/generator/gentest.cc: fix typo
+
+2010-09-06 17:44  jeremy
+
+	* src/generator/rksat.cc: make use of ctime
+
+2010-08-21 10:58  fett
+
+	* include/config.h: [no log message]
+
+2010-08-20 17:14  fett
+
+	* ChangeLog, Makefile.in, aclocal.m4, configure, doc/Makefile.in,
+	  doc/man1/Makefile.in, examples/Makefile.in, include/Makefile.in,
+	  include/config.h, include/config.h.in, src/Makefile.in,
+	  src/cudd/Makefile.in, src/cudd/cppobj/Makefile.in,
+	  src/cudd/cudd/Makefile.in, src/cudd/epd/Makefile.in,
+	  src/cudd/include/Makefile.in, src/cudd/mtr/Makefile.in,
+	  src/cudd/st/Makefile.in, src/cudd/util/Makefile.in,
+	  src/formats/Makefile.in, src/formats/5/Makefile.in,
+	  src/formats/5/libt5_a-aig_g.h, src/postproc/Makefile.in,
+	  src/preproc/Makefile.in, src/solv_bddwalk/Makefile.in,
+	  src/solv_dac/Makefile.in, src/solv_simple/Makefile.in,
+	  src/solv_simple/bb_gelim/Makefile.in,
+	  src/solv_simple/bb_lemmas/Makefile.in,
+	  src/solv_simple/fn_inference/Makefile.in,
+	  src/solv_simple/fn_minmax/Makefile.in,
+	  src/solv_simple/fn_negminmax/Makefile.in,
+	  src/solv_simple/fn_or/Makefile.in,
+	  src/solv_simple/fn_smurf/Makefile.in,
+	  src/solv_simple/fn_xor/Makefile.in,
+	  src/solv_simple/include/Makefile.in, src/solv_smurf/Makefile.in,
+	  src/solv_smurf/fn_and/Makefile.in,
+	  src/solv_smurf/fn_lemma/Makefile.in,
+	  src/solv_smurf/fn_lemma_au/Makefile.in,
+	  src/solv_smurf/fn_minmax/Makefile.in,
+	  src/solv_smurf/fn_smurf/Makefile.in,
+	  src/solv_smurf/fn_smurf_au/Makefile.in,
+	  src/solv_smurf/fn_smurf_xor/Makefile.in,
+	  src/solv_smurf/fn_xor/Makefile.in,
+	  src/solv_smurf/fn_xor_smurf/Makefile.in,
+	  src/solv_smurf/hr_anne/Makefile.in,
+	  src/solv_smurf/hr_berkmin/Makefile.in,
+	  src/solv_smurf/hr_lemma/Makefile.in,
+	  src/solv_smurf/hr_lsgb/Makefile.in,
+	  src/solv_smurf/hr_lsgb_lemma/Makefile.in,
+	  src/solv_smurf/hr_lsgbw/Makefile.in,
+	  src/solv_smurf/hr_minisat/Makefile.in,
+	  src/solv_smurf/hr_null/Makefile.in,
+	  src/solv_smurf/hr_vsids/Makefile.in,
+	  src/solv_smurf/include/Makefile.in, src/solv_wvf/Makefile.in,
+	  src/utils/Makefile.in, tests/Makefile.in, tests/cnf/Makefile.in,
+	  tests/longer_tests/Makefile.in, tests/trace_tests/Makefile.in:
+	  [no log message]
+
+2010-08-16 11:34  fett
+
+	* src/formats/read_input.cc: Added error checking return value when
+	  reading CNF input.
+
+	     ~Sean
+
+2010-06-17 15:21  jeremy
+
+	* src/generator/Makefile.in: fix warning: datarootdir is used
+	  without definition
+
+2010-06-09 11:11  fett
+
+	* src/generator/: Makefile.am, Makefile.in: [no log message]
+
 2010-05-13 15:58  fett
 
 	* src/solv_simple/: display.cc, fn_inference/bt_inference.cc,

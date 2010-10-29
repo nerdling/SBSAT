@@ -41,7 +41,7 @@
 #include <ctime>
 
 void rksat(int n, int m, int k, int seed) {
-    if (seed == 0) seed = time(0);
+   if (seed == 0) seed = time(0);
 	fprintf(stderr, "seed = %d\n", seed);
 	srand(seed);
 	

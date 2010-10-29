@@ -368,244 +368,158 @@ void find_and_build_xors(Clause *pClauses) {
 	d2_printf2("Found %d XOR functions\n", xors_found);
 }
 
-void find_and_build_andequals(Clause *pClauses) {
-	
-	int *twopos_temp = (int *)ite_calloc(nNumCNFVariables+1, sizeof(int), 9, "twopos_temp");
-	int *twoneg_temp = (int *)ite_calloc(nNumCNFVariables+1, sizeof(int), 9, "twoneg_temp");
-	int *greaterpos_temp = (int *)ite_calloc(nNumCNFVariables+1, sizeof(int), 9, "greaterpos_temp");
-	int *greaterneg_temp = (int *)ite_calloc(nNumCNFVariables+1, sizeof(int), 9, "greaternet_temp");
-	for(int x = 0; x < nNumClauses; x++) {
-		if(pClauses[x].length == 2) {
-			for(int y = 0; y < 2; y++) {
-				if(pClauses[x].variables[y] > 0)
-				  twopos_temp[pClauses[x].variables[y]]++;
-				else
-				  twoneg_temp[-pClauses[x].variables[y]]++;
-			}
-		}
-		else if(pClauses[x].length > 2) {
-			for(int y = 0; y < pClauses[x].length; y++) {
-				if(pClauses[x].variables[y] > 0)
-				  greaterpos_temp[pClauses[x].variables[y]]++;
-				else
-				  greaterneg_temp[-pClauses[x].variables[y]]++;
-			}
-		}
-	}
-	store *two_pos = (store *)ite_calloc(nNumCNFVariables+1, sizeof(store), 9, "two_pos");
-	store *two_neg = (store *)ite_calloc(nNumCNFVariables+1, sizeof(store), 9, "two_pos");
+
+uint8_t find_and_build_andequals(Clause *pClauses) {
+   //Search for AND= and OR=
+                  
+   int *twopos_temp = (int *)ite_calloc(nNumCNFVariables+1, sizeof(int), 9, "twopos_temp");
+   int *twoneg_temp = (int *)ite_calloc(nNumCNFVariables+1, sizeof(int), 9, "twoneg_temp");
+   for(int x = 0; x < nNumClauses; x++) {
+      if(pClauses[x].length == 2) {
+         for(int y = 0; y < 2; y++) {
+            if(pClauses[x].variables[y] > 0)
+              twopos_temp[pClauses[x].variables[y]]++;
+            else
+              twoneg_temp[-pClauses[x].variables[y]]++;
+         }
+      } else if(pClauses[x].length > 2) break; //Relies on clauses being sorted
+   }
+   
+   store *two_pos = (store *)ite_calloc(nNumCNFVariables+1, sizeof(store), 9, "two_pos");
+   store *two_neg = (store *)ite_calloc(nNumCNFVariables+1, sizeof(store), 9, "two_neg");
+   
+   //two_pos and two_neg are lists that contain all the clauses
+   //that are of length 2. two_pos contains every 2 variable clause
+   //that has a positive variable, two_neg contains every 2
+   //variable clause that has a negative variable. There will most likely
+   //be some overlaps in the variable storing.
+   //EX)
+   //p cnf 3 3
+   //2 3 0
+   //-2 -3 0
+   //-2 3 0
+   //
+   //two_pos will point to (2:3)   and (-2:3)
+   //two_neg will point to (-2:-3) and (-2:3)
+   
+   //Storing appropriate array sizes...
+   for(int x = 1; x <= nNumCNFVariables; x++) {
+      two_pos[x].num = (int *)ite_calloc(2*twopos_temp[x], sizeof(int), 9, "two_pos[x].num");
+      two_neg[x].num = (int *)ite_calloc(2*twoneg_temp[x], sizeof(int), 9, "two_neg[x].num");
+   }
+   
+   ite_free((void **)&twopos_temp);
+   ite_free((void **)&twoneg_temp);
+   
+   //This is where two_pos, two_neg are filled with clauses
+   
+   for(int x = 0; x < nNumClauses; x++) {
+      if(pClauses[x].length == 2) {
+         if(pClauses[x].variables[0] > 0) {
+            int y = two_pos[pClauses[x].variables[0]].length;
+            two_pos[pClauses[x].variables[0]].num[y] = pClauses[x].variables[1];
+            two_pos[pClauses[x].variables[0]].num[y+1] = x;
+            two_pos[pClauses[x].variables[0]].length+=2;
+         } else {
+            int y = two_neg[-pClauses[x].variables[0]].length;
+            two_neg[-pClauses[x].variables[0]].num[y] = pClauses[x].variables[1];
+            two_neg[-pClauses[x].variables[0]].num[y+1] = x;
+            two_neg[-pClauses[x].variables[0]].length+=2;
+         }
+         if(pClauses[x].variables[1] > 0) {
+            int y = two_pos[pClauses[x].variables[1]].length;
+            two_pos[pClauses[x].variables[1]].num[y] = pClauses[x].variables[0];
+            two_pos[pClauses[x].variables[1]].num[y+1] = x;
+            two_pos[pClauses[x].variables[1]].length+=2;
+         } else {
+            int y = two_neg[-pClauses[x].variables[1]].length;
+            two_neg[-pClauses[x].variables[1]].num[y] = pClauses[x].variables[0];
+            two_neg[-pClauses[x].variables[1]].num[y+1] = x;
+            two_neg[-pClauses[x].variables[1]].length+=2;
+         }
+      } else if(pClauses[x].length > 2) break; //Relies on clauses being sorted
+   }
+   
+   int num_andequals_found = 0;
+   
+   uint8_t find_all = 1;
+   //For all clauses greater than length 2
+   for(int x = 0; x < nNumClauses; x++) {
+      if (x%1000 == 1)
+        d4_printf3("\rAND/OR Search CNF %ju/%ju ...                                             ", x, nNumClauses);
+      if(pClauses[x].length <= 2) continue;
       
-	//two_pos and two_neg are lists that contain all the clauses
-	//that are of length 2. two_pos contains every 2 variable clause
-	//that has a positive variable, two_neg contains every 2
-	//variable clause that has a negative variable. There will most likely
-	//be some overlaps in the variable storing.
-	//EX)
-	//p cnf 3 3
-	//2 3 0
-	//-2 -3 0
-	//-2 3 0
-	//
-	//two_pos will point to (2:3)   and (-2:3)
-	//two_neg will point to (-2:-3) and (-2:3)
-	store *greater_pos = (store *)ite_calloc(nNumCNFVariables+1, sizeof(store), 9, "greater_pos");
-	store *greater_neg = (store *)ite_calloc(nNumCNFVariables+1, sizeof(store), 9, "greater_neg");
-      
-	//greater_pos and greater_neg are similar to two_pos and two_neg
-	//except greater_pos and greater_neg contain all clauses with more
-	//than 2 variables in length.
-	
-	//Storing appropriate array sizes...helps with memory!
-	for(int x = 1; x <= nNumCNFVariables; x++) {
-		two_pos[x].num = (int *)ite_calloc(twopos_temp[x], sizeof(int), 9, "two_pos[x].num");
-		two_neg[x].num = (int *)ite_calloc(twoneg_temp[x], sizeof(int), 9, "two_neg[x].num");
-		greater_pos[x].num = (int *)ite_calloc(greaterpos_temp[x], sizeof(int), 9, "greater_pos[x].num");
-		greater_neg[x].num = (int *)ite_calloc(greaterneg_temp[x], sizeof(int), 9, "greater_neg[x].num");
-	}
-	//      free(twopos_temp);
-	//      free(twoneg_temp);
-	ite_free((void **)&greaterpos_temp);
-	ite_free((void **)&greaterneg_temp);
-	
-	//This is where two_pos, two_neg, greater_pos, and greater_neg are
-	//filled with clauses
-	//SEAN! This could be sped up! Needs to be sped up!
-	//Take into account that clauses are now sorted.
-	
-	for(int x = 0; x < nNumClauses; x++) {
-		if(pClauses[x].length == 2) {
-			if(pClauses[x].variables[0] > 0) {
-				int y = two_pos[pClauses[x].variables[0]].length;
-				two_pos[pClauses[x].variables[0]].num[y] = x;
-				two_pos[pClauses[x].variables[0]].length++;
-			} else {
-				int y = two_neg[-pClauses[x].variables[0]].length;
-				two_neg[-pClauses[x].variables[0]].num[y] = x;
-				two_neg[-pClauses[x].variables[0]].length++;
-			}
-			if(pClauses[x].variables[1] > 0) {
-				int y = two_pos[pClauses[x].variables[1]].length;;
-				two_pos[pClauses[x].variables[1]].num[y] = x;
-				two_pos[pClauses[x].variables[1]].length++;
-			} else {
-				int y = two_neg[-pClauses[x].variables[1]].length;;
-				two_neg[-pClauses[x].variables[1]].num[y] = x;
-				two_neg[-pClauses[x].variables[1]].length++;
-			}
-		} else if(pClauses[x].length > 2) {
-			for(int z = 0; z < pClauses[x].length; z++) {
-				if(pClauses[x].variables[z] > 0) {
-					int y = greater_pos[pClauses[x].variables[z]].length;;
-					greater_pos[pClauses[x].variables[z]].num[y] = x;
-					greater_pos[pClauses[x].variables[z]].length++;
-				} else {
-					int y = greater_neg[-pClauses[x].variables[z]].length;
-					greater_neg[-pClauses[x].variables[z]].num[y] = x;
-					greater_neg[-pClauses[x].variables[z]].length++;
-				}
-			}
-		}
-	}
-
-	int num_andequals_found = 0;
-	
-	//ok...this is where the and= and or= are sorted out.
-	//I'll have to make a good explaination later
-	//cause this was hard to work out.
-	int and_or_do = 1;
-	while(and_or_do) {
-		and_or_do = 0;
-		for(int x = 1; x <= nNumCNFVariables; x++) {
-			if (x%1000 == 1)
-			  d2_printf3("\rAND/OR Search CNF %d/%d ...                                             ", x, nNumCNFVariables);
-			
-			if(two_pos[x].num != NULL) {
-				int out = 0;
-				for(int z = 0; z < greater_neg[x].length && (out != 1); z++) {
-					if ((x+z)%1000 == 1)
-					  d2_printf4("\rAND/OR Search CNF %d/%d ... *** sub1 *** AND/OR Search CNF %d ...       ", x, nNumCNFVariables, z);
-																
-					//if(pClauses[greater_neg[x].num[z]].length-1 > twopos_temp[x]) continue;
-					if(pClauses[greater_neg[x].num[z]].flag == -1) {
-						int count = 0;
-						for(int y = 0; y < pClauses[greater_neg[x].num[z]].length; y++) {
-							for(int i = 0; i < two_pos[x].length; i++) {
-								if(pClauses[two_pos[x].num[i]].flag == 2)
-								  continue;
-								if(((-pClauses[greater_neg[x].num[z]].variables[y] == pClauses[two_pos[x].num[i]].variables[0])
-									 &&(pClauses[two_pos[x].num[i]].variables[0] != x))
-									||((-pClauses[greater_neg[x].num[z]].variables[y] == pClauses[two_pos[x].num[i]].variables[1])
-										&&(pClauses[two_pos[x].num[i]].variables[1] != x)))
-								  {
-									  pClauses[two_pos[x].num[i]].flag = 2;
-									  count++;
-								  }
-							}
-						}
-						if(count == pClauses[greater_neg[x].num[z]].length-1) {
-							for(int i = 0; i < two_pos[x].length; i++) {
-								if(pClauses[two_pos[x].num[i]].flag == 2) {
-									pClauses[two_pos[x].num[i]].subsumed = 1;
-								}
-							}
-							
-//							and_or_do = 1;
-							pClauses[greater_neg[x].num[z]].flag = 1;
-							out = 1;
-							num_andequals_found++;
-
-							BDDNode *pOrEqBDD = false_ptr;
-							for(int y = 0; y < pClauses[greater_neg[x].num[z]].length; y++) {
-								if(pClauses[greater_neg[x].num[z]].variables[y] != -x)
-								  pOrEqBDD = ite_or(pOrEqBDD, ite_var(pClauses[greater_neg[x].num[z]].variables[y]));
-							}
-							pOrEqBDD = ite_equ(ite_var(x), pOrEqBDD);
-							functions_add(pOrEqBDD, OR_EQU, x);
-							independantVars[x] = 0;
-						}
-						for(int i = 0; i < two_pos[x].length; i++)
-						  pClauses[two_pos[x].num[i]].flag = -1;
-					}
-				}
-			}
-			if(two_neg[x].num != NULL) {
-				int out = 0;
-				for(int z = 0; z < greater_pos[x].length && (out != 1); z++) {
-					if ((x+z)%1000 == 1)
-					  d2_printf4("\rAND/OR Search CNF %d/%d ... *** sub2 *** AND/OR Search CNF %d ...       ", x, nNumCNFVariables, z);
-
-					//if(pClauses[greater_pos[x].num[z]].length-1 > twoneg_temp[x]) continue;
-					if(pClauses[greater_pos[x].num[z]].flag == -1) {
-						int count = 0;
-						for(int y = 0; y < pClauses[greater_pos[x].num[z]].length; y++) {
-							for(int i = 0; i < two_neg[x].length; i++) {
-								if(pClauses[two_neg[x].num[i]].flag == 2)
-								  continue;
-								if(((pClauses[greater_pos[x].num[z]].variables[y] == -pClauses[two_neg[x].num[i]].variables[0])
-									 &&(-pClauses[two_neg[x].num[i]].variables[0] != x))
-									||((pClauses[greater_pos[x].num[z]].variables[y] == -pClauses[two_neg[x].num[i]].variables[1])
-										&&(-pClauses[two_neg[x].num[i]].variables[1] != x)))
-								  {
-									  pClauses[two_neg[x].num[i]].flag = 2;
-									  count++;
-								  }
-							}
-						}
-						if(count == pClauses[greater_pos[x].num[z]].length-1) {
-							for(int i = 0; i < two_neg[x].length; i++) {
-								if(pClauses[two_neg[x].num[i]].flag == 2) {
-									pClauses[two_neg[x].num[i]].subsumed = 1;
-								}
-							}
-
-//							and_or_do = 1;
-							pClauses[greater_pos[x].num[z]].flag = 0;
-							out = 1;
-							num_andequals_found++;
-							
-							BDDNode *pAndEqBDD = true_ptr;
-							for(int y = 0; y < pClauses[greater_pos[x].num[z]].length; y++) {
-								if(pClauses[greater_pos[x].num[z]].variables[y] != x)
-								  pAndEqBDD = ite_and(pAndEqBDD, ite_var(-pClauses[greater_pos[x].num[z]].variables[y]));
-							}
-							pAndEqBDD = ite_equ(ite_var(x), pAndEqBDD);
-							functions_add(pAndEqBDD, AND_EQU, x);
-							independantVars[x] = 0;
-						}
-						for(int i = 0; i < two_neg[x].length; i++) {
-							pClauses[two_neg[x].num[i]].flag = -1;
-						}
-					}
-				}
-			}
-		}
-	}
-	
-	//Not needed anymore, free them!
-	for(int x = 1; x < nNumCNFVariables + 1; x++) {
-		ite_free((void **)&two_pos[x].num);
-		ite_free((void **)&two_neg[x].num);
-		ite_free((void **)&greater_pos[x].num);
-		ite_free((void **)&greater_neg[x].num);
-	}
-	
-	ite_free((void **)&twopos_temp);
-	ite_free((void **)&twoneg_temp);
-	
-	ite_free((void **)&two_pos);
-	ite_free((void **)&two_neg);
-	ite_free((void **)&greater_pos);
-	ite_free((void **)&greater_neg);
-	
-	for(int x = 0; x < nNumClauses; x++) {
-		if(pClauses[x].flag != -1) {
-			pClauses[x].subsumed = 1;
-			pClauses[x].flag = -1;
-		}
-	}
-
-	d2_printf2("\rFound %d AND=/OR= functions           \n", num_andequals_found);
-
+      //For each variable in clause x
+      for(int y = 0; y < pClauses[x].length; y++) {
+         //See if the 2-clauses cover clause x on variable v = pClauses[x].variables[y]
+         intmax_t v = pClauses[x].variables[y];
+         intmax_t vabs = imaxabs(v);
+         store *two_v = (v==vabs) ? two_neg : two_pos;
+         
+         if(two_v[vabs].length < pClauses[x].length-1) continue;
+         uint8_t out = 0;
+         int x_pos = 0;
+         int v_pos = 0;
+         while((out==0) && (x_pos < pClauses[x].length)) {
+            if(x_pos == y)
+              { x_pos++; }
+            else if(v_pos >= two_v[vabs].length)
+              { break; }
+            else if(pClauses[x].variables[x_pos] == -(intmax_t)two_v[vabs].num[v_pos])
+              { x_pos++; v_pos+=2; }
+            else if(imaxabs(pClauses[x].variables[x_pos]) > imaxabs((intmax_t)two_v[vabs].num[v_pos]))
+              { v_pos+=2; }
+            else 
+              { out=1; }
+         }
+         if((out==0) && (x_pos == pClauses[x].length)) {
+            num_andequals_found++;
+            pClauses[x].subsumed = 1;
+            x_pos = 0;
+            v_pos = 0;
+            while((x_pos < pClauses[x].length) && (v_pos < two_v[vabs].length)) {
+               if(x_pos == y)
+                 { x_pos++; }
+               else if(pClauses[x].variables[x_pos] == -(intmax_t)two_v[vabs].num[v_pos])
+                 { x_pos++; pClauses[two_v[vabs].num[v_pos+1]].subsumed = 1; v_pos+=2;}
+               else if(imaxabs(pClauses[x].variables[x_pos]) > imaxabs((intmax_t)two_v[vabs].num[v_pos]))
+                 { v_pos+=2; }
+            }
+            
+            if(v==vabs) {
+               //Must negate the list
+               BDDNode *pAndEqBDD = true_ptr;
+               for(int z = 0; z < pClauses[x].length; z++) {
+                  if(pClauses[x].variables[z] != v)
+                    pAndEqBDD = ite_and(pAndEqBDD, ite_var(-pClauses[x].variables[z]));
+               }
+               pAndEqBDD = ite_equ(ite_var(v), pAndEqBDD);
+               functions_add(pAndEqBDD, AND_EQU, v);
+               independantVars[v] = 0;
+            } else {
+               BDDNode *pOrEqBDD = false_ptr;
+               for(int z = 0; z < pClauses[x].length; z++) {
+                  if(pClauses[x].variables[z] != v)
+                    pOrEqBDD = ite_or(pOrEqBDD, ite_var(pClauses[x].variables[z]));
+               }
+               pOrEqBDD = ite_equ(ite_var(vabs), pOrEqBDD);
+               functions_add(pOrEqBDD, OR_EQU, vabs);
+               independantVars[vabs] = 0;
+            }
+            if(find_all==0) break;
+         }
+      }
+   }
+   
+   //Not needed anymore, free them!
+   for(int x = 1; x < nNumCNFVariables + 1; x++) {
+      ite_free((void **)&two_pos[x].num);
+      ite_free((void **)&two_neg[x].num);
+   }
+   ite_free((void **)&two_pos);
+   ite_free((void **)&two_neg);
+   
+   d2_printf2("\rFound %ju AND=/OR= functions           \n", num_andequals_found);
 }
 
 void find_and_build_iteequals(Clause *pClauses) {
@@ -1073,6 +987,10 @@ void cnf_process(Clause *pClauses) {
 		
 		reduce_clauses(pClauses);
 
+      find_and_build_andequals(pClauses);
+		
+		reduce_clauses(pClauses);
+
 		find_and_build_majvequals(pClauses);
 
 		reduce_clauses(pClauses);
@@ -1081,9 +999,6 @@ void cnf_process(Clause *pClauses) {
 		
 		reduce_clauses(pClauses);
 		
-		find_and_build_andequals(pClauses);
-		
-		reduce_clauses(pClauses);
 	}
 	
 	build_clause_BDDs(pClauses);

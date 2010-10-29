@@ -2531,7 +2531,7 @@ INCL=""
 if test "${enable_optimization+set}" = set; then
   enableval="$enable_optimization"
   if eval "test x$enable_optimization = xyes"; then
-        MYCXXFLAGS="-O3 -DNDEBUG -ffast-math -fno-strict-aliasing -funroll-all-loops -fno-peephole -fexpensive-optimizations -fomit-frame-pointer -finline-limit=10000"
+        MYCXXFLAGS="-O6 -DNDEBUG -ffast-math -fno-strict-aliasing -funroll-all-loops -fno-peephole -fexpensive-optimizations -fomit-frame-pointer -finline-limit=10000"
 	MYCCFLAGS="-xO5 -KPIC -dalign -native"
     fi
 fi;
@@ -2604,8 +2604,9 @@ if test "${enable_32bits+set}" = set; then
         orig_ccflags=$CCFLAGS
         orig_cxxflags=$CXXFLAGS
         FORCED_BITS=yes
-        CCFLAGS=-m32
-        CXXFLAGS=-m32
+        CCFLAGS="-m32 -DSIZEOF_VOID_P=4 -DSIZEOF_LONG=8"
+        CXXFLAGS="-m32 -DSIZEOF_VOID_P=4 -DSIZEOF_LONG=8"
+        CFLAGS="-m32 -DSIZEOF_VOID_P=4 -DSIZEOF_LONG=8"
         cat >conftest.$ac_ext <<_ACEOF
  /* confdefs.h.  */
 _ACEOF
@@ -2688,8 +2689,8 @@ if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
 
                     echo "$as_me:$LINENO: checking 32 bit pointer" >&5
 echo $ECHO_N "checking 32 bit pointer... $ECHO_C" >&6
-                    CCFLAGS="-m32 $orig_ccflags"
-                    CXXFLAGS="-m32 $orig_cxxflags"
+                    CCFLAGS="-m32 $orig_ccflags -DSIZEOF_VOID_P=4 -DSIZEOF_LONG=8"
+                    CXXFLAGS="-m32 $orig_cxxflags -DSIZEOF_VOID_P=4 -DSIZEOF_LONG=8"
 	            echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6
 
@@ -2736,9 +2737,9 @@ if test "${enable_64bits+set}" = set; then
         orig_ccflags=$CCFLAGS
         orig_cxxflags=$CXXFLAGS
         FORCED_BITS=yes
-        CCFLAGS=-m64
-        CXXFLAGS=-m64
-        CFLAGS="-DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8"
+        CCFLAGS="-m64 -DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8"
+        CXXFLAGS="-m64 -DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8"
+        CFLAGS="-m64 -DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8"
         cat >conftest.$ac_ext <<_ACEOF
  /* confdefs.h.  */
 _ACEOF
@@ -2821,8 +2822,8 @@ if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
 
                     echo "$as_me:$LINENO: checking 64 bit pointer" >&5
 echo $ECHO_N "checking 64 bit pointer... $ECHO_C" >&6
-                    CCFLAGS="-m64 $orig_ccflags"
-                    CXXFLAGS="-m64 $orig_cxxflags"
+                    CCFLAGS="-m64 $orig_ccflags -DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8"
+                    CXXFLAGS="-m64 $orig_cxxflags -DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8"
                     CFLAGS="-DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8"
 
 cat >>confdefs.h <<\_ACEOF
@@ -5431,7 +5432,6 @@ echo "${ECHO_T}$am_cv_python_pyexecdir" >&6
   fi
 
 
-AC_PROG_SED
 
 
 

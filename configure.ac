@@ -21,7 +21,7 @@ INCL=""
 AC_ARG_ENABLE(optimization, 
 [  --enable-optimization   Turn on compiler optimization (default=no)],
     [if eval "test x$enable_optimization = xyes"; then
-        MYCXXFLAGS="-O3 -DNDEBUG -ffast-math -fno-strict-aliasing -funroll-all-loops -fno-peephole -fexpensive-optimizations -fomit-frame-pointer -finline-limit=10000"
+        MYCXXFLAGS="-O6 -DNDEBUG -ffast-math -fno-strict-aliasing -funroll-all-loops -fno-peephole -fexpensive-optimizations -fomit-frame-pointer -finline-limit=10000"
 	MYCCFLAGS="-xO5 -KPIC -dalign -native"
     fi])
 
@@ -81,8 +81,9 @@ AC_ARG_ENABLE(32bits,
         orig_ccflags=$CCFLAGS
         orig_cxxflags=$CXXFLAGS
         FORCED_BITS=yes
-        CCFLAGS=-m32
-        CXXFLAGS=-m32
+        CCFLAGS="-m32 -DSIZEOF_VOID_P=4 -DSIZEOF_LONG=8"
+        CXXFLAGS="-m32 -DSIZEOF_VOID_P=4 -DSIZEOF_LONG=8"
+        CFLAGS="-m32 -DSIZEOF_VOID_P=4 -DSIZEOF_LONG=8"
         AC_COMPILE_IFELSE(
             [ AC_LANG_PROGRAM([], [dnl
                  return sizeof(void*) == 4 ? 0 : 1;
@@ -96,8 +97,8 @@ AC_ARG_ENABLE(32bits,
                     ])
                 ],[
                     AC_MSG_CHECKING([32 bit pointer])
-                    CCFLAGS="-m32 $orig_ccflags"
-                    CXXFLAGS="-m32 $orig_cxxflags"
+                    CCFLAGS="-m32 $orig_ccflags -DSIZEOF_VOID_P=4 -DSIZEOF_LONG=8"
+                    CXXFLAGS="-m32 $orig_cxxflags -DSIZEOF_VOID_P=4 -DSIZEOF_LONG=8"
 	            AC_MSG_RESULT(yes)
                 ],[
                     AC_MSG_CHECKING([32 bit pointer])
@@ -120,9 +121,9 @@ AC_ARG_ENABLE(64bits,
         orig_ccflags=$CCFLAGS
         orig_cxxflags=$CXXFLAGS
         FORCED_BITS=yes
-        CCFLAGS=-m64
-        CXXFLAGS=-m64
-        CFLAGS="-DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8"
+        CCFLAGS="-m64 -DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8"
+        CXXFLAGS="-m64 -DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8"
+        CFLAGS="-m64 -DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8"
         AC_COMPILE_IFELSE(
             [ AC_LANG_PROGRAM([], [dnl
                  return sizeof(void*) == 8 ? 0 : 1;
@@ -136,8 +137,8 @@ AC_ARG_ENABLE(64bits,
                     ])
                 ],[
                     AC_MSG_CHECKING([64 bit pointer])
-                    CCFLAGS="-m64 $orig_ccflags"
-                    CXXFLAGS="-m64 $orig_cxxflags"
+                    CCFLAGS="-m64 $orig_ccflags -DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8"
+                    CXXFLAGS="-m64 $orig_cxxflags -DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8"
                     CFLAGS="-DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8"
 	            AC_DEFINE(SBSAT_64BIT,true,[Do we have 64 bit enabled?])
 	            AC_MSG_RESULT(yes)
@@ -313,7 +314,6 @@ AM_PROG_LEX
 AC_PROG_YACC("bison -y")
 # AC_PROG_LIBTOOL
 AM_PATH_PYTHON([2.5],, [:])
-AC_PROG_SED
 
 AC_SUBST(ECHO_N)
 AC_SUBST(ECHO_C)

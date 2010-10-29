@@ -59,7 +59,7 @@
 #define HAVE_MUNMAP 1
 
 /* Define to 1 if you have the <ncurses/termcap.h> header file. */
-/* #undef HAVE_NCURSES_TERMCAP_H */
+#define HAVE_NCURSES_TERMCAP_H 1
 
 /* Define to 1 if you have the `popen' function. */
 #define HAVE_POPEN 1
@@ -166,7 +166,7 @@
 
 /* Define to 1 if `lstat' dereferences a symlink specified with a trailing
    slash. */
-/* #undef LSTAT_FOLLOWS_SLASHED_SYMLINK */
+#define LSTAT_FOLLOWS_SLASHED_SYMLINK 1
 
 /* Name of package */
 #define PACKAGE "sbsat"
