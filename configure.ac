@@ -21,7 +21,7 @@ INCL=""
 AC_ARG_ENABLE(optimization, 
 [  --enable-optimization   Turn on compiler optimization (default=no)],
     [if eval "test x$enable_optimization = xyes"; then
-        MYCXXFLAGS="-O6 -DNDEBUG -ffast-math -fno-strict-aliasing -funroll-all-loops -fno-peephole -fexpensive-optimizations -fomit-frame-pointer -finline-limit=10000"
+        MYCXXFLAGS="-O3 -DNDEBUG -ffast-math -fno-strict-aliasing -funroll-all-loops -fno-peephole -fexpensive-optimizations -fomit-frame-pointer -finline-limit=10000"
 	MYCCFLAGS="-xO5 -KPIC -dalign -native"
     fi])
 
