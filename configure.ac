@@ -14,7 +14,7 @@ CXXFLAGS=${saved_CXXFLAGS}
 
 
 # compile with optimization and without debugging by default
-MYCXXFLAGS=" -O2 -DNDEBUG "
+MYCXXFLAGS=" -O2 -DNDEBUG -fno-strict-aliasing"
 MYCCFLAGS=" -DNDEBUG "
 INCL=""
 
