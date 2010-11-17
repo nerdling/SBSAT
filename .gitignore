@@ -3,6 +3,7 @@ Makefile
 config.log
 config.status
 examples/example_tests.sh
+include/config.h
 include/stamp-h1
 tests/cnf_tests.sh
 tests/longer_tests.sh
@@ -16,6 +17,7 @@ src/formats/5/blif_s.cc
 src/formats/5/cnf_s.cc
 src/formats/5/iscas_s.cc
 src/formats/5/libt5_a-aig_g.cc
+src/formats/5/libt5_a-aig_g.h
 src/formats/5/libt5_a-bdd_g.cc
 src/formats/5/libt5_a-bdd_g.h
 src/formats/5/libt5_a-blif_g.cc
