@@ -1,0 +1,10 @@
+Makefile
+.deps
+config.log
+config.status
+examples/example_tests.sh
+include/stamp-h1
+tests/cnf_tests.sh
+tests/longer_tests.sh
+tests/trace_tests.sh
+tests/xor_tests.sh
