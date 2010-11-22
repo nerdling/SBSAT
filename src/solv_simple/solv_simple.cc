@@ -522,7 +522,6 @@ int ApplyInferenceToStates(int nBranchVar, bool bBVPolarity) {
 
 ITE_INLINE
 void SmurfStates_Push(int destination) {
-
 	//destination=nCurrSearchTreeLevel+1, except in the case of a nSimpleSolver_Reset then destination=0
 	if(SimpleSmurfProblemState->arrSmurfStack[destination].arrSmurfStates == NULL) {
 		Alloc_SmurfStack(destination);
