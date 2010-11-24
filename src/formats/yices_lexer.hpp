@@ -12,6 +12,10 @@
 #include <boost/spirit/utility/escape_char.hpp>
 #include <boost/spirit/utility/confix.hpp>
 
+#include <iostream>
+#include <fstream>
+#include <string>
+
 namespace boost { namespace spirit { namespace repository {
     template <typename Actions>
     struct yices_lexer : grammer<yices_lexer<Actions>> {
@@ -77,6 +81,18 @@ namespace boost { namespace spirit { namespace repository {
     };
 
 }}}
+
+inline std::string
+read_from_file(char const* infile) {
+    std::ifstream instream(infile);
+    if (!instream.is_open()) {
+        std:cerr << "Couldn't open file: " << infile << std::endl;
+        exit(-1);
+    }
+    instream.unsetf(std::ios::skipws);
+    return std::string(std::istreambuf_iterator<char>(instream.rdbuf()),
+                       std::istreambuf_iterator<char>());
+}
 
 class TypY {
 };
