@@ -45,18 +45,18 @@
 void increase_queue(void_queue *queue) {
 	cell_queue *tmp = queue->tail;
 	for(int i = 0; i < QUEUE_INCREASE_SIZE; i++) {
-		tmp->next = (cell_queue *)calloc(1, sizeof(cell_queue));
+		tmp->next = (cell_queue *)malloc(sizeof(cell_queue));
 		tmp = tmp->next;
 	}
 	tmp->next = queue->head;
 }
 
 void_queue *queue_init() {
-	void_queue *queue = (void_queue *)calloc(1, sizeof(void_queue));
-	queue->head = (cell_queue *)calloc(1, sizeof(cell_queue));
+	void_queue *queue = (void_queue *)malloc(sizeof(void_queue));
+	queue->head = (cell_queue *)malloc(sizeof(cell_queue));
 	cell_queue *tmp = queue->head;
 	for(int i = 0; i < QUEUE_INCREASE_SIZE; i++) {
-		tmp->next = (cell_queue *)calloc(1, sizeof(cell_queue));
+		tmp->next = (cell_queue *)malloc(sizeof(cell_queue));
 		tmp = tmp->next;
 	}
 	tmp->next = queue->head;
@@ -101,7 +101,7 @@ void *dequeue(void_queue *queue) {
 void increase_stack(void_stack *stack) {
 	cell_stack *tmp = stack->head;
 	for(int i = 0; i < STACK_INCREASE_SIZE; i++) {
-		tmp->push = (cell_stack *)calloc(1, sizeof(cell_stack));
+		tmp->push = (cell_stack *)malloc(sizeof(cell_stack));
 		tmp->push->pop = tmp;
 		tmp = tmp->push;
 	}
@@ -109,8 +109,8 @@ void increase_stack(void_stack *stack) {
 }
 
 void_stack *stack_init() {
-	void_stack *stack = (void_stack *)calloc(1, sizeof(void_stack));
-	stack->head = (cell_stack *)calloc(1, sizeof(cell_stack));
+	void_stack *stack = (void_stack *)malloc(sizeof(void_stack));
+	stack->head = (cell_stack *)malloc(sizeof(cell_stack));
 	increase_stack(stack);
 	return stack;
 }
@@ -151,8 +151,8 @@ void increase_arr_stack(void_arr_stack *stack) {
 }
 
 void_arr_stack *arr_stack_init() {
-	void_arr_stack *stack = (void_arr_stack *)calloc(1, sizeof(void_arr_stack));
-	stack->mem = (void **)calloc(STACK_INCREASE_SIZE, sizeof(void *));
+	void_arr_stack *stack = (void_arr_stack *)malloc(sizeof(void_arr_stack));
+	stack->mem = (void **)malloc(STACK_INCREASE_SIZE * sizeof(void *));
 	stack->head = 0;
 	stack->size = STACK_INCREASE_SIZE;
 	return stack;
