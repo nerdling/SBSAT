@@ -46,7 +46,7 @@ int params_current_src = 0;
 #endif
 
 #ifndef AUTHORS
-#define AUTHORS "a research team lead by John Franco"
+#define AUTHORS "a research team led by John Franco"
 #endif
 
 #ifndef BUGS_EMAIL
