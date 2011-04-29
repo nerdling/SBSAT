@@ -119,7 +119,7 @@ BDDNode *num_replace(BDDNode *, int, int);
 BDDNode *remove_fpsx (int, int);
 BDDNode *remove_fps(BDDNode *, BDDNode *);
 BDDNode *restrictx (int, int);
-BDDNode *restrict (BDDNode *, BDDNode *);
+BDDNode *bddrestrict (BDDNode *, BDDNode *);
 BDDNode *pruning(BDDNode *, BDDNode *);
 BDDNode *pruning_p1(BDDNode *, BDDNode *);
 BDDNode *pruning_p2(BDDNode *, BDDNode *);
