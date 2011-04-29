@@ -18,7 +18,10 @@ MYCXXFLAGS=" -O2 -DNDEBUG -fno-strict-aliasing"
 MYCCFLAGS=" -DNDEBUG "
 INCL=""
 
-AC_CHECK_PROGS([HELP2MAN], [help2man])
+# Check for optional use of help2man
+AC_CHECK_PROG([HELP2MAN], [help2man])
+test -z "$HELP2MAN" && AC_MSG_ERROR([help2man not found.])
+
 
 AC_ARG_ENABLE(optimization, 
 [  --enable-optimization   Turn on compiler optimization (default=no)],
