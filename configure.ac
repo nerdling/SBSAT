@@ -18,6 +18,8 @@ MYCXXFLAGS=" -O2 -DNDEBUG -fno-strict-aliasing"
 MYCCFLAGS=" -DNDEBUG "
 INCL=""
 
+AC_CHECK_PROGS([HELP2MAN], [help2man])
+
 AC_ARG_ENABLE(optimization, 
 [  --enable-optimization   Turn on compiler optimization (default=no)],
     [if eval "test x$enable_optimization = xyes"; then
