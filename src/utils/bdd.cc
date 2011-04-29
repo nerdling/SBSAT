@@ -806,7 +806,7 @@ BDDNode * restrictx (int bddNmbr1, int bddNmbr2)
 }
 
 //Adds false paths from one BDD to another
-BDDNode *restrict (BDDNode * f, BDDNode * c)
+BDDNode *bddrestrict (BDDNode * f, BDDNode * c)
 {
 	//if (f == c)
 	//  return true_ptr;
