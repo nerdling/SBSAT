@@ -36,6 +36,7 @@
 *********************************************************************/
 
 #ifndef SYMTABLE_H
+#include <regex.h>
 #define SYMTABLE_H
 /* Data type for links in the chain of symbols.      */
 struct symrec
