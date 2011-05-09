@@ -378,6 +378,59 @@ void verifyCircuit (int x) {
    }
 }
 
+int GBReduceXors(){
+  int old_nmbrFunctions = nmbrFunctions;
+
+  //find xdds and keep track of their indexes
+  vector<int> xor_indxs;
+  for(int x = 0; x < old_nmbrFunctions; x++){
+    if(isXOR(functions[x]))
+      xor_indxs.push_back(x);
+  }
+
+  // rewrite xors in algebraic notation
+  stringstream ss;
+  for(vector<int>::iterator it = xor_idxs.begin(); it != xor_idxs.end(); it++){
+    BDDNode* xdd = functions[*it];
+    build_algebraic_func(xdd,ss);
+    ss << " ";
+  }
+
+  // call GB function 
+  
+  //doing it naievly for now; once working, will make better with a
+  //piped input to a single sage instance, instead of doing a system
+  //call each time.
+
+  //going to assume a Sage install in user's path for time being; if
+  //this is useful and it is deemed prudent, we can include sage with
+  //sbsat, but that's an awful lot of bloat.
+  
+  //Next:
+  // replace original functions with generators of reduced GB.
+  
+}
+
+void build_algebraic_func(BDDNode* xdd, stringstream& ss){
+  if(xdd == true_ptr){
+    ss << "1";
+  }
+  if(!IS_TRUE_FALSE(xdd->thenCase)){
+    ss << "x" << xdd->variable << "*(";
+    build_algebraic_func(xdd->thenCase,ss);
+    ss << ")";
+  }else{ // thenCase == true_ptr || thenCase == false_ptr
+    ss << "x" << xdd->variable;
+  }
+  if(xdd->elseCase == true_ptr){
+    ss << "+1";
+  }else if(xdd->elseCase!=false_ptr){
+    ss << "+";
+    build_algebraic_func(xdd->elseCase,ss);
+  }
+}
+
+
 int splitXors() {
 	int total_vars = numinp;
 	int *xor_vars = new int[numinp+1]; //This could be made better in the future.
