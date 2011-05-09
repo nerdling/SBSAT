@@ -51,11 +51,8 @@ int Do_ExQuantifyAnd() {
 	int ret = PREP_NO_CHANGE;
 	affected = 0;
 	char p[100];
-	D_3(
-		 sprintf(p, "{0:0/%ld}", numinp);
-		 str_length = strlen(p);
-		 d3_printf1(p);
-	);
+    sprintf(p, "{0:0/%ld}", numinp);
+    str_length = dX_printf(3, p);
 	while (cofs!=PREP_NO_CHANGE) {
 		cofs = ExQuantifyAnd ();
 		if(cofs == PREP_CHANGED) ret = PREP_CHANGED;
@@ -118,15 +115,12 @@ int ExQuantifyAnd () {
 			char p[100];
 			int j, count1;
 			
-			D_3(
-				 if (i % ((numinp/100)+1) == 0) {
-					 for(int iter = 0; iter<str_length; iter++)
-						d3_printf1("\b");
-					 sprintf(p, "{%ld:%d/%ld}", affected, i, numinp);
-					 str_length = strlen(p);
-					 d3_printf1(p);
-				 }
-				 );
+            if (i % ((numinp/100)+1) == 0) {
+                for(int iter = 0; iter<str_length; iter++)
+                   dX_printf(3, "\b");
+                sprintf(p, "{%ld:%d/%ld}", affected, i, numinp);
+                str_length = dX_printf(3, p);
+            }
 			if (nCtrlC) {
 				d3_printf1("Breaking out of Anding Existential Quantification\n");
 				ret = PREP_NO_CHANGE;
@@ -175,13 +169,10 @@ int ExQuantifyAnd () {
 				int z = k->num;
 				k = k->next;
 				if(z == j) continue;
-				D_3(
-					 for(int iter = 0; iter<str_length; iter++)
-					 d3_printf1("\b");
-					 sprintf(p, "(%d:%d/%d[%d])",i, count1, amount_count, countBDDs());
-					 str_length = strlen(p);
-					 d3_printf1(p);
-					 );
+                for(int iter = 0; iter<str_length; iter++)
+                    dX_printf(3, "\b");
+                sprintf(p, "(%d:%d/%d[%d])",i, count1, amount_count, countBDDs());
+                str_length = dX_printf(3, p);
 
 				if (nCtrlC) break;
 				if(length[z] > MAX_EXQUANTIFY_VARLENGTH) break;
@@ -239,13 +230,10 @@ int ExQuantifyAnd () {
 				k = amount[i].head; //Must do this because Rebuild_BDDx can modify amount
 			}
 			if(num_funcs_var_occurs[i] != 1) {
-				D_3(
-					 for(int iter = 0; iter<str_length; iter++)
-					 d3_printf1("\b");
-					 sprintf(p, "(%d:%d/%d[%d])",i, count1, num_funcs_var_occurs[i], countBDDs());
-					 str_length = strlen(p);
-					 d3_printf1(p);
-					 );
+                for(int iter = 0; iter<str_length; iter++)
+                    dX_printf(3, "\b");
+                sprintf(p, "(%d:%d/%d[%d])",i, count1, num_funcs_var_occurs[i], countBDDs());
+                str_length = dX_printf(3, p);
 			}
 			if(num_funcs_var_occurs[i] == 1) {
 				assert(amount[i].head != NULL);

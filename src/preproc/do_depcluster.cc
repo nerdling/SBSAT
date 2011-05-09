@@ -46,11 +46,8 @@ int Do_DepCluster() {
    int ret = PREP_NO_CHANGE;
 	affected = 0;
 	char p[100];
-	D_3(
-		 sprintf(p, "{0:0/%d}", nmbrFunctions);
-		 str_length = strlen(p);
-		 d3_printf1(p);
-	);
+    sprintf(p, "{0:0/%d}", nmbrFunctions);
+    str_length = dX_printf(3, p);
 	while (cofs!=PREP_NO_CHANGE) {
       cofs = DepCluster ();
 		//cofs = Do_ExQuantify ();
@@ -101,15 +98,12 @@ int DepCluster () {
 
 	for (int i = 0; i < numinp + 1; i++) {
 		char p[100];
-		D_3(
-			 if (i % 100 == 0) {
-				 for(int iter = 0; iter<str_length; iter++)
-					d3_printf1("\b");
-				 sprintf(p, "{%ld:%d/%ld}", affected, i, numinp);
-				 str_length = strlen(p);
-				 d3_printf1(p);
-			 }
-		);
+        if (i % 100 == 0) {
+            for(int iter = 0; iter<str_length; iter++)
+                dX_printf(3, "\b");
+            sprintf(p, "{%ld:%d/%ld}", affected, i, numinp);
+            str_length = dX_printf(3, p);
+        }
       
 		if(i % 100 == 0) {
 			if (nCtrlC) {
