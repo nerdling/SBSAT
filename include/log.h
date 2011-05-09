@@ -46,6 +46,20 @@
 extern FILE* stddbg;
 extern int DEBUG_LVL;
 
+#include <stdio.h>
+#include <stdarg.h>
+
+static int dX_printf (int debugLevel, const char* format, ...) {
+   va_list args;
+   va_start (args, format);
+
+   if (_DEBUG_LVL_COMPILE >= debugLevel) {
+      return vfprintf (stddbg, format, args);
+   } else {
+      return 0;
+   }
+}
+
 /* -- finish this -- *
 #ifdef GCC
 #define ITE_DEBUG(fmt, args...)  ITE_ERR("ite(%s): "fmt, __FUNCTION__, ## args)
