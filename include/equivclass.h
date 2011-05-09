@@ -102,7 +102,6 @@
 **/
 
 #define null -1
-#define VecType unsigned long
 
 typedef struct xorrecord {
 	VecType *vector; // 0-1 vector showing vars in xor func and which type of xor func it is
