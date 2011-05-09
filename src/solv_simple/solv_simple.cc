@@ -588,7 +588,7 @@ int SmurfStates_Pop(int pop_to) {
 				}
 				long nSmurfNumber = (long)arr_stack_pop(pSmurfTransitionsStack);
 				arrSmurfStates[nSmurfNumber] = pOldSmurf;
-				d9_printf3("poping %d, %p\n", nSmurfNumber, pOldSmurf);
+				d9_printf3("poping %ld, %p\n", nSmurfNumber, pOldSmurf);
 			}
 		}
 		
