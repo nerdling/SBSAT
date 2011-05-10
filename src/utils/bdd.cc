@@ -855,7 +855,7 @@ BDDNode * restrictx (int bddNmbr1, int bddNmbr2)
       //  fprintf(stderr, "Removing %d ", bddNmbr2);
       return ite_and(functions[bddNmbr1], quantifiedBDD2);
    }
-   return restrict (functions[bddNmbr1], quantifiedBDD2);
+   return bddrestrict (functions[bddNmbr1], quantifiedBDD2);
 }
 
 //Adds false paths from one BDD to another
@@ -871,7 +871,7 @@ BDDNode *bddrestrict (BDDNode * f, BDDNode * c)
 
    // We know that f & c are both BDD's with top variables.
    if (f->variable < c->variable)
-      return restrict (f, ite_or (c->thenCase, c->elseCase));	//xquantify(c, c->variable));
+      return bddrestrict (f, ite_or (c->thenCase, c->elseCase));	//xquantify(c, c->variable));
    int v = f->variable;
 
 
@@ -882,14 +882,14 @@ BDDNode *bddrestrict (BDDNode * f, BDDNode * c)
    //v is the top variable of f & c.
    if (reduce_f (v, c) == false_ptr) {
       if (reduce_t(v, f) == true_ptr) return c;
-      return restrict (reduce_t (v, f), reduce_t (v, c));
+      return bddrestrict (reduce_t (v, f), reduce_t (v, c));
    }
    if (reduce_t (v, c) == false_ptr) {
       if (reduce_f(v, f) == true_ptr) return c;
-      return restrict (reduce_f (v, f), reduce_f (v, c));
+      return bddrestrict (reduce_f (v, f), reduce_f (v, c));
    }
-   BDDNode * r = restrict (reduce_t (v, f), reduce_t (v, c));
-   BDDNode * e = restrict (reduce_f (v, f), reduce_f (v, c));
+   BDDNode * r = bddrestrict (reduce_t (v, f), reduce_t (v, c));
+   BDDNode * e = bddrestrict (reduce_f (v, f), reduce_f (v, c));
    if (r == e)
       return r;
    return find_or_add_node (v, r, e);
