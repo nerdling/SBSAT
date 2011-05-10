@@ -379,22 +379,17 @@ int ReadAllSmurfsIntoTable(int nNumVars) {
 	
 	//Create the rest of the SmurfState entries
 	char p[256]; int str_length=0;
-	D_3(
-		 d3_printf1("Building Smurfs: ");
-		 sprintf(p, "{0/%d}",  SimpleSmurfProblemState->nNumSmurfs);
-		 str_length = (int)strlen(p);
-		 d3_printf1(p);
-		 );
+    dX_printf(3, "Building Smurfs: ");
+    sprintf(p, "{0/%d}",  SimpleSmurfProblemState->nNumSmurfs);
+    str_length = dX_printf(3, p);
+
 	for(int nSmurfIndex = 0; nSmurfIndex < SimpleSmurfProblemState->nNumSmurfs; nSmurfIndex++) {
-		D_3(
-			 if (nSmurfIndex % ((SimpleSmurfProblemState->nNumSmurfs/100)+1) == 0) {
-				 for(int iter = 0; iter<str_length; iter++)
-					d3_printf1("\b");
-				 sprintf(p, "{%d/%d}", nSmurfIndex, SimpleSmurfProblemState->nNumSmurfs);
-				 str_length = (int)strlen(p);
-				 d3_printf1(p);
-			 }
-			 );
+         if (nSmurfIndex % ((SimpleSmurfProblemState->nNumSmurfs/100)+1) == 0) {
+             for(int iter = 0; iter<str_length; iter++)
+                dX_printf(3,"\b");
+             sprintf(p, "{%d/%d}", nSmurfIndex, SimpleSmurfProblemState->nNumSmurfs);
+             str_length = dX_printf(3,p);
+         }
 		BDDNode *pInitialBDD = functions[nSmurfIndex];
 		if(nSmurfIndex > 0 && pInitialBDD->pState != NULL && smurfs_share_states &&
          SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates[((TypeStateEntry *)pInitialBDD->pState)->pStateOwner] == pInitialBDD->pState) { //Duplicate Smurf
@@ -418,14 +413,11 @@ int ReadAllSmurfsIntoTable(int nNumVars) {
 		Init_Solver_MidSmurfs_Hooks(nSmurfIndex, SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates);
 	}
 
-   D_3(
-		 for(int iter = 0; iter<str_length; iter++)
-		 d3_printf1("\b");
-		 sprintf(p, "{%d/%d}\n", SimpleSmurfProblemState->nNumSmurfs, SimpleSmurfProblemState->nNumSmurfs);
-		 str_length = (int)strlen(p);
-		 d3_printf1(p);
-		 d3_printf2("%d SmurfStates Used\n", SimpleSmurfProblemState->nNumSmurfStateEntries);  
-		 );
+     for(int iter = 0; iter<str_length; iter++)
+     dX_printf(3,"\b");
+     sprintf(p, "{%d/%d}\n", SimpleSmurfProblemState->nNumSmurfs, SimpleSmurfProblemState->nNumSmurfs);
+     str_length = dX_printf(3,p);
+     dX_printf(3,"%d SmurfStates Used\n", SimpleSmurfProblemState->nNumSmurfStateEntries);  
 
 	D_9(PrintAllSmurfStateEntries(););
 

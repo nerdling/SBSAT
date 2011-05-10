@@ -49,11 +49,8 @@ int Do_PossibleAnding() {
 	int ret = PREP_NO_CHANGE;
 	affected = 0;
 	char p[100];
-	D_3(
-		 sprintf(p, "{0:0/%ld}", numinp);
-		 str_length = strlen(p);
-		 d3_printf1(p);
-	);
+    sprintf(p, "{0:0/%ld}", numinp);
+    str_length = dX_printf(3, p);
 	while (cofs!=PREP_NO_CHANGE) {
 		cofs = PossibleAnding ();
 		if(cofs == PREP_CHANGED) ret = PREP_CHANGED;
@@ -77,15 +74,12 @@ int PossibleAnding () {
 	for (int i = 1; i < numinp + 1; i++) {
 		char p[100];
 
-		D_3(
-			 if (i % ((numinp/100)+1) == 0) {
-				 for(int iter = 0; iter<str_length; iter++)
-					d3_printf1("\b");
-				 sprintf(p, "{%ld:%d/%ld}", affected, i, numinp);
-				 str_length = strlen(p);
-				 d3_printf1(p);
-			 }
-			 );
+        if (i % ((numinp/100)+1) == 0) {
+            for(int iter = 0; iter<str_length; iter++)
+                dX_printf(3, "\b");
+            sprintf(p, "{%ld:%d/%ld}", affected, i, numinp);
+            str_length = dX_printf(3, p);
+        }
 		if (nCtrlC) {
 			d3_printf1("Breaking out of Possible Anding\n");
 			ret = PREP_NO_CHANGE;
@@ -135,13 +129,10 @@ int PossibleAnding () {
 				cheat[count1] = z;
 				k = k->next;
 
-				D_3(
-					 for(int iter = 0; iter<str_length; iter++)
-					 d3_printf1("\b");
-					 sprintf(p, "(%d:%d/%d[%d])",i, count1, amount_count, countBDDs());
-					 str_length = strlen(p);
-					 d3_printf1(p);
-					 );
+                for(int iter = 0; iter<str_length; iter++)
+                d3_printf1("\b");
+                sprintf(p, "(%d:%d/%d[%d])",i, count1, amount_count, countBDDs());
+                str_length = dX_printf(3, p);
 				if (nCtrlC) {
 					out = 1;
 					break;
@@ -174,13 +165,10 @@ int PossibleAnding () {
 				ret = PREP_CHANGED;
 			}
 			if(amount_count != 1) {
-				D_3(
-					 for(int iter = 0; iter<str_length; iter++)
-					 d3_printf1("\b");
-					 sprintf(p, "(%d:%d/%d[%d])",i, count1, amount_count, countBDDs());
-					 str_length = strlen(p);
-					 d3_printf1(p);
-					 );
+                for(int iter = 0; iter<str_length; iter++)
+                    dX_printf(3, "\b");
+                sprintf(p, "(%d:%d/%d[%d])",i, count1, amount_count, countBDDs());
+                str_length = dX_printf(3, p);
 			}
 			if(out == 0 && xquantify(Quantify, i) == true_ptr) {
 				DO_INFERENCES = 1;
@@ -240,14 +228,11 @@ int PossibleAnding () {
 	}
 	ea_bailout:
 
-	D_3(
-		 for(int iter = 0; iter<str_length; iter++)
-		    d3_printf1("\b");
-		 char p[100];
-		 sprintf(p, "{%ld:%ld/%ld}", affected, numinp, numinp);
-		 str_length = strlen(p);
-		 d3_printf1(p);
-		 );
+    for(int iter = 0; iter<str_length; iter++)
+    dX_printf(3, "\b");
+    char p[100];
+    sprintf(p, "{%ld:%ld/%ld}", affected, numinp, numinp);
+    str_length = dX_printf(3, p);
 	
 	for(int x = 0; x < nmbrFunctions; x++)
 	  Ea_repeat[x] = 1;

@@ -8,7 +8,6 @@ extern int s_line;
 /* remove warning about unput not used */
 #define YY_NO_UNPUT
 /* remove warning statement has no effect */
-#define ECHO
 
 #define yyterminate() { nle__delete_buffer(YY_CURRENT_BUFFER); return YY_NULL; }
 

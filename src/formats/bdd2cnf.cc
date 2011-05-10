@@ -871,7 +871,7 @@ void printBDDToCNFQM () {
    numinp = getNuminp ();
 
 	if(use_symtable)
-	  fprintf(foutputfile, "p cnf %ld %d\n", use_symtable, no_outmp_ints);
+	  fprintf(foutputfile, "p cnf %d %d\n", use_symtable, no_outmp_ints);
 	else
 	  fprintf(foutputfile, "p cnf %ld %d\n", numinp, no_outmp_ints);
 	
@@ -945,7 +945,7 @@ void printBDDToCNF () {
 	}
 	
 	if(use_symtable)
-	  fprintf(foutputfile, "p cnf %ld %d\n", use_symtable, no_outmp_ints);
+	  fprintf(foutputfile, "p cnf %d %d\n", use_symtable, no_outmp_ints);
 	else
 	  fprintf(foutputfile, "p cnf %ld %d\n", numinp, no_outmp_ints);
 	

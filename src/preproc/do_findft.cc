@@ -41,22 +41,16 @@
 int Do_Find_FunctionType() {
 	char p[100];
 	affected = 0;
-	d3_printf1("FINDING FUNCTION TYPES - ");
-	D_3(
-		 sprintf(p, "{0:0/%d}", nmbrFunctions);
-		 str_length = strlen(p);
-		 d3_printf1(p);
-	);
+	dX_printf(3, "FINDING FUNCTION TYPES - ");
+    sprintf(p, "{0:0/%d}", nmbrFunctions);
+    str_length = dX_printf(3, p);
 	for(int i = 0; i < nmbrFunctions; i++) {
-		D_3(
-			 if (i % ((numinp/100)+1) == 0) {
-				 for(int iter = 0; iter<str_length; iter++)
-					d3_printf1("\b");
-				 sprintf(p, "{%ld:%d/%d}", affected, i, nmbrFunctions);
-				 str_length = strlen(p);
-				 d3_printf1(p);
-			 }
-		);
+        if (i % ((numinp/100)+1) == 0) {
+            for(int iter = 0; iter<str_length; iter++)
+                dX_printf(3, "\b");
+            sprintf(p, "{%ld:%d/%d}", affected, i, nmbrFunctions);
+            str_length = dX_printf(3, p);
+        }
 		if(functionType[i] == UNSURE) {
 			//find function type.
 			//check various methods.

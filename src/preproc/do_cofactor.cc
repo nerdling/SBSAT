@@ -48,23 +48,17 @@ Do_Cofactor()
   d3_printf1("COFACTORING - ");
 	affected = 0;
 	char p[100];
-	D_3(
-		 sprintf(p, "{0:0/%d}", nmbrFunctions);
-		 str_length = strlen(p);
-		 d3_printf1(p);
-	);
+    sprintf(p, "{0:0/%d}", nmbrFunctions);
+    str_length = dX_printf(3, p);
 	
   for (int x = 0; x < numout; x++)
    {
-		D_3(
-			 if (x % ((nmbrFunctions/100)+1) == 0) {
-				 for(int iter = 0; iter<str_length; iter++)
-					d3_printf1("\b");
-				 sprintf(p, "{%ld:%d/%d}", affected, x, nmbrFunctions);
-				 str_length = strlen(p);
-				 d3_printf1(p);
-			 }
-		);
+    if (x % ((nmbrFunctions/100)+1) == 0) {
+        for(int iter = 0; iter<str_length; iter++)
+            dX_printf(3,"\b");
+        sprintf(p, "{%ld:%d/%d}", affected, x, nmbrFunctions);
+        str_length = dX_printf(3, p);
+    }
 
       if (x % ((nmbrFunctions/100)+1) == 0) {
 			if (nCtrlC) {

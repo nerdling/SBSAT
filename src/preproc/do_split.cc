@@ -49,11 +49,8 @@ int res_var;
 int Do_Split() {
    d3_printf1("SPLITTING LARGE FUNCTIONS - ");
    int ret = PREP_NO_CHANGE;
-	D_3(
-		 sprintf(p, "{0:0/%d}", nmbrFunctions);
-		 str_length = strlen(p);
-		 d3_printf1(p);
-	);
+   sprintf(p, "{0:0/%d}", nmbrFunctions);
+   str_length = dX_printf(3, p);
 	ret = Split_Large ();	
 
 	d3_printf1("\n");
@@ -136,15 +133,12 @@ int Split_ref_counts() {
 	while(ret == PREP_CHANGED) {
 		ret = PREP_NO_CHANGE;
 		for(int j = 0; j < nmbrFunctions; j++) {
-			D_3(
-				 if (j % 100 == 0) {
-					 for(int iter = 0; iter<str_length; iter++)
-						d3_printf1("\b");
-					 sprintf(p, "***{%ld:%d/%d}", affected, j, nmbrFunctions);
-					 str_length = strlen(p);
-					 d3_printf1(p);
-				 }
-				 );
+            if (j % 100 == 0) {
+                for(int iter = 0; iter<str_length; iter++)
+                    dX_printf(3, "\b");
+                sprintf(p, "***{%ld:%d/%d}", affected, j, nmbrFunctions);
+                str_length = dX_printf(3, p);
+            }
 
 			if (functionType[j] == UNSURE && length[j] > do_split_max_vars) {
 				//Split the BDD based on the reference counts.
@@ -289,15 +283,12 @@ int Split_Large () {
 	int old_nmbrFunctions = nmbrFunctions;
 	
 	for(int j = 0; j < old_nmbrFunctions; j++) {
-		D_3(
-			 if (j % 100 == 0) {
-				 for(int iter = 0; iter<str_length; iter++)
-					d3_printf1("\b");
-				 sprintf(p, "{%ld:%d/%d}", affected, j, old_nmbrFunctions);
-				 str_length = strlen(p);
-				 d3_printf1(p);
-			 }
-			 );
+        if (j % 100 == 0) {
+            for(int iter = 0; iter<str_length; iter++)
+                dX_printf(3, "\b");
+            sprintf(p, "{%ld:%d/%d}", affected, j, old_nmbrFunctions);
+            str_length = dX_printf(3, p);
+        }
 		if (j % 100 == 0) {
 			if (nCtrlC) {
  				d3_printf1("\nBreaking out of Splitting");

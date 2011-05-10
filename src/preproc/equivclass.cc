@@ -101,7 +101,6 @@
 #include "equivclass.h"
 
 #define null -1
-#define VecType unsigned long
 
 /*
 typedef struct xorrecord {

@@ -447,7 +447,7 @@ int splitXors() {
 		if(length[x] <= functionTypeLimits[PLAINXOR] || functionType[x]!=UNSURE) continue; //???
 		BDDNode *xdd = bdd2xdd(functions[x]);		
 		countSingleXors(xdd, xor_vars, nonxor_vars);
-		d5_printf2("\n%ld: ", x);
+		d5_printf2("\n%d: ", x);
       /*
       D_4(
          printBDDfile(xdd, stddbg);
@@ -456,11 +456,11 @@ int splitXors() {
 		BDDNode *ands = true_ptr;
 		BDDNode *xor_part = false_ptr;
 		int y = 0;
-	   d5_printf2("%ld: non-linear: ", x);
+	   d5_printf2("%d: non-linear: ", x);
 		for(y=0; nonxor_vars[y]!=0; y++) {
 			d5_printf2("%d ", nonxor_vars[y]);
 		}
-	   d5_printf2("\n%ld linear: ", x);
+	   d5_printf2("\n%d linear: ", x);
 		for(y=0; xor_vars[y]!=0; y++) {
 			d5_printf2("%d ", xor_vars[y]);
 			ands = ite_and(ands, ite_var(-xor_vars[y]));
@@ -484,7 +484,7 @@ int splitXors() {
          //functionType[x] = PLAINXOR; /* mark it as plain exor */
          continue;
       }
-      d4_printf2("Adding split function %ld\n", x);
+      d4_printf2("Adding split function %d\n", x);
       symrec *s_ptr = tputsym(SYM_VAR);
 
 		total_vars++;

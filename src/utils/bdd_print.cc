@@ -352,14 +352,14 @@ printBDDTree(BDDNode * bdd, int *which_zoom)
 				if(l%2 == 0) {
 					for(i = 0; i < l/2-1; i++)
 					  d2_printf1("\b");
-					d2_printf1(aa);
+                    dX_printf(2,aa);
 					if ((x + 1) < (1 << level))
 					  for(i = l/2+1;i < NUM; i++)
 						 d2_printf1(" ");
 				} else {
 					for(i = 0; i < l/2; i++)
 					  d2_printf1("\b");
-					d2_printf1(aa);
+                    dX_printf(2,aa);
 					if ((x + 1) < (1 << level))
 					  for(i = l/2+1;i < NUM; i++)
 						 d2_printf1(" ");

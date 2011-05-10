@@ -46,11 +46,8 @@ int Do_ExQuantify() {
    int ret = PREP_NO_CHANGE;
 	affected = 0;
 	char p[100];
-	D_3(
-		 sprintf(p, "{0:0/%ld}", numinp);
-		 str_length = strlen(p);
-		 d3_printf1(p);
-	);
+    sprintf(p, "{0:0/%ld}", numinp);
+    str_length = dX_printf(3, p);
 	while (cofs!=PREP_NO_CHANGE) {
       cofs = ExQuantify ();
       if(cofs == PREP_CHANGED) ret = PREP_CHANGED;
@@ -72,15 +69,12 @@ int ExQuantify () {
 		loop_again = 0;
 		for (int i = 1; i < numinp + 1; i++) {
 			char p[100];
-			D_3(
-				 if (i % ((numinp/100)+1) == 0) {
-					 for(int iter = 0; iter<str_length; iter++)
-						d3_printf1("\b");
-					 sprintf(p, "{%ld:%d/%ld}", affected, i, numinp);
-					 str_length = strlen(p);
-					 d3_printf1(p);
-				 }
-				 );
+            if (i % ((numinp/100)+1) == 0) {
+                for(int iter = 0; iter<str_length; iter++)
+                    dX_printf(3, "\b");
+                sprintf(p, "{%ld:%d/%ld}", affected, i, numinp);
+                str_length = dX_printf(3, p);
+            }
 			
 			if (nCtrlC) {
 				d3_printf1("\nBreaking out of Existential Quantification\n");
