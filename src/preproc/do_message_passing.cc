@@ -140,11 +140,8 @@ int Do_Message_Passing() {
 
 	if(mp_surveys == 0) mp_surveys = numinp;
 	
-	D_3(
-		 sprintf(p, "{0:0/%ld}", mp_surveys);
-		 str_length = strlen(p);
-		 d3_printf1(p);
-	);
+    sprintf(p, "{0:0/%d}", mp_surveys);
+    str_length = dX_printf(3, p);
 
 	int heuristic_mode = n_mp_heuristic;
 
@@ -211,11 +208,8 @@ int Do_Message_Passing() {
 			bdd_vars = NULL;
 		}
 		
-		D_3(
-			 sprintf(p, "{0:%d/%ld}", surveys, mp_surveys);
-			 str_length = strlen(p);
-			 d3_printf1(p);
-			 );
+        sprintf(p, "{0:%d/%d}", surveys, mp_surveys);
+        str_length = dX_printf(3, p);
 		if(nCtrlC) {
 			d3_printf1("Breaking out of Message Passing\n");
 			ret = PREP_NO_CHANGE;
