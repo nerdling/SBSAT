@@ -165,13 +165,10 @@ int PossibleAnding () {
 				ret = PREP_CHANGED;
 			}
 			if(amount_count != 1) {
-				D_3(
-					 for(int iter = 0; iter<str_length; iter++)
-					 d3_printf1("\b");
-					 sprintf(p, "(%d:%d/%d[%d])",i, count1, amount_count, countBDDs());
-					 str_length = strlen(p);
-					 d3_printf1(p);
-					 );
+                for(int iter = 0; iter<str_length; iter++)
+                    dX_printf(3, "\b");
+                sprintf(p, "(%d:%d/%d[%d])",i, count1, amount_count, countBDDs());
+                str_length = dX_printf(3, p);
 			}
 			if(out == 0 && xquantify(Quantify, i) == true_ptr) {
 				DO_INFERENCES = 1;
@@ -231,14 +228,11 @@ int PossibleAnding () {
 	}
 	ea_bailout:
 
-	D_3(
-		 for(int iter = 0; iter<str_length; iter++)
-		    d3_printf1("\b");
-		 char p[100];
-		 sprintf(p, "{%ld:%ld/%ld}", affected, numinp, numinp);
-		 str_length = strlen(p);
-		 d3_printf1(p);
-		 );
+    for(int iter = 0; iter<str_length; iter++)
+    dX_printf(3, "\b");
+    char p[100];
+    sprintf(p, "{%ld:%ld/%ld}", affected, numinp, numinp);
+    str_length = dX_printf(3, p);
 	
 	for(int x = 0; x < nmbrFunctions; x++)
 	  Ea_repeat[x] = 1;

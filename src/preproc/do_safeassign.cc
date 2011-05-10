@@ -46,11 +46,8 @@ int Do_SafeAssign() {
 	int ret = PREP_NO_CHANGE;
 	affected = 0;
 	char p[100];
-	D_3(
-		 sprintf(p, "{0:0/%ld}", numinp);
-		 str_length = strlen(p);
-		 d3_printf1(p);
-		 );
+    sprintf(p, "{0:0/%ld}", numinp);
+    str_length = dX_printf(3, p);
 	while (cofs!=PREP_NO_CHANGE) {
 		cofs = SafeAssign_Loop();
 		if(cofs == PREP_CHANGED) ret = PREP_CHANGED;
@@ -91,13 +88,10 @@ int SafeAssign_Loop() {
 			d2e_printf3("\rPreprocessing Sa %d/%ld ", i, numinp);
 		}
 
-		D_3(
-			 for(int iter = 0; iter<str_length; iter++)
-			   d3_printf1("\b");
-			 sprintf(p, "(%d:%d/%d[%d])", count1, i, numinp, countBDDs());
-			 str_length = strlen(p);
-			 d3_printf1(p);
-		);
+        for(int iter = 0; iter<str_length; iter++)
+            dX_printf(3, "\b");
+        sprintf(p, "(%d:%d/%ld[%d])", count1, i, numinp, countBDDs());
+        str_length = dX_printf(3, p);
 
 		if(variablelist[i].true_false !=-1 || variablelist[i].equalvars!=0)
 		  continue;
