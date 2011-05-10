@@ -36,6 +36,9 @@
 *********************************************************************/
 
 #include "sbsat.h"
+#include<vector>
+#include<string>
+#include<sstream>
 
 BDDNode *tmp_equ_var(BDDNode *p);
 int functions_add(BDDNode *bdd, int fn_type, int equal_var);
@@ -406,6 +409,9 @@ int GBReduceXors(){
   //this is useful and it is deemed prudent, we can include sage with
   //sbsat, but that's an awful lot of bloat.
   
+  //THIS IS AWFUL, DO IT RIGHT!
+  system("sage ~/cryptosat/SBSAT/scripts/gb.sage " + ss.str().c_str());
+
   //Next:
   // replace original functions with generators of reduced GB.
   
