@@ -446,7 +446,7 @@ uint8_t find_and_build_andequals(Clause *pClauses) {
    //For all clauses greater than length 2
    for(int x = 0; x < nNumClauses; x++) {
       if (x%1000 == 1)
-        d4_printf3("\rAND/OR Search CNF %ju/%ju ...                                             ", x, nNumClauses);
+        d4_printf3("\rAND/OR Search CNF %d/%d ...                                             ", x, nNumClauses);
       if(pClauses[x].length <= 2) continue;
       
       //For each variable in clause x
@@ -519,7 +519,7 @@ uint8_t find_and_build_andequals(Clause *pClauses) {
    ite_free((void **)&two_pos);
    ite_free((void **)&two_neg);
    
-   d2_printf2("\rFound %ju AND=/OR= functions           \n", num_andequals_found);
+   d2_printf2("\rFound %d AND=/OR= functions           \n", num_andequals_found);
 }
 
 void find_and_build_iteequals(Clause *pClauses) {

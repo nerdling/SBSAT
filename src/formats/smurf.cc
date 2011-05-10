@@ -277,7 +277,7 @@ void BDD_to_Smurfs () {
 			}
 */		} else {
 			if(x > MAX_MAX_VBLES_PER_SMURF)
-			  fprintf(stderr, "Function %ld has %ld variables and it may take a while to consider all 2^%ld truth table values\n", v, x, x);
+			  fprintf(stderr, "Function %d has %d variables and it may take a while to consider all 2^%d truth table values\n", v, x, x);
 			for (long long tvec = 0; tvec < ((long long)1 << x); tvec++) {
                 char *frmt = strdup("%d");
 				fprintf (foutputfile, frmt, getTruth (integers[v].num, p, x, functions[v]));
