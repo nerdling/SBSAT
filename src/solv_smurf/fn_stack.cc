@@ -245,7 +245,7 @@ FnStackNext()
 ITE_INLINE void
 AllocateFnStack(int newsize)
 {
-   int prevsize;
+   int prevsize = 0;
    assert(newsize > 0);
    newsize += 10000; /* it does not hurt to allocate a little bit more
                       * for backtracking stack */

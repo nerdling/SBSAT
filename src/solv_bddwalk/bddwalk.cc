@@ -253,7 +253,7 @@ int walkSolve() {
 	true_weight_multi = (float)BDDWalktaboo_multi;
 	taboo_max = (float)BDDWalktaboo_max;
 	taboo_length = taboo_max-1.0;
-	int (*heurpick)(); //pointer to function
+	int (*heurpick)() = NULL; //pointer to function
 	if(BDDWalkHeur=='a') heurpick = &picknoveltyplus;
 	else if(BDDWalkHeur == 'n') heurpick = &picknoveltyplus;
 	else if(BDDWalkHeur == 'r')  heurpick = &pickrandom;
