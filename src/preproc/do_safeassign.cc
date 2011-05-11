@@ -70,7 +70,7 @@ typedef struct rand_list {
 int SafeAssign_Loop() {
 	int ret = PREP_NO_CHANGE;
 
-	BDDNode *Quantify;
+	//BDDNode *Quantify = NULL;
 	int count1 = 0;
 	
 	if (enable_gc) bdd_gc(); //Hit it!

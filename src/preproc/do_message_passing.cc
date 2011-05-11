@@ -252,7 +252,7 @@ double calculateFreedom(int v, int pos, int &count) {
 	double retval = 1.0;
 	int retcount = 0;
 	
-	int i;
+	//int i = 0;
 	BDDNode *f;
 
 	// Loop through the BDDs.
@@ -278,7 +278,7 @@ double calculateRestriction(int v, int pos, int &count) {
 	double retval = 0.0;
 	int retcount = 0;
 
-	int i;
+	//int i = 0;
 	BDDNode *f;
 	
 	// Loop through the BDDs.
@@ -300,7 +300,7 @@ double calculateRestriction(int v, int pos, int &count) {
 double calculateIndifference(int v) {
 	double retval = 0.0;
 
-	int i;
+	//int i = 0;
 	BDDNode *f;
 	
 	// Loop through the BDDs.
@@ -442,7 +442,7 @@ double updateEMBPL(int v) {
 	double sum_alpha = calculateRestriction(v, 1, nneg);
 	double sum_beta = calculateRestriction(v, 0, npos);
 	
-	double c = double(nneg + npos);
+	//double c = double(nneg + npos);
 	return determineRatioBP(v, nneg, npos, sum_alpha, sum_beta);
 //	return determineRatioBP(v, nneg, npos, c - sum_alpha, c - sum_beta);
 }
@@ -463,7 +463,7 @@ double updateEMBPGV2(int v) {
 	double alpha = calculateFreedom(v, 1, nneg);
 	double beta = calculateFreedom(v, 0, npos);
 	
-	double c = double(nneg + npos);
+	//double c = double(nneg + npos);
 	return determineRatioBP(v, nneg, npos, alpha, beta);
 	//	return determineRatioBP(v, nneg, npos, c * alpha, c * beta);
 }
@@ -489,7 +489,7 @@ double updateEMSPL(int v) {
 	
 //	fprintf(stderr, "{%4.6f %4.6f %4.6f %d %d}\n", sum_alpha, sum_beta, prod_alpha_beta, nneg, npos);
 	
-	double c = double(nneg + npos);
+	//double c = double(nneg + npos);
 	return determineRatioSP(v, nneg, npos, sum_alpha, sum_beta, prod_alpha_beta);
 	//	return determineRatioSP(v, nneg, npos, c - sum_alpha, c - sum_beta, c - sum_alpha - sum_beta);
 }
@@ -513,7 +513,7 @@ double updateEMSPGV2(int v) {
 	double beta = calculateFreedom(v, 0, npos);
 	
 	double prod = alpha * beta;
-	double c = double(nneg + npos);
+	//double c = double(nneg + npos);
 	return determineRatioSP(v, nneg, npos, alpha - prod, beta - prod, prod);
 	//	return determineRatioSP(v, nneg, npos, c * (alpha - prod), c * (beta - prod), c * prod);
 }

@@ -299,8 +299,8 @@ extern int tier;
 
 int
 Triv_Unsat() {
-	long long memory_used = get_memusage();
-	int Total_inferences = Pos_replace + Neg_replace + Setting_Pos + Setting_Neg;
+	//long long memory_used = get_memusage();
+	//int Total_inferences = Pos_replace + Neg_replace + Setting_Pos + Setting_Neg;
 	//fprintf(stderr, "%d, %d, %d, %ld, %4.2f, %ldM, ", tier, num_safe_assigns, Total_inferences, numinp, get_runtime()-start_prep, memory_used/1024);
 
 	d2_printf1 ("\nFormula is UNSATISFIABLE\n");
@@ -312,7 +312,7 @@ Triv_Unsat() {
 int
 Finish_Preprocessing()
 {
-	long long memory_used = get_memusage();
+	//long long memory_used = get_memusage();
 
 	if(preproc_did_nothing == 1) return TRIV_SAT;
 	int ret = PREP_NO_CHANGE;

@@ -50,11 +50,11 @@ int Do_Rewind() {
 	bool OLD_DO_INFERENCES = DO_INFERENCES;
 	DO_INFERENCES = 0;
 
-	long long memory_used = get_memusage();
+	//long long memory_used = get_memusage();
 	
 	Pos_replace = Neg_replace = Setting_Pos = Setting_Neg = 0;
 
-	int y = 0;
+	//int y = 0;
 	for(int x = 0; x < nmbrFunctions; x++) {
 		functions[x] = true_ptr;
 		functionType[x] = UNSURE;
