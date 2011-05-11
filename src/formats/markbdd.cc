@@ -245,7 +245,7 @@ BDDNode *putbdd(int intnum, BDDNode * bdd)
 							}
 							pweight = (double)v1->variable;
 							
-							for(int dec = 0; dec<strlen(macros)/*floor(pweight)!=0*/; dec++) {
+							for(size_t dec = 0; dec<strlen(macros)/*floor(pweight)!=0*/; dec++) {
 								pweight=pweight/10.0;
 							}
 							pweight=pweight/100.0;                                                                                          
@@ -623,7 +623,7 @@ BDDNode *putbdd(int intnum, BDDNode * bdd)
 			} else {	fprintf(stderr, "\nKeyword 'countT' needs positive variables as arguments (%s)...exiting:%d\n", macros, markbdd_line); exit (1); }
 		}
 
-		int set_true = 0;
+		//int set_true = 0;
 		qsort(var_list, numarguments, sizeof(int), abscompfunc);
       strcpy (macros, "countT");
 		int numT = 0;
