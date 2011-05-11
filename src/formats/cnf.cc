@@ -520,6 +520,8 @@ uint8_t find_and_build_andequals(Clause *pClauses) {
    ite_free((void **)&two_neg);
    
    d2_printf2("\rFound %d AND=/OR= functions           \n", num_andequals_found);
+
+   return num_andequals_found;
 }
 
 void find_and_build_iteequals(Clause *pClauses) {
