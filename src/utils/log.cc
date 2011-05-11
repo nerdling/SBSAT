@@ -40,3 +40,16 @@
 FILE *stddbg=stderr;
 int DEBUG_LVL=0;
 
+#include <stdio.h>
+#include <stdarg.h>
+
+int dX_printf (int debugLevel, const char* format, ...) {
+    va_list args;
+    va_start (args, format);
+
+    if (_DEBUG_LVL_COMPILE >= debugLevel) {
+        return vfprintf (stddbg, format, args);
+    } else {
+        return 0;
+    }
+}
