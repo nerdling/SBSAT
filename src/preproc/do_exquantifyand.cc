@@ -94,7 +94,7 @@ int ExQuantifyAnd () {
 	
 	rand_list *rlist = (rand_list*)ite_calloc(numinp+1, sizeof(rand_list), 9, "rlist");
 	
-	int amount_count;
+	int amount_count = 0;
 
 	for(int i = 1;i < numinp+1; i++) {
 		rlist[i].num = i;

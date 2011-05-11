@@ -948,7 +948,7 @@ BDDNode *strengthen_fun(BDDNode *bddNmbr1, BDDNode *bddNmbr2)
 	unravelBDD(&y, &tempint_max, &tempint, bddNmbr1);
 	if (y != 0) qsort (tempint, y, sizeof (int), compfunc);
 	int length1 = y;
-	int *vars1;
+	int *vars1 = NULL;
 	if(length1 > 0) {
 		vars1 = new int[length1+1];
 		for(int i = 0; i < y; i++)
@@ -959,7 +959,7 @@ BDDNode *strengthen_fun(BDDNode *bddNmbr1, BDDNode *bddNmbr2)
 	unravelBDD(&y, &tempint_max, &tempint, bddNmbr2);
 	if (y != 0) qsort (tempint, y, sizeof (int), compfunc);
 	int length2 = y;
-	int *vars2;
+	int *vars2 = NULL;
 	if(length2 > 0){
 		vars2 = new int[length2+1];
 		for(int i = 0; i < y; i++)
