@@ -36,10 +36,12 @@
 *********************************************************************/
 
 #include "sbsat.h"
-#include<vector>
-#include<string>
-#include<sstream>
+#include <vector>
+#include <string>
+#include <sstream>
+#include <stdio.h>
 
+using namespace std; 
 BDDNode *tmp_equ_var(BDDNode *p);
 int functions_add(BDDNode *bdd, int fn_type, int equal_var);
 
@@ -393,7 +395,7 @@ int GBReduceXors(){
 
   // rewrite xors in algebraic notation
   stringstream ss;
-  for(vector<int>::iterator it = xor_idxs.begin(); it != xor_idxs.end(); it++){
+  for(vector<int>::iterator it = xor_indxs.begin(); it != xor_indxs.end(); it++){
     BDDNode* xdd = functions[*it];
     build_algebraic_func(xdd,ss);
     ss << " ";
@@ -410,12 +412,34 @@ int GBReduceXors(){
   //sbsat, but that's an awful lot of bloat.
   
   //THIS IS AWFUL, DO IT RIGHT!
-  system("sage ~/cryptosat/SBSAT/scripts/gb.sage " + ss.str().c_str());
-
+  //system("sage ~/cryptosat/SBSAT/scripts/gb.sage " + ss.str().c_str());
+  
+  char * sagecmd = ("sage ~/cryptosat/SBSAT/scripts/gb.sage " + ss.str()).c_str();
+  FILE * sagepipe;
+  if((sagepipe = popen(sagecmd,"r") == NULL)){
+    stderr << "Error: couldn't open sage pipe" << endl;
+    return;
+  }
+  
+  ss.clear();
+  ss.str("");
+  char readbuf[80];
+  while(fgets(readbuf,80,sagepipe)){
+    ss << readbuf;
+  }
+  
+  while(ss.peek() != '['){
+    ss.ignore(1);
+  }
+  
+  
   //Next:
   // replace original functions with generators of reduced GB.
   
 }
+
+
+//vector<BDDNode*> 
 
 void build_algebraic_func(BDDNode* xdd, stringstream& ss){
   if(xdd == true_ptr){
