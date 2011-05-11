@@ -8,7 +8,6 @@ def checkThings(headers, funcs):
     if not conf.CheckCXX():
         print('!! Your compiler and/or environment is not correctly configured.')
         Exit(0)
-    
     for h in headers:
         if not conf.CheckHeader(h):
             print "You need {0} to compile this program".format(h)
@@ -40,9 +39,9 @@ funcs =   [
           'printf', 'string'
           ]
 
-checkThings(headers, funcs)
+#checkThings(headers, funcs)
 
-#perform checks here
 env = conf.Finish()
 
-env.Program(target='helloworld', source=["helloworld.c"])
+#and now the real work begins
+env.Program(target='sbsat', source=["src/sbsat.cc"])
