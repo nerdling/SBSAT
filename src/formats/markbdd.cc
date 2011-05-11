@@ -245,7 +245,7 @@ BDDNode *putbdd(int intnum, BDDNode * bdd)
 							}
 							pweight = (double)v1->variable;
 							
-							for(size_t dec = 0; dec<strlen(macros)/*floor(pweight)!=0*/; dec++) {
+							for(unsigned int dec = 0; dec<strlen(macros)/*floor(pweight)!=0*/; dec++) {
 								pweight=pweight/10.0;
 							}
 							pweight=pweight/100.0;                                                                                          

@@ -245,7 +245,7 @@ DdNode *putite(int intnum, DdNode * bdd) {
 							}
 							pweight = (double)v1->index;
 							Cudd_RecursiveDeref(BDD_Manager, v1);
-							for(int dec = 0; dec<strlen(macros)/*floor(pweight)!=0*/; dec++) {
+							for(unsigned int dec = 0; dec<strlen(macros)/*floor(pweight)!=0*/; dec++) {
 								pweight=pweight/10.0;
 							}
 							pweight=pweight/100.0;                                                                                          
@@ -516,8 +516,8 @@ DdNode *putite(int intnum, DdNode * bdd) {
 			}
 			tv[i+1] = 0;
 		}
-		int y = 0;
-		int level = 0;
+		//int y = 0;
+		//int level = 0;
       strcpy (macros, "truth_table");
 		fprintf(stderr, "\nKeyword 'truth_table' not currently supported in the 'ite' format...exiting:%d\n", ite_line);
 		exit(1);
@@ -607,7 +607,7 @@ DdNode *putite(int intnum, DdNode * bdd) {
 		}
 		if(max > numarguments) { fprintf(stderr, "\nKeyword 'minmax' cannot have less than the specified max=%d variables (%s)...exiting:%d\n", max, macros, ite_line); exit (1); }
 			
-		int set_true = 0;
+		//int set_true = 0;
 		qsort(var_list, numarguments, sizeof(int), abscompfunc);
 		for(int x = 0; x < numarguments-1; x++)
 		  if(var_list[x] == var_list[x+1]) {
@@ -643,7 +643,7 @@ DdNode *putite(int intnum, DdNode * bdd) {
 			Cudd_RecursiveDeref(BDD_Manager, v2);
 		}
 
-		int set_true = 0;
+		//int set_true = 0;
 		qsort(var_list, numarguments, sizeof(int), abscompfunc);
       strcpy (macros, "countT");
 		int numT = 0;
@@ -814,7 +814,7 @@ DdNode *putite(int intnum, DdNode * bdd) {
 	}
 	if (!strcasecmp (macros, "print_tree")) {
       DdNode * v1;
-      int which_zoom = 0;
+      //int which_zoom = 0;
       v1 = putite (intnum, bdd);
 		if(v1==NULL) { fprintf(stderr, "\nKeyword 'print_tree' expects 1 argument, found 0 (%s)...exiting:%d\n", macros, ite_line); exit (1); }
 		if(putite (intnum, bdd)!=NULL) { fprintf(stderr, "\nKeyword 'print_tree' expects 1 argument, found > 1 (%s)...exiting:%d\n", macros, ite_line); exit (1); }
