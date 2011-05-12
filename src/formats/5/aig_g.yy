@@ -82,12 +82,12 @@ line: uints NEW_LINE
 	  aig_index = 0;
 	  if(aig_counter < aig_inputs){
 	    aig_input_vars[aig_counter] = aig_array[0]/2;
-		 d8_printf3("%d input = %d \n",aig_counter, aig_array[0]);
+		 dX_printf(8, "%d input = %d \n",aig_counter, aig_array[0]);
 	  }else if(aig_counter < aig_latches + aig_inputs){
-	    d8_printf4("%d latch = %d %d\n",aig_counter, aig_array[0],aig_array[1]);
+	    dX_printf(8, "%d latch = %d %d\n",aig_counter, aig_array[0],aig_array[1]);
 	  }else if(aig_counter < aig_outputs + aig_latches + aig_inputs){
 	    aig_output_literals[aig_counter-aig_latches-aig_inputs] = aig_array[0];
-	    d8_printf3("%d output = %d\n",aig_counter,aig_array[0]);
+	    dX_printf(8, "%d output = %d\n",aig_counter,aig_array[0]);
 	    if(aig_array[0] == 0){
 	      //functions_add(false_ptr, UNSURE, 0);
 	    }else if(aig_array[0]%2){
@@ -106,9 +106,11 @@ line: uints NEW_LINE
 	      }else bdd_aig_array[i] = ite_var(i_getsym_int(aig_array[i], SYM_VAR));
 	    }
 	    functions_add(ite_equ(bdd_aig_array[2], ite_and(bdd_aig_array[1], bdd_aig_array[0])), UNSURE, 0);
-			  D_8(printBDD(ite_equ(bdd_aig_array[2], ite_and(bdd_aig_array[1], bdd_aig_array[0])));)
+              if (DEBUG_LVL >= 8) {
+                printBDD(ite_equ(bdd_aig_array[2], ite_and(bdd_aig_array[1], bdd_aig_array[0])));
+              }
 
-	    d8_printf5("%d and = %d %d %d\n",aig_counter, aig_array[2], aig_array[1], aig_array[0]);
+	    dX_printf(8, "%d and = %d %d %d\n",aig_counter, aig_array[2], aig_array[1], aig_array[0]);
 
 	  }else{
 	    //shouldn't reach this case
@@ -121,7 +123,7 @@ uints: /* empty */
 	| UINT uints
 { 
   aig_array[aig_index++] = $1;
-  /*d8_printf2("\t %d\n",$1);*/
+  /*dX_printf(8, "\t %d\n",$1);*/
 }
 ;
 
@@ -133,15 +135,15 @@ symbols: /* empty */
 symbol: IO_IDENTIFIER words NEW_LINE
 { 
   int index = atoi($1+1);
-  d8_printf4("symbol %c %d = %s\n",*$1,index,aig_string_buffer);
+  dX_printf(8, "symbol %c %d = %s\n",*$1,index,aig_string_buffer);
   aig_string_index = 0;
   aig_string_buffer[0] = '\0';
   if(*$1 == 'i'){
 //    putsym_with_id($2, SYM_VAR, aig_input_vars[index]);
-    d8_printf2("\t%d\n",aig_input_vars[index]);
+    dX_printf(8, "\t%d\n",aig_input_vars[index]);
   }else if(*$1 == 'o'){
 //    putsym_with_id($2, SYM_VAR, aig_output_literals[index]/2);
-    d8_printf2("\t%d\n",aig_output_literals[index]/2);
+    dX_printf(8, "\t%d\n",aig_output_literals[index]/2);
   }
 
 }
@@ -156,7 +158,7 @@ comments: /* empty */
 comment_lines: /* empty */
 	| comment_lines comment_line
 {
-  d8_printf2("comment: %s \n",aig_string_buffer);
+  dX_printf(8, "comment: %s \n",aig_string_buffer);
   aig_string_index = 0;
   aig_string_buffer[0] = '\0';
 }

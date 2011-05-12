@@ -72,7 +72,10 @@ HEUR_FUNCTION(int *pnBranchAtom, int *pnBranchValue)
    double fMaxWeight = 0.0;
    double fVbleWeight;
 
-   HEUR_EXTRA_IN();
+   if (DEBUG_LVL >= 8) {
+    DisplayHeuristicValues();
+    dX_printf(8, "\n");
+   }
 
    //
    // SEARCH PREDEFINED SETS FIRST
@@ -235,7 +238,7 @@ HEUR_FUNCTION(int *pnBranchAtom, int *pnBranchValue)
    }
    else
    {
-      dE_printf1 ("Error in heuristic routine:  No uninstantiated variable found\n");
+      dX_printf(0, "Error in heuristic routine:  No uninstantiated variable found\n");
       exit (1);
    }
 

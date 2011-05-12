@@ -182,7 +182,7 @@ HeuristicInit()
                case 'R': procHeurInit = HrLSGBWInit; break;
                case 'd': procHeurInit = HrLSGBWInit; break;
                case 0: procHeurInit = HrLSGBInit; break;
-               default: dE_printf2("error: Unknown LSGB type heuristic %s\n", sHeuristic+1);
+               default: dX_printf(0, "error: Unknown LSGB type heuristic %s\n", sHeuristic+1);
               }
               break;
     case 'l': procHeurInit = HrLemmaInit; break;
@@ -193,7 +193,7 @@ HeuristicInit()
     //case 'i': nHeuristic = INTERACTIVE_HEURISTIC; break;
     //case 'm': nHeuristic = STATE_HEURISTIC; break;
     default: 
-              dE_printf2("error: Unknown heuristic type %c\n", sHeuristic[0]); 
+              dX_printf(0, "error: Unknown heuristic type %c\n", sHeuristic[0]); 
               exit(1);
               break;
    }
