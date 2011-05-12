@@ -72,18 +72,6 @@ int dX_printf (int , const char* , ...);
 # define DM_2(x) {}
 #endif
 
-#if _DEBUG_LVL_COMPILE >= 3
-# define D_3(x) if ((DEBUG_LVL&15) >= 3) { x }
-#else
-# define D_3(x) {}
-#endif
-
-#if _DEBUG_LVL_COMPILE >= 3
-# define D_3E(x) if ((DEBUG_LVL&15) == 3) { x }
-#else
-# define D_3E(x) {}
-#endif
-
 #if _DEBUG_LVL_COMPILE >= 4
 # define D_4(x) if ((DEBUG_LVL&15) >= 4) { x }
 #else
@@ -165,22 +153,6 @@ int dX_printf (int , const char* , ...);
 #define d2e_printf5(x1,x2,x3,x4,x5) D_2E(fprintf(stddbg, x1, x2, x3,x4,x5);)
 
 #define dm2_printf2(x1,x2)    DM_2(fprintf(stddbg, x1, x2);)
-
-#define d3_printf1(x)        D_3(fprintf(stddbg, x);)
-#define d3_printf2(x1,x2)    D_3(fprintf(stddbg, x1, x2);)
-#define d3_printf3(x1,x2,x3) D_3(fprintf(stddbg, x1, x2, x3);)
-#define d3_printf4(x1,x2,x3,x4) D_3(fprintf(stddbg, x1, x2, x3,x4);)
-#define d3_printf5(x1,x2,x3,x4,x5) D_3(fprintf(stddbg, x1, x2, x3,x4,x5);)
-#define d3_printf6(x1,x2,x3,x4,x5,x6) D_3(fprintf(stddbg, x1, x2, x3,x4,x5,x6);)
-#define d3_printf7(x1,x2,x3,x4,x5,x6,x7) D_3(fprintf(stddbg, x1, x2, x3,x4,x5,x6,x7);)
-#define d3_printf8(x1,x2,x3,x4,x5,x6,x7,x8) D_3(fprintf(stddbg, x1, x2, x3,x4,x5,x6,x7,x8);)
-#define d3_printf9(x1,x2,x3,x4,x5,x6,x7,x8,x9) D_3(fprintf(stddbg, x1, x2, x3,x4,x5,x6,x7,x8,x9);)
-
-#define d3e_printf1(x)        D_3E(fprintf(stddbg, x);)
-#define d3e_printf2(x1,x2)    D_3E(fprintf(stddbg, x1, x2);)
-#define d3e_printf3(x1,x2,x3) D_3E(fprintf(stddbg, x1, x2, x3);)
-#define d3e_printf4(x1,x2,x3,x4) D_3E(fprintf(stddbg, x1, x2, x3,x4);)
-#define d3e_printf5(x1,x2,x3,x4,x5) D_3E(fprintf(stddbg, x1, x2, x3,x4,x5);)
 
 #define d4_printf1(x)        D_4(fprintf(stddbg, x);)
 #define d4_printf2(x1,x2)    D_4(fprintf(stddbg, x1, x2);)

@@ -667,7 +667,7 @@ int SimpleBrancher() {
 			if(use_RapidRestarts && nNumRestarts<MAX_RESTARTS && ite_counters[NUM_BACKTRACKS]>nNextRestart) {
 				nNextRestart+=Simple_nextRestart();
 				nNumRestarts++;
-				d3_printf1("Restarting\n");
+				dX_printf(3, "Restarting\n");
 				ite_counters[NUM_SOLUTIONS]=0;
 				nSimpleSolver_Reset=0;
 				nInfQueueStart=0;

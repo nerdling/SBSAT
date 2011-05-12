@@ -68,8 +68,8 @@ Do_Apply_Inferences ()
       if (inferlist->nums[1] != 0) {
 			if (inferlist->nums[1] > 0) {
 /*				
-				//d3_printf2("|%d ", inferlist->nums[0]);
-				//d3_printf2("%d ", inferlist->nums[1]);
+				//dX_printf(3, "|%d ", inferlist->nums[0]);
+				//dX_printf(3, "%d ", inferlist->nums[1]);
 				inferlist->nums[0] = l->get_equiv(inferlist->nums[0]);
 				if (inferlist->nums[0] == T) {
 					inferlist->nums[0] = inferlist->nums[1];
@@ -83,14 +83,14 @@ Do_Apply_Inferences ()
 					inferlist->nums[0] = -inferlist->nums[0];
 					inferlist->nums[1] = -inferlist->nums[1];					
 				}
-				//d3_printf2("%d ", inferlist->nums[0]);
-				//d3_printf2("%d|", inferlist->nums[1]);
+				//dX_printf(3, "%d ", inferlist->nums[0]);
+				//dX_printf(3, "%d|", inferlist->nums[1]);
 */
 				//            D_3(print_nonroller();)
 				Pos_replace++;
 				for(int iter = 0; iter<str_length; iter++)
-				  d3_printf1("\b");
-				d3e_printf3 ("{%d=%d}", inferlist->nums[0], inferlist->nums[1]);
+				  dX_printf(3, "\b");
+				dX_printf(3, "{%d=%d}", inferlist->nums[0], inferlist->nums[1]);
 				d4_printf5("{%s(%d)=%s(%d)}", s_name(inferlist->nums[0]), inferlist->nums[0], s_name(inferlist->nums[1]), inferlist->nums[1]);
 				str_length = 0;
 
@@ -161,9 +161,9 @@ Do_Apply_Inferences ()
 				Neg_replace++;
 //            D_3(print_nonroller(););
 				for(int iter = 0; iter<str_length; iter++)
-				  d3_printf1("\b");
+				  dX_printf(3, "\b");
 				str_length = 0;  
-				d3e_printf3 ("{%d=%d}", inferlist->nums[0], inferlist->nums[1]);
+				dX_printf(3, "{%d=%d}", inferlist->nums[0], inferlist->nums[1]);
 				d4_printf5 ("{%s(%d)!=%s(%d)}", s_name(inferlist->nums[0]), inferlist->nums[0], s_name(-inferlist->nums[1]), -inferlist->nums[1]);
 
 				if(variablelist[inferlist->nums[0]].true_false == 2) {
@@ -235,9 +235,9 @@ Do_Apply_Inferences ()
 				Setting_Pos++;
 //            D_3(print_nonroller(););
 				for(int iter = 0; iter<str_length; iter++)
-				  d3_printf1("\b");
+				  dX_printf(3, "\b");
 				str_length = 0;  
-				d3e_printf2 ("{%d=T}", abs (inferlist->nums[0]));
+				dX_printf(3, "{%d=T}", abs (inferlist->nums[0]));
 				d4_printf3 ("{%s(%d)=T}", s_name(abs(inferlist->nums[0])), abs (inferlist->nums[0]));
 
 				if(variablelist[inferlist->nums[0]].true_false == 2) {
@@ -279,9 +279,9 @@ Do_Apply_Inferences ()
 				Setting_Neg++;
 //            D_3(print_nonroller(););
 				for(int iter = 0; iter<str_length; iter++)
-					d3_printf1("\b");
+					dX_printf(3, "\b");
 				str_length = 0;  
-				d3e_printf2 ("{%d=F}", -inferlist->nums[0]);
+				dX_printf(3, "{%d=F}", -inferlist->nums[0]);
 				d4_printf3 ("{%s(%d)=F}", s_name(-inferlist->nums[0]), -inferlist->nums[0]);
 
 				if(variablelist[-inferlist->nums[0]].true_false == 2) {
@@ -337,9 +337,9 @@ Do_Apply_Inferences ()
 int setALLequiv(int nums0, int nums1, int torf) {
 //   D_3(print_nonroller(););
 	for(int iter = 0; iter<str_length; iter++)
-	  d3_printf1("\b");
+	  dX_printf(3, "\b");
 	str_length = 0;  
-   d3_printf3 ("{%d=%d}", torf*nums0, torf*nums1);
+   dX_printf(3, "{%d=%d}", torf*nums0, torf*nums1);
 	variablelist[nums1].equalvars = nums0;
 	for (llist * k = amount[nums1].head; k != NULL;) {
 		int j = k->num;
@@ -371,16 +371,16 @@ int setALLinfer(int nums0, int torf) {
 	if(torf) {
 //      D_3(print_nonroller(););
 		for(int iter = 0; iter<str_length; iter++)
-		  d3_printf1("\b");
+		  dX_printf(3, "\b");
 		str_length = 0;  
-      d3_printf2 ("{%d=T}", nums0);
+      dX_printf(3, "{%d=T}", nums0);
 		variablelist[nums0].true_false = 1;
 	} else {
 //      D_3(print_nonroller(););
 		for(int iter = 0; iter<str_length; iter++)
-		  d3_printf1("\b");
+		  dX_printf(3, "\b");
 		str_length = 0;  
-      d3_printf2 ("{%d=F}", nums0);
+      dX_printf(3, "{%d=F}", nums0);
 		variablelist[nums0].true_false = 0;
 	}
 	for (llist * k = amount[nums0].head; k != NULL;) {
@@ -437,7 +437,7 @@ int Do_Apply_Inferences_backend () {
 
 void printBDDInfs(BDDNode *bdd) {
 	for(infer *iterator = bdd->inferences; iterator != NULL; iterator = iterator->next) {
-		d3_printf3 ("{%d, %d}", iterator->nums[0], iterator->nums[1]);
+		dX_printf(3, "{%d, %d}", iterator->nums[0], iterator->nums[1]);
 		//fprintf(stderr, "%d|%d, %d|", x, iterator->nums[0], iterator->nums[1]);
 	}
 }

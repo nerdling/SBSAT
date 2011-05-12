@@ -131,7 +131,7 @@ void initializeBiases(int heuristic_mode) {
 }
 
 int Do_Message_Passing() {
-	d3_printf1 ("MESSAGE PASSING - ");
+	dX_printf(3, "MESSAGE PASSING - ");
 	int ret = PREP_NO_CHANGE;
 	char p[100];
 	int v;
@@ -211,7 +211,7 @@ int Do_Message_Passing() {
         sprintf(p, "{0:%d/%d}", surveys, mp_surveys);
         str_length = dX_printf(3, p);
 		if(nCtrlC) {
-			d3_printf1("Breaking out of Message Passing\n");
+			dX_printf(3, "Breaking out of Message Passing\n");
 			ret = PREP_NO_CHANGE;
 			nCtrlC = 0;
 			break;
@@ -222,7 +222,7 @@ int Do_Message_Passing() {
 	ite_free((void **)&mp_neg_biases);
 	ite_free((void **)&mp_star_biases);
 	
-	d3_printf1 ("\n");
+	dX_printf(3, "\n");
 	d2e_printf1 ("\r                  ");
 	return ret;
 }
@@ -525,7 +525,7 @@ int ComputeSurvey (int heuristic_mode) {
 	int v = 0;
 	
 	do {
-		d3_printf1(".");
+		dX_printf(3, ".");
 		max_change = 0.0;
 		reportBiases();
 		for (v = 1; v <= numinp; v++) {
@@ -556,11 +556,11 @@ int ComputeSurvey (int heuristic_mode) {
 	surveys_attempted++;
 	if(max_change <= mp_epsilon) {
 		surveys_converged++;
-		d3_printf1(":-)\n");
+		dX_printf(3, ":-)\n");
 		D_4(reportBiases(););
 		return 1;
 	} else {
-		d3_printf2("[%f]:-(\n", max_change);
+		dX_printf(3, "[%f]:-(\n", max_change);
 		D_4(reportBiases(););
 		return 0;		
 	}	

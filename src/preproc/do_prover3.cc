@@ -42,7 +42,7 @@ int size = 10;
 
 int Do_Prover3() {
 	if(formatin != '3') return PREP_NO_CHANGE;
-	d3_printf2("RECOMPUTING PROVER %d - \n", size);
+	dX_printf(3, "RECOMPUTING PROVER %d - \n", size);
 	str_length = 0;
 	bool OLD_DO_INFERENCES = DO_INFERENCES;
 	DO_INFERENCES = 0;
@@ -153,7 +153,7 @@ int Do_Prover3() {
 	 default: break;
 	}
 	
-	d3_printf1("\n");
+	dX_printf(3, "\n");
    d2e_printf1("\r                                         ");
 	
 	int ret = PREP_NO_CHANGE;

@@ -44,7 +44,7 @@ int PossibleAnding();
 int Do_PossibleAnding() {
 	MAX_EXQUANTIFY_CLAUSES += 1005;
 	MAX_EXQUANTIFY_VARLENGTH += 5;
-	d3_printf1 ("POSSIBLE ANDING - ");
+	dX_printf(3, "POSSIBLE ANDING - ");
 	int cofs = PREP_CHANGED;
 	int ret = PREP_NO_CHANGE;
 	affected = 0;
@@ -59,7 +59,7 @@ int Do_PossibleAnding() {
 		}
 		cofs = ret = PREP_NO_CHANGE; //SEAN
 	}
-	d3_printf1 ("\n");
+	dX_printf(3, "\n");
 	d2e_printf1 ("\r                                      ");
 	return ret;
 }
@@ -81,7 +81,7 @@ int PossibleAnding () {
             str_length = dX_printf(3, p);
         }
 		if (nCtrlC) {
-			d3_printf1("Breaking out of Possible Anding\n");
+			dX_printf(3, "Breaking out of Possible Anding\n");
 			ret = PREP_NO_CHANGE;
 			nCtrlC = 0;
 			goto ea_bailout;
@@ -130,7 +130,7 @@ int PossibleAnding () {
 				k = k->next;
 
                 for(int iter = 0; iter<str_length; iter++)
-                d3_printf1("\b");
+                dX_printf(3, "\b");
                 sprintf(p, "(%d:%d/%d[%d])",i, count1, amount_count, countBDDs());
                 str_length = dX_printf(3, p);
 				if (nCtrlC) {
@@ -208,7 +208,7 @@ int PossibleAnding () {
 				}				
 				variablelist[i].true_false = 2;
 				str_length = 0;
-				d3_printf1("&");
+				dX_printf(3, "&");
 			} else {
 				DO_INFERENCES = 1;
 				

@@ -80,8 +80,12 @@ int DO_PRUNING_FN() {
 	for (int x = 0; x < nmbrFunctions; x++)
 	  repeat_small[x] = PRUNE_REPEATS[x];
 
-//   D_3(print_roller_init(););
-	d3_printf1 ("BRANCH PRUNING - ");
+/*
+    if (DEBUG_LVL == 3) {
+        print_roller_init();
+    }
+*/
+	dX_printf(3, "BRANCH PRUNING - ");
 	affected = 0;
 	char p[100];
     sprintf(p, "{0:0/%d}", nmbrFunctions);
@@ -90,12 +94,12 @@ int DO_PRUNING_FN() {
 	  {
           if (x % ((nmbrFunctions/100)+1) == 0) {
               for(int iter = 0; iter<str_length; iter++)
-                d3_printf1("\b");
+                dX_printf(3, "\b");
               sprintf(p, "{%ld:%d/%d}", affected, x, nmbrFunctions);
               str_length = dX_printf(3, p);
           }
 		  if (nCtrlC) {
-			  d3_printf1("\nBreaking out of Branch Pruning");
+			  dX_printf(3, "\nBreaking out of Branch Pruning");
 			  for(; x < nmbrFunctions; x++) PRUNE_REPEATS[x] = 0;;
 			  nCtrlC = 0;
 			  break;
@@ -218,7 +222,7 @@ int DO_PRUNING_FN() {
 	pr_bailout:
 	
 	//   D_3(print_nonroller(););
-	d3_printf1("\n");
+	dX_printf(3, "\n");
    d2e_printf1("\r                                         ");
 	delete [] repeat_small;
 	return ret;

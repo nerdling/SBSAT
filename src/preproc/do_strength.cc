@@ -52,7 +52,7 @@ int Do_Strength() {
 	  repeat_small[x] = St_repeat[x];
 
 //   D_3(print_nonroller();)
-	d3_printf1("STRENGTHENING - ");
+	dX_printf(3, "STRENGTHENING - ");
 	affected = 0;
 	char p[100];
     sprintf(p, "{0:0/%d}", nmbrFunctions);
@@ -69,7 +69,7 @@ int Do_Strength() {
 		  //if (term_getchar()=='f') Do Fast Foward
 		  
 		  if (nCtrlC) {
-			  d3_printf1("\nBreaking out of Strengthening");
+			  dX_printf(3, "\nBreaking out of Strengthening");
 			  for(; x < nmbrFunctions; x++) St_repeat[x] = 0;
 			  nCtrlC = 0;
 			  break;
@@ -132,7 +132,7 @@ int Do_Strength() {
 	st_bailout:
 	
 	//   D_3(print_nonroller();)
-	d3_printf1 ("\n");
+    dX_printf(3, "\n");
    d2e_printf1("\r                                         ");
 	delete [] repeat_small;
 	return ret;

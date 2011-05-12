@@ -218,7 +218,7 @@ read_ini(char *filename)
 
    if (!fini) 
    { 
-      d3_printf2("warning: ini file not found %s\n", filename); 
+      dX_printf(3, "warning: ini file not found %s\n", filename); 
       return; 
    } else {
       d2_printf2("using ini file %s\n", filename); 

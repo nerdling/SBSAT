@@ -39,7 +39,7 @@
 #include "sbsat_preproc.h"
 
 int Do_Identify_Same_Structure() {
-	d3_printf1("IDENTIFYING STRUCTURE - ");
+	dX_printf(3, "IDENTIFYING STRUCTURE - ");
 	str_length = 0;
 
 	int ret = PREP_NO_CHANGE;

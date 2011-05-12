@@ -253,7 +253,7 @@ p3_top_bdds(int idx)
       functions_add(p3_bdds(idx, &vars), UNSURE, 0);
    } else {
       idx = -1*idx;
-      d3_printf4("%d vars=%d functions=%d\r", idx, vars_max, functions_max);
+      dX_printf(3, "%d vars=%d functions=%d\r", idx, vars_max, functions_max);
       p3_top_bdds(p3[idx].arg1);
       if (p3[idx].argc==2) p3_top_bdds(p3[idx].arg2);
    }

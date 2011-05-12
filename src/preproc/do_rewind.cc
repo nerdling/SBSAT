@@ -42,7 +42,7 @@ extern int num_safe_assigns;
 int tier = 1;
 
 int Do_Rewind() {
-	d3_printf1("REWINDING - ");
+	dX_printf(3, "REWINDING - ");
 	str_length = 0;
 	MAX_EXQUANTIFY_CLAUSES = 5000;
 	MAX_EXQUANTIFY_VARLENGTH = 0;
@@ -110,7 +110,7 @@ int Do_Rewind() {
 	 default: break;
 	}
 
-	d3_printf1("\n");
+	dX_printf(3, "\n");
    d2e_printf1("\rPreprocessing Rw                         ");
 	
 	int ret = PREP_CHANGED;

@@ -128,7 +128,7 @@ FreeSmurfAuStatePool()
 ITE_INLINE void
 SmurfAuStatesDisplayInfo()
 {
-   d3_printf2("Number of autarky Smurf states: %ld\n", (long)(ite_counters[SMURF_AU_STATES]));
+   dX_printf(3, "Number of autarky Smurf states: %ld\n", (long)(ite_counters[SMURF_AU_STATES]));
 }
 
 /* don't use -- bad one */

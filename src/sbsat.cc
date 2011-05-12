@@ -77,7 +77,7 @@ main(int argc, char *argv[])
 	gettimeofday(&tv1,&tzp1);
 	if(random_seed <= 0)
 	  random_seed = ((tv1.tv_sec & 0177 ) * 1000000) + tv1.tv_usec;
-	d3_printf2("Random seed = %d\n", random_seed);
+	dX_printf(3, "Random seed = %d\n", random_seed);
 	srandom(random_seed);	
 	srand(random_seed);
 	

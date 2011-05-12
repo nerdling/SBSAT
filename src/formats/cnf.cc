@@ -251,7 +251,7 @@ int CNF_to_BDD() {
 	
 	ite_free((void **)&tempint); tempint_max = 0;
 
-	d3_printf2("Number of BDDs - %d\n", nmbrFunctions);
+	dX_printf(3, "Number of BDDs - %d\n", nmbrFunctions);
 
 	free_clauses(pClauses);
 	
@@ -961,7 +961,7 @@ void find_and_build_majvequals(Clause *pClauses) {
 
 void cnf_process(Clause *pClauses) {
 
-	d3_printf2("Number of Variables: %d\n", nNumCNFVariables);
+	dX_printf(3, "Number of Variables: %d\n", nNumCNFVariables);
 	
 	nmbrFunctions = 0;
 	
@@ -1081,7 +1081,7 @@ DNF_to_BDD ()
       exit(1);
    }
    dnf_integers = (store*)ite_calloc(dnf_numout+1, sizeof(store), 9, "integers"); 
-	d3_printf1("Storing DNF Inputs");
+	dX_printf(3, "Storing DNF Inputs");
 	for(int x = 0; x < dnf_numout; x++) {
 		if (x%1000 == 1)
 		  d2_printf3("\rReading DNF %d/%ld ... ", x, dnf_numout);
@@ -1187,7 +1187,7 @@ DNF_to_BDD ()
 	}
 	ite_free((void**)&dnf_integers);
 	
-	d3_printf2("Number of BDDs - %ld\n", numout);
+	dX_printf(3, "Number of BDDs - %ld\n", numout);
 	d2_printf1("\rReading DNF ... Done                   \n");
 }
 

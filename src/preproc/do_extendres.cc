@@ -39,7 +39,7 @@
 #include "sbsat_preproc.h"
 
 int Do_ExtendRes() {
-	d3_printf1("CREATING EXTENDED RESOLVENTS - ");
+	dX_printf(3, "CREATING EXTENDED RESOLVENTS - ");
 	str_length = 0;
 
 	int resolvents_max = 1000;
@@ -85,7 +85,7 @@ int Do_ExtendRes() {
 	
 	bdd_gc(1);
 
-	d3_printf1("\n");
+	dX_printf(3, "\n");
    d2e_printf1("\rPreprocessing Er                         ");
 	
 	int ret = PREP_CHANGED;

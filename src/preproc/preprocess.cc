@@ -98,7 +98,7 @@ int Preprocessor() {
 		ret = Do_Apply_Inferences();
 		num_inferences = Pos_replace + Neg_replace + Setting_Pos + Setting_Neg;
 		
-		d3_printf1("\n");
+		dX_printf(3, "\n");
 		if (ret == TRIV_UNSAT || ret == TRIV_SAT || ret == PREP_ERROR)
 		  return ret; 
 	}

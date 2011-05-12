@@ -45,7 +45,7 @@ Do_Cofactor()
 {
   int ret=PREP_NO_CHANGE;
   BDDNode *cof = NULL;
-  d3_printf1("COFACTORING - ");
+  dX_printf(3, "COFACTORING - ");
 	affected = 0;
 	char p[100];
     sprintf(p, "{0:0/%d}", nmbrFunctions);
@@ -62,7 +62,7 @@ Do_Cofactor()
 
       if (x % ((nmbrFunctions/100)+1) == 0) {
 			if (nCtrlC) {
-				d3_printf1("\nBreaking out of CoFactoring\n");
+				dX_printf(3, "\nBreaking out of CoFactoring\n");
 				nCtrlC = 0;
 				break;
 			}
@@ -70,7 +70,7 @@ Do_Cofactor()
 		}
       
 		if (length[x] <= COF_MAX && length[x] > 0) {
-			//d3_printf1("*"); 
+			//dX_printf(3, "*"); 
 			cof = functions[x];
 			for (int j = 0; j < numout; j++) {
 				if(j == x) continue;
@@ -105,7 +105,7 @@ Do_Cofactor()
 		}
 		if(ret == PREP_CHANGED) break;
    }  //This ends Cofactoring
-	d3_printf1("\n");
+	dX_printf(3, "\n");
 	d2e_printf1("\r                                                    ");
 	return ret;
 }

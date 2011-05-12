@@ -49,7 +49,7 @@ int check_bdd_for_safe_eq(int x, int ret);
 int Do_ExSafeCluster() {
 	MAX_EXQUANTIFY_CLAUSES += 5;
 	MAX_EXQUANTIFY_VARLENGTH += cluster_step_increase;
-	d3_printf2 ("EX-SAFE CLUSTERING %d - ", countBDDs());
+	dX_printf(3, "EX-SAFE CLUSTERING %d - ", countBDDs());
 	str_length = 0;
 	int cofs = PREP_CHANGED;
 	int ret = PREP_NO_CHANGE;
@@ -65,7 +65,7 @@ int Do_ExSafeCluster() {
 			return TRIV_UNSAT;
 		}
 	}
-	d3_printf1 ("\n");
+	dX_printf(3, "\n");
 	d2e_printf1 ("\r                                      ");
 
 	if(countBDDs() == 0) return TRIV_SAT;
@@ -123,7 +123,7 @@ int ExSafeCluster () {
                 str_length = dX_printf(3, p);
             }
 			if (nCtrlC) {
-				d3_printf1("Breaking out of Anding Existential Quantification\n");
+				dX_printf(3, "Breaking out of Anding Existential Quantification\n");
 				ret = PREP_NO_CHANGE;
 				nCtrlC = 0;
 				goto es_bailout;
@@ -256,8 +256,8 @@ int check_bdd_for_safe_eq(int x, int ret) {
 		} else if (amount[h].head->next == NULL) {
 			int o = amount[h].head->num;
 			for(int iter = 0; iter<str_length; iter++)
-			  d3_printf1("\b");
-			d3e_printf2 ("*{%d}", h);
+			  dX_printf(3, "\b");
+			dX_printf(3, "*{%d}", h);
 			d4_printf3 ("*{%s(%d)}", s_name(h), h);
 			str_length = 0;// strlen(p);
 			functions[o] = xquantify (functions[o], h);
@@ -316,8 +316,8 @@ int check_bdd_for_safe(int x, int ret) {
 		} else if (amount[h].head->next == NULL) {
 			int o = amount[h].head->num;
 			for(int iter = 0; iter<str_length; iter++)
-			  d3_printf1("\b");
-			d3e_printf2 ("*{%d}", h);
+			  dX_printf(3, "\b");
+			dX_printf(3, "*{%d}", h);
 			d4_printf3 ("*{%s(%d)}", s_name(h), h);
 			str_length = 0;// strlen(p);
 			functions[o] = xquantify (functions[o], h);
@@ -434,14 +434,14 @@ int ExSafeCluster () {
 		D_3(
 			 if (rnum % ((rlist_size/100)+1) == 0) {
 				 for(int iter = 0; iter<str_length; iter++)
-					d3_printf1("\b");
+					dX_printf(3, "\b");
 				 sprintf(p, "{%d %d,%d:%d/%d->%d,%d}", countBDDs(), i, j, 0, j-i, rlist[rnum].d, rlist[rnum].v);
 				 str_length = strlen(p);
-				 d3_printf1(p);
+				 dX_printf(3, p);
 			 }
 		);
 		if (nCtrlC) {
-			d3_printf1("Breaking out of Safe + Existential Quantification\n");
+			dX_printf(3, "Breaking out of Safe + Existential Quantification\n");
 			ret = PREP_NO_CHANGE;
 			nCtrlC = 0;
 			goto es_bailout;
@@ -513,10 +513,10 @@ int ExSafeCluster () {
 			
 			D_3(
 				 for(int iter = 0; iter<str_length; iter++)
-				 d3_printf1("\b");
+				 dX_printf(3, "\b");
 				 sprintf(p, "{%d %d,%d:%d/%d->%d,%d}", countBDDs(), i, j, x-i, j-i, rlist[rnum].d, rlist[rnum].v);
 				 str_length = strlen(p);
-				 d3_printf1(p);
+				 dX_printf(3, p);
 			);
 		}
 	}

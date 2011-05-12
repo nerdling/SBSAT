@@ -436,15 +436,15 @@ Finish_Preprocessing()
 	int div_zero = 0;
 	if (Total_inferences == 0)
 	  div_zero = 1;
-	d3_printf3 ("Positive Replaces - %d (%d%%)\n", Pos_replace,
+	dX_printf(3, "Positive Replaces - %d (%d%%)\n", Pos_replace,
 					(100 * Pos_replace) / (Total_inferences+div_zero));
-	d3_printf3 ("Negative Replaces - %d (%d%%)\n", Neg_replace,
+	dX_printf(3, "Negative Replaces - %d (%d%%)\n", Neg_replace,
 					(100 * Neg_replace) / (Total_inferences+div_zero));
-	d3_printf3 ("Positive Sets     - %d (%d%%)\n", Setting_Pos,
+	dX_printf(3, "Positive Sets     - %d (%d%%)\n", Setting_Pos,
 					(100 * Setting_Pos) / (Total_inferences+div_zero));
-	d3_printf3 ("Negative Sets     - %d (%d%%)\n", Setting_Neg,
+	dX_printf(3, "Negative Sets     - %d (%d%%)\n", Setting_Neg,
 					(100 * Setting_Neg) / (Total_inferences+div_zero));
-	d3_printf2 ("Total Inferences  - %d (100%%)\n\n", Total_inferences);
+	dX_printf(3, "Total Inferences  - %d (100%%)\n\n", Total_inferences);
 
    //fprintf(stderr, "%d, %d, %d, %ld, %4.2f, %ldM, ", tier, num_safe_assigns, Total_inferences, numinp, get_runtime()-start_prep, memory_used/1024);
 
@@ -514,15 +514,17 @@ Finish_Preprocessing()
 	ite_free((void**)&original_equalityVble);
 
 	if(countBDDs()!=nmbrFunctions){
-		d3_printf2("Number of normal BDDs - %d\n", countBDDs());
-		d3_printf2("Total number of BDDs  - %d\n", nmbrFunctions);
-		d3_printf2("Number of Variables   - %ld\n", numinp);
+		dX_printf(3, "Number of normal BDDs - %d\n", countBDDs());
+		dX_printf(3, "Total number of BDDs  - %d\n", nmbrFunctions);
+		dX_printf(3, "Number of Variables   - %ld\n", numinp);
 	} else {
-		d3_printf2("Number of BDDs      - %d\n", countBDDs());
-		d3_printf2("Number of Variables - %ld\n", numinp);
+		dX_printf(3, "Number of BDDs      - %d\n", countBDDs());
+		dX_printf(3, "Number of Variables - %ld\n", numinp);
 	}
 	
-	D_3(fflush (stddbg);)
+    if (DEBUG_LVL == 3) {
+	    fflush (stddbg);
+    }
 	  //printCircuitTree();
 	  //printCircuit();
 
@@ -535,7 +537,7 @@ Finish_Preprocessing()
 	
    if(ite_counters_f[PREPROC_TIME] == 0) {
 		ite_counters_f[PREPROC_TIME] = get_runtime() - start_prep;
-		d3_printf2("Preprocessing Time: %5.3f seconds.\n",
+		dX_printf(3, "Preprocessing Time: %5.3f seconds.\n",
 					  ite_counters_f[PREPROC_TIME]);
 	}
 	d2_printf1("\rPreprocessing .... Done\n");

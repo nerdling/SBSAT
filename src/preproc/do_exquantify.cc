@@ -41,7 +41,7 @@
 int ExQuantify();
 
 int Do_ExQuantify() {
-   d3_printf1("EXISTENTIALLY QUANTIFYING - ");
+   dX_printf(3, "EXISTENTIALLY QUANTIFYING - ");
    int cofs = PREP_CHANGED;
    int ret = PREP_NO_CHANGE;
 	affected = 0;
@@ -56,7 +56,7 @@ int Do_ExQuantify() {
 		}
 	}
 	
-	d3_printf1("\n");
+	dX_printf(3, "\n");
    d2e_printf1("\r                                         ");
 	return ret;
 }
@@ -77,7 +77,7 @@ int ExQuantify () {
             }
 			
 			if (nCtrlC) {
-				d3_printf1("\nBreaking out of Existential Quantification\n");
+				dX_printf(3, "\nBreaking out of Existential Quantification\n");
 				nCtrlC = 0;
 				break;
 			}
@@ -131,8 +131,8 @@ int ExQuantify () {
 						}
 					} else {
 						for(int iter = 0; iter<str_length; iter++)
-						  d3_printf1("\b");
-						d3e_printf2 ("*{%d}", i);
+						  dX_printf(3, "\b");
+						dX_printf(3, "*{%d}", i);
 						d4_printf3("*{%s(%d)}", s_name(i), i);
 						str_length = 0;// strlen(p);
 						functions[j] = xquantify (functions[j], i);

@@ -52,12 +52,12 @@ void print_xdd_d(BDDNode *xdd) {
 	} else if(xdd->thenCase == xdd->elseCase) {
 //		d2_printf1("(");
 //		d2e_printf2("x[%s] + 1", s_name(xdd->variable));
-//		d3e_printf2("x[%d] + 1", xdd->variable);
+//		dX_printf(3, "x[%d] + 1", xdd->variable);
 //		d4_printf3("x[%s(%d)] + 1", s_name(xdd->variable), xdd->variable);
 //		d2_printf1(")");
 
 		d2e_printf2("-x[%s]", s_name(xdd->variable));
-		d3e_printf2("-x[%d]", xdd->variable);
+		dX_printf(3, "-x[%d]", xdd->variable);
 		d4_printf3("-x[%s(%d)]", s_name(xdd->variable), xdd->variable);
 		
 		if(xdd->thenCase != true_ptr) {
@@ -68,12 +68,12 @@ void print_xdd_d(BDDNode *xdd) {
 	} else if(!IS_TRUE_FALSE(xdd->elseCase) && are_xdd_comp(xdd->thenCase, xdd->elseCase)) {
 //		d2_printf1("(");
 //		d2e_printf2("x[%s] + 1", s_name(xdd->variable));
-//		d3e_printf2("x[%d] + 1", xdd->variable);
+//		dX_printf(3, "x[%d] + 1", xdd->variable);
 //		d4_printf3("x[%s(%d)] + 1", s_name(xdd->variable), xdd->variable);
 //		d2_printf1(")");
 
 		d2e_printf2("-x[%s]", s_name(xdd->variable));
-		d3e_printf2("-x[%d]", xdd->variable);
+		dX_printf(3, "-x[%d]", xdd->variable);
 		d4_printf3("-x[%s(%d)]", s_name(xdd->variable), xdd->variable);
 		
 		if(xdd->thenCase != true_ptr) {
@@ -85,14 +85,14 @@ void print_xdd_d(BDDNode *xdd) {
 	} else {
 		if(!IS_TRUE_FALSE(xdd->thenCase)) {
 			d2e_printf2("x[%s]*(", s_name(xdd->variable));
-			d3e_printf2("x[%d]*(", xdd->variable);
+			dX_printf(3, "x[%d]*(", xdd->variable);
 			d4_printf3("x[%s(%d)]*(", s_name(xdd->variable), xdd->variable);
 			
 			print_xdd_d(xdd->thenCase);
 			d2_printf1(")");
 		} else {
 			d2e_printf2("x[%s]", s_name(xdd->variable));
-			d3e_printf2("x[%d]", xdd->variable);
+			dX_printf(3, "x[%d]", xdd->variable);
 			d4_printf3("x[%s(%d)]", s_name(xdd->variable), xdd->variable);
 		}	
 		if(xdd->elseCase == true_ptr) {
@@ -145,14 +145,14 @@ void print_xor_of_ands(xor_of_ands *top_xor) {
 			exit(0);
 		} else {
 			d2e_printf2("x[%s]*", s_name(top_xor->vars_in_and[x]));
-			d3e_printf2("x[%d]*", top_xor->vars_in_and[x]);
+			dX_printf(3, "x[%d]*", top_xor->vars_in_and[x]);
 			d4_printf3("x[%s(%d)]*", s_name(top_xor->vars_in_and[x]), top_xor->vars_in_and[x]);
 		}
 	}
 	if(top_xor->vars_in_and[top_xor->curr_length-1] == -1) fprintf(foutputfile, "1");
 	else {
 		d2e_printf2("x[%s]", s_name(top_xor->vars_in_and[top_xor->curr_length-1]));
-		d3e_printf2("x[%d]", top_xor->vars_in_and[top_xor->curr_length-1]);
+		dX_printf(3, "x[%d]", top_xor->vars_in_and[top_xor->curr_length-1]);
 		d4_printf3("x[%s(%d)]", s_name(top_xor->vars_in_and[top_xor->curr_length-1]), top_xor->vars_in_and[top_xor->curr_length-1]);
 	}
 	for(xor_of_ands *tmp = top_xor->next_and; tmp!=NULL; tmp = tmp->next_and) {
@@ -164,7 +164,7 @@ void print_xor_of_ands(xor_of_ands *top_xor) {
 				exit(0);
 			} else {
 				d2e_printf2("x[%s]*", s_name(tmp->vars_in_and[x]));
-				d3e_printf2("x[%d]*", tmp->vars_in_and[x]);
+				dX_printf(3, "x[%d]*", tmp->vars_in_and[x]);
 				d4_printf3("x[%s(%d)]*", s_name(tmp->vars_in_and[x]), tmp->vars_in_and[x]);
 			}
 		}
@@ -172,7 +172,7 @@ void print_xor_of_ands(xor_of_ands *top_xor) {
 			d2_printf1("1");
 		} else {
 			d2e_printf2("x[%s]", s_name(tmp->vars_in_and[tmp->curr_length-1]));
-			d3e_printf2("x[%d]", tmp->vars_in_and[tmp->curr_length-1]);
+			dX_printf(3, "x[%d]", tmp->vars_in_and[tmp->curr_length-1]);
 			d4_printf3("x[%s(%d)]", s_name(tmp->vars_in_and[tmp->curr_length-1]), tmp->vars_in_and[tmp->curr_length-1]);
 		}
 	}
