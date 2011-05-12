@@ -394,7 +394,7 @@ int ReadAllSmurfsIntoTable(int nNumVars) {
 		if(nSmurfIndex > 0 && pInitialBDD->pState != NULL && smurfs_share_states &&
          SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates[((TypeStateEntry *)pInitialBDD->pState)->pStateOwner] == pInitialBDD->pState) { //Duplicate Smurf
          //This really shouldn't happen because the BDD preprocessor should have already removed all duplicates.
-         d7_printf2("Removing duplicate Smurf #%d\n", nSmurfIndex);
+         dX_printf(7, "Removing duplicate Smurf #%d\n", nSmurfIndex);
 			SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates[nSmurfIndex] = pTrueSimpleSmurfState;
 		} else {
 			if(!smurfs_share_states) {
@@ -404,7 +404,7 @@ int ReadAllSmurfsIntoTable(int nNumVars) {
 			}
          SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates[nSmurfIndex] =	ReadSmurfStateIntoTable(pInitialBDD, NULL, 0);
 			//Setting the ownership of this Smurf
-			d7_printf3("Setting owner of Smurf #%d to %d\n", nSmurfIndex, nSmurfIndex);
+			dX_printf(7, "Setting owner of Smurf #%d to %d\n", nSmurfIndex, nSmurfIndex);
 			assert(((TypeStateEntry *)SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates[nSmurfIndex])->pPreviousState == NULL);
 			((TypeStateEntry *)SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates[nSmurfIndex])->pStateOwner = nSmurfIndex;
 			if(SimpleSmurfProblemState->arrSmurfStack[0].arrSmurfStates[nSmurfIndex] == pTrueSimpleSmurfState)

@@ -6,7 +6,7 @@ void SetVisitedNEGMINMAXState(void *pState, int value) {
    NEGMINMAXStateEntry *pNEGMINMAXState = (NEGMINMAXStateEntry *)pState;
    assert(pNEGMINMAXState->cType == FN_NEGMINMAX);
    if(pNEGMINMAXState->visited != value) {
-      d7_printf3("Marking visited=%d of NEGMINMAX State %p\n", value, pNEGMINMAXState);
+      dX_printf(7, "Marking visited=%d of NEGMINMAX State %p\n", value, pNEGMINMAXState);
       pNEGMINMAXState->visited = value;
    }
 }
@@ -17,7 +17,7 @@ void SetVisitedNEGMINMAXCounterState(void *pState, int value) {
    SetVisitedNEGMINMAXState(pNEGMINMAXCounterState->pNEGMINMAXState, value);
    NEGMINMAXCounterStateEntry *tmp_negminmax = pNEGMINMAXCounterState;
    while(tmp_negminmax != NULL && tmp_negminmax->cType == FN_NEGMINMAX_COUNTER) {
-      d7_printf3("Marking visited=%d of NEGMINMAXCounter State %p\n", value, tmp_negminmax);
+      dX_printf(7, "Marking visited=%d of NEGMINMAXCounter State %p\n", value, tmp_negminmax);
       tmp_negminmax->visited = value;
       tmp_negminmax = (NEGMINMAXCounterStateEntry *)tmp_negminmax->pTransition;
    }
@@ -108,6 +108,6 @@ int ApplyInferenceToNEGMINMAXCounter(int nBranchVar, bool bBVPolarity, int nSmur
 		arrSmurfStates[nSmurfNumber] = pNEGMINMAXCounterState;
 	}
 	
-	d7_printf3("      NEGMINMAXCounterSmurf %d transitioned to state %p\n", nSmurfNumber, arrSmurfStates[nSmurfNumber]);
+	dX_printf(7, "      NEGMINMAXCounterSmurf %d transitioned to state %p\n", nSmurfNumber, arrSmurfStates[nSmurfNumber]);
 	return 1;
 }
