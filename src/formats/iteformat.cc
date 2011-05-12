@@ -374,7 +374,7 @@ DdNode *putite(int intnum, DdNode * bdd) {
 		//        ite_defines[whereat].string[x] = macros[x];
 		//      ite_defines[whereat].string[x] = 0;      
 		// 
-		d4_printf2("#define %s ", ite_defines[whereat].string);
+		dX_printf(4, "#define %s ", ite_defines[whereat].string);
       int v = 0;
 		order = getNextIteSymbol (intnum, bdd);
 		if(order == ')') { fprintf(stderr, "\nKeyword 'define' missing argument before '#' (%s)...exiting:%d\n", macros, ite_line); exit (1); }
@@ -1408,13 +1408,13 @@ void iteloop () {
 
 	p = fgetc(finputfile);
 	 
-	d4_printf1("\n");
+	dX_printf(4, "\n");
 	
 	while (1) {		//(p = fgetc(finputfile))!=EOF) 
 		if(ite_line == 1) { d2_printf1("Reading 2"); }
       else {
 			d2e_printf2("\rReading %d ", ite_line);
-			d4_printf2("Reading %d ", ite_line);
+			dX_printf(4, "Reading %d ", ite_line);
 		}
 		if (p == '\n') {
 			p = fgetc(finputfile);
@@ -1422,7 +1422,7 @@ void iteloop () {
 				goto Exit;
 			}
 			ite_line++;
-			d4_printf1("\r");
+			dX_printf(4, "\r");
 			continue;
 		}
       if (p == ';') {
@@ -1432,7 +1432,7 @@ void iteloop () {
 					goto Exit;
 				}
 			}
-			d4_printf1("\r");
+			dX_printf(4, "\r");
 			continue;
 		}
 		if (p == '	' || p == ' ' || p == ')' || p == '(') {
@@ -1447,7 +1447,7 @@ void iteloop () {
 				goto Exit;
 			}
 				  
-			d4_printf1("\r");
+			dX_printf(4, "\r");
 			continue;
 		}
 		if (p == '*') {
@@ -1468,7 +1468,7 @@ void iteloop () {
 					exit (1);
 				}
 			} else Cudd_RecursiveDeref(BDD_Manager, temp);
-			d4_printf1("*");
+			dX_printf(4, "*");
 		} else {
 			ungetc (p, finputfile);
 			if (p == ';')
@@ -1526,7 +1526,7 @@ void iteloop () {
 			if (p != '\n')
 			  goto Exit;
 		}
-		d4_printf1("\n");
+		dX_printf(4, "\n");
 	}
 	Exit:;
 

@@ -446,7 +446,7 @@ uint8_t find_and_build_andequals(Clause *pClauses) {
    //For all clauses greater than length 2
    for(int x = 0; x < nNumClauses; x++) {
       if (x%1000 == 1)
-        d4_printf3("\rAND/OR Search CNF %d/%d ...                                             ", x, nNumClauses);
+        dX_printf(4, "\rAND/OR Search CNF %d/%d ...                                             ", x, nNumClauses);
       if(pClauses[x].length <= 2) continue;
       
       //For each variable in clause x

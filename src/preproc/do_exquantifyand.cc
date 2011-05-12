@@ -210,7 +210,7 @@ int ExQuantifyAnd () {
 						for(int iter = 0; iter<str_length; iter++)
 						  dX_printf(3, "\b");
 						dX_printf(3, "*{%d}", h);
-						d4_printf3 ("*{%s(%d)}", s_name(h), h);
+						dX_printf(4, "*{%s(%d)}", s_name(h), h);
 						str_length = 0;// strlen(p);
 						functions[j] = xquantify (functions[j], h);
 						variablelist[h].true_false = 2;
@@ -242,7 +242,7 @@ int ExQuantifyAnd () {
 				for(int iter = 0; iter<str_length; iter++)
 				  dX_printf(3, "\b");
 				dX_printf(3, "*{%d}", i);
-				d4_printf3 ("*{%s(%d)}", s_name(i), i);
+				dX_printf(4, "*{%s(%d)}", s_name(i), i);
 				str_length = 0;// strlen(p);
 				functions[j] = xquantify (functions[j], i);
 				variablelist[i].true_false = 2;

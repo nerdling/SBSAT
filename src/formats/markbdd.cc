@@ -372,7 +372,7 @@ BDDNode *putbdd(int intnum, BDDNode * bdd)
 		//        defines[whereat].string[x] = macros[x];
 		//      defines[whereat].string[x] = 0;      
 		// 
-		d4_printf2("#define %s ", defines[whereat].string);
+		dX_printf(4, "#define %s ", defines[whereat].string);
       int v = 0;
 		order = getNextSymbol (intnum, bdd);
 		if(order == ')') { fprintf(stderr, "\nKeyword 'define' missing argument before '#' (%s)...exiting:%d\n", macros, markbdd_line); exit (1); }
@@ -1212,13 +1212,13 @@ void bddloop () {
 
 	p = fgetc(finputfile);
 	 
-	d4_printf1("\n");
+	dX_printf(4, "\n");
 	
 	while (1) {		//(p = fgetc(finputfile))!=EOF) 
 		if(markbdd_line == 1) { d2_printf1("Reading 2"); }
       else {
 			d2e_printf2("\rReading %d ", markbdd_line);
-			d4_printf2("Reading %d ", markbdd_line);
+			dX_printf(4, "Reading %d ", markbdd_line);
 		}
 		if (p == '\n') {
 			p = fgetc(finputfile);
@@ -1226,7 +1226,7 @@ void bddloop () {
 				goto Exit;
 			}
 			markbdd_line++;
-			d4_printf1("\r");
+			dX_printf(4, "\r");
 			continue;
 		}
       if (p == ';') {
@@ -1236,7 +1236,7 @@ void bddloop () {
 					goto Exit;
 				}
 			}
-			d4_printf1("\r");
+			dX_printf(4, "\r");
 			continue;
 		}
 		if (p == '	' || p == ' ' || p == ')' || p == '(') {
@@ -1251,7 +1251,7 @@ void bddloop () {
 				goto Exit;
 			}
 				  
-			d4_printf1("\r");
+			dX_printf(4, "\r");
 			continue;
 		}
 		if (p == '*') {
@@ -1272,7 +1272,7 @@ void bddloop () {
 					exit (1);
 				}
 			}
-			d4_printf1("*");
+			dX_printf(4, "*");
 		} else {
 			ungetc (p, finputfile);
 			if (p == ';')
@@ -1330,7 +1330,7 @@ void bddloop () {
 			if (p != '\n')
 			  goto Exit;
 		}
-		d4_printf1("\n");
+		dX_printf(4, "\n");
 	}
 	Exit:;
 

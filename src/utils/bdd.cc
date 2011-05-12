@@ -183,7 +183,7 @@ BDDNode *MinMaxBDD(int *vars, int min, int max, int total_vars, int set_true) {
 	if(max < min) return false_ptr;
    
 	// make sure vars are sorted;
-   //d4_printf5("MinMaxBDD(int *vars, int min=%d, int max=%d, int total_vars=%d, int set_true=%d)\n", min, max, total_vars, set_true);
+   //dX_printf(4, "MinMaxBDD(int *vars, int min=%d, int max=%d, int total_vars=%d, int set_true=%d)\n", min, max, total_vars, set_true);
    qsort(vars, total_vars, sizeof(int), revcompfunc);
    for(i=1;i<total_vars;i++) assert(vars[i] < vars[i-1]);
    BDDNode **arr = (BDDNode**)ite_calloc(total_vars+1, sizeof(BDDNode*), 2, "MinMaxBDD");
@@ -412,7 +412,7 @@ int splitXors() {
 		//if(IS_TRUE_FALSE(xor_part)) continue; /* unnecessary */
 		BDDNode *nonxor_part = gcf(functions[x], ands);
       D_5(
-         //d4_printf1("\n");
+         //dX_printf(4, "\n");
          //printBDDfile(functions[x], stddbg);
          d5_printf1("\n");
          printBDDfile(nonxor_part, stddbg);
@@ -425,7 +425,7 @@ int splitXors() {
          //functionType[x] = PLAINXOR; /* mark it as plain exor */
          continue;
       }
-      d4_printf2("Adding split function %d\n", x);
+      dX_printf(4, "Adding split function %d\n", x);
       symrec *s_ptr = tputsym(SYM_VAR);
 
 		total_vars++;

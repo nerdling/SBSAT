@@ -176,15 +176,15 @@ ite_final(int ret)
    }
 
    if (ite_counters[BDD_NODE_FIND]==0) ite_counters[BDD_NODE_FIND] = 1;
-   d4_printf4("BDD Lookup Statistic: %ld/%ld (%f hit rate)\n", 
+   dX_printf(4, "BDD Lookup Statistic: %ld/%ld (%f hit rate)\n", 
          (long)(ite_counters[BDD_NODE_FIND] - ite_counters[BDD_NODE_NEW]), 
          (long)(ite_counters[BDD_NODE_FIND]),
          1.0 * (ite_counters[BDD_NODE_FIND] - ite_counters[BDD_NODE_NEW]) / ite_counters[BDD_NODE_FIND]);
-   d4_printf4("BDD Hash Table Lookup Statistic: %ld/%ld (%f steps)\n", 
+   dX_printf(4, "BDD Hash Table Lookup Statistic: %ld/%ld (%f steps)\n", 
          (long)(ite_counters[BDD_NODE_STEPS]),
          (long)(ite_counters[BDD_NODE_FIND]),
          1.0 * ite_counters[BDD_NODE_STEPS] / ite_counters[BDD_NODE_FIND]);
-   d4_printf4("BDD Hash Table Storage Statistic: %ld/%ld (%f nodes taken)\n", 
+   dX_printf(4, "BDD Hash Table Storage Statistic: %ld/%ld (%f nodes taken)\n", 
          (long)(ite_counters[BDD_NODE_NEW]),
          (long)((1<<(numBuckets+sizeBuckets))-1),
          1.0 * ite_counters[BDD_NODE_NEW] / (long)((1<<(numBuckets+sizeBuckets))-1));

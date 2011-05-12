@@ -59,7 +59,7 @@ print_bdd1 (BDDNode * f, int print_counter)
       //printf ("ite %d\n", f->variable);
 		d2e_printf2("ite %s\n", s_name(f->variable));
 		dX_printf(3, "ite %d\n", f->variable);
-		d4_printf3("ite %s (%d)\n", s_name(f->variable), f->variable);
+		dX_printf(4, "ite %s (%d)\n", s_name(f->variable), f->variable);
       print_bdd1 (f->thenCase, print_counter + 1);
       print_bdd1 (f->elseCase, print_counter + 1);
       return;
@@ -67,7 +67,7 @@ print_bdd1 (BDDNode * f, int print_counter)
       //printf ("ite %d ", f->variable);
 		d2e_printf2("ite %s ", s_name(f->variable));
 		dX_printf(3, "ite %d ", f->variable);
-		d4_printf3("ite %s (%d) ", s_name(f->variable), f->variable);
+		dX_printf(4, "ite %s (%d) ", s_name(f->variable), f->variable);
       if (f->thenCase == true_ptr) {
          d2_printf1 ("T F\n");
 		} else {
@@ -89,7 +89,11 @@ void printBDDfile(BDDNode * bdd, FILE * fout) {
 	fprintf (fout, "(");
    printBDDfile(bdd->thenCase, fout);
    //fprintf (stdout, "[%d]", bdd->variable);
-	/* D_4(fprintf(fout, "[%s", s_name(bdd->variable));) */
+    /*
+    if (DEBUG_LVL >= 4) {
+        fprintf(fout, "[%s", s_name(bdd->variable));
+    }
+    */
 	fprintf(fout, "[%d]", bdd->variable);
    printBDDfile(bdd->elseCase, fout);
    fprintf(fout, ")");
@@ -107,7 +111,11 @@ void printBDDfile_sym(BDDNode * bdd, FILE * fout) {
 	fprintf (fout, "(");
    printBDDfile_sym(bdd->thenCase, fout);
    //fprintf (stdout, "[%d]", bdd->variable);
-	/* D_4(fprintf(fout, "[%s", s_name(bdd->variable));) */
+    /*
+    if (DEBUG_LVL >= 4) {
+        fprintf(fout, "[%s", s_name(bdd->variable))
+    }
+     */
 	fprintf(fout, "[%s]", getsym_i(bdd->variable)->name);
    printBDDfile_sym(bdd->elseCase, fout);
    fprintf(fout, ")");
@@ -126,7 +134,7 @@ void printBDD(BDDNode * bdd) {
    printBDD(bdd->thenCase);
    //fprintf (stdout, "[%d]", bdd->variable);
 	d2_printf2("[%s", s_name(bdd->variable));
-	d4_printf2("(%d)", bdd->variable);
+	dX_printf(4, "(%d)", bdd->variable);
 	d2_printf1("]");
    printBDD(bdd->elseCase);
    d2_printf1(")");
@@ -165,7 +173,7 @@ _printBDDshared(BDDNode * bdd, FILE * fout)
    printBDDshared(bdd->thenCase, fout);
    //fprintf (stdout, "[%d]", bdd->variable);
 	fprintf(fout, "[%s", s_name(bdd->variable));
-	d4_printf2("(%d)", bdd->variable);
+	dX_printf(4, "(%d)", bdd->variable);
 	fprintf(fout, "]");
    printBDDshared(bdd->elseCase, fout);
    fprintf(fout, ")");
@@ -345,10 +353,12 @@ printBDDTree(BDDNode * bdd, int *which_zoom)
 					zoomarr[reference++] = y;
 				} else {
 					sprintf(aa, "%s", s_name(tempint[y]));
-					if (DEBUG_LVL == 3) {
+					if (DEBUG_LVL >= 3) {
                         sprintf(aa, "%d", tempint[y]);
+                        if (DEBUG_LVL >= 4) {
+                            sprintf(aa, "%s(%d)", s_name(tempint[y]), tempint[y]);
+                        }
                     }
-					D_4(sprintf(aa, "%s(%d)", s_name(tempint[y]), tempint[y]););
 				}
 				int l = strlen(aa);
 				if(l%2 == 0) {

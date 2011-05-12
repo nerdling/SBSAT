@@ -85,14 +85,14 @@ double scoreVarSkew(int v) {
 // REPORTBIASES: Report biases for all the variables.
 void reportBiases() {
 	int v;
-	d4_printf1("==============================[ Survey Report ]================================\n");
-	d4_printf1("     Variable       Pos       Neg       Star\n");
+	dX_printf(4, "==============================[ Survey Report ]================================\n");
+	dX_printf(4, "     Variable       Pos       Neg       Star\n");
 	for (v = 1; v <= numinp; v++) {
 		if(variablelist[v].true_false != -1 || variablelist[v].equalvars != 0) {			  
-				d4_printf6(" %8d Fix: %2d (%1.3f)   (%1.3f)   (%1.3f)\n",
+				dX_printf(4, " %8d Fix: %2d (%1.3f)   (%1.3f)   (%1.3f)\n",
 							  v, variablelist[v].true_false, mp_pos_biases[v], mp_neg_biases[v], mp_star_biases[v]);
 		} else {
-			d4_printf5(" %8d  %1.3f     %1.3f     %1.3f\n",
+			dX_printf(4, " %8d  %1.3f     %1.3f     %1.3f\n",
 						  v, mp_pos_biases[v], mp_neg_biases[v], mp_star_biases[v]);
 		}
 	}
@@ -333,7 +333,7 @@ double determineRatioBP(int v, int nneg, int npos, double wplus, double wminus) 
 		// Prevents divide-by-zero's; this usually would also invoke lacks_pos_BDD and lacks_neg_BDD,
 		// but might also result from pure neighbor literals that themselves lack certain polarities of BDDs.
 		wplus = 1.0; wminus = 1.0;
-		//d4_printf1("Hey there was a divide by zero problem with EM.\nExiting.\n"); exit(-1);
+		//dX_printf(4, "Hey there was a divide by zero problem with EM.\nExiting.\n"); exit(-1);
 	}
 	
 	if (lacks_pos_BDD && lacks_neg_BDD) {
@@ -372,7 +372,7 @@ double determineRatioSP(int v, int nneg, int npos, double wplus, double wminus, 
 	double new_pos; // caches a temporary value to avoid recalculation
 	double new_neg;
 	
-	//d4_printf5("DETERMINERATIOSP(%d): %f %f %f \n", v + 1, wplus, wminus, wstar);
+	//dX_printf(4, "DETERMINERATIOSP(%d): %f %f %f \n", v + 1, wplus, wminus, wstar);
 	
 	// Actually with the new code, I think boundary conditions can't happen.
 	new_pos = wplus / (wplus + wminus + wstar);
@@ -387,26 +387,26 @@ double determineRatioSP(int v, int nneg, int npos, double wplus, double wminus, 
 		// Prevents divide-by-zero's; this usually would also invoke lacks_pos_BDD and lacks_neg_BDD,
 		// but might also result from pure neighbor literals that themselves lack certain polarities of BDDs.
 		wplus = 1.0; wminus = 1.0; wstar = 1.0;
-		//d4_printf1("Hey there was a divide by zero problem with EM.\nExiting.\n"); exit(-1);
+		//dX_printf(4, "Hey there was a divide by zero problem with EM.\nExiting.\n"); exit(-1);
 	}
 	
 	if (lacks_pos_BDD && lacks_neg_BDD) {
-		//d4_printf1("case1");
+		//dX_printf(4, "case1");
 		// Variable is unconstrained, put all its weight on star.
 		new_pos = 0.0;
 		new_neg = 0.0;
 	} else if (lacks_pos_BDD) {
-		//d4_printf1("case2");
+		//dX_printf(4, "case2");
 		// Variable is either constrained negative, or it's star.  FIXTHIS: can divide-by-zero happen?
 		new_pos = 0.0;
 		new_neg = wminus / (wminus + wstar);
 	} else if (lacks_neg_BDD) {
 		// Variable is either constrained positive, or it's star.  FIXTHIS: can divide-by-zero happen?
-		//d4_printf1("case3");
+		//dX_printf(4, "case3");
 		new_pos = wplus / (wplus + wstar);
 		new_neg = 0.0;
 	} else {
-		//d4_printf1("case4");
+		//dX_printf(4, "case4");
 		// In the absence of a boundary condition, the variable must balance its three responsibilities
 		// by normalizing over its weights.  Because we are doing three states for SP, we can just
 		// determine the chances of being positive and negative; the chances of being star are just 1 minus
@@ -415,7 +415,7 @@ double determineRatioSP(int v, int nneg, int npos, double wplus, double wminus, 
 		new_neg = wminus / (wplus + wminus + wstar);
 	}
 
-	//d4_printf4(":%f %f %f\n", new_pos, new_neg, 1.0 - new_pos - new_neg);
+	//dX_printf(4, ":%f %f %f\n", new_pos, new_neg, 1.0 - new_pos - new_neg);
 	// Store the resulting values.
 	old_pos = mp_pos_biases[v];
 	old_neg = mp_neg_biases[v];
@@ -557,11 +557,15 @@ int ComputeSurvey (int heuristic_mode) {
 	if(max_change <= mp_epsilon) {
 		surveys_converged++;
 		dX_printf(3, ":-)\n");
-		D_4(reportBiases(););
+        if (DEBUG_LVL >= 4) {
+            reportBiases();
+        }
 		return 1;
 	} else {
 		dX_printf(3, "[%f]:-(\n", max_change);
-		D_4(reportBiases(););
+        if (DEBUG_LVL >= 4) {
+            reportBiases();
+        }
 		return 0;		
 	}	
 }

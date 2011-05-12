@@ -91,7 +91,7 @@ Do_Apply_Inferences ()
 				for(int iter = 0; iter<str_length; iter++)
 				  dX_printf(3, "\b");
 				dX_printf(3, "{%d=%d}", inferlist->nums[0], inferlist->nums[1]);
-				d4_printf5("{%s(%d)=%s(%d)}", s_name(inferlist->nums[0]), inferlist->nums[0], s_name(inferlist->nums[1]), inferlist->nums[1]);
+				dX_printf(4, "{%s(%d)=%s(%d)}", s_name(inferlist->nums[0]), inferlist->nums[0], s_name(inferlist->nums[1]), inferlist->nums[1]);
 				str_length = 0;
 
 				if(variablelist[inferlist->nums[0]].true_false == 2) {
@@ -164,7 +164,7 @@ Do_Apply_Inferences ()
 				  dX_printf(3, "\b");
 				str_length = 0;  
 				dX_printf(3, "{%d=%d}", inferlist->nums[0], inferlist->nums[1]);
-				d4_printf5 ("{%s(%d)!=%s(%d)}", s_name(inferlist->nums[0]), inferlist->nums[0], s_name(-inferlist->nums[1]), -inferlist->nums[1]);
+				dX_printf(4, "{%s(%d)!=%s(%d)}", s_name(inferlist->nums[0]), inferlist->nums[0], s_name(-inferlist->nums[1]), -inferlist->nums[1]);
 
 				if(variablelist[inferlist->nums[0]].true_false == 2) {
 					d7_printf1("Inferring a quantified variable...\n");
@@ -238,7 +238,7 @@ Do_Apply_Inferences ()
 				  dX_printf(3, "\b");
 				str_length = 0;  
 				dX_printf(3, "{%d=T}", abs (inferlist->nums[0]));
-				d4_printf3 ("{%s(%d)=T}", s_name(abs(inferlist->nums[0])), abs (inferlist->nums[0]));
+				dX_printf(4, "{%s(%d)=T}", s_name(abs(inferlist->nums[0])), abs (inferlist->nums[0]));
 
 				if(variablelist[inferlist->nums[0]].true_false == 2) {
 					d7_printf1("Inferring a quantified variable...\n");
@@ -282,7 +282,7 @@ Do_Apply_Inferences ()
 					dX_printf(3, "\b");
 				str_length = 0;  
 				dX_printf(3, "{%d=F}", -inferlist->nums[0]);
-				d4_printf3 ("{%s(%d)=F}", s_name(-inferlist->nums[0]), -inferlist->nums[0]);
+				dX_printf(4, "{%s(%d)=F}", s_name(-inferlist->nums[0]), -inferlist->nums[0]);
 
 				if(variablelist[-inferlist->nums[0]].true_false == 2) {
 					d7_printf1("Inferring a quantified variable...\n");

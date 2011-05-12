@@ -406,7 +406,7 @@ bdd_gc(int force)
    }
    bddtable_node_new_last = ite_counters[BDD_NODE_NEW];
 
-   d4_printf2("\nBDD_GC START (free %d) ", bddtable_free_count);
+   dX_printf(4, "\nBDD_GC START (free %d) ", bddtable_free_count);
    struct timeval tv_start;
    gettimeofday(&tv_start, NULL);
    double rt_start = get_runtime();
@@ -466,7 +466,7 @@ bdd_gc(int force)
       
       if (pre_pool_nodes_taken == bddtable_used_count_last &&
             i != numBDDPool) {
-         d4_printf1(" Removing pool ");
+         dX_printf(4, " Removing pool ");
          // can drop this pool
          ite_free((void**)&bddmemory[i].memory);
          chain_free = pre_pool_chain_free;
@@ -486,7 +486,7 @@ bdd_gc(int force)
    struct timeval tv_stop;
    gettimeofday(&tv_stop, NULL);
    double rt_stop = get_runtime();
-   d4_printf6("BDD_GC END(used %d, pools %d, free %d, time=%ldms, cpu=%.0fms)\n", 
+   dX_printf(4, "BDD_GC END(used %d, pools %d, free %d, time=%ldms, cpu=%.0fms)\n", 
          bddtable_used_count_last, numBDDPool+1, bddtable_free_count,
          (tv_stop.tv_sec-tv_start.tv_sec)*1000+(tv_stop.tv_usec-tv_start.tv_usec)/1000,
          (rt_stop-rt_start)*1000);

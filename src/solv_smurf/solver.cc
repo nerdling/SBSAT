@@ -135,7 +135,7 @@ solve_free()
 {
   d5_printf1("FreeSolver\n");
 
-  d4_printf5("SMURF States Statistic(total %ld): %ld/%ld (%f hit rate)\n",
+  dX_printf(4, "SMURF States Statistic(total %ld): %ld/%ld (%f hit rate)\n",
         (long)(ite_counters[SMURF_NODE_NEW]),
         (long)(ite_counters[SMURF_NODE_FIND] - ite_counters[SMURF_NODE_NEW]),
         (long)(ite_counters[SMURF_NODE_FIND]),

@@ -522,7 +522,7 @@ Finish_Preprocessing()
 		dX_printf(3, "Number of Variables - %ld\n", numinp);
 	}
 	
-    if (DEBUG_LVL == 3) {
+    if (DEBUG_LVL >= 3) {
 	    fflush (stddbg);
     }
 	  //printCircuitTree();

@@ -78,7 +78,7 @@ void GarbageCollectSmurfStatesTable(int force) {
 
    if(force == 0 && bdd_gc_test() == 0) return;
 
-   d4_printf2("SMURF_GC START (free %d) ", 0); //SEAN!!! Some indicator for progress?
+   dX_printf(4, "SMURF_GC START (free %d) ", 0); //SEAN!!! Some indicator for progress?
    
    pTrueSimpleSmurfState->visited = 1;
 

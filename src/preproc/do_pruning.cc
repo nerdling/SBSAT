@@ -81,7 +81,7 @@ int DO_PRUNING_FN() {
 	  repeat_small[x] = PRUNE_REPEATS[x];
 
 /*
-    if (DEBUG_LVL == 3) {
+    if (DEBUG_LVL >= 3) {
         print_roller_init();
     }
 */
