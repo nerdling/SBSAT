@@ -72,7 +72,10 @@ HEUR_FUNCTION(int *pnBranchAtom, int *pnBranchValue)
    double fMaxWeight = 0.0;
    double fVbleWeight;
 
-   HEUR_EXTRA_IN();
+   if (DEBUG_LVL >= 8) {
+    DisplayHeuristicValues();
+    dX_printf(8, "\n");
+   }
 
    //
    // SEARCH PREDEFINED SETS FIRST
