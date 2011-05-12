@@ -90,13 +90,13 @@ solve_init()
 {
   int ret = SOLV_UNKNOWN;
 
-  d9_printf1("InitSolver\n");
+  dX_printf(9, "InitSolver\n");
 
   
   if (BREAK_XORS) {
   // change splitXors to add two new functions into functions array to complement/replace the existing smurf
      int total_vars = splitXors();
-     d9_printf3("Split(%ld) returned %d\n", numinp, total_vars);
+     dX_printf(9, "Split(%ld) returned %d\n", numinp, total_vars);
      numinp = total_vars;
   }
 
@@ -133,7 +133,7 @@ solve_init()
 void
 solve_free()
 {
-  d5_printf1("FreeSolver\n");
+  dX_printf(5, "FreeSolver\n");
 
   dX_printf(4, "SMURF States Statistic(total %ld): %ld/%ld (%f hit rate)\n",
         (long)(ite_counters[SMURF_NODE_NEW]),

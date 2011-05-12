@@ -388,7 +388,7 @@ int splitXors() {
 		if(length[x] <= functionTypeLimits[PLAINXOR] || functionType[x]!=UNSURE) continue; //???
 		BDDNode *xdd = bdd2xdd(functions[x]);		
 		countSingleXors(xdd, xor_vars, nonxor_vars);
-		d5_printf2("\n%d: ", x);
+		dX_printf(5, "\n%d: ", x);
       /*
       D_4(
          printBDDfile(xdd, stddbg);
@@ -397,13 +397,13 @@ int splitXors() {
 		BDDNode *ands = true_ptr;
 		BDDNode *xor_part = false_ptr;
 		int y = 0;
-	   d5_printf2("%d: non-linear: ", x);
+	   dX_printf(5, "%d: non-linear: ", x);
 		for(y=0; nonxor_vars[y]!=0; y++) {
-			d5_printf2("%d ", nonxor_vars[y]);
+			dX_printf(5, "%d ", nonxor_vars[y]);
 		}
-	   d5_printf2("\n%d linear: ", x);
+	   dX_printf(5, "\n%d linear: ", x);
 		for(y=0; xor_vars[y]!=0; y++) {
-			d5_printf2("%d ", xor_vars[y]);
+			dX_printf(5, "%d ", xor_vars[y]);
 			ands = ite_and(ands, ite_var(-xor_vars[y]));
 			xor_part = ite_xor(xor_part, ite_var(xor_vars[y]));
 		}
@@ -411,14 +411,14 @@ int splitXors() {
       
 		//if(IS_TRUE_FALSE(xor_part)) continue; /* unnecessary */
 		BDDNode *nonxor_part = gcf(functions[x], ands);
-      D_5(
+      if (DEBUG_LVL >= 5) {
          //dX_printf(4, "\n");
          //printBDDfile(functions[x], stddbg);
-         d5_printf1("\n");
+         dX_printf(5, "\n");
          printBDDfile(nonxor_part, stddbg);
-         d5_printf1("\n");
+         dX_printf(5, "\n");
          printBDDfile(xor_part, stddbg);
-      )
+      }
 
 
       if(IS_TRUE_FALSE(nonxor_part)) {
