@@ -53,7 +53,6 @@ int dX_printf (int , const char* , ...);
 #endif
  * ----------------- */
 
-#define D_E(x) { x }
 #define D_0(x) { x }
 
 #if _DEBUG_LVL_COMPILE >= 2
@@ -79,11 +78,6 @@ int dX_printf (int , const char* , ...);
 #else
 # define D_C(x) {}
 #endif
-
-#define dE_printf1(x)        D_E(fprintf(stddbg, x);)
-#define dE_printf2(x1,x2)    D_E(fprintf(stddbg, x1, x2);)
-#define dE_printf3(x1,x2,x3) D_E(fprintf(stddbg, x1, x2, x3);)
-#define dE_printf4(x1,x2,x3,x4) D_E(fprintf(stddbg, x1, x2, x3,x4);)
 
 #define dC_printf1(x)        D_C(printf(x);)
 #define dC_printf2(x1,x2)    D_C(printf(x1, x2);)

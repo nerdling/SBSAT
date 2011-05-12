@@ -309,14 +309,14 @@ ite_io_init()
    else {
       struct stat buf;
       if (stat(outputfile, &buf) == 0 && (protect_outputfile == 1)) {
-         dE_printf2("Error: File %s exists\n", outputfile);
+         dX_printf(0, "Error: File %s exists\n", outputfile);
          return ERR_IO_INIT;
       }
       foutputfile = fopen(outputfile, "w");
    }
 
    if (!foutputfile) { 
-      dE_printf2("Can't open the output file: %s\n", outputfile);
+      dX_printf(0, "Can't open the output file: %s\n", outputfile);
       return ERR_IO_INIT;
    } else d9_printf2("Output file opened: %s\n", outputfile);
 
@@ -328,7 +328,7 @@ ite_io_init()
     fresultfile = fopen(input_result_filename, "r");
 
     if (!fresultfile) {
-    dE_printf2("Can't open the result filename: %s\n", input_result_filename);
+    dX_printf(0, "Can't open the result filename: %s\n", input_result_filename);
     return ERR_IO_INIT;
     } else
     d9_printf2("Result file opened: %s\n", input_result_filename);
@@ -385,7 +385,7 @@ check_expected_result(int result)
 			 strcasecmp(s_expected_result, "UNSAT")) return SOLV_ERROR;
        break;
     default: /* can't verify the result */
-       dE_printf1("Can't check the result against the expected result\n");
+       dX_printf(0, "Can't check the result against the expected result\n");
        break;
    }	
    return result;

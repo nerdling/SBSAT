@@ -124,7 +124,7 @@ parse_cycle(char **p, int parse_only)
   if (parse_only == 0) 
   {
     if (**p!='}') {
-      dE_printf2("Preproc: Format error: 1 missing '}':%s\n", *p);
+      dX_printf(0, "Preproc: Format error: 1 missing '}':%s\n", *p);
       return PREP_ERROR;
     }
     (*p)++;
@@ -172,7 +172,7 @@ parse_cycle(char **p, int parse_only)
   }
 
   if (**p!='}') {
-    dE_printf2("Preproc: Format error: missing '}':%s\n", *p);
+    dX_printf(0, "Preproc: Format error: missing '}':%s\n", *p);
     return PREP_ERROR;
   }
   (*p)++;
@@ -258,14 +258,14 @@ parse_seq(char **p, int parse_only)
                  while((**p) && (**p)!=')') {
                     (*p)++;
                     if ((**p)=='{' || (**p)=='}' || (**p)=='(') {
-                       dE_printf2("Preproc: Format error: illegal character :%s\n", (*p));
+                       dX_printf(0, "Preproc: Format error: illegal character :%s\n", (*p));
                        r = PREP_ERROR;
                        break;
                     }
                     (*p)++;
                  }
                  if ((**p)!=')') {
-                    dE_printf2("Preproc: Format error: missing ')':%s\n", start);
+                    dX_printf(0, "Preproc: Format error: missing ')':%s\n", start);
                     r = PREP_ERROR;
                     break;
                  }
@@ -290,7 +290,7 @@ parse_seq(char **p, int parse_only)
            }
         }
         if (r == PREP_MAX) {
-           dE_printf2("The preprocessing function at the position %s was not found.\n", *p);
+           dX_printf(0, "The preprocessing function at the position %s was not found.\n", *p);
            r = PREP_ERROR;
            break;
         };

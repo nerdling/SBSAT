@@ -93,8 +93,8 @@ ComputeSmurfOfNormalized(BDDNodeStruct *pFunc)
    for (int i=0;i<pSmurfState->vbles.nNumElts;i++) {
       if (pSmurfState->vbles.arrElts[i]==0 || 
             arrIte2SolverVarMap[pSmurfState->vbles.arrElts[i]]==0) {
-         dE_printf1("\nassigned variable in a BDD in the solver");
-         dE_printf3("\nvariable id: %d, true_false=%d\n", 
+         dX_printf(0, "\nassigned variable in a BDD in the solver");
+         dX_printf(0, "\nvariable id: %d, true_false=%d\n", 
                pSmurfState->vbles.arrElts[i],
                variablelist[pSmurfState->vbles.arrElts[i]].true_false);
          //exit(1);

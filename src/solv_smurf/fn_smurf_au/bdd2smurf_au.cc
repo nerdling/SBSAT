@@ -102,8 +102,8 @@ ComputeSmurfAuOfNormalized(BDDNodeStruct *pFunc, int nAutarkyVble)
 	for (int i=0;i<pSmurfAuState->vbles.nNumElts;i++) {
       if (pSmurfAuState->vbles.arrElts[i]==0 || 
 			 arrIte2SolverVarMap[pSmurfAuState->vbles.arrElts[i]]==0) {
-         dE_printf1("\nassigned variable in an Autarky BDD in the solver");
-         dE_printf3("\nvariable id: %d, true_false=%d\n", 
+         dX_printf(0, "\nassigned variable in an Autarky BDD in the solver");
+         dX_printf(0, "\nvariable id: %d, true_false=%d\n", 
 						  pSmurfAuState->vbles.arrElts[i],
 						  variablelist[pSmurfAuState->vbles.arrElts[i]].true_false);
          //exit(1);
