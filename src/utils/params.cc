@@ -545,7 +545,7 @@ finish_params()
                   p_opt->p_value.i-1);
             ((char*)(p_opt->p_target))[p_opt->p_value.i]=0;
          } else {
-            d1_printf1 ("TEMP or TMPDIR variable not found.\n");
+            dX_printf(1, "TEMP or TMPDIR variable not found.\n");
          }
       }
    }

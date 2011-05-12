@@ -112,7 +112,7 @@ ite_main_init(int argc, char *argv[])
    ret = params_parse_cmd_line(argc, argv);
    if (ret != NO_ERROR) return ret;
 	
-   if (DEBUG_LVL == 1) d1_printf3("%s %s ", ite_basename(inputfile), comment);
+   if (DEBUG_LVL == 1) dX_printf(1, "%s %s ", ite_basename(inputfile), comment);
 
    if (competition_enable == 1) {
       show_competition_version();
@@ -230,8 +230,8 @@ ite_final(int ret)
 
    ite_counters_f[RUNNING_TIME] = get_runtime();
    if (DEBUG_LVL == 1) {
-      d1_printf3("%s %lld ", result_string, ite_counters[NUM_CHOICE_POINTS]);//ite_counters[NO_ERROR]);
-      d1_printf4("%.3fs %.3fs %.3fs\n", 
+      dX_printf(1, "%s %lld ", result_string, ite_counters[NUM_CHOICE_POINTS]);//ite_counters[NO_ERROR]);
+      dX_printf(1, "%.3fs %.3fs %.3fs\n", 
             ite_counters_f[RUNNING_TIME], 
             ite_counters_f[PREPROC_TIME], 
             ite_counters_f[BRANCHER_TIME]);
