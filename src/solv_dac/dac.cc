@@ -142,7 +142,7 @@ int dac_initRAM(void) {
 	ite_free((void **)&tempint); tempint_max = 0;
 
 	if(too_many_vars) {
-		d1_printf2("DAC solver found a BDD w/ more than %ld variables - this is not currently supported\n", sizeof(VecType)*8);
+		dX_printf(1, "DAC solver found a BDD w/ more than %ld variables - this is not currently supported\n", sizeof(VecType)*8);
 		return SOLV_UNKNOWN;
 	}
 

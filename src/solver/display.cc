@@ -298,10 +298,10 @@ void DisplayBacktrackInfo(double &fPrevEndTime, double &fStartTime)
       if ((DEBUG_LVL&15) == 1) {
 	      fprintf(stderr, "%s%s", number, back);
       } else {
-         D_1(
+         if (DEBUG_LVL >= 1 ) {
 	      d0_printf3("%s%s", number, back);
 	      fflush(stddbg);
-            )
+         }
       }
 
       d2_printf1("\n Choices (total, dependent" );
