@@ -315,8 +315,8 @@ int ReadAllSmurfsIntoTable(int nNumVars) {
 		for (int i=0;i<nNumElts;i++) {
 			if (tempint[i]==0 ||
 				 arrIte2SimpleSolverVarMap[tempint[i]]==0) {
-				dE_printf1("\nassigned variable in a BDD in the solver");
-				dE_printf3("\nvariable id: %d, true_false=%d\n",
+				dX_printf(0, "\nassigned variable in a BDD in the solver");
+				dX_printf(0, "\nvariable id: %d, true_false=%d\n",
 							  tempint[i],
 							  variablelist[tempint[i]].true_false);
 				//exit(1);
@@ -348,8 +348,8 @@ int ReadAllSmurfsIntoTable(int nNumVars) {
 		for (int i=0;i<nNumElts;i++) {
 			if (tempint[i]==0 ||
 				 arrIte2SimpleSolverVarMap[tempint[i]]==0) {
-				dE_printf1("\nassigned variable in a BDD in the solver");
-				dE_printf3("\nvariable id: %d, true_false=%d\n",
+				dX_printf(0, "\nassigned variable in a BDD in the solver");
+				dX_printf(0, "\nvariable id: %d, true_false=%d\n",
 							  tempint[i],
 							  variablelist[tempint[i]].true_false);
 				//exit(1);
@@ -482,7 +482,7 @@ int Init_SimpleSmurfSolver() {
 	 case 'n': Simple_Solver_Heuristic = Simple_DC_Heuristic; break;
 	 case 'j': Simple_Solver_Heuristic = Simple_LSGB_Heuristic; break;
 	 case 'p': if(use_lemmas == 0) {
-		          dE_printf1("Error: 'lemmas' must be enabled to use the PicoSAT heuristic\n");
+		          dX_printf(0, "Error: 'lemmas' must be enabled to use the PicoSAT heuristic\n");
                 exit(0);
 	           } else Simple_Solver_Heuristic = picosat_decide_for_SBSAT; break;
     case 'v': Simple_Solver_Heuristic = Simple_PMVSIDS_Heuristic; 
@@ -490,7 +490,7 @@ int Init_SimpleSmurfSolver() {
 		        use_poor_mans_vsids=1;
 		        break;
 	 default:
-		 dE_printf2("Error: Unknown heuristic type %c\n", sHeuristic[0]);
+		 dX_printf(0, "Error: Unknown heuristic type %c\n", sHeuristic[0]);
 		exit(0);
 		break;
 	}
@@ -508,7 +508,7 @@ int Init_SimpleSmurfSolver() {
 		        Simple_initRestart = Luby_initRestart;
 		        Simple_nextRestart = Luby_nextRestart; break;
 	 default:
-		 dE_printf2("Error: Unknown restart heuristic type %c\n", sRestartHeuristic[0]);
+		 dX_printf(0, "Error: Unknown restart heuristic type %c\n", sRestartHeuristic[0]);
 		exit(0);
 		break;
 	}

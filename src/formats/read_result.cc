@@ -72,7 +72,7 @@ while (!feof(fin))
   if ((p_str=strchr(s, '\n'))!=NULL) *p_str = 0;
   if (setValue(s, value, variablelist) != 0)
   {
-    dE_printf2("unknown variable in the input file: %s\n", s);
+    dX_printf(0, "unknown variable in the input file: %s\n", s);
     exit(1); 
   };
 }

@@ -82,7 +82,7 @@ int getEquiv(int v, int *variables, int length) {
 	for(int i = 0; i < length; i++) {
 	  if(abs(x) == variables[i]) return i;
 	}
-	dE_printf1("\nEquivilance variable not found in the variable list!\n");
+	dX_printf(0, "\nEquivilance variable not found in the variable list!\n");
 	exit(0);
    return 0;
 }
@@ -104,12 +104,12 @@ int *getANDLiterals(int v, int *variables, int length) {
 			else if (set_variable (true_and, variables[x], 0) == false_ptr)
 			  literals[x] = variables[x];
 			else {
-				dE_printf2("\nERROR: Function %d is incorrectly labeled type AND= or OR=\n", v);
+				dX_printf(0, "\nERROR: Function %d is incorrectly labeled type AND= or OR=\n", v);
 				exit(1);
 			}
 		}
 		if (validated == 0)	{
-			dE_printf2("\nERROR: Equivalence variable not correct in function %d!\n", v);
+			dX_printf(0, "\nERROR: Equivalence variable not correct in function %d!\n", v);
 			exit(1);
 		}
 	} else {
@@ -465,7 +465,7 @@ void Smurfs_to_BDD () {
 			}
 			vars[x].andor = PLAINXOR;
 		} else {
-			dE_printf2("\nProblem reading in smurf file on function %d\n", line);
+			dX_printf(0, "\nProblem reading in smurf file on function %d\n", line);
 			exit (1);
 		}
 	}

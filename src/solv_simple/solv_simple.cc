@@ -211,7 +211,7 @@ int Simple_LSGB_Heuristic() {
 	}
 	
    if(nBestVble == 0) {
-		dE_printf1 ("Error in heuristic routine:  No uninstantiated variable found\n");
+		dX_printf(0, "Error in heuristic routine:  No uninstantiated variable found\n");
 		assert(0);
 		exit (1);
    }
@@ -290,7 +290,7 @@ int Simple_PMVSIDS_Heuristic() {
 	}
 	
    if(nBestVble == 0) {
-		dE_printf1 ("Error in heuristic routine:  No uninstantiated variable found\n");
+		dX_printf(0, "Error in heuristic routine:  No uninstantiated variable found\n");
 		assert(0);
 		exit (1);
    }
@@ -344,7 +344,7 @@ int Simple_DC_Heuristic() { //Simple Don't Care Heuristic
    }
 	
    if(nBestVble == 0) {
-		dE_printf1 ("Error in heuristic routine:  No uninstantiated variable found\n");
+		dX_printf(0, "Error in heuristic routine:  No uninstantiated variable found\n");
 		assert(0);
 		exit (1);
    }
