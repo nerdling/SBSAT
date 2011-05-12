@@ -302,7 +302,7 @@ void DisplayBacktrackInfo(double &fPrevEndTime, double &fStartTime)
 	      fprintf(stderr, "%s%s", number, back);
       } else {
          if (DEBUG_LVL >= 1) {
-	      d0_printf3("%s%s", number, back);
+	      dX_printf(0, "%s%s", number, back);
 	      fflush(stddbg);
          }
       }

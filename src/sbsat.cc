@@ -237,7 +237,7 @@ ite_final(int ret)
             ite_counters_f[BRANCHER_TIME]);
    } else {
       if (DEBUG_LVL > 0) {
-         d0_printf2("%s\n", result_string);
+         dX_printf(0, "%s\n", result_string);
          d2_printf2("Total Time: %4.3f \n", get_runtime());
       } else {
          if (competition_enable == 0) {
