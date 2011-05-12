@@ -6,7 +6,7 @@ void SetVisitedMINMAXState(void *pState, int value) {
    MINMAXStateEntry *pMINMAXState = (MINMAXStateEntry *)pState;
    assert(pMINMAXState->cType == FN_MINMAX);
    if(pMINMAXState->visited != value) {
-      d7_printf3("Marking visited=%d of MINMAX State %p\n", value, pMINMAXState);
+      dX_printf(7, "Marking visited=%d of MINMAX State %p\n", value, pMINMAXState);
       pMINMAXState->visited = value;
    }
 }
@@ -17,7 +17,7 @@ void SetVisitedMINMAXCounterState(void *pState, int value) {
    SetVisitedMINMAXState(pMINMAXCounterState->pMINMAXState, value);
    MINMAXCounterStateEntry *tmp_minmax = pMINMAXCounterState;
    while(tmp_minmax != NULL && tmp_minmax->cType == FN_MINMAX_COUNTER) {
-      d7_printf3("Marking visited=%d of MINMAXCounter State %p\n", value, tmp_minmax);
+      dX_printf(7, "Marking visited=%d of MINMAXCounter State %p\n", value, tmp_minmax);
       tmp_minmax->visited = value;
       tmp_minmax = (MINMAXCounterStateEntry *)tmp_minmax->pTransition;
    }
@@ -108,6 +108,6 @@ int ApplyInferenceToMINMAXCounter(int nBranchVar, bool bBVPolarity, int nSmurfNu
 		arrSmurfStates[nSmurfNumber] = pMINMAXCounterState;
 	}
 	
-	d7_printf3("      MINMAXCounterSmurf %d transitioned to state %p\n", nSmurfNumber, arrSmurfStates[nSmurfNumber]);
+	dX_printf(7, "      MINMAXCounterSmurf %d transitioned to state %p\n", nSmurfNumber, arrSmurfStates[nSmurfNumber]);
 	return 1;
 }
