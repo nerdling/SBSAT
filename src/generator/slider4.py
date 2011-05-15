@@ -28,7 +28,7 @@ def slider4(size, sat = 1):
 
     items = [1, 2*s+3, 2*s+1, size/2-1-3*s, size/2-1, size/2]
     for i in range(size/2):
-        output.append('add_state1({0}, {1}, {2}, {3}, {4}, {5})'.format(*map(lambda x: x+i, items)))
+        output.append('add_state1({0}, {1}, {2}, {3}, {4}, {5})'.format(*[x+i for x in items]))
 
     output.append("#define add_state2(1, 2, 3, 4, 5, 6)")
     output.append("#xor(-1, xor(3, and(-4, 5), 4), equ(6, 2))")
@@ -38,10 +38,10 @@ def slider4(size, sat = 1):
     items = [1, 2*s-1, 2*s+2, size/2-1-4*s, size/2-1-2*s, size/2-1-s, size/2]
     row = 2
     for i in range(size-size/2):
-        output.append('add_state{0}({1}, {2}, {3}, {4}, {5}, {7})'.format(row, *map(lambda x: x+i, items)))
+        output.append('add_state{0}({1}, {2}, {3}, {4}, {5}, {7})'.format(row, *[x+i for x in items]))
         row = 3 if row == 2 else 2
 
-    return '\n'.join(output)
+    print '\n'.join(output)
 
 #main method. Option parsing
 def main():
@@ -56,7 +56,7 @@ def main():
         parser.error("Unexpected quantity of variables.")
     [size, sat] = map(int, args)
     
-    print slider4(size, sat)
+    slider4(size, sat)
 
 if __name__ == "__main__":
     main()
