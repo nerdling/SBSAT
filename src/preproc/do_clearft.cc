@@ -39,13 +39,13 @@
 #include "sbsat_preproc.h"
 
 int Do_Clear_FunctionType() {
-	d3_printf1("CLEARING FUNCTION TYPE");
+	dX_printf(3, "CLEARING FUNCTION TYPE");
 	for(int x = 0; x < nmbrFunctions; x++) {
 		functionType[x] = UNSURE;
 		equalityVble[x] = 0;
 	}
 	
-	d3_printf1("\n");
+	dX_printf(3, "\n");
    d2e_printf1("\r                                         ");
 	
 	int ret = PREP_NO_CHANGE;

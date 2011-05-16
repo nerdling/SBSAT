@@ -46,7 +46,7 @@ int ExQuantifyAnd();
 int Do_ExQuantifyAnd() {
 	MAX_EXQUANTIFY_CLAUSES += 5;
 	MAX_EXQUANTIFY_VARLENGTH +=cluster_step_increase;
-	d3_printf2 ("EXQUANTIFY AND %d - ", countBDDs());
+	dX_printf(3, "EXQUANTIFY AND %d - ", countBDDs());
 	int cofs = PREP_CHANGED;
 	int ret = PREP_NO_CHANGE;
 	affected = 0;
@@ -60,7 +60,7 @@ int Do_ExQuantifyAnd() {
 			return TRIV_UNSAT;
 		}
 	}
-	d3_printf1 ("\n");
+	dX_printf(3, "\n");
 	d2e_printf1 ("\r                                      ");
 
 	if(countBDDs() == 0) return TRIV_SAT;
@@ -94,7 +94,7 @@ int ExQuantifyAnd () {
 	
 	rand_list *rlist = (rand_list*)ite_calloc(numinp+1, sizeof(rand_list), 9, "rlist");
 	
-	int amount_count;
+	int amount_count = 0;
 
 	for(int i = 1;i < numinp+1; i++) {
 		rlist[i].num = i;
@@ -122,7 +122,7 @@ int ExQuantifyAnd () {
                 str_length = dX_printf(3, p);
             }
 			if (nCtrlC) {
-				d3_printf1("Breaking out of Anding Existential Quantification\n");
+				dX_printf(3, "Breaking out of Anding Existential Quantification\n");
 				ret = PREP_NO_CHANGE;
 				nCtrlC = 0;
 				goto ea_bailout;
@@ -139,7 +139,7 @@ int ExQuantifyAnd () {
 			if(num_funcs_var_occurs[i] == 0) {
 				continue;
 				//Variable dropped out, set it to True.
-				//d3_printf3("\n%d dropped out, %d=T\n", i, i);
+				//dX_printf(3, "\n%d dropped out, %d=T\n", i, i);
 				//str_length = 0;
 				BDDNode *inferBDD = ite_var(i);
 				int bdd_length = 0;
@@ -208,9 +208,9 @@ int ExQuantifyAnd () {
 					int h = variables[j].num[l];
 					if (num_funcs_var_occurs[h] == 1) {
 						for(int iter = 0; iter<str_length; iter++)
-						  d3_printf1("\b");
-						d3e_printf2 ("*{%d}", h);
-						d4_printf3 ("*{%s(%d)}", s_name(h), h);
+						  dX_printf(3, "\b");
+						dX_printf(3, "*{%d}", h);
+						dX_printf(4, "*{%s(%d)}", s_name(h), h);
 						str_length = 0;// strlen(p);
 						functions[j] = xquantify (functions[j], h);
 						variablelist[h].true_false = 2;
@@ -240,9 +240,9 @@ int ExQuantifyAnd () {
 				j = amount[i].head->num;
 				
 				for(int iter = 0; iter<str_length; iter++)
-				  d3_printf1("\b");
-				d3e_printf2 ("*{%d}", i);
-				d4_printf3 ("*{%s(%d)}", s_name(i), i);
+				  dX_printf(3, "\b");
+				dX_printf(3, "*{%d}", i);
+				dX_printf(4, "*{%s(%d)}", s_name(i), i);
 				str_length = 0;// strlen(p);
 				functions[j] = xquantify (functions[j], i);
 				variablelist[i].true_false = 2;

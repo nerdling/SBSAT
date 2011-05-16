@@ -67,7 +67,7 @@ DdNode *putite(int intnum, DdNode * bdd) {
 //		Here I need to return an integer if it is actually an integer...
 //		for the defines, and InititalBranch, and others that use integers.
 //		Though I could fix those to use integers correctly......maybe.....
-		d5_printf2("%s ", macros);
+		dX_printf(5, "%s ", macros);
 		if(intnum == 0) {
 			Cudd_Ref(false_bdd);
 			return false_bdd;
@@ -203,9 +203,9 @@ DdNode *putite(int intnum, DdNode * bdd) {
 				macros[i+1] = 0;
 				initbranch[branch_level].vars[initbranch[branch_level].num_initbranch_level].string = new char[i+2];
 				strcpy(initbranch[branch_level].vars[initbranch[branch_level].num_initbranch_level].string, macros);
-				d5_printf2(" %s", initbranch[branch_level].vars[initbranch[branch_level].num_initbranch_level].string);
+				dX_printf(5, " %s", initbranch[branch_level].vars[initbranch[branch_level].num_initbranch_level].string);
 				if(p == '%') {
-					d5_printf1("%%");
+					dX_printf(5, "%%");
 					expect_integer = 1;
 					DdNode *v1 = putite(intnum, bdd);
 					if(v1 == NULL) { fprintf(stderr, "\nKeyword 'initial_branch' needs a number between 0 and 100 after a '%%' (%s)...exiting:%d\n", macros, ite_line); exit (1);}
@@ -224,14 +224,14 @@ DdNode *putite(int intnum, DdNode * bdd) {
 						tweight = ((double)v1->index)/100.0;
 						Cudd_RecursiveDeref(BDD_Manager, v1);
 					}
-					d6_printf2(" %f  ", tweight);
+					dX_printf(6, " %f  ", tweight);
 					p = fgetc(finputfile);
 					if(p == EOF) {
 						fprintf(stderr, "\nUnexpected EOF (%s)...exiting:%d\n", macros, ite_line);
 						exit(1);
 					}
 					if(p == '.') {
-						d5_printf1("\b.");
+						dX_printf(5, "\b.");
 						expect_integer = 1;
 						DdNode *v1 = putite(intnum, bdd);
 						expect_integer = 0;
@@ -245,13 +245,13 @@ DdNode *putite(int intnum, DdNode * bdd) {
 							}
 							pweight = (double)v1->index;
 							Cudd_RecursiveDeref(BDD_Manager, v1);
-							for(int dec = 0; dec<strlen(macros)/*floor(pweight)!=0*/; dec++) {
+							for(unsigned int dec = 0; dec<strlen(macros)/*floor(pweight)!=0*/; dec++) {
 								pweight=pweight/10.0;
 							}
 							pweight=pweight/100.0;                                                                                          
 						}
 						tweight+=pweight;
-						d6_printf2(" %f ", tweight);
+						dX_printf(6, " %f ", tweight);
 						if(tweight > 100) { fprintf(stderr, "\nKeyword 'initial_branch' needs a number between 0 and 100 after a '%%' (%s)...exiting:%d\n", macros, ite_line); exit(1); }
 					} else {
 						ungetc(p, finputfile);
@@ -271,7 +271,7 @@ DdNode *putite(int intnum, DdNode * bdd) {
 				exit (1);
 			}
 			if(p == '#') {
-				d5_printf1("#");
+				dX_printf(5, "#");
 				if(found_level == 1) {
 					fprintf(stderr, "\nKeyword 'initial_branch' can only have one #level associated with it, found multiple (%s)...exiting:%d\n", macros, ite_line);
 					exit (1);
@@ -374,7 +374,7 @@ DdNode *putite(int intnum, DdNode * bdd) {
 		//        ite_defines[whereat].string[x] = macros[x];
 		//      ite_defines[whereat].string[x] = 0;      
 		// 
-		d4_printf2("#define %s ", ite_defines[whereat].string);
+		dX_printf(4, "#define %s ", ite_defines[whereat].string);
       int v = 0;
 		order = getNextIteSymbol (intnum, bdd);
 		if(order == ')') { fprintf(stderr, "\nKeyword 'define' missing argument before '#' (%s)...exiting:%d\n", macros, ite_line); exit (1); }
@@ -505,7 +505,7 @@ DdNode *putite(int intnum, DdNode * bdd) {
 		if(order == ')') { fprintf(stderr, "\n'Keyword 'truth_table' needs 2^%d, found 0...exiting:%d\n", ints[0], ite_line); exit(1); }
 
 		for(long i = 0; i < 1 << v1->index; i++) {
-			d5_printf2("%c", macros[i]);
+			dX_printf(5, "%c", macros[i]);
 			if(macros[i] == 'T' || macros[i] == 't') {
 				tv[i] = '1';
 			} else if(macros[i] == 'F' || macros[i] == 'f'){
@@ -516,8 +516,8 @@ DdNode *putite(int intnum, DdNode * bdd) {
 			}
 			tv[i+1] = 0;
 		}
-		int y = 0;
-		int level = 0;
+		//int y = 0;
+		//int level = 0;
       strcpy (macros, "truth_table");
 		fprintf(stderr, "\nKeyword 'truth_table' not currently supported in the 'ite' format...exiting:%d\n", ite_line);
 		exit(1);
@@ -607,7 +607,7 @@ DdNode *putite(int intnum, DdNode * bdd) {
 		}
 		if(max > numarguments) { fprintf(stderr, "\nKeyword 'minmax' cannot have less than the specified max=%d variables (%s)...exiting:%d\n", max, macros, ite_line); exit (1); }
 			
-		int set_true = 0;
+		//int set_true = 0;
 		qsort(var_list, numarguments, sizeof(int), abscompfunc);
 		for(int x = 0; x < numarguments-1; x++)
 		  if(var_list[x] == var_list[x+1]) {
@@ -643,7 +643,7 @@ DdNode *putite(int intnum, DdNode * bdd) {
 			Cudd_RecursiveDeref(BDD_Manager, v2);
 		}
 
-		int set_true = 0;
+		//int set_true = 0;
 		qsort(var_list, numarguments, sizeof(int), abscompfunc);
       strcpy (macros, "countT");
 		int numT = 0;
@@ -814,7 +814,7 @@ DdNode *putite(int intnum, DdNode * bdd) {
 	}
 	if (!strcasecmp (macros, "print_tree")) {
       DdNode * v1;
-      int which_zoom = 0;
+      //int which_zoom = 0;
       v1 = putite (intnum, bdd);
 		if(v1==NULL) { fprintf(stderr, "\nKeyword 'print_tree' expects 1 argument, found 0 (%s)...exiting:%d\n", macros, ite_line); exit (1); }
 		if(putite (intnum, bdd)!=NULL) { fprintf(stderr, "\nKeyword 'print_tree' expects 1 argument, found > 1 (%s)...exiting:%d\n", macros, ite_line); exit (1); }
@@ -1290,8 +1290,8 @@ char getNextIteSymbol (int &intnum, DdNode *&bdd) {
 					exit (1);
 				}
 			}
-			if(negate_it) d5_printf2("-%s ", macros);
-			if(!negate_it) d5_printf2("%s ", macros);
+			if(negate_it) dX_printf(5, "-%s ", macros);
+			if(!negate_it) dX_printf(5, "%s ", macros);
 			return 'm';
 		}
       if (p == '#') {
@@ -1408,13 +1408,13 @@ void iteloop () {
 
 	p = fgetc(finputfile);
 	 
-	d4_printf1("\n");
+	dX_printf(4, "\n");
 	
 	while (1) {		//(p = fgetc(finputfile))!=EOF) 
 		if(ite_line == 1) { d2_printf1("Reading 2"); }
       else {
 			d2e_printf2("\rReading %d ", ite_line);
-			d4_printf2("Reading %d ", ite_line);
+			dX_printf(4, "Reading %d ", ite_line);
 		}
 		if (p == '\n') {
 			p = fgetc(finputfile);
@@ -1422,7 +1422,7 @@ void iteloop () {
 				goto Exit;
 			}
 			ite_line++;
-			d4_printf1("\r");
+			dX_printf(4, "\r");
 			continue;
 		}
       if (p == ';') {
@@ -1432,7 +1432,7 @@ void iteloop () {
 					goto Exit;
 				}
 			}
-			d4_printf1("\r");
+			dX_printf(4, "\r");
 			continue;
 		}
 		if (p == '	' || p == ' ' || p == ')' || p == '(') {
@@ -1447,7 +1447,7 @@ void iteloop () {
 				goto Exit;
 			}
 				  
-			d4_printf1("\r");
+			dX_printf(4, "\r");
 			continue;
 		}
 		if (p == '*') {
@@ -1468,7 +1468,7 @@ void iteloop () {
 					exit (1);
 				}
 			} else Cudd_RecursiveDeref(BDD_Manager, temp);
-			d4_printf1("*");
+			dX_printf(4, "*");
 		} else {
 			ungetc (p, finputfile);
 			if (p == ';')
@@ -1489,8 +1489,8 @@ void iteloop () {
 				}
 			} else Cudd_RecursiveDeref(BDD_Manager, temp);
 		}
-      D_5(
-      if ((strcasecmp (macros, "pprint_tree"))
+      if (DEBUG_LVL >= 5) {
+        if ((strcasecmp (macros, "pprint_tree"))
 			 && (strncasecmp (macros, "print_", 6))
 			 && (strcasecmp (macros, "define"))
 			 && (strcasecmp (macros, "order"))
@@ -1499,8 +1499,8 @@ void iteloop () {
 			fprintf(stddbg, "BDD $%d: ", nmbrFunctions);
 			//SEAN!!! Add this back when we can support it
 			//printBDDfile (BDD_List[nmbrFunctions - 1], stddbg);
-		}
-      )
+        }
+      }
 
 		p = fgetc (finputfile);
       if (p != '\n') {
@@ -1526,7 +1526,7 @@ void iteloop () {
 			if (p != '\n')
 			  goto Exit;
 		}
-		d4_printf1("\n");
+		dX_printf(4, "\n");
 	}
 	Exit:;
 
@@ -1559,8 +1559,8 @@ void iteloop () {
 					initbranch_used[id] = 1;
 					arrVarTrueInfluences[id] = initbranch[i].vars[x].true_inf_weight;
 					arrVarChoiceLevels[initbranch[i].branch_level][nVarChoiceIter++] = id;
-					//d5_printf5("%d indep=%d %s %s\n", looper, id, getsym_i(id)->name, initbranch[i].vars[x].string);
-					d5_printf7("%d %d %s %s priority=%d true_inf=%4.6f\n", looper, id, getsym_i(id)->name, initbranch[i].vars[x].string, initbranch[i].branch_level, initbranch[i].vars[x].true_inf_weight);
+					//dX_printf(5, "%d indep=%d %s %s\n", looper, id, getsym_i(id)->name, initbranch[i].vars[x].string);
+					dX_printf(5, "%d %d %s %s priority=%d true_inf=%4.6f\n", looper, id, getsym_i(id)->name, initbranch[i].vars[x].string, initbranch[i].branch_level, initbranch[i].vars[x].true_inf_weight);
 					if(nVarChoiceIter >= max_CLevels) {
 						arrVarChoiceLevels[initbranch[i].branch_level] = (int *)ite_recalloc(arrVarChoiceLevels[initbranch[i].branch_level], max_CLevels, max_CLevels+10, sizeof(int), 9, "arrVarChoiceLevels[i]");
 						max_CLevels += 10;

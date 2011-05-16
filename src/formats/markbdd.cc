@@ -93,7 +93,7 @@ BDDNode *putbdd(int intnum, BDDNode * bdd)
 //		Here I need to return an integer if it is actually an integer...
 //		for the defines, and InititalBranch, and others that use integers.
 //		Though I could fix those to use integers correctly......maybe.....
-		d5_printf2("%s ", macros);
+		dX_printf(5, "%s ", macros);
 		if(intnum == 0) return false_ptr;
 		return ite_var (intnum);
 	}
@@ -204,9 +204,9 @@ BDDNode *putbdd(int intnum, BDDNode * bdd)
 				macros[i+1] = 0;
 				initbranch[branch_level].vars[initbranch[branch_level].num_initbranch_level].string = new char[i+2];
 				strcpy(initbranch[branch_level].vars[initbranch[branch_level].num_initbranch_level].string, macros);
-				d5_printf2(" %s", initbranch[branch_level].vars[initbranch[branch_level].num_initbranch_level].string);
+				dX_printf(5, " %s", initbranch[branch_level].vars[initbranch[branch_level].num_initbranch_level].string);
 				if(p == '%') {
-					d5_printf1("%%");
+					dX_printf(5, "%%");
 					expect_integer = 1;
 					BDDNode *v1 = putbdd(intnum, bdd);
 					if(v1 == NULL) { fprintf(stderr, "\nKeyword 'initial_branch' needs a number between 0 and 100 after a '%%' (%s)...exiting:%d\n", macros, markbdd_line); exit (1);}
@@ -224,14 +224,14 @@ BDDNode *putbdd(int intnum, BDDNode * bdd)
 						}
 						tweight = ((double)v1->variable)/100.0;
 					}
-					d6_printf2(" %f  ", tweight);
+					dX_printf(6, " %f  ", tweight);
 					p = fgetc(finputfile);
 					if(p == EOF) {
 						fprintf(stderr, "\nUnexpected EOF (%s)...exiting:%d\n", macros, markbdd_line);
 						exit(1);
 					}
 					if(p == '.') {
-						d5_printf1("\b.");
+						dX_printf(5, "\b.");
 						expect_integer = 1;
 						BDDNode *v1 = putbdd(intnum, bdd);
 						expect_integer = 0;
@@ -245,13 +245,13 @@ BDDNode *putbdd(int intnum, BDDNode * bdd)
 							}
 							pweight = (double)v1->variable;
 							
-							for(int dec = 0; dec<strlen(macros)/*floor(pweight)!=0*/; dec++) {
+							for(unsigned int dec = 0; dec<strlen(macros)/*floor(pweight)!=0*/; dec++) {
 								pweight=pweight/10.0;
 							}
 							pweight=pweight/100.0;                                                                                          
 						}
 						tweight+=pweight;
-						d6_printf2(" %f ", tweight);
+						dX_printf(6, " %f ", tweight);
 						if(tweight > 100) { fprintf(stderr, "\nKeyword 'initial_branch' needs a number between 0 and 100 after a '%%' (%s)...exiting:%d\n", macros, markbdd_line); exit(1); }
 					} else {
 						ungetc(p, finputfile);
@@ -271,7 +271,7 @@ BDDNode *putbdd(int intnum, BDDNode * bdd)
 				exit (1);
 			}
 			if(p == '#') {
-				d5_printf1("#");
+				dX_printf(5, "#");
 				if(found_level == 1) {
 					fprintf(stderr, "\nKeyword 'initial_branch' can only have one #level associated with it, found multiple (%s)...exiting:%d\n", macros, markbdd_line);
 					exit (1);
@@ -372,7 +372,7 @@ BDDNode *putbdd(int intnum, BDDNode * bdd)
 		//        defines[whereat].string[x] = macros[x];
 		//      defines[whereat].string[x] = 0;      
 		// 
-		d4_printf2("#define %s ", defines[whereat].string);
+		dX_printf(4, "#define %s ", defines[whereat].string);
       int v = 0;
 		order = getNextSymbol (intnum, bdd);
 		if(order == ')') { fprintf(stderr, "\nKeyword 'define' missing argument before '#' (%s)...exiting:%d\n", macros, markbdd_line); exit (1); }
@@ -501,7 +501,7 @@ BDDNode *putbdd(int intnum, BDDNode * bdd)
 		if(order == ')') { fprintf(stderr, "\nKeyword 'truth_table' needs 2^%d, found 0...exiting:%d\n", ints[0], markbdd_line); exit(1); }
 
 		for(long i = 0; i < 1 << v1->variable; i++) {
-			d5_printf2("%c", macros[i]);
+			dX_printf(5, "%c", macros[i]);
 			if(macros[i] == 'T' || macros[i] == 't') {
 				tv[i] = '1';
 			} else if(macros[i] == 'F' || macros[i] == 'f'){
@@ -623,7 +623,7 @@ BDDNode *putbdd(int intnum, BDDNode * bdd)
 			} else {	fprintf(stderr, "\nKeyword 'countT' needs positive variables as arguments (%s)...exiting:%d\n", macros, markbdd_line); exit (1); }
 		}
 
-		int set_true = 0;
+		//int set_true = 0;
 		qsort(var_list, numarguments, sizeof(int), abscompfunc);
       strcpy (macros, "countT");
 		int numT = 0;
@@ -1103,8 +1103,8 @@ char getNextSymbol (int &intnum, BDDNode *&bdd) {
 					exit (1);
 				}
 			}
-			if(negate_it) d5_printf2("-%s ", macros);
-			if(!negate_it) d5_printf2("%s ", macros);
+			if(negate_it) dX_printf(5, "-%s ", macros);
+			if(!negate_it) dX_printf(5, "%s ", macros);
 			return 'm';
 		}
       if (p == '#') {
@@ -1212,13 +1212,13 @@ void bddloop () {
 
 	p = fgetc(finputfile);
 	 
-	d4_printf1("\n");
+	dX_printf(4, "\n");
 	
 	while (1) {		//(p = fgetc(finputfile))!=EOF) 
 		if(markbdd_line == 1) { d2_printf1("Reading 2"); }
       else {
 			d2e_printf2("\rReading %d ", markbdd_line);
-			d4_printf2("Reading %d ", markbdd_line);
+			dX_printf(4, "Reading %d ", markbdd_line);
 		}
 		if (p == '\n') {
 			p = fgetc(finputfile);
@@ -1226,7 +1226,7 @@ void bddloop () {
 				goto Exit;
 			}
 			markbdd_line++;
-			d4_printf1("\r");
+			dX_printf(4, "\r");
 			continue;
 		}
       if (p == ';') {
@@ -1236,7 +1236,7 @@ void bddloop () {
 					goto Exit;
 				}
 			}
-			d4_printf1("\r");
+			dX_printf(4, "\r");
 			continue;
 		}
 		if (p == '	' || p == ' ' || p == ')' || p == '(') {
@@ -1251,7 +1251,7 @@ void bddloop () {
 				goto Exit;
 			}
 				  
-			d4_printf1("\r");
+			dX_printf(4, "\r");
 			continue;
 		}
 		if (p == '*') {
@@ -1272,7 +1272,7 @@ void bddloop () {
 					exit (1);
 				}
 			}
-			d4_printf1("*");
+			dX_printf(4, "*");
 		} else {
 			ungetc (p, finputfile);
 			if (p == ';')
@@ -1293,8 +1293,8 @@ void bddloop () {
 				}
 			}
 		}
-      D_5(
-      if ((strcasecmp (macros, "pprint_tree"))
+      if (DEBUG_LVL >= 5) {
+        if ((strcasecmp (macros, "pprint_tree"))
 			 && (strncasecmp (macros, "print_", 6))
 			 && (strcasecmp (macros, "define"))
 			 && (strcasecmp (macros, "order"))
@@ -1303,8 +1303,8 @@ void bddloop () {
 			fprintf(stddbg, "BDD $%d: ", nmbrFunctions);
 			printBDDfile (functions[nmbrFunctions - 1], stddbg);
 			//fprintf(stddbg, "\n");
-		}
-      )
+        }
+      }
 
 		p = fgetc (finputfile);
       if (p != '\n') {
@@ -1330,7 +1330,7 @@ void bddloop () {
 			if (p != '\n')
 			  goto Exit;
 		}
-		d4_printf1("\n");
+		dX_printf(4, "\n");
 	}
 	Exit:;
 
@@ -1363,8 +1363,8 @@ void bddloop () {
 					initbranch_used[id] = 1;
 					arrVarTrueInfluences[id] = initbranch[i].vars[x].true_inf_weight;
 					arrVarChoiceLevels[initbranch[i].branch_level][nVarChoiceIter++] = id;
-					//d5_printf5("%d indep=%d %s %s\n", looper, id, getsym_i(id)->name, initbranch[i].vars[x].string);
-					d5_printf7("%d %d %s %s priority=%d true_inf=%4.6f\n", looper, id, getsym_i(id)->name, initbranch[i].vars[x].string, initbranch[i].branch_level, initbranch[i].vars[x].true_inf_weight);
+					//dX_printf(5, "%d indep=%d %s %s\n", looper, id, getsym_i(id)->name, initbranch[i].vars[x].string);
+					dX_printf(5, "%d %d %s %s priority=%d true_inf=%4.6f\n", looper, id, getsym_i(id)->name, initbranch[i].vars[x].string, initbranch[i].branch_level, initbranch[i].vars[x].true_inf_weight);
 					if(nVarChoiceIter >= max_CLevels) {
 						arrVarChoiceLevels[initbranch[i].branch_level] = (int *)ite_recalloc(arrVarChoiceLevels[initbranch[i].branch_level], max_CLevels, max_CLevels+10, sizeof(int), 9, "arrVarChoiceLevels[i]");
 						max_CLevels += 10;

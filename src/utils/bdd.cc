@@ -189,7 +189,7 @@ BDDNode *MinMaxBDD(int *vars, int min, int max, int total_vars, int set_true) {
 	if(max < min) return false_ptr;
    
 	// make sure vars are sorted;
-   //d4_printf5("MinMaxBDD(int *vars, int min=%d, int max=%d, int total_vars=%d, int set_true=%d)\n", min, max, total_vars, set_true);
+   //dX_printf(4, "MinMaxBDD(int *vars, int min=%d, int max=%d, int total_vars=%d, int set_true=%d)\n", min, max, total_vars, set_true);
    qsort(vars, total_vars, sizeof(int), revcompfunc);
    for(i=1;i<total_vars;i++) assert(vars[i] < vars[i-1]);
    BDDNode **arr = (BDDNode**)ite_calloc(total_vars+1, sizeof(BDDNode*), 2, "MinMaxBDD");
@@ -473,7 +473,7 @@ int splitXors() {
 		if(length[x] <= functionTypeLimits[PLAINXOR] || functionType[x]!=UNSURE) continue; //???
 		BDDNode *xdd = bdd2xdd(functions[x]);		
 		countSingleXors(xdd, xor_vars, nonxor_vars);
-		d5_printf2("\n%d: ", x);
+		dX_printf(5, "\n%d: ", x);
       /*
       D_4(
          printBDDfile(xdd, stddbg);
@@ -482,13 +482,13 @@ int splitXors() {
 		BDDNode *ands = true_ptr;
 		BDDNode *xor_part = false_ptr;
 		int y = 0;
-	   d5_printf2("%d: non-linear: ", x);
+	   dX_printf(5, "%d: non-linear: ", x);
 		for(y=0; nonxor_vars[y]!=0; y++) {
-			d5_printf2("%d ", nonxor_vars[y]);
+			dX_printf(5, "%d ", nonxor_vars[y]);
 		}
-	   d5_printf2("\n%d linear: ", x);
+	   dX_printf(5, "\n%d linear: ", x);
 		for(y=0; xor_vars[y]!=0; y++) {
-			d5_printf2("%d ", xor_vars[y]);
+			dX_printf(5, "%d ", xor_vars[y]);
 			ands = ite_and(ands, ite_var(-xor_vars[y]));
 			xor_part = ite_xor(xor_part, ite_var(xor_vars[y]));
 		}
@@ -496,21 +496,21 @@ int splitXors() {
       
 		//if(IS_TRUE_FALSE(xor_part)) continue; /* unnecessary */
 		BDDNode *nonxor_part = gcf(functions[x], ands);
-      D_5(
-         //d4_printf1("\n");
+      if (DEBUG_LVL >= 5) {
+         //dX_printf(4, "\n");
          //printBDDfile(functions[x], stddbg);
-         d5_printf1("\n");
+         dX_printf(5, "\n");
          printBDDfile(nonxor_part, stddbg);
-         d5_printf1("\n");
+         dX_printf(5, "\n");
          printBDDfile(xor_part, stddbg);
-      )
+      }
 
 
       if(IS_TRUE_FALSE(nonxor_part)) {
          //functionType[x] = PLAINXOR; /* mark it as plain exor */
          continue;
       }
-      d4_printf2("Adding split function %d\n", x);
+      dX_printf(4, "Adding split function %d\n", x);
       symrec *s_ptr = tputsym(SYM_VAR);
 
 		total_vars++;
@@ -1033,7 +1033,7 @@ BDDNode *strengthen_fun(BDDNode *bddNmbr1, BDDNode *bddNmbr2)
 	unravelBDD(&y, &tempint_max, &tempint, bddNmbr1);
 	if (y != 0) qsort (tempint, y, sizeof (int), compfunc);
 	int length1 = y;
-	int *vars1;
+	int *vars1 = NULL;
 	if(length1 > 0) {
 		vars1 = new int[length1+1];
 		for(int i = 0; i < y; i++)
@@ -1044,7 +1044,7 @@ BDDNode *strengthen_fun(BDDNode *bddNmbr1, BDDNode *bddNmbr2)
 	unravelBDD(&y, &tempint_max, &tempint, bddNmbr2);
 	if (y != 0) qsort (tempint, y, sizeof (int), compfunc);
 	int length2 = y;
-	int *vars2;
+	int *vars2 = NULL;
 	if(length2 > 0){
 		vars2 = new int[length2+1];
 		for(int i = 0; i < y; i++)

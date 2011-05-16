@@ -74,7 +74,7 @@ InitLemmaSpacePool(int at_least) {
 
   arrLemmaSpace = tmp_lemmaspace_pool->memory;
   if (!arrLemmaSpace) {
-      dE_printf1("Unable to allocate lemma space");
+      dX_printf(0, "Unable to allocate lemma space");
       exit(1);
   }
 

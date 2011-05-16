@@ -83,8 +83,8 @@ InitVarMap()
   /* temporary variables (xor) */
   nNumVariables += (total_vars - numinp);
 
-  d3_printf4("Solver vars: %d/%d (not used: %d)\n", nNumVariables-1, total_vars, total_vars-nNumVariables+1);
-  d3_printf4("Indep/Dep vars: %d/%d (other vars: %d)\n", nIndepVars, nDepVars, nNumVariables-1-nIndepVars-nDepVars);
+  dX_printf(3, "Solver vars: %d/%d (not used: %d)\n", nNumVariables-1, total_vars, total_vars-nNumVariables+1);
+  dX_printf(3, "Indep/Dep vars: %d/%d (other vars: %d)\n", nIndepVars, nDepVars, nNumVariables-1-nIndepVars-nDepVars);
 
   /* init mapping arrays */
   arrSolver2IteVarMap = (int *)ite_calloc(nNumVariables, sizeof(int), 2, "solver mapping(s2i)");

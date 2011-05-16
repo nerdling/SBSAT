@@ -176,11 +176,11 @@ VerifySolution()
 
   if (!nSatisfied)
     {
-      dE_printf1("ERROR -- Solution verification failed!\n");
+      dX_printf(0, "ERROR -- Solution verification failed!\n");
     }
   else
     {
-      d5_printf1("Solution verified.\n");
+      dX_printf(5, "Solution verified.\n");
     }
 
   return nSatisfied;

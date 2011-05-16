@@ -41,7 +41,7 @@
 int DepCluster();
 
 int Do_DepCluster() {
-   d3_printf1("DEPENDENT CLUSTERING - ");
+   dX_printf(3, "DEPENDENT CLUSTERING - ");
    int cofs = PREP_CHANGED;
    int ret = PREP_NO_CHANGE;
 	affected = 0;
@@ -57,7 +57,7 @@ int Do_DepCluster() {
 		}
 	}
 	
-	d3_printf1 ("\n");
+	dX_printf(3, "\n");
 	d2e_printf1 ("\r                                                   ");
 	return ret;
 }
@@ -107,7 +107,7 @@ int DepCluster () {
       
 		if(i % 100 == 0) {
 			if (nCtrlC) {
-				d3_printf1("\nBreaking out of Dependent Clustering\n");
+				dX_printf(3, "\nBreaking out of Dependent Clustering\n");
 				nCtrlC = 0;
 				break;
 			}

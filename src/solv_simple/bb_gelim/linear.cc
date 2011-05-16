@@ -209,7 +209,7 @@ ITE_INLINE int precomputed16_bitcount (VecType n){
 
 
 void LSGBXORGElimTableGetHeurScore(XORGElimTableStruct *x) {
-	d7_printf1("    Checking the LSGBXORGElimTableGetHeurScore\n");
+	dX_printf(7, "    Checking the LSGBXORGElimTableGetHeurScore\n");
 	//printLinearN(x);
 	VecType *vn = (VecType*)(&(((unsigned char*)(x->frame))[vecs_v_ref]));
 	int32_t *last_block = (int32_t*)(&(((unsigned char*)(x->frame))[column_ref]));
@@ -458,7 +458,7 @@ ITE_INLINE int rediagonalizeXORGElimTable(XORGElimTableStruct *x, VecType *vec, 
 int addRowXORGElimTable (XORGElimTableStruct *x, void *pVector, int nVars, int *pnVarlist) {
 	assert(nVars > 1);
 
-	d7_printf1("    Checking the addRowXORGElimTable\n");
+	dX_printf(7, "    Checking the addRowXORGElimTable\n");
 	
 	if(x->num_vectors >= x->no_funcs) {
 		allocXORGElimTable(x, x->num_vectors+1);
@@ -505,7 +505,7 @@ int addRowXORGElimTable (XORGElimTableStruct *x, void *pVector, int nVars, int *
 int ApplyInferenceToXORGElimTable (XORGElimTableStruct *x, int nVar, bool bValue) {
 	int v;
 
-	d7_printf1("    Checking the XORGETable\n");
+	dX_printf(7, "    Checking the XORGETable\n");
 
 	//printLinearN(x);
 	

@@ -62,7 +62,7 @@ int Do_Find_FunctionType() {
 		}
 	}
 
-	d3_printf1("\n");
+	dX_printf(3, "\n");
    d2e_printf1("\r                                         ");
 	
 	int ret = PREP_NO_CHANGE;

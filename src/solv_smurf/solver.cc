@@ -90,13 +90,13 @@ solve_init()
 {
   int ret = SOLV_UNKNOWN;
 
-  d9_printf1("InitSolver\n");
+  dX_printf(9, "InitSolver\n");
 
   
   if (BREAK_XORS) {
   // change splitXors to add two new functions into functions array to complement/replace the existing smurf
      int total_vars = splitXors();
-     d9_printf3("Split(%ld) returned %d\n", numinp, total_vars);
+     dX_printf(9, "Split(%ld) returned %d\n", numinp, total_vars);
      numinp = total_vars;
   }
 
@@ -133,9 +133,9 @@ solve_init()
 void
 solve_free()
 {
-  d5_printf1("FreeSolver\n");
+  dX_printf(5, "FreeSolver\n");
 
-  d4_printf5("SMURF States Statistic(total %ld): %ld/%ld (%f hit rate)\n",
+  dX_printf(4, "SMURF States Statistic(total %ld): %ld/%ld (%f hit rate)\n",
         (long)(ite_counters[SMURF_NODE_NEW]),
         (long)(ite_counters[SMURF_NODE_FIND] - ite_counters[SMURF_NODE_NEW]),
         (long)(ite_counters[SMURF_NODE_FIND]),
@@ -182,7 +182,7 @@ HeuristicInit()
                case 'R': procHeurInit = HrLSGBWInit; break;
                case 'd': procHeurInit = HrLSGBWInit; break;
                case 0: procHeurInit = HrLSGBInit; break;
-               default: dE_printf2("error: Unknown LSGB type heuristic %s\n", sHeuristic+1);
+               default: dX_printf(0, "error: Unknown LSGB type heuristic %s\n", sHeuristic+1);
               }
               break;
     case 'l': procHeurInit = HrLemmaInit; break;
@@ -193,7 +193,7 @@ HeuristicInit()
     //case 'i': nHeuristic = INTERACTIVE_HEURISTIC; break;
     //case 'm': nHeuristic = STATE_HEURISTIC; break;
     default: 
-              dE_printf2("error: Unknown heuristic type %c\n", sHeuristic[0]); 
+              dX_printf(0, "error: Unknown heuristic type %c\n", sHeuristic[0]); 
               exit(1);
               break;
    }

@@ -96,7 +96,7 @@ CreateFunctions()
 				arrSolverVarsInFunction[i][0] = length; 						
 			}
 		} else {
-			d4_printf3("Skipping function %d type %d\n", i, nFunctionType);
+			dX_printf(4, "Skipping function %d type %d\n", i, nFunctionType);
 			FnCreateSkippedFunction(i, nFunctionType);
 			nNumUnresolvedFunctions--;
 		}
@@ -106,9 +106,9 @@ CreateFunctions()
    double fEndTime = get_runtime();
    ite_counters_f[BUILD_SMURFS] = fEndTime - fStartTime;
    
-   d3_printf2 ("Time to build functions:  %4.3f secs.\n", 
+   dX_printf(3,"Time to build functions:  %4.3f secs.\n", 
          ite_counters_f[BUILD_SMURFS]);
-   d4_printf4("SMURF States Statistic: %ld/%ld (%f hit rate)\n",
+   dX_printf(4, "SMURF States Statistic: %ld/%ld (%f hit rate)\n",
          (long)(ite_counters[SMURF_NODE_FIND] - ite_counters[SMURF_NODE_NEW]),
          (long)(ite_counters[SMURF_NODE_FIND]),
          ite_counters[SMURF_NODE_FIND]==0?0:1.0 * (ite_counters[SMURF_NODE_FIND] - ite_counters[SMURF_NODE_NEW]) / ite_counters[SMURF_NODE_FIND]);

@@ -41,7 +41,7 @@
 int SafeAssign_Loop();
 
 int Do_SafeAssign() {
-	d3_printf2 ("SAFE ASSIGN %d - ", countBDDs());
+	dX_printf(3, "SAFE ASSIGN %d - ", countBDDs());
 	int cofs = PREP_CHANGED;
 	int ret = PREP_NO_CHANGE;
 	affected = 0;
@@ -55,7 +55,7 @@ int Do_SafeAssign() {
 			return TRIV_UNSAT;
 		}
 	}
-	d3_printf1 ("\n");
+	dX_printf(3, "\n");
 	d2e_printf1 ("\r                                      ");
 	
 	if(ret == PREP_CHANGED && countBDDs() == 0) return TRIV_SAT;
@@ -70,7 +70,7 @@ typedef struct rand_list {
 int SafeAssign_Loop() {
 	int ret = PREP_NO_CHANGE;
 
-	BDDNode *Quantify;
+	//BDDNode *Quantify = NULL;
 	int count1 = 0;
 	
 	if (enable_gc) bdd_gc(); //Hit it!
@@ -78,7 +78,7 @@ int SafeAssign_Loop() {
 		char p[100];
 		
 		if (nCtrlC) {
-			d3_printf1("Breaking out of SafeAssign\n");
+			dX_printf(3, "Breaking out of SafeAssign\n");
 			ret = PREP_NO_CHANGE;
 			nCtrlC = 0;
 			goto sa_bailout;

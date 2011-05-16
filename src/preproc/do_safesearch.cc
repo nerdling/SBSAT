@@ -48,7 +48,7 @@ int VARS_PER_BDD_LIMIT = 0;
 int BDDS_PER_VAR_LIMIT = 5;
 
 int Do_SafeSearch() {
-	d3_printf2 ("SAFE SEARCH CLUSTERING %d - ", countBDDs());
+	dX_printf(3, "SAFE SEARCH CLUSTERING %d - ", countBDDs());
 	int cofs = PREP_CHANGED;
 	int ret = PREP_NO_CHANGE;
 	affected = 0;
@@ -62,7 +62,7 @@ int Do_SafeSearch() {
 			return TRIV_UNSAT;
 		}
 	}
-	d3_printf1 ("\n");
+	dX_printf(3, "\n");
 	d2e_printf1 ("\r                                      ");
 	
 	if(ret == PREP_CHANGED && countBDDs() == 0) return TRIV_SAT;
@@ -169,7 +169,7 @@ int SafeSearchPreCluster_Loop() {
                 str_length = dX_printf(3, p);
             }
 			if (nCtrlC) {
-				d3_printf1("Breaking out of SafeSearch Clustering\n");
+				dX_printf(3, "Breaking out of SafeSearch Clustering\n");
 				ret = PREP_NO_CHANGE;
 				nCtrlC = 0;
 				goto ss_bailout;

@@ -107,7 +107,7 @@ void Do_Flow() {
 	for(int x = 0; x <= numinp; x++) {
 		symrec *ptr = getsym_i(x);
 		var_score[x] = var_score[x] + 1;
-		d5_printf4("%d (%s) = %5.3f\n", x, (ptr&&ptr->name?ptr->name:"NULL"), var_score[x]);
+		dX_printf(5, "%d (%s) = %5.3f\n", x, (ptr&&ptr->name?ptr->name:"NULL"), var_score[x]);
 	}
 
 	ite_free((void**)&equ_funcs);
@@ -123,7 +123,7 @@ void Get_Cutx(int x, int *influence, int *equ_funcs, int depth) {
 		}
 	} else {
 		for(int y = 0; y < length[equ_funcs[x]]; y++) {
-//			d5_printf3("{%d %d}", x, y);
+//			dX_printf(5, "{%d %d}", x, y);
 			if(x != variables[equ_funcs[x]].num[y]) {
 				if(independantVars[variables[equ_funcs[x]].num[y]] == 1)
 				  influence[variables[equ_funcs[x]].num[y]]++;
@@ -234,16 +234,16 @@ void Do_Flow_Grouping() {
 	for(int x = 1; x <= numinp; x++) {
 		symrec *ptr = getsym_i(x);
 		var_score[x] = var_score[x] + 1; //So no score == 0
-		d5_printf5("%d{%d} (%s) = %5.3f ", x, influences[x].depth, (ptr&&ptr->name?ptr->name:"NULL"), var_score[x]);
+		dX_printf(5, "%d{%d} (%s) = %5.3f ", x, influences[x].depth, (ptr&&ptr->name?ptr->name:"NULL"), var_score[x]);
 		if(independantVars[x] == 0) {
 			for(int y = 0; y <= indep_count; y++) {
 				if(influences[x].influence[y] > 0) {
 					ptr = getsym_i(indep_mapping[y]);
-					d5_printf3("%d (%s), ", indep_mapping[y], (ptr&&ptr->name?ptr->name:"NULL"));
+					dX_printf(5, "%d (%s), ", indep_mapping[y], (ptr&&ptr->name?ptr->name:"NULL"));
 				}
 			}
 		}
-		d5_printf1("\n");
+		dX_printf(5, "\n");
 	}
 
 	/**********************************************************/
@@ -251,7 +251,7 @@ void Do_Flow_Grouping() {
 
 	int CutSize = 10;
 	
-	d5_printf2("\nCut Size of %d\n", CutSize);
+	dX_printf(5, "\nCut Size of %d\n", CutSize);
 	int *influence = (int *)ite_calloc(numinp+1, sizeof(int), 9, "influence");
 	
 	for(int x = 1; x <= numinp; x++) {
@@ -262,34 +262,34 @@ void Do_Flow_Grouping() {
 				for(int y = 1; y <= numinp; y++)
 				  influence[y] = 0;
 //				symrec *ptr = getsym_i(x);
-//				d5_printf5("%d{%d} (%s) = %5.3f ", x, influences[x].depth, (ptr&&ptr->name?ptr->name:"NULL"), var_score[x]);
+//				dX_printf(5, "%d{%d} (%s) = %5.3f ", x, influences[x].depth, (ptr&&ptr->name?ptr->name:"NULL"), var_score[x]);
 				Get_Cutx(x, influence, equ_funcs, curr_CutSize);
 				int temp_count = 0;
 				for(int y = 1; y <= numinp; y++) {
 					if(influence[y] > 0) {
 						temp_count++;
 //						ptr = getsym_i(y);
-//						d5_printf3("%d (%s), ", y, (ptr&&ptr->name?ptr->name:"NULL"));
+//						dX_printf(5, "%d (%s), ", y, (ptr&&ptr->name?ptr->name:"NULL"));
 					}
 				}
 				if(count > temp_count) {
 					count = temp_count;
 					smallest = curr_CutSize;
 					symrec *ptr = getsym_i(x);
-					d5_printf3("\n%d %d ", count, smallest);
-					d5_printf5("%d{%d} (%s) = %5.3f ", x, influences[x].depth, (ptr&&ptr->name?ptr->name:"NULL"), var_score[x]);
+					dX_printf(5, "\n%d %d ", count, smallest);
+					dX_printf(5, "%d{%d} (%s) = %5.3f ", x, influences[x].depth, (ptr&&ptr->name?ptr->name:"NULL"), var_score[x]);
 					for(int y = 1; y <= numinp; y++) {
 						if(influence[y] > 0) {
 							temp_count++;
 							ptr = getsym_i(y);
-							d5_printf3("%d (%s), ", y, (ptr&&ptr->name?ptr->name:"NULL"));
+							dX_printf(5, "%d (%s), ", y, (ptr&&ptr->name?ptr->name:"NULL"));
 						}
 					}
 				}
 			}
 		}
 	}
-	d5_printf1("\n");
+	dX_printf(5, "\n");
 	
 	ite_free((void **)&influence);
 	

@@ -84,7 +84,7 @@ CheckSmurfAuInferences(int nSmurfAuIndex, int *arrInferences, int nNumInferences
       else // if (nCurrentAtomValue != value)
       {
          // Conflict -- error
-         dE_printf1("Conflict:  Autarky Smurf Can't cause a conflict\n");
+         dX_printf(0, "Conflict:  Autarky Smurf Can't cause a conflict\n");
          assert(0);
 
          return ERR_BT_SMURF_AU;
@@ -142,7 +142,7 @@ UpdateRegularSmurfAu(int nSmurfAuIndex)
                   pTransitionAu->positiveInferences.nNumElts,
                   BOOL_TRUE)) {
          assert(0);
-         dE_printf1("Autarky Smurf contradiction\n");
+         dX_printf(0, "Autarky Smurf contradiction\n");
          exit(1);
          break;
       }
@@ -154,7 +154,7 @@ UpdateRegularSmurfAu(int nSmurfAuIndex)
                pTransitionAu->negativeInferences.nNumElts,
                BOOL_FALSE)) {
          assert(0);
-         dE_printf1("Autarky Smurf contradiction\n");
+         dX_printf(0, "Autarky Smurf contradiction\n");
          exit(1);
          break;
       }

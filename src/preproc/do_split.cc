@@ -47,13 +47,13 @@ char p[100];
 int res_var;
 
 int Do_Split() {
-   d3_printf1("SPLITTING LARGE FUNCTIONS - ");
+   dX_printf(3, "SPLITTING LARGE FUNCTIONS - ");
    int ret = PREP_NO_CHANGE;
    sprintf(p, "{0:0/%d}", nmbrFunctions);
    str_length = dX_printf(3, p);
 	ret = Split_Large ();	
 
-	d3_printf1("\n");
+	dX_printf(3, "\n");
    d2e_printf1("\r                                         ");
 	return ret;
 }
@@ -118,7 +118,7 @@ int Split_ref_counts() {
 	clear_all_bdd_flags();
 	for(int j = 0; j < nmbrFunctions; j++) {
 		if (functionType[j] == UNSURE && length[j] > do_split_max_vars) {
-			//d3_printf2("\n%d: ", j);			//printBDD(functions[j]);			//d3_printf1("\n");
+			//dX_printf(3, "\n%d: ", j);			//printBDD(functions[j]);			//dX_printf(3, "\n");
 			
 			marknodes(functions[j]);
 			functions[j]->flag = 0;
@@ -216,7 +216,7 @@ void nCk_Sets(int n, int k, int *vars, int *whereat, int n_orig, BDDNode *bdd, i
 	if(length[orig_bdd] <= target_k) return;
 	if (n==0 && k==0) {
 		//printBDD(tempBDD);
-		//d3_printf1("\n");
+		//dX_printf(3, "\n");
 		for(int i = 0; i < (*whereat) && bdd != true_ptr; i++)
 		  bdd = pruning(bdd, BDDFuncs[i]);
 		if(bdd != true_ptr) {				
@@ -225,7 +225,7 @@ void nCk_Sets(int n, int k, int *vars, int *whereat, int n_orig, BDDNode *bdd, i
 			if(tempBDD == functions[orig_bdd]) return;
 			functions[orig_bdd] = tempBDD;
 			Rebuild_BDDx(orig_bdd);
-			//d3_printf2("whereat = %d: \n", (*whereat));
+			//dX_printf(3, "whereat = %d: \n", (*whereat));
 			BDDFuncs[(*whereat)] = bdd;
 			(*whereat)++;
 			if((*whereat) >= max_bdds) {
@@ -291,7 +291,7 @@ int Split_Large () {
         }
 		if (j % 100 == 0) {
 			if (nCtrlC) {
- 				d3_printf1("\nBreaking out of Splitting");
+ 				dX_printf(3, "\nBreaking out of Splitting");
 				//for(; j < nmbrFunctions; j++) SPLIT_REPEATS[x] = 0; ??
 				nCtrlC = 0;
 				break;
@@ -302,26 +302,26 @@ int Split_Large () {
 			bool OLD_DO_INFERENCES = DO_INFERENCES;
 			DO_INFERENCES = 0;
 			
-			//d3_printf2("\n%d: ", j);
+			//dX_printf(3, "\n%d: ", j);
 			//printBDD(functions[j]);
-			//d3_printf1("\n");
+			//dX_printf(3, "\n");
 			
 			//Maximum Split Size:
 			//int num_splits = nCk(length[j], k_size);
-			//d3_printf4("%d C %d = %d\n", length[j], k_size, num_splits);
+			//dX_printf(3, "%d C %d = %d\n", length[j], k_size, num_splits);
 			
 			int whereat = 0;
 			if(findandset_fnType(j) == 1)
 			  continue;
 			
-			//d3_printf2("false paths:%d\n", countFalses (functions[j]));
+			//dX_printf(3, "false paths:%d\n", countFalses (functions[j]));
 			int *vars_copy = new int[length[j]];
 			//This is necessary because variables[j].num is modified inside nCk_Sets
 			for(int i = 0; i < length[j]; i++)
 			  vars_copy[i] = variables[j].num[i];
 			nCk_Sets(length[j], k_size, vars_copy, &whereat, length[j], functions[j], j, k_size);
 			delete [] vars_copy;
-			//d3_printf2("whereat = %d: \n", whereat);
+			//dX_printf(3, "whereat = %d: \n", whereat);
 			
 			//add BDDFuncs to functions;
 			if(whereat > 0) {
@@ -415,9 +415,9 @@ int Split_Large () {
 			DO_INFERENCES = OLD_DO_INFERENCES;
 		}
 		
-		//d3_printf2("\n%d: ", j);
+		//dX_printf(3, "\n%d: ", j);
 		//printBDD(functions[j]);
-		//d3_printf1("\n");
+		//dX_printf(3, "\n");
 	}
 	sp_bailout:;
 	
