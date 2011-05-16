@@ -40,6 +40,7 @@
 #include <string>
 #include <sstream>
 #include <stdio.h>
+#include <iostream>
 
 using namespace std; 
 BDDNode *tmp_equ_var(BDDNode *p);
@@ -414,10 +415,11 @@ int GBReduceXors(){
   //THIS IS AWFUL, DO IT RIGHT!
   //system("sage ~/cryptosat/SBSAT/scripts/gb.sage " + ss.str().c_str());
   
-  char * sagecmd = ("sage ~/cryptosat/SBSAT/scripts/gb.sage " + ss.str()).c_str();
+  const char * sagecmd = ("sage ~/cryptosat/SBSAT/scripts/gb.sage " + ss.str()).c_str();
   FILE * sagepipe;
+
   if((sagepipe = popen(sagecmd,"r") == NULL)){
-    stderr << "Error: couldn't open sage pipe" << endl;
+    cerr << "Error: couldn't open sage pipe" << endl;
     return;
   }
   
