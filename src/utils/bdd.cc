@@ -414,7 +414,7 @@ int GBReduceXors(){
   
   //THIS IS AWFUL, DO IT RIGHT!
   //system("sage ~/cryptosat/SBSAT/scripts/gb.sage " + ss.str().c_str());
-  
+  /*
   const char * sagecmd = ("sage ~/cryptosat/SBSAT/scripts/gb.sage " + ss.str()).c_str();
   FILE * sagepipe;
 
@@ -433,7 +433,7 @@ int GBReduceXors(){
   while(ss.peek() != '['){
     ss.ignore(1);
   }
-  
+  */
   
   //Next:
   // replace original functions with generators of reduced GB.
