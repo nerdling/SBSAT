@@ -172,6 +172,8 @@ t_opt options[] = {
                 "Make use of special function limits during preprocessing"},
 { &BREAK_XORS, "", "break-xors", P_INT, V(i:0,"0"), V(i:1,"1"), VAR_NORMAL, 0, 
                 "Break XORS into linear and non-linear functions during search"},
+/*{ &GB_REDUCE_XORS, "", "gb-reduce-xors", P_INT, V(i:0,"0"), V(i:1,"1"), VAR_NORMAL, 0, 
+  "Reduce XORs by finding a Groebner basis as a preprocessing step"},*/
 
 
 /* 

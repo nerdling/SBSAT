@@ -163,12 +163,18 @@ ITE_INLINE int
 InitSolver()
 {
   d9_printf1("InitSolver\n");
-
+  
   if (BREAK_XORS) {
      total_vars = splitXors();
      d9_printf3("Split(%ld) returned %d\n", numinp, total_vars);
   } else {
      total_vars = numinp;
+  }
+
+
+  //cout << "Does this even get called? (solver dir)" <<endl; // NO?
+  if(GB_REDUCE_XORS){
+    GBReduceXors();
   }
 
   nNumVariables = 1; /* 0 => true, false */

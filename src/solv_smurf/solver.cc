@@ -92,14 +92,18 @@ solve_init()
 
   dX_printf(9, "InitSolver\n");
 
-  
+  //cout << "Does this even get called? (solv_smurf dir)" <<endl; //YES, it does!
   if (BREAK_XORS) {
   // change splitXors to add two new functions into functions array to complement/replace the existing smurf
      int total_vars = splitXors();
      dX_printf(9, "Split(%ld) returned %d\n", numinp, total_vars);
      numinp = total_vars;
   }
-
+  
+  //if(GB_REDUCE_XORS){
+    GBReduceXors();
+    //}
+  
   HeuristicInit();
 
   InitVarMap();
