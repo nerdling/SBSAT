@@ -66,7 +66,7 @@ int splitXors();
 void countSingleXors(BDDNode *, int *, int *);
 int are_oppos(BDDNode *, BDDNode *);
 
-void build_algebraic_func(BDDNode* xdd, stringstream& ss);
+int build_algebraic_func(BDDNode* xdd, stringstream& ss);
 int GBReduceXors();
 
 void SAT_to_CNF();
