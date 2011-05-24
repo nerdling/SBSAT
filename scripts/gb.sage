@@ -21,7 +21,14 @@ I = R.ideal([sage_eval(f,locals=vars) for f in sys.argv[2:]])
 
 B = I.groebner_basis();
 
-print B
+#print B
+
+#get the polynomials in ANF (basically just by distributing any terms
+#that can be distributed)
+
+ANF = [expand(f) for f in B]
+
+print ANF
 
 
 

@@ -419,8 +419,6 @@ int GBReduceXors(){
     //this is useful and it is deemed prudent, we can include sage with
     //sbsat, but that's an awful lot of bloat.
   
-    //THIS IS AWFUL, DO IT RIGHT!
-    //system("sage ~/cryptosat/SBSAT/scripts/gb.sage " + ss.str().c_str());
     cout << "max var is " << maxvar << endl;
     
     stringstream ss2;
@@ -452,14 +450,81 @@ int GBReduceXors(){
     }
   
     cout << "GBTEST: " << ss.str();
-  
-    //Next:
-    // replace original functions with generators of reduced GB.
+    
+    //ok, have the GB, now read the gb elements in and store as XDDs
+    //GB should be in ANF
+    vector<BDDNode*> groebnerbasis = build_BDDs_from_sage(ss);
+    
   }
 }
 
+vector<BDDNode*> build_BDDs_from_sage(stringstream& ss){
+  vector<BDDNode*> gb = vector<BDDNode*>();
+  char c = ss.peek();
+  while(ss.good() && c!=']'){//there's still stuff in ss
+    string xorstr;
+    getline(ss,xorstr,',');
+    xorstr = strip_whitespace(xorstr);
+    xorstr = strip_char(xorstr,']'); // in case we grab the bracket on
+				     // the last one.
+    BDDNode* xdd = parseXOR(xorstr);
+    gb.push_back(xdd);
+    c = ss.peek();
+  }
+  return gb;
+}
 
-//vector<BDDNode*> 
+string strip_whitespace(string str){
+  //  for(int i = str.find(' '); (i!=string::npos) && (i < str.length); i = str.find(' ')){
+  str = strip_char(str,' ');
+  str = strip_char(str,'\n');
+  str = strip_char(str,'\t');
+  str = strip_char(str,'\r');
+  return str;
+}
+
+string strip_char(string str, char c){
+  int i = str.find(c);
+  while(i!=string::npos){
+    //strip all chars==c
+    str.replace(i,1,"");
+    i = str.find(c);
+  }
+  return str;
+}
+
+BDDNode* parseXOR(string xorstr){
+  int op_pos = xorstr.find('+');
+  if(op_pos == string::npos){ //no xor op
+    return parseAND(xorstr);
+  }else{
+    string lhs = xorstr.substr(0,op_pos);
+    string rhs = xorstr.substr(op_pos+1,xorstr.length()-op_pos);
+    BDDNode* lxdd = parseAND(lhs);
+    BDDNode* rxdd = parseXOR(rhs);
+    return xddxor(lxdd,rxdd);
+  }
+}
+
+BDDNode* parseAND(string andstr){
+  int op_pos = andstr.find('*');
+  if(op_pos == string::npos){ //no and op
+    // just vars or var^2
+    // so check for squares
+    // in GF(2), x^2 = (x && x) = x,
+    // so can just get rid of the powers.
+    op_pos = andstr.find('^');
+    andstr = andstr.substr(0,op_pos);
+    int varnum = atoi(andstr.substr(1,andstr.length()-1).c_str());
+    return ite_var(varnum);
+  }else{
+    string lhs = andstr.substr(0,op_pos);
+    string rhs = andstr.substr(op_pos+1,andstr.length()-op_pos);
+    BDDNode* lxdd = parseAND(lhs);
+    BDDNode* rxdd = parseAND(rhs);
+    return xddand(lxdd,rxdd);
+  }
+}
 
 //returns largest varnum
 int build_algebraic_func(BDDNode* xdd, stringstream& ss){
@@ -858,7 +923,6 @@ BDDNode *_and_dot(BDDNode *x, BDDNode *y)
     // this happens but not often enough to bring a speedup
     if (r == y->thenCase && e == y->elseCase) return y;
   } 
-
   if (r == e) return (r);
   return itetable_add_node(12, x, y, find_or_add_node(v, r, e));
   return find_or_add_node(v, r, e);
