@@ -101,9 +101,18 @@ solve_init()
   }
   
   //if(GB_REDUCE_XORS){
-    GBReduceXors();
+  GBReduceXors();
     //}
+  //cout << "TESTING PARSE FUNCTIONS" << endl;
+  //testing parse functions.
+  // string xorstr = "x200*x300 + x1000";//"x0*x1+x0*x3+x1*x2+x2*x3";
+
+  // xorstr = strip_whitespace(xorstr);
+  // BDDNode* testbdd[1] = {parseXOR(xorstr)};
+  // printBDDdot_stdout(testbdd,1);
   
+    //cout << endl << "DONE TESTING PARSE FUNCTIONS" << endl;
+	 
   HeuristicInit();
 
   InitVarMap();

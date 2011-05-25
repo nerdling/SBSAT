@@ -454,6 +454,26 @@ int GBReduceXors(){
     //ok, have the GB, now read the gb elements in and store as XDDs
     //GB should be in ANF
     vector<BDDNode*> groebnerbasis = build_BDDs_from_sage(ss);
+    cout << "GROEBNER BDDS:" << endl;
+    for(vector<BDDNode*>::iterator it = groebnerbasis.begin(); it != groebnerbasis.end(); it++){
+      printBDD(*it);
+      cout << endl;
+    }
+    cout << "END GROEBNER BDDS:" << endl;
+
+
+    //old xors just become "true"
+    //is this best way to "delete" functions???
+    /*    for(vector<int>::iterator it = xor_indxs.begin(); it != xor_indxs.end(); it++){
+      functions[*it] = true_ptr;
+      functionType[*it] = UNSURE;
+      }*/
+
+    //add gb to functions
+    for(vector<BDDNode*>::iterator it = groebnerbasis.begin(); it != groebnerbasis.end(); it++){
+      symrec *s_ptr = tputsym(SYM_VAR);
+      functions_add(*it,UNSURE,s_ptr->id); // check this
+    }
     
   }
 }

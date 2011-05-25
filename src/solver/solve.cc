@@ -172,7 +172,7 @@ InitSolver()
   }
 
 
-  //cout << "Does this even get called? (solver dir)" <<endl; // NO?
+  cout << "Does this even get called? (solver dir)" <<endl; // NO?
   if(GB_REDUCE_XORS){
     GBReduceXors();
   }
