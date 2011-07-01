@@ -4,6 +4,7 @@ env = Environment()
 
 conf = Configure(env)
 
+#uhmm
 def checkThings(headers, funcs):
     if not conf.CheckCXX():
         print('!! Your compiler and/or environment is not correctly configured.')
