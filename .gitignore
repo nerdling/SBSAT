@@ -1,4 +1,10 @@
+#OS Specific
 .DS_Store
+
+#SCONS
+.scon*
+
+#Project Stuff
 Makefile
 .deps
 config.log
