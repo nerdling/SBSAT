@@ -37,11 +37,7 @@
 
 #ifndef PROTOTYPES_H
 #define PROTOTYPES_H
-// this include and using stmt should be removed once move to scons is
-// complete.
-#include <sstream>
-#include <vector>
-using namespace std;
+
 
 double get_runtime();
 long get_memusage();
@@ -66,14 +62,6 @@ BDDNode *xddand(BDDNode *, BDDNode *);
 int splitXors();
 void countSingleXors(BDDNode *, int *, int *);
 int are_oppos(BDDNode *, BDDNode *);
-
-int build_algebraic_func(BDDNode* xdd, stringstream& ss);
-int GBReduceXors();
-vector<BDDNode*> build_BDDs_from_sage(stringstream& ss);
-BDDNode* parseXOR(string andstr);
-BDDNode* parseAND(string andstr);
-string strip_whitespace(string str);
-string strip_char(string str, char c);
 
 void SAT_to_CNF();
 void Smurfs_to_BDD();

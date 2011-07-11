@@ -40,12 +40,12 @@ void create_clause_from_SBSAT_solution(int *arrInferenceQueue, SmurfStack *arrSm
 
 ITE_INLINE
 void save_solution_simple(void) {
-	dX_printf(7, "      Solution found\n");
+	d7_printf1("      Solution found\n");
 
 	if (result_display_type) {
 		ite_counters[NUM_SOLUTIONS]++;
 		/* create another node in solution chain */
-		dX_printf(7, "      Recording solution\n");
+		d7_printf1("      Recording solution\n");
 
 		t_solution_info *tmp_solution_info;
 		tmp_solution_info = (t_solution_info*)calloc(1, sizeof(t_solution_info));
@@ -102,7 +102,7 @@ void save_solution_simple(void) {
 			|| ite_counters[NUM_SOLUTIONS]<(LONG64)save_sol
 			) {
 			solutions_overflow=1;
-			dX_printf(7, "Number of solutions is >= 2^64\n");
+			d7_printf1("Number of solutions is >= 2^64\n");
 		}
 	}
 }
@@ -123,12 +123,12 @@ void Calculate_Heuristic_Values() {
 	}
 	Calculate_Heuristic_Values_Hooks();
 	
-	dX_printf(7, "JHeuristic values:\n");
+	d7_printf1("JHeuristic values:\n");
 	for(int nVar = 1; nVar < SimpleSmurfProblemState->nNumVars; nVar++) {
-		dX_printf(7, " %d: %4.6f\n", nVar, SimpleSmurfProblemState->arrPosVarHeurWghts[nVar]);
-		dX_printf(7, "-%d: %4.6f\n", nVar, SimpleSmurfProblemState->arrNegVarHeurWghts[nVar]);
+		d7_printf3(" %d: %4.6f\n", nVar, SimpleSmurfProblemState->arrPosVarHeurWghts[nVar]);
+		d7_printf3("-%d: %4.6f\n", nVar, SimpleSmurfProblemState->arrNegVarHeurWghts[nVar]);
 	}
-	dX_printf(7, "\n");
+	d7_printf1("\n");
 }
 
 ITE_INLINE
@@ -211,7 +211,7 @@ int Simple_LSGB_Heuristic() {
 	}
 	
    if(nBestVble == 0) {
-		dX_printf(0, "Error in heuristic routine:  No uninstantiated variable found\n");
+		dE_printf1 ("Error in heuristic routine:  No uninstantiated variable found\n");
 		assert(0);
 		exit (1);
    }
@@ -290,7 +290,7 @@ int Simple_PMVSIDS_Heuristic() {
 	}
 	
    if(nBestVble == 0) {
-		dX_printf(0, "Error in heuristic routine:  No uninstantiated variable found\n");
+		dE_printf1 ("Error in heuristic routine:  No uninstantiated variable found\n");
 		assert(0);
 		exit (1);
    }
@@ -344,7 +344,7 @@ int Simple_DC_Heuristic() { //Simple Don't Care Heuristic
    }
 	
    if(nBestVble == 0) {
-		dX_printf(0, "Error in heuristic routine:  No uninstantiated variable found\n");
+		dE_printf1 ("Error in heuristic routine:  No uninstantiated variable found\n");
 		assert(0);
 		exit (1);
    }
@@ -366,7 +366,7 @@ int SimpleHeuristic() {
 	nBranchLit = Simple_Solver_Heuristic();
 	
 	if(solver_polarity_presets_length > solver_polarity_presets_count) {
-		dX_printf(7, "solver_polarity_presets forcing choice point at level %d to take value %c\n", SimpleSmurfProblemState->nCurrSearchTreeLevel, solver_polarity_presets[SimpleSmurfProblemState->nCurrSearchTreeLevel]);
+		d7_printf3("solver_polarity_presets forcing choice point at level %d to take value %c\n", SimpleSmurfProblemState->nCurrSearchTreeLevel, solver_polarity_presets[SimpleSmurfProblemState->nCurrSearchTreeLevel]);
 		if(nBranchLit < 0) {
 			if(solver_polarity_presets[solver_polarity_presets_count]=='+')
 			  nBranchLit = -nBranchLit;
@@ -381,7 +381,7 @@ int SimpleHeuristic() {
 		simple_solver_reset_level=-1;
 		nSimpleSolver_Reset=1;
 		nInfQueueStart = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars+1;
-		dX_printf(7, "Resetting solver at level %d\n", SimpleSmurfProblemState->nCurrSearchTreeLevel);
+		d7_printf2("Resetting solver at level %d\n", SimpleSmurfProblemState->nCurrSearchTreeLevel);
 		//		fprintf(stderr, "here");
 	}
 	
@@ -394,7 +394,7 @@ int EnqueueInference_lemmas_hook(int nBranchVar, bool bBVPolarity) {
 	//Try to insert inference into the inference Queue
 	int nInfQueueHead = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
 	int nPrevInfLevel = abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[nBranchVar]);
-	dX_printf(7, "      Lemma cache inferring %d at Level %d (prior level = %d)\n",
+	d7_printf4("      Lemma cache inferring %d at Level %d (prior level = %d)\n",
 				  bBVPolarity?nBranchVar:-nBranchVar, nInfQueueHead, nPrevInfLevel);
 	assert(use_lemmas || nPrevInfLevel >= 0);
 	
@@ -405,7 +405,7 @@ int EnqueueInference_lemmas_hook(int nBranchVar, bool bBVPolarity) {
 
 		//Value is already inferred the correct value
 		//Do nothing
-		dX_printf(7, "      Inference %d already inferred\n", bBVPolarity?nBranchVar:-nBranchVar); 
+		d7_printf2("      Inference %d already inferred\n", bBVPolarity?nBranchVar:-nBranchVar); 
 		return 2;
 	} else {
 		//Inference is not in inference queue, insert it.
@@ -422,7 +422,7 @@ int EnqueueInference(int nBranchVar, bool bBVPolarity, int inf_function_type) {
 	//Try to insert inference into the inference Queue
 	int nInfQueueHead = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
 	int nPrevInfLevel = abs(SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[nBranchVar]);
-	dX_printf(7, "      Inferring %d at Level %d (prior level = %d)\n",
+	d7_printf4("      Inferring %d at Level %d (prior level = %d)\n",
 				  bBVPolarity?nBranchVar:-nBranchVar, nInfQueueHead, nPrevInfLevel);
 	assert(use_lemmas || nPrevInfLevel >= 0);
 	
@@ -430,7 +430,7 @@ int EnqueueInference(int nBranchVar, bool bBVPolarity, int inf_function_type) {
 		//Inference already in queue
 		if((SimpleSmurfProblemState->arrInferenceQueue[nPrevInfLevel] > 0) != bBVPolarity) {
 			//Conflict Detected;
-			dX_printf(7, "      Conflict when adding %d to the inference queue\n", bBVPolarity?nBranchVar:-nBranchVar);
+			d7_printf2("      Conflict when adding %d to the inference queue\n", bBVPolarity?nBranchVar:-nBranchVar);
          ite_counters[inf_function_type+1]++; //ERR_BT should follow INF -- see sbsat/include/sbsat_vars.h
 			if(use_lemmas) {
 				if(backtrack_level < SimpleSmurfProblemState->nCurrSearchTreeLevel) {
@@ -440,14 +440,14 @@ int EnqueueInference(int nBranchVar, bool bBVPolarity, int inf_function_type) {
 				if(backtrack_level < SimpleSmurfProblemState->nCurrSearchTreeLevel) { 
 					return 0;
 				}
-				dX_printf(7, "      Applying conflict %d to lemma database\n", bBVPolarity?nBranchVar:-nBranchVar);
+				d7_printf2("      Applying conflict %d to lemma database\n", bBVPolarity?nBranchVar:-nBranchVar);
 				backtrack_level = picosat_apply_inference(bBVPolarity?nBranchVar:-nBranchVar, SimpleSmurfProblemState->pConflictClause.clause);
 			}
 			return 0;
 		} else {
 			//Value is already inferred the correct value
 			//Do nothing
-			dX_printf(7, "      Inference %d already inferred\n", bBVPolarity?nBranchVar:-nBranchVar); 
+			d7_printf2("      Inference %d already inferred\n", bBVPolarity?nBranchVar:-nBranchVar); 
 		   return 2;
 		}
 	} else {
@@ -459,7 +459,7 @@ int EnqueueInference(int nBranchVar, bool bBVPolarity, int inf_function_type) {
       ite_counters[NUM_INFERENCES]++;
 		
 		if(use_lemmas) {
-			dX_printf(7, "  Applying %d to lemma database\n", bBVPolarity?nBranchVar:-nBranchVar);
+			d7_printf2("  Applying %d to lemma database\n", bBVPolarity?nBranchVar:-nBranchVar);
 			backtrack_level = picosat_apply_inference(bBVPolarity?nBranchVar:-nBranchVar, SimpleSmurfProblemState->arrInferenceLemmas[nBranchVar].clause);
 			if(backtrack_level < SimpleSmurfProblemState->nCurrSearchTreeLevel) {
             ite_counters[ERR_BT_LEMMA]++;
@@ -472,7 +472,7 @@ int EnqueueInference(int nBranchVar, bool bBVPolarity, int inf_function_type) {
 
 ITE_INLINE
 int ApplyInferenceToStates(int nBranchVar, bool bBVPolarity) {
-	dX_printf(7, "  Handling inference %d\n", bBVPolarity?nBranchVar:-nBranchVar);
+	d7_printf2("  Handling inference %d\n", bBVPolarity?nBranchVar:-nBranchVar);
 	if(print_search_dot) print_dot_inference(bBVPolarity?nBranchVar:-nBranchVar);
 	ite_counters[UNIQUE_NUM]++;
 	
@@ -480,7 +480,7 @@ int ApplyInferenceToStates(int nBranchVar, bool bBVPolarity) {
 	if(ret == 0) return 0;
 
 	if(use_lemmas) {
-		dX_printf(7, "  Calling lemma database bcp\n");
+		d7_printf1("  Calling lemma database bcp\n");
 //		assert(backtrack_level >= SimpleSmurfProblemState);
 		if(backtrack_level < SimpleSmurfProblemState->nCurrSearchTreeLevel) {
 //			fprintf(stderr, "Don't really think this can happen\n");
@@ -494,7 +494,7 @@ int ApplyInferenceToStates(int nBranchVar, bool bBVPolarity) {
       }
 	}
 
-	dX_printf(7, "  Transitioning Smurfs using %d\n", bBVPolarity?nBranchVar:-nBranchVar);
+	d7_printf2("  Transitioning Smurfs using %d\n", bBVPolarity?nBranchVar:-nBranchVar);
 
 	void **arrSmurfStates = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].arrSmurfStates;
 	
@@ -503,7 +503,7 @@ int ApplyInferenceToStates(int nBranchVar, bool bBVPolarity) {
 	for(; i > 0; i--) {
 		int nSmurfNumber = *(arrVarOccursInSmurf--);
 		if (nSmurfNumber < 0) continue; //Skip Non-Watched Variables
-		dX_printf(7, "    Checking Smurf %d (State %p)\n", nSmurfNumber, (void *)arrSmurfStates[nSmurfNumber]);
+		d7_printf3("    Checking Smurf %d (State %p)\n", nSmurfNumber, (void *)arrSmurfStates[nSmurfNumber]);
 		if(arrSmurfStates[nSmurfNumber] == pTrueSimpleSmurfState) continue;
 		//save old state
 		TypeStateEntry *pOldSmurf = (TypeStateEntry *)arrSmurfStates[nSmurfNumber];
@@ -602,7 +602,7 @@ int SmurfStates_Pop(int pop_to) {
 	//Using the inference queue to avoid a linear check over all variables.
 	for(int i = nInfQueueHead; i < nInfQueueTail; i++) {
 		int nBranchLit = abs(SimpleSmurfProblemState->arrInferenceQueue[i]);
-		dX_printf(7, "      Resetting level of variable %d to %d\n", nBranchLit, SimpleSmurfProblemState->nNumVars);
+		d7_printf3("      Resetting level of variable %d to %d\n", nBranchLit, SimpleSmurfProblemState->nNumVars);
 		SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[nBranchLit] = SimpleSmurfProblemState->nNumVars;
 	}
 	
@@ -614,7 +614,7 @@ int Backtrack() {
 	//Pop stack
 	ite_counters[NUM_BACKTRACKS]++;
 
-	dX_printf(7, "  Conflict - Backtracking\n");
+	d7_printf1("  Conflict - Backtracking\n");
 
 	d9_printf2("\nStarting backtrack # %ld\n", (long)ite_counters[NUM_BACKTRACKS]);
 
@@ -680,7 +680,7 @@ int SimpleBrancher() {
 			//Update heuristic values
 		
 			//Call Heuristic to get variable and polarity
-			dX_printf(7, "Calling heuristic to choose choice point #%lld\n", ite_counters[NUM_CHOICE_POINTS]);
+			d7_printf2("Calling heuristic to choose choice point #%lld\n", ite_counters[NUM_CHOICE_POINTS]);
 			nBranchLit = SimpleHeuristic();
 
          GarbageCollectSmurfStatesTable(0); //Garbage collect the state machines if necessary
@@ -699,13 +699,13 @@ int SimpleBrancher() {
 			SimpleSmurfProblemState->arrInferenceQueue[nInfQueueHead] = nBranchLit;
 			SimpleSmurfProblemState->arrInferenceDeclaredAtLevel[abs(nBranchLit)] = nInfQueueHead;
 			SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars++;
-			dX_printf(7, "Inferring %c%d (choice point) at Level %d (prior level = %d)\n",
+			d7_printf5("Inferring %c%d (choice point) at Level %d (prior level = %d)\n",
 						  nBranchLit>0?'+':'-', abs(nBranchLit), nInfQueueHead, nPrevInfLevel);
-			//    dX_printf(7, "Choice Point #%d = %d\n", , nBranchLit);
+			//    d7_printf3("Choice Point #%d = %d\n", , nBranchLit);
 
 			if(use_lemmas) {
 				//Apply choice point to the lemma table
-				dX_printf(7, "  Applying choice %d to lemma database\n", nBranchLit);
+				d7_printf2("  Applying choice %d to lemma database\n", nBranchLit);
 				backtrack_level = picosat_apply_inference(nBranchLit, NULL);
 			}
 			
@@ -723,7 +723,7 @@ int SimpleBrancher() {
 					if(use_lemmas) {
 find_more_solutions_lemmas: ;
 						if(backtrack_level >= SimpleSmurfProblemState->nCurrSearchTreeLevel) {
-							dX_printf(7, "  Backtracking the lemma database and resolving new conflict clauses\n");							  
+							d7_printf1("  Backtracking the lemma database and resolving new conflict clauses\n");							  
 							backtrack_level = picosat_bcp();
 						}
 						if(SimpleSmurfProblemState->nCurrSearchTreeLevel == 0) {
@@ -731,7 +731,7 @@ find_more_solutions_lemmas: ;
 							else return SOLV_SAT;
 						}
 						assert(backtrack_level < SimpleSmurfProblemState->nCurrSearchTreeLevel);
-						dX_printf(7, "  Backtrack from level %d to level %d\n", SimpleSmurfProblemState->nCurrSearchTreeLevel, backtrack_level);
+						d7_printf3("  Backtrack from level %d to level %d\n", SimpleSmurfProblemState->nCurrSearchTreeLevel, backtrack_level);
 						
 						do {
 							switch(Backtrack()) {
@@ -743,7 +743,7 @@ find_more_solutions_lemmas: ;
 						} while (backtrack_level < SimpleSmurfProblemState->nCurrSearchTreeLevel);
 
 						nInfQueueHead = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
-						dX_printf(7, "  Calling lemma database to infer the UIP literal\n");
+						d7_printf1("  Calling lemma database to infer the UIP literal\n");
 						backtrack_level = picosat_bcp();
 						//The lemma table has inferred at least one UIP variable
 						
@@ -774,12 +774,12 @@ find_more_solutions: ;
 					SimpleSmurfProblemState->arrInferenceQueue[SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars] = -nBranchLit;
 					nInfQueueHead = SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars;
 					SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumFreeVars++;
-					dX_printf(7, "Flipping Value of Choicepoint at level %d to %d\n", nInfQueueHead, -nBranchLit);
+					d7_printf3("Flipping Value of Choicepoint at level %d to %d\n", nInfQueueHead, -nBranchLit);
 					just_flipped_choicepoint = -SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel+1].nIdentifier; //Used for searchtree display purposes. Not necessarily accurate unless this printing is turned on.
 					//continue the loop
 				}
 			}
-			dX_printf(7, "\n");
+			d7_printf1("\n");
 		}
 
 		//Record solution
@@ -791,7 +791,7 @@ find_more_solutions: ;
 		if((max_solutions>0)?(ite_counters[NUM_SOLUTIONS]<max_solutions_simple):1) {
 			if(use_lemmas) {
 				if(nForceBackjumpLevel < SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nVarChoiceCurrLevel) {
-					dX_printf(7, "Forcing a backjump to at least level %d\n", nForceBackjumpLevel);
+					d7_printf2("Forcing a backjump to at least level %d\n", nForceBackjumpLevel);
 					while(nForceBackjumpLevel < SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nVarChoiceCurrLevel) {
 						switch(Backtrack()) {
 						 case SOLV_UNSAT: return SOLV_UNSAT;
@@ -816,7 +816,7 @@ find_more_solutions: ;
 			
 			do {
 				if(nForceBackjumpLevel < SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nVarChoiceCurrLevel)
-				  dX_printf(7, "Forcing a backjump to level %d\n", nForceBackjumpLevel);
+				  d7_printf2("Forcing a backjump to level %d\n", nForceBackjumpLevel);
 				switch(Backtrack()) {
 				 case SOLV_UNSAT: return SOLV_UNSAT;
 				 case SOLV_SAT: return SOLV_SAT;

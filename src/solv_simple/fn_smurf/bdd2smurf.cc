@@ -120,8 +120,8 @@ void *ReadSmurfStateIntoTable(BDDNode *pCurrentBDD, int *arrElts, int nNumElts) 
 			arrElts = (int *)ite_calloc(nNumElts, sizeof(int), 9, "arrElts");
 			for (int i=0;i<nNumElts;i++) {
 				if (tempint[i]==0 || arrIte2SimpleSolverVarMap[tempint[i]]==0) {
-					dX_printf(0, "\nassigned variable in a BDD in the solver");
-					dX_printf(0, "\nvariable id: %d, true_false=%d\n", tempint[i], variablelist[tempint[i]].true_false);
+					dE_printf1("\nassigned variable in a BDD in the solver");
+					dE_printf3("\nvariable id: %d, true_false=%d\n", tempint[i], variablelist[tempint[i]].true_false);
 					exit(1);
 				}
 				arrElts[i] = arrIte2SimpleSolverVarMap[tempint[i]];

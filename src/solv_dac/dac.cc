@@ -142,7 +142,7 @@ int dac_initRAM(void) {
 	ite_free((void **)&tempint); tempint_max = 0;
 
 	if(too_many_vars) {
-		dX_printf(1, "DAC solver found a BDD w/ more than %ld variables - this is not currently supported\n", sizeof(VecType)*8);
+		d1_printf2("DAC solver found a BDD w/ more than %ld variables - this is not currently supported\n", sizeof(VecType)*8);
 		return SOLV_UNKNOWN;
 	}
 
@@ -324,29 +324,29 @@ ITE_INLINE
 double sum_vec(VecType vars_to_sum, int *vec_variables, double *Pa_var_values) {
 	int x = 0;
 	double sum = 0.0;
-//dX_printf(7, "{");
+//d7_printf1("{");
 	while(vars_to_sum!=0) {
 		if((vars_to_sum&vec_one) == vec_one) {
-//dX_printf(7, "%f ", Pa_var_values[vec_variables[x]]);
+//d7_printf2("%f ", Pa_var_values[vec_variables[x]]);
          sum+=Pa_var_values[vec_variables[x]];
 		}
 		x++; vars_to_sum>>=vec_one;
 	}
-//dX_printf(7, "}\n");
+//d7_printf1("}\n");
 	return sum;
 }
 
 ITE_INLINE
 int find_smallest_flip(int tail, int *vec_variables, double *Pa_var_values) {
 	double low = sum_vec(current_bubble[0], vec_variables, Pa_var_values);
-//dX_printf(7, "[%f ", low);
+//d7_printf2("[%f ", low);
 	int smallest_vec = 0;
 	for(int x = 1; x < tail; x++) {
 		double sum = sum_vec(current_bubble[x], vec_variables, Pa_var_values);
-//dX_printf(7, "%f ", sum);
+//d7_printf2("%f ", sum);
 		if(sum < low) { low = sum; smallest_vec = x; }
 	}
-//dX_printf(7, "] %d\n", smallest_vec);
+//d7_printf2("] %d\n", smallest_vec);
 	return smallest_vec;
 }
 
@@ -426,7 +426,7 @@ void dac_make_multiflip (int function, double *Pa_var_values, double *Pa_next_va
 		if(tail > max_tail) max_tail = tail;
 		num_loops++;
 	}
-   if (DEBUG_LVL >= 7) {
+   D_7(
 	  d2_printf2("BDD %d: ", function);
      printVec_size(vars_to_flip, size);
 	  d2_printf3(" [%d, %d] - ", num_loops, max_tail);
@@ -435,7 +435,8 @@ void dac_make_multiflip (int function, double *Pa_var_values, double *Pa_next_va
        d2_printf2("%d ", dac_variables[function].num[x]);
 	    //d2_printf2("%s ", s_name(dac_variables[function].num[x]));
 	  d2_printf1("\n");
-   }
+
+   );
 }
 
 /************************************/
@@ -522,8 +523,8 @@ void dac_vec_copy(double *var_values, double *next_var_values) {
 ITE_INLINE
 void dac_vec_print(double *var_values) {
 	for(int x = 1; x <= dac_num_expanded_vars; x++)
-	  dX_printf(7, "%f ", var_values[x]);
-//	dX_printf(7, "\n");
+	  d7_printf2("%f ", var_values[x]);
+//	d7_printf1("\n");
 }
 
 ITE_INLINE
@@ -558,7 +559,7 @@ int dacSolve() {
      dac_solution_var_values = dac_var_values_tmp1;
 
    dac_vec_print(dac_var_values);
-   dX_printf(7, " : Initial random values\n");
+   d7_printf1(" : Initial random values\n");
    
    while(numsol==0 || (numsuccesstry < numsol)) {
 
@@ -605,26 +606,26 @@ int dacSolve() {
             isSAT = 1;
          } else {
 dac_vec_print(dac_var_values_tmp1);
-dX_printf(7, " : Pb(x)\n");
+d7_printf1(" : Pb(x)\n");
             dac_vec_multiply(2.0, dac_var_values_tmp1, dac_var_values_tmp2);       //2*Pb(x)
 dac_vec_print(dac_var_values_tmp2);
-dX_printf(7, " : 2*Pb(x)\n");
+d7_printf1(" : 2*Pb(x)\n");
             dac_vec_subtract_store1(dac_var_values_tmp2, dac_var_values);          //2*Pb(x) - x
 dac_vec_print(dac_var_values_tmp2);
-dX_printf(7, " : 2*Pb(x) - x\n");
+d7_printf1(" : 2*Pb(x) - x\n");
             //isSAT = 
             dac_vec_squaredistance(dac_var_values_tmp2, dac_var_values_tmp4);
 dac_vec_print(dac_var_values_tmp4);
-dX_printf(7, " : (2*Pb(x) - x)^2\n");
+d7_printf1(" : (2*Pb(x) - x)^2\n");
             dac_Pa(dac_var_values_tmp2, dac_var_values_tmp3, dac_var_values_tmp4); //Pa(2*Pb(x) - x)
 dac_vec_print(dac_var_values_tmp3);
-dX_printf(7, " : Pa(2*Pb(x) - x)\n");
+d7_printf1(" : Pa(2*Pb(x) - x)\n");
             dac_vec_subtract_store2(dac_var_values_tmp3, dac_var_values_tmp1);     //Pa(2*Pb(x) - x) - Pb(x)
 dac_vec_print(dac_var_values_tmp1);
-dX_printf(7, " : Pa(2*Pb(x) - x) - Pb(x)\n");
+d7_printf1(" : Pa(2*Pb(x) - x) - Pb(x)\n");
             dac_vec_add(dac_var_values_tmp1, dac_var_values);                      //x + Pa(2*Pb(x) - x) - Pb(x)
 dac_vec_print(dac_var_values);
-dX_printf(7, " : x + Pa(2*Pb(x) - x) - Pb(x)\n\n");
+d7_printf1(" : x + Pa(2*Pb(x) - x) - Pb(x)\n\n");
          }
          //d2_printf1("\n");
 		} else if(dac_beta_value == -1.0) {

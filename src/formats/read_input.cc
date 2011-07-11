@@ -174,7 +174,7 @@ read_input_open()
       }
 
    if (!finputfile) { 
-      dX_printf(0, "Can't open the input file: %s\n", inputfile);
+      dE_printf2("Can't open the input file: %s\n", inputfile);
       return ERR_IO_INIT;
    } else d9_printf2("Input file opened: %s\n", inputfile);
    

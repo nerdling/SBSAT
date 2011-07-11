@@ -172,8 +172,6 @@ t_opt options[] = {
                 "Make use of special function limits during preprocessing"},
 { &BREAK_XORS, "", "break-xors", P_INT, V(i:0,"0"), V(i:1,"1"), VAR_NORMAL, 0, 
                 "Break XORS into linear and non-linear functions during search"},
-/*{ &GB_REDUCE_XORS, "", "gb-reduce-xors", P_INT, V(i:0,"0"), V(i:1,"1"), VAR_NORMAL, 0, 
-  "Reduce XORs by finding a Groebner basis as a preprocessing step"},*/
 
 
 /* 
@@ -547,7 +545,7 @@ finish_params()
                   p_opt->p_value.i-1);
             ((char*)(p_opt->p_target))[p_opt->p_value.i]=0;
          } else {
-            dX_printf(1, "TEMP or TMPDIR variable not found.\n");
+            d1_printf1 ("TEMP or TMPDIR variable not found.\n");
          }
       }
    }
@@ -562,7 +560,7 @@ finish_params()
     case 'c': result_display_type = 4; break;
 	 case 'b': result_display_type = 5; break;
     default: 
-              dX_printf(0, "error: Unknown result type '%c'\n", sResult[0]); 
+              dE_printf2("error: Unknown result type '%c'\n", sResult[0]); 
               exit(1);
               break;
    }
@@ -570,7 +568,7 @@ finish_params()
 	solver_polarity_presets_length = strlen(solver_polarity_presets);
 	for(int x = 0; x < solver_polarity_presets_length; x++) {
 		if(!(solver_polarity_presets[x] == '+' || solver_polarity_presets[x] == '-')) {
-			dX_printf(0, "error: --solver-polarity-presets is malformed at character %d (%c)\n", x, solver_polarity_presets[x]);
+			dE_printf3("error: --solver-polarity-presets is malformed at character %d (%c)\n", x, solver_polarity_presets[x]);
 			exit(1);
 		}
 	}
@@ -578,7 +576,7 @@ finish_params()
    /* limit max vbles per smurf flag -S */
    if (MAX_VBLES_PER_SMURF > MAX_MAX_VBLES_PER_SMURF)
    {
-      dX_printf(0, "error: limit for MAX_VBLES_PER_SMURF -S is %d\n",
+      dE_printf2("error: limit for MAX_VBLES_PER_SMURF -S is %d\n",
             MAX_MAX_VBLES_PER_SMURF);
       exit(1);
    }
@@ -591,7 +589,7 @@ finish_params()
       if (!strcmp(cnfformat, "qm"))   n_cnfformat = CNF_QM; else
          if (!strcmp(cnfformat, "3sat")) n_cnfformat = CNF_3SAT; else
          {
-            dX_printf(0, "error: Unrecognized CNF Format: %s\n", cnfformat); 
+            dE_printf2("error: Unrecognized CNF Format: %s\n", cnfformat); 
             exit(1);
          }
 
@@ -605,7 +603,7 @@ finish_params()
 	  	  	  	  	      if (!strcmp(mp_heuristic, "EMSPG")) n_mp_heuristic = heuristic_EMSPG; else
 	  	  	  	  	  	      if (!strcmp(mp_heuristic, "EMSPGV2")) n_mp_heuristic = heuristic_EMSPGV2; else
 	      {
-				dX_printf(0, "error: Unrecognized Mp heuristic: %s\n", mp_heuristic); 
+				dE_printf2("error: Unrecognized Mp heuristic: %s\n", mp_heuristic); 
 				exit(1);
 			}
 	

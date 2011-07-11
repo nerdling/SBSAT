@@ -92,27 +92,14 @@ solve_init()
 
   dX_printf(9, "InitSolver\n");
 
-  //cout << "Does this even get called? (solv_smurf dir)" <<endl; //YES, it does!
+  
   if (BREAK_XORS) {
   // change splitXors to add two new functions into functions array to complement/replace the existing smurf
      int total_vars = splitXors();
      dX_printf(9, "Split(%ld) returned %d\n", numinp, total_vars);
      numinp = total_vars;
   }
-  
-  //if(GB_REDUCE_XORS){
-  GBReduceXors();
-    //}
-  //cout << "TESTING PARSE FUNCTIONS" << endl;
-  //testing parse functions.
-  // string xorstr = "x200*x300 + x1000";//"x0*x1+x0*x3+x1*x2+x2*x3";
 
-  // xorstr = strip_whitespace(xorstr);
-  // BDDNode* testbdd[1] = {parseXOR(xorstr)};
-  // printBDDdot_stdout(testbdd,1);
-  
-    //cout << endl << "DONE TESTING PARSE FUNCTIONS" << endl;
-	 
   HeuristicInit();
 
   InitVarMap();
@@ -195,7 +182,7 @@ HeuristicInit()
                case 'R': procHeurInit = HrLSGBWInit; break;
                case 'd': procHeurInit = HrLSGBWInit; break;
                case 0: procHeurInit = HrLSGBInit; break;
-               default: dX_printf(0, "error: Unknown LSGB type heuristic %s\n", sHeuristic+1);
+               default: dE_printf2("error: Unknown LSGB type heuristic %s\n", sHeuristic+1);
               }
               break;
     case 'l': procHeurInit = HrLemmaInit; break;
@@ -206,7 +193,7 @@ HeuristicInit()
     //case 'i': nHeuristic = INTERACTIVE_HEURISTIC; break;
     //case 'm': nHeuristic = STATE_HEURISTIC; break;
     default: 
-              dX_printf(0, "error: Unknown heuristic type %c\n", sHeuristic[0]); 
+              dE_printf2("error: Unknown heuristic type %c\n", sHeuristic[0]); 
               exit(1);
               break;
    }

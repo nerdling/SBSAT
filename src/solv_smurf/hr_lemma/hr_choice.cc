@@ -235,7 +235,7 @@ HEUR_FUNCTION(int *pnBranchAtom, int *pnBranchValue)
    }
    else
    {
-      dX_printf(0, "Error in heuristic routine:  No uninstantiated variable found\n");
+      dE_printf1 ("Error in heuristic routine:  No uninstantiated variable found\n");
       exit (1);
    }
 

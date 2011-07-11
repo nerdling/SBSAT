@@ -176,7 +176,7 @@ VerifySolution()
 
   if (!nSatisfied)
     {
-      dX_printf(0, "ERROR -- Solution verification failed!\n");
+      dE_printf1("ERROR -- Solution verification failed!\n");
     }
   else
     {

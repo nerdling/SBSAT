@@ -224,7 +224,7 @@ DdNode *putite(int intnum, DdNode * bdd) {
 						tweight = ((double)v1->index)/100.0;
 						Cudd_RecursiveDeref(BDD_Manager, v1);
 					}
-					dX_printf(6, " %f  ", tweight);
+					d6_printf2(" %f  ", tweight);
 					p = fgetc(finputfile);
 					if(p == EOF) {
 						fprintf(stderr, "\nUnexpected EOF (%s)...exiting:%d\n", macros, ite_line);
@@ -251,7 +251,7 @@ DdNode *putite(int intnum, DdNode * bdd) {
 							pweight=pweight/100.0;                                                                                          
 						}
 						tweight+=pweight;
-						dX_printf(6, " %f ", tweight);
+						d6_printf2(" %f ", tweight);
 						if(tweight > 100) { fprintf(stderr, "\nKeyword 'initial_branch' needs a number between 0 and 100 after a '%%' (%s)...exiting:%d\n", macros, ite_line); exit(1); }
 					} else {
 						ungetc(p, finputfile);

@@ -182,10 +182,10 @@ void DisplaySimpleSolverBacktrackInfo() {
 	if ((DEBUG_LVL&15) == 1) {
 		fprintf(stderr, "%s%s", number, back);
 	} else {
-        if (DEBUG_LVL >= 1) {
-			 dX_printf(0, "%s%s", number, back);
+		D_1(
+			 d0_printf3("%s%s", number, back);
 			 fflush(stddbg);
-        }
+			 )
 	}
 	
 	d2_printf1("\n Choices (total, dependent" );

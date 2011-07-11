@@ -7,7 +7,7 @@ void SetVisitedSmurfState(void *pState, int value) {
    assert(pSmurfState->cType == FN_SMURF);
 
    while(pSmurfState!=NULL && pSmurfState->visited != value) {
-      dX_printf(7, "Marking visited=%d of Smurf State %p\n", value, pSmurfState);
+      d7_printf3("Marking visited=%d of Smurf State %p\n", value, pSmurfState);
       pSmurfState->visited = value;
       bdd_flag_nodes(pSmurfState->pSmurfBDD);
 //      if(pSmurfState->pVarIsTrueTransition != NULL && ((TypeStateEntry *)(pSmurfState->pVarIsTrueTransition))->cType == FN_INFERENCE)
@@ -79,7 +79,7 @@ int ApplyInferenceToSmurf(int nBranchVar, bool bBVPolarity, int nSmurfNumber, vo
 			if(((SmurfStateEntry *)pNextState) == pTrueSimpleSmurfState) {
 				SimpleSmurfProblemState->arrSmurfStack[SimpleSmurfProblemState->nCurrSearchTreeLevel].nNumSmurfsSatisfied++;
 			} else if(pNextState == arrSmurfStates[((TypeStateEntry *)pNextState)->pStateOwner]) {
-				dX_printf(7, "      State %p currently owned by Smurf %d, transitioning to True\n", pNextState, ((TypeStateEntry *)pNextState)->pStateOwner);
+				d7_printf3("      State %p currently owned by Smurf %d, transitioning to True\n", pNextState, ((TypeStateEntry *)pNextState)->pStateOwner);
 				pNextState = pTrueSimpleSmurfState;
 			} else {
 				((TypeStateEntry *)pNextState)->pPreviousState = arrSmurfStates[nSmurfNumber];
@@ -93,8 +93,8 @@ int ApplyInferenceToSmurf(int nBranchVar, bool bBVPolarity, int nSmurfNumber, vo
 
 	int ret = ApplyInferenceToSmurf_Hooks(nBranchVar, bBVPolarity, nSmurfNumber, arrSmurfStates);
 	
-	dX_printf(7, "      Smurf %d transitioned to state %p\n", nSmurfNumber, arrSmurfStates[nSmurfNumber]);
-	dX_printf(7, "      Smurf %d previously was %p\n", nSmurfNumber, ((SmurfStateEntry *)arrSmurfStates[nSmurfNumber])->pPreviousState);
+	d7_printf3("      Smurf %d transitioned to state %p\n", nSmurfNumber, arrSmurfStates[nSmurfNumber]);
+	d7_printf3("      Smurf %d previously was %p\n", nSmurfNumber, ((SmurfStateEntry *)arrSmurfStates[nSmurfNumber])->pPreviousState);
 	
 	return ret;
 }

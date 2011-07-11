@@ -201,9 +201,9 @@ HrLSGBFree()
 #undef HEUR_EXTRA_OUT
 #endif
 
-#define HEUR_EXTRA_IN() D_8(DisplayHeuristicValues();); dX_printf(8, "\n");
+#define HEUR_EXTRA_IN() D_8(DisplayHeuristicValues();); d8_printf1("\n");
 #define HEUR_EXTRA_OUT() \
-   dX_printf(8, "JHeuristic: %c%d (%.10f,%.10f) because of %f\n",  \
+   d8_printf6("JHeuristic: %c%d (%.10f,%.10f) because of %f\n",  \
          (*pnBranchValue==BOOL_TRUE?'+':'-'), \
          nBestVble,  \
          arrHeurScores[nBestVble].Pos, \

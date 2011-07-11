@@ -421,16 +421,16 @@ Finish_Preprocessing()
 	
 	ite_free((void**)&isinVCL);
 	
-	dX_printf(6, "\n");
+	d6_printf1("\n");
 	for(int x = 0; x < nVarChoiceLevelsNum; x++) {
 		for(int i = 0; arrVarChoiceLevels[x][i]!=0; i++)
-		 dX_printf(6, "%d ", arrVarChoiceLevels[x][i]);
-		dX_printf(6, "\n");
+		 d6_printf2("%d ", arrVarChoiceLevels[x][i]);
+		d6_printf1("\n");
 	}
-	dX_printf(6, "\n");
+	d6_printf1("\n");
 	for(int x = 0; x < numinp+1; x++)
-	  dX_printf(6, "%d:%4.4f ", x, arrVarTrueInfluences[x]);
-	dX_printf(6, "\n");
+	  d6_printf3("%d:%4.4f ", x, arrVarTrueInfluences[x]);
+	d6_printf1("\n");
 	
 	int Total_inferences = Pos_replace + Neg_replace + Setting_Pos + Setting_Neg;
 	int div_zero = 0;
