@@ -2,7 +2,7 @@
 #include "util.h"
 
 
-main(argc, argv, environ)
+int main(argc, argv, environ)
 int argc;
 char **argv;
 char **environ;
