@@ -27,7 +27,7 @@ char *prog, *file2;
 
 int restart;
 
-main(argc, argv)
+int main(argc, argv)
 char **argv;
 {
     if (restart) {
