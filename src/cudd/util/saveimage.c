@@ -104,13 +104,13 @@ util_save_image(char const *orig_file_name, char const *save_file_name)
     length_text = new_hdr.a_text;
     start_data = (char *) old_hdr.a_text;
     length_data = end_data - start_data;
-#endif vax
+#endif
 #ifdef	sun
     start_text = (char *) N_TXTADDR(old_hdr) + sizeof(old_hdr);
     length_text = old_hdr.a_text - sizeof(old_hdr);
     start_data = (char *) N_DATADDR(old_hdr);
     length_data = end_data - start_data;
-#endif	sun
+#endif
     new_hdr.a_data = end_data - start_data;
     new_hdr.a_bss = 0;
 
