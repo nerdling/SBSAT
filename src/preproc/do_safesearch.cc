@@ -69,10 +69,10 @@ int Do_SafeSearch() {
 	return ret;
 }
 
-typedef struct rand_list {
+typedef struct {
 	int num;
 	int prob;	
-};
+} rand_list;
 
 int rlistfunc_2 (const void *x, const void *y) {
 	rand_list pp, qq;

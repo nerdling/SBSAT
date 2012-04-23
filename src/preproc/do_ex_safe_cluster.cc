@@ -72,11 +72,11 @@ int Do_ExSafeCluster() {
 	return ret;
 }
 
-typedef struct rand_list {
+typedef struct {
 	int num;
 	int size;
 	int prob;
-};
+} rand_list;
 
 int rlistfunc1 (const void *x, const void *y) {
 	rand_list pp, qq;

@@ -62,10 +62,10 @@ int Do_SafeAssign() {
 	return ret;
 }
 
-typedef struct rand_list {
+typedef struct {
 	int num;
 	int prob;	
-};
+} rand_list;
 
 int SafeAssign_Loop() {
 	int ret = PREP_NO_CHANGE;
