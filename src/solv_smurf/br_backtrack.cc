@@ -478,7 +478,7 @@ BackTrack()
 
          //Apply the inference to nWatchedVble[0]
 
-         if(arrSolution[p->nWatchedVble[0]] == BOOL_UNKNOWN);
+         assert(arrSolution[p->nWatchedVble[0]] == BOOL_UNKNOWN);
 			  InferLiteral(p->nWatchedVble[0], p->nWatchedVblePolarity[0],
 								false, p->pLemma, p, 1);
 		
