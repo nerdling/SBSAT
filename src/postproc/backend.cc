@@ -142,7 +142,7 @@ void ProcessSolution(int oldnuminp, int *original_variables) {
 
 	for (i = 1; i <= numinp; i++) {
 		if (variablelist[i].equalvars != 0) {
-			if ((variablelist[i].true_false==3)) {
+			if (variablelist[i].true_false==3) {
 				variablelist[i].true_false = -1;
 			} else if ((variablelist[abs(variablelist[i].equalvars)].true_false!=-1)) {
 				if (variablelist[i].equalvars<0) {
