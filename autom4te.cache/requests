@@ -254,6 +254,7 @@
                         'LT_SUPPORTED_TAG' => 1,
                         'AM_MAINTAINER_MODE' => 1,
                         'AM_NLS' => 1,
+                        'AC_FC_PP_DEFINE' => 1,
                         'AM_GNU_GETTEXT_INTL_SUBDIR' => 1,
                         'AM_MAKEFILE_INCLUDE' => 1,
                         '_m4_warn' => 1,
@@ -273,6 +274,7 @@
                         'AC_CANONICAL_BUILD' => 1,
                         'AC_FC_FREEFORM' => 1,
                         'AH_OUTPUT' => 1,
+                        'AC_FC_PP_SRCEXT' => 1,
                         '_AM_SUBST_NOTMAKE' => 1,
                         'AC_CONFIG_AUX_DIR' => 1,
                         'sinclude' => 1,
@@ -300,15 +302,15 @@
                         'configure.ac'
                       ],
                       {
-                        'AC_DEFUN' => 1,
-                        'm4_include' => 1,
                         'm4_pattern_allow' => 1,
                         '_AM_AUTOCONF_VERSION' => 1,
                         'm4_pattern_forbid' => 1,
-                        '_m4_warn' => 1,
                         'include' => 1,
-                        'AU_DEFUN' => 1,
-                        'AC_DEFUN_ONCE' => 1
+                        'AC_DEFUN_ONCE' => 1,
+                        'AC_DEFUN' => 1,
+                        'm4_include' => 1,
+                        '_m4_warn' => 1,
+                        'AU_DEFUN' => 1
                       }
                     ], 'Autom4te::Request' ),
              bless( [
