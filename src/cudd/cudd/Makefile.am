@@ -1,4 +1,4 @@
-INCLUDES=-I$(top_srcdir)/include -I$(top_srcdir)/src/cudd/include
+AM_CPPFLAGS=-I$(top_srcdir)/include -I$(top_srcdir)/src/cudd/include
 sources= \
          cuddAPI.c cuddAddAbs.c cuddAddApply.c cuddAddFind.c cuddAddIte.c \
          cuddAddInv.c cuddAddNeg.c cuddAddWalsh.c cuddAndAbs.c \

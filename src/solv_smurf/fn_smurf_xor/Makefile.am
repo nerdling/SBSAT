@@ -1,4 +1,4 @@
-INCLUDES=-I$(top_srcdir)/include -I$(top_srcdir)/src/solv_smurf/include
+AM_CPPFLAGS=-I$(top_srcdir)/include -I$(top_srcdir)/src/solv_smurf/include
 sources = fn_smurf_xor.cc \
 	hr_lsgb_smurfxor_init.cc hr_lsgb_smurfxor_update.cc 
 

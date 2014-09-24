@@ -1,4 +1,4 @@
-INCLUDES=-I$(top_srcdir)/include
+AM_CPPFLAGS=-I$(top_srcdir)/include
 SUBDIRS=5
 sources=autochk.cc  \
 	smurf.cc  bdd2aag.cc bdd2cnf.cc  bddbinary.cc \

@@ -1,4 +1,4 @@
-INCLUDES=-I$(top_srcdir)/include -I$(top_srcdir)/src/cudd/include
+AM_CPPFLAGS=-I$(top_srcdir)/include -I$(top_srcdir)/src/cudd/include
 sources= st.c
 
 noinst_LIBRARIES = libst.a

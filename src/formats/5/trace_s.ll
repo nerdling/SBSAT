@@ -1,7 +1,8 @@
 %{
 #include "sbsat.h"
 #include "bddnode.h"
-#include "libt5_a-trace_g.h"
+// #include "libt5_a-trace_g.h"
+#include "trace_g.hh"
 extern int s_line;
 /* remove warning about unput not used */
 #define YY_NO_UNPUT

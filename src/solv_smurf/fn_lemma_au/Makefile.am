@@ -1,4 +1,4 @@
-INCLUDES=-I$(top_srcdir)/include -I$(top_srcdir)/src/solv_smurf/include
+AM_CPPFLAGS=-I$(top_srcdir)/include -I$(top_srcdir)/src/solv_smurf/include
 EXTRA_DIST=bt_lemmas_au.cc lemmacache_au.cc lemmas_au.cc lemmawlits_au.cc
 sources=fn_lemma_au.cc
 

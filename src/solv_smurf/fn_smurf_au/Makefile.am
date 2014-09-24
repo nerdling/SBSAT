@@ -1,4 +1,4 @@
-INCLUDES=-I$(top_srcdir)/include -I$(top_srcdir)/src/solv_smurf/include
+AM_CPPFLAGS=-I$(top_srcdir)/include -I$(top_srcdir)/src/solv_smurf/include
 sources= bdd2smurf_au.cc bt_smurf_au.cc fn_smurf_au.cc smurfstates_au.cc transitions_au.cc
 
 #if MYLIBTOOL

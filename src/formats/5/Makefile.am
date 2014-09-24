@@ -1,33 +1,43 @@
-INCLUDES=-I$(top_srcdir)/include -I$(top_srcdir)/src/cudd/include
+AM_YFLAGS = -d
+AM_CPPFLAGS=-I$(top_srcdir)/include -I$(top_srcdir)/src/cudd/include
 AM_CFLAGS=-DYYDEBUG
-sources=trace_g.yy trace_s.ll \
-	aig_g.yy aig_s.ll \
-  	nle_g.yy nle_s.ll \
-	cnf_g.yy cnf_s.ll \
-	bdd_g.yy bdd_s.ll \
-	blif_g.yy blif_s.ll \
-	prover_g.yy prover_s.ll \
-	prover3_g.yy prover3_s.ll \
-	iscas_g.yy iscas_s.ll \
+sources=trace_g.yy trace_g.cc trace_s.ll trace_s.cc \
+	aig_g.yy aig_g.cc aig_s.ll aig_s.cc \
+  	nle_g.yy nle_g.cc nle_s.ll nle_s.cc \
+	cnf_g.yy cnf_g.cc cnf_s.ll cnf_s.cc \
+	bdd_g.yy bdd_g.cc bdd_s.ll bdd_s.cc \
+	blif_g.yy blif_g.cc blif_s.ll blif_s.cc \
+	prover_g.yy prover_g.cc prover_s.ll prover_s.cc \
+	prover3_g.yy prover3_g.cc prover3_s.ll prover3_s.cc \
+	iscas_g.yy iscas_g.cc iscas_s.ll iscas_s.cc \
         parser.cc functions.cc bddops.cc p3.cc
 # _g.yy first
-EXTRA_DIST=functions.h bddnode.cc tracetest.cc p3.h 
+# BUILT_SOURCES=
+EXTRA_DIST=functions.h bddnode.cc tracetest.cc p3.h \
+	aig_g.hh \
+  	nle_g.hh \
+	cnf_g.hh  \
+	bdd_g.hh \
+	blif_g.hh \
+	prover_g.hh \
+	prover3_g.hh \
+	iscas_g.hh \
+        trace_g.hh  
 
-#BUILT_SOURCES=\
-	#libt5_la-aig_g.h  \
-	#libt5_la-cnf_g.h  \
-	#libt5_la-bdd_g.h \
-	#libt5_la-blif_g.h \
-	#libt5_la-prover_g.h \
-	#libt5_la-prover3_g.h \
-	#libt5_la-iscas_g.h \
-        #libt5_la-trace_g.cc  \
-	#libt5_la-cnf_g.cc  \
-	#libt5_la-bdd_g.cc \
-	#libt5_la-blif_g.cc \
-	#libt5_la-prover_g.cc \
-	#libt5_la-prover3_g.cc \
-	#libt5_la-iscas_g.cc 
+#libt5_la-aig_g.h  \
+#libt5_la-cnf_g.h  \
+#libt5_la-bdd_g.h \
+#libt5_la-blif_g.h \
+#libt5_la-prover_g.h \
+#libt5_la-prover3_g.h \
+#libt5_la-iscas_g.h \
+#libt5_la-trace_g.cc  \
+#libt5_la-cnf_g.cc  \
+#libt5_la-bdd_g.cc \
+#libt5_la-blif_g.cc \
+#libt5_la-prover_g.cc \
+#libt5_la-prover3_g.cc \
+#libt5_la-iscas_g.cc 
 
 CONFIG_CLEAN_FILES= \
    libt5_a-trace_g.h  \
@@ -48,7 +58,6 @@ CONFIG_CLEAN_FILES= \
 	libt5_a-prover_g.cc \
 	libt5_a-prover3_g.cc \
 	libt5_a-iscas_g.cc \
-        trace_s.cc  \
 	aig_s.cc \
   	nle_s.cc \
 	cnf_s.cc  \

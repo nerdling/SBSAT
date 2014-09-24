@@ -1,4 +1,4 @@
-INCLUDES=-I$(top_srcdir)/include -I$(top_srcdir)/src/solv_simple/include
+AM_CPPFLAGS=-I$(top_srcdir)/include -I$(top_srcdir)/src/solv_simple/include
 
 sources= fn_negminmax.cc bdd2specfn_negminmax.cc bt_specfn_negminmax.cc hr_lsgb_negminmax_init.cc \
          hr_lsgb_negminmax_update.cc

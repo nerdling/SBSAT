@@ -1,4 +1,4 @@
-INCLUDES=-I$(top_srcdir)/include
+AM_CPPFLAGS=-I$(top_srcdir)/include
 sources= create_infs.cc do_cofactor.cc   do_exquantify.cc   \
 	do_strength.cc other_preproc.cc do_applyinfs.cc do_depcluster.cc  \
 	do_exquantifyand.cc  do_pruning.cc init_preproc.cc \
