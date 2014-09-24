@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.68])
-AC_INIT([sbsat], [2.7b], [mkouril@ececs.uc.edu])
+AC_INIT([sbsat], [2.7b], [weaversa@gmail.com])
 AC_CONFIG_SRCDIR([doc/ftest.c])
 AC_CONFIG_HEADERS([config.h])
 AM_INIT_AUTOMAKE
@@ -50,6 +50,7 @@ AC_CONFIG_FILES([Makefile
                  doc/man1/Makefile
                  doc/manual/Makefile
                  examples/Makefile
+                 examples/example_tests.sh
                  include/Makefile
                  src/Makefile
                  src/cudd/Makefile
@@ -102,6 +103,10 @@ AC_CONFIG_FILES([Makefile
                  src/solver/Makefile
                  src/utils/Makefile
                  tests/Makefile
+                 tests/trace_tests.sh
+                 tests/longer_tests.sh
+                 tests/cnf_tests.sh
+                 tests/xor_tests.sh
                  tests/cnf/Makefile
                  tests/longer_tests/Makefile
                  tests/trace_tests/Makefile])
