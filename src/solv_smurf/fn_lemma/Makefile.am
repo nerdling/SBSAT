@@ -1,4 +1,4 @@
-INCLUDES=-I$(top_srcdir)/include -I$(top_srcdir)/src/solv_smurf/include
+AM_CPPFLAGS=-I$(top_srcdir)/include -I$(top_srcdir)/src/solv_smurf/include
 sources= lemmas.cc lemmaspace.cc lemmainfo.cc lemmawlits.cc lemmamisc.cc bt_lemmas.cc lemmacache.cc fn_lemma.cc
 #$bdd2smurf.cc transitions.cc smurfstates.cc fn_smurf.cc bt_smurf.cc hr_lsgb_smurf_update.cc  hr_lsgb_smurf_init.cc 
 

@@ -1,7 +1,8 @@
 %{
 #include "sbsat.h"
 #include "bddnode.h"
-#include "libt5_a-nle_g.h"
+// #include "libt5_a-nle_g.h"
+#include "nle_g.hh"
 #include <string.h>
 
 extern int s_line;

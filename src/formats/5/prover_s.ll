@@ -1,7 +1,8 @@
 %{
 #include "sbsat.h"
 #include "bddnode.h"
-#include "libt5_a-prover_g.h"
+// #include "libt5_a-prover_g.h"
+#include "prover_g.hh"
 
 /* remove warning about unput not used */
 #define YY_NO_UNPUT

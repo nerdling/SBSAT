@@ -4,7 +4,9 @@ echo ===========================================
 echo Checking example tests
 echo ===========================================
 
-for i in @top_srcdir@/examples/*.???
+for ext in ite xor cnf ;
+do
+for i in @top_srcdir@/examples/*.$ext
 do
  echo @ECHO_N@ "`basename $i` ... @ECHO_C@"
  PARAMS=
@@ -15,6 +17,7 @@ do
  if [ $? != 0 ] ; then
     exit 1;
  fi
+done
 done
 
 echo ===========================================

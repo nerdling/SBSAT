@@ -5,7 +5,8 @@ AC_PREREQ([2.68])
 AC_INIT([sbsat], [2.7b], [weaversa@gmail.com])
 AC_CONFIG_SRCDIR([doc/ftest.c])
 AC_CONFIG_HEADERS([config.h])
-AM_INIT_AUTOMAKE
+# AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE([tar-pax])
 
 # Checks for programs.
 AC_PROG_AWK
@@ -39,8 +40,23 @@ AC_FUNC_STRCOLL
 AC_FUNC_WAIT3
 AC_CHECK_FUNCS([bzero dup2 gethostname getpagesize gettimeofday memchr memmove memset pow regcomp select sqrt strcasecmp strchr strcspn strdup strerror strncasecmp strpbrk strrchr strspn strstr strtoul])
 
+# Check for executables.
+AC_CHECK_PROG(HELP2MAN,help2man,yes)
+AC_SUBST(HELP2MAN)
+if test x"$HELP2MAN" != x"yes" ; then
+    AC_MSG_WARN([help2man not found -- will not update man page.])
+fi
+
 # Other things
 AM_CONDITIONAL(SBSAT_STATIC, test x$sbsat_static = xtrue)
+
+cvsbuild=false
+AC_ARG_ENABLE(cvsbuild,
+	      [  --enable-cvsbuild Create nightly build],
+	      [case "${enableval}" in
+	         no) cvsbuild=false ;;
+		   *) cvsbuild=${enableval} ;;
+	   esac],[debug=false])
 AM_CONDITIONAL(NO_CVSBUILD, test x$cvsbuild = xfalse)
 CVSBUILD=$cvsbuild
 AC_SUBST(CVSBUILD)
@@ -49,6 +65,7 @@ AC_CONFIG_FILES([Makefile
                  doc/Makefile
                  doc/man1/Makefile
                  doc/manual/Makefile
+                 doc/manual/sbsat_user_manual/Makefile
                  examples/Makefile
                  examples/example_tests.sh
                  include/Makefile

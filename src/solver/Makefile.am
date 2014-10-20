@@ -1,4 +1,4 @@
-INCLUDES=-I$(top_srcdir)/include
+AM_CPPFLAGS=-I$(top_srcdir)/include
 sources= solve.cc ksolve.cc \
              init_solver.cc brancher.cc \
 	     backtrack.cc backtrack_nl.cc backtrack_sbj.cc bt_misc.cc \
@@ -28,7 +28,7 @@ EXTRA_DIST=heur_choice.cc
 #libsolver_la_SOURCES= $(sources)
 #libsolver2_la_SOURCES=libsolver.cc
 #else
-noinst_LIBRARIES = libsolver.a libsolver2.a
-libsolver_a_SOURCES= $(sources)
-libsolver2_a_SOURCES=libsolver.cc
+# noinst_LIBRARIES = libsolver.a libsolver2.a
+# libsolver_a_SOURCES= $(sources)
+# libsolver2_a_SOURCES=libsolver.cc
 #endif

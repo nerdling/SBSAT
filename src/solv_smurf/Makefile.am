@@ -1,9 +1,9 @@
 SUBDIRS= include fn_lemma_au fn_smurf_au hr_lsgbw hr_lemma fn_minmax fn_xor \
 fn_and fn_lemma fn_smurf hr_null hr_lsgb hr_lsgb_lemma hr_vsids hr_berkmin \
-hr_anne hr_minisat fn_smurf_xor fn_xor_smurf
+hr_anne hr_minisat fn_smurf_xor fn_xor_smurf fn_smt_bitvector
 #fn_plainor fn_smurf_au 
 
-INCLUDES=-I$(top_srcdir)/include -I$(top_srcdir)/src/solv_smurf/include
+AM_CPPFLAGS=-I$(top_srcdir)/include -I$(top_srcdir)/src/solv_smurf/include
 sources= display.cc solver.cc \
 	 fn_init.cc fn_create.cc fn_stack.cc fn_update.cc \
 	 vars_inferlit.cc vars_recordsol.cc vars_verify.cc vars_map.cc vars_init.cc vars_hints.cc \

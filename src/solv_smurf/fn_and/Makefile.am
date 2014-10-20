@@ -1,4 +1,4 @@
-INCLUDES=-I$(top_srcdir)/include -I$(top_srcdir)/src/solv_smurf/include
+AM_CPPFLAGS=-I$(top_srcdir)/include -I$(top_srcdir)/src/solv_smurf/include
 
 sources= bdd2specfn_and.cc bt_specfn_and.cc fn_and.cc lemmas_and.cc \
 	 hr_lsgb_and_init.cc hr_lsgb_and_update.cc \

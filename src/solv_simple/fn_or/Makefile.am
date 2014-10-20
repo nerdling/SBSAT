@@ -1,4 +1,4 @@
-INCLUDES=-I$(top_srcdir)/include -I$(top_srcdir)/src/solv_simple/include
+AM_CPPFLAGS=-I$(top_srcdir)/include -I$(top_srcdir)/src/solv_simple/include
 
 sources= fn_or.cc bdd2specfn_or.cc bt_specfn_or.cc hr_lsgb_or_init.cc \
          hr_lsgb_or_update.cc

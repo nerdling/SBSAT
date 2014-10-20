@@ -1,4 +1,4 @@
-INCLUDES=-I$(top_srcdir)/include -I$(top_srcdir)/src/solv_simple/include
+AM_CPPFLAGS=-I$(top_srcdir)/include -I$(top_srcdir)/src/solv_simple/include
 
 sources= fn_inference.cc bdd2inference.cc bt_inference.cc hr_lsgb_inference_init.cc \
          hr_lsgb_inference_update.cc

@@ -1,7 +1,8 @@
 %{
 #include "sbsat.h"
 #include "bddnode.h"
-#include "libt5_a-iscas_g.h"
+// #include "libt5_a-iscas_g.h"
+#include "iscas_g.hh"
 
 /* remove warning about unput not used */
 #define YY_NO_UNPUT

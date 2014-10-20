@@ -1,4 +1,4 @@
-INCLUDES=-I$(top_srcdir)/include
+AM_CPPFLAGS=-I$(top_srcdir)/include
 sources= \
              bdd.cc bdd_ite.cc bdd_print.cc utils.cc \
              params.cc params_fn.cc log.cc itetable.cc \
