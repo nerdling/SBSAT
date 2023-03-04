@@ -27,8 +27,11 @@ IN THE SOFTWARE.
 #include <limits.h>
 #include <ctype.h>
 #include <stdarg.h>
+#include <stdbool.h>
 
 #include "picosat.h"
+
+int EnqueueInference_lemmas_hook(int nInfVar, bool bInfPolarity);
 
 /* By default code for 'all different constraints' is disabled, since 'NADC'
  * is defined.
