@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "util.h"
 
+int recur(int cnt);
 
 int main(argc, argv, environ)
 int argc;
@@ -39,7 +40,7 @@ char **environ;
 }
 
 
-recur(cnt)
+int recur(cnt)
 {
     int i, j, sum;
 
