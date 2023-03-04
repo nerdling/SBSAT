@@ -45,7 +45,7 @@ InferNLits_MINMAX(SpecialFunc *pSpecialFunc, int nNumRHSUnknowns, int value)
 {
    int nNumElts = pSpecialFunc->rhsVbles.nNumElts;
    int *arrElts = pSpecialFunc->rhsVbles.arrElts;
-   int arrNewPolar[BOOL_MAX];
+   int arrNewPolar[BOOL_MAX_SBSAT];
    if (value == BOOL_TRUE) {
       arrNewPolar[BOOL_TRUE] = BOOL_TRUE;
       arrNewPolar[BOOL_FALSE] = BOOL_FALSE;
