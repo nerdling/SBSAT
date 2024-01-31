@@ -121,10 +121,13 @@ enum {
 extern const char * opnames[EQU_BASE];
 #define XNOR 6  //XNOR and EQU are the same function
 
-#define BOOL_FALSE 0
-#define BOOL_TRUE 1
-#define BOOL_UNKNOWN 2
-#define BOOL_MAX 3
+/* fixing a wall of compiler warnings from redefining BOOL_MAX */
+enum SBSAT_BOOL {
+   BOOL_FALSE = 0,
+   BOOL_TRUE = 1,
+   BOOL_UNKNOWN = 2,
+   BOOL_ENUM_MAX = 3
+};
 
 /* various stacks */
 #define LEVEL_START -1
