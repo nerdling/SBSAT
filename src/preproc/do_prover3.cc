@@ -38,11 +38,11 @@
 #include "sbsat.h"
 #include "sbsat_preproc.h"
 
-int size = 10;
+int do_prover3_size = 10;
 
 int Do_Prover3() {
 	if(formatin != '3') return PREP_NO_CHANGE;
-	dX_printf(3, "RECOMPUTING PROVER %d - \n", size);
+	dX_printf(3, "RECOMPUTING PROVER %d - \n", do_prover3_size);
 	str_length = 0;
 	bool OLD_DO_INFERENCES = DO_INFERENCES;
 	DO_INFERENCES = 0;
@@ -85,7 +85,7 @@ int Do_Prover3() {
 
 	//Grabbing new prover3 BDDS
    nmbrFunctions = 0;
-	prover3_max_vars = size;
+	prover3_max_vars = do_prover3_size;
 	void p3_done();
    p3_done();
 	
